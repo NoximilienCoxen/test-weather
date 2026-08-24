@@ -32,7 +32,7 @@ fun PhysicalNumber(
     fontSize: Dp,
     tilt: Offset,
     modifier: Modifier = Modifier,
-    depth: Dp = fontSize * 0.26f,
+    depth: Dp = fontSize * 0.15f,
 ) {
     var dragDegrees by remember { mutableFloatStateOf(0f) }
 
