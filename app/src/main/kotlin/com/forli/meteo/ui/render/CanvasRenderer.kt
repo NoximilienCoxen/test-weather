@@ -178,15 +178,13 @@ class CanvasRenderer : TemperatureRenderer {
                 // Prevalentemente verticale, non diagonale sull'intero blocco:
                 // con una diagonale la cifra di destra risultava molto piu'
                 // scura di quella di sinistra, come se fossero due materiali.
-                // Gli estremi sono quelli di specifica, ma distribuiti: con una
-                // rampa lineare meta' del volume finiva sotto il grigio medio e
-                // l'oggetto sembrava una faccia bianca su uno zoccolo scuro.
-                // La plastica bianca in ombra resta chiara; il tono piu' cupo
-                // appartiene solo al fondo dell'estrusione.
+                // Estremi di specifica, distribuiti. La fascia piu' chiara resta
+                // sottile in cima: allargandola il volume arrivava al valore
+                // della faccia frontale e lo spigolo anteriore spariva.
                 brush = Brush.linearGradient(
                     0.00f to spec.palette.sideNear,
-                    0.45f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.26f),
-                    0.82f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.58f),
+                    0.10f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.30f),
+                    0.55f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.58f),
                     1.00f to spec.palette.sideFar,
                     start = Offset.Zero,
                     end = Offset(glyphHeight * 0.22f, glyphHeight),
