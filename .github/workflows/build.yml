@@ -137,5 +137,5 @@ jobs:
         if: always()
         with:
           name: screenshots
-          path: /tmp/ciout/screenshots
+          path: /tmp/ciout
           if-no-files-found: warn
