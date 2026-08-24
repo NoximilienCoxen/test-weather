@@ -30,6 +30,7 @@ import java.time.LocalDate
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 /**
@@ -91,7 +92,7 @@ fun WeatherSculpture(
         val unit = size.minDimension
         // La scultura sta piu' vicina della cifra, quindi si sposta di piu'.
         val shift = Offset(tilt.x, tilt.y) * (unit * 0.045f)
-        val centre = Offset(size.width / 2f, size.height * 0.56f) + shift
+        val centre = Offset(size.width / 2f, size.height * 0.64f) + shift
 
         drawCelestial(centre, unit, colors, nightness, cloudiness, phase)
         if (cloudiness > 0.02f) drawCloud(centre, unit, colors, cloudiness)
@@ -209,7 +210,14 @@ private fun DrawScope.drawCloud(
     colors: MeteoColors,
     cloudiness: Float,
 ) {
-    val scale = 0.55f + cloudiness * 0.45f
+    // Usare la trasparenza per rappresentare la copertura era sbagliato: una
+    // nuvola leggera diventava una macchia scura e slavata invece di una
+    // nuvoletta netta. Una nuvola e' un oggetto, non una velatura. La copertura
+    // cambia quante masse ha, quanto e' grande e di che tono e'; l'opacita'
+    // serve solo a farla entrare e uscire di scena senza scatti.
+    val presence = ((cloudiness - 0.06f) / 0.16f).coerceIn(0f, 1f)
+    val scale = 0.5f + cloudiness * 0.5f
+    val masses = (2 + (cloudiness * 3f).roundToInt()).coerceIn(2, 5)
     val light = lerp(colors.numberSideNear, colors.numberSideFar, cloudiness * 0.55f)
     val dark = lerp(colors.numberSideFar, Color.Black, cloudiness * 0.30f)
 
@@ -220,13 +228,13 @@ private fun DrawScope.drawCloud(
         Offset(-0.10f, 0.10f) to 0.18f,
         Offset(0.14f, 0.11f) to 0.17f,
     )
-    lumps.forEach { (relative, size) ->
+    lumps.take(masses).forEach { (relative, size) ->
         sphere(
             centre = centre + Offset(relative.x * unit * scale, relative.y * unit * scale),
             radius = size * unit * scale,
             light = light,
             dark = dark,
-            alpha = cloudiness.coerceIn(0f, 1f),
+            alpha = presence,
         )
     }
 }
