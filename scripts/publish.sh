@@ -8,20 +8,23 @@ SUBDIR="${1:?serve la sottocartella di destinazione}"
 SRC="/tmp/ciout"
 [ -d "$SRC" ] || { echo "niente da pubblicare in $SRC"; exit 0; }
 
+REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 WORK=$(mktemp -d)
-git clone --quiet --depth 1 \
-  "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-  "$WORK/repo"
-cd "$WORK/repo"
+cd "$WORK"
+
+git init --quiet repo
+cd repo
+git remote add origin "$REMOTE"
 git config user.name  "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+# Un clone --depth 1 implicherebbe --single-branch e lascerebbe
+# origin/ci-artifacts inesistente: parto da un init e prendo solo cio' che serve.
 if git ls-remote --exit-code --heads origin ci-artifacts >/dev/null 2>&1; then
   git fetch --quiet --depth 1 origin ci-artifacts
-  git checkout --quiet -B ci-artifacts origin/ci-artifacts
+  git checkout --quiet -B ci-artifacts FETCH_HEAD
 else
   git checkout --quiet --orphan ci-artifacts
-  git rm -rqf . 2>/dev/null || true
 fi
 
 rm -rf "${SUBDIR:?}"
@@ -43,13 +46,14 @@ fi
 git commit --quiet -m "ci($SUBDIR): output run ${GITHUB_RUN_ID}"
 
 for attempt in 1 2 3 4; do
-  if git push --quiet origin ci-artifacts; then
+  if git push --quiet origin ci-artifacts 2>/dev/null; then
     echo "pubblicato in ci-artifacts/$SUBDIR"
     exit 0
   fi
-  echo "push fallito, tentativo $attempt"
+  echo "push respinta, tentativo $attempt: riallineo e riprovo"
   sleep $((attempt * 3))
-  git fetch --quiet origin ci-artifacts && git rebase --quiet origin/ci-artifacts || true
+  git fetch --quiet --depth 1 origin ci-artifacts || true
+  git rebase --quiet FETCH_HEAD || { git rebase --abort || true; }
 done
 echo "impossibile pubblicare dopo 4 tentativi" >&2
 exit 1
