@@ -182,13 +182,18 @@ class CanvasRenderer : TemperatureRenderer {
         // Ombra portata morbida, solo sul tema chiaro: su fondo #EFEFF2 e'
         // l'unica cosa che stacca un oggetto bianco dallo sfondo.
         if (spec.palette.dropShadow) {
+            // Dieci stampi a bassa opacita' si leggevano uno per uno, come
+            // anelli sotto la cifra. Molti piu' stampi, ciascuno molto piu'
+            // trasparente, e distanziati in modo crescente: l'ombra si allarga
+            // sfumando invece di ripetersi.
             val shadowLayout = measurer.measure(
                 text = spec.text,
-                style = baseStyle.copy(color = Color.Black.copy(alpha = 0.045f)),
+                style = baseStyle.copy(color = Color.Black.copy(alpha = 0.016f)),
             )
             val tail = direction * (depth * 1.02f)
             for (k in 1..SHADOW_STAMPS) {
-                val spread = depth * 0.085f * k
+                val t = k.toFloat() / SHADOW_STAMPS
+                val spread = depth * 0.85f * t * t
                 drawText(
                     textLayoutResult = shadowLayout,
                     topLeft = origin + tail + Offset(spread * 0.55f, spread),
@@ -287,7 +292,7 @@ class CanvasRenderer : TemperatureRenderer {
     }
 
     private companion object {
-        const val SHADOW_STAMPS = 10
+        const val SHADOW_STAMPS = 34
         const val MAX_STEPS = 420
         const val MAX_SIDE = 4096
     }
