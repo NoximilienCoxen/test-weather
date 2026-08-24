@@ -92,6 +92,7 @@ jobs:
   screenshots:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
@@ -124,6 +125,7 @@ jobs:
           profile: pixel_6
           ram-size: 4096M
           disable-animations: true
+          emulator-boot-timeout: 900
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           script: bash scripts/capture.sh
 
