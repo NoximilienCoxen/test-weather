@@ -131,6 +131,9 @@ private fun MetricPageContent(
         ExtrudedText(
             text = page.title,
             fontSize = 42.dp,
+            // Estrusione piu' corta della cifra gigante: alla dimensione del
+            // titolo una profondita' piena impasta le lettere.
+            depth = 7.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
@@ -144,7 +147,7 @@ private fun MetricPageContent(
         ) {
             ExtrudedText(
                 text = data.bigNumber,
-                fontSize = maxHeight * 0.72f,
+                fontSize = maxHeight * 0.66f,
                 modifier = Modifier.fillMaxSize(),
             )
             if (page == MetricPage.PRECIPITAZIONI) {

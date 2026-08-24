@@ -1,6 +1,8 @@
 package com.forli.meteo.ui.render
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -14,8 +16,7 @@ import com.forli.meteo.ui.theme.toNumberPalette
 
 /**
  * Disegna testo estruso passando dal TemperatureRenderer corrente.
- * Il Canvas viene lasciato piu' alto del glifo perche' l'estrusione
- * e l'ombra escono dal riquadro del testo.
+ * Il riquadro e' piu' alto del glifo perche' estrusione e ombra ne escono.
  */
 @Composable
 fun ExtrudedText(
@@ -29,25 +30,30 @@ fun ExtrudedText(
     val renderer = LocalTemperatureRenderer.current
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
-
-    val fontPx = with(density) { fontSize.toPx() }
-    val depthPx = with(density) { depth.toPx() }
     val palette = remember(colors) { colors.toNumberPalette() }
-    val spec = remember(text, fontPx, depthPx, palette) {
-        NumberSpec(
-            text = text,
-            fontSizePx = fontPx,
-            palette = palette,
-            depthPx = depthPx,
-        )
-    }
 
-    Canvas(modifier) {
-        renderer.draw(
-            scope = this,
-            measurer = measurer,
-            spec = spec,
-            center = Offset(size.width / 2f, size.height * (0.5f + verticalBias)),
-        )
+    BoxWithConstraints(modifier) {
+        val fontPx = with(density) { fontSize.toPx() }
+        val depthPx = with(density) { depth.toPx() }
+        val availableWidthPx = with(density) { maxWidth.toPx() }
+
+        val spec = remember(text, fontPx, depthPx, availableWidthPx, palette) {
+            NumberSpec(
+                text = text,
+                fontSizePx = fontPx,
+                palette = palette,
+                depthPx = depthPx,
+                maxWidthPx = availableWidthPx,
+            )
+        }
+
+        Canvas(Modifier.fillMaxSize()) {
+            renderer.draw(
+                scope = this,
+                measurer = measurer,
+                spec = spec,
+                center = Offset(size.width / 2f, size.height * (0.5f + verticalBias)),
+            )
+        }
     }
 }

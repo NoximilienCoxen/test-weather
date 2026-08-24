@@ -32,6 +32,8 @@ data class NumberSpec(
     val steps: Int = 26,
     /** Direzione dell'estrusione: giu' a destra, opposta alla luce. */
     val angleDeg: Float = 62f,
+    /** Larghezza disponibile: oltre questa la cifra viene rimpicciolita. */
+    val maxWidthPx: Float = Float.MAX_VALUE,
 )
 
 /**
