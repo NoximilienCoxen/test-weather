@@ -21,15 +21,34 @@ adb logcat -c >/dev/null 2>&1 || true
 
 shoot() {
   local name="$1"
-  if adbt shell screencap -p /sdcard/shot.png >/dev/null 2>&1 &&
-     adbt pull /sdcard/shot.png "$OUT/$name.png" >/dev/null 2>&1 &&
-     [ -s "$OUT/$name.png" ]; then
-    echo "  $name.png ($(stat -c%s "$OUT/$name.png") byte)"
-    adbt shell rm -f /sdcard/shot.png >/dev/null 2>&1 || true
+  # /data/local/tmp e' sempre scrivibile dall'utente shell ed esiste da subito.
+  # /sdcard no: e' storage emulato, viene montato tardi nel boot ed e' soggetto
+  # allo scoped storage. Era la causa degli scatti mancati.
+  local dev="/data/local/tmp/shot.png"
+  local out="$OUT/$name.png"
+  local err
+
+  err=$(adbt shell screencap -p "$dev" 2>&1)
+  [ -n "$err" ] && echo "    screencap: $err"
+  err=$(adbt pull "$dev" "$out" 2>&1)
+  adbt shell rm -f "$dev" >/dev/null 2>&1 || true
+
+  if [ -s "$out" ]; then
+    echo "  $name.png ($(stat -c%s "$out") byte)"
     return 0
   fi
+  echo "    pull: $err"
+
+  # Ripiego: flusso diretto. Su alcuni emulatori headless si chiude a meta',
+  # ma quando il percorso su file fallisce vale la pena provarlo.
+  adbt exec-out screencap -p > "$out" 2>/dev/null
+  if [ -s "$out" ]; then
+    echo "  $name.png ($(stat -c%s "$out") byte, via exec-out)"
+    return 0
+  fi
+
   echo "  $name.png NON catturato"
-  rm -f "$OUT/$name.png"
+  rm -f "$out"
   return 1
 }
 
@@ -68,7 +87,7 @@ session() {
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
   adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
-  sleep 6
+  sleep 10
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
   shoot "${slug}-1-temp"
