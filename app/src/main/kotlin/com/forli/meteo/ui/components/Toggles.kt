@@ -72,7 +72,7 @@ fun DayWeekToggle(
                     .offset(x = travel * knob)
                     .size(20.dp)
                     .clip(CircleShape)
-                    .background(colors.numberFace),
+                    .background(colors.pillBackground),
             )
         }
         Text(

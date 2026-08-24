@@ -130,10 +130,10 @@ private fun MetricPageContent(
 
         ExtrudedText(
             text = page.title,
-            fontSize = 44.dp,
+            fontSize = 42.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(84.dp),
+                .height(72.dp),
         )
 
         BoxWithConstraints(
@@ -144,7 +144,7 @@ private fun MetricPageContent(
         ) {
             ExtrudedText(
                 text = data.bigNumber,
-                fontSize = maxHeight * 0.64f,
+                fontSize = maxHeight * 0.72f,
                 modifier = Modifier.fillMaxSize(),
             )
             if (page == MetricPage.PRECIPITAZIONI) {
@@ -214,7 +214,9 @@ private fun MetricPage.buildData(
     val colors = LocalMeteoColors.current
     val current = forecast?.current
     val days = forecast?.days.orEmpty()
-    val strong = colors.numberFace
+    // Sul tema chiaro la faccia della cifra e' quasi bianca: come colore di
+    // tracciato sparirebbe sul fondo. Le curve seguono il colore del testo.
+    val strong = colors.text
     val faint = colors.label
 
     return when (this) {

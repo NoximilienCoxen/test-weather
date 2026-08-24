@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.em
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos
-import kotlin.math.floor
 import kotlin.math.sin
 
 /**
@@ -33,8 +31,10 @@ import kotlin.math.sin
  *   ombra -> corpo estruso (dal fondo alla faccia) -> smusso illuminato ->
  *   faccia frontale -> iridescenza come bordo sottile.
  *
- * La rampa di grigi e' quantizzata in fasce: una rampa continua leggerebbe
- * come un tubo arrotondato, che e' esattamente il risultato da evitare.
+ * La rampa di grigi segue la direzione della luce, non la profondita'. E' la
+ * differenza fra facce laterali piatte e anelli concentrici: dare un colore
+ * per fascia di profondita' significa ridisegnare il contorno del glifo a ogni
+ * fascia, e il risultato si legge come strati sovrapposti.
  *
  * Il disegno costa una trentina di ristampe del glifo a piena risoluzione,
  * troppo per rifarlo a ogni frame: il risultato finisce in una bitmap tenuta
@@ -93,7 +93,7 @@ class CanvasRenderer : TemperatureRenderer {
                 fontSize = spec.fontSizePx.toSp(),
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily.SansSerif,
-                letterSpacing = (-0.045f).em,
+                letterSpacing = (-0.02f).em,
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
             )
         }
@@ -139,29 +139,42 @@ class CanvasRenderer : TemperatureRenderer {
         if (spec.palette.dropShadow) {
             val tail = direction * (depth * 1.02f)
             for (k in 1..SHADOW_STAMPS) {
-                val spread = depth * 0.06f * k
+                val spread = depth * 0.085f * k
                 drawText(
                     textLayoutResult = solid,
-                    color = Color.Black.copy(alpha = 0.026f),
+                    color = Color.Black.copy(alpha = 0.045f),
                     topLeft = origin + tail + Offset(spread * 0.55f, spread),
                 )
             }
         }
 
-        // 2. Corpo estruso, dal fondo verso la faccia.
-        for (i in spec.steps downTo 1) {
-            val t = i.toFloat() / spec.steps
-            val band = (floor(t * EXTRUSION_BANDS) / EXTRUSION_BANDS).coerceIn(0f, 1f)
+        // 2. Corpo estruso. Tutte le ristampe usano lo stesso glifo con un
+        //    pennello lineare orientato come la luce: il colore dipende da dove
+        //    ci si trova sulla cifra, non da quanto si e' in profondita'.
+        //    Cosi' le facce laterali risultano piane e non compaiono anelli.
+        val sideLayout = measurer.measure(
+            text = spec.text,
+            style = baseStyle.copy(
+                brush = Brush.linearGradient(
+                    colors = listOf(spec.palette.sideNear, spec.palette.sideFar),
+                    start = Offset.Zero,
+                    end = Offset(glyphWidth, glyphHeight),
+                ),
+            ),
+        )
+        // Il passo fra una ristampa e l'altra deve restare sotto il pixel,
+        // altrimenti sui bordi obliqui si vede la scalinata.
+        val steps = ceil(depth / 0.9f).toInt().coerceIn(spec.steps, MAX_STEPS)
+        for (i in steps downTo 1) {
             drawText(
-                textLayoutResult = solid,
-                color = lerp(spec.palette.sideNear, spec.palette.sideFar, band),
-                topLeft = origin + direction * (depth * t),
+                textLayoutResult = sideLayout,
+                topLeft = origin + direction * (depth * i.toFloat() / steps),
             )
         }
 
         // 3. Smusso a 45 gradi rivolto alla luce, in alto a sinistra: sbuca
         //    appena oltre la faccia e ne definisce lo spigolo.
-        val chamfer = (depth * 0.055f).coerceAtLeast(1f)
+        val chamfer = (depth * 0.035f).coerceIn(1.5f, 9f)
         drawText(
             textLayoutResult = solid,
             color = spec.palette.chamfer,
@@ -183,8 +196,8 @@ class CanvasRenderer : TemperatureRenderer {
             style = baseStyle.copy(
                 brush = Brush.linearGradient(
                     colors = spec.palette.iridescence,
-                    start = origin,
-                    end = origin + Offset(glyphWidth, glyphHeight),
+                    start = Offset.Zero,
+                    end = Offset(glyphWidth, glyphHeight),
                 ),
                 drawStyle = Stroke(width = strokeWidth, join = StrokeJoin.Round),
             ),
@@ -198,7 +211,7 @@ class CanvasRenderer : TemperatureRenderer {
 
     private companion object {
         /** Poche fasce nette: e' cio' che rende le facce laterali piatte. */
-        const val EXTRUSION_BANDS = 6f
+        const val MAX_STEPS = 420
         const val SHADOW_STAMPS = 10
         const val CACHE_SIZE = 8
         const val MAX_SIDE = 4096
