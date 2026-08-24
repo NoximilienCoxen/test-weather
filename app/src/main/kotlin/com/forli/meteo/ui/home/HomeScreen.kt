@@ -66,7 +66,7 @@ fun HomeScreen(
             tilt = tilt,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.5f),
+                .weight(0.42f),
         )
 
         // La cifra prende tutto lo spazio che resta e lo riempie davvero: e' la
