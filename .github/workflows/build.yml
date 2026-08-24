@@ -55,7 +55,14 @@ jobs:
       - uses: android-actions/setup-android@v3
 
       - name: Componenti SDK
-        run: sdkmanager --install "platforms;android-37" "build-tools;36.0.0" > /dev/null
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          echo "--- pacchetti disponibili ---"
+          sdkmanager --list 2>/dev/null \
+            | grep -E "platforms;android-3[5-9]|build-tools;3[6-9]" | head -20 || true
+          echo "--- installo ---"
+          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
+            || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
 
       - name: Versioni in uso
         run: |
