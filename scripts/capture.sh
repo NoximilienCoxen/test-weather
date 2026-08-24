@@ -117,6 +117,35 @@ session() {
     shoot "${slug}-1d-ruotato-col-dito"
     adbt shell input motionevent UP "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
     sleep 1
+
+    # Stati che i dati veri oggi non offrono: a Forli' e' sereno tutte le
+    # ventiquattro ore, quindi nuvole e pioggia non comparirebbero mai in uno
+    # scatto. L'app accetta di imporli, come gia' fa per il tema.
+    restart_with() {
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      # shellcheck disable=SC2086
+      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
+      sleep 8
+    }
+
+    restart_with "--ei ora 2"
+    shoot "${slug}-2-notte-luna"
+
+    restart_with "--ei meteo 63"
+    shoot "${slug}-3-pioggia"
+
+    restart_with "--ei ora 2 --ei meteo 63"
+    shoot "${slug}-4-pioggia-di-notte"
+
+    restart_with "--ei meteo 3"
+    shoot "${slug}-5-coperto"
+
+    # Il foglio di dettaglio: mai verificato finora.
+    restart_with ""
+    adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-6-dettaglio"
   fi
 
   adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
