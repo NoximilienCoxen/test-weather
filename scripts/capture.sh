@@ -126,7 +126,9 @@ session() {
       sleep 1
       # shellcheck disable=SC2086
       adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
-      sleep 8
+      # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
+      # gli scatti coglievano i trattini invece dei dati.
+      sleep 14
     }
 
     restart_with "--ei ora 2"

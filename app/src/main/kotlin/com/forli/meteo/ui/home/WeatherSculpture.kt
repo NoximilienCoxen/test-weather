@@ -111,8 +111,10 @@ private fun DrawScope.drawCelestial(
     // Dietro le nuvole, e spostato in alto a destra come nel riferimento.
     val at = centre + Offset(unit * 0.17f, -unit * 0.11f)
     val radius = unit * 0.19f
-    // Piu' e' coperto, meno si vede: non sparisce, si vela.
-    val visibility = (1f - cloudiness * 0.55f).coerceIn(0f, 1f)
+    // Sotto una nuvola spessa l'astro sparisce del tutto: con una velatura
+    // parziale i raggi del sole sbucavano da dietro un temporale, che e'
+    // esattamente il tipo di dettaglio che rovina l'illusione.
+    val visibility = (1f - cloudiness * 1.25f).coerceIn(0f, 1f)
     if (visibility <= 0.02f) return
 
     val body = lerp(colors.numberFace, colors.numberSideNear, nightness * 0.35f)
