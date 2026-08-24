@@ -49,6 +49,7 @@ class CanvasRenderer : TemperatureRenderer {
         val depthPx: Float,
         val steps: Int,
         val angleDeg: Float,
+        val maxWidthPx: Float,
         val palette: NumberPalette,
     )
 
@@ -72,6 +73,7 @@ class CanvasRenderer : TemperatureRenderer {
             depthPx = spec.depthPx,
             steps = spec.steps,
             angleDeg = spec.angleDeg,
+            maxWidthPx = spec.maxWidthPx,
             palette = spec.palette,
         )
         val bitmap = cache[key] ?: bake(scope, measurer, spec)?.also { cache[key] = it } ?: return
@@ -88,9 +90,10 @@ class CanvasRenderer : TemperatureRenderer {
     /** Disegna la cifra una volta sola dentro una bitmap fuori schermo. */
     private fun bake(scope: DrawScope, measurer: TextMeasurer, spec: NumberSpec): ImageBitmap? {
         val density = Density(scope.density, scope.fontScale)
-        val baseStyle = with(density) {
+
+        fun styleAt(sizePx: Float) = with(density) {
             TextStyle(
-                fontSize = spec.fontSizePx.toSp(),
+                fontSize = sizePx.toSp(),
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily.SansSerif,
                 letterSpacing = (-0.02f).em,
@@ -98,13 +101,28 @@ class CanvasRenderer : TemperatureRenderer {
             )
         }
 
-        val solid = measurer.measure(spec.text, baseStyle)
+        var fontPx = spec.fontSizePx
+        var depthPx = spec.depthPx
+        var baseStyle = styleAt(fontPx)
+        var solid = measurer.measure(spec.text, baseStyle)
+
+        // La cifra deve stare nella larghezza disponibile, estrusione inclusa:
+        // senza questo vincolo un valore a tre cifre uscirebbe dallo schermo.
+        val occupied = solid.size.width + (depthPx * 1.8f + 12f) * 2f
+        if (spec.maxWidthPx >= 1f && occupied > spec.maxWidthPx) {
+            val ratio = spec.maxWidthPx / occupied
+            fontPx *= ratio
+            depthPx *= ratio
+            baseStyle = styleAt(fontPx)
+            solid = measurer.measure(spec.text, baseStyle)
+        }
+
         val glyphWidth = solid.size.width.toFloat()
         val glyphHeight = solid.size.height.toFloat()
         if (glyphWidth <= 0f || glyphHeight <= 0f) return null
 
         // Margine per estrusione, smusso e ombra portata, che escono dal glifo.
-        val margin = spec.depthPx * 1.8f + 12f
+        val margin = depthPx * 1.8f + 12f
         val width = ceil(glyphWidth + margin * 2f).toInt().coerceIn(1, MAX_SIDE)
         val height = ceil(glyphHeight + margin * 2f).toInt().coerceIn(1, MAX_SIDE)
 
@@ -115,7 +133,7 @@ class CanvasRenderer : TemperatureRenderer {
             canvas = Canvas(bitmap),
             size = Size(width.toFloat(), height.toFloat()),
         ) {
-            paint(this, measurer, spec, baseStyle, solid, Offset(margin, margin))
+            paint(this, measurer, spec, baseStyle, solid, Offset(margin, margin), depthPx)
         }
         return bitmap
     }
@@ -127,10 +145,10 @@ class CanvasRenderer : TemperatureRenderer {
         baseStyle: TextStyle,
         solid: TextLayoutResult,
         origin: Offset,
+        depth: Float,
     ) = with(scope) {
         val radians = spec.angleDeg * PI.toFloat() / 180f
         val direction = Offset(cos(radians), sin(radians))
-        val depth = spec.depthPx
         val glyphWidth = solid.size.width.toFloat()
         val glyphHeight = solid.size.height.toFloat()
 
@@ -155,10 +173,13 @@ class CanvasRenderer : TemperatureRenderer {
         val sideLayout = measurer.measure(
             text = spec.text,
             style = baseStyle.copy(
+                // Prevalentemente verticale, non diagonale sull'intero blocco:
+                // con una diagonale la cifra di destra risultava molto piu'
+                // scura di quella di sinistra, come se fossero due materiali.
                 brush = Brush.linearGradient(
                     colors = listOf(spec.palette.sideNear, spec.palette.sideFar),
                     start = Offset.Zero,
-                    end = Offset(glyphWidth, glyphHeight),
+                    end = Offset(glyphHeight * 0.22f, glyphHeight),
                 ),
             ),
         )
