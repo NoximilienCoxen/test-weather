@@ -105,6 +105,18 @@ session() {
     shoot "${slug}-1c-inclinato-sinistra"
     adbt emu sensor set acceleration 0:9.81:0 >/dev/null 2>&1 || true
     sleep 1
+
+    # Rotazione col dito. "input motionevent" tiene premuto fra un comando e
+    # l'altro, quindi lo stato intermedio del gesto e' fotografabile: con una
+    # swipe non lo era, perche' finisce prima dello scatto.
+    CX=$(( W / 2 ))
+    CY=$(( H * 30 / 100 ))
+    adbt shell input motionevent DOWN "$CX" "$CY" >/dev/null 2>&1 || true
+    adbt shell input motionevent MOVE "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
+    sleep 1
+    shoot "${slug}-1d-ruotato-col-dito"
+    adbt shell input motionevent UP "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
+    sleep 1
   fi
 
   adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
