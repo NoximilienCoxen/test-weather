@@ -80,10 +80,13 @@ fun SplineChart(
             pointsOf(s.values).forEach { pts ->
                 val path = catmullRomPath(pts)
                 if (s.filled) {
+                    // Chiude sulla linea di base del riquadro: chiudendo sul
+                    // fondo del canvas restava una fascia piena sotto lo zero.
+                    val baseline = padY + plotHeight
                     val area = Path().apply {
                         addPath(path)
-                        lineTo(pts.last().x, size.height - padY * 0.2f)
-                        lineTo(pts.first().x, size.height - padY * 0.2f)
+                        lineTo(pts.last().x, baseline)
+                        lineTo(pts.first().x, baseline)
                         close()
                     }
                     drawPath(area, s.color.copy(alpha = 0.55f))

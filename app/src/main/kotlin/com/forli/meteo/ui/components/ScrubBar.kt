@@ -83,7 +83,7 @@ fun ScrubBar(
         val thumbX = inset + usable * position / (count - 1).coerceAtLeast(1).toFloat()
         val thumbWidth = trackHeight * 1.5f
         drawRoundRect(
-            color = colors.numberFace,
+            color = colors.pillBackground,
             topLeft = Offset(thumbX - thumbWidth / 2f, top - trackHeight * 0.12f),
             size = Size(thumbWidth, trackHeight * 1.24f),
             cornerRadius = CornerRadius(radius, radius),
