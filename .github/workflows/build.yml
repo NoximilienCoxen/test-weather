@@ -23,17 +23,17 @@ jobs:
 
       - name: Interroga Open-Meteo
         run: |
-          mkdir -p /tmp/ciout/api
+          mkdir -p /tmp/ciout
           BASE="https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&forecast_days=7&wind_speed_unit=ms"
           CUR="current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
           SAFE="daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max"
           EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum"
           echo "--- safe ---"
-          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/api/safe.json
+          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/safe.json
           echo "--- extra ---"
-          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/api/extra.json
-          head -c 400 /tmp/ciout/api/safe.json; echo
-          head -c 400 /tmp/ciout/api/extra.json; echo
+          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/extra.json
+          head -c 400 /tmp/ciout/safe.json; echo
+          head -c 400 /tmp/ciout/extra.json; echo
 
       - name: Pubblica
         env:
