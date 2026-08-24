@@ -1,30 +1,30 @@
 package com.forli.meteo.ui.motion
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.render.ExtrudedText
 import com.forli.meteo.ui.render.NumberMotion
-import kotlinx.coroutines.launch
 
 /**
- * La cifra gigante come oggetto che si puo' spingere.
+ * La cifra come solido che si puo' far girare.
  *
- * Il dito la sposta con resistenza crescente oltre una certa distanza, e al
- * rilascio torna al centro con una molla poco smorzata: e' il rimbalzo, non lo
- * spostamento, a dare la sensazione di massa.
+ * Il dito non la sposta piu': ne cambia l'orientamento. Con facce che
+ * conoscono la propria normale, ruotare la luce le riombreggia una per una, e
+ * la differenza rispetto a una traslazione e' esattamente cio' che distingue
+ * un oggetto da un'immagine.
+ *
+ * L'angolo resta dove lo lasci: non torna indietro da solo, perche' scegliere
+ * l'inquadratura e' una decisione di chi guarda.
  */
 @Composable
 fun PhysicalNumber(
@@ -34,23 +34,14 @@ fun PhysicalNumber(
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.26f,
 ) {
-    val density = LocalDensity.current
-    val scope = rememberCoroutineScope()
-    val push = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-
-    val freeTravel = with(density) { 44.dp.toPx() }
-    val sheenTravel = with(density) { 2.dp.toPx() }
+    var dragDegrees by remember { mutableFloatStateOf(0f) }
 
     Box(
-        modifier = modifier.pointerInput(freeTravel) {
-            detectDragGestures(
-                onDrag = { change, delta ->
-                    change.consume()
-                    scope.launch { push.snapTo(resist(push.value + delta, freeTravel)) }
-                },
-                onDragEnd = { scope.launch { push.animateTo(Offset.Zero, RETURN) } },
-                onDragCancel = { scope.launch { push.animateTo(Offset.Zero, RETURN) } },
-            )
+        modifier = modifier.pointerInput(Unit) {
+            detectDragGestures { change, delta ->
+                change.consume()
+                dragDegrees += delta.x * DEGREES_PER_PIXEL
+            }
         },
     ) {
         ExtrudedText(
@@ -59,23 +50,16 @@ fun PhysicalNumber(
             depth = depth,
             modifier = Modifier.fillMaxSize(),
             motion = NumberMotion(
-                tilt = tilt,
-                push = push.value,
-                sheenShift = tilt.x * sheenTravel,
+                orientationDeg = NumberMotion.REST_ORIENTATION +
+                    dragDegrees +
+                    tilt.x * TILT_SWING,
             ),
         )
     }
 }
 
-/**
- * Oltre la corsa libera lo spostamento continua, ma sempre piu' controvoglia.
- * Un limite netto sembrerebbe un difetto; questa resistenza sembra un elastico.
- */
-private fun resist(raw: Offset, freeTravel: Float): Offset {
-    val distance = raw.getDistance()
-    if (distance <= freeTravel || distance == 0f) return raw
-    val compressed = freeTravel + (distance - freeTravel) * 0.32f
-    return raw / distance * compressed
-}
+/** Uno schermo di trascinamento vale circa un quarto di giro. */
+private const val DEGREES_PER_PIXEL = 0.09f
 
-private val RETURN = spring<Offset>(dampingRatio = 0.45f, stiffness = 300f)
+/** Quanto la luce ruota all'inclinazione massima del telefono. */
+private const val TILT_SWING = 26f

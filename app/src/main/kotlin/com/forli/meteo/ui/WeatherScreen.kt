@@ -143,9 +143,11 @@ private fun MetricPageContent(
             // Estrusione piu' corta della cifra gigante: alla dimensione del
             // titolo una profondita' piena impasta le lettere.
             depth = 7.dp,
-            // Frazione dell'inclinazione: il titolo sta su un piano piu'
-            // lontano, e la differenza rispetto alla cifra crea profondita'.
-            motion = NumberMotion(tilt = tilt * 0.35f),
+            // Il titolo ruota molto meno della cifra: sta su un piano piu'
+            // lontano, e la differenza fra i due si legge come profondita'.
+            motion = NumberMotion(
+                orientationDeg = NumberMotion.REST_ORIENTATION + tilt.x * 9f,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
