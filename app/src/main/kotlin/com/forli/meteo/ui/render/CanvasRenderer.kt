@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -133,7 +134,7 @@ class CanvasRenderer : TemperatureRenderer {
             canvas = Canvas(bitmap),
             size = Size(width.toFloat(), height.toFloat()),
         ) {
-            paint(this, measurer, spec, baseStyle, solid, Offset(margin, margin), depthPx)
+            paint(this, measurer, spec, baseStyle, solid, Offset(margin, margin), depthPx, fontPx)
         }
         return bitmap
     }
@@ -146,6 +147,7 @@ class CanvasRenderer : TemperatureRenderer {
         solid: TextLayoutResult,
         origin: Offset,
         depth: Float,
+        fontPx: Float,
     ) = with(scope) {
         val radians = spec.angleDeg * PI.toFloat() / 180f
         val direction = Offset(cos(radians), sin(radians))
@@ -176,8 +178,16 @@ class CanvasRenderer : TemperatureRenderer {
                 // Prevalentemente verticale, non diagonale sull'intero blocco:
                 // con una diagonale la cifra di destra risultava molto piu'
                 // scura di quella di sinistra, come se fossero due materiali.
+                // Gli estremi sono quelli di specifica, ma distribuiti: con una
+                // rampa lineare meta' del volume finiva sotto il grigio medio e
+                // l'oggetto sembrava una faccia bianca su uno zoccolo scuro.
+                // La plastica bianca in ombra resta chiara; il tono piu' cupo
+                // appartiene solo al fondo dell'estrusione.
                 brush = Brush.linearGradient(
-                    colors = listOf(spec.palette.sideNear, spec.palette.sideFar),
+                    0.00f to spec.palette.sideNear,
+                    0.45f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.26f),
+                    0.82f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.58f),
+                    1.00f to spec.palette.sideFar,
                     start = Offset.Zero,
                     end = Offset(glyphHeight * 0.22f, glyphHeight),
                 ),
@@ -195,7 +205,7 @@ class CanvasRenderer : TemperatureRenderer {
 
         // 3. Smusso a 45 gradi rivolto alla luce, in alto a sinistra: sbuca
         //    appena oltre la faccia e ne definisce lo spigolo.
-        val chamfer = (depth * 0.035f).coerceIn(1.5f, 9f)
+        val chamfer = (fontPx * 0.013f).coerceIn(1f, 10f)
         drawText(
             textLayoutResult = solid,
             color = spec.palette.chamfer,
@@ -211,7 +221,7 @@ class CanvasRenderer : TemperatureRenderer {
 
         // 5. Iridescenza: solo sugli smussi e negli angoli interni. E' un filo
         //    di contorno sfalsato, non un riempimento.
-        val strokeWidth = (depth * 0.05f).coerceIn(1.5f, 6f)
+        val strokeWidth = (fontPx * 0.008f).coerceIn(0.8f, 5f)
         val iridescent = measurer.measure(
             text = spec.text,
             style = baseStyle.copy(
