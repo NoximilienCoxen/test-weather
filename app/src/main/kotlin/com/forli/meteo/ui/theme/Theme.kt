@@ -22,7 +22,7 @@ fun MeteoColors.toNumberPalette(): NumberPalette = NumberPalette(
     sideFar = numberSideFar,
     chamfer = numberChamfer,
     iridescence = IridescenceStops,
-    iridescenceAlpha = if (isDark) 0.42f else 0.30f,
+    iridescenceAlpha = if (isDark) 0.62f else 0.45f,
     dropShadow = numberDropShadow,
 )
 
