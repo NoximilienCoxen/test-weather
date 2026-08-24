@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -100,10 +99,10 @@ class CanvasRenderer : TemperatureRenderer {
         val direction = Offset(cos(radians), sin(radians))
 
         val body = render(density, layoutDirection, width, height) {
-            paintBody(this, measurer, spec, baseStyle, solid, Offset(bodyMargin, bodyMargin), depthPx, direction, glyph)
+            paintBody(this, measurer, spec, baseStyle, Offset(bodyMargin, bodyMargin), depthPx, direction, glyph)
         }
         val face = render(density, layoutDirection, frontWidth, frontHeight) {
-            paintFace(this, spec, solid, Offset(frontMargin, frontMargin), chamfer)
+            paintFace(this, measurer, spec, baseStyle, Offset(frontMargin, frontMargin), chamfer)
         }
         val sheen = render(density, layoutDirection, frontWidth, frontHeight) {
             paintSheen(this, measurer, spec, baseStyle, Offset(frontMargin, frontMargin), chamfer, strokeWidth, glyph)
@@ -175,7 +174,6 @@ class CanvasRenderer : TemperatureRenderer {
         measurer: TextMeasurer,
         spec: NumberSpec,
         baseStyle: TextStyle,
-        solid: TextLayoutResult,
         origin: Offset,
         depth: Float,
         direction: Offset,
@@ -184,12 +182,15 @@ class CanvasRenderer : TemperatureRenderer {
         // Ombra portata morbida, solo sul tema chiaro: su fondo #EFEFF2 e'
         // l'unica cosa che stacca un oggetto bianco dallo sfondo.
         if (spec.palette.dropShadow) {
+            val shadowLayout = measurer.measure(
+                text = spec.text,
+                style = baseStyle.copy(color = Color.Black.copy(alpha = 0.045f)),
+            )
             val tail = direction * (depth * 1.02f)
             for (k in 1..SHADOW_STAMPS) {
                 val spread = depth * 0.085f * k
                 drawText(
-                    textLayoutResult = solid,
-                    color = Color.Black.copy(alpha = 0.045f),
+                    textLayoutResult = shadowLayout,
                     topLeft = origin + tail + Offset(spread * 0.55f, spread),
                 )
             }
@@ -228,22 +229,29 @@ class CanvasRenderer : TemperatureRenderer {
 
     private fun paintFace(
         scope: DrawScope,
+        measurer: TextMeasurer,
         spec: NumberSpec,
-        solid: TextLayoutResult,
+        baseStyle: TextStyle,
         origin: Offset,
         chamfer: Float,
     ) = with(scope) {
+        // Il colore sta nello stile, non fra i parametri di disegno: e' lo
+        // stesso meccanismo usato dai piani con pennello, e li' funziona.
         // Smusso a 45 gradi rivolto alla luce: sbuca appena oltre la faccia e
         // ne definisce lo spigolo. Va tenuto sotto il valore della faccia.
         drawText(
-            textLayoutResult = solid,
-            color = spec.palette.chamfer,
+            textLayoutResult = measurer.measure(
+                text = spec.text,
+                style = baseStyle.copy(color = spec.palette.chamfer),
+            ),
             topLeft = origin + Offset(-chamfer, -chamfer),
         )
         // Faccia frontale: tinta piatta, satinata, il piano piu' chiaro.
         drawText(
-            textLayoutResult = solid,
-            color = spec.palette.face,
+            textLayoutResult = measurer.measure(
+                text = spec.text,
+                style = baseStyle.copy(color = spec.palette.face),
+            ),
             topLeft = origin,
         )
     }
