@@ -89,6 +89,45 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
+  # Livello 3: l'APK in mano al telefono. Tag fisso, cosi' il link resta
+  # sempre lo stesso e si puo' salvare fra i preferiti.
+  rilascio:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: apk
+
+      - name: Prepara il file
+        run: |
+          mkdir -p rilascio
+          cp "$(find apk -name '*.apk' | head -1)" rilascio/meteo-forli.apk
+          ls -la rilascio
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: Meteo Forlì — ultima build
+          prerelease: true
+          files: rilascio/meteo-forli.apk
+          body: |
+            APK di debug, sempre aggiornato all'ultimo commit del branch di sviluppo.
+
+            **Installazione dal telefono**
+            1. Tocca `meteo-forli.apk` qui sotto per scaricarlo.
+            2. Android chiedera' di autorizzare l'installazione da questa
+               sorgente: e' la richiesta normale per le app fuori dallo store.
+            3. Apri il file scaricato e installa.
+
+            La firma e' una chiave di debug fissa, quindi le build successive
+            si installano sopra la precedente senza doverla disinstallare.
+
+            Commit: ${{ github.sha }}
+
   screenshots:
     needs: build
     runs-on: ubuntu-latest

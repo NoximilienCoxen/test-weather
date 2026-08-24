@@ -16,9 +16,23 @@ android {
         versionName = "1.0"
     }
 
+    // Chiave di debug fissa e versionata. Senza, la CI ne genera una nuova a
+    // ogni build e Android rifiuta di aggiornare l'app installata, costringendo
+    // a disinstallarla prima. Non e' un segreto: sono le credenziali di debug
+    // documentate da Android, valide solo per build non distribuibili.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
         }
         release {
             isMinifyEnabled = false
