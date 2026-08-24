@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,9 @@ import com.forli.meteo.ui.components.ScrubBar
 import com.forli.meteo.ui.components.SplineChart
 import com.forli.meteo.ui.components.TableRow
 import com.forli.meteo.ui.components.ThemeSwitch
+import com.forli.meteo.ui.motion.PhysicalNumber
+import com.forli.meteo.ui.motion.rememberDeviceTilt
+import com.forli.meteo.ui.render.NumberMotion
 import com.forli.meteo.ui.render.ExtrudedText
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoTheme
@@ -67,6 +71,9 @@ fun WeatherApp(viewModel: WeatherViewModel) {
 private fun WeatherScreen(state: UiState, viewModel: WeatherViewModel) {
     val colors = LocalMeteoColors.current
     val pagerState = rememberPagerState(pageCount = { MetricPage.entries.size })
+    // Un solo ascoltatore del sensore per schermata: il pager tiene vive piu'
+    // pagine, e registrarlo dentro ognuna significherebbe piu' ascoltatori.
+    val tilt by rememberDeviceTilt()
 
     Box(
         modifier = Modifier
@@ -97,6 +104,7 @@ private fun WeatherScreen(state: UiState, viewModel: WeatherViewModel) {
                     page = MetricPage.entries[index],
                     state = state,
                     viewModel = viewModel,
+                    tilt = tilt,
                 )
             }
         }
@@ -108,6 +116,7 @@ private fun MetricPageContent(
     page: MetricPage,
     state: UiState,
     viewModel: WeatherViewModel,
+    tilt: Offset,
 ) {
     val colors = LocalMeteoColors.current
     val forecast = state.forecast
@@ -134,6 +143,9 @@ private fun MetricPageContent(
             // Estrusione piu' corta della cifra gigante: alla dimensione del
             // titolo una profondita' piena impasta le lettere.
             depth = 7.dp,
+            // Frazione dell'inclinazione: il titolo sta su un piano piu'
+            // lontano, e la differenza rispetto alla cifra crea profondita'.
+            motion = NumberMotion(tilt = tilt * 0.35f),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
@@ -145,9 +157,10 @@ private fun MetricPageContent(
                 .weight(1f),
             contentAlignment = Alignment.Center,
         ) {
-            ExtrudedText(
+            PhysicalNumber(
                 text = data.bigNumber,
                 fontSize = maxHeight * 0.66f,
+                tilt = tilt,
                 modifier = Modifier.fillMaxSize(),
             )
             if (page == MetricPage.PRECIPITAZIONI) {

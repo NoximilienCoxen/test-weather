@@ -91,6 +91,22 @@ session() {
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
   shoot "${slug}-1-temp"
+
+  # Prova della parallasse: l'emulatore sa simulare l'accelerometro, quindi
+  # l'inclinazione e' verificabile qui e non solo a mano sul telefono. La linea
+  # di base insegue la posa in qualche secondo, percio' lo scatto va preso
+  # subito dopo aver mosso il sensore.
+  if [ "$tema" = "SCURO" ]; then
+    adbt emu sensor set acceleration 3.2:9.2:0 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-1b-inclinato-destra"
+    adbt emu sensor set acceleration -3.2:9.2:0 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-1c-inclinato-sinistra"
+    adbt emu sensor set acceleration 0:9.81:0 >/dev/null 2>&1 || true
+    sleep 1
+  fi
+
   adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
   sleep 2
   shoot "${slug}-2-precip"
