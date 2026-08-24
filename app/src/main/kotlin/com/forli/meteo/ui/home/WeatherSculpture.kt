@@ -91,7 +91,7 @@ fun WeatherSculpture(
         val unit = size.minDimension
         // La scultura sta piu' vicina della cifra, quindi si sposta di piu'.
         val shift = Offset(tilt.x, tilt.y) * (unit * 0.045f)
-        val centre = Offset(size.width / 2f, size.height * 0.46f) + shift
+        val centre = Offset(size.width / 2f, size.height * 0.56f) + shift
 
         drawCelestial(centre, unit, colors, nightness, cloudiness, phase)
         if (cloudiness > 0.02f) drawCloud(centre, unit, colors, cloudiness)
@@ -110,7 +110,7 @@ private fun DrawScope.drawCelestial(
 ) {
     // Dietro le nuvole, e spostato in alto a destra come nel riferimento.
     val at = centre + Offset(unit * 0.17f, -unit * 0.11f)
-    val radius = unit * 0.15f
+    val radius = unit * 0.19f
     // Piu' e' coperto, meno si vede: non sparisce, si vela.
     val visibility = (1f - cloudiness * 0.55f).coerceIn(0f, 1f)
     if (visibility <= 0.02f) return

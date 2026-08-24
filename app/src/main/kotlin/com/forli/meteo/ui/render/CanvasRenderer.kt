@@ -27,8 +27,13 @@ class CanvasRenderer : TemperatureRenderer {
         val chamfer: Float,
         val palette: NumberPalette,
     ) : PreparedNumber {
-        override val width: Float get() = geometry.width + depth
-        override val height: Float get() = geometry.height + depth
+        // L'estrusione e' obliqua: proietta cos e sin della propria lunghezza,
+        // non la lunghezza intera. Sommarla tutta su entrambi gli assi faceva
+        // credere l'oggetto piu' largo di quanto e', e lo scentrava.
+        override val width: Float
+            get() = geometry.width + depth * cos(EXTRUSION_REST * PI.toFloat() / 180f)
+        override val height: Float
+            get() = geometry.height + depth * sin(EXTRUSION_REST * PI.toFloat() / 180f)
 
         /**
          * Le superfici per orientamento, quantizzate. I vertici non cambiano

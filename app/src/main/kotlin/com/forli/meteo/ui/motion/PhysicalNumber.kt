@@ -33,6 +33,7 @@ fun PhysicalNumber(
     tilt: Offset,
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.15f,
+    verticalBias: Float = -0.08f,
 ) {
     var dragDegrees by remember { mutableFloatStateOf(0f) }
 
@@ -49,6 +50,7 @@ fun PhysicalNumber(
             fontSize = fontSize,
             depth = depth,
             modifier = Modifier.fillMaxSize(),
+            verticalBias = verticalBias,
             motion = NumberMotion(
                 orientationDeg = NumberMotion.REST_ORIENTATION +
                     dragDegrees +
