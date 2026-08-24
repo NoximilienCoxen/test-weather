@@ -1,6 +1,6 @@
 package com.forli.meteo.ui.motion
 
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -39,9 +39,13 @@ fun PhysicalNumber(
 
     Box(
         modifier = modifier.pointerInput(Unit) {
-            detectDragGestures { change, delta ->
+            // Solo orizzontale. Con detectDragGestures la cifra si prendeva
+            // qualunque direzione, quindi trascinare verso l'alto per aprire il
+            // dettaglio la faceva ruotare e basta: il gesto piu' importante
+            // dell'app veniva ingoiato da quello decorativo.
+            detectHorizontalDragGestures { change, delta ->
                 change.consume()
-                dragDegrees += delta.x * DEGREES_PER_PIXEL
+                dragDegrees += delta * DEGREES_PER_PIXEL
             }
         },
     ) {
