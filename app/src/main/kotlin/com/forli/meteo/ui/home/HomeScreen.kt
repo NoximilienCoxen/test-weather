@@ -59,8 +59,15 @@ fun HomeScreen(
         // non due elementi separati da un vuoto.
         WeatherSculpture(
             weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
-            precipitationMm = state.forcedWeatherCode?.let { 2.5 } ?: hour?.precipitation,
-            probability = state.forcedWeatherCode?.let { 80 } ?: hour?.precipProbability,
+            // L'aggancio di verifica deve restare fedele: imporre pioggia a
+            // qualunque codice faceva piovere anche su "coperto", che e'
+            // asciutto. Solo i codici bagnati portano gocce.
+            precipitationMm = state.forcedWeatherCode
+                ?.let { if (Wmo.family(it).isWet()) 2.5 else 0.0 }
+                ?: hour?.precipitation,
+            probability = state.forcedWeatherCode
+                ?.let { if (Wmo.family(it).isWet()) 80 else 0 }
+                ?: hour?.precipProbability,
             isDay = hour?.isDay ?: true,
             date = hour?.time?.toLocalDate() ?: LocalDate.now(),
             tilt = tilt,
@@ -128,8 +135,11 @@ private fun conditionLabel(hour: HourForecast?, forcedCode: Int?): String {
     if (hour == null && forcedCode == null) return "--"
     val code = forcedCode ?: hour?.weatherCode
     val condition = Wmo.condition(code)
+    val wet = Wmo.family(code).isWet()
     val probability = if (forcedCode != null) 80 else hour?.precipProbability ?: 0
-    val wet = Wmo.family(code) in
-        setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
     return if (wet && probability > 0) "$condition $probability%" else condition
 }
+
+/** Famiglie che portano precipitazione, e quindi gocce sulla scultura. */
+private fun Wmo.Family.isWet(): Boolean =
+    this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
