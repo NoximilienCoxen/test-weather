@@ -6,11 +6,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.em
 import kotlin.math.PI
 import kotlin.math.ceil
@@ -28,69 +29,27 @@ import kotlin.math.sin
 /**
  * Estrusione ottenuta ristampando il testo lungo un vettore fisso.
  *
- * L'ordine di disegno e' quello che decide il materiale:
- *   ombra -> corpo estruso (dal fondo alla faccia) -> smusso illuminato ->
- *   faccia frontale -> iridescenza come bordo sottile.
+ * L'ordine di disegno decide il materiale, e la gerarchia dei valori con esso:
+ * la faccia frontale e' il piano piu' chiaro, lo smusso sta appena sotto
+ * perche' inclinato riceve meno luce, poi scende la rampa laterale. Invertire
+ * faccia e smusso fa leggere la cifra come un contorno vuoto.
  *
- * La rampa di grigi segue la direzione della luce, non la profondita'. E' la
- * differenza fra facce laterali piatte e anelli concentrici: dare un colore
+ * La rampa segue la direzione della luce, non la profondita': dare un colore
  * per fascia di profondita' significa ridisegnare il contorno del glifo a ogni
- * fascia, e il risultato si legge come strati sovrapposti.
+ * fascia, e il risultato si legge come strati di cipolla.
  *
- * Il disegno costa una trentina di ristampe del glifo a piena risoluzione,
- * troppo per rifarlo a ogni frame: il risultato finisce in una bitmap tenuta
- * in cache e i frame successivi si limitano a ricopiarla. L'aspetto e'
- * identico, il costo no.
+ * Il disegno viene cotto in tre piani distinti e riusato: il movimento li fa
+ * scorrere l'uno sull'altro senza ricostruire nulla.
  */
 class CanvasRenderer : TemperatureRenderer {
 
-    private data class CacheKey(
-        val text: String,
-        val fontSizePx: Float,
-        val depthPx: Float,
-        val steps: Int,
-        val angleDeg: Float,
-        val maxWidthPx: Float,
-        val palette: NumberPalette,
-    )
-
-    /** Piu' cifre convivono sullo schermo: una cache a voce singola le farebbe sfrattare a vicenda. */
-    private val cache = object : LinkedHashMap<CacheKey, ImageBitmap>(CACHE_SIZE, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<CacheKey, ImageBitmap>) =
-            size > CACHE_SIZE
-    }
-
-    override fun draw(
-        scope: DrawScope,
+    override fun bake(
+        density: Density,
+        layoutDirection: LayoutDirection,
         measurer: TextMeasurer,
         spec: NumberSpec,
-        center: Offset,
-    ) {
-        if (spec.text.isEmpty() || spec.fontSizePx <= 0f) return
-
-        val key = CacheKey(
-            text = spec.text,
-            fontSizePx = spec.fontSizePx,
-            depthPx = spec.depthPx,
-            steps = spec.steps,
-            angleDeg = spec.angleDeg,
-            maxWidthPx = spec.maxWidthPx,
-            palette = spec.palette,
-        )
-        val bitmap = cache[key] ?: bake(scope, measurer, spec)?.also { cache[key] = it } ?: return
-
-        scope.drawImage(
-            image = bitmap,
-            topLeft = Offset(
-                x = center.x - bitmap.width / 2f,
-                y = center.y - bitmap.height / 2f,
-            ),
-        )
-    }
-
-    /** Disegna la cifra una volta sola dentro una bitmap fuori schermo. */
-    private fun bake(scope: DrawScope, measurer: TextMeasurer, spec: NumberSpec): ImageBitmap? {
-        val density = Density(scope.density, scope.fontScale)
+    ): BakedNumber? {
+        if (spec.text.isEmpty() || spec.fontSizePx <= 0f) return null
 
         fun styleAt(sizePx: Float) = with(density) {
             TextStyle(
@@ -118,28 +77,100 @@ class CanvasRenderer : TemperatureRenderer {
             solid = measurer.measure(spec.text, baseStyle)
         }
 
-        val glyphWidth = solid.size.width.toFloat()
-        val glyphHeight = solid.size.height.toFloat()
-        if (glyphWidth <= 0f || glyphHeight <= 0f) return null
+        val glyph = Size(solid.size.width.toFloat(), solid.size.height.toFloat())
+        if (glyph.width <= 0f || glyph.height <= 0f) return null
 
-        // Margine per estrusione, smusso e ombra portata, che escono dal glifo.
-        val margin = depthPx * 1.8f + 12f
-        val width = ceil(glyphWidth + margin * 2f).toInt().coerceIn(1, MAX_SIDE)
-        val height = ceil(glyphHeight + margin * 2f).toInt().coerceIn(1, MAX_SIDE)
+        val chamfer = (fontPx * 0.013f).coerceIn(1f, 10f)
+        val strokeWidth = (fontPx * 0.008f).coerceIn(0.8f, 5f)
 
+        // Il corpo ha bisogno di tutto lo spazio: estrusione e ombra escono dal
+        // glifo. Faccia e iridescenza restano invece attaccate al glifo, quindi
+        // ritagliarle stretto risparmia parecchia memoria: tre piani a piena
+        // dimensione, moltiplicati per le pagine tenute vive dal pager,
+        // costerebbero decine di megabyte.
+        val bodyMargin = depthPx * 1.8f + 12f
+        val frontMargin = chamfer + strokeWidth + 4f
+
+        val width = ceil(glyph.width + bodyMargin * 2f).toInt().coerceIn(1, MAX_SIDE)
+        val height = ceil(glyph.height + bodyMargin * 2f).toInt().coerceIn(1, MAX_SIDE)
+        val frontWidth = ceil(glyph.width + frontMargin * 2f).toInt().coerceIn(1, MAX_SIDE)
+        val frontHeight = ceil(glyph.height + frontMargin * 2f).toInt().coerceIn(1, MAX_SIDE)
+
+        val radians = spec.angleDeg * PI.toFloat() / 180f
+        val direction = Offset(cos(radians), sin(radians))
+
+        val body = render(density, layoutDirection, width, height) {
+            paintBody(this, measurer, spec, baseStyle, solid, Offset(bodyMargin, bodyMargin), depthPx, direction, glyph)
+        }
+        val face = render(density, layoutDirection, frontWidth, frontHeight) {
+            paintFace(this, spec, solid, Offset(frontMargin, frontMargin), chamfer)
+        }
+        val sheen = render(density, layoutDirection, frontWidth, frontHeight) {
+            paintSheen(this, measurer, spec, baseStyle, Offset(frontMargin, frontMargin), chamfer, strokeWidth, glyph)
+        }
+
+        val frontOffset = Offset(bodyMargin - frontMargin, bodyMargin - frontMargin)
+        return BakedNumber(
+            body = NumberLayer(body, Offset.Zero),
+            face = NumberLayer(face, frontOffset),
+            sheen = NumberLayer(sheen, frontOffset),
+            width = width.toFloat(),
+            height = height.toFloat(),
+            parallaxPx = depthPx,
+            sheenAlpha = spec.palette.iridescenceAlpha,
+        )
+    }
+
+    override fun draw(
+        scope: DrawScope,
+        baked: BakedNumber,
+        center: Offset,
+        motion: NumberMotion,
+    ) = with(scope) {
+        val origin = Offset(
+            x = center.x - baked.width / 2f,
+            y = center.y - baked.height / 2f,
+        ) + motion.push
+
+        // Il corpo si sposta CONTRO l'inclinazione mentre la faccia resta
+        // ferma: e' questo che fa leggere una rotazione dell'oggetto invece di
+        // una traslazione dell'immagine.
+        drawImage(
+            image = baked.body.image,
+            topLeft = origin + baked.body.offset - motion.tilt * (baked.parallaxPx * 0.35f),
+        )
+        drawImage(
+            image = baked.face.image,
+            topLeft = origin + baked.face.offset,
+        )
+        drawImage(
+            image = baked.sheen.image,
+            topLeft = origin + baked.sheen.offset +
+                motion.tilt * (baked.parallaxPx * 0.18f) +
+                Offset(motion.sheenShift, 0f),
+            alpha = baked.sheenAlpha,
+        )
+    }
+
+    private fun render(
+        density: Density,
+        layoutDirection: LayoutDirection,
+        width: Int,
+        height: Int,
+        block: DrawScope.() -> Unit,
+    ): ImageBitmap {
         val bitmap = ImageBitmap(width, height)
         CanvasDrawScope().draw(
             density = density,
-            layoutDirection = scope.layoutDirection,
+            layoutDirection = layoutDirection,
             canvas = Canvas(bitmap),
             size = Size(width.toFloat(), height.toFloat()),
-        ) {
-            paint(this, measurer, spec, baseStyle, solid, Offset(margin, margin), depthPx, fontPx)
-        }
+            block = block,
+        )
         return bitmap
     }
 
-    private fun paint(
+    private fun paintBody(
         scope: DrawScope,
         measurer: TextMeasurer,
         spec: NumberSpec,
@@ -147,15 +178,11 @@ class CanvasRenderer : TemperatureRenderer {
         solid: TextLayoutResult,
         origin: Offset,
         depth: Float,
-        fontPx: Float,
+        direction: Offset,
+        glyph: Size,
     ) = with(scope) {
-        val radians = spec.angleDeg * PI.toFloat() / 180f
-        val direction = Offset(cos(radians), sin(radians))
-        val glyphWidth = solid.size.width.toFloat()
-        val glyphHeight = solid.size.height.toFloat()
-
-        // 1. Ombra portata morbida, solo sul tema chiaro: su fondo #EFEFF2 e'
-        //    l'unica cosa che stacca un oggetto bianco dallo sfondo.
+        // Ombra portata morbida, solo sul tema chiaro: su fondo #EFEFF2 e'
+        // l'unica cosa che stacca un oggetto bianco dallo sfondo.
         if (spec.palette.dropShadow) {
             val tail = direction * (depth * 1.02f)
             for (k in 1..SHADOW_STAMPS) {
@@ -168,16 +195,12 @@ class CanvasRenderer : TemperatureRenderer {
             }
         }
 
-        // 2. Corpo estruso. Tutte le ristampe usano lo stesso glifo con un
-        //    pennello lineare orientato come la luce: il colore dipende da dove
-        //    ci si trova sulla cifra, non da quanto si e' in profondita'.
-        //    Cosi' le facce laterali risultano piane e non compaiono anelli.
         val sideLayout = measurer.measure(
             text = spec.text,
             style = baseStyle.copy(
                 // Prevalentemente verticale, non diagonale sull'intero blocco:
                 // con una diagonale la cifra di destra risultava molto piu'
-                // scura di quella di sinistra, come se fossero due materiali.
+                // scura di quella di sinistra, come due materiali diversi.
                 // Estremi di specifica, distribuiti. La fascia piu' chiara resta
                 // sottile in cima: allargandola il volume arrivava al valore
                 // della faccia frontale e lo spigolo anteriore spariva.
@@ -187,10 +210,11 @@ class CanvasRenderer : TemperatureRenderer {
                     0.55f to lerp(spec.palette.sideNear, spec.palette.sideFar, 0.58f),
                     1.00f to spec.palette.sideFar,
                     start = Offset.Zero,
-                    end = Offset(glyphHeight * 0.22f, glyphHeight),
+                    end = Offset(glyph.height * 0.22f, glyph.height),
                 ),
             ),
         )
+
         // Il passo fra una ristampa e l'altra deve restare sotto il pixel,
         // altrimenti sui bordi obliqui si vede la scalinata.
         val steps = ceil(depth / 0.9f).toInt().coerceIn(spec.steps, MAX_STEPS)
@@ -200,33 +224,50 @@ class CanvasRenderer : TemperatureRenderer {
                 topLeft = origin + direction * (depth * i.toFloat() / steps),
             )
         }
+    }
 
-        // 3. Smusso a 45 gradi rivolto alla luce, in alto a sinistra: sbuca
-        //    appena oltre la faccia e ne definisce lo spigolo.
-        val chamfer = (fontPx * 0.013f).coerceIn(1f, 10f)
+    private fun paintFace(
+        scope: DrawScope,
+        spec: NumberSpec,
+        solid: TextLayoutResult,
+        origin: Offset,
+        chamfer: Float,
+    ) = with(scope) {
+        // Smusso a 45 gradi rivolto alla luce: sbuca appena oltre la faccia e
+        // ne definisce lo spigolo. Va tenuto sotto il valore della faccia.
         drawText(
             textLayoutResult = solid,
             color = spec.palette.chamfer,
             topLeft = origin + Offset(-chamfer, -chamfer),
         )
-
-        // 4. Faccia frontale: tinta piatta, satinata. Nessun gradiente colorato.
+        // Faccia frontale: tinta piatta, satinata, il piano piu' chiaro.
         drawText(
             textLayoutResult = solid,
             color = spec.palette.face,
             topLeft = origin,
         )
+    }
 
-        // 5. Iridescenza: solo sugli smussi e negli angoli interni. E' un filo
-        //    di contorno sfalsato, non un riempimento.
-        val strokeWidth = (fontPx * 0.008f).coerceIn(0.8f, 5f)
+    private fun paintSheen(
+        scope: DrawScope,
+        measurer: TextMeasurer,
+        spec: NumberSpec,
+        baseStyle: TextStyle,
+        origin: Offset,
+        chamfer: Float,
+        strokeWidth: Float,
+        glyph: Size,
+    ) = with(scope) {
+        // Iridescenza: solo sugli smussi e negli angoli interni. E' un filo di
+        // contorno sfalsato, non un riempimento. L'alpha viene applicata in
+        // composizione, cosi' il movimento potra' modularla senza ricuocere.
         val iridescent = measurer.measure(
             text = spec.text,
             style = baseStyle.copy(
                 brush = Brush.linearGradient(
                     colors = spec.palette.iridescence,
                     start = Offset.Zero,
-                    end = Offset(glyphWidth, glyphHeight),
+                    end = Offset(glyph.width, glyph.height),
                 ),
                 drawStyle = Stroke(width = strokeWidth, join = StrokeJoin.Round),
             ),
@@ -234,15 +275,12 @@ class CanvasRenderer : TemperatureRenderer {
         drawText(
             textLayoutResult = iridescent,
             topLeft = origin + Offset(-chamfer * 0.7f, -chamfer * 0.7f),
-            alpha = spec.palette.iridescenceAlpha,
         )
     }
 
     private companion object {
-        /** Poche fasce nette: e' cio' che rende le facce laterali piatte. */
-        const val MAX_STEPS = 420
         const val SHADOW_STAMPS = 10
-        const val CACHE_SIZE = 8
+        const val MAX_STEPS = 420
         const val MAX_SIDE = 4096
     }
 }
