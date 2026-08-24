@@ -2,6 +2,7 @@ package com.forli.meteo.ui.home
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,13 +48,15 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         Text(
             text = WeatherRepository.CITY.uppercase(),
             style = MeteoType.caption,
             color = colors.label,
         )
 
+        // La scultura sta sopra la cifra e le sta vicina: sono un oggetto solo,
+        // non due elementi separati da un vuoto.
         WeatherSculpture(
             weatherCode = hour?.weatherCode,
             precipitationMm = hour?.precipitation,
@@ -63,17 +66,23 @@ fun HomeScreen(
             tilt = tilt,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.9f),
+                .weight(0.62f),
         )
 
-        PhysicalNumber(
-            text = hour?.temperature.asBigNumber(),
-            fontSize = 168.dp,
-            tilt = tilt,
+        // La cifra prende tutto lo spazio che resta e lo riempie davvero: e' la
+        // ragione per cui si apre l'app.
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-        )
+        ) {
+            PhysicalNumber(
+                text = hour?.temperature.asBigNumber(),
+                fontSize = maxHeight * 0.82f,
+                tilt = tilt,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
 
         // Crossfade e non sostituzione secca: scorrendo le ore la condizione
         // cambia spesso, e uno scatto di testo si nota piu' del testo stesso.
@@ -91,7 +100,7 @@ fun HomeScreen(
             )
         }
 
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(14.dp))
 
         HourBar(
             hours = hours,
