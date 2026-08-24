@@ -49,4 +49,5 @@ data class DailyDto(
     @SerialName("uv_index_max") val uvMax: List<Double?> = emptyList(),
     @SerialName("relative_humidity_2m_mean") val humidityMean: List<Double?> = emptyList(),
     @SerialName("dew_point_2m_mean") val dewPointMean: List<Double?> = emptyList(),
+    @SerialName("precipitation_hours") val precipitationHours: List<Double?> = emptyList(),
 )
