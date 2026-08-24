@@ -14,6 +14,7 @@ data class OpenMeteoResponse(
     val timezone: String? = null,
     val current: CurrentDto? = null,
     val daily: DailyDto? = null,
+    val hourly: HourlyDto? = null,
     val error: Boolean? = null,
     val reason: String? = null,
 )
@@ -50,4 +51,16 @@ data class DailyDto(
     @SerialName("relative_humidity_2m_mean") val humidityMean: List<Double?> = emptyList(),
     @SerialName("dew_point_2m_mean") val dewPointMean: List<Double?> = emptyList(),
     @SerialName("precipitation_hours") val precipitationHours: List<Double?> = emptyList(),
+)
+
+/** Anche il blocco orario e' colonnare: una lista per variabile. */
+@Serializable
+data class HourlyDto(
+    val time: List<String> = emptyList(),
+    @SerialName("temperature_2m") val temperature: List<Double?> = emptyList(),
+    @SerialName("apparent_temperature") val apparent: List<Double?> = emptyList(),
+    @SerialName("weather_code") val weatherCode: List<Int?> = emptyList(),
+    val precipitation: List<Double?> = emptyList(),
+    @SerialName("precipitation_probability") val precipProbability: List<Int?> = emptyList(),
+    @SerialName("is_day") val isDay: List<Int?> = emptyList(),
 )
