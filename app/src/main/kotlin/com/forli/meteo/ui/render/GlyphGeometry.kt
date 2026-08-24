@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asComposePath
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -27,9 +28,17 @@ class GlyphGeometry private constructor(
     /** Normale uscente per spigolo, gia' normalizzata. */
     private val normals: FloatArray,
     private val edgeCount: Int,
-    /** Contorni campionati, per costruire la faccia frontale rientrata. */
-    private val contours: List<FloatArray>,
-    private val contourNormals: List<FloatArray>,
+    /**
+     * Il contorno vero, non campionato e non rientrato.
+     *
+     * Rientrarlo spostando ogni punto lungo la propria normale sembrava il
+     * modo naturale di ricavare la faccia frontale di un oggetto smussato, ma
+     * sulle curve strette le normali di punti vicini divergono e il poligono
+     * si ripiega su se stesso: da li' le tacche che sfiguravano le cifre.
+     * Lo smusso ora e' la prima fascia dell'estrusione, quindi il rientro non
+     * serve piu' e la faccia resta fedele al glifo.
+     */
+    val front: Path,
     val width: Float,
     val height: Float,
 ) {
@@ -84,18 +93,15 @@ class GlyphGeometry private constructor(
             val dx = ux * depth
             val dy = uy * depth
 
-            val insetPx = px - nx * chamfer
-            val insetPy = py - ny * chamfer
-            val insetQx = qx - nx * chamfer
-            val insetQy = qy - ny * chamfer
-
             val bevelLambert = light.lambert(nx, ny, -1f)
             val sideLambert = light.lambert(nx, ny, 0f)
 
+            // Lo smusso e' la prima fascia dell'estrusione, con normale a
+            // meta' strada fra la faccia frontale e quella laterale.
             val bevelBand = band(bevelLambert, bands)
             quad(
                 bevelBuckets[bevelBand],
-                insetPx, insetPy, insetQx, insetQy,
+                px, py, qx, qy,
                 qx + bx, qy + by, px + bx, py + by,
             )
             bevelUsed[bevelBand] = true
@@ -119,24 +125,7 @@ class GlyphGeometry private constructor(
             if (bevelUsed[b]) facets += Facet(bevelBuckets[b], bandCentre(b, bands), bevel = true)
         }
 
-        return Shading(facets, frontFace(chamfer))
-    }
-
-    /** La faccia frontale e' il contorno rientrato di quanto misura lo smusso. */
-    private fun frontFace(chamfer: Float): Path {
-        val path = Path()
-        contours.forEachIndexed { index, points ->
-            val normals = contourNormals[index]
-            val count = points.size / 2
-            if (count < 3) return@forEachIndexed
-            for (k in 0 until count) {
-                val x = points[k * 2] - normals[k * 2] * chamfer
-                val y = points[k * 2 + 1] - normals[k * 2 + 1] * chamfer
-                if (k == 0) path.moveTo(x, y) else path.lineTo(x, y)
-            }
-            path.close()
-        }
-        return path
+        return Shading(facets, front)
     }
 
     class Shading(val facets: List<Facet>, val front: Path)
@@ -154,9 +143,19 @@ class GlyphGeometry private constructor(
             lz = z / len
         }
 
+        /**
+         * Lambert dimezzato invece che troncato a zero.
+         *
+         * Con il troncamento classico tutte le facce visibili collassavano
+         * sullo stesso tono: la prova di silhouette tiene quelle rivolte nella
+         * direzione dell'estrusione, che e' opposta alla luce, quindi erano
+         * tutte esattamente a zero e il volume si leggeva come una massa
+         * unica. Rimappando l'intero intervallo, anche le facce di spalle si
+         * distinguono fra loro per quanto sono girate.
+         */
         fun lambert(nx: Float, ny: Float, nz: Float): Float {
             val len = sqrt(nx * nx + ny * ny + nz * nz).takeIf { it > 1e-4f } ?: 1f
-            return max(0f, (nx * lx + ny * ly + nz * lz) / len)
+            return (0.5f + 0.5f * (nx * lx + ny * ly + nz * lz) / len).coerceIn(0f, 1f)
         }
 
         companion object {
@@ -246,12 +245,10 @@ class GlyphGeometry private constructor(
 
             val allEdges = ArrayList<Float>()
             val allNormals = ArrayList<Float>()
-            val perContourNormals = ArrayList<FloatArray>()
 
             for (points in sampled) {
                 val count = points.size / 2
                 val positive = signedArea(points) > 0f
-                val contourNormals = FloatArray(count * 2)
                 for (k in 0 until count) {
                     val n = (k + 1) % count
                     val px = points[k * 2]
@@ -261,32 +258,25 @@ class GlyphGeometry private constructor(
                     val ex = qx - px
                     val ey = qy - py
                     val len = hypot(ex, ey)
-                    if (len < 1e-4f) {
-                        contourNormals[k * 2] = 0f
-                        contourNormals[k * 2 + 1] = 0f
-                        continue
-                    }
+                    if (len < 1e-4f) continue
+
                     var nx = ey / len
                     var ny = -ex / len
                     if (positive == flip) {
                         nx = -nx
                         ny = -ny
                     }
-                    contourNormals[k * 2] = nx
-                    contourNormals[k * 2 + 1] = ny
 
                     allEdges += px; allEdges += py; allEdges += qx; allEdges += qy
                     allNormals += nx; allNormals += ny
                 }
-                perContourNormals += contourNormals
             }
 
             return GlyphGeometry(
                 edges = allEdges.toFloatArray(),
                 normals = allNormals.toFloatArray(),
                 edgeCount = allNormals.size / 2,
-                contours = sampled,
-                contourNormals = perContourNormals,
+                front = outline.asComposePath(),
                 width = bounds.width(),
                 height = bounds.height(),
             )

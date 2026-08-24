@@ -58,7 +58,7 @@ fun ExtrudedText(
     text: String,
     fontSize: Dp,
     modifier: Modifier = Modifier,
-    depth: Dp = fontSize * 0.26f,
+    depth: Dp = fontSize * 0.15f,
     verticalBias: Float = -0.08f,
     motion: NumberMotion = NumberMotion.Fermo,
     typeface: Typeface = rememberNumberTypeface(),
