@@ -11,7 +11,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.forli.meteo.R
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.LocalTemperatureRenderer
 import com.forli.meteo.ui.theme.toNumberPalette
@@ -23,6 +22,14 @@ import com.forli.meteo.ui.theme.toNumberPalette
 object NumberType {
     const val WEIGHT = 700
     const val WIDTH = 72
+
+    /**
+     * Typeface.Builder non accetta un identificativo di risorsa: vuole
+     * l'AssetManager e un percorso. Il font sta quindi negli assets, che per un
+     * renderer che lavora gia' a livello di android.graphics e' anche la
+     * collocazione naturale.
+     */
+    const val PATH = "fonts/archivo_variable.ttf"
 }
 
 @Composable
@@ -33,7 +40,7 @@ fun rememberNumberTypeface(
     val context = LocalContext.current
     return remember(weight, width) {
         runCatching {
-            Typeface.Builder(context.resources, R.font.archivo_variable)
+            Typeface.Builder(context.assets, NumberType.PATH)
                 .setFontVariationSettings("'wght' $weight, 'wdth' $width")
                 .build()
         }.getOrNull() ?: Typeface.DEFAULT_BOLD
