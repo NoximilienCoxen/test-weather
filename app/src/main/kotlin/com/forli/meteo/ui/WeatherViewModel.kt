@@ -28,6 +28,11 @@ data class UiState(
     val themeMode: ThemeMode = ThemeMode.AUTO,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
+    /**
+     * Codice meteo imposto dall'esterno, solo per la verifica automatica.
+     * Nullo in uso normale: la schermata usa quello dell'ora scelta.
+     */
+    val forcedWeatherCode: Int? = null,
 )
 
 class WeatherViewModel(app: Application) : AndroidViewModel(app) {
@@ -36,6 +41,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = ThemePrefs(app)
 
     private var loading: Job? = null
+
+    /**
+     * Ora richiesta prima che i dati arrivino. Serve alla verifica automatica:
+     * l'intent puo' chiedere un'ora precisa mentre la lista e' ancora vuota,
+     * e senza ricordarla la richiesta andrebbe persa.
+     */
+    private var pendingHour: Int? = null
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -65,7 +77,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 .onSuccess { forecast ->
                     // All'apertura la schermata mostra l'ora corrente, non la
                     // prima disponibile: e' cio' che ci si aspetta di vedere.
-                    val now = nearestHourIndex(forecast.hours, LocalDateTime.now())
+                    val now = pendingHour?.coerceIn(0, (forecast.hours.size - 1).coerceAtLeast(0))
+                        ?: nearestHourIndex(forecast.hours, LocalDateTime.now())
                     _state.update {
                         it.copy(
                             loading = false,
@@ -105,6 +118,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     private companion object {
         const val MAX_ATTEMPTS = 4
         const val FIRST_RETRY_MS = 1_200L
+    }
+
+    /** Aggancio per la cattura automatica: fissa l'ora anche prima dei dati. */
+    fun requestHour(index: Int) {
+        pendingHour = index
+        if (_state.value.forecast != null) selectHour(index)
+    }
+
+    /** Aggancio per la cattura automatica: impone la condizione mostrata. */
+    fun forceWeatherCode(code: Int?) {
+        _state.update { it.copy(forcedWeatherCode = code) }
     }
 
     fun selectHour(index: Int) {
