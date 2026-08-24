@@ -8,8 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.unit.Dp
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.LocalTemperatureRenderer
@@ -34,9 +35,24 @@ fun ExtrudedText(
 ) {
     val colors = LocalMeteoColors.current
     val renderer = LocalTemperatureRenderer.current
-    val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+
+    // Misuratore senza cache, deliberatamente. La chiave della cache predefinita
+    // si basa sugli attributi che influenzano il layout, e colore e pennello non
+    // lo influenzano: due misurazioni che differiscono solo per la pittura
+    // possono restituire lo stesso oggetto, e vince lo stile della prima. E'
+    // cosi' che faccia e smusso sparivano lasciando solo il filo iridescente.
+    // Qui non perdiamo nulla: il disegno e' gia' in cache come bitmap.
+    val measurer = remember(fontFamilyResolver, density, layoutDirection) {
+        TextMeasurer(
+            defaultFontFamilyResolver = fontFamilyResolver,
+            defaultDensity = density,
+            defaultLayoutDirection = layoutDirection,
+            cacheSize = 0,
+        )
+    }
     val palette = remember(colors) { colors.toNumberPalette() }
 
     BoxWithConstraints(modifier) {
