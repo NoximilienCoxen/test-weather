@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
 import com.forli.meteo.data.Wmo
@@ -27,6 +28,8 @@ import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoColors
 import java.time.LocalDate
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 /**
@@ -106,7 +109,7 @@ private fun DrawScope.drawCelestial(
     phase: Float,
 ) {
     // Dietro le nuvole, e spostato in alto a destra come nel riferimento.
-    val at = centre + Offset(unit * 0.20f, -unit * 0.20f)
+    val at = centre + Offset(unit * 0.17f, -unit * 0.11f)
     val radius = unit * 0.15f
     // Piu' e' coperto, meno si vede: non sparisce, si vela.
     val visibility = (1f - cloudiness * 0.55f).coerceIn(0f, 1f)
@@ -116,7 +119,21 @@ private fun DrawScope.drawCelestial(
     val shade = lerp(colors.numberSideNear, colors.numberSideFar, 0.35f + nightness * 0.2f)
 
     if (nightness < 0.5f) {
-        sphere(at, radius, body, shade, visibility * (1f - nightness * 2f).coerceIn(0f, 1f))
+        val alpha = visibility * (1f - nightness * 2f).coerceIn(0f, 1f)
+        // Raggi corti e radi: senza, una sfera chiara su fondo nero e' solo una
+        // palla, e non si capisce che e' il sole.
+        repeat(12) { i ->
+            val angle = i * (Math.PI.toFloat() * 2f / 12f)
+            val dir = Offset(cos(angle), sin(angle))
+            drawLine(
+                color = body.copy(alpha = alpha * 0.55f),
+                start = at + dir * (radius * 1.30f),
+                end = at + dir * (radius * 1.62f),
+                strokeWidth = radius * 0.075f,
+                cap = StrokeCap.Round,
+            )
+        }
+        sphere(at, radius, body, shade, alpha)
     } else {
         moon(at, radius, phase, body, shade, visibility * ((nightness - 0.5f) * 2f).coerceIn(0f, 1f))
     }

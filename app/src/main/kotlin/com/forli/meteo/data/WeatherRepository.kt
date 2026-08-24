@@ -85,6 +85,13 @@ class WeatherRepository(
     }
 }
 
+/**
+ * La barra racconta la giornata, non la settimana: l'API ne restituisce
+ * centosessantotto, ma centosessantotto tratti in una barra sola sono
+ * illeggibili.
+ */
+private const val HOURS_IN_DAY = 24
+
 private fun <T> List<T>.at(index: Int): T? = getOrNull(index)
 
 internal fun OpenMeteoResponse.toForecast(): Forecast {
@@ -124,7 +131,7 @@ internal fun OpenMeteoResponse.toForecast(): Forecast {
             precipProbability = hourly.precipProbability.at(i),
             isDay = (hourly.isDay.at(i) ?: 1) == 1,
         )
-    }.orEmpty()
+    }.orEmpty().take(HOURS_IN_DAY)
 
     return Forecast(
         hours = hours,
