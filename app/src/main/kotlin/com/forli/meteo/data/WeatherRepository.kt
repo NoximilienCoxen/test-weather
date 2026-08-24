@@ -7,6 +7,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Accesso a Open-Meteo con la sola HttpURLConnection della piattaforma.
@@ -42,6 +43,7 @@ class WeatherRepository(
         append("&wind_speed_unit=ms")
         append("&current=").append(CURRENT_VARS)
         append("&daily=").append(DAILY_VARS)
+        append("&hourly=").append(HOURLY_VARS)
     }
 
     private fun httpGet(url: String): String {
@@ -70,6 +72,10 @@ class WeatherRepository(
         private const val CURRENT_VARS =
             "temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m," +
                 "precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
+
+        private const val HOURLY_VARS =
+            "temperature_2m,apparent_temperature,weather_code,precipitation," +
+                "precipitation_probability,is_day"
 
         private const val DAILY_VARS =
             "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max," +
@@ -107,7 +113,21 @@ internal fun OpenMeteoResponse.toForecast(): Forecast {
         )
     }.orEmpty()
 
+    val hours = hourly?.time?.mapIndexedNotNull { i, iso ->
+        val at = runCatching { LocalDateTime.parse(iso) }.getOrNull() ?: return@mapIndexedNotNull null
+        HourForecast(
+            time = at,
+            temperature = hourly.temperature.at(i),
+            apparent = hourly.apparent.at(i),
+            weatherCode = hourly.weatherCode.at(i),
+            precipitation = hourly.precipitation.at(i),
+            precipProbability = hourly.precipProbability.at(i),
+            isDay = (hourly.isDay.at(i) ?: 1) == 1,
+        )
+    }.orEmpty()
+
     return Forecast(
+        hours = hours,
         current = CurrentWeather(
             temperature = current?.temperature,
             apparent = current?.apparent,
