@@ -39,7 +39,7 @@ fun PhysicalNumber(
     val push = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
 
     val freeTravel = with(density) { 44.dp.toPx() }
-    val sheenTravel = with(density) { 5.dp.toPx() }
+    val sheenTravel = with(density) { 2.dp.toPx() }
 
     Box(
         modifier = modifier.pointerInput(freeTravel) {

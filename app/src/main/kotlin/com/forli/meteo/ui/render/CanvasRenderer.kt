@@ -134,18 +134,25 @@ class CanvasRenderer : TemperatureRenderer {
         // Il corpo si sposta CONTRO l'inclinazione mentre la faccia resta
         // ferma: e' questo che fa leggere una rotazione dell'oggetto invece di
         // una traslazione dell'immagine.
+        //
+        // L'ampiezza va tenuta bassa. A un terzo della profondita' il corpo si
+        // staccava visibilmente dalla faccia e il risultato sembrava un errore
+        // di registro, non un oggetto che ruota.
         drawImage(
             image = baked.body.image,
-            topLeft = origin + baked.body.offset - motion.tilt * (baked.parallaxPx * 0.35f),
+            topLeft = origin + baked.body.offset - motion.tilt * (baked.parallaxPx * BODY_PARALLAX),
         )
         drawImage(
             image = baked.face.image,
             topLeft = origin + baked.face.offset,
         )
+        // L'iridescenza vive sugli smussi della faccia, non su un piano suo:
+        // deve restarle quasi solidale. Lo scarto minimo basta a far viaggiare
+        // il riflesso lungo gli spigoli.
         drawImage(
             image = baked.sheen.image,
             topLeft = origin + baked.sheen.offset +
-                motion.tilt * (baked.parallaxPx * 0.18f) +
+                motion.tilt * (baked.parallaxPx * SHEEN_PARALLAX) +
                 Offset(motion.sheenShift, 0f),
             alpha = baked.sheenAlpha,
         )
@@ -292,6 +299,9 @@ class CanvasRenderer : TemperatureRenderer {
     }
 
     private companion object {
+        /** Frazione della profondita' di cui scorre il corpo a inclinazione piena. */
+        const val BODY_PARALLAX = 0.10f
+        const val SHEEN_PARALLAX = 0.03f
         const val SHADOW_STAMPS = 34
         const val MAX_STEPS = 420
         const val MAX_SIDE = 4096
