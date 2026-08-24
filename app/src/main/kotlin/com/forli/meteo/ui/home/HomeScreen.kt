@@ -66,7 +66,7 @@ fun HomeScreen(
             tilt = tilt,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.62f),
+                .weight(0.5f),
         )
 
         // La cifra prende tutto lo spazio che resta e lo riempie davvero: e' la
@@ -80,6 +80,9 @@ fun HomeScreen(
                 text = hour?.temperature.asBigNumber(),
                 fontSize = maxHeight * 0.82f,
                 tilt = tilt,
+                // Centrata: con la cifra spostata in alto restava un vuoto fra
+                // lei e la condizione, e la schermata sembrava sfilacciata.
+                verticalBias = 0f,
                 modifier = Modifier.fillMaxSize(),
             )
         }
