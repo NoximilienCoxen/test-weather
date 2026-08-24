@@ -81,10 +81,25 @@ class GlyphGeometry private constructor(
             // si disegnerebbero anche le facce nascoste dietro il glifo.
             if (nx * ux + ny * uy <= 0f) continue
 
-            val px = edges[i * 4]
-            val py = edges[i * 4 + 1]
-            val qx = edges[i * 4 + 2]
-            val qy = edges[i * 4 + 3]
+            val rawPx = edges[i * 4]
+            val rawPy = edges[i * 4 + 1]
+            val rawQx = edges[i * 4 + 2]
+            val rawQy = edges[i * 4 + 3]
+
+            // Facce adiacenti che condividono esattamente uno spigolo lasciano
+            // comunque una cucitura visibile, perche' l'antialiasing sfuma i
+            // bordi di ogni contorno chiuso per conto proprio. Allargando ogni
+            // faccia di mezzo pixel sui due lati si sovrappongono appena e la
+            // giunzione sparisce.
+            val tx = rawQx - rawPx
+            val ty = rawQy - rawPy
+            val tLen = hypot(tx, ty).takeIf { it > 1e-4f } ?: 1f
+            val ox = tx / tLen * SEAM_OVERLAP
+            val oy = ty / tLen * SEAM_OVERLAP
+            val px = rawPx - ox
+            val py = rawPy - oy
+            val qx = rawQx + ox
+            val qy = rawQy + oy
 
             // Lo smusso occupa la prima parte della profondita', la faccia
             // laterale il resto.
@@ -169,6 +184,9 @@ class GlyphGeometry private constructor(
 
     companion object {
         const val BANDS = 12
+
+        /** Mezzo pixel di sovrapposizione fra facce contigue. */
+        private const val SEAM_OVERLAP = 0.5f
 
         private fun band(lambert: Float, bands: Int): Int =
             (lambert * (bands - 1)).toInt().coerceIn(0, bands - 1)

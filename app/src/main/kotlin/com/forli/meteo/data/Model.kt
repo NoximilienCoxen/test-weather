@@ -1,6 +1,7 @@
 package com.forli.meteo.data
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class CurrentWeather(
     val temperature: Double? = null,
@@ -34,7 +35,21 @@ data class DayForecast(
     val uvMax: Double? = null,
 )
 
+/** Un'ora della previsione: e' l'unita' su cui scorre la schermata principale. */
+data class HourForecast(
+    val time: LocalDateTime,
+    val temperature: Double? = null,
+    val apparent: Double? = null,
+    val weatherCode: Int? = null,
+    /** Millimetri: dice quanto forte, non quanto probabile. */
+    val precipitation: Double? = null,
+    /** Percentuale: dice quanto probabile, non quanto forte. */
+    val precipProbability: Int? = null,
+    val isDay: Boolean = true,
+)
+
 data class Forecast(
     val current: CurrentWeather,
     val days: List<DayForecast>,
+    val hours: List<HourForecast> = emptyList(),
 )

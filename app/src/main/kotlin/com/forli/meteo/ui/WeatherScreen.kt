@@ -1,7 +1,6 @@
 package com.forli.meteo.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,8 +16,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.DayForecast
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.Wmo
-import com.forli.meteo.prefs.ThemeMode
 import com.forli.meteo.ui.components.ChartSeries
 import com.forli.meteo.ui.components.DataTable
 import com.forli.meteo.ui.components.DayStrip
@@ -39,11 +35,9 @@ import com.forli.meteo.ui.components.SplineChart
 import com.forli.meteo.ui.components.TableRow
 import com.forli.meteo.ui.components.ThemeSwitch
 import com.forli.meteo.ui.motion.PhysicalNumber
-import com.forli.meteo.ui.motion.rememberDeviceTilt
 import com.forli.meteo.ui.render.NumberMotion
 import com.forli.meteo.ui.render.ExtrudedText
 import com.forli.meteo.ui.theme.LocalMeteoColors
-import com.forli.meteo.ui.theme.MeteoTheme
 import com.forli.meteo.ui.theme.MeteoType
 import kotlin.math.roundToInt
 
@@ -53,27 +47,11 @@ private enum class MetricPage(val title: String) {
     VENTO("Vento"),
 }
 
+/** La schermata di dettaglio: si raggiunge trascinando in alto la principale. */
 @Composable
-fun WeatherApp(viewModel: WeatherViewModel) {
-    val state by viewModel.state.collectAsState()
-    val systemDark = isSystemInDarkTheme()
-    val dark = when (state.themeMode) {
-        ThemeMode.AUTO -> systemDark
-        ThemeMode.CHIARO -> false
-        ThemeMode.SCURO -> true
-    }
-    MeteoTheme(dark = dark) {
-        WeatherScreen(state = state, viewModel = viewModel)
-    }
-}
-
-@Composable
-private fun WeatherScreen(state: UiState, viewModel: WeatherViewModel) {
+internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: Offset) {
     val colors = LocalMeteoColors.current
     val pagerState = rememberPagerState(pageCount = { MetricPage.entries.size })
-    // Un solo ascoltatore del sensore per schermata: il pager tiene vive piu'
-    // pagine, e registrarlo dentro ognuna significherebbe piu' ascoltatori.
-    val tilt by rememberDeviceTilt()
 
     Box(
         modifier = Modifier

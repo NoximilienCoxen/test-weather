@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import com.forli.meteo.prefs.ThemeMode
-import com.forli.meteo.ui.WeatherApp
+import com.forli.meteo.ui.MeteoApp
 import com.forli.meteo.ui.WeatherViewModel
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         applyThemeExtra(intent)
         setContent {
-            WeatherApp(viewModel)
+            MeteoApp(viewModel)
         }
     }
 
