@@ -1,0 +1,124 @@
+name: build
+
+on:
+  push:
+    branches:
+      - "claude/**"
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Indipendente dal build: voglio il contratto reale dell'API anche quando
+  # la compilazione fallisce.
+  probe-api:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Interroga Open-Meteo
+        run: |
+          mkdir -p /tmp/ciout/api
+          BASE="https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&forecast_days=7&wind_speed_unit=ms"
+          CUR="current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
+          SAFE="daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max"
+          EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum"
+          echo "--- safe ---"
+          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/api/safe.json
+          echo "--- extra ---"
+          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/api/extra.json
+          head -c 400 /tmp/ciout/api/safe.json; echo
+          head -c 400 /tmp/ciout/api/extra.json; echo
+
+      - name: Pubblica
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/publish.sh api
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Componenti SDK
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
+
+      - name: Versioni in uso
+        run: |
+          java -version
+          ./gradlew --version
+
+      - name: assembleDebug
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+  screenshots:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Abilita KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          echo "kvm:"; ls -l /dev/kvm || echo "NESSUN /dev/kvm"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: apk
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Emulatore e cattura
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          ram-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: bash scripts/capture.sh
+
+      - name: Pubblica
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/publish.sh screenshots
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: /tmp/ciout/screenshots
+          if-no-files-found: warn
