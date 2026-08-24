@@ -1,0 +1,120 @@
+08-24 11:00:50.825 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:50.916 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:51.027 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.029 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.043 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.045 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.088 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.096 E/SystemServiceRegistry(  955): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+08-24 11:00:51.137 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.302 W/d.process.acore( 1396): Long monitor contention with owner Worker-1 (1677) at void android.database.sqlite.SQLiteConnectionPool.closeAvailableNonPrimaryConnectionsAndLogExceptions()(SQLiteConnectionPool.java:616) waiters=0 in android.database.sqlite.SQLiteConnection android.database.sqlite.SQLiteConnectionPool.waitForConnection(java.lang.String, int, android.os.CancellationSignal) for 125ms
+08-24 11:00:51.578 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.601 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:51.862 V/BackupManagerService(  508): [UserID:0] restoreAtInstall pkg=com.forli.meteo token=1 restoreSet=0
+08-24 11:00:51.883 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:51.883 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:51.992 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:51.992 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:52.015 I/SdkSandboxManager(  508): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10141, mPackageName='com.forli.meteo, mAppProcessToken='null'}
+08-24 11:00:52.031 I/SafetyLabelChangedBroadcastReceiver(  801): received broadcast packageName: com.forli.meteo, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+08-24 11:00:52.075 E/BackupHelper(  801): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+08-24 11:00:52.075 E/BackupHelper(  801): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+08-24 11:00:52.408 I/ActivityManager(  508): Force stopping com.forli.meteo appid=10141 user=0: from pid 2016
+08-24 11:00:52.836 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:52.838 E/SystemServiceRegistry(  955): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+08-24 11:00:53.111 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:53.122 I/AppsFilter(  508): interaction: PackageSetting{9904566 com.forli.meteo/10141} -> PackageSetting{a76d0a7 com.android.camera2/10105} BLOCKED
+08-24 11:00:53.122 I/AppsFilter(  508): interaction: PackageSetting{9904566 com.forli.meteo/10141} -> PackageSetting{53e954 com.android.calendar/10104} BLOCKED
+08-24 11:00:53.122 I/AppsFilter(  508): interaction: PackageSetting{9904566 com.forli.meteo/10141} -> PackageSetting{fca20fd com.android.inputmethod.latin/10109} BLOCKED
+08-24 11:00:53.122 I/AppsFilter(  508): interaction: PackageSetting{9904566 com.forli.meteo/10141} -> PackageSetting{fcb51f2 com.android.cellbroadcastreceiver.module/10129} BLOCKED
+08-24 11:00:53.394 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:53.400 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:53.413 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:53.417 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:53.418 D/AppWidgetServiceImpl(  508): Provider info from ComponentInfo{com.forli.meteo/com.forli.meteo.widget.WeatherWidgetReceiver} won't be persisted.
+08-24 11:00:53.433 W/ModernMediaScanner( 1499): Failed to visit /system/media: java.nio.file.NoSuchFileException: /system/media
+08-24 11:00:53.442 D/CarrierSvcBindHelper( 1007): onPackageAdded: com.forli.meteo
+08-24 11:00:53.445 W/ModernMediaScanner( 1499): Failed to visit /oem/media: java.nio.file.NoSuchFileException: /oem/media
+08-24 11:00:53.688 I/binder  (    0): undelivered transaction 59716, process died.
+08-24 11:00:53.567 D/AppWidgetServiceImpl(  508): Provider info from ComponentInfo{com.forli.meteo/com.forli.meteo.widget.WeatherWidgetReceiver} won't be persisted.
+08-24 11:00:53.591 I/Launcher.IconCache( 1059): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.forli.meteo/com.forli.meteo.MainActivity}
+08-24 11:00:53.777 D/ImsResolver( 1007): maybeAddedImsService, packageName: com.forli.meteo
+08-24 11:00:53.780 D/CarrierSvcBindHelper( 1007): onPackageModified: com.forli.meteo
+08-24 11:00:53.781 I/ActivityTaskManager(  508): START u0 {flg=0x10000000 cmp=com.forli.meteo/.MainActivity (has extras)} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+08-24 11:00:53.805 I/ActivityManager(  508): Start proc 2185:com.forli.meteo/u0a141 for next-top-activity {com.forli.meteo/com.forli.meteo.MainActivity}
+08-24 11:00:53.812 E/WifiStaIfaceAidlImpl(  508): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:53.817 I/com.forli.meteo( 2185): Late-enabling -Xcheck:jni
+08-24 11:00:53.850 I/com.forli.meteo( 2185): Using CollectorTypeCC GC.
+08-24 11:00:53.850 W/com.forli.meteo( 2185): Unexpected CPU variant for x86: x86_64.
+08-24 11:00:53.850 W/com.forli.meteo( 2185): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+08-24 11:00:53.866 E/WifiStaIfaceAidlImpl(  508): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:53.960 D/CarrierSvcBindHelper( 1007): onHandleForceStop: [com.forli.meteo]
+08-24 11:00:53.960 D/ImsResolver( 1007): maybeAddedImsService, packageName: com.forli.meteo
+08-24 11:00:53.973 D/CoreBackPreview(  508): Window{7754859 u0 Splash Screen com.forli.meteo}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a4b2b62, mPriority=0, mIsAnimationCallback=false}
+08-24 11:00:54.015 W/ziparchive( 2185): Unable to open '/data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/base.dm': No such file or directory
+08-24 11:00:54.015 W/ziparchive( 2185): Unable to open '/data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/base.dm': No such file or directory
+08-24 11:00:54.078 E/WifiStaIfaceAidlImpl(  508): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:54.083 I/netd    (  326): networkAddInterface(101, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
+08-24 11:00:54.090 W/ConnectivityService(  508): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.092 I/netd    (  326): networkAddRouteParcel(101, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+08-24 11:00:54.098 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.121 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.221 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:54.222 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:54.244 I/netd    (  326): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.05ms>
+08-24 11:00:54.244 E/ConnectivityService(  508): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.244 I/netd    (  326): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+08-24 11:00:54.244 E/ConnectivityService(  508): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.360 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:54.360 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:54.375 E/WifiStaIfaceAidlImpl(  508): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:54.379 I/netd    (  326): networkAddInterface(100, eth0) -> ServiceSpecificException(64, "Machine is not on the network") <0.09ms>
+08-24 11:00:54.384 W/ConnectivityService(  508): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.384 I/netd    (  326): networkAddRouteParcel(100, RouteInfoParcel{destination: 10.0.2.0/24, ifName: eth0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+08-24 11:00:54.384 E/ConnectivityService(  508): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.384 I/netd    (  326): networkAddRouteParcel(100, RouteInfoParcel{destination: 0.0.0.0/0, ifName: eth0, nextHop: 10.0.2.2, mtu: 1500}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+08-24 11:00:54.384 E/ConnectivityService(  508): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.393 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.411 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.414 I/netd    (  326): setNetworkAllowlist([NativeUidRangeConfig{netId: 101, uidRanges: [UidRangeParcel{start: 0, stop: 99999}], subPriority: 0}, NativeUidRangeConfig{netId: 100, uidRanges: [UidRangeParcel{start: 0, stop: 99999}], subPriority: 0}]) -> ServiceSpecificException(64, "Machine is not on the network") <0.00ms>
+08-24 11:00:54.415 E/ConnectivityService(  508): Unexpected ServiceSpecificException
+08-24 11:00:54.415 E/ConnectivityService(  508): android.os.ServiceSpecificException: Machine is not on the network (code 64)
+08-24 11:00:54.415 E/ConnectivityService(  508): 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3071)
+08-24 11:00:54.415 E/ConnectivityService(  508): 	at android.os.Parcel.createException(Parcel.java:3041)
+08-24 11:00:54.415 E/ConnectivityService(  508): 	at android.os.Parcel.readException(Parcel.java:3024)
+08-24 11:00:54.415 E/ConnectivityService(  508): 	at android.os.Parcel.readException(Parcel.java:2966)
+08-24 11:00:54.436 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.458 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.459 D/nativeloader( 2185): Configuring clns-6 for other apk /data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/lib/x86_64:/data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.forli.meteo
+08-24 11:00:54.465 V/GraphicsEnvironment( 2185): ANGLE GameManagerService for com.forli.meteo: false
+08-24 11:00:54.465 V/GraphicsEnvironment( 2185): com.forli.meteo is not listed in per-application setting
+08-24 11:00:54.481 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.527 W/Binder  (  508): Caught a RuntimeException from the binder stub implementation.
+08-24 11:00:54.527 W/Binder  (  508): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10112 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
+08-24 11:00:54.540 V/WindowManager(  508):     info={id=7 t=CHANGE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{da8bde0 Task{1a302bb #8 type=standard A=10141:com.forli.meteo}}} m=OPEN f=MOVE_TO_TOP leash=Surface(name=Task=8)/@0xe2c2e61 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{5f34899 Task{687631b #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x5618b5 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{80ab75e Display{#0 state=ON size=1080x2400 ROTATION_0}}} m=CHANGE f=SHOW_WALLPAPER|IS_DISPLAY leash=Surface(name=WindowedMagnification:0:31)/@0xa5f75d4 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+08-24 11:00:54.690 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
+08-24 11:00:54.797 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:54.949 E/WifiStaIfaceAidlImpl(  508): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
+08-24 11:00:54.973 E/WifiStaIfaceAidlImpl(  508): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:55.002 E/WifiStaIfaceAidlImpl(  508): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+08-24 11:00:55.426 E/TaskWorkerFactory( 1641): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+08-24 11:00:55.721 D/CoreBackPreview(  508): Window{bbcf854 u0 com.forli.meteo/com.forli.meteo.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@830dec9, mPriority=0, mIsAnimationCallback=false}
+08-24 11:00:55.781 E/RkpdPeriodicProvisioner( 2243): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
+08-24 11:00:56.025 W/com.forli.meteo( 2185): Verification of void androidx.compose.ui.text.input.TextInputServiceAndroid.<init>(android.view.View, androidx.compose.ui.input.pointer.MatrixPositionCalculator, androidx.compose.ui.text.input.InputMethodManager, java.util.concurrent.Executor) took 100.935ms (990.73 bytecodes/s) (5568B approximate peak alloc)
+08-24 11:00:56.034 E/SystemServiceRegistry(  955): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+08-24 11:00:56.115 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.115 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.124 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.200 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.218 E/SystemServiceRegistry(  955): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+08-24 11:00:56.432 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.432 W/Telephony( 1007): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.478 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:56.600 W/Telephony( 1007): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+08-24 11:00:57.163 W/ziparchive(  508): Unable to open '/data/app/~~JbSAxRTFb9HV_3p7BcHn1A==/com.forli.meteo-7vS9QucDe_jtEVkOvy9xrw==/base.dm': No such file or directory
+08-24 11:00:57.164 I/ActivityTaskManager(  508): Displayed com.forli.meteo/.MainActivity for user 0: +3s443ms
+08-24 11:00:57.264 D/CoreBackPreview(  508): Window{7754859 u0 Splash Screen com.forli.meteo EXITING}: Setting back callback null
+08-24 11:00:57.264 W/InputManager-JNI(  508): Input channel object '7754859 Splash Screen com.forli.meteo (client)' was disposed without first being removed with the input manager!
+08-24 11:00:57.710 W/com.forli.meteo( 2185): Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+08-24 11:00:57.732 I/ImeTracker(  508): com.forli.meteo:75d6edb7: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+08-24 11:00:57.732 I/ImeTracker(  508): com.forli.meteo:75d6edb7: onCancelled at PHASE_SERVER_SHOULD_HIDE
