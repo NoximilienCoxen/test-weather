@@ -2,7 +2,6 @@ package com.forli.meteo.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -23,14 +22,17 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.forli.meteo.R
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.data.Wmo
 import kotlin.math.roundToInt
 
-private val WidgetBackground = ColorProvider(day = Color(0xFFEFEFF2), night = Color(0xFF000000))
-private val WidgetPrimary = ColorProvider(day = Color(0xFF000000), night = Color(0xFFFFFFFF))
-private val WidgetSecondary = ColorProvider(day = Color(0xFF6C6C70), night = Color(0xFF8A8A8E))
+// Glance 1.1.1 non offre un ColorProvider giorno/notte: la scelta del tema
+// la fa il sistema di risorse fra values/ e values-night/.
+private val WidgetBackground = ColorProvider(R.color.widget_background)
+private val WidgetPrimary = ColorProvider(R.color.widget_primary)
+private val WidgetSecondary = ColorProvider(R.color.widget_secondary)
 
 class WeatherWidget : GlanceAppWidget() {
 

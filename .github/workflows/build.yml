@@ -69,8 +69,18 @@ jobs:
           java -version
           ./gradlew --version
 
+      # Niente --stacktrace: seppelliva gli errori Kotlin sotto trecento righe
+      # di stack Gradle. Se fallisce, gli errori veri finiscono in coda al log.
       - name: assembleDebug
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log || {
+            echo ""
+            echo "================= ERRORI DI COMPILAZIONE ================="
+            grep -E "^e: |^w: .*(error|Error)" /tmp/build.log | head -40
+            echo "=========================================================="
+            exit 1
+          }
 
       - uses: actions/upload-artifact@v4
         if: success()
