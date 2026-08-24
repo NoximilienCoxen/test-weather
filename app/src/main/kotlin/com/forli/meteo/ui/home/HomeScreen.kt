@@ -58,9 +58,9 @@ fun HomeScreen(
         // La scultura sta sopra la cifra e le sta vicina: sono un oggetto solo,
         // non due elementi separati da un vuoto.
         WeatherSculpture(
-            weatherCode = hour?.weatherCode,
-            precipitationMm = hour?.precipitation,
-            probability = hour?.precipProbability,
+            weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
+            precipitationMm = state.forcedWeatherCode?.let { 2.5 } ?: hour?.precipitation,
+            probability = state.forcedWeatherCode?.let { 80 } ?: hour?.precipProbability,
             isDay = hour?.isDay ?: true,
             date = hour?.time?.toLocalDate() ?: LocalDate.now(),
             tilt = tilt,
@@ -90,7 +90,7 @@ fun HomeScreen(
         // Crossfade e non sostituzione secca: scorrendo le ore la condizione
         // cambia spesso, e uno scatto di testo si nota piu' del testo stesso.
         Crossfade(
-            targetState = conditionLabel(hour),
+            targetState = conditionLabel(hour, state.forcedWeatherCode),
             label = "condizione",
             modifier = Modifier.fillMaxWidth(),
         ) { label ->
@@ -124,11 +124,12 @@ fun HomeScreen(
  * La probabilita' compare solo quando c'e' davvero qualcosa da prevedere:
  * "sereno 0%" sarebbe rumore.
  */
-private fun conditionLabel(hour: HourForecast?): String {
-    if (hour == null) return "--"
-    val condition = Wmo.condition(hour.weatherCode)
-    val probability = hour.precipProbability ?: 0
-    val wet = Wmo.family(hour.weatherCode) in
+private fun conditionLabel(hour: HourForecast?, forcedCode: Int?): String {
+    if (hour == null && forcedCode == null) return "--"
+    val code = forcedCode ?: hour?.weatherCode
+    val condition = Wmo.condition(code)
+    val probability = if (forcedCode != null) 80 else hour?.precipProbability ?: 0
+    val wet = Wmo.family(code) in
         setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
     return if (wet && probability > 0) "$condition $probability%" else condition
 }
