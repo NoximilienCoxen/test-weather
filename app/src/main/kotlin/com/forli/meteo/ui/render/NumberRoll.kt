@@ -54,6 +54,12 @@ class NumberRoll internal constructor(
         val hurried = now - lastChangeAt < QUICK_NS
         lastChangeAt = now
 
+        android.util.Log.i(
+            "meteo-roll",
+            "show next=${next != null} from=${from != null} same=${from === next} " +
+                "hurried=$hurried slow=$slow",
+        )
+
         job?.cancel()
         if (next == null || from == null || from === next || hurried) {
             outgoing.value = null
