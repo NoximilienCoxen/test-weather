@@ -328,6 +328,25 @@ lontano e su una macchia al dodici per cento di nero non si vede. La base
 frontale invece la prospettiva ce l'ha per forza - e' tutto il punto - e quella
 resta cara.
 
+**19. Committare da Windows rompe la CI in due modi silenziosi.** Il primo
+commit fatto da qui l'ha fatta fallire senza toccare una riga di Kotlin:
+`gradlew` e gli script sono passati da `100755` a `100644`, e il primo
+`./gradlew` del workflow e' morto con permesso negato prima ancora di compilare.
+Il secondo: Android Studio genera `gradle/gradle-daemon-jvm.properties` con la
+versione di JDK installata **su questa macchina** - qui il 25 - e la CI monta il
+17, quindi il demone si trovava a doverselo procurare. Il file ora e' ignorato e
+un `.gitattributes` dichiara cosa deve restare eseguibile e con quali fine riga.
+Il repository ha anche `core.fileMode=false`, perche' Windows non sa rispondere
+alla domanda.
+
+Da qui non si vedono i log della CI senza credenziali, ma l'elenco dei passi si
+legge lo stesso e basta a capire dove si e' rotta:
+
+```bash
+curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/actions/runs?per_page=1"
+curl -s ".../actions/runs/<id>/jobs" | grep -E '"(name|conclusion)"'
+```
+
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
 ignorata: la pioggia usciva forte quanto il tuono. `WeatherHaptics` prova in
