@@ -279,11 +279,18 @@ class PrismRenderer : TemperatureRenderer {
          * riempire, ed e' la superficie piu' grande che il disegno tocchi. Il
          * terzo aggiungeva pochissimo a vedersi e parecchio a costare.
          */
-        val SHADOW_STEPS = floatArrayOf(0.40f, 1f)
+        val SHADOW_STEPS = floatArrayOf(0.28f, 1f)
         val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
 
-        /** Quanto si allontana l'ombra, in multipli dello spessore della cifra. */
-        const val SHADOW_REACH = 0.62f
+        /**
+         * Quanto si allontana l'ombra, in multipli dello spessore della cifra.
+         *
+         * Corta apposta. Piu' in la' i due gradini si staccano dalla sagoma e
+         * fra l'oggetto e la sua ombra si vede il fondo: a quel punto non si
+         * legge piu' come ombra ma come una seconda cifra scura appoggiata
+         * dietro la prima.
+         */
+        const val SHADOW_REACH = 0.46f
 
         /**
          * Dove cade l'ombra: nel verso opposto alla luce, e da nessun'altra

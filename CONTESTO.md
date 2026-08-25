@@ -170,6 +170,11 @@ vertici e dividendo per la profondita'.
    alto (`smallTail` in `NumberSpec`). Fa parte del prisma apposta: viene
    estruso, illuminato e girato con le cifre. Un simbolo sovrapposto in
    coordinate di schermo resterebbe fermo mentre l'oggetto gira.
+   **Anche lo spessore si riduce con lui** (`Part.depthScale`): il suo anello e'
+   largo novanta pixel e lo spessore comune ne misura centoventi, quindi lasciato
+   spesso come una cifra non era piu' un simbolo ma un pezzo di tubo appoggiato
+   accanto al numero. Ridotto nella stessa proporzione resta la stessa lastra,
+   ritagliata piu' piccola.
 
 **Il verso dei contorni dipende dal font**, quindi non si assume: si deduce
 misurando se sul contorno piu' grande le normali puntano fuori.
