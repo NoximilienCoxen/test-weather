@@ -204,6 +204,8 @@ fun WelcomeScreen(
                     shade = colors.cloudShade,
                     hatSkin = colors.sunShade,
                     hatShade = lerp(colors.sunShade, colors.numberSideFar, 0.55f),
+                    eyeSkin = colors.numberSideFar,
+                    eyeShade = lerp(colors.numberSideFar, colors.background, 0.25f),
                 )
             }
 
