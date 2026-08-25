@@ -108,20 +108,20 @@ jobs:
       - name: Prepara il file
         run: |
           mkdir -p rilascio
-          cp "$(find apk -name '*.apk' | head -1)" rilascio/meteo-forli.apk
+          cp "$(find apk -name '*.apk' | head -1)" rilascio/weather.apk
           ls -la rilascio
 
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: Meteo Forlì — ultima build
+          name: Weather — ultima build
           prerelease: true
-          files: rilascio/meteo-forli.apk
+          files: rilascio/weather.apk
           body: |
             APK di debug, sempre aggiornato all'ultimo commit del branch di sviluppo.
 
             **Installazione dal telefono**
-            1. Tocca `meteo-forli.apk` qui sotto per scaricarlo.
+            1. Tocca `weather.apk` qui sotto per scaricarlo.
             2. Android chiedera' di autorizzare l'installazione da questa
                sorgente: e' la richiesta normale per le app fuori dallo store.
             3. Apri il file scaricato e installa.

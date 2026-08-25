@@ -1,0 +1,23 @@
+# Da Windows, git converte i fine riga in uscita e puo' registrare come non
+# eseguibili i file che lo erano. E' gia' costato una CI: "gradlew" ha perso il
+# bit di esecuzione e il primo "./gradlew" del workflow e' morto con permesso
+# negato, prima ancora di compilare qualcosa.
+#
+# Qui si dichiara cosa deve restare com'e'.
+
+* text=auto
+
+# Vengono eseguiti su Linux: i fine riga devono restare LF, altrimenti la shell
+# non riconosce nemmeno la prima riga.
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Solo per Windows, e li' i fine riga vogliono essere CRLF.
+*.bat text eol=crlf
+
+# Binari: nessuna conversione.
+*.ttf binary
+*.png binary
+*.jpg binary
+*.keystore binary
+gradle-wrapper.jar binary
