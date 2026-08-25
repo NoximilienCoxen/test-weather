@@ -176,14 +176,12 @@ session() {
     roll_from_to() {
         restart_with "--ei ora $1 --ez lento true"
         adbt shell am start -f 0x20000000 -n "$ACT" --ei ora "$2" >/dev/null 2>&1 || true
-        sleep 1
     }
 
-    roll_from_to 14 15
-    shoot "${slug}-12-rotola-una-cifra"
-
     roll_from_to 4 15
-    shoot "${slug}-13-rotola-tutto"
+    shoot "${slug}-12-rotola-presto"
+    sleep 1
+    shoot "${slug}-13-rotola-tardi"
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
