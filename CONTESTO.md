@@ -453,6 +453,18 @@ goccia gia' arrivata ne segnerebbe uno per fotogramma), e c'e' una soglia di un
 decimo di secondo fra un colpo e il successivo, perche' un vibratore che non
 stacca mai non si legge come pioggia ma come un ronzio.
 
+**28. L'emulatore della CI ha le animazioni spente, e Compose gliene da' retta.**
+`disable-animations: true` nel workflow azzera `animator_duration_scale`, e
+Compose legge quella scala di sistema: con zero, `animate` e `animateTo`
+saltano **dritti alla fine**. Il rotolamento della cifra partiva davvero - il
+logcat lo diceva, con tanto di valore da cui veniva - e finiva nello stesso
+fotogramma in cui cominciava, quindi negli scatti si vedeva sempre e solo il
+numero fermo. Vale per tutto quello che si anima: il colore del cielo, la molla
+della barra delle ore, la nuvola che si addensa. Per fotografarne uno bisogna
+riaccendere la scala prima e rispegnerla dopo, come fa `roll_from_to` in
+`scripts/capture.sh`. **Prima di dare la colpa al codice per un'animazione che
+"non parte", guarda se sta girando a durata zero.**
+
 **26. `refresh()` non la richiamava nessuno.** Partiva all'avvio e al cambio di
 localita', e basta: nessun ritorno in primo piano, nessun gesto, nessun segno di
 quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava

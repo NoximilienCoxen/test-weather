@@ -168,12 +168,24 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # La cifra che rotola. Dura due decimi di secondo, quindi uno scatto preso
-    # da riga di comando non la coglie mai: "--ez lento true" la porta a quattro
-    # secondi, e il secondo "am start" cambia l'ora sull'app gia' aperta. Serve
-    # SINGLE_TOP (0x20000000), se no l'attivita' ripartirebbe da capo invece di
-    # ricevere l'ora nuova, e con lei ripartirebbe anche il numero.
+    # La cifra che rotola.
+    #
+    # Tre cose servono tutte e tre, e la terza e' costata un giro di CI a
+    # scoprirla. Primo: "--ez lento true" porta il rotolamento a quattro
+    # secondi, perche' due decimi non si fotografano da riga di comando.
+    # Secondo: il cambio d'ora va consegnato all'app **viva**, con SINGLE_TOP
+    # (0x20000000), se no l'attivita' riparte da capo e con lei riparte anche il
+    # numero, che allora non ha da dove rotolare.
+    #
+    # Terzo: **l'emulatore della CI parte con le animazioni spente**
+    # (disable-animations nel workflow), e Compose rispetta quella scala di
+    # sistema portando ogni animazione dritta alla fine. Il rotolamento partiva
+    # davvero - lo diceva il logcat - e finiva nello stesso fotogramma in cui
+    # cominciava. Qui si riaccende per il tempo di fotografarlo, e si rispegne
+    # subito dopo: tutti gli altri scatti la vogliono spenta, se no colgono le
+    # transizioni a meta' invece degli stati.
     roll_from_to() {
+        adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
         restart_with "--ei ora $1 --ez lento true"
         adbt shell am start -f 0x20000000 -n "$ACT" --ei ora "$2" >/dev/null 2>&1 || true
     }
@@ -182,6 +194,7 @@ session() {
     shoot "${slug}-12-rotola-presto"
     sleep 1
     shoot "${slug}-13-rotola-tardi"
+    adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
