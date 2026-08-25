@@ -548,6 +548,15 @@ class TextPrism private constructor(
         private const val SYMBOL_GAP = 0.015f
 
         /**
+         * Quanto e' piccolo il simbolo in coda rispetto alle cifre.
+         *
+         * Uno solo per la costruzione e per la misura: due valori uguali per
+         * caso si scollano al primo ritocco, e la cifra si troverebbe misurata
+         * con proporzioni diverse da quelle con cui viene poi costruita.
+         */
+        const val SMALL_SCALE = 0.44f
+
+        /**
          * Un `Float` reinterpretato in un intero che si ordina allo stesso modo.
          *
          * I bit di un numero in virgola mobile positivo crescono con lui; quelli
@@ -599,64 +608,14 @@ class TextPrism private constructor(
              * a quello che si deve leggere da lontano.
              */
             smallTail: Int = 0,
-            smallScale: Float = 0.44f,
+            smallScale: Float = SMALL_SCALE,
         ): TextPrism? {
-            if (text.isEmpty() || sizePx <= 0f) return null
-
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                this.typeface = typeface
-                textSize = sizePx
-                letterSpacing = letterSpacingEm
-            }
-
-            // Ogni carattere al proprio posto lungo la riga. L'avanzamento si
-            // accumula carattere per carattere e non si rimisura dal prefisso:
-            // il prefisso e la coda ora possono avere corpi diversi, e una
-            // misura sola non saprebbe di quale dei due parlare.
-            val bigUntil = text.length - smallTail.coerceIn(0, text.length)
-            val outlines = ArrayList<android.graphics.Path>(text.length)
-            val boxes = ArrayList<RectF>(text.length)
-            val reduced = ArrayList<Boolean>(text.length)
-            val big = RectF()
-            var pen = 0f
-            for (i in text.indices) {
-                val small = i >= bigUntil
-                paint.textSize = if (small) sizePx * smallScale else sizePx
-                if (small && i == bigUntil) pen += sizePx * SYMBOL_GAP
-                val path = android.graphics.Path()
-                paint.getTextPath(text, i, i + 1, pen, 0f, path)
-                pen += paint.measureText(text, i, i + 1)
-                val box = RectF()
-                path.computeBounds(box, true)
-                if (box.width() <= 0f || box.height() <= 0f) continue
-                outlines += path
-                boxes += box
-                reduced += small
-                if (!small) {
-                    if (big.isEmpty) big.set(box) else big.union(box)
-                }
-            }
-            if (outlines.isEmpty()) return null
-
-            // Il simbolo sale a filo della cima delle cifre. Sulla linea di base
-            // resterebbe a mezza altezza, dove non si legge come esponente ma
-            // come un carattere rimpicciolito per sbaglio. Alzandolo, il
-            // riquadro complessivo resta quello delle cifre e la centratura
-            // verticale non si accorge di lui.
-            if (!big.isEmpty) {
-                for (k in outlines.indices) {
-                    if (!reduced[k]) continue
-                    val lift = big.top - boxes[k].top
-                    outlines[k].offset(0f, lift)
-                    boxes[k].offset(0f, lift)
-                }
-            }
-
-            val union = RectF()
-            for (box in boxes) {
-                if (union.isEmpty) union.set(box) else union.union(box)
-            }
-            if (union.width() <= 0f || union.height() <= 0f) return null
+            val laid = layout(text, typeface, sizePx, letterSpacingEm, smallTail, smallScale)
+                ?: return null
+            val outlines = laid.outlines
+            val boxes = laid.boxes
+            val reduced = laid.reduced
+            val union = laid.union
 
             // Centrato sull'origine: la rotazione avviene attorno all'asse
             // verticale dell'intera scritta, non attorno a un angolo qualsiasi.
@@ -764,6 +723,110 @@ class TextPrism private constructor(
                 height = union.height(),
             )
         }
+
+        /** I caratteri al loro posto lungo la riga, prima che diventino volume. */
+        private class Layout(
+            val outlines: List<android.graphics.Path>,
+            val boxes: List<RectF>,
+            val reduced: List<Boolean>,
+            val union: RectF,
+        )
+
+        /**
+         * Dove finisce ogni carattere, senza costruirne la geometria.
+         *
+         * E' la meta' a buon mercato del lavoro: `getTextPath` e i suoi
+         * riquadri. Quella cara viene dopo - campionare i contorni e ricavarne
+         * spigoli e normali - e chi vuole solo sapere quanto sara' larga la
+         * scritta non ha motivo di pagarla.
+         */
+        private fun layout(
+            text: String,
+            typeface: Typeface,
+            sizePx: Float,
+            letterSpacingEm: Float,
+            smallTail: Int,
+            smallScale: Float,
+        ): Layout? {
+            if (text.isEmpty() || sizePx <= 0f) return null
+
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                this.typeface = typeface
+                textSize = sizePx
+                letterSpacing = letterSpacingEm
+            }
+
+            // Ogni carattere al proprio posto lungo la riga. L'avanzamento si
+            // accumula carattere per carattere e non si rimisura dal prefisso:
+            // il prefisso e la coda possono avere corpi diversi, e una misura
+            // sola non saprebbe di quale dei due parlare.
+            val bigUntil = text.length - smallTail.coerceIn(0, text.length)
+            val outlines = ArrayList<android.graphics.Path>(text.length)
+            val boxes = ArrayList<RectF>(text.length)
+            val reduced = ArrayList<Boolean>(text.length)
+            val big = RectF()
+            var pen = 0f
+            for (i in text.indices) {
+                val small = i >= bigUntil
+                paint.textSize = if (small) sizePx * smallScale else sizePx
+                if (small && i == bigUntil) pen += sizePx * SYMBOL_GAP
+                val path = android.graphics.Path()
+                paint.getTextPath(text, i, i + 1, pen, 0f, path)
+                pen += paint.measureText(text, i, i + 1)
+                val box = RectF()
+                path.computeBounds(box, true)
+                if (box.width() <= 0f || box.height() <= 0f) continue
+                outlines += path
+                boxes += box
+                reduced += small
+                if (!small) {
+                    if (big.isEmpty) big.set(box) else big.union(box)
+                }
+            }
+            if (outlines.isEmpty()) return null
+
+            // Il simbolo sale a filo della cima delle cifre. Sulla linea di base
+            // resterebbe a mezza altezza, dove non si legge come esponente ma
+            // come un carattere rimpicciolito per sbaglio. Alzandolo, il
+            // riquadro complessivo resta quello delle cifre e la centratura
+            // verticale non si accorge di lui.
+            if (!big.isEmpty) {
+                for (k in outlines.indices) {
+                    if (!reduced[k]) continue
+                    val lift = big.top - boxes[k].top
+                    outlines[k].offset(0f, lift)
+                    boxes[k].offset(0f, lift)
+                }
+            }
+
+            val union = RectF()
+            for (box in boxes) {
+                if (union.isEmpty) union.set(box) else union.union(box)
+            }
+            if (union.width() <= 0f || union.height() <= 0f) return null
+
+            return Layout(outlines, boxes, reduced, union)
+        }
+
+        /**
+         * Quanto sara' larga la scritta, senza costruirla.
+         *
+         * Serve a decidere il corpo **prima** di estrarre la geometria. Chi
+         * doveva rimpicciolire una cifra troppo larga la costruiva intera, la
+         * misurava, e poi **la ricostruiva da capo**: due campionamenti di tutti
+         * i contorni per sapere un numero che si poteva avere con tre chiamate a
+         * `getTextPath`. Il valore e' esattamente quello che tornerebbe
+         * `TextPrism.of(...).width`, perche' e' lo stesso conto.
+         */
+        fun widthOf(
+            text: String,
+            typeface: Typeface,
+            sizePx: Float,
+            letterSpacingEm: Float = 0f,
+            smallTail: Int = 0,
+            smallScale: Float = SMALL_SCALE,
+        ): Float = layout(text, typeface, sizePx, letterSpacingEm, smallTail, smallScale)
+            ?.union?.width() ?: 0f
 
         private fun sample(path: android.graphics.Path, step: Float): List<FloatArray> {
             val sampled = ArrayList<FloatArray>()

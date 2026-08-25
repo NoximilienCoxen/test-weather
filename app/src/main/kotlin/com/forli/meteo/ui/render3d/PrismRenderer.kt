@@ -62,12 +62,56 @@ class PrismRenderer : TemperatureRenderer {
      */
     private val shadowPaint = android.graphics.Paint()
 
+    /**
+     * Le geometrie gia' estratte, dalla piu' usata di recente alla piu' vecchia.
+     *
+     * Estrarre una cifra vuol dire campionare tutti i contorni del font e
+     * ricavarne spigoli e normali, che il documento di passaggio chiama "la
+     * parte cara". Scorrendo la barra delle ore la scritta cambia a ogni ora e
+     * la si rifaceva ogni volta - un lavoro intero dentro un fotogramma solo,
+     * che e' il modo in cui uno scorrimento diventa a scatti. I valori distinti
+     * in una giornata sono una decina, quindi tenerli costa poco e li si trova
+     * gia' pronti.
+     *
+     * Dodici e non di piu': ogni prisma si porta dietro i propri buffer
+     * riusabili, e sono decine di kilobyte a testa.
+     */
+    private val cache = object : LinkedHashMap<NumberSpec, Prepared>(CACHE_SIZE, 0.75f, true) {
+        override fun removeEldestEntry(
+            eldest: MutableMap.MutableEntry<NumberSpec, Prepared>,
+        ): Boolean = size > CACHE_SIZE
+    }
+
     override fun prepare(spec: NumberSpec): PreparedNumber? {
         if (spec.text.isEmpty() || spec.fontSizePx <= 0f) return null
+        cache[spec]?.let { return it }
 
         var size = spec.fontSizePx
         var depth = spec.depthPx
-        var prism = TextPrism.of(
+
+        // Quanto occupera', chiesto **prima** di costruirla. Girata, la meta'
+        // vicina dell'oggetto ingrandisce: se la cifra occupasse tutta la
+        // larghezza da ferma, ruotandola uscirebbe di scena. Il margine e' quel
+        // guadagno prospettico, tenuto da parte.
+        //
+        // Prima la cifra si costruiva, si misurava, e se non ci stava **si
+        // ricostruiva da capo**: due campionamenti di tutti i contorni per
+        // sapere un numero che si ottiene con tre chiamate a `getTextPath`.
+        val width = TextPrism.widthOf(
+            text = spec.text,
+            typeface = spec.typeface,
+            sizePx = size,
+            letterSpacingEm = spec.letterSpacingEm,
+            smallTail = spec.smallTail,
+        )
+        val occupied = width * SWING_ALLOWANCE + MARGIN * 2f
+        if (spec.maxWidthPx >= 1f && occupied > spec.maxWidthPx) {
+            val ratio = spec.maxWidthPx / occupied
+            size *= ratio
+            depth *= ratio
+        }
+
+        val prism = TextPrism.of(
             text = spec.text,
             typeface = spec.typeface,
             sizePx = size,
@@ -76,29 +120,11 @@ class PrismRenderer : TemperatureRenderer {
             smallTail = spec.smallTail,
         ) ?: return null
 
-        // Girata, la meta' vicina dell'oggetto ingrandisce: se la cifra
-        // occupasse tutta la larghezza da ferma, ruotandola uscirebbe di scena.
-        // Il margine e' quel guadagno prospettico, tenuto da parte.
-        val occupied = prism.width * SWING_ALLOWANCE + MARGIN * 2f
-        if (spec.maxWidthPx >= 1f && occupied > spec.maxWidthPx) {
-            val ratio = spec.maxWidthPx / occupied
-            size *= ratio
-            depth *= ratio
-            prism = TextPrism.of(
-                text = spec.text,
-                typeface = spec.typeface,
-                sizePx = size,
-                letterSpacingEm = spec.letterSpacingEm,
-                step = sampleStep(size),
-                smallTail = spec.smallTail,
-            ) ?: return null
-        }
-
         return Prepared(
             prism = prism,
             depth = depth,
             chamfer = (size * 0.016f).coerceIn(1.5f, 18f),
-        )
+        ).also { cache[spec] = it }
     }
 
     override fun draw(
@@ -279,6 +305,9 @@ class PrismRenderer : TemperatureRenderer {
          * riempire, ed e' la superficie piu' grande che il disegno tocchi. Il
          * terzo aggiungeva pochissimo a vedersi e parecchio a costare.
          */
+        /** Quante geometrie si tengono pronte. Vedi il commento sulla cache. */
+        const val CACHE_SIZE = 12
+
         val SHADOW_STEPS = floatArrayOf(0.28f, 1f)
         val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
 
