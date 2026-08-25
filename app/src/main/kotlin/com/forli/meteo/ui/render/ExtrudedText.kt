@@ -8,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import com.forli.meteo.ui.render3d.SceneContact
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.forli.meteo.ui.theme.LocalMeteoColors
@@ -26,7 +29,7 @@ object NumberType {
     /**
      * Typeface.Builder non accetta un identificativo di risorsa: vuole
      * l'AssetManager e un percorso. Il font sta quindi negli assets, che per un
-     * renderer che lavora gia' a livello di android.graphics e' anche la
+     * disegno che lavora gia' a livello di android.graphics e' anche la
      * collocazione naturale.
      */
     const val PATH = "fonts/archivo_variable.ttf"
@@ -48,19 +51,23 @@ fun rememberNumberTypeface(
 }
 
 /**
- * Disegna testo estruso passando dal TemperatureRenderer corrente.
+ * Disegna testo come solido, passando dal renderer corrente.
  *
- * L'estrazione della geometria vive in un [remember] legato allo spec:
- * l'orientamento non entra nella chiave, quindi ruotare non riestrae nulla.
+ * L'orientamento arriva come funzione e non come valore: viene letto dentro il
+ * disegno, quindi ruotare ridipinge e basta. Passandolo come parametro, ogni
+ * grado di rotazione ricomporrebbe l'albero, e la rotazione e' un gesto
+ * continuo che ne produce centinaia.
  */
 @Composable
 fun ExtrudedText(
     text: String,
     fontSize: Dp,
     modifier: Modifier = Modifier,
-    depth: Dp = fontSize * 0.15f,
-    verticalBias: Float = -0.08f,
-    motion: NumberMotion = NumberMotion.Fermo,
+    depth: Dp = fontSize * 0.17f,
+    verticalBias: Float = 0f,
+    motion: () -> NumberMotion = { NumberMotion.Fermo },
+    /** Chi vuole sapere dove l'oggetto offre superficie. Di norma la pioggia. */
+    contact: SceneContact? = null,
     typeface: Typeface = rememberNumberTypeface(),
 ) {
     val colors = LocalMeteoColors.current
@@ -73,12 +80,11 @@ fun ExtrudedText(
         val depthPx = with(density) { depth.toPx() }
         val availableWidthPx = with(density) { maxWidth.toPx() }
 
-        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx, palette) {
+        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx) {
             NumberSpec(
                 text = text,
                 typeface = typeface,
                 fontSizePx = fontPx,
-                palette = palette,
                 depthPx = depthPx,
                 maxWidthPx = availableWidthPx,
             )
@@ -86,13 +92,22 @@ fun ExtrudedText(
 
         val prepared = remember(spec, renderer) { renderer.prepare(spec) }
 
-        Canvas(Modifier.fillMaxSize()) {
+
+        Canvas(
+            Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { coordinates ->
+                    contact?.skyline?.origin = coordinates.positionInRoot()
+                },
+        ) {
             val current = prepared ?: return@Canvas
             renderer.draw(
                 scope = this,
                 prepared = current,
                 center = Offset(size.width / 2f, size.height * (0.5f + verticalBias)),
-                motion = motion,
+                palette = palette,
+                motion = motion(),
+                silhouette = contact?.skyline,
             )
         }
     }

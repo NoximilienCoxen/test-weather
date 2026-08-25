@@ -16,6 +16,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,8 +34,10 @@ import com.forli.meteo.ui.components.RainOverlay
 import com.forli.meteo.ui.components.ScrubBar
 import com.forli.meteo.ui.components.SplineChart
 import com.forli.meteo.ui.components.TableRow
-import com.forli.meteo.ui.components.ThemeSwitch
+import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.motion.PhysicalNumber
+import com.forli.meteo.ui.motion.SceneRotation
+import com.forli.meteo.ui.motion.rememberSceneRotation
 import com.forli.meteo.ui.render.NumberMotion
 import com.forli.meteo.ui.render.ExtrudedText
 import com.forli.meteo.ui.theme.LocalMeteoColors
@@ -49,9 +52,13 @@ private enum class MetricPage(val title: String) {
 
 /** La schermata di dettaglio: si raggiunge trascinando in alto la principale. */
 @Composable
-internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: Offset) {
+internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: State<Offset>) {
     val colors = LocalMeteoColors.current
     val pagerState = rememberPagerState(pageCount = { MetricPage.entries.size })
+    // Qui gli oggetti non si girano col dito: il gesto orizzontale appartiene
+    // gia' al pager, e contendergli le pagine sarebbe peggio che rinunciare
+    // alla rotazione. Resta il respiro dell'inclinazione.
+    val rotation = rememberSceneRotation()
 
     Box(
         modifier = Modifier
@@ -64,15 +71,6 @@ internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: Off
                 .systemBarsPadding()
                 .padding(horizontal = 20.dp),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                ThemeSwitch(mode = state.themeMode, onChange = viewModel::setThemeMode)
-            }
-
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f),
@@ -82,6 +80,7 @@ internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: Off
                     page = MetricPage.entries[index],
                     state = state,
                     viewModel = viewModel,
+                    rotation = rotation,
                     tilt = tilt,
                 )
             }
@@ -94,7 +93,8 @@ private fun MetricPageContent(
     page: MetricPage,
     state: UiState,
     viewModel: WeatherViewModel,
-    tilt: Offset,
+    rotation: SceneRotation,
+    tilt: State<Offset>,
 ) {
     val colors = LocalMeteoColors.current
     val forecast = state.forecast
@@ -103,7 +103,7 @@ private fun MetricPageContent(
     // dato mostrato e' una previsione, non una misura.
     val showingNow = !state.weekMode && state.selectedDay == 0
     val header = if (showingNow) "ORA" else day?.label ?: "--"
-    val data = page.buildData(forecast, day, showingNow)
+    val data = page.buildData(forecast, day, showingNow, state.unit)
     val labels = forecast?.days?.map { it.label } ?: List(7) { "--" }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -123,9 +123,7 @@ private fun MetricPageContent(
             depth = 7.dp,
             // Il titolo ruota molto meno della cifra: sta su un piano piu'
             // lontano, e la differenza fra i due si legge come profondita'.
-            motion = NumberMotion(
-                orientationDeg = NumberMotion.REST_ORIENTATION + tilt.x * 9f,
-            ),
+            motion = { NumberMotion(yawDeg = tilt.value.x * 5f) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
@@ -140,6 +138,7 @@ private fun MetricPageContent(
             PhysicalNumber(
                 text = data.bigNumber,
                 fontSize = maxHeight * 0.66f,
+                rotation = rotation,
                 tilt = tilt,
                 modifier = Modifier.fillMaxSize(),
             )
@@ -206,6 +205,7 @@ private fun MetricPage.buildData(
     forecast: Forecast?,
     day: DayForecast?,
     showingNow: Boolean,
+    unit: TempUnit,
 ): PageData {
     val colors = LocalMeteoColors.current
     val current = forecast?.current
@@ -225,12 +225,12 @@ private fun MetricPage.buildData(
                 .takeIf { it.size == 2 }?.average()
             PageData(
                 rows = listOf(
-                    TableRow("TEMPERATURA", representative.asDegrees()),
-                    TableRow("MASSIMA", day?.tempMax.asDegrees()),
-                    TableRow("MINIMA", day?.tempMin.asDegrees()),
+                    TableRow("TEMPERATURA", representative.asDegrees(unit)),
+                    TableRow("MASSIMA", day?.tempMax.asDegrees(unit)),
+                    TableRow("MINIMA", day?.tempMin.asDegrees(unit)),
                     TableRow(
                         "PERCEPITI",
-                        (if (showingNow) current?.apparent else day?.apparentMax).asDegrees(),
+                        (if (showingNow) current?.apparent else day?.apparentMax).asDegrees(unit),
                     ),
                     TableRow(
                         "UMIDITÀ",
@@ -238,10 +238,10 @@ private fun MetricPage.buildData(
                     ),
                     TableRow(
                         "PUNTO DI RUGIADA",
-                        (if (showingNow) current?.dewPoint else day?.dewPointMean).asDegrees(),
+                        (if (showingNow) current?.dewPoint else day?.dewPointMean).asDegrees(unit),
                     ),
                 ),
-                bigNumber = representative.asBigNumber(),
+                bigNumber = representative.asBigTemperature(unit),
                 series = listOf(
                     ChartSeries(days.map { it.tempMax }, strong, strokeWidthDp = 2.4f),
                     ChartSeries(days.map { it.tempMin }, faint, strokeWidthDp = 1.6f),

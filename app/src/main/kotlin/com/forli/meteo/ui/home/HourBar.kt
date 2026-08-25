@@ -3,12 +3,13 @@ package com.forli.meteo.ui.home
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -18,25 +19,31 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoColors
+import kotlin.math.floor
 
 /**
  * Le ore del giorno come una striscia continua, colorata dal meteo di ciascuna.
  *
  * Una fascia azzurra dice a colpo d'occhio quando piove, senza bisogno di
  * scorrere fin li' per scoprirlo: e' la barra stessa a raccontare la giornata.
+ *
+ * Le tacche non sono decorazione. Senza, la striscia sembra continua e non si
+ * capisce quante posizioni abbia: se un'ora non si riesce a centrare, non c'e'
+ * modo di accorgersi che il problema e' la mira e non la barra.
  */
 @Composable
 fun HourBar(
     hours: List<HourForecast>,
     selected: Int,
+    nowIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -46,34 +53,58 @@ fun HourBar(
 
     val position by animateFloatAsState(
         targetValue = selected.toFloat(),
-        animationSpec = spring(dampingRatio = 0.8f, stiffness = 700f),
+        animationSpec = spring(dampingRatio = 0.82f, stiffness = 700f),
         label = "ora",
     )
 
+    // Il riconoscitore di gesti vive dentro un pointerInput che viene ricreato
+    // solo quando cambia il numero di ore. Tutto quello che la sua lambda
+    // cattura resta fermo al valore che aveva la prima volta, e leggere di li'
+    // l'ora selezionata significava confrontarsi per sempre con quella
+    // dell'apertura: l'ora corrente diventava l'unica irraggiungibile della
+    // giornata, perche' il confronto la dichiarava gia' scelta. Era questo a far
+    // sembrare che la barra "saltasse" un'ora.
+    val liveSelected by rememberUpdatedState(selected)
+    val liveOnSelect by rememberUpdatedState(onSelect)
+
     fun indexAt(x: Float, width: Float): Int =
-        ((x / width) * hours.size).toInt().coerceIn(0, hours.lastIndex)
+        floor(x / width * hours.size).toInt().coerceIn(0, hours.lastIndex)
 
     fun choose(index: Int) {
-        if (index != selected) {
+        if (index != liveSelected) {
             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-            onSelect(index)
+            liveOnSelect(index)
         }
     }
 
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(38.dp)
+            .height(46.dp)
+            // Un solo riconoscitore per tocco e trascinamento, e nessuna soglia
+            // da superare. Con due riconoscitori separati il primo consuma
+            // l'evento di discesa e il secondo annulla il proprio scorrimento:
+            // il risultato e' una barra che ogni tanto ignora il dito, e ore
+            // che sembrano non esistere.
             .pointerInput(hours.size) {
-                detectTapGestures { offset -> choose(indexAt(offset.x, size.width.toFloat())) }
-            }
-            .pointerInput(hours.size) {
-                detectHorizontalDragGestures { change, _ ->
-                    choose(indexAt(change.position.x, size.width.toFloat()))
+                awaitEachGesture {
+                    val down = awaitFirstDown(requireUnconsumed = false)
+                    choose(indexAt(down.position.x, size.width.toFloat()))
+                    down.consume()
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (!change.pressed) {
+                            change.consume()
+                            break
+                        }
+                        choose(indexAt(change.position.x, size.width.toFloat()))
+                        change.consume()
+                    }
                 }
             },
     ) {
-        val trackHeight = size.height * 0.42f
+        val trackHeight = size.height * 0.34f
         val top = (size.height - trackHeight) / 2f
         val radius = trackHeight / 2f
         val slot = size.width / hours.size
@@ -98,14 +129,36 @@ fun HourBar(
                     size = Size(slot + 0.5f, trackHeight),
                 )
             }
+
+            // Una tacca ogni sei ore: abbastanza da far vedere la scansione,
+            // poche da non trasformare la barra in un righello.
+            for (index in hours.indices) {
+                if (index == 0 || index % 6 != 0) continue
+                drawRect(
+                    color = colors.background.copy(alpha = 0.45f),
+                    topLeft = Offset(index * slot - 0.5f, top),
+                    size = Size(1f, trackHeight),
+                )
+            }
+        }
+
+        // Dove sta l'ora vera. Scorrendo la barra si guarda un'altra ora, e
+        // senza questo segno non ci sarebbe piu' modo di tornare a casa.
+        if (nowIndex in hours.indices) {
+            val markX = (nowIndex + 0.5f) * slot
+            drawCircle(
+                color = colors.text,
+                radius = size.height * 0.035f,
+                center = Offset(markX, top + trackHeight + size.height * 0.14f),
+            )
         }
 
         val thumbX = (position + 0.5f) * slot
-        val thumbWidth = trackHeight * 0.62f
+        val thumbWidth = trackHeight * 0.60f
         drawRoundRect(
             color = colors.pillBackground,
-            topLeft = Offset(thumbX - thumbWidth / 2f, top - trackHeight * 0.42f),
-            size = Size(thumbWidth, trackHeight * 1.84f),
+            topLeft = Offset(thumbX - thumbWidth / 2f, top - trackHeight * 0.52f),
+            size = Size(thumbWidth, trackHeight * 2.04f),
             cornerRadius = CornerRadius(thumbWidth / 2f, thumbWidth / 2f),
         )
     }

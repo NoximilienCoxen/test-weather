@@ -24,8 +24,11 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.forli.meteo.R
 import com.forli.meteo.data.Forecast
+import com.forli.meteo.data.Place
 import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.data.Wmo
+import com.forli.meteo.prefs.SettingsPrefs
+import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
 
 // Glance 1.1.1 non offre un ColorProvider giorno/notte: la scelta del tema
@@ -37,13 +40,16 @@ private val WidgetSecondary = ColorProvider(R.color.widget_secondary)
 class WeatherWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val forecast = WeatherRepository().load().getOrNull()
-        provideContent { WidgetBody(forecast) }
+        // La localita' e' quella scelta nell'app: un widget che mostra sempre
+        // Forli' mentre l'app mostra Singapore sarebbe semplicemente rotto.
+        val place = SettingsPrefs(context).settings.first().place
+        val forecast = WeatherRepository(place).load().getOrNull()
+        provideContent { WidgetBody(place, forecast) }
     }
 }
 
 @Composable
-private fun WidgetBody(forecast: Forecast?) {
+private fun WidgetBody(place: Place, forecast: Forecast?) {
     val temperature = forecast?.current?.temperature
     Column(
         modifier = GlanceModifier
@@ -55,7 +61,7 @@ private fun WidgetBody(forecast: Forecast?) {
         horizontalAlignment = Alignment.Horizontal.Start,
     ) {
         Text(
-            text = WeatherRepository.CITY.uppercase(),
+            text = place.name.uppercase(),
             style = TextStyle(
                 color = WidgetSecondary,
                 fontSize = 11.sp,

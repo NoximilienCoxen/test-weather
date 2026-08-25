@@ -1,12 +1,13 @@
 package com.forli.meteo.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import com.forli.meteo.prefs.ThemeMode
+import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
 import com.forli.meteo.ui.motion.rememberDeviceTilt
+import com.forli.meteo.ui.settings.SettingsScreen
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoTheme
+import com.forli.meteo.ui.theme.skyColors
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -34,21 +37,30 @@ import kotlin.math.roundToInt
  * diversa: e' un foglio che sale seguendo il dito, reversibile a meta' corsa.
  * Dietro, la principale arretra e si smorza, cosi' resti nello stesso mondo
  * invece di essere trasportato altrove.
+ *
+ * Le impostazioni entrano invece da sinistra, da dove sta il loro pulsante.
  */
 @Composable
 fun MeteoApp(viewModel: WeatherViewModel) {
     val state by viewModel.state.collectAsState()
-    val systemDark = isSystemInDarkTheme()
-    val dark = when (state.themeMode) {
-        ThemeMode.AUTO -> systemDark
-        ThemeMode.CHIARO -> false
-        ThemeMode.SCURO -> true
-    }
 
-    MeteoTheme(dark = dark) {
-        val colors = LocalMeteoColors.current
-        // Un solo ascoltatore del sensore per tutta l'app.
-        val tilt by rememberDeviceTilt()
+    // Un solo numero anima tutto il cielo, e da quello si ricavano insieme il
+    // fondo, il colore del sole e la comparsa della luna. Animando le tre cose
+    // separatamente ci sarebbero istanti in cui non sono d'accordo fra loro:
+    // sole gia' sparito e cielo ancora di giorno.
+    val altitude by animateFloatAsState(
+        targetValue = state.skyAltitude,
+        animationSpec = spring(stiffness = 110f),
+        label = "cielo",
+    )
+    val sky = remember(altitude) { SkyState.of(altitude) }
+    val colors = remember(sky) { skyColors(sky) }
+
+    MeteoTheme(colors = colors) {
+        // Un solo ascoltatore del sensore per tutta l'app, e il valore resta
+        // uno stato: letto dentro il disegno invece che in composizione, il
+        // sensore fa ridipingere e non ricomporre.
+        val tilt = rememberDeviceTilt()
         val scope = rememberCoroutineScope()
         val sheet = remember { Animatable(0f) }
         val density = LocalDensity.current
@@ -59,6 +71,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 .background(colors.background),
         ) {
             val heightPx = with(density) { maxHeight.toPx() }.coerceAtLeast(1f)
+            val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
 
             fun drag(delta: Float) {
                 scope.launch {
@@ -77,8 +90,11 @@ fun MeteoApp(viewModel: WeatherViewModel) {
 
             HomeScreen(
                 state = state,
+                sky = sky,
                 tilt = tilt,
                 onSelectHour = viewModel::selectHour,
+                onBackToNow = viewModel::backToNow,
+                onOpenSettings = viewModel::openSettings,
                 modifier = Modifier
                     .systemBarsPadding()
                     .graphicsLayer {
@@ -108,6 +124,30 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         ),
                 ) {
                     DetailScreen(state = state, viewModel = viewModel, tilt = tilt)
+                }
+            }
+
+            val settings by animateFloatAsState(
+                targetValue = if (state.settingsOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "impostazioni",
+            )
+            if (settings > 0.001f) {
+                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) }
+                        .background(colors.background)
+                        .systemBarsPadding(),
+                ) {
+                    SettingsScreen(
+                        state = state,
+                        onQuery = viewModel::search,
+                        onChoosePlace = viewModel::choosePlace,
+                        onChooseUnit = viewModel::setUnit,
+                        onClose = viewModel::closeSettings,
+                    )
                 }
             }
         }
