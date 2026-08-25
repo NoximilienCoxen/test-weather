@@ -43,10 +43,17 @@ class MainActivity : ComponentActivity() {
         if (intent == null) return
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
+        // Il giro accetta anche lo zero, che e' un angolo come un altro: il
+        // valore che vuol dire "non imposto" e' il minimo dell'intero, non un
+        // numero che qualcuno potrebbe voler chiedere davvero.
+        intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE)
+            .takeIf { it != Int.MIN_VALUE }
+            ?.let { viewModel.forceYaw(it.toFloat()) }
     }
 
     private companion object {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
+        const val EXTRA_YAW = "giro"
     }
 }
