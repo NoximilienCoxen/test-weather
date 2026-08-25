@@ -43,16 +43,25 @@ class WeatherHaptics(private val vibrator: Vibrator?, private val mode: Mode) {
         NONE,
     }
 
-    /** Un tocco appena percettibile, per la goccia. */
-    fun drizzle() {
+    /**
+     * Il colpetto di una goccia che tocca la cifra.
+     *
+     * Lo chiama l'urto, non un orologio: e' quello che lo rende responsivo
+     * invece che decorativo. Se ne arrivano piu' d'una nello stesso istante il
+     * colpo si fa un po' piu' pieno - una raffica si sente come una raffica -
+     * ma con un tetto, perche' oltre un certo punto non e' piu' pioggia.
+     */
+    fun raindrop(drops: Int = 1) {
         val v = vibrator ?: return
+        val strength = (DROP_SCALE * (1f + (drops - 1) * 0.30f)).coerceIn(0.05f, 0.55f)
         val effect = when (mode) {
             Mode.PRIMITIVE -> VibrationEffect.startComposition()
-                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, DRIZZLE_SCALE)
+                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, strength)
                 .compose()
-            Mode.AMPLITUDE -> VibrationEffect.createOneShot(14, 17)
+            Mode.AMPLITUDE ->
+                VibrationEffect.createOneShot(11, (strength * 255f).toInt().coerceIn(1, 255))
             Mode.PREDEFINED -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
-            Mode.BLUNT -> VibrationEffect.createOneShot(6, VibrationEffect.DEFAULT_AMPLITUDE)
+            Mode.BLUNT -> VibrationEffect.createOneShot(5, VibrationEffect.DEFAULT_AMPLITUDE)
             Mode.NONE -> return
         }
         runCatching { v.vibrate(effect) }
@@ -83,8 +92,12 @@ class WeatherHaptics(private val vibrator: Vibrator?, private val mode: Mode) {
     }
 
     private companion object {
-        /** Su uno. Meno di un quarto: si sente col palmo, non col braccio. */
-        const val DRIZZLE_SCALE = 0.22f
+        /**
+         * Su uno. Piu' leggero di quando il colpetto arrivava una volta per
+         * giro di gocce: adesso ne arriva uno per goccia, e quello che a un
+         * tocco al secondo era appena percettibile, a dieci sarebbe molesto.
+         */
+        const val DROP_SCALE = 0.15f
 
         val THUNDER_TIMINGS = longArrayOf(0, 45, 35, 130)
         val THUNDER_AMPLITUDES = intArrayOf(0, 235, 0, 110)
