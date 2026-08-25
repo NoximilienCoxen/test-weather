@@ -96,5 +96,16 @@ interface TemperatureRenderer {
          * superficie. Nullo quando a nessuno interessa.
          */
         silhouette: com.forli.meteo.ui.render3d.Skyline? = null,
+        /**
+         * Il valore da cui si sta arrivando, e a che punto e' il passaggio.
+         *
+         * Con [progress] a uno - o senza un valore da cui venire - si disegna
+         * solo l'oggetto corrente, fermo. Fra zero e uno le cifre che sono
+         * cambiate rotolano: la vecchia esce da una parte, la nuova entra
+         * dall'altra, e quelle rimaste uguali non si muovono affatto. Ventotto
+         * che diventa ventinove deve muovere il nove, non il due.
+         */
+        previous: PreparedNumber? = null,
+        progress: Float = 1f,
     )
 }
