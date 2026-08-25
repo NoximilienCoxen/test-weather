@@ -631,9 +631,11 @@ class TextPrism private constructor(
              */
             smallTail: Int = 0,
             smallScale: Float = SMALL_SCALE,
+            variationSettings: String? = null,
         ): TextPrism? {
-            val laid = layout(text, typeface, sizePx, letterSpacingEm, smallTail, smallScale)
-                ?: return null
+            val laid = layout(
+                text, typeface, sizePx, letterSpacingEm, smallTail, smallScale, variationSettings,
+            ) ?: return null
             val outlines = laid.outlines
             val boxes = laid.boxes
             val reduced = laid.reduced
@@ -769,6 +771,7 @@ class TextPrism private constructor(
             letterSpacingEm: Float,
             smallTail: Int,
             smallScale: Float,
+            variationSettings: String?,
         ): Layout? {
             if (text.isEmpty() || sizePx <= 0f) return null
 
@@ -776,6 +779,10 @@ class TextPrism private constructor(
                 this.typeface = typeface
                 textSize = sizePx
                 letterSpacing = letterSpacingEm
+                // Gli assi del font variabile: peso e larghezza della cifra. Sul
+                // pennello e non sul carattere, perche' lo stesso file serve
+                // anche all'interfaccia con proporzioni diverse.
+                variationSettings?.let { fontVariationSettings = it }
             }
 
             // Ogni carattere al proprio posto lungo la riga. L'avanzamento si
@@ -847,8 +854,10 @@ class TextPrism private constructor(
             letterSpacingEm: Float = 0f,
             smallTail: Int = 0,
             smallScale: Float = SMALL_SCALE,
-        ): Float = layout(text, typeface, sizePx, letterSpacingEm, smallTail, smallScale)
-            ?.union?.width() ?: 0f
+            variationSettings: String? = null,
+        ): Float = layout(
+            text, typeface, sizePx, letterSpacingEm, smallTail, smallScale, variationSettings,
+        )?.union?.width() ?: 0f
 
         private fun sample(path: android.graphics.Path, step: Float): List<FloatArray> {
             val sampled = ArrayList<FloatArray>()

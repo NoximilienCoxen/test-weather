@@ -51,6 +51,14 @@ data class NumberSpec(
      * che smonta l'illusione.
      */
     val smallTail: Int = 0,
+    /**
+     * Gli assi del font variabile, nella forma di `Paint.fontVariationSettings`.
+     *
+     * Stanno qui e non sul `Typeface` perche' il file del font e' uno solo e lo
+     * condividono la cifra gigante e tutti i testi dell'interfaccia: chi lo usa
+     * dichiara come lo vuole, invece di pretenderne una copia sua.
+     */
+    val variationSettings: String? = null,
 )
 
 /**
@@ -97,15 +105,13 @@ interface TemperatureRenderer {
          */
         silhouette: com.forli.meteo.ui.render3d.Skyline? = null,
         /**
-         * Il valore da cui si sta arrivando, e a che punto e' il passaggio.
+         * Di quanto l'oggetto e' sollevato, in altezze di se' stesso.
          *
-         * Con [progress] a uno - o senza un valore da cui venire - si disegna
-         * solo l'oggetto corrente, fermo. Fra zero e uno le cifre che sono
-         * cambiate rotolano: la vecchia esce da una parte, la nuova entra
-         * dall'altra, e quelle rimaste uguali non si muovono affatto. Ventotto
-         * che diventa ventinove deve muovere il nove, non il due.
+         * Zero e' il posto suo. Serve all'entrata - la cifra sale invece di
+         * comparire - ed e' un sollevamento **nello spazio**, non sulla tela:
+         * passa dentro la proiezione, quindi salendo la cifra cambia anche
+         * prospettiva, come farebbe un oggetto vero.
          */
-        previous: PreparedNumber? = null,
-        progress: Float = 1f,
+        lift: Float = 0f,
     )
 }

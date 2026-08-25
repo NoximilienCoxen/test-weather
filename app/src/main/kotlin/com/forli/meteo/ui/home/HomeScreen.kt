@@ -198,7 +198,6 @@ fun HomeScreen(
                     // Il grado e' l'ultimo carattere e non e' una cifra: va in
                     // corpo ridotto, a filo della cima delle altre.
                     smallTail = 1,
-                    slowMotion = state.slowMotion,
                     fontSize = maxHeight * 0.86f,
                     rotation = rotation,
                     tilt = tilt,
@@ -278,7 +277,10 @@ fun HomeScreen(
         val interaction = remember { MutableInteractionSource() }
         Text(
             text = if (onNow) hourLabel(hour) else "${hourLabel(hour)}  ·  ADESSO",
-            style = MeteoType.caption,
+            // L'unico testo che resta a larghezza fissa: scorrendo la barra
+            // cambia a ogni ora, e con un carattere proporzionale ballerebbe da
+            // sinistra a destra sotto il pollice che lo sta muovendo.
+            style = MeteoType.tabular,
             color = if (onNow) colors.label else colors.text,
             modifier = Modifier
                 .padding(top = 2.dp, bottom = 8.dp)

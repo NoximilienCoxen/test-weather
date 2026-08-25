@@ -39,6 +39,14 @@ data class Settings(
      * richiesta, invece di ripartire da una citta' che non c'entra.
      */
     val followsLocation: Boolean = false,
+    /**
+     * Vero da quando il benvenuto ha finito il suo lavoro.
+     *
+     * Serve una chiave sua e non basta guardare se una localita' e' salvata:
+     * senza scelta il posto e' Forli' per impostazione predefinita, e "non ho
+     * mai scelto" e "ho scelto Forli'" sono la stessa cosa vista da fuori.
+     */
+    val welcomed: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -70,6 +78,7 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> TempUnit.entries.firstOrNull { it.name == saved } }
                 ?: TempUnit.CELSIUS,
             followsLocation = prefs[KEY_FOLLOWS] ?: false,
+            welcomed = prefs[KEY_WELCOMED] ?: false,
         )
     }
 
@@ -90,6 +99,10 @@ class SettingsPrefs(private val context: Context) {
         }
     }
 
+    suspend fun setWelcomed() {
+        context.settingsDataStore.edit { it[KEY_WELCOMED] = true }
+    }
+
     suspend fun setUnit(unit: TempUnit) {
         context.settingsDataStore.edit { it[KEY_UNIT] = unit.name }
     }
@@ -102,5 +115,6 @@ class SettingsPrefs(private val context: Context) {
         val KEY_LON = doublePreferencesKey("localita_lon")
         val KEY_UNIT = stringPreferencesKey("unita")
         val KEY_FOLLOWS = booleanPreferencesKey("segue_posizione")
+        val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
     }
 }

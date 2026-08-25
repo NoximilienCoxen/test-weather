@@ -58,14 +58,6 @@ data class UiState(
      * pareti si scavalcano - non era fotografabile.
      */
     val forcedYawDeg: Float? = null,
-    /**
-     * Aggancio di verifica: rallenta il rotolamento della cifra.
-     *
-     * Serve per la stessa ragione di [forcedYawDeg]: quello che si vede in
-     * movimento va fotografato in movimento, e due decimi di secondo non si
-     * colgono con uno scatto preso da riga di comando.
-     */
-    val slowMotion: Boolean = false,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
@@ -78,6 +70,13 @@ data class UiState(
      * una risposta: si resta dove si era e lo si dice, senza riprovare da soli.
      */
     val locationUnavailable: Boolean = false,
+    /**
+     * Falso finche' il benvenuto non ha fatto il suo lavoro: e' la schermata
+     * che chiede dove sei, e prima non c'era **nessun momento** in cui l'app lo
+     * chiedesse. Chi non entrava nelle impostazioni restava per sempre
+     * sull'ultima localita' impostata senza sapere che ce n'era un'altra.
+     */
+    val welcomed: Boolean = true,
     val settingsOpen: Boolean = false,
     val query: String = "",
     val searching: Boolean = false,
@@ -150,6 +149,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Vero da quando la posizione e' stata chiesta all'avvio: una volta basta. */
     private var started = false
 
+    /**
+     * Vero quando l'aggancio di verifica ha chiesto di rivedere il benvenuto.
+     *
+     * Una bandiera a parte e non un valore mescolato a quello delle preferenze:
+     * queste emettono a ogni cambiamento, anche di tutt'altro, e una condizione
+     * che le intreccia rimetterebbe il benvenuto davanti a chi lo ha appena
+     * chiuso solo perche' nel frattempo ha cambiato unita' di misura.
+     */
+    private var welcomeForced = false
+
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -165,6 +174,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         place = settings.place,
                         unit = settings.unit,
                         followsLocation = settings.followsLocation,
+                        welcomed = settings.welcomed && !welcomeForced,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -348,11 +358,25 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(forcedWeatherCode = code) }
     }
 
+    /** Il benvenuto ha finito: da qui in poi si apre sulla schermata vera. */
+    fun dismissWelcome() {
+        welcomeForced = false
+        _state.update { it.copy(welcomed = true) }
+        viewModelScope.launch { prefs.setWelcomed() }
+    }
+
+    /** Aggancio per la cattura automatica: rimostra il benvenuto. */
+    fun showWelcome() {
+        welcomeForced = true
+        _state.update { it.copy(welcomed = false) }
+    }
+
     /**
      * Chiede al telefono dove siamo e ci si trasferisce.
      *
-     * La chiama la schermata delle impostazioni dopo aver ottenuto il permesso:
-     * un ViewModel non puo' chiederlo, e non deve provarci.
+     * La chiama il benvenuto, o la schermata delle impostazioni, dopo aver
+     * ottenuto il permesso: un ViewModel non puo' chiederlo, e non deve
+     * provarci.
      */
     fun useDeviceLocation() = locate(explicit = true)
 
@@ -382,11 +406,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
     fun forceYaw(degrees: Float?) {
         _state.update { it.copy(forcedYawDeg = degrees) }
-    }
-
-    /** Aggancio per la cattura automatica: rallenta il rotolamento della cifra. */
-    fun setSlowMotion(slow: Boolean) {
-        _state.update { it.copy(slowMotion = slow) }
     }
 
     private companion object {
