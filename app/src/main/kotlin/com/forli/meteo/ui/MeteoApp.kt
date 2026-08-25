@@ -37,6 +37,7 @@ import com.forli.meteo.ui.home.HomeScreen
 import com.forli.meteo.ui.motion.findLifecycleOwner
 import com.forli.meteo.ui.motion.rememberDeviceTilt
 import com.forli.meteo.ui.settings.SettingsScreen
+import com.forli.meteo.ui.welcome.WelcomeScreen
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoTheme
 import com.forli.meteo.ui.theme.skyColors
@@ -116,7 +117,23 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 }
             }
 
-            HomeScreen(
+            // Al primo avvio l'app chiede dove sei, invece di dare per scontato
+            // un posto che nessuno ha scelto. Il foglio del dettaglio non entra
+            // in scena finche' il benvenuto non ha finito: non c'e' ancora
+            // niente da approfondire.
+            if (!state.welcomed) {
+                WelcomeScreen(
+                    state = state,
+                    tilt = tilt,
+                    onFindMe = viewModel::useDeviceLocation,
+                    onChooseByHand = {
+                        viewModel.dismissWelcome()
+                        viewModel.openSettings()
+                    },
+                    onDone = viewModel::dismissWelcome,
+                    modifier = Modifier.systemBarsPadding(),
+                )
+            } else HomeScreen(
                 state = state,
                 sky = sky,
                 tilt = tilt,

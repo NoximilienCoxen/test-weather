@@ -3,7 +3,6 @@ package com.forli.meteo.ui.render3d
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -30,8 +29,6 @@ class PrismRenderer : TemperatureRenderer {
         val prism: TextPrism,
         val depth: Float,
         val chamfer: Float,
-        /** La scritta da cui viene: serve a sapere quali cifre sono cambiate. */
-        val text: String,
     ) : PreparedNumber {
         override val width: Float get() = prism.width
         override val height: Float get() = prism.height
@@ -106,6 +103,7 @@ class PrismRenderer : TemperatureRenderer {
             sizePx = size,
             letterSpacingEm = spec.letterSpacingEm,
             smallTail = spec.smallTail,
+            variationSettings = spec.variationSettings,
         )
         val occupied = width * SWING_ALLOWANCE + MARGIN * 2f
         if (spec.maxWidthPx >= 1f && occupied > spec.maxWidthPx) {
@@ -121,13 +119,13 @@ class PrismRenderer : TemperatureRenderer {
             letterSpacingEm = spec.letterSpacingEm,
             step = sampleStep(size),
             smallTail = spec.smallTail,
+            variationSettings = spec.variationSettings,
         ) ?: return null
 
         return Prepared(
             prism = prism,
             depth = depth,
             chamfer = (size * 0.016f).coerceIn(1.5f, 18f),
-            text = spec.text,
         ).also { cache[spec] = it }
     }
 
@@ -138,10 +136,10 @@ class PrismRenderer : TemperatureRenderer {
         palette: NumberPalette,
         motion: NumberMotion,
         silhouette: Skyline?,
-        previous: PreparedNumber?,
-        progress: Float,
+        lift: Float,
     ) = with(scope) {
         val model = prepared as? Prepared ?: return@with
+        val prism = model.prism
         silhouette?.reset(size.width)
 
         val camera = Camera(
@@ -151,82 +149,13 @@ class PrismRenderer : TemperatureRenderer {
             origin = center,
         )
         val ink = inkFor(palette)
-
-        val from = (previous as? Prepared)
-            ?.takeIf { progress < 1f && it !== model }
-        if (from == null) {
-            drawNumber(model, camera, ink, palette, silhouette, yOffset = 0f, only = null, shadow = true)
-            return@with
-        }
-
-        // Quali colonne cambiano davvero. Ventotto che diventa ventinove deve
-        // muovere il nove: far rotolare anche il due sarebbe un'animazione
-        // vistosa al posto di un'informazione.
-        //
-        // Le colonne si corrispondono solo se i due numeri sono lunghi uguale e
-        // se ogni carattere ha prodotto un carattere - nove che diventa dieci
-        // non ha colonne da confrontare. Li' rotola tutto insieme, che e' anche
-        // quello che fa un contachilometri quando gli cresce una cifra.
-        val aligned = from.text.length == model.text.length &&
-            from.prism.partCount == from.text.length &&
-            model.prism.partCount == model.text.length
-        val still = if (aligned) {
-            BooleanArray(model.text.length) { i -> from.text[i] == model.text[i] }
-        } else {
-            null
-        }
-
-        // In su quando il valore sale, in giu' quando scende: un contachilometri
-        // che gira sempre nello stesso verso mentre il numero cala racconta il
-        // contrario di quello che succede.
-        val span = model.height * ROLL_SPAN
-        val forward = numberIn(model.text) >= numberIn(from.text)
-        val way = if (forward) -1f else 1f
-        val exit = way * span * progress
-        val enter = -way * span * (1f - progress)
-
-        // I caratteri fermi per primi, con la loro ombra: sono l'oggetto, non
-        // la transizione, e non hanno motivo di stare dentro un ritaglio.
-        if (still != null) {
-            drawNumber(model, camera, ink, palette, silhouette, 0f, still, shadow = true)
-        }
-
-        // I mobili dentro una fascia alta quanto la cifra, se no si vedrebbero
-        // sfilare sopra la nuvola e sotto la scritta della condizione.
-        //
-        // Senza ombra portata, e non per pigrizia: e' la voce piu' cara del
-        // disegno (trappola #18), qui andrebbe raddoppiata perche' i corpi sono
-        // due, e il ritaglio la taglierebbe di netto proprio dove sfuma. Per due
-        // decimi di secondo non manca a nessuno, e torna appena il numero si
-        // ferma.
-        val moving = still?.let { flip(it) }
-        val half = model.height * ROLL_CLIP
-        clipRect(top = center.y - half, bottom = center.y + half) {
-            drawNumber(from, camera, ink, palette, null, exit, moving, shadow = false)
-            drawNumber(model, camera, ink, palette, silhouette, enter, moving, shadow = false)
-        }
-    }
-
-    /**
-     * Un numero intero, a un certo scostamento verticale.
-     *
-     * @param only quali caratteri disegnare, o nullo per tutti.
-     * @param shadow se disegnarne l'ombra portata.
-     */
-    private fun DrawScope.drawNumber(
-        model: Prepared,
-        camera: Camera,
-        ink: TextPrism.Ink,
-        palette: NumberPalette,
-        silhouette: Skyline?,
-        yOffset: Float,
-        only: BooleanArray?,
-        shadow: Boolean,
-    ) {
-        val prism = model.prism
         val reversed = prism.reversed(camera)
 
-        fun wanted(index: Int): Boolean = only == null || index >= only.size || only[index]
+        // Quanto la cifra e' sollevata, in coordinate del modello. Serve
+        // all'entrata, ed e' li' e non sulla tela apposta: uno scostamento
+        // applicato dopo la proiezione sposterebbe un'immagine gia' piatta, e
+        // la cifra scivolerebbe come un adesivo invece di salire nello spazio.
+        val rise = lift * model.height
 
         // Le ombre tutte per prime, e tutte insieme. Sul fondo grigio unico
         // l'ombra portata non e' piu' un vezzo del tema chiaro: e' cio' che
@@ -248,12 +177,11 @@ class PrismRenderer : TemperatureRenderer {
         val castAlpha = palette.shadowAlpha *
             ((openness - SHADOW_FADE_FROM) / (SHADOW_FADE_TO - SHADOW_FADE_FROM)).coerceIn(0f, 1f)
 
-        if (shadow && castAlpha > 0.001f) {
+        if (castAlpha > 0.001f) {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 for (index in 0 until prism.partCount) {
-                    if (!wanted(index)) continue
-                    if (!prism.prepareShadow(index, camera, yOffset)) continue
+                    if (!prism.prepareShadow(index, camera, rise)) continue
                     val outline = prism.outlineOf(index)
                     for (layer in SHADOW_STEPS.indices) {
                         val reach = SHADOW_STEPS[layer]
@@ -278,7 +206,6 @@ class PrismRenderer : TemperatureRenderer {
         // che sta dietro puo' stamparsi sopra a chi gli sta davanti.
         for (step in 0 until prism.partCount) {
             val index = if (reversed) prism.partCount - 1 - step else step
-            if (!wanted(index)) continue
             val surfaces = prism.shape(
                 index = index,
                 camera = camera,
@@ -286,7 +213,7 @@ class PrismRenderer : TemperatureRenderer {
                 depth = model.depth,
                 chamfer = model.chamfer,
                 ink = ink,
-                yOffset = yOffset,
+                yOffset = rise,
             )
             silhouette?.let { prism.addSilhouette(index, it) }
 
@@ -327,13 +254,6 @@ class PrismRenderer : TemperatureRenderer {
             }
         }
     }
-
-    /** L'opposto di una maschera: i fermi diventano i mobili. */
-    private fun flip(mask: BooleanArray) = BooleanArray(mask.size) { !mask[it] }
-
-    /** Il valore dentro una scritta, per sapere da che parte far girare le cifre. */
-    private fun numberIn(text: String): Int =
-        text.filter { it.isDigit() || it == '-' }.toIntOrNull() ?: 0
 
     /**
      * Da quanto e' esposta la base a quanto e' chiara.
@@ -397,19 +317,6 @@ class PrismRenderer : TemperatureRenderer {
          */
         /** Quante geometrie si tengono pronte. Vedi il commento sulla cache. */
         const val CACHE_SIZE = 12
-
-        /**
-         * Quanto viaggia una cifra che rotola, in altezze del numero.
-         *
-         * Deve bastare a portarla **fuori** dalla fascia ritagliata: la meta'
-         * del ritaglio piu' la meta' della cifra, con un margine per la
-         * prospettiva che ingrandisce la meta' vicina. Piu' corta e a fine
-         * corsa si vedrebbe ancora un pezzo del valore vecchio appeso in alto.
-         */
-        const val ROLL_SPAN = 1.45f
-
-        /** Mezza fascia dentro cui il rotolamento e' visibile, in altezze del numero. */
-        const val ROLL_CLIP = 0.72f
 
         val SHADOW_STEPS = floatArrayOf(0.28f, 1f)
         val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)

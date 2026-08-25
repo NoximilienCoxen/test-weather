@@ -168,33 +168,22 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # La cifra che rotola.
-    #
-    # Tre cose servono tutte e tre, e la terza e' costata un giro di CI a
-    # scoprirla. Primo: "--ez lento true" porta il rotolamento a quattro
-    # secondi, perche' due decimi non si fotografano da riga di comando.
-    # Secondo: il cambio d'ora va consegnato all'app **viva**, con SINGLE_TOP
-    # (0x20000000), se no l'attivita' riparte da capo e con lei riparte anche il
-    # numero, che allora non ha da dove rotolare.
-    #
-    # Terzo: **l'emulatore della CI parte con le animazioni spente**
-    # (disable-animations nel workflow), e Compose rispetta quella scala di
-    # sistema portando ogni animazione dritta alla fine. Il rotolamento partiva
-    # davvero - lo diceva il logcat - e finiva nello stesso fotogramma in cui
-    # cominciava. Qui si riaccende per il tempo di fotografarlo, e si rispegne
-    # subito dopo: tutti gli altri scatti la vogliono spenta, se no colgono le
-    # transizioni a meta' invece degli stati.
-    roll_from_to() {
-        adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
-        restart_with "--ei ora $1 --ez lento true"
-        adbt shell am start -f 0x20000000 -n "$ACT" --ei ora "$2" >/dev/null 2>&1 || true
-    }
-
-    roll_from_to 4 15
-    shoot "${slug}-12-rotola-presto"
+    # Il benvenuto. Va imposto: si vede una volta sola nella vita
+    # dell'installazione, e sull'emulatore quella volta e' gia' passata al primo
+    # avvio di questo stesso script. E va fotografato con le animazioni accese
+    # (trappola #28), se no il pupazzo sta sempre nella stessa posa.
+    adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
+    restart_with "--ez benvenuto true"
+    shoot "${slug}-12-benvenuto"
     sleep 1
-    shoot "${slug}-13-rotola-tardi"
+    shoot "${slug}-13-benvenuto-guarda"
     adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
+
+    # Le impostazioni, che finora non avevano nessuno scatto.
+    restart_with ""
+    adbt shell input tap 60 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-14-impostazioni"
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
