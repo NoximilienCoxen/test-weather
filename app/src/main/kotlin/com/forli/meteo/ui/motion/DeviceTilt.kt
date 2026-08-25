@@ -135,7 +135,14 @@ fun rememberDeviceTilt(
     return smoothed.asState()
 }
 
-private tailrec fun Context.findLifecycleOwner(): LifecycleOwner? = when (this) {
+/**
+ * Il proprietario del ciclo di vita dietro un contesto di Compose.
+ *
+ * Serve a chi deve accendersi e spegnersi col primo piano e non con la
+ * composizione: la composizione resta viva anche in sottofondo. Lo usano il
+ * sensore qui sotto e la ricarica dei dati.
+ */
+internal tailrec fun Context.findLifecycleOwner(): LifecycleOwner? = when (this) {
     is LifecycleOwner -> this
     is ContextWrapper -> baseContext.findLifecycleOwner()
     else -> null

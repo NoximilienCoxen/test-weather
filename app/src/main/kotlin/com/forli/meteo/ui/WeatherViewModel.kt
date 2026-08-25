@@ -18,9 +18,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
 
 data class UiState(
     val loading: Boolean = true,
+    /**
+     * Vero mentre si ricarica **avendo gia' qualcosa in mano**.
+     *
+     * Distinto da [loading] perche' le due situazioni non si somigliano: un
+     * primo carico non ha niente da mostrare e lo deve dire, una ricarica ha
+     * una schermata intera di dati validi e non deve toglierli di mezzo per
+     * annunciare che ne sta cercando di piu' freschi.
+     */
+    val refreshing: Boolean = false,
     val error: String? = null,
     val forecast: Forecast? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
@@ -60,7 +71,27 @@ data class UiState(
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
     val nowIndex: Int
-        get() = forecast?.let { nearestHourIndex(it.hours, it.nowThere()) } ?: 0
+        get() {
+            val current = forecast ?: return 0
+            val hours = current.hours
+            if (hours.isEmpty()) return 0
+            // Le ore sono contigue e a passo di un'ora: l'indice e' una
+            // sottrazione, non una ricerca. Scorrerle tutte costava una
+            // `Duration` allocata per ognuna, e questa proprieta' viene letta
+            // piu' volte a ogni ricomposizione della schermata - cioe' a ogni
+            // ora scorsa sulla barra.
+            val minutes = Duration.between(hours.first().time, current.nowThere()).toMinutes()
+            return Math.floorDiv(minutes + 30L, 60L).toInt().coerceIn(0, hours.lastIndex)
+        }
+
+    /**
+     * Da quando il dato in mano e' quello che e'.
+     *
+     * Nullo finche' non ne esiste uno. Serve a dire in alto quanto e' vecchio:
+     * un'app meteo che mostra ieri sera con la stessa faccia di adesso e'
+     * peggio di un'app che ammette di non sapere.
+     */
+    val fetchedAt: LocalDateTime? get() = forecast?.fetchedAt
 
     /**
      * Quanto e' alto il sole all'ora scelta.
@@ -120,7 +151,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * o uscendo da una galleria.
      */
     fun refresh() {
-        _state.update { it.copy(loading = true, error = null) }
+        // Un primo carico non ha niente da mostrare e lo dichiara; una ricarica
+        // lascia la schermata dov'e' e cambia solo il segno in alto.
+        val hasData = _state.value.forecast != null
+        _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
         loading?.cancel()
         val place = _state.value.place
         loading = viewModelScope.launch {
@@ -130,27 +164,42 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 val outcome = repository.load()
                 outcome
                     .onSuccess { forecast ->
-                        // All'apertura la schermata mostra l'ora corrente, non
-                        // la prima disponibile: e' cio' che ci si aspetta di
-                        // vedere. E l'ora corrente e' quella della localita',
-                        // non quella dell'orologio di chi guarda.
-                        val now = pendingHour
-                            ?.coerceIn(0, (forecast.hours.size - 1).coerceAtLeast(0))
-                            ?: nearestHourIndex(forecast.hours, forecast.nowThere())
-                        _state.update {
-                            it.copy(
+                        _state.update { current ->
+                            val last = (forecast.hours.size - 1).coerceAtLeast(0)
+                            val hour = when {
+                                // L'aggancio di verifica vince su tutto.
+                                pendingHour != null -> pendingHour!!.coerceIn(0, last)
+                                // Su una **ricarica** l'ora scelta resta quella:
+                                // chi stava guardando le sei di sera non deve
+                                // ritrovarsi sbalzato ad adesso solo perche' e'
+                                // arrivata una risposta dalla rete.
+                                current.forecast != null -> current.selectedHour.coerceIn(0, last)
+                                // All'apertura invece si mostra l'ora corrente,
+                                // non la prima disponibile: e' cio' che ci si
+                                // aspetta di vedere. Ed e' l'ora della
+                                // localita', non quella dell'orologio di chi
+                                // guarda.
+                                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
+                            }
+                            current.copy(
                                 loading = false,
+                                refreshing = false,
                                 forecast = forecast,
                                 error = null,
-                                selectedHour = now,
+                                selectedHour = hour,
                             )
                         }
                     }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
                         _state.update {
+                            // Una ricarica fallita non cancella quello che c'e'
+                            // gia': si tiene il dato vecchio e si continua a
+                            // dire quanto e' vecchio. E' l'unica risposta utile
+                            // a chi e' senza rete.
                             it.copy(
-                                loading = !lastAttempt,
+                                loading = !lastAttempt && it.forecast == null,
+                                refreshing = !lastAttempt && it.forecast != null,
                                 error = if (lastAttempt) {
                                     failure.message ?: "Errore di rete"
                                 } else {
@@ -163,6 +212,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 delay(wait)
                 wait *= 2
             }
+        }
+    }
+
+    /**
+     * Ricarica se quello che si ha in mano ha passato la sua eta'.
+     *
+     * La chiama il ritorno in primo piano. Senza, `refresh()` partiva solo
+     * all'avvio e al cambio di localita' e **nient'altro la richiamava mai**:
+     * un'app lasciata aperta ieri sera mostrava ieri sera, senza modo di
+     * accorgersene ne' di ricaricare se non chiudendola.
+     */
+    fun refreshIfStale(maxAge: Duration = STALE_AFTER) {
+        val fetched = _state.value.fetchedAt
+        if (fetched == null || Duration.between(fetched, LocalDateTime.now()) >= maxAge) {
+            refresh()
         }
     }
 
@@ -252,6 +316,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private companion object {
+        /**
+         * Oltre questa eta' il dato si ricarica da solo tornando in primo
+         * piano. Venti minuti: la previsione di Open-Meteo si muove per ore,
+         * ma la barra deve almeno riguardare il giorno giusto.
+         */
+        val STALE_AFTER: Duration = Duration.ofMinutes(20)
+
         const val MAX_ATTEMPTS = 4
         const val FIRST_RETRY_MS = 1_200L
         const val SEARCH_DEBOUNCE_MS = 320L
