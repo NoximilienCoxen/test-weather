@@ -1,5 +1,8 @@
 package com.forli.meteo.ui.settings
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,10 +55,18 @@ fun SettingsScreen(
     onQuery: (String) -> Unit,
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
+    onUseLocation: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
+
+    // Il permesso lo chiede la schermata, non il ViewModel: e' un dialogo di
+    // sistema legato a un'attivita'. Se e' gia' concesso il lanciatore torna
+    // subito con un si', quindi non serve un ramo a parte per quel caso.
+    val askPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted -> if (granted) onUseLocation() }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -86,6 +97,22 @@ fun SettingsScreen(
                     style = MeteoType.label,
                     color = colors.text,
                     modifier = Modifier.padding(bottom = 2.dp),
+                )
+            }
+
+            // Prima di ogni elenco: il posto piu' probabile e' quello dove si
+            // sta. Scegliere a mano una qualunque delle voci sotto lo spegne -
+            // una scelta esplicita vince su un rilevamento, altrimenti al
+            // riavvio si verrebbe riportati dove si e' invece che dove si e'
+            // chiesto.
+            item {
+                LocationRow(
+                    following = state.followsLocation,
+                    locating = state.locating,
+                    unavailable = state.locationUnavailable,
+                    onClick = {
+                        askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    },
                 )
             }
             item {
@@ -216,6 +243,49 @@ fun SettingsScreen(
             }
             item { Spacer(Modifier.height(40.dp)) }
         }
+    }
+}
+
+/**
+ * La riga che chiede al telefono dove siamo.
+ *
+ * Dice sempre in che stato e', anche quando non ha funzionato: un permesso
+ * negato non e' un errore dell'app, e' una risposta, e la riga la riporta senza
+ * riprovare da sola.
+ */
+@Composable
+private fun LocationRow(
+    following: Boolean,
+    locating: Boolean,
+    unavailable: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = LocalMeteoColors.current
+    val interaction = remember { MutableInteractionSource() }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "USA LA MIA POSIZIONE",
+            style = MeteoType.label,
+            color = if (following) colors.text else colors.label,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = when {
+                locating -> "CERCO…"
+                unavailable -> "NON DISPONIBILE"
+                following -> "ATTIVA"
+                else -> ""
+            },
+            style = MeteoType.caption,
+            color = if (unavailable) colors.text else colors.label,
+        )
     }
 }
 

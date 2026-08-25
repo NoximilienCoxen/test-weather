@@ -3,6 +3,7 @@ package com.forli.meteo.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
@@ -59,6 +60,16 @@ data class UiState(
     val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
+    val followsLocation: Boolean = false,
+    /** Vero mentre si sta chiedendo dove siamo. */
+    val locating: Boolean = false,
+    /**
+     * Vero quando l'ultimo tentativo non ha prodotto un posto: permesso
+     * negato, o nessun rilevamento in tempo utile. **Non e' un errore**, e'
+     * una risposta: si resta dove si era e lo si dice, senza riprovare da soli.
+     */
+    val locationUnavailable: Boolean = false,
     val settingsOpen: Boolean = false,
     val query: String = "",
     val searching: Boolean = false,
@@ -119,6 +130,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     private var loading: Job? = null
     private var searchJob: Job? = null
+    private var locating: Job? = null
 
     /**
      * Ora richiesta prima che i dati arrivino. Serve alla verifica automatica:
@@ -126,6 +138,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * senza ricordarla la richiesta andrebbe persa.
      */
     private var pendingHour: Int? = null
+
+    /** Vero da quando la posizione e' stata chiesta all'avvio: una volta basta. */
+    private var started = false
+
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -134,10 +150,24 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             prefs.settings.collect { settings ->
                 val current = _state.value
                 val moved = current.place != settings.place
-                _state.update { it.copy(place = settings.place, unit = settings.unit) }
+                val firstRead = !started
+                started = true
+                _state.update {
+                    it.copy(
+                        place = settings.place,
+                        unit = settings.unit,
+                        followsLocation = settings.followsLocation,
+                    )
+                }
                 // Cambiare unita' non deve costare una richiesta: la conversione
                 // e' solo scrittura. Cambiare posto invece cambia tutto.
                 if (moved || current.forecast == null) refresh()
+
+                // All'avvio, se il posto lo decide il telefono, lo si richiede
+                // una volta. Il posto salvato resta valido nel frattempo: la
+                // schermata ha subito qualcosa da mostrare invece di aspettare
+                // un satellite davanti al vuoto.
+                if (firstRead && settings.followsLocation) locate(explicit = false)
             }
         }
     }
@@ -308,6 +338,37 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /**
+     * Chiede al telefono dove siamo e ci si trasferisce.
+     *
+     * La chiama la schermata delle impostazioni dopo aver ottenuto il permesso:
+     * un ViewModel non puo' chiederlo, e non deve provarci.
+     */
+    fun useDeviceLocation() = locate(explicit = true)
+
+    private fun locate(explicit: Boolean) {
+        locating?.cancel()
+        _state.update { it.copy(locating = true, locationUnavailable = false) }
+        locating = viewModelScope.launch {
+            val found = DeviceLocation.current(getApplication<Application>())
+            if (found == null) {
+                // Permesso negato, posizione spenta, o nessun rilevamento in
+                // tempo utile. Si resta dove si era: e' l'unica risposta utile,
+                // e riprovare da soli sarebbe insistere.
+                // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
+                // all'avvio che non riesce non deve mettere un avviso davanti a
+                // chi non ha chiesto niente.
+                _state.update { it.copy(locating = false, locationUnavailable = explicit) }
+                return@launch
+            }
+            _state.update { it.copy(locating = false, locationUnavailable = false) }
+            // Da qui in poi comanda il flusso delle preferenze, come per una
+            // localita' scelta a mano: una sola strada per cambiare posto.
+            pendingHour = null
+            prefs.setPlace(found, following = true)
+        }
     }
 
     /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
