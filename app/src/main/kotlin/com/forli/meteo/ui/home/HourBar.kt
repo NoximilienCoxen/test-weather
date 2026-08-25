@@ -44,6 +44,9 @@ fun HourBar(
     hours: List<HourForecast>,
     selected: Int,
     nowIndex: Int,
+    /** Alba e tramonto del giorno mostrato, se l'API li ha dati. */
+    sunrise: java.time.LocalDateTime? = null,
+    sunset: java.time.LocalDateTime? = null,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -142,14 +145,35 @@ fun HourBar(
             }
         }
 
+        // Sotto la pista c'e' una fascia di annotazioni: l'ora vera, e i due
+        // momenti in cui la giornata cambia luce.
+        val noteY = top + trackHeight + size.height * 0.14f
+
         // Dove sta l'ora vera. Scorrendo la barra si guarda un'altra ora, e
         // senza questo segno non ci sarebbe piu' modo di tornare a casa.
         if (nowIndex in hours.indices) {
-            val markX = (nowIndex + 0.5f) * slot
             drawCircle(
                 color = colors.text,
                 radius = size.height * 0.035f,
-                center = Offset(markX, top + trackHeight + size.height * 0.14f),
+                center = Offset((nowIndex + 0.5f) * slot, noteY),
+            )
+        }
+
+        // Alba e tramonto al minuto giusto. Il tono della pista gia' dice
+        // giorno e notte, ma lo dice a scatti d'ora: la tacca dice **dove**
+        // cade il confine, che finora si poteva solo intuire fra una casella e
+        // la successiva. Due trattini e non due pallini, cosi' non si
+        // confondono con l'ora corrente che vive sulla stessa riga.
+        val span = hours.size * 60f
+        val origin = hours.first().time
+        listOfNotNull(sunrise, sunset).forEach { moment ->
+            val minutes = java.time.Duration.between(origin, moment).toMinutes().toFloat()
+            if (minutes < 0f || minutes > span) return@forEach
+            val x = minutes / span * size.width
+            drawRect(
+                color = colors.label,
+                topLeft = Offset(x - size.height * 0.017f, noteY - size.height * 0.05f),
+                size = Size(size.height * 0.034f, size.height * 0.10f),
             )
         }
 
