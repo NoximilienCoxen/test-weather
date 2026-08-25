@@ -22,9 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.forli.meteo.prefs.ThemeMode
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
 
@@ -83,39 +81,3 @@ fun DayWeekToggle(
     }
 }
 
-/** Controllo in alto: automatico, chiaro, scuro. */
-@Composable
-fun ThemeSwitch(
-    mode: ThemeMode,
-    onChange: (ThemeMode) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = LocalMeteoColors.current
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ThemeMode.entries.forEach { entry ->
-            val active = entry == mode
-            val interaction = remember { MutableInteractionSource() }
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(if (active) colors.pillBackground else Color.Transparent)
-                    .clickable(
-                        interactionSource = interaction,
-                        indication = null,
-                        onClick = { onChange(entry) },
-                    )
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
-            ) {
-                Text(
-                    text = entry.name,
-                    style = MeteoType.caption,
-                    color = if (active) colors.pillText else colors.label,
-                )
-            }
-        }
-    }
-}

@@ -18,16 +18,24 @@ data class NumberPalette(
     val chamfer: Color,
     val iridescence: List<Color>,
     val iridescenceAlpha: Float,
-    val dropShadow: Boolean,
+    /** Quanto stacca l'ombra portata. Su fondo grigio serve sempre un po'. */
+    val shadowAlpha: Float,
 )
 
+/**
+ * Cosa disegnare e quanto grande.
+ *
+ * Il materiale non fa parte della specifica, ed e' voluto: la geometria si
+ * estrae una volta e vale per sempre, mentre i colori cambiano a ogni ora del
+ * giorno. Tenerli insieme farebbe rifare l'estrazione a ogni sfumatura del
+ * cielo, che e' la parte cara del lavoro.
+ */
 @Immutable
 data class NumberSpec(
     val text: String,
     val typeface: Typeface,
     val fontSizePx: Float,
-    val palette: NumberPalette,
-    /** Profondita' dell'estrusione, in pixel. */
+    /** Spessore del prisma, in pixel. */
     val depthPx: Float,
     /** Larghezza disponibile: oltre questa la cifra viene rimpicciolita. */
     val maxWidthPx: Float = Float.MAX_VALUE,
@@ -35,25 +43,23 @@ data class NumberSpec(
 )
 
 /**
- * Come l'oggetto e' orientato.
+ * Come l'oggetto e' orientato nello spazio.
  *
- * Non e' piu' uno spostamento: [orientationDeg] ruota la luce e, in misura
- * minore, la direzione dell'estrusione. Con facce che conoscono la propria
- * normale questo si legge come una rotazione vera, perche' ogni superficie
- * cambia tono per conto proprio invece di scorrere insieme alle altre.
+ * Sono angoli veri, non piu' una direzione di estrusione: [yawDeg] gira attorno
+ * all'asse verticale ed e' quello che il dito comanda, [pitchDeg] attorno a
+ * quello orizzontale ed e' il contributo minuto del sensore.
  */
 @Immutable
 data class NumberMotion(
-    val orientationDeg: Float = REST_ORIENTATION,
+    val yawDeg: Float = 0f,
+    val pitchDeg: Float = 0f,
 ) {
     companion object {
-        /** Luce da sinistra in alto, come da specifica. */
-        const val REST_ORIENTATION = 225f
         val Fermo = NumberMotion()
     }
 }
 
-/** Geometria gia' estratta, pronta a essere illuminata in qualunque direzione. */
+/** Geometria gia' estratta, pronta a essere vista da qualunque angolo. */
 interface PreparedNumber {
     val width: Float
     val height: Float
@@ -63,8 +69,8 @@ interface PreparedNumber {
  * Unico punto da cui passa il disegno della cifra gigante.
  *
  * [prepare] estrae la geometria, che dipende solo dal testo e dal corpo.
- * [draw] la illumina, che dipende dall'orientamento. Separarli permette di
- * ruotare senza rifare il lavoro di estrazione.
+ * [draw] la guarda da un certo angolo. Separarli permette di ruotare senza
+ * rifare il lavoro di estrazione, che e' la parte cara.
  */
 interface TemperatureRenderer {
     fun prepare(spec: NumberSpec): PreparedNumber?
@@ -72,6 +78,12 @@ interface TemperatureRenderer {
         scope: DrawScope,
         prepared: PreparedNumber,
         center: Offset,
+        palette: NumberPalette,
         motion: NumberMotion = NumberMotion.Fermo,
+        /**
+         * Dove riporre la sagoma dell'oggetto, per chi deve sapere dove trova
+         * superficie. Nullo quando a nessuno interessa.
+         */
+        silhouette: com.forli.meteo.ui.render3d.Skyline? = null,
     )
 }

@@ -33,6 +33,11 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
+            // Non marcata come debuggabile: una app debuggabile gira con
+            // ottimizzazioni ridotte, e questa schermata fa geometria in tempo
+            // reale a ogni fotogramma. Misurando la fluidita' su una build
+            // debuggabile si misurerebbe un'app che non esiste.
+            isDebuggable = false
         }
         release {
             isMinifyEnabled = false
