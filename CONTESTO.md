@@ -138,19 +138,38 @@ vertici e dividendo per la profondita'.
    la sagoma cambi. Lambert **dimezzato**, non troncato (trappola #4).
 5. L'esposizione si calcola sul **vertice**, mediando le normali dei due spigoli
    che vi si incontrano: da li' la sfumatura continua sulle curve.
-6. La **base** non viene triangolata. Una figura piana sotto una proiezione
+6. Le **pareti si disegnano dalla piu' lontana alla piu' vicina**, non nell'ordine
+   in cui stanno scritte. I vuoti di un carattere sono contorni come gli altri,
+   e uscendo per ultimi si stampavano sopra il pieno che avrebbero dovuto avere
+   davanti: girando l'8 verso il taglio, i due occhielli venivano avanti come
+   due cilindri appoggiati sulla cifra. L'ordine e' un `sort` di interi lunghi
+   che impacchettano profondita' e indice - niente comparatori, niente
+   allocazioni - e sostituisce anche la vecchia regola "prima tutte le pareti,
+   poi tutti gli smussi": lo smusso di uno spigolo lontano deve stare **sotto**
+   la parete di uno vicino, e ordinare lo dice da solo.
+7. La **base** non viene triangolata. Una figura piana sotto una proiezione
    prospettica si trasforma per omografia: si applica alla tela la matrice che
    porta i quattro angoli del riquadro dove finiscono davvero, e si disegna il
    tracciato originale. Curve del font comprese, un solo disegno.
    **Quale delle due basi** dipende da dove si guarda: oltre il quarto di giro
    si vede quella di dietro, e disegnare sempre l'altra la stamperebbe sopra le
    pareti che dovrebbero nasconderla. Un prisma non ha un davanti assoluto.
-7. Lo **smusso** e' la prima fetta dell'estrusione dalla parte che si vede, con
+8. Lo **smusso** e' la prima fetta dell'estrusione dalla parte che si vede, con
    normale a meta' strada. Rientrare la base per ricavarlo fa ripiegare il
    poligono sulle curve strette.
-8. L'**iridescenza** e' una tinta sui vertici dello smusso dove la luce li
+9. L'**iridescenza** e' una tinta sui vertici dello smusso dove la luce li
    sfiora, non piu' una sfumatura stesa sopra.
-9. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12).
+10. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12), sul
+   **piano mediano** e non su una delle due basi (trappola #21), e cadono nel
+   verso opposto alla luce, che e' letto da `Light.Standard` invece di essere
+   una seconda impostazione libera di contraddirla.
+11. Vicino al quarto di giro **base e ombra si spengono**. Li' i quattro angoli
+   del riquadro finiscono quasi in fila e la matrice che li segue e' quasi
+   singolare: esiste, ed e' fatta di numeri che divergono (trappola #20).
+12. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
+   alto (`smallTail` in `NumberSpec`). Fa parte del prisma apposta: viene
+   estruso, illuminato e girato con le cifre. Un simbolo sovrapposto in
+   coordinate di schermo resterebbe fermo mentre l'oggetto gira.
 
 **Il verso dei contorni dipende dal font**, quindi non si assume: si deduce
 misurando se sul contorno piu' grande le normali puntano fuori.
@@ -172,7 +191,9 @@ questa garanzia cade** e servira' un ordinamento vero.
 ## 5. Movimento
 
 - `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra.
-  **Nessun limite**: si gira quanto si vuole, anche piu' volte.
+  **Il trascinamento scrive l'angolo sul posto**, in un `MutableFloatState`, e
+  solo il rilascio anima (trappola #22). **Nessun limite**: si gira quanto si
+  vuole, anche piu' volte.
   **Il segno e' negativo** e non e' un dettaglio: la superficie che si tocca deve
   andare dove va il dito. Col segno positivo, tirando verso destra la cifra
   girava verso sinistra, come una manopola vista da dietro.
@@ -347,6 +368,54 @@ curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/actions/runs?
 curl -s ".../actions/runs/<id>/jobs" | grep -E '"(name|conclusion)"'
 ```
 
+**20. Una matrice quasi singolare esiste eccome.** `setPolyToPoly` torna falso
+solo quando i punti sono *esattamente* in fila. Un grado prima del taglio netto
+sono quasi in fila, la matrice esce fatta di numeri enormi, e la sagoma che ci
+passa sotto si stampa come una colata di strisce lunghe mezzo schermo - erano
+quelle che spuntavano da sotto la cifra ogni volta che passava di profilo. Non
+si chiede alla matrice se esiste: si guarda **quanto la base e' aperta** verso
+l'occhio, e sotto soglia non si disegna. Vale per la faccia e per l'ombra.
+
+**21. Un'ombra non puo' seguire la base rivolta all'occhio.** Quale delle due
+basi si veda cambia al quarto di giro (punto 6 della sezione 4), ed e' giusto
+per la faccia. Per l'ombra no: nello stesso istante in cui la cifra passava di
+taglio, l'ombra saltava dall'altra parte dello spessore. Il **piano mediano** non
+ha un davanti e un dietro, quindi attraversa il giro intero senza accorgersene.
+
+**22. `Animatable.snapTo` in una coroutine annulla la molla che sta girando.**
+Il trascinamento passava da `scope.launch { animated.snapTo(...) }`, uno per
+delta. Il dispatcher della composizione consegna **al fotogramma**, non subito:
+l'ultimo `snapTo` prima del rilascio finiva quindi *dopo* l'avvio della molla, e
+un `Animatable` che riceve un `snapTo` annulla l'animazione in corso. Da fuori si
+vedeva la cifra partire e **piantarsi a meta' giro** senza tornare a posto, tanto
+piu' spesso quanto piu' era stato deciso il gesto - cioe' proprio quando il
+lancio contava. Un gesto continuo non passa da una coda: scrive il valore, e
+basta.
+
+**23. Un astro disegnato per primo e' un fondale, non un oggetto.** Sole e luna
+uscivano prima delle masse della nuvola, sempre: qualunque cosa facesse la
+rotazione, la nuvola restava davanti. Portando la luna di fronte con mezzo giro
+di dito la si vedeva comunque sotto le masse bianche, ed era per questo che non
+si vedeva mai intera. Ora l'astro sta nella **stessa fila** delle masse, ordinato
+per profondita' in coordinate di vista come loro (che e' la trappola #15
+applicata anche a lui).
+
+**24. La Luna non la illumina la lampada della stanza.** Sole, nuvole e cifra
+condividono una luce sola, ed e' giusto: sono oggetti nello stesso spazio. La
+Luna no - la illumina il Sole, e da che parte stia lo dice la fase. Col gradiente
+preso dalla luce della scultura, il lembo acceso della falce veniva il punto piu'
+scuro del disco e **la mediana ci si perdeva dentro**: si vedeva una palla grigia
+storta, non un quarto di luna.
+
+**25. Una vibrazione a tempo non e' una vibrazione responsive.** La pioggia dava
+un colpetto per giro di gocce: cadeva anche quando la pioggia passava a fianco
+della cifra senza toccarla, e mancava quando ne arrivavano cinque insieme. Ora lo
+chiama l'urto - il disegno e' l'unico a sapere dove passa la sagoma - con due
+accortezze: si conta solo il **passaggio** da aria a superficie (altrimenti ogni
+goccia gia' arrivata ne segnerebbe uno per fotogramma), e c'e' una soglia di un
+decimo di secondo fra un colpo e il successivo, perche' un vibratore che non
+stacca mai non si legge come pioggia ma come un ronzio.
+
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
 ignorata: la pioggia usciva forte quanto il tuono. `WeatherHaptics` prova in
@@ -382,8 +451,12 @@ comunque a ogni fotogramma.
   `adb shell input swipe` non produce una velocita' di rilascio credibile, quindi
   la parte della rotazione che dipende dalla foga della mano l'ha provata solo
   chi ha il telefono
-- se la vibrazione della pioggia, un tocco ogni giro di gocce, risulti gradevole
-  o molesta dopo qualche minuto
+- se la vibrazione della pioggia, adesso **un tocco per goccia che tocca la
+  cifra** con un decimo di secondo di soglia fra l'uno e l'altro, risulti
+  gradevole o molesta dopo qualche minuto, e se la soglia vada allargata in un
+  rovescio
+- **come si legge il grado** accanto a una cifra a tre caratteri (`-10`, `100`):
+  li' il riadattamento in larghezza scatta e la cifra si rimpicciolisce
 - il **widget Glance** su una home reale (legge la localita' scelta, non provato)
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
