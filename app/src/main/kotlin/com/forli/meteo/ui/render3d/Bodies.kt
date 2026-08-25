@@ -33,7 +33,14 @@ private val LightOnScreen: Offset = run {
     Offset(l.x / len, l.y / len)
 }
 
-/** Una sfera opaca: un gradiente radiale col centro spostato verso la luce. */
+/**
+ * Una sfera opaca: un gradiente radiale col centro spostato verso la luce.
+ *
+ * @param wide e [tall] schiacciano il disco attorno al proprio centro, sulla
+ *   tela. Servono a poche cose molto piatte - la tesa di un cappello - e non
+ *   pretendono di essere un ellissoide: schiacciano l'immagine, non il corpo.
+ *   A uno e uno non costano niente e non cambiano nulla.
+ */
 fun DrawScope.sphere(
     camera: Camera,
     x: Float,
@@ -43,13 +50,16 @@ fun DrawScope.sphere(
     light: Color,
     dark: Color,
     alpha: Float = 1f,
+    wide: Float = 1f,
+    tall: Float = 1f,
 ) {
     if (alpha <= 0.003f) return
     camera.place(x, y, z)
     val r = radius * camera.scale
     if (r <= 0.5f) return
     val centre = Offset(camera.sx, camera.sy)
-    drawCircle(
+
+    fun disc() = drawCircle(
         brush = Brush.radialGradient(
             colors = listOf(light, dark),
             center = centre + LightOnScreen * (r * 0.44f),
@@ -59,6 +69,12 @@ fun DrawScope.sphere(
         center = centre,
         alpha = alpha,
     )
+
+    if (wide == 1f && tall == 1f) {
+        disc()
+    } else {
+        withTransform({ scale(wide, tall, centre) }) { disc() }
+    }
 }
 
 /**
