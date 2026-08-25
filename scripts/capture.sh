@@ -127,11 +127,14 @@ session() {
       # shellcheck disable=SC2086
       adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
       # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
-      # gli scatti coglievano i trattini invece dei dati.
-      sleep 14
+      # gli scatti coglievano i trattini invece dei dati. Nemmeno quattordici
+      # bastano sempre - uno scatto su undici e' uscito "IN ATTESA DEI DATI".
+      sleep 19
     }
 
-    restart_with "--ei ora 2"
+    # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
+    # stanotte la luna non si vedrebbe, ed e' proprio lei che va guardata.
+    restart_with "--ei ora 2 --ei meteo 1"
     shoot "${slug}-2-notte-luna"
 
     restart_with "--ei meteo 63"
@@ -159,7 +162,7 @@ session() {
 
     # La luna deve poter passare davanti alla nuvola: e' tutto il punto
     # dell'ordinamento in profondita' dei corpi tondi.
-    restart_with "--ei ora 2 --ei giro 155"
+    restart_with "--ei ora 2 --ei meteo 1 --ei giro 155"
     shoot "${slug}-10-luna-girata"
 
     restart_with "--ei meteo 63 --ei giro 45"
