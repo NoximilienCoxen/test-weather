@@ -31,6 +31,8 @@ fun PhysicalNumber(
     verticalBias: Float = 0f,
     /** Quanti caratteri finali sono un simbolo in corpo ridotto: il grado. */
     smallTail: Int = 0,
+    /** Aggancio di verifica: rallenta il rotolamento fino a poterlo fotografare. */
+    slowMotion: Boolean = false,
     contact: SceneContact? = null,
 ) {
     ExtrudedText(
@@ -40,6 +42,7 @@ fun PhysicalNumber(
         modifier = modifier,
         verticalBias = verticalBias,
         smallTail = smallTail,
+        slowMotion = slowMotion,
         contact = contact,
         motion = {
             // L'inclinazione del telefono aggiunge poco, ed e' giusto cosi': e'

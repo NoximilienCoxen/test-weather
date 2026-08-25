@@ -253,14 +253,14 @@ class TextPrism private constructor(
      * Scrive in [shadowTransform]. Torna falso se non c'e' piu' superficie da
      * proiettare.
      */
-    fun prepareShadow(index: Int, camera: Camera): Boolean {
+    fun prepareShadow(index: Int, camera: Camera, yOffset: Float = 0f): Boolean {
         val part = parts[index]
         cornersLocal[0] = part.left; cornersLocal[1] = part.top
         cornersLocal[2] = part.right; cornersLocal[3] = part.top
         cornersLocal[4] = part.right; cornersLocal[5] = part.bottom
         cornersLocal[6] = part.left; cornersLocal[7] = part.bottom
         for (k in 0 until 4) {
-            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1], 0f)
+            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1] + yOffset, 0f)
             cornersScreen[k * 2] = camera.sx
             cornersScreen[k * 2 + 1] = camera.sy
         }
@@ -319,6 +319,18 @@ class TextPrism private constructor(
         depth: Float,
         chamfer: Float,
         ink: Ink,
+        /**
+         * Quanto il carattere e' scostato in verticale, **in coordinate del
+         * modello**.
+         *
+         * Serve al rotolamento della cifra, e va sommato prima della
+         * proiezione e non dopo: uno scostamento applicato alla tela
+         * sposterebbe un'immagine gia' piatta, e la cifra scorrerebbe come un
+         * adesivo invece di muoversi nello spazio. E' lo stesso errore gia'
+         * bocciato una volta su questo oggetto - "sembra che si muova lo
+         * spessore e non la faccia del numero".
+         */
+        yOffset: Float = 0f,
     ): Surfaces {
         val part = parts[index]
         val thickness = depth * part.depthScale
@@ -341,7 +353,7 @@ class TextPrism private constructor(
         camera.normal(0f, 0f, if (frontToViewer) -1f else 1f)
         val capLambert = camera.lambert(light)
 
-        val visibleCount = classify(part, camera, light, bevelZ)
+        val visibleCount = classify(part, camera, light, bevelZ, yOffset)
 
         // Dal piu' lontano al piu' vicino, parete e smusso di uno spigolo per
         // volta.
@@ -360,9 +372,9 @@ class TextPrism private constructor(
         var n = 0
         for (k in visibleCount - 1 downTo 0) {
             val i = (order[k] and 0xFFFFFFFFL).toInt()
-            n = emitSide(part, camera, i, zBevel, zBack, wallLambert, ink, bevel = false, at = n)
+            n = emitSide(part, camera, i, zBevel, zBack, wallLambert, ink, false, n, yOffset)
             if (bevel > 0f) {
-                n = emitSide(part, camera, i, zCap, zBevel, bevelLambert, ink, bevel = true, at = n)
+                n = emitSide(part, camera, i, zCap, zBevel, bevelLambert, ink, true, n, yOffset)
             }
         }
 
@@ -373,7 +385,7 @@ class TextPrism private constructor(
         cornersLocal[4] = part.right; cornersLocal[5] = part.bottom
         cornersLocal[6] = part.left; cornersLocal[7] = part.bottom
         for (k in 0 until 4) {
-            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1], zCap)
+            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1] + yOffset, zCap)
             cornersScreen[k * 2] = camera.sx
             cornersScreen[k * 2 + 1] = camera.sy
         }
@@ -401,13 +413,19 @@ class TextPrism private constructor(
      * spigolo, ogni faccia resterebbe di tinta piatta e la curva si leggerebbe
      * come una scalinata.
      */
-    private fun classify(part: Part, camera: Camera, light: Light, bevelZ: Float): Int {
+    private fun classify(
+        part: Part,
+        camera: Camera,
+        light: Light,
+        bevelZ: Float,
+        yOffset: Float,
+    ): Int {
         var count = 0
         for (i in 0 until part.edgeCount) {
             camera.normal(part.normals[i * 2], part.normals[i * 2 + 1], 0f)
             camera.place(
                 (part.edges[i * 4] + part.edges[i * 4 + 2]) / 2f,
-                (part.edges[i * 4 + 1] + part.edges[i * 4 + 3]) / 2f,
+                (part.edges[i * 4 + 1] + part.edges[i * 4 + 3]) / 2f + yOffset,
                 0f,
             )
             // Prova di visibilita': le pareti che guardano dall'altra parte non
@@ -462,6 +480,7 @@ class TextPrism private constructor(
         ink: Ink,
         bevel: Boolean,
         at: Int,
+        yOffset: Float,
     ): Int {
         var n = at
         val next = part.next[i]
@@ -469,16 +488,19 @@ class TextPrism private constructor(
         val startColour = colourOf(lambert[i], ink, bevel)
         val endColour = colourOf(lambert[next], ink, bevel)
 
-        camera.place(part.edges[i * 4], part.edges[i * 4 + 1], zNear)
+        val y0 = part.edges[i * 4 + 1] + yOffset
+        val y1 = part.edges[i * 4 + 3] + yOffset
+
+        camera.place(part.edges[i * 4], y0, zNear)
         val ax = camera.sx
         val ay = camera.sy
-        camera.place(part.edges[i * 4 + 2], part.edges[i * 4 + 3], zNear)
+        camera.place(part.edges[i * 4 + 2], y1, zNear)
         val bx = camera.sx
         val by = camera.sy
-        camera.place(part.edges[i * 4 + 2], part.edges[i * 4 + 3], zFar)
+        camera.place(part.edges[i * 4 + 2], y1, zFar)
         val cx = camera.sx
         val cy = camera.sy
-        camera.place(part.edges[i * 4], part.edges[i * 4 + 1], zFar)
+        camera.place(part.edges[i * 4], y0, zFar)
         val dx = camera.sx
         val dy = camera.sy
 

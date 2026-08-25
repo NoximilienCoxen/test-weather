@@ -58,6 +58,14 @@ data class UiState(
      * pareti si scavalcano - non era fotografabile.
      */
     val forcedYawDeg: Float? = null,
+    /**
+     * Aggancio di verifica: rallenta il rotolamento della cifra.
+     *
+     * Serve per la stessa ragione di [forcedYawDeg]: quello che si vede in
+     * movimento va fotografato in movimento, e due decimi di secondo non si
+     * colgono con uno scatto preso da riga di comando.
+     */
+    val slowMotion: Boolean = false,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
@@ -374,6 +382,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
     fun forceYaw(degrees: Float?) {
         _state.update { it.copy(forcedYawDeg = degrees) }
+    }
+
+    /** Aggancio per la cattura automatica: rallenta il rotolamento della cifra. */
+    fun setSlowMotion(slow: Boolean) {
+        _state.update { it.copy(slowMotion = slow) }
     }
 
     private companion object {

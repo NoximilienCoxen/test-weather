@@ -198,6 +198,7 @@ fun HomeScreen(
                     // Il grado e' l'ultimo carattere e non e' una cifra: va in
                     // corpo ridotto, a filo della cima delle altre.
                     smallTail = 1,
+                    slowMotion = state.slowMotion,
                     fontSize = maxHeight * 0.86f,
                     rotation = rotation,
                     tilt = tilt,
