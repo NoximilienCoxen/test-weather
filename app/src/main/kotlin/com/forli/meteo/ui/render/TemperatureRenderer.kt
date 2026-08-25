@@ -40,6 +40,17 @@ data class NumberSpec(
     /** Larghezza disponibile: oltre questa la cifra viene rimpicciolita. */
     val maxWidthPx: Float = Float.MAX_VALUE,
     val letterSpacingEm: Float = -0.02f,
+    /**
+     * Quanti caratteri finali sono un simbolo e non una cifra: vanno in corpo
+     * ridotto, a filo della cima.
+     *
+     * Il grado passa di qui e non da un disegno a parte perche' e' parte
+     * dell'oggetto: dev'essere estruso, illuminato e girato con le cifre. Un
+     * simbolo sovrapposto in coordinate di schermo resterebbe appiccicato al
+     * vetro mentre tutto il resto gira, ed e' esattamente il tipo di dettaglio
+     * che smonta l'illusione.
+     */
+    val smallTail: Int = 0,
 )
 
 /**
