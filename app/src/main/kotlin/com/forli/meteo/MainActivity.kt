@@ -49,11 +49,13 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE)
             .takeIf { it != Int.MIN_VALUE }
             ?.let { viewModel.forceYaw(it.toFloat()) }
+        if (intent.getBooleanExtra(EXTRA_SLOW, false)) viewModel.setSlowMotion(true)
     }
 
     private companion object {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
         const val EXTRA_YAW = "giro"
+        const val EXTRA_SLOW = "lento"
     }
 }

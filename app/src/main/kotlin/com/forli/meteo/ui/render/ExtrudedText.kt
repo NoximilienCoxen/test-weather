@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -67,6 +68,8 @@ fun ExtrudedText(
     verticalBias: Float = 0f,
     /** Quanti caratteri finali sono un simbolo in corpo ridotto. */
     smallTail: Int = 0,
+    /** Aggancio di verifica: rallenta il rotolamento fino a poterlo fotografare. */
+    slowMotion: Boolean = false,
     motion: () -> NumberMotion = { NumberMotion.Fermo },
     /** Chi vuole sapere dove l'oggetto offre superficie. Di norma la pioggia. */
     contact: SceneContact? = null,
@@ -95,6 +98,10 @@ fun ExtrudedText(
 
         val prepared = remember(spec, renderer) { renderer.prepare(spec) }
 
+        // Il valore cambia e la cifra non salta: quella vecchia esce, la nuova
+        // entra, e le colonne rimaste uguali non si muovono affatto.
+        val roll = rememberNumberRoll(slowMotion)
+        LaunchedEffect(prepared) { roll.show(prepared) }
 
         Canvas(
             Modifier
@@ -111,6 +118,10 @@ fun ExtrudedText(
                 palette = palette,
                 motion = motion(),
                 silhouette = contact?.skyline,
+                // Letti qui e non in composizione: il rotolamento ridipinge,
+                // non ricompone.
+                previous = roll.previous,
+                progress = roll.progress,
             )
         }
     }

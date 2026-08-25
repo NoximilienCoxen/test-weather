@@ -166,7 +166,19 @@ vertici e dividendo per la profondita'.
 11. Vicino al quarto di giro **base e ombra si spengono**. Li' i quattro angoli
    del riquadro finiscono quasi in fila e la matrice che li segue e' quasi
    singolare: esiste, ed e' fatta di numeri che divergono (trappola #20).
-12. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
+12. Il **valore cambia rotolando**, e rotolano **solo le colonne che cambiano**:
+   ventotto che diventa ventinove muove il nove, non il due. Lo scostamento e'
+   in coordinate del modello e va sommato **prima** della proiezione: applicato
+   alla tela sposterebbe un'immagine gia' piatta, e la cifra scorrerebbe come un
+   adesivo invece di muoversi nello spazio - lo stesso errore gia' bocciato qui
+   una volta. Le cifre in movimento stanno dentro un ritaglio e **senza ombra
+   portata**: e' la voce piu' cara del disegno, qui i corpi sono due, e il
+   ritaglio la taglierebbe di netto proprio dove sfuma. Se il numero cambia
+   lunghezza le colonne non si corrispondono e rotola tutto insieme; se due
+   valori arrivano a meno di un decimo e mezzo di secondo l'uno dall'altro si
+   sta scorrendo la barra e non si rotola affatto - due numeri per fotogramma
+   proprio mentre se ne guarda uno solo di sfuggita.
+13. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
    alto (`smallTail` in `NumberSpec`). Fa parte del prisma apposta: viene
    estruso, illuminato e girato con le cifre. Un simbolo sovrapposto in
    coordinate di schermo resterebbe fermo mentre l'oggetto gira.
@@ -175,6 +187,12 @@ vertici e dividendo per la profondita'.
    spesso come una cifra non era piu' un simbolo ma un pezzo di tubo appoggiato
    accanto al numero. Ridotto nella stessa proporzione resta la stessa lastra,
    ritagliata piu' piccola.
+14. Le **geometrie estratte si tengono pronte** (dodici, LRU in `PrismRenderer`):
+   estrarre vuol dire campionare tutti i contorni del font, e scorrendo la barra
+   la si rifaceva a ogni ora - un lavoro intero dentro un fotogramma solo. La
+   larghezza, che serve a decidere il corpo, si chiede ora con `TextPrism.widthOf`
+   **senza costruire niente**: prima la cifra si costruiva, si misurava, e se non
+   ci stava si ricostruiva da capo.
 
 **Il verso dei contorni dipende dal font**, quindi non si assume: si deduce
 misurando se sul contorno piu' grande le normali puntano fuori.
@@ -228,6 +246,12 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
 | `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
+| `--ez lento` | porta il rotolamento della cifra a quattro secondi |
+
+Il rotolamento si fotografa avviando con `--ez lento true` e poi rimandando un
+`am start -f 0x20000000` con un'ora diversa: **SINGLE_TOP**, se no l'attivita'
+riparte da capo e con lei riparte anche il numero, invece di riceverne uno
+nuovo mentre e' viva.
 
 L'aggancio sul giro c'e' perche' **i difetti che si vedono girando vanno
 fotografati girati**, e un trascinamento simulato non ci arriva: per portare la
@@ -428,6 +452,20 @@ accortezze: si conta solo il **passaggio** da aria a superficie (altrimenti ogni
 goccia gia' arrivata ne segnerebbe uno per fotogramma), e c'e' una soglia di un
 decimo di secondo fra un colpo e il successivo, perche' un vibratore che non
 stacca mai non si legge come pioggia ma come un ronzio.
+
+**26. `refresh()` non la richiamava nessuno.** Partiva all'avvio e al cambio di
+localita', e basta: nessun ritorno in primo piano, nessun gesto, nessun segno di
+quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava
+ieri sera con la stessa faccia di adesso. E il gesto che sarebbe servito a
+ricaricare **c'era gia' e veniva buttato via**: col foglio del dettaglio chiuso,
+lo scorrimento verso il basso finiva dentro un `coerceIn(0f, 1f)` e non
+succedeva niente.
+
+**27. Una ricarica non e' un primo carico.** Il ritorno dei dati riportava
+l'ora scelta ad "adesso" e, fallendo, sostituiva la condizione con un errore.
+Su un primo carico e' giusto; su una ricarica vuol dire sbalzare altrove chi
+stava guardando le sei di sera, e cancellare una giornata di dati validi per
+annunciare che la rete non risponde.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene

@@ -168,6 +168,23 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
+    # La cifra che rotola. Dura due decimi di secondo, quindi uno scatto preso
+    # da riga di comando non la coglie mai: "--ez lento true" la porta a quattro
+    # secondi, e il secondo "am start" cambia l'ora sull'app gia' aperta. Serve
+    # SINGLE_TOP (0x20000000), se no l'attivita' ripartirebbe da capo invece di
+    # ricevere l'ora nuova, e con lei ripartirebbe anche il numero.
+    roll_from_to() {
+        restart_with "--ei ora $1 --ez lento true"
+        adbt shell am start -f 0x20000000 -n "$ACT" --ei ora "$2" >/dev/null 2>&1 || true
+        sleep 1
+    }
+
+    roll_from_to 14 15
+    shoot "${slug}-12-rotola-una-cifra"
+
+    roll_from_to 4 15
+    shoot "${slug}-13-rotola-tutto"
+
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
     adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
