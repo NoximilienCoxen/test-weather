@@ -74,7 +74,14 @@ debugger deve sapere che sta misurando un'app che non esiste.
 
 ## 3. Cosa fa l'app oggi
 
-**Si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
+**Al primo avvio si apre sul benvenuto** (`ui/welcome/WelcomeScreen.kt`): chiede
+dove ti trovi, con un esploratore che appoggia una mano sul tasto e con l'altra
+sopra gli occhi si guarda intorno. Prima non c'era **nessun momento** in cui
+l'app chiedesse la posizione - si cambiava solo dalle impostazioni, quindi chi
+non ci entrava restava per sempre sull'ultima impostata. C'e' sempre una via
+d'uscita: un permesso negato non e' un vicolo cieco.
+
+**Poi si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
 impostazioni a sinistra, nome della localita' al centro, scultura meteo,
 temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
 e sotto l'ora mostrata.
@@ -166,19 +173,7 @@ vertici e dividendo per la profondita'.
 11. Vicino al quarto di giro **base e ombra si spengono**. Li' i quattro angoli
    del riquadro finiscono quasi in fila e la matrice che li segue e' quasi
    singolare: esiste, ed e' fatta di numeri che divergono (trappola #20).
-12. Il **valore cambia rotolando**, e rotolano **solo le colonne che cambiano**:
-   ventotto che diventa ventinove muove il nove, non il due. Lo scostamento e'
-   in coordinate del modello e va sommato **prima** della proiezione: applicato
-   alla tela sposterebbe un'immagine gia' piatta, e la cifra scorrerebbe come un
-   adesivo invece di muoversi nello spazio - lo stesso errore gia' bocciato qui
-   una volta. Le cifre in movimento stanno dentro un ritaglio e **senza ombra
-   portata**: e' la voce piu' cara del disegno, qui i corpi sono due, e il
-   ritaglio la taglierebbe di netto proprio dove sfuma. Se il numero cambia
-   lunghezza le colonne non si corrispondono e rotola tutto insieme; se due
-   valori arrivano a meno di un decimo e mezzo di secondo l'uno dall'altro si
-   sta scorrendo la barra e non si rotola affatto - due numeri per fotogramma
-   proprio mentre se ne guarda uno solo di sfuggita.
-13. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
+12. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
    alto (`smallTail` in `NumberSpec`). Fa parte del prisma apposta: viene
    estruso, illuminato e girato con le cifre. Un simbolo sovrapposto in
    coordinate di schermo resterebbe fermo mentre l'oggetto gira.
@@ -187,6 +182,18 @@ vertici e dividendo per la profondita'.
    spesso come una cifra non era piu' un simbolo ma un pezzo di tubo appoggiato
    accanto al numero. Ridotto nella stessa proporzione resta la stessa lastra,
    ritagliata piu' piccola.
+   **Il file del font sta nelle risorse, non negli assets**: da li' Compose sa
+   costruire una famiglia senza un contesto, e lo stesso mezzo mega serve sia
+   alla cifra sia a tutti i testi dell'interfaccia. Gli assi variabili stanno
+   sul `Paint` (`fontVariationSettings`), non sul `Typeface`, cosi' chi lo usa
+   dichiara le proporzioni che vuole invece di pretendere una copia sua.
+13. La cifra **entra salendo** quando i dati arrivano, con lo stesso
+   `yOffset` in coordinate del modello. Una volta sola, all'ingresso in scena.
+   **Non a ogni ora scorsa**: quella strada e' stata provata (le cifre che
+   rotolavano a contachilometri) ed e' stata bocciata in mano - scorrendo la
+   barra un numero non fa in tempo a rotolare che l'animazione riparte, e una
+   soglia di tempo non basta perche' uno scorrimento a passo moderato ci sta
+   appena sopra.
 14. Le **geometrie estratte si tengono pronte** (dodici, LRU in `PrismRenderer`):
    estrarre vuol dire campionare tutti i contorni del font, e scorrendo la barra
    la si rifaceva a ogni ora - un lavoro intero dentro un fotogramma solo. La
@@ -208,6 +215,48 @@ verticale, quindi la profondita' cresce in modo monotono lungo l'asse
 orizzontale del modello e basta disegnare i caratteri dal piu' lontano al piu'
 vicino. **Se un giorno si aggiunge una rotazione attorno a un secondo asse,
 questa garanzia cade** e servira' un ordinamento vero.
+
+---
+
+## 4-bis. Il personaggio, e cosa gli e' servito
+
+`ui/render3d/Rig.kt`, `ui/render3d/Figure.kt`, `ui/welcome/WelcomeScreen.kt`
+
+L'esploratore del benvenuto e' **un grappolo di sfere**, come la nuvola: stessa
+primitiva, stessa luce, stesso materiale. Un personaggio fatto della materia che
+il motore gia' sa disegnare appartiene al mondo dell'app senza che nessuno debba
+insegnargli come si illumina una superficie nuova.
+
+Delle tre strade possibili per animare un personaggio - motore attuale, Lottie o
+Rive, un motore 3D vero come Filament - si e' scelta la prima, e il motivo e'
+che **i gesti che servivano sono di parti rigide**: mano appoggiata, mano sopra
+gli occhi, testa che gira. Niente pelle, niente scheletro, niente `.glb`. Le
+altre due avrebbero portato una dipendenza e, la terza, un secondo renderer che
+non condivide ne' luce ne' camera con quello scritto a mano.
+
+Due cose gli sono servite:
+
+1. **`Rig`**, una pila di trasformazioni padre-figlio. La mano che fa da visiera
+   sta in un punto **del sistema della testa**: girando la testa, quel punto
+   ruota con lei e la mano lo insegue senza che nessuno ricalcoli niente. Dodici
+   float per livello in un array riusato, nessuna libreria di algebra - non c'e'
+   proiezione da comporre, di quella si occupa gia' la camera.
+2. **Un ordinamento in profondita' vero.** La garanzia dichiarata qui sopra - la
+   profondita' cresce in modo monotono lungo l'asse orizzontale del modello -
+   vale finche' si ruota attorno a un asse solo, e un braccio che si piega per
+   conto suo la manda in pezzi. Le sfere sono convesse, quindi ordinarle per la
+   profondita' del proprio centro e' esatto, non approssimato.
+
+**Le braccia non hanno giunture, ed e' voluto.** Un gomito comandato ad angoli
+avrebbe richiesto cinematica inversa per far arrivare la mano *esattamente* sul
+tasto - e deve arrivarci, e' tutto il senso della posa. Invece ogni braccio e'
+una fila di sfere lungo una curva quadratica che finisce dove deve finire: la
+posa e' garantita per costruzione, e il gomito si piega da solo quanto serve.
+
+**Il benvenuto e' l'unico posto in cui l'app disegna in continuazione.** Altrove
+vale la trappola #8 - zero fotogrammi a schermo immobile - e vale ancora. Li' il
+movimento e' il contenuto, si vede una volta, e si spegne da solo appena si passa
+oltre.
 
 ---
 
@@ -246,12 +295,15 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
 | `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
-| `--ez lento` | porta il rotolamento della cifra a quattro secondi |
+| `--ez benvenuto` | rimostra la schermata di benvenuto |
 
-Il rotolamento si fotografa avviando con `--ez lento true` e poi rimandando un
-`am start -f 0x20000000` con un'ora diversa: **SINGLE_TOP**, se no l'attivita'
-riparte da capo e con lei riparte anche il numero, invece di riceverne uno
-nuovo mentre e' viva.
+Il benvenuto va imposto perche' si vede **una volta sola nella vita
+dell'installazione**, e sull'emulatore quella volta e' gia' passata al primo
+avvio dello script di cattura.
+
+Per consegnare un intent a un'app **gia' viva** serve
+`am start -f 0x20000000` (SINGLE_TOP): senza, l'attivita' riparte da capo, e
+con lei riparte tutto quello che si voleva vedere cambiare.
 
 L'aggancio sul giro c'e' perche' **i difetti che si vedono girando vanno
 fotografati girati**, e un trascinamento simulato non ci arriva: per portare la
@@ -562,6 +614,12 @@ comunque a ogni fotogramma.
 ---
 
 ## 10. Se servissero modelli 3D fatti a mano
+
+Il personaggio del benvenuto (sezione 4-bis) e' stato fatto **senza**, con le
+sfere che il motore gia' disegnava: i suoi gesti sono di parti rigide, e per
+quelli bastano una gerarchia di trasformazioni e un ordinamento in profondita'.
+Quanto segue vale per il caso diverso - una superficie che si deforma, o un
+oggetto la cui forma non si riesce a comporre con le primitive che ci sono.
 
 Oggi **non servono**: sole, luna, nuvole e cifre sono generati dal codice, e la
 cifra deve restare tale perche' cambia a ogni ora. Se pero' si volesse sostituire
