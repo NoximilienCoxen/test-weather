@@ -70,6 +70,34 @@ esac
 FROM_X=$(( W * 82 / 100 )); TO_X=$(( W * 18 / 100 )); MID_Y=$(( H * 42 / 100 ))
 echo "schermo ${W}x${H}"
 
+# Il benvenuto viene prima di tutto, e non solo perche' e' la prima cosa che si
+# vede: finche' non lo si chiude **l'app lo rimostra a ogni avvio**, e ogni altro
+# scatto di questo script ritrarrebbe lui invece della schermata che dice di
+# ritrarre. Chiuderlo scrive la preferenza, e da li' in poi non torna piu'.
+welcome() {
+  echo "== benvenuto =="
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  # Con le animazioni accese (trappola #28), se no il pupazzo sta sempre nella
+  # stessa posa e non si vede che si guarda intorno.
+  adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ez benvenuto true >/dev/null 2>&1 || true
+  sleep 12
+  shoot "00-benvenuto"
+  sleep 1
+  shoot "00-benvenuto-guarda"
+  adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
+
+  # "SCELGO IO" chiude il benvenuto per sempre e apre le impostazioni: due cose
+  # con un tocco solo, e le impostazioni non avevano ancora nessuno scatto.
+  adbt shell input tap "$(( W / 2 ))" "$(( H * 71 / 100 ))" >/dev/null 2>&1 || true
+  sleep 3
+  shoot "00-impostazioni"
+  # E si richiudono dal loro pulsante, in alto a sinistra.
+  adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+}
+
 alive() {
   local state
   state=$(timeout 20 adb get-state 2>/dev/null | tr -d '\r')
@@ -168,23 +196,6 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # Il benvenuto. Va imposto: si vede una volta sola nella vita
-    # dell'installazione, e sull'emulatore quella volta e' gia' passata al primo
-    # avvio di questo stesso script. E va fotografato con le animazioni accese
-    # (trappola #28), se no il pupazzo sta sempre nella stessa posa.
-    adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
-    restart_with "--ez benvenuto true"
-    shoot "${slug}-12-benvenuto"
-    sleep 1
-    shoot "${slug}-13-benvenuto-guarda"
-    adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
-
-    # Le impostazioni, che finora non avevano nessuno scatto.
-    restart_with ""
-    adbt shell input tap 60 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-14-impostazioni"
-
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
     adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
@@ -200,6 +211,7 @@ session() {
   shoot "${slug}-3-vento"
 }
 
+welcome
 session SCURO
 session CHIARO
 
