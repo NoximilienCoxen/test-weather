@@ -65,6 +65,8 @@ fun ExtrudedText(
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.17f,
     verticalBias: Float = 0f,
+    /** Quanti caratteri finali sono un simbolo in corpo ridotto. */
+    smallTail: Int = 0,
     motion: () -> NumberMotion = { NumberMotion.Fermo },
     /** Chi vuole sapere dove l'oggetto offre superficie. Di norma la pioggia. */
     contact: SceneContact? = null,
@@ -80,13 +82,14 @@ fun ExtrudedText(
         val depthPx = with(density) { depth.toPx() }
         val availableWidthPx = with(density) { maxWidth.toPx() }
 
-        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx) {
+        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx, smallTail) {
             NumberSpec(
                 text = text,
                 typeface = typeface,
                 fontSizePx = fontPx,
                 depthPx = depthPx,
                 maxWidthPx = availableWidthPx,
+                smallTail = smallTail,
             )
         }
 
