@@ -67,6 +67,15 @@ fun DrawScope.sphere(
  * La parte in ombra non si disegna. Riempirla di grigio darebbe un disco pieno
  * con una riga in mezzo, che non e' una luna: la falce si riconosce proprio
  * perche' il resto non c'e'.
+ *
+ * **La sua luce non e' quella della scultura.** Sole, nuvole e cifra li
+ * illumina la stessa lampada da sinistra in alto, ed e' giusto: sono oggetti
+ * nella stessa stanza. La Luna no - la Luna la illumina il Sole, e da che parte
+ * stia lo dice la fase, non la stanza. Prendendo la lampada della scena il
+ * lembo acceso della falce veniva il punto piu' scuro del disco e la mediana ci
+ * si perdeva dentro: si vedeva una palla grigia storta, non un quarto di luna.
+ * Col gradiente dal lembo verso la mediana il bordo torna il piu' chiaro, la
+ * luce cala andando verso il taglio, e il taglio si legge.
  */
 fun DrawScope.moon(
     camera: Camera,
@@ -102,12 +111,14 @@ fun DrawScope.moon(
         close()
     }
 
+    // Il lembo acceso: a destra se cresce, a sinistra se cala.
+    val limb = if (waxing) 1f else -1f
     drawPath(
         path = lit,
         brush = Brush.radialGradient(
             colors = listOf(light, dark),
-            center = centre + LightOnScreen * (r * 0.40f),
-            radius = r * 1.75f,
+            center = centre + Offset(limb * r * 0.62f, -r * 0.20f),
+            radius = r * 1.55f,
         ),
         alpha = alpha,
     )

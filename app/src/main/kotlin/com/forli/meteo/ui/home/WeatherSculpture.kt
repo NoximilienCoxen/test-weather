@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
 import com.forli.meteo.data.SkyState
+import com.forli.meteo.data.SunClock
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
@@ -124,14 +126,47 @@ fun WeatherSculpture(
     // fidarsi di una comodita'. Qui il ciclo e' esplicito: gira solo quando
     // piove, e ogni battito scrive un valore che il disegno legge.
     val fall = remember { mutableFloatStateOf(0f) }
+
+    // Chi ha toccato la cifra e quando. Lo scopre il disegno, che e' l'unico a
+    // sapere dove passa la sagoma; lo consuma il ciclo qui sotto, che e'
+    // l'unico posto da cui si possa chiamare il vibratore senza infilare una
+    // chiamata al sistema dentro un fotogramma.
+    val impacts = remember { RainImpacts() }
+
+    // `feelsIt` cambia quando si aprono le impostazioni, e non deve far
+    // ripartire la caduta da capo: la pioggia salterebbe indietro ogni volta.
+    val feels = rememberUpdatedState(feelsIt)
+
     LaunchedEffect(raining) {
+        // Chi stava toccando prima non conta piu': fra una pioggia e la
+        // successiva la cifra ha cambiato numero, angolo e sagoma.
+        impacts.forget()
         if (!raining) return@LaunchedEffect
         var origin = 0L
+        var lastTap = 0L
         while (true) {
+            var frame = 0L
+            var landed = 0
             withFrameNanos { now ->
+                frame = now
                 if (origin == 0L) origin = now
                 val elapsed = (now - origin) / 1_000_000L
                 fall.floatValue = (elapsed % FALL_CYCLE_MS) / FALL_CYCLE_MS.toFloat()
+                landed = impacts.take()
+            }
+            // Una goccia che arriva sulla cifra si sente in mano. Prima il
+            // colpetto arrivava a tempo, uno per giro di gocce, e a tempo non
+            // vuol dire niente: cadeva anche quando la pioggia passava a fianco
+            // della cifra senza toccarla, e mancava quando ne arrivavano cinque
+            // insieme. Adesso e' l'urto a chiamarlo, e la mano sente dove
+            // l'occhio vede.
+            //
+            // Con una soglia di tempo, pero': in un rovescio arrivano decine di
+            // gocce al secondo e un vibratore che non stacca mai non si legge
+            // piu' come pioggia, si legge come un ronzio.
+            if (landed > 0 && feels.value && frame - lastTap > TAP_GAP_NS) {
+                lastTap = frame
+                haptics.raindrop(landed)
             }
         }
     }
@@ -162,17 +197,12 @@ fun WeatherSculpture(
         }
     }
 
-    // La pioggia si sente appena, un tocco per ogni giro di gocce. Continuo
-    // sarebbe un ronzio, e un ronzio non e' pioggia.
-    LaunchedEffect(raining, feelsIt) {
-        if (!raining || !feelsIt) return@LaunchedEffect
-        while (true) {
-            delay(FALL_CYCLE_MS)
-            haptics.drizzle()
-        }
-    }
 
     val phase = remember(date) { MoonPhase.at(date) }
+
+    // Riusati a ogni fotogramma: la fila dei corpi tondi e la loro profondita'.
+    val bodyDepth = remember { FloatArray(CLOUD_MASSES.size + 1) }
+    val bodyOf = remember { IntArray(CLOUD_MASSES.size + 1) }
 
     Canvas(
         modifier.onGloballyPositioned { coordinates ->
@@ -193,71 +223,115 @@ fun WeatherSculpture(
         )
         val glare = flash.value
 
-        // Sotto una nuvola spessa l'astro sparisce del tutto. Con una velatura
-        // parziale i raggi del sole sbucavano da dietro un temporale, che e'
-        // esattamente il tipo di dettaglio che rovina l'illusione.
-        val clear = (1f - cloudiness * 1.25f).coerceIn(0f, 1f)
+        // **Un astro non e' trasparente.** Prima l'opacita' scendeva in
+        // proporzione alla copertura, e una luna al sessanta per cento su un
+        // cielo notturno non si legge come luna velata: si legge come una
+        // macchia. E' la stessa trappola gia' pagata sulla nuvola, che infatti
+        // cambia numero di masse e dimensione invece di sbiadire. Qui l'astro
+        // resta pieno finche' c'e', e a nasconderlo ci pensa la nuvola
+        // passandogli davvero davanti; solo verso il cielo coperto se ne va,
+        // perche' li' davvero non lo si vedrebbe piu'.
+        val clear = 1f - SunClock.smoothstep(0.62f, 0.86f, cloudiness)
 
-        val bodyX = unit * 0.15f
-        val bodyY = -unit * 0.10f
-        val bodyZ = unit * 0.34f
+        // Piu' in alto e piu' fuori dall'asse di quanto stesse. Girando, la
+        // scultura porta i suoi corpi in giro su cerchi di raggio diverso: con
+        // l'astro dentro al raggio della nuvola non c'era angolo da cui lo si
+        // vedesse intero, e la falce - che e' tutto quello che una luna ha da
+        // dire - restava tagliata a meta' da una massa bianca.
+        val bodyX = unit * 0.30f
+        val bodyY = -unit * 0.24f
+        val bodyZ = unit * 0.26f
         val bodyRadius = unit * 0.23f
 
         val sunAlpha = clear * sky.sunPresence
-        if (sunAlpha > 0.01f) {
-            sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = true)
-            sphere(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, colors.sunShade, sunAlpha)
-            sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = false)
-        }
-
         val moonAlpha = clear * sky.moonPresence
-        if (moonAlpha > 0.01f) {
-            moon(
-                camera = camera,
-                x = bodyX,
-                y = bodyY,
-                z = bodyZ,
-                radius = bodyRadius * 0.94f,
-                phase = phase,
-                light = colors.moonCore,
-                dark = colors.moonShade,
-                alpha = moonAlpha,
-                marks = MOON_SEAS,
-            )
-        }
+        val astroAlpha = maxOf(sunAlpha, moonAlpha)
 
         val scale = 0.52f + cloudiness * 0.48f
+        val presence = ((cloudiness - 0.02f) / 0.06f).coerceIn(0f, 1f)
+        val masses = if (cloudiness > 0.02f) {
+            (2 + (cloudiness * 3f).roundToInt()).coerceIn(2, 5)
+        } else {
+            0
+        }
 
-        if (cloudiness > 0.02f) {
-            val presence = ((cloudiness - 0.06f) / 0.16f).coerceIn(0f, 1f)
-            val masses = (2 + (cloudiness * 3f).roundToInt()).coerceIn(2, 5)
-            // Il lampo illumina la nuvola da dentro: se restasse dello stesso
-            // grigio, la saetta sembrerebbe disegnata davanti a un fondale.
-            val core = lerp(lerp(colors.cloudCore, colors.rainCloudCore, laden), Lightning, glare * 0.55f)
-            val shade = lerp(lerp(colors.cloudShade, colors.rainCloudShade, laden), Lightning, glare * 0.40f)
+        // Il lampo illumina la nuvola da dentro: se restasse dello stesso
+        // grigio, la saetta sembrerebbe disegnata davanti a un fondale.
+        val core = lerp(lerp(colors.cloudCore, colors.rainCloudCore, laden), Lightning, glare * 0.55f)
+        val shade = lerp(lerp(colors.cloudShade, colors.rainCloudShade, laden), Lightning, glare * 0.40f)
 
-            // Dal fondo verso l'osservatore, e in coordinate di vista: senza un
-            // buffer di profondita' e' l'ordine di disegno a decidere chi sta
-            // davanti, e ordinandole per la posizione nel modello bastava
-            // girare la scena di mezzo giro perche' si scavalcassero al
-            // contrario.
-            CLOUD_MASSES.take(masses)
-                .sortedByDescending { lump ->
-                    camera.place(lump.x * unit * scale, lump.y * unit * scale, lump.z * unit * scale)
-                    camera.vz
-                }
-                .forEach { lump ->
-                    sphere(
+        // **Un ordine solo per tutti i corpi tondi.** L'astro veniva disegnato
+        // per primo e basta, cioe' era un fondale: qualunque cosa facesse la
+        // rotazione, la nuvola gli restava davanti. Portandolo di fronte con
+        // mezzo giro di dito lo si vedeva comunque sotto le masse bianche, ed e'
+        // esattamente il difetto per cui la luna non si vedeva mai intera.
+        // Adesso entra nella stessa fila delle masse, ordinato per profondita'
+        // in coordinate di vista come loro: passa dietro e poi davanti, e chi
+        // gira decide cosa vedere.
+        var bodies = 0
+        if (astroAlpha > 0.01f) {
+            camera.place(bodyX, bodyY, bodyZ)
+            bodyDepth[bodies] = camera.vz
+            bodyOf[bodies] = ASTRO
+            bodies++
+        }
+        for (k in 0 until masses) {
+            val lump = CLOUD_MASSES[k]
+            camera.place(lump.x * unit * scale, lump.y * unit * scale, lump.z * unit * scale)
+            bodyDepth[bodies] = camera.vz
+            bodyOf[bodies] = k
+            bodies++
+        }
+        // Sei elementi al massimo: un inserimento diretto costa meno di
+        // qualunque ordinamento generico, e soprattutto non alloca niente a ogni
+        // fotogramma.
+        for (i in 1 until bodies) {
+            val depth = bodyDepth[i]
+            val which = bodyOf[i]
+            var j = i - 1
+            while (j >= 0 && bodyDepth[j] < depth) {
+                bodyDepth[j + 1] = bodyDepth[j]
+                bodyOf[j + 1] = bodyOf[j]
+                j--
+            }
+            bodyDepth[j + 1] = depth
+            bodyOf[j + 1] = which
+        }
+
+        for (i in 0 until bodies) {
+            val which = bodyOf[i]
+            if (which == ASTRO) {
+                if (sunAlpha >= moonAlpha) {
+                    sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = true)
+                    sphere(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, colors.sunShade, sunAlpha)
+                    sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = false)
+                } else {
+                    moon(
                         camera = camera,
-                        x = lump.x * unit * scale,
-                        y = lump.y * unit * scale,
-                        z = lump.z * unit * scale,
-                        radius = lump.radius * unit * scale,
-                        light = core,
-                        dark = shade,
-                        alpha = presence,
+                        x = bodyX,
+                        y = bodyY,
+                        z = bodyZ,
+                        radius = bodyRadius * 0.94f,
+                        phase = phase,
+                        light = colors.moonCore,
+                        dark = colors.moonShade,
+                        alpha = moonAlpha,
+                        marks = MOON_SEAS,
                     )
                 }
+                continue
+            }
+            val lump = CLOUD_MASSES[which]
+            sphere(
+                camera = camera,
+                x = lump.x * unit * scale,
+                y = lump.y * unit * scale,
+                z = lump.z * unit * scale,
+                radius = lump.radius * unit * scale,
+                light = core,
+                dark = shade,
+                alpha = presence,
+            )
         }
 
         if (glare > 0.01f && bolt.isNotEmpty()) {
@@ -274,6 +348,7 @@ fun WeatherSculpture(
                 progress = fall.floatValue,
                 colour = colors.rain,
                 contact = contact,
+                impacts = impacts,
             )
         }
     }
@@ -306,6 +381,48 @@ private val MOON_SEAS = listOf(
     Triple(-0.08f, 0.42f, 0.15f),
     Triple(0.42f, -0.34f, 0.12f),
 )
+
+/**
+ * Quali gocce stanno toccando la cifra, e quante hanno appena cominciato.
+ *
+ * Lo stato sta qui e non in Compose apposta: viene scritto dentro il disegno e
+ * riletto dal ciclo della caduta, sullo stesso filo e a un fotogramma di
+ * distanza. Uno stato osservabile chiederebbe una ricomposizione per qualcosa
+ * che sullo schermo non cambia niente - la vibrazione non si vede.
+ */
+private class RainImpacts {
+
+    /** Se ognuna stava gia' toccando al fotogramma prima. */
+    private val touching = BooleanArray(DROPS.size)
+
+    private var landed = 0
+
+    /**
+     * Dal disegno: questa goccia sta toccando, o no.
+     *
+     * Conta solo il passaggio dall'aria alla superficie. Senza il confronto col
+     * fotogramma prima, ogni goccia gia' arrivata ne segnerebbe uno per
+     * fotogramma e non ci sarebbe piu' differenza fra una goccia che arriva e
+     * una goccia ferma sul posto.
+     */
+    fun mark(index: Int, hitting: Boolean) {
+        if (index !in touching.indices) return
+        if (hitting && !touching[index]) landed++
+        touching[index] = hitting
+    }
+
+    /** Dal ciclo: quante ne sono arrivate dall'ultima volta che si e' guardato. */
+    fun take(): Int {
+        val count = landed
+        landed = 0
+        return count
+    }
+
+    fun forget() {
+        java.util.Arrays.fill(touching, false)
+        landed = 0
+    }
+}
 
 /**
  * Una goccia, con un posto suo sotto la nuvola.
@@ -345,8 +462,13 @@ private fun DrawScope.drawRain(
     progress: Float,
     colour: Color,
     contact: SceneContact?,
+    impacts: RainImpacts? = null,
 ) {
     val count = (DROPS.size * wetness).roundToInt().coerceIn(3, DROPS.size)
+    // Le gocce che la pioggia ha smesso di disegnare non stanno toccando
+    // niente: senza dimenticarle, al primo rovescio dopo una pioviggine
+    // risulterebbero tutte arrivate insieme.
+    for (i in count until DROPS.size) impacts?.mark(i, false)
     val spreadX = unit * 0.40f * scale
     val spreadZ = unit * 0.17f * scale
     val top = unit * 0.16f * scale
@@ -377,6 +499,7 @@ private fun DrawScope.drawRain(
         // Dove comincia la cifra, sotto questa goccia. La sagoma arriva in
         // coordinate della propria tela: si sposta nelle nostre.
         val surface = skyline?.topAt(head.x - shift.x)?.let { it + shift.y } ?: Float.NaN
+        impacts?.mark(i, !surface.isNaN() && head.y >= surface)
 
         if (surface.isNaN() || head.y < surface) {
             // Aria libera: cade e basta, smorzandosi con la distanza.
@@ -570,3 +693,15 @@ internal fun Wmo.Family.isWet(): Boolean =
 private const val FALL_CYCLE_MS = 1400L
 private const val TILT_YAW = 7f
 private const val TILT_PITCH = 5f
+
+/** Il posto dell'astro nella fila dei corpi tondi: non e' una massa di nuvola. */
+private const val ASTRO = -1
+
+/**
+ * Quanto deve passare, come minimo, fra un colpetto e il successivo.
+ *
+ * Un decimo di secondo. Sotto, in un rovescio, il vibratore non stacca piu' e
+ * quello che dovrebbe leggersi come pioggia si legge come un ronzio; sopra, si
+ * perde il legame fra la goccia che si vede arrivare e quella che si sente.
+ */
+private const val TAP_GAP_NS = 110_000_000L
