@@ -222,6 +222,14 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 |---|---|
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
+| `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
+
+L'aggancio sul giro c'e' perche' **i difetti che si vedono girando vanno
+fotografati girati**, e un trascinamento simulato non ci arriva: per portare la
+cifra di taglio servono quattrocento pixel, per vederla da dietro piu' di
+ottocento, e uno schermo e' largo mille. Senza, il quarto di giro - che e'
+esattamente dove le matrici degenerano e le pareti si scavalcano - non era
+fotografabile, e infatti quei difetti li ha trovati l'utente e non la CI.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta

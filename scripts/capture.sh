@@ -143,6 +143,28 @@ session() {
     restart_with "--ei meteo 3"
     shoot "${slug}-5-coperto"
 
+    # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
+    # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
+    # col dito non si arriva: per portare la cifra di taglio servono quattrocento
+    # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
+    # schermo e' largo mille.
+    restart_with "--ei giro 90"
+    shoot "${slug}-7-di-taglio"
+
+    restart_with "--ei giro 135"
+    shoot "${slug}-8-tre-ottavi"
+
+    restart_with "--ei giro 180"
+    shoot "${slug}-9-da-dietro"
+
+    # La luna deve poter passare davanti alla nuvola: e' tutto il punto
+    # dell'ordinamento in profondita' dei corpi tondi.
+    restart_with "--ei ora 2 --ei giro 155"
+    shoot "${slug}-10-luna-girata"
+
+    restart_with "--ei meteo 63 --ei giro 45"
+    shoot "${slug}-11-pioggia-girata"
+
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
     adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true

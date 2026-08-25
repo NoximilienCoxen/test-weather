@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -62,6 +63,11 @@ fun HomeScreen(
     // Un solo orientamento per la scultura e la cifra: sono un oggetto solo
     // visto da un punto solo, e il gesto che li gira e' lo stesso.
     val rotation: SceneRotation = rememberSceneRotation()
+
+    // L'aggancio di verifica, se c'e'. Fuori dalla composizione: scrivere lo
+    // stato del gesto mentre si compone significherebbe comporre due volte per
+    // qualcosa che in uso normale non succede mai.
+    LaunchedEffect(state.forcedYawDeg) { rotation.pin(state.forcedYawDeg) }
 
     // E un solo mondo: la pioggia esce dalla nuvola e finisce sulla cifra, che
     // sta in un'altra tela. Qui passano la sagoma e le due origini.

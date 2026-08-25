@@ -34,6 +34,18 @@ data class UiState(
      * Nullo in uso normale: la schermata usa quello dell'ora scelta.
      */
     val forcedWeatherCode: Int? = null,
+    /**
+     * Angolo della scena imposto dall'esterno, in gradi, solo per la verifica
+     * automatica. Nullo in uso normale: comanda il dito.
+     *
+     * Serve perche' i difetti che si vedono girando si vedono **girando**, e un
+     * gesto simulato non arriva dove serve: per portare la cifra di taglio
+     * servono quattrocento pixel di trascinamento, per vederla da dietro piu'
+     * di ottocento, e uno schermo e' largo mille. Senza questo aggancio il
+     * quarto di giro - che e' esattamente dove le matrici degenerano e le
+     * pareti si scavalcano - non era fotografabile.
+     */
+    val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     val settingsOpen: Boolean = false,
@@ -232,6 +244,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
+    fun forceYaw(degrees: Float?) {
+        _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
     private companion object {

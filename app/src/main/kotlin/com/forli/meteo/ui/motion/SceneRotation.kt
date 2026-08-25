@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -46,7 +47,25 @@ class SceneRotation internal constructor(private val scope: CoroutineScope) {
     /** La molla del rilascio, se ne sta girando una. */
     private var settling: Job? = null
 
-    val yawDeg: Float get() = yaw.floatValue
+    /** Angolo imposto dall'aggancio di verifica. Nullo quando comanda il dito. */
+    private val pinned = mutableStateOf<Float?>(null)
+
+    val yawDeg: Float get() = pinned.value ?: yaw.floatValue
+
+    /**
+     * Blocca la scena a un angolo, o la libera con `null`.
+     *
+     * Serve alla cattura automatica e a nient'altro: i difetti che si vedono
+     * girando vanno fotografati **girati**, e un trascinamento simulato non
+     * arriva oltre la larghezza dello schermo.
+     */
+    fun pin(degrees: Float?) {
+        pinned.value = degrees
+        if (degrees != null) {
+            settling?.cancel()
+            settling = null
+        }
+    }
 
     internal fun begin() {
         // Il dito riprende il comando: qualunque molla in corso ha finito il
