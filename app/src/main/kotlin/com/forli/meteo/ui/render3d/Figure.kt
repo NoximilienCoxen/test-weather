@@ -40,7 +40,8 @@ class Explorer {
     private val py = FloatArray(MAX)
     private val pz = FloatArray(MAX)
     private val pr = FloatArray(MAX)
-    private val hat = BooleanArray(MAX)
+    /** 0 pelle, 1 cappello, 2 occhio. */
+    private val tone = IntArray(MAX)
     private val wide = FloatArray(MAX)
     private val tall = FloatArray(MAX)
     private val depth = FloatArray(MAX)
@@ -52,13 +53,13 @@ class Explorer {
         y: Float,
         z: Float,
         radius: Float,
-        isHat: Boolean = false,
+        material: Int = SKIN,
         w: Float = 1f,
         t: Float = 1f,
     ) {
         if (count >= MAX) return
         px[count] = x; py[count] = y; pz[count] = z; pr[count] = radius
-        hat[count] = isHat; wide[count] = w; tall[count] = t
+        tone[count] = material; wide[count] = w; tall[count] = t
         count++
     }
 
@@ -145,17 +146,28 @@ class Explorer {
         // La calotta sta piu' in alto della tesa e sporge sopra la testa: sotto,
         // spariva dietro di lei e restava solo un disco che galleggiava.
         rig.at(0f, -0.140f, 0.005f)
-        add(rig.x, rig.y, rig.z, 0.108f, isHat = true)
+        add(rig.x, rig.y, rig.z, 0.108f, material = HAT)
         rig.at(0f, -0.062f, 0.010f)
-        add(rig.x, rig.y, rig.z, 0.132f, isHat = true, w = 1.45f, t = 0.28f)
+        add(rig.x, rig.y, rig.z, 0.132f, material = HAT, w = 1.45f, t = 0.28f)
+
+        // Due occhi, e servono: senza, la testa che gira si legge solo dalla
+        // tesa del cappello, e "si sta guardando intorno" diventa "il cappello
+        // oscilla". Stanno sulla superficie della testa e ruotano con lei,
+        // quindi quando gira **l'occhio lontano finisce dietro** e sparisce da
+        // solo - non serve dirglielo, lo decide l'ordine in profondita'.
+        rig.at(-0.062f, -0.005f, -0.128f)
+        add(rig.x, rig.y, rig.z, 0.026f, material = EYE)
+        rig.at(0.062f, -0.005f, -0.128f)
+        add(rig.x, rig.y, rig.z, 0.026f, material = EYE)
 
         // Il punto sopra gli occhi, dalla parte in cui la testa sta guardando.
         // E' definito **nel sistema della testa**: girandola, la visiera lo
         // segue da sola.
-        // All'altezza degli occhi e ben davanti alla faccia: piu' in alto la
-        // mano finiva sul cappello e si leggeva come una fascia bianca sulla
-        // tesa, non come qualcuno che ripara lo sguardo.
-        rig.at(-0.115f, -0.015f, -0.245f)
+        // Appena fuori dalla superficie della testa, non a mezzo raggio di
+        // distanza: il punto ruota con lei, e piu' e' lontano dall'asse piu'
+        // l'arco che percorre e' lungo. Da un quarto di unita' la mano si
+        // staccava dalla faccia a ogni sbirciata, come se salutasse.
+        rig.at(-0.085f, -0.010f, -0.155f)
         val browX = rig.x
         val browY = rig.y
         val browZ = rig.z
@@ -204,6 +216,8 @@ class Explorer {
         shade: Color,
         hatSkin: Color,
         hatShade: Color,
+        eyeSkin: Color,
+        eyeShade: Color,
         alpha: Float = 1f,
     ) = with(scope) {
         if (count == 0 || alpha <= 0.003f) return@with
@@ -234,8 +248,16 @@ class Explorer {
                 y = py[i] * unit,
                 z = pz[i] * unit,
                 radius = pr[i] * unit,
-                light = if (hat[i]) hatSkin else skin,
-                dark = if (hat[i]) hatShade else shade,
+                light = when (tone[i]) {
+                    HAT -> hatSkin
+                    EYE -> eyeSkin
+                    else -> skin
+                },
+                dark = when (tone[i]) {
+                    HAT -> hatShade
+                    EYE -> eyeShade
+                    else -> shade
+                },
                 alpha = alpha,
                 wide = wide[i],
                 tall = tall[i],
@@ -245,6 +267,10 @@ class Explorer {
 
     private companion object {
         const val MAX = 40
+
+        const val SKIN = 0
+        const val HAT = 1
+        const val EYE = 2
 
         /** Oltre questo, un braccio piu' lungo costa disegni senza aggiungere forma. */
         const val MAX_BEADS = 11
