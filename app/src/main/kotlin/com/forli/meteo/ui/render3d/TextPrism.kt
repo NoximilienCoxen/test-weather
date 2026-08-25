@@ -81,6 +81,18 @@ class TextPrism private constructor(
         val points: FloatArray,
         /** Il contorno vero, non campionato. */
         val outline: android.graphics.Path,
+        /**
+         * Quanto e' spesso questo carattere, in frazione dello spessore comune.
+         *
+         * Uno per le cifre. Per il grado vale quanto il suo corpo: un simbolo
+         * rimpicciolito solo in altezza e larghezza, ma lasciato spesso come una
+         * cifra, non e' piu' un simbolo - e' un tubo. Il suo anello e' largo
+         * novanta pixel e lo spessore comune ne misura centoventi: visto di
+         * sbieco usciva un pezzo di tubo appoggiato accanto al numero. Ridotto
+         * nella stessa proporzione resta la stessa lastra, ritagliata piu'
+         * piccola.
+         */
+        val depthScale: Float,
         val left: Float,
         val top: Float,
         val right: Float,
@@ -309,8 +321,9 @@ class TextPrism private constructor(
         ink: Ink,
     ): Surfaces {
         val part = parts[index]
-        val half = depth / 2f
-        val bevel = chamfer.coerceIn(0f, depth * 0.4f)
+        val thickness = depth * part.depthScale
+        val half = thickness / 2f
+        val bevel = (chamfer * part.depthScale).coerceIn(0f, thickness * 0.4f)
 
         // Girando oltre il quarto di giro si finisce a guardare l'oggetto da
         // dietro, e allora la base che si vede e' l'altra. Disegnare sempre
@@ -736,6 +749,7 @@ class TextPrism private constructor(
                     edgeCount = allNormals.size / 2,
                     points = pointArray,
                     outline = outlines[index],
+                    depthScale = if (reduced[index]) smallScale else 1f,
                     left = box.left + shiftX,
                     top = box.top + shiftY,
                     right = box.right + shiftX,
