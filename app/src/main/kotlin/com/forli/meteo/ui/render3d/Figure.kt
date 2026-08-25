@@ -72,6 +72,8 @@ class Explorer {
         toX: Float, toY: Float, toZ: Float,
         bowX: Float, bowY: Float,
         thick: Float,
+        handWide: Float = 1f,
+        handTall: Float = 1f,
     ) {
         val cx = (fromX + toX) / 2f + bowX
         val cy = (fromY + toY) / 2f + bowY
@@ -88,7 +90,7 @@ class Explorer {
                 radius = thick * (1f - 0.28f * t),
             )
         }
-        add(toX, toY, toZ, thick * 1.12f)
+        add(toX, toY, toZ, thick * 1.12f, w = handWide, t = handTall)
     }
 
     /**
@@ -112,46 +114,57 @@ class Explorer {
         val lift = shrug * 0.055f
         val bob = breath * 0.012f
 
-        // Busto, dal basso in alto.
-        add(0f, 0.17f + bob, 0f, 0.155f)
-        add(0f, -0.02f + bob, 0f, 0.20f)
+        // Busto, dal basso in alto, piu' due spalle. Senza le spalle la sagoma
+        // e' due palle impilate e si legge pupazzo di neve: e' il restringimento
+        // al collo e l'allargamento sotto a dire che quello e' un torace.
+        add(0f, 0.17f + bob, 0f, 0.150f)
+        add(0f, -0.02f + bob, 0f, 0.195f)
+        add(-0.150f, -0.085f + bob - lift, 0.01f, 0.078f)
+        add(0.150f, -0.085f + bob - lift * 0.7f, 0.01f, 0.078f)
 
         // Testa e cappello vivono nel sistema della testa: entrando qui, tutto
         // quello che si chiede sotto ruota con lei.
-        rig.push(0f, -0.30f + bob - lift, 0f, ryDeg = headYaw)
+        rig.push(0f, -0.305f + bob - lift, 0f, ryDeg = headYaw)
         rig.at(0f, 0f, 0f)
         add(rig.x, rig.y, rig.z, 0.145f)
-        rig.at(0f, -0.085f, 0.01f)
-        add(rig.x, rig.y, rig.z, 0.125f, isHat = true)
-        rig.at(0f, -0.028f, 0.012f)
-        add(rig.x, rig.y, rig.z, 0.145f, isHat = true, w = 1.55f, t = 0.34f)
+        // La calotta sta piu' in alto della tesa e sporge sopra la testa: sotto,
+        // spariva dietro di lei e restava solo un disco che galleggiava.
+        rig.at(0f, -0.120f, 0.005f)
+        add(rig.x, rig.y, rig.z, 0.112f, isHat = true)
+        rig.at(0f, -0.052f, 0.010f)
+        add(rig.x, rig.y, rig.z, 0.124f, isHat = true, w = 1.5f, t = 0.30f)
 
         // Il punto sopra gli occhi, dalla parte in cui la testa sta guardando.
         // E' definito **nel sistema della testa**: girandola, la visiera lo
         // segue da sola.
-        rig.at(-0.10f, -0.055f, -0.16f)
+        rig.at(-0.125f, -0.048f, -0.20f)
         val browX = rig.x
         val browY = rig.y
         val browZ = rig.z
         rig.pop()
 
         // Il braccio che scruta: dalla spalla al punto sopra gli occhi, col
-        // gomito che sporge in fuori e in basso.
+        // gomito che sporge in fuori e in basso. La mano e' schiacciata e larga,
+        // se no e' una pallina appoggiata alla fronte invece di una visiera.
         arm(
-            fromX = -0.185f, fromY = -0.09f + bob - lift, fromZ = 0.02f,
+            fromX = -0.160f, fromY = -0.075f + bob - lift, fromZ = 0.01f,
             toX = browX, toY = browY, toZ = browZ,
-            bowX = -0.16f, bowY = 0.10f,
-            thick = 0.058f,
+            bowX = -0.17f, bowY = 0.11f,
+            thick = 0.052f,
+            handWide = 1.9f,
+            handTall = 0.62f,
         )
 
         // Il braccio che si appoggia: dalla spalla al tasto. La mano ci arriva
         // esattamente, perche' e' l'estremo della curva e non il risultato di
         // una catena di angoli.
         arm(
-            fromX = 0.185f, fromY = -0.09f + bob - lift * 0.7f, fromZ = 0.02f,
-            toX = reachX, toY = reachY, toZ = -0.10f,
-            bowX = 0.13f, bowY = 0.09f,
-            thick = 0.058f,
+            fromX = 0.160f, fromY = -0.075f + bob - lift * 0.7f, fromZ = 0.01f,
+            toX = reachX, toY = reachY, toZ = -0.12f,
+            bowX = 0.06f, bowY = 0.13f,
+            thick = 0.052f,
+            handWide = 1.5f,
+            handTall = 0.78f,
         )
     }
 

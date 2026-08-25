@@ -164,7 +164,11 @@ fun WelcomeScreen(
         ) {
             val boxW = with(density) { maxWidth.toPx() }
             val boxH = with(density) { maxHeight.toPx() }
-            val unit = min(boxW, boxH)
+            // Il pupazzo occupa poco piu' di meta' del riquadro. A grandezza
+            // piena il tasto gli finiva **addosso**: il braccio che avrebbe
+            // dovuto allungarsi per raggiungerlo era lungo sette centesimi di
+            // unita', cioe' spariva dentro il torace.
+            val unit = min(boxW, boxH) * FIGURE_SCALE
 
             // Il pupazzo e il tasto si accordano su un punto solo, calcolato da
             // entrambi con le stesse frazioni: cosi' la mano ci finisce sopra a
@@ -252,13 +256,20 @@ fun WelcomeScreen(
     }
 }
 
-/** Dove sta il pupazzo nel suo riquadro, in frazioni. */
-private const val FIGURE_X = 0.38f
-private const val FIGURE_Y = 0.56f
+/** Dove sta il pupazzo nel suo riquadro, e quanto e' grande, in frazioni. */
+private const val FIGURE_X = 0.30f
+private const val FIGURE_Y = 0.58f
+private const val FIGURE_SCALE = 0.58f
 
-/** Dove sta il tasto, in frazioni dello stesso riquadro. */
-private const val BUTTON_X = 0.72f
-private const val BUTTON_Y = 0.50f
+/**
+ * Dove sta il tasto, in frazioni dello stesso riquadro.
+ *
+ * All'altezza della spalla, non del petto: un braccio che si alza troppo si
+ * legge come un saluto, e uno che scende come un braccio caduto. Appoggiato
+ * vuol dire quasi in piano.
+ */
+private const val BUTTON_X = 0.75f
+private const val BUTTON_Y = 0.52f
 
 private val BUTTON_WIDTH = 156.dp
 private val BUTTON_HEIGHT = 54.dp
