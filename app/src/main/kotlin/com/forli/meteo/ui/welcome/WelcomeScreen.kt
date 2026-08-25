@@ -258,8 +258,8 @@ fun WelcomeScreen(
 
 /** Dove sta il pupazzo nel suo riquadro, e quanto e' grande, in frazioni. */
 private const val FIGURE_X = 0.30f
-private const val FIGURE_Y = 0.58f
-private const val FIGURE_SCALE = 0.58f
+private const val FIGURE_Y = 0.55f
+private const val FIGURE_SCALE = 0.78f
 
 /**
  * Dove sta il tasto, in frazioni dello stesso riquadro.
@@ -268,8 +268,8 @@ private const val FIGURE_SCALE = 0.58f
  * legge come un saluto, e uno che scende come un braccio caduto. Appoggiato
  * vuol dire quasi in piano.
  */
-private const val BUTTON_X = 0.75f
-private const val BUTTON_Y = 0.52f
+private const val BUTTON_X = 0.74f
+private const val BUTTON_Y = 0.50f
 
 private val BUTTON_WIDTH = 156.dp
 private val BUTTON_HEIGHT = 54.dp

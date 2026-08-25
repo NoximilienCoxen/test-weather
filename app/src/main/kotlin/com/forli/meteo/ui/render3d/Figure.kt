@@ -2,6 +2,8 @@ package com.forli.meteo.ui.render3d
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import kotlin.math.ceil
+import kotlin.math.sqrt
 
 /**
  * L'esploratore: un pupazzo fatto di sfere, con le stesse primitive della
@@ -78,8 +80,21 @@ class Explorer {
         val cx = (fromX + toX) / 2f + bowX
         val cy = (fromY + toY) / 2f + bowY
         val cz = (fromZ + toZ) / 2f
-        for (k in 0 until BEADS) {
-            val t = (k + 1f) / (BEADS + 1f)
+
+        // Quante sfere, deciso dalla lunghezza e non da una costante.
+        //
+        // Con un numero fisso un braccio corto usciva impastato e uno lungo
+        // usciva **a collana**: le sfere non si toccavano e si vedevano le
+        // perline sospese in aria invece di un arto. Il passo va tenuto sotto
+        // il raggio, se no fra una e l'altra si apre il fondo.
+        val dx = toX - fromX
+        val dy = toY - fromY
+        val dz = toZ - fromZ
+        val span = sqrt(dx * dx + dy * dy + dz * dz)
+        val beads = ceil(span / (thick * 0.72f)).toInt().coerceIn(3, MAX_BEADS)
+
+        for (k in 0 until beads) {
+            val t = (k + 1f) / (beads + 1f)
             val u = 1f - t
             add(
                 x = u * u * fromX + 2f * u * t * cx + t * t * toX,
@@ -129,15 +144,18 @@ class Explorer {
         add(rig.x, rig.y, rig.z, 0.145f)
         // La calotta sta piu' in alto della tesa e sporge sopra la testa: sotto,
         // spariva dietro di lei e restava solo un disco che galleggiava.
-        rig.at(0f, -0.120f, 0.005f)
-        add(rig.x, rig.y, rig.z, 0.112f, isHat = true)
-        rig.at(0f, -0.052f, 0.010f)
-        add(rig.x, rig.y, rig.z, 0.124f, isHat = true, w = 1.5f, t = 0.30f)
+        rig.at(0f, -0.140f, 0.005f)
+        add(rig.x, rig.y, rig.z, 0.108f, isHat = true)
+        rig.at(0f, -0.062f, 0.010f)
+        add(rig.x, rig.y, rig.z, 0.132f, isHat = true, w = 1.45f, t = 0.28f)
 
         // Il punto sopra gli occhi, dalla parte in cui la testa sta guardando.
         // E' definito **nel sistema della testa**: girandola, la visiera lo
         // segue da sola.
-        rig.at(-0.125f, -0.048f, -0.20f)
+        // All'altezza degli occhi e ben davanti alla faccia: piu' in alto la
+        // mano finiva sul cappello e si leggeva come una fascia bianca sulla
+        // tesa, non come qualcuno che ripara lo sguardo.
+        rig.at(-0.115f, -0.015f, -0.245f)
         val browX = rig.x
         val browY = rig.y
         val browZ = rig.z
@@ -149,10 +167,10 @@ class Explorer {
         arm(
             fromX = -0.160f, fromY = -0.075f + bob - lift, fromZ = 0.01f,
             toX = browX, toY = browY, toZ = browZ,
-            bowX = -0.17f, bowY = 0.11f,
-            thick = 0.052f,
-            handWide = 1.9f,
-            handTall = 0.62f,
+            bowX = -0.19f, bowY = 0.12f,
+            thick = 0.066f,
+            handWide = 1.7f,
+            handTall = 0.58f,
         )
 
         // Il braccio che si appoggia: dalla spalla al tasto. La mano ci arriva
@@ -161,10 +179,10 @@ class Explorer {
         arm(
             fromX = 0.160f, fromY = -0.075f + bob - lift * 0.7f, fromZ = 0.01f,
             toX = reachX, toY = reachY, toZ = -0.12f,
-            bowX = 0.06f, bowY = 0.13f,
-            thick = 0.052f,
-            handWide = 1.5f,
-            handTall = 0.78f,
+            bowX = 0.05f, bowY = 0.12f,
+            thick = 0.070f,
+            handWide = 1.45f,
+            handTall = 0.80f,
         )
     }
 
@@ -226,9 +244,9 @@ class Explorer {
     }
 
     private companion object {
-        const val MAX = 24
+        const val MAX = 40
 
-        /** Sfere per braccio, oltre alla mano. Quattro bastano a leggere una piega. */
-        const val BEADS = 4
+        /** Oltre questo, un braccio piu' lungo costa disegni senza aggiungere forma. */
+        const val MAX_BEADS = 11
     }
 }
