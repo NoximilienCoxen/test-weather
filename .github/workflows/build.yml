@@ -131,6 +131,23 @@ jobs:
 
             Commit: ${{ github.sha }}
 
+      # Il rilascio conserva gli allegati che nessuno sovrascrive. Rinominando
+      # l'APK ne sono rimasti due, uno vecchio e uno nuovo, e chi arriva sulla
+      # pagina non ha modo di sapere quale sia quello buono: se ne scarica uno a
+      # caso e installa l'app di ieri.
+      - name: Togli gli allegati che non c'entrano piu'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          presenti=$(gh release view apk-latest --repo "$GITHUB_REPOSITORY" \
+            --json assets --jq '.assets[].name')
+          for allegato in $presenti; do
+            [ "$allegato" = "weather.apk" ] && continue
+            echo "rimuovo allegato obsoleto: $allegato"
+            gh release delete-asset apk-latest "$allegato" \
+              --repo "$GITHUB_REPOSITORY" --yes
+          done
+
   screenshots:
     needs: build
     runs-on: ubuntu-latest
