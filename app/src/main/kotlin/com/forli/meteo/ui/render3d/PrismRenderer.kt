@@ -3,7 +3,6 @@ package com.forli.meteo.ui.render3d
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -13,6 +12,7 @@ import com.forli.meteo.ui.render.NumberPalette
 import com.forli.meteo.ui.render.NumberSpec
 import com.forli.meteo.ui.render.PreparedNumber
 import com.forli.meteo.ui.render.TemperatureRenderer
+import kotlin.math.hypot
 import kotlin.math.max
 
 /**
@@ -73,6 +73,7 @@ class PrismRenderer : TemperatureRenderer {
             sizePx = size,
             letterSpacingEm = spec.letterSpacingEm,
             step = sampleStep(size),
+            smallTail = spec.smallTail,
         ) ?: return null
 
         // Girata, la meta' vicina dell'oggetto ingrandisce: se la cifra
@@ -89,6 +90,7 @@ class PrismRenderer : TemperatureRenderer {
                 sizePx = size,
                 letterSpacingEm = spec.letterSpacingEm,
                 step = sampleStep(size),
+                smallTail = spec.smallTail,
             ) ?: return null
         }
 
@@ -130,21 +132,32 @@ class PrismRenderer : TemperatureRenderer {
         // copia sola col bordo netto non si legge come ombra ma come un secondo
         // oggetto scuro dietro il primo. Sfocarla davvero non si puo' a buon
         // mercato su tela accelerata, ma due gradini bastano.
-        if (palette.shadowAlpha > 0.001f) {
+        //
+        // Quanto la cifra e' aperta verso l'occhio. Di taglio non proietta piu'
+        // niente, e la matrice che ce la porterebbe e' fatta di numeri che
+        // divergono: l'ombra si spegne prima di arrivarci, invece di sfrangiarsi
+        // in strisce lunghe mezzo schermo - che era il difetto che si vedeva
+        // spuntare da sotto la cifra ogni volta che passava di profilo.
+        val openness = prism.openness(camera)
+        val castAlpha = palette.shadowAlpha *
+            ((openness - SHADOW_FADE_FROM) / (SHADOW_FADE_TO - SHADOW_FADE_FROM)).coerceIn(0f, 1f)
+
+        if (castAlpha > 0.001f) {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 for (index in 0 until prism.partCount) {
-                    if (!prism.capTransform(index, camera, model.depth)) continue
+                    if (!prism.prepareShadow(index, camera)) continue
                     val outline = prism.outlineOf(index)
                     for (layer in SHADOW_STEPS.indices) {
                         val reach = SHADOW_STEPS[layer]
                         shadowPaint.color = Color.Black
-                            .copy(alpha = palette.shadowAlpha * SHADOW_WEIGHTS[layer])
+                            .copy(alpha = castAlpha * SHADOW_WEIGHTS[layer])
                             .toArgb()
                         native.save()
+                        val away = model.depth * SHADOW_REACH * reach
                         native.translate(
-                            model.depth * 0.24f * reach,
-                            model.depth * 0.42f * reach,
+                            SHADOW_DIRECTION.x * away,
+                            SHADOW_DIRECTION.y * away,
                         )
                         native.concat(prism.shadowTransform)
                         native.drawPath(outline, shadowPaint)
@@ -268,5 +281,29 @@ class PrismRenderer : TemperatureRenderer {
          */
         val SHADOW_STEPS = floatArrayOf(0.40f, 1f)
         val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
+
+        /** Quanto si allontana l'ombra, in multipli dello spessore della cifra. */
+        const val SHADOW_REACH = 0.62f
+
+        /**
+         * Dove cade l'ombra: nel verso opposto alla luce, e da nessun'altra
+         * parte. Presa dalla luce stessa cosi' spostare la lampada sposta anche
+         * l'ombra, invece di lasciarle contraddirsi - la luce sfiorava la cifra
+         * da sinistra in alto e l'ombra cadeva quasi in verticale, cioe' come se
+         * venisse da un'altra lampada.
+         */
+        val SHADOW_DIRECTION: Offset = run {
+            val l = Light.Standard
+            val len = hypot(l.x, l.y).takeIf { it > 1e-4f } ?: 1f
+            Offset(-l.x / len, -l.y / len)
+        }
+
+        /**
+         * Fra queste due aperture l'ombra passa da assente a piena. Un gradino
+         * secco si vedrebbe scattare proprio nell'istante in cui la cifra passa
+         * di profilo, che e' il momento in cui la si sta guardando.
+         */
+        const val SHADOW_FADE_FROM = 0.05f
+        const val SHADOW_FADE_TO = 0.20f
     }
 }

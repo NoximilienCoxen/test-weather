@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.UiState
-import com.forli.meteo.ui.asBigTemperature
+import com.forli.meteo.ui.asBigDegrees
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberSceneRotation
@@ -137,7 +137,10 @@ fun HomeScreen(
                 // dice "sto aspettando": dice che l'app e' rotta.
                 val degrees = hour?.temperature
                 if (degrees != null) PhysicalNumber(
-                    text = degrees.asBigTemperature(state.unit),
+                    text = degrees.asBigDegrees(state.unit),
+                    // Il grado e' l'ultimo carattere e non e' una cifra: va in
+                    // corpo ridotto, a filo della cima delle altre.
+                    smallTail = 1,
                     fontSize = maxHeight * 0.86f,
                     rotation = rotation,
                     tilt = tilt,
