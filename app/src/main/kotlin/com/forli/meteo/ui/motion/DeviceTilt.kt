@@ -22,6 +22,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.sin
 
 /**
@@ -76,10 +77,21 @@ fun rememberDeviceTilt(
                 fastY += (rawY - fastY) * FAST
                 baseX += (rawX - baseX) * SLOW
                 baseY += (rawY - baseY) * SLOW
-                target.value = Offset(
+                val next = Offset(
                     x = (-(fastX - baseX) / limit).coerceIn(-1f, 1f),
                     y = ((fastY - baseY) / limit).coerceIn(-1f, 1f),
                 )
+                // Un accelerometro non sta mai fermo: anche col telefono
+                // appoggiato sul tavolo l'ultima cifra balla. Scrivere ogni
+                // lettura teneva l'intera scena a ridisegnarsi cinquanta volte
+                // al secondo per un movimento che nessuno puo' vedere, e con
+                // una scena in tre dimensioni quel lavoro si paga caro.
+                // Sotto la soglia il valore precedente e' altrettanto vero.
+                if (abs(next.x - target.value.x) > DEADBAND ||
+                    abs(next.y - target.value.y) > DEADBAND
+                ) {
+                    target.value = next
+                }
             }
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
@@ -136,3 +148,9 @@ private const val FAST = 0.14f
 
 /** Insegue la posa media, cosi' l'oggetto si ricentra da solo. */
 private const val SLOW = 0.004f
+
+/**
+ * Sotto questo scostamento la lettura si considera ferma. E' l'un per cento
+ * della corsa: a schermo vale meno di un pixel, cioe' niente.
+ */
+private const val DEADBAND = 0.01f

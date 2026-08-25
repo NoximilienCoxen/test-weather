@@ -12,6 +12,12 @@ data class OpenMeteoResponse(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val timezone: String? = null,
+    /**
+     * Scarto dall'ora universale della localita' richiesta. Serve a sapere che
+     * ore sono *li'*: con una citta' scelta dall'utente l'orologio del telefono
+     * non e' piu' una risposta.
+     */
+    @SerialName("utc_offset_seconds") val utcOffsetSeconds: Int? = null,
     val current: CurrentDto? = null,
     val daily: DailyDto? = null,
     val hourly: HourlyDto? = null,
@@ -51,6 +57,24 @@ data class DailyDto(
     @SerialName("relative_humidity_2m_mean") val humidityMean: List<Double?> = emptyList(),
     @SerialName("dew_point_2m_mean") val dewPointMean: List<Double?> = emptyList(),
     @SerialName("precipitation_hours") val precipitationHours: List<Double?> = emptyList(),
+    val sunrise: List<String?> = emptyList(),
+    val sunset: List<String?> = emptyList(),
+)
+
+/** Risposta della ricerca localita'. Qui non c'e' niente di colonnare. */
+@Serializable
+data class GeocodingResponse(
+    val results: List<GeocodingHit> = emptyList(),
+)
+
+@Serializable
+data class GeocodingHit(
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    /** Regione. L'API la chiama cosi' perche' esistono admin2, admin3... */
+    val admin1: String? = null,
+    val country: String? = null,
 )
 
 /** Anche il blocco orario e' colonnare: una lista per variabile. */
