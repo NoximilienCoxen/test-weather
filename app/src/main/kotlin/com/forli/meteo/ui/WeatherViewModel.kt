@@ -1,6 +1,7 @@
 package com.forli.meteo.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.forli.meteo.data.DeviceLocation
@@ -212,6 +213,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 val outcome = repository.load()
                 outcome
                     .onSuccess { forecast ->
+                        // L'unico log dell'app, e non serve a chi sviluppa:
+                        // serve alla cattura in CI, che finora aspettava **a
+                        // tempo** che i dati arrivassero. Un'attesa a tempo e'
+                        // una scommessa sulla rete del runner, e la scommessa
+                        // si perde: otto secondi non bastavano, quattordici
+                        // nemmeno, e a diciannove uno scatto su undici e'
+                        // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
+                        // qui l'attesa smette di essere una durata e diventa
+                        // una condizione.
+                        Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
                         _state.update { current ->
                             val last = (forecast.hours.size - 1).coerceAtLeast(0)
                             val hour = when {
@@ -415,6 +426,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
          * ma la barra deve almeno riguardare il giorno giusto.
          */
         val STALE_AFTER: Duration = Duration.ofMinutes(20)
+
+        /**
+         * L'etichetta del log. Il filtro di `capture.sh` cerca gia' "meteo"
+         * fra le righe che tiene, quindi questa riga finisce anche nel
+         * logcat allegato agli scatti senza doverlo cambiare.
+         */
+        const val TAG = "meteo"
 
         const val MAX_ATTEMPTS = 4
         const val FIRST_RETRY_MS = 1_200L
