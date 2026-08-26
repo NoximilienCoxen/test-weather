@@ -286,7 +286,7 @@ fun WeatherSculpture(
         // centro sopra il numero; con, i due si allargano attorno al centro.
         val pairing = if (masses > 0) presence else 0f
         val bodyX = unit * 0.21f * pairing
-        val bodyY = -unit * (0.20f + 0.03f * pairing)
+        val bodyY = -unit * (0.15f + 0.05f * pairing)
         val bodyZ = unit * 0.26f
         val bodyRadius = unit * 0.23f
         val cloudX = -unit * 0.13f * pairing
