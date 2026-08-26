@@ -292,6 +292,19 @@ fun DrawScope.globe(
         coasts.forEach { coast ->
             outline.reset()
             var visible = false
+            var started = false
+            // L'angolo sul bordo dell'ultimo vertice finito dietro, se c'era.
+            var rimAngle = Float.NaN
+
+            fun addAt(px: Float, py: Float) {
+                if (started) {
+                    outline.lineTo(centre.x + px * r, centre.y + py * r)
+                } else {
+                    outline.moveTo(centre.x + px * r, centre.y + py * r)
+                    started = true
+                }
+            }
+
             var k = 0
             while (k < coast.size) {
                 val lon = (coast[k] + spinDeg) * DEG
@@ -304,21 +317,40 @@ fun DrawScope.globe(
                     // l'osservatore, e da li' comincia a scivolare via girando.
                     -cosLat * cos(lon),
                 )
-                val front = camera.nvz < 0f
-                if (front) visible = true
-                // **Chi sta dietro non si butta via: si porta sul bordo.** Una
-                // costa a meta' del giro ha certi vertici davanti e certi
-                // dietro, e scartando quelli dietro il poligono si richiuderebbe
-                // su se stesso - un continente che si accartoccia mentre esce.
-                // Spingendoli sul bordo del disco, quello che si vede resta la
-                // parte davanti, tagliata dal bordo come deve.
-                val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
-                val px = if (front) camera.nvx else camera.nvx / len
-                val py = if (front) camera.nvy else camera.nvy / len
-                if (k == 0) {
-                    outline.moveTo(centre.x + px * r, centre.y + py * r)
+                if (camera.nvz < 0f) {
+                    visible = true
+                    rimAngle = Float.NaN
+                    addAt(camera.nvx, camera.nvy)
                 } else {
-                    outline.lineTo(centre.x + px * r, centre.y + py * r)
+                    // **Chi sta dietro si porta sul bordo, e fra due vertici
+                    // dietro si segue il bordo invece di tagliare dritto.**
+                    //
+                    // Portarli sul bordo era gia' giusto: scartandoli, una costa
+                    // a meta' del giro si richiuderebbe su se stessa e si
+                    // vedrebbe un continente accartocciarsi mentre esce.
+                    // Unirli con una corda dritta no: su un poligono grande come
+                    // l'Eurasia, che sta dietro per piu' di meta', la corda
+                    // taglia il disco da parte a parte e quello che si riempie
+                    // non e' un continente ma mezza sfera. Era la fascia
+                    // incollata al bordo che si vedeva nel primo scatto.
+                    //
+                    // Seguendo l'arco, la parte nascosta diventa esattamente il
+                    // bordo del disco: quello che resta e' la terra davanti,
+                    // tagliata dall'orizzonte come deve.
+                    val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
+                    val angle = atan2(camera.nvy / len, camera.nvx / len)
+                    if (!rimAngle.isNaN()) {
+                        var delta = angle - rimAngle
+                        while (delta > PI.toFloat()) delta -= 2f * PI.toFloat()
+                        while (delta < -PI.toFloat()) delta += 2f * PI.toFloat()
+                        val steps = (abs(delta) / RIM_STEP).toInt()
+                        for (s in 1..steps) {
+                            val a = rimAngle + delta * (s / (steps + 1f))
+                            addAt(cos(a), sin(a))
+                        }
+                    }
+                    addAt(cos(angle), sin(angle))
+                    rimAngle = angle
                 }
                 k += 2
             }
@@ -394,6 +426,9 @@ fun spinToFace(lonDeg: Float): Float = -lonDeg
  * E' il numero che decide se si guarda una sfera o un cerchio: senza, le terre
  * restano ritagli piatti su una palla e non appartengono al corpo sotto.
  */
+/** Quanto fitto si campiona l'arco del bordo, in radianti. */
+private const val RIM_STEP = 0.16f
+
 private const val LIMB_SHADE = 0.60f
 
 private const val UNLIT_DISC = 0.24f
