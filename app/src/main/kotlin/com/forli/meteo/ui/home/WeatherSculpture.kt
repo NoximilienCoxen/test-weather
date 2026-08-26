@@ -42,6 +42,7 @@ import com.forli.meteo.ui.theme.LocalMeteoColors
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -311,8 +312,24 @@ fun WeatherSculpture(
         // sotto. Ora lo scostamento cresce con la nuvola: senza, l'astro e' al
         // centro sopra il numero; con, i due si allargano attorno al centro.
         val pairing = if (masses > 0) presence else 0f
-        val bodyX = unit * 0.21f * pairing
-        val bodyY = -unit * (0.15f + 0.05f * pairing)
+
+        // **L'arco del giorno.** L'astro non sta piu' a un'altezza fissa: sale e
+        // scende secondo l'ora vera di alba e tramonto, e attraversa da una
+        // parte all'altra.
+        //
+        // L'altezza viene dal valore assoluto dell'altitudine, e il valore
+        // assoluto non e' una scorciatoia: quel numero e' positivo di giorno e
+        // negativo di notte, e vale zero all'orizzonte in **entrambi** i casi.
+        // Prendendone il modulo si ottiene "quanto e' alto l'astro di turno" -
+        // il sole a mezzogiorno e la luna a mezzanotte stanno tutti e due in
+        // cima, all'alba e al tramonto tutti e due bassi. Che e' come va.
+        //
+        // Il lato lo dice il viaggio, che l'altezza da sola non puo' sapere:
+        // alle otto e alle sedici il sole e' alto uguale, ma in cielo sta da due
+        // parti opposte.
+        val climb = abs(sky.altitude).coerceAtMost(1f)
+        val bodyX = unit * (0.21f * pairing + (sky.journey - 0.5f) * 2f * ARC_REACH)
+        val bodyY = -unit * (ARC_FLOOR + ARC_CLIMB * climb + 0.05f * pairing)
         val bodyZ = unit * 0.26f
         val bodyRadius = unit * 0.23f
         val cloudX = -unit * 0.13f * pairing
@@ -1383,6 +1400,19 @@ private const val HAIL_FAST = 1.55f
 private const val HAIL_SIZE = 0.013f
 private const val HAIL_HOP = 0.055f
 private const val HAIL_BOUNCE = 0.26f
+
+/**
+ * L'arco che l'astro percorre in cielo.
+ *
+ * [ARC_REACH] e' quanto si sposta di lato fra il sorgere e il tramontare,
+ * [ARC_FLOOR] quanto sta alto all'orizzonte e [ARC_CLIMB] quanto sale in cima.
+ * Il riquadro e' basso, quindi la corsa verticale e' contenuta: quello che deve
+ * leggersi e' che il sole delle sette non sta dov'e' quello di mezzogiorno, non
+ * una simulazione di elevazione.
+ */
+private const val ARC_REACH = 0.30f
+private const val ARC_FLOOR = 0.07f
+private const val ARC_CLIMB = 0.22f
 
 private const val BIRD_BEAT = 4.2f
 
