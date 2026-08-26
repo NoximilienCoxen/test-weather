@@ -184,9 +184,9 @@ fun WelcomeScreen(
                 z = 0f,
                 radius = radius,
                 spinDeg = spin.floatValue,
-                light = colors.cloudCore,
-                dark = colors.cloudShade,
-                land = colors.numberSideFar.copy(alpha = 0.82f),
+                light = colors.globeSea,
+                dark = colors.globeSeaShade,
+                land = colors.globeLand,
                 lands = CONTINENTS,
             )
 

@@ -38,6 +38,13 @@ jobs:
           head -c 400 /tmp/ciout/safe.json; echo
           head -c 400 /tmp/ciout/extra.json; echo
 
+      # Quale modello numerico e' il piu' fine sopra l'Emilia-Romagna non si
+      # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
+      # accettato non e' lo stesso di uno che ha davvero dei valori sopra
+      # Noceto. Lo si chiede all'API, e la risposta finisce fra gli artefatti.
+      - name: Quali modelli coprono l'Italia
+        run: python3 scripts/probe_models.py
+
       - name: Pubblica
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
