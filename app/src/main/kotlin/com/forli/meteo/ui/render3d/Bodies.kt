@@ -289,72 +289,91 @@ fun DrawScope.globe(
 
     clipPath(disc) {
         val outline = Path()
+
+        // Dove finisce sullo schermo il vertice numero k, e se sta davanti.
+        fun aim(coast: FloatArray, k: Int): Boolean {
+            val lon = (coast[k] + spinDeg) * DEG
+            val lat = coast[k + 1] * DEG
+            val cosLat = cos(lat)
+            camera.normal(
+                cosLat * sin(lon),
+                -sin(lat),
+                // Negativo alla longitudine zero: e' li' che la terra guarda
+                // l'osservatore, e da li' comincia a scivolare via girando.
+                -cosLat * cos(lon),
+            )
+            return camera.nvz < 0f
+        }
+
         coasts.forEach { coast ->
+            val vertices = coast.size / 2
+
+            // Da dove cominciare: il primo vertice davanti. Se non ce n'e'
+            // nessuno la terra e' tutta dietro e non si disegna.
+            var first = -1
+            for (k in 0 until vertices) {
+                if (aim(coast, k * 2)) { first = k; break }
+            }
+            if (first < 0) return@forEach
+
             outline.reset()
-            var visible = false
             var started = false
-            // L'angolo sul bordo dell'ultimo vertice finito dietro, se c'era.
-            var rimAngle = Float.NaN
+            var behind = false
+            var exitAngle = 0f
+            var entryAngle = 0f
 
-            fun addAt(px: Float, py: Float) {
-                if (started) {
-                    outline.lineTo(centre.x + px * r, centre.y + py * r)
-                } else {
-                    outline.moveTo(centre.x + px * r, centre.y + py * r)
-                    started = true
+            fun addRim(from: Float, to: Float) {
+                // **Un arco solo, dall'uscita al rientro.** Il tentativo
+                // precedente seguiva il bordo fra *ogni* coppia di vertici
+                // nascosti, e i vertici nascosti girano attorno alla sfera: i
+                // loro angoli sullo schermo rimbalzavano avanti e indietro sul
+                // bordo, e quello che si riempiva era una fascia incollata al
+                // bordo invece di un continente. Adesso la parte nascosta e'
+                // una cosa sola - il tratto di orizzonte fra dove la costa e'
+                // sparita e dove riappare.
+                var delta = to - from
+                while (delta > PI.toFloat()) delta -= 2f * PI.toFloat()
+                while (delta < -PI.toFloat()) delta += 2f * PI.toFloat()
+                val steps = (abs(delta) / RIM_STEP).toInt() + 1
+                for (s in 1..steps) {
+                    val a = from + delta * (s / steps.toFloat())
+                    outline.lineTo(centre.x + cos(a) * r, centre.y + sin(a) * r)
                 }
             }
 
-            var k = 0
-            while (k < coast.size) {
-                val lon = (coast[k] + spinDeg) * DEG
-                val lat = coast[k + 1] * DEG
-                val cosLat = cos(lat)
-                camera.normal(
-                    cosLat * sin(lon),
-                    -sin(lat),
-                    // Negativo alla longitudine zero: e' li' che la terra guarda
-                    // l'osservatore, e da li' comincia a scivolare via girando.
-                    -cosLat * cos(lon),
-                )
-                if (camera.nvz < 0f) {
-                    visible = true
-                    rimAngle = Float.NaN
-                    addAt(camera.nvx, camera.nvy)
-                } else {
-                    // **Chi sta dietro si porta sul bordo, e fra due vertici
-                    // dietro si segue il bordo invece di tagliare dritto.**
-                    //
-                    // Portarli sul bordo era gia' giusto: scartandoli, una costa
-                    // a meta' del giro si richiuderebbe su se stessa e si
-                    // vedrebbe un continente accartocciarsi mentre esce.
-                    // Unirli con una corda dritta no: su un poligono grande come
-                    // l'Eurasia, che sta dietro per piu' di meta', la corda
-                    // taglia il disco da parte a parte e quello che si riempie
-                    // non e' un continente ma mezza sfera. Era la fascia
-                    // incollata al bordo che si vedeva nel primo scatto.
-                    //
-                    // Seguendo l'arco, la parte nascosta diventa esattamente il
-                    // bordo del disco: quello che resta e' la terra davanti,
-                    // tagliata dall'orizzonte come deve.
-                    val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
-                    val angle = atan2(camera.nvy / len, camera.nvx / len)
-                    if (!rimAngle.isNaN()) {
-                        var delta = angle - rimAngle
-                        while (delta > PI.toFloat()) delta -= 2f * PI.toFloat()
-                        while (delta < -PI.toFloat()) delta += 2f * PI.toFloat()
-                        val steps = (abs(delta) / RIM_STEP).toInt()
-                        for (s in 1..steps) {
-                            val a = rimAngle + delta * (s / (steps + 1f))
-                            addAt(cos(a), sin(a))
-                        }
+            for (step in 0 until vertices) {
+                val k = ((first + step) % vertices) * 2
+                val front = aim(coast, k)
+                val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
+                val angle = atan2(camera.nvy / len, camera.nvx / len)
+
+                if (front) {
+                    if (behind) {
+                        // Rientra: prima l'orizzonte, poi la costa.
+                        entryAngle = angle
+                        addRim(exitAngle, entryAngle)
+                        behind = false
                     }
-                    addAt(cos(angle), sin(angle))
-                    rimAngle = angle
+                    val x = centre.x + camera.nvx * r
+                    val y = centre.y + camera.nvy * r
+                    if (started) outline.lineTo(x, y) else { outline.moveTo(x, y); started = true }
+                } else if (!behind) {
+                    // Sparisce dietro: si segna dove, e i vertici nascosti si
+                    // saltano tutti.
+                    behind = true
+                    exitAngle = angle
+                    outline.lineTo(centre.x + cos(angle) * r, centre.y + sin(angle) * r)
                 }
-                k += 2
             }
-            if (!visible) return@forEach
+
+            // Se il giro finisce dietro, l'orizzonte richiude fino al punto di
+            // partenza.
+            if (behind) {
+                aim(coast, first * 2)
+                val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
+                addRim(exitAngle, atan2(camera.nvy / len, camera.nvx / len))
+            }
+
             outline.close()
             drawPath(outline, color = land, alpha = alpha)
         }

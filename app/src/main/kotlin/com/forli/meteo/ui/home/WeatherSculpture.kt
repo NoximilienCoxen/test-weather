@@ -701,9 +701,9 @@ private class Bird(val lane: Float, val phase: Float, val speed: Float, val size
  * come un'invasione: tre a distanze diverse dicono "cielo aperto" e basta.
  */
 private val BIRDS = listOf(
-    Bird(lane = -0.74f, phase = 0.00f, speed = 0.055f, size = 0.058f),
-    Bird(lane = -0.58f, phase = 0.41f, speed = 0.044f, size = 0.044f),
-    Bird(lane = -0.86f, phase = 0.72f, speed = 0.068f, size = 0.036f),
+    Bird(lane = -0.40f, phase = 0.00f, speed = 0.055f, size = 0.105f),
+    Bird(lane = -0.26f, phase = 0.38f, speed = 0.043f, size = 0.078f),
+    Bird(lane = -0.52f, phase = 0.68f, speed = 0.068f, size = 0.062f),
 )
 
 /**
@@ -733,7 +733,7 @@ private fun DrawScope.drawBirds(
         val y = origin.y + bird.lane * unit + bob
         val edge = (across / 0.12f).coerceAtMost(1f) *
             ((1f - across) / 0.12f).coerceAtMost(1f)
-        val shade = presence * edge * 0.70f
+        val shade = presence * edge * BIRD_INK
         if (shade <= 0.01f) return@forEach
 
         // Il battito. Le punte salgono e scendono attorno al corpo: e' l'unica
@@ -750,7 +750,7 @@ private fun DrawScope.drawBirds(
             path = wing,
             color = colour.copy(alpha = shade),
             style = Stroke(
-                width = (w * 0.13f).coerceAtLeast(1.4f),
+                width = (w * 0.15f).coerceAtLeast(2.2f),
                 cap = StrokeCap.Round,
             ),
         )
@@ -793,12 +793,40 @@ private fun DrawScope.drawHail(
     val shift = contact?.numberToRain ?: Offset.Zero
     val skyline = contact?.skyline
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
+    val shortFall = unit * 0.90f
+    val longFall = unit * LONG_FALL
+
+    /**
+     * **Quanto corre questa goccia.** Non e' un dettaglio: e' la differenza fra
+     * pioggia e qualche trattino sparso.
+     *
+     * Allungando la corsa per tutte, una goccia che cade sopra la cifra la
+     * toccava al terzo del giro e restava **invisibile per i due terzi**
+     * rimanenti, ad aspettare di ricominciare. Il conteggio diceva quarantotto
+     * gocce e sullo schermo se ne vedevano sei: la portata era stata comprata
+     * pagandola in densita'.
+     *
+     * La corsa lunga serve solo a chi deve arrivare a terra, cioe' a chi passa
+     * **accanto** alla cifra. Chi la colpisce tiene la corsa corta e tocca verso
+     * la fine del proprio giro, quindi si vede quasi sempre.
+     *
+     * Quale delle due lo decide la colonna, guardata a meta' caduta: l'ascissa
+     * si sposta pochissimo scendendo, e qui serve solo sapere se sotto c'e'
+     * cifra o vuoto.
+     */
+    fun fallFor(x: Float, z: Float): Float {
+        if (ground.isNaN()) return shortFall
+        camera.place(x, top + shortFall * 0.5f, z)
+        val over = skyline?.topAt(camera.sx - shift.x) ?: Float.NaN
+        return if (over.isNaN()) longFall else shortFall
+    }
 
     for (i in 0 until count) {
         val stone = DROPS[i]
         val travel = (stone.phase + progress * stone.speed * HAIL_FAST) % 1f
-        camera.place(stone.x * spreadX, top + travel * span, stone.z * spreadZ)
+        val hx = stone.x * spreadX
+        val hz = stone.z * spreadZ
+        camera.place(hx, top + travel * fallFor(hx, hz), hz)
         val at = Offset(camera.sx, camera.sy)
         val near = camera.scale
         val size = (unit * HAIL_SIZE * near).coerceAtLeast(1.8f)
@@ -880,7 +908,18 @@ private fun DrawScope.drawSnow(
     val shift = contact?.numberToRain ?: Offset.Zero
     val skyline = contact?.skyline
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
+    val shortFall = unit * 0.90f
+    val longFall = unit * LONG_FALL
+
+    // Stessa regola della pioggia: la corsa lunga solo a chi passa accanto alla
+    // cifra e deve arrivare a terra. Chi la colpisce tiene la corsa corta, se no
+    // tocca presto e resta posato e invisibile per il resto del giro.
+    fun fallFor(x: Float, z: Float): Float {
+        if (ground.isNaN()) return shortFall
+        camera.place(x, top + shortFall * 0.5f, z)
+        val over = skyline?.topAt(camera.sx - shift.x) ?: Float.NaN
+        return if (over.isNaN()) longFall else shortFall
+    }
 
     for (i in 0 until count) {
         val flake = DROPS[i]
@@ -890,8 +929,10 @@ private fun DrawScope.drawSnow(
         // non oscillano tutti insieme - che sarebbe una tendina che ondeggia,
         // non neve.
         val sway = sin(travel * SNOW_TURNS + flake.phase * PI_F * 2f) * SNOW_SWAY
-        val y = top + travel * span
-        camera.place((flake.x + sway) * spreadX, y, flake.z * spreadZ)
+        val fx = (flake.x + sway) * spreadX
+        val fz = flake.z * spreadZ
+        val y = top + travel * fallFor(fx, fz)
+        camera.place(fx, y, fz)
         val at = Offset(camera.sx, camera.sy)
         val near = camera.scale
         val size = (unit * SNOW_SIZE * near).coerceAtLeast(1.6f)
@@ -954,15 +995,26 @@ private fun DrawScope.drawRain(
     // perche' la corsa era lunga novanta centesimi di unita' e basta. Adesso,
     // se la sagoma ha detto dove appoggia, la corsa arriva fin li'.
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
+    val shortFall = unit * 0.90f
+    val longFall = unit * LONG_FALL
+
+    // Stessa regola della pioggia: la corsa lunga solo a chi passa accanto alla
+    // cifra e deve arrivare a terra. Chi la colpisce tiene la corsa corta, se no
+    // tocca presto e resta posato e invisibile per il resto del giro.
+    fun fallFor(x: Float, z: Float): Float {
+        if (ground.isNaN()) return shortFall
+        camera.place(x, top + shortFall * 0.5f, z)
+        val over = skyline?.topAt(camera.sx - shift.x) ?: Float.NaN
+        return if (over.isNaN()) longFall else shortFall
+    }
 
 
     for (i in 0 until count) {
         val drop = DROPS[i]
         val travel = (drop.phase + progress * drop.speed) % 1f
-        val y = top + travel * span
         val x = drop.x * spreadX
         val z = drop.z * spreadZ
+        val y = top + travel * fallFor(x, z)
 
         camera.place(x, y, z)
         val head = Offset(camera.sx, camera.sy)
@@ -1333,6 +1385,16 @@ private const val HAIL_HOP = 0.055f
 private const val HAIL_BOUNCE = 0.26f
 
 private const val BIRD_BEAT = 4.2f
+
+/**
+ * Quanto sono scuri gli uccelli.
+ *
+ * Il primo scatto ne mostrava uno solo, minuscolo e incollato al bordo alto: le
+ * corsie stavano a tre quarti di unita' sopra il centro, cioe' fuori da un
+ * riquadro che e' basso, ed erano larghi mezzo dito. Adesso volano piu' in
+ * basso, sono quasi il doppio e si vedono.
+ */
+private const val BIRD_INK = 0.85f
 
 private const val SNOW_SLOW = 0.34f
 private const val SNOW_SWAY = 0.16f
