@@ -39,6 +39,7 @@ import com.forli.meteo.ui.theme.LocalMeteoColors
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
+import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -346,6 +347,54 @@ fun WeatherSculpture(
                         camera.origin.y + star.y * unit,
                     ),
                 )
+            }
+
+            // **Una stella cadente ogni tanto, e solo col buio pieno.** Non e'
+            // decorazione: e' la cosa che distingue una notte da un cielo
+            // semplicemente scuro. Una per volta e rade, pero' - una pioggia di
+            // meteore sopra la temperatura di domani non e' atmosfera, e' un
+            // salvaschermo.
+            //
+            // Dove parte e da che parte va lo decide il **numero del ciclo**:
+            // cosi' due cadute di seguito non si somigliano, ma la stessa caduta
+            // resta identica a se stessa a ogni fotogramma. Non c'e' nessuno
+            // stato da tenere e da rimettere a posto - la si ricava dall'orologio
+            // e basta, che e' la stessa regola delle gocce.
+            if (night > SHOOTING_DARK) {
+                val cycle = moved / SHOOTING_PERIOD
+                val turn = cycle.toInt()
+                val life = (cycle - turn) / SHOOTING_SPAN
+                if (life < 1f) {
+                    val seed = turn * HASH_MIX
+                    val fx = ((seed shr 8) and 0xFF) / 255f
+                    val fy = ((seed shr 16) and 0xFF) / 255f
+                    val fa = ((seed shr 24) and 0xFF) / 255f
+                    val angle = SHOOTING_TILT_MIN + fa * (SHOOTING_TILT_MAX - SHOOTING_TILT_MIN)
+                    val run = unit * SHOOTING_LENGTH
+                    val dx = cos(angle) * run
+                    val dy = sin(angle) * run
+                    val fromX = camera.origin.x + (fx * 1.8f - 1.0f) * unit
+                    val fromY = camera.origin.y - (0.30f + fy * 0.66f) * unit
+                    // Piena a meta' corsa: entra, attraversa, esce. Comparire e
+                    // sparire di colpo si legge come uno sfarfallio del disegno.
+                    val glow = sin(life * PI_F) * starAlpha
+                    val head = Offset(fromX + dx * life, fromY + dy * life)
+                    val tail = Offset(head.x - dx * SHOOTING_TAIL, head.y - dy * SHOOTING_TAIL)
+                    drawLine(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                colors.text.copy(alpha = 0f),
+                                colors.text.copy(alpha = glow),
+                            ),
+                            start = tail,
+                            end = head,
+                        ),
+                        start = tail,
+                        end = head,
+                        strokeWidth = unit * 0.0055f,
+                        cap = StrokeCap.Round,
+                    )
+                }
             }
         }
 
@@ -841,9 +890,65 @@ private val STARS: List<Star> = listOf(
     Star(-0.70f, -0.78f, 0.004f, 0.36f),
     Star(0.02f, -0.40f, 0.004f, 0.34f),
     Star(-0.42f, -0.24f, 0.004f, 0.32f),
+
+    // **La coda del buio pieno.** Da qui in giu' sono le stelle che si accendono
+    // solo quando la notte e' proprio notte: il conto e' quadratico, quindi
+    // arrivano tutte insieme nell'ultimo tratto invece di comparire una alla
+    // volta al calare del sole. Sono anche le piu' lontane dalla scultura, cosi'
+    // il cielo si riempie ai bordi mentre il centro resta libero per l'astro.
+    Star(-0.94f, -0.08f, 0.004f, 0.30f),
+    Star(0.92f, -0.14f, 0.004f, 0.29f),
+    Star(-0.72f, -0.42f, 0.004f, 0.28f),
+    Star(0.80f, -0.58f, 0.004f, 0.27f),
+    Star(-0.06f, -0.98f, 0.003f, 0.26f),
+    Star(0.44f, -0.96f, 0.003f, 0.25f),
+    Star(-0.36f, -0.98f, 0.003f, 0.24f),
+    Star(0.96f, -0.82f, 0.003f, 0.23f),
+    Star(-0.96f, -0.76f, 0.003f, 0.22f),
+    Star(0.34f, -0.62f, 0.003f, 0.21f),
+    Star(-0.18f, -0.60f, 0.003f, 0.20f),
+    Star(0.70f, -0.06f, 0.003f, 0.19f),
+    Star(-0.60f, 0.06f, 0.003f, 0.18f),
+    Star(0.10f, -0.12f, 0.003f, 0.17f),
+    Star(-0.86f, -0.94f, 0.003f, 0.16f),
+    Star(0.88f, -0.98f, 0.003f, 0.16f),
+    Star(0.24f, -0.50f, 0.003f, 0.15f),
+    Star(-0.50f, -0.60f, 0.003f, 0.15f),
 )
 
 /** Quanto deriva una massa della nuvola, in frazioni di unita'. */
+/**
+ * Le stelle cadenti.
+ *
+ * [SHOOTING_DARK] e' la soglia di buio sotto la quale non ne cade nessuna: sul
+ * grigio del crepuscolo una scia non si vedrebbe e comunque non c'entra, e'
+ * roba da notte fonda. [SHOOTING_PERIOD] sono i secondi fra un tentativo e
+ * l'altro e [SHOOTING_SPAN] la frazione di quel tempo in cui la caduta si vede
+ * davvero: il prodotto dei due fa quanto dura, il resto e' attesa.
+ *
+ * Rade apposta. Una pioggia di meteore sopra la temperatura di domani non e'
+ * atmosfera, e' un salvaschermo.
+ */
+private const val SHOOTING_DARK = 0.80f
+private const val SHOOTING_PERIOD = 12f
+private const val SHOOTING_SPAN = 0.07f
+
+/** Quanto e' lunga la corsa e quanto la scia che si trascina dietro. */
+private const val SHOOTING_LENGTH = 1.45f
+private const val SHOOTING_TAIL = 0.32f
+
+/** L'inclinazione della caduta, in radianti: sempre verso il basso, mai a piombo. */
+private const val SHOOTING_TILT_MIN = 0.42f
+private const val SHOOTING_TILT_MAX = 0.95f
+
+/**
+ * Il numero di Knuth per la miscelazione. Serve a far sembrare diverse due
+ * cadute consecutive partendo solo dal numero del ciclo, senza tenere stato.
+ */
+private const val HASH_MIX = -1640531535
+
+private const val PI_F = kotlin.math.PI.toFloat()
+
 private const val DRIFT = 0.022f
 
 private const val FALL_CYCLE_MS = 1400L
