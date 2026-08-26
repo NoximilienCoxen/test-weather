@@ -96,6 +96,18 @@ temperatura, e da dove arrivano i dati. Le prime voci dell'elenco sono fra i
 posti piu' piovosi che esistano, e ci sono apposta: con una citta' sola non
 c'era modo di vedere la pioggia se non aspettando che piovesse.
 
+**Quale modello numerico**, verificato dalla CI (`scripts/probe_models.py`, esito
+in `ci-artifacts/api/modelli.txt`): sopra l'Emilia-Romagna il `best_match` sceglie
+**ICON-D2** (DWD, 2,2 km). Esiste pero' anche `italia_meteo_arpae_icon_2i` -
+ItaliaMeteo/ARPAE, 2,2 km, l'agenzia della regione stessa - e copre entrambi i
+punti provati con quarantotto ore su quarantotto. Fra i due c'e' oltre un grado
+di differenza sulla prima ora, quindi **non e' una scelta neutra**. `arpae_cosmo_5m`
+non esiste piu': l'API risponde "not available anymore", e ICON-2I ne e' il
+successore.
+
+Da questo container `api.open-meteo.com` **non si raggiunge** (403 al CONNECT del
+proxy): domande sull'API si girano alla CI, non alla memoria.
+
 Dati: Open-Meteo senza chiave, `HttpURLConnection` + `kotlinx.serialization`.
 Una richiesta porta `current`, `daily` (7 giorni, alba e tramonto compresi) e
 `hourly`. La ricerca dei luoghi passa dalla geocodifica di Open-Meteo.
