@@ -57,15 +57,17 @@ OUT = "/tmp/ciout"
 
 
 def fetch(url: str, timeout: int = 30):
-    """Torna (codice, corpo). L'errore non e' un'eccezione: e' una risposta."""
+    """Torna (codice, tipo, corpo). L'errore non e' un'eccezione: e' una risposta."""
     request = urllib.request.Request(url, headers={"User-Agent": "test-weather-probe"})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.status, response.read().decode("utf-8", "replace")
+            kind = response.headers.get("Content-Type", "?")
+            return response.status, kind, response.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as error:
-        return error.code, error.read().decode("utf-8", "replace")
+        kind = error.headers.get("Content-Type", "?") if error.headers else "?"
+        return error.code, kind, error.read().decode("utf-8", "replace")
     except Exception as error:  # rete assente, DNS, timeout
-        return 0, f"{type(error).__name__}: {error}"
+        return 0, "?", f"{type(error).__name__}: {error}"
 
 
 def describe(model: str, name: str, lat: float, lon: float) -> str:
@@ -73,14 +75,21 @@ def describe(model: str, name: str, lat: float, lon: float) -> str:
         f"{BASE}?latitude={lat}&longitude={lon}"
         f"&hourly=temperature_2m&forecast_days=2&models={model}"
     )
-    code, body = fetch(url)
+    code, kind, body = fetch(url)
     if code != 200:
         short = body.replace("\n", " ")[:160]
-        return f"    {name:8s} HTTP {code}  {short}"
+        return f"    {name:9s} HTTP {code}  {short}"
     try:
         data = json.loads(body)
     except ValueError:
-        return f"    {name:8s} risposta non JSON"
+        # Il caso peggiore per chi scrive il client, e quindi quello da
+        # descrivere per esteso: la richiesta **riesce**, ma quello che torna
+        # non e' quello che il client si aspetta di deserializzare.
+        short = body.replace("\n", " ")[:200]
+        return (
+            f"    {name:9s} HTTP 200 ma NON JSON  tipo={kind}  "
+            f"lunghezza={len(body)}  corpo=[{short}]"
+        )
 
     hourly = data.get("hourly", {})
     series = next((v for k, v in hourly.items() if k != "time"), [])
@@ -100,7 +109,7 @@ def main() -> None:
 
     # 1. L'elenco ufficiale, chiesto sbagliando apposta.
     lines.append("=== modelli accettati (dall'errore su un nome inventato) ===")
-    _, body = fetch(f"{BASE}?latitude=44.8&longitude=10.18&hourly=temperature_2m&models=zzz")
+    _, _, body = fetch(f"{BASE}?latitude=44.8&longitude=10.18&hourly=temperature_2m&models=zzz")
     lines.append(body.strip()[:4000])
     lines.append("")
 
