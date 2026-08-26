@@ -334,17 +334,26 @@ class PrismRenderer : TemperatureRenderer {
         /**
          * Quanto dietro l'oggetto cade l'ombra, in multipli del suo spessore.
          *
-         * Corta apposta: piu' lontano il piano, piu' l'ombra si stacca dalla
-         * sagoma e fra l'oggetto e la sua ombra si vede il fondo.
+         * **Non e' lo scostamento sullo schermo, e la differenza e' costata un
+         * giro.** Passando dalla copia traslata alla proiezione questo numero ha
+         * cambiato significato: prima erano pixel di tela, adesso e' profondita'
+         * su cui poi si viaggia lungo la luce. Lasciato al valore di prima
+         * moltiplicato per il viaggio, lo scostamento a schermo era piu' che
+         * raddoppiato e l'ombra si staccava dalla cifra come un fantasma.
          */
-        const val SHADOW_REACH = 1.15f
+        const val SHADOW_REACH = 0.42f
 
         /**
-         * Fra queste due aperture l'ombra passa da assente a piena. Un gradino
-         * secco si vedrebbe scattare proprio nell'istante in cui la cifra passa
-         * di profilo, che e' il momento in cui la si sta guardando.
+         * Fra queste due aperture l'ombra passa da assente a piena.
+         *
+         * La corsa e' lunga apposta. Un'ombra portata su un fondo piatto e'
+         * **finta**: non c'e' un pavimento su cui cada, e piu' l'oggetto si gira
+         * piu' quella finzione viene allo scoperto - la sagoma proiettata non
+         * somiglia piu' a quella che si vede, e si legge come un secondo oggetto
+         * invece che come un'ombra. Di faccia serve e regge; oltre i sessanta
+         * gradi conviene che se ne vada, e a settanta non c'e' quasi piu'.
          */
-        const val SHADOW_FADE_FROM = 0.05f
-        const val SHADOW_FADE_TO = 0.20f
+        const val SHADOW_FADE_FROM = 0.15f
+        const val SHADOW_FADE_TO = 0.62f
     }
 }
