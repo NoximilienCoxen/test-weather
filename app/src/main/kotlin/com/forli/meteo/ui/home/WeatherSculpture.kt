@@ -23,8 +23,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.SunClock
@@ -399,6 +401,18 @@ fun WeatherSculpture(
             }
         }
 
+        // Gli uccelli stanno nel cielo, quindi prima di tutto il resto: la
+        // nuvola e la scultura devono poterci passare davanti. Ci sono solo col
+        // sereno di giorno - con la nuvola addosso non si vedrebbero comunque,
+        // e di notte non volano.
+        drawBirds(
+            unit = unit,
+            origin = camera.origin,
+            time = moved,
+            presence = clear * sky.dayness,
+            colour = colors.label,
+        )
+
         // Ogni massa deriva per conto suo, con la propria fase e la propria
         // velocita': tutte insieme sarebbe una nuvola che trema, non una nuvola
         // che si muove. Quelle davanti scorrono di piu' di quelle dietro, che e'
@@ -496,7 +510,18 @@ fun WeatherSculpture(
             drawBolt(camera, unit, scale, bolt, glare)
         }
 
-        if (wetness > 0.01f) {
+        if (wetness > 0.01f && family == Wmo.Family.NEVE) {
+            drawSnow(
+                camera = camera,
+                unit = unit,
+                scale = scale,
+                wetness = wetness,
+                progress = fall.floatValue,
+                colour = colors.cloudCore,
+                contact = contact,
+                impacts = impacts,
+            )
+        } else if (wetness > 0.01f) {
             drawRain(
                 camera = camera,
                 unit = unit,
@@ -609,6 +634,151 @@ private val DROPS: List<Drop> = List(48) { i ->
         speed = 0.85f + r.nextFloat() * 0.5f,
         length = 0.05f + r.nextFloat() * 0.05f,
     )
+}
+
+/**
+ * Un uccello: la corsia in cui vola, la fase, quanto e' veloce e quanto grande.
+ */
+private class Bird(val lane: Float, val phase: Float, val speed: Float, val size: Float)
+
+/**
+ * Tre e non uno stormo. Uno solo si legge come un difetto del disegno, dieci
+ * come un'invasione: tre a distanze diverse dicono "cielo aperto" e basta.
+ */
+private val BIRDS = listOf(
+    Bird(lane = -0.74f, phase = 0.00f, speed = 0.055f, size = 0.058f),
+    Bird(lane = -0.58f, phase = 0.41f, speed = 0.044f, size = 0.044f),
+    Bird(lane = -0.86f, phase = 0.72f, speed = 0.068f, size = 0.036f),
+)
+
+/**
+ * Gli uccelli del sereno.
+ *
+ * Due archi che si toccano, cioe' la sagoma con cui **tutti** disegnano un
+ * uccello lontano - e a questa dimensione qualunque tentativo di fare di piu'
+ * diventa una macchia. Quello che li rende vivi non e' la forma: e' che le ali
+ * battono e che ognuno attraversa con un passo suo.
+ *
+ * Attraversano lo schermo e basta, entrando e uscendo in dissolvenza. Farli
+ * girare in tondo li avrebbe legati a un centro, e un uccello che orbita
+ * attorno alla temperatura e' un carillon, non un cielo.
+ */
+private fun DrawScope.drawBirds(
+    unit: Float,
+    origin: Offset,
+    time: Float,
+    presence: Float,
+    colour: Color,
+) {
+    if (presence <= 0.02f) return
+    BIRDS.forEach { bird ->
+        val across = (time * bird.speed + bird.phase) % 1f
+        val x = origin.x + (across * 2.6f - 1.3f) * unit
+        val bob = sin(time * 0.9f + bird.phase * PI_F * 2f) * unit * 0.02f
+        val y = origin.y + bird.lane * unit + bob
+        val edge = (across / 0.12f).coerceAtMost(1f) *
+            ((1f - across) / 0.12f).coerceAtMost(1f)
+        val shade = presence * edge * 0.70f
+        if (shade <= 0.01f) return@forEach
+
+        // Il battito. Le punte salgono e scendono attorno al corpo: e' l'unica
+        // cosa che distingue un uccello che vola da un accento circonflesso.
+        val beat = sin(time * BIRD_BEAT + bird.phase * PI_F * 2f)
+        val w = unit * bird.size
+        val lift = w * 0.44f * beat
+        val wing = Path().apply {
+            moveTo(x - w, y - lift)
+            quadraticTo(x - w * 0.45f, y + w * 0.18f, x, y)
+            quadraticTo(x + w * 0.45f, y + w * 0.18f, x + w, y - lift)
+        }
+        drawPath(
+            path = wing,
+            color = colour.copy(alpha = shade),
+            style = Stroke(
+                width = (w * 0.13f).coerceAtLeast(1.4f),
+                cap = StrokeCap.Round,
+            ),
+        )
+    }
+}
+
+/**
+ * La neve: fiocchi, non righe.
+ *
+ * Finora nevicare voleva dire piovere - la famiglia NEVE conta come bagnata e
+ * finiva nello stesso disegno - e sotto la scritta NEVE cadevano trattini
+ * verticali. Un fiocco pero' non e' una goccia corta: e' un corpo che scende
+ * **piano** e non in linea retta, perche' pesa poco e l'aria se lo passa. Sono
+ * quelle due cose - la lentezza e lo sbandamento - a farlo leggere come neve, e
+ * nessuna quantita' di bianco puo' sostituirle.
+ *
+ * Riusa le stesse posizioni della pioggia: sono gia' distribuite sotto la
+ * nuvola e ruotano con lei. Cambia come ci si muove sopra.
+ *
+ * Chi tocca la cifra si posa invece di schizzare, e resta un attimo prima di
+ * sparire - la neve si ferma dove arriva, l'acqua no.
+ */
+private fun DrawScope.drawSnow(
+    camera: Camera,
+    unit: Float,
+    scale: Float,
+    wetness: Float,
+    progress: Float,
+    colour: Color,
+    contact: SceneContact?,
+    impacts: RainImpacts? = null,
+) {
+    val count = (DROPS.size * wetness).roundToInt().coerceIn(4, DROPS.size)
+    for (i in count until DROPS.size) impacts?.mark(i, false)
+
+    val spreadX = unit * 0.44f * scale
+    val spreadZ = unit * 0.17f * scale
+    val top = unit * 0.16f * scale
+    val shift = contact?.numberToRain ?: Offset.Zero
+    val skyline = contact?.skyline
+    val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
+    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
+
+    for (i in 0 until count) {
+        val flake = DROPS[i]
+        // Piu' lenta della pioggia, e ogni fiocco col proprio passo.
+        val travel = (flake.phase + progress * flake.speed * SNOW_SLOW) % 1f
+        // Lo sbandamento: un pendolo, con la fase presa dal fiocco stesso cosi'
+        // non oscillano tutti insieme - che sarebbe una tendina che ondeggia,
+        // non neve.
+        val sway = sin(travel * SNOW_TURNS + flake.phase * PI_F * 2f) * SNOW_SWAY
+        val y = top + travel * span
+        camera.place((flake.x + sway) * spreadX, y, flake.z * spreadZ)
+        val at = Offset(camera.sx, camera.sy)
+        val near = camera.scale
+        val size = (unit * SNOW_SIZE * near).coerceAtLeast(1.6f)
+        val alpha = (travel / 0.08f).coerceAtMost(1f)
+
+        val surface = skyline?.topAt(at.x - shift.x)?.let { it + shift.y } ?: Float.NaN
+        val landed = !surface.isNaN() && at.y >= surface
+        impacts?.mark(i, landed)
+
+        val rest = when {
+            landed -> surface
+            !ground.isNaN() && at.y >= ground -> ground
+            else -> Float.NaN
+        }
+
+        if (rest.isNaN()) {
+            drawCircle(color = colour.copy(alpha = alpha * 0.92f), radius = size, center = at)
+            continue
+        }
+
+        // Posato: si schiaccia un po' e svanisce dov'e' arrivato.
+        val age = ((at.y - rest) / (unit * SNOW_REST)).coerceIn(0f, 1f)
+        if (age >= 1f) continue
+        val wide = size * (1f + age * 1.5f)
+        drawOval(
+            color = colour.copy(alpha = alpha * 0.85f * (1f - age) * (1f - age)),
+            topLeft = Offset(at.x - wide, rest - size * 0.55f),
+            size = Size(wide * 2f, size * 1.1f),
+        )
+    }
 }
 
 private fun DrawScope.drawRain(
@@ -991,6 +1161,25 @@ private val STARS: List<Star> = listOf(
  * giorno la disposizione cambiasse le proporzioni fra scultura e cifra, questo
  * va rimisurato - non indovinato.
  */
+/**
+ * La neve.
+ *
+ * [SNOW_SLOW] e' quanto va piu' piano della pioggia, [SNOW_SWAY] quanto sbanda
+ * di lato in frazione della larghezza, [SNOW_TURNS] quante oscillazioni fa in
+ * una discesa. Sono i tre numeri che decidono se si legge neve o coriandoli:
+ * sbandamento troppo largo o troppo veloce e diventano farfalle.
+ */
+/** Battiti d'ala al secondo, in radianti: sotto sembrano alianti, sopra insetti. */
+private const val BIRD_BEAT = 4.2f
+
+private const val SNOW_SLOW = 0.34f
+private const val SNOW_SWAY = 0.16f
+private const val SNOW_TURNS = 7.5f
+private const val SNOW_SIZE = 0.011f
+
+/** Quanto resta un fiocco posato prima di sparire, in unita' di caduta. */
+private const val SNOW_REST = 0.30f
+
 private const val LONG_FALL = 2.6f
 
 /** Quanto vive una pozzanghera e quanto uno schizzo, in unita' di caduta. */
