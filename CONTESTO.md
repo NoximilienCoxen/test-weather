@@ -559,6 +559,22 @@ Su un primo carico e' giusto; su una ricarica vuol dire sbalzare altrove chi
 stava guardando le sei di sera, e cancellare una giornata di dati validi per
 annunciare che la rete non risponde.
 
+**32. Il cielo non deve passare dalla camera.** Le stelle erano corpi come gli
+altri, sistemate con `camera.place`: girando la scultura girava anche il cielo.
+Misurato su due scatti, giro zero e giro centocinquantacinque, **non c'era una
+sola stella nello stesso posto**. Un fondo che ruota con l'oggetto davanti non
+si legge come fondo: si legge come una cupola dipinta attaccata alla scultura,
+che se la porta dietro. Adesso la posizione la decidono lo schermo e
+nient'altro, e con la camera se ne va anche `camera.scale` - senza profondita'
+non c'e' prospettiva da applicare.
+
+Vale anche come avvertimento di metodo: il commit che aveva "fermato" le stelle
+diceva *"il cielo sta fermo e le cose davanti si muovono"* e aveva tolto **solo
+il tremolio**. La frase era vera per la luminosita' e falsa per la posizione, e
+nessuno se n'e' accorto per due giri perche' lo scatto che l'avrebbe mostrato -
+`scuro-10-luna-girata` - era uno di quelli che uscivano vuoti (trappola #31).
+Due difetti che si coprivano a vicenda.
+
 **31. Aspettare una durata e' scommettere sulla rete del runner.** Dopo ogni
 riavvio dell'app la cattura aspettava che la previsione arrivasse, e l'attesa
 era un numero di secondi. Quando uno scatto usciva "IN ATTESA DEI DATI" il
