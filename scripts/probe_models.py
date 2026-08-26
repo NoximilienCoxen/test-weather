@@ -25,6 +25,19 @@ PLACES = [
     ("Forli", 44.22, 12.04),
 ]
 
+# I posti che l'app offre gia' come scorciatoie, piu' uno oltreoceano: servono a
+# sapere **come si rompe** un modello regionale fuori dal suo dominio. Non e' una
+# curiosita': decide se la scelta del modello puo' essere un'impostazione fissa o
+# se deve sapersi ritirare da sola.
+ABROAD = [
+    ("Londra", 51.51, -0.13),
+    ("Bergen", 60.39, 5.32),
+    ("Singapore", 1.35, 103.82),
+    ("NewYork", 40.71, -74.01),
+]
+
+REGIONAL = ["italia_meteo_arpae_icon_2i", "icon_d2", "meteofrance_seamless"]
+
 CANDIDATES = [
     "best_match",
     "italia_meteo_arpae_icon_2i",
@@ -96,6 +109,14 @@ def main() -> None:
     for model in CANDIDATES:
         lines.append(f"  {model}")
         for name, lat, lon in PLACES:
+            lines.append(describe(model, name, lat, lon))
+    lines.append("")
+
+    # 3. Cosa succede a un modello regionale fuori casa.
+    lines.append("=== modelli regionali fuori dal loro dominio ===")
+    for model in REGIONAL:
+        lines.append(f"  {model}")
+        for name, lat, lon in ABROAD:
             lines.append(describe(model, name, lat, lon))
     lines.append("")
 
