@@ -67,7 +67,14 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         animationSpec = spring(stiffness = 110f),
         label = "cielo",
     )
-    val sky = remember(altitude) { SkyState.of(altitude) }
+    // Anche il viaggio si anima, se no scorrendo le ore l'astro salterebbe da
+    // una posizione all'altra invece di attraversare il cielo.
+    val journey by animateFloatAsState(
+        targetValue = state.skyJourney,
+        animationSpec = spring(stiffness = 110f),
+        label = "viaggio",
+    )
+    val sky = remember(altitude, journey) { SkyState.of(altitude, journey) }
     val colors = remember(sky) { skyColors(sky) }
 
     MeteoTheme(colors = colors) {

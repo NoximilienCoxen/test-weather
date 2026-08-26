@@ -130,6 +130,21 @@ data class UiState(
                 fallbackIsDay = hour?.isDay ?: true,
             )
         }
+
+    /**
+     * A che punto del viaggio sta l'astro, da quando sorge a quando tramonta.
+     *
+     * Serve accanto all'altezza e non al posto suo: l'altezza dice **quanto e'
+     * alto**, questa da **che parte sta andando**. Con la sola altezza il sole
+     * salirebbe e ridiscenderebbe dallo stesso lato, perche' alle otto e alle
+     * sedici vale lo stesso numero.
+     */
+    val skyJourney: Float
+        get() {
+            val moment = hour?.time ?: return 0.5f
+            val day = forecast?.dayOf(moment)
+            return SunClock.journey(moment, day?.sunrise, day?.sunset)
+        }
 }
 
 class WeatherViewModel(app: Application) : AndroidViewModel(app) {
