@@ -81,6 +81,10 @@ fun WeatherSculpture(
     val family = Wmo.family(weatherCode)
     val raining = family.isWet()
     val storming = family == Wmo.Family.TEMPORALE
+    // **La grandine e' dichiarata dal codice, non dedotta dalla quantita'.**
+    // Novantasei e novantanove sono "temporale con grandine": e' l'unico modo di
+    // saperlo: dai millimetri non si distingue, perche' pesano uguale.
+    val hailing = weatherCode == 96 || weatherCode == 99
 
     /**
      * Quanta pioggia si vede.
@@ -546,7 +550,18 @@ fun WeatherSculpture(
             drawBolt(camera, unit, scale, bolt, glare)
         }
 
-        if (wetness > 0.01f && family == Wmo.Family.NEVE) {
+        if (wetness > 0.01f && hailing) {
+            drawHail(
+                camera = camera,
+                unit = unit,
+                scale = scale,
+                wetness = wetness,
+                progress = fall.floatValue,
+                colour = colors.cloudCore,
+                contact = contact,
+                impacts = impacts,
+            )
+        } else if (wetness > 0.01f && family == Wmo.Family.NEVE) {
             drawSnow(
                 camera = camera,
                 unit = unit,
@@ -740,6 +755,94 @@ private fun DrawScope.drawBirds(
             ),
         )
     }
+}
+
+/**
+ * La grandine: chicchi che rimbalzano.
+ *
+ * Non e' pioggia piu' forte, ed e' per questo che non bastava alzare la
+ * quantita'. La differenza fra acqua e ghiaccio, vista da lontano, sta tutta in
+ * cosa succede **quando toccano**: l'acqua si apre e sparisce dentro la
+ * superficie, il ghiaccio riparte. Un chicco che si spiaccica e' una goccia
+ * grossa; un chicco che rimbalza e' grandine, anche se disegnato uguale.
+ *
+ * Le altre due cose che la distinguono: cade piu' dritta della neve e piu' in
+ * fretta della pioggia - il vento non se la passa - ed e' tonda invece che
+ * allungata, perche' a quella velocita' una goccia si stira e un chicco no.
+ *
+ * Il rimbalzo e' un arco solo, non tre. Farlo rimbalzare piu' volte sarebbe
+ * fisica gratis: a questa dimensione il secondo rimbalzo e' due pixel e l'unico
+ * effetto e' che il chicco resta in giro troppo a lungo.
+ */
+private fun DrawScope.drawHail(
+    camera: Camera,
+    unit: Float,
+    scale: Float,
+    wetness: Float,
+    progress: Float,
+    colour: Color,
+    contact: SceneContact?,
+    impacts: RainImpacts? = null,
+) {
+    val count = (DROPS.size * wetness).roundToInt().coerceIn(5, DROPS.size)
+    for (i in count until DROPS.size) impacts?.mark(i, false)
+
+    val spreadX = unit * 0.42f * scale
+    val spreadZ = unit * 0.17f * scale
+    val top = unit * 0.16f * scale
+    val shift = contact?.numberToRain ?: Offset.Zero
+    val skyline = contact?.skyline
+    val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
+    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
+
+    for (i in 0 until count) {
+        val stone = DROPS[i]
+        val travel = (stone.phase + progress * stone.speed * HAIL_FAST) % 1f
+        camera.place(stone.x * spreadX, top + travel * span, stone.z * spreadZ)
+        val at = Offset(camera.sx, camera.sy)
+        val near = camera.scale
+        val size = (unit * HAIL_SIZE * near).coerceAtLeast(1.8f)
+
+        val surface = skyline?.topAt(at.x - shift.x)?.let { it + shift.y } ?: Float.NaN
+        val onDigit = !surface.isNaN() && at.y >= surface
+        impacts?.mark(i, onDigit)
+
+        val rest = when {
+            onDigit -> surface
+            !ground.isNaN() && at.y >= ground -> ground
+            else -> Float.NaN
+        }
+
+        if (rest.isNaN()) {
+            hailstone(at, size, colour, 1f)
+            continue
+        }
+
+        // Rimbalzato. La quota la fa un arco, lo scostamento di lato e' sempre
+        // dalla stessa parte per lo stesso chicco - un rimbalzo che cambia
+        // direzione a ogni fotogramma e' un tremolio, non un rimbalzo.
+        val hop = ((at.y - rest) / (unit * HAIL_BOUNCE)).coerceIn(0f, 1f)
+        if (hop >= 1f) continue
+        val side = if ((i and 1) == 0) 1f else -1f
+        val lift = sin(hop * PI_F) * unit * HAIL_HOP * near
+        hailstone(
+            Offset(at.x + side * lift * 0.55f, rest - lift),
+            size * (1f - hop * 0.35f),
+            colour,
+            (1f - hop) * (1f - hop),
+        )
+    }
+}
+
+/** Un chicco: tondo e con un lembo piu' chiaro, se no e' un pallino grigio. */
+private fun DrawScope.hailstone(at: Offset, size: Float, colour: Color, alpha: Float) {
+    if (alpha <= 0.01f) return
+    drawCircle(color = colour.copy(alpha = 0.92f * alpha), radius = size, center = at)
+    drawCircle(
+        color = Color.White.copy(alpha = 0.45f * alpha),
+        radius = size * 0.42f,
+        center = Offset(at.x - size * 0.28f, at.y - size * 0.30f),
+    )
 }
 
 /**
@@ -1219,6 +1322,15 @@ private val STARS: List<Star> = listOf(
  */
 private const val OVERCAST_SPREAD = 0.55f
 private const val BREATH = 0.07f
+
+/**
+ * La grandine. [HAIL_FAST] e' quanto va piu' svelta della pioggia, [HAIL_HOP]
+ * quanto rimbalza in frazione di unita', [HAIL_BOUNCE] quanto dura il rimbalzo.
+ */
+private const val HAIL_FAST = 1.55f
+private const val HAIL_SIZE = 0.013f
+private const val HAIL_HOP = 0.055f
+private const val HAIL_BOUNCE = 0.26f
 
 private const val BIRD_BEAT = 4.2f
 
