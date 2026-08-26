@@ -307,14 +307,25 @@ fun WeatherSculpture(
         val moved = stir.floatValue
 
         // Le stelle, e solo quando ci sono davvero: di notte e con il cielo
-        // sgombro. Stanno **dietro** tutto il resto e nello spazio del modello,
-        // quindi girando la scultura girano con lei invece di restare
-        // appiccicate al vetro - e' la stessa regola che vale per le gocce.
+        // sgombro.
         //
-        // **Ferme.** Il tremolio c'era e se n'e' andato: una stella che pulsa e'
-        // un lampeggiatore, e in mezzo a un sole che gira e a nuvole che
-        // derivano diventa l'unica cosa che distrae invece di quella che sta
-        // sullo sfondo. Il cielo sta fermo e le cose davanti si muovono.
+        // **Non passano dalla camera, ed e' il punto.** Prima ci passavano, come
+        // ogni altro corpo, quindi gira la scultura e girava anche il cielo. Su
+        // uno scatto a giro zero e uno a centocinquantacinque gradi non c'era
+        // una sola stella nello stesso posto - il campo stellato era un altro. E
+        // un cielo che ruota con l'oggetto davanti non si legge come cielo: si
+        // legge come una cupola dipinta attaccata alla scultura, che se la porta
+        // dietro girando. Il fondo deve restare fondo. Adesso la posizione la
+        // decidono lo schermo e nient'altro: si gira la cifra e la notte resta
+        // dov'e'.
+        //
+        // Per la stessa ragione se ne va anche `camera.scale`: se non c'e'
+        // profondita' non c'e' rimpicciolimento prospettico da applicare. La
+        // gerarchia fra stelle grandi e piccole ce l'ha gia' l'elenco.
+        //
+        // Il tremolio invece era gia' sparito, ed e' un'altra cosa ancora: una
+        // stella che pulsa e' un lampeggiatore, e in mezzo a un sole che gira e
+        // a nuvole che derivano diventa l'unica cosa che distrae.
         //
         // **Quante, lo decide il buio.** Sul grigio del crepuscolo se ne vedono
         // due o tre, a notte piena il cielo si riempie: e' cosi' che va, e farle
@@ -327,11 +338,13 @@ fun WeatherSculpture(
             val shown = (STARS.size * night * night).toInt().coerceIn(0, STARS.size)
             for (k in 0 until shown) {
                 val star = STARS[k]
-                camera.place(star.x * unit, star.y * unit, star.z * unit)
                 drawCircle(
                     color = colors.text.copy(alpha = starAlpha * star.glow),
-                    radius = (unit * star.size * camera.scale).coerceAtLeast(0.8f),
-                    center = Offset(camera.sx, camera.sy),
+                    radius = (unit * star.size).coerceAtLeast(0.8f),
+                    center = Offset(
+                        camera.origin.x + star.x * unit,
+                        camera.origin.y + star.y * unit,
+                    ),
                 )
             }
         }
@@ -785,8 +798,13 @@ private val Halo = Color(0xFF6E9BF0)
 internal fun Wmo.Family.isWet(): Boolean =
     this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
 
-/** Una stella: dove sta nello spazio del modello, quanto e' grande, quanto brilla. */
-private class Star(val x: Float, val y: Float, val z: Float, val size: Float, val glow: Float)
+/**
+ * Una stella: dove sta **sullo schermo**, quanto e' grande, quanto brilla.
+ *
+ * Niente profondita': il cielo non passa dalla camera, quindi una terza
+ * coordinata non avrebbe niente che la legga.
+ */
+private class Star(val x: Float, val y: Float, val size: Float, val glow: Float)
 
 /**
  * Il cielo stellato. Sparse a mano e non a caso: attorno all'astro il cielo e'
@@ -797,32 +815,32 @@ private class Star(val x: Float, val y: Float, val z: Float, val size: Float, va
  * le fioche arrivano col buio.
  */
 private val STARS: List<Star> = listOf(
-    Star(-0.62f, -0.52f, 0.55f, 0.011f, 1.00f),
-    Star(0.06f, -0.66f, 0.58f, 0.011f, 1.00f),
-    Star(-0.66f, -0.16f, 0.48f, 0.010f, 0.95f),
-    Star(0.58f, -0.60f, 0.52f, 0.010f, 0.92f),
-    Star(-0.20f, -0.44f, 0.70f, 0.009f, 0.88f),
-    Star(0.52f, 0.02f, 0.68f, 0.009f, 0.85f),
-    Star(-0.44f, -0.70f, 0.62f, 0.008f, 0.80f),
-    Star(0.30f, -0.78f, 0.64f, 0.008f, 0.78f),
-    Star(-0.34f, -0.05f, 0.66f, 0.007f, 0.72f),
-    Star(0.68f, -0.28f, 0.60f, 0.007f, 0.70f),
-    Star(-0.78f, -0.62f, 0.44f, 0.007f, 0.68f),
-    Star(0.14f, -0.92f, 0.46f, 0.006f, 0.62f),
-    Star(-0.08f, -0.86f, 0.50f, 0.006f, 0.60f),
-    Star(0.76f, -0.74f, 0.42f, 0.006f, 0.58f),
-    Star(-0.52f, -0.90f, 0.40f, 0.006f, 0.55f),
-    Star(0.40f, -0.36f, 0.76f, 0.005f, 0.52f),
-    Star(0.22f, -0.20f, 0.74f, 0.005f, 0.50f),
-    Star(-0.24f, -0.74f, 0.72f, 0.005f, 0.48f),
-    Star(0.86f, -0.44f, 0.38f, 0.005f, 0.46f),
-    Star(-0.88f, -0.34f, 0.36f, 0.005f, 0.44f),
-    Star(0.62f, -0.90f, 0.36f, 0.004f, 0.42f),
-    Star(-0.14f, -0.28f, 0.80f, 0.004f, 0.40f),
-    Star(0.34f, -0.56f, 0.78f, 0.004f, 0.38f),
-    Star(-0.70f, -0.78f, 0.34f, 0.004f, 0.36f),
-    Star(0.02f, -0.40f, 0.82f, 0.004f, 0.34f),
-    Star(-0.42f, -0.24f, 0.78f, 0.004f, 0.32f),
+    Star(-0.62f, -0.52f, 0.011f, 1.00f),
+    Star(0.06f, -0.66f, 0.011f, 1.00f),
+    Star(-0.66f, -0.16f, 0.010f, 0.95f),
+    Star(0.58f, -0.60f, 0.010f, 0.92f),
+    Star(-0.20f, -0.44f, 0.009f, 0.88f),
+    Star(0.52f, 0.02f, 0.009f, 0.85f),
+    Star(-0.44f, -0.70f, 0.008f, 0.80f),
+    Star(0.30f, -0.78f, 0.008f, 0.78f),
+    Star(-0.34f, -0.05f, 0.007f, 0.72f),
+    Star(0.68f, -0.28f, 0.007f, 0.70f),
+    Star(-0.78f, -0.62f, 0.007f, 0.68f),
+    Star(0.14f, -0.92f, 0.006f, 0.62f),
+    Star(-0.08f, -0.86f, 0.006f, 0.60f),
+    Star(0.76f, -0.74f, 0.006f, 0.58f),
+    Star(-0.52f, -0.90f, 0.006f, 0.55f),
+    Star(0.40f, -0.36f, 0.005f, 0.52f),
+    Star(0.22f, -0.20f, 0.005f, 0.50f),
+    Star(-0.24f, -0.74f, 0.005f, 0.48f),
+    Star(0.86f, -0.44f, 0.005f, 0.46f),
+    Star(-0.88f, -0.34f, 0.005f, 0.44f),
+    Star(0.62f, -0.90f, 0.004f, 0.42f),
+    Star(-0.14f, -0.28f, 0.004f, 0.40f),
+    Star(0.34f, -0.56f, 0.004f, 0.38f),
+    Star(-0.70f, -0.78f, 0.004f, 0.36f),
+    Star(0.02f, -0.40f, 0.004f, 0.34f),
+    Star(-0.42f, -0.24f, 0.004f, 0.32f),
 )
 
 /** Quanto deriva una massa della nuvola, in frazioni di unita'. */
