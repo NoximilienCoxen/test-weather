@@ -67,11 +67,6 @@ fun WeatherSculpture(
     tilt: State<Offset>,
     /** Falso quando la schermata non e' in primo piano: allora niente vibrazione. */
     feelsIt: Boolean,
-    /**
-     * Cambia quando c'e' un motivo per rimettere in moto la scultura: un'altra
-     * ora, un altro posto. Il valore non conta, conta che sia diverso.
-     */
-    stirKey: Any?,
     /** Dove la cifra offre superficie alla pioggia. */
     contact: SceneContact,
     modifier: Modifier = Modifier,
@@ -205,31 +200,32 @@ fun WeatherSculpture(
 
 
     /**
-     * Il respiro della scultura: parte quando c'e' un motivo e **si spegne da
-     * sola**.
+     * Il respiro della scultura: **continuo, finche' la schermata si vede**.
      *
-     * Non un moto perpetuo. La proprieta' misurata di questa app e' che a
-     * schermo immobile disegna **zero fotogrammi** (trappola #8), ed e' quella
-     * che le fa consumare niente in tasca: una scena in tre dimensioni
-     * ridisegnata sessanta volte al secondo per sempre la butterebbe via. Qui il
-     * moto dura pochi secondi e la velocita' cala fino a zero, quindi la
-     * scultura si **assesta** invece di fermarsi di colpo - e da ferma torna a
-     * costare niente.
+     * Prima durava quattro secondi e si spegneva da sola, per non rinunciare
+     * alla proprieta' misurata dell'app - a schermo immobile, zero fotogrammi
+     * (trappola #8). Provata in mano, quella prudenza si e' rivelata sbagliata
+     * nel merito: un movimento che finisce prima che tu abbia finito di
+     * guardare non si legge come una scultura viva, si legge come **niente**.
+     * Chi guarda l'app la apre, guarda, e chiude: il moto deve esserci mentre
+     * guarda.
      *
-     * Il valore e' una fase in secondi di moto pieno: chi disegna la usa come
-     * tempo, e quando smette di crescere ogni cosa resta dov'era.
+     * Il prezzo si paga e va detto: la scena in tre dimensioni si ridisegna a
+     * ogni fotogramma finche' la schermata e' in primo piano, e in tasca si
+     * sente. Non si paga in sottofondo, ed e' l'unico sconto che non e' stato
+     * scelto ma regalato: `withFrameNanos` non batte quando la finestra non si
+     * vede, quindi il ciclo si ferma da solo senza che nessuno glielo dica.
+     *
+     * Il valore e' una fase in secondi: chi disegna la usa come tempo.
      */
     val stir = remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(stirKey, weatherCode) {
+    LaunchedEffect(Unit) {
         var last = 0L
-        var elapsed = 0f
-        while (elapsed < STIR_SECONDS) {
+        while (true) {
             withFrameNanos { now ->
                 val dt = if (last == 0L) 0f else (now - last) / 1_000_000_000f
                 last = now
-                elapsed += dt
-                val ease = (1f - elapsed / STIR_SECONDS).coerceIn(0f, 1f)
-                stir.floatValue += dt * ease * ease
+                stir.floatValue += dt
             }
         }
     }
@@ -314,15 +310,26 @@ fun WeatherSculpture(
         // sgombro. Stanno **dietro** tutto il resto e nello spazio del modello,
         // quindi girando la scultura girano con lei invece di restare
         // appiccicate al vetro - e' la stessa regola che vale per le gocce.
-        val starAlpha = (1f - sky.dayness) * clear
+        //
+        // **Ferme.** Il tremolio c'era e se n'e' andato: una stella che pulsa e'
+        // un lampeggiatore, e in mezzo a un sole che gira e a nuvole che
+        // derivano diventa l'unica cosa che distrae invece di quella che sta
+        // sullo sfondo. Il cielo sta fermo e le cose davanti si muovono.
+        //
+        // **Quante, lo decide il buio.** Sul grigio del crepuscolo se ne vedono
+        // due o tre, a notte piena il cielo si riempie: e' cosi' che va, e farle
+        // comparire tutte insieme al calar del sole sarebbe un interruttore, non
+        // una sera. Il conto e' quadratico apposta, cosi' le prime arrivano
+        // tardi e poi si affollano.
+        val night = (1f - sky.dayness).coerceIn(0f, 1f)
+        val starAlpha = night * clear
         if (starAlpha > 0.02f) {
-            STARS.forEachIndexed { k, star ->
+            val shown = (STARS.size * night * night).toInt().coerceIn(0, STARS.size)
+            for (k in 0 until shown) {
+                val star = STARS[k]
                 camera.place(star.x * unit, star.y * unit, star.z * unit)
-                // Il tremolio: ognuna col proprio passo, se no si accendono
-                // tutte insieme e sembra un lampeggiatore.
-                val twinkle = 0.55f + 0.45f * sin(moved * (1.1f + k % 3 * 0.4f) + k * 2.1f)
                 drawCircle(
-                    color = colors.text.copy(alpha = starAlpha * twinkle * star.glow),
+                    color = colors.text.copy(alpha = starAlpha * star.glow),
                     radius = (unit * star.size * camera.scale).coerceAtLeast(0.8f),
                     center = Offset(camera.sx, camera.sy),
                 )
@@ -778,35 +785,44 @@ private val Halo = Color(0xFF6E9BF0)
 internal fun Wmo.Family.isWet(): Boolean =
     this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
 
-/**
- * Per quanti secondi la scultura resta in moto dopo un motivo per muoversi.
- *
- * Quattro e mezzo: abbastanza da vederla vivere aprendo l'app o scorrendo
- * un'ora, poco da non diventare un moto perpetuo che tiene acceso lo schermo a
- * ridisegnare una scena che nessuno sta piu' guardando.
- */
-private const val STIR_SECONDS = 4.5f
-
 /** Una stella: dove sta nello spazio del modello, quanto e' grande, quanto brilla. */
 private class Star(val x: Float, val y: Float, val z: Float, val size: Float, val glow: Float)
 
 /**
- * Il cielo stellato. Sparse a mano e non a caso: attorno alla luna il cielo e'
- * piu' vuoto, se no le stelle le finiscono addosso e si legge come sporco.
+ * Il cielo stellato. Sparse a mano e non a caso: attorno all'astro il cielo e'
+ * piu' vuoto, se no le stelle gli finiscono addosso e si leggono come sporco.
+ *
+ * **L'ordine conta**: se ne accende un prefisso, quindi le prime sono le piu'
+ * luminose. Sul grigio compaiono quelle che si vedrebbero davvero per prime, e
+ * le fioche arrivano col buio.
  */
 private val STARS: List<Star> = listOf(
-    Star(-0.62f, -0.52f, 0.55f, 0.010f, 1.0f),
-    Star(-0.44f, -0.70f, 0.62f, 0.007f, 0.7f),
-    Star(-0.20f, -0.44f, 0.70f, 0.008f, 0.8f),
-    Star(-0.66f, -0.16f, 0.48f, 0.009f, 0.9f),
-    Star(-0.34f, -0.05f, 0.66f, 0.006f, 0.6f),
-    Star(0.06f, -0.66f, 0.58f, 0.010f, 1.0f),
-    Star(0.30f, -0.78f, 0.64f, 0.007f, 0.7f),
-    Star(0.58f, -0.60f, 0.52f, 0.008f, 0.85f),
-    Star(0.68f, -0.28f, 0.60f, 0.006f, 0.6f),
-    Star(0.52f, 0.02f, 0.68f, 0.009f, 0.8f),
-    Star(-0.08f, -0.86f, 0.50f, 0.006f, 0.55f),
-    Star(0.22f, -0.20f, 0.74f, 0.005f, 0.5f),
+    Star(-0.62f, -0.52f, 0.55f, 0.011f, 1.00f),
+    Star(0.06f, -0.66f, 0.58f, 0.011f, 1.00f),
+    Star(-0.66f, -0.16f, 0.48f, 0.010f, 0.95f),
+    Star(0.58f, -0.60f, 0.52f, 0.010f, 0.92f),
+    Star(-0.20f, -0.44f, 0.70f, 0.009f, 0.88f),
+    Star(0.52f, 0.02f, 0.68f, 0.009f, 0.85f),
+    Star(-0.44f, -0.70f, 0.62f, 0.008f, 0.80f),
+    Star(0.30f, -0.78f, 0.64f, 0.008f, 0.78f),
+    Star(-0.34f, -0.05f, 0.66f, 0.007f, 0.72f),
+    Star(0.68f, -0.28f, 0.60f, 0.007f, 0.70f),
+    Star(-0.78f, -0.62f, 0.44f, 0.007f, 0.68f),
+    Star(0.14f, -0.92f, 0.46f, 0.006f, 0.62f),
+    Star(-0.08f, -0.86f, 0.50f, 0.006f, 0.60f),
+    Star(0.76f, -0.74f, 0.42f, 0.006f, 0.58f),
+    Star(-0.52f, -0.90f, 0.40f, 0.006f, 0.55f),
+    Star(0.40f, -0.36f, 0.76f, 0.005f, 0.52f),
+    Star(0.22f, -0.20f, 0.74f, 0.005f, 0.50f),
+    Star(-0.24f, -0.74f, 0.72f, 0.005f, 0.48f),
+    Star(0.86f, -0.44f, 0.38f, 0.005f, 0.46f),
+    Star(-0.88f, -0.34f, 0.36f, 0.005f, 0.44f),
+    Star(0.62f, -0.90f, 0.36f, 0.004f, 0.42f),
+    Star(-0.14f, -0.28f, 0.80f, 0.004f, 0.40f),
+    Star(0.34f, -0.56f, 0.78f, 0.004f, 0.38f),
+    Star(-0.70f, -0.78f, 0.34f, 0.004f, 0.36f),
+    Star(0.02f, -0.40f, 0.82f, 0.004f, 0.34f),
+    Star(-0.42f, -0.24f, 0.78f, 0.004f, 0.32f),
 )
 
 /** Quanto deriva una massa della nuvola, in frazioni di unita'. */
