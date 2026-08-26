@@ -98,7 +98,13 @@ fun WelcomeScreen(
     // La velocita' e' un valore solo che sale mentre cerca e scende a zero
     // quando ha trovato: l'angolo lo integra, quindi rallenta e si ferma senza
     // scatti invece di spegnersi di colpo.
-    val spin = remember { mutableFloatStateOf(0f) }
+    // **Si apre sull'Africa, non sul Pacifico.** A giro zero davanti c'e' la
+    // longitudine zero, che di terre ne ha poche: il primo scatto mostrava un
+    // disco blu con una striscia artica in cima e l'Australia in basso, cioe'
+    // niente di riconoscibile. Partendo da qui la prima cosa che si vede sono
+    // Africa ed Europa - le due che chiunque riconosce a colpo d'occhio - e
+    // solo dopo il giro porta avanti il resto.
+    val spin = remember { mutableFloatStateOf(spinToFace(OPENING_LON)) }
     val pulse = remember { mutableFloatStateOf(0f) }
     val hunting = state.locating
     val homeLon = state.place.longitude.toFloat()
@@ -328,7 +334,13 @@ private val BUTTON_HEIGHT = 56.dp
 private const val HOMING_EASE = 2.6f
 
 /** Gradi al secondo: da fermo si guarda, mentre cerca si affanna. */
-private const val IDLE_SPEED = 16f
+/**
+ * La longitudine che guarda l'osservatore all'apertura: l'Africa centrale, con
+ * l'Europa sopra e le Americhe che stanno per entrare da destra.
+ */
+private const val OPENING_LON = 18f
+
+private const val IDLE_SPEED = 7f
 private const val HUNT_SPEED = 90f
 
 /** Quanto aspetta, trovato il posto, prima di cedere il passo. */
