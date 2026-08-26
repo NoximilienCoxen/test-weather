@@ -213,6 +213,16 @@ session() {
     restart_with "--ei meteo 3"
     shoot "${slug}-5-coperto"
 
+    # Neve e sereno non avevano nessuno scatto, quindi si scrivevano alla
+    # cieca: il fiocco che sbanda e l'uccello che batte le ali si giudicano
+    # guardandoli, non rileggendo il codice. Il sereno va forzato a mezzogiorno,
+    # se no all'ora della CI il cielo e' notte e gli uccelli non volano.
+    restart_with "--ei meteo 73"
+    shoot "${slug}-5b-neve"
+
+    restart_with "--ei ora 12 --ei meteo 0"
+    shoot "${slug}-5c-sereno-uccelli"
+
     # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
     # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
     # col dito non si arriva: per portare la cifra di taglio servono quattrocento
