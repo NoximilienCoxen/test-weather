@@ -169,31 +169,106 @@ fun DrawScope.surfaceMarks(
         // sulla sfera, non attorno.
         val squared = 1f - ux * ux - uy * uy
         if (squared <= 0f) return@forEach
-        val uz = -kotlin.math.sqrt(squared)
-
-        camera.normal(ux, uy, uz)
-        if (camera.nvz > -0.12f) return@forEach
-
-        val at = centre + Offset(camera.nvx * radius, camera.nvy * radius)
-        val flatten = abs(camera.nvz)
-        val markRadius = size * radius
-        val angle = atan2(camera.nvy, camera.nvx) * 180f / PI.toFloat()
-
-        // Vista di sbieco una macchia tonda e' un'ellisse schiacciata lungo la
-        // direzione che va dal centro al bordo.
-        withTransform({
-            rotate(angle, at)
-            scale(flatten, 1f, at)
-        }) {
-            drawCircle(
-                color = color,
-                radius = markRadius,
-                center = at,
-                alpha = (flatten - 0.12f).coerceIn(0f, 1f),
-            )
-        }
+        blot(camera, centre, radius, ux, uy, -kotlin.math.sqrt(squared), size, color)
     }
 }
+
+/**
+ * Una macchia appoggiata sulla superficie di una sfera, nella direzione data.
+ *
+ * Vista di sbieco una macchia tonda e' un'ellisse schiacciata lungo la direzione
+ * che va dal centro al bordo, e oltre il bordo non c'e': se ne va dietro, e
+ * sparisce. Vale per i mari della luna come per i continenti del mappamondo, e
+ * la differenza fra i due sta solo in **come si sceglie la direzione** - fissa
+ * per i primi, girata dal proprio asse per i secondi.
+ */
+private fun DrawScope.blot(
+    camera: Camera,
+    centre: Offset,
+    radius: Float,
+    ux: Float,
+    uy: Float,
+    uz: Float,
+    size: Float,
+    color: Color,
+) {
+    camera.normal(ux, uy, uz)
+    if (camera.nvz > -0.12f) return
+
+    val at = centre + Offset(camera.nvx * radius, camera.nvy * radius)
+    val flatten = abs(camera.nvz)
+    val angle = atan2(camera.nvy, camera.nvx) * 180f / PI.toFloat()
+
+    withTransform({
+        rotate(angle, at)
+        scale(flatten, 1f, at)
+    }) {
+        drawCircle(
+            color = color,
+            radius = size * radius,
+            center = at,
+            alpha = (flatten - 0.12f).coerceIn(0f, 1f),
+        )
+    }
+}
+
+/**
+ * Un mappamondo che gira sul proprio asse.
+ *
+ * E' la luna con due differenze: nessuna fase che la sezioni, e le macchie
+ * girano per conto loro invece di stare ferme rispetto al corpo. Tutto il resto
+ * - la sfera, la luce, l'ellisse che si schiaccia verso il bordo, il continente
+ * che se ne va dietro - e' il codice che nell'app funziona da sempre.
+ *
+ * I continenti non sono una mappa e non provano a esserlo: sono l'appiglio che
+ * permette di **vedere** che sta girando. Una sfera liscia che ruota e' una
+ * sfera ferma.
+ *
+ * @param lands terne di longitudine e latitudine in gradi, piu' il raggio della
+ *   macchia in frazione del raggio della sfera.
+ * @param spinDeg quanto e' girato adesso, in gradi.
+ */
+fun DrawScope.globe(
+    camera: Camera,
+    x: Float,
+    y: Float,
+    z: Float,
+    radius: Float,
+    spinDeg: Float,
+    light: Color,
+    dark: Color,
+    land: Color,
+    lands: List<Triple<Float, Float, Float>>,
+    alpha: Float = 1f,
+) {
+    if (alpha <= 0.003f) return
+    sphere(camera, x, y, z, radius, light, dark, alpha)
+
+    camera.place(x, y, z)
+    val r = radius * camera.scale
+    if (r <= 1f) return
+    val centre = Offset(camera.sx, camera.sy)
+
+    lands.forEach { (lonDeg, latDeg, size) ->
+        val lon = (lonDeg + spinDeg) * DEG
+        val lat = latDeg * DEG
+        val cosLat = cos(lat)
+        blot(
+            camera = camera,
+            centre = centre,
+            radius = r,
+            ux = cosLat * sin(lon),
+            uy = -sin(lat),
+            // Negativo alla longitudine zero: e' li' che il continente guarda
+            // l'osservatore, e da li' comincia a scivolare via girando.
+            uz = -cosLat * cos(lon),
+            size = size,
+            color = land.copy(alpha = land.alpha * alpha),
+        )
+    }
+}
+
+private const val DEG = (PI / 180.0).toFloat()
 
 /**
  * La corona di raggi del sole, in un piano solidale col corpo.
@@ -216,10 +291,16 @@ fun DrawScope.sunRays(
     alpha: Float,
     far: Boolean,
     count: Int = 12,
+    /** Di quanto e' girata la corona attorno al proprio centro, in gradi. */
+    turnDeg: Float = 0f,
+    /** Da 0 a 1: quanto i raggi sono allungati rispetto al minimo. */
+    reach: Float = 1f,
 ) {
     if (alpha <= 0.003f) return
+    val turn = turnDeg * DEG
+    val tip = 1.52f + 0.20f * reach
     for (i in 0 until count) {
-        val angle = i * (PI.toFloat() * 2f / count)
+        val angle = turn + i * (PI.toFloat() * 2f / count)
         val dx = cos(angle)
         val dy = sin(angle)
 
@@ -227,7 +308,7 @@ fun DrawScope.sunRays(
         if ((camera.vz > 0f) != far) continue
         val from = Offset(camera.sx, camera.sy)
         val nearScale = camera.scale
-        camera.place(x + dx * radius * 1.66f, y + dy * radius * 1.66f, z)
+        camera.place(x + dx * radius * tip, y + dy * radius * tip, z)
         val to = Offset(camera.sx, camera.sy)
 
         drawLine(

@@ -12,13 +12,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,19 +32,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.render3d.Camera
-import com.forli.meteo.ui.render3d.Explorer
+import com.forli.meteo.ui.render3d.globe
+import com.forli.meteo.ui.render3d.sphere
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
 import kotlinx.coroutines.delay
-import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
@@ -57,11 +53,13 @@ import kotlin.math.sin
  * cambiava solo entrando nelle impostazioni, quindi chi non ci entrava restava
  * per sempre sull'ultima impostata senza sapere che ce ne fosse un'altra.
  *
- * L'esploratore non e' una decorazione: e' l'unica cosa che spiega il tasto
- * senza scriverlo. Una mano appoggiata sopra dice "questo si preme", l'altra
- * sopra gli occhi dice cosa succede premendolo. Con la testa che si guarda
- * intorno la schermata si racconta da sola, e la riga di testo puo' restare una
- * domanda invece di diventare un'istruzione.
+ * **Un mappamondo e non un personaggio.** Una figura umana fatta di sfere non
+ * viene: era stata provata, e ogni correzione ne scopriva un'altra - le braccia
+ * a collana, il cappello che spariva, la mano che salutava invece di riparare lo
+ * sguardo. Il mappamondo invece e' la luna con un'altra pelle, cioe' l'unica
+ * cosa di questo motore che si sa gia' che funziona bene: sfera, luce di
+ * sempre, macchie sulla superficie che scivolano via girando. E dice la stessa
+ * identica cosa - **dove sei sulla Terra** - senza dover somigliare a nessuno.
  *
  * **Qui l'app disegna in continuazione, ed e' l'unico posto in cui lo fa.**
  * Altrove la regola e' zero fotogrammi a schermo immobile (trappola #8), e vale
@@ -78,55 +76,62 @@ fun WelcomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
-    val density = LocalDensity.current
 
     val askPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted -> if (granted) onFindMe() else onChooseByHand() }
 
-    // Trovato il posto, il pupazzo ha finito il suo lavoro: un attimo per farlo
-    // vedere e la schermata cede il passo a quella vera.
-    LaunchedEffect(state.followsLocation) {
-        if (state.followsLocation) {
+    val found = state.followsLocation
+
+    // Trovato il posto, un attimo per farlo vedere e la schermata cede il passo.
+    LaunchedEffect(found) {
+        if (found) {
             delay(HANDOVER_MS)
             onDone()
         }
     }
 
-    // Il ciclo del "si guarda intorno". Esplicito e non `rememberInfiniteTransition`,
-    // che qui non anima (trappola #17): un battito per fotogramma che scrive un
-    // valore, e il disegno lo legge.
-    val look = remember { mutableFloatStateOf(0f) }
-    val breath = remember { mutableFloatStateOf(0f) }
+    // Il giro del mappamondo, battuto a mano sui fotogrammi. Esplicito e non
+    // `rememberInfiniteTransition`, che qui non anima (trappola #17).
+    //
+    // La velocita' e' un valore solo che sale mentre cerca e scende a zero
+    // quando ha trovato: l'angolo lo integra, quindi rallenta e si ferma senza
+    // scatti invece di spegnersi di colpo.
+    val spin = remember { mutableFloatStateOf(0f) }
+    val pulse = remember { mutableFloatStateOf(0f) }
     val hunting = state.locating
-    LaunchedEffect(hunting) {
-        var origin = 0L
+    LaunchedEffect(hunting, found) {
+        var last = 0L
+        val speed = when {
+            found -> 0f
+            hunting -> HUNT_SPEED
+            else -> IDLE_SPEED
+        }
+        var current = spin.floatValue
         while (true) {
             withFrameNanos { now ->
-                if (origin == 0L) origin = now
-                val t = (now - origin) / 1_000_000_000f
-                // Mentre cerca guarda piu' in fretta e piu' largo: e' l'unico
-                // modo che ha di dire che sta facendo qualcosa.
-                val speed = if (hunting) 2.6f else 1.05f
-                look.floatValue = sin(t * speed)
-                breath.floatValue = sin(t * 2.1f)
+                val dt = if (last == 0L) 0f else (now - last) / 1_000_000_000f
+                last = now
+                // Insegue la velocita' voluta invece di prenderla: e' la
+                // differenza fra un mappamondo che accelera e uno che scatta.
+                current += (speed - current) * (dt * 2.2f).coerceAtMost(1f)
+                spin.floatValue += current * dt
+                pulse.floatValue = (pulse.floatValue + dt) % 1f
             }
         }
     }
 
-    val shrug by animateFloatAsState(
-        targetValue = if (state.locationUnavailable) 1f else 0f,
-        animationSpec = spring(dampingRatio = 0.62f, stiffness = 220f),
-        label = "spallucce",
-    )
-
-    val explorer = remember { Explorer() }
     val press = remember { MutableInteractionSource() }
     val pressed by press.collectIsPressedAsState()
     val sink by animateFloatAsState(
         targetValue = if (pressed) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = 900f),
         label = "affondo",
+    )
+    val pinned by animateFloatAsState(
+        targetValue = if (found) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.55f, stiffness = 240f),
+        label = "spillo",
     )
 
     Column(
@@ -146,7 +151,7 @@ fun WelcomeScreen(
             text = when {
                 state.locating -> "TI STO CERCANDO…"
                 state.locationUnavailable -> "NON RIESCO A TROVARTI"
-                state.followsLocation -> state.place.name.uppercase()
+                found -> state.place.name.uppercase()
                 else -> "DOVE TI TROVI ADESSO?"
             },
             style = MeteoType.title,
@@ -157,85 +162,93 @@ fun WelcomeScreen(
                 .padding(horizontal = 24.dp),
         )
 
-        BoxWithConstraints(
-            modifier = Modifier
+        Spacer(Modifier.height(28.dp))
+
+        Canvas(
+            Modifier
                 .fillMaxWidth()
-                .height(340.dp),
+                .height(260.dp),
         ) {
-            val boxW = with(density) { maxWidth.toPx() }
-            val boxH = with(density) { maxHeight.toPx() }
-            // Il pupazzo occupa poco piu' di meta' del riquadro. A grandezza
-            // piena il tasto gli finiva **addosso**: il braccio che avrebbe
-            // dovuto allungarsi per raggiungerlo era lungo sette centesimi di
-            // unita', cioe' spariva dentro il torace.
-            val unit = min(boxW, boxH) * FIGURE_SCALE
+            val unit = size.minDimension
+            val camera = Camera(
+                yawDeg = tilt.value.x * TILT_YAW,
+                pitchDeg = tilt.value.y * TILT_PITCH,
+                distance = unit * 2.6f,
+                origin = Offset(size.width / 2f, size.height / 2f),
+            )
+            val radius = unit * 0.34f
 
-            // Il pupazzo e il tasto si accordano su un punto solo, calcolato da
-            // entrambi con le stesse frazioni: cosi' la mano ci finisce sopra a
-            // qualunque dimensione di schermo, senza numeri scritti a mano.
-            val originX = boxW * FIGURE_X
-            val originY = boxH * FIGURE_Y
-            val buttonW = with(density) { BUTTON_WIDTH.toPx() }
-            val buttonH = with(density) { BUTTON_HEIGHT.toPx() }
-            val buttonCx = boxW * BUTTON_X
-            val buttonCy = boxH * BUTTON_Y + sink * buttonH * 0.06f
+            globe(
+                camera = camera,
+                x = 0f,
+                y = 0f,
+                z = 0f,
+                radius = radius,
+                spinDeg = spin.floatValue,
+                light = colors.cloudCore,
+                dark = colors.cloudShade,
+                land = lerp(colors.numberSideFar, colors.background, 0.34f),
+                lands = CONTINENTS,
+            )
 
-            Canvas(Modifier.fillMaxSize()) {
-                val camera = Camera(
-                    yawDeg = tilt.value.x * TILT_YAW,
-                    pitchDeg = tilt.value.y * TILT_PITCH,
-                    distance = unit * 2.6f,
-                    origin = Offset(originX, originY),
-                )
-                // La mano si appoggia sul bordo del tasto, non al suo centro:
-                // una mano che spunta da meta' del tasto sembra dentro il tasto.
-                explorer.pose(
-                    headYaw = look.floatValue * LOOK_DEGREES,
-                    reachX = (buttonCx - buttonW * 0.30f - originX) / unit,
-                    reachY = (buttonCy - buttonH * 0.22f - originY) / unit,
-                    shrug = shrug,
-                    breath = breath.floatValue,
-                )
-                explorer.draw(
-                    scope = this,
+            // Lo spillo si pianta quando il posto e' arrivato. Prima di allora
+            // non c'e', perche' non c'e' niente da segnare.
+            if (pinned > 0.01f) {
+                // Arriva da fuori e si posa: la corsa la fa la molla, qui si
+                // legge solo dove e' arrivata.
+                val drop = (1f - pinned) * radius * 1.6f
+                sphere(
                     camera = camera,
-                    unit = unit,
-                    skin = colors.cloudCore,
-                    shade = colors.cloudShade,
-                    hatSkin = colors.sunShade,
-                    hatShade = lerp(colors.sunShade, colors.numberSideFar, 0.55f),
-                    eyeSkin = colors.numberSideFar,
-                    eyeShade = lerp(colors.numberSideFar, colors.background, 0.25f),
+                    x = 0f,
+                    y = -radius * 0.18f - drop,
+                    z = -radius * 0.98f,
+                    radius = radius * 0.10f,
+                    light = colors.text,
+                    dark = colors.text,
+                    alpha = pinned,
                 )
-            }
-
-            Box(
-                modifier = Modifier
-                    .offset {
-                        IntOffset(
-                            (buttonCx - buttonW / 2f).roundToInt(),
-                            (buttonCy - buttonH / 2f).roundToInt(),
-                        )
-                    }
-                    .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(colors.pillBackground)
-                    .clickable(
-                        interactionSource = press,
-                        indication = null,
-                        enabled = !state.locating && !state.followsLocation,
-                        onClick = {
-                            askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        },
+                // L'onda che parte da li'. Una sola, e in dissolvenza: e' un
+                // segno di conferma, non un radar.
+                val wave = pulse.floatValue
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            colors.text.copy(alpha = 0f),
+                            colors.text.copy(alpha = 0.22f * pinned * (1f - wave)),
+                            colors.text.copy(alpha = 0f),
+                        ),
+                        center = Offset(size.width / 2f, size.height / 2f - radius * 0.18f),
+                        radius = radius * (0.3f + wave * 1.1f),
                     ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "TROVAMI",
-                    style = MeteoType.label,
-                    color = colors.pillText,
+                    radius = radius * (0.3f + wave * 1.1f),
+                    center = Offset(size.width / 2f, size.height / 2f - radius * 0.18f),
                 )
             }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        Box(
+            modifier = Modifier
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .padding(top = (sink * 3).dp)
+                .clip(RoundedCornerShape(percent = 50))
+                .background(colors.pillBackground)
+                .clickable(
+                    interactionSource = press,
+                    indication = null,
+                    enabled = !state.locating && !found,
+                    onClick = {
+                        askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    },
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "TROVAMI",
+                style = MeteoType.label,
+                color = colors.pillText,
+            )
         }
 
         // La via d'uscita c'e' sempre: un permesso negato non e' un vicolo
@@ -253,34 +266,40 @@ fun WelcomeScreen(
                     indication = null,
                     onClick = onChooseByHand,
                 )
-                .padding(horizontal = 20.dp, vertical = 10.dp),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
         )
     }
 }
 
-/** Dove sta il pupazzo nel suo riquadro, e quanto e' grande, in frazioni. */
-private const val FIGURE_X = 0.30f
-private const val FIGURE_Y = 0.55f
-private const val FIGURE_SCALE = 0.78f
-
 /**
- * Dove sta il tasto, in frazioni dello stesso riquadro.
+ * I continenti: longitudine e latitudine in gradi, piu' quanto e' grande la
+ * macchia.
  *
- * All'altezza della spalla, non del petto: un braccio che si alza troppo si
- * legge come un saluto, e uno che scende come un braccio caduto. Appoggiato
- * vuol dire quasi in piano.
+ * Non e' una mappa e non prova a esserlo. Servono a far **vedere** che la sfera
+ * gira: una sfera liscia che ruota e' una sfera ferma. Sono sparsi su tutte le
+ * longitudini apposta, cosi' in ogni istante qualcosa sta entrando da un lato
+ * mentre qualcos'altro esce dall'altro.
  */
-private const val BUTTON_X = 0.74f
-private const val BUTTON_Y = 0.50f
+private val CONTINENTS: List<Triple<Float, Float, Float>> = listOf(
+    Triple(-58f, 8f, 0.20f),
+    Triple(-72f, -26f, 0.15f),
+    Triple(12f, 22f, 0.17f),
+    Triple(24f, -10f, 0.19f),
+    Triple(46f, 46f, 0.13f),
+    Triple(104f, 34f, 0.21f),
+    Triple(136f, -26f, 0.14f),
+    Triple(-160f, 40f, 0.12f),
+)
 
-private val BUTTON_WIDTH = 156.dp
-private val BUTTON_HEIGHT = 54.dp
+private val BUTTON_WIDTH = 172.dp
+private val BUTTON_HEIGHT = 56.dp
 
-/** Di quanti gradi gira la testa agli estremi della sbirciata. */
-private const val LOOK_DEGREES = 26f
+/** Gradi al secondo: da fermo si guarda, mentre cerca si affanna. */
+private const val IDLE_SPEED = 16f
+private const val HUNT_SPEED = 90f
 
 /** Quanto aspetta, trovato il posto, prima di cedere il passo. */
-private const val HANDOVER_MS = 900L
+private const val HANDOVER_MS = 1400L
 
-private const val TILT_YAW = 9f
+private const val TILT_YAW = 8f
 private const val TILT_PITCH = 6f
