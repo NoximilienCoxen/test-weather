@@ -48,6 +48,21 @@ data class MeteoColors(
     val rainCloudCore: Color,
     val rainCloudShade: Color,
     val rain: Color,
+    /**
+     * Il mappamondo del benvenuto: mare e terre emerse.
+     *
+     * **Fissi, e non mescolati all'ora del giorno come tutto il resto.** Il
+     * mappamondo si vede una volta sola, prima ancora di sapere che tempo fa e
+     * dove: non ha un'ora a cui appartenere. E soprattutto e' l'unica cosa
+     * dell'app che deve **somigliare a qualcosa di vero** - una sfera bianca con
+     * macchie grigie era la luna, non la Terra, e infatti si leggeva cosi'.
+     *
+     * Il blu e l'ocra non sono tinte nuove: sono gli stessi della pioggia e del
+     * sole, smorzati. Un mappamondo da libro di scuola.
+     */
+    val globeSea: Color,
+    val globeSeaShade: Color,
+    val globeLand: Color,
 )
 
 // I due estremi del fondo. Nero pieno no: una luna bianca ci starebbe sopra
@@ -109,6 +124,9 @@ fun skyColors(sky: SkyState): MeteoColors {
         rainCloudCore = Color(0xFF9BA1AB),
         rainCloudShade = Color(0xFF474C56),
         rain = Color(0xFF3C8DF5),
+        globeSea = Color(0xFF8CBCE8),
+        globeSeaShade = Color(0xFF2E5C92),
+        globeLand = Color(0xFFCFA255),
     )
 }
 
