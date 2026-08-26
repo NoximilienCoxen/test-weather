@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.lerp
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -78,11 +79,26 @@ fun DrawScope.sphere(
 }
 
 /**
- * La luna: solo la parte illuminata, sezionata dalla mediana della fase.
+ * La luna: il disco intero, con dentro la parte illuminata e il taglio della
+ * fase.
  *
- * La parte in ombra non si disegna. Riempirla di grigio darebbe un disco pieno
- * con una riga in mezzo, che non e' una luna: la falce si riconosce proprio
- * perche' il resto non c'e'.
+ * **Il disco spento c'e', e prima non c'era.** Si disegnava solo la falce, col
+ * ragionamento che una luna si riconosce proprio perche' il resto non c'e'. In
+ * cielo e' vero. Su due centimetri di schermo, a chi non passa le sere a
+ * guardare in su, no: una falce sola non si legge come luna, si legge come una
+ * palla deformata - ed e' esattamente il commento arrivato da chi la usa.
+ *
+ * La fase si capisce quando si vede **il cerchio**, e dentro il cerchio il
+ * taglio. E' cosi' che la disegnano i calendari e i lunari, ed e' la ragione
+ * per cui funzionano: senza il bordo spento non c'e' un tondo da cui la falce
+ * sia stata tolta, c'e' solo una scheggia. Qui la parte in ombra sta a un
+ * quarto scarso di opacita': abbastanza da chiudere il cerchio, troppo poco da
+ * competere con la parte accesa.
+ *
+ * Per la stessa ragione il gradiente della parte accesa non arriva piu' fino al
+ * grigio dell'ombra: si ferma a mezza strada. Se le due parti finissero dello
+ * stesso colore lungo la mediana, la mediana sparirebbe - e la mediana e'
+ * l'informazione.
  *
  * **La sua luce non e' quella della scultura.** Sole, nuvole e cifra li
  * illumina la stessa lampada da sinistra in alto, ed e' giusto: sono oggetti
@@ -127,12 +143,23 @@ fun DrawScope.moon(
         close()
     }
 
+    // Il tondo spento, sotto a tutto: e' lui a dire che quella e' una luna e non
+    // una scheggia. Va disegnato prima, se no coprirebbe la falce.
+    drawCircle(
+        color = dark,
+        radius = r,
+        center = centre,
+        alpha = alpha * UNLIT_DISC,
+    )
+
     // Il lembo acceso: a destra se cresce, a sinistra se cala.
     val limb = if (waxing) 1f else -1f
     drawPath(
         path = lit,
         brush = Brush.radialGradient(
-            colors = listOf(light, dark),
+            // Non fino al grigio dell'ombra: a mezza strada. Arrivandoci, lungo
+            // la mediana i due lati finirebbero uguali e il taglio sparirebbe.
+            colors = listOf(light, lerp(light, dark, TERMINATOR_CONTRAST)),
             center = centre + Offset(limb * r * 0.62f, -r * 0.20f),
             radius = r * 1.55f,
         ),
@@ -273,6 +300,23 @@ fun DrawScope.globe(
         )
     }
 }
+
+/**
+ * Quanto si vede la parte in ombra della luna.
+ *
+ * Il compito e' chiudere il cerchio, non farsi guardare: alzandolo, la fase
+ * smette di leggersi perche' acceso e spento si somigliano; togliendolo del
+ * tutto si torna alla scheggia.
+ */
+private const val UNLIT_DISC = 0.24f
+
+/**
+ * Dove si ferma il gradiente della parte accesa, andando verso la mediana.
+ *
+ * A uno arriverebbe fino al grigio dell'ombra, i due lati finirebbero uguali
+ * lungo il taglio e il taglio - che e' l'informazione - sparirebbe.
+ */
+private const val TERMINATOR_CONTRAST = 0.45f
 
 private const val DEG = (PI / 180.0).toFloat()
 
