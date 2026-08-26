@@ -177,6 +177,9 @@ fun HomeScreen(
                 // il telefono continuerebbe a vibrare di pioggia mentre si
                 // sceglie una citta'.
                 feelsIt = !state.settingsOpen,
+                // Ogni ora scorsa e' un motivo per rimettere in moto la
+                // scultura: si anima qualche secondo e torna ferma.
+                stirKey = state.selectedHour,
                 contact = contact,
                 modifier = Modifier
                     .fillMaxWidth()

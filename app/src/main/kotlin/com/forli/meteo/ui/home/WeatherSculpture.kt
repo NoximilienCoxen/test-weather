@@ -39,6 +39,7 @@ import com.forli.meteo.ui.theme.LocalMeteoColors
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import kotlin.random.Random
 
 /**
@@ -66,6 +67,11 @@ fun WeatherSculpture(
     tilt: State<Offset>,
     /** Falso quando la schermata non e' in primo piano: allora niente vibrazione. */
     feelsIt: Boolean,
+    /**
+     * Cambia quando c'e' un motivo per rimettere in moto la scultura: un'altra
+     * ora, un altro posto. Il valore non conta, conta che sia diverso.
+     */
+    stirKey: Any?,
     /** Dove la cifra offre superficie alla pioggia. */
     contact: SceneContact,
     modifier: Modifier = Modifier,
@@ -198,6 +204,36 @@ fun WeatherSculpture(
     }
 
 
+    /**
+     * Il respiro della scultura: parte quando c'e' un motivo e **si spegne da
+     * sola**.
+     *
+     * Non un moto perpetuo. La proprieta' misurata di questa app e' che a
+     * schermo immobile disegna **zero fotogrammi** (trappola #8), ed e' quella
+     * che le fa consumare niente in tasca: una scena in tre dimensioni
+     * ridisegnata sessanta volte al secondo per sempre la butterebbe via. Qui il
+     * moto dura pochi secondi e la velocita' cala fino a zero, quindi la
+     * scultura si **assesta** invece di fermarsi di colpo - e da ferma torna a
+     * costare niente.
+     *
+     * Il valore e' una fase in secondi di moto pieno: chi disegna la usa come
+     * tempo, e quando smette di crescere ogni cosa resta dov'era.
+     */
+    val stir = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(stirKey, weatherCode) {
+        var last = 0L
+        var elapsed = 0f
+        while (elapsed < STIR_SECONDS) {
+            withFrameNanos { now ->
+                val dt = if (last == 0L) 0f else (now - last) / 1_000_000_000f
+                last = now
+                elapsed += dt
+                val ease = (1f - elapsed / STIR_SECONDS).coerceIn(0f, 1f)
+                stir.floatValue += dt * ease * ease
+            }
+        }
+    }
+
     val phase = remember(date) { MoonPhase.at(date) }
 
     // Riusati a ogni fotogramma: la fila dei corpi tondi e la loro profondita'.
@@ -233,20 +269,6 @@ fun WeatherSculpture(
         // perche' li' davvero non lo si vedrebbe piu'.
         val clear = 1f - SunClock.smoothstep(0.62f, 0.86f, cloudiness)
 
-        // Piu' in alto e piu' fuori dall'asse di quanto stesse. Girando, la
-        // scultura porta i suoi corpi in giro su cerchi di raggio diverso: con
-        // l'astro dentro al raggio della nuvola non c'era angolo da cui lo si
-        // vedesse intero, e la falce - che e' tutto quello che una luna ha da
-        // dire - restava tagliata a meta' da una massa bianca.
-        val bodyX = unit * 0.30f
-        val bodyY = -unit * 0.24f
-        val bodyZ = unit * 0.26f
-        val bodyRadius = unit * 0.23f
-
-        val sunAlpha = clear * sky.sunPresence
-        val moonAlpha = clear * sky.moonPresence
-        val astroAlpha = maxOf(sunAlpha, moonAlpha)
-
         val scale = 0.52f + cloudiness * 0.48f
         val presence = ((cloudiness - 0.02f) / 0.06f).coerceIn(0f, 1f)
         val masses = if (cloudiness > 0.02f) {
@@ -254,6 +276,24 @@ fun WeatherSculpture(
         } else {
             0
         }
+
+        // **Astro e nuvola si fanno spazio a vicenda solo quando sono in due.**
+        //
+        // L'astro stava sempre spostato a destra, che serve a non farlo
+        // inghiottire dalla nuvola - ma col sereno la nuvola non c'e', e il sole
+        // restava in alto a destra da solo, scollato dalla cifra che gli sta
+        // sotto. Ora lo scostamento cresce con la nuvola: senza, l'astro e' al
+        // centro sopra il numero; con, i due si allargano attorno al centro.
+        val pairing = if (masses > 0) presence else 0f
+        val bodyX = unit * 0.21f * pairing
+        val bodyY = -unit * (0.20f + 0.03f * pairing)
+        val bodyZ = unit * 0.26f
+        val bodyRadius = unit * 0.23f
+        val cloudX = -unit * 0.13f * pairing
+
+        val sunAlpha = clear * sky.sunPresence
+        val moonAlpha = clear * sky.moonPresence
+        val astroAlpha = maxOf(sunAlpha, moonAlpha)
 
         // Il lampo illumina la nuvola da dentro: se restasse dello stesso
         // grigio, la saetta sembrerebbe disegnata davanti a un fondale.
@@ -268,6 +308,44 @@ fun WeatherSculpture(
         // Adesso entra nella stessa fila delle masse, ordinato per profondita'
         // in coordinate di vista come loro: passa dietro e poi davanti, e chi
         // gira decide cosa vedere.
+        val moved = stir.floatValue
+
+        // Le stelle, e solo quando ci sono davvero: di notte e con il cielo
+        // sgombro. Stanno **dietro** tutto il resto e nello spazio del modello,
+        // quindi girando la scultura girano con lei invece di restare
+        // appiccicate al vetro - e' la stessa regola che vale per le gocce.
+        val starAlpha = (1f - sky.dayness) * clear
+        if (starAlpha > 0.02f) {
+            STARS.forEachIndexed { k, star ->
+                camera.place(star.x * unit, star.y * unit, star.z * unit)
+                // Il tremolio: ognuna col proprio passo, se no si accendono
+                // tutte insieme e sembra un lampeggiatore.
+                val twinkle = 0.55f + 0.45f * sin(moved * (1.1f + k % 3 * 0.4f) + k * 2.1f)
+                drawCircle(
+                    color = colors.text.copy(alpha = starAlpha * twinkle * star.glow),
+                    radius = (unit * star.size * camera.scale).coerceAtLeast(0.8f),
+                    center = Offset(camera.sx, camera.sy),
+                )
+            }
+        }
+
+        // Ogni massa deriva per conto suo, con la propria fase e la propria
+        // velocita': tutte insieme sarebbe una nuvola che trema, non una nuvola
+        // che si muove. Quelle davanti scorrono di piu' di quelle dietro, che e'
+        // la stessa parallasse che gia' racconta lo spazio quando si gira.
+        fun driftX(k: Int): Float {
+            val lump = CLOUD_MASSES[k]
+            val depth = 0.6f + 0.4f * (1f - (lump.z + 0.2f))
+            return lump.x * unit * scale + cloudX +
+                sin(moved * 0.62f + k * 1.7f) * unit * DRIFT * depth
+        }
+
+        fun driftY(k: Int): Float {
+            val lump = CLOUD_MASSES[k]
+            return lump.y * unit * scale +
+                sin(moved * 0.48f + k * 2.6f) * unit * DRIFT * 0.55f
+        }
+
         var bodies = 0
         if (astroAlpha > 0.01f) {
             camera.place(bodyX, bodyY, bodyZ)
@@ -277,7 +355,7 @@ fun WeatherSculpture(
         }
         for (k in 0 until masses) {
             val lump = CLOUD_MASSES[k]
-            camera.place(lump.x * unit * scale, lump.y * unit * scale, lump.z * unit * scale)
+            camera.place(driftX(k), driftY(k), lump.z * unit * scale)
             bodyDepth[bodies] = camera.vz
             bodyOf[bodies] = k
             bodies++
@@ -302,9 +380,19 @@ fun WeatherSculpture(
             val which = bodyOf[i]
             if (which == ASTRO) {
                 if (sunAlpha >= moonAlpha) {
-                    sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = true)
+                    // La corona gira piano e i raggi respirano: e' quello che
+                    // distingue un sole da un cerchio giallo con dei trattini.
+                    val turn = moved * 9f
+                    val reach = (0.5f + 0.5f * sin(moved * 1.15f))
+                    sunRays(
+                        camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore,
+                        sunAlpha * 0.75f, far = true, turnDeg = turn, reach = reach,
+                    )
                     sphere(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, colors.sunShade, sunAlpha)
-                    sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = false)
+                    sunRays(
+                        camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore,
+                        sunAlpha * 0.75f, far = false, turnDeg = turn, reach = reach,
+                    )
                 } else {
                     moon(
                         camera = camera,
@@ -324,8 +412,8 @@ fun WeatherSculpture(
             val lump = CLOUD_MASSES[which]
             sphere(
                 camera = camera,
-                x = lump.x * unit * scale,
-                y = lump.y * unit * scale,
+                x = driftX(which),
+                y = driftY(which),
                 z = lump.z * unit * scale,
                 radius = lump.radius * unit * scale,
                 light = core,
@@ -689,6 +777,40 @@ private val Halo = Color(0xFF6E9BF0)
 /** Famiglie che portano precipitazione, e quindi una nuvola carica. */
 internal fun Wmo.Family.isWet(): Boolean =
     this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
+
+/**
+ * Per quanti secondi la scultura resta in moto dopo un motivo per muoversi.
+ *
+ * Quattro e mezzo: abbastanza da vederla vivere aprendo l'app o scorrendo
+ * un'ora, poco da non diventare un moto perpetuo che tiene acceso lo schermo a
+ * ridisegnare una scena che nessuno sta piu' guardando.
+ */
+private const val STIR_SECONDS = 4.5f
+
+/** Una stella: dove sta nello spazio del modello, quanto e' grande, quanto brilla. */
+private class Star(val x: Float, val y: Float, val z: Float, val size: Float, val glow: Float)
+
+/**
+ * Il cielo stellato. Sparse a mano e non a caso: attorno alla luna il cielo e'
+ * piu' vuoto, se no le stelle le finiscono addosso e si legge come sporco.
+ */
+private val STARS: List<Star> = listOf(
+    Star(-0.62f, -0.52f, 0.55f, 0.010f, 1.0f),
+    Star(-0.44f, -0.70f, 0.62f, 0.007f, 0.7f),
+    Star(-0.20f, -0.44f, 0.70f, 0.008f, 0.8f),
+    Star(-0.66f, -0.16f, 0.48f, 0.009f, 0.9f),
+    Star(-0.34f, -0.05f, 0.66f, 0.006f, 0.6f),
+    Star(0.06f, -0.66f, 0.58f, 0.010f, 1.0f),
+    Star(0.30f, -0.78f, 0.64f, 0.007f, 0.7f),
+    Star(0.58f, -0.60f, 0.52f, 0.008f, 0.85f),
+    Star(0.68f, -0.28f, 0.60f, 0.006f, 0.6f),
+    Star(0.52f, 0.02f, 0.68f, 0.009f, 0.8f),
+    Star(-0.08f, -0.86f, 0.50f, 0.006f, 0.55f),
+    Star(0.22f, -0.20f, 0.74f, 0.005f, 0.5f),
+)
+
+/** Quanto deriva una massa della nuvola, in frazioni di unita'. */
+private const val DRIFT = 0.022f
 
 private const val FALL_CYCLE_MS = 1400L
 private const val TILT_YAW = 7f

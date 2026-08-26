@@ -253,14 +253,38 @@ class TextPrism private constructor(
      * Scrive in [shadowTransform]. Torna falso se non c'e' piu' superficie da
      * proiettare.
      */
-    fun prepareShadow(index: Int, camera: Camera, yOffset: Float = 0f): Boolean {
+    fun prepareShadow(
+        index: Int,
+        camera: Camera,
+        yOffset: Float = 0f,
+        /** Quanto dietro l'oggetto cade l'ombra, in pixel di profondita'. */
+        behind: Float = 0f,
+    ): Boolean {
         val part = parts[index]
         cornersLocal[0] = part.left; cornersLocal[1] = part.top
         cornersLocal[2] = part.right; cornersLocal[3] = part.top
         cornersLocal[4] = part.right; cornersLocal[5] = part.bottom
         cornersLocal[6] = part.left; cornersLocal[7] = part.bottom
+
+        // **Una proiezione, non una copia spostata.**
+        //
+        // Prima l'ombra era la faccia dell'oggetto sotto la stessa matrice,
+        // traslata di un tot sulla tela: ferma sembrava un'ombra, girata no.
+        // Ruotando, un'ombra vera cambia forma - si accorcia, si inclina, si
+        // allarga - e una copia traslata non cambia niente, quindi si legge come
+        // una seconda cifra scura appoggiata dietro la prima.
+        //
+        // Qui ogni angolo viene spinto **lungo la luce** fino al piano che sta
+        // dietro l'oggetto, e solo allora proiettato. La forma la decide la
+        // geometria, e girando cambia da sola. Costa gli stessi quattro angoli.
+        val travel = behind / SHADOW_TRAVEL_Z
         for (k in 0 until 4) {
             camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1] + yOffset, 0f)
+            camera.project(
+                camera.vx + SHADOW_TRAVEL_X * travel,
+                camera.vy + SHADOW_TRAVEL_Y * travel,
+                camera.vz + behind,
+            )
             cornersScreen[k * 2] = camera.sx
             cornersScreen[k * 2 + 1] = camera.sy
         }
@@ -568,6 +592,17 @@ class TextPrism private constructor(
 
         /** Lo stacco fra le cifre e il simbolo, in frazione del corpo. */
         private const val SYMBOL_GAP = 0.015f
+
+        /**
+         * Il verso in cui viaggia la luce, cioe' il verso in cui cade l'ombra.
+         *
+         * E' l'opposto della direzione **verso** la lampada, che e' quella che
+         * `Light` tiene. Presa da li' e non scritta a mano: cosi' spostare la
+         * luce sposta anche l'ombra, invece di lasciarle contraddirsi.
+         */
+        private val SHADOW_TRAVEL_X = -Light.Standard.x
+        private val SHADOW_TRAVEL_Y = -Light.Standard.y
+        private val SHADOW_TRAVEL_Z = -Light.Standard.z
 
         /**
          * Quanto e' piccolo il simbolo in coda rispetto alle cifre.

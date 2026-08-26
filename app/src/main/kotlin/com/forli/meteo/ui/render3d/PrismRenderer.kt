@@ -12,7 +12,6 @@ import com.forli.meteo.ui.render.NumberPalette
 import com.forli.meteo.ui.render.NumberSpec
 import com.forli.meteo.ui.render.PreparedNumber
 import com.forli.meteo.ui.render.TemperatureRenderer
-import kotlin.math.hypot
 import kotlin.math.max
 
 /**
@@ -97,8 +96,20 @@ class PrismRenderer : TemperatureRenderer {
         // Prima la cifra si costruiva, si misurava, e se non ci stava **si
         // ricostruiva da capo**: due campionamenti di tutti i contorni per
         // sapere un numero che si ottiene con tre chiamate a `getTextPath`.
+        // **Misurato su una sagoma di riferimento, non sul testo vero.**
+        //
+        // La larghezza dell'inchiostro dipende da quali cifre sono: l'uno ne ha
+        // molto meno di uno zero. Misurando il testo vero, "31" restava sotto la
+        // soglia o la sfiorava e veniva rimpicciolito meno di "32", e le due
+        // temperature uscivano di corpo diverso a un'ora di distanza. Con tutte
+        // le cifre ridotte a uno zero, qualunque valore della stessa lunghezza
+        // riceve lo stesso corpo, ed e' l'unica cosa che conta: la cifra non
+        // deve respirare mentre si scorre la barra.
+        val gauge = buildString {
+            for (c in spec.text) append(if (c.isDigit()) '0' else c)
+        }
         val width = TextPrism.widthOf(
-            text = spec.text,
+            text = gauge,
             typeface = spec.typeface,
             sizePx = size,
             letterSpacingEm = spec.letterSpacingEm,
@@ -181,19 +192,18 @@ class PrismRenderer : TemperatureRenderer {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 for (index in 0 until prism.partCount) {
-                    if (!prism.prepareShadow(index, camera, rise)) continue
                     val outline = prism.outlineOf(index)
                     for (layer in SHADOW_STEPS.indices) {
-                        val reach = SHADOW_STEPS[layer]
+                        // I due gradini non sono piu' due copie traslate ma due
+                        // piani a distanze diverse: quello vicino da' il nucleo,
+                        // quello lontano la sfumatura, e girando si deformano
+                        // tutti e due come si deve.
+                        val behind = model.depth * SHADOW_REACH * SHADOW_STEPS[layer]
+                        if (!prism.prepareShadow(index, camera, rise, behind)) continue
                         shadowPaint.color = Color.Black
                             .copy(alpha = castAlpha * SHADOW_WEIGHTS[layer])
                             .toArgb()
                         native.save()
-                        val away = model.depth * SHADOW_REACH * reach
-                        native.translate(
-                            SHADOW_DIRECTION.x * away,
-                            SHADOW_DIRECTION.y * away,
-                        )
                         native.concat(prism.shadowTransform)
                         native.drawPath(outline, shadowPaint)
                         native.restore()
@@ -322,27 +332,12 @@ class PrismRenderer : TemperatureRenderer {
         val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
 
         /**
-         * Quanto si allontana l'ombra, in multipli dello spessore della cifra.
+         * Quanto dietro l'oggetto cade l'ombra, in multipli del suo spessore.
          *
-         * Corta apposta. Piu' in la' i due gradini si staccano dalla sagoma e
-         * fra l'oggetto e la sua ombra si vede il fondo: a quel punto non si
-         * legge piu' come ombra ma come una seconda cifra scura appoggiata
-         * dietro la prima.
+         * Corta apposta: piu' lontano il piano, piu' l'ombra si stacca dalla
+         * sagoma e fra l'oggetto e la sua ombra si vede il fondo.
          */
-        const val SHADOW_REACH = 0.46f
-
-        /**
-         * Dove cade l'ombra: nel verso opposto alla luce, e da nessun'altra
-         * parte. Presa dalla luce stessa cosi' spostare la lampada sposta anche
-         * l'ombra, invece di lasciarle contraddirsi - la luce sfiorava la cifra
-         * da sinistra in alto e l'ombra cadeva quasi in verticale, cioe' come se
-         * venisse da un'altra lampada.
-         */
-        val SHADOW_DIRECTION: Offset = run {
-            val l = Light.Standard
-            val len = hypot(l.x, l.y).takeIf { it > 1e-4f } ?: 1f
-            Offset(-l.x / len, -l.y / len)
-        }
+        const val SHADOW_REACH = 1.15f
 
         /**
          * Fra queste due aperture l'ombra passa da assente a piena. Un gradino
