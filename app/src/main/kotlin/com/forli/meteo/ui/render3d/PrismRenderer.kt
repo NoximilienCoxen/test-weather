@@ -61,6 +61,15 @@ class PrismRenderer : TemperatureRenderer {
      */
     private val shadowPaint = android.graphics.Paint()
 
+    /** Il riquadro dello strato dell'ombra, riusato per non allocare a ogni fotogramma. */
+    private val shadowArea = android.graphics.RectF()
+
+    /** Il riquadro del glifo, che serve a sapere attorno a cosa allargare la penombra. */
+    private val glyphBounds = android.graphics.RectF()
+
+    /** La matrice della penombra: la proiezione piu' un allargamento. */
+    private val haloMatrix = android.graphics.Matrix()
+
     /**
      * Le geometrie gia' estratte, dalla piu' usata di recente alla piu' vecchia.
      *
@@ -174,10 +183,37 @@ class PrismRenderer : TemperatureRenderer {
         // di luce. Ma e' un disegno, non un fenomeno: deve stare sul fondo, non
         // sulla faccia del carattere accanto.
         //
-        // Due copie sempre piu' lontane e sempre piu' tenui, non una sola: una
-        // copia sola col bordo netto non si legge come ombra ma come un secondo
-        // oggetto scuro dietro il primo. Sfocarla davvero non si puo' a buon
-        // mercato su tela accelerata, ma due gradini bastano.
+        // **L'ombra e' il volume spazzato, non un piano.** Per tre giri e' stata
+        // due copie della faccia proiettate su due piani dietro l'oggetto, ognuna
+        // col suo alpha. Il difetto che si vedeva - "un foglio appiccicato dietro
+        // il numero", e si notava alla prima rotazione - non era la distanza ne'
+        // il colore: era che **un piano non e' un solido**. L'ombra di una lastra
+        // estrusa e' il suo volume spinto lungo la luce, cioe' la faccia spazzata
+        // da qui fino a la'; una faccia sola, per quanto ben proiettata, resta
+        // una lastra sottile appoggiata dietro. E due gradini a bordo netto sono
+        // esattamente due lastre.
+        //
+        // Adesso la faccia viene proiettata a piu' profondita' lungo lo stesso
+        // viaggio e l'unione delle copie **e'** il volume. Tre cose la rendono
+        // un'ombra invece che una pila di sagome:
+        //
+        // - **Uno strato fuori schermo, e l'alpha una volta sola.** Dentro lo
+        //   strato le copie sono nero pieno, quindi sovrapporsi non le scurisce:
+        //   l'unione e' una macchia sola. Sommandole direttamente a schermo ogni
+        //   sovrapposizione si scurirebbe due volte e i gradini tornerebbero
+        //   visibili - era proprio quello a tradire il trucco.
+        // - **Il viaggio e' corto.** Non c'e' pavimento su cui cadere, quindi non
+        //   e' un'ombra portata: e' il buio di contatto che stacca l'oggetto dal
+        //   fondo. Corta, resta credibile a ogni angolo; lunga, chiede un
+        //   pavimento che non esiste.
+        // - **Una penombra vera**, due copie appena piu' larghe sotto al nucleo,
+        //   allargate attorno al centro del glifo e non spostate: e' un alone che
+        //   circonda la sagoma, non una terza lastra piu' in la'.
+        //
+        // Costa piu' di prima e va detto: sette riempimenti per carattere invece
+        // di due. Restano tutti affini (la proiezione usa tre angoli apposta),
+        // quindi restano sulla strada veloce, e lo strato e' ritagliato attorno
+        // alla cifra invece che grande quanto lo schermo.
         //
         // Quanto la cifra e' aperta verso l'occhio. Di taglio non proietta piu'
         // niente, e la matrice che ce la porterebbe e' fatta di numeri che
@@ -189,26 +225,50 @@ class PrismRenderer : TemperatureRenderer {
             ((openness - SHADOW_FADE_FROM) / (SHADOW_FADE_TO - SHADOW_FADE_FROM)).coerceIn(0f, 1f)
 
         if (castAlpha > 0.001f) {
+            val travel = model.depth * SHADOW_REACH
+            // Lo strato sta attorno alla cifra, non su tutto lo schermo. La
+            // meta' diagonale basta a contenerla comunque sia girata, piu' il
+            // viaggio dell'ombra e un margine per la penombra.
+            val span = max(model.width, model.height) * 0.75f + travel * 2f
+            shadowArea.set(
+                center.x - span, center.y - span,
+                center.x + span, center.y + span,
+            )
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
+                native.saveLayerAlpha(shadowArea, (castAlpha * 255f).toInt())
+                shadowPaint.color = android.graphics.Color.BLACK
                 for (index in 0 until prism.partCount) {
                     val outline = prism.outlineOf(index)
-                    for (layer in SHADOW_STEPS.indices) {
-                        // I due gradini non sono piu' due copie traslate ma due
-                        // piani a distanze diverse: quello vicino da' il nucleo,
-                        // quello lontano la sfumatura, e girando si deformano
-                        // tutti e due come si deve.
-                        val behind = model.depth * SHADOW_REACH * SHADOW_STEPS[layer]
+                    outline.computeBounds(glyphBounds, true)
+                    val cx = glyphBounds.centerX()
+                    val cy = glyphBounds.centerY()
+
+                    // La penombra per prima, cosi' il nucleo le finisce sopra.
+                    if (prism.prepareShadow(index, camera, rise, travel * 0.5f)) {
+                        for (h in HALO_SPREADS.indices) {
+                            haloMatrix.set(prism.shadowTransform)
+                            haloMatrix.preScale(HALO_SPREADS[h], HALO_SPREADS[h], cx, cy)
+                            shadowPaint.alpha = (HALO_ALPHAS[h] * 255f).toInt()
+                            native.save()
+                            native.concat(haloMatrix)
+                            native.drawPath(outline, shadowPaint)
+                            native.restore()
+                        }
+                    }
+
+                    // Il nucleo: la faccia spazzata lungo la luce.
+                    shadowPaint.alpha = 255
+                    for (k in 0 until SHADOW_SAMPLES) {
+                        val behind = travel * (k / (SHADOW_SAMPLES - 1f))
                         if (!prism.prepareShadow(index, camera, rise, behind)) continue
-                        shadowPaint.color = Color.Black
-                            .copy(alpha = castAlpha * SHADOW_WEIGHTS[layer])
-                            .toArgb()
                         native.save()
                         native.concat(prism.shadowTransform)
                         native.drawPath(outline, shadowPaint)
                         native.restore()
                     }
                 }
+                native.restore()
             }
         }
 
@@ -328,8 +388,28 @@ class PrismRenderer : TemperatureRenderer {
         /** Quante geometrie si tengono pronte. Vedi il commento sulla cache. */
         const val CACHE_SIZE = 12
 
-        val SHADOW_STEPS = floatArrayOf(0.28f, 1f)
-        val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
+        /**
+         * Quante volte si campiona il viaggio della luce.
+         *
+         * Sono le fette del volume spazzato: fra una e l'altra deve restare meno
+         * di un paio di pixel, se no l'unione mostra i gradini e si torna a
+         * vedere una pila di sagome invece di una macchia sola. Cinque bastano
+         * perche' il viaggio e' corto - se un giorno si allungasse, questo numero
+         * va alzato insieme a [SHADOW_REACH], non uno senza l'altro.
+         */
+        const val SHADOW_SAMPLES = 5
+
+        /**
+         * La penombra: due copie appena piu' larghe **attorno al centro del
+         * glifo**, non spostate piu' in la'.
+         *
+         * E' la differenza fra un alone che circonda la sagoma e una terza lastra
+         * appoggiata dietro. Gli allargamenti sono minimi apposta: oltre il
+         * cinque per cento l'alone smette di sembrare una sfumatura e comincia a
+         * sembrare un contorno disegnato.
+         */
+        val HALO_SPREADS = floatArrayOf(1.045f, 1.020f)
+        val HALO_ALPHAS = floatArrayOf(0.28f, 0.55f)
 
         /**
          * Quanto dietro l'oggetto cade l'ombra, in multipli del suo spessore.
@@ -341,19 +421,22 @@ class PrismRenderer : TemperatureRenderer {
          * moltiplicato per il viaggio, lo scostamento a schermo era piu' che
          * raddoppiato e l'ombra si staccava dalla cifra come un fantasma.
          */
-        const val SHADOW_REACH = 0.42f
+        const val SHADOW_REACH = 0.22f
 
         /**
          * Fra queste due aperture l'ombra passa da assente a piena.
          *
-         * La corsa e' lunga apposta. Un'ombra portata su un fondo piatto e'
-         * **finta**: non c'e' un pavimento su cui cada, e piu' l'oggetto si gira
-         * piu' quella finzione viene allo scoperto - la sagoma proiettata non
-         * somiglia piu' a quella che si vede, e si legge come un secondo oggetto
-         * invece che come un'ombra. Di faccia serve e regge; oltre i sessanta
-         * gradi conviene che se ne vada, e a settanta non c'e' quasi piu'.
+         * **La corsa si e' accorciata di molto, e non e' una taratura: e' la
+         * conseguenza del volume.** Finche' l'ombra era un piano, girando smetteva
+         * di somigliare all'oggetto e bisognava nasconderla presto - la corsa
+         * arrivava fino a sessantadue centesimi di apertura, cioe' spariva ben
+         * prima del quarto di giro. Adesso la sagoma e' quella giusta a ogni
+         * angolo, quindi non c'e' piu' niente da nascondere: resta solo la
+         * guardia contro il caso degenere, la cifra esattamente di taglio, dove
+         * non c'e' superficie da proiettare e la matrice e' fatta di numeri che
+         * divergono.
          */
-        const val SHADOW_FADE_FROM = 0.15f
-        const val SHADOW_FADE_TO = 0.62f
+        const val SHADOW_FADE_FROM = 0.04f
+        const val SHADOW_FADE_TO = 0.17f
     }
 }
