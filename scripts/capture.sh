@@ -223,6 +223,9 @@ session() {
     restart_with "--ei ora 12 --ei meteo 0"
     shoot "${slug}-5c-sereno-uccelli"
 
+    restart_with "--ei meteo 96"
+    shoot "${slug}-5d-grandine"
+
     # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
     # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
     # col dito non si arriva: per portare la cifra di taglio servono quattrocento
