@@ -16,10 +16,10 @@
     Forli    48/48 ore  quota 40.0 m  prime [20.2, 19.7, 19.4]
   icon_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [21.0, 20.4, 19.8]
-    Forli    48/48 ore  quota 40.0 m  prime [22.5, 21.9, 21.1]
+    Forli    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   ecmwf_ifs025
     Noceto   48/48 ore  quota 74.0 m  prime [21.3, 20.9, 20.8]
-    Forli    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Forli    48/48 ore  quota 40.0 m  prime [21.4, 21.0, 20.6]
   ecmwf_aifs025_single
     Noceto   48/48 ore  quota 74.0 m  prime [20.6, 20.2, 19.9]
     Forli    48/48 ore  quota 40.0 m  prime [21.0, 20.5, 20.1]
@@ -27,11 +27,11 @@
     Noceto   48/48 ore  quota 74.0 m  prime [21.7, 20.9, 20.4]
     Forli    48/48 ore  quota 40.0 m  prime [23.5, 23.1, 22.2]
   arpae_cosmo_5m
-    Noceto   HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Noceto   HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
     Forli    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [20.7, 20.5, 20.4]
-    Forli    48/48 ore  quota 40.0 m  prime [22.2, 21.9, 21.7]
+    Forli    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   knmi_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [21.7, 22.1, 20.5]
     Forli    48/48 ore  quota 40.0 m  prime [23.6, 23.5, 22.0]
