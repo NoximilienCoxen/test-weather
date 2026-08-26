@@ -12,6 +12,11 @@ ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"
 
+# Secondi massimi di attesa perche' la previsione arrivi dopo un riavvio.
+# E' un tetto, non una durata: si esce appena l'app dice di averla (vedi
+# attendi_previsione), quindi tenerlo largo non costa niente.
+ATTESA_DATI=45
+
 adbt() { timeout 60 adb "$@"; }
 
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
@@ -49,6 +54,32 @@ shoot() {
 
   echo "  $name.png NON catturato"
   rm -f "$out"
+  return 1
+}
+
+# Aspetta che la previsione sia arrivata davvero.
+#
+# Per tre giri il rimedio era stato alzare l'attesa: otto secondi, poi
+# quattordici, poi diciannove. A diciannove uno scatto su undici e' uscito lo
+# stesso "IN ATTESA DEI DATI", ed e' li' che si vede che il numero non era mai
+# il problema: aspettare una **durata** e' scommettere sulla rete del runner, e
+# ogni tanto la scommessa si perde. L'app scrive una riga quando la previsione
+# atterra, quindi qui si aspetta quella. Il tetto di tempo serve solo a non
+# restare appesi per sempre.
+#
+# `uiautomator dump` sarebbe la via ovvia e qui non si puo' usare: aspetta che
+# la finestra sia ferma, e questa schermata anima in continuazione per scelta.
+attendi_previsione() {
+  local i
+  for i in $(seq 1 "$ATTESA_DATI"); do
+    if adbt shell logcat -d -s meteo:I 2>/dev/null | grep -q "previsione pronta"; then
+      # Un istante perche' la composizione coi dati arrivi a schermo.
+      sleep 1
+      return 0
+    fi
+    sleep 1
+  done
+  echo "    previsione non arrivata in ${ATTESA_DATI}s: lo scatto uscira' senza dati"
   return 1
 }
 
@@ -112,10 +143,16 @@ session() {
 
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il secondo tema gira dopo il primo: senza svuotare, l'attesa troverebbe
+  # la riga del tema precedente e passerebbe all'istante.
+  adbt shell logcat -c >/dev/null 2>&1 || true
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
   adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
-  sleep 10
+  # -W dice che l'attivita' e' in primo piano, non che ha qualcosa da mostrare:
+  # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
+  # per primo, quindi vale l'attesa vera come per tutti gli altri.
+  attendi_previsione
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
   shoot "${slug}-1-temp"
@@ -152,12 +189,14 @@ session() {
     restart_with() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
+      # Il buffer va svuotato prima dell'avvio, altrimenti la riga del giro
+      # precedente farebbe passare l'attesa all'istante. Il logcat in
+      # streaming ha gia' scritto su file quello che ha visto, quindi qui non
+      # si perde niente.
+      adbt shell logcat -c >/dev/null 2>&1 || true
       # shellcheck disable=SC2086
       adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
-      # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
-      # gli scatti coglievano i trattini invece dei dati. Nemmeno quattordici
-      # bastano sempre - uno scatto su undici e' uscito "IN ATTESA DEI DATI".
-      sleep 19
+      attendi_previsione
     }
 
     # Di notte serve anche un cielo poco nuvoloso: col coperto vero di

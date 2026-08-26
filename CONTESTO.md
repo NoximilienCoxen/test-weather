@@ -559,6 +559,18 @@ Su un primo carico e' giusto; su una ricarica vuol dire sbalzare altrove chi
 stava guardando le sei di sera, e cancellare una giornata di dati validi per
 annunciare che la rete non risponde.
 
+**31. Aspettare una durata e' scommettere sulla rete del runner.** Dopo ogni
+riavvio dell'app la cattura aspettava che la previsione arrivasse, e l'attesa
+era un numero di secondi. Quando uno scatto usciva "IN ATTESA DEI DATI" il
+rimedio era alzarlo: otto, poi quattordici, poi diciannove. A diciannove uno
+scatto su undici e' uscito lo stesso vuoto — ed e' li' che si vede che il numero
+non era mai il problema. Adesso l'app scrive una riga di log quando la
+previsione atterra (`meteo: previsione pronta`, l'unico `Log` di tutto il
+progetto) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
+serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
+`uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
+ferma e la schermata principale anima in continuazione per scelta.
+
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
 ignorata: la pioggia usciva forte quanto il tuono. `WeatherHaptics` prova in
