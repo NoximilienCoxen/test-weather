@@ -37,8 +37,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.render3d.Camera
+import com.forli.meteo.ui.render3d.WORLD_COASTS
 import com.forli.meteo.ui.render3d.globe
-import com.forli.meteo.ui.render3d.sphere
+import com.forli.meteo.ui.render3d.globeSpot
+import com.forli.meteo.ui.render3d.spinToFace
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
 import kotlinx.coroutines.delay
@@ -99,22 +101,36 @@ fun WelcomeScreen(
     val spin = remember { mutableFloatStateOf(0f) }
     val pulse = remember { mutableFloatStateOf(0f) }
     val hunting = state.locating
-    LaunchedEffect(hunting, found) {
+    val homeLon = state.place.longitude.toFloat()
+    LaunchedEffect(hunting, found, homeLon) {
         var last = 0L
-        val speed = when {
-            found -> 0f
-            hunting -> HUNT_SPEED
-            else -> IDLE_SPEED
-        }
-        var current = spin.floatValue
+        var speed = 0f
         while (true) {
             withFrameNanos { now ->
                 val dt = if (last == 0L) 0f else (now - last) / 1_000_000_000f
                 last = now
-                // Insegue la velocita' voluta invece di prenderla: e' la
-                // differenza fra un mappamondo che accelera e uno che scatta.
-                current += (speed - current) * (dt * 2.2f).coerceAtMost(1f)
-                spin.floatValue += current * dt
+                if (found) {
+                    // **Trovato il posto, il mappamondo ci si gira.** Prima
+                    // rallentava e basta, fermandosi dove capitava: il segno
+                    // atterrava al centro del disco su un pezzo di oceano a
+                    // caso. Adesso porta davanti la longitudine di casa, e lo
+                    // spillo si pianta dov'e' casa davvero - che e' l'unica
+                    // cosa che quella schermata deve dire.
+                    //
+                    // Per la via piu' corta: da centosettanta gradi est a
+                    // centosettanta ovest sono venti gradi, non trecentoquaranta.
+                    var delta = (spinToFace(homeLon) - spin.floatValue) % 360f
+                    if (delta > 180f) delta -= 360f
+                    if (delta < -180f) delta += 360f
+                    spin.floatValue += delta * (dt * HOMING_EASE).coerceAtMost(1f)
+                    speed = 0f
+                } else {
+                    val wanted = if (hunting) HUNT_SPEED else IDLE_SPEED
+                    // Insegue la velocita' voluta invece di prenderla: e' la
+                    // differenza fra un mappamondo che accelera e uno che scatta.
+                    speed += (wanted - speed) * (dt * 2.2f).coerceAtMost(1f)
+                    spin.floatValue += speed * dt
+                }
                 pulse.floatValue = (pulse.floatValue + dt) % 1f
             }
         }
@@ -187,40 +203,69 @@ fun WelcomeScreen(
                 light = colors.globeSea,
                 dark = colors.globeSeaShade,
                 land = colors.globeLand,
-                lands = CONTINENTS,
+                coasts = WORLD_COASTS,
             )
 
-            // Lo spillo si pianta quando il posto e' arrivato. Prima di allora
-            // non c'e', perche' non c'e' niente da segnare.
-            if (pinned > 0.01f) {
+            // **Lo spillo si pianta sul posto, non al centro del disco.**
+            // Prima era una pallina appoggiata davanti alla sfera in un punto
+            // fisso: qualunque cosa avesse trovato la localizzazione, il segno
+            // finiva li'. Adesso la posizione la danno le coordinate vere, e
+            // siccome il mappamondo si e' girato apposta per portarle davanti,
+            // lo spillo atterra dov'e' casa.
+            //
+            // Nullo vuol dire che quel punto sta ancora dietro: durante la
+            // rotazione capita, e in quei fotogrammi non si disegna niente
+            // invece di appiccicare il segno sul bordo.
+            val spot = if (pinned > 0.01f) {
+                globeSpot(
+                    camera = camera,
+                    x = 0f, y = 0f, z = 0f,
+                    radius = radius,
+                    spinDeg = spin.floatValue,
+                    lonDeg = state.place.longitude.toFloat(),
+                    latDeg = state.place.latitude.toFloat(),
+                )
+            } else {
+                null
+            }
+
+            spot?.let { at ->
                 // Arriva da fuori e si posa: la corsa la fa la molla, qui si
                 // legge solo dove e' arrivata.
-                val drop = (1f - pinned) * radius * 1.6f
-                sphere(
-                    camera = camera,
-                    x = 0f,
-                    y = -radius * 0.18f - drop,
-                    z = -radius * 0.98f,
-                    radius = radius * 0.10f,
-                    light = colors.text,
-                    dark = colors.text,
-                    alpha = pinned,
-                )
+                val drop = (1f - pinned) * radius * 1.4f
+                val head = Offset(at.x, at.y - drop)
+
                 // L'onda che parte da li'. Una sola, e in dissolvenza: e' un
                 // segno di conferma, non un radar.
                 val wave = pulse.floatValue
+                val ring = radius * (0.10f + wave * 0.55f)
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
                             colors.text.copy(alpha = 0f),
-                            colors.text.copy(alpha = 0.22f * pinned * (1f - wave)),
+                            colors.text.copy(alpha = 0.26f * pinned * (1f - wave)),
                             colors.text.copy(alpha = 0f),
                         ),
-                        center = Offset(size.width / 2f, size.height / 2f - radius * 0.18f),
-                        radius = radius * (0.3f + wave * 1.1f),
+                        center = at,
+                        radius = ring,
                     ),
-                    radius = radius * (0.3f + wave * 1.1f),
-                    center = Offset(size.width / 2f, size.height / 2f - radius * 0.18f),
+                    radius = ring,
+                    center = at,
+                )
+
+                // Il segno: un disco pieno con attorno un alone chiaro, cosi'
+                // si stacca sia dal mare sia dalla terra sotto.
+                drawCircle(
+                    color = colors.text,
+                    radius = radius * 0.075f,
+                    center = head,
+                    alpha = 0.28f * pinned,
+                )
+                drawCircle(
+                    color = colors.text,
+                    radius = radius * 0.038f,
+                    center = head,
+                    alpha = pinned,
                 )
             }
         }
@@ -270,42 +315,17 @@ fun WelcomeScreen(
     }
 }
 
-/**
- * I continenti: longitudine e latitudine in gradi, piu' quanto e' grande la
- * macchia.
- *
- * Non e' una mappa e non prova a esserlo. Servono a far **vedere** che la sfera
- * gira: una sfera liscia che ruota e' una sfera ferma. Sono sparsi su tutte le
- * longitudini apposta, cosi' in ogni istante qualcosa sta entrando da un lato
- * mentre qualcos'altro esce dall'altro.
- *
- * **A gruppi e sovrapposti, non sparsi uno per uno.** Otto macchie isolate
- * davano una palla bianca con qualche puntino: sono le masse continue, con i
- * bordi che si toccano, a leggersi come terra invece che come sporco.
- */
-private val CONTINENTS: List<Triple<Float, Float, Float>> = listOf(
-    // Ponente
-    Triple(-96f, 42f, 0.20f),
-    Triple(-78f, 22f, 0.15f),
-    Triple(-62f, -6f, 0.17f),
-    Triple(-58f, -30f, 0.13f),
-    // Mezzo
-    Triple(8f, 50f, 0.13f),
-    Triple(16f, 26f, 0.19f),
-    Triple(24f, 0f, 0.21f),
-    Triple(30f, -24f, 0.15f),
-    // Levante
-    Triple(72f, 40f, 0.18f),
-    Triple(98f, 52f, 0.21f),
-    Triple(112f, 26f, 0.16f),
-    // Australe
-    Triple(134f, -26f, 0.17f),
-    Triple(146f, -34f, 0.11f),
-    Triple(176f, -42f, 0.09f),
-)
 
 private val BUTTON_WIDTH = 172.dp
 private val BUTTON_HEIGHT = 56.dp
+
+/**
+ * Quanto in fretta il mappamondo si porta davanti il posto trovato.
+ *
+ * E' un inseguimento, non una durata: ogni fotogramma copre una frazione di
+ * quello che manca, quindi arriva piano senza sbattere contro il bersaglio.
+ */
+private const val HOMING_EASE = 2.6f
 
 /** Gradi al secondo: da fermo si guarda, mentre cerca si affanna. */
 private const val IDLE_SPEED = 16f

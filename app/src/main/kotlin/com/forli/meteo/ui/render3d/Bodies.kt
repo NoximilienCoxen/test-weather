@@ -271,7 +271,8 @@ fun DrawScope.globe(
     light: Color,
     dark: Color,
     land: Color,
-    lands: List<Triple<Float, Float, Float>>,
+    /** Le coste: per ogni terra, longitudine e latitudine in gradi, a coppie. */
+    coasts: List<FloatArray>,
     alpha: Float = 1f,
 ) {
     if (alpha <= 0.003f) return
@@ -282,24 +283,103 @@ fun DrawScope.globe(
     if (r <= 1f) return
     val centre = Offset(camera.sx, camera.sy)
 
-    lands.forEach { (lonDeg, latDeg, size) ->
-        val lon = (lonDeg + spinDeg) * DEG
-        val lat = latDeg * DEG
-        val cosLat = cos(lat)
-        blot(
-            camera = camera,
-            centre = centre,
-            radius = r,
-            ux = cosLat * sin(lon),
-            uy = -sin(lat),
-            // Negativo alla longitudine zero: e' li' che il continente guarda
-            // l'osservatore, e da li' comincia a scivolare via girando.
-            uz = -cosLat * cos(lon),
-            size = size,
-            color = land.copy(alpha = land.alpha * alpha),
-        )
+    val disc = Path().apply {
+        addOval(Rect(centre.x - r, centre.y - r, centre.x + r, centre.y + r))
     }
+
+    clipPath(disc) {
+        val outline = Path()
+        coasts.forEach { coast ->
+            outline.reset()
+            var visible = false
+            var k = 0
+            while (k < coast.size) {
+                val lon = (coast[k] + spinDeg) * DEG
+                val lat = coast[k + 1] * DEG
+                val cosLat = cos(lat)
+                camera.normal(
+                    cosLat * sin(lon),
+                    -sin(lat),
+                    // Negativo alla longitudine zero: e' li' che la terra guarda
+                    // l'osservatore, e da li' comincia a scivolare via girando.
+                    -cosLat * cos(lon),
+                )
+                val front = camera.nvz < 0f
+                if (front) visible = true
+                // **Chi sta dietro non si butta via: si porta sul bordo.** Una
+                // costa a meta' del giro ha certi vertici davanti e certi
+                // dietro, e scartando quelli dietro il poligono si richiuderebbe
+                // su se stesso - un continente che si accartoccia mentre esce.
+                // Spingendoli sul bordo del disco, quello che si vede resta la
+                // parte davanti, tagliata dal bordo come deve.
+                val len = hypot(camera.nvx, camera.nvy).takeIf { it > 1e-4f } ?: 1f
+                val px = if (front) camera.nvx else camera.nvx / len
+                val py = if (front) camera.nvy else camera.nvy / len
+                if (k == 0) {
+                    outline.moveTo(centre.x + px * r, centre.y + py * r)
+                } else {
+                    outline.lineTo(centre.x + px * r, centre.y + py * r)
+                }
+                k += 2
+            }
+            if (!visible) return@forEach
+            outline.close()
+            drawPath(outline, color = land, alpha = alpha)
+        }
+    }
+
+    // **L'ombra del bordo, sopra a tutto.** Senza, le terre sono ritagli piatti
+    // incollati su una palla: il mare sotto ha il suo gradiente e loro no,
+    // quindi non appartengono alla stessa sfera. Questa passata scurisce mare e
+    // terra insieme andando verso il bordo, ed e' cio' che rende il disco tondo
+    // invece che un cerchio colorato.
+    drawCircle(
+        brush = Brush.radialGradient(
+            colors = listOf(Color.Transparent, dark),
+            center = centre + LightOnScreen * (r * 0.40f),
+            radius = r * 1.30f,
+        ),
+        radius = r,
+        center = centre,
+        alpha = alpha * LIMB_SHADE,
+    )
 }
+
+/**
+ * Dove finisce sullo schermo un punto preciso del mappamondo, o nullo se in
+ * questo momento sta dietro.
+ *
+ * Serve a piantare uno spillo **sul posto**, non al centro del disco: trovata
+ * la posizione, quello che chiude il discorso e' vedere il segno atterrare
+ * dov'e' casa propria.
+ */
+fun globeSpot(
+    camera: Camera,
+    x: Float,
+    y: Float,
+    z: Float,
+    radius: Float,
+    spinDeg: Float,
+    lonDeg: Float,
+    latDeg: Float,
+): Offset? {
+    camera.place(x, y, z)
+    val r = radius * camera.scale
+    val centre = Offset(camera.sx, camera.sy)
+    val lon = (lonDeg + spinDeg) * DEG
+    val lat = latDeg * DEG
+    val cosLat = cos(lat)
+    camera.normal(cosLat * sin(lon), -sin(lat), -cosLat * cos(lon))
+    if (camera.nvz > -0.04f) return null
+    return centre + Offset(camera.nvx * r, camera.nvy * r)
+}
+
+/**
+ * Di quanto va girato il mappamondo perche' una longitudine guardi in faccia
+ * chi osserva. Alla longitudine zero la terra e' di fronte, quindi basta
+ * portarcela.
+ */
+fun spinToFace(lonDeg: Float): Float = -lonDeg
 
 /**
  * Quanto si vede la parte in ombra della luna.
@@ -308,6 +388,14 @@ fun DrawScope.globe(
  * smette di leggersi perche' acceso e spento si somigliano; togliendolo del
  * tutto si torna alla scheggia.
  */
+/**
+ * Quanto scurisce il bordo del mappamondo.
+ *
+ * E' il numero che decide se si guarda una sfera o un cerchio: senza, le terre
+ * restano ritagli piatti su una palla e non appartengono al corpo sotto.
+ */
+private const val LIMB_SHADE = 0.60f
+
 private const val UNLIT_DISC = 0.24f
 
 /**
