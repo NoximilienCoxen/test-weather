@@ -91,6 +91,12 @@ fun WeatherSculpture(
      * piovere; i millimetri decidono quanto forte, non se.
      */
     val target = when {
+        // **Il temporale non contratta.** Con la formula normale un temporale
+        // previsto all'ottanta per cento dava poco piu' di mezza pioggia, e
+        // sotto la scritta TEMPORALE si vedeva una pioviggine. I millimetri di
+        // quell'ora non sono la misura giusta: un rovescio scarica in dieci
+        // minuti e la casella oraria lo diluisce.
+        storming -> 1f
         raining -> maxOf(
             (precipitationMm ?: 0.0).toFloat() / 6f,
             0.28f + 0.34f * ((probability ?: 0) / 100f),
@@ -271,8 +277,24 @@ fun WeatherSculpture(
 
         val scale = 0.52f + cloudiness * 0.48f
         val presence = ((cloudiness - 0.02f) / 0.06f).coerceIn(0f, 1f)
+
+        // **Quanto siamo nel coperto**, che e' una condizione diversa in natura
+        // e non solo in quantita'.
+        //
+        // Fino al nuvoloso la nuvola e' una *forma*: ha dei bordi, la si guarda,
+        // si sposta e la si riconosce da un momento all'altro. Il coperto no. Il
+        // coperto non e' una nuvola piu' grande, e' un tetto - non ha un profilo
+        // da fissare, e non si sposta perche' non c'e' un fuori verso cui
+        // andare. Disegnarlo come "cinque masse invece di tre" lo faceva
+        // sembrare esattamente questo: una nuvola grossa.
+        val overcast = ((cloudiness - 0.70f) / 0.30f).coerceIn(0f, 1f)
+        // Col temporale se ne accendono due in piu', e la fila arriva a sette.
+        // Le altre condizioni si fermano a cinque: sono quelle che c'erano, e
+        // il fronte deve restare un salto visibile, non un incremento.
         val masses = if (cloudiness > 0.02f) {
-            (2 + (cloudiness * 3f).roundToInt()).coerceIn(2, 5)
+            val extra = if (storming) 2 else 0
+            (2 + (cloudiness * 3f).roundToInt() + extra)
+                .coerceIn(2, if (storming) CLOUD_MASSES.size else 5)
         } else {
             0
         }
@@ -417,12 +439,26 @@ fun WeatherSculpture(
         // velocita': tutte insieme sarebbe una nuvola che trema, non una nuvola
         // che si muove. Quelle davanti scorrono di piu' di quelle dietro, che e'
         // la stessa parallasse che gia' racconta lo spazio quando si gira.
+        // Col coperto la fila si allarga oltre i bordi: quello che si vede
+        // smette di avere due estremita' e diventa una fascia che continua fuori
+        // dallo schermo. E' meta' di cio' che fa un tetto - l'altra meta' e' il
+        // respiro qui sotto.
+        val spread = 1f + overcast * OVERCAST_SPREAD
+
         fun driftX(k: Int): Float {
             val lump = CLOUD_MASSES[k]
             val depth = 0.6f + 0.4f * (1f - (lump.z + 0.2f))
-            return lump.x * unit * scale + cloudX +
+            return lump.x * unit * scale * spread + cloudX +
                 sin(moved * 0.62f + k * 1.7f) * unit * DRIFT * depth
         }
+
+        // **Il respiro.** Ogni massa si gonfia e si sgonfia per conto suo,
+        // quindi il profilo della fila non sta mai fermo e non se ne riesce a
+        // fissare uno. Solo col coperto: su una nuvola isolata questo si
+        // leggerebbe come una palla che pulsa, mentre su una fascia continua
+        // toglie i bordi, che e' il punto.
+        fun swell(k: Int): Float =
+            1f + overcast * BREATH * sin(moved * 0.5f + k * 2.1f)
 
         fun driftY(k: Int): Float {
             val lump = CLOUD_MASSES[k]
@@ -499,7 +535,7 @@ fun WeatherSculpture(
                 x = driftX(which),
                 y = driftY(which),
                 z = lump.z * unit * scale,
-                radius = lump.radius * unit * scale,
+                radius = lump.radius * unit * scale * swell(which),
                 light = core,
                 dark = shade,
                 alpha = presence,
@@ -551,6 +587,10 @@ private val CLOUD_MASSES = listOf(
     Lump(0.26f, 0.03f, 0.12f, 0.20f),
     Lump(-0.11f, 0.10f, -0.19f, 0.18f),
     Lump(0.15f, 0.11f, -0.14f, 0.17f),
+    // Le due del temporale. Stanno larghe e dietro: un temporale non e' una
+    // nuvola piu' fitta al centro, e' un fronte che occupa piu' cielo.
+    Lump(-0.42f, -0.04f, -0.24f, 0.21f),
+    Lump(0.44f, -0.02f, -0.21f, 0.22f),
 )
 
 /**
@@ -1170,6 +1210,16 @@ private val STARS: List<Star> = listOf(
  * sbandamento troppo largo o troppo veloce e diventano farfalle.
  */
 /** Battiti d'ala al secondo, in radianti: sotto sembrano alianti, sopra insetti. */
+/**
+ * Il coperto: quanto si allarga la fila oltre i bordi e quanto respira.
+ *
+ * Il respiro e' volutamente piccolo. Serve a togliere il profilo, non a farsi
+ * notare: a occhio non si deve vedere una nuvola che pulsa, si deve solo non
+ * riuscire a dire dove finisce.
+ */
+private const val OVERCAST_SPREAD = 0.55f
+private const val BREATH = 0.07f
+
 private const val BIRD_BEAT = 4.2f
 
 private const val SNOW_SLOW = 0.34f
