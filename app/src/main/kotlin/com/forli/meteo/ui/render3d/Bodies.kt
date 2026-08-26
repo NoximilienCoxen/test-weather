@@ -207,7 +207,13 @@ private fun DrawScope.blot(
             color = color,
             radius = size * radius,
             center = at,
-            alpha = (flatten - 0.12f).coerceIn(0f, 1f),
+            // La dissolvenza serve solo a non far comparire una macchia di
+            // colpo sul bordo, e deve finire li'. Legata direttamente
+            // all'inclinazione sbiadiva tutto quello che non stava esattamente
+            // al centro, e una sfera con due smagliature al centro non si legge
+            // come un corpo con dei segni sopra: si legge come una sfera
+            // sporca.
+            alpha = ((flatten - 0.06f) / 0.22f).coerceIn(0f, 1f),
         )
     }
 }

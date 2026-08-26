@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
@@ -176,7 +175,7 @@ fun WelcomeScreen(
                 distance = unit * 2.6f,
                 origin = Offset(size.width / 2f, size.height / 2f),
             )
-            val radius = unit * 0.34f
+            val radius = unit * 0.38f
 
             globe(
                 camera = camera,
@@ -187,7 +186,7 @@ fun WelcomeScreen(
                 spinDeg = spin.floatValue,
                 light = colors.cloudCore,
                 dark = colors.cloudShade,
-                land = lerp(colors.numberSideFar, colors.background, 0.34f),
+                land = colors.numberSideFar.copy(alpha = 0.82f),
                 lands = CONTINENTS,
             )
 
@@ -279,16 +278,30 @@ fun WelcomeScreen(
  * gira: una sfera liscia che ruota e' una sfera ferma. Sono sparsi su tutte le
  * longitudini apposta, cosi' in ogni istante qualcosa sta entrando da un lato
  * mentre qualcos'altro esce dall'altro.
+ *
+ * **A gruppi e sovrapposti, non sparsi uno per uno.** Otto macchie isolate
+ * davano una palla bianca con qualche puntino: sono le masse continue, con i
+ * bordi che si toccano, a leggersi come terra invece che come sporco.
  */
 private val CONTINENTS: List<Triple<Float, Float, Float>> = listOf(
-    Triple(-58f, 8f, 0.20f),
-    Triple(-72f, -26f, 0.15f),
-    Triple(12f, 22f, 0.17f),
-    Triple(24f, -10f, 0.19f),
-    Triple(46f, 46f, 0.13f),
-    Triple(104f, 34f, 0.21f),
-    Triple(136f, -26f, 0.14f),
-    Triple(-160f, 40f, 0.12f),
+    // Ponente
+    Triple(-96f, 42f, 0.20f),
+    Triple(-78f, 22f, 0.15f),
+    Triple(-62f, -6f, 0.17f),
+    Triple(-58f, -30f, 0.13f),
+    // Mezzo
+    Triple(8f, 50f, 0.13f),
+    Triple(16f, 26f, 0.19f),
+    Triple(24f, 0f, 0.21f),
+    Triple(30f, -24f, 0.15f),
+    // Levante
+    Triple(72f, 40f, 0.18f),
+    Triple(98f, 52f, 0.21f),
+    Triple(112f, 26f, 0.16f),
+    // Australe
+    Triple(134f, -26f, 0.17f),
+    Triple(146f, -34f, 0.11f),
+    Triple(176f, -42f, 0.09f),
 )
 
 private val BUTTON_WIDTH = 172.dp
