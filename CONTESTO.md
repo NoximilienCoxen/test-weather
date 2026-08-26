@@ -166,10 +166,11 @@ vertici e dividendo per la profondita'.
    poligono sulle curve strette.
 9. L'**iridescenza** e' una tinta sui vertici dello smusso dove la luce li
    sfiora, non piu' una sfumatura stesa sopra.
-10. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12), sul
-   **piano mediano** e non su una delle due basi (trappola #21), e cadono nel
-   verso opposto alla luce, che e' letto da `Light.Standard` invece di essere
-   una seconda impostazione libera di contraddirla.
+10. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12) e sono
+   una **proiezione, non una copia**: ogni angolo del riquadro viene spinto lungo
+   la luce fino al piano che sta dietro l'oggetto, e solo allora proiettato
+   (trappola #29). I due gradini sono due piani a distanze diverse, non due copie
+   traslate.
 11. Vicino al quarto di giro **base e ombra si spengono**. Li' i quattro angoli
    del riquadro finiscono quasi in fila e la matrice che li segue e' quasi
    singolare: esiste, ed e' fatta di numeri che divergono (trappola #20).
@@ -218,45 +219,44 @@ questa garanzia cade** e servira' un ordinamento vero.
 
 ---
 
-## 4-bis. Il personaggio, e cosa gli e' servito
+## 4-bis. Il mappamondo del benvenuto
 
-`ui/render3d/Rig.kt`, `ui/render3d/Figure.kt`, `ui/welcome/WelcomeScreen.kt`
+`ui/render3d/Bodies.kt` (`globe`), `ui/welcome/WelcomeScreen.kt`
 
-L'esploratore del benvenuto e' **un grappolo di sfere**, come la nuvola: stessa
-primitiva, stessa luce, stesso materiale. Un personaggio fatto della materia che
-il motore gia' sa disegnare appartiene al mondo dell'app senza che nessuno debba
-insegnargli come si illumina una superficie nuova.
+**Un personaggio e' stato provato ed e' stato bocciato.** Un esploratore fatto di
+sfere, con una gerarchia di trasformazioni per la testa e le braccia disegnate
+come file di sfere lungo una curva. Ogni correzione ne scopriva un'altra: le
+braccia a collana quando erano lunghe, il cappello che spariva dietro la testa,
+la mano che salutava invece di riparare lo sguardo. Il verdetto dell'utente:
+*"se il risultato e' questo, lasciamo perdere"*. Con lui sono usciti `Figure.kt`
+e `Rig.kt` - stanno nella cronologia se un giorno servissero.
 
-Delle tre strade possibili per animare un personaggio - motore attuale, Lottie o
-Rive, un motore 3D vero come Filament - si e' scelta la prima, e il motivo e'
-che **i gesti che servivano sono di parti rigide**: mano appoggiata, mano sopra
-gli occhi, testa che gira. Niente pelle, niente scheletro, niente `.glb`. Le
-altre due avrebbero portato una dipendenza e, la terza, un secondo renderer che
-non condivide ne' luce ne' camera con quello scritto a mano.
+**Al suo posto un mappamondo, cioe' la luna con un'altra pelle.** Sfera, luce di
+sempre, macchie sulla superficie che scivolano via girando: e' l'unica cosa di
+questo motore che si sa gia' che funziona bene, e dice la stessa identica cosa -
+dove sei sulla Terra - senza dover somigliare a nessuno. La differenza con la
+luna e' una sola: **i continenti girano per conto loro** invece di stare fermi
+rispetto al corpo, quindi la direzione della macchia si ruota prima di darla
+alla camera.
 
-Due cose gli sono servite:
+Due cose imparate mettendolo a punto:
 
-1. **`Rig`**, una pila di trasformazioni padre-figlio. La mano che fa da visiera
-   sta in un punto **del sistema della testa**: girando la testa, quel punto
-   ruota con lei e la mano lo insegue senza che nessuno ricalcoli niente. Dodici
-   float per livello in un array riusato, nessuna libreria di algebra - non c'e'
-   proiezione da comporre, di quella si occupa gia' la camera.
-2. **Un ordinamento in profondita' vero.** La garanzia dichiarata qui sopra - la
-   profondita' cresce in modo monotono lungo l'asse orizzontale del modello -
-   vale finche' si ruota attorno a un asse solo, e un braccio che si piega per
-   conto suo la manda in pezzi. Le sfere sono convesse, quindi ordinarle per la
-   profondita' del proprio centro e' esatto, non approssimato.
+- **A gruppi, non sparsi.** Otto macchie isolate davano una palla bianca con
+  qualche puntino. Sono le masse continue, coi bordi che si toccano, a leggersi
+  come terra invece che come sporco.
+- **La dissolvenza al bordo va tenuta corta.** Legata direttamente
+  all'inclinazione sbiadiva tutto quello che non stava esattamente al centro, e
+  una sfera con due smagliature al centro non si legge come un corpo con dei
+  segni sopra: si legge come una sfera sporca. Vale anche per i mari della luna,
+  che dallo stesso `blot` passano.
 
-**Le braccia non hanno giunture, ed e' voluto.** Un gomito comandato ad angoli
-avrebbe richiesto cinematica inversa per far arrivare la mano *esattamente* sul
-tasto - e deve arrivarci, e' tutto il senso della posa. Invece ogni braccio e'
-una fila di sfere lungo una curva quadratica che finisce dove deve finire: la
-posa e' garantita per costruzione, e il gomito si piega da solo quanto serve.
+**Se un giorno serve davvero un personaggio disegnato**, la strada e' Lottie
+(`lottie-compose`, un `.json` in `res/raw`): la parte che manca e' il disegno,
+non il codice, e un JSON Lottie scritto a mano non e' una strada seria.
 
 **Il benvenuto e' l'unico posto in cui l'app disegna in continuazione.** Altrove
-vale la trappola #8 - zero fotogrammi a schermo immobile - e vale ancora. Li' il
-movimento e' il contenuto, si vede una volta, e si spegne da solo appena si passa
-oltre.
+vale la trappola #8 - zero fotogrammi a schermo immobile. Li' il movimento e' il
+contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 
 ---
 
@@ -504,6 +504,22 @@ accortezze: si conta solo il **passaggio** da aria a superficie (altrimenti ogni
 goccia gia' arrivata ne segnerebbe uno per fotogramma), e c'e' una soglia di un
 decimo di secondo fra un colpo e il successivo, perche' un vibratore che non
 stacca mai non si legge come pioggia ma come un ronzio.
+
+**29. Un'ombra traslata non e' un'ombra.** Era la faccia dell'oggetto sotto la
+stessa matrice, spostata di un tot sulla tela. Ferma sembrava giusta; girata no,
+e per un motivo che non si aggira ritoccando i numeri: **un'ombra vera cambia
+forma girando** - si accorcia, si inclina, si allarga - e una copia traslata non
+cambia niente, quindi si legge come una seconda cifra scura appoggiata dietro la
+prima. Serve una proiezione vera, e costa gli stessi quattro angoli: si spingono
+lungo la luce fino al piano dietro l'oggetto e li si proietta di li'.
+
+**30. Il corpo della cifra non deve dipendere da quali cifre sono.** La larghezza
+dell'**inchiostro** cambia col valore - l'uno ne ha molto meno di uno zero - e il
+rimpicciolimento per far stare la scritta nello schermo si calcolava sul testo
+vero: "31" usciva percettibilmente piu' grande di "32", e scorrendo la barra la
+cifra respirava. Si misura una **sagoma di riferimento** con tutte le cifre
+ridotte a uno zero, cosi' ogni valore della stessa lunghezza riceve lo stesso
+corpo.
 
 **28. L'emulatore della CI ha le animazioni spente, e Compose gliene da' retta.**
 `disable-animations: true` nel workflow azzera `animator_duration_scale`, e
