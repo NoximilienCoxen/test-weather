@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -599,7 +600,7 @@ private class Drop(
     val length: Float,
 )
 
-private val DROPS: List<Drop> = List(34) { i ->
+private val DROPS: List<Drop> = List(48) { i ->
     val r = Random(i * 7919 + 13)
     Drop(
         x = r.nextFloat() * 2f - 1f,
@@ -629,10 +630,18 @@ private fun DrawScope.drawRain(
     val spreadX = unit * 0.40f * scale
     val spreadZ = unit * 0.17f * scale
     val top = unit * 0.16f * scale
-    val span = unit * 0.90f
     val width = unit * 0.013f
     val shift = contact?.numberToRain ?: Offset.Zero
     val skyline = contact?.skyline
+
+    // **Dove finisce la caduta.** La base della cifra, quando si sa dov'e'.
+    //
+    // Compose non ritaglia ai bordi del riquadro - non e' una View - quindi la
+    // pioggia poteva gia' scendere sotto la scultura: si fermava a mezz'aria
+    // perche' la corsa era lunga novanta centesimi di unita' e basta. Adesso,
+    // se la sagoma ha detto dove appoggia, la corsa arriva fin li'.
+    val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
+    val span = if (ground.isNaN()) unit * 0.90f else unit * LONG_FALL
 
 
     for (i in 0 until count) {
@@ -659,6 +668,17 @@ private fun DrawScope.drawRain(
         impacts?.mark(i, !surface.isNaN() && head.y >= surface)
 
         if (surface.isNaN() || head.y < surface) {
+            if (!ground.isNaN() && head.y >= ground) {
+                // **Arrivata a terra.** Si allarga e sparisce: una pozzanghera
+                // che resta e' una macchia, una che si spande e si asciuga e'
+                // acqua. Quanto e' vecchia lo dice quanto la goccia e' andata
+                // oltre la base - il tempo sta gia' nella posizione, come per
+                // lo schizzo, e non c'e' niente da ricordare fra un fotogramma
+                // e l'altro.
+                val age = ((head.y - ground) / (unit * PUDDLE_LIFE)).coerceIn(0f, 1f)
+                if (age < 1f) puddle(Offset(head.x, ground), stroke, age, colour, alpha)
+                continue
+            }
             // Aria libera: cade e basta, smorzandosi con la distanza.
             drawLine(
                 color = colour.copy(alpha = alpha * (1f - travel * 0.35f)),
@@ -680,17 +700,51 @@ private fun DrawScope.drawRain(
         // diagonali in punta - e quella figura si legge come una freccia, non
         // come acqua che rimbalza.
         val stop = surface - stroke * 1.7f
+        // **E poi si spegne.** Con la corsa corta la goccia toccava in fondo al
+        // giro e lo schizzo faceva in tempo appena a vedersi. Adesso tocca molto
+        // prima, e senza questo si fermerebbe li' identico per mezzo ciclo - una
+        // macchia ferma sulla cifra, non uno schizzo.
+        val spent = ((head.y - surface) / (unit * SPLASH_LIFE)).coerceIn(0f, 1f)
+        if (spent >= 1f) continue
+        val fading = alpha * (1f - spent) * (1f - spent)
         if (tail.y < stop) {
             drawLine(
-                color = colour.copy(alpha = alpha),
+                color = colour.copy(alpha = fading),
                 start = tail,
                 end = Offset(head.x, stop),
                 strokeWidth = stroke,
                 cap = StrokeCap.Round,
             )
         }
-        splash(Offset(head.x, surface), stroke, sunk, colour, alpha)
+        splash(Offset(head.x, surface), stroke, sunk, colour, fading)
     }
+}
+
+/**
+ * Una mini-pozzanghera alla base della cifra.
+ *
+ * Un'ellisse molto schiacciata, non un cerchio: il piano d'appoggio si guarda
+ * di sbieco, e un cerchio pieno li' si legge come una pallina appoggiata a
+ * terra invece che come acqua distesa.
+ *
+ * Si allarga mentre si smorza, e la smorzatura va al quadrato: l'acqua non
+ * evapora a velocita' costante, sparisce in fretta sul finire. Con una
+ * dissolvenza lineare si vedeva un disco grigio restare li' troppo a lungo.
+ */
+private fun DrawScope.puddle(
+    at: Offset,
+    stroke: Float,
+    age: Float,
+    colour: Color,
+    alpha: Float,
+) {
+    val half = stroke * (1.1f + age * 5.0f)
+    val tall = half * 0.30f
+    drawOval(
+        color = colour.copy(alpha = alpha * 0.45f * (1f - age) * (1f - age)),
+        topLeft = Offset(at.x - half, at.y - tall * 0.5f),
+        size = Size(half * 2f, tall),
+    )
 }
 
 /**
@@ -929,6 +983,20 @@ private val STARS: List<Star> = listOf(
  * Rade apposta. Una pioggia di meteore sopra la temperatura di domani non e'
  * atmosfera, e' un salvaschermo.
  */
+/**
+ * Quanto e' lunga la caduta quando si sa dove appoggia, in unita'.
+ *
+ * Non e' un numero estetico: e' quanto serve perche' una goccia che passa
+ * accanto alla cifra arrivi alla sua base invece di fermarsi a mezz'aria. Se un
+ * giorno la disposizione cambiasse le proporzioni fra scultura e cifra, questo
+ * va rimisurato - non indovinato.
+ */
+private const val LONG_FALL = 2.6f
+
+/** Quanto vive una pozzanghera e quanto uno schizzo, in unita' di caduta. */
+private const val PUDDLE_LIFE = 0.34f
+private const val SPLASH_LIFE = 0.16f
+
 private const val SHOOTING_DARK = 0.80f
 private const val SHOOTING_PERIOD = 12f
 private const val SHOOTING_SPAN = 0.07f
