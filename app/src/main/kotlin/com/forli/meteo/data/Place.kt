@@ -29,13 +29,37 @@ data class Place(
         )
 
         /**
+         * Aoraki / Monte Cook, la vetta.
+         *
+         * Sta in cima all'elenco per lo stesso motivo per cui ci stanno Bergen e
+         * Singapore: e' un banco di prova. A tremilasettecento metri, e con le
+         * stagioni rovesciate rispetto a qui, e' il posto dove neve e gelo si
+         * trovano quasi sempre senza doverli aspettare - e senza doverli
+         * imporre con l'aggancio di verifica, che mostra il disegno ma non
+         * mette mai alla prova i dati veri che gli arrivano dietro.
+         *
+         * Le coordinate sono quelle della vetta e non del villaggio a valle:
+         * settecento metri di dislivello cambiano la previsione, e il villaggio
+         * d'estate e' semplicemente una valle verde.
+         */
+        val AORAKI = Place(
+            name = "Aoraki / Monte Cook",
+            admin = "Canterbury",
+            country = "Nuova Zelanda",
+            latitude = -43.5950,
+            longitude = 170.1418,
+        )
+
+        /**
          * Scorciatoie per provare l'app dove il tempo e' diverso da qui.
          *
          * Con una sola citta' cablata non c'era modo di vedere la pioggia senza
-         * aspettare che piovesse: le prime tre di questa lista sono fra i posti
-         * piu' piovosi che esistano, ed e' esattamente per questo che ci sono.
+         * aspettare che piovesse: le prime della lista sono fra i posti piu'
+         * piovosi - o piu' gelidi - che esistano, ed e' esattamente per questo
+         * che ci sono.
          */
         val SUGGESTIONS = listOf(
+            AORAKI,
             FORLI,
             Place("Bergen", "Vestland", "Norvegia", 60.3913, 5.3221),
             Place("Londra", "England", "Regno Unito", 51.5085, -0.1257),

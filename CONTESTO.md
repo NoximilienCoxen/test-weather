@@ -43,8 +43,10 @@ git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 
 **L'APK sta sempre a**
 <https://github.com/NoximilienCoxen/test-weather/releases/tag/apk-latest>
-(tag fisso, chiave di debug fissa versionata cosi' le build si installano una
-sopra l'altra senza disinstallare).
+(tag fisso, cosi' il link resta lo stesso). Da ora e' una build **di rilascio**
+firmata con `app/release.keystore`, chiave dedicata e sempre la stessa: le build
+si installano una sopra l'altra senza disinstallare, e il `versionCode` cresce
+col numero della corsa.
 
 ---
 
@@ -64,6 +66,19 @@ sopra l'altra senza disinstallare).
 `kotlin { compilerOptions }` sta a **livello radice**, non dentro `android {}`.
 `jvmTarget` non si dichiara: eredita da `compileOptions.targetCompatibility`.
 
+**La variante che va in mano alle persone e' `release`, non piu' `debug`.** La
+CI costruisce entrambe: la release firmata con `app/release.keystore` e'
+quella che finisce sul tag `apk-latest`, la debug serve solo all'emulatore
+degli screenshot. `versionCode` viene dal numero della corsa e `BUILD_EPOCH`
+dall'istante del commit: entrambi arrivano dall'ambiente e in locale valgono
+1 e 0.
+
+**Lint va in crash su JDK 21.** `lintVitalAnalyze` muore con
+`findFirCompiledSymbol only works on compiled declarations`, che e' un difetto
+interno del suo analizzatore K2 e non ha niente a che vedere col codice. La CI
+monta il 17 e lo esegue davvero; per compilare in locale su una macchina col 21
+si escludono `lintVitalDebug`, `lintVitalAnalyzeDebug`, `lintVitalReportDebug`.
+
 **Il tipo di build `debug` ha `isDebuggable = false`.** Non e' una svista: una
 app debuggabile gira con ottimizzazioni ridotte, e questa schermata fa geometria
 in tempo reale a ogni fotogramma. Misurato sullo stesso identico codice:
@@ -74,7 +89,11 @@ debugger deve sapere che sta misurando un'app che non esiste.
 
 ## 3. Cosa fa l'app oggi
 
-**Si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
+**Al primo avvio si apre sul benvenuto** (`ui/welcome/WelcomeScreen.kt`): una
+domanda sola - da dove si guarda il tempo - e due risposte, "TROVAMI" oppure
+l'elenco. Superato una volta, non torna piu'.
+
+**Poi si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
 impostazioni a sinistra, nome della localita' al centro, scultura meteo,
 temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
 e sotto l'ora mostrata.
@@ -166,6 +185,57 @@ verticale, quindi la profondita' cresce in modo monotono lungo l'asse
 orizzontale del modello e basta disegnare i caratteri dal piu' lontano al piu'
 vicino. **Se un giorno si aggiunge una rotazione attorno a un secondo asse,
 questa garanzia cade** e servira' un ordinamento vero.
+
+---
+
+## 4-bis. Il cielo, e cosa lo fa muovere
+
+`ui/home/SceneClock.kt`, `Precipitation.kt`, `SkyLife.kt`
+
+**Un solo battito per tutto.** `SceneClock` e' un `withFrameNanos` acceso solo
+mentre qualcosa si muove davvero, e il suo tempo **non torna mai a zero**. Era
+questo lo stacco netto di pioggia e neve: il valore veniva ricavato con
+`elapsed % CICLO`, e ogni particella lo moltiplicava per la propria velocita'.
+Con velocita' sparse fra 0,85 e 1,35 - sparse apposta, per la parallasse - ogni
+ritorno a zero e' una discontinuita' diversa per ognuna, e saltavano tutte
+insieme un paio di volte al secondo. Il conto sta in un `Double`: in singola
+precisione, dopo una decina di minuti il prodotto `secondi * velocita'` ha una
+risoluzione peggiore del fotogramma e l'animazione ricomincerebbe a scattare da
+sola.
+
+**Da fermo l'app disegna ancora zero fotogrammi, ma "fermo" adesso e' meno
+frequente.** Il battito si accende con precipitazione, nebbia, uccelli (giorno
+sereno), scia di meteora in corso, o vento apprezzabile con nuvole. Resta spento
+col cielo coperto, aria ferma e niente che cada. E' il prezzo di cose che si
+muovono, ed e' pagato una volta sola invece che da cinque cicli indipendenti.
+
+**Le stelle cadenti sono eventi, non cicli**: fra l'una e l'altra non c'e'
+niente in corsa. Due stati separati - `streaking` letto in composizione,
+`streakProgress` letto nel disegno - perche' leggere il progresso in
+composizione avrebbe ricomposto l'intera schermata quaranta volte per meteora.
+
+**La neve si accumula sulla cifra** (`SnowCap`) usando la stessa griglia di
+colonne della `Skyline`, e cresce **solo** dove la sagoma offre superficie:
+farla crescere ovunque e disegnarla solo dove serve sembra equivalente e non lo
+e', perche' cambiando ora la cifra cambia forma e le colonne prima vuote si
+troverebbero addosso di colpo la coltre intera. Girando, scivola via. La
+differenza d'angolo fra due fotogrammi va ridotta dentro il mezzo giro: a fine
+molla l'angolo torna a zero di scatto, e trecentosessanta gradi in un fotogramma
+non sono una rotazione, sono lo stesso posto.
+
+**Il vento inclina, non sposta.** La deriva si somma con `(corsa - 0,5)` e non
+con `corsa`: partendo da zero ogni particella nasce sopra la propria colonna e
+finisce sottovento, e col vento forte meta' schermo resta vuoto. Togliendo mezza
+corsa la fascia percorsa resta centrata e cambia solo l'inclinazione.
+
+**La rotazione trasforma la profondita' in larghezza.** Vale per qualunque cosa
+si metta dietro: dopo un quarto di giro una massa lontana **dietro** e' una
+massa lontana **di fianco**, e li' esce dallo schermo. Il primo strato di nuvole
+di sfondo era sparso fino a 0,74 di scostamento e 0,95 di profondita': portava
+l'ingombro peggiore da 0,50 a 1,40 unita' e avrebbe costretto a rimpicciolire di
+un terzo anche la nuvola principale. `cloudFit` calcola il limite di scala che
+tiene la nuvola dentro il riquadro **a ogni rotazione**; i suoi ingombri sono
+tabulati una volta sola, non ricalcolati nel disegno.
 
 ---
 
@@ -388,6 +458,13 @@ comunque a ogni fotogramma.
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 
+**Mai verificato in questo giro** (nessun telefono raggiungibile dal container):
+come si sente il tilt piu' reattivo in mano, se lo schiocco del giro completo
+risulti gradevole o molesto alla decima volta, quanto costano davvero in
+fotogrammi uccelli e nebbia, e se la coltre di neve si stacchi con l'aria giusta.
+Sono tutte cose che si misurano in due minuti sul dispositivo e che qui si
+potevano solo calcolare.
+
 **Non fatto, in ordine di valore**:
 
 1. **La schermata di dettaglio e' rimasta indietro.** Compila e non e' rotta, ma
@@ -402,11 +479,11 @@ comunque a ogni fotogramma.
    che oggi non si chiedono all'API (vento, umidita', punto di rugiada).
 2. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
-3. **Posizione del dispositivo** — `LocationManager` di piattaforma, **non**
-   `play-services-location`: sarebbe una dipendenza nuova. Permesso solo
-   approssimato.
-4. Ridondanza da sanare: `DayStrip` e `ScrubBar` nel dettaglio fanno la stessa
+3. Ridondanza da sanare: `DayStrip` e `ScrubBar` nel dettaglio fanno la stessa
    cosa.
+4. **Il dettaglio non ha ricevuto il cielo nuovo.** Usa `colors.background`, che
+   ora e' una tinta di riferimento e non piu' il fondo vero: e' coerente e
+   leggibile, ma non ha il gradiente.
 
 ---
 

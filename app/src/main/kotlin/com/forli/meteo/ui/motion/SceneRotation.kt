@@ -7,8 +7,10 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -25,7 +27,19 @@ import kotlin.math.roundToInt
  * ridipinge senza ricomporre nulla.
  */
 @Stable
-class SceneRotation internal constructor(private val scope: CoroutineScope) {
+class SceneRotation internal constructor(
+    private val scope: CoroutineScope,
+    /**
+     * Chiamato quando la molla si riappoggia dopo **almeno** un giro intero.
+     *
+     * Non a ogni rilascio: la molla punta sempre al giro intero piu' vicino, e
+     * un lancio piano riporta l'oggetto dov'era senza aver girato niente. Se il
+     * segnale partisse anche li', suonerebbe a ogni sfioramento della cifra -
+     * che e' il gesto piu' frequente dell'app - e da segnale diventerebbe
+     * fastidio.
+     */
+    private val onFullTurn: () -> Unit = {},
+) {
 
     private val animated = Animatable(0f)
 
@@ -61,13 +75,19 @@ class SceneRotation internal constructor(private val scope: CoroutineScope) {
         // fa girare su se stesso una volta o due e lo lascia nella stessa posa.
         // In entrambi i casi torna a posto, ma quanto gira lo decide la mano.
         val projected = animated.value + launchSpeed * COAST
-        val target = (projected / FULL_TURN).roundToInt() * FULL_TURN
+        val turns = (projected / FULL_TURN).roundToInt()
+        val target = turns * FULL_TURN
 
         animated.animateTo(
             targetValue = target,
             animationSpec = spring(dampingRatio = 0.80f, stiffness = 55f),
             initialVelocity = launchSpeed,
         )
+        // Il segnale parte **dopo** la molla, non al rilascio: e' il momento in
+        // cui l'oggetto si riappoggia che si deve sentire, e da fermo. Al
+        // rilascio la cifra sta ancora girando, e un colpo li' arriverebbe a
+        // meta' corsa su un oggetto in volo.
+        if (turns != 0) onFullTurn()
         // Un giro intero e' indistinguibile da nessun giro: riportare il conto a
         // zero non si vede e impedisce all'angolo di crescere senza fine.
         animated.snapTo(0f)
@@ -93,9 +113,13 @@ class SceneRotation internal constructor(private val scope: CoroutineScope) {
 }
 
 @Composable
-fun rememberSceneRotation(): SceneRotation {
+fun rememberSceneRotation(onFullTurn: () -> Unit = {}): SceneRotation {
     val scope = rememberCoroutineScope()
-    return remember(scope) { SceneRotation(scope) }
+    // Il richiamo viene tenuto aggiornato invece che catturato: la lambda
+    // arriva nuova a ogni composizione, e legarla dentro il `remember`
+    // significherebbe chiamare per sempre quella della prima volta.
+    val live by rememberUpdatedState(onFullTurn)
+    return remember(scope) { SceneRotation(scope) { live() } }
 }
 
 /**

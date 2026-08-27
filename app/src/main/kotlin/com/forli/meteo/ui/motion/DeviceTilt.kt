@@ -43,7 +43,7 @@ import kotlin.math.sin
 @Composable
 fun rememberDeviceTilt(
     enabled: Boolean = true,
-    maxDegrees: Float = 14f,
+    maxDegrees: Float = 9f,
 ): State<Offset> {
     val context = LocalContext.current
     val target = remember { mutableStateOf(Offset.Zero) }
@@ -128,12 +128,43 @@ fun rememberDeviceTilt(
 
     LaunchedEffect(smoothed) {
         snapshotFlow { target.value }.collect { value ->
-            smoothed.animateTo(value, spring(dampingRatio = 0.75f, stiffness = 200f))
+            // Piu' tesa e appena meno smorzata di prima: il movimento deve
+            // arrivare mentre si muove il polso, non due terzi di secondo dopo.
+            // Sotto 0,7 di smorzamento comincia a rimbalzare, e un oggetto di
+            // plastica opaca non rimbalza.
+            smoothed.animateTo(value, spring(dampingRatio = 0.72f, stiffness = 420f))
         }
     }
 
     return smoothed.asState()
 }
+
+/**
+ * Quanti gradi gira la scena quando l'inclinazione e' a fondo corsa.
+ *
+ * Stanno qui, e non nei due disegni che li usano, perche' la scultura e la
+ * cifra sono **lo stesso oggetto visto dallo stesso punto**. Due copie di questi
+ * numeri in due file diversi reggono finche' qualcuno ne ritocca una sola, e da
+ * quel momento la scena si spacca in due pezzi che si inclinano di quantita'
+ * diverse: un difetto che non somiglia affatto alla sua causa.
+ *
+ * Sedici gradi e non sette. A sette, e con la corsa di prima, un'inclinazione
+ * del polso valeva mezzo grado di imbardata per grado di telefono: c'era, ma
+ * bisognava sapere di doverla cercare. Ora sono quasi due gradi per grado, e la
+ * faccia della cifra si accorcia abbastanza da vedersi.
+ */
+const val TILT_YAW_DEGREES = 16f
+
+/**
+ * Il beccheggio resta piu' contenuto dell'imbardata, e non per timidezza:
+ * l'ordine di sovrapposizione dei caratteri e' garantito dalla sola rotazione
+ * attorno all'asse verticale (vedi la nota sul tetto in CONTESTO.md). Il
+ * beccheggio non lo rompe - i caratteri stanno tutti sulla stessa linea di
+ * base, quindi il termine in y e' identico per tutti e non ne cambia l'ordine -
+ * ma spinto oltre comincia a mostrare la base da sotto, e li' si vedrebbe che
+ * il solido non ha un fondo.
+ */
+const val TILT_PITCH_DEGREES = 11f
 
 private tailrec fun Context.findLifecycleOwner(): LifecycleOwner? = when (this) {
     is LifecycleOwner -> this
@@ -144,13 +175,35 @@ private tailrec fun Context.findLifecycleOwner(): LifecycleOwner? = when (this) 
 private const val GRAVITY = 9.81f
 
 /** Insegue il movimento reale. */
-private const val FAST = 0.14f
-
-/** Insegue la posa media, cosi' l'oggetto si ricentra da solo. */
-private const val SLOW = 0.004f
+private const val FAST = 0.24f
 
 /**
- * Sotto questo scostamento la lettura si considera ferma. E' l'un per cento
- * della corsa: a schermo vale meno di un pixel, cioe' niente.
+ * Insegue la posa media, cosi' l'oggetto si ricentra da solo.
+ *
+ * Piu' lento di prima. La linea di base serve a non lasciare la cifra
+ * stabilmente storta quando si tiene il telefono inclinato, ma se rincorre
+ * troppo in fretta si mangia il movimento che dovrebbe raccontare: si inclinava
+ * il telefono, la scena rispondeva, e nel giro di un secondo tornava dritta da
+ * sola mentre il telefono era ancora storto. Ora l'inseguimento e' lungo una
+ * decina di secondi, che e' la scala del "come tengo in mano il telefono", non
+ * quella del "lo sto inclinando".
  */
-private const val DEADBAND = 0.01f
+private const val SLOW = 0.0018f
+
+/**
+ * Sotto questo scostamento la lettura si considera ferma.
+ *
+ * Non e' un numero a caso e non si puo' lasciare quello di prima. La soglia sta
+ * su un valore **normalizzato**, e normalizzare divide per la corsa: accorciando
+ * la corsa da quattordici a nove gradi lo stesso identico tremolio
+ * dell'accelerometro produce un valore un terzo piu' grande. In piu' il filtro
+ * veloce, salendo da 0,14 a 0,24, ne lascia passare un altro quarto. Tenere lo
+ * 0,01 di prima significherebbe farsi ridisegnare la scena cinquanta volte al
+ * secondo col telefono appoggiato sul tavolo, che e' esattamente il difetto per
+ * cui la soglia esiste.
+ *
+ * 1,3 volte 1,3 fa 1,7: da 0,01 si sale a 0,02, arrotondato per eccesso.
+ * A schermo, moltiplicato per i sedici gradi di imbardata, vale un terzo di
+ * grado - cioe' sempre niente da vedere, e sempre zero fotogrammi da fermo.
+ */
+private const val DEADBAND = 0.02f

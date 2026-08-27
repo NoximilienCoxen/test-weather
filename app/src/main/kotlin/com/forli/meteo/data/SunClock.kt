@@ -2,6 +2,7 @@ package com.forli.meteo.data
 
 import java.time.LocalDateTime
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.sin
 
 /**
@@ -29,10 +30,21 @@ data class SkyState(
     val moonPresence: Float,
     /** 1 quando il sole e' all'orizzonte, 0 quando e' alto. Rosso contro giallo. */
     val redness: Float,
+    /**
+     * Quanto si e' dentro l'ora dorata, da 0 a 1.
+     *
+     * Non si ricava dall'altezza: [redness] vale uno per tutto il tempo in cui
+     * il sole sta basso, che d'inverno alle latitudini alte e' mezza giornata,
+     * e a mezzogiorno di dicembre a Tromso il cielo non e' arancione. Questo
+     * invece misura i minuti che mancano davvero all'alba o al tramonto, che e'
+     * l'unica cosa che decide se la luce e' calda.
+     */
+    val golden: Float = 0f,
 ) {
     companion object {
-        fun of(altitude: Float): SkyState = SkyState(
+        fun of(altitude: Float, golden: Float = 0f): SkyState = SkyState(
             altitude = altitude,
+            golden = golden.coerceIn(0f, 1f),
             // Il cielo si schiarisce molto prima che il sole spunti: mezz'ora
             // prima dell'alba fuori ci si vede benissimo. Facendo coincidere il
             // buio con il sole sotto l'orizzonte si otteneva una notte piena
@@ -83,6 +95,37 @@ object SunClock {
             else -> sin(PI * (t - rise) / (set - rise)).toFloat()
         }
     }
+
+    /**
+     * Quanto si e' vicini all'alba o al tramonto, da 0 a 1.
+     *
+     * Uno esatto sull'evento, zero a [GOLDEN_MINUTES] di distanza. Serve a
+     * tingere di caldo la luce della scena e il fondo prima che il tema scivoli
+     * nel giorno o nella notte: e' la mezz'ora in cui tutto e' arancione, e
+     * finora l'app la attraversava senza accorgersene.
+     */
+    fun goldenness(
+        moment: LocalDateTime,
+        sunrise: LocalDateTime?,
+        sunset: LocalDateTime?,
+    ): Float {
+        val events = listOfNotNull(sunrise, sunset)
+        if (events.isEmpty()) return 0f
+        val t = minutesOfDay(moment)
+        // Il giro di mezzanotte conta: alle latitudini alte l'alba puo' cadere a
+        // ridosso delle ventiquattro, e senza la differenza ciclica un'ora
+        // distante dieci minuti ne risulterebbe distante milletrecento.
+        val nearest = events.minOf { event ->
+            val gap = abs(t - minutesOfDay(event))
+            minOf(gap, MINUTES_IN_DAY - gap)
+        }
+        return 1f - smoothstep(0f, GOLDEN_MINUTES, nearest)
+    }
+
+    /** L'ampiezza della finestra dorata, in minuti, da una parte e dall'altra. */
+    const val GOLDEN_MINUTES = 45f
+
+    private const val MINUTES_IN_DAY = 1440f
 
     private fun minutesOfDay(moment: LocalDateTime): Float =
         moment.hour * 60f + moment.minute + moment.second / 60f
