@@ -62,6 +62,50 @@ fun DrawScope.sphere(
 }
 
 /**
+ * Una massa d'aria: un corpo **senza bordo**.
+ *
+ * Serve allo strato di nuvole lontane, e la differenza con [sphere] non e' di
+ * grado ma di natura. Una sfera e' un disco a contorno netto con dentro un
+ * gradiente: da vicino e' una nuvola, da lontano e al venti per cento di
+ * opacita' resta un **cerchio**, e cinque cerchi in fila si leggono come una
+ * collana di bolle - lo si e' visto ruotando la scena, dove la parallasse li
+ * staccava dalla massa principale e li mostrava per quello che erano.
+ *
+ * Qui il gradiente arriva fino a trasparente prima del raggio, quindi non c'e'
+ * nessun punto in cui il colore si interrompe. Non ha volume e non deve averlo:
+ * a quella distanza il volume non si vedrebbe comunque, e cio' che racconta la
+ * lontananza e' proprio il fatto che i contorni si siano persi.
+ */
+fun DrawScope.hazeMass(
+    camera: Camera,
+    x: Float,
+    y: Float,
+    z: Float,
+    radius: Float,
+    colour: Color,
+    alpha: Float = 1f,
+) {
+    if (alpha <= 0.003f) return
+    camera.place(x, y, z)
+    val r = radius * camera.scale
+    if (r <= 1f) return
+    val centre = Offset(camera.sx, camera.sy)
+    drawCircle(
+        // Il nucleo pieno occupa poco piu' di meta' del raggio, poi si spegne:
+        // e' quella coda a mangiare il bordo.
+        brush = Brush.radialGradient(
+            0f to colour.copy(alpha = alpha),
+            0.45f to colour.copy(alpha = alpha * 0.62f),
+            1f to colour.copy(alpha = 0f),
+            center = centre + LightOnScreen * (r * 0.22f),
+            radius = r,
+        ),
+        radius = r,
+        center = centre,
+    )
+}
+
+/**
  * La luna: solo la parte illuminata, sezionata dalla mediana della fase.
  *
  * La parte in ombra non si disegna. Riempirla di grigio darebbe un disco pieno
