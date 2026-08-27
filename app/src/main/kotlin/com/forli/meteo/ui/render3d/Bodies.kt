@@ -5,7 +5,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -472,6 +471,10 @@ private const val DEG = (PI / 180.0).toFloat()
  * Va disegnata in due passate, [far] prima e dopo la sfera: girata di parecchio
  * la corona rientra nella sagoma del disco, e i raggi che stanno dietro devono
  * sparirci sotto invece di attraversarlo.
+ *
+ * Ogni raggio e' un triangolo sottile, base larga vicino al disco e punta
+ * stretta in fondo alla corsa - una lama, non un trattino: e' quello che lo
+ * fa leggere come un raggio disegnato apposta invece che come una riga.
  */
 fun DrawScope.sunRays(
     camera: Camera,
@@ -503,13 +506,21 @@ fun DrawScope.sunRays(
         camera.place(x + dx * radius * tip, y + dy * radius * tip, z)
         val to = Offset(camera.sx, camera.sy)
 
-        drawLine(
-            color = color,
-            start = from,
-            end = to,
-            strokeWidth = (radius * 0.085f * nearScale).coerceAtLeast(1f),
-            cap = StrokeCap.Round,
-            alpha = alpha,
-        )
+        // La larghezza sta di traverso alla corsa del raggio, non allo
+        // schermo: senza ruoterebbe la lama invece del raggio.
+        val runX = to.x - from.x
+        val runY = to.y - from.y
+        val run = hypot(runX, runY).takeIf { it > 1e-3f } ?: 1f
+        val perpX = -runY / run
+        val perpY = runX / run
+        val halfWidth = (radius * 0.11f * nearScale).coerceAtLeast(1.2f)
+
+        val blade = Path().apply {
+            moveTo(from.x + perpX * halfWidth, from.y + perpY * halfWidth)
+            lineTo(from.x - perpX * halfWidth, from.y - perpY * halfWidth)
+            lineTo(to.x, to.y)
+            close()
+        }
+        drawPath(path = blade, color = color, alpha = alpha)
     }
 }
