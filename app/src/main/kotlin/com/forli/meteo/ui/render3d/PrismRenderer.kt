@@ -62,6 +62,18 @@ class PrismRenderer : TemperatureRenderer {
      */
     private val shadowPaint = android.graphics.Paint()
 
+    /** Una sola, riusata: vedi [Camera.aim]. */
+    private val camera = Camera()
+
+    /**
+     * L'inchiostro dipende solo dalla tavolozza, che cambia quando cambia l'ora
+     * - qualche volta al minuto - non a ogni fotogramma. Calcolarlo dentro
+     * `draw` costava due liste e un vettore di interi sessanta volte al secondo
+     * per un risultato identico a se stesso.
+     */
+    private var inkPalette: NumberPalette? = null
+    private var ink: TextPrism.Ink? = null
+
     override fun prepare(spec: NumberSpec): PreparedNumber? {
         if (spec.text.isEmpty() || spec.fontSizePx <= 0f) return null
 
@@ -111,7 +123,7 @@ class PrismRenderer : TemperatureRenderer {
         val prism = model.prism
         silhouette?.reset(size.width)
 
-        val camera = Camera(
+        val camera = camera.aim(
             yawDeg = motion.yawDeg,
             pitchDeg = motion.pitchDeg,
             distance = max(model.width, model.height) * EYE_DISTANCE,
@@ -220,7 +232,16 @@ class PrismRenderer : TemperatureRenderer {
     private fun faceTone(surfaces: TextPrism.Surfaces): Float =
         ((surfaces.faceLambert - 0.30f) / 0.55f).coerceIn(0f, 1f)
 
-    private fun inkFor(palette: NumberPalette) = TextPrism.Ink(
+    private fun inkFor(palette: NumberPalette): TextPrism.Ink {
+        val cached = ink
+        if (cached != null && inkPalette == palette) return cached
+        val built = buildInk(palette)
+        inkPalette = palette
+        ink = built
+        return built
+    }
+
+    private fun buildInk(palette: NumberPalette) = TextPrism.Ink(
         wallFar = palette.sideFar.toArgb(),
         wallNear = palette.sideNear.toArgb(),
         bevelDark = lerp(palette.chamfer, palette.sideFar, 0.55f).toArgb(),

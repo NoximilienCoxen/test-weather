@@ -9,12 +9,21 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.toArgb
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
+
+/**
+ * La sagoma della parte illuminata della luna, riusata a ogni fotogramma.
+ *
+ * Il disegno di Compose gira sul filo principale e la luna e' una sola: non ci
+ * sono due chiamate che se la contendano nello stesso istante.
+ */
+private val MoonPath = Path()
 
 /**
  * I corpi tondi della scultura - sole, luna, masse della nuvola - visti dalla
@@ -33,7 +42,14 @@ private val LightOnScreen: Offset = run {
     Offset(l.x / len, l.y / len)
 }
 
-/** Una sfera opaca: un gradiente radiale col centro spostato verso la luce. */
+/**
+ * Una sfera opaca: un gradiente radiale col centro spostato verso la luce.
+ *
+ * Il pennello arriva da fuori. Costruirlo qui dentro voleva dire un oggetto per
+ * sfera e per fotogramma - fino a nove, cioe' oltre cinquecento al secondo - e
+ * quasi sempre identico al precedente, perche' fra un fotogramma e l'altro una
+ * nuvola si sposta di frazioni di pixel.
+ */
 fun DrawScope.sphere(
     camera: Camera,
     x: Float,
@@ -43,22 +59,66 @@ fun DrawScope.sphere(
     light: Color,
     dark: Color,
     alpha: Float = 1f,
+    brushes: SphereBrushes? = null,
+    slot: Int = 0,
 ) {
     if (alpha <= 0.003f) return
     camera.place(x, y, z)
     val r = radius * camera.scale
     if (r <= 0.5f) return
     val centre = Offset(camera.sx, camera.sy)
-    drawCircle(
-        brush = Brush.radialGradient(
+    val focus = centre + LightOnScreen * (r * 0.44f)
+    val brush = brushes?.radial(slot, light, dark, focus, r * 1.75f)
+        ?: Brush.radialGradient(
             colors = listOf(light, dark),
-            center = centre + LightOnScreen * (r * 0.44f),
+            center = focus,
             radius = r * 1.75f,
-        ),
-        radius = r,
-        center = centre,
-        alpha = alpha,
-    )
+        )
+    drawCircle(brush = brush, radius = r, center = centre, alpha = alpha)
+}
+
+/**
+ * Pennelli a sfumatura riusati, uno per posto.
+ *
+ * Ogni corpo della scena ha il proprio posto fisso, quindi non serve nessuna
+ * ricerca: si legge un vettore all'indice del corpo. Il pennello viene rifatto
+ * solo se i colori cambiano - cioe' al cambio d'ora - oppure se il centro o il
+ * raggio si sono mossi di piu' di un pixel, che sotto quella soglia non
+ * produrrebbe comunque un disegno diverso.
+ */
+@androidx.compose.runtime.Stable
+class SphereBrushes(slots: Int) {
+
+    private val brush = arrayOfNulls<Brush>(slots)
+    private val tint = IntArray(slots)
+    private val cx = FloatArray(slots)
+    private val cy = FloatArray(slots)
+    private val rr = FloatArray(slots)
+
+    fun radial(slot: Int, light: Color, dark: Color, centre: Offset, radius: Float): Brush {
+        val key = light.toArgb() * 31 + dark.toArgb()
+        val cached = brush[slot]
+        if (cached != null &&
+            tint[slot] == key &&
+            abs(centre.x - cx[slot]) <= 1f &&
+            abs(centre.y - cy[slot]) <= 1f &&
+            abs(radius - rr[slot]) <= 1f
+        ) {
+            return cached
+        }
+        val built = Brush.radialGradient(
+            0f to light,
+            1f to dark,
+            center = centre,
+            radius = radius,
+        )
+        brush[slot] = built
+        tint[slot] = key
+        cx[slot] = centre.x
+        cy[slot] = centre.y
+        rr[slot] = radius
+        return built
+    }
 }
 
 /**
@@ -138,13 +198,13 @@ fun DrawScope.moon(
     val disc = Rect(centre.x - r, centre.y - r, centre.x + r, centre.y + r)
     val inner = Rect(centre.x - r * terminator, centre.y - r, centre.x + r * terminator, centre.y + r)
 
-    val lit = Path().apply {
-        // Semicerchio dal lato illuminato.
-        arcTo(disc, if (waxing) -90f else 90f, 180f, true)
-        // Mediana: rientra o sporge secondo che la luna sia falce o gibbosa.
-        arcTo(inner, if (waxing) 90f else -90f, if (gibbous) 180f else -180f, false)
-        close()
-    }
+    val lit = MoonPath
+    lit.reset()
+    // Semicerchio dal lato illuminato.
+    lit.arcTo(disc, if (waxing) -90f else 90f, 180f, true)
+    // Mediana: rientra o sporge secondo che la luna sia falce o gibbosa.
+    lit.arcTo(inner, if (waxing) 90f else -90f, if (gibbous) 180f else -180f, false)
+    lit.close()
 
     drawPath(
         path = lit,

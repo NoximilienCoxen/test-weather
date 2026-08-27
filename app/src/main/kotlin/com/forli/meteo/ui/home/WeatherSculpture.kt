@@ -32,6 +32,7 @@ import com.forli.meteo.ui.motion.TILT_YAW_DEGREES
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
 import com.forli.meteo.ui.render3d.Camera
 import com.forli.meteo.ui.render3d.SceneContact
+import com.forli.meteo.ui.render3d.SphereBrushes
 import com.forli.meteo.ui.render3d.hazeMass
 import com.forli.meteo.ui.render3d.moon
 import com.forli.meteo.ui.render3d.sphere
@@ -170,13 +171,21 @@ fun WeatherSculpture(
 
     val phase = remember(date) { MoonPhase.at(date) }
 
+    // Una camera sola e un ordinatore solo, vivi quanto la schermata. Dentro il
+    // disegno non si alloca: vedi [Camera.aim] e [DepthOrder].
+    val camera = remember { Camera() }
+    val order = remember { DepthOrder(maxOf(CLOUD_MASSES.size, DISTANT_MASSES.size)) }
+    // Un posto per ogni corpo: il sole, la luna e le masse della nuvola. Il
+    // posto e' fisso, quindi leggere il pennello e' un accesso a vettore.
+    val brushes = remember { SphereBrushes(CLOUD_MASSES.size + DISTANT_MASSES.size + 2) }
+
     Canvas(
         modifier.onGloballyPositioned { coordinates ->
             contact.rainOrigin = coordinates.positionInRoot()
         },
     ) {
         val unit = size.minDimension
-        val camera = Camera(
+        camera.aim(
             yawDeg = rotation.yawDeg + tilt.value.x * TILT_YAW_DEGREES,
             pitchDeg = tilt.value.y * TILT_PITCH_DEGREES,
             // Piu' vicina di quella della cifra rispetto alla propria
@@ -207,7 +216,11 @@ fun WeatherSculpture(
         val sunAlpha = clear * sky.sunPresence
         if (sunAlpha > 0.01f) {
             sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = true)
-            sphere(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, colors.sunShade, sunAlpha)
+            sphere(
+                camera, bodyX, bodyY, bodyZ, bodyRadius,
+                colors.sunCore, colors.sunShade, sunAlpha,
+                brushes = brushes, slot = SLOT_SUN,
+            )
             sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = false)
         }
 
@@ -262,6 +275,8 @@ fun WeatherSculpture(
                 rainCore = colors.rainCloudCore,
                 rainShade = colors.rainCloudShade,
                 distant = colors.cloudDistant,
+                order = order,
+                brushes = brushes,
             )
         }
 
@@ -304,14 +319,14 @@ fun WeatherSculpture(
 // ---------------------------------------------------------------------------
 
 /** Una massa della nuvola: posizione nello spazio e raggio, in frazioni di unita'. */
-private class Lump(val x: Float, val y: Float, val z: Float, val radius: Float)
+internal class Lump(val x: Float, val y: Float, val z: Float, val radius: Float)
 
 /**
  * Le masse sono sparse anche in profondita', non solo sul piano. Tutte alla
  * stessa distanza la nuvola sarebbe un ritaglio di cartone, e ruotandola si
  * vedrebbe che lo e'.
  */
-private val CLOUD_MASSES = listOf(
+internal val CLOUD_MASSES = listOf(
     Lump(-0.26f, 0.02f, 0.16f, 0.19f),
     Lump(0.00f, -0.09f, -0.06f, 0.25f),
     Lump(0.26f, 0.03f, 0.12f, 0.20f),
@@ -329,7 +344,7 @@ private val CLOUD_MASSES = listOf(
  * scorrono meno di quelle davanti, e da quel solo fatto si legge che il cielo ha
  * uno spessore.
  */
-private val DISTANT_MASSES = listOf(
+internal val DISTANT_MASSES = listOf(
     Lump(-0.33f, -0.34f, 0.28f, 0.22f),
     Lump(-0.06f, -0.40f, 0.38f, 0.20f),
     Lump(0.26f, -0.36f, 0.32f, 0.23f),
@@ -419,6 +434,8 @@ private fun DrawScope.drawClouds(
     rainCore: Color,
     rainShade: Color,
     distant: Color,
+    order: DepthOrder,
+    brushes: SphereBrushes,
 ) {
     val presence = ((cloudiness - 0.06f) / 0.16f).coerceIn(0f, 1f)
     val masses = (2 + (cloudiness * 3f).roundToInt()).coerceIn(2, CLOUD_MASSES.size)
@@ -443,47 +460,94 @@ private fun DrawScope.drawClouds(
     val depth = ((cloudiness - 0.35f) / 0.45f).coerceIn(0f, 1f)
     if (depth > 0.01f) {
         val far = (1 + (depth * 4f).roundToInt()).coerceIn(1, DISTANT_MASSES.size)
-        DISTANT_MASSES.take(far)
-            .sortedByDescending { lump ->
-                camera.place(lump.x * unit * scale, lump.y * unit * scale, lump.z * unit * scale)
-                camera.vz
-            }
-            .forEach { lump ->
-                hazeMass(
-                    camera = camera,
-                    // Piu' lontano, meno lo sposta il vento: e' il modo in cui
-                    // la parallasse racconta la distanza senza dichiararla.
-                    x = lump.x * unit * scale + drift * 0.35f,
-                    y = lump.y * unit * scale,
-                    z = lump.z * unit * scale,
-                    radius = lump.radius * unit * scale,
-                    colour = distant,
-                    alpha = presence * depth * 0.50f,
-                )
-            }
+        order.sortFarToNear(DISTANT_MASSES, far, camera, unit * scale)
+        for (i in 0 until far) {
+            val lump = DISTANT_MASSES[order[i]]
+            hazeMass(
+                camera = camera,
+                // Piu' lontano, meno lo sposta il vento: e' il modo in cui la
+                // parallasse racconta la distanza senza dichiararla.
+                x = lump.x * unit * scale + drift * 0.35f,
+                y = lump.y * unit * scale,
+                z = lump.z * unit * scale,
+                radius = lump.radius * unit * scale,
+                colour = distant,
+                alpha = presence * depth * 0.50f,
+            )
+        }
     }
 
     // Dal fondo verso l'osservatore, e in coordinate di vista: senza un buffer
     // di profondita' e' l'ordine di disegno a decidere chi sta davanti, e
     // ordinandole per la posizione nel modello bastava girare la scena di mezzo
     // giro perche' si scavalcassero al contrario.
-    CLOUD_MASSES.take(masses)
-        .sortedByDescending { lump ->
-            camera.place(lump.x * unit * scale, lump.y * unit * scale, lump.z * unit * scale)
-            camera.vz
+    order.sortFarToNear(CLOUD_MASSES, masses, camera, unit * scale)
+    for (i in 0 until masses) {
+        val lump = CLOUD_MASSES[order[i]]
+        sphere(
+            camera = camera,
+            x = lump.x * unit * scale + drift,
+            y = lump.y * unit * scale,
+            z = lump.z * unit * scale,
+            radius = lump.radius * unit * scale,
+            light = lit,
+            dark = dark,
+            alpha = presence,
+            brushes = brushes,
+            // Il posto segue la **massa**, non l'ordine di disegno: quello
+            // cambia ruotando, e un pennello che cambia posto a ogni mezzo giro
+            // verrebbe ricostruito ogni volta.
+            slot = SLOT_CLOUDS + order[i],
+        )
+    }
+}
+
+/**
+ * L'ordine dal fondo verso l'osservatore, senza allocare niente.
+ *
+ * Serviva `take(n).sortedByDescending { ... }`, e in un disegno quelle due
+ * chiamate costano piu' di quanto sembri: la prima costruisce una lista, la
+ * seconda ne costruisce un'altra **e incapsula ogni chiave in un oggetto**,
+ * perche' il confronto passa da `Comparable`. Cinque masse per due strati fanno
+ * quattro liste e dieci float incapsulati a ogni fotogramma, cioe' quasi mille
+ * oggetti al secondo per riordinare cinque cose.
+ *
+ * Qui gli indici stanno in un vettore di interi riusato e la profondita' in uno
+ * di float, e l'ordinamento e' per inserzione: su cinque elementi e' piu'
+ * veloce di qualunque cosa piu' furba, e soprattutto e' **stabile**, il che
+ * evita che due masse alla stessa profondita' si scambino di posto da un
+ * fotogramma all'altro facendo sfarfallare la nuvola.
+ */
+internal class DepthOrder(capacity: Int) {
+
+    private val index = IntArray(capacity)
+    private val depth = FloatArray(capacity)
+
+    operator fun get(position: Int): Int = index[position]
+
+    fun sortFarToNear(masses: List<Lump>, count: Int, camera: Camera, scale: Float) {
+        for (i in 0 until count) {
+            val lump = masses[i]
+            camera.place(lump.x * scale, lump.y * scale, lump.z * scale)
+            index[i] = i
+            // In coordinate di **vista**, non del modello: ordinare per la
+            // posizione nel modello bastava a far scavalcare le masse al
+            // contrario dopo mezzo giro.
+            depth[i] = camera.vz
         }
-        .forEach { lump ->
-            sphere(
-                camera = camera,
-                x = lump.x * unit * scale + drift,
-                y = lump.y * unit * scale,
-                z = lump.z * unit * scale,
-                radius = lump.radius * unit * scale,
-                light = lit,
-                dark = dark,
-                alpha = presence,
-            )
+        for (i in 1 until count) {
+            val keyIndex = index[i]
+            val keyDepth = depth[i]
+            var j = i - 1
+            while (j >= 0 && depth[j] < keyDepth) {
+                index[j + 1] = index[j]
+                depth[j + 1] = depth[j]
+                j--
+            }
+            index[j + 1] = keyIndex
+            depth[j + 1] = keyDepth
         }
+    }
 }
 
 /**
@@ -618,6 +682,10 @@ private val Halo = Color(0xFF6E9BF0)
 /** Famiglie che portano precipitazione, e quindi una nuvola carica. */
 internal fun Wmo.Family.isWet(): Boolean =
     this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
+
+/** I posti fissi dei pennelli. Il sole, e poi una massa di nuvola per posto. */
+private const val SLOT_SUN = 0
+private const val SLOT_CLOUDS = 1
 
 /** Distanza dell'occhio, in multipli della dimensione del riquadro. */
 private const val EYE = 2.1f

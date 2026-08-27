@@ -8,6 +8,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.toArgb
 import com.forli.meteo.data.Wind
 import kotlin.math.abs
 import kotlin.math.cos
@@ -129,28 +132,33 @@ fun DrawScope.drawShootingStar(star: ShootingStar, progress: Float, presence: Fl
     val alpha = fade * presence
     val unit = size.minDimension
 
-    drawLine(
-        brush = Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color(0xFFBBD6FF).copy(alpha = alpha * 0.55f)),
-            start = tail,
-            end = head,
-        ),
-        start = tail,
-        end = head,
-        strokeWidth = unit * 0.010f,
-        cap = StrokeCap.Round,
-    )
-    drawLine(
-        brush = Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.White.copy(alpha = alpha)),
-            start = tail,
-            end = head,
-        ),
-        start = tail,
-        end = head,
-        strokeWidth = unit * 0.0035f,
-        cap = StrokeCap.Round,
-    )
+    // La coda si spegne in tre tratti a tinta piena invece che con un pennello
+    // a sfumatura. Non e' un ripiego: un pennello lineare va costruito con le
+    // due estremita' del momento, quindi cambia a ogni fotogramma e non si puo'
+    // riusare - due oggetti per fotogramma per tutta la durata della scia. Tre
+    // segmenti con alfa crescente danno la stessa lettura a occhio, perche' la
+    // scia e' lunga un decimo di schermo e dura mezzo secondo.
+    for (step in 0 until TRAIL_STEPS) {
+        val from = step / TRAIL_STEPS.toFloat()
+        val to = (step + 1) / TRAIL_STEPS.toFloat()
+        val a = alpha * (step + 1) / TRAIL_STEPS.toFloat()
+        val s0 = Offset(tail.x + (head.x - tail.x) * from, tail.y + (head.y - tail.y) * from)
+        val s1 = Offset(tail.x + (head.x - tail.x) * to, tail.y + (head.y - tail.y) * to)
+        drawLine(
+            color = Halo.copy(alpha = a * 0.55f),
+            start = s0,
+            end = s1,
+            strokeWidth = unit * 0.010f,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = Color.White.copy(alpha = a),
+            start = s0,
+            end = s1,
+            strokeWidth = unit * 0.0035f,
+            cap = StrokeCap.Round,
+        )
+    }
     drawCircle(
         color = Color.White.copy(alpha = alpha),
         radius = unit * 0.005f,
@@ -204,7 +212,10 @@ fun DrawScope.drawBirds(clock: SceneClock, presence: Float, wind: Wind, colour: 
     // aria, che si nota molto piu' di uno stormo assente.
     if (presence <= BIRDS_MIN) return
     val unit = size.minDimension
-    val path = Path()
+    // Una sola, svuotata e ridisegnata: costruirne una per uccello e per
+    // fotogramma fa cinquecentoquaranta oggetti al secondo per nove sagome che
+    // non cambiano mai numero.
+    val path = BIRD_PATH
 
     for (bird in BIRDS) {
         // La direzione di marcia la decide il vento; con aria ferma vanno tutti
@@ -247,8 +258,23 @@ fun DrawScope.drawBirds(clock: SceneClock, presence: Float, wind: Wind, colour: 
     }
 }
 
+/** In quanti tratti si spegne la coda di una meteora. */
+private const val TRAIL_STEPS = 3
+
+/** L'azzurro dell'alone, lo stesso del fulmine. */
+private val Halo = Color(0xFFBBD6FF)
+
 /** Sotto questa presenza il battito e' spento, quindi non si disegnano. */
 private const val BIRDS_MIN = 0.15f
+
+/**
+ * La sagoma degli uccelli, riusata.
+ *
+ * Sta a livello di file e non dentro la funzione perche' il disegno di Compose
+ * gira sempre sul filo principale: non ci sono due tele che la vogliano nello
+ * stesso istante.
+ */
+private val BIRD_PATH = Path()
 
 /**
  * Dove finisce la scena e comincia l'interfaccia, in frazione dell'altezza.
@@ -284,6 +310,8 @@ fun DrawScope.drawFog(
     wind: Wind,
     near: Color,
     far: Color,
+    /** I pennelli riusati: vedi [FogBrushes]. */
+    brushes: FogBrushes,
 ) {
     if (density <= 0.02f) return
 
@@ -301,18 +329,13 @@ fun DrawScope.drawFog(
     // Il velo di fondo: sale da terra e si esaurisce a meta' altezza. E' cio'
     // che da' il "non si vede niente" senza cancellare il cielo in cima.
     drawRect(
-        brush = Brush.verticalGradient(
-            0f to Color.Transparent,
-            0.30f to far.copy(alpha = density * 0.16f),
-            0.68f to near.copy(alpha = density * 0.62f),
-            SCENE_BOTTOM to near.copy(alpha = density * 0.30f),
-            1f to Color.Transparent,
-        ),
+        brush = brushes.veil(density, near, far),
         topLeft = Offset.Zero,
         size = size,
     )
 
-    for (band in FOG_BANDS) {
+    for (index in FOG_BANDS.indices) {
+        val band = FOG_BANDS[index]
         // La deriva e' fatta con seno e coseno di due ritmi diversi invece che
         // con un ciclo che si riavvolge: cosi' non c'e' nessun istante in cui il
         // banco torna al punto di partenza, che e' l'unico modo perche' una
@@ -326,20 +349,93 @@ fun DrawScope.drawFog(
 
         val bandWidth = size.width * band.width
         val bandHeight = height * band.thickness
-        val tint = androidx.compose.ui.graphics.lerp(far, near, band.depth)
-
         drawOval(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    tint.copy(alpha = density * band.opacity),
-                    tint.copy(alpha = 0f),
-                ),
-                center = Offset(cx, cy),
-                radius = bandWidth / 2f,
-            ),
+            brush = brushes.band(index, density, near, far, band.depth, cx, cy, bandWidth / 2f),
             topLeft = Offset(cx - bandWidth / 2f, cy - bandHeight / 2f),
             size = Size(bandWidth, bandHeight),
         )
+    }
+}
+
+/**
+ * I pennelli della nebbia, costruiti solo quando cambia qualcosa.
+ *
+ * Un pennello a sfumatura non e' un colore: e' un oggetto, e disegnarne uno
+ * nuovo a ogni fotogramma per ognuno dei cinque banchi piu' il velo fa
+ * trecentosessanta oggetti al secondo. I colori pero' dipendono solo dalla
+ * densita' e dalla tavolozza, che cambiano quando cambia l'ora; a muoversi sono
+ * il **centro** e il **raggio**, e quelli il pennello se li rifa' soltanto se
+ * sono davvero cambiati oltre il pixel.
+ *
+ * Non e' una cache generica: e' un vettore lungo quanto i banchi, indicizzato
+ * dal banco stesso. Nessuna ricerca, nessuna mappa.
+ */
+@Stable
+class FogBrushes {
+
+    private var veilBrush: Brush? = null
+    private var veilKey = 0
+
+    private val bandBrush = arrayOfNulls<Brush>(FOG_BANDS.size)
+    private val bandKey = IntArray(FOG_BANDS.size)
+    private val bandCentreX = FloatArray(FOG_BANDS.size)
+    private val bandCentreY = FloatArray(FOG_BANDS.size)
+    private val bandRadius = FloatArray(FOG_BANDS.size)
+
+    internal fun veil(density: Float, near: Color, far: Color): Brush {
+        val key = key(density, near, far)
+        val cached = veilBrush
+        if (cached != null && key == veilKey) return cached
+        val built = Brush.verticalGradient(
+            0f to Color.Transparent,
+            0.30f to far.copy(alpha = density * 0.16f),
+            0.68f to near.copy(alpha = density * 0.62f),
+            SCENE_BOTTOM to near.copy(alpha = density * 0.30f),
+            1f to Color.Transparent,
+        )
+        veilBrush = built
+        veilKey = key
+        return built
+    }
+
+    internal fun band(
+        index: Int,
+        density: Float,
+        near: Color,
+        far: Color,
+        depth: Float,
+        centreX: Float,
+        centreY: Float,
+        radius: Float,
+    ): Brush {
+        val key = key(density, near, far)
+        val cached = bandBrush[index]
+        val moved = kotlin.math.abs(centreX - bandCentreX[index]) > 1f ||
+            kotlin.math.abs(centreY - bandCentreY[index]) > 1f ||
+            kotlin.math.abs(radius - bandRadius[index]) > 1f
+        if (cached != null && key == bandKey[index] && !moved) return cached
+
+        val tint = lerp(far, near, depth)
+        val built = Brush.radialGradient(
+            0f to tint.copy(alpha = density * FOG_BANDS[index].opacity),
+            1f to tint.copy(alpha = 0f),
+            center = Offset(centreX, centreY),
+            radius = radius,
+        )
+        bandBrush[index] = built
+        bandKey[index] = key
+        bandCentreX[index] = centreX
+        bandCentreY[index] = centreY
+        bandRadius[index] = radius
+        return built
+    }
+
+    /** Densita' e tinte in un intero solo: due confronti invece di sei. */
+    private fun key(density: Float, near: Color, far: Color): Int {
+        var k = (density * 255f).toInt()
+        k = k * 31 + near.toArgb()
+        k = k * 31 + far.toArgb()
+        return k
     }
 }
 

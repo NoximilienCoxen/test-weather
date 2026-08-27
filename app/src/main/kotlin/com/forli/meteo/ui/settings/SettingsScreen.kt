@@ -59,14 +59,15 @@ fun SettingsScreen(
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onLocate: (canAsk: Boolean, onNeedsPermission: () -> Unit) -> Unit,
+    onAddFavourite: (Place) -> Unit,
+    onRemoveFavourite: (Place) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
 
-    // Stessa storia del benvenuto: dopo un rifiuto il sistema non mostra piu'
-    // la richiesta, e un pulsante che non apre nulla e non dice nulla e' peggio
-    // di un pulsante assente.
+    // Dopo un rifiuto il sistema non mostra piu' la richiesta: chiederla
+    // ancora non aprirebbe nulla, quindi si dice cosa fare invece.
     var refused by remember { mutableStateOf(false) }
     val permission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -105,13 +106,7 @@ fun SettingsScreen(
             }
             item {
                 Text(
-                    text = if (state.located) {
-                        listOf(state.place.detail.uppercase(), "TROVATA DAL TELEFONO")
-                            .filter { it.isNotBlank() }
-                            .joinToString("  ·  ")
-                    } else {
-                        state.place.detail.uppercase()
-                    },
+                    text = state.place.detail.uppercase(),
                     style = MeteoType.caption,
                     color = colors.label,
                 )
@@ -124,21 +119,60 @@ fun SettingsScreen(
                     text = coordinates(state.place.latitude, state.place.longitude),
                     style = MeteoType.caption,
                     color = colors.label,
-                    modifier = Modifier.padding(top = 3.dp, bottom = 12.dp),
+                    modifier = Modifier.padding(top = 3.dp, bottom = 6.dp),
                 )
             }
 
+            // Due azioni in peso di didascalia, non due pulsanti.
+            //
+            // Qui c'era un pulsante a pillola alto quanto il campo di ricerca,
+            // e sbilanciava la sezione: questa schermata e' fatta di righe di
+            // testo fitte, e un blocco pieno in mezzo la spezza in due. Alla
+            // scala del resto, invece, si leggono come quello che sono - due
+            // cose che si possono fare alla localita' scritta sopra.
             item {
-                LocateRow(
-                    locating = state.locating,
-                    refused = refused,
-                    problem = state.locationProblem,
-                    onClick = {
-                        onLocate(!refused) {
-                            permission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        }
-                    },
-                )
+                Row(
+                    modifier = Modifier.padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(18.dp),
+                ) {
+                    val saved = state.favourites.any { it.samePlaceAs(state.place) }
+                    TextAction(
+                        text = if (saved) "· NEI PREFERITI" else "+ SALVA FRA I PREFERITI",
+                        emphasised = !saved,
+                        onClick = {
+                            if (saved) onRemoveFavourite(state.place) else onAddFavourite(state.place)
+                        },
+                    )
+                    TextAction(
+                        text = when {
+                            state.locating -> "STO CERCANDO…"
+                            refused -> "PERMESSO NEGATO"
+                            else -> "TROVAMI"
+                        },
+                        emphasised = !state.locating && !refused,
+                        onClick = {
+                            onLocate(!refused) {
+                                permission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            }
+                        },
+                    )
+                }
+            }
+
+            val locationProblem = state.locationProblem ?: if (refused) {
+                "SI PUÒ CONCEDERE DALLE IMPOSTAZIONI DI ANDROID."
+            } else {
+                null
+            }
+            if (locationProblem != null) {
+                item {
+                    Text(
+                        text = locationProblem,
+                        style = MeteoType.caption,
+                        color = colors.label,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+                }
             }
 
             item {
@@ -165,6 +199,31 @@ fun SettingsScreen(
                 )
             }
 
+            // I preferiti stanno sopra le scorciatoie e solo con la ricerca
+            // vuota: sono la risposta alla domanda "dove guardo di solito", e
+            // mentre si cerca qualcosa d'altro sarebbero rumore.
+            if (state.results.isEmpty() && state.favourites.isNotEmpty()) {
+                items(
+                    state.favourites,
+                    key = { "pref${it.latitude}${it.longitude}" },
+                ) { place ->
+                    PlaceRow(
+                        place = place,
+                        selected = place.samePlaceAs(state.place),
+                        onClick = { onChoosePlace(place) },
+                        onRemove = { onRemoveFavourite(place) },
+                    )
+                }
+                item {
+                    Text(
+                        text = "SCORCIATOIE",
+                        style = MeteoType.caption,
+                        color = colors.label,
+                        modifier = Modifier.padding(top = 14.dp, bottom = 4.dp),
+                    )
+                }
+            }
+
             // Con la ricerca vuota si vedono le scorciatoie. Le prime della
             // lista sono fra i posti piu' piovosi che esistano, ed e' voluto:
             // con una citta' sola non c'era modo di vedere la pioggia se non
@@ -173,9 +232,15 @@ fun SettingsScreen(
             items(places, key = { "${it.name}${it.latitude}${it.longitude}" }) { place ->
                 PlaceRow(
                     place = place,
-                    selected = place.latitude == state.place.latitude &&
-                        place.longitude == state.place.longitude,
+                    selected = place.samePlaceAs(state.place),
                     onClick = { onChoosePlace(place) },
+                    // Dai risultati e dalle scorciatoie si mette da parte; il
+                    // segno e' lo stesso della riga sopra, al contrario.
+                    onAdd = if (state.favourites.any { it.samePlaceAs(place) }) {
+                        null
+                    } else {
+                        { onAddFavourite(place) }
+                    },
                 )
             }
 
@@ -253,56 +318,6 @@ fun SettingsScreen(
     }
 }
 
-/** Il pulsante che chiede al telefono dove siamo, con accanto cos'e' andato storto. */
-@Composable
-private fun LocateRow(
-    locating: Boolean,
-    refused: Boolean,
-    problem: String?,
-    onClick: () -> Unit,
-) {
-    val colors = LocalMeteoColors.current
-    Column(modifier = Modifier.padding(bottom = 10.dp)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(if (refused) colors.line.copy(alpha = 0.35f) else colors.pillBackground)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    enabled = !locating && !refused,
-                    onClick = onClick,
-                )
-                .padding(vertical = 13.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = when {
-                    locating -> "STO CERCANDO…"
-                    refused -> "PERMESSO NEGATO"
-                    else -> "TROVAMI"
-                },
-                style = MeteoType.value,
-                color = if (refused) colors.label else colors.pillText,
-            )
-        }
-        val message = problem ?: if (refused) {
-            "SI PUÒ CONCEDERE DALLE IMPOSTAZIONI DI ANDROID."
-        } else {
-            null
-        }
-        if (message != null) {
-            Text(
-                text = message,
-                style = MeteoType.caption,
-                color = colors.label,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
-    }
-}
-
 @Composable
 private fun SectionTitle(text: String) {
     val colors = LocalMeteoColors.current
@@ -334,7 +349,13 @@ private fun SourceRow(label: String, value: String) {
 }
 
 @Composable
-private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
+private fun PlaceRow(
+    place: Place,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onAdd: (() -> Unit)? = null,
+    onRemove: (() -> Unit)? = null,
+) {
     val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Row(
@@ -343,7 +364,7 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
             .clip(RoundedCornerShape(10.dp))
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
             .background(if (selected) colors.line.copy(alpha = 0.55f) else Color.Transparent)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(start = 12.dp, end = 4.dp, top = 10.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -364,10 +385,63 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
         if (selected) {
             Box(
                 modifier = Modifier
+                    .padding(end = 8.dp)
                     .size(8.dp)
                     .clip(CircleShape)
                     .background(colors.text),
             )
+        }
+        // Il segno sta a destra e non apre nulla: mettere da parte e togliere
+        // sono azioni senza conseguenze, e una conferma per una riga che si
+        // rimette con un tocco sarebbe una domanda di troppo.
+        if (onRemove != null) GlyphButton(glyph = Glyph.CROSS, onClick = onRemove)
+        if (onAdd != null) GlyphButton(glyph = Glyph.PLUS, onClick = onAdd)
+    }
+}
+
+/** Un'azione in peso di didascalia: la scala del resto della schermata. */
+@Composable
+private fun TextAction(text: String, emphasised: Boolean, onClick: () -> Unit) {
+    val colors = LocalMeteoColors.current
+    val interaction = remember { MutableInteractionSource() }
+    Text(
+        text = text,
+        style = MeteoType.caption,
+        color = if (emphasised) colors.text else colors.label,
+        modifier = Modifier
+            .clip(RoundedCornerShape(percent = 50))
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .padding(vertical = 4.dp),
+    )
+}
+
+private enum class Glyph { PLUS, CROSS }
+
+/** Croce e piu' disegnati, per non tirarsi dietro una libreria di icone. */
+@Composable
+private fun GlyphButton(glyph: Glyph, onClick: () -> Unit) {
+    val colors = LocalMeteoColors.current
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        modifier = Modifier
+            .size(34.dp)
+            .clip(CircleShape)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(Modifier.size(11.dp)) {
+            val stroke = size.minDimension * 0.14f
+            val half = size.width / 2f
+            when (glyph) {
+                Glyph.PLUS -> {
+                    drawLine(colors.label, Offset(half, 0f), Offset(half, size.height), stroke, StrokeCap.Round)
+                    drawLine(colors.label, Offset(0f, half), Offset(size.width, half), stroke, StrokeCap.Round)
+                }
+                Glyph.CROSS -> {
+                    drawLine(colors.label, Offset.Zero, Offset(size.width, size.height), stroke, StrokeCap.Round)
+                    drawLine(colors.label, Offset(size.width, 0f), Offset(0f, size.height), stroke, StrokeCap.Round)
+                }
+            }
         }
     }
 }

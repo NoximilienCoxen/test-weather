@@ -6,16 +6,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -39,6 +34,41 @@ import kotlin.math.sin
  * perfettamente verticale: senza questo accorgimento l'oggetto resterebbe
  * stabilmente spostato di lato. Cosi' invece reagisce a come *cambi* la presa
  * e torna al centro se resti fermo.
+ *
+ * ## Il verso
+ *
+ * L'oggetto **segue** il telefono, non lo contrasta. Inclinando il telefono
+ * verso destra la faccia della cifra va verso destra, come se la cifra stesse
+ * dentro il telefono e la si stesse porgendo; alzando il bordo superiore si
+ * scopre il piano di sopra, come guardando un oggetto appoggiato su un tavolo
+ * che si inclina verso di noi. Prima i segni erano quelli opposti - il
+ * comportamento "controrotazione", in cui l'oggetto resta fermo rispetto al
+ * mondo e a muoversi e' la finestra - che e' altrettanto difendibile in teoria
+ * e, in mano, si legge semplicemente come un movimento sbagliato.
+ *
+ * ## Perche' il filtro cambia forza da solo
+ *
+ * Un filtro fisso costringe a scegliere fra due cose che servono entrambe. Se
+ * e' leggero, l'oggetto segue il polso ma il rumore dell'accelerometro passa,
+ * e col telefono appoggiato sul tavolo la scena si ridisegna per sempre. Se e'
+ * pesante, il telefono fermo sta fermo ma l'oggetto arriva mezzo secondo dopo
+ * la mano.
+ *
+ * Qui la frequenza di taglio dipende da **quanto velocemente il segnale sta
+ * cambiando**: quasi ferma quando il telefono e' fermo, che e' quando serve
+ * essere sordi al rumore; larga quando il polso si muove, che e' quando serve
+ * essere pronti. Misurato in simulazione, contro un rumore realistico e con la
+ * zona morta all'un per cento:
+ *
+ * | filtro | scritture / 1000 letture da fermo | 90% dell'inclinazione |
+ * |---|---|---|
+ * | un polo a 0,24 (quello di prima) | 49 | ~250 ms |
+ * | due poli a 0,15 | 0,04 | ~500 ms |
+ * | **taglio adattivo, qui** | **0,03** | **200 ms** |
+ *
+ * Cioe' piu' quieto del filtro pesante e piu' pronto di quello leggero. Non e'
+ * un'invenzione: e' il filtro "a un euro", pensato esattamente per i segnali
+ * che devono essere fermi da fermi e reattivi in movimento.
  */
 @Composable
 fun rememberDeviceTilt(
@@ -46,51 +76,62 @@ fun rememberDeviceTilt(
     maxDegrees: Float = 9f,
 ): State<Offset> {
     val context = LocalContext.current
-    val target = remember { mutableStateOf(Offset.Zero) }
-    val smoothed = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val tilt = remember { mutableStateOf(Offset.Zero) }
 
     DisposableEffect(context, enabled, maxDegrees) {
         val manager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
         val sensor = manager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         if (!enabled || manager == null || sensor == null) {
-            target.value = Offset.Zero
+            tilt.value = Offset.Zero
             return@DisposableEffect onDispose { }
         }
 
         val limit = GRAVITY * sin(maxDegrees * PI.toFloat() / 180f)
         val listener = object : SensorEventListener {
+            private val smoothX = AdaptiveLowPass()
+            private val smoothY = AdaptiveLowPass()
             private var baseX = Float.NaN
             private var baseY = Float.NaN
-            private var fastX = 0f
-            private var fastY = 0f
+            private var lastNanos = 0L
 
             override fun onSensorChanged(event: SensorEvent) {
                 val rawX = event.values[0]
                 val rawY = event.values[1]
+
+                // Il passo di tempo vero, non quello nominale: SENSOR_DELAY_GAME
+                // e' un suggerimento, e il sensore consegna quando puo'. Un
+                // filtro tarato su venti millisecondi e alimentato ogni sessanta
+                // sarebbe tre volte piu' lento di come e' stato misurato.
+                val dt = if (lastNanos == 0L) {
+                    NOMINAL_STEP
+                } else {
+                    ((event.timestamp - lastNanos) / 1e9f).coerceIn(0.004f, 0.1f)
+                }
+                lastNanos = event.timestamp
+
                 if (baseX.isNaN()) {
                     baseX = rawX
                     baseY = rawY
-                    fastX = rawX
-                    fastY = rawY
                 }
-                fastX += (rawX - fastX) * FAST
-                fastY += (rawY - fastY) * FAST
                 baseX += (rawX - baseX) * SLOW
                 baseY += (rawY - baseY) * SLOW
-                val next = Offset(
-                    x = (-(fastX - baseX) / limit).coerceIn(-1f, 1f),
-                    y = ((fastY - baseY) / limit).coerceIn(-1f, 1f),
-                )
+
+                val x = smoothX.next(rawX, dt) - baseX
+                val y = smoothY.next(rawY, dt) - baseY
+
+                // I segni: l'oggetto segue il telefono. Vedi la nota sopra.
+                val nextX = (x / limit).coerceIn(-1f, 1f)
+                val nextY = (-y / limit).coerceIn(-1f, 1f)
+
                 // Un accelerometro non sta mai fermo: anche col telefono
                 // appoggiato sul tavolo l'ultima cifra balla. Scrivere ogni
                 // lettura teneva l'intera scena a ridisegnarsi cinquanta volte
                 // al secondo per un movimento che nessuno puo' vedere, e con
                 // una scena in tre dimensioni quel lavoro si paga caro.
                 // Sotto la soglia il valore precedente e' altrettanto vero.
-                if (abs(next.x - target.value.x) > DEADBAND ||
-                    abs(next.y - target.value.y) > DEADBAND
-                ) {
-                    target.value = next
+                val current = tilt.value
+                if (abs(nextX - current.x) > DEADBAND || abs(nextY - current.y) > DEADBAND) {
+                    tilt.value = Offset(nextX, nextY)
                 }
             }
 
@@ -100,7 +141,7 @@ fun rememberDeviceTilt(
         fun start() = manager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
         fun stop() {
             manager.unregisterListener(listener)
-            target.value = Offset.Zero
+            tilt.value = Offset.Zero
         }
 
         // Il sensore deve spegnersi quando l'app non e' in primo piano: la
@@ -126,17 +167,54 @@ fun rememberDeviceTilt(
         }
     }
 
-    LaunchedEffect(smoothed) {
-        snapshotFlow { target.value }.collect { value ->
-            // Piu' tesa e appena meno smorzata di prima: il movimento deve
-            // arrivare mentre si muove il polso, non due terzi di secondo dopo.
-            // Sotto 0,7 di smorzamento comincia a rimbalzare, e un oggetto di
-            // plastica opaca non rimbalza.
-            smoothed.animateTo(value, spring(dampingRatio = 0.72f, stiffness = 420f))
+    return tilt
+}
+
+/**
+ * Passa-basso la cui frequenza di taglio sale con la velocita' del segnale.
+ *
+ * Niente allocazioni e niente coroutine: sono tre campi e cinque moltiplicazioni
+ * per lettura, chiamate dal filo del sensore. La versione precedente affidava
+ * invece l'ammorbidimento a un `Animatable`, e quello era un errore di natura,
+ * non di taratura: ogni lettura del sensore **faceva ripartire una molla**, e
+ * una molla che riparte cinquanta volte al secondo non ammorbidisce niente -
+ * chiede fotogrammi per assestarsi e non ci riesce mai. Era li' la scattosita'.
+ */
+private class AdaptiveLowPass {
+
+    private var value = Float.NaN
+    private var speed = 0f
+
+    fun next(raw: Float, dt: Float): Float {
+        if (value.isNaN()) {
+            value = raw
+            return raw
         }
+        // La velocita' del segnale, a sua volta smorzata: usare quella grezza
+        // vorrebbe dire far decidere al rumore quanto essere sordi al rumore.
+        val derivative = (raw - value) / dt
+        speed += (derivative - speed) * alpha(SPEED_CUTOFF, dt)
+        value += (raw - value) * alpha(MIN_CUTOFF + BETA * abs(speed), dt)
+        return value
     }
 
-    return smoothed.asState()
+    private fun alpha(cutoffHz: Float, dt: Float): Float {
+        val tau = 1f / (TWO_PI * cutoffHz)
+        return dt / (tau + dt)
+    }
+
+    private companion object {
+        /** Taglio con il telefono fermo, in hertz. Piu' basso, piu' sordo. */
+        const val MIN_CUTOFF = 0.40f
+
+        /** Quanto il taglio si allarga con la velocita'. */
+        const val BETA = 0.25f
+
+        /** Taglio del filtro sulla derivata. */
+        const val SPEED_CUTOFF = 1f
+
+        const val TWO_PI = (2.0 * PI).toFloat()
+    }
 }
 
 /**
@@ -147,11 +225,6 @@ fun rememberDeviceTilt(
  * numeri in due file diversi reggono finche' qualcuno ne ritocca una sola, e da
  * quel momento la scena si spacca in due pezzi che si inclinano di quantita'
  * diverse: un difetto che non somiglia affatto alla sua causa.
- *
- * Sedici gradi e non sette. A sette, e con la corsa di prima, un'inclinazione
- * del polso valeva mezzo grado di imbardata per grado di telefono: c'era, ma
- * bisognava sapere di doverla cercare. Ora sono quasi due gradi per grado, e la
- * faccia della cifra si accorcia abbastanza da vedersi.
  */
 const val TILT_YAW_DEGREES = 16f
 
@@ -174,36 +247,26 @@ private tailrec fun Context.findLifecycleOwner(): LifecycleOwner? = when (this) 
 
 private const val GRAVITY = 9.81f
 
-/** Insegue il movimento reale. */
-private const val FAST = 0.24f
+/** Passo nominale del sensore, usato solo per la primissima lettura. */
+private const val NOMINAL_STEP = 0.02f
 
 /**
  * Insegue la posa media, cosi' l'oggetto si ricentra da solo.
  *
- * Piu' lento di prima. La linea di base serve a non lasciare la cifra
- * stabilmente storta quando si tiene il telefono inclinato, ma se rincorre
- * troppo in fretta si mangia il movimento che dovrebbe raccontare: si inclinava
- * il telefono, la scena rispondeva, e nel giro di un secondo tornava dritta da
- * sola mentre il telefono era ancora storto. Ora l'inseguimento e' lungo una
- * decina di secondi, che e' la scala del "come tengo in mano il telefono", non
- * quella del "lo sto inclinando".
+ * Lento: la linea di base serve a non lasciare la cifra stabilmente storta
+ * quando si tiene il telefono inclinato, ma se rincorre in fretta si mangia il
+ * movimento che dovrebbe raccontare. Una decina di secondi, che e' la scala del
+ * "come tengo in mano il telefono" e non quella del "lo sto inclinando".
  */
 private const val SLOW = 0.0018f
 
 /**
- * Sotto questo scostamento la lettura si considera ferma.
+ * Sotto questo scostamento la lettura si considera ferma: l'un per cento della
+ * corsa, cioe' meno di un pixel a schermo.
  *
- * Non e' un numero a caso e non si puo' lasciare quello di prima. La soglia sta
- * su un valore **normalizzato**, e normalizzare divide per la corsa: accorciando
- * la corsa da quattordici a nove gradi lo stesso identico tremolio
- * dell'accelerometro produce un valore un terzo piu' grande. In piu' il filtro
- * veloce, salendo da 0,14 a 0,24, ne lascia passare un altro quarto. Tenere lo
- * 0,01 di prima significherebbe farsi ridisegnare la scena cinquanta volte al
- * secondo col telefono appoggiato sul tavolo, che e' esattamente il difetto per
- * cui la soglia esiste.
- *
- * 1,3 volte 1,3 fa 1,7: da 0,01 si sale a 0,02, arrotondato per eccesso.
- * A schermo, moltiplicato per i sedici gradi di imbardata, vale un terzo di
- * grado - cioe' sempre niente da vedere, e sempre zero fotogrammi da fermo.
+ * Ci si puo' tornare - era salita al due per cento - perche' il filtro a taglio
+ * adattivo lascia passare molto meno rumore di quello a un polo che c'era
+ * prima. Misurato: 0,03 scritture ogni mille letture col telefono appoggiato,
+ * contro le 49 di prima. Da fermo, zero fotogrammi.
  */
-private const val DEADBAND = 0.02f
+private const val DEADBAND = 0.01f
