@@ -5,6 +5,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- La pioggia si sente in mano, e il tuono si sente di piu'. -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!--
+        Solo approssimata: una previsione vale per una cella di chilometri, e un
+        permesso che non serve e' un permesso che non si chiede. Facoltativo -
+        senza, l'app funziona con la localita' scelta a mano.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"

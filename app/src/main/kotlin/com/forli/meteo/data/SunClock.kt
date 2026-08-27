@@ -29,10 +29,13 @@ data class SkyState(
     val moonPresence: Float,
     /** 1 quando il sole e' all'orizzonte, 0 quando e' alto. Rosso contro giallo. */
     val redness: Float,
+    /** A che punto del viaggio sta l'astro: 0 quando sorge, 1 quando tramonta. */
+    val journey: Float = 0.5f,
 ) {
     companion object {
-        fun of(altitude: Float): SkyState = SkyState(
+        fun of(altitude: Float, journey: Float = 0.5f): SkyState = SkyState(
             altitude = altitude,
+            journey = journey,
             // Il cielo si schiarisce molto prima che il sole spunti: mezz'ora
             // prima dell'alba fuori ci si vede benissimo. Facendo coincidere il
             // buio con il sole sotto l'orizzonte si otteneva una notte piena
@@ -83,6 +86,40 @@ object SunClock {
             else -> sin(PI * (t - rise) / (set - rise)).toFloat()
         }
     }
+
+    /**
+     * A che punto del proprio viaggio sta l'astro: zero quando sorge, uno
+     * quando tramonta.
+     *
+     * L'altezza da sola non basta a piazzarlo in cielo, perche' e' **simmetrica
+     * attorno a mezzogiorno**: alle otto e alle sedici vale lo stesso, e con
+     * quella sola il sole salirebbe e ridiscenderebbe sempre dallo stesso lato.
+     * Questa dice da che parte, ed e' la stessa frazione che dentro [altitude]
+     * fa la campana - li' se ne prende il seno, qui il valore grezzo.
+     *
+     * Vale anche di notte, dal tramonto all'alba successiva passando per
+     * mezzanotte: la luna attraversa come il sole, e non c'e' ragione di darle
+     * un moto diverso.
+     */
+    fun journey(
+        moment: LocalDateTime,
+        sunrise: LocalDateTime?,
+        sunset: LocalDateTime?,
+    ): Float {
+        if (sunrise == null || sunset == null) return 0.5f
+        val t = minutesOfDay(moment)
+        val rise = minutesOfDay(sunrise)
+        val set = minutesOfDay(sunset)
+        if (set <= rise) return 0.5f
+        val night = (DAY_MINUTES - set) + rise
+        return when {
+            t in rise..set -> (t - rise) / (set - rise)
+            t > set -> (t - set) / night
+            else -> ((DAY_MINUTES - set) + t) / night
+        }.coerceIn(0f, 1f)
+    }
+
+    private const val DAY_MINUTES = 1440f
 
     private fun minutesOfDay(moment: LocalDateTime): Float =
         moment.hour * 60f + moment.minute + moment.second / 60f

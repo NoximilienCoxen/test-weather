@@ -3,6 +3,7 @@ package com.forli.meteo.prefs
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -30,6 +31,22 @@ enum class TempUnit(val symbol: String) {
 data class Settings(
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /**
+     * Vero quando il posto lo decide il telefono.
+     *
+     * Il posto resta comunque salvato per intero: cosi' all'avvio successivo
+     * la schermata ha subito qualcosa da mostrare mentre la posizione viene
+     * richiesta, invece di ripartire da una citta' che non c'entra.
+     */
+    val followsLocation: Boolean = false,
+    /**
+     * Vero da quando il benvenuto ha finito il suo lavoro.
+     *
+     * Serve una chiave sua e non basta guardare se una localita' e' salvata:
+     * senza scelta il posto e' Forli' per impostazione predefinita, e "non ho
+     * mai scelto" e "ho scelto Forli'" sono la stessa cosa vista da fuori.
+     */
+    val welcomed: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -60,17 +77,30 @@ class SettingsPrefs(private val context: Context) {
             unit = prefs[KEY_UNIT]
                 ?.let { saved -> TempUnit.entries.firstOrNull { it.name == saved } }
                 ?: TempUnit.CELSIUS,
+            followsLocation = prefs[KEY_FOLLOWS] ?: false,
+            welcomed = prefs[KEY_WELCOMED] ?: false,
         )
     }
 
-    suspend fun setPlace(place: Place) {
+    /**
+     * @param following vero solo quando il posto arriva dal telefono. Sceglierlo
+     *   a mano spegne il seguire, e non e' un dettaglio: una scelta esplicita
+     *   deve vincere su un rilevamento, altrimenti al riavvio successivo si
+     *   verrebbe riportati dove si e' invece che dove si e' chiesto.
+     */
+    suspend fun setPlace(place: Place, following: Boolean = false) {
         context.settingsDataStore.edit { prefs ->
+            prefs[KEY_FOLLOWS] = following
             prefs[KEY_NAME] = place.name
             prefs[KEY_LAT] = place.latitude
             prefs[KEY_LON] = place.longitude
             place.admin?.let { prefs[KEY_ADMIN] = it } ?: prefs.remove(KEY_ADMIN)
             place.country?.let { prefs[KEY_COUNTRY] = it } ?: prefs.remove(KEY_COUNTRY)
         }
+    }
+
+    suspend fun setWelcomed() {
+        context.settingsDataStore.edit { it[KEY_WELCOMED] = true }
     }
 
     suspend fun setUnit(unit: TempUnit) {
@@ -84,5 +114,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_LAT = doublePreferencesKey("localita_lat")
         val KEY_LON = doublePreferencesKey("localita_lon")
         val KEY_UNIT = stringPreferencesKey("unita")
+        val KEY_FOLLOWS = booleanPreferencesKey("segue_posizione")
+        val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
     }
 }

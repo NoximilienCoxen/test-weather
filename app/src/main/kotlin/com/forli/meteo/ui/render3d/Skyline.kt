@@ -29,11 +29,23 @@ class Skyline {
     /** Dove sta il riquadro di chi l'ha scritta, rispetto alla radice. */
     var origin: Offset = Offset.Zero
 
+    /**
+     * Il punto piu' basso toccato dalla sagoma: la base della cifra.
+     *
+     * La cima serve a sapere dove la pioggia si ferma; questa a sapere dove
+     * **arriva** quando non incontra niente. Ne basta uno per tutta la scritta e
+     * non uno per colonna: e' un piano d'appoggio, e un piano d'appoggio a
+     * gradini non e' un piano.
+     */
+    var floor: Float = Float.NaN
+        private set
+
     fun reset(canvasWidth: Float) {
         val needed = ((canvasWidth / COLUMN_PX).toInt() + 2).coerceAtLeast(2)
         if (top.size != needed) top = FloatArray(needed)
         java.util.Arrays.fill(top, Float.MAX_VALUE)
         width = canvasWidth
+        floor = Float.NaN
         ready = false
     }
 
@@ -69,6 +81,8 @@ class Skyline {
             }
             column++
         }
+        val lowest = maxOf(y0, y1)
+        if (floor.isNaN() || lowest > floor) floor = lowest
         ready = true
     }
 
