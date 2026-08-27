@@ -264,13 +264,21 @@ tabulati una volta sola, non ricalcolati nel disegno.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
+adb shell am start -n com.forli.meteo/.MainActivity \
+  --ez benvenuto false --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
 |---|---|
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
+| `--ez benvenuto false` | salta la schermata di benvenuto |
+
+**Il terzo non e' opzionale in cattura.** Il benvenuto compare al primo avvio e
+si mette davanti a tutto: senza saltarlo, la CI fotografa dodici volte la stessa
+domanda invece della scena. Lo scavalco e' transitorio e non passa dalle
+preferenze - segnare sul disco come "gia' visto" un benvenuto che nessuno ha
+visto sarebbe uno stato scritto da un aggancio di prova, e resterebbe li'.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta

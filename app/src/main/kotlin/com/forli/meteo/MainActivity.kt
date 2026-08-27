@@ -43,6 +43,8 @@ class MainActivity : ComponentActivity() {
      * serena da mezzanotte a mezzanotte, nuvole e pioggia non comparirebbero
      * mai in uno scatto. Imporli e' l'unico modo per vederli.
      *
+     *   adb shell am start -n .../.MainActivity --ez benvenuto false
+     *
      * L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da
      * scegliere: giorno e notte adesso li decide l'ora mostrata, e per
      * fotografare la notte basta chiedere un'ora notturna.
@@ -51,10 +53,19 @@ class MainActivity : ComponentActivity() {
         if (intent == null) return
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
+        if (!intent.getBooleanExtra(EXTRA_WELCOME, true)) viewModel.skipWelcome()
     }
 
     private companion object {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
+
+        /**
+         * `--ez benvenuto false` salta la schermata di benvenuto.
+         *
+         * Senza, comparendo al primo avvio si mette davanti a ogni scatto
+         * dell'emulatore e la CI fotografa dodici volte la stessa domanda.
+         */
+        const val EXTRA_WELCOME = "benvenuto"
     }
 }
