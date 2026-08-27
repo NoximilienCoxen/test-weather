@@ -86,7 +86,10 @@ session() {
   sleep 1
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
-  adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
+  # `--ez benvenuto false`: al primo avvio la schermata di benvenuto si mette
+  # davanti a tutto, e senza saltarla ogni scatto ritrarrebbe quella invece
+  # della scena.
+  adbt shell am start -W -n "$ACT" --ez benvenuto false 2>&1 | sed 's/^/    /' || true
   sleep 10
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
@@ -125,7 +128,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       # shellcheck disable=SC2086
-      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
+      adbt shell am start -n "$ACT" --ez benvenuto false $1 >/dev/null 2>&1 || true
       # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
       # gli scatti coglievano i trattini invece dei dati.
       sleep 14
@@ -142,6 +145,31 @@ session() {
 
     restart_with "--ei meteo 3"
     shoot "${slug}-5-coperto"
+
+    # Gli stati nuovi. La neve va fotografata dopo qualche secondo di caduta,
+    # altrimenti la coltre sopra la cifra non ha ancora avuto tempo di posarsi:
+    # i quattordici secondi di restart_with bastano.
+    restart_with "--ei meteo 75"
+    shoot "${slug}-7-neve"
+
+    # E subito dopo con un giro di dito, per vedere se la coltre si stacca.
+    adbt shell input motionevent DOWN "$CX" "$CY" >/dev/null 2>&1 || true
+    adbt shell input motionevent MOVE "$(( CX + 300 ))" "$CY" >/dev/null 2>&1 || true
+    sleep 1
+    shoot "${slug}-7b-neve-che-scivola"
+    adbt shell input motionevent UP "$(( CX + 300 ))" "$CY" >/dev/null 2>&1 || true
+
+    restart_with "--ei meteo 45"
+    shoot "${slug}-8-nebbia"
+
+    restart_with "--ei meteo 95"
+    shoot "${slug}-9-temporale"
+
+    # L'ora dorata: la finestra e' di quarantacinque minuti attorno all'alba e
+    # al tramonto, quindi l'ora giusta dipende dalla stagione. Due scatti a
+    # cavallo del tramonto d'agosto a Forli' (circa le 20).
+    restart_with "--ei ora 20"
+    shoot "${slug}-10-tramonto"
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""

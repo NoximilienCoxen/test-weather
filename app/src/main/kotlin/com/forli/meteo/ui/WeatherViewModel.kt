@@ -162,7 +162,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     it.copy(
                         place = settings.place,
                         unit = settings.unit,
-                        welcomed = settings.welcomed,
+                        // L'aggancio di verifica vince: una volta saltato, il
+                        // benvenuto non puo' tornare per un'emissione delle
+                        // preferenze arrivata dopo.
+                        welcomed = it.welcomed || settings.welcomed,
                         located = settings.located,
                     )
                 }
@@ -341,6 +344,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun dismissWelcome() {
         viewModelScope.launch { prefs.setWelcomed() }
     }
+
+    /**
+     * Aggancio per la verifica automatica: salta il benvenuto senza ricordarlo.
+     *
+     * Serve perche' il benvenuto, comparendo al primo avvio, si mette davanti a
+     * **ogni** scatto dell'emulatore: la CI fotografava dodici volte la stessa
+     * domanda invece della scena. Non passa da [prefs] di proposito - segnare
+     * come "gia' visto" un benvenuto che nessuno ha visto sarebbe uno stato
+     * scritto sul disco da un aggancio di prova, e resterebbe li' anche dopo.
+     */
+    fun skipWelcome() = _state.update { it.copy(welcomed = true) }
 
     /**
      * Ricerca con attesa: un carattere digitato non e' una domanda, e mandare
