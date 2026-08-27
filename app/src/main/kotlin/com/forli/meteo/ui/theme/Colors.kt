@@ -205,9 +205,11 @@ fun skyColors(sky: SkyState, fog: Float = 0f): MeteoColors {
         // errore di fotografia.
         cloudCore = lerp(Color(0xFFFFFFFF), Color(0xFFFFD2A6), golden * 0.85f),
         cloudShade = lerp(Color(0xFFBFC4CC), Color(0xFF9C6A55), golden * 0.70f),
-        // Lo strato lontano non e' la stessa nuvola piu' piccola: e' piu' vicino
-        // al colore del cielo, perche' l'aria che ci sta in mezzo se lo mangia.
-        cloudDistant = lerp(Color(0xFFD6DBE2), top, 0.45f),
+        // Lo strato lontano non e' la stessa nuvola piu' piccola: l'aria che ci
+        // sta in mezzo lo tira verso il colore del cielo. Ma poco - a 0,45 su un
+        // cielo azzurro pieno diventava azzurro pieno anche lui, e una nuvola
+        // azzurra non e' una nuvola lontana, e' una bolla.
+        cloudDistant = lerp(Color(0xFFE8ECF2), top, 0.20f),
         rainCloudCore = Color(0xFF9BA1AB),
         rainCloudShade = Color(0xFF474C56),
         rain = Color(0xFF6FB2FF),

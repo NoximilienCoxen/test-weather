@@ -174,7 +174,10 @@ private class Bird(
 private val BIRDS: List<Bird> = List(9) { i ->
     val r = Random(i * 2311 + 7)
     Bird(
-        y = 0.06f + r.nextFloat() * 0.42f,
+        // Solo nella fascia alta. Scendendo fino a meta' schermo finivano
+        // addosso alla scultura e alla cifra, dove un uccello non e' piu'
+        // cielo: e' un segno nero sopra l'oggetto.
+        y = 0.05f + r.nextFloat() * 0.26f,
         phase = r.nextFloat(),
         speed = 0.6f + r.nextFloat() * 0.7f,
         // Quelli piu' piccoli sono anche piu' lenti e piu' in alto: e' la
@@ -196,7 +199,10 @@ private val BIRDS: List<Bird> = List(9) { i ->
  * a quello che dice la previsione.
  */
 fun DrawScope.drawBirds(clock: SceneClock, presence: Float, wind: Wind, colour: Color) {
-    if (presence <= 0.02f) return
+    // La stessa soglia con cui si accende il battito. Sotto, l'orologio e'
+    // fermo: disegnarli comunque vorrebbe dire uno stormo **immobile** a mezz'
+    // aria, che si nota molto piu' di uno stormo assente.
+    if (presence <= BIRDS_MIN) return
     val unit = size.minDimension
     val path = Path()
 
@@ -216,11 +222,14 @@ fun DrawScope.drawBirds(clock: SceneClock, presence: Float, wind: Wind, colour: 
         val y = bird.y * size.height +
             sin((clock.seconds * 0.5 + bird.phase * 6.28).toFloat()) * unit * 0.012f
 
-        val span = unit * 0.020f * bird.scale
-        // L'apertura d'ala oscilla fra quasi chiusa e distesa. Ferma, la sagoma
-        // e' una V immobile e si legge come un segno di spunta.
+        val span = unit * 0.013f * bird.scale
+        // L'apertura d'ala oscilla fra quasi chiusa e distesa. A riposo la
+        // sagoma deve restare una V riconoscibile: con l'alzata a un terzo
+        // dell'apertura, un uccello largo ottanta pixel ne era alto dieci e a
+        // meta' battuta diventava un trattino. Ora l'alzata vale quasi quanto
+        // l'apertura, e la V si legge in ogni istante del battito.
         val beat = sin((clock.seconds * bird.flap + bird.phase * 6.28).toFloat())
-        val lift = span * (0.30f + 0.45f * beat)
+        val lift = span * (0.85f + 0.55f * beat)
 
         path.reset()
         path.moveTo(x - span * 2f, y - lift * 0.4f)
@@ -229,11 +238,25 @@ fun DrawScope.drawBirds(clock: SceneClock, presence: Float, wind: Wind, colour: 
 
         drawPath(
             path = path,
-            color = colour.copy(alpha = presence * (0.30f + 0.45f * bird.scale)),
-            style = Stroke(width = (unit * 0.0035f * bird.scale).coerceAtLeast(1f), cap = StrokeCap.Round),
+            color = colour.copy(alpha = presence * (0.40f + 0.50f * bird.scale)),
+            style = Stroke(
+                width = (unit * 0.0030f * bird.scale).coerceAtLeast(1.2f),
+                cap = StrokeCap.Round,
+            ),
         )
     }
 }
+
+/** Sotto questa presenza il battito e' spento, quindi non si disegnano. */
+private const val BIRDS_MIN = 0.15f
+
+/**
+ * Dove finisce la scena e comincia l'interfaccia, in frazione dell'altezza.
+ *
+ * Sotto stanno la condizione, la barra delle ore e l'ora: sono testo, non
+ * mondo, e il mondo non deve andarci sopra.
+ */
+private const val SCENE_BOTTOM = 0.80f
 
 // ---------------------------------------------------------------------------
 // Nebbia
@@ -263,15 +286,27 @@ fun DrawScope.drawFog(
     far: Color,
 ) {
     if (density <= 0.02f) return
-    val height = size.height
+
+    // **Il fondo della nebbia non e' il fondo dello schermo.**
+    //
+    // Sotto questa quota non c'e' piu' scena: ci sono la condizione, la barra
+    // delle ore e l'ora mostrata. Portando i banchi fin laggiu' - come facevano
+    // prima - il fondo dietro quei testi si schiariva di parecchio, e il
+    // contrasto garantito dalla tavolozza, che e' calcolato contro `skyBottom`,
+    // smetteva di valere: l'ora scritta in grigio chiaro su nebbia grigio
+    // chiara era di nuovo illeggibile, cioe' il difetto appena tolto rimesso in
+    // piedi da un'altra porta.
+    val height = size.height * SCENE_BOTTOM
 
     // Il velo di fondo: sale da terra e si esaurisce a meta' altezza. E' cio'
     // che da' il "non si vede niente" senza cancellare il cielo in cima.
     drawRect(
         brush = Brush.verticalGradient(
             0f to Color.Transparent,
-            0.34f to far.copy(alpha = density * 0.16f),
-            1f to near.copy(alpha = density * 0.60f),
+            0.30f to far.copy(alpha = density * 0.16f),
+            0.68f to near.copy(alpha = density * 0.62f),
+            SCENE_BOTTOM to near.copy(alpha = density * 0.30f),
+            1f to Color.Transparent,
         ),
         topLeft = Offset.Zero,
         size = size,

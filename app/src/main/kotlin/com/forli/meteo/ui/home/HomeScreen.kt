@@ -220,6 +220,7 @@ fun HomeScreen(
                         ?: hour?.precipProbability,
                     sky = sky,
                     wind = wind,
+                    fog = fog,
                     date = hour?.time?.toLocalDate() ?: LocalDate.now(),
                     rotation = rotation,
                     tilt = tilt,
