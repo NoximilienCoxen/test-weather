@@ -171,6 +171,23 @@ session() {
     restart_with "--ei ora 20"
     shoot "${slug}-10-tramonto"
 
+    # Le impostazioni. Il pulsante sta in alto a sinistra: trentaquattro dp di
+    # bersaglio, quindi una frazione fissa dello schermo lo prende comodamente.
+    restart_with ""
+    adbt shell input tap "$(( W * 7 / 100 ))" "$(( H * 6 / 100 ))" >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-11-impostazioni"
+
+    # E in fondo, dove sta il blocco dei dati: prima ci si arriva, poi lo si
+    # apre. Se il tocco manca il bersaglio resta comunque lo scatto di sopra,
+    # che e' quello che conta.
+    adbt shell input swipe "$CX" "$(( H * 75 / 100 ))" "$CX" "$(( H * 30 / 100 ))" 350 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-12-impostazioni-fondo"
+    adbt shell input tap "$CX" "$(( H * 62 / 100 ))" >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-13-dati-aperti"
+
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
     adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
