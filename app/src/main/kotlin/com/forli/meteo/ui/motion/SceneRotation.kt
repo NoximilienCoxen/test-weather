@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.withFrameNanos
+import kotlin.math.abs
 import kotlin.math.sin
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +115,16 @@ class SceneRotation internal constructor(
         // metronomo.
         val wave = sin(seconds * BREATH_RATE) * 0.72f +
             sin(seconds * BREATH_RATE * 0.41f + 1.3f) * 0.28f
-        breath.floatValue = wave * BREATH_DEGREES * idle
+        val next = wave * BREATH_DEGREES * idle
+
+        // Zona morta, come per il sensore che c'era prima e per lo stesso
+        // motivo. Il respiro si muove al massimo di due gradi al secondo, cioe'
+        // tre centesimi di grado per fotogramma, e vicino alle inversioni molto
+        // meno: scrivere ogni battito fa ridisegnare l'intera scena per uno
+        // spostamento che non copre un pixel. Sotto la soglia il valore di
+        // prima e' altrettanto vero, e la scena resta ferma finche' non lo e'
+        // piu'.
+        if (abs(next - breath.floatValue) > BREATH_DEADBAND) breath.floatValue = next
     }
 
     internal fun drag(deltaPx: Float) {
@@ -195,6 +205,14 @@ class SceneRotation internal constructor(
 
         /** Al rilascio torna in un secondo e mezzo. */
         const val FADE_IN = 0.66f
+
+        /**
+         * Sotto questo scostamento, in gradi, non si riscrive.
+         *
+         * Sei centesimi di grado sono meno del due per cento dell'ampiezza: a
+         * schermo, sulla cifra piu' grande, valgono una frazione di pixel.
+         */
+        const val BREATH_DEADBAND = 0.06f
     }
 }
 
