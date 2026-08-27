@@ -1,5 +1,8 @@
 package com.forli.meteo.ui.settings
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,10 +58,19 @@ fun SettingsScreen(
     onQuery: (String) -> Unit,
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
+    onLocate: (canAsk: Boolean, onNeedsPermission: () -> Unit) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
+
+    // Stessa storia del benvenuto: dopo un rifiuto il sistema non mostra piu'
+    // la richiesta, e un pulsante che non apre nulla e non dice nulla e' peggio
+    // di un pulsante assente.
+    var refused by remember { mutableStateOf(false) }
+    val permission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted -> if (granted) onLocate(false) {} else refused = true }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -90,7 +105,13 @@ fun SettingsScreen(
             }
             item {
                 Text(
-                    text = state.place.detail.uppercase(),
+                    text = if (state.located) {
+                        listOf(state.place.detail.uppercase(), "TROVATA DAL TELEFONO")
+                            .filter { it.isNotBlank() }
+                            .joinToString("  ·  ")
+                    } else {
+                        state.place.detail.uppercase()
+                    },
                     style = MeteoType.caption,
                     color = colors.label,
                 )
@@ -104,6 +125,19 @@ fun SettingsScreen(
                     style = MeteoType.caption,
                     color = colors.label,
                     modifier = Modifier.padding(top = 3.dp, bottom = 12.dp),
+                )
+            }
+
+            item {
+                LocateRow(
+                    locating = state.locating,
+                    refused = refused,
+                    problem = state.locationProblem,
+                    onClick = {
+                        onLocate(!refused) {
+                            permission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        }
+                    },
                 )
             }
 
@@ -215,6 +249,56 @@ fun SettingsScreen(
                 SourceRow("FASE LUNARE", "CALCOLATA NELL'APP: L'API NON LA FORNISCE")
             }
             item { Spacer(Modifier.height(40.dp)) }
+        }
+    }
+}
+
+/** Il pulsante che chiede al telefono dove siamo, con accanto cos'e' andato storto. */
+@Composable
+private fun LocateRow(
+    locating: Boolean,
+    refused: Boolean,
+    problem: String?,
+    onClick: () -> Unit,
+) {
+    val colors = LocalMeteoColors.current
+    Column(modifier = Modifier.padding(bottom = 10.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(if (refused) colors.line.copy(alpha = 0.35f) else colors.pillBackground)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    enabled = !locating && !refused,
+                    onClick = onClick,
+                )
+                .padding(vertical = 13.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = when {
+                    locating -> "STO CERCANDO…"
+                    refused -> "PERMESSO NEGATO"
+                    else -> "TROVAMI"
+                },
+                style = MeteoType.value,
+                color = if (refused) colors.label else colors.pillText,
+            )
+        }
+        val message = problem ?: if (refused) {
+            "SI PUÒ CONCEDERE DALLE IMPOSTAZIONI DI ANDROID."
+        } else {
+            null
+        }
+        if (message != null) {
+            Text(
+                text = message,
+                style = MeteoType.caption,
+                color = colors.label,
+                modifier = Modifier.padding(top = 8.dp),
+            )
         }
     }
 }

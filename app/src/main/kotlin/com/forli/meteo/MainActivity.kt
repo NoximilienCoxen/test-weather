@@ -1,6 +1,7 @@
 package com.forli.meteo
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +16,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Verticale e basta. La schermata e' una colonna sola - scultura, cifra,
+        // barra delle ore - e coricata non guadagna niente: la cifra dovrebbe
+        // rimpicciolirsi per stare in altezza, cioe' l'unica cosa che si e'
+        // venuti a vedere diventerebbe la piu' piccola. Dichiarato anche nel
+        // manifesto: qui serve perche' un'inclinazione che arriva mentre
+        // l'attivita' e' gia' viva non ripassa da li'.
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
         applyExtras(intent)
         setContent {

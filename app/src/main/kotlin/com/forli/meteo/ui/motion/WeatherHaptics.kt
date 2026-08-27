@@ -59,6 +59,27 @@ class WeatherHaptics(private val vibrator: Vibrator?, private val mode: Mode) {
     }
 
     /**
+     * Il giro che si chiude: un colpo secco e solo.
+     *
+     * Piu' netto della goccia e molto piu' corto del tuono. Sono tre gesti
+     * diversi e devono restare distinguibili a occhi chiusi, che e' l'unico
+     * modo in cui un riscontro aptico porta informazione invece di rumore.
+     */
+    fun spin() {
+        val v = vibrator ?: return
+        val effect = when (mode) {
+            Mode.PRIMITIVE -> VibrationEffect.startComposition()
+                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, SPIN_SCALE)
+                .compose()
+            Mode.AMPLITUDE -> VibrationEffect.createOneShot(18, 120)
+            Mode.PREDEFINED -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+            Mode.BLUNT -> VibrationEffect.createOneShot(12, VibrationEffect.DEFAULT_AMPLITUDE)
+            Mode.NONE -> return
+        }
+        runCatching { v.vibrate(effect) }
+    }
+
+    /**
      * Il tuono: uno schianto e il rotolare che segue.
      *
      * Due tempi e non uno solo perche' un lampo non fa un rumore, ne fa due. Con
@@ -85,6 +106,9 @@ class WeatherHaptics(private val vibrator: Vibrator?, private val mode: Mode) {
     private companion object {
         /** Su uno. Meno di un quarto: si sente col palmo, non col braccio. */
         const val DRIZZLE_SCALE = 0.22f
+
+        /** Meta' scala: sopra la goccia, ben sotto il tuono. */
+        const val SPIN_SCALE = 0.55f
 
         val THUNDER_TIMINGS = longArrayOf(0, 45, 35, 130)
         val THUNDER_AMPLITUDES = intArrayOf(0, 235, 0, 110)

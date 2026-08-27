@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,13 +20,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
 import com.forli.meteo.ui.motion.rememberDeviceTilt
 import com.forli.meteo.ui.settings.SettingsScreen
+import com.forli.meteo.ui.welcome.WelcomeScreen
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoTheme
 import com.forli.meteo.ui.theme.skyColors
@@ -53,8 +58,25 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         animationSpec = spring(stiffness = 110f),
         label = "cielo",
     )
-    val sky = remember(altitude) { SkyState.of(altitude) }
-    val colors = remember(sky) { skyColors(sky) }
+    // La luce dorata e' un secondo numero perche' non si ricava dal primo:
+    // l'altezza del sole dice quanto e' giorno, non quanti minuti mancano al
+    // tramonto, e d'inverno alle latitudini alte il sole sta basso per ore
+    // senza che il cielo sia mai arancione.
+    val golden by animateFloatAsState(
+        targetValue = state.goldenHour,
+        animationSpec = spring(stiffness = 110f),
+        label = "oradorata",
+    )
+    // La nebbia scolora il cielo, quindi entra nella tavolozza. Anche questa
+    // animata: comparire di colpo passando da un'ora all'altra si legge come un
+    // difetto, non come meteo.
+    val fog by animateFloatAsState(
+        targetValue = state.fogDensity,
+        animationSpec = spring(stiffness = 90f),
+        label = "nebbia",
+    )
+    val sky = remember(altitude, golden) { SkyState.of(altitude, golden) }
+    val colors = remember(sky, fog) { skyColors(sky, fog) }
 
     MeteoTheme(colors = colors) {
         // Un solo ascoltatore del sensore per tutta l'app, e il valore resta
@@ -65,10 +87,25 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         val sheet = remember { Animatable(0f) }
         val density = LocalDensity.current
 
+        // Il cielo e' un gradiente, non una tinta piatta.
+        //
+        // Le tre fermate non sono equidistanti: il colore vivo deve occupare la
+        // parte alta dove sta la scultura, e cedere in fretta verso il fondo
+        // dove sta il testo. Con due sole fermate il centro dello schermo
+        // finiva a meta' strada fra le due, cioe' proprio nel tono medio da cui
+        // si veniva.
+        val backdrop = remember(colors.skyTop, colors.skyBottom) {
+            Brush.verticalGradient(
+                0f to colors.skyTop,
+                0.42f to lerp(colors.skyTop, colors.skyBottom, 0.45f),
+                1f to colors.skyBottom,
+            )
+        }
+
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.background),
+                .background(backdrop),
         ) {
             val heightPx = with(density) { maxHeight.toPx() }.coerceAtLeast(1f)
             val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
@@ -91,6 +128,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             HomeScreen(
                 state = state,
                 sky = sky,
+                fog = fog,
                 tilt = tilt,
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
@@ -110,6 +148,26 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     ),
             )
 
+            // Sopra la schermata principale ma sotto il foglio e le
+            // impostazioni: e' un avviso, non una pagina, e non deve seguirti
+            // dove sei andato.
+            if (state.updateReady && sheet.value < 0.05f && !state.settingsOpen &&
+                state.welcomed
+            ) {
+                Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
+                    // In alto, appena sotto la riga della localita': li' sopra
+                    // c'e' cielo vuoto. In fondo avrebbe coperto la barra delle
+                    // ore e l'ora mostrata, cioe' proprio le due cose per cui
+                    // si e' aperta l'app.
+                    UpdateNotice(
+                        onDismiss = viewModel::dismissUpdate,
+                        modifier = Modifier
+                            .align(androidx.compose.ui.Alignment.TopCenter)
+                            .padding(top = 42.dp),
+                    )
+                }
+            }
+
             if (sheet.value > 0.001f) {
                 Box(
                     modifier = Modifier
@@ -124,6 +182,27 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         ),
                 ) {
                     DetailScreen(state = state, viewModel = viewModel, tilt = tilt)
+                }
+            }
+
+            // Il benvenuto sta sopra tutto e non e' scorrevole: e' una domanda,
+            // e finche' non ha una risposta non c'e' niente sotto che abbia
+            // senso guardare. Sta pero' *dentro* lo stesso tema, cosi' il cielo
+            // dell'ora corrente si vede gia' da qui.
+            if (!state.welcomed) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(backdrop)
+                        .systemBarsPadding(),
+                ) {
+                    WelcomeScreen(
+                        locating = state.locating,
+                        problem = state.locationProblem,
+                        onLocate = viewModel::locateMe,
+                        onChoosePlace = viewModel::choosePlace,
+                        onSkip = viewModel::dismissWelcome,
+                    )
                 }
             }
 
@@ -146,6 +225,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onQuery = viewModel::search,
                         onChoosePlace = viewModel::choosePlace,
                         onChooseUnit = viewModel::setUnit,
+                        onLocate = viewModel::locateMe,
                         onClose = viewModel::closeSettings,
                     )
                 }

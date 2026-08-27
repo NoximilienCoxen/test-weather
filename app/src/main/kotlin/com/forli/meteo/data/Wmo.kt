@@ -58,7 +58,12 @@ object Wmo {
         1 -> 0.22f
         2 -> 0.55f
         3 -> 0.88f
-        45, 48 -> 0.78f
+        // La nebbia non e' cielo coperto, ed era questo a confonderle: con 0,78
+        // disegnava quattro masse di nuvola, cioe' esattamente il disegno del
+        // coperto. Dalla nebbia il cielo spesso non si vede affatto - e quando
+        // si vede e' pallido, non pieno di nuvole. Il carattere lo porta il
+        // banco a terra, non una massa in alto.
+        45, 48 -> 0.10f
         51, 53, 55, 56, 57 -> 0.82f
         61, 63, 65, 66, 67 -> 0.94f
         71, 73, 75, 77 -> 0.88f
@@ -68,6 +73,31 @@ object Wmo {
         96, 99 -> 1f
         else -> 0.5f
     }
+
+    /**
+     * Quanto e' fitta la nebbia, da 0 a 1.
+     *
+     * **Solo** i codici 45 e 48 la producono, e non c'e' altra strada che porti
+     * qui: una giornata di sole non puo' finire disegnata come una giornata di
+     * nebbia perche' non esiste un codice sereno che passi da questo `when`. Il
+     * 48 e' la nebbia che deposita brina, quella fitta d'inverno in pianura, ed
+     * e' giusto che pesi piu' del 45.
+     *
+     * @param sunAltitude quanto e' alto il sole, da -1 a 1. A meta' giornata il
+     *   banco si alza e si assottiglia - succede davvero, in ogni stagione - ma
+     *   non sparisce: se il servizio dice nebbia, nebbia si vede.
+     */
+    fun fogDensity(code: Int?, sunAltitude: Float): Float {
+        val base = when (code) {
+            45 -> 0.68f
+            48 -> 1f
+            else -> return 0f
+        }
+        return base * (1f - 0.40f * SunClock.smoothstep(0.25f, 0.95f, sunAltitude))
+    }
+
+    /** Vero se quello che cade e' neve, non acqua. La scena disegna cose diverse. */
+    fun isSnow(code: Int?): Boolean = family(code) == Family.NEVE
 
     /** Famiglia meteo, per colorare la barra delle ore. */
     enum class Family { ASCIUTTO, NUVOLOSO, NEBBIA, PIOGGIA, NEVE, TEMPORALE }

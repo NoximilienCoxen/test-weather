@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +48,27 @@ object MeteoType {
         letterSpacing = 0.20.em,
     )
 }
+
+/**
+ * Lo stesso stile, con dietro l'ombra che lo tiene staccato dalla scena.
+ *
+ * Il contrasto contro il **fondo** e' gia' garantito dalla tavolozza, e non e'
+ * questo che serve coprire: serve coprire i casi in cui sotto il testo non c'e'
+ * il fondo ma una nuvola bianca, un banco di nebbia o il fianco della cifra. Li'
+ * il colore del cielo non dice piu' niente, e l'unica difesa che funziona
+ * comunque e' un alone scuro attaccato alle lettere.
+ *
+ * Sfocata e senza scostamento laterale: un'ombra spostata si legge come
+ * rilievo, e il testo qui non deve sembrare un altro oggetto in tre dimensioni
+ * accanto a quello vero.
+ */
+fun TextStyle.overScene(colors: MeteoColors): TextStyle = copy(
+    shadow = Shadow(
+        color = colors.textShadow,
+        offset = Offset(0f, 1f),
+        blurRadius = 7f,
+    ),
+)
 
 @Composable
 fun MeteoTheme(

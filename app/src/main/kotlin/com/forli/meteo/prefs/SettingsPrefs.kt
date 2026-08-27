@@ -3,6 +3,7 @@ package com.forli.meteo.prefs
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -30,6 +31,21 @@ enum class TempUnit(val symbol: String) {
 data class Settings(
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /**
+     * Vero dopo che il benvenuto e' stato superato, in un modo o nell'altro.
+     *
+     * Superato, non "accettato": chi salta la geolocalizzazione ha comunque
+     * risposto, e riproporgli la stessa domanda a ogni apertura sarebbe
+     * chiedergli di rispondere di no per sempre.
+     */
+    val welcomed: Boolean = false,
+    /**
+     * Vero se l'ultima localita' scelta l'ha trovata il telefono, non l'utente.
+     *
+     * Serve alle impostazioni, che altrimenti mostrerebbero un puntino di
+     * selezione su nessuna delle scorciatoie senza spiegare perche'.
+     */
+    val located: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -60,17 +76,24 @@ class SettingsPrefs(private val context: Context) {
             unit = prefs[KEY_UNIT]
                 ?.let { saved -> TempUnit.entries.firstOrNull { it.name == saved } }
                 ?: TempUnit.CELSIUS,
+            welcomed = prefs[KEY_WELCOMED] ?: false,
+            located = prefs[KEY_LOCATED] ?: false,
         )
     }
 
-    suspend fun setPlace(place: Place) {
+    suspend fun setPlace(place: Place, located: Boolean = false) {
         context.settingsDataStore.edit { prefs ->
             prefs[KEY_NAME] = place.name
             prefs[KEY_LAT] = place.latitude
             prefs[KEY_LON] = place.longitude
+            prefs[KEY_LOCATED] = located
             place.admin?.let { prefs[KEY_ADMIN] = it } ?: prefs.remove(KEY_ADMIN)
             place.country?.let { prefs[KEY_COUNTRY] = it } ?: prefs.remove(KEY_COUNTRY)
         }
+    }
+
+    suspend fun setWelcomed() {
+        context.settingsDataStore.edit { it[KEY_WELCOMED] = true }
     }
 
     suspend fun setUnit(unit: TempUnit) {
@@ -84,5 +107,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_LAT = doublePreferencesKey("localita_lat")
         val KEY_LON = doublePreferencesKey("localita_lon")
         val KEY_UNIT = stringPreferencesKey("unita")
+        val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
+        val KEY_LOCATED = booleanPreferencesKey("localita_dal_telefono")
     }
 }

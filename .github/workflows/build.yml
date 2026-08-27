@@ -28,7 +28,7 @@ jobs:
           CUR="current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
           SAFE="daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max"
           EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum"
-          HOURLY="hourly=temperature_2m,weather_code,precipitation,precipitation_probability,is_day,apparent_temperature"
+          HOURLY="hourly=temperature_2m,weather_code,precipitation,precipitation_probability,wind_speed_10m,wind_direction_10m,is_day,apparent_temperature"
           echo "--- safe ---"
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/safe.json
           echo "--- extra ---"
@@ -45,6 +45,14 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    # Il segreto viene esposto come variabile d'ambiente del job perche' il
+    # contesto `secrets` non e' consultabile dentro un `if` di passo: scriverci
+    # `secrets.QUALCOSA` non e' falso, e' un workflow che non viene accettato.
+    env:
+      RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -72,12 +80,46 @@ jobs:
           java -version
           ./gradlew --version
 
+      # L'identita' del pacchetto.
+      #
+      # Il numero di versione cresce col numero della corsa, e la data di build
+      # e' quella del commit. Servono a due cose diverse e ugualmente concrete:
+      # un versionCode che sale fa di ogni pubblicazione un **aggiornamento**
+      # invece di un'installazione laterale, e l'istante di build e' il solo
+      # appiglio che l'app ha per sapere se quella pubblicata e' piu' recente
+      # di lei, visto che il tag del rilascio e' fisso e non lo dice.
+      - name: Identita' della build
+        run: |
+          echo "VERSION_CODE=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "BUILD_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+          echo "BUILD_COMMIT=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      # La chiave di rilascio, se il repository ne ha una fra i segreti.
+      #
+      # Se non c'e' - ed e' il caso normale - la build usa quella versionata in
+      # app/release.keystore, che e' fissa e va benissimo: quello che conta per
+      # Play Protect e' che la firma resti **la stessa** da una build all'altra,
+      # non che sia segreta.
+      - name: Chiave di rilascio dai segreti
+        if: env.RELEASE_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/rilascio.keystore"
+          echo "RELEASE_KEYSTORE=$RUNNER_TEMP/rilascio.keystore" >> "$GITHUB_ENV"
+
       # Niente --stacktrace: seppelliva gli errori Kotlin sotto trecento righe
       # di stack Gradle. Se fallisce, gli errori veri finiscono in coda al log.
-      - name: assembleDebug
+      #
+      # Si costruisce la variante di **rilascio**, non piu' quella di debug. La
+      # debug resta per l'emulatore degli screenshot, ma quella che finisce in
+      # mano alle persone dev'essere una build di rilascio firmata con la chiave
+      # dell'app: un APK di debug si presenta ad Android per quello che e' -
+      # roba non distribuibile, firmata da "Android Debug" come migliaia di
+      # altre build sperimentali - ed e' meta' del motivo per cui Play Protect
+      # metteva di mezzo un avviso.
+      - name: assemble
         run: |
           set -o pipefail
-          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log || {
+          ./gradlew assembleRelease assembleDebug --no-daemon 2>&1 | tee /tmp/build.log || {
             echo ""
             echo "================= ERRORI DI COMPILAZIONE ================="
             grep -E "^e: |^w: .*(error|Error)" /tmp/build.log | head -40
@@ -85,10 +127,31 @@ jobs:
             exit 1
           }
 
+      # Una firma sbagliata non fa fallire la build: fa fallire l'installazione,
+      # sul telefono, a scaricamento gia' fatto. Meglio accorgersene qui.
+      - name: Verifica la firma
+        run: |
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          echo "pacchetto: $APK"
+          BT=$(ls "$ANDROID_HOME"/build-tools | sort -V | tail -1)
+          "$ANDROID_HOME/build-tools/$BT/apksigner" verify --verbose --print-certs "$APK"
+          "$ANDROID_HOME/build-tools/$BT/aapt2" dump badging "$APK" \
+            | grep -E "^package|application-label" || true
+
       - uses: actions/upload-artifact@v4
         if: success()
         with:
           name: apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      # L'emulatore installa la debug: la release non e' debuggabile ne'
+      # installabile su un emulatore senza passare dalla stessa firma, e agli
+      # screenshot serve solo che l'app parta.
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: apk-debug
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
@@ -126,8 +189,10 @@ jobs:
                sorgente: e' la richiesta normale per le app fuori dallo store.
             3. Apri il file scaricato e installa.
 
-            La firma e' una chiave di debug fissa, quindi le build successive
-            si installano sopra la precedente senza doverla disinstallare.
+            Build di **rilascio**, firmata con la chiave dell'app, sempre la
+            stessa: le build successive si installano sopra la precedente senza
+            doverla disinstallare, e il numero di versione cresce a ogni
+            pubblicazione.
 
             Commit: ${{ github.sha }}
 
@@ -167,7 +232,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: apk
+          name: apk-debug
           path: apk
 
       - uses: actions/setup-java@v4
