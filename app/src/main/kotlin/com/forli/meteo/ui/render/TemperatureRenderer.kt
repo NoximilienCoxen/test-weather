@@ -113,5 +113,10 @@ interface TemperatureRenderer {
          * prospettiva, come farebbe un oggetto vero.
          */
         lift: Float = 0f,
+        /**
+         * Quanto illumina il lampo, da 0 a 1. Zero fuori dal temporale: la
+         * cifra resta sotto la sola luce fissa della scena.
+         */
+        glare: Float = 0f,
     )
 }
