@@ -524,9 +524,28 @@ Kotlin che registra i comandi di disegno. La seconda dipende da quanti pixel si
 riempiono e da chi li riempie, e su una scheda grafica vera scende di parecchio.
 
 **Da fermo l'app non disegna piu' zero fotogrammi**, e non e' una regressione:
-e' il respiro, chiesto esplicitamente, e il conto e' che ne disegni pochi e
-costino poco invece che nessuno. Gli stati davvero immobili non esistono piu'
-salvo dietro le impostazioni, dove il battito si spegne.
+e' il respiro, chiesto esplicitamente. Il conto e' che ne disegni pochi e
+costino poco invece che nessuno, e la zona morta sul respiro li riduce al
+ventitre per cento dei battiti. Restano a zero solo gli stati coperti - dietro
+le impostazioni, o col foglio del dettaglio alzato.
+
+| stato | interfaccia | rendering |
+|---|---|---|
+| coperto, aria ferma | 3,0 ms | 3,2 ms |
+| notte, aria ferma | 1,4 ms | 2,6 ms |
+| coperto con vento | 5,3 ms | 5,5 ms |
+| sereno di giorno | 2,4 ms | 6,3 ms |
+| pioggia | 6,3 ms | 7,1 ms |
+| neve | 2,6 ms | 6,6 ms |
+| nebbia | 1,4 ms | 4,1 ms |
+| temporale | 2,0 ms | 6,6 ms |
+| rotazione, sereno | 2,1 ms | 5,9 ms |
+| rotazione, neve | 2,4 ms | 9,3 ms |
+
+L'unico valore sopra gli otto millisecondi e' il caso peggiore costruito
+apposta: rotazione sotto il dito con la neve accesa, cioe' geometria
+ricalcolata a ogni fotogramma, nuvola, centotrenta fiocchi e la coltre che
+scivola, tutto insieme, su un rasterizzatore software.
 
 La pioggia sa dove trova superficie: `ui/render3d/Skyline.kt` tiene, colonna per
 colonna, il punto piu' alto occupato dalla cifra, e la cifra ce lo scrive dentro
