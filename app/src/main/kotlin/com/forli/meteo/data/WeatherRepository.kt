@@ -19,7 +19,10 @@ import java.time.LocalDateTime
  * l'intera richiesta per cambiare un'unita' di misura, cioe' restare fermi
  * davanti a una schermata vuota per una scelta che e' solo di scrittura.
  */
-class WeatherRepository(private val place: Place = Place.FORLI) {
+class WeatherRepository(
+    private val place: Place = Place.FORLI,
+    private val model: WeatherModel = WeatherModel.AUTO,
+) {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -44,6 +47,7 @@ class WeatherRepository(private val place: Place = Place.FORLI) {
         append("&timezone=auto")
         append("&forecast_days=7")
         append("&wind_speed_unit=ms")
+        append("&models=").append(model.apiValue)
         append("&current=").append(CURRENT_VARS)
         append("&daily=").append(DAILY_VARS)
         append("&hourly=").append(HOURLY_VARS)

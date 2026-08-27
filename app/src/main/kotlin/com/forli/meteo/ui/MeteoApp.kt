@@ -148,6 +148,9 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onQuery = viewModel::search,
                         onChoosePlace = viewModel::choosePlace,
                         onChooseUnit = viewModel::setUnit,
+                        onToggleFavorite = viewModel::toggleFavorite,
+                        onChooseModel = viewModel::setModel,
+                        onLocate = viewModel::locate,
                         onClose = viewModel::closeSettings,
                     )
                 }
