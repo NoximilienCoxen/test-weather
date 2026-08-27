@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -198,7 +199,10 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) }
-                        .background(colors.background)
+                        // Fisso e scuro, non il fondo del tema: le impostazioni devono
+                        // leggersi uguali a mezzogiorno e a mezzanotte, e il tema chiaro
+                        // rendeva invisibili titolo e pulsante di chiusura.
+                        .background(Color.Black.copy(alpha = 0.85f))
                         .systemBarsPadding(),
                 ) {
                     SettingsScreen(

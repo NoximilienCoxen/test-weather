@@ -35,6 +35,7 @@ import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
 import com.forli.meteo.ui.render3d.Camera
 import com.forli.meteo.ui.render3d.SceneContact
+import com.forli.meteo.ui.render3d.glow
 import com.forli.meteo.ui.render3d.moon
 import com.forli.meteo.ui.render3d.sphere
 import com.forli.meteo.ui.render3d.sunRays
@@ -92,6 +93,15 @@ fun WeatherSculpture(
     // pena tenere acceso l'orologio delle stelle.
     val night = (1f - sky.dayness).coerceIn(0f, 1f)
     val isNight = night > NIGHT_THRESHOLD
+
+    // Sereno, coperto o pioggia: tre cieli notturni diversi, non uno solo che
+    // sfuma con la nuvolosita'. La nebbia va col coperto - anche lei toglie le
+    // stelle senza azzerarle - e il coperto non e' un buio pieno.
+    val nightSky = when {
+        raining -> NightSky.WET
+        family == Wmo.Family.NUVOLOSO || family == Wmo.Family.NEBBIA -> NightSky.OVERCAST
+        else -> NightSky.CLEAR
+    }
 
     /**
      * Quanta pioggia si vede.
@@ -231,26 +241,44 @@ fun WeatherSculpture(
      */
     val nightClock = remember { mutableFloatStateOf(0f) }
     var shootingStar by remember { mutableStateOf(ShootingStar.EMPTY) }
+    // Letto dentro il ciclo senza farlo ripartire: il cielo puo' passare da
+    // sereno a piovoso a meta' notte, e l'intervallo fra una cadente e
+    // l'altra deve adattarsi subito, non aspettare che la notte ricominci.
+    val tier = rememberUpdatedState(nightSky)
     LaunchedEffect(isNight) {
         if (!isNight) return@LaunchedEffect
         var last = 0L
         var seed = System.nanoTime().toInt()
+        var lastTier = tier.value
         // Relativo al valore attuale dell'orologio, non a zero: l'orologio
         // non si azzera quando torna il sole, quindi partire da un numero
         // assoluto avrebbe fatto scattare una stella cadente nello stesso
         // istante in cui la notte ricomincia, ogni volta dopo la prima.
-        var nextShootAt = nightClock.floatValue +
-            SHOOTING_GAP_MIN + Random(seed).nextFloat() * SHOOTING_GAP_SPAN
+        var nextShootAt = nightClock.floatValue + gapFor(lastTier, Random(seed))
         while (true) {
             withFrameNanos { now ->
                 val dt = if (last == 0L) 0f else (now - last) / 1_000_000_000f
                 last = now
                 nightClock.floatValue += dt
+                // Se smette di piovere a meta' notte il gap non deve restare
+                // quello infinito della pioggia per sempre: senza questo
+                // controllo il confronto sotto non sarebbe piu' vero mai piu',
+                // e le stelle cadenti non ripartirebbero nemmeno tornando al
+                // sereno.
+                if (tier.value != lastTier) {
+                    lastTier = tier.value
+                    nextShootAt = nightClock.floatValue + gapFor(lastTier, Random(seed))
+                }
                 if (nightClock.floatValue >= nextShootAt) {
                     seed = seed * 31 + 17
-                    shootingStar = ShootingStar.of(Random(seed), nightClock.floatValue)
-                    nextShootAt = nightClock.floatValue +
-                        SHOOTING_GAP_MIN + Random(seed).nextFloat() * SHOOTING_GAP_SPAN
+                    // Con la pioggia non ne parte nessuna: il gap e' infinito
+                    // (vedi `gapFor`), quindi questo ramo in pratica non si
+                    // raggiunge mai finche' piove - non costa un controllo in
+                    // piu' a ogni fotogramma.
+                    if (lastTier != NightSky.WET) {
+                        shootingStar = ShootingStar.of(Random(seed), nightClock.floatValue)
+                    }
+                    nextShootAt = nightClock.floatValue + gapFor(lastTier, Random(seed))
                 }
             }
         }
@@ -379,7 +407,16 @@ fun WeatherSculpture(
         val bodyRadius = unit * 0.23f
         val cloudX = -unit * 0.13f * pairing
 
-        val sunAlpha = clear * sky.sunPresence
+        // **Il sole resta leggibile anche sotto il coperto.** `clear` va a
+        // zero fra 0.62 e 0.86 di nuvolosita', e il coperto sta li' appena
+        // sopra: il disco spariva del tutto invece di restare a cavallo
+        // delle masse, come succede davvero quando il cielo e' grigio ma non
+        // nero. Una seconda curva, piu' dolce, gli da' un pavimento che
+        // `clear` da solo non ha - la luna invece non cambia, non e' stato
+        // chiesto e "brilla nel buio" lo ottiene gia' col bagliore qui sotto.
+        val sunPeek = 1f - SunClock.smoothstep(0.86f, 1.05f, cloudiness)
+        val sunClear = maxOf(clear, sunPeek * SUN_PEEK_FLOOR)
+        val sunAlpha = sunClear * sky.sunPresence
         val moonAlpha = clear * sky.moonPresence
         val astroAlpha = maxOf(sunAlpha, moonAlpha)
 
@@ -422,15 +459,24 @@ fun WeatherSculpture(
         // l'angolo aureo cosi' non lampeggiano in coro: si vede scintillio,
         // non un lampeggiatore.
         //
-        // **Quante, lo decide il buio.** Sul grigio del crepuscolo se ne vedono
-        // due o tre, a notte piena il cielo si riempie: e' cosi' che va, e farle
-        // comparire tutte insieme al calar del sole sarebbe un interruttore, non
-        // una sera. Il conto e' quadratico apposta, cosi' le prime arrivano
-        // tardi e poi si affollano.
-        val starAlpha = night * clear
+        // **Quante, lo decide il buio - e adesso anche il meteo.** Sul grigio
+        // del crepuscolo se ne vedono due o tre, a notte piena il cielo si
+        // riempie: e' cosi' che va, e farle comparire tutte insieme al calar
+        // del sole sarebbe un interruttore, non una sera. Il conto e'
+        // quadratico apposta, cosi' le prime arrivano tardi e poi si
+        // affollano.
+        //
+        // **Non e' piu' la stessa curva del sole/luna.** `clear` sfuma a zero
+        // gia' verso il coperto - serve a loro, che sotto una nuvola vera non
+        // si vedrebbero comunque - ma un cielo coperto non e' un cielo
+        // vuoto: filtra ancora qualche stella. La densita' e il tetto di
+        // opacita' vengono dal livello meteo-notte (`nightSky`), non da
+        // `clear`.
+        val starAlpha = night * STAR_ALPHA_CAP[nightSky.ordinal]
         if (starAlpha > 0.02f) {
             val skyTime = nightClock.floatValue
-            val shown = (STARS.size * night * night).toInt().coerceIn(0, STARS.size)
+            val shown = (STARS.size * night * night * STAR_COUNT_MUL[nightSky.ordinal]).toInt()
+                .coerceIn(0, STARS.size)
             for (k in 0 until shown) {
                 val star = STARS[k]
                 val twinkle = 1f - TWINKLE_AMOUNT +
@@ -454,8 +500,10 @@ fun WeatherSculpture(
             // A quando la prossima e da dove parte lo decide l'orologio
             // notturno (vedi il `LaunchedEffect(isNight)` qui sopra), non piu'
             // il fotogramma corrente: qui si legge solo l'ultima lanciata e si
-            // disegna finche' e' nella sua finestra di 350 millisecondi.
-            if (night > SHOOTING_DARK && shootingStar.isActive(skyTime)) {
+            // disegna finche' e' nella sua finestra. Con la pioggia niente:
+            // se e' cominciata a piovere mentre una era gia' per aria, sparisce
+            // subito invece di aspettare che finisca la sua corsa.
+            if (nightSky != NightSky.WET && night > SHOOTING_DARK && shootingStar.isActive(skyTime)) {
                 val life = shootingStar.lifeAt(skyTime)
                 val run = unit * SHOOTING_LENGTH
                 val dx = cos(shootingStar.angle) * run
@@ -464,7 +512,7 @@ fun WeatherSculpture(
                 val fromY = camera.origin.y - (0.30f + shootingStar.fy * 0.66f) * unit
                 // Piena a meta' corsa: entra, attraversa, esce. Comparire e
                 // sparire di colpo si legge come uno sfarfallio del disegno.
-                val glow = sin(life * PI_F) * starAlpha
+                val glow = sin(life * PI_F) * starAlpha * shootingStar.glowScale
                 val head = Offset(fromX + dx * life, fromY + dy * life)
                 val tail = Offset(head.x - dx * SHOOTING_TAIL, head.y - dy * SHOOTING_TAIL)
                 drawLine(
@@ -478,7 +526,7 @@ fun WeatherSculpture(
                     ),
                     start = tail,
                     end = head,
-                    strokeWidth = unit * 0.0055f,
+                    strokeWidth = unit * 0.0055f * shootingStar.widthScale,
                     cap = StrokeCap.Round,
                 )
             }
@@ -576,6 +624,12 @@ fun WeatherSculpture(
             val which = bodyOf[i]
             if (which == ASTRO) {
                 if (sunAlpha >= moonAlpha) {
+                    // Luce propria, non riflessa: un alone dietro al disco,
+                    // sfumato a niente. Eredita il colore di `sunCore`, che
+                    // gia' scivola verso l'arancione con `sky.redness` - il
+                    // bagliore di un tramonto e' caldo senza bisogno di un
+                    // secondo calcolo.
+                    glow(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.45f)
                     // La corona gira piano e i raggi respirano: e' quello che
                     // distingue un sole da un cerchio giallo con dei trattini.
                     val turn = moved * 9f
@@ -590,6 +644,13 @@ fun WeatherSculpture(
                         sunAlpha * 0.75f, far = false, count = 8, turnDeg = turn, reach = reach,
                     )
                 } else {
+                    // Piu' intenso quanto piu' e' buio: e' la luna che si fa
+                    // notare nel cielo nero, non una lampadina fissa. Fredda
+                    // perche' `moonCore` e' gia' un bianco-blu.
+                    glow(
+                        camera, bodyX, bodyY, bodyZ, bodyRadius, colors.moonCore,
+                        moonAlpha * night * 0.55f, spread = 2.0f,
+                    )
                     moon(
                         camera = camera,
                         x = bodyX,
@@ -606,13 +667,20 @@ fun WeatherSculpture(
                 continue
             }
             val lump = CLOUD_MASSES[which]
+            // Una tinta appena diversa per massa, stabile fra un fotogramma e
+            // l'altro perche' dipende solo dall'indice: senza, sette palle
+            // dello stesso identico grigio si leggono come una nuvola sola
+            // spezzata a caso, non come masse distinte che stanno a
+            // profondita' diverse. `Color` e' una value class - `lerp` qui
+            // non alloca sull'heap.
+            val tint = 0.5f + 0.5f * sin(which * 2.4f)
             sphere(
                 camera = camera,
                 x = driftX(which),
                 y = driftY(which),
                 z = lump.z * unit * scale,
                 radius = lump.radius * unit * scale * swell(which),
-                light = core,
+                light = lerp(core, Color.White, tint * 0.10f),
                 dark = shade,
                 alpha = presence,
             )
@@ -658,6 +726,35 @@ fun WeatherSculpture(
             )
         }
     }
+}
+
+/**
+ * Il cielo notturno cambia carattere col meteo, non solo col buio.
+ *
+ * Tre livelli e non una curva continua: sono tre modi di essere diversi, non
+ * tre quantita' della stessa cosa. Sereno, coperto e pioggia sono gia' le
+ * famiglie che il resto della scultura conosce - qui decidono solo quante
+ * stelle filtrano e quanto spesso ne cade una.
+ */
+private enum class NightSky { CLEAR, OVERCAST, WET }
+
+/** Densita' delle stelle e tetto della loro opacita', per livello. */
+private val STAR_COUNT_MUL = floatArrayOf(1.00f, 0.35f, 0.10f)
+private val STAR_ALPHA_CAP = floatArrayOf(1.00f, 0.55f, 0.30f)
+
+/**
+ * Quanto passa fra una stella cadente e la successiva, per livello: minimo e
+ * ampiezza casuale. Sereno ne mostra spesso, coperto raramente, pioggia mai -
+ * un gap infinito fa si' che il confronto nel ciclo non scatti mai, senza
+ * bisogno di un ramo a parte.
+ */
+private val SHOOTING_GAP_MIN = floatArrayOf(5f, 20f, Float.POSITIVE_INFINITY)
+private val SHOOTING_GAP_SPAN = floatArrayOf(6f, 15f, 0f)
+
+private fun gapFor(tier: NightSky, random: Random): Float {
+    val i = tier.ordinal
+    val span = SHOOTING_GAP_SPAN[i]
+    return SHOOTING_GAP_MIN[i] + if (span > 0f) random.nextFloat() * span else 0f
 }
 
 /** Una massa della nuvola: posizione nello spazio e raggio, in frazioni di unita'. */
@@ -865,7 +962,7 @@ private fun DrawScope.drawHail(
     val shift = contact?.numberToRain ?: Offset.Zero
     val skyline = contact?.skyline
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val shortFall = unit * 0.90f
+    val shortFall = unit * SURFACE_FALL
     val longFall = unit * LONG_FALL
 
     /**
@@ -980,7 +1077,7 @@ private fun DrawScope.drawSnow(
     val shift = contact?.numberToRain ?: Offset.Zero
     val skyline = contact?.skyline
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val shortFall = unit * 0.90f
+    val shortFall = unit * SURFACE_FALL
     val longFall = unit * LONG_FALL
 
     // Stessa regola della pioggia: la corsa lunga solo a chi passa accanto alla
@@ -1067,7 +1164,7 @@ private fun DrawScope.drawRain(
     // perche' la corsa era lunga novanta centesimi di unita' e basta. Adesso,
     // se la sagoma ha detto dove appoggia, la corsa arriva fin li'.
     val ground = skyline?.floor?.takeIf { !it.isNaN() }?.let { it + shift.y } ?: Float.NaN
-    val shortFall = unit * 0.90f
+    val shortFall = unit * SURFACE_FALL
     val longFall = unit * LONG_FALL
 
     // Stessa regola della pioggia: la corsa lunga solo a chi passa accanto alla
@@ -1440,25 +1537,35 @@ private val STARS: List<Star> = listOf(
  * A differenza del fulmine non serve un `Animatable`: la posizione lungo la
  * corsa e' sempre e solo una funzione di quanto tempo e' passato da
  * [launchedAt], la stessa regola con cui si muovono gocce e chicchi.
+ *
+ * Non sono tutte uguali: meta' sono veloci e sottili, l'altra meta' lente e
+ * luminose. Senza questa differenza ogni cadente e' la fotocopia della
+ * precedente, e una notte con dieci fotocopie non si legge come cielo vivo.
  */
 private class ShootingStar(
     val fx: Float,
     val fy: Float,
     val angle: Float,
     val launchedAt: Float,
+    fast: Boolean,
 ) {
-    fun isActive(now: Float): Boolean = (now - launchedAt) < SHOOTING_DURATION
+    val duration: Float = if (fast) SHOOTING_DURATION_FAST else SHOOTING_DURATION_SLOW
+    val widthScale: Float = if (fast) 0.65f else 1.35f
+    val glowScale: Float = if (fast) 0.80f else 1.30f
 
-    fun lifeAt(now: Float): Float = ((now - launchedAt) / SHOOTING_DURATION).coerceIn(0f, 1f)
+    fun isActive(now: Float): Boolean = (now - launchedAt) < duration
+
+    fun lifeAt(now: Float): Float = ((now - launchedAt) / duration).coerceIn(0f, 1f)
 
     companion object {
-        val EMPTY = ShootingStar(0f, 0f, 0f, Float.NEGATIVE_INFINITY)
+        val EMPTY = ShootingStar(0f, 0f, 0f, Float.NEGATIVE_INFINITY, fast = true)
 
         fun of(random: Random, launchedAt: Float): ShootingStar = ShootingStar(
             fx = random.nextFloat(),
             fy = random.nextFloat(),
             angle = SHOOTING_TILT_MIN + random.nextFloat() * (SHOOTING_TILT_MAX - SHOOTING_TILT_MIN),
             launchedAt = launchedAt,
+            fast = random.nextFloat() < 0.5f,
         )
     }
 }
@@ -1513,6 +1620,9 @@ private const val ARC_REACH = 0.30f
 private const val ARC_FLOOR = 0.07f
 private const val ARC_CLIMB = 0.22f
 
+/** Quanto resta visibile il sole a coperto pieno, in frazione della sua alpha piena. */
+private const val SUN_PEEK_FLOOR = 0.22f
+
 private const val BIRD_BEAT = 4.2f
 
 /**
@@ -1535,18 +1645,29 @@ private const val SNOW_REST = 0.30f
 
 private const val LONG_FALL = 2.6f
 
+/**
+ * Quanto corre chi sembra passare sopra la cifra, in unita'.
+ *
+ * Era 0.90f, e non bastava: la colonna viene classificata "sopra la cifra"
+ * con un solo campione a meta' altezza, ma la sagoma vera in quella colonna
+ * puo' stare piu' in basso di quanto quel budget copra. Quando succedeva, la
+ * goccia esauriva il giro **senza toccare niente** e il ciclo (`% 1f`) si
+ * azzerava di scatto mentre era ancora ben dentro lo schermo - si leggeva
+ * come una goccia che sparisce a meta' aria. Un budget piu' largo garantisce
+ * la corsa fino a qualunque sagoma reale, restando comunque piu' corto di
+ * [LONG_FALL] per chi invece deve arrivare a terra.
+ */
+private const val SURFACE_FALL = 1.65f
+
 /** Quanto vive una pozzanghera e quanto uno schizzo, in unita' di caduta. */
 private const val PUDDLE_LIFE = 0.34f
 private const val SPLASH_LIFE = 0.16f
 
 private const val SHOOTING_DARK = 0.80f
 
-/** Quanto passa, come minimo e come intervallo casuale, fra una caduta e la successiva. */
-private const val SHOOTING_GAP_MIN = 8f
-private const val SHOOTING_GAP_SPAN = 7f
-
-/** Quanto dura la caduta, in secondi. */
-private const val SHOOTING_DURATION = 0.35f
+/** Quanto dura la caduta, in secondi: le veloci corrono, le lente indugiano. */
+private const val SHOOTING_DURATION_FAST = 0.22f
+private const val SHOOTING_DURATION_SLOW = 0.48f
 
 /** Quanto e' lunga la corsa e quanto la scia che si trascina dietro. */
 private const val SHOOTING_LENGTH = 1.45f
