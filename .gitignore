@@ -1,0 +1,15 @@
+*.iml
+.gradle/
+/local.properties
+# Lo genera Android Studio e vale solo per questa macchina: dentro c'e' la
+# versione di JDK installata qui. Finito nel repository, la CI - che monta il
+# diciassette - si trovava a dover procurare il venticinque.
+/gradle/gradle-daemon-jvm.properties
+/.idea/
+.DS_Store
+/build
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
