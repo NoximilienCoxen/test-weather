@@ -62,6 +62,8 @@ fun HomeScreen(
     state: UiState,
     sky: SkyState,
     fog: Float,
+    /** Falso quando la scena e' coperta: allora niente respiro e niente battito. */
+    visible: Boolean,
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -77,7 +79,7 @@ fun HomeScreen(
     val rotation: SceneRotation = rememberSceneRotation(
         // Dietro le impostazioni la scena non si vede: farla respirare li'
         // vorrebbe dire chiedere fotogrammi per un oggetto coperto.
-        breathing = !state.settingsOpen,
+        breathing = visible,
         forcedYawDeg = state.forcedYawDeg,
         onFullTurn = { if (!state.settingsOpen) spin.landed() },
     )
@@ -163,11 +165,15 @@ fun HomeScreen(
     // Un battito solo per tutta la scena, acceso solo se qualcosa si muove
     // davvero. Con cielo coperto, aria ferma e niente che cada, l'app torna a
     // disegnare zero fotogrammi.
-    val alive = family.isWet() ||
-        fog > 0.02f ||
-        daylight > 0.15f ||
-        streaking ||
-        (wind.strength > 0.12f && Wmo.cloudiness(code) > 0.05f)
+    // Coperta, la scena non chiede fotogrammi: ne' per il meteo ne' per il
+    // respiro. E' il solo stato in cui l'app torna a disegnarne zero.
+    val alive = visible && (
+        family.isWet() ||
+            fog > 0.02f ||
+            daylight > 0.15f ||
+            streaking ||
+            (wind.strength > 0.12f && Wmo.cloudiness(code) > 0.05f)
+        )
     val clock = rememberSceneClock(alive)
 
     Box(modifier = modifier.fillMaxSize()) {
