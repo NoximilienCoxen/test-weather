@@ -179,20 +179,40 @@ fun skyColors(sky: SkyState, fog: Float = 0f): MeteoColors {
         labelOnSky = readableOn(top, lerp(onSky, top, 0.35f), LABEL_CONTRAST),
         textShadow = Color(0xFF000000).copy(alpha = 0.55f),
         line = lerp(text, base, 0.70f),
-        // Le facce esposte prendono la luce calda, quella in ombra prende il
-        // riflesso del cielo: e' lo scarto fra le due a raccontare che la luce
-        // viene di lato, che e' tutto quello che l'alba e il tramonto sono.
-        numberFace = lerp(Color(0xFFFFFFFF), GoldenLight, golden * 0.62f),
-        numberSideNear = lerp(Color(0xFFE9EAEE), GoldenLight, golden * 0.48f),
+        // ## La tinta d'ambiente resta una velatura, non una ricolorazione
+        //
+        // Il materiale e' plastica bianca opaca, e deve restare bianco a
+        // qualunque ora: e' l'unica cosa che non cambia mai nella scena, e da
+        // li' si legge che e' un oggetto e non un riflesso del cielo. Le
+        // interpolazioni verso il caldo dell'ora dorata arrivavano al
+        // sessantadue per cento sulla faccia e al settanta sullo smusso, e a
+        // quel punto non e' piu' una luce che tinge la plastica: e' plastica
+        // arancione.
+        //
+        // Il tramonto continua a leggersi, e lo fa da dove lo si legge davvero:
+        // il cielo e le nuvole, che di caldo ne prendono quanto vogliono perche'
+        // sono fatti di luce e non di materia.
+        numberFace = lerp(Color(0xFFFFFFFF), GoldenLight, golden * AMBIENT_TINT),
+        numberSideNear = lerp(Color(0xFFE9EAEE), GoldenLight, golden * AMBIENT_TINT),
         // Il lato in ombra deve staccare dal fondo a qualunque ora, altrimenti
-        // a mezzogiorno il volume si perde. Sull'ora dorata non schiarisce: si
-        // sposta di tinta, verso il bruno del controluce.
-        numberSideFar = lerp(Color(0xFF43464C), GoldenShade, golden * 0.55f),
-        numberChamfer = lerp(Color(0xFFDFE1E5), GoldenLight, golden * 0.70f),
-        // L'ombra portata serve solo se dietro la cifra il cielo e' chiaro. Su
-        // un fondo profondo una macchia nera non stacca niente, e costa: e' la
-        // superficie piu' grande che il disegno tocchi.
-        numberShadowAlpha = (luminance(bottom) * 1.9f).coerceIn(0f, 0.20f),
+        // a mezzogiorno il volume si perde. Puo' permettersi il doppio di tinta
+        // degli altri: e' in ombra, e cio' che lo illumina e' il cielo.
+        numberSideFar = lerp(Color(0xFF43464C), GoldenShade, golden * AMBIENT_TINT * 2f),
+        numberChamfer = lerp(Color(0xFFDFE1E5), GoldenLight, golden * AMBIENT_TINT),
+        // ## L'ombra portata, e contro cosa si misura
+        //
+        // Si misurava contro `bottom`, cioe' contro il colore in **fondo** allo
+        // schermo. Ma la cifra non sta in fondo: sta poco sotto la meta', dove
+        // il gradiente e' ancora vicino alla cima. Contro il fondo sbagliato
+        // l'alfa usciva fra un centesimo e cinque centesimi in ogni stato -
+        // invisibile - e l'ombra veniva saltata sempre.
+        //
+        // Contro il colore che sta davvero dietro la cifra, la stessa formula
+        // da' da sette centesimi di notte a trentacinque nella nebbia: cioe'
+        // poco dove il bianco stacca da solo e parecchio dove il fondo si
+        // schiarisce, che e' esattamente quando serve.
+        numberShadowAlpha = (luminance(lerp(top, bottom, BEHIND_NUMBER)) * 8f)
+            .coerceIn(0f, 0.35f),
         pillBackground = text,
         pillText = bottom,
         sunCore = lerp(SunYellowCore, SunRedCore, sky.redness),
@@ -224,6 +244,20 @@ fun skyColors(sky: SkyState, fog: Float = 0f): MeteoColors {
 // ---------------------------------------------------------------------------
 // Contrasto
 // ---------------------------------------------------------------------------
+
+/**
+ * Quanto in basso sta la cifra nel gradiente, da 0 (cima) a 1 (fondo).
+ *
+ * Non e' una posizione precisa e non serve che lo sia: e' il punto in cui
+ * campionare il cielo per sapere contro cosa la cifra deve staccare.
+ */
+private const val BEHIND_NUMBER = 0.72f
+
+/**
+ * Quanta tinta d'ambiente puo' prendere la plastica bianca, al massimo
+ * dell'ora dorata. Una velatura, non una ricolorazione.
+ */
+private const val AMBIENT_TINT = 0.15f
 
 /** Rapporto minimo per il testo che porta informazione. E' il livello AA. */
 private const val BODY_CONTRAST = 4.5f
