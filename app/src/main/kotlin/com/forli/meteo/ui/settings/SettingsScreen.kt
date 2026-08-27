@@ -1,5 +1,8 @@
 package com.forli.meteo.ui.settings
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +38,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.Place
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.theme.LocalMeteoColors
@@ -55,6 +60,9 @@ fun SettingsScreen(
     onQuery: (String) -> Unit,
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
+    onToggleFavorite: (Place) -> Unit,
+    onChooseModel: (WeatherModel) -> Unit,
+    onLocate: (canAsk: Boolean, onNeedsPermission: () -> Unit) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -111,6 +119,14 @@ fun SettingsScreen(
             }
 
             item {
+                LocateButton(
+                    locating = state.locating,
+                    error = state.locationError,
+                    onLocate = onLocate,
+                )
+            }
+
+            item {
                 SearchField(
                     value = state.query,
                     onValueChange = onQuery,
@@ -135,18 +151,47 @@ fun SettingsScreen(
                 }
             }
 
-            // Con la ricerca vuota si vedono le scorciatoie. Le prime della
-            // lista sono fra i posti piu' piovosi che esistano, ed e' voluto:
-            // con una citta' sola non c'era modo di vedere la pioggia se non
-            // aspettando che piovesse.
-            val places = if (state.results.isNotEmpty()) state.results else Place.SUGGESTIONS
-            items(places, key = { "${it.name}${it.latitude}${it.longitude}" }) { place ->
-                PlaceRow(
-                    place = place,
-                    selected = place.latitude == state.place.latitude &&
-                        place.longitude == state.place.longitude,
-                    onClick = { onChoosePlace(place) },
-                )
+            // Con la ricerca vuota si vedono le scorciatoie, con i preferiti
+            // in cima. Le prime scorciatoie sono fra i posti piu' piovosi che
+            // esistano, ed e' voluto: con una citta' sola non c'era modo di
+            // vedere la pioggia se non aspettando che piovesse.
+            val favoriteKeys = state.favorites.map { it.key }.toSet()
+            fun isSelected(place: Place) = place.latitude == state.place.latitude &&
+                place.longitude == state.place.longitude
+
+            if (state.results.isNotEmpty()) {
+                items(state.results, key = { it.key }) { place ->
+                    PlaceRow(
+                        place = place,
+                        selected = isSelected(place),
+                        favorite = place.key in favoriteKeys,
+                        onClick = { onChoosePlace(place) },
+                        onToggleFavorite = { onToggleFavorite(place) },
+                    )
+                }
+            } else {
+                if (state.favorites.isNotEmpty()) {
+                    item { SectionTitle("PREFERITI") }
+                    items(state.favorites, key = { it.key }) { place ->
+                        PlaceRow(
+                            place = place,
+                            selected = isSelected(place),
+                            favorite = true,
+                            onClick = { onChoosePlace(place) },
+                            onToggleFavorite = { onToggleFavorite(place) },
+                        )
+                    }
+                }
+                val plainSuggestions = Place.SUGGESTIONS.filterNot { it.key in favoriteKeys }
+                items(plainSuggestions, key = { it.key }) { place ->
+                    PlaceRow(
+                        place = place,
+                        selected = isSelected(place),
+                        favorite = false,
+                        onClick = { onChoosePlace(place) },
+                        onToggleFavorite = { onToggleFavorite(place) },
+                    )
+                }
             }
 
             item { Spacer(Modifier.height(6.dp)) }
@@ -168,7 +213,18 @@ fun SettingsScreen(
             item { SectionTitle("DATI") }
 
             item { KeyValueRow("SERVIZIO", "OPEN-METEO.COM") }
-            item { KeyValueRow("MODELLO", "MISCELA AUTOMATICA") }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(28.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "MODELLO", style = MeteoType.caption, color = colors.label)
+                    ModelChoice(current = state.model, onChoose = onChooseModel)
+                }
+            }
             item { KeyValueRow("FUSO ORARIO", "Auto (coordinate)") }
             item {
                 KeyValueRow(
@@ -270,9 +326,16 @@ private fun AdvancedRow(label: String, value: String) {
 }
 
 @Composable
-private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
+private fun PlaceRow(
+    place: Place,
+    selected: Boolean,
+    favorite: Boolean,
+    onClick: () -> Unit,
+    onToggleFavorite: () -> Unit,
+) {
     val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
+    val starInteraction = remember { MutableInteractionSource() }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -282,6 +345,21 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Modifier proprio e distinto da quello della riga: il tocco sulla
+        // stella deve aggiungere o togliere il preferito, non selezionare
+        // anche la citta'.
+        Text(
+            text = if (favorite) "★" else "☆",
+            style = MeteoType.value,
+            color = if (favorite) colors.text else colors.label,
+            modifier = Modifier
+                .clickable(
+                    interactionSource = starInteraction,
+                    indication = null,
+                    onClick = onToggleFavorite,
+                )
+                .padding(end = 10.dp),
+        )
         val label = if (place.country.isNullOrBlank()) {
             "· ${place.name}"
         } else {
@@ -337,6 +415,38 @@ private fun UnitChoice(
 }
 
 @Composable
+private fun ModelChoice(
+    current: WeatherModel,
+    onChoose: (WeatherModel) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = LocalMeteoColors.current
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        WeatherModel.entries.forEach { option ->
+            val active = option == current
+            val interaction = remember { MutableInteractionSource() }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(if (active) colors.pillBackground else Color.Transparent)
+                    .clickable(
+                        interactionSource = interaction,
+                        indication = null,
+                        onClick = { onChoose(option) },
+                    )
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                Text(
+                    text = option.label,
+                    style = MeteoType.value,
+                    color = if (active) colors.pillText else colors.label,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
@@ -364,6 +474,65 @@ private fun SearchField(
             ),
             modifier = Modifier.fillMaxWidth(),
         )
+    }
+}
+
+/**
+ * Il pulsante "TROVAMI": chiede la posizione al dispositivo e, se manca il
+ * permesso, apre il dialogo di sistema una sola volta. Rifiutato, resta
+ * comunque possibile ritentare (l'utente puo' averlo concesso nel frattempo
+ * dalle impostazioni di sistema) ma non si riapre da solo il dialogo.
+ */
+@Composable
+private fun LocateButton(
+    locating: Boolean,
+    error: String?,
+    onLocate: (canAsk: Boolean, onNeedsPermission: () -> Unit) -> Unit,
+) {
+    val colors = LocalMeteoColors.current
+    var refused by remember { mutableStateOf(false) }
+    val permission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            refused = false
+            onLocate(false) {}
+        } else {
+            refused = true
+        }
+    }
+    val interaction = remember { MutableInteractionSource() }
+
+    Column {
+        Text(
+            text = when {
+                locating -> "[ ⌖ RICERCA POSIZIONE… ]"
+                else -> "[ ⌖ TROVAMI ]"
+            },
+            style = MeteoType.caption,
+            color = colors.label,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = interaction,
+                    indication = null,
+                    enabled = !locating,
+                    onClick = {
+                        onLocate(!refused) {
+                            permission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        }
+                    },
+                )
+                .padding(vertical = 8.dp),
+        )
+        if (error != null) {
+            Text(
+                text = error,
+                style = MeteoType.caption,
+                color = colors.label,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+        }
     }
 }
 
