@@ -473,6 +473,8 @@ private fun DrawScope.drawClouds(
                 radius = lump.radius * unit * scale,
                 colour = distant,
                 alpha = presence * depth * 0.50f,
+                brushes = brushes,
+                slot = SLOT_DISTANT + order[i],
             )
         }
     }
@@ -686,6 +688,7 @@ internal fun Wmo.Family.isWet(): Boolean =
 /** I posti fissi dei pennelli. Il sole, e poi una massa di nuvola per posto. */
 private const val SLOT_SUN = 0
 private const val SLOT_CLOUDS = 1
+private val SLOT_DISTANT = SLOT_CLOUDS + CLOUD_MASSES.size
 
 /** Distanza dell'occhio, in multipli della dimensione del riquadro. */
 private const val EYE = 2.1f

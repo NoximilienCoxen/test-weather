@@ -274,23 +274,19 @@ misura() {
           n++
         }
         END {
-          if (n == 0) { printf "  %-22s framestats non disponibili\n", nome; exit }
+          # Zero fotogrammi non segnala un guasto: negli stati fermi e il
+          # risultato che si cerca, ed e la regola del progetto.
+          if (n == 0) { printf "  %-22s nessun fotogramma disegnato\n", nome; exit }
           printf "  %-22s interfaccia %.1f ms   rendering %.1f ms   (mediane su %d fotogrammi)\n",
                  nome, mediana(ui, n), mediana(rt, n), n
         }' | tee -a "$OUT/prestazioni.txt"
 
-  adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null | tr -d '\r' \
-    | awk -v nome="$nome" '
-        /Total frames rendered/ { tot=$NF }
-        /Janky frames/          { jank=$4" "$5 }
-        /50th percentile/       { p50=$3 }
-        /90th percentile/       { p90=$3 }
-        /95th percentile/       { p95=$3 }
-        /99th percentile/       { p99=$3 }
-        END {
-          printf "  %-22s tot %-5s  mediana %-6s  90%% %-6s  95%% %-6s  99%% %-6s  in ritardo %s\n",
-                 nome, tot, p50, p90, p95, p99, jank
-        }' | tee -a "$OUT/prestazioni.txt"
+  # Le percentuali di gfxinfo qui non si usano, e non e' una dimenticanza.
+  # Su swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo:
+  # riporta ogni fotogramma "in ritardo" e mediane da centocinquanta
+  # millisecondi, che misurano il rasterizzatore software del runner e non
+  # l'app. Le colonne di framestats invece misurano il lavoro svolto, ed e'
+  # quello che si voleva sapere.
 }
 
 echo "== prestazioni ==" | tee "$OUT/prestazioni.txt"

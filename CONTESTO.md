@@ -463,29 +463,38 @@ cambio unita' (21 °C -> 70 °F), persistenza delle scelte.
 pioggia che cade, 19 ms mediani e nessun fotogramma in ritardo, di giorno come
 di notte. In rotazione il lavoro per fotogramma sta fra i 5 e i 17 ms.
 
-**Misurato dall'emulatore della CI** (dopo), cinque secondi per stato senza
-toccare lo schermo:
+**Misurato dall'emulatore della CI** (dopo), con le colonne di `framestats`:
+da `DrawStart` a `SyncQueued` il lavoro del thread di interfaccia, cioe' il
+codice che registra i comandi; da `IssueDrawCommandsStart` a `SwapBuffers`
+quello del thread di rendering, cioe' i pixel riempiti.
 
-| stato | fotogrammi in 5 s |
-|---|---|
-| coperto, aria ferma | **1** |
-| notte, aria ferma | **0** |
-| coperto con vento a 10 m/s | 79 |
-| sereno di giorno (uccelli) | 67 |
-| pioggia | 65 |
-| neve | 78 |
-| nebbia | 34 |
-| temporale | 65 |
+| stato | interfaccia | rendering |
+|---|---|---|
+| coperto, aria ferma | **nessun fotogramma** | |
+| notte, aria ferma | **nessun fotogramma** | |
+| coperto con vento | 1,1 ms | 4,4 ms |
+| sereno di giorno | 2,3 ms | 5,7 ms |
+| pioggia | 4,1 ms | 6,1 ms |
+| neve | 1,1 ms | 4,4 ms |
+| nebbia | 4,1 ms | 3,7 ms |
+| temporale | 3,9 ms | 4,2 ms |
+| rotazione, sereno | 1,1 ms | 2,7 ms |
+| rotazione, neve | 4,2 ms | 10,0 ms |
 
-Le prime due righe sono la cosa da sorvegliare: **negli stati fermi lo zero
-c'e' ancora**. Le altre non sono regressioni, sono il prezzo di cose che si
-muovono e che sono state chieste. Il battito e' uno solo per tutta la scena.
+**Le percentuali di `gfxinfo` non si usano qui, e non e' una dimenticanza.** Su
+swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo: riporta
+il cento per cento dei fotogrammi "in ritardo" e mediane da centocinquanta
+millisecondi in ogni stato, comprese le scene piu' semplici. Sta misurando il
+rasterizzatore software del runner, non l'app. Le colonne sopra misurano il
+lavoro svolto, che e' l'unica cosa confrontabile con un telefono.
 
-La nebbia a trentaquattro fotogrammi non e' piu' leggera delle altre: e' piu'
-**pesante**. Sono banchi larghi quanto lo schermo con sfumature sovrapposte, e
-swiftshader non ci sta dentro. Su una scheda grafica vera dovrebbe tornare in
-riga, ma finche' non lo si guarda su un telefono resta l'unico numero di questa
-tabella di cui non ci si puo' fidare.
+Delle due colonne, **la prima e' quella che dipende da noi**: e' il codice
+Kotlin che registra i comandi di disegno, e sta fra 1,1 e 4,2 millisecondi in
+ogni stato. La seconda dipende da quanti pixel si riempiono e da chi li
+riempie, e su una scheda grafica vera dovrebbe scendere di parecchio. L'unico
+valore sopra gli otto millisecondi e' la rotazione sotto il dito con la neve
+accesa, che e' il caso peggiore costruito apposta: geometria ricalcolata a ogni
+fotogramma, nuvola, centotrenta fiocchi e la coltre che scivola, tutto insieme.
 
 La pioggia sa dove trova superficie: `ui/render3d/Skyline.kt` tiene, colonna per
 colonna, il punto piu' alto occupato dalla cifra, e la cifra ce lo scrive dentro

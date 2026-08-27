@@ -95,29 +95,48 @@ class SphereBrushes(slots: Int) {
     private val cy = FloatArray(slots)
     private val rr = FloatArray(slots)
 
+    /** Come [radial], ma per le masse d'aria: la chiave comprende l'opacita'. */
+    fun haze(slot: Int, colour: Color, alpha: Float, centre: Offset, radius: Float): Brush {
+        val key = colour.toArgb() * 31 + (alpha * 255f).toInt()
+        val cached = brush[slot]
+        if (cached != null && tint[slot] == key && unmoved(slot, centre, radius)) return cached
+        val built = hazeBrush(colour, alpha, centre, radius)
+        store(slot, built, key, centre, radius)
+        return built
+    }
+
     fun radial(slot: Int, light: Color, dark: Color, centre: Offset, radius: Float): Brush {
         val key = light.toArgb() * 31 + dark.toArgb()
         val cached = brush[slot]
-        if (cached != null &&
-            tint[slot] == key &&
-            abs(centre.x - cx[slot]) <= 1f &&
-            abs(centre.y - cy[slot]) <= 1f &&
-            abs(radius - rr[slot]) <= 1f
-        ) {
-            return cached
-        }
+        if (cached != null && tint[slot] == key && unmoved(slot, centre, radius)) return cached
         val built = Brush.radialGradient(
             0f to light,
             1f to dark,
             center = centre,
             radius = radius,
         )
+        store(slot, built, key, centre, radius)
+        return built
+    }
+
+    /**
+     * Sotto il pixel il disegno non cambia, quindi il pennello nemmeno.
+     *
+     * Senza questa tolleranza il pennello si rifarebbe comunque a ogni
+     * fotogramma: fra l'uno e l'altro una nuvola si sposta di frazioni di
+     * pixel, e un confronto esatto non e' mai vero.
+     */
+    private fun unmoved(slot: Int, centre: Offset, radius: Float): Boolean =
+        abs(centre.x - cx[slot]) <= 1f &&
+            abs(centre.y - cy[slot]) <= 1f &&
+            abs(radius - rr[slot]) <= 1f
+
+    private fun store(slot: Int, built: Brush, key: Int, centre: Offset, radius: Float) {
         brush[slot] = built
         tint[slot] = key
         cx[slot] = centre.x
         cy[slot] = centre.y
         rr[slot] = radius
-        return built
     }
 }
 
@@ -144,26 +163,32 @@ fun DrawScope.hazeMass(
     radius: Float,
     colour: Color,
     alpha: Float = 1f,
+    brushes: SphereBrushes? = null,
+    slot: Int = 0,
 ) {
     if (alpha <= 0.003f) return
     camera.place(x, y, z)
     val r = radius * camera.scale
     if (r <= 1f) return
     val centre = Offset(camera.sx, camera.sy)
-    drawCircle(
-        // Il nucleo pieno occupa poco piu' di meta' del raggio, poi si spegne:
-        // e' quella coda a mangiare il bordo.
-        brush = Brush.radialGradient(
-            0f to colour.copy(alpha = alpha),
-            0.45f to colour.copy(alpha = alpha * 0.62f),
-            1f to colour.copy(alpha = 0f),
-            center = centre + LightOnScreen * (r * 0.22f),
-            radius = r,
-        ),
-        radius = r,
-        center = centre,
-    )
+    val focus = centre + LightOnScreen * (r * 0.22f)
+    val brush = brushes?.haze(slot, colour, alpha, focus, r) ?: hazeBrush(colour, alpha, focus, r)
+    drawCircle(brush = brush, radius = r, center = centre)
 }
+
+/**
+ * Il nucleo pieno occupa poco piu' di meta' del raggio, poi si spegne: e' quella
+ * coda a mangiare il bordo, ed e' cio' che distingue una massa d'aria da una
+ * sfera.
+ */
+private fun hazeBrush(colour: Color, alpha: Float, centre: Offset, radius: Float): Brush =
+    Brush.radialGradient(
+        0f to colour.copy(alpha = alpha),
+        0.45f to colour.copy(alpha = alpha * 0.62f),
+        1f to colour.copy(alpha = 0f),
+        center = centre,
+        radius = radius,
+    )
 
 /**
  * La luna: solo la parte illuminata, sezionata dalla mediana della fase.
