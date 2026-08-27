@@ -2,9 +2,8 @@ package com.forli.meteo.ui.motion
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -17,11 +16,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.withFrameNanos
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 /**
  * L'orientamento della scena, comandato dal dito.
@@ -262,17 +266,114 @@ fun rememberSceneRotation(
 }
 
 /**
- * Il gesto che ruota la scena.
+ * Il gesto della scena: uno solo, che decide da che parte va.
  *
- * Solo orizzontale, e non e' un dettaglio: il gesto piu' importante dell'app e'
- * il trascinamento verso l'alto che apre il dettaglio. Un riconoscitore che
- * accetta qualunque direzione se lo mangerebbe, e il gesto decorativo
- * bloccherebbe quello utile.
+ * ## Perche' non sono due
+ *
+ * Prima erano due `draggable` innestati, uno orizzontale sulla scena per la
+ * rotazione e uno verticale su tutta la schermata per il foglio del dettaglio.
+ * Sembra la soluzione pulita - ognuno il suo asse - e non lo e': **entrambi si
+ * armano sullo stesso tocco**, ognuno aspetta di superare la soglia sul proprio
+ * asse, e chi la supera per primo vince mentre l'altro **si annulla per tutto
+ * il resto del gesto**.
+ *
+ * Il risultato e' una monetina lanciata nei primi pixel. Un dito non parte mai
+ * perfettamente orizzontale: se i primissimi millimetri hanno un filo di
+ * verticale in piu', il tocco va al foglio, e da quel momento si puo' scorrere
+ * di lato quanto si vuole senza che il numero giri. Ecco perche' a volte si
+ * riusciva a ruotare e a volte no, con lo stesso identico gesto.
+ *
+ * Qui il riconoscitore e' uno. Accumula lo spostamento finche' non supera la
+ * soglia su un asse qualunque, poi guarda **quale dei due componenti e' piu'
+ * grande** e da li' in avanti non cambia piu' idea. Nessuna gara, nessuno che
+ * si annulla: la direzione la decide il gesto nel suo insieme, non i suoi primi
+ * tre pixel.
+ *
+ * ## E perche' l'orizzontale ha un piccolo vantaggio
+ *
+ * Dentro la scena il gesto naturale e' girare l'oggetto, e il foglio si tira su
+ * anche da tutta la fascia sotto - condizione, barra delle ore, ora mostrata -
+ * dove questo riconoscitore non arriva. Perche' il tocco sia verticale serve
+ * quindi che la verticale sia **chiaramente** prevalente, non che vinca per un
+ * pixel. Chi vuole aprire il dettaglio tira su, e tirando su la prevalenza c'e'
+ * tutta; chi vuole girare non deve piu' stare attento a come appoggia il dito.
  */
 @Composable
-fun Modifier.rotatesScene(rotation: SceneRotation): Modifier = draggable(
-    state = rememberDraggableState { delta -> rotation.drag(delta) },
-    orientation = Orientation.Horizontal,
-    onDragStarted = { rotation.begin() },
-    onDragStopped = { velocity -> rotation.release(velocity) },
-)
+fun Modifier.scenePointer(
+    rotation: SceneRotation,
+    onVerticalDelta: (Float) -> Unit,
+    onVerticalSettle: suspend (Float) -> Unit,
+): Modifier {
+    val liveDelta by rememberUpdatedState(onVerticalDelta)
+    val liveSettle by rememberUpdatedState(onVerticalSettle)
+    // Il rientro della molla e l'assestamento del foglio sono sospesi, e vanno
+    // lanciati **fuori** dal riconoscitore: aspettarli li' dentro terrebbe
+    // fermo il riconoscitore fino a molla finita, e il dito non potrebbe
+    // riafferrare l'oggetto mentre torna a posto.
+    val scope = rememberCoroutineScope()
+    return pointerInput(Unit) {
+        val slop = viewConfiguration.touchSlop
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            val tracker = VelocityTracker()
+            tracker.addPosition(down.uptimeMillis, down.position)
+
+            var travelled = Offset.Zero
+            var axis = Axis.UNDECIDED
+
+            while (true) {
+                val event = awaitPointerEvent()
+                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                if (change.changedToUpIgnoreConsumed()) break
+
+                val step = change.positionChange()
+                travelled += step
+                tracker.addPosition(change.uptimeMillis, change.position)
+
+                if (axis == Axis.UNDECIDED &&
+                    (abs(travelled.x) > slop || abs(travelled.y) > slop)
+                ) {
+                    axis = if (abs(travelled.y) > abs(travelled.x) * VERTICAL_EDGE) {
+                        Axis.VERTICAL
+                    } else {
+                        Axis.HORIZONTAL
+                    }
+                    if (axis == Axis.HORIZONTAL) rotation.begin()
+                }
+
+                when (axis) {
+                    // Consumare e' cio' che tiene fuori il riconoscitore
+                    // verticale che avvolge tutta la schermata: senza, quello
+                    // continuerebbe a guardare lo stesso tocco e la gara
+                    // tornerebbe da dove l'abbiamo tolta.
+                    Axis.HORIZONTAL -> {
+                        change.consume()
+                        rotation.drag(step.x)
+                    }
+                    Axis.VERTICAL -> {
+                        change.consume()
+                        liveDelta(step.y)
+                    }
+                    Axis.UNDECIDED -> Unit
+                }
+            }
+
+            val velocity = tracker.calculateVelocity()
+            when (axis) {
+                Axis.HORIZONTAL -> scope.launch { rotation.release(velocity.x) }
+                Axis.VERTICAL -> scope.launch { liveSettle(velocity.y) }
+                Axis.UNDECIDED -> Unit
+            }
+        }
+    }
+}
+
+private enum class Axis { UNDECIDED, HORIZONTAL, VERTICAL }
+
+/**
+ * Quanto la verticale deve prevalere sull'orizzontale per prendersi il gesto.
+ *
+ * Uno e mezzo: un trascinamento verso l'alto vero supera abbondantemente questa
+ * soglia, un movimento di lato con un po' di tremolio no.
+ */
+private const val VERTICAL_EDGE = 1.5f
