@@ -64,6 +64,8 @@ fun WeatherSculpture(
     probability: Int?,
     sky: SkyState,
     wind: Wind,
+    /** Quanto e' fitta la nebbia: nasconde gli astri prima ancora del cielo. */
+    fog: Float,
     date: LocalDate,
     rotation: SceneRotation,
     tilt: State<Offset>,
@@ -189,7 +191,12 @@ fun WeatherSculpture(
         // Sotto una nuvola spessa l'astro sparisce del tutto. Con una velatura
         // parziale i raggi del sole sbucavano da dietro un temporale, che e'
         // esattamente il tipo di dettaglio che rovina l'illusione.
-        val clear = (1f - cloudiness * 1.25f).coerceIn(0f, 1f)
+        //
+        // La nebbia conta quanto le nuvole, e prima non contava affatto: dentro
+        // un banco fitto il sole restava un disco arancione a contorno netto,
+        // con tanto di raggi, che e' l'esatto contrario di cio' che si vede in
+        // pianura a gennaio. Dalla nebbia il sole o non si vede, o si intuisce.
+        val clear = (1f - cloudiness * 1.25f - fog * 0.85f).coerceIn(0f, 1f)
 
         val bodyX = unit * 0.15f
         val bodyY = -unit * 0.10f
@@ -322,11 +329,11 @@ private val CLOUD_MASSES = listOf(
  * uno spessore.
  */
 private val DISTANT_MASSES = listOf(
-    Lump(-0.34f, -0.20f, 0.30f, 0.15f),
-    Lump(-0.12f, -0.26f, 0.40f, 0.12f),
-    Lump(0.22f, -0.24f, 0.36f, 0.16f),
-    Lump(0.38f, -0.17f, 0.24f, 0.13f),
-    Lump(0.02f, -0.30f, 0.46f, 0.13f),
+    Lump(-0.36f, -0.38f, 0.30f, 0.12f),
+    Lump(-0.14f, -0.44f, 0.40f, 0.10f),
+    Lump(0.24f, -0.41f, 0.36f, 0.13f),
+    Lump(0.40f, -0.35f, 0.24f, 0.11f),
+    Lump(0.04f, -0.48f, 0.46f, 0.11f),
 )
 
 /**
@@ -451,8 +458,12 @@ private fun DrawScope.drawClouds(
                     z = lump.z * unit * scale,
                     radius = lump.radius * unit * scale,
                     light = distant,
-                    dark = lerp(distant, dark, 0.45f),
-                    alpha = presence * depth * 0.85f,
+                    dark = lerp(distant, dark, 0.30f),
+                    // Molto piu' tenue di prima. All'ottantacinque per cento non
+                    // si leggevano come nuvole lontane: si leggevano come palle
+                    // azzurre semitrasparenti spuntate da dietro quella vera -
+                    // cioe' proprio la geometria a bolle che va evitata.
+                    alpha = presence * depth * 0.45f,
                 )
             }
     }
