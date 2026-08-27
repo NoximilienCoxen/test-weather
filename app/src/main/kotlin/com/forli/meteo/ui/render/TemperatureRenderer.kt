@@ -40,6 +40,25 @@ data class NumberSpec(
     /** Larghezza disponibile: oltre questa la cifra viene rimpicciolita. */
     val maxWidthPx: Float = Float.MAX_VALUE,
     val letterSpacingEm: Float = -0.02f,
+    /**
+     * Quanti caratteri finali sono un simbolo e non una cifra: vanno in corpo
+     * ridotto, a filo della cima.
+     *
+     * Il grado passa di qui e non da un disegno a parte perche' e' parte
+     * dell'oggetto: dev'essere estruso, illuminato e girato con le cifre. Un
+     * simbolo sovrapposto in coordinate di schermo resterebbe appiccicato al
+     * vetro mentre tutto il resto gira, ed e' esattamente il tipo di dettaglio
+     * che smonta l'illusione.
+     */
+    val smallTail: Int = 0,
+    /**
+     * Gli assi del font variabile, nella forma di `Paint.fontVariationSettings`.
+     *
+     * Stanno qui e non sul `Typeface` perche' il file del font e' uno solo e lo
+     * condividono la cifra gigante e tutti i testi dell'interfaccia: chi lo usa
+     * dichiara come lo vuole, invece di pretenderne una copia sua.
+     */
+    val variationSettings: String? = null,
 )
 
 /**
@@ -85,5 +104,14 @@ interface TemperatureRenderer {
          * superficie. Nullo quando a nessuno interessa.
          */
         silhouette: com.forli.meteo.ui.render3d.Skyline? = null,
+        /**
+         * Di quanto l'oggetto e' sollevato, in altezze di se' stesso.
+         *
+         * Zero e' il posto suo. Serve all'entrata - la cifra sale invece di
+         * comparire - ed e' un sollevamento **nello spazio**, non sulla tela:
+         * passa dentro la proiezione, quindi salendo la cifra cambia anche
+         * prospettiva, come farebbe un oggetto vero.
+         */
+        lift: Float = 0f,
     )
 }

@@ -74,7 +74,14 @@ debugger deve sapere che sta misurando un'app che non esiste.
 
 ## 3. Cosa fa l'app oggi
 
-**Si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
+**Al primo avvio si apre sul benvenuto** (`ui/welcome/WelcomeScreen.kt`): chiede
+dove ti trovi, con un esploratore che appoggia una mano sul tasto e con l'altra
+sopra gli occhi si guarda intorno. Prima non c'era **nessun momento** in cui
+l'app chiedesse la posizione - si cambiava solo dalle impostazioni, quindi chi
+non ci entrava restava per sempre sull'ultima impostata. C'e' sempre una via
+d'uscita: un permesso negato non e' un vicolo cieco.
+
+**Poi si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
 impostazioni a sinistra, nome della localita' al centro, scultura meteo,
 temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
 e sotto l'ora mostrata.
@@ -88,6 +95,18 @@ localita' (ricerca per nome piu' un elenco di scorciatoie), unita' della
 temperatura, e da dove arrivano i dati. Le prime voci dell'elenco sono fra i
 posti piu' piovosi che esistano, e ci sono apposta: con una citta' sola non
 c'era modo di vedere la pioggia se non aspettando che piovesse.
+
+**Quale modello numerico**, verificato dalla CI (`scripts/probe_models.py`, esito
+in `ci-artifacts/api/modelli.txt`): sopra l'Emilia-Romagna il `best_match` sceglie
+**ICON-D2** (DWD, 2,2 km). Esiste pero' anche `italia_meteo_arpae_icon_2i` -
+ItaliaMeteo/ARPAE, 2,2 km, l'agenzia della regione stessa - e copre entrambi i
+punti provati con quarantotto ore su quarantotto. Fra i due c'e' oltre un grado
+di differenza sulla prima ora, quindi **non e' una scelta neutra**. `arpae_cosmo_5m`
+non esiste piu': l'API risponde "not available anymore", e ICON-2I ne e' il
+successore.
+
+Da questo container `api.open-meteo.com` **non si raggiunge** (403 al CONNECT del
+proxy): domande sull'API si girano alla CI, non alla memoria.
 
 Dati: Open-Meteo senza chiave, `HttpURLConnection` + `kotlinx.serialization`.
 Una richiesta porta `current`, `daily` (7 giorni, alba e tramonto compresi) e
@@ -138,19 +157,62 @@ vertici e dividendo per la profondita'.
    la sagoma cambi. Lambert **dimezzato**, non troncato (trappola #4).
 5. L'esposizione si calcola sul **vertice**, mediando le normali dei due spigoli
    che vi si incontrano: da li' la sfumatura continua sulle curve.
-6. La **base** non viene triangolata. Una figura piana sotto una proiezione
+6. Le **pareti si disegnano dalla piu' lontana alla piu' vicina**, non nell'ordine
+   in cui stanno scritte. I vuoti di un carattere sono contorni come gli altri,
+   e uscendo per ultimi si stampavano sopra il pieno che avrebbero dovuto avere
+   davanti: girando l'8 verso il taglio, i due occhielli venivano avanti come
+   due cilindri appoggiati sulla cifra. L'ordine e' un `sort` di interi lunghi
+   che impacchettano profondita' e indice - niente comparatori, niente
+   allocazioni - e sostituisce anche la vecchia regola "prima tutte le pareti,
+   poi tutti gli smussi": lo smusso di uno spigolo lontano deve stare **sotto**
+   la parete di uno vicino, e ordinare lo dice da solo.
+7. La **base** non viene triangolata. Una figura piana sotto una proiezione
    prospettica si trasforma per omografia: si applica alla tela la matrice che
    porta i quattro angoli del riquadro dove finiscono davvero, e si disegna il
    tracciato originale. Curve del font comprese, un solo disegno.
    **Quale delle due basi** dipende da dove si guarda: oltre il quarto di giro
    si vede quella di dietro, e disegnare sempre l'altra la stamperebbe sopra le
    pareti che dovrebbero nasconderla. Un prisma non ha un davanti assoluto.
-7. Lo **smusso** e' la prima fetta dell'estrusione dalla parte che si vede, con
+8. Lo **smusso** e' la prima fetta dell'estrusione dalla parte che si vede, con
    normale a meta' strada. Rientrare la base per ricavarlo fa ripiegare il
    poligono sulle curve strette.
-8. L'**iridescenza** e' una tinta sui vertici dello smusso dove la luce li
+9. L'**iridescenza** e' una tinta sui vertici dello smusso dove la luce li
    sfiora, non piu' una sfumatura stesa sopra.
-9. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12).
+10. Le **ombre** si disegnano tutte prima di tutti i corpi (trappola #12) e sono
+   una **proiezione, non una copia**: ogni angolo del riquadro viene spinto lungo
+   la luce fino al piano che sta dietro l'oggetto, e solo allora proiettato
+   (trappola #29). I due gradini sono due piani a distanze diverse, non due copie
+   traslate.
+11. Vicino al quarto di giro **base e ombra si spengono**. Li' i quattro angoli
+   del riquadro finiscono quasi in fila e la matrice che li segue e' quasi
+   singolare: esiste, ed e' fatta di numeri che divergono (trappola #20).
+12. Il **grado** e' l'ultimo carattere del testo, in corpo ridotto e allineato in
+   alto (`smallTail` in `NumberSpec`). Fa parte del prisma apposta: viene
+   estruso, illuminato e girato con le cifre. Un simbolo sovrapposto in
+   coordinate di schermo resterebbe fermo mentre l'oggetto gira.
+   **Anche lo spessore si riduce con lui** (`Part.depthScale`): il suo anello e'
+   largo novanta pixel e lo spessore comune ne misura centoventi, quindi lasciato
+   spesso come una cifra non era piu' un simbolo ma un pezzo di tubo appoggiato
+   accanto al numero. Ridotto nella stessa proporzione resta la stessa lastra,
+   ritagliata piu' piccola.
+   **Il file del font sta nelle risorse, non negli assets**: da li' Compose sa
+   costruire una famiglia senza un contesto, e lo stesso mezzo mega serve sia
+   alla cifra sia a tutti i testi dell'interfaccia. Gli assi variabili stanno
+   sul `Paint` (`fontVariationSettings`), non sul `Typeface`, cosi' chi lo usa
+   dichiara le proporzioni che vuole invece di pretendere una copia sua.
+13. La cifra **entra salendo** quando i dati arrivano, con lo stesso
+   `yOffset` in coordinate del modello. Una volta sola, all'ingresso in scena.
+   **Non a ogni ora scorsa**: quella strada e' stata provata (le cifre che
+   rotolavano a contachilometri) ed e' stata bocciata in mano - scorrendo la
+   barra un numero non fa in tempo a rotolare che l'animazione riparte, e una
+   soglia di tempo non basta perche' uno scorrimento a passo moderato ci sta
+   appena sopra.
+14. Le **geometrie estratte si tengono pronte** (dodici, LRU in `PrismRenderer`):
+   estrarre vuol dire campionare tutti i contorni del font, e scorrendo la barra
+   la si rifaceva a ogni ora - un lavoro intero dentro un fotogramma solo. La
+   larghezza, che serve a decidere il corpo, si chiede ora con `TextPrism.widthOf`
+   **senza costruire niente**: prima la cifra si costruiva, si misurava, e se non
+   ci stava si ricostruiva da capo.
 
 **Il verso dei contorni dipende dal font**, quindi non si assume: si deduce
 misurando se sul contorno piu' grande le normali puntano fuori.
@@ -169,10 +231,53 @@ questa garanzia cade** e servira' un ordinamento vero.
 
 ---
 
+## 4-bis. Il mappamondo del benvenuto
+
+`ui/render3d/Bodies.kt` (`globe`), `ui/welcome/WelcomeScreen.kt`
+
+**Un personaggio e' stato provato ed e' stato bocciato.** Un esploratore fatto di
+sfere, con una gerarchia di trasformazioni per la testa e le braccia disegnate
+come file di sfere lungo una curva. Ogni correzione ne scopriva un'altra: le
+braccia a collana quando erano lunghe, il cappello che spariva dietro la testa,
+la mano che salutava invece di riparare lo sguardo. Il verdetto dell'utente:
+*"se il risultato e' questo, lasciamo perdere"*. Con lui sono usciti `Figure.kt`
+e `Rig.kt` - stanno nella cronologia se un giorno servissero.
+
+**Al suo posto un mappamondo, cioe' la luna con un'altra pelle.** Sfera, luce di
+sempre, macchie sulla superficie che scivolano via girando: e' l'unica cosa di
+questo motore che si sa gia' che funziona bene, e dice la stessa identica cosa -
+dove sei sulla Terra - senza dover somigliare a nessuno. La differenza con la
+luna e' una sola: **i continenti girano per conto loro** invece di stare fermi
+rispetto al corpo, quindi la direzione della macchia si ruota prima di darla
+alla camera.
+
+Due cose imparate mettendolo a punto:
+
+- **A gruppi, non sparsi.** Otto macchie isolate davano una palla bianca con
+  qualche puntino. Sono le masse continue, coi bordi che si toccano, a leggersi
+  come terra invece che come sporco.
+- **La dissolvenza al bordo va tenuta corta.** Legata direttamente
+  all'inclinazione sbiadiva tutto quello che non stava esattamente al centro, e
+  una sfera con due smagliature al centro non si legge come un corpo con dei
+  segni sopra: si legge come una sfera sporca. Vale anche per i mari della luna,
+  che dallo stesso `blot` passano.
+
+**Se un giorno serve davvero un personaggio disegnato**, la strada e' Lottie
+(`lottie-compose`, un `.json` in `res/raw`): la parte che manca e' il disegno,
+non il codice, e un JSON Lottie scritto a mano non e' una strada seria.
+
+**Il benvenuto e' l'unico posto in cui l'app disegna in continuazione.** Altrove
+vale la trappola #8 - zero fotogrammi a schermo immobile. Li' il movimento e' il
+contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
+
+---
+
 ## 5. Movimento
 
 - `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra.
-  **Nessun limite**: si gira quanto si vuole, anche piu' volte.
+  **Il trascinamento scrive l'angolo sul posto**, in un `MutableFloatState`, e
+  solo il rilascio anima (trappola #22). **Nessun limite**: si gira quanto si
+  vuole, anche piu' volte.
   **Il segno e' negativo** e non e' un dettaglio: la superficie che si tocca deve
   andare dove va il dito. Col segno positivo, tirando verso destra la cifra
   girava verso sinistra, come una manopola vista da dietro.
@@ -201,6 +306,23 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 |---|---|
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
+| `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
+| `--ez benvenuto` | rimostra la schermata di benvenuto |
+
+Il benvenuto va imposto perche' si vede **una volta sola nella vita
+dell'installazione**, e sull'emulatore quella volta e' gia' passata al primo
+avvio dello script di cattura.
+
+Per consegnare un intent a un'app **gia' viva** serve
+`am start -f 0x20000000` (SINGLE_TOP): senza, l'attivita' riparte da capo, e
+con lei riparte tutto quello che si voleva vedere cambiare.
+
+L'aggancio sul giro c'e' perche' **i difetti che si vedono girando vanno
+fotografati girati**, e un trascinamento simulato non ci arriva: per portare la
+cifra di taglio servono quattrocento pixel, per vederla da dietro piu' di
+ottocento, e uno schermo e' largo mille. Senza, il quarto di giro - che e'
+esattamente dove le matrici degenerano e le pareti si scavalcano - non era
+fotografabile, e infatti quei difetti li ha trovati l'utente e non la CI.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta
@@ -347,6 +469,124 @@ curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/actions/runs?
 curl -s ".../actions/runs/<id>/jobs" | grep -E '"(name|conclusion)"'
 ```
 
+**20. Una matrice quasi singolare esiste eccome.** `setPolyToPoly` torna falso
+solo quando i punti sono *esattamente* in fila. Un grado prima del taglio netto
+sono quasi in fila, la matrice esce fatta di numeri enormi, e la sagoma che ci
+passa sotto si stampa come una colata di strisce lunghe mezzo schermo - erano
+quelle che spuntavano da sotto la cifra ogni volta che passava di profilo. Non
+si chiede alla matrice se esiste: si guarda **quanto la base e' aperta** verso
+l'occhio, e sotto soglia non si disegna. Vale per la faccia e per l'ombra.
+
+**21. Un'ombra non puo' seguire la base rivolta all'occhio.** Quale delle due
+basi si veda cambia al quarto di giro (punto 6 della sezione 4), ed e' giusto
+per la faccia. Per l'ombra no: nello stesso istante in cui la cifra passava di
+taglio, l'ombra saltava dall'altra parte dello spessore. Il **piano mediano** non
+ha un davanti e un dietro, quindi attraversa il giro intero senza accorgersene.
+
+**22. `Animatable.snapTo` in una coroutine annulla la molla che sta girando.**
+Il trascinamento passava da `scope.launch { animated.snapTo(...) }`, uno per
+delta. Il dispatcher della composizione consegna **al fotogramma**, non subito:
+l'ultimo `snapTo` prima del rilascio finiva quindi *dopo* l'avvio della molla, e
+un `Animatable` che riceve un `snapTo` annulla l'animazione in corso. Da fuori si
+vedeva la cifra partire e **piantarsi a meta' giro** senza tornare a posto, tanto
+piu' spesso quanto piu' era stato deciso il gesto - cioe' proprio quando il
+lancio contava. Un gesto continuo non passa da una coda: scrive il valore, e
+basta.
+
+**23. Un astro disegnato per primo e' un fondale, non un oggetto.** Sole e luna
+uscivano prima delle masse della nuvola, sempre: qualunque cosa facesse la
+rotazione, la nuvola restava davanti. Portando la luna di fronte con mezzo giro
+di dito la si vedeva comunque sotto le masse bianche, ed era per questo che non
+si vedeva mai intera. Ora l'astro sta nella **stessa fila** delle masse, ordinato
+per profondita' in coordinate di vista come loro (che e' la trappola #15
+applicata anche a lui).
+
+**24. La Luna non la illumina la lampada della stanza.** Sole, nuvole e cifra
+condividono una luce sola, ed e' giusto: sono oggetti nello stesso spazio. La
+Luna no - la illumina il Sole, e da che parte stia lo dice la fase. Col gradiente
+preso dalla luce della scultura, il lembo acceso della falce veniva il punto piu'
+scuro del disco e **la mediana ci si perdeva dentro**: si vedeva una palla grigia
+storta, non un quarto di luna.
+
+**25. Una vibrazione a tempo non e' una vibrazione responsive.** La pioggia dava
+un colpetto per giro di gocce: cadeva anche quando la pioggia passava a fianco
+della cifra senza toccarla, e mancava quando ne arrivavano cinque insieme. Ora lo
+chiama l'urto - il disegno e' l'unico a sapere dove passa la sagoma - con due
+accortezze: si conta solo il **passaggio** da aria a superficie (altrimenti ogni
+goccia gia' arrivata ne segnerebbe uno per fotogramma), e c'e' una soglia di un
+decimo di secondo fra un colpo e il successivo, perche' un vibratore che non
+stacca mai non si legge come pioggia ma come un ronzio.
+
+**29. Un'ombra traslata non e' un'ombra.** Era la faccia dell'oggetto sotto la
+stessa matrice, spostata di un tot sulla tela. Ferma sembrava giusta; girata no,
+e per un motivo che non si aggira ritoccando i numeri: **un'ombra vera cambia
+forma girando** - si accorcia, si inclina, si allarga - e una copia traslata non
+cambia niente, quindi si legge come una seconda cifra scura appoggiata dietro la
+prima. Serve una proiezione vera, e costa gli stessi quattro angoli: si spingono
+lungo la luce fino al piano dietro l'oggetto e li si proietta di li'.
+
+**30. Il corpo della cifra non deve dipendere da quali cifre sono.** La larghezza
+dell'**inchiostro** cambia col valore - l'uno ne ha molto meno di uno zero - e il
+rimpicciolimento per far stare la scritta nello schermo si calcolava sul testo
+vero: "31" usciva percettibilmente piu' grande di "32", e scorrendo la barra la
+cifra respirava. Si misura una **sagoma di riferimento** con tutte le cifre
+ridotte a uno zero, cosi' ogni valore della stessa lunghezza riceve lo stesso
+corpo.
+
+**28. L'emulatore della CI ha le animazioni spente, e Compose gliene da' retta.**
+`disable-animations: true` nel workflow azzera `animator_duration_scale`, e
+Compose legge quella scala di sistema: con zero, `animate` e `animateTo`
+saltano **dritti alla fine**. Il rotolamento della cifra partiva davvero - il
+logcat lo diceva, con tanto di valore da cui veniva - e finiva nello stesso
+fotogramma in cui cominciava, quindi negli scatti si vedeva sempre e solo il
+numero fermo. Vale per tutto quello che si anima: il colore del cielo, la molla
+della barra delle ore, la nuvola che si addensa. Per fotografarne uno bisogna
+riaccendere la scala prima e rispegnerla dopo, come fa `roll_from_to` in
+`scripts/capture.sh`. **Prima di dare la colpa al codice per un'animazione che
+"non parte", guarda se sta girando a durata zero.**
+
+**26. `refresh()` non la richiamava nessuno.** Partiva all'avvio e al cambio di
+localita', e basta: nessun ritorno in primo piano, nessun gesto, nessun segno di
+quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava
+ieri sera con la stessa faccia di adesso. E il gesto che sarebbe servito a
+ricaricare **c'era gia' e veniva buttato via**: col foglio del dettaglio chiuso,
+lo scorrimento verso il basso finiva dentro un `coerceIn(0f, 1f)` e non
+succedeva niente.
+
+**27. Una ricarica non e' un primo carico.** Il ritorno dei dati riportava
+l'ora scelta ad "adesso" e, fallendo, sostituiva la condizione con un errore.
+Su un primo carico e' giusto; su una ricarica vuol dire sbalzare altrove chi
+stava guardando le sei di sera, e cancellare una giornata di dati validi per
+annunciare che la rete non risponde.
+
+**32. Il cielo non deve passare dalla camera.** Le stelle erano corpi come gli
+altri, sistemate con `camera.place`: girando la scultura girava anche il cielo.
+Misurato su due scatti, giro zero e giro centocinquantacinque, **non c'era una
+sola stella nello stesso posto**. Un fondo che ruota con l'oggetto davanti non
+si legge come fondo: si legge come una cupola dipinta attaccata alla scultura,
+che se la porta dietro. Adesso la posizione la decidono lo schermo e
+nient'altro, e con la camera se ne va anche `camera.scale` - senza profondita'
+non c'e' prospettiva da applicare.
+
+Vale anche come avvertimento di metodo: il commit che aveva "fermato" le stelle
+diceva *"il cielo sta fermo e le cose davanti si muovono"* e aveva tolto **solo
+il tremolio**. La frase era vera per la luminosita' e falsa per la posizione, e
+nessuno se n'e' accorto per due giri perche' lo scatto che l'avrebbe mostrato -
+`scuro-10-luna-girata` - era uno di quelli che uscivano vuoti (trappola #31).
+Due difetti che si coprivano a vicenda.
+
+**31. Aspettare una durata e' scommettere sulla rete del runner.** Dopo ogni
+riavvio dell'app la cattura aspettava che la previsione arrivasse, e l'attesa
+era un numero di secondi. Quando uno scatto usciva "IN ATTESA DEI DATI" il
+rimedio era alzarlo: otto, poi quattordici, poi diciannove. A diciannove uno
+scatto su undici e' uscito lo stesso vuoto — ed e' li' che si vede che il numero
+non era mai il problema. Adesso l'app scrive una riga di log quando la
+previsione atterra (`meteo: previsione pronta`, l'unico `Log` di tutto il
+progetto) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
+serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
+`uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
+ferma e la schermata principale anima in continuazione per scelta.
+
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
 ignorata: la pioggia usciva forte quanto il tuono. `WeatherHaptics` prova in
@@ -382,8 +622,12 @@ comunque a ogni fotogramma.
   `adb shell input swipe` non produce una velocita' di rilascio credibile, quindi
   la parte della rotazione che dipende dalla foga della mano l'ha provata solo
   chi ha il telefono
-- se la vibrazione della pioggia, un tocco ogni giro di gocce, risulti gradevole
-  o molesta dopo qualche minuto
+- se la vibrazione della pioggia, adesso **un tocco per goccia che tocca la
+  cifra** con un decimo di secondo di soglia fra l'uno e l'altro, risulti
+  gradevole o molesta dopo qualche minuto, e se la soglia vada allargata in un
+  rovescio
+- **come si legge il grado** accanto a una cifra a tre caratteri (`-10`, `100`):
+  li' il riadattamento in larghezza scatta e la cifra si rimpicciolisce
 - il **widget Glance** su una home reale (legge la localita' scelta, non provato)
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
@@ -426,6 +670,12 @@ comunque a ogni fotogramma.
 ---
 
 ## 10. Se servissero modelli 3D fatti a mano
+
+Il personaggio del benvenuto (sezione 4-bis) e' stato fatto **senza**, con le
+sfere che il motore gia' disegnava: i suoi gesti sono di parti rigide, e per
+quelli bastano una gerarchia di trasformazioni e un ordinamento in profondita'.
+Quanto segue vale per il caso diverso - una superficie che si deforma, o un
+oggetto la cui forma non si riesce a comporre con le primitive che ci sono.
 
 Oggi **non servono**: sole, luna, nuvole e cifre sono generati dal codice, e la
 cifra deve restare tale perche' cambia a ogni ora. Se pero' si volesse sostituire

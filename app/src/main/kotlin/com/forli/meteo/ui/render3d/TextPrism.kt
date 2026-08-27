@@ -62,6 +62,14 @@ class TextPrism private constructor(
          * curva col primo di un'altra.
          */
         val contourStart: IntArray,
+        /**
+         * Lo spigolo che segue, per ognuno, gia' richiuso sul proprio contorno.
+         *
+         * Serve perche' gli spigoli non si percorrono piu' nell'ordine in cui
+         * stanno scritti: si disegnano dal piu' lontano al piu' vicino, e in
+         * quell'ordine "il prossimo" non e' "quello dopo".
+         */
+        val next: IntArray,
         val edgeCount: Int,
         /**
          * Gli stessi punti campionati, in coppie x,y di seguito.
@@ -73,6 +81,18 @@ class TextPrism private constructor(
         val points: FloatArray,
         /** Il contorno vero, non campionato. */
         val outline: android.graphics.Path,
+        /**
+         * Quanto e' spesso questo carattere, in frazione dello spessore comune.
+         *
+         * Uno per le cifre. Per il grado vale quanto il suo corpo: un simbolo
+         * rimpicciolito solo in altezza e larghezza, ma lasciato spesso come una
+         * cifra, non e' piu' un simbolo - e' un tubo. Il suo anello e' largo
+         * novanta pixel e lo spessore comune ne misura centoventi: visto di
+         * sbieco usciva un pezzo di tubo appoggiato accanto al numero. Ridotto
+         * nella stessa proporzione resta la stessa lastra, ritagliata piu'
+         * piccola.
+         */
+        val depthScale: Float,
         val left: Float,
         val top: Float,
         val right: Float,
@@ -101,7 +121,17 @@ class TextPrism private constructor(
     // Contenitori riusati a ogni fotogramma e a ogni carattere: ricrearli
     // sarebbe l'unica allocazione degna di nota di tutto il disegno.
     private val maxEdges = parts.maxOf { it.edgeCount }
-    private val visible = BooleanArray(maxEdges)
+
+    /**
+     * Gli spigoli visibili, ordinabili dal piu' lontano al piu' vicino.
+     *
+     * Ogni voce impacchetta la profondita' nei trentadue bit alti e l'indice
+     * dello spigolo in quelli bassi, cosi' un solo `sort` di interi lunghi -
+     * senza allocare e senza comparatori - mette in fila le pareti. La
+     * profondita' e' un `Float` reinterpretato in modo che l'ordine dei bit
+     * coincida con l'ordine dei numeri.
+     */
+    private val order = LongArray(maxEdges)
 
     /**
      * Esposizione alla luce nel punto d'inizio di ogni spigolo, non sullo
@@ -154,7 +184,17 @@ class TextPrism private constructor(
         var outline: android.graphics.Path = android.graphics.Path(); internal set
         var matrix: Matrix = Matrix(); internal set
 
-        /** Falso quando l'oggetto e' esattamente di taglio e la base non ha superficie. */
+        /**
+         * Falso quando l'oggetto e' troppo di taglio perche' la base abbia
+         * ancora superficie.
+         *
+         * Non basta chiedersi se la matrice esiste. Avvicinandosi al quarto di
+         * giro i quattro angoli del riquadro finiscono quasi in fila, e una
+         * matrice quasi singolare esiste eccome: e' fatta di numeri enormi, e
+         * ci stampa il tracciato come una colata di strisce lunghe mezzo
+         * schermo. Sotto la soglia la base non si disegna, e non manca a
+         * nessuno: li' e' larga meno di un pelo.
+         */
         var capVisible: Boolean = true; internal set
 
         /** Esposizione della base rivolta all'occhio: cambia ruotando, ed e' meta' dell'effetto. */
@@ -181,7 +221,20 @@ class TextPrism private constructor(
     fun outlineOf(index: Int): android.graphics.Path = parts[index].outline
 
     /**
-     * La sola matrice della base di un carattere, senza costruirne le pareti.
+     * Quanto la base e' aperta verso l'occhio: uno di fronte, zero di taglio.
+     *
+     * E' il coseno fra la normale della base e la direzione di vista, e serve a
+     * due cose: sapere quando smettere di disegnare la base, e sapere quanto
+     * pesa l'ombra portata. Entrambe spariscono quando l'oggetto si mette di
+     * taglio, ed entrambe, prima di sparire, diventano garbage numerico.
+     */
+    fun openness(camera: Camera): Float {
+        camera.normal(0f, 0f, -1f)
+        return abs(camera.nvz)
+    }
+
+    /**
+     * La matrice dell'ombra portata di un carattere, senza costruirne le pareti.
      *
      * Serve a disegnare tutte le ombre prima di tutti i corpi. Disegnandole
      * insieme al proprio carattere, l'ombra di quello vicino finiva sulla faccia
@@ -189,18 +242,49 @@ class TextPrism private constructor(
      * cifra diventava sporca senza motivo apparente. L'ombra qui e' un disegno,
      * non un fenomeno: sta sul fondo, non sugli altri oggetti.
      *
-     * Scrive in [shadowTransform]. Torna falso se la base e' di taglio.
+     * **Sul piano mediano, non su una delle due basi.** Prima seguiva la base
+     * rivolta all'occhio, e quella cambia identita' al quarto di giro: nello
+     * stesso istante in cui la cifra passava di taglio, l'ombra saltava
+     * dall'altra parte dello spessore e si vedeva scattare. Il piano di mezzo
+     * non ha un davanti e un dietro, quindi attraversa il giro intero senza
+     * accorgersene - e per giunta e' il posto giusto da cui far partire
+     * un'ombra, che non e' una copia della faccia ma la proiezione del volume.
+     *
+     * Scrive in [shadowTransform]. Torna falso se non c'e' piu' superficie da
+     * proiettare.
      */
-    fun capTransform(index: Int, camera: Camera, depth: Float): Boolean {
+    fun prepareShadow(
+        index: Int,
+        camera: Camera,
+        yOffset: Float = 0f,
+        /** Quanto dietro l'oggetto cade l'ombra, in pixel di profondita'. */
+        behind: Float = 0f,
+    ): Boolean {
         val part = parts[index]
-        camera.normal(0f, 0f, -1f)
-        val zCap = if (camera.nvz < 0f) -depth / 2f else depth / 2f
         cornersLocal[0] = part.left; cornersLocal[1] = part.top
         cornersLocal[2] = part.right; cornersLocal[3] = part.top
         cornersLocal[4] = part.right; cornersLocal[5] = part.bottom
         cornersLocal[6] = part.left; cornersLocal[7] = part.bottom
+
+        // **Una proiezione, non una copia spostata.**
+        //
+        // Prima l'ombra era la faccia dell'oggetto sotto la stessa matrice,
+        // traslata di un tot sulla tela: ferma sembrava un'ombra, girata no.
+        // Ruotando, un'ombra vera cambia forma - si accorcia, si inclina, si
+        // allarga - e una copia traslata non cambia niente, quindi si legge come
+        // una seconda cifra scura appoggiata dietro la prima.
+        //
+        // Qui ogni angolo viene spinto **lungo la luce** fino al piano che sta
+        // dietro l'oggetto, e solo allora proiettato. La forma la decide la
+        // geometria, e girando cambia da sola. Costa gli stessi quattro angoli.
+        val travel = behind / SHADOW_TRAVEL_Z
         for (k in 0 until 4) {
-            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1], zCap)
+            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1] + yOffset, 0f)
+            camera.project(
+                camera.vx + SHADOW_TRAVEL_X * travel,
+                camera.vy + SHADOW_TRAVEL_Y * travel,
+                camera.vz + behind,
+            )
             cornersScreen[k * 2] = camera.sx
             cornersScreen[k * 2 + 1] = camera.sy
         }
@@ -259,10 +343,23 @@ class TextPrism private constructor(
         depth: Float,
         chamfer: Float,
         ink: Ink,
+        /**
+         * Quanto il carattere e' scostato in verticale, **in coordinate del
+         * modello**.
+         *
+         * Serve al rotolamento della cifra, e va sommato prima della
+         * proiezione e non dopo: uno scostamento applicato alla tela
+         * sposterebbe un'immagine gia' piatta, e la cifra scorrerebbe come un
+         * adesivo invece di muoversi nello spazio. E' lo stesso errore gia'
+         * bocciato una volta su questo oggetto - "sembra che si muova lo
+         * spessore e non la faccia del numero".
+         */
+        yOffset: Float = 0f,
     ): Surfaces {
         val part = parts[index]
-        val half = depth / 2f
-        val bevel = chamfer.coerceIn(0f, depth * 0.4f)
+        val thickness = depth * part.depthScale
+        val half = thickness / 2f
+        val bevel = (chamfer * part.depthScale).coerceIn(0f, thickness * 0.4f)
 
         // Girando oltre il quarto di giro si finisce a guardare l'oggetto da
         // dietro, e allora la base che si vede e' l'altra. Disegnare sempre
@@ -270,7 +367,8 @@ class TextPrism private constructor(
         // nasconderla, e la cifra sembrerebbe trasparente. Un prisma non ha un
         // davanti assoluto: ha una base rivolta all'occhio e una no.
         camera.normal(0f, 0f, -1f)
-        val frontToViewer = camera.nvz < 0f
+        val camera0z = camera.nvz
+        val frontToViewer = camera0z < 0f
         val zCap = if (frontToViewer) -half else half
         val zBevel = if (frontToViewer) -half + bevel else half - bevel
         val zBack = -zCap
@@ -279,14 +377,29 @@ class TextPrism private constructor(
         camera.normal(0f, 0f, if (frontToViewer) -1f else 1f)
         val capLambert = camera.lambert(light)
 
-        classify(part, camera, light, bevelZ)
+        val visibleCount = classify(part, camera, light, bevelZ, yOffset)
 
-        // Prima tutte le pareti, poi tutti gli smussi. Lo smusso e' piu' vicino
-        // all'occhio e deve stare sopra: mescolandoli spigolo per spigolo, la
-        // parete di uno finirebbe sopra lo smusso di un altro.
-        var n = emitRing(part, camera, zBevel, zBack, wallLambert, ink, bevel = false, at = 0)
-        if (bevel > 0f) {
-            n = emitRing(part, camera, zCap, zBevel, bevelLambert, ink, bevel = true, at = n)
+        // Dal piu' lontano al piu' vicino, parete e smusso di uno spigolo per
+        // volta.
+        //
+        // Prima gli spigoli uscivano nell'ordine in cui stanno scritti, cioe'
+        // contorno per contorno, e i vuoti del carattere sono contorni come gli
+        // altri: le pareti interne dell'8 finivano quindi *sopra* il pieno che
+        // avrebbero dovuto avere davanti. Di faccia non si notava, ma girando
+        // l'8 verso il taglio i due occhielli venivano avanti come due cilindri
+        // appoggiati sulla cifra - e non erano un artefatto dell'estrusione, era
+        // l'ordine di disegno. Ordinando per profondita' il problema sparisce
+        // alla radice, e con lui sparisce anche la regola "prima tutte le
+        // pareti, poi tutti gli smussi": lo smusso di uno spigolo lontano deve
+        // stare sotto la parete di uno vicino, non sopra, ed e' esattamente
+        // quello che l'ordine dice adesso.
+        var n = 0
+        for (k in visibleCount - 1 downTo 0) {
+            val i = (order[k] and 0xFFFFFFFFL).toInt()
+            n = emitSide(part, camera, i, zBevel, zBack, wallLambert, ink, false, n, yOffset)
+            if (bevel > 0f) {
+                n = emitSide(part, camera, i, zCap, zBevel, bevelLambert, ink, true, n, yOffset)
+            }
         }
 
         // La base per omografia: i quattro angoli del riquadro del carattere
@@ -296,7 +409,7 @@ class TextPrism private constructor(
         cornersLocal[4] = part.right; cornersLocal[5] = part.bottom
         cornersLocal[6] = part.left; cornersLocal[7] = part.bottom
         for (k in 0 until 4) {
-            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1], zCap)
+            camera.place(cornersLocal[k * 2], cornersLocal[k * 2 + 1] + yOffset, zCap)
             cornersScreen[k * 2] = camera.sx
             cornersScreen[k * 2 + 1] = camera.sy
         }
@@ -310,7 +423,7 @@ class TextPrism private constructor(
         surfaces.vertexValues = n
         surfaces.outline = part.outline
         surfaces.matrix = matrix
-        surfaces.capVisible = mapped
+        surfaces.capVisible = mapped && abs(camera0z) > MIN_CAP_OPENNESS
         surfaces.faceLambert = capLambert
         return surfaces
     }
@@ -324,19 +437,34 @@ class TextPrism private constructor(
      * spigolo, ogni faccia resterebbe di tinta piatta e la curva si leggerebbe
      * come una scalinata.
      */
-    private fun classify(part: Part, camera: Camera, light: Light, bevelZ: Float) {
+    private fun classify(
+        part: Part,
+        camera: Camera,
+        light: Light,
+        bevelZ: Float,
+        yOffset: Float,
+    ): Int {
+        var count = 0
         for (i in 0 until part.edgeCount) {
             camera.normal(part.normals[i * 2], part.normals[i * 2 + 1], 0f)
             camera.place(
                 (part.edges[i * 4] + part.edges[i * 4 + 2]) / 2f,
-                (part.edges[i * 4 + 1] + part.edges[i * 4 + 3]) / 2f,
+                (part.edges[i * 4 + 1] + part.edges[i * 4 + 3]) / 2f + yOffset,
                 0f,
             )
             // Prova di visibilita': le pareti che guardano dall'altra parte non
             // vanno disegnate, altrimenti il retro dell'oggetto verrebbe
-            // dipinto sopra il davanti.
-            visible[i] = camera.facesViewer()
+            // dipinto sopra il davanti. Quelle di spalle non entrano nemmeno
+            // nella fila: chi non si vede non costa nemmeno un posto.
+            if (camera.facesViewer()) {
+                // La profondita' del punto di mezzo dello spigolo, sul piano
+                // mediano: e' il posto giusto da cui misurare una parete, che
+                // sta a cavallo dei due piani in parti uguali.
+                order[count] = (sortable(camera.vz) shl 32) or i.toLong()
+                count++
+            }
         }
+        if (count > 1) java.util.Arrays.sort(order, 0, count)
 
         for (c in 0 until part.contourStart.size - 1) {
             val from = part.contourStart[c]
@@ -362,52 +490,51 @@ class TextPrism private constructor(
                 bevelLambert[k] = camera.lambert(light)
             }
         }
+        return count
     }
 
-    /** Una corona di quadrilateri fra due piani, spezzata in triangoli. */
-    private fun emitRing(
+    /** Il quadrilatero di uno spigolo fra due piani, spezzato in due triangoli. */
+    private fun emitSide(
         part: Part,
         camera: Camera,
+        i: Int,
         zNear: Float,
         zFar: Float,
         lambert: FloatArray,
         ink: Ink,
         bevel: Boolean,
         at: Int,
+        yOffset: Float,
     ): Int {
         var n = at
-        for (c in 0 until part.contourStart.size - 1) {
-            val from = part.contourStart[c]
-            val until = part.contourStart[c + 1]
-            for (i in from until until) {
-                if (!visible[i]) continue
-                val next = if (i + 1 == until) from else i + 1
+        val next = part.next[i]
 
-                val startColour = colourOf(lambert[i], ink, bevel)
-                val endColour = colourOf(lambert[next], ink, bevel)
+        val startColour = colourOf(lambert[i], ink, bevel)
+        val endColour = colourOf(lambert[next], ink, bevel)
 
-                camera.place(part.edges[i * 4], part.edges[i * 4 + 1], zNear)
-                val ax = camera.sx
-                val ay = camera.sy
-                camera.place(part.edges[i * 4 + 2], part.edges[i * 4 + 3], zNear)
-                val bx = camera.sx
-                val by = camera.sy
-                camera.place(part.edges[i * 4 + 2], part.edges[i * 4 + 3], zFar)
-                val cx = camera.sx
-                val cy = camera.sy
-                camera.place(part.edges[i * 4], part.edges[i * 4 + 1], zFar)
-                val dx = camera.sx
-                val dy = camera.sy
+        val y0 = part.edges[i * 4 + 1] + yOffset
+        val y1 = part.edges[i * 4 + 3] + yOffset
 
-                // a-b-c e a-c-d: il quadrilatero spezzato lungo una diagonale.
-                n = vertex(n, ax, ay, startColour)
-                n = vertex(n, bx, by, endColour)
-                n = vertex(n, cx, cy, endColour)
-                n = vertex(n, ax, ay, startColour)
-                n = vertex(n, cx, cy, endColour)
-                n = vertex(n, dx, dy, startColour)
-            }
-        }
+        camera.place(part.edges[i * 4], y0, zNear)
+        val ax = camera.sx
+        val ay = camera.sy
+        camera.place(part.edges[i * 4 + 2], y1, zNear)
+        val bx = camera.sx
+        val by = camera.sy
+        camera.place(part.edges[i * 4 + 2], y1, zFar)
+        val cx = camera.sx
+        val cy = camera.sy
+        camera.place(part.edges[i * 4], y0, zFar)
+        val dx = camera.sx
+        val dy = camera.sy
+
+        // a-b-c e a-c-d: il quadrilatero spezzato lungo una diagonale.
+        n = vertex(n, ax, ay, startColour)
+        n = vertex(n, bx, by, endColour)
+        n = vertex(n, cx, cy, endColour)
+        n = vertex(n, ax, ay, startColour)
+        n = vertex(n, cx, cy, endColour)
+        n = vertex(n, dx, dy, startColour)
         return n
     }
 
@@ -452,6 +579,54 @@ class TextPrism private constructor(
         private const val GRAZING_CENTRE = 0.44f
         private const val GRAZING_WIDTH = 0.30f
 
+        /**
+         * Sotto questa apertura la base non si disegna piu'.
+         *
+         * Poco meno di due gradi dal taglio netto. Li' la faccia e' larga una
+         * decina di pixel e non manca a nessuno, mentre la matrice che ce la
+         * porterebbe e' fatta di numeri che divergono: sono le strisce lunghe
+         * mezzo schermo che si vedevano spuntare da sotto la cifra ogni volta
+         * che passava di profilo.
+         */
+        private const val MIN_CAP_OPENNESS = 0.035f
+
+        /** Lo stacco fra le cifre e il simbolo, in frazione del corpo. */
+        private const val SYMBOL_GAP = 0.015f
+
+        /**
+         * Il verso in cui viaggia la luce, cioe' il verso in cui cade l'ombra.
+         *
+         * E' l'opposto della direzione **verso** la lampada, che e' quella che
+         * `Light` tiene. Presa da li' e non scritta a mano: cosi' spostare la
+         * luce sposta anche l'ombra, invece di lasciarle contraddirsi.
+         */
+        private val SHADOW_TRAVEL_X = -Light.Standard.x
+        private val SHADOW_TRAVEL_Y = -Light.Standard.y
+        private val SHADOW_TRAVEL_Z = -Light.Standard.z
+
+        /**
+         * Quanto e' piccolo il simbolo in coda rispetto alle cifre.
+         *
+         * Uno solo per la costruzione e per la misura: due valori uguali per
+         * caso si scollano al primo ritocco, e la cifra si troverebbe misurata
+         * con proporzioni diverse da quelle con cui viene poi costruita.
+         */
+        const val SMALL_SCALE = 0.44f
+
+        /**
+         * Un `Float` reinterpretato in un intero che si ordina allo stesso modo.
+         *
+         * I bit di un numero in virgola mobile positivo crescono con lui; quelli
+         * di un negativo calano. Ribaltando i secondi si ottiene una chiave che
+         * il confronto fra interi con segno ordina come ordinerebbe i numeri, e
+         * da li' basta un `sort` di primitivi: niente comparatori, niente
+         * scatole, niente allocazioni a ogni fotogramma.
+         */
+        private fun sortable(value: Float): Long {
+            val bits = java.lang.Float.floatToRawIntBits(value)
+            return (bits xor ((bits shr 31) and 0x7FFFFFFF)).toLong()
+        }
+
         /** Interpolazione fra due colori interi, canale per canale. */
         fun blend(from: Int, to: Int, amount: Float): Int {
             val t = amount.coerceIn(0f, 1f)
@@ -481,32 +656,25 @@ class TextPrism private constructor(
             sizePx: Float,
             letterSpacingEm: Float = 0f,
             step: Float = 5f,
+            /**
+             * Quanti caratteri finali vanno in corpo ridotto e allineati in alto.
+             *
+             * E' il grado della temperatura: appartiene alla cifra - viene
+             * estruso, illuminato e girato con lei - ma non e' una cifra, e in
+             * corpo pieno se ne prenderebbe un quarto della larghezza rubandola
+             * a quello che si deve leggere da lontano.
+             */
+            smallTail: Int = 0,
+            smallScale: Float = SMALL_SCALE,
+            variationSettings: String? = null,
         ): TextPrism? {
-            if (text.isEmpty() || sizePx <= 0f) return null
-
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                this.typeface = typeface
-                textSize = sizePx
-                letterSpacing = letterSpacingEm
-            }
-
-            // Ogni carattere al proprio posto lungo la riga, misurato dal
-            // prefisso che lo precede: cosi' la spaziatura e' quella che il font
-            // applicherebbe scrivendo la parola intera.
-            val outlines = ArrayList<android.graphics.Path>(text.length)
-            val boxes = ArrayList<RectF>(text.length)
-            val union = RectF()
-            for (i in text.indices) {
-                val path = android.graphics.Path()
-                paint.getTextPath(text, i, i + 1, paint.measureText(text, 0, i), 0f, path)
-                val box = RectF()
-                path.computeBounds(box, true)
-                if (box.width() <= 0f || box.height() <= 0f) continue
-                outlines += path
-                boxes += box
-                if (union.isEmpty) union.set(box) else union.union(box)
-            }
-            if (outlines.isEmpty() || union.width() <= 0f || union.height() <= 0f) return null
+            val laid = layout(
+                text, typeface, sizePx, letterSpacingEm, smallTail, smallScale, variationSettings,
+            ) ?: return null
+            val outlines = laid.outlines
+            val boxes = laid.boxes
+            val reduced = laid.reduced
+            val union = laid.union
 
             // Centrato sull'origine: la rotazione avviene attorno all'asse
             // verticale dell'intera scritta, non attorno a un angolo qualsiasi.
@@ -569,6 +737,21 @@ class TextPrism private constructor(
                 }
                 if (allNormals.isEmpty()) continue
                 starts += allNormals.size / 2
+
+                // Il successore di ogni spigolo, richiuso sul proprio contorno.
+                // Precalcolato una volta sola perche' in disegno gli spigoli si
+                // percorrono in ordine di profondita', e da li' non si puo' piu'
+                // sapere dove finisce il contorno a cui si appartiene.
+                val startArray = starts.toIntArray()
+                val nextArray = IntArray(allNormals.size / 2)
+                for (c in 0 until startArray.size - 1) {
+                    val from = startArray[c]
+                    val until = startArray[c + 1]
+                    for (k in from until until) {
+                        nextArray[k] = if (k + 1 == until) from else k + 1
+                    }
+                }
+
                 val box = boxes[index]
                 val edgeArray = allEdges.toFloatArray()
                 val pointArray = FloatArray(edgeArray.size / 2)
@@ -579,10 +762,12 @@ class TextPrism private constructor(
                 parts += Part(
                     edges = edgeArray,
                     normals = allNormals.toFloatArray(),
-                    contourStart = starts.toIntArray(),
+                    contourStart = startArray,
+                    next = nextArray,
                     edgeCount = allNormals.size / 2,
                     points = pointArray,
                     outline = outlines[index],
+                    depthScale = if (reduced[index]) smallScale else 1f,
                     left = box.left + shiftX,
                     top = box.top + shiftY,
                     right = box.right + shiftX,
@@ -597,6 +782,117 @@ class TextPrism private constructor(
                 height = union.height(),
             )
         }
+
+        /** I caratteri al loro posto lungo la riga, prima che diventino volume. */
+        private class Layout(
+            val outlines: List<android.graphics.Path>,
+            val boxes: List<RectF>,
+            val reduced: List<Boolean>,
+            val union: RectF,
+        )
+
+        /**
+         * Dove finisce ogni carattere, senza costruirne la geometria.
+         *
+         * E' la meta' a buon mercato del lavoro: `getTextPath` e i suoi
+         * riquadri. Quella cara viene dopo - campionare i contorni e ricavarne
+         * spigoli e normali - e chi vuole solo sapere quanto sara' larga la
+         * scritta non ha motivo di pagarla.
+         */
+        private fun layout(
+            text: String,
+            typeface: Typeface,
+            sizePx: Float,
+            letterSpacingEm: Float,
+            smallTail: Int,
+            smallScale: Float,
+            variationSettings: String?,
+        ): Layout? {
+            if (text.isEmpty() || sizePx <= 0f) return null
+
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                this.typeface = typeface
+                textSize = sizePx
+                letterSpacing = letterSpacingEm
+                // Gli assi del font variabile: peso e larghezza della cifra. Sul
+                // pennello e non sul carattere, perche' lo stesso file serve
+                // anche all'interfaccia con proporzioni diverse.
+                variationSettings?.let { fontVariationSettings = it }
+            }
+
+            // Ogni carattere al proprio posto lungo la riga. L'avanzamento si
+            // accumula carattere per carattere e non si rimisura dal prefisso:
+            // il prefisso e la coda possono avere corpi diversi, e una misura
+            // sola non saprebbe di quale dei due parlare.
+            val bigUntil = text.length - smallTail.coerceIn(0, text.length)
+            val outlines = ArrayList<android.graphics.Path>(text.length)
+            val boxes = ArrayList<RectF>(text.length)
+            val reduced = ArrayList<Boolean>(text.length)
+            val big = RectF()
+            var pen = 0f
+            for (i in text.indices) {
+                val small = i >= bigUntil
+                paint.textSize = if (small) sizePx * smallScale else sizePx
+                if (small && i == bigUntil) pen += sizePx * SYMBOL_GAP
+                val path = android.graphics.Path()
+                paint.getTextPath(text, i, i + 1, pen, 0f, path)
+                pen += paint.measureText(text, i, i + 1)
+                val box = RectF()
+                path.computeBounds(box, true)
+                if (box.width() <= 0f || box.height() <= 0f) continue
+                outlines += path
+                boxes += box
+                reduced += small
+                if (!small) {
+                    if (big.isEmpty) big.set(box) else big.union(box)
+                }
+            }
+            if (outlines.isEmpty()) return null
+
+            // Il simbolo sale a filo della cima delle cifre. Sulla linea di base
+            // resterebbe a mezza altezza, dove non si legge come esponente ma
+            // come un carattere rimpicciolito per sbaglio. Alzandolo, il
+            // riquadro complessivo resta quello delle cifre e la centratura
+            // verticale non si accorge di lui.
+            if (!big.isEmpty) {
+                for (k in outlines.indices) {
+                    if (!reduced[k]) continue
+                    val lift = big.top - boxes[k].top
+                    outlines[k].offset(0f, lift)
+                    boxes[k].offset(0f, lift)
+                }
+            }
+
+            val union = RectF()
+            for (box in boxes) {
+                if (union.isEmpty) union.set(box) else union.union(box)
+            }
+            if (union.width() <= 0f || union.height() <= 0f) return null
+
+            return Layout(outlines, boxes, reduced, union)
+        }
+
+        /**
+         * Quanto sara' larga la scritta, senza costruirla.
+         *
+         * Serve a decidere il corpo **prima** di estrarre la geometria. Chi
+         * doveva rimpicciolire una cifra troppo larga la costruiva intera, la
+         * misurava, e poi **la ricostruiva da capo**: due campionamenti di tutti
+         * i contorni per sapere un numero che si poteva avere con tre chiamate a
+         * `getTextPath`. Il valore e' esattamente quello che tornerebbe
+         * `TextPrism.of(...).width`, perche' e' lo stesso conto.
+         */
+        fun widthOf(
+            text: String,
+            typeface: Typeface,
+            sizePx: Float,
+            letterSpacingEm: Float = 0f,
+            smallTail: Int = 0,
+            smallScale: Float = SMALL_SCALE,
+            variationSettings: String? = null,
+        ): Float = layout(
+            text, typeface, sizePx, letterSpacingEm, smallTail, smallScale, variationSettings,
+        )?.union?.width() ?: 0f
 
         private fun sample(path: android.graphics.Path, step: Float): List<FloatArray> {
             val sampled = ArrayList<FloatArray>()

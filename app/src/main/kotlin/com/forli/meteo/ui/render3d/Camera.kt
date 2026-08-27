@@ -79,6 +79,23 @@ class Camera(
     }
 
     /**
+     * Proietta un punto **gia' in coordinate di vista**, senza ruotarlo.
+     *
+     * Serve a chi il punto se lo e' calcolato da se' nello spazio della vista -
+     * l'ombra portata, che prende un vertice dell'oggetto e lo spinge lungo la
+     * luce fino al piano su cui cade. Quel punto non appartiene piu' al modello,
+     * quindi ruotarlo di nuovo lo manderebbe altrove.
+     */
+    fun project(x: Float, y: Float, z: Float) {
+        vx = x
+        vy = y
+        vz = z
+        scale = distance / (distance + z).coerceAtLeast(distance * 0.2f)
+        sx = origin.x + x * scale
+        sy = origin.y + y * scale
+    }
+
+    /**
      * Vero se la superficie con l'ultima normale, nell'ultimo punto sistemato,
      * e' rivolta verso l'occhio. Con la prospettiva non basta guardare il segno
      * di z: la direzione di vista cambia da punto a punto.

@@ -4,13 +4,18 @@ import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.res.ResourcesCompat
+import com.forli.meteo.R
 import com.forli.meteo.ui.render3d.SceneContact
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -26,27 +31,31 @@ object NumberType {
     const val WEIGHT = 700
     const val WIDTH = 72
 
-    /**
-     * Typeface.Builder non accetta un identificativo di risorsa: vuole
-     * l'AssetManager e un percorso. Il font sta quindi negli assets, che per un
-     * disegno che lavora gia' a livello di android.graphics e' anche la
-     * collocazione naturale.
-     */
-    const val PATH = "fonts/archivo_variable.ttf"
+    /** Gli assi, nella forma che vuole `Paint.fontVariationSettings`. */
+    fun axes(weight: Int = WEIGHT, width: Int = WIDTH): String =
+        "'wght' $weight, 'wdth' $width"
 }
 
+/**
+ * Il carattere della cifra, preso dalle risorse.
+ *
+ * **Dalle risorse e non dagli assets**, e non e' un dettaglio: lo stesso file
+ * serve anche a tutti i testi dell'interfaccia, e Compose sa costruire una
+ * famiglia da un identificativo di risorsa **senza un contesto**. Dagli assets
+ * avrebbe voluto un `AssetManager`, quindi una famiglia costruibile solo dentro
+ * un composable, quindi uno stato da far girare per tutta l'app - oppure una
+ * seconda copia dello stesso mezzo mega di font.
+ *
+ * Gli assi variabili non stanno piu' sul `Typeface` ma sul `Paint` che lo usa:
+ * `Paint.fontVariationSettings` li applica al momento della misura, ed e'
+ * disponibile dallo stesso Android 8 che l'app dichiara come minimo.
+ */
 @Composable
-fun rememberNumberTypeface(
-    weight: Int = NumberType.WEIGHT,
-    width: Int = NumberType.WIDTH,
-): Typeface {
+fun rememberNumberTypeface(): Typeface {
     val context = LocalContext.current
-    return remember(weight, width) {
-        runCatching {
-            Typeface.Builder(context.assets, NumberType.PATH)
-                .setFontVariationSettings("'wght' $weight, 'wdth' $width")
-                .build()
-        }.getOrNull() ?: Typeface.DEFAULT_BOLD
+    return remember(context) {
+        runCatching { ResourcesCompat.getFont(context, R.font.archivo_variable) }
+            .getOrNull() ?: Typeface.DEFAULT_BOLD
     }
 }
 
@@ -65,6 +74,8 @@ fun ExtrudedText(
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.17f,
     verticalBias: Float = 0f,
+    /** Quanti caratteri finali sono un simbolo in corpo ridotto. */
+    smallTail: Int = 0,
     motion: () -> NumberMotion = { NumberMotion.Fermo },
     /** Chi vuole sapere dove l'oggetto offre superficie. Di norma la pioggia. */
     contact: SceneContact? = null,
@@ -80,18 +91,31 @@ fun ExtrudedText(
         val depthPx = with(density) { depth.toPx() }
         val availableWidthPx = with(density) { maxWidth.toPx() }
 
-        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx) {
+        val spec = remember(text, typeface, fontPx, depthPx, availableWidthPx, smallTail) {
             NumberSpec(
                 text = text,
                 typeface = typeface,
                 fontSizePx = fontPx,
                 depthPx = depthPx,
                 maxWidthPx = availableWidthPx,
+                smallTail = smallTail,
+                variationSettings = NumberType.axes(),
             )
         }
 
         val prepared = remember(spec, renderer) { renderer.prepare(spec) }
 
+        // L'entrata: la cifra sale al suo posto invece di comparirci.
+        //
+        // Una volta sola, quando l'oggetto entra in scena - cioe' quando i dati
+        // arrivano e c'e' finalmente un numero da mostrare. Scorrendo le ore non
+        // si ripete: li' il valore cambia di continuo, e un'animazione a ogni
+        // cambio non fa in tempo a finire prima di ricominciare. E' esattamente
+        // il motivo per cui il contachilometri sulle cifre e' stato tolto.
+        val entrance = remember { Animatable(ENTRANCE_LIFT) }
+        LaunchedEffect(Unit) {
+            entrance.animateTo(0f, spring(dampingRatio = 0.78f, stiffness = 170f))
+        }
 
         Canvas(
             Modifier
@@ -108,7 +132,18 @@ fun ExtrudedText(
                 palette = palette,
                 motion = motion(),
                 silhouette = contact?.skyline,
+                // Letto qui e non in composizione: l'entrata ridipinge, non
+                // ricompone.
+                lift = entrance.value,
             )
         }
     }
 }
+
+/**
+ * Da quanto in basso arriva la cifra all'entrata, in altezze di se' stessa.
+ *
+ * Un terzo, non uno: deve sembrare che si assesti, non che venga lanciata da
+ * fuori campo.
+ */
+private const val ENTRANCE_LIFT = 0.34f
