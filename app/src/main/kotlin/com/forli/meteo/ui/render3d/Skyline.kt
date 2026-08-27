@@ -84,7 +84,7 @@ class Skyline {
         return if (value == Float.MAX_VALUE) Float.NaN else value
     }
 
-    private companion object {
+    internal companion object {
         /**
          * Larghezza di una colonna. Sei pixel: piu' fine non si distingue a
          * occhio, piu' grosso e le gocce cominciano a fermarsi sul vuoto accanto

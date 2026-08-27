@@ -28,7 +28,6 @@ import androidx.core.net.toUri
 import com.forli.meteo.data.UpdateCheck
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
-import com.forli.meteo.ui.theme.overScene
 
 /**
  * L'avviso che c'e' una build piu' recente.
@@ -54,7 +53,7 @@ fun UpdateNotice(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(lerp(colors.skyBottom, colors.text, 0.12f))
+            .background(lerp(colors.background, colors.text, 0.12f))
             .clickable(
                 interactionSource = interaction,
                 indication = null,
@@ -75,7 +74,7 @@ fun UpdateNotice(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = "NUOVA VERSIONE DISPONIBILE",
-                style = MeteoType.value.overScene(colors),
+                style = MeteoType.value,
                 color = colors.text,
             )
             Text(
