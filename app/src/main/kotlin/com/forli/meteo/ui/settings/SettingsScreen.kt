@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -250,46 +252,56 @@ private fun CurrentPlace(
     onLocate: () -> Unit,
 ) {
     val colors = LocalMeteoColors.current
-    Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 14.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    // Il blocco di testo prende tutta la larghezza che avanza e "Trovami" sta
+    // a destra di tutti e tre i righi, non del solo nome. Spartendo la riga a
+    // meta' fra il nome e uno spaziatore, "AORAKI / MONTE COOK" andava a capo
+    // due volte lasciando la pastiglia sospesa in mezzo al vuoto.
+    Row(
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 14.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = place.name.uppercase(),
+                    style = MeteoType.label,
+                    color = colors.text,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                StarToggle(saved = saved, onClick = onToggleSaved)
+            }
+            if (place.detail.isNotBlank()) {
+                Text(
+                    text = place.detail.uppercase(),
+                    style = MeteoType.caption,
+                    color = colors.label,
+                )
+            }
+            // Con la virgola decimale dell'italiano "44,2226, 12,0407" si legge
+            // come quattro numeri invece che due. I gradi e i punti cardinali
+            // tolgono ogni dubbio.
             Text(
-                text = place.name.uppercase(),
-                style = MeteoType.label,
-                color = colors.text,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-            StarToggle(saved = saved, onClick = onToggleSaved)
-            Spacer(Modifier.weight(1f))
-            // "Trovami" sta sulla stessa riga del nome e non sotto: e' cio' che
-            // sostituisce quel nome, e le due cose vanno guardate insieme.
-            Pill(
-                text = when {
-                    locating -> "CERCO…"
-                    refused -> "NEGATO"
-                    else -> "TROVAMI"
-                },
-                filled = !locating && !refused,
-                enabled = !locating && !refused,
-                surfaces = surfaces,
-                onClick = onLocate,
-            )
-        }
-        if (place.detail.isNotBlank()) {
-            Text(
-                text = place.detail.uppercase(),
+                text = coordinates(place.latitude, place.longitude),
                 style = MeteoType.caption,
                 color = colors.label,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = 3.dp),
             )
         }
-        // Con la virgola decimale dell'italiano "44,2226, 12,0407" si legge
-        // come quattro numeri invece che due. I gradi e i punti cardinali
-        // tolgono ogni dubbio.
-        Text(
-            text = coordinates(place.latitude, place.longitude),
-            style = MeteoType.caption,
-            color = colors.label,
-            modifier = Modifier.padding(top = 3.dp),
+        Spacer(Modifier.width(10.dp))
+        // "Trovami" sta accanto al nome e non sotto: e' cio' che sostituisce
+        // quel nome, e le due cose vanno guardate insieme.
+        Pill(
+            text = when {
+                locating -> "CERCO…"
+                refused -> "NEGATO"
+                else -> "TROVAMI"
+            },
+            filled = !locating && !refused,
+            enabled = !locating && !refused,
+            surfaces = surfaces,
+            onClick = onLocate,
         )
     }
 }
@@ -480,13 +492,20 @@ private fun UnitSwitch(
         val radius = size.height / 2f
         val inset = size.height * 0.09f
 
-        // La scanalatura.
+        // La scanalatura: il fondo, e sopra un tratto solo con la sfumatura che
+        // va dal labbro in ombra a quello in luce.
         drawRoundRect(
             color = surfaces.recessed,
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
         )
-        drawArcLip(top = true, colour = surfaces.lipShadow, radius = radius)
-        drawArcLip(top = false, colour = surfaces.lipLight, radius = radius)
+        val lip = 1.dp.toPx()
+        drawRoundRect(
+            brush = surfaces.lip,
+            topLeft = Offset(lip / 2f, lip / 2f),
+            size = androidx.compose.ui.geometry.Size(size.width - lip, size.height - lip),
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = lip),
+        )
 
         // Il pomello, dove lo dice la molla.
         val knobWidth = (size.width - inset * 2f) / entries.size
@@ -512,28 +531,6 @@ private fun UnitSwitch(
             }
         }
     }
-}
-
-/**
- * Un filetto lungo il bordo interno della scanalatura.
- *
- * Disegnato come arco e non come riga dritta: la pillola e' tonda alle
- * estremita', e una riga dritta che si ferma prima delle curve lascia due
- * monconi visibili.
- */
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawArcLip(
-    top: Boolean,
-    colour: Color,
-    radius: Float,
-) {
-    val stroke = 1.dp.toPx()
-    drawRoundRect(
-        color = colour,
-        topLeft = Offset(0f, if (top) 0f else stroke),
-        size = androidx.compose.ui.geometry.Size(size.width, size.height - stroke),
-        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
-        style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke),
-    )
 }
 
 /**
@@ -589,11 +586,17 @@ private fun DataAccordion(fetchedAt: LocalDateTime?, surfaces: Surfaces) {
         modifier = Modifier
             .padding(horizontal = 24.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(surfaces.raised)
-            .clickable(interactionSource = interaction, indication = null) { open = !open }
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .background(surfaces.raised),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Il tocco sta sulla sola intestazione. Sull'intera colonna, aprire il
+        // blocco e poi toccare un indirizzo per leggerlo meglio lo richiudeva.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(interactionSource = interaction, indication = null) { open = !open }
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "OPEN-METEO", style = MeteoType.value, color = colors.text)
                 Text(
@@ -631,23 +634,24 @@ private fun DataAccordion(fetchedAt: LocalDateTime?, surfaces: Surfaces) {
         }
 
         if (open) {
-            Spacer(Modifier.height(14.dp))
-            SourceRow("MODELLO", "MISCELA AUTOMATICA DEI MODELLI NAZIONALI")
-            SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
-            SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
-            SourceRow(
-                "GRANDEZZE ORARIE",
-                WeatherRepository.HOURLY_VARS.replace(",", ", ").uppercase(),
-            )
-            SourceRow(
-                "GRANDEZZE GIORNALIERE",
-                WeatherRepository.DAILY_VARS.replace(",", ", ").uppercase(),
-            )
-            SourceRow("FUSO ORARIO", "QUELLO DELLA LOCALITÀ, DEDOTTO DALLE COORDINATE")
-            SourceRow("ALBA E TRAMONTO", "CALCOLATI DA OPEN-METEO PER QUESTE COORDINATE")
-            SourceRow("FASE LUNARE", "CALCOLATA NELL'APP: L'API NON LA FORNISCE")
-            SourceRow("CHIAVE D'ACCESSO", "NESSUNA: L'USO NON COMMERCIALE È LIBERO")
-            SourceRow("LICENZA DEI DATI", "CC BY 4.0", last = true)
+            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp)) {
+                SourceRow("MODELLO", "MISCELA AUTOMATICA DEI MODELLI NAZIONALI")
+                SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
+                SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
+                SourceRow(
+                    "GRANDEZZE ORARIE",
+                    WeatherRepository.HOURLY_VARS.replace(",", ", ").uppercase(),
+                )
+                SourceRow(
+                    "GRANDEZZE GIORNALIERE",
+                    WeatherRepository.DAILY_VARS.replace(",", ", ").uppercase(),
+                )
+                SourceRow("FUSO ORARIO", "QUELLO DELLA LOCALITÀ, DEDOTTO DALLE COORDINATE")
+                SourceRow("ALBA E TRAMONTO", "CALCOLATI DA OPEN-METEO PER QUESTE COORDINATE")
+                SourceRow("FASE LUNARE", "CALCOLATA NELL'APP: L'API NON LA FORNISCE")
+                SourceRow("CHIAVE D'ACCESSO", "NESSUNA: L'USO NON COMMERCIALE È LIBERO")
+                SourceRow("LICENZA DEI DATI", "CC BY 4.0", last = true)
+            }
         }
     }
 }
@@ -685,10 +689,17 @@ private class Surfaces(
     val raised: Color,
     /** Sotto il fondo: la scanalatura dell'interruttore. */
     val recessed: Color,
-    /** Il labbro in ombra della scanalatura, in alto. */
-    val lipShadow: Color,
-    /** Il labbro in luce, in basso. */
-    val lipLight: Color,
+    /**
+     * Il bordo della scanalatura: in ombra in alto, in luce in basso.
+     *
+     * Un tratto solo con una sfumatura verticale, e non due filetti
+     * sovrapposti. Due tratti chiusi si coprono a vicenda lungo le curve delle
+     * estremita', dove non c'e' un "sopra" e un "sotto" ma un giro continuo, e
+     * si vedeva il punto in cui l'uno finiva e l'altro cominciava. La sfumatura
+     * gira con la curva perche' e' il colore a dipendere dall'altezza, non il
+     * tratto a essere spezzato in due.
+     */
+    val lip: Brush,
 )
 
 @Composable
@@ -696,8 +707,14 @@ private fun rememberSurfaces(colors: MeteoColors): Surfaces = remember(colors) {
     Surfaces(
         raised = lerp(colors.background, colors.text, 0.09f),
         recessed = lerp(colors.background, Color.Black, 0.42f),
-        lipShadow = lerp(colors.background, Color.Black, 0.66f),
-        lipLight = lerp(colors.background, colors.text, 0.16f),
+        // Senza estremi espliciti la sfumatura si adatta da sola all'altezza di
+        // chi la usa, quindi si puo' costruire una volta e riusarla.
+        lip = Brush.verticalGradient(
+            listOf(
+                lerp(colors.background, Color.Black, 0.66f),
+                lerp(colors.background, colors.text, 0.18f),
+            ),
+        ),
     )
 }
 
