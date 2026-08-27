@@ -43,21 +43,6 @@ class WeatherHaptics(private val vibrator: Vibrator?, private val mode: Mode) {
         NONE,
     }
 
-    /** Un tocco leggero quando la cifra completa un giro intero. */
-    fun spin() {
-        val v = vibrator ?: return
-        val effect = when (mode) {
-            Mode.PRIMITIVE -> VibrationEffect.startComposition()
-                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, 0.35f)
-                .compose()
-            Mode.AMPLITUDE -> VibrationEffect.createOneShot(10, 22)
-            Mode.PREDEFINED -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
-            Mode.BLUNT -> VibrationEffect.createOneShot(8, VibrationEffect.DEFAULT_AMPLITUDE)
-            Mode.NONE -> return
-        }
-        runCatching { v.vibrate(effect) }
-    }
-
     /** Un tocco appena percettibile, per la goccia. */
     fun drizzle() {
         val v = vibrator ?: return

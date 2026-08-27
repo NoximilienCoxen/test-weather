@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +24,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
 import com.forli.meteo.data.SkyState
+import com.forli.meteo.data.Wind
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
@@ -61,7 +61,6 @@ fun WeatherSculpture(
     sky: SkyState,
     date: LocalDate,
     rotation: SceneRotation,
-    tilt: State<Offset>,
     /** Falso quando la schermata non e' in primo piano: allora niente vibrazione. */
     feelsIt: Boolean,
     /** Dove la cifra offre superficie alla pioggia. */
@@ -174,6 +173,15 @@ fun WeatherSculpture(
 
     val phase = remember(date) { MoonPhase.at(date) }
 
+    // Presenza uccelli: calcolata qui fuori per poterla usare sia nel clock
+    // sia nel Canvas senza ricalcolare due volte.
+    val birdsPresenceFraction = ((sky.sunPresence - 0.1f) / 0.5f).coerceIn(0f, 1f) *
+        (1f - cloudiness * 0.80f).coerceIn(0f, 1f)
+
+    // Orologio per uccelli: gira solo quando sono visibili, cosi' a notte
+    // fonda l'app non chiede fotogrammi per un cielo vuoto.
+    val skyLifeClock = rememberSceneClock(running = birdsPresenceFraction > 0.15f)
+
     Canvas(
         modifier.onGloballyPositioned { coordinates ->
             contact.rainOrigin = coordinates.positionInRoot()
@@ -181,8 +189,8 @@ fun WeatherSculpture(
     ) {
         val unit = size.minDimension
         val camera = Camera(
-            yawDeg = rotation.yawDeg + tilt.value.x * TILT_YAW,
-            pitchDeg = tilt.value.y * TILT_PITCH,
+            yawDeg = rotation.yawDeg + rotation.breathingOffset,
+            pitchDeg = 0f,
             // Piu' vicina di quella della cifra rispetto alla propria
             // dimensione: la scultura e' un oggetto piccolo tenuto vicino
             // all'occhio, e girandola la prospettiva deve sentirsi.
@@ -192,6 +200,20 @@ fun WeatherSculpture(
             origin = Offset(size.width / 2f, size.height * 0.74f),
         )
         val glare = flash.value
+
+        // Stelle: visibili di notte con cielo sereno.
+        val starsPresence = sky.moonPresence * (1f - cloudiness * 0.95f).coerceIn(0f, 1f)
+        drawStars(presence = starsPresence, clarity = 1f)
+
+        // Uccelli: presenti di giorno con cielo almeno parzialmente visibile.
+        if (birdsPresenceFraction > 0.15f) {
+            drawBirds(
+                clock = skyLifeClock,
+                presence = birdsPresenceFraction,
+                wind = Wind.CALMA,
+                colour = colors.label,
+            )
+        }
 
         // Sotto una nuvola spessa l'astro sparisce del tutto. Con una velatura
         // parziale i raggi del sole sbucavano da dietro un temporale, che e'
@@ -210,7 +232,11 @@ fun WeatherSculpture(
             sunRays(camera, bodyX, bodyY, bodyZ, bodyRadius, colors.sunCore, sunAlpha * 0.75f, far = false)
         }
 
-        val moonAlpha = clear * sky.moonPresence
+        // La luna e' un corpo solido: con la nebbia si attenua ma non sparisce
+        // mai del tutto. Minimo 0.25 quando e' presente, per mantenerla leggibile
+        // come oggetto materico anche con cielo coperto o nebbioso.
+        val moonRaw = clear * sky.moonPresence
+        val moonAlpha = if (sky.moonPresence > 0.05f) moonRaw.coerceAtLeast(0.25f * sky.moonPresence) else moonRaw
         if (moonAlpha > 0.01f) {
             moon(
                 camera = camera,
@@ -568,5 +594,3 @@ internal fun Wmo.Family.isWet(): Boolean =
     this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
 
 private const val FALL_CYCLE_MS = 1400L
-private const val TILT_YAW = 7f
-private const val TILT_PITCH = 5f

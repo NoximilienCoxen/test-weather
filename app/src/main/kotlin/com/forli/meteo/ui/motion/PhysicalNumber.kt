@@ -1,9 +1,7 @@
 package com.forli.meteo.ui.motion
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import com.forli.meteo.ui.render.ExtrudedText
 import com.forli.meteo.ui.render.NumberMotion
@@ -25,7 +23,6 @@ fun PhysicalNumber(
     text: String,
     fontSize: Dp,
     rotation: SceneRotation,
-    tilt: State<Offset>,
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.17f,
     verticalBias: Float = 0f,
@@ -39,15 +36,12 @@ fun PhysicalNumber(
         verticalBias = verticalBias,
         contact = contact,
         motion = {
-            // L'inclinazione del telefono aggiunge poco, ed e' giusto cosi': e'
-            // il respiro dell'oggetto in mano, non un secondo comando.
+            // Il respiro idle viene da SceneRotation.breathingOffset, letto
+            // qui dentro il draw: nessuna ricomposizione, solo ridisegno.
             NumberMotion(
-                yawDeg = rotation.yawDeg + tilt.value.x * TILT_YAW,
-                pitchDeg = tilt.value.y * TILT_PITCH,
+                yawDeg = rotation.yawDeg + rotation.breathingOffset,
+                pitchDeg = 0f,
             )
         },
     )
 }
-
-private const val TILT_YAW = 7f
-private const val TILT_PITCH = 5f

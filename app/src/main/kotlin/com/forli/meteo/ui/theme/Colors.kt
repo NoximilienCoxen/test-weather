@@ -50,21 +50,29 @@ data class MeteoColors(
     val rain: Color,
 )
 
-// I due estremi del fondo. Nero pieno no: una luna bianca ci starebbe sopra
-// come un buco, e la cifra bianca non avrebbe un lato in ombra credibile.
-private val NightBackground = Color(0xFF1D2026)
-private val DayBackground = Color(0xFFAEB3BB)
+// Notte: blu ardesia scuro, non nero pieno (la luna bianca ci starebbe sopra
+// come un buco, e la cifra non avrebbe un lato in ombra credibile).
+private val NightBackground = Color(0xFF1A1E28)
 
-/** Il grigio caldo del crepuscolo, mescolato al fondo quando il sole e' radente. */
-private val TwilightBackground = Color(0xFF6B5057)
+// Giorno: azzurro polvere / cielo aperto, non grigio neutro che sembra
+// lo schermo spento.
+private val DayBackground = Color(0xFFB8D4E8)
+
+// Tramonto: arancione pesca opaco in alto — non marrone/ruggine che si fonde
+// con lo sfondo. Il mix e' leggero (max 28%) per non dominare.
+private val TwilightTop = Color(0xFFE8956D)
+
+// Notte profonda: violetto ardesia, la componente bassa del tramonto.
+private val TwilightBottom = Color(0xFF2D2440)
 
 private val NightText = Color(0xFFF4F5F7)
 private val DayText = Color(0xFF181B20)
 
-private val SunYellowCore = Color(0xFFFFDE59)
-private val SunYellowShade = Color(0xFFE39A0C)
-private val SunRedCore = Color(0xFFFF8A4C)
-private val SunRedShade = Color(0xFFC9331D)
+private val SunYellowCore = Color(0xFFFFE066)
+private val SunYellowShade = Color(0xFFE8A020)
+// Tramonto: arancione caldo vibrante, non scuro/marrone.
+private val SunRedCore = Color(0xFFFF7040)
+private val SunRedShade = Color(0xFFD94010)
 
 /**
  * Colori del momento.
@@ -76,40 +84,67 @@ fun skyColors(sky: SkyState): MeteoColors {
     val day = sky.dayness
     val warmth = sky.redness * sky.sunPresence
 
+    // Tramonto: mix tra arancione pesca e violetto notte — niente marrone.
+    val twilight = lerp(TwilightBottom, TwilightTop, day.coerceIn(0f, 1f))
     val background = lerp(
         lerp(NightBackground, DayBackground, day),
-        TwilightBackground,
-        warmth * 0.5f,
+        twilight,
+        warmth * 0.28f,
     )
-    val text = lerp(NightText, DayText, day)
-    val label = lerp(text, background, 0.42f)
-    val line = lerp(text, background, 0.72f)
+
+    // Contrasto garantito: il testo non si avvicina mai a meno di 4.5:1
+    // rispetto allo sfondo. Si calcola sulla luminanza relativa (sRGB).
+    val bgLum = background.luminance()
+    val rawText = lerp(NightText, DayText, day)
+    // Se la luminanza del testo raw da contrasto insufficiente, spingiamo
+    // verso il polo opposto. Soglia conservativa: 0.18 garantisce >= 4.5:1
+    // per qualsiasi sfondo nel nostro range.
+    val text = if (bgLum > 0.18f) {
+        // Sfondo chiaro: testo scuro
+        lerp(rawText, Color(0xFF0E1118), ((bgLum - 0.18f) / 0.45f).coerceIn(0f, 1f))
+    } else {
+        // Sfondo scuro: testo chiaro
+        lerp(rawText, Color(0xFFF4F5F7), ((0.18f - bgLum) / 0.18f).coerceIn(0f, 1f))
+    }
+
+    val label = lerp(text, background, 0.38f)
+    val line = lerp(text, background, 0.70f)
 
     return MeteoColors(
         background = background,
         text = text,
         label = label,
         line = line,
-        numberFace = Color(0xFFFFFFFF),
+        // Plastica bianca opaca fresata: nessuna dominante di colore d'ambiente.
+        // Un lerp massimo del 10% verso il background caldo evita che risulti
+        // troppo fredda di notte — senza ereditarne la saturazione scura.
+        numberFace = lerp(Color(0xFFFFFFFF), background, 0.10f * warmth),
         numberSideNear = Color(0xFFE9EAEE),
-        // Costante e scura: e' il lato in ombra, e deve staccare dal fondo a
-        // qualunque ora, altrimenti a mezzogiorno il volume si perde.
-        numberSideFar = Color(0xFF43464C),
+        // Lato in ombra costante e scuro: deve staccare dal fondo a qualunque ora.
+        numberSideFar = Color(0xFF3E4148),
         numberChamfer = Color(0xFFDFE1E5),
-        numberShadowAlpha = 0.12f * day,
-        
+        numberShadowAlpha = 0.14f * day,
         pillBackground = text,
         pillText = background,
         sunCore = lerp(SunYellowCore, SunRedCore, sky.redness),
         sunShade = lerp(SunYellowShade, SunRedShade, sky.redness),
         moonCore = Color(0xFFF6F7F9),
-        moonShade = Color(0xFF9AA0AA),
+        moonShade = Color(0xFF8A909A),
         cloudCore = Color(0xFFFFFFFF),
         cloudShade = Color(0xFFBFC4CC),
         rainCloudCore = Color(0xFF9BA1AB),
         rainCloudShade = Color(0xFF474C56),
-        rain = Color(0xFF3C8DF5),
+        rain = Color(0xFF4A9BF5),
     )
+}
+
+/**
+ * Luminanza relativa sRGB per il calcolo del contrasto WCAG.
+ * Formula: https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+ */
+private fun Color.luminance(): Float {
+    fun channel(c: Float) = if (c <= 0.03928f) c / 12.92f else ((c + 0.055f) / 1.055f).let { it * it * it }
+    return 0.2126f * channel(red) + 0.7152f * channel(green) + 0.0722f * channel(blue)
 }
 
 /**

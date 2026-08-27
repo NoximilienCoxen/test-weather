@@ -179,7 +179,7 @@ private class Bird(
     val flap: Float,
 )
 
-private val BIRDS: List<Bird> = List(9) { i ->
+private val BIRDS: List<Bird> = List(14) { i ->
     val r = Random(i * 2311 + 7)
     Bird(
         // Solo nella fascia alta. Scendendo fino a meta' schermo finivano
