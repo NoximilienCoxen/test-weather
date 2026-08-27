@@ -3,10 +3,12 @@ package com.forli.meteo.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
@@ -36,11 +38,15 @@ data class UiState(
     val forcedWeatherCode: Int? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    val model: WeatherModel = WeatherModel.AUTO,
+    val favorites: List<Place> = emptyList(),
     val settingsOpen: Boolean = false,
     val query: String = "",
     val searching: Boolean = false,
     val results: List<Place> = emptyList(),
     val searchError: String? = null,
+    val locating: Boolean = false,
+    val locationError: String? = null,
 ) {
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -91,10 +97,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             prefs.settings.collect { settings ->
                 val current = _state.value
                 val moved = current.place != settings.place
-                _state.update { it.copy(place = settings.place, unit = settings.unit) }
-                // Cambiare unita' non deve costare una richiesta: la conversione
-                // e' solo scrittura. Cambiare posto invece cambia tutto.
-                if (moved || current.forecast == null) refresh()
+                val modelChanged = current.model != settings.model
+                _state.update {
+                    it.copy(
+                        place = settings.place,
+                        unit = settings.unit,
+                        model = settings.model,
+                        favorites = settings.favorites,
+                    )
+                }
+                // Cambiare unita' o preferiti non deve costare una richiesta:
+                // sono solo scrittura/visualizzazione. Cambiare posto o modello
+                // invece cambia i dati da chiedere.
+                if (moved || modelChanged || current.forecast == null) refresh()
             }
         }
     }
@@ -111,9 +126,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(loading = true, error = null) }
         loading?.cancel()
         val place = _state.value.place
+        val model = _state.value.model
         loading = viewModelScope.launch {
             var wait = FIRST_RETRY_MS
-            val repository = WeatherRepository(place)
+            val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
                 val outcome = repository.load()
                 outcome
@@ -190,6 +206,49 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         // aprire Singapore fermi sull'ora di Forli'.
         pendingHour = null
         viewModelScope.launch { prefs.setPlace(place) }
+    }
+
+    fun setModel(model: WeatherModel) {
+        viewModelScope.launch { prefs.setModel(model) }
+    }
+
+    fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    /**
+     * Chiede la posizione al dispositivo. Stessa forma del callback
+     * `onLocate` gia' definito in `WelcomeScreen`: chi chiama decide se puo'
+     * ancora chiedere il permesso (`canAsk`) e cosa fare se serve chiederlo
+     * (`onNeedsPermission`, che tipicamente apre il dialogo di sistema).
+     * `DeviceLocation` non lancia mai: ogni esito e' un `Outcome`, mai
+     * un'eccezione che chiuderebbe l'app.
+     */
+    fun locate(canAsk: Boolean, onNeedsPermission: () -> Unit) {
+        _state.update { it.copy(locating = true, locationError = null) }
+        viewModelScope.launch {
+            when (val outcome = DeviceLocation.current(getApplication<Application>())) {
+                is DeviceLocation.Outcome.Found -> {
+                    pendingHour = null
+                    prefs.setPlace(outcome.place)
+                    _state.update { it.copy(locating = false) }
+                }
+                DeviceLocation.Outcome.NeedsPermission -> {
+                    _state.update { it.copy(locating = false) }
+                    if (canAsk) {
+                        onNeedsPermission()
+                    } else {
+                        _state.update { it.copy(locationError = "PERMESSO NEGATO") }
+                    }
+                }
+                DeviceLocation.Outcome.Unavailable -> _state.update {
+                    it.copy(locating = false, locationError = "POSIZIONE NON DISPONIBILE")
+                }
+                DeviceLocation.Outcome.Timeout -> _state.update {
+                    it.copy(locating = false, locationError = "TEMPO SCADUTO")
+                }
+            }
+        }
     }
 
     /**
