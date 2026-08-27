@@ -273,6 +273,13 @@ adb shell am start -n com.forli.meteo/.MainActivity \
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
 | `--ez benvenuto false` | salta la schermata di benvenuto |
+| `--ei vento N` | impone il vento a N metri al secondo, zero compreso |
+
+**`--ei vento 0` serve a chiedere la bonaccia.** Con un codice imposto l'app
+impone anche il vento, perche' una scena costruita deve essere inclinata come
+le altre; ma senza un modo di spegnerlo nessuno stato di prova e' fermo, e la
+misura dei fotogrammi a riposo riporta fedelmente che l'app disegna sempre -
+avendo ragione, perche' l'aggancio le sta dicendo che tira vento.
 
 **Il terzo non e' opzionale in cattura.** Il benvenuto compare al primo avvio e
 si mette davanti a tutto: senza saltarlo, la CI fotografa dodici volte la stessa

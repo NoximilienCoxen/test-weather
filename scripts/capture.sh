@@ -221,9 +221,12 @@ misura() {
 }
 
 echo "== fotogrammi a riposo ==" | tee "$OUT/prestazioni.txt"
-misura "sereno (fermo)"   "--ei meteo 0"
-misura "coperto (fermo)"  "--ei meteo 3"
-misura "notte (fermo)"    "--ei ora 2 --ei meteo 3"
+# `--ei vento 0` non e' un dettaglio: con una condizione imposta l'app impone
+# anche il vento, e senza spegnerlo nessuno di questi stati sarebbe fermo.
+misura "coperto (fermo)"  "--ei meteo 3 --ei vento 0"
+misura "notte (fermo)"    "--ei ora 2 --ei meteo 3 --ei vento 0"
+misura "coperto ventoso"  "--ei meteo 3 --ei vento 10"
+misura "sereno di giorno" "--ei meteo 0 --ei vento 0"
 misura "pioggia"          "--ei meteo 63"
 misura "neve"             "--ei meteo 75"
 misura "nebbia"           "--ei meteo 45"

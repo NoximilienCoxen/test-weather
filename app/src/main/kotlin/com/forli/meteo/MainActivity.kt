@@ -54,11 +54,24 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         if (!intent.getBooleanExtra(EXTRA_WELCOME, true)) viewModel.skipWelcome()
+        intent.getIntExtra(EXTRA_WIND, -1).takeIf { it >= 0 }
+            ?.let { viewModel.forceWind(it.toFloat()) }
     }
 
     private companion object {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
+
+        /**
+         * `--ei vento N` impone il vento a N metri al secondo, zero compreso.
+         *
+         * Serve a poter chiedere la bonaccia. Con una condizione imposta il
+         * vento viene imposto anche lui, e senza un modo di spegnerlo nessuno
+         * stato di prova risultava fermo: la misura dei fotogrammi a riposo
+         * riportava fedelmente che l'app disegnava sempre, e aveva ragione,
+         * perche' l'aggancio le stava dicendo che tirava vento.
+         */
+        const val EXTRA_WIND = "vento"
 
         /**
          * `--ez benvenuto false` salta la schermata di benvenuto.
