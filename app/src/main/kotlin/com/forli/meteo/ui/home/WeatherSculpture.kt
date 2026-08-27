@@ -32,6 +32,7 @@ import com.forli.meteo.ui.motion.TILT_YAW_DEGREES
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
 import com.forli.meteo.ui.render3d.Camera
 import com.forli.meteo.ui.render3d.SceneContact
+import com.forli.meteo.ui.render3d.hazeMass
 import com.forli.meteo.ui.render3d.moon
 import com.forli.meteo.ui.render3d.sphere
 import com.forli.meteo.ui.render3d.sunRays
@@ -329,11 +330,10 @@ private val CLOUD_MASSES = listOf(
  * uno spessore.
  */
 private val DISTANT_MASSES = listOf(
-    Lump(-0.36f, -0.38f, 0.30f, 0.12f),
-    Lump(-0.14f, -0.44f, 0.40f, 0.10f),
-    Lump(0.24f, -0.41f, 0.36f, 0.13f),
-    Lump(0.40f, -0.35f, 0.24f, 0.11f),
-    Lump(0.04f, -0.48f, 0.46f, 0.11f),
+    Lump(-0.33f, -0.34f, 0.28f, 0.22f),
+    Lump(-0.06f, -0.40f, 0.38f, 0.20f),
+    Lump(0.26f, -0.36f, 0.32f, 0.23f),
+    Lump(0.42f, -0.30f, 0.20f, 0.18f),
 )
 
 /**
@@ -449,7 +449,7 @@ private fun DrawScope.drawClouds(
                 camera.vz
             }
             .forEach { lump ->
-                sphere(
+                hazeMass(
                     camera = camera,
                     // Piu' lontano, meno lo sposta il vento: e' il modo in cui
                     // la parallasse racconta la distanza senza dichiararla.
@@ -457,13 +457,8 @@ private fun DrawScope.drawClouds(
                     y = lump.y * unit * scale,
                     z = lump.z * unit * scale,
                     radius = lump.radius * unit * scale,
-                    light = distant,
-                    dark = lerp(distant, dark, 0.30f),
-                    // Molto piu' tenue di prima. All'ottantacinque per cento non
-                    // si leggevano come nuvole lontane: si leggevano come palle
-                    // azzurre semitrasparenti spuntate da dietro quella vera -
-                    // cioe' proprio la geometria a bolle che va evitata.
-                    alpha = presence * depth * 0.45f,
+                    colour = distant,
+                    alpha = presence * depth * 0.50f,
                 )
             }
     }
