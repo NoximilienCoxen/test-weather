@@ -472,14 +472,24 @@ quello del thread di rendering, cioe' i pixel riempiti.
 |---|---|---|
 | coperto, aria ferma | **nessun fotogramma** | |
 | notte, aria ferma | **nessun fotogramma** | |
-| coperto con vento | 1,1 ms | 4,4 ms |
-| sereno di giorno | 2,3 ms | 5,7 ms |
-| pioggia | 4,1 ms | 6,1 ms |
-| neve | 1,1 ms | 4,4 ms |
-| nebbia | 4,1 ms | 3,7 ms |
-| temporale | 3,9 ms | 4,2 ms |
-| rotazione, sereno | 1,1 ms | 2,7 ms |
-| rotazione, neve | 4,2 ms | 10,0 ms |
+| coperto con vento | 1,5 ms | 3,8 ms |
+| sereno di giorno | 2,0 ms | 3,9 ms |
+| pioggia | 0,8 ms | 5,1 ms |
+| neve | 1,6 ms | 5,6 ms |
+| nebbia | 3,6 ms | 4,6 ms |
+| temporale | 0,9 ms | 4,6 ms |
+| rotazione, sereno | 1,8 ms | 5,6 ms |
+| rotazione, neve | 1,9 ms | 7,6 ms |
+
+Prima della passata sulle allocazioni e sull'ombra portata, gli stessi stati
+davano fino a 4,2 ms di interfaccia e 10,0 di rendering nel caso peggiore. Le
+tre cose che hanno spostato l'ago, in ordine di quanto:
+
+1. **l'ombra portata della cifra**, che con la tavolozza scura era invisibile e
+   veniva disegnata lo stesso;
+2. **la nebbia da cinque banchi a tre**, che era riempimento puro;
+3. **le allocazioni nel disegno**: liste e chiavi incapsulate dell'ordinamento,
+   camere, tracciati e pennelli.
 
 **Le percentuali di `gfxinfo` non si usano qui, e non e' una dimenticanza.** Su
 swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo: riporta
