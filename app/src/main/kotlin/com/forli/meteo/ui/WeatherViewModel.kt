@@ -13,6 +13,7 @@ import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -410,22 +411,40 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         locating?.cancel()
         _state.update { it.copy(locating = true, locationUnavailable = false) }
         locating = viewModelScope.launch {
-            val found = DeviceLocation.current(getApplication<Application>())
-            if (found == null) {
-                // Permesso negato, posizione spenta, o nessun rilevamento in
-                // tempo utile. Si resta dove si era: e' l'unica risposta utile,
-                // e riprovare da soli sarebbe insistere.
-                // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
-                // all'avvio che non riesce non deve mettere un avviso davanti a
-                // chi non ha chiesto niente.
+            // Tutto qui dentro parla col sistema operativo o col disco - il
+            // gestore di posizione, il geocoder, e infine la scrittura su
+            // DataStore. Nessuno di questi e' garantito: un file delle
+            // preferenze corrotto, per dire, fa fallire `prefs.setPlace` con
+            // un'eccezione che altrimenti risalirebbe non presa fino a far
+            // cadere l'app. E' la stessa filosofia di "permesso negato non e'
+            // un errore" applicata a tutta la catena, non solo al permesso.
+            try {
+                val found = DeviceLocation.current(getApplication<Application>())
+                if (found == null) {
+                    // Permesso negato, posizione spenta, o nessun rilevamento in
+                    // tempo utile. Si resta dove si era: e' l'unica risposta utile,
+                    // e riprovare da soli sarebbe insistere.
+                    // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
+                    // all'avvio che non riesce non deve mettere un avviso davanti a
+                    // chi non ha chiesto niente.
+                    _state.update { it.copy(locating = false, locationUnavailable = explicit) }
+                    return@launch
+                }
+                _state.update { it.copy(locating = false, locationUnavailable = false) }
+                // Da qui in poi comanda il flusso delle preferenze, come per una
+                // localita' scelta a mano: una sola strada per cambiare posto.
+                pendingHour = null
+                prefs.setPlace(found, following = true)
+            } catch (e: CancellationException) {
+                // Un tentativo nuovo ha appena cancellato questo (vedi
+                // `locating?.cancel()` sopra): non e' un fallimento, e va
+                // rilanciata, non inghiottita - altrimenti la cancellazione
+                // strutturata smette di funzionare.
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Localizzazione non riuscita", e)
                 _state.update { it.copy(locating = false, locationUnavailable = explicit) }
-                return@launch
             }
-            _state.update { it.copy(locating = false, locationUnavailable = false) }
-            // Da qui in poi comanda il flusso delle preferenze, come per una
-            // localita' scelta a mano: una sola strada per cambiare posto.
-            pendingHour = null
-            prefs.setPlace(found, following = true)
         }
     }
 
