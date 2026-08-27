@@ -458,9 +458,19 @@ private class FogBand(
 )
 
 private val FOG_BANDS = listOf(
-    FogBand(0.52f, 1.9f, 0.30f, 0.30f, 0.10f, 0.09f, 0.043f, 0.0f),
-    FogBand(0.64f, 2.2f, 0.34f, 0.36f, 0.35f, 0.13f, 0.031f, 2.1f),
-    FogBand(0.76f, 2.0f, 0.30f, 0.44f, 0.62f, 0.17f, 0.052f, 4.3f),
-    FogBand(0.88f, 2.6f, 0.38f, 0.54f, 0.85f, 0.22f, 0.038f, 1.2f),
-    FogBand(1.00f, 2.8f, 0.44f, 0.62f, 1.00f, 0.27f, 0.026f, 5.6f),
+    FogBand(0.58f, 2.2f, 0.42f, 0.34f, 0.20f, 0.11f, 0.043f, 0.0f),
+    FogBand(0.80f, 2.5f, 0.46f, 0.48f, 0.60f, 0.17f, 0.031f, 2.1f),
+    FogBand(1.00f, 2.9f, 0.52f, 0.62f, 1.00f, 0.25f, 0.052f, 4.3f),
 )
+
+/*
+ * Tre banchi e non cinque, piu' alti e piu' larghi.
+ *
+ * Ognuno e' un ovale largo due volte e mezzo lo schermo con dentro una
+ * sfumatura: e' riempimento puro, ed e' l'unica parte della scena il cui costo
+ * non dipende da quanta geometria c'e' ma da quanti pixel copre. Cinque banchi
+ * erano cinque volte lo schermo ridipinte a ogni fotogramma, e infatti la
+ * nebbia risultava lo stato piu' pesante di tutti. A occhio la differenza non
+ * si vede - a distinguere i banchi e' che derivano a velocita' diverse, non
+ * quanti sono - e il riempimento cala di quasi la meta'.
+ */
