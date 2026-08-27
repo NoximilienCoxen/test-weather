@@ -111,19 +111,16 @@ fun HourBar(
 
         // Ritaglio sulla pista arrotondata e poi dipingo le ore dentro: cosi'
         // gli estremi sono tondi senza dover coprire nulla.
-        // Riusata: la pista cambia forma solo quando cambia la dimensione del
-        // riquadro, mentre il disegno si ripete a ogni scorrimento dell'ora.
-        val track = TRACK_PATH
-        track.reset()
-        track.addRoundRect(
-            RoundRect(
-                rect = Rect(0f, top, size.width, top + trackHeight),
-                cornerRadius = CornerRadius(radius, radius),
-            ),
-        )
+        val track = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    rect = Rect(0f, top, size.width, top + trackHeight),
+                    cornerRadius = CornerRadius(radius, radius),
+                ),
+            )
+        }
         clipPath(track) {
-            for (index in hours.indices) {
-                val hour = hours[index]
+            hours.forEachIndexed { index, hour ->
                 drawRect(
                     color = tintOf(hour, colors),
                     topLeft = Offset(index * slot, top),
@@ -180,9 +177,6 @@ private fun tintOf(hour: HourForecast, colors: MeteoColors): Color {
     // La notte smorza, cosi' la striscia racconta anche il passare del giorno.
     return if (hour.isDay) base else base.copy(alpha = base.alpha * 0.55f)
 }
-
-/** La pista della barra, riusata: vedi la nota nel disegno. */
-private val TRACK_PATH = Path()
 
 internal fun nearestHourIndex(hours: List<HourForecast>, target: java.time.LocalDateTime): Int {
     if (hours.isEmpty()) return 0

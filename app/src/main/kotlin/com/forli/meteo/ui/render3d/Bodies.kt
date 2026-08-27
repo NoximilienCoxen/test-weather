@@ -9,21 +9,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.toArgb
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
-
-/**
- * La sagoma della parte illuminata della luna, riusata a ogni fotogramma.
- *
- * Il disegno di Compose gira sul filo principale e la luna e' una sola: non ci
- * sono due chiamate che se la contendano nello stesso istante.
- */
-private val MoonPath = Path()
 
 /**
  * I corpi tondi della scultura - sole, luna, masse della nuvola - visti dalla
@@ -42,14 +33,7 @@ private val LightOnScreen: Offset = run {
     Offset(l.x / len, l.y / len)
 }
 
-/**
- * Una sfera opaca: un gradiente radiale col centro spostato verso la luce.
- *
- * Il pennello arriva da fuori. Costruirlo qui dentro voleva dire un oggetto per
- * sfera e per fotogramma - fino a nove, cioe' oltre cinquecento al secondo - e
- * quasi sempre identico al precedente, perche' fra un fotogramma e l'altro una
- * nuvola si sposta di frazioni di pixel.
- */
+/** Una sfera opaca: un gradiente radiale col centro spostato verso la luce. */
 fun DrawScope.sphere(
     camera: Camera,
     x: Float,
@@ -59,136 +43,23 @@ fun DrawScope.sphere(
     light: Color,
     dark: Color,
     alpha: Float = 1f,
-    brushes: SphereBrushes? = null,
-    slot: Int = 0,
 ) {
     if (alpha <= 0.003f) return
     camera.place(x, y, z)
     val r = radius * camera.scale
     if (r <= 0.5f) return
     val centre = Offset(camera.sx, camera.sy)
-    val focus = centre + LightOnScreen * (r * 0.44f)
-    val brush = brushes?.radial(slot, light, dark, focus, r * 1.75f)
-        ?: Brush.radialGradient(
+    drawCircle(
+        brush = Brush.radialGradient(
             colors = listOf(light, dark),
-            center = focus,
+            center = centre + LightOnScreen * (r * 0.44f),
             radius = r * 1.75f,
-        )
-    drawCircle(brush = brush, radius = r, center = centre, alpha = alpha)
-}
-
-/**
- * Pennelli a sfumatura riusati, uno per posto.
- *
- * Ogni corpo della scena ha il proprio posto fisso, quindi non serve nessuna
- * ricerca: si legge un vettore all'indice del corpo. Il pennello viene rifatto
- * solo se i colori cambiano - cioe' al cambio d'ora - oppure se il centro o il
- * raggio si sono mossi di piu' di un pixel, che sotto quella soglia non
- * produrrebbe comunque un disegno diverso.
- */
-@androidx.compose.runtime.Stable
-class SphereBrushes(slots: Int) {
-
-    private val brush = arrayOfNulls<Brush>(slots)
-    private val tint = IntArray(slots)
-    private val cx = FloatArray(slots)
-    private val cy = FloatArray(slots)
-    private val rr = FloatArray(slots)
-
-    /** Come [radial], ma per le masse d'aria: la chiave comprende l'opacita'. */
-    fun haze(slot: Int, colour: Color, alpha: Float, centre: Offset, radius: Float): Brush {
-        val key = colour.toArgb() * 31 + (alpha * 255f).toInt()
-        val cached = brush[slot]
-        if (cached != null && tint[slot] == key && unmoved(slot, centre, radius)) return cached
-        val built = hazeBrush(colour, alpha, centre, radius)
-        store(slot, built, key, centre, radius)
-        return built
-    }
-
-    fun radial(slot: Int, light: Color, dark: Color, centre: Offset, radius: Float): Brush {
-        val key = light.toArgb() * 31 + dark.toArgb()
-        val cached = brush[slot]
-        if (cached != null && tint[slot] == key && unmoved(slot, centre, radius)) return cached
-        val built = Brush.radialGradient(
-            0f to light,
-            1f to dark,
-            center = centre,
-            radius = radius,
-        )
-        store(slot, built, key, centre, radius)
-        return built
-    }
-
-    /**
-     * Sotto il pixel il disegno non cambia, quindi il pennello nemmeno.
-     *
-     * Senza questa tolleranza il pennello si rifarebbe comunque a ogni
-     * fotogramma: fra l'uno e l'altro una nuvola si sposta di frazioni di
-     * pixel, e un confronto esatto non e' mai vero.
-     */
-    private fun unmoved(slot: Int, centre: Offset, radius: Float): Boolean =
-        abs(centre.x - cx[slot]) <= 1f &&
-            abs(centre.y - cy[slot]) <= 1f &&
-            abs(radius - rr[slot]) <= 1f
-
-    private fun store(slot: Int, built: Brush, key: Int, centre: Offset, radius: Float) {
-        brush[slot] = built
-        tint[slot] = key
-        cx[slot] = centre.x
-        cy[slot] = centre.y
-        rr[slot] = radius
-    }
-}
-
-/**
- * Una massa d'aria: un corpo **senza bordo**.
- *
- * Serve allo strato di nuvole lontane, e la differenza con [sphere] non e' di
- * grado ma di natura. Una sfera e' un disco a contorno netto con dentro un
- * gradiente: da vicino e' una nuvola, da lontano e al venti per cento di
- * opacita' resta un **cerchio**, e cinque cerchi in fila si leggono come una
- * collana di bolle - lo si e' visto ruotando la scena, dove la parallasse li
- * staccava dalla massa principale e li mostrava per quello che erano.
- *
- * Qui il gradiente arriva fino a trasparente prima del raggio, quindi non c'e'
- * nessun punto in cui il colore si interrompe. Non ha volume e non deve averlo:
- * a quella distanza il volume non si vedrebbe comunque, e cio' che racconta la
- * lontananza e' proprio il fatto che i contorni si siano persi.
- */
-fun DrawScope.hazeMass(
-    camera: Camera,
-    x: Float,
-    y: Float,
-    z: Float,
-    radius: Float,
-    colour: Color,
-    alpha: Float = 1f,
-    brushes: SphereBrushes? = null,
-    slot: Int = 0,
-) {
-    if (alpha <= 0.003f) return
-    camera.place(x, y, z)
-    val r = radius * camera.scale
-    if (r <= 1f) return
-    val centre = Offset(camera.sx, camera.sy)
-    val focus = centre + LightOnScreen * (r * 0.22f)
-    val brush = brushes?.haze(slot, colour, alpha, focus, r) ?: hazeBrush(colour, alpha, focus, r)
-    drawCircle(brush = brush, radius = r, center = centre)
-}
-
-/**
- * Il nucleo pieno occupa poco piu' di meta' del raggio, poi si spegne: e' quella
- * coda a mangiare il bordo, ed e' cio' che distingue una massa d'aria da una
- * sfera.
- */
-private fun hazeBrush(colour: Color, alpha: Float, centre: Offset, radius: Float): Brush =
-    Brush.radialGradient(
-        0f to colour.copy(alpha = alpha),
-        0.45f to colour.copy(alpha = alpha * 0.62f),
-        1f to colour.copy(alpha = 0f),
+        ),
+        radius = r,
         center = centre,
-        radius = radius,
+        alpha = alpha,
     )
+}
 
 /**
  * La luna: solo la parte illuminata, sezionata dalla mediana della fase.
@@ -223,13 +94,13 @@ fun DrawScope.moon(
     val disc = Rect(centre.x - r, centre.y - r, centre.x + r, centre.y + r)
     val inner = Rect(centre.x - r * terminator, centre.y - r, centre.x + r * terminator, centre.y + r)
 
-    val lit = MoonPath
-    lit.reset()
-    // Semicerchio dal lato illuminato.
-    lit.arcTo(disc, if (waxing) -90f else 90f, 180f, true)
-    // Mediana: rientra o sporge secondo che la luna sia falce o gibbosa.
-    lit.arcTo(inner, if (waxing) 90f else -90f, if (gibbous) 180f else -180f, false)
-    lit.close()
+    val lit = Path().apply {
+        // Semicerchio dal lato illuminato.
+        arcTo(disc, if (waxing) -90f else 90f, 180f, true)
+        // Mediana: rientra o sporge secondo che la luna sia falce o gibbosa.
+        arcTo(inner, if (waxing) 90f else -90f, if (gibbous) 180f else -180f, false)
+        close()
+    }
 
     drawPath(
         path = lit,

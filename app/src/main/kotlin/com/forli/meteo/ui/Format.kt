@@ -18,6 +18,18 @@ fun Double?.asPlainDegrees(unit: TempUnit = TempUnit.CELSIUS): String =
     this?.let { "${unit.from(it).roundToInt()}°" } ?: EMPTY
 
 /**
+ * Uno scarto fra due temperature, non una temperatura: l'escursione termica
+ * non porta lo zero spostato del Fahrenheit, solo il suo passo piu' fitto.
+ * Passarla da `asDegrees` sommerebbe 32 gradi a una differenza, che non ha
+ * senso quanto sommarli a un numero di ore.
+ */
+fun Double?.asDegreeSpan(unit: TempUnit = TempUnit.CELSIUS): String =
+    this?.let {
+        val span = if (unit == TempUnit.CELSIUS) it else it * 9.0 / 5.0
+        "${span.roundToInt()}${unit.symbol}"
+    } ?: EMPTY
+
+/**
  * Il numero gigante non porta unita': solo la cifra, arrotondata.
  * Due funzioni e non una con un parametro opzionale: la cifra gigante mostra
  * anche millimetri e metri al secondo, e una conversione di temperatura

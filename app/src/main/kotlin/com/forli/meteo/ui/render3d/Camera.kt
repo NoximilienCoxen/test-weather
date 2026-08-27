@@ -19,41 +19,23 @@ import kotlin.math.sqrt
  * proietta qualche migliaio di punti, e allocare un oggetto per ciascuno darebbe
  * al raccoglitore piu' lavoro del disegno stesso.
  */
-class Camera {
-
+class Camera(
+    yawDeg: Float,
+    pitchDeg: Float,
     /**
      * Distanza dell'occhio dal piano mediano dell'oggetto, in pixel.
      * Piu' e' corta, piu' la prospettiva e' marcata: sotto un paio di volte la
      * dimensione dell'oggetto le facce vicine esplodono e sembra un grandangolo.
      */
-    var distance = 1f; private set
-
+    val distance: Float,
     /** Dove finisce sullo schermo il centro dell'oggetto. */
-    var origin: Offset = Offset.Zero; private set
+    val origin: Offset,
+) {
 
-    private var cosYaw = 1f
-    private var sinYaw = 0f
-    private var cosPitch = 1f
-    private var sinPitch = 0f
-
-    /**
-     * Punta la camera. Si riusa lo stesso oggetto a ogni fotogramma.
-     *
-     * Prima ne veniva costruito uno nuovo dentro il disegno, uno per la cifra e
-     * uno per la scultura: due oggetti al fotogramma, cioe' centoventi al
-     * secondo che nascono e muoiono senza aver mai contenuto niente di diverso
-     * da quattro seni e coseni. Ricalcolarli sul posto costa uguale; allocarli
-     * no.
-     */
-    fun aim(yawDeg: Float, pitchDeg: Float, distance: Float, origin: Offset): Camera {
-        cosYaw = cos(yawDeg * DEG)
-        sinYaw = sin(yawDeg * DEG)
-        cosPitch = cos(pitchDeg * DEG)
-        sinPitch = sin(pitchDeg * DEG)
-        this.distance = distance
-        this.origin = origin
-        return this
-    }
+    private val cosYaw = cos(yawDeg * DEG)
+    private val sinYaw = sin(yawDeg * DEG)
+    private val cosPitch = cos(pitchDeg * DEG)
+    private val sinPitch = sin(pitchDeg * DEG)
 
     /** Ultimo punto sistemato, in coordinate di vista. */
     var vx = 0f; private set

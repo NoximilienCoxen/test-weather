@@ -43,10 +43,8 @@ git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 
 **L'APK sta sempre a**
 <https://github.com/NoximilienCoxen/test-weather/releases/tag/apk-latest>
-(tag fisso, cosi' il link resta lo stesso). Da ora e' una build **di rilascio**
-firmata con `app/release.keystore`, chiave dedicata e sempre la stessa: le build
-si installano una sopra l'altra senza disinstallare, e il `versionCode` cresce
-col numero della corsa.
+(tag fisso, chiave di debug fissa versionata cosi' le build si installano una
+sopra l'altra senza disinstallare).
 
 ---
 
@@ -66,19 +64,6 @@ col numero della corsa.
 `kotlin { compilerOptions }` sta a **livello radice**, non dentro `android {}`.
 `jvmTarget` non si dichiara: eredita da `compileOptions.targetCompatibility`.
 
-**La variante che va in mano alle persone e' `release`, non piu' `debug`.** La
-CI costruisce entrambe: la release firmata con `app/release.keystore` e'
-quella che finisce sul tag `apk-latest`, la debug serve solo all'emulatore
-degli screenshot. `versionCode` viene dal numero della corsa e `BUILD_EPOCH`
-dall'istante del commit: entrambi arrivano dall'ambiente e in locale valgono
-1 e 0.
-
-**Lint va in crash su JDK 21.** `lintVitalAnalyze` muore con
-`findFirCompiledSymbol only works on compiled declarations`, che e' un difetto
-interno del suo analizzatore K2 e non ha niente a che vedere col codice. La CI
-monta il 17 e lo esegue davvero; per compilare in locale su una macchina col 21
-si escludono `lintVitalDebug`, `lintVitalAnalyzeDebug`, `lintVitalReportDebug`.
-
 **Il tipo di build `debug` ha `isDebuggable = false`.** Non e' una svista: una
 app debuggabile gira con ottimizzazioni ridotte, e questa schermata fa geometria
 in tempo reale a ogni fotogramma. Misurato sullo stesso identico codice:
@@ -89,11 +74,7 @@ debugger deve sapere che sta misurando un'app che non esiste.
 
 ## 3. Cosa fa l'app oggi
 
-**Al primo avvio si apre sul benvenuto** (`ui/welcome/WelcomeScreen.kt`): una
-domanda sola - da dove si guarda il tempo - e due risposte, "TROVAMI" oppure
-l'elenco. Superato una volta, non torna piu'.
-
-**Poi si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
+**Si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
 impostazioni a sinistra, nome della localita' al centro, scultura meteo,
 temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
 e sotto l'ora mostrata.
@@ -188,61 +169,9 @@ questa garanzia cade** e servira' un ordinamento vero.
 
 ---
 
-## 4-bis. Il cielo, e cosa lo fa muovere
-
-`ui/home/SceneClock.kt`, `Precipitation.kt`, `SkyLife.kt`
-
-**Un solo battito per tutto.** `SceneClock` e' un `withFrameNanos` acceso solo
-mentre qualcosa si muove davvero, e il suo tempo **non torna mai a zero**. Era
-questo lo stacco netto di pioggia e neve: il valore veniva ricavato con
-`elapsed % CICLO`, e ogni particella lo moltiplicava per la propria velocita'.
-Con velocita' sparse fra 0,85 e 1,35 - sparse apposta, per la parallasse - ogni
-ritorno a zero e' una discontinuita' diversa per ognuna, e saltavano tutte
-insieme un paio di volte al secondo. Il conto sta in un `Double`: in singola
-precisione, dopo una decina di minuti il prodotto `secondi * velocita'` ha una
-risoluzione peggiore del fotogramma e l'animazione ricomincerebbe a scattare da
-sola.
-
-**Da fermo l'app disegna ancora zero fotogrammi, ma "fermo" adesso e' meno
-frequente.** Il battito si accende con precipitazione, nebbia, uccelli (giorno
-sereno), scia di meteora in corso, o vento apprezzabile con nuvole. Resta spento
-col cielo coperto, aria ferma e niente che cada. E' il prezzo di cose che si
-muovono, ed e' pagato una volta sola invece che da cinque cicli indipendenti.
-
-**Le stelle cadenti sono eventi, non cicli**: fra l'una e l'altra non c'e'
-niente in corsa. Due stati separati - `streaking` letto in composizione,
-`streakProgress` letto nel disegno - perche' leggere il progresso in
-composizione avrebbe ricomposto l'intera schermata quaranta volte per meteora.
-
-**La neve si accumula sulla cifra** (`SnowCap`) usando la stessa griglia di
-colonne della `Skyline`, e cresce **solo** dove la sagoma offre superficie:
-farla crescere ovunque e disegnarla solo dove serve sembra equivalente e non lo
-e', perche' cambiando ora la cifra cambia forma e le colonne prima vuote si
-troverebbero addosso di colpo la coltre intera. Girando, scivola via. La
-differenza d'angolo fra due fotogrammi va ridotta dentro il mezzo giro: a fine
-molla l'angolo torna a zero di scatto, e trecentosessanta gradi in un fotogramma
-non sono una rotazione, sono lo stesso posto.
-
-**Il vento inclina, non sposta.** La deriva si somma con `(corsa - 0,5)` e non
-con `corsa`: partendo da zero ogni particella nasce sopra la propria colonna e
-finisce sottovento, e col vento forte meta' schermo resta vuoto. Togliendo mezza
-corsa la fascia percorsa resta centrata e cambia solo l'inclinazione.
-
-**La rotazione trasforma la profondita' in larghezza.** Vale per qualunque cosa
-si metta dietro: dopo un quarto di giro una massa lontana **dietro** e' una
-massa lontana **di fianco**, e li' esce dallo schermo. Il primo strato di nuvole
-di sfondo era sparso fino a 0,74 di scostamento e 0,95 di profondita': portava
-l'ingombro peggiore da 0,50 a 1,40 unita' e avrebbe costretto a rimpicciolire di
-un terzo anche la nuvola principale. `cloudFit` calcola il limite di scala che
-tiene la nuvola dentro il riquadro **a ogni rotazione**; i suoi ingombri sono
-tabulati una volta sola, non ricalcolati nel disegno.
-
----
-
 ## 5. Movimento
 
-- `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra,
-  e **un solo riconoscitore** per il gesto (vedi trappola #23).
+- `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra.
   **Nessun limite**: si gira quanto si vuole, anche piu' volte.
   **Il segno e' negativo** e non e' un dettaglio: la superficie che si tocca deve
   andare dove va il dito. Col segno positivo, tirando verso destra la cifra
@@ -252,17 +181,11 @@ tabulati una volta sola, non ricalcolati nel disegno.
   se stesso una volta o due e lo lascia nella stessa posa. In entrambi i casi
   torna a posto, ma quanto gira lo decide la mano. Finita la molla il conto
   torna a zero: un giro intero e' indistinguibile da nessun giro.
-- **L'accelerometro non c'e' piu'.** `DeviceTilt.kt` e' stato cancellato: si
-  contendeva il movimento col dito, e per il beccheggio metteva in discussione
-  l'unica garanzia che regge l'ordine di sovrapposizione dei caratteri (vedi il
-  tetto, sopra). Al suo posto il **respiro**, dentro `SceneRotation`: tre gradi e
-  mezzo di oscillazione, un ciclo ogni undici secondi, somma di due seni
-  incommensurabili fra loro perche' con uno solo si riconosce il periodo e un
-  oggetto che oscilla a tempo non respira, fa il metronomo. Comando e respiro si
-  **sommano**, quindi il dito ha priorita' per costruzione e non per una regola
-  scritta altrove: mentre si trascina il peso del respiro vale zero. Scende in un
-  decimo di secondo e risale in un secondo e mezzo. Si spegne dietro le
-  impostazioni, e con l'angolo imposto dalla verifica.
+- `ui/motion/DeviceTilt.kt`: accelerometro, **non** vettore di rotazione (che
+  porterebbe imbardata e deriva). Il valore e' **lo scostamento da una linea di
+  base che insegue lentamente la posa**: nessuno tiene il telefono verticale, e
+  senza questo la cifra resterebbe stabilmente storta. Sensore spento fuori dal
+  primo piano. **Zona morta all'un per cento** (trappola #8).
 - Il valore della rotazione e quello dell'inclinazione si leggono **dentro il
   disegno**, mai in composizione: ruotare deve ridipingere, non ricomporre.
 
@@ -271,34 +194,13 @@ tabulati una volta sola, non ricalcolati nel disegno.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n com.forli.meteo/.MainActivity \
-  --ez benvenuto false --ei ora 2 --ei meteo 63
+adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
 |---|---|
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
-| `--ez benvenuto false` | salta la schermata di benvenuto |
-| `--ei vento N` | impone il vento a N metri al secondo, zero compreso |
-| `--ei giro N` | fissa l'angolo della scena a N gradi |
-
-**`--ei giro` esiste per poter confrontare.** Tenendo il dito fermo a ottanta
-gradi e sperando che lo scatto arrivi in tempo, due esecuzioni non danno mai la
-stessa immagine, e senza due immagini confrontabili non si sa se una correzione
-ha corretto.
-
-**`--ei vento 0` serve a chiedere la bonaccia.** Con un codice imposto l'app
-impone anche il vento, perche' una scena costruita deve essere inclinata come
-le altre; ma senza un modo di spegnerlo nessuno stato di prova e' fermo, e la
-misura dei fotogrammi a riposo riporta fedelmente che l'app disegna sempre -
-avendo ragione, perche' l'aggancio le sta dicendo che tira vento.
-
-**Il terzo non e' opzionale in cattura.** Il benvenuto compare al primo avvio e
-si mette davanti a tutto: senza saltarlo, la CI fotografa dodici volte la stessa
-domanda invece della scena. Lo scavalco e' transitorio e non passa dalle
-preferenze - segnare sul disco come "gia' visto" un benvenuto che nessuno ha
-visto sarebbe uno stato scritto da un aggancio di prova, e resterebbe li'.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta
@@ -311,14 +213,7 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-**La CI adesso misura da sola i fotogrammi a riposo.** `scripts/capture.sh`
-pubblica `prestazioni.txt` su `ci-artifacts`: per sette stati fa `gfxinfo
-reset`, aspetta cinque secondi senza toccare nulla e legge `Total frames
-rendered`. E' il conteggio a valere, non i millisecondi: l'emulatore usa
-swiftshader e i suoi tempi non dicono niente su un telefono vero, mentre lo
-zero da fermo e' la stessa proprieta' ovunque.
-
-Per le prestazioni sul dispositivo, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
+Per le prestazioni, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di
@@ -341,30 +236,6 @@ si torna a usare `TextMeasurer`, costruirlo con cache a zero.
 **4. Lambert troncato a zero appiattisce tutto.** La prova di silhouette tiene
 le facce rivolte come l'estrusione, opposta alla luce: erano **tutte esattamente
 0.00**. Serve il Lambert dimezzato.
-
-**23. Due riconoscitori con assi diversi sullo stesso tocco sono una monetina.**
-La correzione della trappola #5 - un `draggable` orizzontale per la rotazione
-dentro uno verticale per il foglio - sembrava la soluzione pulita, ognuno il suo
-asse, e ha retto per mesi perche' il difetto e' **intermittente**. Entrambi si
-armano sullo stesso tocco, ognuno aspetta di superare la soglia sul proprio
-asse, e chi la supera per primo vince mentre l'altro **si annulla per tutto il
-resto del gesto**. Un dito non parte mai perfettamente orizzontale: se i primi
-millimetri hanno un filo di verticale in piu', il tocco va al foglio, e da li'
-in poi si puo' scorrere di lato quanto si vuole senza che il numero giri. Detto
-dall'utente con parole esatte: *"a volte riesco a ruotare il numero a volte no,
-e' molto snervante"*.
-
-Un difetto che si presenta a intermittenza con lo stesso identico gesto va
-cercato **in una gara**, non in una soglia sbagliata: non c'e' nessun valore da
-ritoccare che faccia vincere sempre chi deve vincere. La cura e' togliere la
-gara. `scenePointer` e' un riconoscitore solo che accumula lo spostamento,
-decide l'asse guardando **quale componente e' piu' grande** quando la soglia
-cade, e non cambia piu' idea; consuma, cosi' il riconoscitore che avvolge la
-schermata resta fuori; e se il gesto risulta verticale muove il foglio lui.
-
-Provato sull'emulatore con cinque diagonali crescenti a parita' di corsa
-orizzontale: le prime quattro girano la cifra, la quinta - chiaramente
-verticale - alza il foglio.
 
 **5. `detectDragGestures` consuma qualunque direzione.** La rotazione ingoiava
 la trascinata verso l'alto, cioe' **il gesto piu' importante dell'app veniva
@@ -457,39 +328,6 @@ lontano e su una macchia al dodici per cento di nero non si vede. La base
 frontale invece la prospettiva ce l'ha per forza - e' tutto il punto - e quella
 resta cara.
 
-**20. Scartare le facce di spalle e' giusto solo se c'e' un buffer di
-profondita'.** Le pareti rivolte altrove venivano buttate via - il gesto ovvio,
-e quello sbagliato qui. **Su un solido non convesso le pareti frontali piu' la
-base non coprono tutta la sagoma**: dentro l'occhiello del 9, nel ricciolo del
-2, lungo ogni rientranza restano regioni dove nessuna superficie rivolta
-all'occhio arriva, e li' si vedeva il cielo attraverso la cifra. Le pareti di
-spalle sono l'unica cosa che possa riempirle: si disegnano tutte, in due
-passate, prima quelle di spalle e poi quelle davanti che le coprono dove si
-sovrappongono. E vanno illuminate con la **normale ribaltata**, perche' cio' che
-si vede attraverso una rientranza e' l'interno della concavita' e non il retro
-del guscio; con l'esposizione vera resta quasi nera e la rientranza si legge
-come un buco. Ribaltarla e' gratis: il Lambert dimezzato della normale opposta
-e' il complemento a uno di quello della normale.
-
-**21. Un difetto di disegno si stana piu' in fretta fuori dall'app.**
-`/tmp` non serve: il glifo vero si estrae dal font del progetto con `fontTools`,
-e con un centinaio di righe di Python si replica la camera, il campionamento dei
-contorni, il culling e l'ordine di disegno. Da li' una variante si prova in un
-secondo invece che in un giro di CI da dodici minuti, e soprattutto si possono
-rendere **affiancate** le versioni con e senza una certa scelta, che e' l'unico
-modo di sapere quale delle due la causa. Su questo difetto due ipotesi
-plausibili sono cadute cosi' prima di arrivare a quella giusta: non c'era nessun
-`BlendMode` da togliere, e l'omografia della base resta esatta al pixel anche a
-ottantanove gradi, dove pure e' malcondizionata.
-
-**22. L'ombra portata va misurata contro il colore che sta dietro l'oggetto.**
-Si misurava contro il fondo dello schermo, ma la cifra non sta in fondo: sta
-poco sotto la meta', dove il gradiente e' ancora vicino alla cima. Contro il
-fondo sbagliato l'alfa usciva fra un centesimo e cinque centesimi in ogni stato,
-cioe' invisibile, e l'ombra veniva saltata sempre - senza che niente lo
-segnalasse, perche' un'ombra che non si vede e un'ombra che non c'e' hanno lo
-stesso aspetto.
-
 **19. Committare da Windows rompe la CI in due modi silenziosi.** Il primo
 commit fatto da qui l'ha fatta fallire senza toccare una riga di Kotlin:
 `gradlew` e gli script sono passati da `100755` a `100644`, e il primo
@@ -529,48 +367,9 @@ sul tuono (viste nella cronologia del vibratore), fondo che segue l'ora, **tutte
 e ventiquattro le ore raggiungibili una per una**, impostazioni, cambio localita',
 cambio unita' (21 °C -> 70 °F), persistenza delle scelte.
 
-**Misurato sul telefono** (prima di questo giro): da fermo 0 fotogrammi. Con la
-pioggia che cade, 19 ms mediani e nessun fotogramma in ritardo, di giorno come
-di notte. In rotazione il lavoro per fotogramma sta fra i 5 e i 17 ms.
-
-**Misurato dall'emulatore della CI**, con le colonne di `framestats`: da
-`DrawStart` a `SyncQueued` il lavoro del thread di interfaccia, cioe' il codice
-che registra i comandi; da `IssueDrawCommandsStart` a `SwapBuffers` quello del
-thread di rendering, cioe' i pixel riempiti.
-
-**Le percentuali di `gfxinfo` non si usano, e non e' una dimenticanza.** Su
-swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo: riporta
-il cento per cento dei fotogrammi "in ritardo" e mediane da centocinquanta
-millisecondi in ogni stato, comprese le scene piu' semplici. Sta misurando il
-rasterizzatore software del runner, non l'app.
-
-Delle due colonne, **la prima e' quella che dipende da noi**: e' il codice
-Kotlin che registra i comandi di disegno. La seconda dipende da quanti pixel si
-riempiono e da chi li riempie, e su una scheda grafica vera scende di parecchio.
-
-**Da fermo l'app non disegna piu' zero fotogrammi**, e non e' una regressione:
-e' il respiro, chiesto esplicitamente. Il conto e' che ne disegni pochi e
-costino poco invece che nessuno, e la zona morta sul respiro li riduce al
-ventitre per cento dei battiti. Restano a zero solo gli stati coperti - dietro
-le impostazioni, o col foglio del dettaglio alzato.
-
-| stato | interfaccia | rendering |
-|---|---|---|
-| coperto, aria ferma | 3,0 ms | 3,2 ms |
-| notte, aria ferma | 1,4 ms | 2,6 ms |
-| coperto con vento | 5,3 ms | 5,5 ms |
-| sereno di giorno | 2,4 ms | 6,3 ms |
-| pioggia | 6,3 ms | 7,1 ms |
-| neve | 2,6 ms | 6,6 ms |
-| nebbia | 1,4 ms | 4,1 ms |
-| temporale | 2,0 ms | 6,6 ms |
-| rotazione, sereno | 2,1 ms | 5,9 ms |
-| rotazione, neve | 2,4 ms | 9,3 ms |
-
-L'unico valore sopra gli otto millisecondi e' il caso peggiore costruito
-apposta: rotazione sotto il dito con la neve accesa, cioe' geometria
-ricalcolata a ogni fotogramma, nuvola, centotrenta fiocchi e la coltre che
-scivola, tutto insieme, su un rasterizzatore software.
+**Misurato**: da fermo 0 fotogrammi. Con la pioggia che cade, 19 ms mediani e
+nessun fotogramma in ritardo, di giorno come di notte. In rotazione il lavoro
+per fotogramma sta fra i 5 e i 17 ms.
 
 La pioggia sa dove trova superficie: `ui/render3d/Skyline.kt` tiene, colonna per
 colonna, il punto piu' alto occupato dalla cifra, e la cifra ce lo scrive dentro
@@ -589,13 +388,6 @@ comunque a ogni fotogramma.
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 
-**Mai verificato in questo giro** (nessun telefono raggiungibile dal container):
-come si sente il tilt piu' reattivo in mano, se lo schiocco del giro completo
-risulti gradevole o molesto alla decima volta, quanto costano davvero in
-fotogrammi uccelli e nebbia, e se la coltre di neve si stacchi con l'aria giusta.
-Sono tutte cose che si misurano in due minuti sul dispositivo e che qui si
-potevano solo calcolare.
-
 **Non fatto, in ordine di valore**:
 
 1. **La schermata di dettaglio e' rimasta indietro.** Compila e non e' rotta, ma
@@ -610,11 +402,11 @@ potevano solo calcolare.
    che oggi non si chiedono all'API (vento, umidita', punto di rugiada).
 2. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
-3. Ridondanza da sanare: `DayStrip` e `ScrubBar` nel dettaglio fanno la stessa
+3. **Posizione del dispositivo** — `LocationManager` di piattaforma, **non**
+   `play-services-location`: sarebbe una dipendenza nuova. Permesso solo
+   approssimato.
+4. Ridondanza da sanare: `DayStrip` e `ScrubBar` nel dettaglio fanno la stessa
    cosa.
-4. **Il dettaglio non ha ricevuto il cielo nuovo.** Usa `colors.background`, che
-   ora e' una tinta di riferimento e non piu' il fondo vero: e' coerente e
-   leggibile, ma non ha il gradiente.
 
 ---
 

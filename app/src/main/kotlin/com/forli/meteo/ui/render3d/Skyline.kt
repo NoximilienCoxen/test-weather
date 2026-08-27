@@ -29,9 +29,6 @@ class Skyline {
     /** Dove sta il riquadro di chi l'ha scritta, rispetto alla radice. */
     var origin: Offset = Offset.Zero
 
-    /** Quante colonne copre la sagoma in questo fotogramma. */
-    val columnCount: Int get() = top.size
-
     fun reset(canvasWidth: Float) {
         val needed = ((canvasWidth / COLUMN_PX).toInt() + 2).coerceAtLeast(2)
         if (top.size != needed) top = FloatArray(needed)
@@ -87,15 +84,11 @@ class Skyline {
         return if (value == Float.MAX_VALUE) Float.NaN else value
     }
 
-    companion object {
+    private companion object {
         /**
          * Larghezza di una colonna. Sei pixel: piu' fine non si distingue a
          * occhio, piu' grosso e le gocce cominciano a fermarsi sul vuoto accanto
          * alla cifra.
-         *
-         * Pubblica perche' la coltre di neve vive sulla stessa griglia: due
-         * griglie diverse sullo stesso oggetto vorrebbero dire interpolare fra
-         * loro, e sarebbe lavoro per non avere niente in piu'.
          */
         const val COLUMN_PX = 6f
     }

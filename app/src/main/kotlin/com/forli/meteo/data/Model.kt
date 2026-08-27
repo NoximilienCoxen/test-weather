@@ -43,19 +43,12 @@ data class HourForecast(
     val time: LocalDateTime,
     val temperature: Double? = null,
     val apparent: Double? = null,
+    val dewPoint: Double? = null,
     val weatherCode: Int? = null,
     /** Millimetri: dice quanto forte, non quanto probabile. */
     val precipitation: Double? = null,
     /** Percentuale: dice quanto probabile, non quanto forte. */
     val precipProbability: Int? = null,
-    /** Metri al secondo: l'unita' la fissa la richiesta, non la conversione. */
-    val windSpeed: Double? = null,
-    /**
-     * Gradi da cui il vento *proviene*, come vuole la convenzione meteorologica.
-     * Chi lo usa per muovere qualcosa deve ricordarsene: zero gradi significa
-     * che soffia da nord, cioe' verso sud.
-     */
-    val windDirection: Double? = null,
     val isDay: Boolean = true,
 )
 

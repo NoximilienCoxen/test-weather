@@ -83,10 +83,9 @@ data class HourlyDto(
     val time: List<String> = emptyList(),
     @SerialName("temperature_2m") val temperature: List<Double?> = emptyList(),
     @SerialName("apparent_temperature") val apparent: List<Double?> = emptyList(),
+    @SerialName("dew_point_2m") val dewPoint: List<Double?> = emptyList(),
     @SerialName("weather_code") val weatherCode: List<Int?> = emptyList(),
     val precipitation: List<Double?> = emptyList(),
     @SerialName("precipitation_probability") val precipProbability: List<Int?> = emptyList(),
-    @SerialName("wind_speed_10m") val windSpeed: List<Double?> = emptyList(),
-    @SerialName("wind_direction_10m") val windDirection: List<Double?> = emptyList(),
     @SerialName("is_day") val isDay: List<Int?> = emptyList(),
 )
