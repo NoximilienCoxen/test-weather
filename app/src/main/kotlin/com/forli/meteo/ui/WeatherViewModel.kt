@@ -38,6 +38,16 @@ data class UiState(
      * Nullo in uso normale: la schermata usa quello dell'ora scelta.
      */
     val forcedWeatherCode: Int? = null,
+    /**
+     * Vento imposto dall'esterno, in metri al secondo. Solo per la verifica.
+     *
+     * Separato da [forcedWeatherCode] perche' sono due domande diverse, e
+     * tenerle insieme ha gia' ingannato una misura: imponendo il vento
+     * **insieme** al codice, ogni stato di prova risultava ventoso, quindi
+     * nessuno risultava fermo, quindi il conteggio dei fotogrammi a riposo non
+     * misurava mai il riposo.
+     */
+    val forcedWindSpeed: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     val settingsOpen: Boolean = false,
@@ -98,10 +108,14 @@ data class UiState(
      * perfettamente a piombo.
      */
     val wind: Wind
-        get() = if (forcedWeatherCode != null) {
-            Wind(speed = 6.5f, fromDegrees = 250f)
-        } else {
-            Wind.of(hour?.windSpeed, hour?.windDirection)
+        get() = when {
+            forcedWindSpeed != null -> Wind(speed = forcedWindSpeed, fromDegrees = 250f)
+            // Con una condizione imposta il vento vero non c'entra piu' niente:
+            // si sta guardando una scena costruita, e va inclinata anche lei,
+            // altrimenti l'aggancio mostrerebbe l'unica neve al mondo che
+            // scende perfettamente a piombo. Chi vuole la bonaccia la chiede.
+            forcedWeatherCode != null -> Wind(speed = 6.5f, fromDegrees = 250f)
+            else -> Wind.of(hour?.windSpeed, hour?.windDirection)
         }
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
@@ -396,6 +410,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /** Aggancio per la cattura automatica: impone il vento, zero compreso. */
+    fun forceWind(metresPerSecond: Float?) {
+        _state.update { it.copy(forcedWindSpeed = metresPerSecond) }
     }
 
     private companion object {
