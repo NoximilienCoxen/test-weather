@@ -1,7 +1,6 @@
 package com.forli.meteo
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,13 +15,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Verticale e basta. La schermata e' una colonna sola - scultura, cifra,
-        // barra delle ore - e coricata non guadagna niente: la cifra dovrebbe
-        // rimpicciolirsi per stare in altezza, cioe' l'unica cosa che si e'
-        // venuti a vedere diventerebbe la piu' piccola. Dichiarato anche nel
-        // manifesto: qui serve perche' un'inclinazione che arriva mentre
-        // l'attivita' e' gia' viva non ripassa da li'.
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
         applyExtras(intent)
         setContent {
@@ -43,8 +35,6 @@ class MainActivity : ComponentActivity() {
      * serena da mezzanotte a mezzanotte, nuvole e pioggia non comparirebbero
      * mai in uno scatto. Imporli e' l'unico modo per vederli.
      *
-     *   adb shell am start -n .../.MainActivity --ez benvenuto false
-     *
      * L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da
      * scegliere: giorno e notte adesso li decide l'ora mostrata, e per
      * fotografare la notte basta chiedere un'ora notturna.
@@ -53,44 +43,10 @@ class MainActivity : ComponentActivity() {
         if (intent == null) return
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
-        if (!intent.getBooleanExtra(EXTRA_WELCOME, true)) viewModel.skipWelcome()
-        intent.getIntExtra(EXTRA_WIND, -1).takeIf { it >= 0 }
-            ?.let { viewModel.forceWind(it.toFloat()) }
-        intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE).takeIf { it != Int.MIN_VALUE }
-            ?.let { viewModel.forceYaw(it.toFloat()) }
     }
 
     private companion object {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
-
-        /**
-         * `--ei vento N` impone il vento a N metri al secondo, zero compreso.
-         *
-         * Serve a poter chiedere la bonaccia. Con una condizione imposta il
-         * vento viene imposto anche lui, e senza un modo di spegnerlo nessuno
-         * stato di prova risultava fermo: la misura dei fotogrammi a riposo
-         * riportava fedelmente che l'app disegnava sempre, e aveva ragione,
-         * perche' l'aggancio le stava dicendo che tirava vento.
-         */
-        const val EXTRA_WIND = "vento"
-
-        /**
-         * `--ei giro N` fissa l'angolo della scena a N gradi.
-         *
-         * Senza, l'unico modo di guardare la cifra a ottanta gradi e' tenere il
-         * dito fermo li' e sperare che lo scatto arrivi in tempo, e due
-         * esecuzioni non producono mai la stessa immagine: cioe' non si puo'
-         * confrontare un prima con un dopo.
-         */
-        const val EXTRA_YAW = "giro"
-
-        /**
-         * `--ez benvenuto false` salta la schermata di benvenuto.
-         *
-         * Senza, comparendo al primo avvio si mette davanti a ogni scatto
-         * dell'emulatore e la CI fotografa dodici volte la stessa domanda.
-         */
-        const val EXTRA_WELCOME = "benvenuto"
     }
 }

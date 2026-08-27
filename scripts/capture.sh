@@ -86,10 +86,7 @@ session() {
   sleep 1
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
-  # `--ez benvenuto false`: al primo avvio la schermata di benvenuto si mette
-  # davanti a tutto, e senza saltarla ogni scatto ritrarrebbe quella invece
-  # della scena.
-  adbt shell am start -W -n "$ACT" --ez benvenuto false 2>&1 | sed 's/^/    /' || true
+  adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
   sleep 10
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
@@ -128,7 +125,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       # shellcheck disable=SC2086
-      adbt shell am start -n "$ACT" --ez benvenuto false $1 >/dev/null 2>&1 || true
+      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
       # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
       # gli scatti coglievano i trattini invece dei dati.
       sleep 14
@@ -145,89 +142,6 @@ session() {
 
     restart_with "--ei meteo 3"
     shoot "${slug}-5-coperto"
-
-    # Gli stati nuovi. La neve va fotografata dopo qualche secondo di caduta,
-    # altrimenti la coltre sopra la cifra non ha ancora avuto tempo di posarsi:
-    # i quattordici secondi di restart_with bastano.
-    restart_with "--ei meteo 75"
-    shoot "${slug}-7-neve"
-
-    # E subito dopo con un giro di dito, per vedere se la coltre si stacca.
-    adbt shell input motionevent DOWN "$CX" "$CY" >/dev/null 2>&1 || true
-    adbt shell input motionevent MOVE "$(( CX + 300 ))" "$CY" >/dev/null 2>&1 || true
-    sleep 1
-    shoot "${slug}-7b-neve-che-scivola"
-    adbt shell input motionevent UP "$(( CX + 300 ))" "$CY" >/dev/null 2>&1 || true
-
-    restart_with "--ei meteo 45"
-    shoot "${slug}-8-nebbia"
-
-    restart_with "--ei meteo 95"
-    shoot "${slug}-9-temporale"
-
-    # L'ora dorata: la finestra e' di quarantacinque minuti attorno all'alba e
-    # al tramonto, quindi l'ora giusta dipende dalla stagione. Due scatti a
-    # cavallo del tramonto d'agosto a Forli' (circa le 20).
-    restart_with "--ei ora 20"
-    shoot "${slug}-10-tramonto"
-
-    # ## Il gesto: ruota davvero, a qualunque diagonale?
-    #
-    # Il difetto era una monetina lanciata nei primi pixel: due riconoscitori
-    # armati sullo stesso tocco, e chi superava per primo la soglia sul proprio
-    # asse escludeva l'altro. Un dito che parte con un filo di verticale in piu'
-    # consegnava il gesto al foglio, e da li' in poi si poteva scorrere di lato
-    # quanto si voleva senza che il numero girasse.
-    #
-    # Qui si trascina la stessa distanza orizzontale con quantita' crescenti di
-    # verticale. I primi quattro devono girare la cifra; l'ultimo, chiaramente
-    # verticale, deve invece alzare il foglio del dettaglio.
-    trascina() {
-      local nome="$1" dx="$2" dy="$3"
-      restart_with "--ei meteo 3 --ei vento 0"
-      local x0=$(( W / 2 )) y0=$(( H * 32 / 100 ))
-      adbt shell input motionevent DOWN "$x0" "$y0" >/dev/null 2>&1 || true
-      local k
-      for k in 1 2 3 4 5 6; do
-        adbt shell input motionevent MOVE \
-          "$(( x0 + dx * k / 6 ))" "$(( y0 + dy * k / 6 ))" >/dev/null 2>&1 || true
-      done
-      sleep 1
-      shoot "${slug}-gesto-${nome}"
-      adbt shell input motionevent UP "$(( x0 + dx ))" "$(( y0 + dy ))" >/dev/null 2>&1 || true
-      sleep 1
-    }
-
-    trascina "1-piatto"      300 0
-    trascina "2-poco-obliquo" 300 80
-    trascina "3-obliquo"      300 160
-    trascina "4-molto-obliquo" 300 280
-    trascina "5-verticale"     60 320
-
-    # La cifra ad angoli fissi. E l'unico modo di confrontare un prima con un
-    # dopo: tenendo il dito fermo e sperando nello scatto, due esecuzioni non
-    # producono mai la stessa immagine.
-    for giro in 0 40 70 85 95 120 160; do
-      restart_with "--ei meteo 3 --ei vento 0 --ei giro $giro"
-      shoot "${slug}-giro-$(printf %03d $giro)"
-    done
-
-    # Le impostazioni. Il pulsante sta in alto a sinistra: trentaquattro dp di
-    # bersaglio, quindi una frazione fissa dello schermo lo prende comodamente.
-    restart_with ""
-    adbt shell input tap "$(( W * 7 / 100 ))" "$(( H * 6 / 100 ))" >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-11-impostazioni"
-
-    # E in fondo, dove sta il blocco dei dati: prima ci si arriva, poi lo si
-    # apre. Se il tocco manca il bersaglio resta comunque lo scatto di sopra,
-    # che e' quello che conta.
-    adbt shell input swipe "$CX" "$(( H * 75 / 100 ))" "$CX" "$(( H * 30 / 100 ))" 350 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-12-impostazioni-fondo"
-    adbt shell input tap "$CX" "$(( H * 62 / 100 ))" >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-13-dati-aperti"
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
@@ -246,121 +160,6 @@ session() {
 
 session SCURO
 session CHIARO
-
-# ---------------------------------------------------------------------------
-# Fotogrammi disegnati a riposo
-# ---------------------------------------------------------------------------
-#
-# La misura che conta e' **quanti** fotogrammi l'app disegna con nessun dito
-# sullo schermo, non quanto ci mette a disegnarli: l'emulatore usa swiftshader,
-# e i suoi millisecondi non dicono niente su un telefono vero. Il conteggio si'.
-#
-# La regola del progetto e' che da fermo l'app deve disegnare zero fotogrammi.
-# Adesso quella regola vale solo negli stati davvero fermi - coperto, aria
-# ferma, niente che cada - perche' neve, nebbia, uccelli e stelle cadenti sono
-# animazioni, e un'animazione costa fotogrammi per definizione. Qui si verifica
-# che negli stati fermi lo zero ci sia ancora, e si scrive quanto costano gli
-# altri.
-misura() {
-  local nome="$1" extra="$2" gesto="${3:-fermo}"
-  alive || return
-  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  sleep 1
-  # shellcheck disable=SC2086
-  adbt shell am start -n "$ACT" --ez benvenuto false $extra >/dev/null 2>&1 || true
-  sleep 14
-  adbt shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
-
-  if [ "$gesto" = "rotazione" ]; then
-    # Sotto il dito e' l'unico momento in cui la cifra ridisegna la geometria a
-    # ogni fotogramma: e' li' che si misura il caso peggiore, non da fermo.
-    local cx=$(( W / 2 )) cy=$(( H * 30 / 100 ))
-    adbt shell input motionevent DOWN "$cx" "$cy" >/dev/null 2>&1 || true
-    local k
-    for k in 60 120 180 240 300 240 180 120 60; do
-      adbt shell input motionevent MOVE "$(( cx + k ))" "$cy" >/dev/null 2>&1 || true
-    done
-    adbt shell input motionevent UP "$(( cx + 60 ))" "$cy" >/dev/null 2>&1 || true
-  else
-    sleep 5
-  fi
-
-  # Due letture, perche' rispondono a due domande diverse.
-  #
-  # Le percentuali dicono **quanto si nota**: la mediana com'e' di solito, il
-  # novantacinquesimo quanto va male quando va male. Il conteggio da solo non
-  # distingue fluido da lento.
-  #
-  # Le colonne di framestats dicono **da che parte sta il costo**. Da DrawStart
-  # a SyncQueued c'e' il lavoro del thread di interfaccia, cioe' il codice
-  # Kotlin che registra i comandi; da IssueDrawCommandsStart a SwapBuffers c'e'
-  # quello del thread di rendering, cioe' i pixel davvero riempiti. Ottimizzare
-  # senza sapere quale dei due pesa vuol dire tirare a indovinare, ed e' gia'
-  # costato caro (vedi la trappola numero 9 in CONTESTO.md).
-  adbt shell dumpsys gfxinfo "$PKG" framestats 2>/dev/null | tr -d '\r' \
-    | awk -F, -v nome="$nome" '
-        # La funzione sta prima delle regole: e la collocazione consueta, e
-        # mawk non sempre digerisce una funzione dichiarata in mezzo.
-        function mediana(v, count,   i, j, key) {
-          # Ordinamento per inserzione scritto a mano: asort e di gawk, e il
-          # runner monta mawk. Su centoventi fotogrammi la differenza non si
-          # misura, e cosi lo script gira ovunque.
-          for (i = 1; i < count; i++) {
-            key = v[i]; j = i - 1
-            while (j >= 0 && v[j] > key) { v[j + 1] = v[j]; j-- }
-            v[j + 1] = key
-          }
-          return v[int(count / 2)]
-        }
-        # n va azzerata esplicitamente. In awk gli indici degli array sono
-        # STRINGHE: con n non inizializzata, ui[n] scrive alla chiave "" e non
-        # alla chiave "0", e il primo campione finisce in un posto che nessuno
-        # rilegge. La mediana usciva sbagliata di un campione su tre, e sui dati
-        # veri sarebbe passata inosservata perche resta un numero plausibile.
-        BEGIN { n = 0 }
-        /^---PROFILEDATA---/ { dentro = !dentro; next }
-        dentro && $1 ~ /^[0-9]+$/ && NF >= 17 {
-          # Le colonne documentate sono 8 DrawStart, 12 SyncQueued,
-          # 14 IssueDrawCommandsStart, 15 SwapBuffers - contate da ZERO, mentre
-          # awk conta i campi da UNO: qui diventano 9, 13, 15 e 16. Sbagliare
-          # quello scarto non da errore, da numeri: la prima scrittura misurava
-          # linizio delle traversate invece del disegno e riportava mediane
-          # negative. E la stessa trappola numero 9 di CONTESTO.md, presa una
-          # seconda volta e stanata solo perche provata su dati finti.
-          ui[n] = ($13 - $9) / 1000000
-          rt[n] = ($16 - $15) / 1000000
-          n++
-        }
-        END {
-          # Zero fotogrammi non segnala un guasto: negli stati fermi e il
-          # risultato che si cerca, ed e la regola del progetto.
-          if (n == 0) { printf "  %-22s nessun fotogramma disegnato\n", nome; exit }
-          printf "  %-22s interfaccia %.1f ms   rendering %.1f ms   (mediane su %d fotogrammi)\n",
-                 nome, mediana(ui, n), mediana(rt, n), n
-        }' | tee -a "$OUT/prestazioni.txt"
-
-  # Le percentuali di gfxinfo qui non si usano, e non e' una dimenticanza.
-  # Su swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo:
-  # riporta ogni fotogramma "in ritardo" e mediane da centocinquanta
-  # millisecondi, che misurano il rasterizzatore software del runner e non
-  # l'app. Le colonne di framestats invece misurano il lavoro svolto, ed e'
-  # quello che si voleva sapere.
-}
-
-echo "== prestazioni ==" | tee "$OUT/prestazioni.txt"
-echo "-- a riposo: qui il totale deve essere zero --" | tee -a "$OUT/prestazioni.txt"
-misura "coperto (fermo)"   "--ei meteo 3 --ei vento 0"
-misura "notte (fermo)"     "--ei ora 2 --ei meteo 3 --ei vento 0"
-echo "-- animato: qui contano i millisecondi --" | tee -a "$OUT/prestazioni.txt"
-misura "coperto ventoso"   "--ei meteo 3 --ei vento 10"
-misura "sereno di giorno"  "--ei meteo 0 --ei vento 0"
-misura "pioggia"           "--ei meteo 63"
-misura "neve"              "--ei meteo 75"
-misura "nebbia"            "--ei meteo 45"
-misura "temporale"         "--ei meteo 95"
-echo "-- sotto il dito: il caso peggiore --" | tee -a "$OUT/prestazioni.txt"
-misura "rotazione, sereno" "--ei meteo 0 --ei vento 0" rotazione
-misura "rotazione, neve"   "--ei meteo 75" rotazione
 
 sleep 2
 pkill -f "adb logcat -v time" >/dev/null 2>&1 || true

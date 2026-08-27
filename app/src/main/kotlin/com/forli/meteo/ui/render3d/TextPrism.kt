@@ -281,28 +281,12 @@ class TextPrism private constructor(
 
         classify(part, camera, light, bevelZ)
 
-        // ## Quattro passate, e nessuna parete buttata via
-        //
-        // Qui prima si disegnavano le sole pareti rivolte all'occhio, scartando
-        // le altre. E' il gesto giusto quando c'e' un buffer di profondita', e
-        // quello sbagliato quando non c'e': **su un solido non convesso le
-        // pareti frontali piu' la base non coprono tutta la sagoma**. Dentro
-        // l'occhiello del 9, nel ricciolo del 2, lungo ogni rientranza restano
-        // regioni dove nessuna superficie rivolta all'occhio arriva, e li' si
-        // vedeva il cielo attraverso la cifra - la "scatola bucata".
-        //
-        // Le pareti di spalle sono l'unica cosa che possa riempirle. Si
-        // disegnano per prime, cosi' quelle davanti le coprono dove si
-        // sovrappongono, e l'ordine fra corpo e smusso resta quello di sempre
-        // dentro ciascuna passata: lo smusso e' piu' vicino all'occhio e deve
-        // stare sopra il proprio corpo.
-        var n = emitRing(part, camera, zBevel, zBack, wallLambert, ink, bevel = false, back = true, at = 0)
+        // Prima tutte le pareti, poi tutti gli smussi. Lo smusso e' piu' vicino
+        // all'occhio e deve stare sopra: mescolandoli spigolo per spigolo, la
+        // parete di uno finirebbe sopra lo smusso di un altro.
+        var n = emitRing(part, camera, zBevel, zBack, wallLambert, ink, bevel = false, at = 0)
         if (bevel > 0f) {
-            n = emitRing(part, camera, zCap, zBevel, bevelLambert, ink, bevel = true, back = true, at = n)
-        }
-        n = emitRing(part, camera, zBevel, zBack, wallLambert, ink, bevel = false, back = false, at = n)
-        if (bevel > 0f) {
-            n = emitRing(part, camera, zCap, zBevel, bevelLambert, ink, bevel = true, back = false, at = n)
+            n = emitRing(part, camera, zCap, zBevel, bevelLambert, ink, bevel = true, at = n)
         }
 
         // La base per omografia: i quattro angoli del riquadro del carattere
@@ -348,9 +332,9 @@ class TextPrism private constructor(
                 (part.edges[i * 4 + 1] + part.edges[i * 4 + 3]) / 2f,
                 0f,
             )
-            // Non piu' una prova per scartare, ma per **ordinare**: dice in
-            // quale delle due passate va questo spigolo. Vedi la nota in
-            // [shape] sul perche' nessuna parete si butti piu' via.
+            // Prova di visibilita': le pareti che guardano dall'altra parte non
+            // vanno disegnate, altrimenti il retro dell'oggetto verrebbe
+            // dipinto sopra il davanti.
             visible[i] = camera.facesViewer()
         }
 
@@ -389,8 +373,6 @@ class TextPrism private constructor(
         lambert: FloatArray,
         ink: Ink,
         bevel: Boolean,
-        /** Vero per la passata delle pareti di spalle, falso per quelle davanti. */
-        back: Boolean,
         at: Int,
     ): Int {
         var n = at
@@ -398,23 +380,11 @@ class TextPrism private constructor(
             val from = part.contourStart[c]
             val until = part.contourStart[c + 1]
             for (i in from until until) {
-                if (visible[i] == back) continue
+                if (!visible[i]) continue
                 val next = if (i + 1 == until) from else i + 1
 
-                // Una parete di spalle che si vede attraverso una rientranza va
-                // illuminata come se fosse rivolta a noi, perche' li' e' il
-                // materiale a essere rivolto a noi: e' l'interno della
-                // concavita', non il retro del guscio. Con l'esposizione vera
-                // resterebbe quasi nera e la rientranza si leggerebbe come un
-                // buco, che e' esattamente il difetto da togliere.
-                //
-                // Ribaltare la normale e' gratis: il Lambert dimezzato vale
-                // 0,5 + 0,5·(n·luce), quindi quello della normale opposta e'
-                // il suo complemento a uno. Nessun secondo vettore da tenere.
-                val startLambert = if (back) 1f - lambert[i] else lambert[i]
-                val endLambert = if (back) 1f - lambert[next] else lambert[next]
-                val startColour = colourOf(startLambert, ink, bevel)
-                val endColour = colourOf(endLambert, ink, bevel)
+                val startColour = colourOf(lambert[i], ink, bevel)
+                val endColour = colourOf(lambert[next], ink, bevel)
 
                 camera.place(part.edges[i * 4], part.edges[i * 4 + 1], zNear)
                 val ax = camera.sx

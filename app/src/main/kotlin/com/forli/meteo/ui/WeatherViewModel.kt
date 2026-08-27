@@ -1,17 +1,13 @@
 package com.forli.meteo.ui
 
 import android.app.Application
-import com.forli.meteo.data.DeviceLocation
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
-import com.forli.meteo.data.UpdateCheck
 import com.forli.meteo.data.WeatherRepository
-import com.forli.meteo.data.Wind
-import com.forli.meteo.data.Wmo
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
@@ -38,36 +34,9 @@ data class UiState(
      * Nullo in uso normale: la schermata usa quello dell'ora scelta.
      */
     val forcedWeatherCode: Int? = null,
-    /**
-     * Vento imposto dall'esterno, in metri al secondo. Solo per la verifica.
-     *
-     * Separato da [forcedWeatherCode] perche' sono due domande diverse, e
-     * tenerle insieme ha gia' ingannato una misura: imponendo il vento
-     * **insieme** al codice, ogni stato di prova risultava ventoso, quindi
-     * nessuno risultava fermo, quindi il conteggio dei fotogrammi a riposo non
-     * misurava mai il riposo.
-     */
-    val forcedWindSpeed: Float? = null,
-    /** Angolo della scena imposto dall'esterno, solo per la verifica. */
-    val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     val settingsOpen: Boolean = false,
-    /** Falso finche' il benvenuto non e' stato superato. */
-    val welcomed: Boolean = true,
-    /** Vero mentre si sta chiedendo la posizione al telefono. */
-    val locating: Boolean = false,
-    /** Perche' la posizione non e' arrivata. Nullo se e' andata bene. */
-    val locationProblem: String? = null,
-    /** Vero se la localita' mostrata l'ha trovata il telefono. */
-    val located: Boolean = false,
-    /** Le localita' messe da parte, nell'ordine in cui sono state aggiunte. */
-    val favourites: List<Place> = emptyList(),
-    /**
-     * Vero quando sul rilascio a tag fisso c'e' una build piu' recente di
-     * questa. Falso anche in caso di dubbio: vedi [UpdateCheck].
-     */
-    val updateReady: Boolean = false,
     val query: String = "",
     val searching: Boolean = false,
     val results: List<Place> = emptyList(),
@@ -76,51 +45,6 @@ data class UiState(
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
     val hour: HourForecast? get() = hours.getOrNull(selectedHour)
-
-    /**
-     * Il codice che comanda la scena.
-     *
-     * Uno solo, e letto da un posto solo: quando l'imposizione della verifica e
-     * il dato vero venivano consultati separatamente in punti diversi, bastava
-     * dimenticarne uno perche' meta' schermata mostrasse il temporale imposto e
-     * l'altra meta' il sereno vero.
-     */
-    val activeWeatherCode: Int? get() = forcedWeatherCode ?: hour?.weatherCode
-
-    /**
-     * Quanto si e' dentro l'ora dorata, da 0 a 1.
-     *
-     * Non si deduce da [skyAltitude]: quella dice quanto e' giorno, non quanti
-     * minuti mancano al tramonto.
-     */
-    val goldenHour: Float
-        get() {
-            val moment = hour?.time ?: return 0f
-            val day = forecast?.dayOf(moment) ?: return 0f
-            return SunClock.goldenness(moment, day.sunrise, day.sunset)
-        }
-
-    /** Quanto e' fitta la nebbia all'ora mostrata. */
-    val fogDensity: Float get() = Wmo.fogDensity(activeWeatherCode, skyAltitude)
-
-    /**
-     * Il vento dell'ora mostrata.
-     *
-     * Con un codice imposto dalla verifica il vento vero non c'entra piu'
-     * niente: si sta guardando una scena costruita, e va inclinata anche lei,
-     * altrimenti l'aggancio mostrerebbe l'unica neve al mondo che scende
-     * perfettamente a piombo.
-     */
-    val wind: Wind
-        get() = when {
-            forcedWindSpeed != null -> Wind(speed = forcedWindSpeed, fromDegrees = 250f)
-            // Con una condizione imposta il vento vero non c'entra piu' niente:
-            // si sta guardando una scena costruita, e va inclinata anche lei,
-            // altrimenti l'aggancio mostrerebbe l'unica neve al mondo che
-            // scende perfettamente a piombo. Chi vuole la bonaccia la chiede.
-            forcedWeatherCode != null -> Wind(speed = 6.5f, fromDegrees = 250f)
-            else -> Wind.of(hour?.windSpeed, hour?.windDirection)
-        }
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
     val nowIndex: Int
@@ -163,31 +87,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     init {
-        // Una volta sola, all'avvio, e in silenzio se non c'e' niente da dire.
-        // Non e' un controllo periodico: l'app la si apre per sapere che tempo
-        // fa, e ricontrollare a ogni ora scelta sarebbe una richiesta di rete
-        // in piu' per un'informazione che cambia una volta al giorno.
-        viewModelScope.launch {
-            if (UpdateCheck.check() is UpdateCheck.Result.Available) {
-                _state.update { it.copy(updateReady = true) }
-            }
-        }
         viewModelScope.launch {
             prefs.settings.collect { settings ->
                 val current = _state.value
                 val moved = current.place != settings.place
-                _state.update {
-                    it.copy(
-                        place = settings.place,
-                        unit = settings.unit,
-                        // L'aggancio di verifica vince: una volta saltato, il
-                        // benvenuto non puo' tornare per un'emissione delle
-                        // preferenze arrivata dopo.
-                        welcomed = it.welcomed || settings.welcomed,
-                        located = settings.located,
-                        favourites = settings.favourites,
-                    )
-                }
+                _state.update { it.copy(place = settings.place, unit = settings.unit) }
                 // Cambiare unita' non deve costare una richiesta: la conversione
                 // e' solo scrittura. Cambiare posto invece cambia tutto.
                 if (moved || current.forecast == null) refresh()
@@ -289,101 +193,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Chiede al telefono dove si trova.
-     *
-     * Non lancia mai: [DeviceLocation] restituisce un esito anche quando tutto
-     * va storto, e ogni esito ha una frase. Il pulsante che chiama questo metodo
-     * puo' essere premuto senza permesso, senza servizi di localizzazione,
-     * senza servizi Google e su un dispositivo che non ha mai visto un
-     * satellite: in nessuno di quei casi l'app deve chiudersi.
-     *
-     * @param canAsk falso quando il permesso e' gia' stato negato e chi chiama
-     *   non ha modo di richiederlo: allora si dice cosa fare invece di rimandare
-     *   a una richiesta che il sistema non mostrerebbe piu'.
-     */
-    fun locateMe(canAsk: Boolean = true, onNeedsPermission: () -> Unit = {}) {
-        if (_state.value.locating) return
-        _state.update { it.copy(locating = true, locationProblem = null) }
-        viewModelScope.launch {
-            val outcome = runCatching { DeviceLocation.current(getApplication()) }
-                .getOrElse { DeviceLocation.Outcome.Unavailable }
-            when (outcome) {
-                is DeviceLocation.Outcome.Found -> {
-                    pendingHour = null
-                    prefs.setPlace(outcome.place, located = true)
-                    prefs.setWelcomed()
-                    _state.update { it.copy(locating = false, locationProblem = null) }
-                }
-
-                DeviceLocation.Outcome.NeedsPermission -> {
-                    _state.update {
-                        it.copy(
-                            locating = false,
-                            locationProblem = if (canAsk) {
-                                null
-                            } else {
-                                "PERMESSO NEGATO. SI PUÒ CONCEDERE " +
-                                    "DALLE IMPOSTAZIONI DI ANDROID."
-                            },
-                        )
-                    }
-                    if (canAsk) onNeedsPermission()
-                }
-
-                DeviceLocation.Outcome.Unavailable -> _state.update {
-                    it.copy(
-                        locating = false,
-                        locationProblem = "LOCALIZZAZIONE SPENTA O NON DISPONIBILE " +
-                            "SU QUESTO DISPOSITIVO.",
-                    )
-                }
-
-                DeviceLocation.Outcome.Timeout -> _state.update {
-                    it.copy(
-                        locating = false,
-                        locationProblem = "IL TELEFONO NON HA TROVATO LA POSIZIONE. " +
-                            "RIPROVA, O SCEGLI UNA CITTÀ.",
-                    )
-                }
-            }
-        }
-    }
-
-    /**
-     * L'avviso di aggiornamento e' stato visto.
-     *
-     * Non viene ricordato oltre la sessione, ed e' voluto: chi lo chiude non
-     * sta dicendo "mai piu'", sta dicendo "adesso no". Riaprendo l'app dopo
-     * aver aggiornato l'avviso non torna comunque, perche' [UpdateCheck] non lo
-     * troverebbe piu'.
-     */
-    fun dismissUpdate() = _state.update { it.copy(updateReady = false) }
-
-    fun addFavourite(place: Place) {
-        viewModelScope.launch { prefs.addFavourite(place) }
-    }
-
-    fun removeFavourite(place: Place) {
-        viewModelScope.launch { prefs.removeFavourite(place) }
-    }
-
-    /** Il benvenuto e' stato superato: non si ripropone. */
-    fun dismissWelcome() {
-        viewModelScope.launch { prefs.setWelcomed() }
-    }
-
-    /**
-     * Aggancio per la verifica automatica: salta il benvenuto senza ricordarlo.
-     *
-     * Serve perche' il benvenuto, comparendo al primo avvio, si mette davanti a
-     * **ogni** scatto dell'emulatore: la CI fotografava dodici volte la stessa
-     * domanda invece della scena. Non passa da [prefs] di proposito - segnare
-     * come "gia' visto" un benvenuto che nessuno ha visto sarebbe uno stato
-     * scritto sul disco da un aggancio di prova, e resterebbe li' anche dopo.
-     */
-    fun skipWelcome() = _state.update { it.copy(welcomed = true) }
-
-    /**
      * Ricerca con attesa: un carattere digitato non e' una domanda, e mandare
      * una richiesta per ognuno riempirebbe la lista di risposte a query gia'
      * superate, che arrivano in ordine sparso.
@@ -423,16 +232,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
-    }
-
-    /** Aggancio per la cattura automatica: fissa l'angolo della scena. */
-    fun forceYaw(degrees: Float?) {
-        _state.update { it.copy(forcedYawDeg = degrees) }
-    }
-
-    /** Aggancio per la cattura automatica: impone il vento, zero compreso. */
-    fun forceWind(metresPerSecond: Float?) {
-        _state.update { it.copy(forcedWindSpeed = metresPerSecond) }
     }
 
     private companion object {

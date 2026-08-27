@@ -76,8 +76,8 @@ class WeatherRepository(private val place: Place = Place.FORLI) {
                 "precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
 
         const val HOURLY_VARS =
-            "temperature_2m,apparent_temperature,weather_code,precipitation," +
-                "precipitation_probability,wind_speed_10m,wind_direction_10m,is_day"
+            "temperature_2m,apparent_temperature,dew_point_2m,weather_code,precipitation," +
+                "precipitation_probability,is_day"
 
         const val DAILY_VARS =
             "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max," +
@@ -176,11 +176,10 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             time = at,
             temperature = hourly.temperature.at(i),
             apparent = hourly.apparent.at(i),
+            dewPoint = hourly.dewPoint.at(i),
             weatherCode = hourly.weatherCode.at(i),
             precipitation = hourly.precipitation.at(i),
             precipProbability = hourly.precipProbability.at(i),
-            windSpeed = hourly.windSpeed.at(i),
-            windDirection = hourly.windDirection.at(i),
             isDay = (hourly.isDay.at(i) ?: 1) == 1,
         )
     }.orEmpty().take(HOURS_IN_DAY)

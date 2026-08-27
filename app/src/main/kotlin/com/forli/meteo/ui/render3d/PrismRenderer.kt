@@ -62,18 +62,6 @@ class PrismRenderer : TemperatureRenderer {
      */
     private val shadowPaint = android.graphics.Paint()
 
-    /** Una sola, riusata: vedi [Camera.aim]. */
-    private val camera = Camera()
-
-    /**
-     * L'inchiostro dipende solo dalla tavolozza, che cambia quando cambia l'ora
-     * - qualche volta al minuto - non a ogni fotogramma. Calcolarlo dentro
-     * `draw` costava due liste e un vettore di interi sessanta volte al secondo
-     * per un risultato identico a se stesso.
-     */
-    private var inkPalette: NumberPalette? = null
-    private var ink: TextPrism.Ink? = null
-
     override fun prepare(spec: NumberSpec): PreparedNumber? {
         if (spec.text.isEmpty() || spec.fontSizePx <= 0f) return null
 
@@ -123,7 +111,7 @@ class PrismRenderer : TemperatureRenderer {
         val prism = model.prism
         silhouette?.reset(size.width)
 
-        val camera = camera.aim(
+        val camera = Camera(
             yawDeg = motion.yawDeg,
             pitchDeg = motion.pitchDeg,
             distance = max(model.width, model.height) * EYE_DISTANCE,
@@ -138,50 +126,30 @@ class PrismRenderer : TemperatureRenderer {
         // di luce. Ma e' un disegno, non un fenomeno: deve stare sul fondo, non
         // sulla faccia del carattere accanto.
         //
-        // Una copia sola, e non piu' due.
-        //
-        // Due gradini davano un bordo meno secco, e su un fondo grigio chiaro
-        // servivano. Su questo fondo no: l'ombra e' scura su scuro, il bordo si
-        // perde da solo, e il secondo gradino si pagava per intero senza
-        // aggiungere niente. E si paga caro - ogni gradino e' una copia intera
-        // della sagoma sotto una matrice, cioe' la superficie piu' grande che il
-        // disegno tocchi. Misurato: toglierlo restituisce quasi due millisecondi
-        // di rendering per fotogramma, che sono quelli che separavano il caso
-        // peggiore dal budget.
-        // La soglia e' 0,06 e non un millesimo, e la differenza vale piu' di
-        // tutto il resto di questo file messo insieme.
-        //
-        // L'ombra portata e' la cosa **piu' cara** che ci sia sullo schermo:
-        // due copie intere della sagoma sotto una matrice prospettica, che non
-        // passa dalla strada veloce e viene rasterizzata a mano. Misurata a suo
-        // tempo, da sola faceva passare la schermata da diciotto a trentasei
-        // millisecondi per fotogramma.
-        //
-        // Serviva a staccare una cifra bianca da un fondo grigio chiaro. Da
-        // quando il fondo non sale piu' oltre il crepuscolo, quel distacco lo
-        // fa il fondo stesso, e l'alfa calcolata dalla luminanza sta fra un
-        // centesimo e cinque centesimi: nero al cinque per cento sopra un fondo
-        // quasi nero non si vede, e si continuava a pagarlo per intero a ogni
-        // fotogramma. Sotto questa soglia non c'e' niente da vedere, quindi non
-        // c'e' niente da disegnare.
-        //
-        // Il meccanismo resta perche' la tavolozza puo' tornare a schiarire:
-        // e' la soglia a essere onesta, non l'ombra a essere stata tolta.
-        if (palette.shadowAlpha > SHADOW_VISIBLE) {
+        // Due copie sempre piu' lontane e sempre piu' tenui, non una sola: una
+        // copia sola col bordo netto non si legge come ombra ma come un secondo
+        // oggetto scuro dietro il primo. Sfocarla davvero non si puo' a buon
+        // mercato su tela accelerata, ma due gradini bastano.
+        if (palette.shadowAlpha > 0.001f) {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 for (index in 0 until prism.partCount) {
                     if (!prism.capTransform(index, camera, model.depth)) continue
                     val outline = prism.outlineOf(index)
-                    shadowPaint.color = Color.Black.copy(alpha = palette.shadowAlpha).toArgb()
-                    native.save()
-                    native.translate(
-                        model.depth * 0.24f * SHADOW_REACH,
-                        model.depth * 0.42f * SHADOW_REACH,
-                    )
-                    native.concat(prism.shadowTransform)
-                    native.drawPath(outline, shadowPaint)
-                    native.restore()
+                    for (layer in SHADOW_STEPS.indices) {
+                        val reach = SHADOW_STEPS[layer]
+                        shadowPaint.color = Color.Black
+                            .copy(alpha = palette.shadowAlpha * SHADOW_WEIGHTS[layer])
+                            .toArgb()
+                        native.save()
+                        native.translate(
+                            model.depth * 0.24f * reach,
+                            model.depth * 0.42f * reach,
+                        )
+                        native.concat(prism.shadowTransform)
+                        native.drawPath(outline, shadowPaint)
+                        native.restore()
+                    }
                 }
             }
         }
@@ -252,16 +220,7 @@ class PrismRenderer : TemperatureRenderer {
     private fun faceTone(surfaces: TextPrism.Surfaces): Float =
         ((surfaces.faceLambert - 0.30f) / 0.55f).coerceIn(0f, 1f)
 
-    private fun inkFor(palette: NumberPalette): TextPrism.Ink {
-        val cached = ink
-        if (cached != null && inkPalette == palette) return cached
-        val built = buildInk(palette)
-        inkPalette = palette
-        ink = built
-        return built
-    }
-
-    private fun buildInk(palette: NumberPalette) = TextPrism.Ink(
+    private fun inkFor(palette: NumberPalette) = TextPrism.Ink(
         wallFar = palette.sideFar.toArgb(),
         wallNear = palette.sideNear.toArgb(),
         bevelDark = lerp(palette.chamfer, palette.sideFar, 0.55f).toArgb(),
@@ -285,9 +244,6 @@ class PrismRenderer : TemperatureRenderer {
     private fun sampleStep(sizePx: Float): Float = (sizePx / 60f).coerceIn(3f, 19f)
 
     private companion object {
-        /** Sotto questo alfa l'ombra non si vede, e non si disegna. */
-        const val SHADOW_VISIBLE = 0.06f
-
         const val MARGIN = 10f
         const val SWING_ALLOWANCE = 1.10f
         const val AMBIENT = 0.14f
@@ -304,11 +260,13 @@ class PrismRenderer : TemperatureRenderer {
         const val EYE_DISTANCE = 2.7f
 
         /**
-         * Quanto si allontana l'ombra, in multipli dello spessore.
+         * Quanto si allontana ogni gradino dell'ombra, e quanto pesa.
          *
-         * Fra i due gradini di prima: abbastanza da staccare, non tanto da
-         * sembrare un secondo oggetto.
+         * Due e non tre: ogni gradino e' una copia intera della sagoma da
+         * riempire, ed e' la superficie piu' grande che il disegno tocchi. Il
+         * terzo aggiungeva pochissimo a vedersi e parecchio a costare.
          */
-        const val SHADOW_REACH = 0.72f
+        val SHADOW_STEPS = floatArrayOf(0.40f, 1f)
+        val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
     }
 }

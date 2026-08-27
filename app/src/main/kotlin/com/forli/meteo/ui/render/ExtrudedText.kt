@@ -11,9 +11,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.forli.meteo.ui.render3d.SceneContact
-import com.forli.meteo.ui.render3d.Skyline
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.forli.meteo.ui.theme.LocalMeteoColors
@@ -70,16 +68,6 @@ fun ExtrudedText(
     motion: () -> NumberMotion = { NumberMotion.Fermo },
     /** Chi vuole sapere dove l'oggetto offre superficie. Di norma la pioggia. */
     contact: SceneContact? = null,
-    /**
-     * Cosa si posa **sopra** l'oggetto, disegnato dopo di lui.
-     *
-     * Riceve la sagoma appena tracciata, non quella del fotogramma prima: e' il
-     * solo momento in cui la coltre di neve puo' sapere dove appoggiarsi con un
-     * fotogramma di anticipo su nessuno. Disegnarla dalla tela della scultura,
-     * che viene prima nell'ordine di disposizione, l'avrebbe messa **sotto** la
-     * cifra - cioe' invisibile, che e' il modo peggiore di sbagliare.
-     */
-    overlay: (DrawScope.(Skyline) -> Unit)? = null,
     typeface: Typeface = rememberNumberTypeface(),
 ) {
     val colors = LocalMeteoColors.current
@@ -121,7 +109,6 @@ fun ExtrudedText(
                 motion = motion(),
                 silhouette = contact?.skyline,
             )
-            contact?.skyline?.let { silhouette -> overlay?.invoke(this, silhouette) }
         }
     }
 }
