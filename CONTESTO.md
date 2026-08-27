@@ -241,7 +241,8 @@ tabulati una volta sola, non ricalcolati nel disegno.
 
 ## 5. Movimento
 
-- `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra.
+- `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra,
+  e **un solo riconoscitore** per il gesto (vedi trappola #23).
   **Nessun limite**: si gira quanto si vuole, anche piu' volte.
   **Il segno e' negativo** e non e' un dettaglio: la superficie che si tocca deve
   andare dove va il dito. Col segno positivo, tirando verso destra la cifra
@@ -340,6 +341,30 @@ si torna a usare `TextMeasurer`, costruirlo con cache a zero.
 **4. Lambert troncato a zero appiattisce tutto.** La prova di silhouette tiene
 le facce rivolte come l'estrusione, opposta alla luce: erano **tutte esattamente
 0.00**. Serve il Lambert dimezzato.
+
+**23. Due riconoscitori con assi diversi sullo stesso tocco sono una monetina.**
+La correzione della trappola #5 - un `draggable` orizzontale per la rotazione
+dentro uno verticale per il foglio - sembrava la soluzione pulita, ognuno il suo
+asse, e ha retto per mesi perche' il difetto e' **intermittente**. Entrambi si
+armano sullo stesso tocco, ognuno aspetta di superare la soglia sul proprio
+asse, e chi la supera per primo vince mentre l'altro **si annulla per tutto il
+resto del gesto**. Un dito non parte mai perfettamente orizzontale: se i primi
+millimetri hanno un filo di verticale in piu', il tocco va al foglio, e da li'
+in poi si puo' scorrere di lato quanto si vuole senza che il numero giri. Detto
+dall'utente con parole esatte: *"a volte riesco a ruotare il numero a volte no,
+e' molto snervante"*.
+
+Un difetto che si presenta a intermittenza con lo stesso identico gesto va
+cercato **in una gara**, non in una soglia sbagliata: non c'e' nessun valore da
+ritoccare che faccia vincere sempre chi deve vincere. La cura e' togliere la
+gara. `scenePointer` e' un riconoscitore solo che accumula lo spostamento,
+decide l'asse guardando **quale componente e' piu' grande** quando la soglia
+cade, e non cambia piu' idea; consuma, cosi' il riconoscitore che avvolge la
+schermata resta fuori; e se il gesto risulta verticale muove il foglio lui.
+
+Provato sull'emulatore con cinque diagonali crescenti a parita' di corsa
+orizzontale: le prime quattro girano la cifra, la quinta - chiaramente
+verticale - alza il foglio.
 
 **5. `detectDragGestures` consuma qualunque direzione.** La rotazione ingoiava
 la trascinata verso l'alto, cioe' **il gesto piu' importante dell'app veniva
