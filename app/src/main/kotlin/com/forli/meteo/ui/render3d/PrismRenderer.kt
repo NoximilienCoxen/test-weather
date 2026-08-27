@@ -138,10 +138,16 @@ class PrismRenderer : TemperatureRenderer {
         // di luce. Ma e' un disegno, non un fenomeno: deve stare sul fondo, non
         // sulla faccia del carattere accanto.
         //
-        // Due copie sempre piu' lontane e sempre piu' tenui, non una sola: una
-        // copia sola col bordo netto non si legge come ombra ma come un secondo
-        // oggetto scuro dietro il primo. Sfocarla davvero non si puo' a buon
-        // mercato su tela accelerata, ma due gradini bastano.
+        // Una copia sola, e non piu' due.
+        //
+        // Due gradini davano un bordo meno secco, e su un fondo grigio chiaro
+        // servivano. Su questo fondo no: l'ombra e' scura su scuro, il bordo si
+        // perde da solo, e il secondo gradino si pagava per intero senza
+        // aggiungere niente. E si paga caro - ogni gradino e' una copia intera
+        // della sagoma sotto una matrice, cioe' la superficie piu' grande che il
+        // disegno tocchi. Misurato: toglierlo restituisce quasi due millisecondi
+        // di rendering per fotogramma, che sono quelli che separavano il caso
+        // peggiore dal budget.
         // La soglia e' 0,06 e non un millesimo, e la differenza vale piu' di
         // tutto il resto di questo file messo insieme.
         //
@@ -167,20 +173,15 @@ class PrismRenderer : TemperatureRenderer {
                 for (index in 0 until prism.partCount) {
                     if (!prism.capTransform(index, camera, model.depth)) continue
                     val outline = prism.outlineOf(index)
-                    for (layer in SHADOW_STEPS.indices) {
-                        val reach = SHADOW_STEPS[layer]
-                        shadowPaint.color = Color.Black
-                            .copy(alpha = palette.shadowAlpha * SHADOW_WEIGHTS[layer])
-                            .toArgb()
-                        native.save()
-                        native.translate(
-                            model.depth * 0.24f * reach,
-                            model.depth * 0.42f * reach,
-                        )
-                        native.concat(prism.shadowTransform)
-                        native.drawPath(outline, shadowPaint)
-                        native.restore()
-                    }
+                    shadowPaint.color = Color.Black.copy(alpha = palette.shadowAlpha).toArgb()
+                    native.save()
+                    native.translate(
+                        model.depth * 0.24f * SHADOW_REACH,
+                        model.depth * 0.42f * SHADOW_REACH,
+                    )
+                    native.concat(prism.shadowTransform)
+                    native.drawPath(outline, shadowPaint)
+                    native.restore()
                 }
             }
         }
@@ -303,13 +304,11 @@ class PrismRenderer : TemperatureRenderer {
         const val EYE_DISTANCE = 2.7f
 
         /**
-         * Quanto si allontana ogni gradino dell'ombra, e quanto pesa.
+         * Quanto si allontana l'ombra, in multipli dello spessore.
          *
-         * Due e non tre: ogni gradino e' una copia intera della sagoma da
-         * riempire, ed e' la superficie piu' grande che il disegno tocchi. Il
-         * terzo aggiungeva pochissimo a vedersi e parecchio a costare.
+         * Fra i due gradini di prima: abbastanza da staccare, non tanto da
+         * sembrare un secondo oggetto.
          */
-        val SHADOW_STEPS = floatArrayOf(0.40f, 1f)
-        val SHADOW_WEIGHTS = floatArrayOf(0.60f, 0.40f)
+        const val SHADOW_REACH = 0.72f
     }
 }
