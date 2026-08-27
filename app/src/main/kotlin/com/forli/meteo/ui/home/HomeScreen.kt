@@ -44,7 +44,7 @@ import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberSceneRotation
 import com.forli.meteo.ui.motion.rememberSpinFeedback
-import com.forli.meteo.ui.motion.rotatesScene
+import com.forli.meteo.ui.motion.scenePointer
 import com.forli.meteo.ui.render3d.SceneContact
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
@@ -64,6 +64,16 @@ fun HomeScreen(
     fog: Float,
     /** Falso quando la scena e' coperta: allora niente respiro e niente battito. */
     visible: Boolean,
+    /**
+     * Il foglio del dettaglio, comandato da qui.
+     *
+     * Dentro la scena il gesto e' uno solo e lo riconosce [scenePointer]: se
+     * il trascinamento risulta verticale, e' lui a muovere il foglio. Lasciarlo
+     * al riconoscitore che avvolge tutta la schermata rimetterebbe in piedi la
+     * gara fra i due, che e' il difetto da togliere.
+     */
+    onSheetDelta: (Float) -> Unit,
+    onSheetSettle: suspend (Float) -> Unit,
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -222,7 +232,11 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .rotatesScene(rotation),
+                    .scenePointer(
+                    rotation = rotation,
+                    onVerticalDelta = onSheetDelta,
+                    onVerticalSettle = onSheetSettle,
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 WeatherSculpture(

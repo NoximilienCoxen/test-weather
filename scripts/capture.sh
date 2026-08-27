@@ -171,6 +171,39 @@ session() {
     restart_with "--ei ora 20"
     shoot "${slug}-10-tramonto"
 
+    # ## Il gesto: ruota davvero, a qualunque diagonale?
+    #
+    # Il difetto era una monetina lanciata nei primi pixel: due riconoscitori
+    # armati sullo stesso tocco, e chi superava per primo la soglia sul proprio
+    # asse escludeva l'altro. Un dito che parte con un filo di verticale in piu'
+    # consegnava il gesto al foglio, e da li' in poi si poteva scorrere di lato
+    # quanto si voleva senza che il numero girasse.
+    #
+    # Qui si trascina la stessa distanza orizzontale con quantita' crescenti di
+    # verticale. I primi quattro devono girare la cifra; l'ultimo, chiaramente
+    # verticale, deve invece alzare il foglio del dettaglio.
+    trascina() {
+      local nome="$1" dx="$2" dy="$3"
+      restart_with "--ei meteo 3 --ei vento 0"
+      local x0=$(( W / 2 )) y0=$(( H * 32 / 100 ))
+      adbt shell input motionevent DOWN "$x0" "$y0" >/dev/null 2>&1 || true
+      local k
+      for k in 1 2 3 4 5 6; do
+        adbt shell input motionevent MOVE \
+          "$(( x0 + dx * k / 6 ))" "$(( y0 + dy * k / 6 ))" >/dev/null 2>&1 || true
+      done
+      sleep 1
+      shoot "${slug}-gesto-${nome}"
+      adbt shell input motionevent UP "$(( x0 + dx ))" "$(( y0 + dy ))" >/dev/null 2>&1 || true
+      sleep 1
+    }
+
+    trascina "1-piatto"      300 0
+    trascina "2-poco-obliquo" 300 80
+    trascina "3-obliquo"      300 160
+    trascina "4-molto-obliquo" 300 280
+    trascina "5-verticale"     60 320
+
     # La cifra ad angoli fissi. E l'unico modo di confrontare un prima con un
     # dopo: tenendo il dito fermo e sperando nello scatto, due esecuzioni non
     # producono mai la stessa immagine.

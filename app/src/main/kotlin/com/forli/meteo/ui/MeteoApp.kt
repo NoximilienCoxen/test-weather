@@ -128,6 +128,8 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 // scena non si vede: farla respirare li' vorrebbe dire chiedere
                 // fotogrammi per un oggetto coperto.
                 visible = !state.settingsOpen && sheet.value < 0.98f,
+                onSheetDelta = ::drag,
+                onSheetSettle = ::settle,
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
