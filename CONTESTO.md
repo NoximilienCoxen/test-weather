@@ -251,11 +251,17 @@ tabulati una volta sola, non ricalcolati nel disegno.
   se stesso una volta o due e lo lascia nella stessa posa. In entrambi i casi
   torna a posto, ma quanto gira lo decide la mano. Finita la molla il conto
   torna a zero: un giro intero e' indistinguibile da nessun giro.
-- `ui/motion/DeviceTilt.kt`: accelerometro, **non** vettore di rotazione (che
-  porterebbe imbardata e deriva). Il valore e' **lo scostamento da una linea di
-  base che insegue lentamente la posa**: nessuno tiene il telefono verticale, e
-  senza questo la cifra resterebbe stabilmente storta. Sensore spento fuori dal
-  primo piano. **Zona morta all'un per cento** (trappola #8).
+- **L'accelerometro non c'e' piu'.** `DeviceTilt.kt` e' stato cancellato: si
+  contendeva il movimento col dito, e per il beccheggio metteva in discussione
+  l'unica garanzia che regge l'ordine di sovrapposizione dei caratteri (vedi il
+  tetto, sopra). Al suo posto il **respiro**, dentro `SceneRotation`: tre gradi e
+  mezzo di oscillazione, un ciclo ogni undici secondi, somma di due seni
+  incommensurabili fra loro perche' con uno solo si riconosce il periodo e un
+  oggetto che oscilla a tempo non respira, fa il metronomo. Comando e respiro si
+  **sommano**, quindi il dito ha priorita' per costruzione e non per una regola
+  scritta altrove: mentre si trascina il peso del respiro vale zero. Scende in un
+  decimo di secondo e risale in un secondo e mezzo. Si spegne dietro le
+  impostazioni, e con l'angolo imposto dalla verifica.
 - Il valore della rotazione e quello dell'inclinazione si leggono **dentro il
   disegno**, mai in composizione: ruotare deve ridipingere, non ricomporre.
 
@@ -274,6 +280,12 @@ adb shell am start -n com.forli.meteo/.MainActivity \
 | `--ei meteo` | impone il codice WMO |
 | `--ez benvenuto false` | salta la schermata di benvenuto |
 | `--ei vento N` | impone il vento a N metri al secondo, zero compreso |
+| `--ei giro N` | fissa l'angolo della scena a N gradi |
+
+**`--ei giro` esiste per poter confrontare.** Tenendo il dito fermo a ottanta
+gradi e sperando che lo scatto arrivi in tempo, due esecuzioni non danno mai la
+stessa immagine, e senza due immagini confrontabili non si sa se una correzione
+ha corretto.
 
 **`--ei vento 0` serve a chiedere la bonaccia.** Con un codice imposto l'app
 impone anche il vento, perche' una scena costruita deve essere inclinata come
@@ -420,6 +432,39 @@ lontano e su una macchia al dodici per cento di nero non si vede. La base
 frontale invece la prospettiva ce l'ha per forza - e' tutto il punto - e quella
 resta cara.
 
+**20. Scartare le facce di spalle e' giusto solo se c'e' un buffer di
+profondita'.** Le pareti rivolte altrove venivano buttate via - il gesto ovvio,
+e quello sbagliato qui. **Su un solido non convesso le pareti frontali piu' la
+base non coprono tutta la sagoma**: dentro l'occhiello del 9, nel ricciolo del
+2, lungo ogni rientranza restano regioni dove nessuna superficie rivolta
+all'occhio arriva, e li' si vedeva il cielo attraverso la cifra. Le pareti di
+spalle sono l'unica cosa che possa riempirle: si disegnano tutte, in due
+passate, prima quelle di spalle e poi quelle davanti che le coprono dove si
+sovrappongono. E vanno illuminate con la **normale ribaltata**, perche' cio' che
+si vede attraverso una rientranza e' l'interno della concavita' e non il retro
+del guscio; con l'esposizione vera resta quasi nera e la rientranza si legge
+come un buco. Ribaltarla e' gratis: il Lambert dimezzato della normale opposta
+e' il complemento a uno di quello della normale.
+
+**21. Un difetto di disegno si stana piu' in fretta fuori dall'app.**
+`/tmp` non serve: il glifo vero si estrae dal font del progetto con `fontTools`,
+e con un centinaio di righe di Python si replica la camera, il campionamento dei
+contorni, il culling e l'ordine di disegno. Da li' una variante si prova in un
+secondo invece che in un giro di CI da dodici minuti, e soprattutto si possono
+rendere **affiancate** le versioni con e senza una certa scelta, che e' l'unico
+modo di sapere quale delle due la causa. Su questo difetto due ipotesi
+plausibili sono cadute cosi' prima di arrivare a quella giusta: non c'era nessun
+`BlendMode` da togliere, e l'omografia della base resta esatta al pixel anche a
+ottantanove gradi, dove pure e' malcondizionata.
+
+**22. L'ombra portata va misurata contro il colore che sta dietro l'oggetto.**
+Si misurava contro il fondo dello schermo, ma la cifra non sta in fondo: sta
+poco sotto la meta', dove il gradiente e' ancora vicino alla cima. Contro il
+fondo sbagliato l'alfa usciva fra un centesimo e cinque centesimi in ogni stato,
+cioe' invisibile, e l'ombra veniva saltata sempre - senza che niente lo
+segnalasse, perche' un'ombra che non si vede e un'ombra che non c'e' hanno lo
+stesso aspetto.
+
 **19. Committare da Windows rompe la CI in due modi silenziosi.** Il primo
 commit fatto da qui l'ha fatta fallire senza toccare una riga di Kotlin:
 `gradlew` e gli script sono passati da `100755` a `100644`, e il primo
@@ -463,48 +508,25 @@ cambio unita' (21 °C -> 70 °F), persistenza delle scelte.
 pioggia che cade, 19 ms mediani e nessun fotogramma in ritardo, di giorno come
 di notte. In rotazione il lavoro per fotogramma sta fra i 5 e i 17 ms.
 
-**Misurato dall'emulatore della CI** (dopo), con le colonne di `framestats`:
-da `DrawStart` a `SyncQueued` il lavoro del thread di interfaccia, cioe' il
-codice che registra i comandi; da `IssueDrawCommandsStart` a `SwapBuffers`
-quello del thread di rendering, cioe' i pixel riempiti.
+**Misurato dall'emulatore della CI**, con le colonne di `framestats`: da
+`DrawStart` a `SyncQueued` il lavoro del thread di interfaccia, cioe' il codice
+che registra i comandi; da `IssueDrawCommandsStart` a `SwapBuffers` quello del
+thread di rendering, cioe' i pixel riempiti.
 
-| stato | interfaccia | rendering |
-|---|---|---|
-| coperto, aria ferma | **nessun fotogramma** | |
-| notte, aria ferma | **nessun fotogramma** | |
-| coperto con vento | 1,5 ms | 3,8 ms |
-| sereno di giorno | 2,0 ms | 3,9 ms |
-| pioggia | 0,8 ms | 5,1 ms |
-| neve | 1,6 ms | 5,6 ms |
-| nebbia | 3,6 ms | 4,6 ms |
-| temporale | 0,9 ms | 4,6 ms |
-| rotazione, sereno | 1,8 ms | 5,6 ms |
-| rotazione, neve | 1,9 ms | 7,6 ms |
-
-Prima della passata sulle allocazioni e sull'ombra portata, gli stessi stati
-davano fino a 4,2 ms di interfaccia e 10,0 di rendering nel caso peggiore. Le
-tre cose che hanno spostato l'ago, in ordine di quanto:
-
-1. **l'ombra portata della cifra**, che con la tavolozza scura era invisibile e
-   veniva disegnata lo stesso;
-2. **la nebbia da cinque banchi a tre**, che era riempimento puro;
-3. **le allocazioni nel disegno**: liste e chiavi incapsulate dell'ordinamento,
-   camere, tracciati e pennelli.
-
-**Le percentuali di `gfxinfo` non si usano qui, e non e' una dimenticanza.** Su
+**Le percentuali di `gfxinfo` non si usano, e non e' una dimenticanza.** Su
 swiftshader l'emulatore non aggancia il vsync nemmeno a schermo fermo: riporta
 il cento per cento dei fotogrammi "in ritardo" e mediane da centocinquanta
 millisecondi in ogni stato, comprese le scene piu' semplici. Sta misurando il
-rasterizzatore software del runner, non l'app. Le colonne sopra misurano il
-lavoro svolto, che e' l'unica cosa confrontabile con un telefono.
+rasterizzatore software del runner, non l'app.
 
 Delle due colonne, **la prima e' quella che dipende da noi**: e' il codice
-Kotlin che registra i comandi di disegno, e sta fra 1,1 e 4,2 millisecondi in
-ogni stato. La seconda dipende da quanti pixel si riempiono e da chi li
-riempie, e su una scheda grafica vera dovrebbe scendere di parecchio. L'unico
-valore sopra gli otto millisecondi e' la rotazione sotto il dito con la neve
-accesa, che e' il caso peggiore costruito apposta: geometria ricalcolata a ogni
-fotogramma, nuvola, centotrenta fiocchi e la coltre che scivola, tutto insieme.
+Kotlin che registra i comandi di disegno. La seconda dipende da quanti pixel si
+riempiono e da chi li riempie, e su una scheda grafica vera scende di parecchio.
+
+**Da fermo l'app non disegna piu' zero fotogrammi**, e non e' una regressione:
+e' il respiro, chiesto esplicitamente, e il conto e' che ne disegni pochi e
+costino poco invece che nessuno. Gli stati davvero immobili non esistono piu'
+salvo dietro le impostazioni, dove il battito si spegne.
 
 La pioggia sa dove trova superficie: `ui/render3d/Skyline.kt` tiene, colonna per
 colonna, il punto piu' alto occupato dalla cifra, e la cifra ce lo scrive dentro
