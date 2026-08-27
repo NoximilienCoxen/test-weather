@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,8 +26,6 @@ import com.forli.meteo.data.SunClock
 import com.forli.meteo.data.Wind
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.motion.SceneRotation
-import com.forli.meteo.ui.motion.TILT_PITCH_DEGREES
-import com.forli.meteo.ui.motion.TILT_YAW_DEGREES
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
 import com.forli.meteo.ui.render3d.Camera
 import com.forli.meteo.ui.render3d.SceneContact
@@ -70,7 +67,6 @@ fun WeatherSculpture(
     fog: Float,
     date: LocalDate,
     rotation: SceneRotation,
-    tilt: State<Offset>,
     /** Falso quando la schermata non e' in primo piano: allora niente vibrazione. */
     feelsIt: Boolean,
     /** Dove la cifra offre superficie a quello che cade. */
@@ -186,8 +182,10 @@ fun WeatherSculpture(
     ) {
         val unit = size.minDimension
         camera.aim(
-            yawDeg = rotation.yawDeg + tilt.value.x * TILT_YAW_DEGREES,
-            pitchDeg = tilt.value.y * TILT_PITCH_DEGREES,
+            // Stesso orientamento della cifra, e solo attorno alla verticale:
+            // sono un oggetto solo visto da un punto solo.
+            yawDeg = rotation.yawDeg,
+            pitchDeg = 0f,
             // Piu' vicina di quella della cifra rispetto alla propria
             // dimensione: la scultura e' un oggetto piccolo tenuto vicino
             // all'occhio, e girandola la prospettiva deve sentirsi.

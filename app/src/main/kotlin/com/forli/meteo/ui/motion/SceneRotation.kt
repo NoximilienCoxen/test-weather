@@ -6,11 +6,17 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.withFrameNanos
+import kotlin.math.sin
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -46,11 +52,69 @@ class SceneRotation internal constructor(
     /** Quanto il dito ha girato in tutto, senza limiti. */
     private var raw = 0f
 
-    /** Angolo attorno all'asse verticale, in gradi. */
-    val yawDeg: Float get() = animated.value
+    /**
+     * Il respiro: l'oscillazione lenta che l'oggetto ha quando nessuno lo tocca.
+     *
+     * E' uno stato di Compose, ma viene letto **dentro il disegno** insieme al
+     * resto dell'orientamento: respirare ridipinge e non ricompone.
+     */
+    private val breath = mutableFloatStateOf(0f)
+
+    /**
+     * Angolo imposto dall'aggancio di verifica, in gradi.
+     *
+     * Serve a fotografare la cifra a un angolo preciso: senza, l'unico modo di
+     * guardarla a ottanta gradi e' tenere il dito fermo li' e sperare che lo
+     * scatto arrivi in tempo, e due esecuzioni non producono mai la stessa
+     * immagine - cioe' non si puo' confrontare un prima con un dopo.
+     */
+    private val forced = mutableStateOf<Float?>(null)
+
+    internal fun force(degrees: Float?) {
+        if (forced.value != degrees) forced.value = degrees
+    }
+
+    /**
+     * Quanto il respiro conta adesso, da 0 a 1.
+     *
+     * Non e' uno stato osservabile: lo legge e lo scrive solo il battito, che
+     * gira sul filo principale. Va a zero appena il dito tocca e ci resta
+     * finche' la molla non ha finito, poi risale piano.
+     */
+    private var idle = 1f
+    private var touching = false
+
+    /**
+     * Angolo attorno all'asse verticale, in gradi.
+     *
+     * Il comando del dito e il respiro si sommano, e non e' un dettaglio: cosi'
+     * il dito ha **priorita' assoluta** per costruzione invece che per una
+     * regola scritta da qualche parte. Mentre si trascina, il respiro vale zero
+     * e quello che si vede e' esattamente dove sta il dito.
+     */
+    val yawDeg: Float get() = forced.value ?: (animated.value + breath.floatValue)
 
     internal fun begin() {
         raw = animated.value
+        touching = true
+    }
+
+    /** Avanza il respiro di un fotogramma. Chiamato solo dal battito. */
+    internal fun breathe(seconds: Float, delta: Float) {
+        // Il peso scende in fretta e risale piano: interrompere il respiro deve
+        // essere immediato, riprenderlo no, altrimenti al rilascio l'oggetto
+        // riceve due movimenti insieme e sembra che gli scappi di mano.
+        idle = if (touching) {
+            (idle - delta * FADE_OUT).coerceAtLeast(0f)
+        } else {
+            (idle + delta * FADE_IN).coerceAtMost(1f)
+        }
+        // Due seni incommensurabili fra loro: con uno solo si riconosce il
+        // periodo, e un oggetto che oscilla a tempo non respira, fa il
+        // metronomo.
+        val wave = sin(seconds * BREATH_RATE) * 0.72f +
+            sin(seconds * BREATH_RATE * 0.41f + 1.3f) * 0.28f
+        breath.floatValue = wave * BREATH_DEGREES * idle
     }
 
     internal fun drag(deltaPx: Float) {
@@ -92,6 +156,9 @@ class SceneRotation internal constructor(
         // zero non si vede e impedisce all'angolo di crescere senza fine.
         animated.snapTo(0f)
         raw = 0f
+        // Solo adesso il respiro puo' tornare: durante la molla lo si
+        // vedrebbe combattere contro il rientro.
+        touching = false
     }
 
     private companion object {
@@ -109,17 +176,71 @@ class SceneRotation internal constructor(
 
         /** Gradi al secondo. Oltre, un colpo di dito diventa una trottola. */
         const val MAX_LAUNCH_SPEED = 1900f
+
+        /**
+         * Ampiezza del respiro, in gradi.
+         *
+         * Tre gradi e mezzo: abbastanza perche' la faccia si accorci quel tanto
+         * che basta a vedere che l'oggetto e' li' e non stampato, troppo pochi
+         * perche' qualcuno lo chiami movimento. Sopra i cinque comincia a
+         * sembrare che l'app stia facendo qualcosa.
+         */
+        const val BREATH_DEGREES = 3.5f
+
+        /** Radianti al secondo: un ciclo ogni undici secondi circa. */
+        const val BREATH_RATE = 0.57f
+
+        /** Al tocco il respiro sparisce in un decimo di secondo. */
+        const val FADE_OUT = 10f
+
+        /** Al rilascio torna in un secondo e mezzo. */
+        const val FADE_IN = 0.66f
     }
 }
 
+/**
+ * @param breathing falso quando la scena non si vede - dietro le impostazioni,
+ *   o col foglio del dettaglio alzato - e allora il battito si spegne del tutto
+ *   e l'app torna a disegnare zero fotogrammi.
+ */
 @Composable
-fun rememberSceneRotation(onFullTurn: () -> Unit = {}): SceneRotation {
+fun rememberSceneRotation(
+    breathing: Boolean = true,
+    forcedYawDeg: Float? = null,
+    onFullTurn: () -> Unit = {},
+): SceneRotation {
     val scope = rememberCoroutineScope()
     // Il richiamo viene tenuto aggiornato invece che catturato: la lambda
     // arriva nuova a ogni composizione, e legarla dentro il `remember`
     // significherebbe chiamare per sempre quella della prima volta.
     val live by rememberUpdatedState(onFullTurn)
-    return remember(scope) { SceneRotation(scope) { live() } }
+    val rotation = remember(scope) { SceneRotation(scope) { live() } }
+    SideEffect { rotation.force(forcedYawDeg) }
+
+    // Il battito del respiro. Scrive un solo numero, che il disegno legge:
+    // nessuna ricomposizione, e il lavoro per fotogramma e' un seno.
+    LaunchedEffect(rotation, breathing, forcedYawDeg != null) {
+        // Con l'angolo imposto il respiro si spegne: uno scatto deve essere
+        // ripetibile, e un oggetto che oscilla non lo e'.
+        if (!breathing || forcedYawDeg != null) {
+            rotation.breathe(0f, 0f)
+            return@LaunchedEffect
+        }
+        var origin = 0L
+        var previous = 0L
+        while (true) {
+            withFrameNanos { now ->
+                if (origin == 0L) {
+                    origin = now
+                    previous = now
+                }
+                val delta = ((now - previous) / 1e9f).coerceIn(0f, 0.05f)
+                previous = now
+                rotation.breathe((now - origin) / 1e9f, delta)
+            }
+        }
+    }
+    return rotation
 }
 
 /**

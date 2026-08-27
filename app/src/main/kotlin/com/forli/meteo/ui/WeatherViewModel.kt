@@ -48,6 +48,8 @@ data class UiState(
      * misurava mai il riposo.
      */
     val forcedWindSpeed: Float? = null,
+    /** Angolo della scena imposto dall'esterno, solo per la verifica. */
+    val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     val settingsOpen: Boolean = false,
@@ -421,6 +423,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /** Aggancio per la cattura automatica: fissa l'angolo della scena. */
+    fun forceYaw(degrees: Float?) {
+        _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
     /** Aggancio per la cattura automatica: impone il vento, zero compreso. */
