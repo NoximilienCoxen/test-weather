@@ -34,6 +34,41 @@ private val LightOnScreen: Offset = run {
 }
 
 /**
+ * Un bagliore proprio: un alone che sfuma a trasparente, dietro al corpo.
+ *
+ * Non e' la sfumatura della sfera - quella racconta come la luce esterna
+ * colpisce una superficie opaca. Questo e' l'opposto: il corpo che emette
+ * luce sua, indipendente da dove sta la lampada della scena. Va disegnato
+ * *prima* del disco, cosi' il disco gli sta sopra e l'alone resta un contorno
+ * intorno, non una macchia che lo attraversa.
+ */
+fun DrawScope.glow(
+    camera: Camera,
+    x: Float,
+    y: Float,
+    z: Float,
+    radius: Float,
+    color: Color,
+    alpha: Float,
+    spread: Float = 2.4f,
+) {
+    if (alpha <= 0.003f) return
+    camera.place(x, y, z)
+    val r = radius * camera.scale
+    if (r <= 0.5f) return
+    val centre = Offset(camera.sx, camera.sy)
+    drawCircle(
+        brush = Brush.radialGradient(
+            colors = listOf(color.copy(alpha = alpha), color.copy(alpha = 0f)),
+            center = centre,
+            radius = r * spread,
+        ),
+        radius = r * spread,
+        center = centre,
+    )
+}
+
+/**
  * Una sfera opaca: un gradiente radiale col centro spostato verso la luce.
  *
  * @param wide e [tall] schiacciano il disco attorno al proprio centro, sulla
