@@ -21,7 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +59,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
+    var advancedOpen by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -75,7 +79,7 @@ fun SettingsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             item { SectionTitle("LOCALITÀ") }
@@ -89,21 +93,20 @@ fun SettingsScreen(
                 )
             }
             item {
-                Text(
-                    text = state.place.detail.uppercase(),
-                    style = MeteoType.caption,
-                    color = colors.label,
-                )
-            }
-            item {
                 // Con la virgola decimale dell'italiano "44,2226, 12,0407" si
                 // legge come quattro numeri invece che due. I gradi e i punti
                 // cardinali tolgono ogni dubbio.
+                val detail = state.place.detail
+                val text = if (detail.isBlank()) {
+                    coordinates(state.place.latitude, state.place.longitude)
+                } else {
+                    "$detail · ${coordinates(state.place.latitude, state.place.longitude)}"
+                }
                 Text(
-                    text = coordinates(state.place.latitude, state.place.longitude),
+                    text = text.uppercase(),
                     style = MeteoType.caption,
                     color = colors.label,
-                    modifier = Modifier.padding(top = 3.dp, bottom = 12.dp),
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
 
@@ -111,24 +114,25 @@ fun SettingsScreen(
                 SearchField(
                     value = state.query,
                     onValueChange = onQuery,
-                    placeholder = "CERCA UNA CITTÀ",
+                    placeholder = "> CERCA CITTÀ",
                 )
             }
 
-            item {
-                val message = when {
-                    state.searching -> "RICERCA IN CORSO…"
-                    state.searchError != null -> state.searchError.uppercase()
-                    state.query.trim().length >= 2 && state.results.isEmpty() -> "NESSUN RISULTATO"
-                    state.query.isBlank() -> "OPPURE SCEGLI DALL'ELENCO"
-                    else -> null
+            val message = when {
+                state.searching -> "RICERCA IN CORSO…"
+                state.searchError != null -> state.searchError.uppercase()
+                state.query.trim().length >= 2 && state.results.isEmpty() -> "NESSUN RISULTATO"
+                else -> null
+            }
+            if (message != null) {
+                item {
+                    Text(
+                        text = message,
+                        style = MeteoType.caption,
+                        color = colors.label,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+                    )
                 }
-                Text(
-                    text = message.orEmpty(),
-                    style = MeteoType.caption,
-                    color = colors.label,
-                    modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
-                )
             }
 
             // Con la ricerca vuota si vedono le scorciatoie. Le prime della
@@ -145,76 +149,61 @@ fun SettingsScreen(
                 )
             }
 
-            item { Spacer(Modifier.height(20.dp)) }
-            item { SectionTitle("UNITÀ") }
+            item { Spacer(Modifier.height(6.dp)) }
+            item { SectionTitle("IMPOSTAZIONI") }
             item {
-                UnitChoice(
-                    current = state.unit,
-                    onChoose = onChooseUnit,
-                    modifier = Modifier.padding(top = 6.dp, bottom = 4.dp),
-                )
-            }
-            item {
-                Text(
-                    text = "LA CONVERSIONE È IMMEDIATA: I DATI RESTANO QUELLI, " +
-                        "CAMBIA SOLO COME SONO SCRITTI.",
-                    style = MeteoType.caption,
-                    color = colors.label,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "UNITÀ DI MISURA", style = MeteoType.caption, color = colors.label)
+                    UnitChoice(current = state.unit, onChoose = onChooseUnit)
+                }
             }
 
-            item { Spacer(Modifier.height(24.dp)) }
-            item { SectionTitle("DA DOVE ARRIVANO I DATI") }
-            item { Spacer(Modifier.height(8.dp)) }
+            item { Spacer(Modifier.height(6.dp)) }
+            item { SectionTitle("DATI") }
+
+            item { KeyValueRow("SERVIZIO", "OPEN-METEO.COM") }
+            item { KeyValueRow("MODELLO", "MISCELA AUTOMATICA") }
+            item { KeyValueRow("FUSO ORARIO", "Auto (coordinate)") }
+            item {
+                KeyValueRow(
+                    "AGGIORNATO",
+                    state.forecast?.fetchedAt?.format(CLOCK) ?: "MAI",
+                )
+            }
+            item { KeyValueRow("CHIAVE D'ACCESSO", "Nessuna (Uso libero)") }
+            item { KeyValueRow("LICENZA", "CC BY 4.0") }
+            item { KeyValueRow("FASE LUNARE", "Locale (in-app)") }
 
             item {
-                SourceRow("SERVIZIO", "OPEN-METEO.COM")
-            }
-            item {
-                SourceRow("MODELLO", "MISCELA AUTOMATICA DEI MODELLI NAZIONALI")
-            }
-            item {
-                SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
-            }
-            item {
-                SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
-            }
-            item {
-                SourceRow(
-                    "GRANDEZZE ORARIE",
-                    WeatherRepository.HOURLY_VARS.replace(",", ", ").uppercase(),
+                AdvancedToggle(
+                    open = advancedOpen,
+                    onToggle = { advancedOpen = !advancedOpen },
                 )
             }
-            item {
-                SourceRow(
-                    "GRANDEZZE GIORNALIERE",
-                    WeatherRepository.DAILY_VARS.replace(",", ", ").uppercase(),
-                )
+            if (advancedOpen) {
+                item { AdvancedRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT) }
+                item { AdvancedRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT) }
+                item {
+                    AdvancedRow(
+                        "GRANDEZZE ORARIE",
+                        WeatherRepository.HOURLY_VARS.replace(",", ", "),
+                    )
+                }
+                item {
+                    AdvancedRow(
+                        "GRANDEZZE GIORNALIERE",
+                        WeatherRepository.DAILY_VARS.replace(",", ", "),
+                    )
+                }
             }
-            item {
-                SourceRow("FUSO ORARIO", "QUELLO DELLA LOCALITÀ, DEDOTTO DALLE COORDINATE")
-            }
-            item {
-                SourceRow(
-                    "ULTIMO AGGIORNAMENTO",
-                    state.forecast?.fetchedAt?.format(CLOCK)?.let { "$it, ORA DEL TELEFONO" }
-                        ?: "MAI",
-                )
-            }
-            item {
-                SourceRow("CHIAVE D'ACCESSO", "NESSUNA: L'USO NON COMMERCIALE È LIBERO")
-            }
-            item {
-                SourceRow("LICENZA DEI DATI", "CC BY 4.0")
-            }
-            item {
-                SourceRow("ALBA E TRAMONTO", "CALCOLATI DA OPEN-METEO PER QUESTE COORDINATE")
-            }
-            item {
-                SourceRow("FASE LUNARE", "CALCOLATA NELL'APP: L'API NON LA FORNISCE")
-            }
-            item { Spacer(Modifier.height(40.dp)) }
+
+            item { Spacer(Modifier.height(16.dp)) }
         }
     }
 }
@@ -222,23 +211,54 @@ fun SettingsScreen(
 @Composable
 private fun SectionTitle(text: String) {
     val colors = LocalMeteoColors.current
-    Column {
-        Spacer(Modifier.height(10.dp))
-        Text(text = text, style = MeteoType.caption, color = colors.label)
+    Text(
+        text = "──── $text ────",
+        style = MeteoType.caption,
+        color = colors.label.copy(alpha = 0.5f),
+        modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
+    )
+}
+
+@Composable
+private fun KeyValueRow(label: String, value: String) {
+    val colors = LocalMeteoColors.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(28.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = label, style = MeteoType.caption, color = colors.label)
         Box(
             modifier = Modifier
-                .padding(top = 6.dp, bottom = 10.dp)
-                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 10.dp)
                 .height(1.dp)
                 .background(colors.line),
         )
+        Text(text = value, style = MeteoType.value, color = colors.text)
     }
 }
 
 @Composable
-private fun SourceRow(label: String, value: String) {
+private fun AdvancedToggle(open: Boolean, onToggle: () -> Unit) {
     val colors = LocalMeteoColors.current
-    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+    val interaction = remember { MutableInteractionSource() }
+    Text(
+        text = if (open) "[-] PARAMETRI AVANZATI" else "[+] PARAMETRI AVANZATI",
+        style = MeteoType.caption,
+        color = colors.label,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(interactionSource = interaction, indication = null, onClick = onToggle)
+            .padding(vertical = 10.dp),
+    )
+}
+
+@Composable
+private fun AdvancedRow(label: String, value: String) {
+    val colors = LocalMeteoColors.current
+    Column(modifier = Modifier.padding(bottom = 10.dp)) {
         Text(text = label, style = MeteoType.caption, color = colors.label)
         Text(
             text = value,
@@ -259,24 +279,20 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
             .clip(RoundedCornerShape(10.dp))
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
             .background(if (selected) colors.line.copy(alpha = 0.55f) else Color.Transparent)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = place.name.uppercase(),
-                style = MeteoType.value,
-                color = colors.text,
-            )
-            if (place.detail.isNotBlank()) {
-                Text(
-                    text = place.detail.uppercase(),
-                    style = MeteoType.caption,
-                    color = colors.label,
-                    modifier = Modifier.padding(top = 2.dp),
-                )
-            }
+        val label = if (place.country.isNullOrBlank()) {
+            "· ${place.name}"
+        } else {
+            "· ${place.name} · ${place.country}"
         }
+        Text(
+            text = label,
+            style = MeteoType.value,
+            color = colors.text,
+            modifier = Modifier.weight(1f),
+        )
         if (selected) {
             Box(
                 modifier = Modifier
@@ -295,7 +311,7 @@ private fun UnitChoice(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         TempUnit.entries.forEach { unit ->
             val active = unit == current
             val interaction = remember { MutableInteractionSource() }
@@ -308,7 +324,7 @@ private fun UnitChoice(
                         indication = null,
                         onClick = { onChoose(unit) },
                     )
-                    .padding(horizontal = 18.dp, vertical = 8.dp),
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
                 Text(
                     text = unit.symbol,
@@ -332,7 +348,7 @@ private fun SearchField(
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(colors.line.copy(alpha = 0.40f))
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .padding(horizontal = 12.dp, vertical = 9.dp),
     ) {
         if (value.isEmpty()) {
             Text(text = placeholder, style = MeteoType.value, color = colors.label)
