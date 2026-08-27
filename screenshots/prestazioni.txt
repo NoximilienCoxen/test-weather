@@ -1,0 +1,24 @@
+== prestazioni ==
+-- a riposo: qui il totale deve essere zero --
+  coperto (fermo)        framestats non disponibili
+  coperto (fermo)        tot 0      mediana 4950ms  90% 4950ms  95% 4950ms  99% 4950ms  in ritardo 0 (0.00%)
+  notte (fermo)          framestats non disponibili
+  notte (fermo)          tot 0      mediana 4950ms  90% 4950ms  95% 4950ms  99% 4950ms  in ritardo 0 (0.00%)
+-- animato: qui contano i millisecondi --
+  coperto ventoso        interfaccia 1.1 ms   rendering 4.4 ms   (mediane su 78 fotogrammi)
+  coperto ventoso        tot 82     mediana 129ms   90% 150ms   95% 150ms   99% 200ms   in ritardo 82 (100.00%)
+  sereno di giorno       interfaccia 2.3 ms   rendering 5.7 ms   (mediane su 72 fotogrammi)
+  sereno di giorno       tot 75     mediana 150ms   90% 150ms   95% 200ms   99% 200ms   in ritardo 75 (100.00%)
+  pioggia                interfaccia 4.1 ms   rendering 6.1 ms   (mediane su 69 fotogrammi)
+  pioggia                tot 72     mediana 150ms   90% 150ms   95% 200ms   99% 200ms   in ritardo 72 (100.00%)
+  neve                   interfaccia 1.1 ms   rendering 4.4 ms   (mediane su 78 fotogrammi)
+  neve                   tot 81     mediana 133ms   90% 150ms   95% 150ms   99% 200ms   in ritardo 81 (100.00%)
+  nebbia                 interfaccia 4.1 ms   rendering 3.7 ms   (mediane su 38 fotogrammi)
+  nebbia                 tot 41     mediana 250ms   90% 300ms   95% 350ms   99% 400ms   in ritardo 41 (100.00%)
+  temporale              interfaccia 3.9 ms   rendering 4.2 ms   (mediane su 70 fotogrammi)
+  temporale              tot 73     mediana 150ms   90% 150ms   95% 200ms   99% 200ms   in ritardo 73 (100.00%)
+-- sotto il dito: il caso peggiore --
+  rotazione, sereno      interfaccia 1.1 ms   rendering 2.7 ms   (mediane su 25 fotogrammi)
+  rotazione, sereno      tot 28     mediana 150ms   90% 200ms   95% 250ms   99% 300ms   in ritardo 28 (100.00%)
+  rotazione, neve        interfaccia 4.2 ms   rendering 10.0 ms   (mediane su 26 fotogrammi)
+  rotazione, neve        tot 28     mediana 150ms   90% 200ms   95% 250ms   99% 250ms   in ritardo 28 (100.00%)
