@@ -36,6 +36,8 @@ data class Place(
          * piu' piovosi che esistano, ed e' esattamente per questo che ci sono.
          */
         val SUGGESTIONS = listOf(
+            // Prima voce: neve e gelo garantiti tutto l'anno per testare la neve.
+            Place("Aoraki / Monte Cook", "Canterbury", "Nuova Zelanda", -43.5950, 170.1418),
             FORLI,
             Place("Bergen", "Vestland", "Norvegia", 60.3913, 5.3221),
             Place("Londra", "England", "Regno Unito", 51.5085, -0.1257),

@@ -63,8 +63,9 @@ private val DROPS = particles(count = 34, seed = 13, swaying = false)
  * I fiocchi sono molti di piu' delle gocce, e non e' un capriccio: una goccia si
  * legge da sola perche' e' una riga lunga, un fiocco e' un punto e da solo non
  * dice niente. La neve la si riconosce dalla **quantita'**.
+ * 200 fiocchi: abbastanza densi da leggere come nevicata vera anche con intensita' bassa.
  */
-private val FLAKES = particles(count = 130, seed = 4391, swaying = true)
+private val FLAKES = particles(count = 200, seed = 4391, swaying = true)
 
 /** Giri al secondo della caduta. La neve scende molto piu' piano dell'acqua. */
 private const val RAIN_RATE = 0.72f

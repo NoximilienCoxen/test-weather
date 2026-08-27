@@ -19,11 +19,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,7 +55,7 @@ private enum class MetricPage(val title: String) {
 
 /** La schermata di dettaglio: si raggiunge trascinando in alto la principale. */
 @Composable
-internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: State<Offset>) {
+internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel) {
     val colors = LocalMeteoColors.current
     // La temperatura e' la prima pagina, non per convenzione dell'enum ma
     // perche' e' quella su cui si apre toccando la cifra in home: il foglio
@@ -93,14 +91,12 @@ internal fun DetailScreen(state: UiState, viewModel: WeatherViewModel, tilt: Sta
                         state = state,
                         viewModel = viewModel,
                         rotation = rotation,
-                        tilt = tilt,
                     )
                     else -> MetricPageContent(
                         page = page,
                         state = state,
                         viewModel = viewModel,
                         rotation = rotation,
-                        tilt = tilt,
                     )
                 }
             }
@@ -126,7 +122,6 @@ private fun TemperaturePageContent(
     state: UiState,
     viewModel: WeatherViewModel,
     rotation: SceneRotation,
-    tilt: State<Offset>,
 ) {
     val colors = LocalMeteoColors.current
     val forecast = state.forecast
@@ -177,12 +172,8 @@ private fun TemperaturePageContent(
         ) {
             PhysicalNumber(
                 text = representative.asBigTemperature(unit),
-                // Piu' piccola di quella delle altre schede: qui sotto c'e'
-                // anche il grafico orario, e una cifra alta quanto la meta'
-                // schermo lo spingerebbe fuori vista.
                 fontSize = maxHeight * 0.58f,
                 rotation = rotation,
-                tilt = tilt,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -285,7 +276,6 @@ private fun MetricPageContent(
     state: UiState,
     viewModel: WeatherViewModel,
     rotation: SceneRotation,
-    tilt: State<Offset>,
 ) {
     val colors = LocalMeteoColors.current
     val forecast = state.forecast
@@ -314,7 +304,7 @@ private fun MetricPageContent(
             depth = 7.dp,
             // Il titolo ruota molto meno della cifra: sta su un piano piu'
             // lontano, e la differenza fra i due si legge come profondita'.
-            motion = { NumberMotion(yawDeg = tilt.value.x * 5f) },
+            motion = { NumberMotion(yawDeg = rotation.breathingOffset * 0.5f) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
@@ -330,7 +320,6 @@ private fun MetricPageContent(
                 text = data.bigNumber,
                 fontSize = maxHeight * 0.66f,
                 rotation = rotation,
-                tilt = tilt,
                 modifier = Modifier.fillMaxSize(),
             )
             if (page == MetricPage.PRECIPITAZIONI) {

@@ -6,13 +6,16 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * L'orientamento della scena, comandato dal dito.
@@ -23,6 +26,10 @@ import kotlin.math.roundToInt
  *
  * Il valore non viene letto in composizione ma dentro il disegno, quindi ruotare
  * ridipinge senza ricomporre nulla.
+ *
+ * Quando il dito non tocca, la scena respira: un'oscillazione lenta (±4°, ~4s)
+ * che da' vita all'oggetto senza causare ricomposizioni. Il drag ha priorita'
+ * assoluta e azzera il contributo dell'idle.
  */
 @Stable
 class SceneRotation internal constructor(private val scope: CoroutineScope) {
@@ -32,88 +39,106 @@ class SceneRotation internal constructor(private val scope: CoroutineScope) {
     /** Quanto il dito ha girato in tutto, senza limiti. */
     private var raw = 0f
 
+    /** Vera mentre il dito sta trascinando: l'idle si azzera. */
+    @Volatile private var draggingNow = false
+
+    /**
+     * L'offset dell'idle breathing, letto dentro il draw.
+     * Zero mentre il dito e' attivo, oscillazione sinusoidale a riposo.
+     */
+    @Volatile var breathingOffset: Float = 0f
+        private set
+
     /** Angolo attorno all'asse verticale, in gradi. */
     val yawDeg: Float get() = animated.value
 
     internal fun begin() {
         raw = animated.value
+        draggingNow = true
+        breathingOffset = 0f
     }
 
     internal fun drag(deltaPx: Float) {
-        // Il segno e' negativo, e non e' un dettaglio: la superficie che si
-        // tocca deve andare dove va il dito. Con il segno positivo, tirando
-        // verso destra la cifra girava verso sinistra, come una manopola vista
-        // da dietro.
         raw -= deltaPx * DEGREES_PER_PIXEL
-        // Il valore grezzo assorbe il delta prima del lancio, quindi due
-        // trascinamenti ravvicinati non possono arrivare in ordine sbagliato:
-        // ognuno porta gia' con se' la posizione finale, non un incremento.
         val target = raw
         scope.launch { animated.snapTo(target) }
     }
 
-    /**
-     * Versione non-suspend di [release]: lancia l'animazione sul scope interno.
-     * Usata da detectTapOrRotate in HomeScreen, che vive dentro un GestureScope
-     * ristretto e non puo' chiamare direttamente funzioni suspend esterne.
-     */
     internal fun releaseAsync(velocityPx: Float) {
-        scope.launch { release(velocityPx) }
+        scope.launch {
+            draggingNow = false
+            release(velocityPx)
+        }
     }
 
     internal suspend fun release(velocityPx: Float) {
         val launchSpeed = (-velocityPx * DEGREES_PER_PIXEL)
             .coerceIn(-MAX_LAUNCH_SPEED, MAX_LAUNCH_SPEED)
-
-        // Dove finirebbe se la si lasciasse scorrere, e da li' il giro intero
-        // piu' vicino. Un lancio piano riporta l'oggetto dov'era; uno deciso lo
-        // fa girare su se stesso una volta o due e lo lascia nella stessa posa.
-        // In entrambi i casi torna a posto, ma quanto gira lo decide la mano.
         val projected = animated.value + launchSpeed * COAST
         val target = (projected / FULL_TURN).roundToInt() * FULL_TURN
-
         animated.animateTo(
             targetValue = target,
             animationSpec = spring(dampingRatio = 0.80f, stiffness = 55f),
             initialVelocity = launchSpeed,
         )
-        // Un giro intero e' indistinguibile da nessun giro: riportare il conto a
-        // zero non si vede e impedisce all'angolo di crescere senza fine.
         animated.snapTo(0f)
         raw = 0f
+        draggingNow = false
+    }
+
+    /**
+     * Avvia il loop dell'idle breathing.
+     *
+     * Gira per sempre su un coroutine scope collegato alla composizione:
+     * quando la schermata sparisce il loop si cancella da solo.
+     * Non usa `rememberInfiniteTransition` perche' legge solo dentro il draw
+     * (nessuna ricomposizione), e perche' il drag deve interromperlo
+     * istantaneamente senza aspettare il prossimo frame di composizione.
+     */
+    internal fun startBreathing(loopScope: CoroutineScope) {
+        loopScope.launch {
+            var origin = 0L
+            while (true) {
+                withFrameNanos { now ->
+                    if (origin == 0L) origin = now
+                    if (!draggingNow) {
+                        val t = (now - origin) / 1_000_000_000.0
+                        breathingOffset = (BREATH_AMPLITUDE * sin(TWO_PI * t / BREATH_PERIOD)).toFloat()
+                    }
+                }
+            }
+        }
     }
 
     private companion object {
-        /**
-         * Poco piu' di un centimetro di dito per dieci gradi. Piu' lento e la
-         * cifra sembra incollata al vetro, piu' veloce e il minimo tremolio la
-         * fa girare.
-         */
         const val DEGREES_PER_PIXEL = 0.22f
-
         const val FULL_TURN = 360f
-
-        /** Per quanto tempo, in secondi, si immagina che il lancio scorra. */
         const val COAST = 0.28f
-
-        /** Gradi al secondo. Oltre, un colpo di dito diventa una trottola. */
         const val MAX_LAUNCH_SPEED = 1900f
+
+        /** Ampiezza dell'oscillazione idle in gradi. */
+        const val BREATH_AMPLITUDE = 4.0
+        /** Periodo dell'oscillazione in secondi. */
+        const val BREATH_PERIOD = 4.2
+        val TWO_PI = 2.0 * Math.PI
     }
 }
 
 @Composable
 fun rememberSceneRotation(): SceneRotation {
     val scope = rememberCoroutineScope()
-    return remember(scope) { SceneRotation(scope) }
+    val rotation = remember(scope) { SceneRotation(scope) }
+    // Avvia il loop dell'idle breathing legato al ciclo di vita del composable.
+    LaunchedEffect(rotation) { rotation.startBreathing(this) }
+    return rotation
 }
 
 /**
  * Il gesto che ruota la scena.
  *
- * Solo orizzontale, e non e' un dettaglio: il gesto piu' importante dell'app e'
- * il trascinamento verso l'alto che apre il dettaglio. Un riconoscitore che
- * accetta qualunque direzione se lo mangerebbe, e il gesto decorativo
- * bloccherebbe quello utile.
+ * Solo orizzontale: il gesto piu' importante dell'app e' il trascinamento verso
+ * l'alto che apre il dettaglio. Un riconoscitore che accetta qualunque direzione
+ * se lo mangerebbe.
  */
 @Composable
 fun Modifier.rotatesScene(rotation: SceneRotation): Modifier = draggable(

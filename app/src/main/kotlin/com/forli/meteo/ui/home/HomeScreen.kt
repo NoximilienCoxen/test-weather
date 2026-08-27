@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -39,8 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.Wmo
+import java.time.LocalDateTime
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.asBigTemperature
+import com.forli.meteo.ui.asPlainDegrees
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberSceneRotation
@@ -58,7 +59,6 @@ import java.time.LocalDate
 fun HomeScreen(
     state: UiState,
     sky: SkyState,
-    tilt: State<Offset>,
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -119,9 +119,6 @@ fun HomeScreen(
         ) {
             WeatherSculpture(
                 weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
-                // L'aggancio di verifica deve restare fedele: imporre pioggia a
-                // qualunque codice faceva piovere anche su "coperto", che e'
-                // asciutto. Solo i codici bagnati portano gocce.
                 precipitationMm = state.forcedWeatherCode
                     ?.let { if (Wmo.family(it).isWet()) 2.5 else 0.0 }
                     ?: hour?.precipitation,
@@ -131,10 +128,6 @@ fun HomeScreen(
                 sky = sky,
                 date = hour?.time?.toLocalDate() ?: LocalDate.now(),
                 rotation = rotation,
-                tilt = tilt,
-                // Dietro le impostazioni la schermata resta viva: senza questo
-                // il telefono continuerebbe a vibrare di pioggia mentre si
-                // sceglie una citta'.
                 feelsIt = !state.settingsOpen,
                 contact = contact,
                 modifier = Modifier
@@ -162,10 +155,6 @@ fun HomeScreen(
                     text = degrees.asBigTemperature(state.unit),
                     fontSize = maxHeight * 0.86f,
                     rotation = rotation,
-                    tilt = tilt,
-                    // Un filo verso l'alto: la cifra e la scultura devono
-                    // leggersi come un oggetto solo, e fra loro non ci deve
-                    // stare il vuoto che ci starebbe centrandole entrambe.
                     verticalBias = -0.04f,
                     contact = contact,
                     modifier = Modifier.fillMaxSize(),
@@ -196,7 +185,32 @@ fun HomeScreen(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        // Min / Max / Percepita: tre numeri in una riga sotto la condizione.
+        // Vengono dal giorno corrente (daily) e dall'ora scelta (hourly).
+        val day = state.forecast?.dayOf(hour?.time ?: LocalDateTime.now())
+        val minMaxLabel = buildString {
+            val min = day?.tempMin?.asPlainDegrees(state.unit)
+            val max = day?.tempMax?.asPlainDegrees(state.unit)
+            val apparent = hour?.apparent?.asPlainDegrees(state.unit)
+            if (min != null && max != null) append("$min / $max")
+            if (apparent != null) {
+                if (isNotEmpty()) append("  ·  ")
+                append("PERCEPITI $apparent")
+            }
+        }
+        if (minMaxLabel.isNotBlank()) {
+            Text(
+                text = minMaxLabel,
+                style = MeteoType.caption,
+                color = colors.label,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 3.dp),
+            )
+        }
+
+        Spacer(Modifier.height(8.dp))
 
         HourBar(
             hours = hours,
