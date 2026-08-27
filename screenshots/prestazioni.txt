@@ -1,14 +1,14 @@
 == prestazioni ==
 -- a riposo: qui il totale deve essere zero --
-  coperto (fermo)        interfaccia 3.0 ms   rendering 3.2 ms   (mediane su 58 fotogrammi)
-  notte (fermo)          interfaccia 1.4 ms   rendering 2.6 ms   (mediane su 58 fotogrammi)
+  coperto (fermo)        interfaccia 1.7 ms   rendering 1.8 ms   (mediane su 64 fotogrammi)
+  notte (fermo)          interfaccia 1.1 ms   rendering 1.9 ms   (mediane su 63 fotogrammi)
 -- animato: qui contano i millisecondi --
-  coperto ventoso        interfaccia 5.3 ms   rendering 5.5 ms   (mediane su 78 fotogrammi)
-  sereno di giorno       interfaccia 2.4 ms   rendering 6.3 ms   (mediane su 75 fotogrammi)
-  pioggia                interfaccia 6.3 ms   rendering 7.1 ms   (mediane su 67 fotogrammi)
-  neve                   interfaccia 2.6 ms   rendering 6.6 ms   (mediane su 73 fotogrammi)
-  nebbia                 interfaccia 1.4 ms   rendering 4.1 ms   (mediane su 41 fotogrammi)
-  temporale              interfaccia 2.0 ms   rendering 6.6 ms   (mediane su 73 fotogrammi)
+  coperto ventoso        interfaccia 1.1 ms   rendering 4.9 ms   (mediane su 101 fotogrammi)
+  sereno di giorno       interfaccia 2.8 ms   rendering 6.1 ms   (mediane su 98 fotogrammi)
+  pioggia                interfaccia 1.5 ms   rendering 5.9 ms   (mediane su 94 fotogrammi)
+  neve                   interfaccia 0.7 ms   rendering 3.6 ms   (mediane su 114 fotogrammi)
+  nebbia                 interfaccia 2.7 ms   rendering 5.5 ms   (mediane su 54 fotogrammi)
+  temporale              interfaccia 1.4 ms   rendering 6.1 ms   (mediane su 93 fotogrammi)
 -- sotto il dito: il caso peggiore --
-  rotazione, sereno      interfaccia 2.1 ms   rendering 5.9 ms   (mediane su 30 fotogrammi)
-  rotazione, neve        interfaccia 2.4 ms   rendering 9.3 ms   (mediane su 27 fotogrammi)
+  rotazione, sereno      interfaccia 1.3 ms   rendering 6.0 ms   (mediane su 22 fotogrammi)
+  rotazione, neve        interfaccia 1.3 ms   rendering 5.3 ms   (mediane su 28 fotogrammi)
