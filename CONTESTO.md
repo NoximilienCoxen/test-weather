@@ -459,9 +459,33 @@ sul tuono (viste nella cronologia del vibratore), fondo che segue l'ora, **tutte
 e ventiquattro le ore raggiungibili una per una**, impostazioni, cambio localita',
 cambio unita' (21 °C -> 70 °F), persistenza delle scelte.
 
-**Misurato**: da fermo 0 fotogrammi. Con la pioggia che cade, 19 ms mediani e
-nessun fotogramma in ritardo, di giorno come di notte. In rotazione il lavoro
-per fotogramma sta fra i 5 e i 17 ms.
+**Misurato sul telefono** (prima di questo giro): da fermo 0 fotogrammi. Con la
+pioggia che cade, 19 ms mediani e nessun fotogramma in ritardo, di giorno come
+di notte. In rotazione il lavoro per fotogramma sta fra i 5 e i 17 ms.
+
+**Misurato dall'emulatore della CI** (dopo), cinque secondi per stato senza
+toccare lo schermo:
+
+| stato | fotogrammi in 5 s |
+|---|---|
+| coperto, aria ferma | **1** |
+| notte, aria ferma | **0** |
+| coperto con vento a 10 m/s | 79 |
+| sereno di giorno (uccelli) | 67 |
+| pioggia | 65 |
+| neve | 78 |
+| nebbia | 34 |
+| temporale | 65 |
+
+Le prime due righe sono la cosa da sorvegliare: **negli stati fermi lo zero
+c'e' ancora**. Le altre non sono regressioni, sono il prezzo di cose che si
+muovono e che sono state chieste. Il battito e' uno solo per tutta la scena.
+
+La nebbia a trentaquattro fotogrammi non e' piu' leggera delle altre: e' piu'
+**pesante**. Sono banchi larghi quanto lo schermo con sfumature sovrapposte, e
+swiftshader non ci sta dentro. Su una scheda grafica vera dovrebbe tornare in
+riga, ma finche' non lo si guarda su un telefono resta l'unico numero di questa
+tabella di cui non ci si puo' fidare.
 
 La pioggia sa dove trova superficie: `ui/render3d/Skyline.kt` tiene, colonna per
 colonna, il punto piu' alto occupato dalla cifra, e la cifra ce lo scrive dentro
