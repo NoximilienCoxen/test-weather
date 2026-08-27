@@ -220,8 +220,20 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         .background(colors.background)
                         .systemBarsPadding(),
                 ) {
+                    // I campi uno per uno e non l'intero stato: cosi' la
+                    // schermata puo' saltare la ricomposizione quando cambia
+                    // qualcosa che non la riguarda, che e' quasi sempre.
                     SettingsScreen(
-                        state = state,
+                        place = state.place,
+                        unit = state.unit,
+                        favourites = state.favourites,
+                        query = state.query,
+                        searching = state.searching,
+                        results = state.results,
+                        searchError = state.searchError,
+                        locating = state.locating,
+                        locationProblem = state.locationProblem,
+                        fetchedAt = state.forecast?.fetchedAt,
                         onQuery = viewModel::search,
                         onChoosePlace = viewModel::choosePlace,
                         onChooseUnit = viewModel::setUnit,
