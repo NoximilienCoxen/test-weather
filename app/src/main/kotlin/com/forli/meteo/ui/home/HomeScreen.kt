@@ -38,8 +38,10 @@ import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.Wind
 import com.forli.meteo.data.Wmo
+import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.asBigTemperature
+import com.forli.meteo.ui.asPlainDegrees
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberSceneRotation
@@ -330,7 +332,44 @@ fun HomeScreen(
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            // ## Il contorno della giornata
+            //
+            // La cifra grande dice **adesso**, e da sola non basta a decidere
+            // se uscire con la giacca: ventidue gradi con minima di otto sono
+            // un'altra giornata rispetto a ventidue con minima di diciotto.
+            // Minima e massima vengono dal giorno a cui appartiene l'ora
+            // mostrata - non da "oggi" - perche' scorrendo la barra si arriva a
+            // domani, e li' la giornata e' un'altra.
+            val apparent = hour?.apparent ?: state.forecast?.current?.apparent
+            val today = hour?.let { state.forecast?.dayOf(it.time) }
+            // La stringa si ricalcola solo quando cambia uno dei quattro
+            // ingredienti, non a ogni ricomposizione della schermata.
+            val range = remember(today?.tempMin, today?.tempMax, apparent, state.unit) {
+                temperatureLine(
+                    minimum = today?.tempMin,
+                    maximum = today?.tempMax,
+                    apparent = apparent,
+                    unit = state.unit,
+                )
+            }
+            // Niente riga finche' non c'e' niente da scriverci. Un "-- / --"
+            // non dice "sto aspettando": dice che l'app e' rotta.
+            if (range != null) {
+                Text(
+                    text = range,
+                    style = MeteoType.caption.overScene(colors),
+                    // Inchiostro pieno e non smorzato: e' scritto piccolo, e
+                    // quello che e' scritto piccolo ha bisogno di tutto il
+                    // contrasto che c'e'.
+                    color = colors.text,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
+                )
+            }
+
+            Spacer(Modifier.height(10.dp))
 
             HourBar(
                 hours = hours,
@@ -381,6 +420,35 @@ fun HomeScreen(
                 )
             }
         }
+    }
+}
+
+/**
+ * "20° / 31°  ·  PERCEPITI 30°", e le sue mezze versioni.
+ *
+ * Torna nullo se non c'e' proprio niente: una riga di trattini occupa lo stesso
+ * spazio di una riga vera senza portare niente, e si legge come un guasto.
+ *
+ * La conversione in Fahrenheit avviene qui dentro come per tutti gli altri
+ * numeri dell'app, cioe' **al momento di scriverli**: i gradi arrivano sempre
+ * in Celsius, e chiederli convertiti alla rete vorrebbe dire rifare l'intera
+ * richiesta per cambiare un'unita' di misura.
+ */
+private fun temperatureLine(
+    minimum: Double?,
+    maximum: Double?,
+    apparent: Double?,
+    unit: TempUnit,
+): String? {
+    val span = if (minimum != null && maximum != null) {
+        "${minimum.asPlainDegrees(unit)} / ${maximum.asPlainDegrees(unit)}"
+    } else {
+        null
+    }
+    val felt = apparent?.let { "PERCEPITI ${it.asPlainDegrees(unit)}" }
+    return when {
+        span != null && felt != null -> "$span  ·  $felt"
+        else -> span ?: felt
     }
 }
 
