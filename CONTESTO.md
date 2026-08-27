@@ -291,7 +291,14 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-Per le prestazioni, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
+**La CI adesso misura da sola i fotogrammi a riposo.** `scripts/capture.sh`
+pubblica `prestazioni.txt` su `ci-artifacts`: per sette stati fa `gfxinfo
+reset`, aspetta cinque secondi senza toccare nulla e legge `Total frames
+rendered`. E' il conteggio a valere, non i millisecondi: l'emulatore usa
+swiftshader e i suoi tempi non dicono niente su un telefono vero, mentre lo
+zero da fermo e' la stessa proprieta' ovunque.
+
+Per le prestazioni sul dispositivo, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di

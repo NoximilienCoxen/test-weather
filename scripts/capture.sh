@@ -189,6 +189,46 @@ session() {
 session SCURO
 session CHIARO
 
+# ---------------------------------------------------------------------------
+# Fotogrammi disegnati a riposo
+# ---------------------------------------------------------------------------
+#
+# La misura che conta e' **quanti** fotogrammi l'app disegna con nessun dito
+# sullo schermo, non quanto ci mette a disegnarli: l'emulatore usa swiftshader,
+# e i suoi millisecondi non dicono niente su un telefono vero. Il conteggio si'.
+#
+# La regola del progetto e' che da fermo l'app deve disegnare zero fotogrammi.
+# Adesso quella regola vale solo negli stati davvero fermi - coperto, aria
+# ferma, niente che cada - perche' neve, nebbia, uccelli e stelle cadenti sono
+# animazioni, e un'animazione costa fotogrammi per definizione. Qui si verifica
+# che negli stati fermi lo zero ci sia ancora, e si scrive quanto costano gli
+# altri.
+misura() {
+  local nome="$1" extra="$2" attesa="${3:-5}"
+  alive || return
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  # shellcheck disable=SC2086
+  adbt shell am start -n "$ACT" --ez benvenuto false $extra >/dev/null 2>&1 || true
+  sleep 14
+  adbt shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
+  sleep "$attesa"
+  local n
+  n=$(adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null \
+        | tr -d '\r' | grep -m1 "Total frames rendered" | awk '{print $NF}')
+  printf '  %-22s %s fotogrammi in %ss\n' "$nome" "${n:-?}" "$attesa" \
+    | tee -a "$OUT/prestazioni.txt"
+}
+
+echo "== fotogrammi a riposo ==" | tee "$OUT/prestazioni.txt"
+misura "sereno (fermo)"   "--ei meteo 0"
+misura "coperto (fermo)"  "--ei meteo 3"
+misura "notte (fermo)"    "--ei ora 2 --ei meteo 3"
+misura "pioggia"          "--ei meteo 63"
+misura "neve"             "--ei meteo 75"
+misura "nebbia"           "--ei meteo 45"
+misura "temporale"        "--ei meteo 95"
+
 sleep 2
 pkill -f "adb logcat -v time" >/dev/null 2>&1 || true
 grep -iE "forli|meteo|AndroidRuntime|FATAL|Exception|OutOfMemory|died|crash" \
