@@ -86,6 +86,18 @@ fun HomeScreen(
     // sta in un'altra tela. Qui passano la sagoma e le due origini.
     val contact = remember { SceneContact() }
     val snowfall = remember { Snowfall() }
+    val fogBrushes = remember { FogBrushes() }
+    // Il velo davanti alla scena e' un pennello anche lui, e cambia solo con la
+    // densita' e la tavolozza: ricostruirlo nel disegno lo rifaceva sessanta
+    // volte al secondo identico a se stesso.
+    val fogVeil = remember(fog, colors.fogNear, colors.fogFar) {
+        Brush.verticalGradient(
+            0f to colors.fogFar.copy(alpha = fog * 0.10f),
+            0.66f to colors.fogNear.copy(alpha = fog * 0.30f),
+            0.80f to Color.Transparent,
+            1f to Color.Transparent,
+        )
+    }
 
     val code = state.activeWeatherCode
     val family = Wmo.family(code)
@@ -167,7 +179,7 @@ fun HomeScreen(
             drawStars(presence = starlight, clarity = 1f)
             drawShootingStar(streak, streakProgress.floatValue, starlight)
             drawBirds(clock, daylight, wind, colors.bird)
-            drawFog(clock, fog, wind, colors.fogNear, colors.fogFar)
+            drawFog(clock, fog, wind, colors.fogNear, colors.fogFar, fogBrushes)
         }
 
         Column(

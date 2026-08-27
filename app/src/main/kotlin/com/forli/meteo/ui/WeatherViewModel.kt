@@ -59,6 +59,8 @@ data class UiState(
     val locationProblem: String? = null,
     /** Vero se la localita' mostrata l'ha trovata il telefono. */
     val located: Boolean = false,
+    /** Le localita' messe da parte, nell'ordine in cui sono state aggiunte. */
+    val favourites: List<Place> = emptyList(),
     /**
      * Vero quando sul rilascio a tag fisso c'e' una build piu' recente di
      * questa. Falso anche in caso di dubbio: vedi [UpdateCheck].
@@ -181,6 +183,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // preferenze arrivata dopo.
                         welcomed = it.welcomed || settings.welcomed,
                         located = settings.located,
+                        favourites = settings.favourites,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -353,6 +356,14 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * troverebbe piu'.
      */
     fun dismissUpdate() = _state.update { it.copy(updateReady = false) }
+
+    fun addFavourite(place: Place) {
+        viewModelScope.launch { prefs.addFavourite(place) }
+    }
+
+    fun removeFavourite(place: Place) {
+        viewModelScope.launch { prefs.removeFavourite(place) }
+    }
 
     /** Il benvenuto e' stato superato: non si ripropone. */
     fun dismissWelcome() {

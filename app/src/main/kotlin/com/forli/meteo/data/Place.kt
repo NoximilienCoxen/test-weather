@@ -1,5 +1,7 @@
 package com.forli.meteo.data
 
+import kotlinx.serialization.Serializable
+
 /**
  * Una localita' scelta dall'utente.
  *
@@ -8,6 +10,7 @@ package com.forli.meteo.data
  * AOSP, e in generale chiedere di nuovo alla rete un nome che si e' gia' avuto
  * in mano e' lavoro sprecato.
  */
+@Serializable
 data class Place(
     val name: String,
     /** Regione o provincia, quando l'API la fornisce. Distingue gli omonimi. */
@@ -19,7 +22,23 @@ data class Place(
     /** Riga di dettaglio sotto al nome nella lista dei risultati. */
     val detail: String get() = listOfNotNull(admin, country).joinToString(", ")
 
+    /**
+     * Stesso posto, anche se scritto diversamente.
+     *
+     * Il confronto e' sulle coordinate e con una tolleranza: la stessa citta'
+     * arriva dalla ricerca con quattro decimali e dalla geolocalizzazione con
+     * la posizione vera del telefono, che non coincidera' mai. Un centesimo di
+     * grado e' circa un chilometro: sotto quella distanza il meteo e' lo
+     * stesso, e due voci sarebbero due voci per la stessa cosa.
+     */
+    fun samePlaceAs(other: Place): Boolean =
+        kotlin.math.abs(latitude - other.latitude) < TOLERANCE &&
+            kotlin.math.abs(longitude - other.longitude) < TOLERANCE
+
     companion object {
+        /** Gradi entro cui due coordinate descrivono lo stesso posto. */
+        private const val TOLERANCE = 0.01
+
         val FORLI = Place(
             name = "Forlì",
             admin = "Emilia-Romagna",

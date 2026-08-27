@@ -204,7 +204,7 @@ session CHIARO
 # che negli stati fermi lo zero ci sia ancora, e si scrive quanto costano gli
 # altri.
 misura() {
-  local nome="$1" extra="$2" attesa="${3:-5}"
+  local nome="$1" extra="$2" gesto="${3:-fermo}"
   alive || return
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -212,25 +212,52 @@ misura() {
   adbt shell am start -n "$ACT" --ez benvenuto false $extra >/dev/null 2>&1 || true
   sleep 14
   adbt shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
-  sleep "$attesa"
-  local n
-  n=$(adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null \
-        | tr -d '\r' | grep -m1 "Total frames rendered" | awk '{print $NF}')
-  printf '  %-22s %s fotogrammi in %ss\n' "$nome" "${n:-?}" "$attesa" \
-    | tee -a "$OUT/prestazioni.txt"
+
+  if [ "$gesto" = "rotazione" ]; then
+    # Sotto il dito e' l'unico momento in cui la cifra ridisegna la geometria a
+    # ogni fotogramma: e' li' che si misura il caso peggiore, non da fermo.
+    local cx=$(( W / 2 )) cy=$(( H * 30 / 100 ))
+    adbt shell input motionevent DOWN "$cx" "$cy" >/dev/null 2>&1 || true
+    local k
+    for k in 60 120 180 240 300 240 180 120 60; do
+      adbt shell input motionevent MOVE "$(( cx + k ))" "$cy" >/dev/null 2>&1 || true
+    done
+    adbt shell input motionevent UP "$(( cx + 60 ))" "$cy" >/dev/null 2>&1 || true
+  else
+    sleep 5
+  fi
+
+  # Le percentuali le calcola gia' gfxinfo, e sono quelle che contano: la
+  # mediana dice com'e' di solito, il novantacinquesimo dice quanto si nota
+  # quando va male. Il conteggio da solo non distingue "fluido" da "lento".
+  adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null | tr -d '\r' \
+    | awk -v nome="$nome" '
+        /Total frames rendered/ { tot=$NF }
+        /Janky frames/          { jank=$4" "$5 }
+        /50th percentile/       { p50=$3 }
+        /90th percentile/       { p90=$3 }
+        /95th percentile/       { p95=$3 }
+        /99th percentile/       { p99=$3 }
+        END {
+          printf "  %-22s tot %-5s  mediana %-6s  90%% %-6s  95%% %-6s  99%% %-6s  in ritardo %s\n",
+                 nome, tot, p50, p90, p95, p99, jank
+        }' | tee -a "$OUT/prestazioni.txt"
 }
 
-echo "== fotogrammi a riposo ==" | tee "$OUT/prestazioni.txt"
-# `--ei vento 0` non e' un dettaglio: con una condizione imposta l'app impone
-# anche il vento, e senza spegnerlo nessuno di questi stati sarebbe fermo.
-misura "coperto (fermo)"  "--ei meteo 3 --ei vento 0"
-misura "notte (fermo)"    "--ei ora 2 --ei meteo 3 --ei vento 0"
-misura "coperto ventoso"  "--ei meteo 3 --ei vento 10"
-misura "sereno di giorno" "--ei meteo 0 --ei vento 0"
-misura "pioggia"          "--ei meteo 63"
-misura "neve"             "--ei meteo 75"
-misura "nebbia"           "--ei meteo 45"
-misura "temporale"        "--ei meteo 95"
+echo "== prestazioni ==" | tee "$OUT/prestazioni.txt"
+echo "-- a riposo: qui il totale deve essere zero --" | tee -a "$OUT/prestazioni.txt"
+misura "coperto (fermo)"   "--ei meteo 3 --ei vento 0"
+misura "notte (fermo)"     "--ei ora 2 --ei meteo 3 --ei vento 0"
+echo "-- animato: qui contano i millisecondi --" | tee -a "$OUT/prestazioni.txt"
+misura "coperto ventoso"   "--ei meteo 3 --ei vento 10"
+misura "sereno di giorno"  "--ei meteo 0 --ei vento 0"
+misura "pioggia"           "--ei meteo 63"
+misura "neve"              "--ei meteo 75"
+misura "nebbia"            "--ei meteo 45"
+misura "temporale"         "--ei meteo 95"
+echo "-- sotto il dito: il caso peggiore --" | tee -a "$OUT/prestazioni.txt"
+misura "rotazione, sereno" "--ei meteo 0 --ei vento 0" rotazione
+misura "rotazione, neve"   "--ei meteo 75" rotazione
 
 sleep 2
 pkill -f "adb logcat -v time" >/dev/null 2>&1 || true
