@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
-import com.forli.meteo.ui.motion.rememberDeviceTilt
 import com.forli.meteo.ui.settings.SettingsScreen
 import com.forli.meteo.ui.welcome.WelcomeScreen
 import com.forli.meteo.ui.theme.LocalMeteoColors
@@ -79,10 +78,6 @@ fun MeteoApp(viewModel: WeatherViewModel) {
     val colors = remember(sky, fog) { skyColors(sky, fog) }
 
     MeteoTheme(colors = colors) {
-        // Un solo ascoltatore del sensore per tutta l'app, e il valore resta
-        // uno stato: letto dentro il disegno invece che in composizione, il
-        // sensore fa ridipingere e non ricomporre.
-        val tilt = rememberDeviceTilt()
         val scope = rememberCoroutineScope()
         val sheet = remember { Animatable(0f) }
         val density = LocalDensity.current
@@ -129,7 +124,6 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 state = state,
                 sky = sky,
                 fog = fog,
-                tilt = tilt,
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
@@ -181,7 +175,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                             onDragStopped = { velocity -> settle(velocity) },
                         ),
                 ) {
-                    DetailScreen(state = state, viewModel = viewModel, tilt = tilt)
+                    DetailScreen(state = state, viewModel = viewModel)
                 }
             }
 

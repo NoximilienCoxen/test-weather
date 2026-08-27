@@ -1,9 +1,7 @@
 package com.forli.meteo.ui.motion
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 import com.forli.meteo.ui.render.ExtrudedText
@@ -27,7 +25,6 @@ fun PhysicalNumber(
     text: String,
     fontSize: Dp,
     rotation: SceneRotation,
-    tilt: State<Offset>,
     modifier: Modifier = Modifier,
     depth: Dp = fontSize * 0.17f,
     verticalBias: Float = 0f,
@@ -44,14 +41,17 @@ fun PhysicalNumber(
         contact = contact,
         overlay = overlay,
         motion = {
-            // L'inclinazione del telefono non e' un secondo comando, ma deve
-            // sentirsi: e' quello che distingue un oggetto tenuto in mano da un
-            // disegno stampato sul vetro. I gradi li decide DeviceTilt, che li
-            // detta anche alla scultura: sono lo stesso oggetto.
-            NumberMotion(
-                yawDeg = rotation.yawDeg + tilt.value.x * TILT_YAW_DEGREES,
-                pitchDeg = tilt.value.y * TILT_PITCH_DEGREES,
-            )
+            // Il solo asse verticale, e niente beccheggio.
+            //
+            // Non e' una rinuncia: l'ordine di sovrapposizione dei caratteri e'
+            // garantito **soltanto** dalla rotazione attorno alla verticale
+            // (vedi "Il tetto, dichiarato" in CONTESTO.md). Finche' si gira di
+            // li', la profondita' cresce in modo monotono lungo l'asse
+            // orizzontale del modello e basta disegnare dal piu' lontano al
+            // piu' vicino. Il beccheggio che arrivava dall'accelerometro
+            // metteva quella garanzia in discussione per un effetto che nessuno
+            // aveva chiesto.
+            NumberMotion(yawDeg = rotation.yawDeg, pitchDeg = 0f)
         },
     )
 }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +62,6 @@ fun HomeScreen(
     state: UiState,
     sky: SkyState,
     fog: Float,
-    tilt: State<Offset>,
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -77,8 +75,10 @@ fun HomeScreen(
     // visto da un punto solo, e il gesto che li gira e' lo stesso.
     val spin = rememberSpinFeedback()
     val rotation: SceneRotation = rememberSceneRotation(
-        // Dietro le impostazioni la cifra non si vede: un colpo che arriva da
-        // una schermata coperta non si capisce da dove venga.
+        // Dietro le impostazioni la scena non si vede: farla respirare li'
+        // vorrebbe dire chiedere fotogrammi per un oggetto coperto.
+        breathing = !state.settingsOpen,
+        forcedYawDeg = state.forcedYawDeg,
         onFullTurn = { if (!state.settingsOpen) spin.landed() },
     )
 
@@ -235,7 +235,6 @@ fun HomeScreen(
                     fog = fog,
                     date = hour?.time?.toLocalDate() ?: LocalDate.now(),
                     rotation = rotation,
-                    tilt = tilt,
                     // Dietro le impostazioni la schermata resta viva: senza questo
                     // il telefono continuerebbe a vibrare di pioggia mentre si
                     // sceglie una citta'.
@@ -262,8 +261,7 @@ fun HomeScreen(
                         text = degrees.asBigTemperature(state.unit),
                         fontSize = maxHeight * 0.86f,
                         rotation = rotation,
-                        tilt = tilt,
-                        // Un filo verso l'alto: la cifra e la scultura devono
+                            // Un filo verso l'alto: la cifra e la scultura devono
                         // leggersi come un oggetto solo, e fra loro non ci deve
                         // stare il vuoto che ci starebbe centrandole entrambe.
                         verticalBias = -0.04f,

@@ -171,6 +171,14 @@ session() {
     restart_with "--ei ora 20"
     shoot "${slug}-10-tramonto"
 
+    # La cifra ad angoli fissi. E l'unico modo di confrontare un prima con un
+    # dopo: tenendo il dito fermo e sperando nello scatto, due esecuzioni non
+    # producono mai la stessa immagine.
+    for giro in 0 40 70 85 95 120 160; do
+      restart_with "--ei meteo 3 --ei vento 0 --ei giro $giro"
+      shoot "${slug}-giro-$(printf %03d $giro)"
+    done
+
     # Le impostazioni. Il pulsante sta in alto a sinistra: trentaquattro dp di
     # bersaglio, quindi una frazione fissa dello schermo lo prende comodamente.
     restart_with ""

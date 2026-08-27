@@ -56,6 +56,8 @@ class MainActivity : ComponentActivity() {
         if (!intent.getBooleanExtra(EXTRA_WELCOME, true)) viewModel.skipWelcome()
         intent.getIntExtra(EXTRA_WIND, -1).takeIf { it >= 0 }
             ?.let { viewModel.forceWind(it.toFloat()) }
+        intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE).takeIf { it != Int.MIN_VALUE }
+            ?.let { viewModel.forceYaw(it.toFloat()) }
     }
 
     private companion object {
@@ -72,6 +74,16 @@ class MainActivity : ComponentActivity() {
          * perche' l'aggancio le stava dicendo che tirava vento.
          */
         const val EXTRA_WIND = "vento"
+
+        /**
+         * `--ei giro N` fissa l'angolo della scena a N gradi.
+         *
+         * Senza, l'unico modo di guardare la cifra a ottanta gradi e' tenere il
+         * dito fermo li' e sperare che lo scatto arrivi in tempo, e due
+         * esecuzioni non producono mai la stessa immagine: cioe' non si puo'
+         * confrontare un prima con un dopo.
+         */
+        const val EXTRA_YAW = "giro"
 
         /**
          * `--ez benvenuto false` salta la schermata di benvenuto.
