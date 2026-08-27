@@ -124,6 +124,10 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 state = state,
                 sky = sky,
                 fog = fog,
+                // Sotto il foglio del dettaglio o dietro le impostazioni la
+                // scena non si vede: farla respirare li' vorrebbe dire chiedere
+                // fotogrammi per un oggetto coperto.
+                visible = !state.settingsOpen && sheet.value < 0.98f,
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
