@@ -227,9 +227,58 @@ misura() {
     sleep 5
   fi
 
-  # Le percentuali le calcola gia' gfxinfo, e sono quelle che contano: la
-  # mediana dice com'e' di solito, il novantacinquesimo dice quanto si nota
-  # quando va male. Il conteggio da solo non distingue "fluido" da "lento".
+  # Due letture, perche' rispondono a due domande diverse.
+  #
+  # Le percentuali dicono **quanto si nota**: la mediana com'e' di solito, il
+  # novantacinquesimo quanto va male quando va male. Il conteggio da solo non
+  # distingue fluido da lento.
+  #
+  # Le colonne di framestats dicono **da che parte sta il costo**. Da DrawStart
+  # a SyncQueued c'e' il lavoro del thread di interfaccia, cioe' il codice
+  # Kotlin che registra i comandi; da IssueDrawCommandsStart a SwapBuffers c'e'
+  # quello del thread di rendering, cioe' i pixel davvero riempiti. Ottimizzare
+  # senza sapere quale dei due pesa vuol dire tirare a indovinare, ed e' gia'
+  # costato caro (vedi la trappola numero 9 in CONTESTO.md).
+  adbt shell dumpsys gfxinfo "$PKG" framestats 2>/dev/null | tr -d '\r' \
+    | awk -F, -v nome="$nome" '
+        # La funzione sta prima delle regole: e la collocazione consueta, e
+        # mawk non sempre digerisce una funzione dichiarata in mezzo.
+        function mediana(v, count,   i, j, key) {
+          # Ordinamento per inserzione scritto a mano: asort e di gawk, e il
+          # runner monta mawk. Su centoventi fotogrammi la differenza non si
+          # misura, e cosi lo script gira ovunque.
+          for (i = 1; i < count; i++) {
+            key = v[i]; j = i - 1
+            while (j >= 0 && v[j] > key) { v[j + 1] = v[j]; j-- }
+            v[j + 1] = key
+          }
+          return v[int(count / 2)]
+        }
+        # n va azzerata esplicitamente. In awk gli indici degli array sono
+        # STRINGHE: con n non inizializzata, ui[n] scrive alla chiave "" e non
+        # alla chiave "0", e il primo campione finisce in un posto che nessuno
+        # rilegge. La mediana usciva sbagliata di un campione su tre, e sui dati
+        # veri sarebbe passata inosservata perche resta un numero plausibile.
+        BEGIN { n = 0 }
+        /^---PROFILEDATA---/ { dentro = !dentro; next }
+        dentro && $1 ~ /^[0-9]+$/ && NF >= 17 {
+          # Le colonne documentate sono 8 DrawStart, 12 SyncQueued,
+          # 14 IssueDrawCommandsStart, 15 SwapBuffers - contate da ZERO, mentre
+          # awk conta i campi da UNO: qui diventano 9, 13, 15 e 16. Sbagliare
+          # quello scarto non da errore, da numeri: la prima scrittura misurava
+          # linizio delle traversate invece del disegno e riportava mediane
+          # negative. E la stessa trappola numero 9 di CONTESTO.md, presa una
+          # seconda volta e stanata solo perche provata su dati finti.
+          ui[n] = ($13 - $9) / 1000000
+          rt[n] = ($16 - $15) / 1000000
+          n++
+        }
+        END {
+          if (n == 0) { printf "  %-22s framestats non disponibili\n", nome; exit }
+          printf "  %-22s interfaccia %.1f ms   rendering %.1f ms   (mediane su %d fotogrammi)\n",
+                 nome, mediana(ui, n), mediana(rt, n), n
+        }' | tee -a "$OUT/prestazioni.txt"
+
   adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null | tr -d '\r' \
     | awk -v nome="$nome" '
         /Total frames rendered/ { tot=$NF }

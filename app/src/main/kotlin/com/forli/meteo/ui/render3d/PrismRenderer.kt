@@ -142,7 +142,26 @@ class PrismRenderer : TemperatureRenderer {
         // copia sola col bordo netto non si legge come ombra ma come un secondo
         // oggetto scuro dietro il primo. Sfocarla davvero non si puo' a buon
         // mercato su tela accelerata, ma due gradini bastano.
-        if (palette.shadowAlpha > 0.001f) {
+        // La soglia e' 0,06 e non un millesimo, e la differenza vale piu' di
+        // tutto il resto di questo file messo insieme.
+        //
+        // L'ombra portata e' la cosa **piu' cara** che ci sia sullo schermo:
+        // due copie intere della sagoma sotto una matrice prospettica, che non
+        // passa dalla strada veloce e viene rasterizzata a mano. Misurata a suo
+        // tempo, da sola faceva passare la schermata da diciotto a trentasei
+        // millisecondi per fotogramma.
+        //
+        // Serviva a staccare una cifra bianca da un fondo grigio chiaro. Da
+        // quando il fondo non sale piu' oltre il crepuscolo, quel distacco lo
+        // fa il fondo stesso, e l'alfa calcolata dalla luminanza sta fra un
+        // centesimo e cinque centesimi: nero al cinque per cento sopra un fondo
+        // quasi nero non si vede, e si continuava a pagarlo per intero a ogni
+        // fotogramma. Sotto questa soglia non c'e' niente da vedere, quindi non
+        // c'e' niente da disegnare.
+        //
+        // Il meccanismo resta perche' la tavolozza puo' tornare a schiarire:
+        // e' la soglia a essere onesta, non l'ombra a essere stata tolta.
+        if (palette.shadowAlpha > SHADOW_VISIBLE) {
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
                 for (index in 0 until prism.partCount) {
@@ -265,6 +284,9 @@ class PrismRenderer : TemperatureRenderer {
     private fun sampleStep(sizePx: Float): Float = (sizePx / 60f).coerceIn(3f, 19f)
 
     private companion object {
+        /** Sotto questo alfa l'ombra non si vede, e non si disegna. */
+        const val SHADOW_VISIBLE = 0.06f
+
         const val MARGIN = 10f
         const val SWING_ALLOWANCE = 1.10f
         const val AMBIENT = 0.14f
