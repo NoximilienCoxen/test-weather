@@ -101,8 +101,14 @@ jobs:
 
   # Livello 3: l'APK in mano al telefono. Tag fisso, cosi' il link resta
   # sempre lo stesso e si puo' salvare fra i preferiti.
+  #
+  # Solo da main: un push su un branch claude/* di lavoro non deve mai
+  # sovrascrivere l'unica release che le persone installano. Prima di
+  # questa condizione ogni branch in corso, mai unito agli altri, poteva
+  # spedire sul telefono una build con funzionalita' diverse a caso.
   rilascio:
     needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
