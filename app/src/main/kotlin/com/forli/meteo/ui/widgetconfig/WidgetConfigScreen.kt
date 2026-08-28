@@ -3,7 +3,7 @@ package com.forli.meteo.ui.widgetconfig
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -34,22 +34,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.forli.meteo.R
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.ui.theme.MeteoType
+import com.forli.meteo.widget.WidgetKind
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 
@@ -71,9 +72,12 @@ private val SelectedBackground = Color.White.copy(alpha = 0.16f)
 fun WidgetConfigScreen(
     onSave: (place: Place?, useLocation: Boolean, background: Color, accent: Color) -> Unit,
     modifier: Modifier = Modifier,
-    /** Falso per il widget della luna, che la stessa fase ce l'ha ovunque. */
-    showLocation: Boolean = true,
+    /** Quale dei tre widget si sta configurando, per l'anteprima e la localita'. */
+    kind: WidgetKind? = null,
 ) {
+    // La luna e' la stessa da qualunque parte la si guardi: chiederle una
+    // citta' sarebbe una domanda senza conseguenze.
+    val showLocation = kind != WidgetKind.LUNA
     val context = LocalContext.current
     val settingsPrefs = remember { SettingsPrefs(context) }
 
@@ -219,7 +223,7 @@ fun WidgetConfigScreen(
                 WidgetPreview(
                     place = selectedPlace,
                     useLocation = useLocation,
-                    showLocation = showLocation,
+                    kind = kind,
                     background = background,
                     accent = accent,
                     modifier = Modifier.padding(bottom = 16.dp),
@@ -249,61 +253,64 @@ fun WidgetConfigScreen(
 /**
  * Il widget com'e' fatto, con i colori scelti in questo momento.
  *
- * Ridisegnato qui invece di essere renderizzato davvero: Glance sa disegnare
- * solo dentro la Home, e per far vedere l'effetto di una tinta bastano le
- * stesse tre righe con le stesse proporzioni.
+ * Ridisegnato qui invece di essere renderizzato davvero, perche' Glance sa
+ * disegnare solo dentro la Home; ma la disposizione e' quella vera della forma
+ * quadrata, e l'icona e' lo stesso disegno che finira' sul widget, non una sua
+ * imitazione: e' l'unico modo perche' l'anteprima non menta.
  */
 @Composable
 private fun WidgetPreview(
     place: Place?,
     useLocation: Boolean,
-    showLocation: Boolean,
+    kind: WidgetKind?,
     background: Color,
     accent: Color,
     modifier: Modifier = Modifier,
 ) {
-    val label = when {
-        !showLocation -> "LUNA"
+    val luogo = when {
         useLocation -> "POSIZIONE ATTUALE"
         place != null -> place.name.uppercase()
         else -> "—"
     }
-    Row(
+    val (label, value, caption) = when (kind) {
+        WidgetKind.LUNA -> Triple("LUNA", "86%", "GIBBOSA CRESCENTE")
+        WidgetKind.ARIA -> Triple(luogo, "42", "DISCRETA")
+        else -> Triple(luogo, "21°", "PARZ. NUVOLOSO")
+    }
+    val icona = when (kind) {
+        WidgetKind.LUNA -> R.drawable.ic_moon_waxing_gibbous
+        WidgetKind.ARIA -> R.drawable.ic_widget_air
+        else -> R.drawable.ic_widget_cloud
+    }
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(background)
-            .padding(14.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
-        Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.size(26.dp)) {
-                // Una nuvoletta di esempio: tre bolle e una base, con lo stesso
-                // colore d'accento che tingera' l'icona vera.
-                val unit = size.minDimension / 24f
-                drawCircle(accent, radius = 5.2f * unit, center = Offset(9f * unit, 12f * unit))
-                drawCircle(accent, radius = 6.4f * unit, center = Offset(14f * unit, 11f * unit))
-                drawRoundRect(
-                    color = accent,
-                    topLeft = Offset(4f * unit, 12f * unit),
-                    size = Size(16f * unit, 6.4f * unit),
-                    cornerRadius = CornerRadius(3.2f * unit),
-                )
-            }
-        }
-        Column(modifier = Modifier.padding(start = 10.dp)) {
-            Text(text = label, style = MeteoType.caption, color = accent.copy(alpha = 0.65f))
+        Row(verticalAlignment = Alignment.Top) {
             Text(
-                text = "21°",
-                style = MeteoType.title.copy(fontSize = 34.sp),
-                color = accent,
-            )
-            Text(
-                text = "PARZ. NUVOLOSO",
+                text = label,
                 style = MeteoType.caption,
                 color = accent.copy(alpha = 0.65f),
+                modifier = Modifier.weight(1f),
+            )
+            Image(
+                painter = painterResource(icona),
+                contentDescription = caption,
+                colorFilter = ColorFilter.tint(accent),
+                modifier = Modifier.size(34.dp),
             )
         }
+        Spacer(Modifier.height(14.dp))
+        Text(
+            text = value,
+            style = MeteoType.title.copy(fontSize = 44.sp),
+            color = accent,
+        )
+        Text(text = caption, style = MeteoType.label, color = accent)
     }
 }
 

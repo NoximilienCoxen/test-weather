@@ -3,6 +3,7 @@ package com.forli.meteo.widget
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 class WidgetConfigActivity : ComponentActivity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var kind: WidgetKind? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,18 +46,17 @@ class WidgetConfigActivity : ComponentActivity() {
             return
         }
 
-        // La luna e' la stessa da qualunque parte la si guardi: chiederle una
-        // citta' sarebbe una domanda senza conseguenze.
-        val provider = AppWidgetManager.getInstance(this)
-            .getAppWidgetInfo(appWidgetId)?.provider?.className
-        val needsPlace = provider != MoonWidgetReceiver::class.java.name
+        // Il tipo si legge qui e si tiene: adesso il lanciatore ha gia'
+        // agganciato il widget, mentre al momento del salvataggio la stessa
+        // domanda potrebbe non avere piu' risposta.
+        kind = WidgetKind.of(this, appWidgetId)
 
         setContent {
             // Palette neutra, non quella dell'ora del giorno: e' una schermata
             // di sistema, non una schermata dell'app.
             MeteoTheme(colors = skyColors(SkyState.Giorno)) {
                 WidgetConfigScreen(
-                    showLocation = needsPlace,
+                    kind = kind,
                     onSave = { place, useLocation, background, accent ->
                         lifecycleScope.launch {
                             saveAndFinish(place, useLocation, background, accent)
@@ -82,15 +83,21 @@ class WidgetConfigActivity : ComponentActivity() {
             ),
         )
 
-        // Un ridisegno subito, cosi' il widget nasce gia' con la tinta scelta.
-        // Se non riesce non e' grave e non deve impedire il salvataggio: il
-        // primo disegno legge comunque le stesse preferenze, che ora ci sono.
-        runCatching { refreshWidget(this, appWidgetId) }
+        // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
+        // una volta, prima che questa schermata si aprisse, con le preferenze
+        // ancora vuote. Se fallisce lo si dice, invece di lasciare all'utente
+        // un widget del colore sbagliato senza spiegazione.
+        runCatching { refreshWidget(this, appWidgetId, kind) }
+            .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
 
         setResult(
             RESULT_OK,
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
         )
         finish()
+    }
+
+    private companion object {
+        const val TAG = "WidgetConfig"
     }
 }
