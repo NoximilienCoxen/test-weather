@@ -43,7 +43,6 @@ data class HourForecast(
     val time: LocalDateTime,
     val temperature: Double? = null,
     val apparent: Double? = null,
-    val dewPoint: Double? = null,
     val weatherCode: Int? = null,
     /** Millimetri: dice quanto forte, non quanto probabile. */
     val precipitation: Double? = null,

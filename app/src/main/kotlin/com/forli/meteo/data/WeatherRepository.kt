@@ -80,7 +80,7 @@ class WeatherRepository(
                 "precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
 
         const val HOURLY_VARS =
-            "temperature_2m,apparent_temperature,dew_point_2m,weather_code,precipitation," +
+            "temperature_2m,apparent_temperature,weather_code,precipitation," +
                 "precipitation_probability,is_day"
 
         const val DAILY_VARS =
@@ -180,7 +180,6 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             time = at,
             temperature = hourly.temperature.at(i),
             apparent = hourly.apparent.at(i),
-            dewPoint = hourly.dewPoint.at(i),
             weatherCode = hourly.weatherCode.at(i),
             precipitation = hourly.precipitation.at(i),
             precipProbability = hourly.precipProbability.at(i),

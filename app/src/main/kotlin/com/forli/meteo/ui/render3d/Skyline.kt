@@ -29,11 +29,23 @@ class Skyline {
     /** Dove sta il riquadro di chi l'ha scritta, rispetto alla radice. */
     var origin: Offset = Offset.Zero
 
+    /**
+     * Il punto piu' basso toccato dalla sagoma: la base della cifra.
+     *
+     * La cima serve a sapere dove la pioggia si ferma; questa a sapere dove
+     * **arriva** quando non incontra niente. Ne basta uno per tutta la scritta e
+     * non uno per colonna: e' un piano d'appoggio, e un piano d'appoggio a
+     * gradini non e' un piano.
+     */
+    var floor: Float = Float.NaN
+        private set
+
     fun reset(canvasWidth: Float) {
         val needed = ((canvasWidth / COLUMN_PX).toInt() + 2).coerceAtLeast(2)
         if (top.size != needed) top = FloatArray(needed)
         java.util.Arrays.fill(top, Float.MAX_VALUE)
         width = canvasWidth
+        floor = Float.NaN
         ready = false
     }
 
@@ -69,6 +81,8 @@ class Skyline {
             }
             column++
         }
+        val lowest = maxOf(y0, y1)
+        if (floor.isNaN() || lowest > floor) floor = lowest
         ready = true
     }
 
@@ -84,7 +98,7 @@ class Skyline {
         return if (value == Float.MAX_VALUE) Float.NaN else value
     }
 
-    internal companion object {
+    private companion object {
         /**
          * Larghezza di una colonna. Sei pixel: piu' fine non si distingue a
          * occhio, piu' grosso e le gocce cominciano a fermarsi sul vuoto accanto
@@ -111,4 +125,14 @@ class SceneContact {
 
     /** Lo scostamento da sommare a una coordinata della cifra per leggerla nella pioggia. */
     val numberToRain: Offset get() = skyline.origin - rainOrigin
+
+    /**
+     * Quanto illumina il lampo in questo istante, da 0 a 1.
+     *
+     * Scritto dalla scultura a ogni fotogramma e letto dalla cifra, che sta in
+     * una tela separata ma disegna subito dopo nello stesso frame: stessa
+     * regola di [rainOrigin], stato non osservabile perche' cambia a ogni
+     * fotogramma comunque.
+     */
+    var glare: Float = 0f
 }

@@ -12,6 +12,11 @@ ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"
 
+# Secondi massimi di attesa perche' la previsione arrivi dopo un riavvio.
+# E' un tetto, non una durata: si esce appena l'app dice di averla (vedi
+# attendi_previsione), quindi tenerlo largo non costa niente.
+ATTESA_DATI=45
+
 adbt() { timeout 60 adb "$@"; }
 
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
@@ -52,6 +57,32 @@ shoot() {
   return 1
 }
 
+# Aspetta che la previsione sia arrivata davvero.
+#
+# Per tre giri il rimedio era stato alzare l'attesa: otto secondi, poi
+# quattordici, poi diciannove. A diciannove uno scatto su undici e' uscito lo
+# stesso "IN ATTESA DEI DATI", ed e' li' che si vede che il numero non era mai
+# il problema: aspettare una **durata** e' scommettere sulla rete del runner, e
+# ogni tanto la scommessa si perde. L'app scrive una riga quando la previsione
+# atterra, quindi qui si aspetta quella. Il tetto di tempo serve solo a non
+# restare appesi per sempre.
+#
+# `uiautomator dump` sarebbe la via ovvia e qui non si puo' usare: aspetta che
+# la finestra sia ferma, e questa schermata anima in continuazione per scelta.
+attendi_previsione() {
+  local i
+  for i in $(seq 1 "$ATTESA_DATI"); do
+    if adbt shell logcat -d -s meteo:I 2>/dev/null | grep -q "previsione pronta"; then
+      # Un istante perche' la composizione coi dati arrivi a schermo.
+      sleep 1
+      return 0
+    fi
+    sleep 1
+  done
+  echo "    previsione non arrivata in ${ATTESA_DATI}s: lo scatto uscira' senza dati"
+  return 1
+}
+
 # Esperimento di controllo: fotografo il launcher PRIMA di toccare l'app.
 # Se questo scatto riesce e i successivi no, la catena di cattura e' sana e
 # il problema sta nell'app; se fallisce anche questo, e' l'emulatore.
@@ -70,6 +101,34 @@ esac
 FROM_X=$(( W * 82 / 100 )); TO_X=$(( W * 18 / 100 )); MID_Y=$(( H * 42 / 100 ))
 echo "schermo ${W}x${H}"
 
+# Il benvenuto viene prima di tutto, e non solo perche' e' la prima cosa che si
+# vede: finche' non lo si chiude **l'app lo rimostra a ogni avvio**, e ogni altro
+# scatto di questo script ritrarrebbe lui invece della schermata che dice di
+# ritrarre. Chiuderlo scrive la preferenza, e da li' in poi non torna piu'.
+welcome() {
+  echo "== benvenuto =="
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  # Con le animazioni accese (trappola #28), se no il pupazzo sta sempre nella
+  # stessa posa e non si vede che si guarda intorno.
+  adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ez benvenuto true >/dev/null 2>&1 || true
+  sleep 12
+  shoot "00-benvenuto"
+  sleep 1
+  shoot "00-benvenuto-guarda"
+  adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
+
+  # "SCELGO IO" chiude il benvenuto per sempre e apre le impostazioni: due cose
+  # con un tocco solo, e le impostazioni non avevano ancora nessuno scatto.
+  adbt shell input tap "$(( W / 2 ))" "$(( H * 71 / 100 ))" >/dev/null 2>&1 || true
+  sleep 3
+  shoot "00-impostazioni"
+  # E si richiudono dal loro pulsante, in alto a sinistra.
+  adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+}
+
 alive() {
   local state
   state=$(timeout 20 adb get-state 2>/dev/null | tr -d '\r')
@@ -84,10 +143,16 @@ session() {
 
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il secondo tema gira dopo il primo: senza svuotare, l'attesa troverebbe
+  # la riga del tema precedente e passerebbe all'istante.
+  adbt shell logcat -c >/dev/null 2>&1 || true
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
   adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
-  sleep 10
+  # -W dice che l'attivita' e' in primo piano, non che ha qualcosa da mostrare:
+  # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
+  # per primo, quindi vale l'attesa vera come per tutti gli altri.
+  attendi_previsione
   alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
 
   shoot "${slug}-1-temp"
@@ -124,14 +189,19 @@ session() {
     restart_with() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
+      # Il buffer va svuotato prima dell'avvio, altrimenti la riga del giro
+      # precedente farebbe passare l'attesa all'istante. Il logcat in
+      # streaming ha gia' scritto su file quello che ha visto, quindi qui non
+      # si perde niente.
+      adbt shell logcat -c >/dev/null 2>&1 || true
       # shellcheck disable=SC2086
       adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
-      # Ogni riavvio rifa' la richiesta di rete: otto secondi non bastavano e
-      # gli scatti coglievano i trattini invece dei dati.
-      sleep 14
+      attendi_previsione
     }
 
-    restart_with "--ei ora 2"
+    # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
+    # stanotte la luna non si vedrebbe, ed e' proprio lei che va guardata.
+    restart_with "--ei ora 2 --ei meteo 1"
     shoot "${slug}-2-notte-luna"
 
     restart_with "--ei meteo 63"
@@ -142,6 +212,41 @@ session() {
 
     restart_with "--ei meteo 3"
     shoot "${slug}-5-coperto"
+
+    # Neve e sereno non avevano nessuno scatto, quindi si scrivevano alla
+    # cieca: il fiocco che sbanda e l'uccello che batte le ali si giudicano
+    # guardandoli, non rileggendo il codice. Il sereno va forzato a mezzogiorno,
+    # se no all'ora della CI il cielo e' notte e gli uccelli non volano.
+    restart_with "--ei meteo 73"
+    shoot "${slug}-5b-neve"
+
+    restart_with "--ei ora 12 --ei meteo 0"
+    shoot "${slug}-5c-sereno-uccelli"
+
+    restart_with "--ei meteo 96"
+    shoot "${slug}-5d-grandine"
+
+    # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
+    # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
+    # col dito non si arriva: per portare la cifra di taglio servono quattrocento
+    # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
+    # schermo e' largo mille.
+    restart_with "--ei giro 90"
+    shoot "${slug}-7-di-taglio"
+
+    restart_with "--ei giro 135"
+    shoot "${slug}-8-tre-ottavi"
+
+    restart_with "--ei giro 180"
+    shoot "${slug}-9-da-dietro"
+
+    # La luna deve poter passare davanti alla nuvola: e' tutto il punto
+    # dell'ordinamento in profondita' dei corpi tondi.
+    restart_with "--ei ora 2 --ei meteo 1 --ei giro 155"
+    shoot "${slug}-10-luna-girata"
+
+    restart_with "--ei meteo 63 --ei giro 45"
+    shoot "${slug}-11-pioggia-girata"
 
     # Il foglio di dettaglio: mai verificato finora.
     restart_with ""
@@ -158,6 +263,7 @@ session() {
   shoot "${slug}-3-vento"
 }
 
+welcome
 session SCURO
 session CHIARO
 
