@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.unit.ColorProvider
@@ -61,21 +62,51 @@ internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
     GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
 /**
- * Ridisegna il widget appena configurato, qualunque dei tre sia.
+ * Quale dei tre widget e' quello con questo identificativo.
  *
- * Il tipo si chiede al sistema invece di farselo passare: la configurazione
- * riceve solo un identificativo, e tre Activity quasi identiche per distinguere
- * tre widget sarebbero tre volte lo stesso codice.
+ * Si chiede al sistema invece di farselo passare: la configurazione riceve solo
+ * un identificativo, e tre Activity quasi identiche per distinguere tre widget
+ * sarebbero tre volte lo stesso codice.
  */
-internal suspend fun refreshWidget(context: Context, appWidgetId: Int) {
-    val provider = AppWidgetManager.getInstance(context)
-        .getAppWidgetInfo(appWidgetId)?.provider?.className
-    val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
-    when (provider) {
-        MoonWidgetReceiver::class.java.name -> MoonWidget().update(context, glanceId)
-        AirQualityWidgetReceiver::class.java.name -> AirQualityWidget().update(context, glanceId)
-        else -> WeatherWidget().update(context, glanceId)
+enum class WidgetKind {
+    METEO, LUNA, ARIA;
+
+    fun widget(): GlanceAppWidget = when (this) {
+        METEO -> WeatherWidget()
+        LUNA -> MoonWidget()
+        ARIA -> AirQualityWidget()
     }
+
+    companion object {
+        fun of(context: Context, appWidgetId: Int): WidgetKind? =
+            when (
+                AppWidgetManager.getInstance(context)
+                    .getAppWidgetInfo(appWidgetId)?.provider?.className
+            ) {
+                MoonWidgetReceiver::class.java.name -> LUNA
+                AirQualityWidgetReceiver::class.java.name -> ARIA
+                WeatherWidgetReceiver::class.java.name -> METEO
+                // Nessun tipo: il widget non risulta ancora agganciato. Non si
+                // tira a indovinare, perche' ridisegnare il widget sbagliato
+                // significa mettere la luna al posto della temperatura.
+                else -> null
+            }
+    }
+}
+
+/**
+ * Ridisegna il widget appena configurato.
+ *
+ * Serve davvero, e non e' una cortesia: il lanciatore aggancia il widget
+ * **prima** di aprire la configurazione, quindi a quel punto e' gia' stato
+ * disegnato una volta con le preferenze ancora vuote. Senza questo ridisegno
+ * la tinta appena scelta non comparirebbe fino al risveglio successivo, mezz'ora
+ * piu' tardi.
+ */
+internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
+    val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
+    val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
+    resolved.widget().update(context, glanceId)
 }
 
 /**
