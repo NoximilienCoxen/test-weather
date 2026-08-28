@@ -39,6 +39,8 @@ data class Place(
          * piu' piovosi che esistano, ed e' esattamente per questo che ci sono.
          */
         val SUGGESTIONS = listOf(
+            // Prima voce: neve e gelo garantiti tutto l'anno per testare la neve.
+            Place("Aoraki / Monte Cook", "Canterbury", "Nuova Zelanda", -43.5950, 170.1418),
             FORLI,
             Place("Bergen", "Vestland", "Norvegia", 60.3913, 5.3221),
             Place("Londra", "England", "Regno Unito", 51.5085, -0.1257),
@@ -53,3 +55,22 @@ data class Place(
 
 /** Chiave stabile per confronti e chiavi di lista, senza portarsi dietro un id. */
 val Place.key: String get() = "$name$latitude$longitude"
+
+private val ITALY_LATITUDE_RANGE = 35.5..47.1
+private val ITALY_LONGITUDE_RANGE = 6.6..18.5
+
+/**
+ * Vero se il paese testuale indica l'Italia, oppure se le coordinate
+ * ricadono nel rettangolo geografico italiano (nessun countryCode ISO
+ * e' disponibile nei dati di Open-Meteo/Geocoder usati da questa app).
+ */
+val Place.isItaly: Boolean
+    get() {
+        val normalizedCountry = country?.trim()?.uppercase()
+        if (normalizedCountry == "IT" || normalizedCountry == "ITA" ||
+            normalizedCountry == "ITALIA" || normalizedCountry == "ITALY"
+        ) {
+            return true
+        }
+        return latitude in ITALY_LATITUDE_RANGE && longitude in ITALY_LONGITUDE_RANGE
+    }
