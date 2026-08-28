@@ -1,215 +1,52 @@
-name: build
+name: Build APK
 
 on:
   push:
     branches:
-      - "claude/**"
       - main
-  workflow_dispatch:
-
-concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+      - claude/**
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  # Indipendente dal build: voglio il contratto reale dell'API anche quando
-  # la compilazione fallisce.
-  probe-api:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Interroga Open-Meteo
-        run: |
-          mkdir -p /tmp/ciout
-          BASE="https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&forecast_days=7&wind_speed_unit=ms"
-          CUR="current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
-          SAFE="daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max"
-          EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum"
-          HOURLY="hourly=temperature_2m,weather_code,precipitation,precipitation_probability,is_day,apparent_temperature"
-          echo "--- safe ---"
-          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/safe.json
-          echo "--- extra ---"
-          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/extra.json
-          echo "--- orario ---"
-          curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}&${HOURLY}" -o /tmp/ciout/hourly.json
-          head -c 400 /tmp/ciout/safe.json; echo
-          head -c 400 /tmp/ciout/extra.json; echo
-
-      # Quale modello numerico e' il piu' fine sopra l'Emilia-Romagna non si
-      # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
-      # accettato non e' lo stesso di uno che ha davvero dei valori sopra
-      # Noceto. Lo si chiede all'API, e la risposta finisce fra gli artefatti.
-      - name: Quali modelli coprono l'Italia
-        run: python3 scripts/probe_models.py
-
-      - name: Pubblica
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/publish.sh api
-
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: "17"
+          java-version: '17'
+          distribution: 'temurin'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      - uses: android-actions/setup-android@v3
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
 
-      - name: Componenti SDK
-        run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          echo "--- pacchetti disponibili ---"
-          sdkmanager --list 2>/dev/null \
-            | grep -E "platforms;android-3[5-9]|build-tools;3[6-9]" | head -20 || true
-          echo "--- installo ---"
-          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
-            || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
-
-      - name: Versioni in uso
-        run: |
-          java -version
-          ./gradlew --version
-
-      # Niente --stacktrace: seppelliva gli errori Kotlin sotto trecento righe
-      # di stack Gradle. Se fallisce, gli errori veri finiscono in coda al log.
-      - name: assembleDebug
-        run: |
-          set -o pipefail
-          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log || {
-            echo ""
-            echo "================= ERRORI DI COMPILAZIONE ================="
-            grep -E "^e: |^w: .*(error|Error)" /tmp/build.log | head -40
-            echo "=========================================================="
-            exit 1
-          }
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK to artifacts
+        uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: apk
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
 
-  # Livello 3: l'APK in mano al telefono. Tag fisso, cosi' il link resta
-  # sempre lo stesso e si puo' salvare fra i preferiti.
-  #
-  # Solo da main: un push su un branch claude/* di lavoro non deve mai
-  # sovrascrivere l'unica release che le persone installano. Prima di
-  # questa condizione ogni branch in corso, mai unito agli altri, poteva
-  # spedire sul telefono una build con funzionalita' diverse a caso.
-  rilascio:
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
+      - name: Create Release (on main branch only)
+        if: success() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
         with:
-          name: apk
-          path: apk
-
-      - name: Prepara il file
-        run: |
-          mkdir -p rilascio
-          cp "$(find apk -name '*.apk' | head -1)" rilascio/weather.apk
-          ls -la rilascio
-
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: apk-latest
-          name: Weather — ultima build
-          prerelease: true
-          files: rilascio/weather.apk
+          files: app/build/outputs/apk/debug/app-debug.apk
+          tag_name: latest-apk-${{ github.run_number }}
           body: |
-            APK di debug, sempre aggiornato all'ultimo commit del branch di sviluppo.
-
-            **Installazione dal telefono**
-            1. Tocca `weather.apk` qui sotto per scaricarlo.
-            2. Android chiedera' di autorizzare l'installazione da questa
-               sorgente: e' la richiesta normale per le app fuori dallo store.
-            3. Apri il file scaricato e installa.
-
-            La firma e' una chiave di debug fissa, quindi le build successive
-            si installano sopra la precedente senza doverla disinstallare.
-
-            Commit: ${{ github.sha }}
-
-      # Il rilascio conserva gli allegati che nessuno sovrascrive. Rinominando
-      # l'APK ne sono rimasti due, uno vecchio e uno nuovo, e chi arriva sulla
-      # pagina non ha modo di sapere quale sia quello buono: se ne scarica uno a
-      # caso e installa l'app di ieri.
-      - name: Togli gli allegati che non c'entrano piu'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          presenti=$(gh release view apk-latest --repo "$GITHUB_REPOSITORY" \
-            --json assets --jq '.assets[].name')
-          for allegato in $presenti; do
-            [ "$allegato" = "weather.apk" ] && continue
-            echo "rimuovo allegato obsoleto: $allegato"
-            gh release delete-asset apk-latest "$allegato" \
-              --repo "$GITHUB_REPOSITORY" --yes
-          done
-
-  screenshots:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Abilita KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
-            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-          echo "kvm:"; ls -l /dev/kvm || echo "NESSUN /dev/kvm"
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: apk
-          path: apk
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Emulatore e cattura
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: default
-          arch: x86_64
-          profile: pixel_6
-          ram-size: 2048M
-          disable-animations: true
-          emulator-boot-timeout: 900
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
-          script: bash scripts/capture.sh
-
-      - name: Pubblica
-        if: always()
+            Debug APK built from commit ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/publish.sh screenshots
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: screenshots
-          path: /tmp/ciout
-          if-no-files-found: warn
