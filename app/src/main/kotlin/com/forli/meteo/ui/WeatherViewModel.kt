@@ -9,7 +9,9 @@ import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
@@ -62,6 +64,10 @@ data class UiState(
     val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /** Motore numerico scelto per la previsione. */
+    val model: WeatherModel = WeatherModel.AUTO,
+    /** Localita' salvate a parte dalla scelta corrente. */
+    val favorites: List<Place> = emptyList(),
     /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
     val followsLocation: Boolean = false,
     /** Vero mentre si sta chiedendo dove siamo. */
@@ -184,19 +190,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             prefs.settings.collect { settings ->
                 val current = _state.value
                 val moved = current.place != settings.place
+                val modelChanged = current.model != settings.model
                 val firstRead = !started
                 started = true
                 _state.update {
                     it.copy(
                         place = settings.place,
                         unit = settings.unit,
+                        model = settings.model,
+                        favorites = settings.favorites,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
-                // e' solo scrittura. Cambiare posto invece cambia tutto.
-                if (moved || current.forecast == null) refresh()
+                // e' solo scrittura. Cambiare posto o modello invece cambia
+                // tutto, perche' i numeri arrivano da un motore diverso.
+                if (moved || modelChanged || current.forecast == null) refresh()
 
                 // All'avvio, se il posto lo decide il telefono, lo si richiede
                 // una volta. Il posto salvato resta valido nel frattempo: la
@@ -222,9 +232,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
         loading?.cancel()
         val place = _state.value.place
+        val model = _state.value.model
         loading = viewModelScope.launch {
             var wait = FIRST_RETRY_MS
-            val repository = WeatherRepository(place)
+            val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
                 val outcome = repository.load()
                 outcome
@@ -335,6 +346,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun setUnit(unit: TempUnit) {
         viewModelScope.launch { prefs.setUnit(unit) }
     }
+
+    fun setModel(model: WeatherModel) {
+        viewModelScope.launch { prefs.setModel(model) }
+    }
+
+    /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
+    fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    fun isFavorite(place: Place): Boolean =
+        _state.value.favorites.any { it.key == place.key }
 
     fun choosePlace(place: Place) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
