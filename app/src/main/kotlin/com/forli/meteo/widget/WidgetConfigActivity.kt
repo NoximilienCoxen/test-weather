@@ -8,9 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.lifecycle.lifecycleScope
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SkyState
@@ -20,9 +17,12 @@ import com.forli.meteo.ui.widgetconfig.WidgetConfigScreen
 import kotlinx.coroutines.launch
 
 /**
- * Aperta dal sistema subito dopo che il widget e' stato trascinato sulla
- * Home ([android:configure] in `weather_widget_info.xml`): sceglie la
- * localita' e i colori di quella singola istanza, prima che compaia.
+ * Aperta dal sistema subito dopo che un widget e' stato trascinato sulla Home
+ * (attributo `configure` dei provider): sceglie la localita' e i colori di
+ * quella singola istanza, prima che compaia.
+ *
+ * Una sola per tutti e tre i widget: quale sia lo si chiede al sistema al
+ * momento di ridisegnarlo.
  */
 class WidgetConfigActivity : ComponentActivity() {
 
@@ -32,8 +32,8 @@ class WidgetConfigActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Contratto standard di AppWidgetProvider: se l'utente esce senza
-        // salvare, il sistema deve considerare il posizionamento annullato.
+        // Contratto standard dei widget: se l'utente esce senza salvare, il
+        // sistema deve considerare il posizionamento annullato.
         setResult(RESULT_CANCELED)
 
         appWidgetId = intent?.extras
@@ -44,15 +44,23 @@ class WidgetConfigActivity : ComponentActivity() {
             return
         }
 
+        // La luna e' la stessa da qualunque parte la si guardi: chiederle una
+        // citta' sarebbe una domanda senza conseguenze.
+        val provider = AppWidgetManager.getInstance(this)
+            .getAppWidgetInfo(appWidgetId)?.provider?.className
+        val needsPlace = provider != MoonWidgetReceiver::class.java.name
+
         setContent {
-            // Palette neutra, non quella dell'ora del giorno: e' un dialogo
+            // Palette neutra, non quella dell'ora del giorno: e' una schermata
             // di sistema, non una schermata dell'app.
             MeteoTheme(colors = skyColors(SkyState.Giorno)) {
                 WidgetConfigScreen(
+                    showLocation = needsPlace,
                     onSave = { place, useLocation, background, accent ->
-                        lifecycleScope.launch { saveAndFinish(place, useLocation, background, accent) }
+                        lifecycleScope.launch {
+                            saveAndFinish(place, useLocation, background, accent)
+                        }
                     },
-                    onCancel = { finish() },
                 )
             }
         }
@@ -64,24 +72,25 @@ class WidgetConfigActivity : ComponentActivity() {
         background: Color,
         accent: Color,
     ) {
-        val glanceId = GlanceAppWidgetManager(this).getGlanceIdBy(appWidgetId)
+        WidgetPrefs(this).save(
+            appWidgetId = appWidgetId,
+            config = WidgetConfig(
+                useLocation = useLocation,
+                place = place,
+                background = background.toArgb(),
+                accent = accent.toArgb(),
+            ),
+        )
 
-        updateAppWidgetState(this, PreferencesGlanceStateDefinition, glanceId) { prefs ->
-            prefs.toMutablePreferences().apply {
-                this[WidgetPrefKeys.USE_LOCATION] = useLocation
-                if (!useLocation && place != null) {
-                    this[WidgetPrefKeys.PLACE_JSON] = placeToJson(place)
-                } else {
-                    remove(WidgetPrefKeys.PLACE_JSON)
-                }
-                this[WidgetPrefKeys.BACKGROUND_ARGB] = background.toArgb()
-                this[WidgetPrefKeys.ACCENT_ARGB] = accent.toArgb()
-            }
-        }
-        WeatherWidget().update(this, glanceId)
+        // Un ridisegno subito, cosi' il widget nasce gia' con la tinta scelta.
+        // Se non riesce non e' grave e non deve impedire il salvataggio: il
+        // primo disegno legge comunque le stesse preferenze, che ora ci sono.
+        runCatching { refreshWidget(this, appWidgetId) }
 
-        val result = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, result)
+        setResult(
+            RESULT_OK,
+            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+        )
         finish()
     }
 }

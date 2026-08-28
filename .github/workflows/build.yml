@@ -38,6 +38,16 @@ jobs:
           head -c 400 /tmp/ciout/safe.json; echo
           head -c 400 /tmp/ciout/extra.json; echo
 
+      # La qualita' dell'aria sta su un altro host e ha un contratto suo: il
+      # widget che la mostra si fida di questi nomi di campo, e qui si vede se
+      # sono ancora quelli.
+      - name: Interroga la qualita' dell'aria
+        run: |
+          mkdir -p /tmp/ciout
+          AIR="https://air-quality-api.open-meteo.com/v1/air-quality?latitude=44.2226&longitude=12.0407&timezone=auto&current=european_aqi,pm2_5,pm10"
+          curl -sS -w "\nHTTP %{http_code}\n" "$AIR" -o /tmp/ciout/aria.json
+          cat /tmp/ciout/aria.json; echo
+
       # Quale modello numerico e' il piu' fine sopra l'Emilia-Romagna non si
       # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
       # accettato non e' lo stesso di uno che ha davvero dei valori sopra
