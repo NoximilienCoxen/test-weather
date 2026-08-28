@@ -44,56 +44,64 @@ internal fun WidgetImage(bitmap: Bitmap, description: String, onClick: Action) {
 }
 
 /**
- * La localita' da mostrare.
+ * La localita' da mostrare per questo widget.
  *
- * Gerarchia di fallback:
- * 1. Se `useLocation` e' true: prova il GPS del dispositivo.
- * 2. Se il GPS non e' disponibile o i permessi mancano: usa `place` salvata
- *    nella configurazione dell'istanza (potrebbe essere non-null anche con
- *    useLocation=true se l'utente l'aveva impostata in precedenza).
- * 3. Solo se anche `place` e' null: ripiegare sulla localita' globale dell'app.
+ * La configurazione viene letta dai campi primitivi del DataStore (lat, lon,
+ * nome, admin, paese) — nessun parsing JSON, nessun runCatching silenzioso.
+ * Se i campi primitivi sono presenti, [place] e' non-null con certezza.
  *
- * Un widget mai configurato ripiega sulla localita' dell'app: mostrare niente
- * sarebbe peggio che mostrare il posto sbagliato.
+ * Gerarchia di risoluzione:
+ *
+ * REGOLA 1 — useLocation=true:
+ *   Tenta il GPS. Se disponibile, usa quello.
+ *   Se il GPS e' null (permessi revocati, antenna spenta), usa [place]
+ *   dell'istanza come fallback immediato — NON la citta' globale dell'app.
+ *   Solo se anche [place] e' null si usa il fallback globale.
+ *
+ * REGOLA 2 — useLocation=false e place!=null:
+ *   Usa tassativamente la citta' scelta per questa istanza.
+ *   NON controlla SettingsPrefs.
+ *
+ * REGOLA 3 — widget mai configurato (useLocation=false, place=null):
+ *   Il widget non e' mai stato configurato. Unico caso in cui si usa
+ *   la citta' globale dell'app come placeholder.
  */
 internal suspend fun WidgetConfig.resolvePlace(context: Context): Place {
     suspend fun fromApp(): Place = SettingsPrefs(context).settings.first().place
 
-    // REGOLA 1: useLocation=true → tenta GPS
-    // REGOLA 2: useLocation=false e place!=null → usa la città dell'istanza
-    // REGOLA 3 (fallback): GPS fallisce E place==null → città globale app
-    val resolved = when {
+    return when {
+        // REGOLA 1: GPS richiesto
         useLocation -> {
-            Log.d("WidgetResolve", "resolvePlace: useLocation=true, tento GPS...")
+            Log.d("WidgetResolve", "resolvePlace: useLocation=true — tento GPS")
             val gps = DeviceLocation.current(context)
-            if (gps != null) {
-                Log.d("WidgetResolve", "resolvePlace: REGOLA 1 → GPS: ${gps.name}")
-                gps
-            } else {
-                // GPS non disponibile: usa place dell'istanza se c'è,
-                // altrimenti fallback globale app.
-                val fallback = place
-                if (fallback != null) {
-                    Log.d("WidgetResolve", "resolvePlace: GPS null, REGOLA 2 (fallback) → place istanza: ${fallback.name}")
-                    fallback
-                } else {
+            when {
+                gps != null -> {
+                    Log.d("WidgetResolve", "resolvePlace: R1 GPS ✓ → ${gps.name}")
+                    gps
+                }
+                place != null -> {
+                    Log.d("WidgetResolve", "resolvePlace: R1 GPS null → fallback place istanza: ${place.name}")
+                    place
+                }
+                else -> {
                     val app = fromApp()
-                    Log.d("WidgetResolve", "resolvePlace: GPS null, place null, REGOLA 3 → app: ${app.name}")
+                    Log.d("WidgetResolve", "resolvePlace: R1 GPS null, place null → fallback app: ${app.name}")
                     app
                 }
             }
         }
+        // REGOLA 2: citta' manuale impostata per questa istanza
         place != null -> {
-            Log.d("WidgetResolve", "resolvePlace: REGOLA 2 → città manuale istanza: ${place.name}")
+            Log.d("WidgetResolve", "resolvePlace: R2 citta' istanza → ${place.name}")
             place
         }
+        // REGOLA 3: widget mai configurato — placeholder globale app
         else -> {
             val app = fromApp()
-            Log.d("WidgetResolve", "resolvePlace: REGOLA 3 → nessuna config istanza, usa app: ${app.name}")
+            Log.d("WidgetResolve", "resolvePlace: R3 mai configurato → fallback app: ${app.name}")
             app
         }
     }
-    return resolved
 }
 
 internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
