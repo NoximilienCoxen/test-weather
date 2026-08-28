@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Due celle di lato, ma allargabile fino a tutta la riga: il disegno cambia
-    disposizione con la forma, e il taglio lo decide il codice guardando quanto
-    spazio ha davvero.
+    Due celle di lato, dimensione fissa: il disegno e' costruito per occupare
+    esattamente 2x2 celle e il ridimensionamento e' disabilitato per evitare
+    che l'utente deformi il widget.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
     android:minHeight="110dp"
-    android:minResizeWidth="110dp"
-    android:minResizeHeight="110dp"
     android:targetCellWidth="2"
     android:targetCellHeight="2"
     android:updatePeriodMillis="1800000"
-    android:resizeMode="horizontal|vertical"
+    android:resizeMode="none"
     android:widgetCategory="home_screen"
     android:configure="com.forli.meteo.widget.WidgetConfigActivity"
     android:initialLayout="@layout/widget_loading" />

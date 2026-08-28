@@ -54,11 +54,11 @@ class WidgetPrefs(private val context: Context) {
     suspend fun save(appWidgetId: Int, config: WidgetConfig) {
         context.widgetDataStore.edit { prefs ->
             prefs[useLocationKey(appWidgetId)] = config.useLocation
-            // Seguire il telefono e ricordare una citta' sono alternative: tenere
-            // salvate entrambe lascerebbe un posto fantasma a cui tornare.
-            val place = config.place?.takeUnless { config.useLocation }
-            if (place != null) {
-                prefs[placeKey(appWidgetId)] = widgetJson.encodeToString(place)
+            // La place viene sempre salvata se presente, anche con useLocation=true:
+            // serve come fallback nel caso il GPS non sia disponibile o i permessi
+            // vengano revocati. resolvePlace() decide l'ordine di priorità.
+            if (config.place != null) {
+                prefs[placeKey(appWidgetId)] = widgetJson.encodeToString(config.place)
             } else {
                 prefs.remove(placeKey(appWidgetId))
             }

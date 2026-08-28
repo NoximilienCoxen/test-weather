@@ -3,6 +3,7 @@ package com.forli.meteo.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -23,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Il widget, che ormai e' un'immagine sola.
@@ -44,17 +46,54 @@ internal fun WidgetImage(bitmap: Bitmap, description: String, onClick: Action) {
 /**
  * La localita' da mostrare.
  *
- * Un widget mai configurato, o che segue il telefono senza riuscire a sapere
- * dove sia, ripiega sulla localita' scelta nell'app: mostrare niente sarebbe
- * peggio che mostrare il posto sbagliato.
+ * Gerarchia di fallback:
+ * 1. Se `useLocation` e' true: prova il GPS del dispositivo.
+ * 2. Se il GPS non e' disponibile o i permessi mancano: usa `place` salvata
+ *    nella configurazione dell'istanza (potrebbe essere non-null anche con
+ *    useLocation=true se l'utente l'aveva impostata in precedenza).
+ * 3. Solo se anche `place` e' null: ripiegare sulla localita' globale dell'app.
+ *
+ * Un widget mai configurato ripiega sulla localita' dell'app: mostrare niente
+ * sarebbe peggio che mostrare il posto sbagliato.
  */
 internal suspend fun WidgetConfig.resolvePlace(context: Context): Place {
     suspend fun fromApp(): Place = SettingsPrefs(context).settings.first().place
-    return when {
-        useLocation -> DeviceLocation.current(context) ?: place ?: fromApp()
-        place != null -> place
-        else -> fromApp()
+
+    // REGOLA 1: useLocation=true → tenta GPS
+    // REGOLA 2: useLocation=false e place!=null → usa la città dell'istanza
+    // REGOLA 3 (fallback): GPS fallisce E place==null → città globale app
+    val resolved = when {
+        useLocation -> {
+            Log.d("WidgetResolve", "resolvePlace: useLocation=true, tento GPS...")
+            val gps = DeviceLocation.current(context)
+            if (gps != null) {
+                Log.d("WidgetResolve", "resolvePlace: REGOLA 1 → GPS: ${gps.name}")
+                gps
+            } else {
+                // GPS non disponibile: usa place dell'istanza se c'è,
+                // altrimenti fallback globale app.
+                val fallback = place
+                if (fallback != null) {
+                    Log.d("WidgetResolve", "resolvePlace: GPS null, REGOLA 2 (fallback) → place istanza: ${fallback.name}")
+                    fallback
+                } else {
+                    val app = fromApp()
+                    Log.d("WidgetResolve", "resolvePlace: GPS null, place null, REGOLA 3 → app: ${app.name}")
+                    app
+                }
+            }
+        }
+        place != null -> {
+            Log.d("WidgetResolve", "resolvePlace: REGOLA 2 → città manuale istanza: ${place.name}")
+            place
+        }
+        else -> {
+            val app = fromApp()
+            Log.d("WidgetResolve", "resolvePlace: REGOLA 3 → nessuna config istanza, usa app: ${app.name}")
+            app
+        }
     }
+    return resolved
 }
 
 internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
@@ -94,16 +133,31 @@ enum class WidgetKind {
 }
 
 /**
- * Ridisegna il widget appena configurato.
+ * Ridisegna il widget appena configurato e **attende** il completamento.
  *
  * Serve davvero, e non e' una cortesia: il lanciatore aggancia il widget
  * **prima** di aprire la configurazione, quindi a quel punto e' gia' stato
  * disegnato una volta con le preferenze ancora vuote. Senza questo ridisegno
- * la tinta appena scelta non comparirebbe fino al risveglio successivo, mezz'ora
- * piu' tardi.
+ * la tinta appena scelta non comparirebbe fino al risveglio successivo.
+ *
+ * Garanzia anti-race: `WidgetPrefs.save()` e' una suspend function che
+ * completa il flush su DataStore prima di tornare. `update()` viene chiamato
+ * solo dopo quel completamento, cosi' `provideGlance` legge sempre le
+ * preferenze gia' scritte. `withContext(Dispatchers.IO)` forza l'esecuzione
+ * sul pool IO, lo stesso usato da DataStore internamente, eliminando qualsiasi
+ * coda di scrittura pendente prima che Glance legga.
  */
 internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
+    // Forza la lettura delle preferenze su IO per svuotare la coda DataStore
+    // prima di schedulare il ridisegno: elimina la race condition tra save()
+    // e il primo provideGlance().
+    val confirmedConfig = withContext(Dispatchers.IO) {
+        WidgetPrefs(context).load(appWidgetId)
+    }
+    Log.d("WidgetResolve", "refreshWidget: widget=$appWidgetId kind=${resolved.name} " +
+        "| DataStore confermato → useLocation=${confirmedConfig.useLocation}, " +
+        "place=${confirmedConfig.place?.name ?: "null"}")
     val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
     resolved.widget().update(context, glanceId)
 }

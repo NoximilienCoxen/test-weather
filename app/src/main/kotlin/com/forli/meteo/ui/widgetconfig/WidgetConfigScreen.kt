@@ -163,7 +163,12 @@ fun WidgetConfigScreen(
                                 PlaceOption(
                                     place = place,
                                     selected = selectedPlace?.key == place.key,
-                                    onClick = { selectedPlace = place },
+                                    onClick = {
+                                        // Scegliere una città disattiva esplicitamente il GPS:
+                                        // i due sono mutuamente esclusivi.
+                                        selectedPlace = place
+                                        useLocation = false
+                                    },
                                 )
                             }
                         }
@@ -200,7 +205,12 @@ fun WidgetConfigScreen(
                             PlaceOption(
                                 place = place,
                                 selected = selectedPlace?.key == place.key,
-                                onClick = { selectedPlace = place },
+                                onClick = {
+                                    // Scegliere una città disattiva esplicitamente il GPS:
+                                    // i due sono mutuamente esclusivi.
+                                    selectedPlace = place
+                                    useLocation = false
+                                },
                             )
                         }
                     }
