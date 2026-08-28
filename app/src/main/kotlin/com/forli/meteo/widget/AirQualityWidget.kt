@@ -25,41 +25,36 @@ import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.forli.meteo.data.Forecast
+import com.forli.meteo.R
+import com.forli.meteo.data.AirQuality
+import com.forli.meteo.data.AirQualityRepository
 import com.forli.meteo.data.Place
-import com.forli.meteo.data.WeatherRepository
-import com.forli.meteo.data.Wmo
-import kotlin.math.roundToInt
 
-/** Il tempo che fa adesso: localita', temperatura, condizione. */
-class WeatherWidget : GlanceAppWidget() {
+/** La qualita' dell'aria, secondo l'indice europeo. */
+class AirQualityWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val config = WidgetPrefs(context).load(appWidgetIdOf(context, id))
         val place = config.resolvePlace(context)
-        val forecast = WeatherRepository(place).load().getOrNull()
+        val air = AirQualityRepository(place).load().getOrNull()
         val palette = config.palette()
-        provideContent { WidgetBody(place, forecast, palette) }
+        provideContent { AirBody(place, air, palette) }
     }
 }
 
 @Composable
-private fun WidgetBody(place: Place, forecast: Forecast?, palette: WidgetPalette) {
-    val temperature = forecast?.current?.temperature
-    val family = Wmo.family(forecast?.current?.weatherCode)
-    val isDay = forecast?.current?.isDay ?: true
-
+private fun AirBody(place: Place, air: AirQuality?, palette: WidgetPalette) {
     Row(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(palette.background)
             .padding(14.dp)
-            .clickable(actionRunCallback<RefreshWidgetAction>()),
+            .clickable(actionRunCallback<RefreshAirAction>()),
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Image(
-            provider = ImageProvider(iconFor(family, isDay)),
-            contentDescription = Wmo.condition(forecast?.current?.weatherCode),
+            provider = ImageProvider(R.drawable.ic_widget_air),
+            contentDescription = "QUALITÀ DELL'ARIA",
             colorFilter = ColorFilter.tint(palette.accent),
             modifier = GlanceModifier.size(30.dp),
         )
@@ -77,15 +72,17 @@ private fun WidgetBody(place: Place, forecast: Forecast?, palette: WidgetPalette
                 ),
             )
             Text(
-                text = temperature?.roundToInt()?.let { "$it°" } ?: "--",
+                text = air?.europeanAqi?.toString() ?: "--",
                 style = TextStyle(
                     color = palette.accent,
-                    fontSize = 40.sp,
+                    fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                 ),
             )
             Text(
-                text = Wmo.condition(forecast?.current?.weatherCode),
+                // Il numero da solo non dice niente a nessuno: e' la parola
+                // accanto a dirti se puoi uscire a correre.
+                text = air?.band?.label ?: "ARIA",
                 style = TextStyle(
                     color = palette.secondary,
                     fontSize = 12.sp,
@@ -96,17 +93,16 @@ private fun WidgetBody(place: Place, forecast: Forecast?, palette: WidgetPalette
     }
 }
 
-/** Un tocco sul widget forza un nuovo scaricamento. */
-class RefreshWidgetAction : ActionCallback {
+class RefreshAirAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
-        WeatherWidget().update(context, glanceId)
+        AirQualityWidget().update(context, glanceId)
     }
 }
 
-class WeatherWidgetReceiver : ConfigurableWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = WeatherWidget()
+class AirQualityWidgetReceiver : ConfigurableWidgetReceiver() {
+    override val glanceAppWidget: GlanceAppWidget = AirQualityWidget()
 }
