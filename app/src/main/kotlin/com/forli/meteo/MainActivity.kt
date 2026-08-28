@@ -6,8 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.forli.meteo.ui.MeteoApp
 import com.forli.meteo.ui.WeatherViewModel
+import com.forli.meteo.widget.repaintWidgets
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -25,6 +28,19 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         applyExtras(intent)
+    }
+
+    /**
+     * Ridisegna i widget quando l'app torna in primo piano.
+     *
+     * I widget adesso sono immagini gia' dipinte, e un'immagine non cambia
+     * colore da sola: cambiando il tema del telefono resterebbero chiari su una
+     * schermata scura fino al risveglio successivo, mezz'ora piu' tardi. Chi
+     * cambia tema passa quasi sempre di qui subito dopo.
+     */
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch { repaintWidgets(applicationContext) }
     }
 
     /**

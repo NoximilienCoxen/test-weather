@@ -7,8 +7,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.lifecycleScope
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SkyState
@@ -57,30 +55,18 @@ class WidgetConfigActivity : ComponentActivity() {
             MeteoTheme(colors = skyColors(SkyState.Giorno)) {
                 WidgetConfigScreen(
                     kind = kind,
-                    onSave = { place, useLocation, background, accent ->
-                        lifecycleScope.launch {
-                            saveAndFinish(place, useLocation, background, accent)
-                        }
+                    onSave = { place, useLocation ->
+                        lifecycleScope.launch { saveAndFinish(place, useLocation) }
                     },
                 )
             }
         }
     }
 
-    private suspend fun saveAndFinish(
-        place: Place?,
-        useLocation: Boolean,
-        background: Color,
-        accent: Color,
-    ) {
+    private suspend fun saveAndFinish(place: Place?, useLocation: Boolean) {
         WidgetPrefs(this).save(
             appWidgetId = appWidgetId,
-            config = WidgetConfig(
-                useLocation = useLocation,
-                place = place,
-                background = background.toArgb(),
-                accent = accent.toArgb(),
-            ),
+            config = WidgetConfig(useLocation = useLocation, place = place),
         )
 
         // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato

@@ -2,13 +2,19 @@ package com.forli.meteo.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import androidx.compose.ui.graphics.Color
+import android.graphics.Bitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.layout.ContentScale
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.unit.ColorProvider
-import com.forli.meteo.R
+import androidx.glance.layout.fillMaxSize
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Place
 import com.forli.meteo.prefs.SettingsPrefs
@@ -17,28 +23,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-// Glance 1.1.1 non offre un ColorProvider giorno/notte: quando l'utente non
-// sceglie una tinta, la decide il sistema di risorse fra values/ e values-night/.
-private val DefaultBackground = ColorProvider(R.color.widget_background)
-private val DefaultPrimary = ColorProvider(R.color.widget_primary)
-private val DefaultSecondary = ColorProvider(R.color.widget_secondary)
-
-/** I tre colori con cui si disegna un widget. */
-internal class WidgetPalette(
-    val background: ColorProvider,
-    val accent: ColorProvider,
-    val secondary: ColorProvider,
-)
-
-internal fun WidgetConfig.palette(): WidgetPalette {
-    val chosenAccent = accent?.let { Color(it) }
-    return WidgetPalette(
-        background = background?.let { ColorProvider(Color(it)) } ?: DefaultBackground,
-        accent = chosenAccent?.let { ColorProvider(it) } ?: DefaultPrimary,
-        // Il secondario segue l'accento invece di restare il grigio di sistema:
-        // su uno sfondo scelto a mano quel grigio poteva sparirci dentro.
-        secondary = chosenAccent?.let { ColorProvider(it.copy(alpha = 0.65f)) }
-            ?: DefaultSecondary,
+/**
+ * Il widget, che ormai e' un'immagine sola.
+ *
+ * A tutto riquadro e **deformata**, non contenuta: il disegno e' gia' della
+ * forma esatta del riquadro, e "contenere" lascerebbe due bande da cui si vede
+ * la schermata sotto.
+ */
+@Composable
+internal fun WidgetImage(bitmap: Bitmap, description: String, onClick: Action) {
+    Image(
+        provider = ImageProvider(bitmap),
+        contentDescription = description,
+        contentScale = ContentScale.FillBounds,
+        modifier = GlanceModifier.fillMaxSize().clickable(onClick),
     )
 }
 
@@ -107,6 +105,18 @@ internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: Wid
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
     val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
     resolved.widget().update(context, glanceId)
+}
+
+/**
+ * Ridisegna tutti i widget piazzati, di qualunque tipo.
+ *
+ * Serve al cambio di tema: le immagini gia' dipinte non si ricolorano da sole.
+ * Se un tipo non ha widget in giro, `updateAll` non fa niente e non costa.
+ */
+suspend fun repaintWidgets(context: Context) {
+    WidgetKind.entries.forEach { kind ->
+        runCatching { kind.widget().updateAll(context) }
+    }
 }
 
 /**
