@@ -1,30 +1,12 @@
 package com.forli.meteo.widget
 
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import androidx.glance.background
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Column
-import androidx.glance.layout.Row
-import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.padding
-import androidx.glance.layout.size
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import com.forli.meteo.R
 import com.forli.meteo.ui.home.MoonPhase
 import java.time.LocalDate
@@ -39,60 +21,22 @@ import kotlin.math.roundToInt
  */
 class MoonWidget : GlanceAppWidget() {
 
+    override val sizeMode = WidgetSizes
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val palette = WidgetPrefs(context).load(appWidgetIdOf(context, id)).palette()
         val phase = MoonPhase.at(LocalDate.now())
-        provideContent { MoonBody(phase, palette) }
-    }
-}
+        val segment = MoonSegment.of(phase)
+        val illuminated = (MoonPhase.illumination(phase) * 100).roundToInt()
 
-@Composable
-private fun MoonBody(phase: Float, palette: WidgetPalette) {
-    val segment = MoonSegment.of(phase)
-    val illuminated = (MoonPhase.illumination(phase) * 100).roundToInt()
-
-    Row(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(palette.background)
-            .padding(14.dp)
-            .clickable(actionRunCallback<RefreshMoonAction>()),
-        verticalAlignment = Alignment.Vertical.CenterVertically,
-    ) {
-        Image(
-            provider = ImageProvider(segment.icon),
-            contentDescription = segment.label,
-            colorFilter = ColorFilter.tint(palette.accent),
-            modifier = GlanceModifier.size(30.dp),
-        )
-        Column(
-            modifier = GlanceModifier.padding(start = 10.dp),
-            verticalAlignment = Alignment.Vertical.CenterVertically,
-            horizontalAlignment = Alignment.Horizontal.Start,
-        ) {
-            Text(
-                text = "LUNA",
-                style = TextStyle(
-                    color = palette.secondary,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-            )
-            Text(
-                text = "$illuminated%",
-                style = TextStyle(
-                    color = palette.accent,
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
-            )
-            Text(
-                text = segment.label,
-                style = TextStyle(
-                    color = palette.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+        provideContent {
+            WidgetFrame(
+                value = "$illuminated%",
+                label = "LUNA",
+                caption = segment.label,
+                icon = segment.icon,
+                palette = palette,
+                onClick = actionRunCallback<RefreshMoonAction>(),
             )
         }
     }
