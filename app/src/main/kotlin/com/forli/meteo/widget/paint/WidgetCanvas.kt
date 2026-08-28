@@ -4,8 +4,10 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
@@ -110,11 +112,9 @@ internal object WidgetCanvas {
             Size(frame.widthPx.toFloat(), frame.heightPx.toFloat()),
         ) {
             drawRoundRect(
-                color = androidx.compose.ui.graphics.Color(background),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(
-                    frame.cornerDp.dp.toPx(),
-                ),
+                color = Color(background),
                 size = size,
+                cornerRadius = CornerRadius(frame.cornerDp.dp.toPx()),
             )
             body()
         }
