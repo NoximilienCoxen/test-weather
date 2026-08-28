@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Due celle di lato: con una sola in altezza la riga sotto il numero restava
-    tagliata fuori, ed e' quella che dice se piove. Resta allargabile fino a
-    tutta la riga, dove il numero e la scritta si mettono affiancati.
+    Due celle di lato, ma allargabile fino a tutta la riga: il disegno cambia
+    disposizione con la forma, e il taglio lo decide il codice guardando quanto
+    spazio ha davvero.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
@@ -15,4 +15,4 @@
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:configure="com.forli.meteo.widget.WidgetConfigActivity"
-    android:initialLayout="@layout/glance_default_loading_layout" />
+    android:initialLayout="@layout/widget_loading" />

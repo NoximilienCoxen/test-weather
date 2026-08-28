@@ -28,13 +28,15 @@ private val Context.widgetDataStore: DataStore<Preferences> by
 
 private val widgetJson = Json { ignoreUnknownKeys = true }
 
-/** Dove guarda un widget e con che colori. */
+/**
+ * Dove guarda un widget.
+ *
+ * Solo la localita': i colori li decide il tema del telefono, e sceglierli a
+ * mano era una promessa che il disegno non riusciva a mantenere.
+ */
 data class WidgetConfig(
     val useLocation: Boolean = false,
     val place: Place? = null,
-    /** ARGB, oppure nullo per lasciar decidere al tema chiaro/scuro di sistema. */
-    val background: Int? = null,
-    val accent: Int? = null,
 )
 
 class WidgetPrefs(private val context: Context) {
@@ -46,8 +48,6 @@ class WidgetPrefs(private val context: Context) {
             place = prefs[placeKey(appWidgetId)]?.let { raw ->
                 runCatching { widgetJson.decodeFromString<Place>(raw) }.getOrNull()
             },
-            background = prefs[backgroundKey(appWidgetId)],
-            accent = prefs[accentKey(appWidgetId)],
         )
     }
 
@@ -62,8 +62,6 @@ class WidgetPrefs(private val context: Context) {
             } else {
                 prefs.remove(placeKey(appWidgetId))
             }
-            config.background?.let { prefs[backgroundKey(appWidgetId)] = it }
-            config.accent?.let { prefs[accentKey(appWidgetId)] = it }
         }
     }
 
@@ -72,6 +70,9 @@ class WidgetPrefs(private val context: Context) {
         context.widgetDataStore.edit { prefs ->
             prefs.remove(useLocationKey(appWidgetId))
             prefs.remove(placeKey(appWidgetId))
+            // Le due tinte non si salvano piu', ma vanno ancora tolte: chi
+            // aggiorna dalla versione di prima se le ritroverebbe nell'archivio
+            // per sempre.
             prefs.remove(backgroundKey(appWidgetId))
             prefs.remove(accentKey(appWidgetId))
         }

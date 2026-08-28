@@ -3,7 +3,6 @@ package com.forli.meteo.ui.widgetconfig
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -35,15 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.forli.meteo.R
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.WeatherRepository
@@ -70,7 +65,7 @@ private val SelectedBackground = Color.White.copy(alpha = 0.16f)
  */
 @Composable
 fun WidgetConfigScreen(
-    onSave: (place: Place?, useLocation: Boolean, background: Color, accent: Color) -> Unit,
+    onSave: (place: Place?, useLocation: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     /** Quale dei tre widget si sta configurando, per l'anteprima e la localita'. */
     kind: WidgetKind? = null,
@@ -89,9 +84,6 @@ fun WidgetConfigScreen(
     var query by remember { mutableStateOf("") }
     var results by remember { mutableStateOf<List<Place>>(emptyList()) }
     var searching by remember { mutableStateOf(false) }
-
-    var background by remember { mutableStateOf(Color(0xFFEFEFF2)) }
-    var accent by remember { mutableStateOf(Color(0xFF000000)) }
 
     val favorites by remember(settingsPrefs) { settingsPrefs.settings.map { it.favorites } }
         .collectAsState(initial = emptyList())
@@ -216,101 +208,15 @@ fun WidgetConfigScreen(
                 item { Spacer(Modifier.height(26.dp)) }
             }
 
-            item { SectionTitle("COLORI") }
-            item {
-                // L'anteprima sta sopra i comandi: mentre si sceglie una tinta
-                // si guarda l'effetto, non la manopola.
-                WidgetPreview(
-                    place = selectedPlace,
-                    useLocation = useLocation,
-                    kind = kind,
-                    background = background,
-                    accent = accent,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                )
-            }
-            item {
-                WidgetColorPicker(
-                    background = background,
-                    accent = accent,
-                    onBackgroundChange = { background = it },
-                    onAccentChange = { accent = it },
-                )
-            }
-
             item { Spacer(Modifier.height(28.dp)) }
             item {
                 SaveButton(
                     enabled = canSave,
-                    onClick = { onSave(selectedPlace, useLocation, background, accent) },
+                    onClick = { onSave(selectedPlace, useLocation) },
                 )
             }
             item { Spacer(Modifier.height(40.dp)) }
         }
-    }
-}
-
-/**
- * Il widget com'e' fatto, con i colori scelti in questo momento.
- *
- * Ridisegnato qui invece di essere renderizzato davvero, perche' Glance sa
- * disegnare solo dentro la Home; ma la disposizione e' quella vera della forma
- * quadrata, e l'icona e' lo stesso disegno che finira' sul widget, non una sua
- * imitazione: e' l'unico modo perche' l'anteprima non menta.
- */
-@Composable
-private fun WidgetPreview(
-    place: Place?,
-    useLocation: Boolean,
-    kind: WidgetKind?,
-    background: Color,
-    accent: Color,
-    modifier: Modifier = Modifier,
-) {
-    val luogo = when {
-        useLocation -> "POSIZIONE ATTUALE"
-        place != null -> place.name.uppercase()
-        else -> "—"
-    }
-    val (label, value, caption) = when (kind) {
-        WidgetKind.LUNA -> Triple("LUNA", "86%", "GIBBOSA CRESCENTE")
-        WidgetKind.ARIA -> Triple(luogo, "42", "DISCRETA")
-        else -> Triple(luogo, "21°", "PARZ. NUVOLOSO")
-    }
-    val icona = when (kind) {
-        WidgetKind.LUNA -> R.drawable.ic_moon_waxing_gibbous
-        WidgetKind.ARIA -> R.drawable.ic_widget_air
-        else -> R.drawable.ic_widget_cloud
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(background)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-    ) {
-        Row(verticalAlignment = Alignment.Top) {
-            Text(
-                text = label,
-                style = MeteoType.caption,
-                color = accent.copy(alpha = 0.65f),
-                modifier = Modifier.weight(1f),
-            )
-            Image(
-                painter = painterResource(icona),
-                contentDescription = caption,
-                colorFilter = ColorFilter.tint(accent),
-                modifier = Modifier.size(34.dp),
-            )
-        }
-        Spacer(Modifier.height(14.dp))
-        Text(
-            text = value,
-            style = MeteoType.title.copy(fontSize = 44.sp),
-            color = accent,
-        )
-        Text(text = caption, style = MeteoType.label, color = accent)
     }
 }
 
