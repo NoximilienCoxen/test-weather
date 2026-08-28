@@ -3,6 +3,7 @@ package com.forli.meteo.ui.widgetconfig
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -33,12 +34,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.WeatherRepository
@@ -65,8 +70,9 @@ private val SelectedBackground = Color.White.copy(alpha = 0.16f)
 @Composable
 fun WidgetConfigScreen(
     onSave: (place: Place?, useLocation: Boolean, background: Color, accent: Color) -> Unit,
-    onCancel: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Falso per il widget della luna, che la stessa fase ce l'ha ovunque. */
+    showLocation: Boolean = true,
 ) {
     val context = LocalContext.current
     val settingsPrefs = remember { SettingsPrefs(context) }
@@ -105,7 +111,7 @@ fun WidgetConfigScreen(
         searching = false
     }
 
-    val canSave = useLocation || selectedPlace != null
+    val canSave = !showLocation || useLocation || selectedPlace != null
 
     Column(modifier = modifier.fillMaxSize().background(ScreenBackground)) {
         Row(
@@ -122,40 +128,79 @@ fun WidgetConfigScreen(
             modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            item { SectionTitle("LOCALITÀ") }
-            item {
-                SourceTabs(
-                    current = source,
-                    onChoose = { chosen ->
-                        source = chosen
-                        if (chosen != LocationSource.GPS) useLocation = false
-                        if (chosen == LocationSource.GPS) useLocation = locationGranted
-                    },
-                )
-            }
-            item { Spacer(Modifier.height(10.dp)) }
-
-            when (source) {
-                LocationSource.GPS -> item {
-                    GpsSection(
-                        granted = locationGranted,
-                        onRequest = { askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION) },
+            if (showLocation) {
+                item { SectionTitle("LOCALITÀ") }
+                item {
+                    SourceTabs(
+                        current = source,
+                        onChoose = { chosen ->
+                            source = chosen
+                            useLocation = chosen == LocationSource.GPS && locationGranted
+                        },
                     )
                 }
+                item { Spacer(Modifier.height(10.dp)) }
 
-                LocationSource.FAVORITES -> {
-                    if (favorites.isEmpty()) {
+                when (source) {
+                    LocationSource.GPS -> item {
+                        GpsSection(
+                            granted = locationGranted,
+                            onRequest = {
+                                askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            },
+                        )
+                    }
+
+                    LocationSource.FAVORITES -> {
+                        if (favorites.isEmpty()) {
+                            item {
+                                Text(
+                                    text = "NESSUNA CITTÀ NEI PREFERITI. SALVANE UNA DALLE " +
+                                        "IMPOSTAZIONI DELL'APP TOCCANDO LA STELLA.",
+                                    style = MeteoType.caption,
+                                    color = Secondary,
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                )
+                            }
+                        } else {
+                            items(items = favorites, key = { it.key }) { place ->
+                                PlaceOption(
+                                    place = place,
+                                    selected = selectedPlace?.key == place.key,
+                                    onClick = { selectedPlace = place },
+                                )
+                            }
+                        }
+                    }
+
+                    LocationSource.SEARCH -> {
                         item {
-                            Text(
-                                text = "NESSUNA CITTÀ NEI PREFERITI. SALVANE UNA DALLE " +
-                                    "IMPOSTAZIONI DELL'APP TOCCANDO LA STELLA.",
-                                style = MeteoType.caption,
-                                color = Secondary,
-                                modifier = Modifier.padding(vertical = 8.dp),
+                            SearchField(
+                                value = query,
+                                onValueChange = { query = it },
+                                placeholder = "CERCA UNA CITTÀ",
                             )
                         }
-                    } else {
-                        items(items = favorites, key = { it.key }) { place ->
+                        item {
+                            val message = when {
+                                searching -> "RICERCA IN CORSO…"
+                                query.trim().length >= 2 && results.isEmpty() -> "NESSUN RISULTATO"
+                                query.isBlank() -> "OPPURE SCEGLI FRA QUESTE"
+                                else -> null
+                            }
+                            if (message != null) {
+                                Text(
+                                    text = message,
+                                    style = MeteoType.caption,
+                                    color = Secondary,
+                                    modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+                                )
+                            }
+                        }
+                        val options = results.ifEmpty {
+                            if (query.isBlank()) Place.SUGGESTIONS else emptyList()
+                        }
+                        items(items = options, key = { it.key }) { place ->
                             PlaceOption(
                                 place = place,
                                 selected = selectedPlace?.key == place.key,
@@ -164,44 +209,22 @@ fun WidgetConfigScreen(
                         }
                     }
                 }
-
-                LocationSource.SEARCH -> {
-                    item {
-                        SearchField(
-                            value = query,
-                            onValueChange = { query = it },
-                            placeholder = "CERCA UNA CITTÀ",
-                        )
-                    }
-                    item {
-                        val message = when {
-                            searching -> "RICERCA IN CORSO…"
-                            query.trim().length >= 2 && results.isEmpty() -> "NESSUN RISULTATO"
-                            query.isBlank() -> "OPPURE SCEGLI FRA QUESTE"
-                            else -> null
-                        }
-                        if (message != null) {
-                            Text(
-                                text = message,
-                                style = MeteoType.caption,
-                                color = Secondary,
-                                modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
-                            )
-                        }
-                    }
-                    val options = results.ifEmpty { if (query.isBlank()) Place.SUGGESTIONS else emptyList() }
-                    items(items = options, key = { it.key }) { place ->
-                        PlaceOption(
-                            place = place,
-                            selected = selectedPlace?.key == place.key,
-                            onClick = { selectedPlace = place },
-                        )
-                    }
-                }
+                item { Spacer(Modifier.height(26.dp)) }
             }
 
-            item { Spacer(Modifier.height(26.dp)) }
             item { SectionTitle("COLORI") }
+            item {
+                // L'anteprima sta sopra i comandi: mentre si sceglie una tinta
+                // si guarda l'effetto, non la manopola.
+                WidgetPreview(
+                    place = selectedPlace,
+                    useLocation = useLocation,
+                    showLocation = showLocation,
+                    background = background,
+                    accent = accent,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+            }
             item {
                 WidgetColorPicker(
                     background = background,
@@ -219,6 +242,67 @@ fun WidgetConfigScreen(
                 )
             }
             item { Spacer(Modifier.height(40.dp)) }
+        }
+    }
+}
+
+/**
+ * Il widget com'e' fatto, con i colori scelti in questo momento.
+ *
+ * Ridisegnato qui invece di essere renderizzato davvero: Glance sa disegnare
+ * solo dentro la Home, e per far vedere l'effetto di una tinta bastano le
+ * stesse tre righe con le stesse proporzioni.
+ */
+@Composable
+private fun WidgetPreview(
+    place: Place?,
+    useLocation: Boolean,
+    showLocation: Boolean,
+    background: Color,
+    accent: Color,
+    modifier: Modifier = Modifier,
+) {
+    val label = when {
+        !showLocation -> "LUNA"
+        useLocation -> "POSIZIONE ATTUALE"
+        place != null -> place.name.uppercase()
+        else -> "—"
+    }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(background)
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
+            Canvas(Modifier.size(26.dp)) {
+                // Una nuvoletta di esempio: tre bolle e una base, con lo stesso
+                // colore d'accento che tingera' l'icona vera.
+                val unit = size.minDimension / 24f
+                drawCircle(accent, radius = 5.2f * unit, center = Offset(9f * unit, 12f * unit))
+                drawCircle(accent, radius = 6.4f * unit, center = Offset(14f * unit, 11f * unit))
+                drawRoundRect(
+                    color = accent,
+                    topLeft = Offset(4f * unit, 12f * unit),
+                    size = Size(16f * unit, 6.4f * unit),
+                    cornerRadius = CornerRadius(3.2f * unit),
+                )
+            }
+        }
+        Column(modifier = Modifier.padding(start = 10.dp)) {
+            Text(text = label, style = MeteoType.caption, color = accent.copy(alpha = 0.65f))
+            Text(
+                text = "21°",
+                style = MeteoType.title.copy(fontSize = 34.sp),
+                color = accent,
+            )
+            Text(
+                text = "PARZ. NUVOLOSO",
+                style = MeteoType.caption,
+                color = accent.copy(alpha = 0.65f),
+            )
         }
     }
 }

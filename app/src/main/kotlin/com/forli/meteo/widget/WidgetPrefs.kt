@@ -1,44 +1,86 @@
 package com.forli.meteo.widget
 
+import android.content.Context
+import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.forli.meteo.data.Place
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
- * Chiavi delle preferenze salvate per singola istanza di widget.
+ * Le scelte fatte nella configurazione, una riga per ogni widget piazzato.
  *
- * Vivono nello store di Glance ([androidx.glance.appwidget.state.PreferencesGlanceStateDefinition]),
- * gia' automaticamente separato per `GlanceId`: non serve un DataStore o una
- * tabella Room dedicati.
+ * Un archivio nostro e non lo stato di Glance: la configurazione gira **prima**
+ * che il widget esista: quando la si scriveva attraverso Glance, il widget
+ * appena creato ripartiva da uno stato vuoto e ricadeva sui colori di sistema,
+ * ignorando la tinta appena scelta. Qui la chiave e' l'`appWidgetId`, che il
+ * sistema assegna prima di aprire la configurazione ed e' lo stesso che il
+ * widget si ritrova al primo disegno.
  */
-object WidgetPrefKeys {
-    val USE_LOCATION = booleanPreferencesKey("use_location")
-    val PLACE_JSON = stringPreferencesKey("place_json")
-    val BACKGROUND_ARGB = intPreferencesKey("background_argb")
-    val ACCENT_ARGB = intPreferencesKey("accent_argb")
-}
+private val Context.widgetDataStore: DataStore<Preferences> by
+    preferencesDataStore(name = "widget_config")
 
 private val widgetJson = Json { ignoreUnknownKeys = true }
 
-/** Configurazione risolta di un widget: dove guarda e con che colori. */
+/** Dove guarda un widget e con che colori. */
 data class WidgetConfig(
-    val useLocation: Boolean,
-    val place: Place?,
-    val background: Int?,
-    val accent: Int?,
+    val useLocation: Boolean = false,
+    val place: Place? = null,
+    /** ARGB, oppure nullo per lasciar decidere al tema chiaro/scuro di sistema. */
+    val background: Int? = null,
+    val accent: Int? = null,
 )
 
-fun Preferences.toWidgetConfig(): WidgetConfig = WidgetConfig(
-    useLocation = this[WidgetPrefKeys.USE_LOCATION] ?: false,
-    place = this[WidgetPrefKeys.PLACE_JSON]?.let {
-        runCatching { widgetJson.decodeFromString<Place>(it) }.getOrNull()
-    },
-    background = this[WidgetPrefKeys.BACKGROUND_ARGB],
-    accent = this[WidgetPrefKeys.ACCENT_ARGB],
-)
+class WidgetPrefs(private val context: Context) {
 
-fun placeToJson(place: Place): String = widgetJson.encodeToString(place)
+    suspend fun load(appWidgetId: Int): WidgetConfig {
+        val prefs = context.widgetDataStore.data.first()
+        return WidgetConfig(
+            useLocation = prefs[useLocationKey(appWidgetId)] ?: false,
+            place = prefs[placeKey(appWidgetId)]?.let { raw ->
+                runCatching { widgetJson.decodeFromString<Place>(raw) }.getOrNull()
+            },
+            background = prefs[backgroundKey(appWidgetId)],
+            accent = prefs[accentKey(appWidgetId)],
+        )
+    }
+
+    suspend fun save(appWidgetId: Int, config: WidgetConfig) {
+        context.widgetDataStore.edit { prefs ->
+            prefs[useLocationKey(appWidgetId)] = config.useLocation
+            // Seguire il telefono e ricordare una citta' sono alternative: tenere
+            // salvate entrambe lascerebbe un posto fantasma a cui tornare.
+            val place = config.place?.takeUnless { config.useLocation }
+            if (place != null) {
+                prefs[placeKey(appWidgetId)] = widgetJson.encodeToString(place)
+            } else {
+                prefs.remove(placeKey(appWidgetId))
+            }
+            config.background?.let { prefs[backgroundKey(appWidgetId)] = it }
+            config.accent?.let { prefs[accentKey(appWidgetId)] = it }
+        }
+    }
+
+    /** Toglie le righe di un widget che non sta piu' sulla Home. */
+    suspend fun forget(appWidgetId: Int) {
+        context.widgetDataStore.edit { prefs ->
+            prefs.remove(useLocationKey(appWidgetId))
+            prefs.remove(placeKey(appWidgetId))
+            prefs.remove(backgroundKey(appWidgetId))
+            prefs.remove(accentKey(appWidgetId))
+        }
+    }
+
+    private companion object {
+        fun useLocationKey(id: Int) = booleanPreferencesKey("posizione_$id")
+        fun placeKey(id: Int) = stringPreferencesKey("localita_$id")
+        fun backgroundKey(id: Int) = intPreferencesKey("sfondo_$id")
+        fun accentKey(id: Int) = intPreferencesKey("accento_$id")
+    }
+}
