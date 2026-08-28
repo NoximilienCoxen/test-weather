@@ -1,6 +1,7 @@
 package com.forli.meteo.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.forli.meteo.data.DeviceLocation
@@ -10,9 +11,11 @@ import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
 import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +23,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
 
 data class UiState(
     val loading: Boolean = true,
+    /**
+     * Vero mentre si ricarica **avendo gia' qualcosa in mano**.
+     *
+     * Distinto da [loading] perche' le due situazioni non si somigliano: un
+     * primo carico non ha niente da mostrare e lo deve dire, una ricarica ha
+     * una schermata intera di dati validi e non deve toglierli di mezzo per
+     * annunciare che ne sta cercando di piu' freschi.
+     */
+    val refreshing: Boolean = false,
     val error: String? = null,
     val forecast: Forecast? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
@@ -36,17 +50,46 @@ data class UiState(
      * Nullo in uso normale: la schermata usa quello dell'ora scelta.
      */
     val forcedWeatherCode: Int? = null,
+    /**
+     * Angolo della scena imposto dall'esterno, in gradi, solo per la verifica
+     * automatica. Nullo in uso normale: comanda il dito.
+     *
+     * Serve perche' i difetti che si vedono girando si vedono **girando**, e un
+     * gesto simulato non arriva dove serve: per portare la cifra di taglio
+     * servono quattrocento pixel di trascinamento, per vederla da dietro piu'
+     * di ottocento, e uno schermo e' largo mille. Senza questo aggancio il
+     * quarto di giro - che e' esattamente dove le matrici degenerano e le
+     * pareti si scavalcano - non era fotografabile.
+     */
+    val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /** Motore numerico scelto per la previsione. */
     val model: WeatherModel = WeatherModel.AUTO,
+    /** Localita' salvate a parte dalla scelta corrente. */
     val favorites: List<Place> = emptyList(),
+    /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
+    val followsLocation: Boolean = false,
+    /** Vero mentre si sta chiedendo dove siamo. */
+    val locating: Boolean = false,
+    /**
+     * Vero quando l'ultimo tentativo non ha prodotto un posto: permesso
+     * negato, o nessun rilevamento in tempo utile. **Non e' un errore**, e'
+     * una risposta: si resta dove si era e lo si dice, senza riprovare da soli.
+     */
+    val locationUnavailable: Boolean = false,
+    /**
+     * Falso finche' il benvenuto non ha fatto il suo lavoro: e' la schermata
+     * che chiede dove sei, e prima non c'era **nessun momento** in cui l'app lo
+     * chiedesse. Chi non entrava nelle impostazioni restava per sempre
+     * sull'ultima localita' impostata senza sapere che ce n'era un'altra.
+     */
+    val welcomed: Boolean = true,
     val settingsOpen: Boolean = false,
     val query: String = "",
     val searching: Boolean = false,
     val results: List<Place> = emptyList(),
     val searchError: String? = null,
-    val locating: Boolean = false,
-    val locationError: String? = null,
 ) {
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -54,7 +97,27 @@ data class UiState(
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
     val nowIndex: Int
-        get() = forecast?.let { nearestHourIndex(it.hours, it.nowThere()) } ?: 0
+        get() {
+            val current = forecast ?: return 0
+            val hours = current.hours
+            if (hours.isEmpty()) return 0
+            // Le ore sono contigue e a passo di un'ora: l'indice e' una
+            // sottrazione, non una ricerca. Scorrerle tutte costava una
+            // `Duration` allocata per ognuna, e questa proprieta' viene letta
+            // piu' volte a ogni ricomposizione della schermata - cioe' a ogni
+            // ora scorsa sulla barra.
+            val minutes = Duration.between(hours.first().time, current.nowThere()).toMinutes()
+            return Math.floorDiv(minutes + 30L, 60L).toInt().coerceIn(0, hours.lastIndex)
+        }
+
+    /**
+     * Da quando il dato in mano e' quello che e'.
+     *
+     * Nullo finche' non ne esiste uno. Serve a dire in alto quanto e' vecchio:
+     * un'app meteo che mostra ieri sera con la stessa faccia di adesso e'
+     * peggio di un'app che ammette di non sapere.
+     */
+    val fetchedAt: LocalDateTime? get() = forecast?.fetchedAt
 
     /**
      * Quanto e' alto il sole all'ora scelta.
@@ -74,6 +137,21 @@ data class UiState(
                 fallbackIsDay = hour?.isDay ?: true,
             )
         }
+
+    /**
+     * A che punto del viaggio sta l'astro, da quando sorge a quando tramonta.
+     *
+     * Serve accanto all'altezza e non al posto suo: l'altezza dice **quanto e'
+     * alto**, questa da **che parte sta andando**. Con la sola altezza il sole
+     * salirebbe e ridiscenderebbe dallo stesso lato, perche' alle otto e alle
+     * sedici vale lo stesso numero.
+     */
+    val skyJourney: Float
+        get() {
+            val moment = hour?.time ?: return 0.5f
+            val day = forecast?.dayOf(moment)
+            return SunClock.journey(moment, day?.sunrise, day?.sunset)
+        }
 }
 
 class WeatherViewModel(app: Application) : AndroidViewModel(app) {
@@ -82,6 +160,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     private var loading: Job? = null
     private var searchJob: Job? = null
+    private var locating: Job? = null
 
     /**
      * Ora richiesta prima che i dati arrivino. Serve alla verifica automatica:
@@ -89,6 +168,20 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * senza ricordarla la richiesta andrebbe persa.
      */
     private var pendingHour: Int? = null
+
+    /** Vero da quando la posizione e' stata chiesta all'avvio: una volta basta. */
+    private var started = false
+
+    /**
+     * Vero quando l'aggancio di verifica ha chiesto di rivedere il benvenuto.
+     *
+     * Una bandiera a parte e non un valore mescolato a quello delle preferenze:
+     * queste emettono a ogni cambiamento, anche di tutt'altro, e una condizione
+     * che le intreccia rimetterebbe il benvenuto davanti a chi lo ha appena
+     * chiuso solo perche' nel frattempo ha cambiato unita' di misura.
+     */
+    private var welcomeForced = false
+
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -98,18 +191,28 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 val current = _state.value
                 val moved = current.place != settings.place
                 val modelChanged = current.model != settings.model
+                val firstRead = !started
+                started = true
                 _state.update {
                     it.copy(
                         place = settings.place,
                         unit = settings.unit,
                         model = settings.model,
                         favorites = settings.favorites,
+                        followsLocation = settings.followsLocation,
+                        welcomed = settings.welcomed && !welcomeForced,
                     )
                 }
-                // Cambiare unita' o preferiti non deve costare una richiesta:
-                // sono solo scrittura/visualizzazione. Cambiare posto o modello
-                // invece cambia i dati da chiedere.
+                // Cambiare unita' non deve costare una richiesta: la conversione
+                // e' solo scrittura. Cambiare posto o modello invece cambia
+                // tutto, perche' i numeri arrivano da un motore diverso.
                 if (moved || modelChanged || current.forecast == null) refresh()
+
+                // All'avvio, se il posto lo decide il telefono, lo si richiede
+                // una volta. Il posto salvato resta valido nel frattempo: la
+                // schermata ha subito qualcosa da mostrare invece di aspettare
+                // un satellite davanti al vuoto.
+                if (firstRead && settings.followsLocation) locate(explicit = false)
             }
         }
     }
@@ -123,7 +226,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * o uscendo da una galleria.
      */
     fun refresh() {
-        _state.update { it.copy(loading = true, error = null) }
+        // Un primo carico non ha niente da mostrare e lo dichiara; una ricarica
+        // lascia la schermata dov'e' e cambia solo il segno in alto.
+        val hasData = _state.value.forecast != null
+        _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
         loading?.cancel()
         val place = _state.value.place
         val model = _state.value.model
@@ -134,27 +240,52 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 val outcome = repository.load()
                 outcome
                     .onSuccess { forecast ->
-                        // All'apertura la schermata mostra l'ora corrente, non
-                        // la prima disponibile: e' cio' che ci si aspetta di
-                        // vedere. E l'ora corrente e' quella della localita',
-                        // non quella dell'orologio di chi guarda.
-                        val now = pendingHour
-                            ?.coerceIn(0, (forecast.hours.size - 1).coerceAtLeast(0))
-                            ?: nearestHourIndex(forecast.hours, forecast.nowThere())
-                        _state.update {
-                            it.copy(
+                        // L'unico log dell'app, e non serve a chi sviluppa:
+                        // serve alla cattura in CI, che finora aspettava **a
+                        // tempo** che i dati arrivassero. Un'attesa a tempo e'
+                        // una scommessa sulla rete del runner, e la scommessa
+                        // si perde: otto secondi non bastavano, quattordici
+                        // nemmeno, e a diciannove uno scatto su undici e'
+                        // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
+                        // qui l'attesa smette di essere una durata e diventa
+                        // una condizione.
+                        Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
+                        _state.update { current ->
+                            val last = (forecast.hours.size - 1).coerceAtLeast(0)
+                            val hour = when {
+                                // L'aggancio di verifica vince su tutto.
+                                pendingHour != null -> pendingHour!!.coerceIn(0, last)
+                                // Su una **ricarica** l'ora scelta resta quella:
+                                // chi stava guardando le sei di sera non deve
+                                // ritrovarsi sbalzato ad adesso solo perche' e'
+                                // arrivata una risposta dalla rete.
+                                current.forecast != null -> current.selectedHour.coerceIn(0, last)
+                                // All'apertura invece si mostra l'ora corrente,
+                                // non la prima disponibile: e' cio' che ci si
+                                // aspetta di vedere. Ed e' l'ora della
+                                // localita', non quella dell'orologio di chi
+                                // guarda.
+                                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
+                            }
+                            current.copy(
                                 loading = false,
+                                refreshing = false,
                                 forecast = forecast,
                                 error = null,
-                                selectedHour = now,
+                                selectedHour = hour,
                             )
                         }
                     }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
                         _state.update {
+                            // Una ricarica fallita non cancella quello che c'e'
+                            // gia': si tiene il dato vecchio e si continua a
+                            // dire quanto e' vecchio. E' l'unica risposta utile
+                            // a chi e' senza rete.
                             it.copy(
-                                loading = !lastAttempt,
+                                loading = !lastAttempt && it.forecast == null,
+                                refreshing = !lastAttempt && it.forecast != null,
                                 error = if (lastAttempt) {
                                     failure.message ?: "Errore di rete"
                                 } else {
@@ -167,6 +298,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 delay(wait)
                 wait *= 2
             }
+        }
+    }
+
+    /**
+     * Ricarica se quello che si ha in mano ha passato la sua eta'.
+     *
+     * La chiama il ritorno in primo piano. Senza, `refresh()` partiva solo
+     * all'avvio e al cambio di localita' e **nient'altro la richiamava mai**:
+     * un'app lasciata aperta ieri sera mostrava ieri sera, senza modo di
+     * accorgersene ne' di ricaricare se non chiudendola.
+     */
+    fun refreshIfStale(maxAge: Duration = STALE_AFTER) {
+        val fetched = _state.value.fetchedAt
+        if (fetched == null || Duration.between(fetched, LocalDateTime.now()) >= maxAge) {
+            refresh()
         }
     }
 
@@ -201,54 +347,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.setUnit(unit) }
     }
 
+    fun setModel(model: WeatherModel) {
+        viewModelScope.launch { prefs.setModel(model) }
+    }
+
+    /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
+    fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    fun isFavorite(place: Place): Boolean =
+        _state.value.favorites.any { it.key == place.key }
+
     fun choosePlace(place: Place) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
         // aprire Singapore fermi sull'ora di Forli'.
         pendingHour = null
         viewModelScope.launch { prefs.setPlace(place) }
-    }
-
-    fun setModel(model: WeatherModel) {
-        viewModelScope.launch { prefs.setModel(model) }
-    }
-
-    fun toggleFavorite(place: Place) {
-        viewModelScope.launch { prefs.toggleFavorite(place) }
-    }
-
-    /**
-     * Chiede la posizione al dispositivo. Stessa forma del callback
-     * `onLocate` gia' definito in `WelcomeScreen`: chi chiama decide se puo'
-     * ancora chiedere il permesso (`canAsk`) e cosa fare se serve chiederlo
-     * (`onNeedsPermission`, che tipicamente apre il dialogo di sistema).
-     * `DeviceLocation` non lancia mai: ogni esito e' un `Outcome`, mai
-     * un'eccezione che chiuderebbe l'app.
-     */
-    fun locate(canAsk: Boolean, onNeedsPermission: () -> Unit) {
-        _state.update { it.copy(locating = true, locationError = null) }
-        viewModelScope.launch {
-            when (val outcome = DeviceLocation.current(getApplication<Application>())) {
-                is DeviceLocation.Outcome.Found -> {
-                    pendingHour = null
-                    prefs.setPlace(outcome.place)
-                    _state.update { it.copy(locating = false) }
-                }
-                DeviceLocation.Outcome.NeedsPermission -> {
-                    _state.update { it.copy(locating = false) }
-                    if (canAsk) {
-                        onNeedsPermission()
-                    } else {
-                        _state.update { it.copy(locationError = "PERMESSO NEGATO") }
-                    }
-                }
-                DeviceLocation.Outcome.Unavailable -> _state.update {
-                    it.copy(locating = false, locationError = "POSIZIONE NON DISPONIBILE")
-                }
-                DeviceLocation.Outcome.Timeout -> _state.update {
-                    it.copy(locating = false, locationError = "TEMPO SCADUTO")
-                }
-            }
-        }
     }
 
     /**
@@ -293,7 +408,89 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(forcedWeatherCode = code) }
     }
 
+    /** Il benvenuto ha finito: da qui in poi si apre sulla schermata vera. */
+    fun dismissWelcome() {
+        welcomeForced = false
+        _state.update { it.copy(welcomed = true) }
+        viewModelScope.launch { prefs.setWelcomed() }
+    }
+
+    /** Aggancio per la cattura automatica: rimostra il benvenuto. */
+    fun showWelcome() {
+        welcomeForced = true
+        _state.update { it.copy(welcomed = false) }
+    }
+
+    /**
+     * Chiede al telefono dove siamo e ci si trasferisce.
+     *
+     * La chiama il benvenuto, o la schermata delle impostazioni, dopo aver
+     * ottenuto il permesso: un ViewModel non puo' chiederlo, e non deve
+     * provarci.
+     */
+    fun useDeviceLocation() = locate(explicit = true)
+
+    private fun locate(explicit: Boolean) {
+        locating?.cancel()
+        _state.update { it.copy(locating = true, locationUnavailable = false) }
+        locating = viewModelScope.launch {
+            // Tutto qui dentro parla col sistema operativo o col disco - il
+            // gestore di posizione, il geocoder, e infine la scrittura su
+            // DataStore. Nessuno di questi e' garantito: un file delle
+            // preferenze corrotto, per dire, fa fallire `prefs.setPlace` con
+            // un'eccezione che altrimenti risalirebbe non presa fino a far
+            // cadere l'app. E' la stessa filosofia di "permesso negato non e'
+            // un errore" applicata a tutta la catena, non solo al permesso.
+            try {
+                val found = DeviceLocation.current(getApplication<Application>())
+                if (found == null) {
+                    // Permesso negato, posizione spenta, o nessun rilevamento in
+                    // tempo utile. Si resta dove si era: e' l'unica risposta utile,
+                    // e riprovare da soli sarebbe insistere.
+                    // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
+                    // all'avvio che non riesce non deve mettere un avviso davanti a
+                    // chi non ha chiesto niente.
+                    _state.update { it.copy(locating = false, locationUnavailable = explicit) }
+                    return@launch
+                }
+                _state.update { it.copy(locating = false, locationUnavailable = false) }
+                // Da qui in poi comanda il flusso delle preferenze, come per una
+                // localita' scelta a mano: una sola strada per cambiare posto.
+                pendingHour = null
+                prefs.setPlace(found, following = true)
+            } catch (e: CancellationException) {
+                // Un tentativo nuovo ha appena cancellato questo (vedi
+                // `locating?.cancel()` sopra): non e' un fallimento, e va
+                // rilanciata, non inghiottita - altrimenti la cancellazione
+                // strutturata smette di funzionare.
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Localizzazione non riuscita", e)
+                _state.update { it.copy(locating = false, locationUnavailable = explicit) }
+            }
+        }
+    }
+
+    /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
+    fun forceYaw(degrees: Float?) {
+        _state.update { it.copy(forcedYawDeg = degrees) }
+    }
+
     private companion object {
+        /**
+         * Oltre questa eta' il dato si ricarica da solo tornando in primo
+         * piano. Venti minuti: la previsione di Open-Meteo si muove per ore,
+         * ma la barra deve almeno riguardare il giorno giusto.
+         */
+        val STALE_AFTER: Duration = Duration.ofMinutes(20)
+
+        /**
+         * L'etichetta del log. Il filtro di `capture.sh` cerca gia' "meteo"
+         * fra le righe che tiene, quindi questa riga finisce anche nel
+         * logcat allegato agli scatti senza doverlo cambiare.
+         */
+        const val TAG = "meteo"
+
         const val MAX_ATTEMPTS = 4
         const val FIRST_RETRY_MS = 1_200L
         const val SEARCH_DEBOUNCE_MS = 320L

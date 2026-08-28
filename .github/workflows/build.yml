@@ -38,6 +38,13 @@ jobs:
           head -c 400 /tmp/ciout/safe.json; echo
           head -c 400 /tmp/ciout/extra.json; echo
 
+      # Quale modello numerico e' il piu' fine sopra l'Emilia-Romagna non si
+      # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
+      # accettato non e' lo stesso di uno che ha davvero dei valori sopra
+      # Noceto. Lo si chiede all'API, e la risposta finisce fra gli artefatti.
+      - name: Quali modelli coprono l'Italia
+        run: python3 scripts/probe_models.py
+
       - name: Pubblica
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,14 +101,8 @@ jobs:
 
   # Livello 3: l'APK in mano al telefono. Tag fisso, cosi' il link resta
   # sempre lo stesso e si puo' salvare fra i preferiti.
-  #
-  # Solo da main: un push su un branch claude/* di lavoro non deve mai
-  # sovrascrivere l'unica release che le persone installano. Prima di
-  # questa condizione ogni branch in corso, mai unito agli altri, poteva
-  # spedire sul telefono una build con funzionalita' diverse a caso.
   rilascio:
     needs: build
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write

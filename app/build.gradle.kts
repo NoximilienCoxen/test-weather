@@ -14,7 +14,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        buildConfigField("long", "BUILD_EPOCH", (System.getenv("BUILD_EPOCH") ?: "0") + "L")
     }
 
     // Chiave di debug fissa e versionata. Senza, la CI ne genera una nuova a
@@ -52,7 +51,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 

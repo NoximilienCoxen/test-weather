@@ -21,9 +21,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +40,12 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.Wmo
-import java.time.LocalDateTime
+import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
-import com.forli.meteo.ui.asBigTemperature
+import com.forli.meteo.ui.asBigDegrees
 import com.forli.meteo.ui.asPlainDegrees
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
@@ -49,7 +54,13 @@ import com.forli.meteo.ui.motion.rotatesScene
 import com.forli.meteo.ui.render3d.SceneContact
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
+import kotlinx.coroutines.delay
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import kotlin.math.abs
 
 /**
  * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
@@ -59,10 +70,14 @@ import java.time.LocalDate
 fun HomeScreen(
     state: UiState,
     sky: SkyState,
+    tilt: State<Offset>,
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
-    onOpenTemperatureDetail: () -> Unit,
+    onOpenTemperatureDetail: () -> Unit = {},
+    onRefresh: () -> Unit = {},
+    /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
+    pullArmed: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -73,15 +88,21 @@ fun HomeScreen(
     // visto da un punto solo, e il gesto che li gira e' lo stesso.
     val rotation: SceneRotation = rememberSceneRotation()
 
+    // L'aggancio di verifica, se c'e'. Fuori dalla composizione: scrivere lo
+    // stato del gesto mentre si compone significherebbe comporre due volte per
+    // qualcosa che in uso normale non succede mai.
+    LaunchedEffect(state.forcedYawDeg) { rotation.pin(state.forcedYawDeg) }
+
     // E un solo mondo: la pioggia esce dalla nuvola e finisce sulla cifra, che
     // sta in un'altra tela. Qui passano la sagoma e le due origini.
     val contact = remember { SceneContact() }
 
-    // Il riconoscitore vive dentro un pointerInput con chiave Unit, quindi non
-    // viene mai ricreato: tutto quello che legge deve arrivare aggiornato da
-    // qui, non congelato al valore che aveva alla prima composizione.
-    val liveOnOpenDetail by rememberUpdatedState(onOpenTemperatureDetail)
+    // Letti dentro il gesto e non catturati alla composizione: `pointerInput`
+    // parte una volta sola (chiave `Unit`) e altrimenti continuerebbe a
+    // chiamare la lambda di quel primo giro, con dentro un `rotation` o un
+    // `onOpenTemperatureDetail` ormai vecchi.
     val liveRotation by rememberUpdatedState(rotation)
+    val liveOnOpenDetail by rememberUpdatedState(onOpenTemperatureDetail)
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -95,13 +116,49 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SettingsButton(onClick = onOpenSettings)
-            Text(
-                text = state.place.name.uppercase(),
-                style = MeteoType.caption,
-                color = colors.label,
-                textAlign = TextAlign.Center,
+            Column(
                 modifier = Modifier.weight(1f),
-            )
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = state.place.name.uppercase(),
+                    style = MeteoType.caption,
+                    color = colors.label,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                // La riga sotto il nome dice sempre qualcosa, e non e' un
+                // riempitivo: di norma il giorno - la barra copre oggi e basta,
+                // quindi vale la pena dire quale oggi - e quando serve prende
+                // il posto per dire che il dato e' vecchio, che si sta
+                // ricaricando, o che basta lasciare il dito.
+                //
+                // Sempre presente e non a comparsa: apparendo e sparendo
+                // sposterebbe in su e in giu' tutto quello che ha sotto.
+                val stale = rememberFreshness(state.fetchedAt)
+                Text(
+                    text = when {
+                        pullArmed -> "RILASCIA"
+                        state.refreshing -> "AGGIORNO"
+                        stale != null -> stale
+                        else -> dayLabel(hour)
+                    },
+                    style = MeteoType.caption,
+                    color = if (stale != null || pullArmed || state.refreshing) {
+                        colors.text
+                    } else {
+                        colors.line
+                    },
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onRefresh,
+                        ),
+                )
+            }
             // Occupa quanto il pulsante a sinistra, cosi' il nome resta al
             // centro dello schermo e non al centro di quel che avanza.
             Spacer(Modifier.width(34.dp))
@@ -119,6 +176,9 @@ fun HomeScreen(
         ) {
             WeatherSculpture(
                 weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
+                // L'aggancio di verifica deve restare fedele: imporre pioggia a
+                // qualunque codice faceva piovere anche su "coperto", che e'
+                // asciutto. Solo i codici bagnati portano gocce.
                 precipitationMm = state.forcedWeatherCode
                     ?.let { if (Wmo.family(it).isWet()) 2.5 else 0.0 }
                     ?: hour?.precipitation,
@@ -128,6 +188,10 @@ fun HomeScreen(
                 sky = sky,
                 date = hour?.time?.toLocalDate() ?: LocalDate.now(),
                 rotation = rotation,
+                tilt = tilt,
+                // Dietro le impostazioni la schermata resta viva: senza questo
+                // il telefono continuerebbe a vibrare di pioggia mentre si
+                // sceglie una citta'.
                 feelsIt = !state.settingsOpen,
                 contact = contact,
                 modifier = Modifier
@@ -140,21 +204,32 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(horizontal = 16.dp)
-                    // Il tocco secco apre il dettaglio, il trascinamento gira
-                    // la scena: sono lo stesso dito sulla stessa superficie, e
-                    // solo lo spostamento prima del rilascio li distingue. Sotto
-                    // la soglia il gesto appartiene al tocco, sopra appartiene
-                    // alla rotazione di SceneRotation - mai a entrambi.
-                    .pointerInput(Unit) { detectTapOrRotate(liveRotation, liveOnOpenDetail) },
+                    // Un tocco fermo apre il dettaglio, un trascinamento gira
+                    // la scena: sono lo stesso dito sullo stesso numero, e la
+                    // differenza si vede solo a gesto finito. Questo
+                    // `pointerInput` sta sul figlio e non lascia salire
+                    // l'evento al genitore - che ha il suo `.rotatesScene()` -
+                    // altrimenti i due gestori risponderebbero insieme allo
+                    // stesso trascinamento.
+                    .pointerInput(Unit) {
+                        detectTapOrRotate(liveRotation) { liveOnOpenDetail() }
+                    },
             ) {
                 // Finche' non c'e' un numero non si disegna niente. Un "--"
                 // alto mezzo schermo, con tanto di spessore e di ombra, non
                 // dice "sto aspettando": dice che l'app e' rotta.
                 val degrees = hour?.temperature
                 if (degrees != null) PhysicalNumber(
-                    text = degrees.asBigTemperature(state.unit),
+                    text = degrees.asBigDegrees(state.unit),
+                    // Il grado e' l'ultimo carattere e non e' una cifra: va in
+                    // corpo ridotto, a filo della cima delle altre.
+                    smallTail = 1,
                     fontSize = maxHeight * 0.86f,
                     rotation = rotation,
+                    tilt = tilt,
+                    // Un filo verso l'alto: la cifra e la scultura devono
+                    // leggersi come un oggetto solo, e fra loro non ci deve
+                    // stare il vuoto che ci starebbe centrandole entrambe.
                     verticalBias = -0.04f,
                     contact = contact,
                     modifier = Modifier.fillMaxSize(),
@@ -169,7 +244,12 @@ fun HomeScreen(
         // l'attesa sia il risultato.
         Crossfade(
             targetState = when {
-                state.error != null -> state.error.uppercase()
+                // L'errore prende la parola solo se non c'e' altro da dire. Una
+                // ricarica fallita mentre si ha in mano una giornata intera di
+                // dati validi non deve cancellare la condizione per annunciare
+                // che la rete non risponde: il dato vecchio resta, e a dire che
+                // e' vecchio ci pensa la riga in alto.
+                hour == null && state.error != null -> state.error.uppercase()
                 hour == null -> "IN ATTESA DEI DATI"
                 else -> conditionLabel(hour, state.forcedWeatherCode)
             },
@@ -185,37 +265,33 @@ fun HomeScreen(
             )
         }
 
-        // Min / Max / Percepita: tre numeri in una riga sotto la condizione.
-        // Vengono dal giorno corrente (daily) e dall'ora scelta (hourly).
-        val day = state.forecast?.dayOf(hour?.time ?: LocalDateTime.now())
-        val minMaxLabel = buildString {
-            val min = day?.tempMin?.asPlainDegrees(state.unit)
-            val max = day?.tempMax?.asPlainDegrees(state.unit)
-            val apparent = hour?.apparent?.asPlainDegrees(state.unit)
-            if (min != null && max != null) append("$min / $max")
-            if (apparent != null) {
-                if (isNotEmpty()) append("  ·  ")
-                append("PERCEPITI $apparent")
-            }
-        }
-        if (minMaxLabel.isNotBlank()) {
-            Text(
-                text = minMaxLabel,
-                style = MeteoType.caption,
-                color = colors.label,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 3.dp),
-            )
-        }
+        Spacer(Modifier.height(6.dp))
 
-        Spacer(Modifier.height(8.dp))
+        // Minima, massima e percepita: sono gia' nella stessa risposta che
+        // porta la temperatura, e finora non le leggeva nessuno.
+        val today = hour?.time?.let { state.forecast?.dayOf(it) }
+        Text(
+            text = rangeLabel(
+                min = today?.tempMin,
+                max = today?.tempMax,
+                apparent = hour?.apparent,
+                real = hour?.temperature,
+                unit = state.unit,
+            ),
+            style = MeteoType.caption,
+            color = colors.label,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(Modifier.height(10.dp))
 
         HourBar(
             hours = hours,
             selected = state.selectedHour,
             nowIndex = state.nowIndex,
+            sunrise = today?.sunrise,
+            sunset = today?.sunset,
             onSelect = onSelectHour,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
@@ -227,7 +303,10 @@ fun HomeScreen(
         val interaction = remember { MutableInteractionSource() }
         Text(
             text = if (onNow) hourLabel(hour) else "${hourLabel(hour)}  ·  ADESSO",
-            style = MeteoType.caption,
+            // L'unico testo che resta a larghezza fissa: scorrendo la barra
+            // cambia a ogni ora, e con un carattere proporzionale ballerebbe da
+            // sinistra a destra sotto il pollice che lo sta muovendo.
+            style = MeteoType.tabular,
             color = if (onNow) colors.label else colors.text,
             modifier = Modifier
                 .padding(top = 2.dp, bottom = 8.dp)
@@ -242,6 +321,51 @@ fun HomeScreen(
         )
     }
 }
+
+/**
+ * Distingue un tocco da un trascinamento sulla stessa cifra.
+ *
+ * Sotto la soglia di scorrimento resta un tocco possibile; superata, diventa
+ * un giro di scena e non torna piu' indietro - un dito che parte fermo e poi
+ * scivola non deve aprire il dettaglio **e** girare la scena insieme.
+ */
+private suspend fun PointerInputScope.detectTapOrRotate(
+    rotation: SceneRotation,
+    onTap: () -> Unit,
+) {
+    val slopPx = TAP_SLOP_DP.dp.toPx()
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false)
+        val tracker = VelocityTracker()
+        tracker.addPosition(down.uptimeMillis, down.position)
+        var dragging = false
+        while (true) {
+            val event = awaitPointerEvent()
+            val change: PointerInputChange = event.changes.firstOrNull { it.id == down.id }
+                ?: break
+            tracker.addPosition(change.uptimeMillis, change.position)
+            if (!dragging && (change.position - down.position).getDistance() > slopPx) {
+                dragging = true
+                rotation.begin()
+            }
+            if (dragging) {
+                rotation.drag(change.positionChange().x)
+                change.consume()
+            }
+            if (!change.pressed) {
+                if (dragging) {
+                    rotation.release(tracker.calculateVelocity().x)
+                } else {
+                    change.consume()
+                    onTap()
+                }
+                break
+            }
+        }
+    }
+}
+
+private const val TAP_SLOP_DP = 5f
 
 /** Tre righe: e' il segno universale, e non serve una libreria di icone. */
 @Composable
@@ -276,55 +400,71 @@ private fun SettingsButton(onClick: () -> Unit) {
 }
 
 /**
- * Un solo riconoscitore per la cifra: tocco secco o trascinamento orizzontale,
- * mai insieme.
+ * Quanto e' vecchio il dato, in parole, e nullo finche' e' fresco.
  *
- * Sotto i 5dp di spostamento il dito non ha ancora detto se vuole girare o
- * aprire il dettaglio, quindi non si consuma nulla e la rotazione (che vive un
- * livello sopra, sulla scultura) resta libera di intercettare il gesto se
- * decide di farlo. Superata la soglia la scelta e' fatta: da quel punto in poi
- * ogni evento viene consumato qui e guida SceneRotation direttamente, cosi' il
- * trascinamento non puo' arrivare due volte - una da questo riconoscitore e una
- * dal `.rotatesScene` del genitore.
+ * L'orologio batte ogni mezzo minuto ma **scrive solo quando la frase cambia**,
+ * e la frase cambia poche volte in un'ora. Scrivere a ogni battito terrebbe la
+ * schermata a ricomporsi per sempre a schermo immobile, che e' esattamente la
+ * trappola gia' pagata con l'accelerometro.
  */
-private suspend fun PointerInputScope.detectTapOrRotate(
-    rotation: SceneRotation,
-    onTap: () -> Unit,
-) {
-    val slopPx = TAP_SLOP_DP.dp.toPx()
-    awaitEachGesture {
-        val down = awaitFirstDown(requireUnconsumed = false)
-        val tracker = VelocityTracker()
-        tracker.addPosition(down.uptimeMillis, down.position)
-        var dragging = false
+@Composable
+private fun rememberFreshness(fetchedAt: LocalDateTime?): String? {
+    var label by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(fetchedAt) {
         while (true) {
-            val event = awaitPointerEvent()
-            val change: PointerInputChange =
-                event.changes.firstOrNull { it.id == down.id } ?: break
-            tracker.addPosition(change.uptimeMillis, change.position)
-
-            if (!dragging && (change.position - down.position).getDistance() > slopPx) {
-                dragging = true
-                rotation.begin()
-            }
-            if (dragging) {
-                rotation.drag(change.positionChange().x)
-                change.consume()
-            }
-            if (!change.pressed) {
-                if (dragging) {
-                    rotation.releaseAsync(tracker.calculateVelocity().x)
-                } else {
-                    change.consume()
-                    onTap()
-                }
-                break
-            }
+            val next = freshnessOf(fetchedAt, LocalDateTime.now())
+            if (next != label) label = next
+            delay(FRESHNESS_TICK_MS)
         }
+    }
+    return label
+}
+
+private fun freshnessOf(fetchedAt: LocalDateTime?, now: LocalDateTime): String? {
+    if (fetchedAt == null) return null
+    val minutes = Duration.between(fetchedAt, now).toMinutes()
+    return when {
+        minutes < STALE_MINUTES -> null
+        minutes < 120L -> "$minutes MIN FA"
+        else -> "${minutes / 60L} H FA"
     }
 }
 
-private const val TAP_SLOP_DP = 5f
+/** Il giorno dell'ora mostrata: la barra copre oggi, e conviene dire quale. */
+private fun dayLabel(hour: HourForecast?): String =
+    hour?.time?.format(DAY_FORMAT)?.uppercase(Locale.ITALIAN).orEmpty()
+
+private val DAY_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("EEE d MMM", Locale.ITALIAN)
+
+/**
+ * Minima e massima del giorno, e la percepita quando ha qualcosa da aggiungere.
+ *
+ * La percepita compare solo se stacca di almeno un grado e mezzo dalla reale:
+ * scritta accanto a un numero uguale al suo non e' un'informazione, e' la
+ * stessa riga stampata due volte. Il confronto si fa in gradi Celsius, prima
+ * della conversione, perche' in Fahrenheit la stessa differenza vale quasi il
+ * doppio e la soglia cambierebbe senso a seconda dell'unita' scelta.
+ */
+private fun rangeLabel(
+    min: Double?,
+    max: Double?,
+    apparent: Double?,
+    real: Double?,
+    unit: TempUnit,
+): String {
+    val span = if (min != null && max != null) {
+        "${min.asPlainDegrees(unit)} / ${max.asPlainDegrees(unit)}"
+    } else {
+        null
+    }
+    val felt = if (apparent != null && real != null && abs(apparent - real) >= FELT_THRESHOLD) {
+        "PERCEPITI ${apparent.asPlainDegrees(unit)}"
+    } else {
+        null
+    }
+    return listOfNotNull(span, felt).joinToString("   \u00B7   ")
+}
 
 /**
  * La probabilita' compare solo quando c'e' davvero qualcosa da prevedere:
@@ -341,3 +481,11 @@ private fun conditionLabel(
     val probability = if (forcedCode != null) 80 else hour?.precipProbability ?: 0
     return if (wet && probability > 0) "$condition $probability%" else condition
 }
+
+/** Sotto questa eta' il dato si considera fresco e non lo si dichiara. */
+private const val STALE_MINUTES = 30L
+
+private const val FRESHNESS_TICK_MS = 30_000L
+
+/** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
+private const val FELT_THRESHOLD = 1.5
