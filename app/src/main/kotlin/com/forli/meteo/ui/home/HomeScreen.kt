@@ -3,6 +3,8 @@ package com.forli.meteo.ui.home
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,12 +26,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.HourForecast
@@ -66,6 +74,7 @@ fun HomeScreen(
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenTemperatureDetail: () -> Unit = {},
     onRefresh: () -> Unit = {},
     /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
     pullArmed: Boolean = false,
@@ -87,6 +96,13 @@ fun HomeScreen(
     // E un solo mondo: la pioggia esce dalla nuvola e finisce sulla cifra, che
     // sta in un'altra tela. Qui passano la sagoma e le due origini.
     val contact = remember { SceneContact() }
+
+    // Letti dentro il gesto e non catturati alla composizione: `pointerInput`
+    // parte una volta sola (chiave `Unit`) e altrimenti continuerebbe a
+    // chiamare la lambda di quel primo giro, con dentro un `rotation` o un
+    // `onOpenTemperatureDetail` ormai vecchi.
+    val liveRotation by rememberUpdatedState(rotation)
+    val liveOnOpenDetail by rememberUpdatedState(onOpenTemperatureDetail)
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -187,7 +203,17 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    // Un tocco fermo apre il dettaglio, un trascinamento gira
+                    // la scena: sono lo stesso dito sullo stesso numero, e la
+                    // differenza si vede solo a gesto finito. Questo
+                    // `pointerInput` sta sul figlio e non lascia salire
+                    // l'evento al genitore - che ha il suo `.rotatesScene()` -
+                    // altrimenti i due gestori risponderebbero insieme allo
+                    // stesso trascinamento.
+                    .pointerInput(Unit) {
+                        detectTapOrRotate(liveRotation) { liveOnOpenDetail() }
+                    },
             ) {
                 // Finche' non c'e' un numero non si disegna niente. Un "--"
                 // alto mezzo schermo, con tanto di spessore e di ombra, non
@@ -295,6 +321,51 @@ fun HomeScreen(
         )
     }
 }
+
+/**
+ * Distingue un tocco da un trascinamento sulla stessa cifra.
+ *
+ * Sotto la soglia di scorrimento resta un tocco possibile; superata, diventa
+ * un giro di scena e non torna piu' indietro - un dito che parte fermo e poi
+ * scivola non deve aprire il dettaglio **e** girare la scena insieme.
+ */
+private suspend fun PointerInputScope.detectTapOrRotate(
+    rotation: SceneRotation,
+    onTap: () -> Unit,
+) {
+    val slopPx = TAP_SLOP_DP.dp.toPx()
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false)
+        val tracker = VelocityTracker()
+        tracker.addPosition(down.uptimeMillis, down.position)
+        var dragging = false
+        while (true) {
+            val event = awaitPointerEvent()
+            val change: PointerInputChange = event.changes.firstOrNull { it.id == down.id }
+                ?: break
+            tracker.addPosition(change.uptimeMillis, change.position)
+            if (!dragging && (change.position - down.position).getDistance() > slopPx) {
+                dragging = true
+                rotation.begin()
+            }
+            if (dragging) {
+                rotation.drag(change.positionChange().x)
+                change.consume()
+            }
+            if (!change.pressed) {
+                if (dragging) {
+                    rotation.release(tracker.calculateVelocity().x)
+                } else {
+                    change.consume()
+                    onTap()
+                }
+                break
+            }
+        }
+    }
+}
+
+private const val TAP_SLOP_DP = 5f
 
 /** Tre righe: e' il segno universale, e non serve una libreria di icone. */
 @Composable

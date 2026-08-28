@@ -40,7 +40,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.Place
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.theme.MeteoType
@@ -78,6 +80,8 @@ fun SettingsScreen(
     onQuery: (String) -> Unit,
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
+    onChooseModel: (WeatherModel) -> Unit,
+    onToggleFavorite: (Place) -> Unit,
     onUseLocation: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,11 +123,18 @@ fun SettingsScreen(
             item { SectionTitle("DOVE") }
             item {
                 Block {
-                    Text(
-                        text = state.place.name.uppercase(),
-                        style = MeteoType.title,
-                        color = SettingsPrimary,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = state.place.name.uppercase(),
+                            style = MeteoType.title,
+                            color = SettingsPrimary,
+                            modifier = Modifier.weight(1f),
+                        )
+                        FavoriteStar(
+                            filled = state.favorites.any { it.key == state.place.key },
+                            onClick = { onToggleFavorite(state.place) },
+                        )
+                    }
                     Text(
                         text = listOf(state.place.detail.uppercase())
                             .filter { it.isNotBlank() }
@@ -216,6 +227,36 @@ fun SettingsScreen(
                 }
             }
 
+            // PREFERITI. Le localita' salvate a mano con la stella, distinte
+            // dalle scorciatoie fisse qui sopra: quelle sono suggerimenti
+            // dell'app, queste sono scelte di chi guarda.
+            item { Spacer(Modifier.height(26.dp)) }
+            item { SectionTitle("PREFERITI") }
+            item {
+                if (state.favorites.isEmpty()) {
+                    Text(
+                        text = "NESSUNA CITTÀ SALVATA. TOCCA LA STELLA ACCANTO A UN NOME " +
+                            "PER TENERLA A PORTATA DI MANO.",
+                        style = MeteoType.caption,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    )
+                } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        items(items = state.favorites, key = { it.key }) { place ->
+                            PlaceChip(
+                                place = place,
+                                selected = place.key == state.place.key,
+                                onClick = { onChoosePlace(place) },
+                            )
+                        }
+                    }
+                }
+            }
+
             // COME.
             item { Spacer(Modifier.height(26.dp)) }
             item { SectionTitle("COME") }
@@ -229,6 +270,28 @@ fun SettingsScreen(
                     Text(
                         text = "LA CONVERSIONE È IMMEDIATA: I DATI RESTANO QUELLI, " +
                             "CAMBIA SOLO COME SONO SCRITTI.",
+                        style = MeteoType.caption,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(top = 10.dp),
+                    )
+                }
+            }
+
+            // MODELLO. Quale motore numerico calcola la previsione: l'AUTO di
+            // Open-Meteo va bene ovunque, l'ICON-2I di ARPAE e' piu' fine ma
+            // vede solo l'Italia.
+            item { Spacer(Modifier.height(26.dp)) }
+            item { SectionTitle("MODELLO") }
+            item {
+                Block {
+                    ModelChoice(
+                        current = state.model,
+                        onChoose = onChooseModel,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                    )
+                    Text(
+                        text = "ICON-2I È PIÙ PRECISO IN ITALIA. FUORI DALL'ITALIA " +
+                            "USA COMUNQUE AUTO.",
                         style = MeteoType.caption,
                         color = SettingsSecondary,
                         modifier = Modifier.padding(top = 10.dp),
@@ -252,7 +315,14 @@ fun SettingsScreen(
                 item {
                     Block {
                         SourceRow("SERVIZIO", "OPEN-METEO.COM")
-                        SourceRow("MODELLO", "MISCELA AUTOMATICA DEI MODELLI NAZIONALI")
+                        SourceRow(
+                            "MODELLO",
+                            if (state.model == WeatherModel.AUTO) {
+                                "MISCELA AUTOMATICA DEI MODELLI NAZIONALI"
+                            } else {
+                                "${state.model.label} (ARPAE, ALTA RISOLUZIONE ITALIA)"
+                            },
+                        )
                         SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
                         SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
                         SourceRow(
@@ -506,6 +576,56 @@ private fun UnitChoice(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ModelChoice(
+    current: WeatherModel,
+    onChoose: (WeatherModel) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        WeatherModel.entries.forEach { model ->
+            val active = model == current
+            val interaction = remember { MutableInteractionSource() }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(if (active) SettingsPillBg else Color.Transparent)
+                    .clickable(
+                        interactionSource = interaction,
+                        indication = null,
+                        onClick = { onChoose(model) },
+                    )
+                    .padding(horizontal = 18.dp, vertical = 8.dp),
+            ) {
+                Text(
+                    text = model.label,
+                    style = MeteoType.value,
+                    color = if (active) SettingsPillText else SettingsSecondary,
+                )
+            }
+        }
+    }
+}
+
+/** La stella che salva o toglie il posto corrente dai preferiti. */
+@Composable
+private fun FavoriteStar(filled: Boolean, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        modifier = Modifier
+            .size(34.dp)
+            .clip(CircleShape)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = if (filled) "★" else "☆",
+            style = MeteoType.title,
+            color = SettingsPrimary,
+        )
     }
 }
 
