@@ -16,12 +16,12 @@
     Forli    48/48 ore  quota 40.0 m  prime [23.9, 23.5, 23.1]
   icon_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [24.0, 23.2, 23.3]
-    Forli     HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Forli    48/48 ore  quota 40.0 m  prime [24.2, 23.9, 23.8]
   ecmwf_ifs025
-    Noceto   48/48 ore  quota 74.0 m  prime [25.3, 24.7, 24.3]
-    Forli    48/48 ore  quota 40.0 m  prime [23.9, 23.5, 23.3]
+    Noceto   48/48 ore  quota 74.0 m  prime [25.3, 24.8, 24.4]
+    Forli    48/48 ore  quota 40.0 m  prime [23.9, 23.6, 23.5]
   ecmwf_aifs025_single
-    Noceto   48/48 ore  quota 74.0 m  prime [23.7, 23.2, 22.8]
+    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
     Forli    48/48 ore  quota 40.0 m  prime [23.8, 23.5, 23.4]
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [25.5, 24.8, 24.7]
@@ -33,7 +33,7 @@
     Noceto   48/48 ore  quota 74.0 m  prime [24.6, 23.5, 22.7]
     Forli    48/48 ore  quota 40.0 m  prime [25.4, 25.4, 26.0]
   knmi_seamless
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [23.9, 24.1, 24.6]
     Forli    48/48 ore  quota 40.0 m  prime [26.2, 26.7, 26.9]
   ukmo_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [25.0, 23.6, 24.1]
@@ -41,15 +41,15 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0016689300537109375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0016689300537109375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0016689300537109375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0022649765014648438,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0022649765014648438,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0015497207641601562,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=141  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0019073486328125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0016689300537109375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
   icon_d2
-    Londra   48/48 ore  quota 29.0 m  prime [18.3, 17.7, 17.1]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Londra    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [18.3, 17.8, 17.7]
     Bergen   48/48 ore  quota 17.0 m  prime [14.9, 14.5, 14.6]
