@@ -1,32 +1,12 @@
 package com.forli.meteo.widget
 
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import androidx.glance.background
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Column
-import androidx.glance.layout.Row
-import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.padding
-import androidx.glance.layout.size
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
-import com.forli.meteo.data.Forecast
-import com.forli.meteo.data.Place
 import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.data.Wmo
 import kotlin.math.roundToInt
@@ -34,63 +14,26 @@ import kotlin.math.roundToInt
 /** Il tempo che fa adesso: localita', temperatura, condizione. */
 class WeatherWidget : GlanceAppWidget() {
 
+    override val sizeMode = WidgetSizes
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val config = WidgetPrefs(context).load(appWidgetIdOf(context, id))
         val place = config.resolvePlace(context)
         val forecast = WeatherRepository(place).load().getOrNull()
         val palette = config.palette()
-        provideContent { WidgetBody(place, forecast, palette) }
-    }
-}
 
-@Composable
-private fun WidgetBody(place: Place, forecast: Forecast?, palette: WidgetPalette) {
-    val temperature = forecast?.current?.temperature
-    val family = Wmo.family(forecast?.current?.weatherCode)
-    val isDay = forecast?.current?.isDay ?: true
+        val current = forecast?.current
+        val value = current?.temperature?.roundToInt()?.let { "$it°" } ?: "--"
+        val icon = iconFor(Wmo.family(current?.weatherCode), current?.isDay ?: true)
 
-    Row(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(palette.background)
-            .padding(14.dp)
-            .clickable(actionRunCallback<RefreshWidgetAction>()),
-        verticalAlignment = Alignment.Vertical.CenterVertically,
-    ) {
-        Image(
-            provider = ImageProvider(iconFor(family, isDay)),
-            contentDescription = Wmo.condition(forecast?.current?.weatherCode),
-            colorFilter = ColorFilter.tint(palette.accent),
-            modifier = GlanceModifier.size(30.dp),
-        )
-        Column(
-            modifier = GlanceModifier.padding(start = 10.dp),
-            verticalAlignment = Alignment.Vertical.CenterVertically,
-            horizontalAlignment = Alignment.Horizontal.Start,
-        ) {
-            Text(
-                text = place.name.uppercase(),
-                style = TextStyle(
-                    color = palette.secondary,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-            )
-            Text(
-                text = temperature?.roundToInt()?.let { "$it°" } ?: "--",
-                style = TextStyle(
-                    color = palette.accent,
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
-            )
-            Text(
-                text = Wmo.condition(forecast?.current?.weatherCode),
-                style = TextStyle(
-                    color = palette.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+        provideContent {
+            WidgetFrame(
+                value = value,
+                label = place.name.uppercase(),
+                caption = Wmo.condition(current?.weatherCode),
+                icon = icon,
+                palette = palette,
+                onClick = actionRunCallback<RefreshWidgetAction>(),
             )
         }
     }
