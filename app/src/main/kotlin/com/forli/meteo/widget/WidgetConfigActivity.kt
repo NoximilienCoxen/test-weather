@@ -13,7 +13,9 @@ import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.theme.MeteoTheme
 import com.forli.meteo.ui.theme.skyColors
 import com.forli.meteo.ui.widgetconfig.WidgetConfigScreen
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Aperta dal sistema subito dopo che un widget e' stato trascinato sulla Home
@@ -64,15 +66,23 @@ class WidgetConfigActivity : ComponentActivity() {
     }
 
     private suspend fun saveAndFinish(place: Place?, useLocation: Boolean) {
-        WidgetPrefs(this).save(
-            appWidgetId = appWidgetId,
-            config = WidgetConfig(useLocation = useLocation, place = place),
-        )
+        // Salvataggio su Dispatchers.IO: DataStore usa gia' IO internamente,
+        // ma forzare il dispatcher garantisce che la scrittura sia completata
+        // e visibile a qualsiasi lettura successiva prima di procedere.
+        withContext(Dispatchers.IO) {
+            WidgetPrefs(this@WidgetConfigActivity).save(
+                appWidgetId = appWidgetId,
+                config = WidgetConfig(useLocation = useLocation, place = place),
+            )
+        }
+
+        Log.d(TAG, "Preferenze salvate: widget=$appWidgetId useLocation=$useLocation place=${place?.name}")
 
         // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
         // una volta, prima che questa schermata si aprisse, con le preferenze
-        // ancora vuote. Se fallisce lo si dice, invece di lasciare all'utente
-        // un widget del colore sbagliato senza spiegazione.
+        // ancora vuote. refreshWidget() legge le preferenze su IO per
+        // confermare il flush prima di schedulare il re-render di Glance:
+        // questo elimina la race condition tra save() e provideGlance().
         runCatching { refreshWidget(this, appWidgetId, kind) }
             .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
 
