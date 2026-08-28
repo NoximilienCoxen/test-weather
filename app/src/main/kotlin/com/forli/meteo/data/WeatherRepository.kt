@@ -47,10 +47,23 @@ class WeatherRepository(
         append("&timezone=auto")
         append("&forecast_days=7")
         append("&wind_speed_unit=ms")
-        append("&models=").append(model.apiValue)
+        modelsQueryValue()?.let { append("&models=").append(it) }
         append("&current=").append(CURRENT_VARS)
         append("&daily=").append(DAILY_VARS)
         append("&hourly=").append(HOURLY_VARS)
+    }
+
+    /**
+     * "best_match" di Open-Meteo risolve in ICON-D2 anche su punti italiani,
+     * piu' impreciso di ICON-2I (ARPAE/ItaliaMeteo): con AUTO in Italia si
+     * chiede quindi ICON-2I esplicitamente. Fuori Italia si lascia il
+     * best_match nativo (nessun parametro models). Una scelta esplicita
+     * dell'utente (es. ICON-2I) resta sempre quella che ha scelto.
+     */
+    private fun modelsQueryValue(): String? = when {
+        model != WeatherModel.AUTO -> model.apiValue
+        place.isItaly -> WeatherModel.ICON_2I.apiValue
+        else -> null
     }
 
     private fun httpGet(url: String): String {

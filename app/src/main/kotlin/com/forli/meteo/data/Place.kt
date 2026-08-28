@@ -55,3 +55,22 @@ data class Place(
 
 /** Chiave stabile per confronti e chiavi di lista, senza portarsi dietro un id. */
 val Place.key: String get() = "$name$latitude$longitude"
+
+private val ITALY_LATITUDE_RANGE = 35.5..47.1
+private val ITALY_LONGITUDE_RANGE = 6.6..18.5
+
+/**
+ * Vero se il paese testuale indica l'Italia, oppure se le coordinate
+ * ricadono nel rettangolo geografico italiano (nessun countryCode ISO
+ * e' disponibile nei dati di Open-Meteo/Geocoder usati da questa app).
+ */
+val Place.isItaly: Boolean
+    get() {
+        val normalizedCountry = country?.trim()?.uppercase()
+        if (normalizedCountry == "IT" || normalizedCountry == "ITA" ||
+            normalizedCountry == "ITALIA" || normalizedCountry == "ITALY"
+        ) {
+            return true
+        }
+        return latitude in ITALY_LATITUDE_RANGE && longitude in ITALY_LONGITUDE_RANGE
+    }
