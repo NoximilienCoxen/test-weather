@@ -1,5 +1,7 @@
 package com.forli.meteo.data
 
+import kotlinx.serialization.Serializable
+
 /**
  * Una localita' scelta dall'utente.
  *
@@ -8,6 +10,7 @@ package com.forli.meteo.data
  * AOSP, e in generale chiedere di nuovo alla rete un nome che si e' gia' avuto
  * in mano e' lavoro sprecato.
  */
+@Serializable
 data class Place(
     val name: String,
     /** Regione o provincia, quando l'API la fornisce. Distingue gli omonimi. */
@@ -47,3 +50,6 @@ data class Place(
         )
     }
 }
+
+/** Chiave stabile per confronti e chiavi di lista, senza portarsi dietro un id. */
+val Place.key: String get() = "$name$latitude$longitude"

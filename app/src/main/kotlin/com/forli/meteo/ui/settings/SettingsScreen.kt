@@ -36,17 +36,36 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.Place
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
-import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoType
 import java.time.format.DateTimeFormatter
+
+/**
+ * Tavolozza fissa, non quella del tema.
+ *
+ * Il pannello ha uno sfondo scuro fisso (vedi `MeteoApp.kt`), indipendente
+ * dall'ora del giorno: riusare `LocalMeteoColors` qui - pensato per un fondo
+ * che va dal grigio chiaro al blu scuro - tornava a far sparire titolo e
+ * pulsanti a mezzogiorno. Solo due toni per il testo, mai un grigio scuro o
+ * spento: bianco pieno per tutto cio' che e' primario, grigio chiaro
+ * brillante per le didascalie.
+ */
+private val SettingsPrimary = Color.White
+private val SettingsSecondary = Color(0xFFEEEEEE)
+private val SettingsLine = Color.White.copy(alpha = 0.18f)
+private val SettingsFieldBg = Color.White.copy(alpha = 0.10f)
+private val SettingsBlockBg = Color.White.copy(alpha = 0.06f)
+private val SettingsSelectedBg = Color.White.copy(alpha = 0.14f)
+private val SettingsPillBg = Color.White
+private val SettingsPillText = Color.Black
 
 /**
  * Le impostazioni: dove si guarda, in che unita', e da dove arrivano i numeri.
@@ -61,12 +80,12 @@ fun SettingsScreen(
     onQuery: (String) -> Unit,
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
+    onChooseModel: (WeatherModel) -> Unit,
+    onToggleFavorite: (Place) -> Unit,
     onUseLocation: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalMeteoColors.current
-
     // Il permesso lo chiede la schermata, non il ViewModel: e' un dialogo di
     // sistema legato a un'attivita'. Se e' gia' concesso il lanciatore torna
     // subito con un si', quindi non serve un ramo a parte per quel caso.
@@ -87,7 +106,7 @@ fun SettingsScreen(
             Text(
                 text = "IMPOSTAZIONI",
                 style = MeteoType.caption,
-                color = colors.label,
+                color = SettingsPrimary,
             )
         }
 
@@ -104,17 +123,24 @@ fun SettingsScreen(
             item { SectionTitle("DOVE") }
             item {
                 Block {
-                    Text(
-                        text = state.place.name.uppercase(),
-                        style = MeteoType.title,
-                        color = colors.text,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = state.place.name.uppercase(),
+                            style = MeteoType.title,
+                            color = SettingsPrimary,
+                            modifier = Modifier.weight(1f),
+                        )
+                        FavoriteStar(
+                            filled = state.favorites.any { it.key == state.place.key },
+                            onClick = { onToggleFavorite(state.place) },
+                        )
+                    }
                     Text(
                         text = listOf(state.place.detail.uppercase())
                             .filter { it.isNotBlank() }
                             .joinToString(),
                         style = MeteoType.caption,
-                        color = colors.label,
+                        color = SettingsSecondary,
                     )
                     // Con la virgola decimale dell'italiano "44,2226, 12,0407"
                     // si legge come quattro numeri invece che due. I gradi e i
@@ -122,7 +148,7 @@ fun SettingsScreen(
                     Text(
                         text = coordinates(state.place.latitude, state.place.longitude),
                         style = MeteoType.caption,
-                        color = colors.label,
+                        color = SettingsSecondary,
                         modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
                     )
                     Divider()
@@ -157,7 +183,7 @@ fun SettingsScreen(
                 Text(
                     text = message.orEmpty(),
                     style = MeteoType.caption,
-                    color = colors.label,
+                    color = SettingsSecondary,
                     modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
                 )
             }
@@ -201,6 +227,36 @@ fun SettingsScreen(
                 }
             }
 
+            // PREFERITI. Le localita' salvate a mano con la stella, distinte
+            // dalle scorciatoie fisse qui sopra: quelle sono suggerimenti
+            // dell'app, queste sono scelte di chi guarda.
+            item { Spacer(Modifier.height(26.dp)) }
+            item { SectionTitle("PREFERITI") }
+            item {
+                if (state.favorites.isEmpty()) {
+                    Text(
+                        text = "NESSUNA CITTÀ SALVATA. TOCCA LA STELLA ACCANTO A UN NOME " +
+                            "PER TENERLA A PORTATA DI MANO.",
+                        style = MeteoType.caption,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    )
+                } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        items(items = state.favorites, key = { it.key }) { place ->
+                            PlaceChip(
+                                place = place,
+                                selected = place.key == state.place.key,
+                                onClick = { onChoosePlace(place) },
+                            )
+                        }
+                    }
+                }
+            }
+
             // COME.
             item { Spacer(Modifier.height(26.dp)) }
             item { SectionTitle("COME") }
@@ -215,7 +271,29 @@ fun SettingsScreen(
                         text = "LA CONVERSIONE È IMMEDIATA: I DATI RESTANO QUELLI, " +
                             "CAMBIA SOLO COME SONO SCRITTI.",
                         style = MeteoType.caption,
-                        color = colors.label,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(top = 10.dp),
+                    )
+                }
+            }
+
+            // MODELLO. Quale motore numerico calcola la previsione: l'AUTO di
+            // Open-Meteo va bene ovunque, l'ICON-2I di ARPAE e' piu' fine ma
+            // vede solo l'Italia.
+            item { Spacer(Modifier.height(26.dp)) }
+            item { SectionTitle("MODELLO") }
+            item {
+                Block {
+                    ModelChoice(
+                        current = state.model,
+                        onChoose = onChooseModel,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                    )
+                    Text(
+                        text = "ICON-2I È PIÙ PRECISO IN ITALIA. FUORI DALL'ITALIA " +
+                            "USA COMUNQUE AUTO.",
+                        style = MeteoType.caption,
+                        color = SettingsSecondary,
                         modifier = Modifier.padding(top = 10.dp),
                     )
                 }
@@ -237,7 +315,14 @@ fun SettingsScreen(
                 item {
                     Block {
                         SourceRow("SERVIZIO", "OPEN-METEO.COM")
-                        SourceRow("MODELLO", "MISCELA AUTOMATICA DEI MODELLI NAZIONALI")
+                        SourceRow(
+                            "MODELLO",
+                            if (state.model == WeatherModel.AUTO) {
+                                "MISCELA AUTOMATICA DEI MODELLI NAZIONALI"
+                            } else {
+                                "${state.model.label} (ARPAE, ALTA RISOLUZIONE ITALIA)"
+                            },
+                        )
                         SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
                         SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
                         SourceRow(
@@ -284,7 +369,6 @@ private fun LocationRow(
     unavailable: Boolean,
     onClick: () -> Unit,
 ) {
-    val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Row(
         modifier = Modifier
@@ -297,7 +381,7 @@ private fun LocationRow(
         Text(
             text = "USA LA MIA POSIZIONE",
             style = MeteoType.label,
-            color = if (following) colors.text else colors.label,
+            color = if (following) SettingsPrimary else SettingsSecondary,
             modifier = Modifier.weight(1f),
         )
         Text(
@@ -308,7 +392,7 @@ private fun LocationRow(
                 else -> ""
             },
             style = MeteoType.caption,
-            color = if (unavailable) colors.text else colors.label,
+            color = if (unavailable) SettingsPrimary else SettingsSecondary,
         )
     }
 }
@@ -319,7 +403,6 @@ private fun SectionTitle(
     open: Boolean? = null,
     onToggle: (() -> Unit)? = null,
 ) {
-    val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Column(
         modifier = if (onToggle == null) {
@@ -337,14 +420,14 @@ private fun SectionTitle(
             Text(
                 text = text,
                 style = MeteoType.caption,
-                color = colors.label,
+                color = SettingsSecondary,
                 modifier = Modifier.weight(1f),
             )
             if (open != null) {
                 Text(
                     text = if (open) "CHIUDI" else "MOSTRA",
                     style = MeteoType.caption,
-                    color = colors.text,
+                    color = SettingsPrimary,
                 )
             }
         }
@@ -353,7 +436,7 @@ private fun SectionTitle(
                 .padding(top = 6.dp, bottom = 10.dp)
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(colors.line),
+                .background(SettingsLine),
         )
     }
 }
@@ -369,12 +452,11 @@ private fun SectionTitle(
  */
 @Composable
 private fun Block(content: @Composable ColumnScope.() -> Unit) {
-    val colors = LocalMeteoColors.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(lerp(colors.background, colors.text, 0.055f))
+            .background(SettingsBlockBg)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         content = content,
     )
@@ -383,12 +465,11 @@ private fun Block(content: @Composable ColumnScope.() -> Unit) {
 /** Il filo che separa due cose dentro lo stesso blocco. */
 @Composable
 private fun Divider() {
-    val colors = LocalMeteoColors.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(colors.line),
+            .background(SettingsLine),
     )
 }
 
@@ -400,34 +481,30 @@ private fun Divider() {
  */
 @Composable
 private fun PlaceChip(place: Place, selected: Boolean, onClick: () -> Unit) {
-    val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(percent = 50))
-            .background(
-                if (selected) colors.pillBackground else lerp(colors.background, colors.text, 0.08f),
-            )
+            .background(if (selected) SettingsPillBg else SettingsBlockBg)
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
     ) {
         Text(
             text = place.name.uppercase(),
             style = MeteoType.label,
-            color = if (selected) colors.pillText else colors.text,
+            color = if (selected) SettingsPillText else SettingsPrimary,
         )
     }
 }
 
 @Composable
 private fun SourceRow(label: String, value: String) {
-    val colors = LocalMeteoColors.current
     Column(modifier = Modifier.padding(bottom = 12.dp)) {
-        Text(text = label, style = MeteoType.caption, color = colors.label)
+        Text(text = label, style = MeteoType.caption, color = SettingsSecondary)
         Text(
             text = value,
             style = MeteoType.value,
-            color = colors.text,
+            color = SettingsPrimary,
             modifier = Modifier.padding(top = 3.dp),
         )
     }
@@ -435,14 +512,13 @@ private fun SourceRow(label: String, value: String) {
 
 @Composable
 private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
-    val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
-            .background(if (selected) colors.line.copy(alpha = 0.55f) else Color.Transparent)
+            .background(if (selected) SettingsSelectedBg else Color.Transparent)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -450,13 +526,13 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
             Text(
                 text = place.name.uppercase(),
                 style = MeteoType.value,
-                color = colors.text,
+                color = SettingsPrimary,
             )
             if (place.detail.isNotBlank()) {
                 Text(
                     text = place.detail.uppercase(),
                     style = MeteoType.caption,
-                    color = colors.label,
+                    color = SettingsSecondary,
                     modifier = Modifier.padding(top = 2.dp),
                 )
             }
@@ -466,7 +542,7 @@ private fun PlaceRow(place: Place, selected: Boolean, onClick: () -> Unit) {
                 modifier = Modifier
                     .size(8.dp)
                     .clip(CircleShape)
-                    .background(colors.text),
+                    .background(SettingsPrimary),
             )
         }
     }
@@ -478,7 +554,6 @@ private fun UnitChoice(
     onChoose: (TempUnit) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalMeteoColors.current
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         TempUnit.entries.forEach { unit ->
             val active = unit == current
@@ -486,7 +561,7 @@ private fun UnitChoice(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(if (active) colors.pillBackground else Color.Transparent)
+                    .background(if (active) SettingsPillBg else Color.Transparent)
                     .clickable(
                         interactionSource = interaction,
                         indication = null,
@@ -497,10 +572,60 @@ private fun UnitChoice(
                 Text(
                     text = unit.symbol,
                     style = MeteoType.value,
-                    color = if (active) colors.pillText else colors.label,
+                    color = if (active) SettingsPillText else SettingsSecondary,
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ModelChoice(
+    current: WeatherModel,
+    onChoose: (WeatherModel) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        WeatherModel.entries.forEach { model ->
+            val active = model == current
+            val interaction = remember { MutableInteractionSource() }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(if (active) SettingsPillBg else Color.Transparent)
+                    .clickable(
+                        interactionSource = interaction,
+                        indication = null,
+                        onClick = { onChoose(model) },
+                    )
+                    .padding(horizontal = 18.dp, vertical = 8.dp),
+            ) {
+                Text(
+                    text = model.label,
+                    style = MeteoType.value,
+                    color = if (active) SettingsPillText else SettingsSecondary,
+                )
+            }
+        }
+    }
+}
+
+/** La stella che salva o toglie il posto corrente dai preferiti. */
+@Composable
+private fun FavoriteStar(filled: Boolean, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    Box(
+        modifier = Modifier
+            .size(34.dp)
+            .clip(CircleShape)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = if (filled) "★" else "☆",
+            style = MeteoType.title,
+            color = SettingsPrimary,
+        )
     }
 }
 
@@ -510,23 +635,22 @@ private fun SearchField(
     onValueChange: (String) -> Unit,
     placeholder: String,
 ) {
-    val colors = LocalMeteoColors.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .background(colors.line.copy(alpha = 0.40f))
+            .background(SettingsFieldBg)
             .padding(horizontal = 12.dp, vertical = 12.dp),
     ) {
         if (value.isEmpty()) {
-            Text(text = placeholder, style = MeteoType.value, color = colors.label)
+            Text(text = placeholder, style = MeteoType.value, color = SettingsSecondary)
         }
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             singleLine = true,
-            textStyle = MeteoType.value.copy(color = colors.text),
-            cursorBrush = SolidColor(colors.text),
+            textStyle = MeteoType.value.copy(color = SettingsPrimary),
+            cursorBrush = SolidColor(SettingsPrimary),
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                 imeAction = ImeAction.Search,
             ),
@@ -538,7 +662,6 @@ private fun SearchField(
 /** Una croce disegnata, per non tirarsi dietro una libreria di icone. */
 @Composable
 private fun CloseButton(onClick: () -> Unit) {
-    val colors = LocalMeteoColors.current
     val interaction = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
@@ -550,14 +673,14 @@ private fun CloseButton(onClick: () -> Unit) {
         Canvas(Modifier.size(14.dp)) {
             val stroke = size.minDimension * 0.11f
             drawLine(
-                color = colors.label,
+                color = SettingsPrimary,
                 start = Offset(0f, 0f),
                 end = Offset(size.width, size.height),
                 strokeWidth = stroke,
                 cap = StrokeCap.Round,
             )
             drawLine(
-                color = colors.label,
+                color = SettingsPrimary,
                 start = Offset(size.width, 0f),
                 end = Offset(0f, size.height),
                 strokeWidth = stroke,

@@ -14,6 +14,9 @@ import com.forli.meteo.ui.render.PreparedNumber
 import com.forli.meteo.ui.render.TemperatureRenderer
 import kotlin.math.max
 
+/** Bianco pieno, gia' in intero: e' verso questo che il lampo schiarisce i vertici. */
+private const val LightningWhite = 0xFFFFFFFF.toInt()
+
 /**
  * Disegna la cifra come un solido guardato da una camera prospettica.
  *
@@ -157,6 +160,7 @@ class PrismRenderer : TemperatureRenderer {
         motion: NumberMotion,
         silhouette: Skyline?,
         lift: Float,
+        glare: Float,
     ) = with(scope) {
         val model = prepared as? Prepared ?: return@with
         val prism = model.prism
@@ -287,6 +291,17 @@ class PrismRenderer : TemperatureRenderer {
             )
             silhouette?.let { prism.addSilhouette(index, it) }
 
+            // Il lampo illumina anche la cifra, non solo le nuvole: senza
+            // questo la scultura si accende e il numero accanto resta
+            // indifferente, e i due smettono di sembrare nello stesso cielo.
+            // Costa solo quando c'e' davvero un lampo in corso.
+            if (glare > 0.01f) {
+                val amount = (glare * WALL_GLARE).coerceIn(0f, 1f)
+                for (c in 0 until surfaces.vertexValues / 2) {
+                    surfaces.colours[c] = TextPrism.blend(surfaces.colours[c], LightningWhite, amount)
+                }
+            }
+
             // Pareti e smussi in una sola chiamata: il colore viaggia sui
             // vertici e la scheda grafica lo interpola. E' qui che l'oggetto
             // smette di sembrare piatto, e da qui in poi non costa quasi nulla.
@@ -311,11 +326,16 @@ class PrismRenderer : TemperatureRenderer {
             if (surfaces.capVisible) {
                 drawIntoCanvas { canvas ->
                     val native = canvas.nativeCanvas
-                    facePaint.color = lerp(
+                    val base = lerp(
                         lerp(palette.sideNear, palette.sideFar, FACE_SHADE),
                         palette.face,
                         faceTone(surfaces),
-                    ).toArgb()
+                    )
+                    facePaint.color = if (glare > 0.01f) {
+                        lerp(base, Color.White, (glare * FACE_GLARE).coerceIn(0f, 1f))
+                    } else {
+                        base
+                    }.toArgb()
                     native.save()
                     native.concat(surfaces.matrix)
                     native.drawPath(surfaces.outline, facePaint)
@@ -369,6 +389,15 @@ class PrismRenderer : TemperatureRenderer {
 
         /** Quanto scende la faccia quando gira via dalla luce: un passo, non un salto. */
         const val FACE_SHADE = 0.22f
+
+        /**
+         * Quanto il lampo schiarisce pareti e faccia, in proporzione al suo
+         * valore. La faccia meno delle pareti: e' gia' la superficie piu'
+         * chiara, e portarla anche lei fino al bianco pieno la farebbe
+         * sparire nel bagliore invece di restare leggibile come materiale.
+         */
+        const val WALL_GLARE = 0.55f
+        const val FACE_GLARE = 0.35f
 
         /**
          * Distanza dell'occhio in multipli della dimensione dell'oggetto. Sotto

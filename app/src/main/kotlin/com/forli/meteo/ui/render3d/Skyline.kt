@@ -125,4 +125,14 @@ class SceneContact {
 
     /** Lo scostamento da sommare a una coordinata della cifra per leggerla nella pioggia. */
     val numberToRain: Offset get() = skyline.origin - rainOrigin
+
+    /**
+     * Quanto illumina il lampo in questo istante, da 0 a 1.
+     *
+     * Scritto dalla scultura a ogni fotogramma e letto dalla cifra, che sta in
+     * una tela separata ma disegna subito dopo nello stesso frame: stessa
+     * regola di [rainOrigin], stato non osservabile perche' cambia a ogni
+     * fotogramma comunque.
+     */
+    var glare: Float = 0f
 }

@@ -135,6 +135,7 @@ fun ExtrudedText(
                 // Letto qui e non in composizione: l'entrata ridipinge, non
                 // ricompone.
                 lift = entrance.value,
+                glare = contact?.glare ?: 0f,
             )
         }
     }
