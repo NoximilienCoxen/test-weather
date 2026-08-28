@@ -76,7 +76,12 @@ class WidgetConfigActivity : ComponentActivity() {
             )
         }
 
-        Log.d(TAG, "Preferenze salvate: widget=$appWidgetId useLocation=$useLocation place=${place?.name}")
+        Log.d(
+            TAG,
+            "save OK: widget=$appWidgetId useLocation=$useLocation " +
+                "place=${place?.name} lat=${place?.latitude} lon=${place?.longitude} " +
+                "admin=${place?.admin} country=${place?.country}",
+        )
 
         // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
         // una volta, prima che questa schermata si aprisse, con le preferenze
