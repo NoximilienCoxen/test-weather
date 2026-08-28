@@ -9,8 +9,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.forli.meteo.data.Place
+import com.forli.meteo.data.WeatherModel
+import com.forli.meteo.data.key
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Unita' della temperatura.
@@ -47,10 +51,16 @@ data class Settings(
      * mai scelto" e "ho scelto Forli'" sono la stessa cosa vista da fuori.
      */
     val welcomed: Boolean = false,
+    /** Motore numerico scelto per la previsione. */
+    val model: WeatherModel = WeatherModel.AUTO,
+    /** Localita' salvate a parte dalla scelta corrente. */
+    val favorites: List<Place> = emptyList(),
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
     preferencesDataStore(name = "impostazioni")
+
+private val favoritesJson = Json { ignoreUnknownKeys = true }
 
 class SettingsPrefs(private val context: Context) {
 
@@ -79,6 +89,10 @@ class SettingsPrefs(private val context: Context) {
                 ?: TempUnit.CELSIUS,
             followsLocation = prefs[KEY_FOLLOWS] ?: false,
             welcomed = prefs[KEY_WELCOMED] ?: false,
+            model = prefs[KEY_MODEL]
+                ?.let { saved -> WeatherModel.entries.firstOrNull { it.name == saved } }
+                ?: WeatherModel.AUTO,
+            favorites = decodeFavorites(prefs[KEY_FAVORITES]),
         )
     }
 
@@ -107,6 +121,28 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_UNIT] = unit.name }
     }
 
+    suspend fun setModel(model: WeatherModel) {
+        context.settingsDataStore.edit { it[KEY_MODEL] = model.name }
+    }
+
+    /** Aggiunge o toglie una localita' dai preferiti, a seconda che ci sia gia'. */
+    suspend fun toggleFavorite(place: Place) {
+        context.settingsDataStore.edit { prefs ->
+            val current = decodeFavorites(prefs[KEY_FAVORITES])
+            val updated = if (current.any { it.key == place.key }) {
+                current.filterNot { it.key == place.key }
+            } else {
+                current + place
+            }
+            prefs[KEY_FAVORITES] = favoritesJson.encodeToString(updated)
+        }
+    }
+
+    private fun decodeFavorites(raw: String?): List<Place> {
+        if (raw.isNullOrBlank()) return emptyList()
+        return runCatching { favoritesJson.decodeFromString<List<Place>>(raw) }.getOrDefault(emptyList())
+    }
+
     private companion object {
         val KEY_NAME = stringPreferencesKey("localita_nome")
         val KEY_ADMIN = stringPreferencesKey("localita_regione")
@@ -116,5 +152,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_UNIT = stringPreferencesKey("unita")
         val KEY_FOLLOWS = booleanPreferencesKey("segue_posizione")
         val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
+        val KEY_MODEL = stringPreferencesKey("modello")
+        val KEY_FAVORITES = stringPreferencesKey("preferiti")
     }
 }

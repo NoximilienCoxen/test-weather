@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -147,6 +148,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
+                onOpenTemperatureDetail = sheet::openFully,
                 onRefresh = viewModel::refresh,
                 pullArmed = pullArmed,
                 modifier = Modifier
@@ -198,7 +200,10 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) }
-                        .background(colors.background)
+                        // Fisso e scuro, non il fondo del tema: le impostazioni devono
+                        // leggersi uguali a mezzogiorno e a mezzanotte, e il tema chiaro
+                        // rendeva invisibili titolo e pulsante di chiusura.
+                        .background(Color.Black.copy(alpha = 0.85f))
                         .systemBarsPadding(),
                 ) {
                     SettingsScreen(
@@ -206,6 +211,8 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onQuery = viewModel::search,
                         onChoosePlace = viewModel::choosePlace,
                         onChooseUnit = viewModel::setUnit,
+                        onChooseModel = viewModel::setModel,
+                        onToggleFavorite = viewModel::toggleFavorite,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeSettings,
                     )
@@ -265,6 +272,23 @@ private class SheetGesture(private val scope: CoroutineScope) {
             // certo punto non e' piu' un gesto, e' un trascinamento.
             raised.floatValue = 0f
             pulled.floatValue = (pulled.floatValue - next * heightPx).coerceAtMost(PULL_LIMIT)
+        }
+    }
+
+    /**
+     * Apre il foglio del dettaglio senza passare dal trascinamento: lo chiama
+     * il tocco sulla cifra della temperatura, che non ha ne' un delta ne' una
+     * velocita' da darle in pasto a `release`.
+     */
+    fun openFully() {
+        settling?.cancel()
+        settling = scope.launch {
+            animate(
+                initialValue = raised.floatValue,
+                targetValue = 1f,
+                animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
+            ) { value, _ -> raised.floatValue = value }
+            settling = null
         }
     }
 

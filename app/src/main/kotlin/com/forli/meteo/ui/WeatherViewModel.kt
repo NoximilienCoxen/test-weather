@@ -9,10 +9,13 @@ import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
+import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +64,10 @@ data class UiState(
     val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /** Motore numerico scelto per la previsione. */
+    val model: WeatherModel = WeatherModel.AUTO,
+    /** Localita' salvate a parte dalla scelta corrente. */
+    val favorites: List<Place> = emptyList(),
     /** Vero quando il posto lo decide il telefono invece di una scelta a mano. */
     val followsLocation: Boolean = false,
     /** Vero mentre si sta chiedendo dove siamo. */
@@ -183,19 +190,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             prefs.settings.collect { settings ->
                 val current = _state.value
                 val moved = current.place != settings.place
+                val modelChanged = current.model != settings.model
                 val firstRead = !started
                 started = true
                 _state.update {
                     it.copy(
                         place = settings.place,
                         unit = settings.unit,
+                        model = settings.model,
+                        favorites = settings.favorites,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
-                // e' solo scrittura. Cambiare posto invece cambia tutto.
-                if (moved || current.forecast == null) refresh()
+                // e' solo scrittura. Cambiare posto o modello invece cambia
+                // tutto, perche' i numeri arrivano da un motore diverso.
+                if (moved || modelChanged || current.forecast == null) refresh()
 
                 // All'avvio, se il posto lo decide il telefono, lo si richiede
                 // una volta. Il posto salvato resta valido nel frattempo: la
@@ -221,9 +232,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
         loading?.cancel()
         val place = _state.value.place
+        val model = _state.value.model
         loading = viewModelScope.launch {
             var wait = FIRST_RETRY_MS
-            val repository = WeatherRepository(place)
+            val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
                 val outcome = repository.load()
                 outcome
@@ -335,6 +347,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.setUnit(unit) }
     }
 
+    fun setModel(model: WeatherModel) {
+        viewModelScope.launch { prefs.setModel(model) }
+    }
+
+    /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
+    fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    fun isFavorite(place: Place): Boolean =
+        _state.value.favorites.any { it.key == place.key }
+
     fun choosePlace(place: Place) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
         // aprire Singapore fermi sull'ora di Forli'.
@@ -410,22 +434,40 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         locating?.cancel()
         _state.update { it.copy(locating = true, locationUnavailable = false) }
         locating = viewModelScope.launch {
-            val found = DeviceLocation.current(getApplication<Application>())
-            if (found == null) {
-                // Permesso negato, posizione spenta, o nessun rilevamento in
-                // tempo utile. Si resta dove si era: e' l'unica risposta utile,
-                // e riprovare da soli sarebbe insistere.
-                // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
-                // all'avvio che non riesce non deve mettere un avviso davanti a
-                // chi non ha chiesto niente.
+            // Tutto qui dentro parla col sistema operativo o col disco - il
+            // gestore di posizione, il geocoder, e infine la scrittura su
+            // DataStore. Nessuno di questi e' garantito: un file delle
+            // preferenze corrotto, per dire, fa fallire `prefs.setPlace` con
+            // un'eccezione che altrimenti risalirebbe non presa fino a far
+            // cadere l'app. E' la stessa filosofia di "permesso negato non e'
+            // un errore" applicata a tutta la catena, non solo al permesso.
+            try {
+                val found = DeviceLocation.current(getApplication<Application>())
+                if (found == null) {
+                    // Permesso negato, posizione spenta, o nessun rilevamento in
+                    // tempo utile. Si resta dove si era: e' l'unica risposta utile,
+                    // e riprovare da soli sarebbe insistere.
+                    // Solo quando l'ha chiesto qualcuno lo si dice: un tentativo
+                    // all'avvio che non riesce non deve mettere un avviso davanti a
+                    // chi non ha chiesto niente.
+                    _state.update { it.copy(locating = false, locationUnavailable = explicit) }
+                    return@launch
+                }
+                _state.update { it.copy(locating = false, locationUnavailable = false) }
+                // Da qui in poi comanda il flusso delle preferenze, come per una
+                // localita' scelta a mano: una sola strada per cambiare posto.
+                pendingHour = null
+                prefs.setPlace(found, following = true)
+            } catch (e: CancellationException) {
+                // Un tentativo nuovo ha appena cancellato questo (vedi
+                // `locating?.cancel()` sopra): non e' un fallimento, e va
+                // rilanciata, non inghiottita - altrimenti la cancellazione
+                // strutturata smette di funzionare.
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Localizzazione non riuscita", e)
                 _state.update { it.copy(locating = false, locationUnavailable = explicit) }
-                return@launch
             }
-            _state.update { it.copy(locating = false, locationUnavailable = false) }
-            // Da qui in poi comanda il flusso delle preferenze, come per una
-            // localita' scelta a mano: una sola strada per cambiare posto.
-            pendingHour = null
-            prefs.setPlace(found, following = true)
         }
     }
 
