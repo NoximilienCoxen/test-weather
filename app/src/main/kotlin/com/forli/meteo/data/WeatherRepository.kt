@@ -212,6 +212,7 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             windSpeed = current?.windSpeed,
             windDirection = current?.windDirection,
             windGusts = current?.windGusts,
+            isDay = (current?.isDay ?: 1) == 1,
         ),
         days = days,
         place = place,

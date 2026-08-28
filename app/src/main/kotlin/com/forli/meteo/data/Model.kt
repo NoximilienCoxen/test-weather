@@ -13,6 +13,8 @@ data class CurrentWeather(
     val windSpeed: Double? = null,
     val windDirection: Double? = null,
     val windGusts: Double? = null,
+    /** Vero di giorno: sceglie fra sole e luna nell'icona del widget. */
+    val isDay: Boolean = true,
 )
 
 data class DayForecast(
