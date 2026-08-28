@@ -6,4 +6,13 @@
         smentita in cima allo schermo.
     -->
     <string name="app_name">Weather</string>
+
+    <!--
+        I tre widget si scelgono da una lista in cui compare solo il nome: se si
+        chiamassero tutti "Weather" non ci sarebbe modo di sapere quale si sta
+        trascinando.
+    -->
+    <string name="widget_weather_label">Meteo attuale</string>
+    <string name="widget_moon_label">Luna</string>
+    <string name="widget_air_label">Qualità dell\'aria</string>
 </resources>
