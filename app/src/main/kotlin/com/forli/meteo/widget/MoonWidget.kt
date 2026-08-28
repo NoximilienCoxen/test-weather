@@ -4,11 +4,17 @@ import android.content.Context
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import com.forli.meteo.R
 import com.forli.meteo.ui.home.MoonPhase
+import com.forli.meteo.widget.paint.WidgetCanvas
+import com.forli.meteo.widget.paint.WidgetInk
+import com.forli.meteo.widget.paint.WidgetType
+import com.forli.meteo.widget.paint.moonArt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
@@ -21,43 +27,47 @@ import kotlin.math.roundToInt
  */
 class MoonWidget : GlanceAppWidget() {
 
-    override val sizeMode = WidgetSizes
+    override val sizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val palette = WidgetPrefs(context).load(appWidgetIdOf(context, id)).palette()
+        val appWidgetId = appWidgetIdOf(context, id)
         val phase = MoonPhase.at(LocalDate.now())
-        val segment = MoonSegment.of(phase)
-        val illuminated = (MoonPhase.illumination(phase) * 100).roundToInt()
+        val illuminated = MoonPhase.illumination(phase)
+        val label = MoonSegment.of(phase).label
+
+        val frame = WidgetCanvas.plan(context, appWidgetId)
+        val ink = WidgetInk.of(context)
+        val type = WidgetType(context)
+        val bitmap = withContext(Dispatchers.Default) {
+            WidgetCanvas.paint(frame, ink.background) {
+                moonArt(phase, illuminated, label, type, ink)
+            }
+        }
+
+        val spoken = "Luna, ${label.lowercase()}, " +
+            "${(illuminated * 100).roundToInt()} per cento illuminata"
 
         provideContent {
-            WidgetFrame(
-                value = "$illuminated%",
-                label = "LUNA",
-                caption = segment.label,
-                icon = segment.icon,
-                palette = palette,
-                onClick = actionRunCallback<RefreshMoonAction>(),
-            )
+            WidgetImage(bitmap, spoken, actionRunCallback<RefreshMoonAction>())
         }
     }
 }
 
 /**
- * Gli otto nomi con cui si chiama la luna, e la sagoma di ciascuno.
+ * Gli otto nomi con cui si chiama la luna.
  *
- * Otto e non un disegno continuo: Glance non sa disegnare, puo' solo mostrare
- * un'immagine gia' pronta, e otto sagome bastano a riconoscere a colpo d'occhio
- * a che punto del mese si e'.
+ * Restano i nomi, non le sagome: la fase adesso viene tracciata per intero, e
+ * scegliere fra otto disegni fissi mostrava la luna di due giorni prima.
  */
-internal enum class MoonSegment(val label: String, val icon: Int) {
-    NOVILUNIO("NOVILUNIO", R.drawable.ic_moon_new),
-    CRESCENTE("LUNA CRESCENTE", R.drawable.ic_moon_waxing_crescent),
-    PRIMO_QUARTO("PRIMO QUARTO", R.drawable.ic_moon_first_quarter),
-    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE", R.drawable.ic_moon_waxing_gibbous),
-    PLENILUNIO("PLENILUNIO", R.drawable.ic_moon_full),
-    GIBBOSA_CALANTE("GIBBOSA CALANTE", R.drawable.ic_moon_waning_gibbous),
-    ULTIMO_QUARTO("ULTIMO QUARTO", R.drawable.ic_moon_last_quarter),
-    CALANTE("LUNA CALANTE", R.drawable.ic_moon_waning_crescent),
+internal enum class MoonSegment(val label: String) {
+    NOVILUNIO("NOVILUNIO"),
+    CRESCENTE("LUNA CRESCENTE"),
+    PRIMO_QUARTO("PRIMO QUARTO"),
+    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE"),
+    PLENILUNIO("PLENILUNIO"),
+    GIBBOSA_CALANTE("GIBBOSA CALANTE"),
+    ULTIMO_QUARTO("ULTIMO QUARTO"),
+    CALANTE("LUNA CALANTE"),
     ;
 
     companion object {
