@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
@@ -108,7 +109,9 @@ internal object WidgetCanvas {
         CanvasDrawScope().draw(
             Density(frame.scale, 1f),
             LayoutDirection.Ltr,
-            Canvas(bitmap),
+            // L'involucro condivide i pixel con la bitmap: disegnare qui e'
+            // disegnare la', non se ne fa una copia.
+            Canvas(bitmap.asImageBitmap()),
             Size(frame.widthPx.toFloat(), frame.heightPx.toFloat()),
         ) {
             drawRoundRect(
