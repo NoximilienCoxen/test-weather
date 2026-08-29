@@ -1,11 +1,12 @@
 package com.forli.meteo.widget
 
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -15,7 +16,6 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
@@ -27,17 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-/**
- * Chiave nello stato interno Glance che funge da trigger di re-render.
- *
- * Glance osserva il proprio stato con un Flow: qualsiasi modifica a questa
- * chiave garantisce che provideGlance venga rieseguito immediatamente.
- * Senza questa chiave, update() non rilancia provideGlance perche' Glance
- * non vede cambiamenti nel suo stato interno (il DataStore esterno
- * widget_config e' invisibile al framework Glance).
- */
-private val LAST_CONFIG_UPDATE_KEY = longPreferencesKey("last_config_update")
 
 /**
  * Il widget, che ormai e' un'immagine sola.
@@ -154,24 +143,27 @@ enum class WidgetKind {
 }
 
 /**
- * Ridisegna il widget appena configurato e **attende** il completamento.
+ * Ridisegna il widget appena configurato forzando una nuova sessione Glance.
  *
- * Serve davvero, e non e' una cortesia: il lanciatore aggancia il widget
- * **prima** di aprire la configurazione, quindi a quel punto e' gia' stato
- * disegnato una volta con le preferenze ancora vuote. Senza questo ridisegno
- * la tinta appena scelta non comparirebbe fino al risveglio successivo.
+ * Il problema: Glance con SizeMode.Exact apre una sessione corta — esegue
+ * provideGlance, emette il contenuto, e chiude la sessione (SessionWorker).
+ * Dopo la chiusura, chiamate a update() o a updateAppWidgetState() non hanno
+ * effetto perche' non c'e' nessun Flow attivo che le osservi.
  *
- * Garanzia anti-race: `WidgetPrefs.save()` e' una suspend function che
- * completa il flush su DataStore prima di tornare. `update()` viene chiamato
- * solo dopo quel completamento, cosi' `provideGlance` legge sempre le
- * preferenze gia' scritte. `withContext(Dispatchers.IO)` forza l'esecuzione
- * sul pool IO, lo stesso usato da DataStore internamente, eliminando qualsiasi
- * coda di scrittura pendente prima che Glance legga.
+ * La soluzione: inviare ACTION_APPWIDGET_UPDATE direttamente al receiver
+ * del widget. Questo e' esattamente cio' che il sistema fa ogni 30 minuti
+ * tramite updatePeriodMillis. Il receiver (GlanceAppWidgetReceiver) risponde
+ * aprendo una nuova sessione Glance da zero, che esegue provideGlance e legge
+ * le preferenze aggiornate dal DataStore.
+ *
+ * Il DataStore (widget_config) e' gia' stato scritto da save() prima che
+ * questa funzione venga chiamata: il nuovo provideGlance trovera' i dati
+ * corretti al primo accesso.
  */
 internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
 
-    // Conferma che il DataStore esterno contenga i dati aggiornati.
+    // Conferma che il DataStore contenga i dati aggiornati prima di procedere.
     val confirmedConfig = withContext(Dispatchers.IO) {
         WidgetPrefs(context).load(appWidgetId)
     }
@@ -182,20 +174,22 @@ internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: Wid
             "place=${confirmedConfig.place?.name ?: "null"}",
     )
 
-    val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
-
-    // PUNTO CRITICO: scrive un timestamp nello stato INTERNO di Glance.
-    // Glance osserva il proprio stato con un Flow: qualsiasi modifica
-    // garantisce che provideGlance venga rieseguito immediatamente.
-    // Senza questo passaggio, update() non rilancia provideGlance perche'
-    // Glance non vede cambiamenti nel suo stato interno (il DataStore
-    // esterno widget_config e' invisibile al framework Glance).
-    updateAppWidgetState(context, glanceId) { prefs ->
-        prefs[LAST_CONFIG_UPDATE_KEY] = System.currentTimeMillis()
+    // Determina la classe receiver corretta per questo tipo di widget.
+    val receiverClass = when (resolved) {
+        WidgetKind.METEO -> WeatherWidgetReceiver::class.java
+        WidgetKind.LUNA -> MoonWidgetReceiver::class.java
+        WidgetKind.ARIA -> AirQualityWidgetReceiver::class.java
     }
-    Log.d("WidgetResolve", "refreshWidget: stato Glance toccato → provideGlance verra' rieseguito")
 
-    resolved.widget().update(context, glanceId)
+    // Invia ACTION_APPWIDGET_UPDATE al receiver specifico con l'id del widget.
+    // Questo e' il meccanismo nativo del sistema: apre una nuova sessione
+    // Glance da zero e garantisce l'esecuzione di provideGlance.
+    val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).apply {
+        component = ComponentName(context, receiverClass)
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+    }
+    context.sendBroadcast(intent)
+    Log.d("WidgetResolve", "refreshWidget: broadcast ACTION_APPWIDGET_UPDATE inviato → nuova sessione Glance")
 }
 
 /**
