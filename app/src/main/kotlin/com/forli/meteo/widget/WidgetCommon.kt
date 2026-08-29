@@ -24,6 +24,7 @@ import com.forli.meteo.data.Place
 import com.forli.meteo.prefs.SettingsPrefs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -181,9 +182,20 @@ internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: Wid
         WidgetKind.ARIA -> AirQualityWidgetReceiver::class.java
     }
 
+    // Prima di inviare il broadcast attendiamo che la sessione Glance
+    // corrente si chiuda. Se il widget e' appena stato renderizzato per
+    // la prima volta (provideGlance iniziale), la sessione e' ancora aperta
+    // e il broadcast verrebbe ignorato. Il SessionWorker di Glance impiega
+    // tipicamente meno di un secondo a chiudersi dopo aver emesso il contenuto.
+    // 800ms e' sufficiente nella pratica e non rallenta percettibilmente l'UX
+    // perche' avviene mentre l'animazione di chiusura della config Activity
+    // e' ancora in corso.
+    delay(800)
+
     // Invia ACTION_APPWIDGET_UPDATE al receiver specifico con l'id del widget.
     // Questo e' il meccanismo nativo del sistema: apre una nuova sessione
-    // Glance da zero e garantisce l'esecuzione di provideGlance.
+    // Glance da zero e garantisce l'esecuzione di provideGlance con le
+    // preferenze aggiornate gia' presenti nel DataStore.
     val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).apply {
         component = ComponentName(context, receiverClass)
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
