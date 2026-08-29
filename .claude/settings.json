@@ -5,8 +5,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git checkout main",
-            "statusMessage": "Checking out main branch..."
+            "command": "echo \"branch: $(git rev-parse --abbrev-ref HEAD) — lo sviluppo va su claude/**, la compilazione la verifica la CI (niente SDK in questo container)\"",
+            "statusMessage": "Verifica del branch di lavoro..."
           }
         ]
       }

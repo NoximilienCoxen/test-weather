@@ -1,7 +1,6 @@
 package com.forli.meteo.widget
 
 import android.content.Context
-import android.util.Log
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidget
@@ -29,15 +28,7 @@ class WeatherWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = appWidgetIdOf(context, id)
 
-        // Legge la configurazione dell'istanza e logga ogni campo per debug.
-        val config = WidgetPrefs(context).load(appWidgetId)
-        Log.d("WidgetResolve", "=== WeatherWidget provideGlance ===")
-        Log.d("WidgetResolve", "appWidgetId=$appWidgetId")
-        Log.d("WidgetResolve", "config.useLocation=${config.useLocation}")
-        Log.d("WidgetResolve", "config.place=${config.place?.name} (lat=${config.place?.latitude}, lon=${config.place?.longitude})")
-
-        val place = config.resolvePlace(context)
-        Log.d("WidgetResolve", "place SCELTO => ${place.name} (lat=${place.latitude}, lon=${place.longitude})")
+        val place = WidgetPrefs(context).load(appWidgetId).resolvePlace(context)
 
         val forecast = WeatherRepository(place).load().getOrNull()
 

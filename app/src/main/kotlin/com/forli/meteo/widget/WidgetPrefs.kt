@@ -1,7 +1,6 @@
 package com.forli.meteo.widget
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -73,12 +72,6 @@ class WidgetPrefs(private val context: Context) {
         } else {
             null
         }
-
-        Log.d(
-            "WidgetPrefs",
-            "load(id=$appWidgetId): useLocation=$useLocation " +
-                "place=${place?.name} lat=$lat lon=$lon",
-        )
         return WidgetConfig(useLocation = useLocation, place = place)
     }
 
@@ -123,13 +116,6 @@ class WidgetPrefs(private val context: Context) {
                 prefs.remove(paeseKey(appWidgetId))
             }
         }
-
-        Log.d(
-            "WidgetPrefs",
-            "save(id=$appWidgetId): useLocation=${config.useLocation} " +
-                "place=${config.place?.name} " +
-                "lat=${config.place?.latitude} lon=${config.place?.longitude}",
-        )
     }
 
     /**

@@ -113,6 +113,10 @@ Una richiesta porta `current`, `daily` (7 giorni, alba e tramonto compresi) e
 `hourly`. La ricerca dei luoghi passa dalla geocodifica di Open-Meteo.
 Localita' e unita' vivono in DataStore (`prefs/SettingsPrefs.kt`).
 
+**Sulla Home del telefono ci sono tre widget** — tempo attuale, fase lunare,
+qualita' dell'aria — ognuno con la sua localita', descritti nella sezione
+4-ter.
+
 **Le temperature arrivano sempre in Celsius** e si convertono al momento di
 scriverle: chiedere i Fahrenheit alla rete vorrebbe dire rifare la richiesta per
 cambiare un'unita' di misura.
@@ -217,8 +221,9 @@ vertici e dividendo per la profondita'.
 **Il verso dei contorni dipende dal font**, quindi non si assume: si deduce
 misurando se sul contorno piu' grande le normali puntano fuori.
 
-**Font**: Archivo variabile in `assets/fonts/`, assi `wght` 100-900 e `wdth`
-62-125. Le proporzioni si regolano in `NumberType` senza cambiare file.
+**Font**: Archivo variabile in `res/font/archivo_variable.ttf`, assi `wght`
+100-900 e `wdth` 62-125. Le proporzioni si regolano in `NumberType` senza
+cambiare file.
 
 ### Il tetto, dichiarato
 
@@ -269,6 +274,79 @@ non il codice, e un JSON Lottie scritto a mano non e' una strada seria.
 **Il benvenuto e' l'unico posto in cui l'app disegna in continuazione.** Altrove
 vale la trappola #8 - zero fotogrammi a schermo immobile. Li' il movimento e' il
 contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
+
+---
+
+## 4-ter. I widget
+
+`widget/` — tre widget Glance, una configurazione sola, e un livello di
+pittura tutto suo (`widget/paint/`).
+
+**I widget sono immagini dipinte, non alberi di Glance.** `provideGlance`
+raccoglie i dati, dipinge una `Bitmap` su `Dispatchers.Default` e la consegna
+a un solo `Image`. Il motivo e' che Glance parla in RemoteViews, e le
+RemoteViews non sanno disegnare quello che disegna l'app: senza la pittura, i
+widget sarebbero stati testo e icone, cioe' un'altra applicazione appiccicata
+a fianco di questa.
+
+- `paint/WidgetCanvas.kt` — misura il riquadro vero (`Frame`: pixel, densita',
+  raggio d'angolo) e apre una tela sopra una bitmap. Dentro il disegno tutto
+  si misura in dp: un pixel scritto a mano si rompe alla prima densita'
+  diversa.
+- `paint/WidgetInk.kt` — la tavolozza. Disegnando su un'immagine la scelta fra
+  chiaro e scuro non la puo' piu' fare il sistema, quindi la si fa qui,
+  leggendo le stesse risorse `values/` e `values-night/` dell'app.
+- `paint/WidgetType.kt` — le scritte con Archivo, assi variabili sul `Paint`
+  come nella scultura.
+- `paint/CurrentArt.kt`, `MoonArt.kt`, `AirArt.kt` — un disegno per widget;
+  `WidgetParts.kt` e `WidgetScene.kt` sono i pezzi in comune.
+
+**I tre widget**: `WeatherWidget` (localita', temperatura, condizione),
+`MoonWidget` (fase calcolata dalla data, **l'unico che non tocca la rete**),
+`AirQualityWidget` (host diverso dal meteo: `air-quality-api.open-meteo.com`,
+con un contratto suo che la CI interroga a parte).
+
+**`SizeMode.Exact` e non a scaglioni**: coi tagli predefiniti Glance
+disegnerebbe un'immagine per ciascuno e il sistema ne sommerebbe il peso.
+L'immagine e' stesa a tutto riquadro e **deformata**, non contenuta: e' gia'
+della forma esatta del riquadro, e "contenere" lascerebbe due bande da cui si
+vede la schermata sotto.
+
+**Dove guarda un widget** lo decide `WidgetConfig.resolvePlace`, con tre regole
+in ordine: col GPS richiesto si tenta la posizione e si ricade sulla citta'
+**dell'istanza** se non arriva; senza GPS si usa tassativamente la citta'
+dell'istanza; solo un widget mai configurato ricade sulla citta' globale
+dell'app. La sequenza conta: la scorciatoia sbagliata qui e' ricadere sulla
+citta' dell'app, che fa apparire il widget "giusto ma di un'altra citta'".
+
+**La configurazione e' una Activity sola per tutti e tre** (`configure` nei
+provider): quale widget sia lo si chiede al sistema (`WidgetKind.of`), invece
+di scrivere tre Activity identiche. Se il sistema non risponde non si tira a
+indovinare — ridisegnare il widget sbagliato vuol dire mettere la luna al
+posto della temperatura.
+
+**Le scelte stanno in un DataStore separato** (`widget_config`), una riga per
+istanza, in **campi primitivi** e non in un blob JSON: il parsing che fallisce
+in silenzio e ricade sulla citta' dell'app e' esattamente il difetto che e'
+costato i sei tentativi qui sotto. `onDeleted` le butta via, chiavi vecchie
+comprese, o l'archivio cresce a ogni widget aggiunto e tolto.
+
+### Il punto molle, dichiarato
+
+**Il ridisegno dopo la configurazione e' appeso a un `delay(800)`.** Glance con
+`SizeMode.Exact` apre una sessione corta e la chiude; dopo, `update()` non ha
+piu' nessun Flow che la osservi, quindi il ridisegno passa da un broadcast
+`ACTION_APPWIDGET_UPDATE` al receiver — che pero' va inviato **dopo** che la
+sessione si e' chiusa. Gli ottocento millisecondi sono la stima di quel tempo.
+
+Funziona sul telefono provato, ma e' la trappola #31 in un altro vestito:
+aspettare una durata invece che un fatto. Sotto carico la sessione puo'
+chiudersi piu' tardi, e allora il broadcast si perde e il widget resta quello
+di prima. **Serve un'attesa su qualcosa di osservabile**, non un numero.
+
+Da sapere prima di rimetterci le mani: il widget su una home vera **non e' mai
+stato verificato** (sezione 8), e la catena di sei commit `fix(widget)` in
+cronologia e' tutta su questo stesso sintomo.
 
 ---
 
@@ -581,8 +659,9 @@ era un numero di secondi. Quando uno scatto usciva "IN ATTESA DEI DATI" il
 rimedio era alzarlo: otto, poi quattordici, poi diciannove. A diciannove uno
 scatto su undici e' uscito lo stesso vuoto — ed e' li' che si vede che il numero
 non era mai il problema. Adesso l'app scrive una riga di log quando la
-previsione atterra (`meteo: previsione pronta`, l'unico `Log` di tutto il
-progetto) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
+previsione atterra (`meteo: previsione pronta`, l'unica riga di log che il
+progetto scriva quando va tutto bene: le altre due sono `Log.w` su rami
+d'errore) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
 serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
 `uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
 ferma e la schermata principale anima in continuazione per scelta.
@@ -628,7 +707,9 @@ comunque a ogni fotogramma.
   rovescio
 - **come si legge il grado** accanto a una cifra a tre caratteri (`-10`, `100`):
   li' il riadattamento in larghezza scatta e la cifra si rimpicciolisce
-- il **widget Glance** su una home reale (legge la localita' scelta, non provato)
+- i **tre widget** su una home vera: nessuno dei tre e' mai stato visto
+  fuori dall'emulatore, e il ridisegno dopo la configurazione dipende da
+  un'attesa a tempo (sezione 4-ter)
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 

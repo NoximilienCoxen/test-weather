@@ -76,18 +76,11 @@ class WidgetConfigActivity : ComponentActivity() {
             )
         }
 
-        Log.d(
-            TAG,
-            "save OK: widget=$appWidgetId useLocation=$useLocation " +
-                "place=${place?.name} lat=${place?.latitude} lon=${place?.longitude} " +
-                "admin=${place?.admin} country=${place?.country}",
-        )
-
         // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
         // una volta, prima che questa schermata si aprisse, con le preferenze
-        // ancora vuote. refreshWidget() legge le preferenze su IO per
-        // confermare il flush prima di schedulare il re-render di Glance:
-        // questo elimina la race condition tra save() e provideGlance().
+        // ancora vuote. La scrittura qui sopra e' gia' conclusa quando
+        // refreshWidget() parte, quindi la nuova sessione di Glance trova
+        // le preferenze aggiornate.
         runCatching { refreshWidget(this, appWidgetId, kind) }
             .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
 
