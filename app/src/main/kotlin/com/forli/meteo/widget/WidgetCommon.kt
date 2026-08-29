@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -14,6 +15,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
@@ -25,6 +27,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+/**
+ * Chiave nello stato interno Glance che funge da trigger di re-render.
+ *
+ * Glance osserva il proprio stato con un Flow: qualsiasi modifica a questa
+ * chiave garantisce che provideGlance venga rieseguito immediatamente.
+ * Senza questa chiave, update() non rilancia provideGlance perche' Glance
+ * non vede cambiamenti nel suo stato interno (il DataStore esterno
+ * widget_config e' invisibile al framework Glance).
+ */
+private val LAST_CONFIG_UPDATE_KEY = longPreferencesKey("last_config_update")
 
 /**
  * Il widget, che ormai e' un'immagine sola.
@@ -157,16 +170,31 @@ enum class WidgetKind {
  */
 internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
-    // Forza la lettura delle preferenze su IO per svuotare la coda DataStore
-    // prima di schedulare il ridisegno: elimina la race condition tra save()
-    // e il primo provideGlance().
+
+    // Conferma che il DataStore esterno contenga i dati aggiornati.
     val confirmedConfig = withContext(Dispatchers.IO) {
         WidgetPrefs(context).load(appWidgetId)
     }
-    Log.d("WidgetResolve", "refreshWidget: widget=$appWidgetId kind=${resolved.name} " +
-        "| DataStore confermato → useLocation=${confirmedConfig.useLocation}, " +
-        "place=${confirmedConfig.place?.name ?: "null"}")
+    Log.d(
+        "WidgetResolve",
+        "refreshWidget: widget=$appWidgetId kind=${resolved.name} " +
+            "| DataStore confermato → useLocation=${confirmedConfig.useLocation}, " +
+            "place=${confirmedConfig.place?.name ?: "null"}",
+    )
+
     val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
+
+    // PUNTO CRITICO: scrive un timestamp nello stato INTERNO di Glance.
+    // Glance osserva il proprio stato con un Flow: qualsiasi modifica
+    // garantisce che provideGlance venga rieseguito immediatamente.
+    // Senza questo passaggio, update() non rilancia provideGlance perche'
+    // Glance non vede cambiamenti nel suo stato interno (il DataStore
+    // esterno widget_config e' invisibile al framework Glance).
+    updateAppWidgetState(context, glanceId) { prefs ->
+        prefs[LAST_CONFIG_UPDATE_KEY] = System.currentTimeMillis()
+    }
+    Log.d("WidgetResolve", "refreshWidget: stato Glance toccato → provideGlance verra' rieseguito")
+
     resolved.widget().update(context, glanceId)
 }
 
