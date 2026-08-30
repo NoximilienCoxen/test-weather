@@ -35,6 +35,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
+import com.forli.meteo.ui.temperature.TemperatureDetailScreen
 import com.forli.meteo.ui.motion.findLifecycleOwner
 import com.forli.meteo.ui.motion.rememberDeviceTilt
 import com.forli.meteo.ui.settings.SettingsScreen
@@ -185,7 +186,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                             onDragStopped = { velocity -> release(velocity) },
                         ),
                 ) {
-                    DetailScreen(state = state, viewModel = viewModel, tilt = tilt)
+                    TemperatureDetailScreen(state = state, viewModel = viewModel)
                 }
             }
 
