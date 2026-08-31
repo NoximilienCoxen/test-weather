@@ -24,17 +24,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
+import com.forli.meteo.ui.temperature.DayDetailScreen
 import com.forli.meteo.ui.temperature.TemperatureDetailScreen
 import com.forli.meteo.ui.motion.findLifecycleOwner
 import com.forli.meteo.ui.motion.rememberDeviceTilt
@@ -173,20 +179,61 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             )
 
             if (sheetVisible) {
+                // Il contenuto del dettaglio scorre, e un `draggable` sul
+                // contenitore non puo' convivere con uno scorrimento interno:
+                // il figlio riceve il tocco per primo e il foglio non si
+                // chiuderebbe mai piu'. Con il nesting il gesto e' uno solo e
+                // sono i due a spartirselo - prima il contenuto, e il foglio
+                // solo su quello che avanza.
+                val sheetScroll = remember(sheet, heightPx) {
+                    SheetNestedScroll(sheet, heightPx)
+                }
+                BackHandler(enabled = sheetVisible, onBack = sheet::closeFully)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .offset { IntOffset(0, ((1f - sheet.open) * heightPx).roundToInt()) }
-                        .background(colors.background)
+                        // Sfondo scuro fisso: le schermate di dettaglio sono
+                        // sempre scure indipendentemente dall'ora del giorno.
+                        // Di mezzogiorno il fondo tema e' grigio chiaro e il
+                        // testo delle schede (bianco/grigio chiaro) spariva.
+                        .background(DetailPanelBackground)
                         .systemBarsPadding()
-                        .draggable(
-                            state = rememberDraggableState { delta -> sheet.drag(delta, heightPx) },
-                            orientation = Orientation.Vertical,
-                            onDragStarted = { sheet.begin() },
-                            onDragStopped = { velocity -> release(velocity) },
-                        ),
+                        .nestedScroll(sheetScroll),
                 ) {
-                    TemperatureDetailScreen(state = state, viewModel = viewModel)
+                    TemperatureDetailScreen(
+                        state = state,
+                        viewModel = viewModel,
+                        tilt = tilt,
+                        onBack = sheet::closeFully,
+                    )
+                }
+            }
+
+            // Il dettaglio di un giorno entra da destra: si scende dentro
+            // qualcosa, e il verso lo racconta. Le impostazioni entrano da
+            // sinistra perche' li' sta il loro pulsante.
+            val dayOpen = state.dayDetail != null
+            val dayShift by animateFloatAsState(
+                targetValue = if (dayOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "giorno",
+            )
+            if (dayShift > 0.001f) {
+                BackHandler(enabled = dayOpen, onBack = viewModel::closeDayDetail)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) }
+                        // Stesso sfondo scuro fisso del foglio principale.
+                        .background(DetailPanelBackground)
+                        .systemBarsPadding(),
+                ) {
+                    DayDetailScreen(
+                        state = state,
+                        viewModel = viewModel,
+                        onBack = viewModel::closeDayDetail,
+                    )
                 }
             }
 
@@ -281,16 +328,35 @@ private class SheetGesture(private val scope: CoroutineScope) {
      * il tocco sulla cifra della temperatura, che non ha ne' un delta ne' una
      * velocita' da darle in pasto a `release`.
      */
-    fun openFully() {
+    fun openFully() = glideTo(1f)
+
+    /** Chiude il foglio: la freccia in alto a sinistra e il tasto indietro. */
+    fun closeFully() = glideTo(0f)
+
+    private fun glideTo(target: Float) {
         settling?.cancel()
         settling = scope.launch {
             animate(
                 initialValue = raised.floatValue,
-                targetValue = 1f,
+                targetValue = target,
                 animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
             ) { value, _ -> raised.floatValue = value }
             settling = null
         }
+    }
+
+    /**
+     * Il trascinamento che arriva da **dentro** il foglio.
+     *
+     * Muove solo il foglio e mai il tiro per ricaricare: quello appartiene alla
+     * schermata principale, e un avanzo di scorrimento nato dentro il dettaglio
+     * non deve poter chiedere dati alla rete. Senza questa porta separata,
+     * arrivando in fondo alla corsa il valore scivolava in `pulled` e la
+     * schermata sotto si ritrovava armata per una ricarica che nessuno aveva
+     * chiesto.
+     */
+    fun dragSheet(deltaPx: Float, heightPx: Float) {
+        raised.floatValue = (raised.floatValue - deltaPx / heightPx).coerceIn(0f, 1f)
     }
 
     /** Torna vero se il gesto e' arrivato abbastanza in giu' da chiedere i dati. */
@@ -323,6 +389,64 @@ private class SheetGesture(private val scope: CoroutineScope) {
         return asked
     }
 }
+
+/**
+ * Il ponte fra lo scorrimento del dettaglio e il foglio che lo contiene.
+ *
+ * Le due meta' del gesto verticale non sono in concorrenza, sono in fila: il
+ * contenuto scorre finche' ha strada, e solo l'avanzo muove il foglio. Da fermo
+ * in cima, il dito che va giu' non ha piu' contenuto da scorrere e quello che
+ * resta chiude; da foglio socchiuso, il dito che va su lo rialza **prima** di
+ * toccare il contenuto, altrimenti si scorrerebbe dentro una schermata che non
+ * e' ancora arrivata al suo posto.
+ */
+@Stable
+private class SheetNestedScroll(
+    private val sheet: SheetGesture,
+    private val heightPx: Float,
+) : NestedScrollConnection {
+
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        val delta = available.y
+        if (delta >= 0f || sheet.open >= 1f) return Offset.Zero
+        sheet.begin()
+        sheet.dragSheet(delta, heightPx)
+        return Offset(0f, delta)
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource,
+    ): Offset {
+        val delta = available.y
+        if (delta <= 0f) return Offset.Zero
+        sheet.begin()
+        sheet.dragSheet(delta, heightPx)
+        return Offset(0f, delta)
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity = settle(available)
+
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
+        settle(available)
+
+    private fun settle(available: Velocity): Velocity {
+        if (sheet.open >= 1f) return Velocity.Zero
+        sheet.release(available.y)
+        return available
+    }
+}
+
+/**
+ * Sfondo fisso per i pannelli di dettaglio (temperatura e giorno).
+ *
+ * Scuro a qualunque ora: le schede e i grafici usano palette chiare fisse
+ * (bianco, grigio chiaro) che sparirebbero su un fondo chiaro di mezzogiorno.
+ * Non e' il nero pieno: una sfumatura antracite (identica a NightBackground)
+ * lascia respirare le card scure con bordo sottile.
+ */
+private val DetailPanelBackground = Color(0xFF1D2026)
 
 /** Oltre questa velocita' il gesto decide da solo, senza guardare la posizione. */
 private const val SNAP_VELOCITY = 800f

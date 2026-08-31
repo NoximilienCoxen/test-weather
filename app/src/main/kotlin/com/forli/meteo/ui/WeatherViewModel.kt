@@ -15,6 +15,7 @@ import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.home.nearestHourIndex
+import com.forli.meteo.ui.temperature.DetailMode
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,6 +44,19 @@ data class UiState(
     val selectedDay: Int = 0,
     /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
     val weekMode: Boolean = false,
+    /** Quale grandezza mostra la schermata di dettaglio. */
+    val detailMode: DetailMode = DetailMode.TEMPERATURA,
+    /**
+     * Il giorno aperto nel dettaglio, o nullo se quella schermata e' chiusa.
+     *
+     * Distinto da [selectedDay] apposta: `selectedDay` dice **quale giorno si
+     * sta guardando** e sopravvive alla chiusura, questo dice **se la schermata
+     * e' in scena**. Con un campo solo, tornare indietro avrebbe voluto dire
+     * dimenticare anche il giorno.
+     */
+    val dayDetail: Int? = null,
+    /** false = EFFETTIVA, true = PERCEPITI, nel dettaglio del giorno. */
+    val feelsLike: Boolean = false,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -238,44 +252,65 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
                 val outcome = repository.load()
-                outcome
-                    .onSuccess { forecast ->
-                        // L'unico log dell'app, e non serve a chi sviluppa:
-                        // serve alla cattura in CI, che finora aspettava **a
-                        // tempo** che i dati arrivassero. Un'attesa a tempo e'
-                        // una scommessa sulla rete del runner, e la scommessa
-                        // si perde: otto secondi non bastavano, quattordici
-                        // nemmeno, e a diciannove uno scatto su undici e'
-                        // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
-                        // qui l'attesa smette di essere una durata e diventa
-                        // una condizione.
-                        Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
-                        _state.update { current ->
-                            val last = (forecast.hours.size - 1).coerceAtLeast(0)
-                            val hour = when {
-                                // L'aggancio di verifica vince su tutto.
-                                pendingHour != null -> pendingHour!!.coerceIn(0, last)
-                                // Su una **ricarica** l'ora scelta resta quella:
-                                // chi stava guardando le sei di sera non deve
-                                // ritrovarsi sbalzato ad adesso solo perche' e'
-                                // arrivata una risposta dalla rete.
-                                current.forecast != null -> current.selectedHour.coerceIn(0, last)
-                                // All'apertura invece si mostra l'ora corrente,
-                                // non la prima disponibile: e' cio' che ci si
-                                // aspetta di vedere. Ed e' l'ora della
-                                // localita', non quella dell'orologio di chi
-                                // guarda.
-                                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
+                    outcome
+                        .onSuccess { forecast ->
+                            // L'unico log dell'app, e non serve a chi sviluppa:
+                            // serve alla cattura in CI, che finora aspettava **a
+                            // tempo** che i dati arrivassero. Un'attesa a tempo e'
+                            // una scommessa sulla rete del runner, e la scommessa
+                            // si perde: otto secondi non bastavano, quattordici
+                            // nemmeno, e a diciannove uno scatto su undici e'
+                            // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
+                            // qui l'attesa smette di essere una durata e diventa
+                            // una condizione.
+                            Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
+                            _state.update { current ->
+                                val last = (forecast.hours.size - 1).coerceAtLeast(0)
+                                val hour = when {
+                                    // L'aggancio di verifica vince su tutto.
+                                    pendingHour != null -> pendingHour!!.coerceIn(0, last)
+                                    // Su una **ricarica** l'ora scelta resta quella:
+                                    // chi stava guardando le sei di sera non deve
+                                    // ritrovarsi sbalzato ad adesso solo perche' e'
+                                    // arrivata una risposta dalla rete.
+                                    current.forecast != null -> current.selectedHour.coerceIn(0, last)
+                                    // All'apertura invece si mostra l'ora corrente,
+                                    // non la prima disponibile: e' cio' che ci si
+                                    // aspetta di vedere. Ed e' l'ora della
+                                    // localita', non quella dell'orologio di chi
+                                    // guarda.
+                                    else -> nearestHourIndex(forecast.hours, forecast.nowThere())
+                                }
+                                current.copy(
+                                    loading = false,
+                                    refreshing = false,
+                                    forecast = forecast,
+                                    error = null,
+                                    selectedHour = hour,
+                                )
                             }
-                            current.copy(
-                                loading = false,
-                                refreshing = false,
-                                forecast = forecast,
-                                error = null,
-                                selectedHour = hour,
-                            )
+
+                            // La Norma storica arriva dopo, in background, e
+                            // aggiorna i giorni gia' visibili senza bloccare la
+                            // schermata. Se fallisce non succede nulla: il grafico
+                            // la mostra solo quando c'e'.
+                            viewModelScope.launch {
+                                WeatherRepository.loadNorm(place, forecast.days)
+                                    .onSuccess { norms ->
+                                        if (norms.isEmpty()) return@onSuccess
+                                        _state.update { current ->
+                                            val f = current.forecast ?: return@update current
+                                            current.copy(
+                                                forecast = f.copy(
+                                                    days = f.days.map { day ->
+                                                        day.copy(normTemp = norms[day.date])
+                                                    },
+                                                ),
+                                            )
+                                        }
+                                    }
+                            }
                         }
-                    }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
                         _state.update {
@@ -337,6 +372,25 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
+
+    fun setDetailMode(mode: DetailMode) = _state.update { it.copy(detailMode = mode) }
+
+    /**
+     * Apre il dettaglio di un giorno preciso, toccandolo nella card della
+     * settimana. Porta con se' anche `selectedDay`, cosi' le linguette in cima
+     * alla schermata nuova si aprono gia' sul giorno toccato.
+     */
+    fun openDayDetail(index: Int) {
+        _state.update { current ->
+            val last = (current.forecast?.days?.size ?: 1) - 1
+            val day = index.coerceIn(0, maxOf(last, 0))
+            current.copy(selectedDay = day, dayDetail = day)
+        }
+    }
+
+    fun closeDayDetail() = _state.update { it.copy(dayDetail = null) }
+
+    fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
 
     fun openSettings() = _state.update { it.copy(settingsOpen = true) }
 

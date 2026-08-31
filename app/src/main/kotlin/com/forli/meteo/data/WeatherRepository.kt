@@ -54,17 +54,18 @@ class WeatherRepository(
     }
 
     /**
-     * "best_match" di Open-Meteo risolve in ICON-D2 anche su punti italiani,
-     * piu' impreciso di ICON-2I (ARPAE/ItaliaMeteo): con AUTO in Italia si
-     * chiede quindi ICON-2I esplicitamente. Fuori Italia si lascia il
-     * best_match nativo (nessun parametro models). Una scelta esplicita
-     * dell'utente (es. ICON-2I) resta sempre quella che ha scelto.
+     * Quale modello passare all'API.
+     *
+     * Con AUTO si lascia `best_match` di Open-Meteo: sceglie lui il modello
+     * piu' adatto per la posizione richiesta e garantisce sempre 7 giorni
+     * completi nel blocco `daily`. ICON-2I (ARPAE/ItaliaMeteo) e' piu'
+     * preciso per l'Italia nelle prime 72 ore, ma copre solo ~3 giorni nel
+     * blocco `daily` — i giorni 4-7 tornano con tempMax/tempMin nulli e la
+     * curva settimanale si interrompe a meta'. Per questo non viene piu'
+     * forzato in automatico: chi lo vuole lo sceglie dalle impostazioni.
      */
-    private fun modelsQueryValue(): String? = when {
-        model != WeatherModel.AUTO -> model.apiValue
-        place.isItaly -> WeatherModel.ICON_2I.apiValue
-        else -> null
-    }
+    private fun modelsQueryValue(): String? =
+        if (model != WeatherModel.AUTO) model.apiValue else null
 
     private fun httpGet(url: String): String {
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
@@ -86,7 +87,11 @@ class WeatherRepository(
 
     companion object {
         const val FORECAST_ENDPOINT = "https://api.open-meteo.com/v1/forecast"
+        const val ARCHIVE_ENDPOINT = "https://archive-api.open-meteo.com/v1/archive"
         const val GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search"
+
+        /** Quanti anni di storico usare per calcolare la Norma. */
+        private const val NORM_YEARS = 10
 
         const val CURRENT_VARS =
             "temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m," +
@@ -101,6 +106,78 @@ class WeatherRepository(
                 "apparent_temperature_min,precipitation_sum,precipitation_probability_max," +
                 "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max," +
                 "relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,sunrise,sunset"
+
+        /**
+         * Media storica della temperatura per ogni giorno della previsione.
+         *
+         * Chiama l'API archivio degli ultimi [NORM_YEARS] anni per il mese
+         * che copre la maggior parte dei giorni previsti, ne calcola la media
+         * giornaliera e la restituisce come mappa data->valore. La chiamata e'
+         * leggera: un campo solo, al massimo 31 giorni per anno richiesto.
+         *
+         * Torna vuota senza eccezione se qualcosa va storto: la Norma e' un
+         * arricchimento, non un dato indispensabile, e il grafico la omette
+         * silenziosamente se non c'e'.
+         */
+        suspend fun loadNorm(place: Place, days: List<DayForecast>): Result<Map<LocalDate, Double>> =
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    if (days.isEmpty()) return@runCatching emptyMap()
+
+                    // Il mese piu' frequente fra i giorni previsti: di solito e'
+                    // sempre lo stesso, ma a cavallo di fine mese potrebbe cambiare.
+                    val month = days
+                        .groupingBy { it.date.month }
+                        .eachCount()
+                        .maxByOrNull { it.value }
+                        ?.key ?: days.first().date.month
+
+                    val today = LocalDate.now()
+                    val archiveJson = Json { ignoreUnknownKeys = true; isLenient = true }
+                    val normByDate = mutableMapOf<LocalDate, Double>()
+
+                    // Legge gli ultimi NORM_YEARS anni per questo mese.
+                    for (yearsBack in 1..NORM_YEARS) {
+                        val year = today.year - yearsBack
+                        val firstDay = LocalDate.of(year, month, 1)
+                        val lastDay = firstDay.withDayOfMonth(firstDay.lengthOfMonth())
+                        val url = buildString {
+                            append(ARCHIVE_ENDPOINT)
+                            append("?latitude=").append(place.latitude)
+                            append("&longitude=").append(place.longitude)
+                            append("&start_date=").append(firstDay)
+                            append("&end_date=").append(lastDay)
+                            append("&daily=temperature_2m_mean")
+                            append("&timezone=auto")
+                        }
+                        runCatching {
+                            val body = simpleHttpGet(url)
+                            val dto = archiveJson.decodeFromString<ArchiveResponse>(body)
+                            dto.daily?.let { d ->
+                                d.time.forEachIndexed { i, iso ->
+                                    val date = runCatching { LocalDate.parse(iso) }.getOrNull()
+                                        ?: return@forEachIndexed
+                                    val value = d.tempMean.getOrNull(i) ?: return@forEachIndexed
+                                    // Chiave: giorno-del-mese (anonimizzato all'anno 2000
+                                    // per aggregare fra anni diversi).
+                                    val key = LocalDate.of(2000, date.month, date.dayOfMonth)
+                                    normByDate[key] = (normByDate[key] ?: 0.0) + value
+                                }
+                            }
+                        } // errori di rete su singolo anno: si ignora quell'anno
+                    }
+
+                    // Divide per il numero di anni effettivi per ottenere la media.
+                    // Mappa il risultato sui giorni della previsione.
+                    val result = mutableMapOf<LocalDate, Double>()
+                    days.forEach { day ->
+                        val key = LocalDate.of(2000, day.date.month, day.date.dayOfMonth)
+                        val sum = normByDate[key] ?: return@forEach
+                        result[day.date] = sum / NORM_YEARS
+                    }
+                    result
+                }
+            }
 
         /**
          * Ricerca di localita' per nome, sempre su Open-Meteo e sempre senza
@@ -148,9 +225,42 @@ class WeatherRepository(
 }
 
 /**
+ * GET HTTP minimale condivisa fra le chiamate del companion object.
+ *
+ * Duplica intenzionalmente la logica di `httpGet` di istanza: il companion
+ * non puo' chiamare metodi di istanza, e una funzione di estensione su
+ * HttpURLConnection richiederebbe di aprire la connessione fuori dal try,
+ * rendendo il flusso piu' complicato senza vantaggi. La ripetizione e' ridotta:
+ * sono sette righe che fanno una cosa sola.
+ */
+private fun simpleHttpGet(url: String): String {
+    val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+        requestMethod = "GET"
+        connectTimeout = 10_000
+        readTimeout = 10_000
+        setRequestProperty("Accept", "application/json")
+    }
+    try {
+        val code = connection.responseCode
+        val stream = if (code in 200..299) connection.inputStream else connection.errorStream
+        val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
+        if (code !in 200..299) error("HTTP $code da Open-Meteo: ${text.take(200)}")
+        return text
+    } finally {
+        connection.disconnect()
+    }
+}
+
+/**
  * La barra racconta la giornata, non la settimana: l'API ne restituisce
  * centosessantotto, ma centosessantotto tratti in una barra sola sono
  * illeggibili.
+ *
+ * **Il taglio riguarda la barra, non la risposta.** Prima le altre
+ * centoquarantaquattro venivano buttate via qui, e con loro qualunque
+ * possibilita' di disegnare l'andamento orario di un giorno che non fosse
+ * oggi: il dettaglio di mercoledi' non aveva niente da mostrare perche' il
+ * repository aveva gia' deciso che non serviva a nessuno.
  */
 private const val HOURS_IN_DAY = 24
 
@@ -187,7 +297,7 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
         )
     }.orEmpty()
 
-    val hours = hourly?.time?.mapIndexedNotNull { i, iso ->
+    val allHours = hourly?.time?.mapIndexedNotNull { i, iso ->
         val at = iso.asDateTime() ?: return@mapIndexedNotNull null
         HourForecast(
             time = at,
@@ -198,10 +308,11 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             precipProbability = hourly.precipProbability.at(i),
             isDay = (hourly.isDay.at(i) ?: 1) == 1,
         )
-    }.orEmpty().take(HOURS_IN_DAY)
+    }.orEmpty()
 
     return Forecast(
-        hours = hours,
+        hours = allHours.take(HOURS_IN_DAY),
+        allHours = allHours,
         current = CurrentWeather(
             temperature = current?.temperature,
             apparent = current?.apparent,

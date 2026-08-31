@@ -97,8 +97,12 @@ fun skyColors(sky: SkyState): MeteoColors {
         warmth * 0.5f,
     )
     val text = lerp(NightText, DayText, day)
-    val label = lerp(text, background, 0.42f)
-    val line = lerp(text, background, 0.72f)
+    // Il mixing verso il fondo e' tenuto basso (0.28) in modo che l'etichetta
+    // abbia sempre contrasto sufficiente: a mezzogiorno il fondo e' grigio
+    // chiaro e con 0.42 il label diventava quasi invisibile. Con 0.28 resta
+    // leggibile a qualunque ora, pur distinguendosi dal testo principale.
+    val label = lerp(text, background, 0.28f)
+    val line = lerp(text, background, 0.55f)
 
     return MeteoColors(
         background = background,
