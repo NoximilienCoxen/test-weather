@@ -218,6 +218,15 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     private var pendingHour: Int? = null
 
+    /**
+     * Giorno di cui aprire il dettaglio, chiesto prima che i dati arrivino.
+     *
+     * Stessa ragione di [pendingHour]: l'intent arriva all'avvio, la previsione
+     * qualche secondo dopo, e `openDayDetail` senza dati stringerebbe l'indice
+     * a zero - aprirebbe sempre oggi, qualunque giorno si sia chiesto.
+     */
+    private var pendingDay: Int? = null
+
     /** Vero da quando la posizione e' stata chiesta all'avvio: una volta basta. */
     private var started = false
 
@@ -322,12 +331,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     // guarda.
                                     else -> nearestHourIndex(forecast.hours, forecast.nowThere())
                                 }
+                                val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
+                                val wantedDay = pendingDay?.coerceIn(0, lastDay)
                                 current.copy(
                                     loading = false,
                                     refreshing = false,
                                     forecast = forecast,
                                     error = null,
                                     selectedHour = hour,
+                                    selectedDay = wantedDay ?: current.selectedDay,
+                                    dayDetail = wantedDay ?: current.dayDetail,
                                 )
                             }
 
@@ -443,7 +456,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun closeDayDetail() = _state.update { it.copy(dayDetail = null) }
+    fun closeDayDetail() {
+        pendingDay = null
+        _state.update { it.copy(dayDetail = null) }
+    }
 
     fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
 
@@ -510,6 +526,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun requestHour(index: Int) {
         pendingHour = index
         if (_state.value.forecast != null) selectHour(index)
+    }
+
+    /**
+     * Aggancio per la cattura automatica: apre il dettaglio di un giorno.
+     *
+     * Esiste perche' raggiungerlo col dito **non si puo' fare in modo
+     * affidabile**: la settimana sta in coda a una pagina che scorre, quindi
+     * bisogna prima scorrere, e la trascinata lunga necessaria a farlo fa
+     * morire l'emulatore della CI (vedi CONTESTO, trappola sull'emulatore).
+     * E' lo stesso motivo per cui esiste l'aggancio sul giro: certi stati col
+     * dito, li', non si raggiungono.
+     */
+    fun requestDayDetail(index: Int) {
+        pendingDay = index
+        if (_state.value.forecast != null) openDayDetail(index)
     }
 
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */

@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE)
             .takeIf { it != Int.MIN_VALUE }
             ?.let { viewModel.forceYaw(it.toFloat()) }
+        intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDayDetail)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
     }
 
@@ -72,6 +73,13 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
         const val EXTRA_YAW = "giro"
+
+        /**
+         * Apre il dettaglio di un giorno. Serve perche' col dito si arriva
+         * solo scorrendo fino in fondo a una pagina, e la trascinata lunga che
+         * ci vuole fa cadere l'emulatore della CI.
+         */
+        const val EXTRA_DAY = "giorno"
         const val EXTRA_WELCOME = "benvenuto"
     }
 }
