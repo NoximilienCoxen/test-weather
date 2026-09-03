@@ -1,17 +1,14 @@
 package com.forli.meteo.ui.temperature
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -20,12 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
@@ -47,6 +47,7 @@ import com.forli.meteo.ui.temperature.pages.heroSmallTail
 import com.forli.meteo.ui.temperature.pages.heroValue
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 /**
  * Il dettaglio: sale trascinando in alto la principale, oppure toccando la
@@ -73,49 +74,83 @@ fun TemperatureDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val modes = DetailMode.entries
-    val mode = state.detailMode
     val layout = rememberMeteoLayout()
     val rotation = rememberSceneRotation()
-    val accent = mode.accent()
+    val scope = rememberCoroutineScope()
 
     val pagerState = rememberPagerState(
-        initialPage = modes.indexOf(mode).coerceAtLeast(0),
+        initialPage = modes.indexOf(state.detailMode).coerceAtLeast(0),
         pageCount = { modes.size },
     )
 
-    // Carosello -> stato: quando si scorre, la modalita' segue.
+    // Il carosello e' la sorgente di verita'. `state.detailMode` sopravvive
+    // come **modalita' d'ingresso** - da quale grandezza si e' aperto il
+    // foglio - e come memoria per la riapertura, non come seconda copia di
+    // "su quale pagina sono".
+    //
+    // Prima erano due copie riconciliate da due effetti che si rincorrevano, e
+    // il secondo era chiavato su cio' che il primo cambiava: mentre
+    // `animateScrollToPage` girava, la pagina intermedia faceva cambiare la
+    // modalita', l'effetto veniva rilanciato e **si cancellava l'animazione da
+    // solo**. Toccare "Aria" partendo da "Temp" lasciava il carosello fermo a
+    // meta' strada.
+    //
+    // Si scrive nello stato **solo a scorrimento finito**: un trascinamento
+    // lasciato a meta' e tornato indietro non e' una scelta, e non deve
+    // lasciare traccia nello stato globale dell'app.
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
+        snapshotFlow { pagerState.settledPage }.collect { page ->
             val next = modes.getOrNull(page) ?: return@collect
             if (next != state.detailMode) viewModel.setDetailMode(next)
         }
     }
-    // Stato -> carosello: quando si tocca una pillola, il carosello ci arriva.
-    LaunchedEffect(mode) {
-        val page = modes.indexOf(mode)
-        if (page >= 0 && page != pagerState.currentPage) pagerState.animateScrollToPage(page)
-    }
+
+    // La pagina che si sta guardando: quella piu' vicina, non quella posata.
+    // Comanda titolo, pillola accesa, cifra e tinta, cioe' tutto cio' che deve
+    // corrispondere a **cio' che si vede**. E' un intero e cambia solo allo
+    // scavalco, quindi ricomporre qui costa una volta a pagina.
+    val shownMode = modes.getOrNull(pagerState.currentPage) ?: modes.first()
+    val accent = shownMode.accent()
+    val accents = modes.map { it.accent() }
+
+    // Cio' che si muove col dito passa invece per **lambda**, non per valore.
+    // `currentPageOffsetFraction` cambia a ogni fotogramma del trascinamento:
+    // leggerlo qui nel corpo ricomporrebbe l'intera schermata sessanta volte al
+    // secondo per spostare una trasparenza e allungare un pallino. Letto dentro
+    // `graphicsLayer` o dentro una tela, l'aggiornamento si ferma alla fase di
+    // disegno.
+    val drift = { pagerState.currentPageOffsetFraction }
+    val position = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
 
     Column(modifier = modifier.fillMaxSize()) {
         MeteoTopBar(
-            title = mode.title,
-            subtitle = subtitle(state),
+            title = shownMode.title,
+            subtitle = subtitle(state, shownMode),
             onBack = onBack,
             backLabel = "Chiudi il dettaglio",
+            transition = drift,
         )
 
         MeteoPillRow(
             items = modes,
-            selected = mode,
+            selected = shownMode,
             label = { it.chipLabel },
-            onSelect = viewModel::setDetailMode,
-            modifier = Modifier.padding(horizontal = layout.gutter),
+            // La pillola muove il carosello **direttamente**, senza passare
+            // dallo stato: l'animazione non vive piu' dentro un effetto
+            // chiavato su cio' che essa stessa cambia, quindi nessuno la
+            // interrompe a meta'.
+            onSelect = { picked ->
+                val page = modes.indexOf(picked)
+                if (page >= 0) scope.launch { pagerState.animateScrollToPage(page) }
+            },
+            contentPadding = PaddingValues(horizontal = layout.gutter),
+            position = position,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         PageDots(
-            count = modes.size,
-            current = modes.indexOf(mode).coerceAtLeast(0),
-            accent = accent,
+            position = position,
+            accents = accents,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 2.dp),
@@ -123,10 +158,11 @@ fun TemperatureDetailScreen(
 
         Hero(
             state = state,
-            mode = mode,
+            mode = shownMode,
             accent = accent,
             rotation = rotation,
             tilt = tilt,
+            drift = drift,
             heightFraction = layout.heroFraction,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -176,17 +212,25 @@ fun TemperatureDetailScreen(
  * quelli di Bergen si somigliano abbastanza da non poterli distinguere a
  * occhio.
  */
-private fun subtitle(state: UiState): String {
+private fun subtitle(state: UiState, mode: DetailMode): String {
     val place = state.place.name.uppercase()
     val dayLabel = when (state.selectedDay) {
         0 -> "OGGI"
         1 -> "DOMANI"
         else -> state.forecast?.days?.getOrNull(state.selectedDay)?.label ?: "--"
     }
-    val clock = state.detailHour?.time?.let {
-        runCatching { it.format(HOUR_FORMAT) }.getOrNull()
+    // Un'ora precisa sopra un totale del giorno e' una bugia, e si vedeva:
+    // sulla pagina del sole l'intestazione diceva "OGGI  ·  15:00" mentre la
+    // cifra sotto annunciava tredici **ore di sole**, che non sono le ore di
+    // sole delle quindici - sono quelle di tutta la giornata. Stessa cosa sui
+    // millimetri di pioggia. `isDailyTotal` sapeva gia' distinguere i due casi
+    // e nessuno glielo chiedeva.
+    val moment = if (mode.isDailyTotal) {
+        "TUTTO IL GIORNO"
+    } else {
+        state.detailHour?.time?.let { runCatching { it.format(HOUR_FORMAT) }.getOrNull() }
     }
-    return listOfNotNull(place, dayLabel, clock).joinToString("  ·  ")
+    return listOfNotNull(place, dayLabel, moment).joinToString("  ·  ")
 }
 
 private val HOUR_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -209,10 +253,20 @@ private fun Hero(
     accent: Color,
     rotation: com.forli.meteo.ui.motion.SceneRotation,
     tilt: State<Offset>,
+    drift: () -> Float,
     heightFraction: Float,
     modifier: Modifier = Modifier,
 ) {
-    BoxWithConstraints(modifier = modifier) {
+    // La cifra vive **fuori** dal carosello, quindi non scorre via con la
+    // pagina: si sostituiva sul posto a meta' trascinamento, e per mezzo gesto
+    // si leggeva il numero di una grandezza sopra il contenuto di un'altra.
+    // Sfumando, il cambio avviene nell'istante in cui non c'e' niente da
+    // leggere - lo stesso trattamento del titolo, per la stessa ragione.
+    BoxWithConstraints(
+        modifier = modifier.graphicsLayer {
+            alpha = 1f - (abs(drift()).coerceAtMost(0.5f) * 2f)
+        },
+    ) {
         val heroHeight = maxHeight * heightFraction
         val value = heroValue(mode, state)
         if (value == null) {
@@ -272,33 +326,55 @@ private fun Hero(
  * schermo stretto le ultime restano fuori, e chi guarda non ha modo di sapere
  * che esistono. Era una delle mancanze annotate in CONTESTO, «non c'e' segno di
  * quante pagine ci siano».
+ *
+ * **Continui, non a scatti.** Prima prendevano un indice intero e il pallino
+ * lungo saltava da una posizione all'altra a meta' trascinamento, cioe' nello
+ * stesso istante sbagliato in cui saltava il titolo. Qui prendono la posizione
+ * frazionaria del carosello: l'allungamento si travasa da un pallino al
+ * successivo mentre il dito si muove, e a meta' strada sono lunghi meta'
+ * ciascuno - che e' esattamente dov'e' la pagina.
+ *
+ * Un pallino non e' testo, quindi qui interpolare un colore e' lecito: la
+ * regola sul contrasto calcolato riguarda cio' che si legge, e i due estremi
+ * dell'interpolazione vengono comunque dal tema.
  */
 @Composable
 private fun PageDots(
-    count: Int,
-    current: Int,
-    accent: Color,
+    position: () -> Float,
+    accents: List<Color>,
     modifier: Modifier = Modifier,
 ) {
     val idle = MaterialTheme.colorScheme.outlineVariant
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(count) { index ->
-            val active = index == current
-            Canvas(
-                modifier = Modifier
-                    .padding(horizontal = 3.dp)
-                    .height(6.dp)
-                    .then(if (active) Modifier.width(16.dp) else Modifier.width(6.dp)),
-            ) {
-                drawRoundRect(
-                    color = if (active) accent else idle,
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(size.height / 2f),
-                )
-            }
+    val count = accents.size
+    // **Una tela sola, non un pallino per composable.** La posizione si legge
+    // dentro il blocco di disegno: il travaso da un pallino al successivo
+    // avviene in fase di disegno, senza ricomporre niente e senza rimisurare un
+    // layout a ogni fotogramma. Con un `Row` di cinque `Canvas` larghi in `dp`
+    // ogni frame del trascinamento avrebbe rifatto misura e posizionamento di
+    // tutti e cinque.
+    Canvas(modifier = modifier.height(6.dp)) {
+        if (count == 0) return@Canvas
+        val at = position()
+        val gap = 6.dp.toPx()
+        val small = 6.dp.toPx()
+        val grown = 16.dp.toPx()
+        val radius = androidx.compose.ui.geometry.CornerRadius(size.height / 2f)
+
+        // Larghezze prima, cosi' la fila si puo' centrare sapendo quanto misura
+        // davvero: allungandosi un pallino, il totale cambia a ogni fotogramma.
+        val shares = FloatArray(count) { i -> (1f - abs(i - at)).coerceIn(0f, 1f) }
+        val widths = FloatArray(count) { i -> small + (grown - small) * shares[i] }
+        val total = widths.sum() + gap * (count - 1)
+
+        var x = (size.width - total) / 2f
+        for (i in 0 until count) {
+            drawRoundRect(
+                color = lerp(idle, accents[i], shares[i]),
+                topLeft = Offset(x, 0f),
+                size = Size(widths[i], size.height),
+                cornerRadius = radius,
+            )
+            x += widths[i] + gap
         }
     }
 }
