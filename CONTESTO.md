@@ -588,24 +588,31 @@ serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
 `uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
 ferma e la schermata principale anima in continuazione per scelta.
 
-**33. Una trascinata lunga sull'emulatore della CI lo fa morire.** Per
-fotografare il dettaglio di un giorno bisogna raggiungere la settimana, che sta
-in coda a una pagina che scorre: due trascinate da mille pixel in trecento
-millisecondi, e subito dopo l'emulatore non c'e' piu'. Provato due volte, stesso
-punto esatto. **Non e' l'app**: il logcat finisce pulito sull'ultimo scatto
-riuscito - nessuna eccezione, nessun ANR, nessun consumo anomalo - e sparisce la
-macchina virtuale, che infatti non risponde nemmeno a `emu kill`. Non c'e' un
-log da leggere perche' a morire e' il processo che il log lo ospita.
+**33. L'emulatore della CI muore a meta' corsa, e muore in silenzio.** Tre giri
+di seguito, in tre punti diversi ma sempre dopo qualche minuto: l'emulatore
+sparisce e non risponde nemmeno a `emu kill`. **Non e' l'app**: il logcat
+finisce pulito sull'ultimo scatto riuscito - nessuna eccezione, nessun ANR,
+nessun consumo anomalo. Non c'e' un log da leggere perche' a morire e' il
+processo che il log lo ospita.
 
-Da qui l'aggancio `--ei giorno`, che apre quella schermata senza gesti. E' lo
-stesso motivo per cui esiste l'aggancio sul giro: certi stati, qui, col dito non
-si raggiungono. **Prima di aggiungere un gesto lungo a `capture.sh`, ricordarsi
-che questo e' il modo in cui si presenta** - non un errore, un silenzio.
+La prima diagnosi - "e' la trascinata lunga" - era sbagliata, ed e' la trappola
+#9 che si ripresenta: il giro dopo e' morto in un punto dove trascinate non ce
+n'erano. Quello che si puo' dire e' solo dove **non** sta il problema.
 
-Ha lasciato anche un secondo insegnamento: il job era **verde** con dodici
-scatti mancanti su trentasette, perche' il controllo finale guardava solo che ce
-ne fosse almeno uno. Un job verde che ha fotografato meta' delle schermate e'
-peggio di uno rosso, e adesso gli scatti mancati si contano.
+Tre conseguenze in `capture.sh`:
+
+- l'aggancio `--ei giorno` apre il dettaglio di un giorno senza gesti, come
+  `--ei giro` fa per la cifra di taglio: sono entrambi stati che col dito, qui,
+  non si raggiungono in modo affidabile;
+- **si fotografa prima cio' che non ha mai avuto uno scatto** e poi le prove del
+  motore 3D, che una galleria alle spalle ce l'hanno. Quel che resta fuori e'
+  sempre la coda, quindi in coda va messo cio' che si puo' perdere;
+- il giro fallisce se il dispositivo non c'e' piu' alla fine. Contare gli scatti
+  mancati non bastava: la soglia si azzecca per difetto, e con esattamente tre
+  mancati il controllo lasciava passare un giro monco. Prima ancora, il job era
+  **verde** con dodici scatti mancanti su trentasette, perche' guardava solo che
+  ce ne fosse almeno uno - e un job verde che ha fotografato meta' delle
+  schermate e' peggio di uno rosso: sembra una verifica fatta.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
