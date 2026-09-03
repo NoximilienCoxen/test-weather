@@ -1,25 +1,32 @@
 package com.forli.meteo.ui.temperature
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -27,8 +34,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.forli.meteo.data.DayForecast
+import com.forli.meteo.data.Wmo
 import com.forli.meteo.prefs.TempUnit
-import com.forli.meteo.ui.theme.MeteoType
+import com.forli.meteo.ui.asPlainDegrees
+import com.forli.meteo.ui.common.MeteoCard
+import com.forli.meteo.ui.theme.LocalMeteoAccents
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -43,6 +53,13 @@ private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM"
  * riga trasparente distesa su tutto, cosi' un giorno si apre toccandolo
  * ovunque - l'icona, il numero, la percentuale - invece che centrando la sola
  * casella giusta.
+ *
+ * **La seconda fila di illustrazioni e' sparita.** Ce n'erano due per colonna,
+ * una diurna e una notturna, ma disegnavano **lo stesso** `weatherCode` - quello
+ * giornaliero - con il sole in una e la luna nell'altra. La riga notturna
+ * quindi non portava alcun dato notturno: occupava un quinto della scheda per
+ * ridisegnare cio' che era gia' scritto sopra. Al suo posto c'e' il giorno
+ * selezionato, evidenziato, che prima non si vedeva da nessuna parte.
  */
 @Composable
 fun DailyForecastCard(
@@ -50,38 +67,44 @@ fun DailyForecastCard(
     unit: TempUnit,
     onSelectDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    selected: Int = -1,
 ) {
     if (days.isEmpty()) return
     val shown = days.take(7)
+    val accents = LocalMeteoAccents.current
 
-    DetailCard(modifier = modifier) {
+    MeteoCard(modifier = modifier) {
         Text(
-            text = "PREVISIONI GIORNALIERE",
-            style = MeteoType.caption,
-            color = MetricLabel,
-            modifier = Modifier.padding(start = 14.dp, top = 12.dp, bottom = 10.dp),
+            text = "LA SETTIMANA",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 8.dp),
         )
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                // ── Intestazioni: sigla, data, illustrazione diurna ──────────
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    shown.forEach { day ->
+                    shown.forEachIndexed { index, day ->
                         Column(
                             modifier = Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
+                            val active = index == selected
                             Text(
                                 text = day.label,
-                                style = MeteoType.caption,
-                                color = MetricValue,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (active) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                                 maxLines = 1,
                                 textAlign = TextAlign.Center,
                             )
                             Text(
                                 text = day.date.format(DATE_FORMAT),
-                                style = MeteoType.tabular,
-                                color = MetricLabel,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
                                 textAlign = TextAlign.Center,
                             )
@@ -90,64 +113,85 @@ fun DailyForecastCard(
                                 isDay = true,
                                 modifier = Modifier
                                     .padding(top = 4.dp)
-                                    .size(34.dp),
+                                    .size(32.dp),
                             )
                         }
                     }
                 }
 
-                // ── Le due curve, su una tela sola ──────────────────────────
                 TemperatureBand(
                     days = shown,
                     unit = unit,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(96.dp),
+                        .height(88.dp),
                 )
 
-                // ── Note: probabilita' e illustrazione notturna ─────────────
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    shown.forEach { day ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                ) {
+                    shown.forEachIndexed { index, day ->
                         Column(
                             modifier = Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             // Lo zero per cento non e' una notizia: sotto un
                             // cielo sereno una colonna di "0%" e' solo rumore.
+                            // Lo spazio pero' va tenuto lo stesso, se no le
+                            // colonne asciutte si alzano rispetto alle bagnate.
                             Text(
                                 text = day.precipProbability
                                     ?.takeIf { it > 0 }
                                     ?.let { "$it%" }
                                     .orEmpty(),
-                                style = MeteoType.tabular,
-                                color = RainAccent,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = accents.rain,
                                 maxLines = 1,
                             )
-                            WeatherGlyph(
-                                weatherCode = day.weatherCode,
-                                isDay = false,
-                                modifier = Modifier
-                                    .padding(top = 2.dp, bottom = 12.dp)
-                                    .size(30.dp),
+                            Spacer(
+                                Modifier
+                                    .padding(top = 6.dp)
+                                    .fillMaxWidth(0.5f)
+                                    .height(2.dp)
+                                    .background(
+                                        if (index == selected) {
+                                            MaterialTheme.colorScheme.onSurface
+                                        } else {
+                                            androidx.compose.ui.graphics.Color.Transparent
+                                        },
+                                    ),
                             )
                         }
                     }
                 }
             }
 
-            // ── Zone toccabili, una per giorno ──────────────────────────────
+            // Zone toccabili, una per giorno. Con il nome dichiarato: una
+            // colonna trasparente senza etichetta e' invisibile a chi ascolta.
             Row(modifier = Modifier.matchParentSize()) {
-                shown.forEachIndexed { index, _ ->
-                    val interaction = remember { MutableInteractionSource() }
+                shown.forEachIndexed { index, day ->
+                    val spoken = buildString {
+                        append(day.label)
+                        append(", ")
+                        append(Wmo.condition(day.weatherCode).lowercase())
+                        append(", da ")
+                        append(day.tempMin.asPlainDegrees(unit))
+                        append(" a ")
+                        append(day.tempMax.asPlainDegrees(unit))
+                    }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
+                            .heightIn(min = 48.dp)
                             .clickable(
-                                interactionSource = interaction,
-                                indication = null,
+                                role = Role.Button,
+                                onClickLabel = "Apri il dettaglio",
                                 onClick = { onSelectDay(index) },
-                            ),
+                            )
+                            .clearAndSetSemantics { contentDescription = spoken },
                     )
                 }
             }
@@ -168,7 +212,8 @@ private fun TemperatureBand(
     unit: TempUnit,
     modifier: Modifier = Modifier,
 ) {
-    val measurer = rememberTextMeasurer(cacheSize = 0)
+    val measurer = rememberTextMeasurer()
+    val onSurface = MaterialTheme.colorScheme.onSurface
 
     Canvas(modifier) {
         val maxima = days.map { it.tempMax }
@@ -196,9 +241,6 @@ private fun TemperatureBand(
         val highPts = maxima.mapIndexed { i, v -> v?.let { Offset(xOf(i), yOf(it)) } }
         val lowPts = minima.mapIndexed { i, v -> v?.let { Offset(xOf(i), yOf(it)) } }
 
-        // L'area fra le due: usa nullSafeRibbonPath che preserva le X originali.
-        // ribbonPath(filterNotNull, filterNotNull) comprimeva la lista e
-        // disegnava i punti alla X sbagliata quando c'erano null intermedi.
         drawPath(
             path = nullSafeRibbonPath(highPts, lowPts),
             brush = Brush.verticalGradient(
@@ -224,18 +266,18 @@ private fun TemperatureBand(
             style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round),
         )
 
-        val valueStyle = TextStyle(fontSize = 11.sp, color = MetricValue)
+        val valueStyle = TextStyle(fontSize = 11.sp, color = onSurface)
         fun label(value: Double?, at: Offset?, above: Boolean) {
             if (value == null || at == null) return
-            val layout = measurer.measure(
-                "${unit.from(value).roundToInt()}\u00B0",
-                valueStyle,
-            )
+            val layout = measurer.measure("${unit.from(value).roundToInt()}°", valueStyle)
+            val maxX = size.width - layout.size.width
             drawText(
                 textLayoutResult = layout,
                 topLeft = Offset(
-                    x = (at.x - layout.size.width / 2f)
-                        .coerceIn(0f, size.width - layout.size.width),
+                    // Con sette colonne su uno schermo stretto l'etichetta puo'
+                    // essere piu' larga della tela: li' `coerceIn` avrebbe il
+                    // minimo sopra il massimo, e solleva invece di arrotondare.
+                    x = if (maxX <= 0f) 0f else (at.x - layout.size.width / 2f).coerceIn(0f, maxX),
                     y = if (above) {
                         at.y - layout.size.height - 2.dp.toPx()
                     } else {

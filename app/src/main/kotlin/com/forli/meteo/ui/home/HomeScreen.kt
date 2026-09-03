@@ -47,6 +47,7 @@ import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.asBigDegrees
 import com.forli.meteo.ui.asPlainDegrees
+import com.forli.meteo.ui.common.MeteoIconButton
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberSceneRotation
@@ -161,7 +162,7 @@ fun HomeScreen(
             }
             // Occupa quanto il pulsante a sinistra, cosi' il nome resta al
             // centro dello schermo e non al centro di quel che avanza.
-            Spacer(Modifier.width(34.dp))
+            Spacer(Modifier.width(48.dp))
         }
 
         // Scultura e cifra dentro lo stesso riquadro sensibile: il dito li
@@ -367,22 +368,17 @@ private suspend fun PointerInputScope.detectTapOrRotate(
 
 private const val TAP_SLOP_DP = 5f
 
-/** Tre righe: e' il segno universale, e non serve una libreria di icone. */
+/**
+ * Tre righe: e' il segno universale, e non serve una libreria di icone.
+ *
+ * Da 48dp e non da 34: e' il minimo che Material dichiara, e sotto quella
+ * misura un dito manca il bersaglio. Il disegno resta piccolo - a crescere e'
+ * l'area sensibile, non l'icona.
+ */
 @Composable
 private fun SettingsButton(onClick: () -> Unit) {
     val colors = LocalMeteoColors.current
-    val interaction = remember { MutableInteractionSource() }
-    Box(
-        modifier = Modifier
-            .size(34.dp)
-            .clip(CircleShape)
-            .clickable(
-                interactionSource = interaction,
-                indication = null,
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
+    MeteoIconButton(onClick = onClick, contentDescription = "Apri le impostazioni") {
         Canvas(Modifier.size(16.dp)) {
             val gap = size.height / 3f
             for (i in 0 until 3) {

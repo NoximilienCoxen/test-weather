@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -88,8 +87,13 @@ fun MeteoTopBar(
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // `onSurface` esplicito e non `LocalContentColor`: la barra vive dentro
+        // un Box con lo sfondo dipinto a mano, non dentro una `Surface`, e li'
+        // il colore di contenuto e' ancora quello di riposo di Material - nero.
+        // Sarebbe stata una freccia nera su un pannello antracite, cioe'
+        // esattamente il difetto che questa passata deve togliere di mezzo.
         MeteoIconButton(onClick = onBack, contentDescription = backLabel) {
-            BackArrowIcon(LocalContentColor.current)
+            BackArrowIcon(MaterialTheme.colorScheme.onSurface)
         }
         Column(
             modifier = Modifier

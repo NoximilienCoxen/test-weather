@@ -2,7 +2,6 @@ package com.forli.meteo.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
@@ -55,7 +54,6 @@ data class MeteoLayout(
  * tutto, e soprattutto non serve che ogni schermata se lo misuri per conto suo.
  */
 @Composable
-@ReadOnlyComposable
 fun rememberMeteoLayout(): MeteoLayout {
     val configuration = LocalConfiguration.current
     val width = configuration.screenWidthDp

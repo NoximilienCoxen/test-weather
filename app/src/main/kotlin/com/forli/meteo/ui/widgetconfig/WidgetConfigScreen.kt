@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,11 +54,24 @@ private enum class LocationSource { GPS, FAVORITES, SEARCH }
 
 private const val SEARCH_DEBOUNCE_MS = 320L
 
-private val ScreenBackground = Color(0xFF14161B)
-private val Primary = Color.White
-private val Secondary = Color(0xFFEEEEEE)
-private val FieldBackground = Color.White.copy(alpha = 0.10f)
-private val SelectedBackground = Color.White.copy(alpha = 0.16f)
+/**
+ * Anche qui i colori vengono dal tema.
+ *
+ * Era la terza copia della stessa tavolozza - dopo quella delle impostazioni e
+ * quella del dettaglio - con gli stessi nomi e valori appena diversi. Adesso
+ * sono i token Material, gia' calcolati per contrasto sulla superficie che li
+ * ospita.
+ */
+private val ScreenBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.surface
+private val Primary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurface
+private val Secondary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
+private val FieldBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.surfaceContainerHigh
+private val SelectedBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.secondaryContainer
 
 /**
  * Schermata di configurazione aperta al posizionamento del widget: sceglie
@@ -240,7 +254,7 @@ private fun SectionTitle(text: String) {
                 .padding(top = 6.dp, bottom = 10.dp)
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color.White.copy(alpha = 0.18f)),
+                .background(MaterialTheme.colorScheme.outlineVariant),
         )
     }
 }
@@ -259,11 +273,11 @@ private fun SourceTab(label: String, selected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(percent = 50))
-            .background(if (selected) Primary else Color.White.copy(alpha = 0.10f))
+            .background(if (selected) Primary else MaterialTheme.colorScheme.surfaceContainerHigh)
             .pointerInput(onClick) { detectTapGestures { onClick() } }
             .padding(horizontal = 16.dp, vertical = 10.dp),
     ) {
-        Text(text = label, style = MeteoType.value, color = if (selected) Color.Black else Secondary)
+        Text(text = label, style = MeteoType.value, color = if (selected) MaterialTheme.colorScheme.surface else Secondary)
     }
 }
 
