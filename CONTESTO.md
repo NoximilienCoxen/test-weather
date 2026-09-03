@@ -667,6 +667,26 @@ tara contro la superficie piu' chiara su cui puo' finire**, non contro quella
 media: tarandolo sul container si ottiene 4,49:1 sulle pillole spente, cioe' lo
 stesso difetto spostato di un decimo.
 
+**Il caso peggiore non era il dettaglio: era la schermata principale a meta'
+mattina.** Il fondo del cielo e il colore del testo si interpolano su due scale
+diverse - il fondo da antracite a grigio chiaro, il testo da bianco sporco a
+quasi nero - e a un certo punto del giorno si incrociano. Misurato sulla
+matematica di `skyColors`, con la formula WCAG:
+
+| ora | fondo | contrasto prima | dopo `readableOn` |
+|---|---|---|---|
+| mezzanotte | `#1D2026` | 14,96:1 | invariato |
+| mattina (giorno 0,6) | `#727279` | **1,01:1** | 4,75:1 |
+| pomeriggio (giorno 0,8) | `#8F9299` | 3,02:1 | 4,77:1 |
+| mezzogiorno | `#AEB3BB` | 8,19:1 | invariato |
+| alba e tramonto | `#564A51` | 4,53:1 | invariato |
+
+Uno-virgola-zero-uno a uno vuol dire **testo invisibile**: stessa luminanza del
+fondo. Capitava ogni giorno, per un'ora buona, e nessuno l'aveva mai visto
+perche' la CI fotografava solo le due ore estreme - mezzanotte e mezzogiorno -
+che sono le due in cui il contrasto e' migliore. Da qui la regola: se una
+tinta e' interpolata, il testo che ci va sopra non si sceglie, si calcola.
+
 **Le etichette dentro le tele hanno un fondo.** La scala dell'asse Y cade sempre
 sopra l'area riempita del grafico, che sotto la scala dei gradi copre
 all'ottantadue per cento: li' un grigio su un arancione non si legge. Ogni
