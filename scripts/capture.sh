@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Installa l'APK sull'emulatore e fotografa le tre pagine nei due temi.
+# Installa l'APK sull'emulatore e fotografa le schermate nei due temi:
+# principale, benvenuto, impostazioni, e le cinque pagine del dettaglio piu'
+# il dettaglio di un giorno.
 #
 # Ogni chiamata adb ha un timeout: senza, una adb su dispositivo caduto resta
 # appesa per sempre. Niente set -e, perche' voglio comunque il logcat; ma alla
@@ -248,19 +250,61 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # Il foglio di dettaglio: mai verificato finora.
-    restart_with ""
-    adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-6-dettaglio"
   fi
 
-  adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
+  # ── Il foglio di dettaglio ──────────────────────────────────────────────────
+  #
+  # **Finora non e' mai stato fotografato davvero.** Lo scatto che si chiamava
+  # "dettaglio" ritraeva la schermata principale: la trascinata che doveva
+  # aprire il foglio partiva dal settantotto per cento dell'altezza, dove la
+  # barra delle ore intercetta il gesto, e non apriva niente. Nessuno se n'e'
+  # accorto perche' le due schermate, a colpo d'occhio, cominciano uguali.
+  #
+  # Qui si apre col **tocco sulla cifra**, che e' deterministico: la schermata
+  # principale distingue un tocco fermo da un trascinamento
+  # (`detectTapOrRotate`), e il tocco apre il dettaglio.
+  #
+  # E si fotografa in **tutti e due i temi**, non solo al buio: il punto di
+  # questa passata e' che ogni scritta si legga a qualunque ora, e finora non
+  # c'era uno scatto che lo mostrasse.
+  echo "  -- dettaglio --"
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" >/dev/null 2>&1 || true
+  attendi_previsione
+  alive || { echo "dispositivo caduto prima del dettaglio"; return; }
+
+  local cx=$(( W / 2 ))
+  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-2-precip"
-  adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
+  shoot "${slug}-d1-temperatura"
+
+  # Le altre quattro pagine, raggiunte scorrendo sul contenuto sotto la cifra:
+  # e' il gesto vero, quello che usa chi guarda. Sulla cifra invece il gesto
+  # orizzontale gira la scena, e i due non si contendono niente proprio perche'
+  # stanno in due zone diverse.
+  local pager_y=$(( H * 72 / 100 ))
+  local n=2
+  for pagina in sole pioggia vento aria; do
+    adbt shell input swipe "$FROM_X" "$pager_y" "$TO_X" "$pager_y" 320 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-d${n}-${pagina}"
+    n=$(( n + 1 ))
+  done
+
+  # Il dettaglio di un giorno, toccando la settimana in fondo al foglio.
+  adbt shell input tap "$(( W * 30 / 100 ))" "$(( H * 90 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-3-vento"
+  shoot "${slug}-d6-giorno"
+
+  # Si esce con l'indietro di sistema, due volte: prima il giorno, poi il
+  # foglio. E' anche una prova che i due BackHandler siano agganciati.
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 1
+  shoot "${slug}-d7-tornato-alla-principale"
 }
 
 welcome

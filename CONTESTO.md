@@ -634,25 +634,74 @@ comunque a ogni fotogramma.
 
 **Non fatto, in ordine di valore**:
 
-1. **La schermata di dettaglio e' rimasta indietro.** Compila e non e' rotta, ma
-   non ha ricevuto ne' la rotazione (il pager si contende il gesto orizzontale)
-   ne' una passata di composizione. Guardandola: la cifra e' piccola in mezzo a
-   un vuoto enorme, il titolo estruso ("Temp.") e' un residuo, non c'e' segno di
-   quante pagine ci siano, e in fondo `DayStrip` e `ScrubBar` fanno la stessa
-   identica cosa. Il pezzo grosso da fare li' e' dare senso al selettore
-   GIORNO/SETTIMANA: ora che i dati orari ci sono, la stessa barra della
-   principale puo' scorrere 24 ore in GIORNO e 7 giorni in SETTIMANA, e cosi'
-   sparisce anche la ridondanza. Nota: in GIORNO servirebbero grandezze orarie
-   che oggi non si chiedono all'API (vento, umidita', punto di rugiada).
-2. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
+1. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
-3. **Posizione del dispositivo** — `LocationManager` di piattaforma, **non**
-   `play-services-location`: sarebbe una dipendenza nuova. Permesso solo
-   approssimato.
-4. Ridondanza da sanare: `DayStrip` e `ScrubBar` nel dettaglio fanno la stessa
-   cosa.
+2. **Il dettaglio non e' mai stato provato in mano.** Il rifacimento (sezione 11)
+   e' verificato dalla CI - compila, e gli scatti mostrano tutte e cinque le
+   pagine nei due temi - ma nessuno ha ancora scorso il carosello col pollice
+   ne' girato la cifra da dentro il foglio.
+3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
+   quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
+   curva piatta.
+4. **Il dettaglio in orizzontale** e' adattato nelle misure (`MeteoLayout`) ma
+   non nella disposizione: grafico e statistiche restano impilati anche dove
+   ci starebbero affiancati.
 
 ---
+
+## 8-bis. Il rifacimento delle schermate di dettaglio
+
+`ui/theme/Contrast.kt`, `ui/theme/MeteoColorScheme.kt`, `ui/common/`,
+`ui/temperature/`, `ui/temperature/pages/`
+
+Prima di toccare queste schermate, tre regole che sono costate la passata
+intera.
+
+**Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
+cadra', con [`readableOn`](app/src/main/kotlin/com/forli/meteo/ui/theme/Contrast.kt)
+e la formula di contrasto della WCAG 2.1. Il difetto che questo toglie di mezzo
+era esattamente uno scritto a mano: il titolo del dettaglio era `colors.text`,
+cioe' quasi nero a mezzogiorno, sopra un pannello antracite fisso. E l'etichetta
+grigia delle pillole stava a 4,17:1, sotto la soglia. **Il grigio secondario si
+tara contro la superficie piu' chiara su cui puo' finire**, non contro quella
+media: tarandolo sul container si ottiene 4,49:1 sulle pillole spente, cioe' lo
+stesso difetto spostato di un decimo.
+
+**Le etichette dentro le tele hanno un fondo.** La scala dell'asse Y cade sempre
+sopra l'area riempita del grafico, che sotto la scala dei gradi copre
+all'ottantadue per cento: li' un grigio su un arancione non si legge. Ogni
+`drawText` di `MeteoChart` passa da `drawLabel`, che gli mette sotto una
+pillola.
+
+**La scala di un grafico non inventa valori.** Con una serie piatta il vecchio
+grafico allargava l'intervallo a `mid ± 1.5`, e su una giornata asciutta l'asse
+delle probabilita' dichiarava "-1" e "2". `ChartBounds` dice cosa la grandezza
+puo' davvero valere, e l'allargamento resta dentro.
+
+Tre trappole minori, gia' pagate:
+
+- **`coerceIn` solleva quando il minimo supera il massimo.** Succede: su schermo
+  stretto un'etichetta puo' essere piu' larga del grafico che la contiene, e
+  `plotRight - larghezza` diventa negativo. Le tele usano `clamp`, che in quel
+  caso preferisce il minimo e tira avanti.
+- **La falce di luna e' un disco meno un disco**, e il secondo va del colore di
+  cio' che sta sotto. `skyMark` non ha piu' un valore di riposo per quel colore:
+  il valore di riposo era il fondo delle schede, mentre il grafico del giorno si
+  disegna sul fondo del pannello, e il ritaglio si vedeva come una macchia
+  scura sopra la luna.
+- **`@ReadOnlyComposable` e `remember` non convivono.** La prima dichiara che la
+  funzione non scrive nella composizione, la seconda ci scrive.
+
+**Il gesto orizzontale e' spartito per zone, non conteso.** Sulla cifra gira la
+scena, sul contenuto sotto cambia pagina. Il carosello era gia' stato tolto una
+volta per questa ragione (trappola #5): adesso il confine e' dichiarato invece
+che sottinteso, e la cifra vive fuori dal carosello. Il grafico consuma **solo**
+la componente orizzontale del trascinamento, se no dentro una colonna che scorre
+il dito sul grafico blocca la pagina.
+
+**La settimana sta fuori dal carosello.** E' la stessa informazione per tutte e
+cinque le grandezze: dentro la sola pagina della temperatura la rendeva lunga il
+doppio delle altre e la nascondeva a chi guardava il vento.
 
 ## 9. Preferenze dell'utente, dette esplicitamente
 
