@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
+import com.forli.meteo.ui.alerts.AlertBanner
 import com.forli.meteo.ui.WeatherViewModel
 import com.forli.meteo.ui.common.MeteoEmptyState
 import com.forli.meteo.ui.common.MeteoPillRow
@@ -129,6 +130,16 @@ fun TemperatureDetailScreen(
             onBack = onBack,
             backLabel = "Chiudi il dettaglio",
             transition = drift,
+        )
+
+        // Sotto la barra e **fuori** dal carosello: l'allerta vale per la
+        // localita', non per la grandezza che si sta guardando, e deve restare
+        // in scena su tutte e cinque le pagine. Non disegna niente quando non
+        // c'e' niente da dire.
+        AlertBanner(
+            alerts = state.alerts,
+            onOpen = viewModel::openAlerts,
+            modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
         )
 
         MeteoPillRow(
