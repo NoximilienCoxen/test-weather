@@ -45,6 +45,7 @@ import com.forli.meteo.data.SkyState
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
+import com.forli.meteo.ui.alerts.AlertBanner
 import com.forli.meteo.ui.asBigDegrees
 import com.forli.meteo.ui.asPlainDegrees
 import com.forli.meteo.ui.common.MeteoIconButton
@@ -76,6 +77,7 @@ fun HomeScreen(
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenTemperatureDetail: () -> Unit = {},
+    onOpenAlerts: () -> Unit = {},
     onRefresh: () -> Unit = {},
     /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
     pullArmed: Boolean = false,
@@ -164,6 +166,18 @@ fun HomeScreen(
             // centro dello schermo e non al centro di quel che avanza.
             Spacer(Modifier.width(48.dp))
         }
+
+        // L'allerta sta qui, in cima alla schermata che si apre per prima.
+        //
+        // Dipinge un fondo proprio e prende i colori dal tema dei pannelli, non
+        // dal cielo: e' l'unico riquadro che deve leggersi uguale a mezzanotte
+        // e a mezzogiorno, mentre tutto il resto di questa schermata cambia con
+        // l'ora. Se non ci sono allerte non occupa spazio.
+        AlertBanner(
+            alerts = state.alerts,
+            onOpen = onOpenAlerts,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+        )
 
         // Scultura e cifra dentro lo stesso riquadro sensibile: il dito li
         // gira insieme dovunque lo si appoggi, invece di dover indovinare

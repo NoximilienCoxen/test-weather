@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
             ?.let { viewModel.forceYaw(it.toFloat()) }
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDayDetail)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
+        intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
     }
 
     private companion object {
@@ -81,5 +82,17 @@ class MainActivity : ComponentActivity() {
          */
         const val EXTRA_DAY = "giorno"
         const val EXTRA_WELCOME = "benvenuto"
+
+        /**
+         * Mette in scena un'allerta finta, per gradino: 1 gialla, 2 arancione,
+         * 3 rossa.
+         *
+         * Senza, la fascia si potrebbe fotografare solo nei giorni in cui la
+         * Protezione Civile ha davvero diramato qualcosa su Forli', cioe' quasi
+         * mai e mai su richiesta. Un riquadro che compare solo col maltempo e'
+         * esattamente quello che nessuno riesce a verificare prima di
+         * pubblicarlo.
+         */
+        const val EXTRA_ALERT = "allerta"
     }
 }

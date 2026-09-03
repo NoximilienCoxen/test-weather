@@ -5,14 +5,20 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.forli.meteo.data.AirQuality
+import com.forli.meteo.data.AlertKind
+import com.forli.meteo.data.AlertLevel
 import com.forli.meteo.data.AirQualityRepository
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.data.Place
 import com.forli.meteo.data.SunClock
+import com.forli.meteo.data.WeatherAlert
+import com.forli.meteo.data.WeatherAlertsRepository
 import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.derivedAlerts
+import com.forli.meteo.data.mergeAlerts
 import com.forli.meteo.data.key
 import com.forli.meteo.prefs.SettingsPrefs
 import com.forli.meteo.prefs.TempUnit
@@ -53,6 +59,27 @@ data class UiState(
     val air: AirQuality? = null,
     /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
     val airUnavailable: Boolean = false,
+    /**
+     * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
+     *
+     * Come [air], sono un arricchimento che arriva dopo la previsione e per
+     * conto suo. A differenza di [air] hanno **due sorgenti**: i bollettini
+     * ufficiali di MeteoAlarm dove ci sono, e le soglie calcolate sui dati gia'
+     * scaricati dove non ci sono. Quale delle due lo dice ogni allerta con il
+     * proprio `official`, perche' il peso delle due affermazioni e' diverso.
+     */
+    val alerts: List<WeatherAlert> = emptyList(),
+    /**
+     * Vero quando il feed ufficiale non ha risposto **e la localita' sarebbe
+     * coperta**.
+     *
+     * Distinto dal caso "fuori copertura", che non e' un guasto: in Nuova
+     * Zelanda MeteoAlarm non deve rispondere, e dirlo come se fosse un errore
+     * insegnerebbe a ignorare l'avviso quando invece e' vero.
+     */
+    val alertsUnavailable: Boolean = false,
+    /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
+    val alertsOpen: Boolean = false,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
     val selectedDay: Int = 0,
     /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
@@ -295,7 +322,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         // carica un'altra citta' vorrebbe dire attribuire a Bergen le polveri
         // di Forli' per il tempo di una richiesta.
         if (_state.value.forecast?.place?.key != place.key) {
-            _state.update { it.copy(air = null, airUnavailable = false) }
+            // Le allerte seguono la stessa regola dell'aria, e per un motivo
+            // piu' serio: un'allerta rossa lasciata in scena mentre si carica
+            // un'altra citta' dice a chi guarda che il pericolo e' dove si
+            // trova lui.
+            _state.update {
+                it.copy(
+                    air = null,
+                    airUnavailable = false,
+                    alerts = emptyList(),
+                    alertsUnavailable = false,
+                )
+            }
         }
         loading = viewModelScope.launch {
             var wait = FIRST_RETRY_MS
@@ -355,6 +393,43 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     }
                                     .onFailure {
                                         _state.update { it.copy(airUnavailable = true) }
+                                    }
+                            }
+
+                            // Le allerte: prima i bollettini ufficiali, e le
+                            // soglie a coprire cio' che quelli non dicono.
+                            //
+                            // Le derivate si calcolano **subito e in ogni
+                            // caso**, perche' sono gratis - i numeri sono gia'
+                            // qui - e perche' cosi' la fascia compare senza
+                            // aspettare una risposta di rete. Quando
+                            // l'ufficiale arriva, rimpiazza le derivate dello
+                            // stesso fenomeno.
+                            val derived = derivedAlerts(forecast)
+                            _state.update { it.copy(alerts = derived) }
+                            viewModelScope.launch {
+                                WeatherAlertsRepository(place).load()
+                                    .onSuccess { official ->
+                                        _state.update {
+                                            it.copy(
+                                                alerts = mergeAlerts(official, derived),
+                                                alertsUnavailable = false,
+                                            )
+                                        }
+                                    }
+                                    .onFailure { failure ->
+                                        // Fuori copertura non e' un guasto: si
+                                        // resta sulle derivate senza dire che
+                                        // qualcosa e' andato storto, perche'
+                                        // non e' andato storto niente.
+                                        val broken =
+                                            failure !is WeatherAlertsRepository.OutOfCoverage
+                                        _state.update {
+                                            it.copy(
+                                                alerts = derived,
+                                                alertsUnavailable = broken,
+                                            )
+                                        }
                                     }
                             }
 
@@ -442,6 +517,46 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
 
     fun setDetailMode(mode: DetailMode) = _state.update { it.copy(detailMode = mode) }
+
+    /**
+     * Un'allerta finta, solo per la verifica automatica.
+     *
+     * Sta accanto a `forceWeatherCode` e `forceYaw` e per la stessa ragione: i
+     * difetti di un riquadro che compare col maltempo si vedono **col
+     * maltempo**, e aspettare che la Protezione Civile emetta un avviso su
+     * Forli' non e' un piano di verifica. Il ricarico successivo la sostituisce
+     * con quelle vere, che e' il comportamento giusto - non e' uno stato in cui
+     * l'app possa restare bloccata.
+     */
+    fun forceAlert(level: Int) {
+        val chosen = when (level) {
+            1 -> AlertLevel.GIALLA
+            2 -> AlertLevel.ARANCIONE
+            else -> AlertLevel.ROSSA
+        }
+        _state.update {
+            it.copy(
+                alerts = listOf(
+                    WeatherAlert(
+                        id = "prova-${chosen.name}",
+                        level = chosen,
+                        kind = AlertKind.TEMPORALI,
+                        headline = "Temporali forti dal pomeriggio",
+                        description = "Rovesci e temporali sparsi, localmente intensi, " +
+                            "con possibili grandinate e forti raffiche di vento.",
+                        instruction = "Evitare i sottopassi e i corsi d'acqua.",
+                        areaDesc = it.place.name,
+                        source = "Aggancio di verifica",
+                        official = true,
+                    ),
+                ),
+            )
+        }
+    }
+
+    fun openAlerts() = _state.update { it.copy(alertsOpen = true) }
+
+    fun closeAlerts() = _state.update { it.copy(alertsOpen = false) }
 
     /**
      * Apre il dettaglio di un giorno preciso, toccandolo nella card della
