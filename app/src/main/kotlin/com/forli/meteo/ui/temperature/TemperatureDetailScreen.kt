@@ -131,6 +131,20 @@ fun TemperatureDetailScreen(
             modifier = Modifier.fillMaxWidth(),
         )
 
+        // La settimana chiude ogni pagina: appartiene alla schermata, non a una
+        // grandezza sola. Sta dentro lo scorrimento delle pagine e non appesa
+        // sotto il carosello, dove sarebbe un'altezza fissa che in orizzontale
+        // non lascia piu' spazio al carosello stesso.
+        val week: @Composable () -> Unit = {
+            DailyForecastCard(
+                days = state.forecast?.days.orEmpty(),
+                unit = state.unit,
+                selected = state.selectedDay,
+                onSelectDay = viewModel::openDayDetail,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -138,26 +152,19 @@ fun TemperatureDetailScreen(
                 .weight(1f),
         ) { page ->
             when (modes.getOrNull(page)) {
-                DetailMode.TEMPERATURA -> TemperaturePage(state, layout, viewModel::setWeekMode)
-                DetailMode.SOLE -> SunPage(state, layout, viewModel::setWeekMode)
-                DetailMode.PRECIPITAZIONI -> RainPage(state, layout, viewModel::setWeekMode)
-                DetailMode.VENTO -> WindPage(state, layout, viewModel::setWeekMode)
-                DetailMode.ARIA -> AirPage(state, layout)
+                DetailMode.TEMPERATURA ->
+                    TemperaturePage(state, layout, viewModel::setWeekMode, week = week)
+                DetailMode.SOLE ->
+                    SunPage(state, layout, viewModel::setWeekMode, week = week)
+                DetailMode.PRECIPITAZIONI ->
+                    RainPage(state, layout, viewModel::setWeekMode, week = week)
+                DetailMode.VENTO ->
+                    WindPage(state, layout, viewModel::setWeekMode, week = week)
+                DetailMode.ARIA ->
+                    AirPage(state, layout, week = week)
                 null -> Unit
             }
         }
-
-        // La settimana, sotto tutte le pagine: appartiene alla schermata, non a
-        // una grandezza sola.
-        DailyForecastCard(
-            days = state.forecast?.days.orEmpty(),
-            unit = state.unit,
-            selected = state.selectedDay,
-            onSelectDay = viewModel::openDayDetail,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = layout.gutter, vertical = 8.dp),
-        )
     }
 }
 

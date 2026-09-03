@@ -46,10 +46,12 @@ internal fun AirPage(
     state: UiState,
     layout: MeteoLayout,
     modifier: Modifier = Modifier,
+    /** La settimana, che chiude ogni pagina. */
+    week: @Composable () -> Unit = {},
 ) {
     val air = state.air
 
-    PageColumn(layout = layout, modifier = modifier) {
+    PageColumn(layout = layout, modifier = modifier, week = week) {
         if (air == null) {
             MeteoCard(modifier = Modifier.fillMaxWidth()) {
                 MeteoEmptyState(

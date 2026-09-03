@@ -53,6 +53,8 @@ internal fun WindPage(
     layout: MeteoLayout,
     onToggleWeek: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    /** La settimana, che chiude ogni pagina. */
+    week: @Composable () -> Unit = {},
 ) {
     val accents = LocalMeteoAccents.current
     val day = state.pageDay
@@ -63,7 +65,7 @@ internal fun WindPage(
     val direction = hour?.windDirection ?: day?.windDirection
     val gustiest = hours.filter { it.windGusts != null }.maxByOrNull { it.windGusts ?: 0.0 }
 
-    PageColumn(layout = layout, modifier = modifier) {
+    PageColumn(layout = layout, modifier = modifier, week = week) {
         MeteoMetricCard(
             rows = listOfNotNull(
                 MeteoMetric("VELOCITA'", hour?.windSpeed.asMetresPerSecond(), emphasis = true),

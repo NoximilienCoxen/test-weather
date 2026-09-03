@@ -41,6 +41,8 @@ internal fun SunPage(
     layout: MeteoLayout,
     onToggleWeek: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    /** La settimana, che chiude ogni pagina. */
+    week: @Composable () -> Unit = {},
 ) {
     val accents = LocalMeteoAccents.current
     val day = state.pageDay
@@ -52,7 +54,7 @@ internal fun SunPage(
     // nessuno a che ora conviene stare all'ombra.
     val peak = hours.filter { it.uvIndex != null }.maxByOrNull { it.uvIndex ?: 0.0 }
 
-    PageColumn(layout = layout, modifier = modifier) {
+    PageColumn(layout = layout, modifier = modifier, week = week) {
         MeteoMetricCard(
             rows = listOfNotNull(
                 MeteoMetric(

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -79,16 +80,29 @@ internal val UiState.weekLabels: List<String>
 internal fun PageColumn(
     layout: MeteoLayout,
     modifier: Modifier = Modifier,
+    /** La settimana in coda alla pagina. Nulla per le pagine che non la vogliono. */
+    week: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = layout.gutter),
         verticalArrangement = Arrangement.spacedBy(layout.gap),
     ) {
         content()
+        // La settimana chiude **ogni** pagina, e scorre col resto.
+        //
+        // Non appesa sotto il carosello, come si era fatto in un primo momento:
+        // li' e' un'altezza fissa che il carosello non puo' contendere, e in
+        // orizzontale la somma di barra, pillole, cifra e settimana supera lo
+        // schermo - il carosello si riduce a zero e la pagina sparisce. Dentro
+        // lo scorrimento non toglie spazio a nessuno.
+        //
+        // Resta comunque su tutte e cinque le grandezze, che era il punto:
+        // prima stava nella sola pagina della temperatura.
+        week?.invoke()
         Spacer(Modifier.height(24.dp))
     }
 }
