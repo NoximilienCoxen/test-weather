@@ -599,6 +599,23 @@ La prima diagnosi - "e' la trascinata lunga" - era sbagliata, ed e' la trappola
 #9 che si ripresenta: il giro dopo e' morto in un punto dove trascinate non ce
 n'erano. Quello che si puo' dire e' solo dove **non** sta il problema.
 
+**Quello che si sa, e va detto senza abbellirlo.** Quattro giri morti su
+cinque, sempre mentre il foglio di dettaglio e' in scena, in quattro punti
+diversi (pagina aria due volte, dettaglio di un giorno, pagina vento).
+L'ultimo giro **completo** e' `5ca1ca4`; il primo morto e' quello subito dopo,
+che porta cinque cambiamenti insieme - fra cui i pannelli che dipingono sotto
+le barre di sistema e le icone di sistema che seguono il fondo, cioe' le uniche
+due cose del rifacimento che toccano la finestra invece del contenuto.
+
+**La correlazione c'e', la causa no.** Cambiare quel codice a naso per far
+passare la CI sarebbe esattamente la trappola #9 di nuovo: quattro diagnosi
+sbagliate di fila su un sintomo che non si e' ancora misurato. Qui non si puo'
+misurare - non c'e' un emulatore da strumentare - e da fuori le due cose sono
+indistinguibili. **Il modo per chiudere la questione e' il giro di lavoro
+normale di questo progetto**: `./gradlew assembleDebug`, installare, aprire il
+dettaglio sul telefono e guardare. Se li' non muore niente, e' l'emulatore
+della CI; se muore, si e' trovato il pezzo.
+
 Tre conseguenze in `capture.sh`:
 
 - l'aggancio `--ei giorno` apre il dettaglio di un giorno senza gesti, come
