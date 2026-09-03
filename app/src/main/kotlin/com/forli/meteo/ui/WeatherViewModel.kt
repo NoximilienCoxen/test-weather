@@ -270,9 +270,14 @@ data class UiState(
      * astronomia: il sole sta dov'e' anche sotto le nuvole. Serve al fondo, che
      * deve poter smettere di essere azzurro quando non c'e' niente di azzurro
      * da mostrare.
+     *
+     * **Legge [forcedWeatherCode] per primo**, come fa gia' la scultura. Senza,
+     * lo scatto di verifica del coperto usciva con la nuvola giusta sopra un
+     * cielo azzurro: la scultura obbediva all'ora imposta e il fondo no, cioe'
+     * proprio la regola che quello scatto doveva dimostrare non si vedeva.
      */
     val skyCloudiness: Float
-        get() = Wmo.cloudiness(hour?.weatherCode)
+        get() = Wmo.cloudiness(forcedWeatherCode ?: hour?.weatherCode)
 }
 
 class WeatherViewModel(app: Application) : AndroidViewModel(app) {
