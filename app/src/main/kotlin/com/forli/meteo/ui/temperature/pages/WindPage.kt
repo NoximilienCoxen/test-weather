@@ -22,7 +22,6 @@ import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.asDistance
 import com.forli.meteo.ui.asMetresPerSecond
-import com.forli.meteo.ui.asPercent
 import com.forli.meteo.ui.common.MeteoCard
 import com.forli.meteo.ui.common.MeteoLayout
 import com.forli.meteo.ui.common.MeteoMetric
@@ -73,7 +72,9 @@ internal fun WindPage(
                 MeteoMetric("MASSIMA DEL GIORNO", day?.windMax.asMetresPerSecond()),
                 MeteoMetric("RAFFICA MASSIMA", day?.gustMax.asMetresPerSecond()),
                 gustiest?.let { MeteoMetric("RAFFICA PIU' FORTE ALLE", it.time.format(CLOCK)) },
-                MeteoMetric("COPERTURA NUVOLOSA", hour?.cloudCover.asPercent()),
+                // La copertura nuvolosa sta nella pagina del sole, che e' cio'
+                // che copre: ripeterla qui era lo stesso difetto dell'UV
+                // duplicato, spostato di una pagina.
                 MeteoMetric("VISIBILITA'", hour?.visibility.asDistance()),
             ),
             modifier = Modifier.fillMaxWidth(),

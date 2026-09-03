@@ -195,17 +195,32 @@ fun MeteoChart(
         var rawHi = known.max()
         if (bars.isNotEmpty()) rawLo = minOf(rawLo, 0f)
         if (rawHi - rawLo < 0.001f) {
-            // Serie piatta. Si allarga, ma **dentro i limiti della grandezza**:
-            // e' qui che la versione precedente dichiarava percentuali negative.
-            val pad = if (abs(rawHi) < 1f) 1f else abs(rawHi) * 0.1f
-            rawLo -= pad
-            rawHi += pad
+            // Serie piatta. Se la grandezza ha un tetto dichiarato - una
+            // percentuale, per dire - si mostra **tutta la scala**: una
+            // giornata di zero per cento si legge come "zero su cento", che e'
+            // l'informazione, invece che come una riga schiacciata fra due
+            // tacche inventate a un punto di distanza.
+            val max = bounds.max
+            if (max != null) {
+                rawLo = bounds.min ?: 0f
+                rawHi = max
+            } else {
+                // Senza tetto si allarga, ma dentro i limiti che ci sono: e'
+                // qui che la versione precedente dichiarava valori negativi.
+                val pad = if (abs(rawHi) < 1f) 1f else abs(rawHi) * 0.1f
+                rawLo -= pad
+                rawHi += pad
+            }
         }
         bounds.min?.let { rawLo = maxOf(rawLo, it) }
         bounds.max?.let { rawHi = minOf(rawHi, it) }
         if (rawHi - rawLo < 0.001f) rawHi = rawLo + 1f
 
-        val step = niceStep((rawHi - rawLo) / 4f)
+        // Tutte le grandezze di questa app si scrivono con numeri interi, quindi
+        // un passo sotto l'uno produce **due tacche con la stessa etichetta**:
+        // su una giornata asciutta la scala della probabilita' andava a passo
+        // di mezzo punto e l'asse mostrava "1%" due volte, una sopra l'altra.
+        val step = niceStep((rawHi - rawLo) / 4f).coerceAtLeast(1f)
         var gridLo = floor(rawLo / step) * step
         var gridHi = ceil(rawHi / step) * step
         bounds.min?.let { gridLo = maxOf(gridLo, it) }

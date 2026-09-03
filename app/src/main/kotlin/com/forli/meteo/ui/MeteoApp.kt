@@ -97,18 +97,6 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         val tilt = rememberDeviceTilt()
         val scope = rememberCoroutineScope()
 
-        // Le icone delle barre di sistema seguono cio' che hanno sotto. Con le
-        // barre trasparenti e un fondo che va dal grigio chiaro all'antracite,
-        // lasciarle fisse vuol dire che per meta' giornata sono invisibili: e'
-        // il motivo per cui negli scatti la barra di navigazione appariva
-        // bianca sotto un'app scura.
-        SystemBarIcons(
-            behind = if (state.settingsOpen || state.dayDetail != null) {
-                MaterialTheme.colorScheme.surface
-            } else {
-                colors.background
-            },
-        )
         val sheet = remember(scope) { SheetGesture(scope) }
         val density = LocalDensity.current
         val haptics = LocalHapticFeedback.current
@@ -142,6 +130,24 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // volte in tutto il gesto.
             val sheetVisible by remember { derivedStateOf { sheet.open > 0.001f } }
             val pullArmed by remember { derivedStateOf { sheet.armed } }
+            // Vero quando il foglio copre abbastanza schermo da decidere lui
+            // il colore sotto le barre di sistema. Derivato come gli altri: il
+            // foglio si muove a ogni fotogramma del dito, e questa risposta
+            // cambia due volte in tutto il gesto.
+            val sheetCovers by remember { derivedStateOf { sheet.open > 0.5f } }
+
+            // Le icone delle barre di sistema seguono cio' che hanno sotto. Con
+            // le barre trasparenti e un fondo che va dal grigio chiaro
+            // all'antracite, lasciarle fisse vuol dire che per meta' giornata
+            // sono invisibili: e' il motivo per cui negli scatti la barra di
+            // navigazione appariva bianca sotto un'app scura.
+            SystemBarIcons(
+                behind = if (state.settingsOpen || state.dayDetail != null || sheetCovers) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    colors.background
+                },
+            )
 
             fun release(velocity: Float) {
                 if (sheet.release(velocity)) {
@@ -218,7 +224,6 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .offset { IntOffset(0, ((1f - sheet.open) * heightPx).roundToInt()) }
-                        .systemBarsPadding()
                         .nestedScroll(sheetScroll),
                     color = MaterialTheme.colorScheme.surface,
                 ) {
@@ -227,6 +232,13 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         viewModel = viewModel,
                         tilt = tilt,
                         onBack = sheet::closeFully,
+                        // L'inserto delle barre di sistema sta sul **contenuto**
+                        // e non sulla superficie: cosi' il pannello dipinge da
+                        // bordo a bordo. Con l'inserto sulla superficie il
+                        // foglio si fermava prima delle barre, e sopra e sotto
+                        // restava una striscia di cielo - a mezzogiorno una
+                        // banda grigio chiaro attorno a un foglio scuro.
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
@@ -245,14 +257,14 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) }
-                        .systemBarsPadding(),
+                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
                     DayDetailScreen(
                         state = state,
                         viewModel = viewModel,
                         onBack = viewModel::closeDayDetail,
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
@@ -272,8 +284,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) }
-                        .systemBarsPadding(),
+                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
                     SettingsScreen(
@@ -285,6 +296,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onToggleFavorite = viewModel::toggleFavorite,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeSettings,
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
