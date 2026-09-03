@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Installa l'APK sull'emulatore e fotografa le tre pagine nei due temi.
+# Installa l'APK sull'emulatore e fotografa le schermate nei due temi:
+# principale, benvenuto, impostazioni, e le cinque pagine del dettaglio piu'
+# il dettaglio di un giorno.
 #
 # Ogni chiamata adb ha un timeout: senza, una adb su dispositivo caduto resta
 # appesa per sempre. Niente set -e, perche' voglio comunque il logcat; ma alla
@@ -11,6 +13,15 @@ PKG="com.forli.meteo"
 ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"
+
+# Quanti scatti sono stati chiesti e non sono usciti.
+#
+# Serve perche' un job verde con meta' degli scatti mancanti e' **peggio** di
+# un job rosso: sembra una verifica fatta. E' successo davvero - l'emulatore e'
+# morto a meta' corsa, il logcat dell'app finiva pulito senza un solo errore, e
+# il job ha riportato successo con dodici scatti in meno. Il controllo finale
+# guardava solo che ce ne fosse almeno uno.
+MANCATI=0
 
 # Secondi massimi di attesa perche' la previsione arrivi dopo un riavvio.
 # E' un tetto, non una durata: si esce appena l'app dice di averla (vedi
@@ -54,6 +65,7 @@ shoot() {
 
   echo "  $name.png NON catturato"
   rm -f "$out"
+  MANCATI=$(( MANCATI + 1 ))
   return 1
 }
 
@@ -148,7 +160,12 @@ session() {
   adbt shell logcat -c >/dev/null 2>&1 || true
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
-  adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
+  # `--es tema` l'app non lo legge piu' (vedi il blocco del dettaglio): resta
+  # solo perche' `-W` vuole un comando da attendere, e toglierlo cambierebbe la
+  # riga senza cambiare nulla di cio' che si vede. Il cielo di questo primo
+  # scatto e' quello dell'ora vera del runner, ed e' voluto: e' l'unico scatto
+  # che ritrae l'app come la si trova aprendola.
+  adbt shell am start -W -n "$ACT" 2>&1 | sed 's/^/    /' || true
   # -W dice che l'attivita' e' in primo piano, non che ha qualcosa da mostrare:
   # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
   # per primo, quindi vale l'attesa vera come per tutti gli altri.
@@ -157,11 +174,126 @@ session() {
 
   shoot "${slug}-1-temp"
 
+  # ── Prima il nuovo, poi il gia' verificato ──────────────────────────────────
+  #
+  # Il dettaglio e le ore di contrasto vengono **prima** delle prove del motore
+  # 3D, e non e' l'ordine naturale: e' che l'emulatore della CI se ne va a meta'
+  # corsa, in modo riproducibile ma in punti diversi, e quel che resta fuori e'
+  # sempre la coda. Le prove del motore hanno una galleria alle spalle e
+  # possono permettersi di saltare un giro; queste schermate no, non hanno mai
+  # avuto uno scatto.
+
+  # ── Il foglio di dettaglio ──────────────────────────────────────────────────
+  #
+  # **Finora non e' mai stato fotografato davvero.** Lo scatto che si chiamava
+  # "dettaglio" ritraeva la schermata principale: la trascinata che doveva
+  # aprire il foglio partiva dal settantotto per cento dell'altezza, dove la
+  # barra delle ore intercetta il gesto, e non apriva niente. Nessuno se n'e'
+  # accorto perche' le due schermate, a colpo d'occhio, cominciano uguali.
+  #
+  # Qui si apre col **tocco sulla cifra**, che e' deterministico: la schermata
+  # principale distingue un tocco fermo da un trascinamento
+  # (`detectTapOrRotate`), e il tocco apre il dettaglio.
+  #
+  # E si fotografa **a due ore diverse**, non solo al buio: il punto di questa
+  # passata e' che ogni scritta si legga a qualunque ora, e finora non c'era
+  # uno scatto che lo mostrasse.
+  #
+  # L'ora si impone con `--ei ora`, non con `--es tema`: quell'aggancio **non
+  # esiste piu'** - `MainActivity` legge soltanto `ora`, `meteo`, `giro` e
+  # `benvenuto`, e giorno e notte li decide l'ora mostrata. Le due sessioni
+  # continuavano a passarselo e a fotografare due volte lo stesso cielo,
+  # qualunque fosse, senza che il nome del file lo lasciasse sospettare.
+  local ora_dettaglio
+  case "$tema" in
+    SCURO) ora_dettaglio=2  ;;   # notte piena
+    *)     ora_dettaglio=13 ;;   # mezzogiorno passato, fondo grigio chiaro
+  esac
+
+  echo "  -- dettaglio (ora $ora_dettaglio) --"
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" >/dev/null 2>&1 || true
+  attendi_previsione
+  alive || { echo "dispositivo caduto prima del dettaglio"; return; }
+
+  local cx=$(( W / 2 ))
+  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d1-temperatura"
+
+  # Le altre quattro pagine, raggiunte scorrendo sul contenuto sotto la cifra:
+  # e' il gesto vero, quello che usa chi guarda. Sulla cifra invece il gesto
+  # orizzontale gira la scena, e i due non si contendono niente proprio perche'
+  # stanno in due zone diverse.
+  local pager_y=$(( H * 72 / 100 ))
+  local n=2
+  for pagina in sole pioggia vento aria; do
+    adbt shell input swipe "$FROM_X" "$pager_y" "$TO_X" "$pager_y" 320 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-d${n}-${pagina}"
+    n=$(( n + 1 ))
+  done
+
+  # Si esce dal foglio con l'indietro di sistema: e' anche una prova che il
+  # BackHandler sia agganciato.
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d6-tornato-alla-principale"
+
+  # ── Il dettaglio di un giorno ───────────────────────────────────────────────
+  #
+  # Si apre con l'aggancio `--ei giorno` e **non col dito**, e non e' una
+  # scorciatoia: la settimana sta in coda a una pagina che scorre, quindi per
+  # toccarla bisogna prima scorrere, e la trascinata lunga che ci vuole **fa
+  # morire l'emulatore**. Provato due volte, stesso punto esatto: il logcat
+  # dell'app finisce pulito - nessuna eccezione, nessun ANR - e sparisce la
+  # macchina virtuale, non l'app. E' la stessa ragione per cui esiste
+  # l'aggancio sul giro: certi stati, qui, col dito non si raggiungono.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d7-giorno"
+
+  # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
+  #
+  # Il fondo del cielo e il colore del testo si interpolano su due scale
+  # diverse e a meta' mattina si incrociano: misurato sulla matematica di
+  # `skyColors`, li' il contrasto scendeva a **1,01:1**, cioe' testo della
+  # stessa luminanza del fondo. Non l'aveva mai visto nessuno perche' gli
+  # scatti coprivano le due ore estreme, che sono le due in cui il contrasto e'
+  # al meglio.
+  #
+  # Solo nella sessione scura: sono scatti della schermata principale, e farli
+  # due volte darebbe due file identici.
+  if [ "$tema" = "SCURO" ]; then
+    for ora in 9 17; do
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      adbt shell am start -n "$ACT" --ei ora "$ora" >/dev/null 2>&1 || true
+      attendi_previsione
+      shoot "contrasto-ora-${ora}"
+    done
+  fi
+
   # Prova della parallasse: l'emulatore sa simulare l'accelerometro, quindi
   # l'inclinazione e' verificabile qui e non solo a mano sul telefono. La linea
   # di base insegue la posa in qualche secondo, percio' lo scatto va preso
   # subito dopo aver mosso il sensore.
   if [ "$tema" = "SCURO" ]; then
+    # Il blocco qui sopra lascia l'app sul dettaglio di un giorno: le prove
+    # dell'inclinazione vogliono la schermata principale.
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell logcat -c >/dev/null 2>&1 || true
+    adbt shell am start -n "$ACT" >/dev/null 2>&1 || true
+    attendi_previsione
+
     adbt emu sensor set acceleration 3.2:9.2:0 >/dev/null 2>&1 || true
     sleep 2
     shoot "${slug}-1b-inclinato-destra"
@@ -248,19 +380,9 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # Il foglio di dettaglio: mai verificato finora.
-    restart_with ""
-    adbt shell input swipe "$CX" "$(( H * 78 / 100 ))" "$CX" "$(( H * 20 / 100 ))" 420 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-6-dettaglio"
   fi
 
-  adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-2-precip"
-  adbt shell input swipe "$FROM_X" "$MID_Y" "$TO_X" "$MID_Y" 320 >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-3-vento"
+
 }
 
 welcome
@@ -276,5 +398,17 @@ echo "== file prodotti =="
 ls -la "$OUT"
 
 shots=$(find "$OUT" -name "*.png" -size +0 | wc -l)
-echo "scatti riusciti: $shots"
+echo "scatti riusciti: $shots, mancati: $MANCATI"
 [ "$shots" -gt 0 ] || { echo "nessuno scatto prodotto"; exit 1; }
+
+# Il segnale vero non e' il numero di scatti mancati - la soglia si azzecca
+# sempre per difetto, e infatti con esattamente tre mancati questo controllo
+# lasciava passare un giro monco - ma **se il dispositivo e' ancora vivo alla
+# fine**. Un emulatore che se n'e' andato a meta' corsa non e' un intoppo
+# passeggero: e' un giro da rifare, e il job deve dirlo invece di consegnare
+# mezza galleria con la faccia di una verifica completa.
+if ! alive; then
+  echo "il dispositivo non c'e' piu': il giro e' incompleto ($MANCATI scatti mancati)"
+  exit 1
+fi
+[ "$MANCATI" -eq 0 ] || echo "attenzione: $MANCATI scatti non catturati"

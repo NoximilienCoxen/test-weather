@@ -96,13 +96,33 @@ fun skyColors(sky: SkyState): MeteoColors {
         TwilightBackground,
         warmth * 0.5f,
     )
-    val text = lerp(NightText, DayText, day)
-    // Il mixing verso il fondo e' tenuto basso (0.28) in modo che l'etichetta
-    // abbia sempre contrasto sufficiente: a mezzogiorno il fondo e' grigio
-    // chiaro e con 0.42 il label diventava quasi invisibile. Con 0.28 resta
-    // leggibile a qualunque ora, pur distinguendosi dal testo principale.
-    val label = lerp(text, background, 0.28f)
-    val line = lerp(text, background, 0.55f)
+    // ── Il contrasto, garantito invece che sperato ──────────────────────────
+    //
+    // Fondo e testo si interpolano su **due scale diverse** - il fondo da
+    // antracite a grigio chiaro, il testo da bianco sporco a quasi nero - e a
+    // un certo punto della giornata si incrociano. Misurato con la formula
+    // WCAG sulla matematica qui sotto: a `day` = 0,6 il contrasto scendeva a
+    // **1,01:1**, cioe' testo della stessa luminanza del fondo. Succedeva ogni
+    // giorno, per un'ora buona, e non l'aveva mai visto nessuno perche' gli
+    // scatti della CI coprivano le due ore estreme - che sono le due in cui il
+    // contrasto e' al meglio.
+    //
+    // La correzione sta **qui e non nei chiamanti**: la schermata principale,
+    // la barra delle ore, il benvenuto e la scultura leggono tutti questi
+    // colori, e correggerli uno per uno vorrebbe dire dimenticarne uno.
+    //
+    // La regolazione a mano che c'era prima - il mixing verso il fondo tenuto
+    // a 0,28 invece che a 0,42 - era la stessa medicina data a occhio: curava
+    // il caso di mezzogiorno, che era quello che si vedeva negli scatti, e
+    // lasciava scoperto quello di meta' mattina, che negli scatti non c'era.
+    val text = lerp(NightText, DayText, day).readableOn(background)
+    // L'etichetta resta un gradino sotto il testo principale, ma non scende
+    // mai sotto la soglia: `mutedOn` si avvicina al fondo finche' puo' e si
+    // ferma li'.
+    val label = text.mutedOn(background)
+    // La linea e' un segno, non una scritta: le basta la soglia del testo
+    // grande, se no diventerebbe indistinguibile dall'etichetta.
+    val line = lerp(text, background, 0.55f).readableOn(background, CONTRAST_AA_LARGE)
 
     return MeteoColors(
         background = background,

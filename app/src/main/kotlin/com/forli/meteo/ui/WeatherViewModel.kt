@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.forli.meteo.data.AirQuality
+import com.forli.meteo.data.AirQualityRepository
 import com.forli.meteo.data.DeviceLocation
 import com.forli.meteo.data.Forecast
 import com.forli.meteo.data.HourForecast
@@ -40,6 +42,17 @@ data class UiState(
     val refreshing: Boolean = false,
     val error: String? = null,
     val forecast: Forecast? = null,
+    /**
+     * La qualita' dell'aria adesso, o nulla se non e' (ancora) arrivata.
+     *
+     * Sta su un altro host e arriva per conto suo, dopo la previsione: e' un
+     * arricchimento, non un dato senza il quale la schermata non ha senso.
+     * `AirQualityRepository` esisteva gia' e finora lo interrogava soltanto un
+     * widget - in app quei numeri non si vedevano da nessuna parte.
+     */
+    val air: AirQuality? = null,
+    /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
+    val airUnavailable: Boolean = false,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
     val selectedDay: Int = 0,
     /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
@@ -108,6 +121,28 @@ data class UiState(
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
     val hour: HourForecast? get() = hours.getOrNull(selectedHour)
+
+    /**
+     * L'ora da mostrare nel dettaglio: quella scelta, ma **sul giorno scelto**.
+     *
+     * [hours] copre solo oggi e [selectedHour] conta su quella lista, quindi
+     * con un giorno diverso da oggi il dettaglio mostrava i valori di oggi
+     * sotto un'intestazione che annunciava un altro giorno. Qui si va a
+     * prendere la stessa ora sul giorno giusto; nulla se quel giorno non ha
+     * quell'ora, che e' meglio di un numero preso altrove.
+     */
+    val detailHour: HourForecast?
+        get() {
+            val current = forecast ?: return null
+            if (selectedDay == 0) return hour
+            val date = current.days.getOrNull(selectedDay)?.date ?: return hour
+            val clock = hour?.time?.hour ?: return null
+            return current.hourOn(date, clock)
+        }
+
+    /** Il giorno aperto dal dettaglio, dentro i limiti di cio' che esiste. */
+    val detailDay: com.forli.meteo.data.DayForecast?
+        get() = forecast?.days?.getOrNull(selectedDay)
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
     val nowIndex: Int
@@ -183,6 +218,15 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     private var pendingHour: Int? = null
 
+    /**
+     * Giorno di cui aprire il dettaglio, chiesto prima che i dati arrivino.
+     *
+     * Stessa ragione di [pendingHour]: l'intent arriva all'avvio, la previsione
+     * qualche secondo dopo, e `openDayDetail` senza dati stringerebbe l'indice
+     * a zero - aprirebbe sempre oggi, qualunque giorno si sia chiesto.
+     */
+    private var pendingDay: Int? = null
+
     /** Vero da quando la posizione e' stata chiesta all'avvio: una volta basta. */
     private var started = false
 
@@ -247,6 +291,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         loading?.cancel()
         val place = _state.value.place
         val model = _state.value.model
+        // L'aria misurata appartiene al posto da cui viene: tenerla mentre si
+        // carica un'altra citta' vorrebbe dire attribuire a Bergen le polveri
+        // di Forli' per il tempo di una richiesta.
+        if (_state.value.forecast?.place?.key != place.key) {
+            _state.update { it.copy(air = null, airUnavailable = false) }
+        }
         loading = viewModelScope.launch {
             var wait = FIRST_RETRY_MS
             val repository = WeatherRepository(place, model)
@@ -281,13 +331,31 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     // guarda.
                                     else -> nearestHourIndex(forecast.hours, forecast.nowThere())
                                 }
+                                val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
+                                val wantedDay = pendingDay?.coerceIn(0, lastDay)
                                 current.copy(
                                     loading = false,
                                     refreshing = false,
                                     forecast = forecast,
                                     error = null,
                                     selectedHour = hour,
+                                    selectedDay = wantedDay ?: current.selectedDay,
+                                    dayDetail = wantedDay ?: current.dayDetail,
                                 )
+                            }
+
+                            // La qualita' dell'aria vive su un altro host: si
+                            // chiede a parte e senza far aspettare nessuno. Se
+                            // non arriva, la pagina ARIA lo dichiara invece di
+                            // mostrare una colonna di trattini muti.
+                            viewModelScope.launch {
+                                AirQualityRepository(place).load()
+                                    .onSuccess { air ->
+                                        _state.update { it.copy(air = air, airUnavailable = false) }
+                                    }
+                                    .onFailure {
+                                        _state.update { it.copy(airUnavailable = true) }
+                                    }
                             }
 
                             // La Norma storica arriva dopo, in background, e
@@ -388,7 +456,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun closeDayDetail() = _state.update { it.copy(dayDetail = null) }
+    fun closeDayDetail() {
+        pendingDay = null
+        _state.update { it.copy(dayDetail = null) }
+    }
 
     fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
 
@@ -455,6 +526,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun requestHour(index: Int) {
         pendingHour = index
         if (_state.value.forecast != null) selectHour(index)
+    }
+
+    /**
+     * Aggancio per la cattura automatica: apre il dettaglio di un giorno.
+     *
+     * Esiste perche' raggiungerlo col dito **non si puo' fare in modo
+     * affidabile**: la settimana sta in coda a una pagina che scorre, quindi
+     * bisogna prima scorrere, e la trascinata lunga necessaria a farlo fa
+     * morire l'emulatore della CI (vedi CONTESTO, trappola sull'emulatore).
+     * E' lo stesso motivo per cui esiste l'aggancio sul giro: certi stati col
+     * dito, li', non si raggiungono.
+     */
+    fun requestDayDetail(index: Int) {
+        pendingDay = index
+        if (_state.value.forecast != null) openDayDetail(index)
     }
 
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */

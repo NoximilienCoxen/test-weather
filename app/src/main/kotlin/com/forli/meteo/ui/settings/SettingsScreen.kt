@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,27 +46,32 @@ import com.forli.meteo.data.WeatherRepository
 import com.forli.meteo.data.key
 import com.forli.meteo.prefs.TempUnit
 import com.forli.meteo.ui.UiState
+import com.forli.meteo.ui.common.MeteoIconButton
+import com.forli.meteo.ui.common.MeteoPill
+import com.forli.meteo.ui.common.CloseIcon
 import com.forli.meteo.ui.theme.MeteoType
 import java.time.format.DateTimeFormatter
 
 /**
- * Tavolozza fissa, non quella del tema.
+ * I colori vengono dal tema, non da una tavolozza privata.
  *
- * Il pannello ha uno sfondo scuro fisso (vedi `MeteoApp.kt`), indipendente
- * dall'ora del giorno: riusare `LocalMeteoColors` qui - pensato per un fondo
- * che va dal grigio chiaro al blu scuro - tornava a far sparire titolo e
- * pulsanti a mezzogiorno. Solo due toni per il testo, mai un grigio scuro o
- * spento: bianco pieno per tutto cio' che e' primario, grigio chiaro
- * brillante per le didascalie.
+ * Questo file ne dichiarava otto per conto suo, `WidgetConfigScreen` altrettanti,
+ * `DetailChrome` un terzo gruppo: tre copie parallele destinate a divergere, e
+ * divergevano. Ora sono i token Material, che a loro volta si calcolano per
+ * contrasto sulla superficie che li ospita (`ui/theme/Contrast.kt`).
  */
-private val SettingsPrimary = Color.White
-private val SettingsSecondary = Color(0xFFEEEEEE)
-private val SettingsLine = Color.White.copy(alpha = 0.18f)
-private val SettingsFieldBg = Color.White.copy(alpha = 0.10f)
-private val SettingsBlockBg = Color.White.copy(alpha = 0.06f)
-private val SettingsSelectedBg = Color.White.copy(alpha = 0.14f)
-private val SettingsPillBg = Color.White
-private val SettingsPillText = Color.Black
+private val SettingsPrimary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurface
+private val SettingsSecondary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
+private val SettingsLine: Color
+    @Composable get() = MaterialTheme.colorScheme.outlineVariant
+private val SettingsFieldBg: Color
+    @Composable get() = MaterialTheme.colorScheme.surfaceContainerHighest
+private val SettingsBlockBg: Color
+    @Composable get() = MaterialTheme.colorScheme.surfaceContainerHigh
+private val SettingsSelectedBg: Color
+    @Composable get() = MaterialTheme.colorScheme.secondaryContainer
 
 /**
  * Le impostazioni: dove si guarda, in che unita', e da dove arrivano i numeri.
@@ -102,10 +108,12 @@ fun SettingsScreen(
                 .padding(start = 10.dp, end = 24.dp, top = 2.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CloseButton(onClose)
+            MeteoIconButton(onClick = onClose, contentDescription = "Chiudi le impostazioni") {
+                CloseIcon(SettingsPrimary)
+            }
             Text(
                 text = "IMPOSTAZIONI",
-                style = MeteoType.caption,
+                style = MaterialTheme.typography.titleMedium,
                 color = SettingsPrimary,
             )
         }
@@ -235,9 +243,9 @@ fun SettingsScreen(
             item {
                 if (state.favorites.isEmpty()) {
                     Text(
-                        text = "NESSUNA CITTÀ SALVATA. TOCCA LA STELLA ACCANTO A UN NOME " +
-                            "PER TENERLA A PORTATA DI MANO.",
-                        style = MeteoType.caption,
+                        text = "Nessuna città salvata. Tocca la stella accanto a un nome " +
+                            "per tenerla a portata di mano.",
+                        style = MaterialTheme.typography.bodyLarge,
                         color = SettingsSecondary,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -268,9 +276,9 @@ fun SettingsScreen(
                         modifier = Modifier.padding(vertical = 2.dp),
                     )
                     Text(
-                        text = "LA CONVERSIONE È IMMEDIATA: I DATI RESTANO QUELLI, " +
-                            "CAMBIA SOLO COME SONO SCRITTI.",
-                        style = MeteoType.caption,
+                        text = "La conversione è immediata: i dati restano quelli, " +
+                            "cambia solo come sono scritti.",
+                        style = MaterialTheme.typography.bodyLarge,
                         color = SettingsSecondary,
                         modifier = Modifier.padding(top = 10.dp),
                     )
@@ -290,9 +298,9 @@ fun SettingsScreen(
                         modifier = Modifier.padding(vertical = 2.dp),
                     )
                     Text(
-                        text = "ICON-2I È PIÙ PRECISO IN ITALIA. FUORI DALL'ITALIA " +
-                            "USA COMUNQUE AUTO.",
-                        style = MeteoType.caption,
+                        text = "ICON-2I è più preciso in Italia. Fuori dall'Italia " +
+                            "conviene comunque AUTO.",
+                        style = MaterialTheme.typography.bodyLarge,
                         color = SettingsSecondary,
                         modifier = Modifier.padding(top = 10.dp),
                     )
@@ -481,20 +489,12 @@ private fun Divider() {
  */
 @Composable
 private fun PlaceChip(place: Place, selected: Boolean, onClick: () -> Unit) {
-    val interaction = remember { MutableInteractionSource() }
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(percent = 50))
-            .background(if (selected) SettingsPillBg else SettingsBlockBg)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-    ) {
-        Text(
-            text = place.name.uppercase(),
-            style = MeteoType.label,
-            color = if (selected) SettingsPillText else SettingsPrimary,
-        )
-    }
+    MeteoPill(
+        label = place.name.uppercase(),
+        selected = selected,
+        onClick = onClick,
+        role = androidx.compose.ui.semantics.Role.RadioButton,
+    )
 }
 
 @Composable
@@ -556,25 +556,12 @@ private fun UnitChoice(
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         TempUnit.entries.forEach { unit ->
-            val active = unit == current
-            val interaction = remember { MutableInteractionSource() }
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(if (active) SettingsPillBg else Color.Transparent)
-                    .clickable(
-                        interactionSource = interaction,
-                        indication = null,
-                        onClick = { onChoose(unit) },
-                    )
-                    .padding(horizontal = 18.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = unit.symbol,
-                    style = MeteoType.value,
-                    color = if (active) SettingsPillText else SettingsSecondary,
-                )
-            }
+            MeteoPill(
+                label = unit.symbol,
+                selected = unit == current,
+                onClick = { onChoose(unit) },
+                role = androidx.compose.ui.semantics.Role.RadioButton,
+            )
         }
     }
 }
@@ -587,44 +574,35 @@ private fun ModelChoice(
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         WeatherModel.entries.forEach { model ->
-            val active = model == current
-            val interaction = remember { MutableInteractionSource() }
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(if (active) SettingsPillBg else Color.Transparent)
-                    .clickable(
-                        interactionSource = interaction,
-                        indication = null,
-                        onClick = { onChoose(model) },
-                    )
-                    .padding(horizontal = 18.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = model.label,
-                    style = MeteoType.value,
-                    color = if (active) SettingsPillText else SettingsSecondary,
-                )
-            }
+            MeteoPill(
+                label = model.label,
+                selected = model == current,
+                onClick = { onChoose(model) },
+                role = androidx.compose.ui.semantics.Role.RadioButton,
+            )
         }
     }
 }
 
-/** La stella che salva o toglie il posto corrente dai preferiti. */
+/**
+ * La stella che salva o toglie il posto corrente dai preferiti.
+ *
+ * Un pulsante vero da 48dp e non un glifo di testo da 34: sotto quella misura
+ * un dito manca il bersaglio, ed era il caso di tutti e tre i pulsanti tondi
+ * dell'app. Il nome cambia con lo stato, cosi' chi ascolta sente cosa fara' il
+ * tocco invece di sentire "stella".
+ */
 @Composable
 private fun FavoriteStar(filled: Boolean, onClick: () -> Unit) {
-    val interaction = remember { MutableInteractionSource() }
-    Box(
-        modifier = Modifier
-            .size(34.dp)
-            .clip(CircleShape)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
-        contentAlignment = Alignment.Center,
+    val color = SettingsPrimary
+    MeteoIconButton(
+        onClick = onClick,
+        contentDescription = if (filled) "Togli dai preferiti" else "Salva nei preferiti",
     ) {
         Text(
             text = if (filled) "★" else "☆",
-            style = MeteoType.title,
-            color = SettingsPrimary,
+            style = MaterialTheme.typography.headlineMedium,
+            color = color,
         )
     }
 }
@@ -643,7 +621,11 @@ private fun SearchField(
             .padding(horizontal = 12.dp, vertical = 12.dp),
     ) {
         if (value.isEmpty()) {
-            Text(text = placeholder, style = MeteoType.value, color = SettingsSecondary)
+            Text(
+                text = placeholder,
+                style = MaterialTheme.typography.bodyMedium,
+                color = SettingsSecondary,
+            )
         }
         BasicTextField(
             value = value,
@@ -656,37 +638,6 @@ private fun SearchField(
             ),
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-}
-
-/** Una croce disegnata, per non tirarsi dietro una libreria di icone. */
-@Composable
-private fun CloseButton(onClick: () -> Unit) {
-    val interaction = remember { MutableInteractionSource() }
-    Box(
-        modifier = Modifier
-            .size(34.dp)
-            .clip(CircleShape)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Canvas(Modifier.size(14.dp)) {
-            val stroke = size.minDimension * 0.11f
-            drawLine(
-                color = SettingsPrimary,
-                start = Offset(0f, 0f),
-                end = Offset(size.width, size.height),
-                strokeWidth = stroke,
-                cap = StrokeCap.Round,
-            )
-            drawLine(
-                color = SettingsPrimary,
-                start = Offset(size.width, 0f),
-                end = Offset(0f, size.height),
-                strokeWidth = stroke,
-                cap = StrokeCap.Round,
-            )
-        }
     }
 }
 

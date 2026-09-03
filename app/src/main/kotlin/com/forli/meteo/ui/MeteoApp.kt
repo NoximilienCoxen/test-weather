@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -33,10 +35,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.Lifecycle
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleEventObserver
 import com.forli.meteo.data.SkyState
 import com.forli.meteo.ui.home.HomeScreen
@@ -48,6 +52,7 @@ import com.forli.meteo.ui.settings.SettingsScreen
 import com.forli.meteo.ui.welcome.WelcomeScreen
 import com.forli.meteo.ui.theme.LocalMeteoColors
 import com.forli.meteo.ui.theme.MeteoTheme
+import com.forli.meteo.ui.theme.relativeLuminance
 import com.forli.meteo.ui.theme.skyColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -91,6 +96,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         // sensore fa ridipingere e non ricomporre.
         val tilt = rememberDeviceTilt()
         val scope = rememberCoroutineScope()
+
         val sheet = remember(scope) { SheetGesture(scope) }
         val density = LocalDensity.current
         val haptics = LocalHapticFeedback.current
@@ -124,6 +130,24 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // volte in tutto il gesto.
             val sheetVisible by remember { derivedStateOf { sheet.open > 0.001f } }
             val pullArmed by remember { derivedStateOf { sheet.armed } }
+            // Vero quando il foglio copre abbastanza schermo da decidere lui
+            // il colore sotto le barre di sistema. Derivato come gli altri: il
+            // foglio si muove a ogni fotogramma del dito, e questa risposta
+            // cambia due volte in tutto il gesto.
+            val sheetCovers by remember { derivedStateOf { sheet.open > 0.5f } }
+
+            // Le icone delle barre di sistema seguono cio' che hanno sotto. Con
+            // le barre trasparenti e un fondo che va dal grigio chiaro
+            // all'antracite, lasciarle fisse vuol dire che per meta' giornata
+            // sono invisibili: e' il motivo per cui negli scatti la barra di
+            // navigazione appariva bianca sotto un'app scura.
+            SystemBarIcons(
+                behind = if (state.settingsOpen || state.dayDetail != null || sheetCovers) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    colors.background
+                },
+            )
 
             fun release(velocity: Float) {
                 if (sheet.release(velocity)) {
@@ -189,23 +213,32 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     SheetNestedScroll(sheet, heightPx)
                 }
                 BackHandler(enabled = sheetVisible, onBack = sheet::closeFully)
-                Box(
+                // Una `Surface` e non un `Box` col fondo dipinto: cosi' il
+                // colore di contenuto scende ai figli invece di restare quello
+                // di riposo di Material, che e' nero. E la tinta e' quella del
+                // tema, non una costante ricopiata in quattro file - i testi
+                // che ci stanno sopra sono calcolati su di essa
+                // (vedi ui/theme/Contrast.kt), quindi pannello e scritte non
+                // possono piu' divergere.
+                Surface(
                     modifier = Modifier
                         .fillMaxSize()
                         .offset { IntOffset(0, ((1f - sheet.open) * heightPx).roundToInt()) }
-                        // Sfondo scuro fisso: le schermate di dettaglio sono
-                        // sempre scure indipendentemente dall'ora del giorno.
-                        // Di mezzogiorno il fondo tema e' grigio chiaro e il
-                        // testo delle schede (bianco/grigio chiaro) spariva.
-                        .background(DetailPanelBackground)
-                        .systemBarsPadding()
                         .nestedScroll(sheetScroll),
+                    color = MaterialTheme.colorScheme.surface,
                 ) {
                     TemperatureDetailScreen(
                         state = state,
                         viewModel = viewModel,
                         tilt = tilt,
                         onBack = sheet::closeFully,
+                        // L'inserto delle barre di sistema sta sul **contenuto**
+                        // e non sulla superficie: cosi' il pannello dipinge da
+                        // bordo a bordo. Con l'inserto sulla superficie il
+                        // foglio si fermava prima delle barre, e sopra e sotto
+                        // restava una striscia di cielo - a mezzogiorno una
+                        // banda grigio chiaro attorno a un foglio scuro.
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
@@ -221,18 +254,17 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             )
             if (dayShift > 0.001f) {
                 BackHandler(enabled = dayOpen, onBack = viewModel::closeDayDetail)
-                Box(
+                Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) }
-                        // Stesso sfondo scuro fisso del foglio principale.
-                        .background(DetailPanelBackground)
-                        .systemBarsPadding(),
+                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
                 ) {
                     DayDetailScreen(
                         state = state,
                         viewModel = viewModel,
                         onBack = viewModel::closeDayDetail,
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
@@ -244,15 +276,16 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             )
             if (settings > 0.001f) {
                 BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
-                Box(
+                // **Opaco.** Era nero all'ottantacinque per cento, e la
+                // schermata sotto traspariva: negli scatti si legge la cifra
+                // della temperatura in mezzo al testo delle impostazioni. Un
+                // velo non e' uno sfondo, e un testo che poggia su un velo non
+                // ha un contrasto: ne ha uno diverso a ogni pixel.
+                Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) }
-                        // Fisso e scuro, non il fondo del tema: le impostazioni devono
-                        // leggersi uguali a mezzogiorno e a mezzanotte, e il tema chiaro
-                        // rendeva invisibili titolo e pulsante di chiusura.
-                        .background(Color.Black.copy(alpha = 0.85f))
-                        .systemBarsPadding(),
+                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
                 ) {
                     SettingsScreen(
                         state = state,
@@ -263,6 +296,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onToggleFavorite = viewModel::toggleFavorite,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeSettings,
+                        modifier = Modifier.systemBarsPadding(),
                     )
                 }
             }
@@ -439,14 +473,35 @@ private class SheetNestedScroll(
 }
 
 /**
- * Sfondo fisso per i pannelli di dettaglio (temperatura e giorno).
+ * Chiare o scure, le icone delle barre di sistema.
  *
- * Scuro a qualunque ora: le schede e i grafici usano palette chiare fisse
- * (bianco, grigio chiaro) che sparirebbero su un fondo chiaro di mezzogiorno.
- * Non e' il nero pieno: una sfumatura antracite (identica a NightBackground)
- * lascia respirare le card scure con bordo sottile.
+ * Si decide dalla luminanza di cio' che sta sotto, con la stessa formula che
+ * decide i colori del testo: sopra un fondo chiaro icone scure, sopra uno scuro
+ * icone chiare. La soglia e' la meta' della scala percettiva, non lo 0,5 del
+ * canale: un giallo pieno ha luminanza 0,93 e vuole icone nere, un blu pieno
+ * 0,07 e le vuole bianche, e i due sono altrettanto "saturi".
  */
-private val DetailPanelBackground = Color(0xFF1D2026)
+@Composable
+private fun SystemBarIcons(behind: Color) {
+    val view = LocalView.current
+    val light = behind.relativeLuminance() > 0.35f
+    DisposableEffect(view, light) {
+        val window = (view.context.findActivity())?.window
+        if (window != null) {
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = light
+                isAppearanceLightNavigationBars = light
+            }
+        }
+        onDispose { }
+    }
+}
+
+private tailrec fun android.content.Context.findActivity(): android.app.Activity? = when (this) {
+    is android.app.Activity -> this
+    is android.content.ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 /** Oltre questa velocita' il gesto decide da solo, senza guardare la posizione. */
 private const val SNAP_VELOCITY = 800f
