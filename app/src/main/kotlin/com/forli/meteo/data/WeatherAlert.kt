@@ -41,34 +41,24 @@ data class WeatherAlert(
 /**
  * La gravita', nei tre gradini che l'Italia usa a voce.
  *
- * MeteoAlarm ne dichiara quattro (`awareness_level` da 1 a 4) ma il primo e'
- * verde, cioe' "nessun avviso": un'app che mostrasse una fascia per dire che
- * non succede niente insegnerebbe a ignorare la fascia. Il verde si scarta
- * alla fonte e qui restano i tre che valgono la pena di essere letti.
+ * MeteoAlarm ne usa quattro - verde, giallo, arancione, rosso - ma il verde
+ * vuol dire "nessun avviso": un'app che mostrasse una fascia per dire che non
+ * succede niente insegnerebbe a ignorare la fascia. Il verde si scarta alla
+ * fonte e qui restano i tre che vale la pena leggere.
  */
 enum class AlertLevel(val label: String, val weight: Int) {
     GIALLA("ALLERTA GIALLA", 1),
     ARANCIONE("ALLERTA ARANCIONE", 2),
     ROSSA("ALLERTA ROSSA", 3),
-    ;
-
-    companion object {
-        /** Da `awareness_level` di MeteoAlarm. Verde e ignoto tornano nulli. */
-        fun ofAwareness(value: Int?): AlertLevel? = when (value) {
-            2 -> GIALLA
-            3 -> ARANCIONE
-            4 -> ROSSA
-            else -> null
-        }
-    }
 }
 
 /**
  * Di cosa avvisa.
  *
- * I nomi sono quelli dei fenomeni, non i codici della fonte: `awareness_type`
- * di MeteoAlarm e' un numero, e un numero in cima allo schermo non avvisa
- * nessuno.
+ * I nomi sono quelli dei fenomeni, non i codici della fonte. MeteoAlarm scrive
+ * il tipo dentro una frase inglese - "Yellow High-temperature Warning" - e a
+ * riconoscerlo pensa `FeedEntry.kind`; qui restano solo le parole che vanno a
+ * schermo.
  */
 enum class AlertKind(val label: String) {
     VENTO("VENTO"),
@@ -82,33 +72,4 @@ enum class AlertKind(val label: String) {
     INCENDI("INCENDI"),
     VALANGHE("VALANGHE"),
     ALTRO("AVVISO"),
-    ;
-
-    companion object {
-        /**
-         * Da `awareness_type` di MeteoAlarm.
-         *
-         * La numerazione e' quella pubblicata da EUMETNET e non e' contigua:
-         * i valori mancanti non sono buchi da riempire a intuito, sono codici
-         * che non esistono. Tutto cio' che non si riconosce diventa [ALTRO],
-         * che si mostra comunque - un avviso di cui non si sa il tipo resta un
-         * avviso, e buttarlo sarebbe il modo peggiore di gestire l'ignoto.
-         */
-        fun ofAwareness(value: Int?): AlertKind = when (value) {
-            1 -> VENTO
-            2 -> NEVE_GHIACCIO
-            3 -> TEMPORALI
-            4 -> NEBBIA
-            5 -> CALDO
-            6 -> FREDDO
-            7 -> COSTIERO
-            8 -> INCENDI
-            9 -> NEVE_GHIACCIO
-            10 -> PIOGGIA
-            11 -> VALANGHE
-            12 -> PIOGGIA
-            13 -> VALANGHE
-            else -> ALTRO
-        }
-    }
 }
