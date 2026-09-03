@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.DayForecast
 import com.forli.meteo.data.HourForecast
@@ -135,6 +136,13 @@ internal fun ChartPanel(
                 text = title,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                // Cede spazio alle due pillole invece di spingerle fuori: su
+                // uno schermo da 360 punti "LA GIORNATA" piu' GIORNO piu'
+                // SETTIMANA non ci stanno, e in una riga a spazio distribuito
+                // e' il testo senza peso a vincere.
+                modifier = Modifier.weight(1f, fill = false),
             )
             if (weekMode != null && onToggleWeek != null) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
