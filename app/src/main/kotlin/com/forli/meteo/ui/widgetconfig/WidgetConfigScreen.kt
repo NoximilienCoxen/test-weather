@@ -131,13 +131,24 @@ fun WidgetConfigScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(Modifier.width(10.dp))
-            Text(text = "CONFIGURA WIDGET", style = MeteoType.caption, color = Primary)
+            Text(
+                text = "CONFIGURA WIDGET",
+                style = MaterialTheme.typography.titleMedium,
+                color = Primary,
+            )
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            // Quale widget si sta posizionando. Lo schermo lo sapeva - arriva
+            // come parametro - e non lo diceva: chi ne aggancia tre uguali di
+            // aspetto si ritrova la stessa schermata tre volte senza sapere a
+            // quale delle tre stia rispondendo.
+            item { WidgetIdentity(kind = kind, place = selectedPlace, following = useLocation) }
+            item { Spacer(Modifier.height(14.dp)) }
+
             if (showLocation) {
                 item { SectionTitle("LOCALITÀ") }
                 item {
@@ -378,5 +389,54 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
             color = Color.Black,
             modifier = Modifier.align(Alignment.Center),
         )
+    }
+}
+
+/**
+ * Che widget e' e dove guardera'.
+ *
+ * **Non un'anteprima dei numeri.** I numeri non ci sono ancora - il widget non
+ * e' stato salvato e la sua richiesta non e' mai partita - e disegnarne di
+ * finti sarebbe peggio che non disegnare niente: chi guarda non ha modo di
+ * sapere che sono finti, e i widget di questa app sono immagini dipinte, quindi
+ * un'anteprima falsa sembrerebbe quella vera.
+ *
+ * Quel che si puo' dire con onesta' e' l'identita': quale dei tre widget, con
+ * il suo disegno, e quale localita' andra' a leggere.
+ */
+@Composable
+private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean) {
+    val titolo = when (kind) {
+        WidgetKind.METEO -> "METEO"
+        WidgetKind.LUNA -> "LUNA"
+        WidgetKind.ARIA -> "QUALITÀ DELL'ARIA"
+        null -> "WIDGET"
+    }
+    val dove = when {
+        kind == WidgetKind.LUNA -> "La luna e' la stessa da ogni punto della Terra"
+        following -> "Seguira' la posizione del telefono"
+        place != null -> "Mostrera' ${place.name}"
+        else -> "Scegli da dove prendere i dati"
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(FieldBackground)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = titolo,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Primary,
+            )
+            Text(
+                text = dove,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Secondary,
+            )
+        }
     }
 }
