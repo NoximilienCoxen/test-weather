@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -88,8 +89,35 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         animationSpec = spring(stiffness = 110f),
         label = "viaggio",
     )
-    val sky = remember(altitude, journey) { SkyState.of(altitude, journey) }
-    val colors = remember(sky) { skyColors(sky) }
+    // Da che parte della giornata si guarda: decide se l'orizzonte e' il rosa
+    // dell'alba o l'arancio del tramonto. Si muove con la stessa molla degli
+    // altri due, se no attraversando il mezzogiorno il cielo cambierebbe
+    // tavolozza di scatto invece che di passaggio.
+    val evening by animateFloatAsState(
+        targetValue = state.skyEvening,
+        animationSpec = spring(stiffness = 110f),
+        label = "sera",
+    )
+    // Quanto e' coperto. Sta fuori da SkyState perche' non e' astronomia, ma si
+    // anima insieme al resto: passando da un'ora serena a una piovosa il cielo
+    // deve ingrigirsi, non cambiare.
+    val cloudiness by animateFloatAsState(
+        targetValue = state.skyCloudiness,
+        animationSpec = spring(stiffness = 110f),
+        label = "nuvolosita",
+    )
+    val sky = remember(altitude, journey, evening) { SkyState.of(altitude, journey, evening) }
+    val colors = remember(sky, cloudiness) { skyColors(sky, cloudiness) }
+    // Tre fermate e non due: quella di mezzo e' il tono piatto che tutto il
+    // resto dell'app chiama "il fondo", e deve comparire davvero sullo schermo -
+    // se no i testi e la barra sarebbero tarati su un cielo che non si vede.
+    val skyBrush = remember(colors) {
+        Brush.verticalGradient(
+            0f to colors.skyZenith,
+            0.5f to colors.background,
+            1f to colors.skyHorizon,
+        )
+    }
 
     MeteoTheme(colors = colors) {
         // Un solo ascoltatore del sensore per tutta l'app, e il valore resta
@@ -119,7 +147,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.background),
+                .background(skyBrush),
         ) {
             val heightPx = with(density) { maxHeight.toPx() }.coerceAtLeast(1f)
             val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
@@ -138,15 +166,22 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             val sheetCovers by remember { derivedStateOf { sheet.open > 0.5f } }
 
             // Le icone delle barre di sistema seguono cio' che hanno sotto. Con
-            // le barre trasparenti e un fondo che va dal grigio chiaro
-            // all'antracite, lasciarle fisse vuol dire che per meta' giornata
+            // le barre trasparenti e un fondo che va dall'azzurro di
+            // mezzogiorno all'indaco della notte, lasciarle fisse vuol dire
+            // che per meta' giornata
             // sono invisibili: e' il motivo per cui negli scatti la barra di
             // navigazione appariva bianca sotto un'app scura.
+            val panelled = state.settingsOpen || state.dayDetail != null || sheetCovers
             SystemBarIcons(
-                behind = if (state.settingsOpen || state.dayDetail != null || sheetCovers) {
+                behindStatusBar = if (panelled) {
                     MaterialTheme.colorScheme.surface
                 } else {
-                    colors.background
+                    colors.skyZenith
+                },
+                behindNavigationBar = if (panelled) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    colors.skyHorizon
                 },
             )
 
@@ -511,15 +546,20 @@ private class SheetNestedScroll(
  * 0,07 e le vuole bianche, e i due sono altrettanto "saturi".
  */
 @Composable
-private fun SystemBarIcons(behind: Color) {
+private fun SystemBarIcons(behindStatusBar: Color, behindNavigationBar: Color) {
     val view = LocalView.current
-    val light = behind.relativeLuminance() > 0.35f
-    DisposableEffect(view, light) {
+    // Le due barre si decidono separatamente da quando il fondo e' una
+    // sfumatura: in alto c'e' lo zenit e in fondo l'orizzonte, e al crepuscolo
+    // uno dei due e' scuro mentre l'altro e' chiaro. Un boolean solo per
+    // entrambe sbaglia sempre una delle due, per un'ora buona al giorno.
+    val lightStatus = behindStatusBar.relativeLuminance() > 0.35f
+    val lightNavigation = behindNavigationBar.relativeLuminance() > 0.35f
+    DisposableEffect(view, lightStatus, lightNavigation) {
         val window = (view.context.findActivity())?.window
         if (window != null) {
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = light
-                isAppearanceLightNavigationBars = light
+                isAppearanceLightStatusBars = lightStatus
+                isAppearanceLightNavigationBars = lightNavigation
             }
         }
         onDispose { }

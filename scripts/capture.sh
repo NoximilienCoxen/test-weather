@@ -378,6 +378,25 @@ session() {
     restart_with "--ei ora 12 --ei meteo 0"
     shoot "${slug}-5c-sereno-uccelli"
 
+    # Il cielo colorato si giudica ai suoi tre estremi, e nessuno dei tre
+    # c'era. Il sereno di mezzogiorno qui sopra dice se il fondo e' azzurro
+    # invece che grigio; questi tre dicono il resto.
+    #
+    # Alba e tramonto vanno fotografati **tutti e due**: hanno la stessa
+    # altezza del sole e tavolozze diverse - rosa e freddo l'una, arancio e
+    # caldo l'altra - e con un solo scatto non c'e' modo di accorgersi se la
+    # distinzione funziona o se si somigliano.
+    restart_with "--ei ora 6 --ei meteo 0"
+    shoot "${slug}-5e-alba"
+
+    restart_with "--ei ora 20 --ei meteo 0"
+    shoot "${slug}-5f-tramonto"
+
+    # E il coperto a mezzogiorno, che e' lo scatto che dimostra la regola:
+    # adesso il grigio c'e' **solo** quando vuol dire qualcosa.
+    restart_with "--ei ora 12 --ei meteo 3"
+    shoot "${slug}-5g-coperto-a-mezzogiorno"
+
     restart_with "--ei meteo 96"
     shoot "${slug}-5d-grandine"
 
