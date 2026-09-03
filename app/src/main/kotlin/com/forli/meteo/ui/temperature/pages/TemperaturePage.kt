@@ -11,13 +11,13 @@ import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.asDegrees
 import com.forli.meteo.ui.asHectopascal
 import com.forli.meteo.ui.asPercent
+import com.forli.meteo.ui.asPlainDegrees
 import com.forli.meteo.ui.common.MeteoLayout
 import com.forli.meteo.ui.common.MeteoMetric
 import com.forli.meteo.ui.common.MeteoMetricCard
 import com.forli.meteo.ui.temperature.ChartReference
 import com.forli.meteo.ui.temperature.MeteoChart
 import com.forli.meteo.ui.theme.LocalMeteoAccents
-import kotlin.math.roundToInt
 
 /**
  * La temperatura.
@@ -102,7 +102,7 @@ internal fun TemperaturePage(
                     ?.takeIf { !week }
                     ?.let { ChartReference(it.toFloat(), "MEDIA") },
                 useTemperatureRamp = true,
-                formatValue = { "${unit.from(it.toDouble()).roundToInt()}°" },
+                formatValue = { it.toDouble().asPlainDegrees(unit) },
                 description = if (week) {
                     "Temperatura della settimana"
                 } else {

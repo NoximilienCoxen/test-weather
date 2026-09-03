@@ -210,7 +210,7 @@ private fun DayBody(
                 daylight = hours.map { it.isDay },
                 reference = day.normTemp?.let { ChartReference(it.toFloat(), "MEDIA") },
                 useTemperatureRamp = true,
-                formatValue = { "${unit.from(it.toDouble()).toInt()}°" },
+                formatValue = { it.toDouble().asPlainDegrees(unit) },
                 description = "Temperatura del giorno",
                 modifier = Modifier
                     .fillMaxWidth()
