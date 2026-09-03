@@ -124,6 +124,11 @@ fun MeteoChart(
     val onVariant = MaterialTheme.colorScheme.onSurfaceVariant
     // Il contrasto costa qualche elevamento a potenza per colore: si calcola
     // al cambio di tema, non a ogni fotogramma di trascinamento.
+    // I tre colori delle scritte dentro la tela, gia' resi leggibili sul fondo
+    // della loro pillola. **Non finiscono nello stile passato al misuratore**:
+    // la cache di `TextMeasurer` ignora colore e pennello (trappola #3), quindi
+    // due scritte uguali di colore diverso si scambierebbero il tono. Si misura
+    // con uno stile solo e il colore si passa a `drawText`.
     val labelColor = remember(labelBackground, onVariant) { onVariant.readableOn(labelBackground) }
     val strongLabelColor = remember(labelBackground) { Color.White.readableOn(labelBackground) }
     val normColor = remember(labelBackground, accents.norm) {
@@ -205,13 +210,19 @@ fun MeteoChart(
         var gridHi = ceil(rawHi / step) * step
         bounds.min?.let { gridLo = maxOf(gridLo, it) }
         bounds.max?.let { gridHi = minOf(gridHi, it) }
-        val span = (gridHi - gridLo).takeIf { it > 0.001f } ?: 1f
+        // I due limiti si stringono da lati opposti e potrebbero incrociarsi.
+        // Piu' avanti si usa `coerceIn(gridLo, gridHi)`, che con il minimo
+        // sopra il massimo non arrotonda: solleva.
+        if (gridHi - gridLo < 0.001f) gridHi = gridLo + 1f
+        val span = gridHi - gridLo
 
         fun yOf(value: Float): Float = plotTop + plotH * (1f - (value - gridLo) / span)
         fun xOf(index: Int): Float =
             plotLeft + plotW * index / (series.size - 1).coerceAtLeast(1).toFloat()
 
-        val labelStyle = TextStyle(fontSize = 10.sp, color = labelColor)
+        // Senza colore, apposta: vedi la nota sui tre colori qui sopra.
+        val labelStyle = TextStyle(fontSize = 10.sp)
+        val calloutStyle = TextStyle(fontSize = 11.sp)
 
         // ── Griglia e scala a destra ─────────────────────────────────────────
         val dashes = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 5.dp.toPx()))
@@ -232,6 +243,7 @@ fun MeteoChart(
                 layout = layout,
                 topLeft = Offset(size.width - layout.size.width, y - layout.size.height / 2f),
                 background = labelBackground,
+                color = labelColor,
             )
             tick += step
         }
@@ -246,14 +258,12 @@ fun MeteoChart(
                 strokeWidth = 1.5.dp.toPx(),
                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 5.dp.toPx())),
             )
-            val layout = measurer.measure(
-                reference.label,
-                TextStyle(fontSize = 10.sp, color = normColor),
-            )
+            val layout = measurer.measure(reference.label, labelStyle)
             drawLabel(
                 layout = layout,
                 topLeft = Offset(plotLeft, y - layout.size.height - 3.dp.toPx()),
                 background = labelBackground,
+                color = normColor,
             )
         }
 
@@ -353,6 +363,7 @@ fun MeteoChart(
                     y = size.height - layout.size.height.toFloat(),
                 ),
                 background = labelBackground,
+                color = labelColor,
             )
         }
 
@@ -378,10 +389,7 @@ fun MeteoChart(
                     append(xLabels.getOrNull(idx)?.takeIf { it.isNotBlank() }?.plus("  ").orEmpty())
                     append(formatValue(value))
                 }
-                val layout = measurer.measure(
-                    text,
-                    TextStyle(fontSize = 11.sp, color = strongLabelColor),
-                )
+                val layout = measurer.measure(text, calloutStyle)
                 drawLabel(
                     layout = layout,
                     topLeft = Offset(
@@ -393,6 +401,7 @@ fun MeteoChart(
                         ),
                     ),
                     background = labelBackground,
+                    color = strongLabelColor,
                     padding = 5.dp.toPx(),
                 )
             }
@@ -411,6 +420,7 @@ private fun DrawScope.drawLabel(
     layout: TextLayoutResult,
     topLeft: Offset,
     background: Color,
+    color: Color,
     padding: Float = 3f,
 ) {
     drawRoundRect(
@@ -419,7 +429,9 @@ private fun DrawScope.drawLabel(
         size = Size(layout.size.width + padding * 2, layout.size.height + padding * 2),
         cornerRadius = CornerRadius(padding + 2f),
     )
-    drawText(textLayoutResult = layout, topLeft = topLeft)
+    // Il colore qui e non nello stile misurato: la cache del misuratore non lo
+    // guarda, e due scritte uguali di colore diverso si scambierebbero il tono.
+    drawText(textLayoutResult = layout, color = color, topLeft = topLeft)
 }
 
 /**

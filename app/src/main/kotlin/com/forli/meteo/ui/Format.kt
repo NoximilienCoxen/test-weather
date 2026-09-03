@@ -63,18 +63,27 @@ fun Double?.asBigDegrees(unit: TempUnit): String =
  */
 private val NUM: java.util.Locale = java.util.Locale.ROOT
 
-private fun Double.dec(decimals: Int = 1): String = String.format(NUM, "%.${decimals}f", this)
+/**
+ * Il numero con i decimali richiesti.
+ *
+ * **Non chiamarla `dec`**: `Double.dec()` e' l'operatore di decremento della
+ * libreria standard, e un membro vince sempre su un'estensione. Chiamandola
+ * cosi', la chiamata non formattava un bel niente: restituiva il numero meno
+ * uno, e i millimetri di pioggia uscivano negativi.
+ */
+private fun Double.fixed(decimals: Int = 1): String =
+    String.format(NUM, "%.${decimals}f", this)
 
-fun Double?.asMillimetres(): String = this?.let { "${it.dec()} MM" } ?: EMPTY
-fun Double?.asMillimetresPerDay(): String = this?.let { "${it.dec()} MM/GIORNO" } ?: EMPTY
-fun Double?.asMetresPerSecond(): String = this?.let { "${it.dec()} M/S" } ?: EMPTY
+fun Double?.asMillimetres(): String = this?.let { "${it.fixed()} MM" } ?: EMPTY
+fun Double?.asMillimetresPerDay(): String = this?.let { "${it.fixed()} MM/GIORNO" } ?: EMPTY
+fun Double?.asMetresPerSecond(): String = this?.let { "${it.fixed()} M/S" } ?: EMPTY
 fun Double?.asHours(): String = this?.let { "${it.roundToInt()} H" } ?: EMPTY
-fun Double?.asIndex(): String = this?.let { it.dec() } ?: EMPTY
+fun Double?.asIndex(): String = this?.let { it.fixed() } ?: EMPTY
 fun Double?.asPercent(): String = this?.let { "${it.roundToInt()}%" } ?: EMPTY
 fun Int?.asPercent(): String = this?.let { "$it%" } ?: EMPTY
 
 /** Centimetri di neve: Open-Meteo li da' cosi', e convertirli sarebbe inventare. */
-fun Double?.asCentimetres(): String = this?.let { "${it.dec()} CM" } ?: EMPTY
+fun Double?.asCentimetres(): String = this?.let { "${it.fixed()} CM" } ?: EMPTY
 
 /** Pressione al suolo. L'intero basta: il decimo di hPa non lo guarda nessuno. */
 fun Double?.asHectopascal(): String = this?.let { "${it.roundToInt()} HPA" } ?: EMPTY
@@ -88,7 +97,7 @@ fun Double?.asHectopascal(): String = this?.let { "${it.roundToInt()} HPA" } ?: 
  */
 fun Double?.asDistance(): String = when {
     this == null -> EMPTY
-    this >= 1000.0 -> "${(this / 1000.0).dec()} KM"
+    this >= 1000.0 -> "${(this / 1000.0).fixed()} KM"
     else -> "${roundToInt()} M"
 }
 
