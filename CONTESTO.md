@@ -86,6 +86,26 @@ impostazioni a sinistra, nome della localita' al centro, scultura meteo,
 temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
 e sotto l'ora mostrata.
 
+**Il fondo e' un cielo, non piu' un grigio** (`ui/theme/Colors.kt`). Era una
+tinta piatta sola, interpolata fra antracite e grigio chiaro: mezzogiorno usciva
+grigio per costruzione, alba e tramonto viravano su un malva fangoso, e sereno e
+coperto avevano lo stesso identico fondo - il grigio c'era sempre, quindi non
+diceva niente. Adesso sono tre decisioni:
+
+- **Una sfumatura verticale**, zenit sopra e orizzonte sotto, ricavata da due
+  tabelle di fermate ordinate per altezza del sole. Le fermate cadono dove
+  cadono le soglie di `SkyState.of`, cosi' fondo, sole e luna cambiano negli
+  stessi punti.
+- **Alba e tramonto sono diversi**: rosa e freddo l'una, arancio e caldo
+  l'altro. L'altezza del sole non li distingue - e' simmetrica attorno a
+  mezzogiorno - e nemmeno `journey`, che al tramonto riparte da zero perche'
+  descrive l'arco della luna. Serve `SunClock.eveningness`, che e' la frazione
+  del giorno **senza limiti**: negativa prima dell'alba, oltre uno dopo il
+  tramonto, quindi monotona lungo tutta la giornata.
+- **Il grigio adesso significa coperto.** Il fondo di prima e' diventato la
+  tavolozza della nuvolosita', e ci si scivola dentro con `Wmo.cloudiness`; il
+  decile alto - pioggia forte e temporale - scurisce ancora.
+
 **Il dettaglio sale trascinando verso l'alto** (`ui/MeteoApp.kt`): un foglio che
 segue il dito, reversibile a meta' corsa. **Le impostazioni entrano da
 sinistra**, da dove sta il loro pulsante.
@@ -554,6 +574,29 @@ riaccendere la scala prima e rispegnerla dopo, come fa `roll_from_to` in
 `scripts/capture.sh`. **Prima di dare la colpa al codice per un'animazione che
 "non parte", guarda se sta girando a durata zero.**
 
+**33. Il rovescio della #28: quando le animazioni sono vive, uno scatto puo'
+ritrarre il viaggio invece della destinazione.** La #28 dice che con
+`animator_duration_scale` a zero `animate` salta alla fine. Il caso opposto e'
+altrettanto velenoso e si e' visto subito: ad app appena avviata l'altezza del
+sole parte dal **ripiego diurno** (`0.62`), e la molla del cielo ci mette piu'
+di un secondo ad arrivare a un'ora notturna. Lo scatto dell'alba, preso col
+solo secondo di `attendi_previsione`, e' uscito con il cielo di mezzogiorno e il
+sole alto - e la tavolozza era giusta, era la foto a essere presto.
+
+Il segno che lo tradiva stava nel testo, non nel colore: **"IN ATTESA DEI DATI"
+sopra una riga di minima e massima gia' piene**. Sono due stati che non possono
+coesistere, se non a meta' di una dissolvenza. Quando due parti dello schermo si
+contraddicono, la spiegazione e' quasi sempre il momento dello scatto e non la
+logica di una delle due.
+
+**34. Chi reagisce al meteo deve leggere `forcedWeatherCode`, non solo l'ora.**
+Il fondo del cielo era nato leggendo `hour?.weatherCode` e basta: nello scatto
+di verifica del coperto la scultura obbediva al codice imposto e il fondo no, e
+usciva la nuvola giusta sopra un cielo da sereno - cioe' proprio la regola che
+quello scatto doveva dimostrare non si vedeva. In uso normale non si sarebbe
+notato mai, perche' li' il codice imposto non esiste: e' un difetto che **solo
+l'aggancio di verifica poteva mostrare, e solo se l'aggancio arriva dappertutto**.
+
 **26. `refresh()` non la richiamava nessuno.** Partiva all'avvio e al cambio di
 localita', e basta: nessun ritorno in primo piano, nessun gesto, nessun segno di
 quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava
@@ -755,8 +798,25 @@ tocca quella funzione tenga presente che la regolazione a mano che c'era prima -
 il mixing dell'etichetta verso il fondo tenuto a 0,28 invece che a 0,42 - era la
 stessa medicina data a occhio: curava il caso di mezzogiorno, che era quello che
 si vedeva negli scatti, e lasciava scoperto quello di meta' mattina, che negli
-scatti non c'era. Dopo la correzione il caso peggiore su tutta la giornata e'
-**4,54:1**.
+scatti non c'era.
+
+**Da quando il fondo e' una sfumatura, la soglia si chiede ai due capi e non al
+tono medio.** Sotto un testo solo ci sono due colori diversi - in cima lo zenit,
+in fondo l'orizzonte - e a meta' pomeriggio distano fra loro piu' di due a uno:
+un testo corretto sulla media li regge tutti e due appena appena, che e' come si
+torna al difetto di prima con un'altra faccia. Da qui `readableOnBoth` e
+`mutedOnBoth` in `Contrast.kt`.
+
+E c'e' un caso in cui **nessun colore di testo regge entrambi i capi**: quando
+uno sta sopra e l'altro sotto la luminanza di mezzo, il bianco perde in cima e
+il nero perde in fondo, e non esiste una terza risposta. Li' e' **la sfumatura a
+cedere, non la leggibilita'**: `legibleSky` la avvicina al proprio tono medio
+finche' un testo esiste, al limite fino alla tinta piatta di prima. Misurato su
+3168 momenti - tre stagioni per undici nuvolosita' per i quarti d'ora di una
+giornata - cede nell'**1,8%** dei casi, quasi sempre di un passo su sei, e sono
+il parzialmente nuvoloso attorno all'alba e il coperto attorno al tramonto,
+cioe' i momenti gia' meno colorati. Dopo la correzione il caso peggiore su tutta
+la giornata e' **4,50:1**, e nessuna lettura sta sotto la soglia.
 
 **Le etichette dentro le tele hanno un fondo.** La scala dell'asse Y cade sempre
 sopra l'area riempita del grafico, che sotto la scala dei gradi copre

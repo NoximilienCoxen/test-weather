@@ -106,6 +106,63 @@ fun Color.mutedOn(background: Color, minRatio: Float = CONTRAST_AA): Color {
 }
 
 /**
+ * Leggibile su **tutti e due** i capi di una sfumatura.
+ *
+ * Da quando il fondo della schermata principale e' un cielo sfumato, sotto un
+ * testo solo ci sono due colori diversi: in cima il nome della localita' sta
+ * sullo zenit, in fondo l'ora e la barra stanno sull'orizzonte. Garantire la
+ * soglia sul solo tono medio vuol dire perderla a uno dei due capi - ed e'
+ * esattamente il modo in cui era gia' sparito una volta il titolo del dettaglio,
+ * che era corretto sul fondo sbagliato.
+ *
+ * Si provano i poli dei due capi e si tiene il primo passo che regge entrambi.
+ * Se nessuno dei due basta - un cielo che andasse dal quasi nero al quasi bianco
+ * non ha un colore di testo che lo attraversi - si tiene il candidato che regge
+ * meglio il capo peggiore, che e' il male minore invece del bianco d'ufficio.
+ *
+ * Vuole i due capi **opachi**: con la trasparenza non c'e' un fondo solo su cui
+ * comporre, e comporre sul capo sbagliato darebbe una misura falsa.
+ */
+fun Color.readableOnBoth(first: Color, second: Color, minRatio: Float = CONTRAST_AA): Color {
+    fun worstOf(color: Color) = min(color.contrastRatio(first), color.contrastRatio(second))
+
+    if (worstOf(this) >= minRatio) return this
+    var best = this
+    var bestWorst = worstOf(this)
+    for (pole in listOf(first.onColor(), second.onColor())) {
+        for (step in 1..16) {
+            val candidate = lerp(this, pole, step / 16f)
+            val worst = worstOf(candidate)
+            if (worst >= minRatio) return candidate
+            if (worst > bestWorst) {
+                bestWorst = worst
+                best = candidate
+            }
+        }
+    }
+    return best
+}
+
+/**
+ * Il testo secondario su una sfumatura: si fa da parte verso il tono medio dei
+ * due capi e si ferma appena uno dei due scende sotto la soglia.
+ *
+ * Il capo peggiore comanda, come deve essere: un'etichetta che si legge in cima
+ * e sbianca in fondo e' un'etichetta illeggibile, non un'etichetta a meta'.
+ */
+fun Color.mutedOnBoth(first: Color, second: Color, minRatio: Float = CONTRAST_AA): Color {
+    val middle = lerp(first, second, 0.5f)
+    var best = this
+    for (step in 1..8) {
+        val candidate = lerp(this, middle, step * 0.06f)
+        if (candidate.contrastRatio(first) < minRatio) break
+        if (candidate.contrastRatio(second) < minRatio) break
+        best = candidate
+    }
+    return best
+}
+
+/**
  * Vero quando due colori sono cosi' vicini da non distinguersi.
  *
  * Serve a decidere se un bordo serve davvero: fra due superfici che gia'
