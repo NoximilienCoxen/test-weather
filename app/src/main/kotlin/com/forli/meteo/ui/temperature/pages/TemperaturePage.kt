@@ -17,6 +17,7 @@ import com.forli.meteo.ui.common.MeteoMetric
 import com.forli.meteo.ui.common.MeteoMetricCard
 import com.forli.meteo.ui.temperature.ChartReference
 import com.forli.meteo.ui.temperature.MeteoChart
+import com.forli.meteo.ui.temperature.temperatureRamp
 import com.forli.meteo.ui.theme.LocalMeteoAccents
 
 /**
@@ -76,13 +77,27 @@ internal fun TemperaturePage(
             hours.map { it.apparent?.toFloat() }
         }
 
+        // La rampa che il grafico usera' davvero, sull'intervallo dei dati
+        // mostrati: la legenda deve dire il colore che si vede, non un colore
+        // teorico. In Celsius, come tutta la scala.
+        val onSurface = MaterialTheme.colorScheme.onSurface
+        val known = (values + ghost).filterNotNull()
+        val tempRamp = if (known.size < 2) {
+            listOf(onSurface)
+        } else {
+            temperatureRamp(known.min(), known.max())
+        }
+
         ChartPanel(
             title = if (weekMode) "LA SETTIMANA" else "LA GIORNATA",
             weekMode = weekMode,
             onToggleWeek = onToggleWeek,
             legend = listOfNotNull(
+                // Il segno della curva principale e' la **scala dei gradi**,
+                // non una tinta: e' quello che la curva disegna davvero, e un
+                // pallino bianco accanto direbbe il contrario.
                 LegendEntry(
-                    MaterialTheme.colorScheme.onSurface,
+                    tempRamp,
                     if (weekMode) "Massima del giorno" else "Temperatura misurata all'ombra",
                 ),
                 LegendEntry(

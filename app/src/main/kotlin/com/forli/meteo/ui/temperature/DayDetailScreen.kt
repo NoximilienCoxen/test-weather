@@ -28,7 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -187,19 +190,30 @@ private fun DayBody(
         val main = hours.map { (if (feelsLike) it.apparent else it.temperature)?.toFloat() }
         val ghost = hours.map { (if (feelsLike) it.temperature else it.apparent)?.toFloat() }
 
+        // La rampa che il grafico usa davvero sull'intervallo mostrato: la
+        // legenda deve dire il colore che si vede. La curva principale non ha
+        // una tinta, ha la scala dei gradi, e un segno bianco accanto direbbe
+        // il contrario di quello che c'e' sulla tela.
+        val known = (main + ghost).filterNotNull()
+        val tempRamp = if (known.size < 2) {
+            listOf(MaterialTheme.colorScheme.onSurface)
+        } else {
+            temperatureRamp(known.min(), known.max())
+        }
+
         ChartCard(
             title = "ANDAMENTO DELLA GIORNATA",
             legend = buildList {
                 add(
-                    MaterialTheme.colorScheme.onSurface to
+                    tempRamp to
                         if (feelsLike) "Percepita" else "Temperatura misurata all'ombra"
                 )
                 add(
-                    accents.ghost to
+                    listOf(accents.ghost) to
                         if (feelsLike) "Effettiva, per confronto" else "Percepita, per confronto"
                 )
                 if (day.normTemp != null) {
-                    add(accents.norm to "Media degli ultimi dieci anni in questo mese")
+                    add(listOf(accents.norm) to "Media degli ultimi dieci anni in questo mese")
                 }
             },
         ) {
@@ -260,7 +274,8 @@ private fun DayBody(
 @Composable
 private fun ChartCard(
     title: String,
-    legend: List<Pair<Color, String>>,
+    /** Ogni voce porta i colori del suo tracciato: uno solo, o l'intera rampa. */
+    legend: List<Pair<List<Color>, String>>,
     chart: @Composable () -> Unit,
 ) {
     MeteoCard(modifier = Modifier.fillMaxWidth()) {
@@ -280,15 +295,25 @@ private fun ChartCard(
                 .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            legend.forEach { (color, label) ->
+            legend.forEach { (colors, label) ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Spacer(
                         Modifier
-                            .size(width = 14.dp, height = 3.dp)
-                            .background(color, MaterialTheme.shapes.extraSmall),
+                            .size(width = 16.dp, height = 4.dp)
+                            .clip(MaterialTheme.shapes.extraSmall)
+                            .background(
+                                if (colors.size == 1) {
+                                    SolidColor(colors.first())
+                                } else {
+                                    // Dal freddo al caldo: la rampa nasce per
+                                    // un gradiente verticale, qui si legge da
+                                    // sinistra a destra.
+                                    Brush.horizontalGradient(colors.reversed())
+                                },
+                            ),
                     )
                     Text(
                         text = label,

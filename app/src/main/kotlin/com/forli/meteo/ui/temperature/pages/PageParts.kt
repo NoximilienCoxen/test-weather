@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.DayForecast
@@ -162,8 +164,17 @@ internal fun ChartPanel(
     }
 }
 
-/** Una voce di legenda: un pallino del suo colore e cosa significa. */
-internal data class LegendEntry(val color: Color, val label: String)
+/**
+ * Una voce di legenda: il segno del suo colore e cosa significa.
+ *
+ * I colori sono una **lista** e non uno solo perche' la curva della temperatura
+ * non ha un colore: ha la scala dei gradi, che e' tutto il punto di quella
+ * curva. Un pallino bianco accanto a "temperatura" direbbe che la curva e'
+ * bianca, e la curva bianca non c'e' - e' quella che va dal viola al rosso.
+ */
+internal data class LegendEntry(val colors: List<Color>, val label: String) {
+    constructor(color: Color, label: String) : this(listOf(color), label)
+}
 
 /**
  * La legenda.
@@ -188,9 +199,18 @@ private fun Legend(entries: List<LegendEntry>) {
             ) {
                 Spacer(
                     Modifier
-                        .size(10.dp)
+                        .size(width = 16.dp, height = 8.dp)
                         .clip(CircleShape)
-                        .background(entry.color),
+                        .background(
+                            if (entry.colors.size == 1) {
+                                SolidColor(entry.colors.first())
+                            } else {
+                                // Dal freddo al caldo: la rampa nasce dall'alto
+                                // in basso per il gradiente verticale del
+                                // grafico, e qui va letta da sinistra a destra.
+                                Brush.horizontalGradient(entry.colors.reversed())
+                            },
+                        ),
                 )
                 Text(
                     text = entry.label,
