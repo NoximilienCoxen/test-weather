@@ -41,7 +41,7 @@ internal fun TemperaturePage(
     val day = state.pageDay
     val unit = state.unit
     val hours = state.pageHours
-    val week = state.weekMode
+    val weekMode = state.weekMode
 
     PageColumn(layout = layout, modifier = modifier, week = week) {
         MeteoMetricCard(
@@ -65,31 +65,31 @@ internal fun TemperaturePage(
 
         // I valori restano in Celsius fin qui: la scala di colore dei gradi e'
         // tarata in Celsius, e a convertire pensa l'etichetta.
-        val values = if (week) {
+        val values = if (weekMode) {
             state.forecast?.days?.map { (it.tempMax ?: it.tempMin)?.toFloat() }.orEmpty()
         } else {
             hours.map { it.temperature?.toFloat() }
         }
-        val ghost = if (week) {
+        val ghost = if (weekMode) {
             state.forecast?.days?.map { it.tempMin?.toFloat() }.orEmpty()
         } else {
             hours.map { it.apparent?.toFloat() }
         }
 
         ChartPanel(
-            title = if (week) "LA SETTIMANA" else "LA GIORNATA",
-            weekMode = week,
+            title = if (weekMode) "LA SETTIMANA" else "LA GIORNATA",
+            weekMode = weekMode,
             onToggleWeek = onToggleWeek,
             legend = listOfNotNull(
                 LegendEntry(
                     MaterialTheme.colorScheme.onSurface,
-                    if (week) "Massima del giorno" else "Temperatura misurata all'ombra",
+                    if (weekMode) "Massima del giorno" else "Temperatura misurata all'ombra",
                 ),
                 LegendEntry(
                     accents.ghost,
-                    if (week) "Minima del giorno" else "Percepita: umidita', vento e sole insieme",
+                    if (weekMode) "Minima del giorno" else "Percepita: umidita', vento e sole insieme",
                 ),
-                day?.normTemp?.takeIf { !week }?.let {
+                day?.normTemp?.takeIf { !weekMode }?.let {
                     LegendEntry(accents.norm, "Media degli ultimi dieci anni in questo mese")
                 },
             ),
@@ -98,14 +98,14 @@ internal fun TemperaturePage(
             MeteoChart(
                 values = values,
                 ghost = ghost,
-                xLabels = if (week) state.weekLabels else state.hourLabels,
-                daylight = if (week) emptyList() else hours.map { it.isDay },
+                xLabels = if (weekMode) state.weekLabels else state.hourLabels,
+                daylight = if (weekMode) emptyList() else hours.map { it.isDay },
                 reference = day?.normTemp
-                    ?.takeIf { !week }
+                    ?.takeIf { !weekMode }
                     ?.let { ChartReference(it.toFloat(), "MEDIA") },
                 useTemperatureRamp = true,
                 formatValue = { it.toDouble().asPlainDegrees(unit) },
-                description = if (week) {
+                description = if (weekMode) {
                     "Temperatura della settimana"
                 } else {
                     "Temperatura della giornata"

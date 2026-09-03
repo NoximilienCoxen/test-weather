@@ -60,7 +60,7 @@ internal fun WindPage(
     val day = state.pageDay
     val hour = state.pageHour
     val hours = state.pageHours
-    val week = state.weekMode
+    val weekMode = state.weekMode
 
     val direction = hour?.windDirection ?: day?.windDirection
     val gustiest = hours.filter { it.windGusts != null }.maxByOrNull { it.windGusts ?: 0.0 }
@@ -81,20 +81,20 @@ internal fun WindPage(
 
         DirectionCard(degrees = direction, modifier = Modifier.fillMaxWidth())
 
-        val values = if (week) {
+        val values = if (weekMode) {
             state.forecast?.days?.map { it.windMax?.toFloat() }.orEmpty()
         } else {
             hours.map { it.windSpeed?.toFloat() }
         }
-        val gusts = if (week) {
+        val gusts = if (weekMode) {
             state.forecast?.days?.map { it.gustMax?.toFloat() }.orEmpty()
         } else {
             hours.map { it.windGusts?.toFloat() }
         }
 
         ChartPanel(
-            title = if (week) "LA SETTIMANA" else "LA GIORNATA",
-            weekMode = week,
+            title = if (weekMode) "LA SETTIMANA" else "LA GIORNATA",
+            weekMode = weekMode,
             onToggleWeek = onToggleWeek,
             legend = listOf(
                 LegendEntry(accents.wind, "Velocita' del vento a dieci metri"),
@@ -105,8 +105,8 @@ internal fun WindPage(
             MeteoChart(
                 values = values,
                 ghost = gusts,
-                xLabels = if (week) state.weekLabels else state.hourLabels,
-                daylight = if (week) emptyList() else hours.map { it.isDay },
+                xLabels = if (weekMode) state.weekLabels else state.hourLabels,
+                daylight = if (weekMode) emptyList() else hours.map { it.isDay },
                 accent = accents.wind,
                 bounds = ChartBounds.NonNegative,
                 formatValue = { "${it.roundToInt()}" },

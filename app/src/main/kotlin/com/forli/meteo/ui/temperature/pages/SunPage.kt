@@ -48,7 +48,7 @@ internal fun SunPage(
     val day = state.pageDay
     val hour = state.pageHour
     val hours = state.pageHours
-    val week = state.weekMode
+    val weekMode = state.weekMode
 
     // L'ora in cui l'UV tocca il massimo: "UV 6" senza il quando non dice a
     // nessuno a che ora conviene stare all'ombra.
@@ -77,7 +77,7 @@ internal fun SunPage(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        val values = if (week) {
+        val values = if (weekMode) {
             state.forecast?.days?.map { d ->
                 d.sunshineSeconds?.let { (it / 3600.0).toFloat() }
             }.orEmpty()
@@ -86,13 +86,13 @@ internal fun SunPage(
         }
 
         ChartPanel(
-            title = if (week) "ORE DI SOLE, GIORNO PER GIORNO" else "INDICE UV NELLA GIORNATA",
-            weekMode = week,
+            title = if (weekMode) "ORE DI SOLE, GIORNO PER GIORNO" else "INDICE UV NELLA GIORNATA",
+            weekMode = weekMode,
             onToggleWeek = onToggleWeek,
             legend = listOf(
                 LegendEntry(
                     accents.sun,
-                    if (week) {
+                    if (weekMode) {
                         "Sole effettivo, non ore di luce: un cielo coperto le azzera"
                     } else {
                         "Indice UV: sopra 6 conviene coprirsi"
@@ -103,12 +103,12 @@ internal fun SunPage(
         ) {
             MeteoChart(
                 values = values,
-                xLabels = if (week) state.weekLabels else state.hourLabels,
-                daylight = if (week) emptyList() else hours.map { it.isDay },
+                xLabels = if (weekMode) state.weekLabels else state.hourLabels,
+                daylight = if (weekMode) emptyList() else hours.map { it.isDay },
                 accent = accents.sun,
                 bounds = ChartBounds.NonNegative,
-                formatValue = { if (week) "${it.roundToInt()}h" else "${it.roundToInt()}" },
-                description = if (week) "Ore di sole della settimana" else "Indice UV della giornata",
+                formatValue = { if (weekMode) "${it.roundToInt()}h" else "${it.roundToInt()}" },
+                description = if (weekMode) "Ore di sole della settimana" else "Indice UV della giornata",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(layout.chartHeight)

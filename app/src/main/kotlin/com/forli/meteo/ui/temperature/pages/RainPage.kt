@@ -48,7 +48,7 @@ internal fun RainPage(
     val day = state.pageDay
     val hour = state.pageHour
     val hours = state.pageHours
-    val week = state.weekMode
+    val weekMode = state.weekMode
 
     val kind = Wmo.precipKind(hour?.weatherCode ?: day?.weatherCode)
     val wettest = hours
@@ -85,20 +85,20 @@ internal fun RainPage(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        val values = if (week) {
+        val values = if (weekMode) {
             state.forecast?.days?.map { it.precipProbability?.toFloat() }.orEmpty()
         } else {
             hours.map { it.precipProbability?.toFloat() }
         }
-        val bars = if (week) {
+        val bars = if (weekMode) {
             state.forecast?.days?.map { it.precipitationSum?.toFloat() }.orEmpty()
         } else {
             hours.map { it.precipitation?.toFloat() }
         }
 
         ChartPanel(
-            title = if (week) "LA SETTIMANA" else "LA GIORNATA",
-            weekMode = week,
+            title = if (weekMode) "LA SETTIMANA" else "LA GIORNATA",
+            weekMode = weekMode,
             onToggleWeek = onToggleWeek,
             legend = listOf(
                 LegendEntry(accents.rain, "Curva: probabilita' che piova, in percentuale"),
@@ -109,8 +109,8 @@ internal fun RainPage(
             MeteoChart(
                 values = values,
                 bars = bars,
-                xLabels = if (week) state.weekLabels else state.hourLabels,
-                daylight = if (week) emptyList() else hours.map { it.isDay },
+                xLabels = if (weekMode) state.weekLabels else state.hourLabels,
+                daylight = if (weekMode) emptyList() else hours.map { it.isDay },
                 accent = accents.rain,
                 // Zero e cento, non un intervallo dedotto dai dati: su una
                 // giornata asciutta la scala si allargava a valori inventati e
