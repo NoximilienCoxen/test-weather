@@ -176,12 +176,62 @@ session() {
 
   # ── Prima il nuovo, poi il gia' verificato ──────────────────────────────────
   #
-  # Il dettaglio e le ore di contrasto vengono **prima** delle prove del motore
-  # 3D, e non e' l'ordine naturale: e' che l'emulatore della CI se ne va a meta'
-  # corsa, in modo riproducibile ma in punti diversi, e quel che resta fuori e'
-  # sempre la coda. Le prove del motore hanno una galleria alle spalle e
-  # possono permettersi di saltare un giro; queste schermate no, non hanno mai
-  # avuto uno scatto.
+  # Il cielo, il dettaglio e le ore di contrasto vengono **prima** delle prove
+  # del motore 3D, e non e' l'ordine naturale: e' che l'emulatore della CI se ne
+  # va a meta' corsa, in modo riproducibile ma in punti diversi, e quel che
+  # resta fuori e' sempre la coda. Le prove del motore hanno una galleria alle
+  # spalle e possono permettersi di saltare un giro; queste schermate no, non
+  # hanno mai avuto uno scatto.
+  #
+  # **E il cielo viene per primo di tutti**, prima ancora del foglio di
+  # dettaglio. Non e' una gerarchia di importanza: e' che negli ultimi due giri
+  # il dispositivo e' morto **dentro** il carosello del dettaglio, alla pagina
+  # dell'aria, e da li' in poi non e' arrivato piu' niente - ne' le ore di
+  # contrasto, ne' le allerte. Quattro riavvii veloci messi qui costano meno di
+  # un minuto e sono gli unici scatti che dicono se il fondo e' un cielo.
+
+  # ── Il cielo alle sue ore ───────────────────────────────────────────────────
+  #
+  # Alba e tramonto vanno fotografati **tutti e due**: hanno la stessa altezza
+  # del sole e tavolozze diverse - rosa e freddo l'una, arancio e caldo l'altra
+  # - e con un solo scatto non c'e' modo di accorgersi se la distinzione
+  # funziona o se le due si somigliano.
+  #
+  # Il sereno di mezzogiorno dice se il fondo e' azzurro invece che grigio, ed
+  # e' lo scatto che risponde alla richiesta. Il coperto alla stessa ora e' il
+  # suo controllo: adesso il grigio c'e' **solo** quando vuol dire qualcosa, e
+  # senza i due affiancati non si distingue una regola da una coincidenza.
+  #
+  # Solo nella sessione scura: sono scatti della schermata principale a un'ora
+  # imposta, e farli due volte darebbe due file identici.
+  if [ "$tema" = "SCURO" ]; then
+    cielo() {
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      adbt shell am start -n "$ACT" --ei ora "$1" --ei meteo "$2" >/dev/null 2>&1 || true
+      attendi_previsione
+      # **Il cielo va aspettato anche dopo che i dati sono arrivati**, ed e' il
+      # rovescio della trappola #28: quella dice che con le animazioni spente
+      # tutto salta alla fine, questa dice cosa succede quando invece sono
+      # vive. Ad app appena avviata l'altezza del sole parte dal ripiego
+      # diurno, e la molla ci mette piu' del secondo che aspetta
+      # `attendi_previsione` ad arrivare a un'ora notturna: il primo scatto
+      # dell'alba e' uscito con il cielo di mezzogiorno e il sole alto, cioe'
+      # ritraeva il viaggio invece della destinazione.
+      #
+      # Si vedeva anche dal testo: "IN ATTESA DEI DATI" sotto una riga di
+      # minima e massima gia' piene - due stati che non possono coesistere se
+      # non a meta' di una dissolvenza.
+      sleep 3
+      shoot "cielo-$3"
+    }
+    cielo  6 0 alba
+    cielo 12 0 mezzogiorno-sereno
+    cielo 20 0 tramonto
+    cielo 12 3 mezzogiorno-coperto
+    alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
+  fi
 
   # ── Il foglio di dettaglio ──────────────────────────────────────────────────
   #

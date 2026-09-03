@@ -17,6 +17,7 @@ import com.forli.meteo.data.WeatherAlert
 import com.forli.meteo.data.WeatherAlertsRepository
 import com.forli.meteo.data.WeatherModel
 import com.forli.meteo.data.WeatherRepository
+import com.forli.meteo.data.Wmo
 import com.forli.meteo.data.derivedAlerts
 import com.forli.meteo.data.mergeAlerts
 import com.forli.meteo.data.key
@@ -247,6 +248,36 @@ data class UiState(
             val day = forecast?.dayOf(moment)
             return SunClock.journey(moment, day?.sunrise, day?.sunset)
         }
+
+    /**
+     * Se l'ora scelta guarda verso il mattino o verso la sera.
+     *
+     * Alba e tramonto hanno la stessa altezza del sole e colori diversi: uno e'
+     * rosa e freddo, l'altro arancio e caldo. Senza questo valore il cielo non
+     * ha modo di sapere quale dei due sta dipingendo.
+     */
+    val skyEvening: Float
+        get() {
+            val moment = hour?.time ?: return 0.5f
+            val day = forecast?.dayOf(moment)
+            return SunClock.eveningness(moment, day?.sunrise, day?.sunset)
+        }
+
+    /**
+     * Quanto e' coperto il cielo all'ora scelta.
+     *
+     * Sta accanto ai valori del sole e non dentro di loro perche' non e'
+     * astronomia: il sole sta dov'e' anche sotto le nuvole. Serve al fondo, che
+     * deve poter smettere di essere azzurro quando non c'e' niente di azzurro
+     * da mostrare.
+     *
+     * **Legge [forcedWeatherCode] per primo**, come fa gia' la scultura. Senza,
+     * lo scatto di verifica del coperto usciva con la nuvola giusta sopra un
+     * cielo azzurro: la scultura obbediva all'ora imposta e il fondo no, cioe'
+     * proprio la regola che quello scatto doveva dimostrare non si vedeva.
+     */
+    val skyCloudiness: Float
+        get() = Wmo.cloudiness(forcedWeatherCode ?: hour?.weatherCode)
 }
 
 class WeatherViewModel(app: Application) : AndroidViewModel(app) {

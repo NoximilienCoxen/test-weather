@@ -31,11 +31,25 @@ data class SkyState(
     val redness: Float,
     /** A che punto del viaggio sta l'astro: 0 quando sorge, 1 quando tramonta. */
     val journey: Float = 0.5f,
+    /**
+     * Verso quale orizzonte sta andando la luce: 0 mattino, 1 sera.
+     *
+     * Non si ricava da [journey], per quanto se ne abbia la tentazione: quello
+     * riparte da zero al tramonto, perche' descrive l'arco della luna. Alle
+     * nove di sera varrebbe quasi zero e chiederebbe i colori dell'alba.
+     *
+     * Serve perche' [altitude] e' **simmetrica attorno a mezzogiorno** e da
+     * sola non sa distinguere le sette del mattino dalle sette di sera. Sono i
+     * due momenti in cui il cielo si tinge davvero, e tingerli allo stesso modo
+     * vuol dire buttare via meta' della giornata.
+     */
+    val evening: Float = 0.5f,
 ) {
     companion object {
-        fun of(altitude: Float, journey: Float = 0.5f): SkyState = SkyState(
+        fun of(altitude: Float, journey: Float = 0.5f, evening: Float = 0.5f): SkyState = SkyState(
             altitude = altitude,
             journey = journey,
+            evening = evening,
             // Il cielo si schiarisce molto prima che il sole spunti: mezz'ora
             // prima dell'alba fuori ci si vede benissimo. Facendo coincidere il
             // buio con il sole sotto l'orizzonte si otteneva una notte piena
@@ -117,6 +131,32 @@ object SunClock {
             t > set -> (t - set) / night
             else -> ((DAY_MINUTES - set) + t) / night
         }.coerceIn(0f, 1f)
+    }
+
+    /**
+     * Mattino o sera, da zero a uno.
+     *
+     * E' la stessa frazione di [journey] ma **senza limiti**: negativa prima
+     * dell'alba, oltre uno dopo il tramonto. Cosi' e' monotona lungo tutta la
+     * giornata, e le due del mattino cadono dalla parte del mattino mentre le
+     * undici di sera cadono dalla parte della sera - che con la frazione
+     * limitata dell'arco non succedeva.
+     *
+     * Lo scambio fra le due meta' cade a mezzogiorno, dove le tavolozze
+     * dell'alba e del tramonto sono comunque identiche: e' li' che va messo,
+     * perche' e' l'unico punto in cui non si vede.
+     */
+    fun eveningness(
+        moment: LocalDateTime,
+        sunrise: LocalDateTime?,
+        sunset: LocalDateTime?,
+    ): Float {
+        if (sunrise == null || sunset == null) return 0.5f
+        val rise = minutesOfDay(sunrise)
+        val set = minutesOfDay(sunset)
+        if (set <= rise) return 0.5f
+        val progress = (minutesOfDay(moment) - rise) / (set - rise)
+        return smoothstep(0.42f, 0.58f, progress)
     }
 
     private const val DAY_MINUTES = 1440f
