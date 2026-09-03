@@ -310,10 +310,25 @@ session() {
     n=$(( n + 1 ))
   done
 
-  # Il dettaglio di un giorno, toccando la settimana in fondo al foglio.
-  adbt shell input tap "$(( W * 30 / 100 ))" "$(( H * 90 / 100 ))" >/dev/null 2>&1 || true
+  # Il dettaglio di un giorno, toccando la settimana in coda alla pagina.
+  #
+  # Prima si toccava al novanta per cento dell'altezza dando per scontato che
+  # la settimana fosse li': su una pagina corta - quella dell'aria, quando la
+  # misura non arriva - li' sotto non c'e' niente, il tocco cadeva nel vuoto e
+  # lo scatto usciva **identico al precedente**, byte per byte. Un nome di file
+  # che dice "giorno" su un'immagine che ritrae un'altra pagina e' peggio di
+  # uno scatto mancante: sembra una verifica fatta.
+  #
+  # Adesso si scorre prima fino in fondo, cosi' la settimana e' l'ultima cosa
+  # e sta sempre nello stesso posto, qualunque sia la pagina.
+  adbt shell input swipe "$cx" "$(( H * 80 / 100 ))" "$cx" "$(( H * 30 / 100 ))" 300 >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell input swipe "$cx" "$(( H * 80 / 100 ))" "$cx" "$(( H * 30 / 100 ))" 300 >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d6-giorno"
+  shoot "${slug}-d6-settimana"
+  adbt shell input tap "$(( W * 30 / 100 ))" "$(( H * 62 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d7-giorno"
 
   # Si esce con l'indietro di sistema, due volte: prima il giorno, poi il
   # foglio. E' anche una prova che i due BackHandler siano agganciati.
@@ -321,7 +336,7 @@ session() {
   sleep 1
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 1
-  shoot "${slug}-d7-tornato-alla-principale"
+  shoot "${slug}-d8-tornato-alla-principale"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #
