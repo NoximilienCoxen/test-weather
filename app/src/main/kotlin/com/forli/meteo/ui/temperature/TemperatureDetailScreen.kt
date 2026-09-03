@@ -137,7 +137,7 @@ fun TemperatureDetailScreen(
         // in scena su tutte e cinque le pagine. Non disegna niente quando non
         // c'e' niente da dire.
         AlertBanner(
-            alerts = state.alerts,
+            alerts = state.shownAlerts,
             onOpen = viewModel::openAlerts,
             modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
         )

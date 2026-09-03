@@ -80,6 +80,16 @@ data class UiState(
     val alertsUnavailable: Boolean = false,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
+    /**
+     * Allerta imposta dall'esterno, solo per la verifica automatica.
+     *
+     * Sta accanto a [forcedWeatherCode] e [forcedYawDeg] e si applica **in
+     * lettura**, come loro: scriverla dentro [alerts] non sarebbe bastato,
+     * perche' il primo caricamento che arriva sovrascrive quella lista con le
+     * allerte vere e lo scatto uscirebbe senza fascia. Al lettore serve che
+     * resti finche' l'app e' viva.
+     */
+    val forcedAlert: WeatherAlert? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
     val selectedDay: Int = 0,
     /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
@@ -145,6 +155,15 @@ data class UiState(
     val results: List<Place> = emptyList(),
     val searchError: String? = null,
 ) {
+    /**
+     * Le allerte da mettere in scena: quella imposta se c'e', se no le vere.
+     *
+     * Le schermate leggono **questa** e non [alerts], cosi' l'aggancio di
+     * verifica non ha bisogno che nessuno se ne ricordi.
+     */
+    val shownAlerts: List<WeatherAlert>
+        get() = forcedAlert?.let { listOf(it) } ?: alerts
+
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
     val hour: HourForecast? get() = hours.getOrNull(selectedHour)
@@ -536,7 +555,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
         _state.update {
             it.copy(
-                alerts = listOf(
+                forcedAlert =
                     WeatherAlert(
                         id = "prova-${chosen.name}",
                         level = chosen,
@@ -549,7 +568,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         source = "Aggancio di verifica",
                         official = true,
                     ),
-                ),
             )
         }
     }
