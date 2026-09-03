@@ -33,6 +33,8 @@ internal fun TemperaturePage(
     layout: MeteoLayout,
     onToggleWeek: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    /** La settimana, che chiude ogni pagina. */
+    week: @Composable () -> Unit = {},
 ) {
     val accents = LocalMeteoAccents.current
     val hour = state.pageHour
@@ -41,7 +43,7 @@ internal fun TemperaturePage(
     val hours = state.pageHours
     val week = state.weekMode
 
-    PageColumn(layout = layout, modifier = modifier) {
+    PageColumn(layout = layout, modifier = modifier, week = week) {
         MeteoMetricCard(
             rows = listOfNotNull(
                 MeteoMetric("TEMPERATURA", hour?.temperature.asDegrees(unit), emphasis = true),

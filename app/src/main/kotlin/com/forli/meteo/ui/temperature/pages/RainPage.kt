@@ -41,6 +41,8 @@ internal fun RainPage(
     layout: MeteoLayout,
     onToggleWeek: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    /** La settimana, che chiude ogni pagina. */
+    week: @Composable () -> Unit = {},
 ) {
     val accents = LocalMeteoAccents.current
     val day = state.pageDay
@@ -53,7 +55,7 @@ internal fun RainPage(
         .filter { (it.precipProbability ?: 0) > 0 }
         .maxByOrNull { it.precipProbability ?: 0 }
 
-    PageColumn(layout = layout, modifier = modifier) {
+    PageColumn(layout = layout, modifier = modifier, week = week) {
         MeteoMetricCard(
             rows = listOfNotNull(
                 MeteoMetric(
