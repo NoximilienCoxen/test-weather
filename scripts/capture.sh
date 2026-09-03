@@ -150,7 +150,12 @@ session() {
   adbt shell logcat -c >/dev/null 2>&1 || true
   # -W attende che l'attivita' sia effettivamente in primo piano e riporta
   # l'esito, invece di lasciarmi indovinare con una sleep fissa.
-  adbt shell am start -W -n "$ACT" --es tema "$tema" 2>&1 | sed 's/^/    /' || true
+  # `--es tema` l'app non lo legge piu' (vedi il blocco del dettaglio): resta
+  # solo perche' `-W` vuole un comando da attendere, e toglierlo cambierebbe la
+  # riga senza cambiare nulla di cio' che si vede. Il cielo di questo primo
+  # scatto e' quello dell'ora vera del runner, ed e' voluto: e' l'unico scatto
+  # che ritrae l'app come la si trova aprendola.
+  adbt shell am start -W -n "$ACT" 2>&1 | sed 's/^/    /' || true
   # -W dice che l'attivita' e' in primo piano, non che ha qualcosa da mostrare:
   # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
   # per primo, quindi vale l'attesa vera come per tutti gli altri.
@@ -264,14 +269,26 @@ session() {
   # principale distingue un tocco fermo da un trascinamento
   # (`detectTapOrRotate`), e il tocco apre il dettaglio.
   #
-  # E si fotografa in **tutti e due i temi**, non solo al buio: il punto di
-  # questa passata e' che ogni scritta si legga a qualunque ora, e finora non
-  # c'era uno scatto che lo mostrasse.
-  echo "  -- dettaglio --"
+  # E si fotografa **a due ore diverse**, non solo al buio: il punto di questa
+  # passata e' che ogni scritta si legga a qualunque ora, e finora non c'era
+  # uno scatto che lo mostrasse.
+  #
+  # L'ora si impone con `--ei ora`, non con `--es tema`: quell'aggancio **non
+  # esiste piu'** - `MainActivity` legge soltanto `ora`, `meteo`, `giro` e
+  # `benvenuto`, e giorno e notte li decide l'ora mostrata. Le due sessioni
+  # continuavano a passarselo e a fotografare due volte lo stesso cielo,
+  # qualunque fosse, senza che il nome del file lo lasciasse sospettare.
+  local ora_dettaglio
+  case "$tema" in
+    SCURO) ora_dettaglio=2  ;;   # notte piena
+    *)     ora_dettaglio=13 ;;   # mezzogiorno passato, fondo grigio chiaro
+  esac
+
+  echo "  -- dettaglio (ora $ora_dettaglio) --"
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
-  adbt shell am start -n "$ACT" >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" >/dev/null 2>&1 || true
   attendi_previsione
   alive || { echo "dispositivo caduto prima del dettaglio"; return; }
 
@@ -305,6 +322,28 @@ session() {
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 1
   shoot "${slug}-d7-tornato-alla-principale"
+
+  # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
+  #
+  # Il fondo del cielo e il colore del testo si interpolano su due scale
+  # diverse e a meta' mattina si incrociano: misurato sulla matematica di
+  # `skyColors`, li' il contrasto scendeva a **1,01:1**, cioe' testo della
+  # stessa luminanza del fondo. Non l'aveva mai visto nessuno perche' gli
+  # scatti coprivano le due ore estreme, che sono le due in cui il contrasto e'
+  # al meglio.
+  #
+  # Solo nella sessione scura: sono scatti della schermata principale, e farli
+  # due volte darebbe due file identici.
+  if [ "$tema" = "SCURO" ]; then
+    for ora in 9 17; do
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      adbt shell am start -n "$ACT" --ei ora "$ora" >/dev/null 2>&1 || true
+      attendi_previsione
+      shoot "contrasto-ora-${ora}"
+    done
+  fi
 }
 
 welcome
