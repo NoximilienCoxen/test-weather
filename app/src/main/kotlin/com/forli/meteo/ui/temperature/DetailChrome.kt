@@ -79,7 +79,7 @@ fun DetailMode.accentOf(accents: MeteoAccents, onSurface: Color): Color = when (
  * stessa luce, e riscriverli qui vorrebbe dire avere due soli che invecchiano
  * separatamente.
  */
-fun detailInk(primary: Color, secondary: Color): WidgetInk = WidgetInk(
+internal fun detailInk(primary: Color, secondary: Color): WidgetInk = WidgetInk(
     background = 0,
     primary = primary,
     secondary = secondary,
