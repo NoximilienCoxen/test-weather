@@ -320,33 +320,28 @@ session() {
     n=$(( n + 1 ))
   done
 
-  # Il dettaglio di un giorno, toccando la settimana in coda alla pagina.
-  #
-  # Prima si toccava al novanta per cento dell'altezza dando per scontato che
-  # la settimana fosse li': su una pagina corta - quella dell'aria, quando la
-  # misura non arriva - li' sotto non c'e' niente, il tocco cadeva nel vuoto e
-  # lo scatto usciva **identico al precedente**, byte per byte. Un nome di file
-  # che dice "giorno" su un'immagine che ritrae un'altra pagina e' peggio di
-  # uno scatto mancante: sembra una verifica fatta.
-  #
-  # Adesso si scorre prima fino in fondo, cosi' la settimana e' l'ultima cosa
-  # e sta sempre nello stesso posto, qualunque sia la pagina.
-  adbt shell input swipe "$cx" "$(( H * 80 / 100 ))" "$cx" "$(( H * 30 / 100 ))" 300 >/dev/null 2>&1 || true
-  sleep 1
-  adbt shell input swipe "$cx" "$(( H * 80 / 100 ))" "$cx" "$(( H * 30 / 100 ))" 300 >/dev/null 2>&1 || true
+  # Si esce dal foglio con l'indietro di sistema: e' anche una prova che il
+  # BackHandler sia agganciato.
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d6-settimana"
-  adbt shell input tap "$(( W * 30 / 100 ))" "$(( H * 62 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d7-giorno"
+  shoot "${slug}-d6-tornato-alla-principale"
 
-  # Si esce con l'indietro di sistema, due volte: prima il giorno, poi il
-  # foglio. E' anche una prova che i due BackHandler siano agganciati.
-  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  # ── Il dettaglio di un giorno ───────────────────────────────────────────────
+  #
+  # Si apre con l'aggancio `--ei giorno` e **non col dito**, e non e' una
+  # scorciatoia: la settimana sta in coda a una pagina che scorre, quindi per
+  # toccarla bisogna prima scorrere, e la trascinata lunga che ci vuole **fa
+  # morire l'emulatore**. Provato due volte, stesso punto esatto: il logcat
+  # dell'app finisce pulito - nessuna eccezione, nessun ANR - e sparisce la
+  # macchina virtuale, non l'app. E' la stessa ragione per cui esiste
+  # l'aggancio sul giro: certi stati, qui, col dito non si raggiungono.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
-  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 >/dev/null 2>&1 || true
+  attendi_previsione
   sleep 1
-  shoot "${slug}-d8-tornato-alla-principale"
+  shoot "${slug}-d7-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #

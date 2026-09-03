@@ -307,6 +307,7 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
 | `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
+| `--ei giorno` | apre il dettaglio di quel giorno della settimana |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -586,6 +587,25 @@ progetto) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
 serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
 `uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
 ferma e la schermata principale anima in continuazione per scelta.
+
+**33. Una trascinata lunga sull'emulatore della CI lo fa morire.** Per
+fotografare il dettaglio di un giorno bisogna raggiungere la settimana, che sta
+in coda a una pagina che scorre: due trascinate da mille pixel in trecento
+millisecondi, e subito dopo l'emulatore non c'e' piu'. Provato due volte, stesso
+punto esatto. **Non e' l'app**: il logcat finisce pulito sull'ultimo scatto
+riuscito - nessuna eccezione, nessun ANR, nessun consumo anomalo - e sparisce la
+macchina virtuale, che infatti non risponde nemmeno a `emu kill`. Non c'e' un
+log da leggere perche' a morire e' il processo che il log lo ospita.
+
+Da qui l'aggancio `--ei giorno`, che apre quella schermata senza gesti. E' lo
+stesso motivo per cui esiste l'aggancio sul giro: certi stati, qui, col dito non
+si raggiungono. **Prima di aggiungere un gesto lungo a `capture.sh`, ricordarsi
+che questo e' il modo in cui si presenta** - non un errore, un silenzio.
+
+Ha lasciato anche un secondo insegnamento: il job era **verde** con dodici
+scatti mancanti su trentasette, perche' il controllo finale guardava solo che ce
+ne fosse almeno uno. Un job verde che ha fotografato meta' delle schermate e'
+peggio di uno rosso, e adesso gli scatti mancati si contano.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
