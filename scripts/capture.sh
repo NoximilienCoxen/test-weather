@@ -259,6 +259,29 @@ session() {
   sleep 1
   shoot "${slug}-d7-giorno"
 
+  # ── La fascia delle allerte ─────────────────────────────────────────────────
+  #
+  # Con un'allerta imposta, non aspettando che ne arrivi una vera: la fascia
+  # compare solo quando la Protezione Civile ha diramato qualcosa sulla
+  # localita' mostrata, cioe' quasi mai e mai su richiesta. Fotografarla solo
+  # nei giorni di maltempo vuol dire non fotografarla, e un riquadro che non e'
+  # mai stato visto in uno scatto e' un riquadro che nessuno ha verificato.
+  #
+  # Due scatti: la principale, dove la fascia sta in cima, e il dettaglio, dove
+  # deve convivere con le pillole senza spingerle fuori.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d8-allerta-principale"
+
+  # Il tocco sulla cifra apre il dettaglio: stessa coordinata usata sopra.
+  alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
+  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d9-allerta-dettaglio"
+
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #
   # Il fondo del cielo e il colore del testo si interpolano su due scale

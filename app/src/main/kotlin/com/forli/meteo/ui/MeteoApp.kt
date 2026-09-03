@@ -43,6 +43,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleEventObserver
 import com.forli.meteo.data.SkyState
+import com.forli.meteo.ui.alerts.AlertsSheet
 import com.forli.meteo.ui.home.HomeScreen
 import com.forli.meteo.ui.temperature.DayDetailScreen
 import com.forli.meteo.ui.temperature.TemperatureDetailScreen
@@ -180,6 +181,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
                 onOpenTemperatureDetail = sheet::openFully,
+                onOpenAlerts = viewModel::openAlerts,
                 onRefresh = viewModel::refresh,
                 pullArmed = pullArmed,
                 modifier = Modifier
@@ -264,6 +266,33 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         state = state,
                         viewModel = viewModel,
                         onBack = viewModel::closeDayDetail,
+                        modifier = Modifier.systemBarsPadding(),
+                    )
+                }
+            }
+
+            // Le allerte entrano da destra come il dettaglio di un giorno: si
+            // scende dentro qualcosa di piu' specifico, e il verso lo racconta.
+            // Stanno **dopo** il dettaglio nella pila perche' la fascia si puo'
+            // toccare anche da li', e un foglio che si apre sotto quello da cui
+            // e' stato aperto non si vedrebbe.
+            val alertsShift by animateFloatAsState(
+                targetValue = if (state.alertsOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "allerte",
+            )
+            if (alertsShift > 0.001f) {
+                BackHandler(enabled = state.alertsOpen, onBack = viewModel::closeAlerts)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - alertsShift) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    AlertsSheet(
+                        alerts = state.shownAlerts,
+                        unavailable = state.alertsUnavailable,
+                        onBack = viewModel::closeAlerts,
                         modifier = Modifier.systemBarsPadding(),
                     )
                 }
