@@ -216,8 +216,14 @@ private fun Hero(
         val heroHeight = maxHeight * heightFraction
         val value = heroValue(mode, state)
         if (value == null) {
+            // Un guasto globale - previsione che non arriva, rete muta - lo
+            // dice l'eroe, che e' il posto piu' visibile. Il buco di una
+            // singola grandezza invece lo spiega la sua pagina, che ne sa il
+            // motivo: qui uscivano **tutti e due**, e la pagina dell'aria
+            // ripeteva parola per parola quello che l'eroe aveva gia' detto
+            // due centimetri sopra.
             val (title, message) = heroMissingReason(mode, state)
-            MeteoEmptyState(title = title, message = message)
+            if (state.forecast == null) MeteoEmptyState(title = title, message = message)
             return@BoxWithConstraints
         }
         Column(
