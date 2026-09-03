@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,8 @@ import com.forli.meteo.ui.common.MeteoSplitPills
 import com.forli.meteo.ui.common.MeteoStatData
 import com.forli.meteo.ui.common.MeteoStatGrid
 import com.forli.meteo.ui.common.MeteoTopBar
+import com.forli.meteo.ui.common.centerOn
+import kotlinx.coroutines.launch
 import com.forli.meteo.ui.common.rememberMeteoLayout
 import com.forli.meteo.ui.secondsAsHoursMinutes
 import com.forli.meteo.ui.theme.LocalMeteoAccents
@@ -89,18 +92,28 @@ fun DayDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val layout = rememberMeteoLayout()
+    val scope = rememberCoroutineScope()
     val days = state.forecast?.days.orEmpty()
     val index = state.selectedDay.coerceIn(0, maxOf(days.lastIndex, 0))
 
+    // Il carosello si dichiara **prima della barra**, che adesso lo legge: il
+    // titolo deve dire il giorno che si sta guardando, non quello posato. Con
+    // la scrittura nello stato spostata a scorrimento finito, leggere
+    // `state.selectedDay` qui avrebbe lasciato in cima il nome del giorno
+    // precedente per tutta la durata del gesto.
+    val pagerState = rememberPagerState(initialPage = index, pageCount = { days.size })
+    val shownDay = days.getOrNull(pagerState.currentPage)
+
     Column(modifier = modifier.fillMaxSize()) {
         MeteoTopBar(
-            title = days.getOrNull(index)?.date
+            title = shownDay?.date
                 ?.format(FULL_DATE)
                 ?.replaceFirstChar { it.uppercase() }
                 ?: "GIORNO",
             subtitle = state.place.name.uppercase(),
             onBack = onBack,
             backLabel = "Torna al dettaglio",
+            transition = { pagerState.currentPageOffsetFraction },
         )
 
         if (days.isEmpty()) {
@@ -114,22 +127,25 @@ fun DayDetailScreen(
             return@Column
         }
 
-        DayTabs(
-            days = days,
-            selected = index,
-            width = layout.dayTabWidth,
-            onSelect = viewModel::selectDay,
-        )
-
-        val pagerState = rememberPagerState(initialPage = index, pageCount = { days.size })
+        // Stesso schema del dettaglio delle grandezze, per la stessa ragione:
+        // il carosello comanda e si scrive nello stato **solo a scorrimento
+        // finito**. I due effetti che c'erano prima si rincorrevano - il
+        // secondo era chiavato su cio' che il primo cambiava e cancellava la
+        // propria animazione a meta' - e un trascinamento lasciato andare
+        // cambiava comunque il giorno scelto.
         LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }.collect { page ->
+            snapshotFlow { pagerState.settledPage }.collect { page ->
                 if (page != state.selectedDay) viewModel.selectDay(page)
             }
         }
-        LaunchedEffect(index) {
-            if (index != pagerState.currentPage) pagerState.animateScrollToPage(index)
-        }
+
+        DayTabs(
+            days = days,
+            selected = pagerState.currentPage,
+            position = { pagerState.currentPage + pagerState.currentPageOffsetFraction },
+            width = layout.dayTabWidth,
+            onSelect = { day -> scope.launch { pagerState.animateScrollToPage(day) } },
+        )
 
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             val day = days.getOrNull(page)
@@ -341,14 +357,21 @@ private fun ChartCard(
 private fun DayTabs(
     days: List<DayForecast>,
     selected: Int,
+    position: () -> Float,
     width: androidx.compose.ui.unit.Dp,
     onSelect: (Int) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    LaunchedEffect(selected) {
-        if (selected in days.indices) {
-            runCatching { listState.animateScrollToItem(selected) }
-        }
+    // `animateScrollToItem` portava la linguetta al **bordo** d'ingresso, non
+    // al centro: aprendo sabato ci si ritrovava la sua linguetta incollata a
+    // sinistra, con i giorni prima invisibili e nessun senso di dove si fosse
+    // nella settimana. `centerOn` misura da `layoutInfo` e la porta davvero in
+    // mezzo, seguendo il carosello mentre il dito lo muove.
+    // La posizione si legge **dentro** il blocco di `snapshotFlow`: e' li' che
+    // Compose registra cosa osservare. Con un `Float` gia' calcolato fuori non
+    // ci sarebbe niente da osservare e il flusso emetterebbe una volta sola.
+    LaunchedEffect(listState, days.size) {
+        snapshotFlow { position() }.collect { runCatching { listState.centerOn(it) } }
     }
     LazyRow(
         state = listState,

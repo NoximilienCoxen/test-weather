@@ -3,11 +3,13 @@ package com.forli.meteo.ui.common
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,18 +19,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -37,6 +45,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
+import kotlin.math.floor
 
 /**
  * Il vocabolario di componenti condiviso da tutte le schermate.
@@ -71,6 +81,23 @@ private val PillShape = CircleShape
  * Il sottotitolo non e' un vezzo: aperto il foglio del dettaglio non c'era piu'
  * modo di sapere quale localita' si stesse guardando, ne' quale giorno, e i
  * numeri di una citta' sono indistinguibili da quelli di un'altra.
+ *
+ * [transition] e' lo scostamento frazionario del carosello sottostante, da
+ * -0,5 a 0,5, e vale zero per le schermate che non ne hanno uno.
+ *
+ * E' una **lambda** e non un numero apposta: letta dentro `graphicsLayer`, la
+ * variazione si ferma alla fase di disegno invece di ricomporre la barra a ogni
+ * fotogramma del trascinamento. Passandola come valore, ogni frame del gesto
+ * avrebbe ricomposto titolo e sottotitolo - due `Text` con misura del testo -
+ * per cambiare una trasparenza.
+ *
+ * Serve a togliere di mezzo un difetto che si vedeva a ogni singola passata di
+ * pagina: il titolo **si sostituiva di colpo** a meta' trascinamento, cioe'
+ * annunciava "VENTO" mentre sotto si vedeva ancora la pagina del sole. Qui il
+ * titolo sfuma via mentre la pagina se ne va e rientra con quella nuova; il
+ * testo si sostituisce nell'istante in cui e' del tutto trasparente, che e'
+ * esattamente il punto di scavalco. Non c'e' fotogramma in cui si legga un
+ * titolo che non corrisponde a cio' che sta sotto.
  */
 @Composable
 fun MeteoTopBar(
@@ -79,6 +106,7 @@ fun MeteoTopBar(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     backLabel: String = "Torna indietro",
+    transition: () -> Float = { 0f },
 ) {
     Row(
         modifier = modifier
@@ -98,7 +126,14 @@ fun MeteoTopBar(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 4.dp),
+                .padding(horizontal = 4.dp)
+                .graphicsLayer {
+                    // A gesto fermo vale zero e questo blocco non fa niente:
+                    // le altre schermate non pagano nulla.
+                    val shift = transition()
+                    alpha = 1f - (abs(shift).coerceAtMost(0.5f) * 2f)
+                    translationX = -shift * size.width * 0.5f
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -318,11 +353,30 @@ fun MeteoPill(
 }
 
 /**
- * Una fila di pillole che scorre se non ci sta.
+ * Una fila di pillole che si porta da sola la selezione **al centro**.
  *
  * Scorrevole e non a larghezze uguali: i nomi sono lunghi in modo diverso, e
- * comprimerli tutti alla misura del piu' largo li spezzerebbe a meta'. Lo
- * scorrimento non si vede finche' ci stanno.
+ * comprimerli tutti alla misura del piu' largo li spezzerebbe a meta'.
+ *
+ * Due difetti che questa versione toglie di mezzo, e non erano cosmetici.
+ *
+ * **La fila non seguiva niente.** Era un `Row` con `horizontalScroll` e nessuna
+ * logica di scorrimento: cambiando pagina la pillola attiva restava dov'era,
+ * cioe' spesso **fuori dallo schermo**. Con cinque grandezze su un telefono le
+ * ultime non entrano, e chi scorreva fino ad "Aria" vedeva una fila di pillole
+ * tutte spente.
+ *
+ * **La fila non era centrata.** Con `horizontalScroll` il contenuto si appoggia
+ * a sinistra anche quando ci starebbe comodo, e senza margine interno la prima
+ * e l'ultima pillola toccavano il bordo. Qui `spacedBy(..., CenterHorizontally)`
+ * centra quando c'e' spazio e si comporta da fila che scorre quando non ce n'e',
+ * e [contentPadding] tiene le estreme staccate dal bordo.
+ *
+ * [position] e' la posizione **frazionaria** del carosello sottostante, quando
+ * ce n'e' uno. Serve a far scivolare la fila **col dito** invece che a scatti a
+ * gesto finito: e' il movimento che rende leggibile dove si sta andando mentre
+ * ci si va. Senza, si passa il solo indice e la fila ci arriva con
+ * un'animazione.
  */
 @Composable
 fun <T> MeteoPillRow(
@@ -331,14 +385,37 @@ fun <T> MeteoPillRow(
     label: (T) -> String,
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 0.dp),
+    position: (() -> Float)? = null,
 ) {
-    val scroll = rememberScrollState()
-    Row(
-        modifier = modifier.horizontalScroll(scroll),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    val listState = rememberLazyListState()
+    val selectedIndex = items.indexOf(selected)
+
+    // Col carosello: la fila insegue la posizione frazionaria, senza animazione
+    // propria - l'animazione e' il dito. Senza carosello: ci arriva da sola.
+    if (position != null) {
+        // `snapshotFlow` riemette quando cambia lo **stato di Compose letto
+        // dentro il blocco**. Con un `Float` gia' calcolato dal chiamante non
+        // c'e' niente da osservare: il flusso emetterebbe una volta sola e la
+        // fila resterebbe ferma per sempre. La lambda legge il pager dentro il
+        // blocco, che e' l'unico modo perche' il flusso se ne accorga.
+        LaunchedEffect(listState, items.size) {
+            snapshotFlow { position() }.collect { listState.centerOn(it) }
+        }
+    } else {
+        LaunchedEffect(selectedIndex) {
+            if (selectedIndex >= 0) runCatching { listState.centerOn(selectedIndex.toFloat(), animate = true) }
+        }
+    }
+
+    LazyRow(
+        state = listState,
+        modifier = modifier,
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        items.forEach { item ->
+        itemsIndexed(items) { _, item ->
             MeteoPill(
                 label = label(item),
                 selected = item == selected,
@@ -346,6 +423,47 @@ fun <T> MeteoPillRow(
             )
         }
     }
+}
+
+/**
+ * Porta al centro del viewport il punto [position] della lista, dove la parte
+ * intera e' un indice e la frazione sta fra quell'elemento e il successivo.
+ *
+ * `animateScrollToItem` non basta e non e' pignoleria: quella porta l'elemento
+ * al **bordo** d'ingresso, non al centro, e su una fila di cinque pillole
+ * significa che l'attiva finisce incollata a sinistra invece che davanti agli
+ * occhi. Il residuo si calcola da `layoutInfo`, che e' l'unico posto dove le
+ * misure vere degli elementi esistono.
+ *
+ * Se il punto non e' in scena si fa prima un salto per portarcelo, se no non
+ * c'e' niente da misurare.
+ */
+internal suspend fun LazyListState.centerOn(position: Float, animate: Boolean = false) {
+    val low = floor(position).toInt()
+    val high = low + 1
+    val fraction = position - low
+
+    fun centerOf(index: Int): Float? = layoutInfo.visibleItemsInfo
+        .firstOrNull { it.index == index }
+        ?.let { it.offset + it.size / 2f }
+
+    if (centerOf(low) == null && centerOf(high) == null) {
+        val landing = low.coerceIn(0, (layoutInfo.totalItemsCount - 1).coerceAtLeast(0))
+        if (animate) animateScrollToItem(landing) else scrollToItem(landing)
+    }
+
+    val a = centerOf(low)
+    val b = centerOf(high)
+    val target = when {
+        a != null && b != null -> a + (b - a) * fraction
+        a != null -> a
+        b != null -> b
+        else -> return
+    }
+    val info = layoutInfo
+    val viewportCenter = (info.viewportStartOffset + info.viewportEndOffset) / 2f
+    val delta = target - viewportCenter
+    if (animate) animateScrollBy(delta) else scrollBy(delta)
 }
 
 /**
