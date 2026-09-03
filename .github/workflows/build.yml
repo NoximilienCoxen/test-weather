@@ -58,10 +58,15 @@ jobs:
       # Questo passo e' l'unico posto del progetto da cui il feed sia davvero
       # raggiungibile, e serve a due cose. La prima: gli RSS legacy sono stati
       # spenti il 14 gennaio 2026, quindi si verifica che l'Atom risponda. La
-      # seconda, piu' importante: il parser si fida di `awareness_level` e
-      # `awareness_type` dentro i `parameter` del CAP, e se quei nomi cambiano a
-      # monte l'app smetterebbe di mostrare le allerte **senza dirlo a nessuno**.
-      # Meglio che sia rosso qui.
+      # seconda, piu' importante: il parser si fida di `cap:event` - dove il
+      # colore sta scritto in inglese dentro la frase - e di `cap:severity`,
+      # `cap:areaDesc`, `cap:expires`. Se uno di quei nomi cambia a monte l'app
+      # smetterebbe di mostrare le allerte **senza dirlo a nessuno**.
+      #
+      # Questo passo si e' gia' guadagnato lo stipendio: la prima stesura del
+      # parser cercava `awareness_level` e `awareness_type`, che nel feed non
+      # esistono. Zero occorrenze su trentacinquemila byte, e ogni allerta
+      # sarebbe uscita come una gialla generica.
       #
       # Non fa fallire il giro: un feed di allertamento momentaneamente giu' non
       # e' un difetto del codice, e l'app in quel caso ripiega sulle soglie.
@@ -73,7 +78,7 @@ jobs:
           curl -sSL -w "\nHTTP %{http_code}\n" "$FEED" -o /tmp/ciout/allerte.xml
           echo "--- byte ricevuti: $(wc -c < /tmp/ciout/allerte.xml) ---"
           head -c 600 /tmp/ciout/allerte.xml; echo
-          for campo in awareness_level awareness_type areaDesc expires; do
+          for campo in "cap:event" "cap:severity" "cap:areaDesc" "cap:expires"; do
             n=$(grep -o "$campo" /tmp/ciout/allerte.xml | wc -l)
             echo "$campo: $n occorrenze"
             if [ "$n" -eq 0 ]; then
