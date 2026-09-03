@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.forli.meteo.data.DayForecast
 import com.forli.meteo.data.HourForecast
 import com.forli.meteo.ui.UiState
+import com.forli.meteo.ui.asBigDegrees
 import com.forli.meteo.ui.common.MeteoCard
 import com.forli.meteo.ui.common.MeteoLayout
 import com.forli.meteo.ui.common.MeteoPill
@@ -199,8 +200,13 @@ internal fun heroValue(
     val day = state.pageDay
     val hour = state.pageHour
     return when (mode) {
+        // `asBigDegrees` e non il grado scritto a mano: il simbolo sta in
+        // Format.kt come sequenza di escape, apposta - un carattere fuori
+        // dall'ASCII in mezzo al codice e' l'unico pezzo che ne' .gitattributes
+        // ne' i controlli proteggono, e un transito storto lo trasforma in un
+        // punto interrogativo alto mezzo schermo.
         com.forli.meteo.ui.temperature.DetailMode.TEMPERATURA ->
-            hour?.temperature?.let { "${state.unit.from(it).roundToInt()}°" }
+            hour?.temperature?.let { it.asBigDegrees(state.unit) }
 
         com.forli.meteo.ui.temperature.DetailMode.SOLE ->
             day?.sunshineSeconds?.let { (it / 3600.0).roundToInt().toString() }
