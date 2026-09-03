@@ -47,6 +47,18 @@ data class DayForecast(
      * e' fallita: il grafico la disegna solo quando e' disponibile.
      */
     val normTemp: Double? = null,
+    /** Millimetri di sola pioggia, distinti dalla neve dentro il totale. */
+    val rainSum: Double? = null,
+    /** Centimetri di neve. */
+    val snowfallSum: Double? = null,
+    /**
+     * Secondi di sole effettivo, che non sono le ore di luce.
+     *
+     * Sotto un cielo coperto la luce fra alba e tramonto e' la stessa e il sole
+     * e' zero: mostrare la prima chiamandola "luce solare", come si faceva,
+     * dice a chi guarda esattamente il contrario di quello che vedra' uscendo.
+     */
+    val sunshineSeconds: Double? = null,
 )
 
 /** Un'ora della previsione: e' l'unita' su cui scorre la schermata principale. */
@@ -60,6 +72,30 @@ data class HourForecast(
     /** Percentuale: dice quanto probabile, non quanto forte. */
     val precipProbability: Int? = null,
     val isDay: Boolean = true,
+    /**
+     * Le grandezze orarie che prima non si chiedevano.
+     *
+     * Senza di queste il dettaglio non aveva scelta: o mostrava il valore di
+     * `current` - cioe' di adesso - sotto un'intestazione che dichiarava
+     * un'altra ora, o non mostrava niente. Il grafico del vento faceva la
+     * seconda, e usciva vuoto senza dirlo.
+     */
+    val humidity: Double? = null,
+    val dewPoint: Double? = null,
+    val windSpeed: Double? = null,
+    val windGusts: Double? = null,
+    val windDirection: Double? = null,
+    val uvIndex: Double? = null,
+    /** Copertura nuvolosa in percentuale. */
+    val cloudCover: Int? = null,
+    /** Pressione al suolo in hPa. */
+    val pressure: Double? = null,
+    /** Visibilita' in metri. */
+    val visibility: Double? = null,
+    /** Millimetri di sola pioggia. */
+    val rain: Double? = null,
+    /** Centimetri di neve. */
+    val snowfall: Double? = null,
 )
 
 data class Forecast(
@@ -101,6 +137,22 @@ data class Forecast(
      */
     fun hoursOf(date: LocalDate): List<HourForecast> =
         allHours.filter { it.time.toLocalDate() == date }
+
+    /**
+     * L'ora corrispondente su un altro giorno.
+     *
+     * `hours` copre solo le prime ventiquattro ore, cioe' oggi, e l'indice
+     * dell'ora scelta conta su quella lista. Il foglio del dettaglio pero'
+     * puo' avere selezionato mercoledi': prendendo [hours] alla stessa
+     * posizione si otteneva l'ora di **oggi** sotto un'intestazione che
+     * annunciava mercoledi', e i due numeri non avevano niente a che vedere.
+     *
+     * Qui si cerca la stessa ora del giorno richiesto. Se quel giorno non c'e'
+     * si torna nulli, che e' l'unica risposta onesta: meglio un trattino di un
+     * valore preso da un altro giorno.
+     */
+    fun hourOn(date: LocalDate, hourOfDay: Int): HourForecast? =
+        allHours.firstOrNull { it.time.toLocalDate() == date && it.time.hour == hourOfDay }
 
     /**
      * Che ore sono nella localita' mostrata.

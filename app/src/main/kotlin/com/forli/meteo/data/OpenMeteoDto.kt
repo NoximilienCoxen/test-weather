@@ -57,6 +57,18 @@ data class DailyDto(
     @SerialName("relative_humidity_2m_mean") val humidityMean: List<Double?> = emptyList(),
     @SerialName("dew_point_2m_mean") val dewPointMean: List<Double?> = emptyList(),
     @SerialName("precipitation_hours") val precipitationHours: List<Double?> = emptyList(),
+    /** Millimetri di sola pioggia, separati dalla neve nel totale. */
+    @SerialName("rain_sum") val rainSum: List<Double?> = emptyList(),
+    /** Centimetri di neve. */
+    @SerialName("snowfall_sum") val snowfallSum: List<Double?> = emptyList(),
+    /**
+     * Secondi di sole effettivo.
+     *
+     * Non e' la stessa cosa della luce fra alba e tramonto, che e' quel che
+     * la pagina SOLE mostrava spacciandolo per "luce solare": una giornata
+     * coperta ha le stesse quattordici ore di luce e zero ore di sole.
+     */
+    @SerialName("sunshine_duration") val sunshineSeconds: List<Double?> = emptyList(),
     val sunrise: List<String?> = emptyList(),
     val sunset: List<String?> = emptyList(),
 )
@@ -108,4 +120,22 @@ data class HourlyDto(
     val precipitation: List<Double?> = emptyList(),
     @SerialName("precipitation_probability") val precipProbability: List<Int?> = emptyList(),
     @SerialName("is_day") val isDay: List<Int?> = emptyList(),
+    // Le grandezze qui sotto non venivano chiese all'API, e la schermata di
+    // dettaglio ne pagava il prezzo: il grafico del vento in modalita' GIORNO
+    // era letteralmente vuoto, e umidita' e punto di rugiada venivano dal
+    // blocco `current` - cioe' da adesso - mentre l'intestazione dichiarava
+    // l'ora selezionata.
+    @SerialName("relative_humidity_2m") val humidity: List<Double?> = emptyList(),
+    @SerialName("dew_point_2m") val dewPoint: List<Double?> = emptyList(),
+    @SerialName("wind_speed_10m") val windSpeed: List<Double?> = emptyList(),
+    @SerialName("wind_gusts_10m") val windGusts: List<Double?> = emptyList(),
+    @SerialName("wind_direction_10m") val windDirection: List<Double?> = emptyList(),
+    @SerialName("uv_index") val uvIndex: List<Double?> = emptyList(),
+    @SerialName("cloud_cover") val cloudCover: List<Int?> = emptyList(),
+    @SerialName("surface_pressure") val pressure: List<Double?> = emptyList(),
+    val visibility: List<Double?> = emptyList(),
+    /** Millimetri di sola pioggia: distinguerla dalla neve cambia cosa indossi. */
+    val rain: List<Double?> = emptyList(),
+    /** Centimetri di neve, non millimetri: e' l'unita' che usa Open-Meteo. */
+    val snowfall: List<Double?> = emptyList(),
 )
