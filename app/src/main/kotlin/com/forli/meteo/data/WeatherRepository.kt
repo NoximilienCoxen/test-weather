@@ -97,15 +97,30 @@ class WeatherRepository(
             "temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m," +
                 "precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
 
+        /**
+         * Le grandezze orarie.
+         *
+         * La seconda meta' dell'elenco e' quella che mancava, e non era una
+         * dimenticanza innocua: senza vento orario il grafico del vento in
+         * modalita' GIORNO usciva vuoto, e umidita', rugiada e UV venivano
+         * presi dal blocco `current` - cioe' da adesso - e mostrati sotto
+         * un'intestazione che dichiarava tutt'altra ora.
+         *
+         * Costano poco: la risposta e' colonnare, e sono numeri.
+         */
         const val HOURLY_VARS =
             "temperature_2m,apparent_temperature,weather_code,precipitation," +
-                "precipitation_probability,is_day"
+                "precipitation_probability,is_day," +
+                "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m," +
+                "wind_direction_10m,uv_index,cloud_cover,surface_pressure,visibility," +
+                "rain,snowfall"
 
         const val DAILY_VARS =
             "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max," +
                 "apparent_temperature_min,precipitation_sum,precipitation_probability_max," +
                 "wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max," +
-                "relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,sunrise,sunset"
+                "relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours," +
+                "rain_sum,snowfall_sum,sunshine_duration,sunrise,sunset"
 
         /**
          * Media storica della temperatura per ogni giorno della previsione.
@@ -292,6 +307,9 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             gustMax = d.gustMax.at(i),
             windDirection = d.windDirection.at(i),
             uvMax = d.uvMax.at(i),
+            rainSum = d.rainSum.at(i),
+            snowfallSum = d.snowfallSum.at(i),
+            sunshineSeconds = d.sunshineSeconds.at(i),
             sunrise = d.sunrise.at(i).asDateTime(),
             sunset = d.sunset.at(i).asDateTime(),
         )
@@ -307,6 +325,17 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             precipitation = hourly.precipitation.at(i),
             precipProbability = hourly.precipProbability.at(i),
             isDay = (hourly.isDay.at(i) ?: 1) == 1,
+            humidity = hourly.humidity.at(i),
+            dewPoint = hourly.dewPoint.at(i),
+            windSpeed = hourly.windSpeed.at(i),
+            windGusts = hourly.windGusts.at(i),
+            windDirection = hourly.windDirection.at(i),
+            uvIndex = hourly.uvIndex.at(i),
+            cloudCover = hourly.cloudCover.at(i),
+            pressure = hourly.pressure.at(i),
+            visibility = hourly.visibility.at(i),
+            rain = hourly.rain.at(i),
+            snowfall = hourly.snowfall.at(i),
         )
     }.orEmpty()
 
