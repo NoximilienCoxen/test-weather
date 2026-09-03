@@ -870,13 +870,45 @@ un'allerta, non darla.
 barra invece che dentro il carosello: un avviso che si trova solo scorrendo fino
 alla sesta pillola non avvisa nessuno.
 
-Due trappole gia' pagate qui:
+**Com'e' fatto il feed non si deduce: si guarda.** La prima stesura del parser
+era scritta su `awareness_level` e `awareness_type`, che sono i campi che la
+documentazione di terze parti descrive e che nel feed vero **non esistono** -
+zero occorrenze su trentacinquemila byte. Ogni allerta sarebbe uscita come una
+gialla generica, senza un errore da nessuna parte. La forma vera:
 
-- **`nextText()` solleva su un elemento che ha figli.** `area` contiene
-  `areaDesc` e `polygon`, `parameter` contiene `valueName` e `value`: chiamarla
-  su tutto avrebbe fatto fallire la lettura dell'intero feed sulla prima voce
-  con un poligono, cioe' su quasi tutte. Solo le foglie di `LEAF_TAGS` ci
-  passano.
+```xml
+<cap:areaDesc>Basilicata</cap:areaDesc>
+<cap:event>Yellow High-temperature Warning</cap:event>
+<cap:severity>Moderate</cap:severity>
+<cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+<link type="application/cap+xml" href="..."/>
+```
+
+Da cui: il **colore sta dentro la frase inglese** di `cap:event` e non nella
+severita' accanto, che e' piu' grossolana - tutte e ventitre le voci della
+cattura dicevano `Moderate`, comprese le gialle. Non c'e' **nessun poligono**:
+l'area e' un nome. E descrizione e raccomandazioni non stanno nell'Atom ma nel
+documento CAP collegato, che si va a prendere solo per le poche voci che
+riguardano la localita' mostrata.
+
+Una copia della risposta vera sta in `ci-artifacts/api/allerte.xml`, ripubblicata
+a ogni giro: e' il posto da cui guardare prima di toccare il parser.
+
+Quattro trappole gia' pagate qui:
+
+- **I nomi delle regioni non combaciano, e il confronto per sottostringa
+  fallisce in silenzio.** Il feed chiama la regione di Forli' *"Emilia e
+  Romagna"*, Open-Meteo la chiama *"Emilia-Romagna"*: nessuna delle due
+  contiene l'altra. Forli' sarebbe rimasta senza allerte per sempre, senza un
+  errore. Si confrontano **insiemi di parole significative** (tre lettere o
+  piu'), cosi' le congiunzioni - che sono esattamente cio' che differisce -
+  cadono.
+- **`nextText()` solleva su un elemento che ha figli.** `cap:geocode` contiene
+  `valueName` e `value`, `author` contiene `name` e `uri`: chiamarla su tutto
+  avrebbe fatto fallire la lettura dell'intero feed. Solo le foglie ci passano.
+- **I titoli si compongono in italiano, non si copiano.** Il feed scrive
+  "Yellow High-temperature Warning": messo in cima a una schermata italiana
+  sarebbe stata la traduzione mancante piu' visibile dell'app.
 - **L'allerta imposta si applica in lettura, non scrivendo in `alerts`.** Il
   primo caricamento sovrascrive quella lista con le allerte vere, e lo scatto
   usciva senza fascia. Le schermate leggono `UiState.shownAlerts`.
