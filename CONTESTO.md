@@ -687,6 +687,17 @@ perche' la CI fotografava solo le due ore estreme - mezzanotte e mezzogiorno -
 che sono le due in cui il contrasto e' migliore. Da qui la regola: se una
 tinta e' interpolata, il testo che ci va sopra non si sceglie, si calcola.
 
+**La correzione sta in `skyColors`, non nei chiamanti**, ed e' una distinzione
+che e' costata un giro: correggere il solo `onBackground` dello schema Material
+non serviva a niente, perche' la schermata principale, la barra delle ore, il
+benvenuto e la scultura leggono `LocalMeteoColors.text` e `.label` diretti. Chi
+tocca quella funzione tenga presente che la regolazione a mano che c'era prima -
+il mixing dell'etichetta verso il fondo tenuto a 0,28 invece che a 0,42 - era la
+stessa medicina data a occhio: curava il caso di mezzogiorno, che era quello che
+si vedeva negli scatti, e lasciava scoperto quello di meta' mattina, che negli
+scatti non c'era. Dopo la correzione il caso peggiore su tutta la giornata e'
+**4,54:1**.
+
 **Le etichette dentro le tele hanno un fondo.** La scala dell'asse Y cade sempre
 sopra l'area riempita del grafico, che sotto la scala dei gradi copre
 all'ottantadue per cento: li' un grigio su un arancione non si legge. Ogni
