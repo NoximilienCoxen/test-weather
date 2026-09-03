@@ -14,6 +14,15 @@ ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"
 
+# Quanti scatti sono stati chiesti e non sono usciti.
+#
+# Serve perche' un job verde con meta' degli scatti mancanti e' **peggio** di
+# un job rosso: sembra una verifica fatta. E' successo davvero - l'emulatore e'
+# morto a meta' corsa, il logcat dell'app finiva pulito senza un solo errore, e
+# il job ha riportato successo con dodici scatti in meno. Il controllo finale
+# guardava solo che ce ne fosse almeno uno.
+MANCATI=0
+
 # Secondi massimi di attesa perche' la previsione arrivi dopo un riavvio.
 # E' un tetto, non una durata: si esce appena l'app dice di averla (vedi
 # attendi_previsione), quindi tenerlo largo non costa niente.
@@ -56,6 +65,7 @@ shoot() {
 
   echo "  $name.png NON catturato"
   rm -f "$out"
+  MANCATI=$(( MANCATI + 1 ))
   return 1
 }
 
@@ -374,5 +384,13 @@ echo "== file prodotti =="
 ls -la "$OUT"
 
 shots=$(find "$OUT" -name "*.png" -size +0 | wc -l)
-echo "scatti riusciti: $shots"
+echo "scatti riusciti: $shots, mancati: $MANCATI"
 [ "$shots" -gt 0 ] || { echo "nessuno scatto prodotto"; exit 1; }
+
+# Qualche scatto puo' saltare per un intoppo passeggero di screencap, e per
+# quello c'e' gia' il ripiego su exec-out. Oltre la manciata invece non e' piu'
+# un intoppo: e' il dispositivo che se n'e' andato, e il job deve dirlo.
+if [ "$MANCATI" -gt 3 ]; then
+  echo "troppi scatti mancati ($MANCATI): il dispositivo se n'e' andato a meta' corsa"
+  exit 1
+fi
