@@ -1,5 +1,9 @@
 package com.forli.meteo.ui.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -9,6 +13,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.forli.meteo.R
@@ -17,6 +22,9 @@ import com.forli.meteo.ui.render.TemperatureRenderer
 import com.forli.meteo.ui.render3d.PrismRenderer
 
 val LocalTemperatureRenderer = staticCompositionLocalOf<TemperatureRenderer> { PrismRenderer() }
+
+/** Le tinte delle grandezze, che Material 3 non nomina. Vedi [MeteoAccents]. */
+val LocalMeteoAccents = staticCompositionLocalOf { skyColors(com.forli.meteo.data.SkyState.Giorno).toAccents() }
 
 fun MeteoColors.toNumberPalette(): NumberPalette = NumberPalette(
     face = numberFace,
@@ -60,6 +68,15 @@ object MeteoType {
         letterSpacing = 0.02.em,
         lineHeight = 30.sp,
     )
+
+    /** Un gradino sotto il titolo: le intestazioni delle schede. */
+    val heading = TextStyle(
+        fontFamily = archivo(weight = 600, width = 86f),
+        fontSize = 18.sp,
+        letterSpacing = 0.01.em,
+        lineHeight = 23.sp,
+    )
+
     val label = TextStyle(
         fontFamily = archivo(weight = 600, width = 82f),
         fontSize = 14.sp,
@@ -76,6 +93,36 @@ object MeteoType {
         letterSpacing = 0.13.em,
     )
 
+    /**
+     * I paragrafi che spiegano qualcosa.
+     *
+     * Minuscolo e senza spaziatura extra, al contrario di tutto il resto: una
+     * frase intera in maiuscolo spaziato si compita invece di leggersi, e nelle
+     * impostazioni ce n'erano quattro di seguito. Le etichette restano in
+     * maiuscolo - li' e' una parola sola e fa da segnale, non da testo.
+     */
+    val body = TextStyle(
+        fontFamily = archivo(weight = 420, width = 100f),
+        fontSize = 15.sp,
+        letterSpacing = 0.005.em,
+        lineHeight = 21.sp,
+    )
+
+    /**
+     * I valori numerici delle tabelle.
+     *
+     * Archivo con le cifre a larghezza fissa (`tnum`), non il monospace di
+     * sistema: scorrendo le ore i valori devono restare incolonnati, ma finora
+     * lo si otteneva con un carattere che non e' quello dell'app e con una
+     * spaziatura da orologio digitale, e "-10 °C" ne usciva sfilacciato.
+     */
+    val metric = TextStyle(
+        fontFamily = archivo(weight = 520, width = 92f),
+        fontSize = 15.sp,
+        letterSpacing = 0.02.em,
+        fontFeatureSettings = "tnum",
+    )
+
     /** Solo per cio' che deve restare incolonnato mentre i valori cambiano. */
     val tabular = TextStyle(
         fontFamily = FontFamily.Monospace,
@@ -85,15 +132,64 @@ object MeteoType {
     )
 }
 
+/**
+ * La tipografia Material, cosi' i componenti della libreria prendono Archivo
+ * senza doverglielo passare a mano uno per uno. E' anche la ragione per cui i
+ * `Text` senza `style` esplicito smettono di uscire col carattere di sistema.
+ */
+private val MeteoTypography = Typography(
+    displayLarge = MeteoType.title.copy(fontSize = 44.sp, lineHeight = 50.sp),
+    displayMedium = MeteoType.title.copy(fontSize = 36.sp, lineHeight = 42.sp),
+    displaySmall = MeteoType.title.copy(fontSize = 30.sp, lineHeight = 36.sp),
+    headlineLarge = MeteoType.title,
+    headlineMedium = MeteoType.title.copy(fontSize = 22.sp, lineHeight = 28.sp),
+    headlineSmall = MeteoType.heading,
+    titleLarge = MeteoType.heading,
+    titleMedium = MeteoType.label,
+    titleSmall = MeteoType.caption,
+    bodyLarge = MeteoType.body,
+    bodyMedium = MeteoType.value,
+    bodySmall = MeteoType.caption,
+    labelLarge = MeteoType.metric,
+    labelMedium = MeteoType.caption,
+    labelSmall = MeteoType.caption.copy(fontSize = 11.sp),
+)
+
+/**
+ * Le forme.
+ *
+ * Un solo raggio generoso per le schede (18dp, quello che il dettaglio gia'
+ * usava) e uno pieno per le pillole. Material ne vuole cinque: gli altri tre
+ * scalano fra questi due invece di essere inventati.
+ */
+private val MeteoShapes = Shapes(
+    extraSmall = RoundedCornerShape(6.dp),
+    small = RoundedCornerShape(10.dp),
+    medium = RoundedCornerShape(14.dp),
+    large = RoundedCornerShape(18.dp),
+    extraLarge = RoundedCornerShape(26.dp),
+)
+
 @Composable
 fun MeteoTheme(
     colors: MeteoColors,
     content: @Composable () -> Unit,
 ) {
     val renderer = remember { PrismRenderer() }
+    // Lo schema e le tinte costano una manciata di conversioni di gamma per
+    // colore: si ricalcolano al cambio d'ora, non a ogni ricomposizione.
+    val scheme = remember(colors) { colors.toColorScheme() }
+    val accents = remember(colors) { colors.toAccents() }
     CompositionLocalProvider(
         LocalMeteoColors provides colors,
+        LocalMeteoAccents provides accents,
         LocalTemperatureRenderer provides renderer,
-        content = content,
-    )
+    ) {
+        MaterialTheme(
+            colorScheme = scheme,
+            typography = MeteoTypography,
+            shapes = MeteoShapes,
+            content = content,
+        )
+    }
 }
