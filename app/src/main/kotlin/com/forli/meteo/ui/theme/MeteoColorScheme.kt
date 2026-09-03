@@ -86,7 +86,13 @@ data class MeteoAccents(
  */
 fun MeteoColors.toColorScheme(): ColorScheme {
     val onPanel = Color.White.readableOn(PanelContainer)
-    val onPanelVariant = onPanel.mutedOn(PanelContainer)
+    // Il grigio secondario si ricava contro la superficie **piu' chiara** su cui
+    // puo' finire, non contro quella media: le pillole spente stanno su
+    // `surfaceContainerHighest`, ed e' li' che il contrasto e' piu' magro.
+    // Tarandolo sul container si otteneva 4,49:1 su quelle pillole - meglio del
+    // 4,17:1 di prima, ma pur sempre sotto la soglia, cioe' lo stesso difetto
+    // spostato di un decimo. Contro la piu' chiara passa ovunque.
+    val onPanelVariant = onPanel.mutedOn(PanelContainerHighest)
     val onBackground = text.readableOn(background)
 
     return darkColorScheme(
