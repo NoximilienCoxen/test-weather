@@ -27,8 +27,11 @@ jobs:
           BASE="https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&forecast_days=7&wind_speed_unit=ms"
           CUR="current=temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day"
           SAFE="daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max"
-          EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum"
-          HOURLY="hourly=temperature_2m,weather_code,precipitation,precipitation_probability,is_day,apparent_temperature"
+          EXTRA="${SAFE},relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours,rain_sum,snowfall_sum,sunshine_duration"
+          # Le grandezze orarie che il dettaglio usa davvero. Le ultime undici
+          # sono quelle aggiunte: se una viene ritirata a monte, e' qui che si
+          # vede, e non in una schermata che mostra trattini senza spiegazione.
+          HOURLY="hourly=temperature_2m,apparent_temperature,weather_code,precipitation,precipitation_probability,is_day,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,cloud_cover,surface_pressure,visibility,rain,snowfall"
           echo "--- safe ---"
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}"  -o /tmp/ciout/safe.json
           echo "--- extra ---"

@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,11 +54,24 @@ private enum class LocationSource { GPS, FAVORITES, SEARCH }
 
 private const val SEARCH_DEBOUNCE_MS = 320L
 
-private val ScreenBackground = Color(0xFF14161B)
-private val Primary = Color.White
-private val Secondary = Color(0xFFEEEEEE)
-private val FieldBackground = Color.White.copy(alpha = 0.10f)
-private val SelectedBackground = Color.White.copy(alpha = 0.16f)
+/**
+ * Anche qui i colori vengono dal tema.
+ *
+ * Era la terza copia della stessa tavolozza - dopo quella delle impostazioni e
+ * quella del dettaglio - con gli stessi nomi e valori appena diversi. Adesso
+ * sono i token Material, gia' calcolati per contrasto sulla superficie che li
+ * ospita.
+ */
+private val ScreenBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.surface
+private val Primary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurface
+private val Secondary: Color
+    @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
+private val FieldBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.surfaceContainerHigh
+private val SelectedBackground: Color
+    @Composable get() = MaterialTheme.colorScheme.secondaryContainer
 
 /**
  * Schermata di configurazione aperta al posizionamento del widget: sceglie
@@ -117,13 +131,24 @@ fun WidgetConfigScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(Modifier.width(10.dp))
-            Text(text = "CONFIGURA WIDGET", style = MeteoType.caption, color = Primary)
+            Text(
+                text = "CONFIGURA WIDGET",
+                style = MaterialTheme.typography.titleMedium,
+                color = Primary,
+            )
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            // Quale widget si sta posizionando. Lo schermo lo sapeva - arriva
+            // come parametro - e non lo diceva: chi ne aggancia tre uguali di
+            // aspetto si ritrova la stessa schermata tre volte senza sapere a
+            // quale delle tre stia rispondendo.
+            item { WidgetIdentity(kind = kind, place = selectedPlace, following = useLocation) }
+            item { Spacer(Modifier.height(14.dp)) }
+
             if (showLocation) {
                 item { SectionTitle("LOCALITÀ") }
                 item {
@@ -240,7 +265,7 @@ private fun SectionTitle(text: String) {
                 .padding(top = 6.dp, bottom = 10.dp)
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color.White.copy(alpha = 0.18f)),
+                .background(MaterialTheme.colorScheme.outlineVariant),
         )
     }
 }
@@ -259,11 +284,11 @@ private fun SourceTab(label: String, selected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(percent = 50))
-            .background(if (selected) Primary else Color.White.copy(alpha = 0.10f))
+            .background(if (selected) Primary else MaterialTheme.colorScheme.surfaceContainerHigh)
             .pointerInput(onClick) { detectTapGestures { onClick() } }
             .padding(horizontal = 16.dp, vertical = 10.dp),
     ) {
-        Text(text = label, style = MeteoType.value, color = if (selected) Color.Black else Secondary)
+        Text(text = label, style = MeteoType.value, color = if (selected) MaterialTheme.colorScheme.surface else Secondary)
     }
 }
 
@@ -364,5 +389,54 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
             color = Color.Black,
             modifier = Modifier.align(Alignment.Center),
         )
+    }
+}
+
+/**
+ * Che widget e' e dove guardera'.
+ *
+ * **Non un'anteprima dei numeri.** I numeri non ci sono ancora - il widget non
+ * e' stato salvato e la sua richiesta non e' mai partita - e disegnarne di
+ * finti sarebbe peggio che non disegnare niente: chi guarda non ha modo di
+ * sapere che sono finti, e i widget di questa app sono immagini dipinte, quindi
+ * un'anteprima falsa sembrerebbe quella vera.
+ *
+ * Quel che si puo' dire con onesta' e' l'identita': quale dei tre widget, con
+ * il suo disegno, e quale localita' andra' a leggere.
+ */
+@Composable
+private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean) {
+    val titolo = when (kind) {
+        WidgetKind.METEO -> "METEO"
+        WidgetKind.LUNA -> "LUNA"
+        WidgetKind.ARIA -> "QUALITÀ DELL'ARIA"
+        null -> "WIDGET"
+    }
+    val dove = when {
+        kind == WidgetKind.LUNA -> "La luna e' la stessa da ogni punto della Terra"
+        following -> "Seguira' la posizione del telefono"
+        place != null -> "Mostrera' ${place.name}"
+        else -> "Scegli da dove prendere i dati"
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(FieldBackground)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = titolo,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Primary,
+            )
+            Text(
+                text = dove,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Secondary,
+            )
+        }
     }
 }
