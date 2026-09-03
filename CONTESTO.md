@@ -574,6 +574,29 @@ riaccendere la scala prima e rispegnerla dopo, come fa `roll_from_to` in
 `scripts/capture.sh`. **Prima di dare la colpa al codice per un'animazione che
 "non parte", guarda se sta girando a durata zero.**
 
+**33. Il rovescio della #28: quando le animazioni sono vive, uno scatto puo'
+ritrarre il viaggio invece della destinazione.** La #28 dice che con
+`animator_duration_scale` a zero `animate` salta alla fine. Il caso opposto e'
+altrettanto velenoso e si e' visto subito: ad app appena avviata l'altezza del
+sole parte dal **ripiego diurno** (`0.62`), e la molla del cielo ci mette piu'
+di un secondo ad arrivare a un'ora notturna. Lo scatto dell'alba, preso col
+solo secondo di `attendi_previsione`, e' uscito con il cielo di mezzogiorno e il
+sole alto - e la tavolozza era giusta, era la foto a essere presto.
+
+Il segno che lo tradiva stava nel testo, non nel colore: **"IN ATTESA DEI DATI"
+sopra una riga di minima e massima gia' piene**. Sono due stati che non possono
+coesistere, se non a meta' di una dissolvenza. Quando due parti dello schermo si
+contraddicono, la spiegazione e' quasi sempre il momento dello scatto e non la
+logica di una delle due.
+
+**34. Chi reagisce al meteo deve leggere `forcedWeatherCode`, non solo l'ora.**
+Il fondo del cielo era nato leggendo `hour?.weatherCode` e basta: nello scatto
+di verifica del coperto la scultura obbediva al codice imposto e il fondo no, e
+usciva la nuvola giusta sopra un cielo da sereno - cioe' proprio la regola che
+quello scatto doveva dimostrare non si vedeva. In uso normale non si sarebbe
+notato mai, perche' li' il codice imposto non esiste: e' un difetto che **solo
+l'aggancio di verifica poteva mostrare, e solo se l'aggancio arriva dappertutto**.
+
 **26. `refresh()` non la richiamava nessuno.** Partiva all'avvio e al cambio di
 localita', e basta: nessun ritorno in primo piano, nessun gesto, nessun segno di
 quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava
