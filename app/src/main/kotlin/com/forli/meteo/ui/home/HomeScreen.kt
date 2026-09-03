@@ -174,7 +174,7 @@ fun HomeScreen(
         // e a mezzogiorno, mentre tutto il resto di questa schermata cambia con
         // l'ora. Se non ci sono allerte non occupa spazio.
         AlertBanner(
-            alerts = state.alerts,
+            alerts = state.shownAlerts,
             onOpen = onOpenAlerts,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
         )

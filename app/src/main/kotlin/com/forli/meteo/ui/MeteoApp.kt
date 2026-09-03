@@ -290,7 +290,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     color = MaterialTheme.colorScheme.surface,
                 ) {
                     AlertsSheet(
-                        alerts = state.alerts,
+                        alerts = state.shownAlerts,
                         unavailable = state.alertsUnavailable,
                         onBack = viewModel::closeAlerts,
                         modifier = Modifier.systemBarsPadding(),

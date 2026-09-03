@@ -308,6 +308,7 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 | `--ei meteo` | impone il codice WMO |
 | `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
 | `--ei giorno` | apre il dettaglio di quel giorno della settimana |
+| `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -324,6 +325,13 @@ cifra di taglio servono quattrocento pixel, per vederla da dietro piu' di
 ottocento, e uno schermo e' largo mille. Senza, il quarto di giro - che e'
 esattamente dove le matrici degenerano e le pareti si scavalcano - non era
 fotografabile, e infatti quei difetti li ha trovati l'utente e non la CI.
+
+L'aggancio sull'allerta c'e' per la stessa ragione di quello sul meteo: la
+fascia compare solo quando la Protezione Civile ha diramato qualcosa **sulla
+localita' mostrata**, cioe' quasi mai e mai su richiesta. Fotografarla solo nei
+giorni di maltempo vuol dire non fotografarla. Si applica **in lettura** e non
+scrivendo dentro `UiState.alerts`, se no il primo caricamento la cancella prima
+dello scatto.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta
@@ -680,10 +688,18 @@ comunque a ogni fotogramma.
 
 1. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
-2. **Il dettaglio non e' mai stato provato in mano.** Il rifacimento (sezione 11)
-   e' verificato dalla CI - compila, e gli scatti mostrano tutte e cinque le
-   pagine nei due temi - ma nessuno ha ancora scorso il carosello col pollice
-   ne' girato la cifra da dentro il foglio.
+2. **Il dettaglio non e' mai stato provato in mano.** Il rifacimento e le
+   correzioni alla navigazione (sezioni 8-bis e 8-ter) sono verificati dalla CI
+   - compila, e gli scatti mostrano tutte e cinque le pagine nei due temi - ma
+   nessuno ha ancora scorso il carosello col pollice ne' girato la cifra da
+   dentro il foglio. In particolare **non sono mai state viste in mano** la fila
+   di pillole che si porta al centro e la sfumatura del titolo durante il
+   trascinamento: sono movimenti, e un movimento in uno scatto non si giudica.
+5. **Le allerte non sono mai state viste con un bollettino vero.** Il parser e'
+   scritto sullo schema CAP/Atom documentato e il job `probe-api` controlla che
+   i campi su cui si fida esistano ancora, ma nessuno ha ancora aperto l'app in
+   un giorno di allerta arancione: gli scatti usano l'aggancio `--ei allerta`.
+   La prima allerta vera e' anche la prima verifica vera.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
@@ -777,6 +793,93 @@ il dito sul grafico blocca la pagina.
 **La settimana sta fuori dal carosello.** E' la stessa informazione per tutte e
 cinque le grandezze: dentro la sola pagina della temperatura la rendeva lunga il
 doppio delle altre e la nascondeva a chi guardava il vento.
+
+**Una sola sorgente di verita' per la pagina: il carosello.** `detailMode` nello
+stato e' la *modalita' d'ingresso*, non una seconda copia di "su quale pagina
+sono". C'erano due copie riconciliate da due `LaunchedEffect`, e il secondo era
+chiavato su cio' che il primo cambiava: mentre `animateScrollToPage` girava, la
+pagina intermedia faceva cambiare la modalita', l'effetto veniva rilanciato e
+**cancellava la propria animazione**. Toccare "Aria" da "Temp" lasciava il
+carosello a meta' strada. Tre regole da non sciogliere:
+
+- si scrive nello stato **solo su `settledPage`** - un trascinamento annullato
+  non e' una scelta e non deve lasciare traccia nello stato globale;
+- si legge `currentPage` per **cio' che si vede** (titolo, pillola accesa,
+  cifra, tinta): la pagina posata cambia troppo tardi e l'intestazione
+  resterebbe indietro per tutto il gesto;
+- le pillole animano il pager **direttamente**, non passando dal ViewModel.
+
+Lo stesso schema vale in `DayDetailScreen`, che lo aveva duplicato.
+
+**Cio' che si muove col dito passa per lambda, non per valore.**
+`currentPageOffsetFraction` cambia a ogni fotogramma: letto nel corpo di un
+composable ricompone l'intera schermata sessanta volte al secondo per spostare
+una trasparenza. Letto **dentro** `graphicsLayer` o dentro una tela si ferma
+alla fase di disegno. Per la stessa ragione i pallini sono **una tela sola**
+invece di cinque `Canvas` larghi in `dp`, che a ogni frame avrebbero rifatto
+misura e posizionamento. E per la stessa ragione `snapshotFlow` riceve una
+lambda: con un `Float` gia' calcolato dal chiamante non c'e' nessuno stato di
+Compose da osservare e il flusso emette **una volta sola**.
+
+**Una fila che scorre deve portare la selezione al centro, e
+`animateScrollToItem` non lo fa**: quella si ferma al bordo d'ingresso. Il
+residuo si calcola da `layoutInfo` - `centerOn` in `MeteoSurfaces.kt`, usata sia
+dalle pillole sia dalle linguette dei giorni. E `spacedBy(..., CenterHorizontally)`
+su una `LazyRow` centra quando il contenuto ci sta e scorre quando non ci sta:
+con `horizontalScroll` restava incollato a sinistra in entrambi i casi.
+
+**Un'ora precisa sopra un totale del giorno e' una bugia.** Sulla pagina del
+sole l'intestazione diceva "OGGI · 15:00" sopra tredici *ore di sole*, che sono
+quelle di tutta la giornata. `DetailMode.isDailyTotal` sapeva gia' distinguere i
+due casi; adesso il sottotitolo glielo chiede.
+
+## 8-ter. Le allerte meteo
+
+`data/WeatherAlert.kt`, `data/WeatherAlertsRepository.kt`,
+`data/DerivedAlerts.kt`, `ui/alerts/`
+
+**La fonte, e perche' non l'Aeronautica Militare.** Open-Meteo non ha un
+endpoint per gli avvisi. Il servizio meteo dell'Aeronautica pubblica bollettini
+su meteoam.it ma **non espone un'API pubblica documentata**: i dati si ottengono
+per accordo, non con una GET - verificato, non supposto. Si usa **MeteoAlarm**,
+il canale di EUMETNET su cui i servizi nazionali pubblicano in CAP, e per
+l'Italia sono i bollettini della Protezione Civile e dei centri funzionali
+regionali. Stessa informazione, per una via leggibile. Gli **RSS legacy sono
+stati spenti il 14 gennaio 2026**: si legge l'Atom.
+
+**Due strati, e la differenza si dichiara.** MeteoAlarm copre l'Europa; l'app no
+- fra le localita' suggerite c'e' la Nuova Zelanda - e un feed puo' non
+rispondere. Li' l'alternativa non e' un bollettino migliore, e' il silenzio
+davanti a novanta chilometri orari di raffica: le soglie calcolate sui dati gia'
+scaricati riempiono il buco senza una richiesta in piu'. L'ufficiale vince
+sempre sul derivato dello stesso fenomeno, e `WeatherAlert.official` dice sempre
+quale dei due si sta leggendo. **Il rosso non si emette per soglia**: e' una
+valutazione del rischio sul territorio, non un confronto fra un numero e una
+costante.
+
+**Fuori copertura non e' un guasto.** In Nuova Zelanda MeteoAlarm non *deve*
+rispondere: `OutOfCoverage` e' distinto dall'errore, e annunciarlo come tale
+insegnerebbe a ignorare l'avviso quando invece e' vero.
+
+**Un avviso che non si sa collocare si mostra lo stesso**, col nome dell'area
+scritto sopra. La selezione usa il poligono CAP quando c'e' e il nome della
+regione quando non c'e'; scartare cio' che non combacia significherebbe, per
+un'allerta, non darla.
+
+**La fascia non disegna niente quando non c'e' niente da dire**, e sta sotto la
+barra invece che dentro il carosello: un avviso che si trova solo scorrendo fino
+alla sesta pillola non avvisa nessuno.
+
+Due trappole gia' pagate qui:
+
+- **`nextText()` solleva su un elemento che ha figli.** `area` contiene
+  `areaDesc` e `polygon`, `parameter` contiene `valueName` e `value`: chiamarla
+  su tutto avrebbe fatto fallire la lettura dell'intero feed sulla prima voce
+  con un poligono, cioe' su quasi tutte. Solo le foglie di `LEAF_TAGS` ci
+  passano.
+- **L'allerta imposta si applica in lettura, non scrivendo in `alerts`.** Il
+  primo caricamento sovrascrive quella lista con le allerte vere, e lo scatto
+  usciva senza fascia. Le schermate leggono `UiState.shownAlerts`.
 
 ## 9. Preferenze dell'utente, dette esplicitamente
 
