@@ -141,6 +141,11 @@ fun MeteoIconButton(
     enabled: Boolean = true,
     icon: @Composable () -> Unit,
 ) {
+    // Il nome in una variabile a parte: dentro `semantics` il ricevente ha una
+    // proprieta' che si chiama gia' `contentDescription`, e averla su tutti e
+    // due i lati dell'assegnamento e' un'ambiguita' che si legge male anche
+    // quando le regole di risoluzione la sciolgono nel verso giusto.
+    val label = contentDescription
     Box(
         modifier = modifier
             .size(MinTouchTarget)
@@ -148,10 +153,10 @@ fun MeteoIconButton(
             .clickable(
                 enabled = enabled,
                 role = Role.Button,
-                onClickLabel = contentDescription,
+                onClickLabel = label,
                 onClick = onClick,
             )
-            .semantics { this.contentDescription = contentDescription },
+            .semantics { this.contentDescription = label },
         contentAlignment = Alignment.Center,
     ) {
         icon()
