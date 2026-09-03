@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Data corrupted at path ''. Cannot initialize MultiDomains from invalid String value zzz.","error":true}
+{"error":true,"reason":"Data corrupted at path ''. Cannot initialize MultiDomains from invalid String value zzz."}
 
 === copertura reale sui due punti ===
   best_match
@@ -19,16 +19,16 @@
     Forli    48/48 ore  quota 40.0 m  prime [23.3, 22.6, 22.3]
   ecmwf_ifs025
     Noceto   48/48 ore  quota 74.0 m  prime [21.9, 21.7, 21.8]
-    Forli    48/48 ore  quota 40.0 m  prime [22.1, 21.4, 20.9]
+    Forli     HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   ecmwf_aifs025_single
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [21.7, 21.1, 20.6]
     Forli    48/48 ore  quota 40.0 m  prime [20.8, 20.3, 20.0]
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [23.2, 22.0, 21.9]
     Forli    48/48 ore  quota 40.0 m  prime [24.0, 23.9, 23.2]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
-    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
+    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [21.8, 21.3, 21.1]
     Forli    48/48 ore  quota 40.0 m  prime [22.3, 22.0, 21.9]
@@ -36,23 +36,23 @@
     Noceto   48/48 ore  quota 74.0 m  prime [23.1, 23.3, 22.3]
     Forli    48/48 ore  quota 40.0 m  prime [25.2, 24.3, 24.0]
   ukmo_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [22.2, 21.3, 20.8]
+    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
     Forli    48/48 ore  quota 40.0 m  prime [21.6, 20.4, 19.7]
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0025033950805664062,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0015497207641601562,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0017881393432617188,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0034570693969726562,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=141  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0019073486328125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0030994415283203125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0017881393432617188,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [18.9, 18.9, 18.8]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [18.9, 18.9, 18.8]
     Bergen   48/48 ore  quota 17.0 m  prime [11.4, 11.8, 11.9]
-    Singapore 48/48 ore  quota 39.0 m  prime [27.8, 28.2, 28.7]
+    Singapore HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
     NewYork  48/48 ore  quota 27.0 m  prime [20.6, 20.4, 20.4]
 
