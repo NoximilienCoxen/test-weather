@@ -174,98 +174,14 @@ session() {
 
   shoot "${slug}-1-temp"
 
-  # Prova della parallasse: l'emulatore sa simulare l'accelerometro, quindi
-  # l'inclinazione e' verificabile qui e non solo a mano sul telefono. La linea
-  # di base insegue la posa in qualche secondo, percio' lo scatto va preso
-  # subito dopo aver mosso il sensore.
-  if [ "$tema" = "SCURO" ]; then
-    adbt emu sensor set acceleration 3.2:9.2:0 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-1b-inclinato-destra"
-    adbt emu sensor set acceleration -3.2:9.2:0 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-1c-inclinato-sinistra"
-    adbt emu sensor set acceleration 0:9.81:0 >/dev/null 2>&1 || true
-    sleep 1
-
-    # Rotazione col dito. "input motionevent" tiene premuto fra un comando e
-    # l'altro, quindi lo stato intermedio del gesto e' fotografabile: con una
-    # swipe non lo era, perche' finisce prima dello scatto.
-    CX=$(( W / 2 ))
-    CY=$(( H * 30 / 100 ))
-    adbt shell input motionevent DOWN "$CX" "$CY" >/dev/null 2>&1 || true
-    adbt shell input motionevent MOVE "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
-    sleep 1
-    shoot "${slug}-1d-ruotato-col-dito"
-    adbt shell input motionevent UP "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
-    sleep 1
-
-    # Stati che i dati veri oggi non offrono: a Forli' e' sereno tutte le
-    # ventiquattro ore, quindi nuvole e pioggia non comparirebbero mai in uno
-    # scatto. L'app accetta di imporli, come gia' fa per il tema.
-    restart_with() {
-      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-      sleep 1
-      # Il buffer va svuotato prima dell'avvio, altrimenti la riga del giro
-      # precedente farebbe passare l'attesa all'istante. Il logcat in
-      # streaming ha gia' scritto su file quello che ha visto, quindi qui non
-      # si perde niente.
-      adbt shell logcat -c >/dev/null 2>&1 || true
-      # shellcheck disable=SC2086
-      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
-      attendi_previsione
-    }
-
-    # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
-    # stanotte la luna non si vedrebbe, ed e' proprio lei che va guardata.
-    restart_with "--ei ora 2 --ei meteo 1"
-    shoot "${slug}-2-notte-luna"
-
-    restart_with "--ei meteo 63"
-    shoot "${slug}-3-pioggia"
-
-    restart_with "--ei ora 2 --ei meteo 63"
-    shoot "${slug}-4-pioggia-di-notte"
-
-    restart_with "--ei meteo 3"
-    shoot "${slug}-5-coperto"
-
-    # Neve e sereno non avevano nessuno scatto, quindi si scrivevano alla
-    # cieca: il fiocco che sbanda e l'uccello che batte le ali si giudicano
-    # guardandoli, non rileggendo il codice. Il sereno va forzato a mezzogiorno,
-    # se no all'ora della CI il cielo e' notte e gli uccelli non volano.
-    restart_with "--ei meteo 73"
-    shoot "${slug}-5b-neve"
-
-    restart_with "--ei ora 12 --ei meteo 0"
-    shoot "${slug}-5c-sereno-uccelli"
-
-    restart_with "--ei meteo 96"
-    shoot "${slug}-5d-grandine"
-
-    # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
-    # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
-    # col dito non si arriva: per portare la cifra di taglio servono quattrocento
-    # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
-    # schermo e' largo mille.
-    restart_with "--ei giro 90"
-    shoot "${slug}-7-di-taglio"
-
-    restart_with "--ei giro 135"
-    shoot "${slug}-8-tre-ottavi"
-
-    restart_with "--ei giro 180"
-    shoot "${slug}-9-da-dietro"
-
-    # La luna deve poter passare davanti alla nuvola: e' tutto il punto
-    # dell'ordinamento in profondita' dei corpi tondi.
-    restart_with "--ei ora 2 --ei meteo 1 --ei giro 155"
-    shoot "${slug}-10-luna-girata"
-
-    restart_with "--ei meteo 63 --ei giro 45"
-    shoot "${slug}-11-pioggia-girata"
-
-  fi
+  # ── Prima il nuovo, poi il gia' verificato ──────────────────────────────────
+  #
+  # Il dettaglio e le ore di contrasto vengono **prima** delle prove del motore
+  # 3D, e non e' l'ordine naturale: e' che l'emulatore della CI se ne va a meta'
+  # corsa, in modo riproducibile ma in punti diversi, e quel che resta fuori e'
+  # sempre la coda. Le prove del motore hanno una galleria alle spalle e
+  # possono permettersi di saltare un giro; queste schermate no, non hanno mai
+  # avuto uno scatto.
 
   # ── Il foglio di dettaglio ──────────────────────────────────────────────────
   #
@@ -364,6 +280,109 @@ session() {
       shoot "contrasto-ora-${ora}"
     done
   fi
+
+  # Prova della parallasse: l'emulatore sa simulare l'accelerometro, quindi
+  # l'inclinazione e' verificabile qui e non solo a mano sul telefono. La linea
+  # di base insegue la posa in qualche secondo, percio' lo scatto va preso
+  # subito dopo aver mosso il sensore.
+  if [ "$tema" = "SCURO" ]; then
+    # Il blocco qui sopra lascia l'app sul dettaglio di un giorno: le prove
+    # dell'inclinazione vogliono la schermata principale.
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell logcat -c >/dev/null 2>&1 || true
+    adbt shell am start -n "$ACT" >/dev/null 2>&1 || true
+    attendi_previsione
+
+    adbt emu sensor set acceleration 3.2:9.2:0 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-1b-inclinato-destra"
+    adbt emu sensor set acceleration -3.2:9.2:0 >/dev/null 2>&1 || true
+    sleep 2
+    shoot "${slug}-1c-inclinato-sinistra"
+    adbt emu sensor set acceleration 0:9.81:0 >/dev/null 2>&1 || true
+    sleep 1
+
+    # Rotazione col dito. "input motionevent" tiene premuto fra un comando e
+    # l'altro, quindi lo stato intermedio del gesto e' fotografabile: con una
+    # swipe non lo era, perche' finisce prima dello scatto.
+    CX=$(( W / 2 ))
+    CY=$(( H * 30 / 100 ))
+    adbt shell input motionevent DOWN "$CX" "$CY" >/dev/null 2>&1 || true
+    adbt shell input motionevent MOVE "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
+    sleep 1
+    shoot "${slug}-1d-ruotato-col-dito"
+    adbt shell input motionevent UP "$(( CX + 260 ))" "$CY" >/dev/null 2>&1 || true
+    sleep 1
+
+    # Stati che i dati veri oggi non offrono: a Forli' e' sereno tutte le
+    # ventiquattro ore, quindi nuvole e pioggia non comparirebbero mai in uno
+    # scatto. L'app accetta di imporli, come gia' fa per il tema.
+    restart_with() {
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      # Il buffer va svuotato prima dell'avvio, altrimenti la riga del giro
+      # precedente farebbe passare l'attesa all'istante. Il logcat in
+      # streaming ha gia' scritto su file quello che ha visto, quindi qui non
+      # si perde niente.
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      # shellcheck disable=SC2086
+      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
+      attendi_previsione
+    }
+
+    # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
+    # stanotte la luna non si vedrebbe, ed e' proprio lei che va guardata.
+    restart_with "--ei ora 2 --ei meteo 1"
+    shoot "${slug}-2-notte-luna"
+
+    restart_with "--ei meteo 63"
+    shoot "${slug}-3-pioggia"
+
+    restart_with "--ei ora 2 --ei meteo 63"
+    shoot "${slug}-4-pioggia-di-notte"
+
+    restart_with "--ei meteo 3"
+    shoot "${slug}-5-coperto"
+
+    # Neve e sereno non avevano nessuno scatto, quindi si scrivevano alla
+    # cieca: il fiocco che sbanda e l'uccello che batte le ali si giudicano
+    # guardandoli, non rileggendo il codice. Il sereno va forzato a mezzogiorno,
+    # se no all'ora della CI il cielo e' notte e gli uccelli non volano.
+    restart_with "--ei meteo 73"
+    shoot "${slug}-5b-neve"
+
+    restart_with "--ei ora 12 --ei meteo 0"
+    shoot "${slug}-5c-sereno-uccelli"
+
+    restart_with "--ei meteo 96"
+    shoot "${slug}-5d-grandine"
+
+    # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
+    # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
+    # col dito non si arriva: per portare la cifra di taglio servono quattrocento
+    # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
+    # schermo e' largo mille.
+    restart_with "--ei giro 90"
+    shoot "${slug}-7-di-taglio"
+
+    restart_with "--ei giro 135"
+    shoot "${slug}-8-tre-ottavi"
+
+    restart_with "--ei giro 180"
+    shoot "${slug}-9-da-dietro"
+
+    # La luna deve poter passare davanti alla nuvola: e' tutto il punto
+    # dell'ordinamento in profondita' dei corpi tondi.
+    restart_with "--ei ora 2 --ei meteo 1 --ei giro 155"
+    shoot "${slug}-10-luna-girata"
+
+    restart_with "--ei meteo 63 --ei giro 45"
+    shoot "${slug}-11-pioggia-girata"
+
+  fi
+
+
 }
 
 welcome
@@ -382,10 +401,14 @@ shots=$(find "$OUT" -name "*.png" -size +0 | wc -l)
 echo "scatti riusciti: $shots, mancati: $MANCATI"
 [ "$shots" -gt 0 ] || { echo "nessuno scatto prodotto"; exit 1; }
 
-# Qualche scatto puo' saltare per un intoppo passeggero di screencap, e per
-# quello c'e' gia' il ripiego su exec-out. Oltre la manciata invece non e' piu'
-# un intoppo: e' il dispositivo che se n'e' andato, e il job deve dirlo.
-if [ "$MANCATI" -gt 3 ]; then
-  echo "troppi scatti mancati ($MANCATI): il dispositivo se n'e' andato a meta' corsa"
+# Il segnale vero non e' il numero di scatti mancati - la soglia si azzecca
+# sempre per difetto, e infatti con esattamente tre mancati questo controllo
+# lasciava passare un giro monco - ma **se il dispositivo e' ancora vivo alla
+# fine**. Un emulatore che se n'e' andato a meta' corsa non e' un intoppo
+# passeggero: e' un giro da rifare, e il job deve dirlo invece di consegnare
+# mezza galleria con la faccia di una verifica completa.
+if ! alive; then
+  echo "il dispositivo non c'e' piu': il giro e' incompleto ($MANCATI scatti mancati)"
   exit 1
 fi
+[ "$MANCATI" -eq 0 ] || echo "attenzione: $MANCATI scatti non catturati"
