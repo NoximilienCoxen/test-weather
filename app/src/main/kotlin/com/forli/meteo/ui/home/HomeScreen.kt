@@ -2,6 +2,7 @@ package com.forli.meteo.ui.home
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -314,26 +315,41 @@ fun HomeScreen(
         // Tornare all'ora vera deve costare un tocco. Scorrendo la barra si
         // finisce facilmente lontani, e ritrovare la posizione a mano annulla
         // il senso di aver aperto l'app per sapere che tempo fa adesso.
+        //
+        // **Adesso e' un tasto e basta.** Prima era l'etichetta dell'ora che
+        // faceva anche da tasto: un bersaglio con due mestieri, e per giunta
+        // spento proprio quando diceva la cosa piu' utile. L'ora se n'e' andata
+        // nella bolla sopra il cursore, dove il pollice non la copre, e qui
+        // resta il solo comando.
         val onNow = state.selectedHour == state.nowIndex
         val interaction = remember { MutableInteractionSource() }
-        Text(
-            text = if (onNow) hourLabel(hour) else "${hourLabel(hour)}  ·  ADESSO",
-            // L'unico testo che resta a larghezza fissa: scorrendo la barra
-            // cambia a ogni ora, e con un carattere proporzionale ballerebbe da
-            // sinistra a destra sotto il pollice che lo sta muovendo.
-            style = MeteoType.tabular,
-            color = if (onNow) colors.label else colors.text,
+        Box(
+            // L'altezza si riserva anche quando il tasto non c'e'. Comparendo e
+            // sparendo a ogni scorrimento farebbe saltare in su e in giu' la
+            // scultura che sta sopra, e un sussulto a ogni ora scelta e' peggio
+            // dei pochi punti che si risparmierebbero.
             modifier = Modifier
-                .padding(top = 2.dp, bottom = 8.dp)
-                .clip(CircleShape)
-                .clickable(
-                    interactionSource = interaction,
-                    indication = null,
-                    enabled = !onNow,
-                    onClick = onBackToNow,
+                .padding(top = 4.dp, bottom = 6.dp)
+                .height(40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (!onNow) {
+                Text(
+                    text = "TORNA AD ADESSO",
+                    style = MeteoType.caption,
+                    color = colors.pillText,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(colors.pillBackground)
+                        .clickable(
+                            interactionSource = interaction,
+                            indication = null,
+                            onClick = onBackToNow,
+                        )
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
                 )
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-        )
+            }
+        }
     }
 }
 

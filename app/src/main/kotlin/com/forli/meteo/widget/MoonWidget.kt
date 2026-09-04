@@ -9,6 +9,7 @@ import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
 import com.forli.meteo.ui.home.MoonPhase
+import com.forli.meteo.ui.home.MoonSegment
 import com.forli.meteo.widget.paint.WidgetCanvas
 import com.forli.meteo.widget.paint.WidgetInk
 import com.forli.meteo.widget.paint.WidgetType
@@ -49,32 +50,6 @@ class MoonWidget : GlanceAppWidget() {
 
         provideContent {
             WidgetImage(bitmap, spoken, actionRunCallback<RefreshMoonAction>())
-        }
-    }
-}
-
-/**
- * Gli otto nomi con cui si chiama la luna.
- *
- * Restano i nomi, non le sagome: la fase adesso viene tracciata per intero, e
- * scegliere fra otto disegni fissi mostrava la luna di due giorni prima.
- */
-internal enum class MoonSegment(val label: String) {
-    NOVILUNIO("NOVILUNIO"),
-    CRESCENTE("LUNA CRESCENTE"),
-    PRIMO_QUARTO("PRIMO QUARTO"),
-    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE"),
-    PLENILUNIO("PLENILUNIO"),
-    GIBBOSA_CALANTE("GIBBOSA CALANTE"),
-    ULTIMO_QUARTO("ULTIMO QUARTO"),
-    CALANTE("LUNA CALANTE"),
-    ;
-
-    companion object {
-        /** Il ciclo diviso in otto, con i nomi centrati sul loro istante esatto. */
-        fun of(phase: Float): MoonSegment {
-            val eighth = ((phase * 8f) + 0.5f).toInt() % 8
-            return entries[eighth]
         }
     }
 }

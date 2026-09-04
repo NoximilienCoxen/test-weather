@@ -34,6 +34,7 @@ import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.motion.SceneRotation
 import com.forli.meteo.ui.motion.rememberWeatherHaptics
 import com.forli.meteo.ui.render3d.Camera
+import com.forli.meteo.ui.render3d.MOON_SEAS
 import com.forli.meteo.ui.render3d.SceneContact
 import com.forli.meteo.ui.render3d.glow
 import com.forli.meteo.ui.render3d.moon
@@ -775,18 +776,6 @@ private val CLOUD_MASSES = listOf(
     // nuvola piu' fitta al centro, e' un fronte che occupa piu' cielo.
     Lump(-0.42f, -0.04f, -0.24f, 0.21f),
     Lump(0.44f, -0.02f, -0.21f, 0.22f),
-)
-
-/**
- * I mari lunari: due componenti sulla sfera unitaria e il raggio della macchia.
- * Non sono una mappa fedele, sono l'appiglio che permette di vedere che la luna
- * sta girando invece di stare ferma a farsi guardare.
- */
-private val MOON_SEAS = listOf(
-    Triple(-0.30f, -0.24f, 0.20f),
-    Triple(0.16f, 0.05f, 0.26f),
-    Triple(-0.08f, 0.42f, 0.15f),
-    Triple(0.42f, -0.34f, 0.12f),
 )
 
 /**

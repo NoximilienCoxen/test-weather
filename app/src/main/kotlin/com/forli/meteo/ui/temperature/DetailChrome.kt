@@ -56,6 +56,7 @@ fun DetailMode.accent(): Color {
         DetailMode.PRECIPITAZIONI -> accents.rain
         DetailMode.VENTO -> accents.wind
         DetailMode.ARIA -> accents.air
+        DetailMode.LUNA -> accents.moon
     }
 }
 
@@ -66,6 +67,7 @@ fun DetailMode.accentOf(accents: MeteoAccents, onSurface: Color): Color = when (
     DetailMode.PRECIPITAZIONI -> accents.rain
     DetailMode.VENTO -> accents.wind
     DetailMode.ARIA -> accents.air
+    DetailMode.LUNA -> accents.moon
 }
 
 // ---------------------------------------------------------------------------
