@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
@@ -80,6 +81,41 @@ import kotlin.math.abs
  * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
  * come sara' nelle prossime ore. Tutto il resto sta un trascinamento piu' su.
  */
+/**
+ * I 48dp in cima a destra: vuoti, o col pallino dell'allerta.
+ *
+ * **Sta in una funzione sua per una ragione di compilazione, non di stile.**
+ * Dentro il `Box`, in mezzo alla `Row` della barra, ci sono due riceventi
+ * impliciti - `BoxScope` da vicino e `RowScope` da fuori - e Kotlin risolve
+ * `AnimatedVisibility` sulla versione di `RowScope`, che li' non puo' chiamare:
+ * *cannot be called in this context with an implicit receiver*. In una funzione
+ * a se' `RowScope` non c'e', e resta una chiamata sola possibile.
+ */
+@Composable
+private fun AlertPillSlot(
+    alerts: List<WeatherAlert>,
+    collapsed: Boolean,
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        // Larghezza fissa **anche da vuoto**: e' cio' che tiene il nome della
+        // localita' al centro dello schermo invece che al centro di quel che
+        // avanza, e che impedisce al nome di spostarsi quando il pallino
+        // compare o sparisce.
+        modifier = modifier.width(48.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedVisibility(
+            visible = collapsed,
+            enter = scaleIn(ALERT_SPRING) + fadeIn(ALERT_SPRING),
+            exit = scaleOut(ALERT_SPRING) + fadeOut(ALERT_SPRING),
+        ) {
+            AlertPill(alerts = alerts, onOpen = onOpen)
+        }
+    }
+}
+
 /**
  * La molla del passaggio fra la fascia dell'allerta e il pallino.
  *
@@ -199,15 +235,11 @@ fun HomeScreen(
             // non si sposta di un pixel fra i due stati, e il pallino non ruba
             // altezza a niente. Che e' esattamente cio' che si cerca chiudendo
             // la fascia.
-            Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
-                AnimatedVisibility(
-                    visible = state.alertsCollapsed,
-                    enter = scaleIn(ALERT_SPRING) + fadeIn(ALERT_SPRING),
-                    exit = scaleOut(ALERT_SPRING) + fadeOut(ALERT_SPRING),
-                ) {
-                    AlertPill(alerts = state.shownAlerts, onOpen = onReopenAlerts)
-                }
-            }
+            AlertPillSlot(
+                alerts = state.shownAlerts,
+                collapsed = state.alertsCollapsed,
+                onOpen = onReopenAlerts,
+            )
         }
 
         // L'allerta sta qui, in cima alla schermata che si apre per prima.
