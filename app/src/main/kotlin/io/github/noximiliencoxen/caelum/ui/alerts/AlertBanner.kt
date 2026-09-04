@@ -29,6 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AlertLevel
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
+import io.github.noximiliencoxen.caelum.ui.common.CloseIcon
+import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.theme.CONTRAST_AA_LARGE
 import io.github.noximiliencoxen.caelum.ui.theme.readableOn
@@ -56,6 +58,7 @@ import io.github.noximiliencoxen.caelum.ui.theme.readableOn
 fun AlertBanner(
     alerts: List<WeatherAlert>,
     onOpen: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val worst = alerts.maxByOrNull { it.level.weight } ?: return
@@ -86,32 +89,55 @@ fun AlertBanner(
             .fillMaxWidth()
             .heightIn(min = MinTouchTarget)
             .clip(MaterialTheme.shapes.large)
-            .background(background)
-            .clickable(role = Role.Button, onClick = onOpen)
-            .padding(horizontal = 14.dp, vertical = 8.dp)
-            .clearAndSetSemantics { contentDescription = "$spoken. Tocca per il bollettino." },
+            .background(background),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        WarningTriangle(levelTint, Modifier.size(18.dp))
-        Spacer(Modifier.width(10.dp))
-        Box(modifier = Modifier.weight(1f)) {
+        // La parte che si legge e' un bersaglio, la croce e' l'altro. Prima
+        // tutta la riga passava da `clearAndSetSemantics`, e qui non si puo'
+        // piu': cancellerebbe anche il pulsante di chiusura, e un lettore di
+        // schermo resterebbe senza il modo di ridurre la fascia.
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .heightIn(min = MinTouchTarget)
+                .clickable(role = Role.Button, onClick = onOpen)
+                .padding(start = 14.dp, top = 8.dp, bottom = 8.dp)
+                .clearAndSetSemantics {
+                    contentDescription = "$spoken. Tocca per il bollettino."
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            WarningTriangle(levelTint, Modifier.size(18.dp))
+            Spacer(Modifier.width(10.dp))
+            Box(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = line,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = levelTint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Spacer(Modifier.width(8.dp))
             Text(
-                text = line,
-                style = MaterialTheme.typography.labelMedium,
-                color = levelTint,
+                text = worst.headline,
+                style = MaterialTheme.typography.labelSmall,
+                color = onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1.4f, fill = false),
             )
         }
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = worst.headline,
-            style = MaterialTheme.typography.labelSmall,
-            color = onBackground,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1.4f, fill = false),
-        )
+
+        // Ridurre la fascia e' un gesto che va dichiarato, non indovinato: la
+        // croce e' lo stesso segno che chiude i pannelli del dettaglio, e sta
+        // in un bersaglio da 48dp come tutti gli altri dell'app.
+        MeteoIconButton(
+            onClick = onDismiss,
+            contentDescription = "Riduci l'avviso a un pallino",
+        ) {
+            CloseIcon(onBackground)
+        }
     }
 }
 
@@ -122,7 +148,7 @@ fun AlertBanner(
  * qui vanno dichiarati grezzi apposta: chi li usa li passa da `readableOn` sul
  * proprio fondo, che e' l'unico punto in cui si decide quanto schiarirli.
  */
-private fun rawTint(level: AlertLevel): Color = when (level) {
+internal fun rawTint(level: AlertLevel): Color = when (level) {
     AlertLevel.GIALLA -> Color(0xFFF2C230)
     AlertLevel.ARANCIONE -> Color(0xFFF08A2B)
     AlertLevel.ROSSA -> Color(0xFFE0402F)
@@ -136,7 +162,7 @@ private fun rawTint(level: AlertLevel): Color = when (level) {
  * dipendenza per tre linee e un punto.
  */
 @Composable
-private fun WarningTriangle(color: Color, modifier: Modifier = Modifier) {
+internal fun WarningTriangle(color: Color, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val w = size.width
         val h = size.height

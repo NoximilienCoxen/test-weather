@@ -82,6 +82,13 @@ data class UiState(
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
+     * Le allerte per cui la fascia e' gia' stata ridotta a pallino, e il peso
+     * del livello peggiore fra quelle. Arrivano dalle impostazioni come le
+     * altre scelte, e insieme decidono [alertsCollapsed].
+     */
+    val dismissedAlertIds: Set<String> = emptySet(),
+    val dismissedAlertWeight: Int = 0,
+    /**
      * Allerta imposta dall'esterno, solo per la verifica automatica.
      *
      * Sta accanto a [forcedWeatherCode] e [forcedYawDeg] e si applica **in
@@ -164,6 +171,35 @@ data class UiState(
      */
     val shownAlerts: List<WeatherAlert>
         get() = forcedAlert?.let { listOf(it) } ?: alerts
+
+    /**
+     * Vero quando la fascia va disegnata come un pallino invece che per esteso.
+     *
+     * La regola sta qui e non nelle impostazioni perche' dipende da **cosa c'e'
+     * adesso**, non solo da cosa e' stato chiuso: la fascia resta ridotta se e
+     * solo se ogni allerta in scena era gia' fra quelle chiuse **e** la
+     * peggiore di adesso non e' piu' grave della peggiore di allora.
+     *
+     * Due conseguenze volute:
+     * - un'allerta **nuova** riapre la fascia, anche se le vecchie erano state
+     *   chiuse. Un avviso che compare mentre il pallino e' chiuso resterebbe
+     *   altrimenti un puntino in un angolo, ed e' esattamente il caso in cui
+     *   avvisare conta;
+     * - un **peggioramento** riapre la fascia pur senza allerte nuove: la
+     *   gialla di stamattina che diventa arancione ha lo stesso identificativo
+     *   e non e' piu' la stessa notizia.
+     *
+     * Una che **scade**, invece, non la riapre: la condizione e' per
+     * inclusione, non per uguaglianza degli insiemi. Se ne restano due su tre
+     * gia' viste, non e' successo niente di nuovo.
+     */
+    val alertsCollapsed: Boolean
+        get() {
+            val shown = shownAlerts
+            if (shown.isEmpty()) return false
+            val worst = shown.maxOf { it.level.weight }
+            return worst <= dismissedAlertWeight && shown.all { it.id in dismissedAlertIds }
+        }
 
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -334,6 +370,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         unit = settings.unit,
                         model = settings.model,
                         favorites = settings.favorites,
+                        dismissedAlertIds = settings.dismissedAlertIds,
+                        dismissedAlertWeight = settings.dismissedAlertWeight,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
                     )
@@ -606,6 +644,30 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun openAlerts() = _state.update { it.copy(alertsOpen = true) }
 
     fun closeAlerts() = _state.update { it.copy(alertsOpen = false) }
+
+    /**
+     * Riduce la fascia dell'allerta al pallino.
+     *
+     * Si salvano gli identificativi di **cio' che c'e' adesso**, non un
+     * booleano: la regola che decide se la fascia torna intera e'
+     * [UiState.alertsCollapsed], e ha bisogno di sapere cosa e' stato chiuso.
+     */
+    fun collapseAlerts() {
+        val shown = _state.value.shownAlerts
+        if (shown.isEmpty()) return
+        val ids = shown.map { it.id }.toSet()
+        val weight = shown.maxOf { it.level.weight }
+        viewModelScope.launch { prefs.dismissAlerts(ids, weight) }
+    }
+
+    /**
+     * Rimette la fascia intera. E' cio' che fa toccare il pallino, insieme ad
+     * aprire il bollettino: un gesto solo, e chi torna indietro ritrova la riga
+     * dov'era invece di dover cercare come farla riapparire.
+     */
+    fun expandAlerts() {
+        viewModelScope.launch { prefs.restoreAlertBar() }
+    }
 
     /**
      * Apre il dettaglio di un giorno preciso, toccandolo nella card della

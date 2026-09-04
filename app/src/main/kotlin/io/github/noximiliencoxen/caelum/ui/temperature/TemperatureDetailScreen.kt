@@ -172,9 +172,18 @@ fun TemperatureDetailScreen(
             // localita', non per la grandezza che si sta guardando, e deve restare
             // in scena su tutte le pagine. Non disegna niente quando non c'e'
             // niente da dire.
-            AlertBanner(
+            //
+            // Anche qui la fascia si puo' ridurre, e ridurla vale **dappertutto**:
+            // la scelta sta nelle impostazioni, non in questa schermata. Il
+            // pallino pero' non compare qui - questa barra non ha i 48dp liberi
+            // che ha la principale, e infilarcelo vorrebbe dire spingere il
+            // titolo fuori centro per un avviso che si e' appena chiesto di
+            // togliere di mezzo. Chi lo vuole riaprire lo trova sulla schermata
+            // da cui si e' entrati.
+            if (!state.alertsCollapsed) AlertBanner(
                 alerts = state.shownAlerts,
                 onOpen = viewModel::openAlerts,
+                onDismiss = viewModel::collapseAlerts,
                 modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
             )
 

@@ -6,7 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.WeatherModel
@@ -55,6 +57,24 @@ data class Settings(
     val model: WeatherModel = WeatherModel.AUTO,
     /** Localita' salvate a parte dalla scelta corrente. */
     val favorites: List<Place> = emptyList(),
+    /**
+     * Gli identificativi delle allerte per cui la fascia e' stata ridotta.
+     *
+     * Non basta ricordare **che** e' stata chiusa: va ricordato **cosa** e'
+     * stato chiuso. Chiudere l'avviso di oggi non puo' nascondere quello che
+     * arriva domani, se no la fascia smetterebbe di avvisare esattamente
+     * quando serve.
+     */
+    val dismissedAlertIds: Set<String> = emptySet(),
+    /**
+     * Il peso del livello peggiore fra quelle chiuse (1 gialla, 2 arancione,
+     * 3 rossa).
+     *
+     * Sta accanto agli identificativi perche' un'allerta puo' **peggiorare**
+     * restando la stessa: la gialla di stamattina che diventa arancione ha lo
+     * stesso id e non e' piu' la stessa notizia.
+     */
+    val dismissedAlertWeight: Int = 0,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -93,6 +113,8 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> WeatherModel.entries.firstOrNull { it.name == saved } }
                 ?: WeatherModel.AUTO,
             favorites = decodeFavorites(prefs[KEY_FAVORITES]),
+            dismissedAlertIds = prefs[KEY_ALERTS_DISMISSED].orEmpty(),
+            dismissedAlertWeight = prefs[KEY_ALERTS_WEIGHT] ?: 0,
         )
     }
 
@@ -138,6 +160,34 @@ class SettingsPrefs(private val context: Context) {
         }
     }
 
+    /**
+     * Riduce la fascia dell'allerta a un pallino, ricordando per cosa.
+     *
+     * @param ids gli identificativi delle allerte in scena in questo momento.
+     * @param weight il peso del livello peggiore fra quelle.
+     */
+    suspend fun dismissAlerts(ids: Set<String>, weight: Int) {
+        context.settingsDataStore.edit { prefs ->
+            prefs[KEY_ALERTS_DISMISSED] = ids
+            prefs[KEY_ALERTS_WEIGHT] = weight
+        }
+    }
+
+    /**
+     * Rimette la fascia intera.
+     *
+     * Si svuota tutto invece di togliere un identificativo per volta: chi
+     * riapre la fascia sta dicendo che la vuole vedere, e ricordarsi di
+     * un'allerta chiusa la settimana scorsa servirebbe solo a nasconderne una
+     * di nuovo.
+     */
+    suspend fun restoreAlertBar() {
+        context.settingsDataStore.edit { prefs ->
+            prefs.remove(KEY_ALERTS_DISMISSED)
+            prefs.remove(KEY_ALERTS_WEIGHT)
+        }
+    }
+
     private fun decodeFavorites(raw: String?): List<Place> {
         if (raw.isNullOrBlank()) return emptyList()
         return runCatching { favoritesJson.decodeFromString<List<Place>>(raw) }.getOrDefault(emptyList())
@@ -154,5 +204,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
         val KEY_MODEL = stringPreferencesKey("modello")
         val KEY_FAVORITES = stringPreferencesKey("preferiti")
+        val KEY_ALERTS_DISMISSED = stringSetPreferencesKey("allerte_chiuse")
+        val KEY_ALERTS_WEIGHT = intPreferencesKey("allerte_chiuse_peso")
     }
 }

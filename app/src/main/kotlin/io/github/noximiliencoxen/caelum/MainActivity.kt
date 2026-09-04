@@ -68,6 +68,10 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDayDetail)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
+        // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
+        // identificativi di cio' che c'e' in scena, e se l'allerta imposta non
+        // ci fosse ancora non ci sarebbe niente da ridurre.
+        if (intent.getBooleanExtra(EXTRA_ALERT_SMALL, false)) viewModel.collapseAlerts()
     }
 
     private companion object {
@@ -94,5 +98,15 @@ class MainActivity : ComponentActivity() {
          * pubblicarlo.
          */
         const val EXTRA_ALERT = "allerta"
+
+        /**
+         * Riduce subito la fascia al pallino, per fotografare quello stato.
+         *
+         * Con il solo `--ei allerta` si vede sempre e solo la fascia intera: lo
+         * stato ridotto si raggiunge con un tocco sulla croce, e la CI non ha
+         * un dito. Senza questo aggancio il pallino sarebbe l'unica cosa
+         * dell'app che nessuno scatto puo' mostrare.
+         */
+        const val EXTRA_ALERT_SMALL = "allertaridotta"
     }
 }
