@@ -138,20 +138,17 @@ jobs:
       # Lint gira accanto ai test e non dentro `build`: sono i due controlli che
       # parlano del codice, mentre `build` produce l'artefatto.
       #
-      # Al primo giro la baseline non esiste e Lint la crea, segnalando il fatto
-      # come "errore": e' il suo modo di dire "guardala prima di fidartene".
-      # Va letta fra gli artefatti e messa nel repository.
+      # Con `textReport` il referto finisce **nel log**, non solo in un HTML da
+      # scaricare: da qui gli artefatti non si aprono, e un rapporto che nessuno
+      # legge non e' un controllo.
       - name: lintDebug
-        continue-on-error: true
-        run: ./gradlew lintDebug --no-daemon || true
+        run: ./gradlew lintDebug --no-daemon
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lint
-          path: |
-            app/build/reports/lint-results-debug.html
-            app/lint-baseline.xml
+          path: app/build/reports/lint-results-debug.html
           if-no-files-found: warn
 
       - name: testDebugUnitTest

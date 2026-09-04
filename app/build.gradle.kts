@@ -71,12 +71,14 @@ android {
         // Android Lint sta gia' dentro AGP: niente plugin nuovo, niente versione
         // in piu' da tenere aggiornata per dire cose che qui direbbe comunque.
         //
-        // Con una baseline: il debito che c'e' oggi non blocca il primo giro,
-        // ma quello che si aggiunge da domani si'. Senza, o si accetta un passo
-        // rosso per sempre - che vuol dire ignorarlo - o si spegne il controllo.
-        baseline = file("lint-baseline.xml")
+        // **Referta, non blocca**, e non e' pigrizia: una baseline si puo'
+        // scrivere solo dopo aver letto cosa segnala, e da questo container non
+        // si compila. Il rapporto va nel log della CI, si legge, si sistema cio'
+        // che va sistemato, e solo allora ha senso alzare `abortOnError`. Un
+        // controllo acceso su un debito mai letto lo si spegne dopo due giri.
+        textReport = true
         warningsAsErrors = false
-        abortOnError = true
+        abortOnError = false
         checkDependencies = false
     }
 

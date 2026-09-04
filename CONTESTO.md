@@ -32,7 +32,7 @@ indipendente e come punto di pubblicazione.
 
 `.github/workflows/build.yml` ha cinque job: `probe-api` (interroga Open-Meteo,
 MeteoAlarm, i modelli numerici e le versioni delle dipendenze, e pubblica le
-risposte vere), `test` (`testDebugUnitTest`), `build` (`assembleDebug` **e**
+risposte vere), `test` (`lintDebug` e `testDebugUnitTest`), `build` (`assembleDebug` **e**
 `assembleRelease`, cosi' R8 gira davvero), `rilascio` (pubblica l'APK sul tag
 fisso `apk-latest`), `screenshots` (emulatore API 34). Gli output finiscono sul
 branch `ci-artifacts`, separato da quello di sviluppo:
