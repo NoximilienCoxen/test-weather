@@ -1,120 +1,120 @@
-09-04 09:22:43.721 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.722 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.723 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.723 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.724 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.724 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.733 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.733 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:43.773 W/Binder  (  508): Caught a RuntimeException from the binder stub implementation.
-09-04 09:22:43.773 W/Binder  (  508): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10112 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
-09-04 09:22:44.012 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.040 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.056 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.056 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.057 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.060 E/TaskWorkerFactory( 1511): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
-09-04 09:22:44.083 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.089 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.089 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.089 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.090 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.145 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.235 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.248 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.257 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.281 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.282 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.320 W/ModernMediaScanner( 1424): Failed to visit /system/media: java.nio.file.NoSuchFileException: /system/media
-09-04 09:22:44.326 W/ModernMediaScanner( 1424): Failed to visit /oem/media: java.nio.file.NoSuchFileException: /oem/media
-09-04 09:22:44.329 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.332 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.339 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.404 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.493 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.494 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.495 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.522 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.523 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.526 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.528 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.534 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.546 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.549 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.554 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.556 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.556 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.557 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.735 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:44.842 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:44.842 W/BestClock(  508): java.time.DateTimeException: Missing network time fix
-09-04 09:22:45.780 E/RkpdPeriodicProvisioner( 2220): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
-09-04 09:22:45.910 E/SystemServiceRegistry(  951): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-04 09:22:45.992 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:45.992 W/Telephony( 1003): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:45.996 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:46.120 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:46.225 E/SystemServiceRegistry(  951): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-09-04 09:22:46.314 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:46.314 W/Telephony( 1003): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:46.368 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:46.543 W/Telephony( 1003): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-09-04 09:22:47.303 E/BackupHelper(  803): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
-09-04 09:22:47.303 E/BackupHelper(  803): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-09-04 09:22:47.708 W/ModernMediaScanner( 1424): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-04 09:22:47.708 W/ModernMediaScanner( 1424): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-04 09:22:48.136 W/ModernMediaScanner( 1424): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-04 09:22:48.136 W/ModernMediaScanner( 1424): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-04 09:22:48.137 W/ModernMediaScanner( 1424): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-09-04 09:22:48.137 W/ModernMediaScanner( 1424): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-09-04 09:22:48.213 W/MediaProvider( 1424): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
-09-04 09:22:48.215 W/MediaProvider( 1424): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
-09-04 09:22:48.240 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:22:51.485 I/meteo   ( 2369): previsione pronta: 24 ore
-09-04 09:22:54.151 W/OverlayManager(  508): service 'idmap' died
-09-04 09:23:01.629 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:04.247 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:08.678 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:10.955 W/ActivityTaskManager(  508): Force removing ActivityRecord{1bd27d u0 io.github.noximiliencoxen.caelum/.MainActivity t8 f}}: app died, no saved state
-09-04 09:23:10.995 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:11.510 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{cf4f3ef u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:11.510 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:13.971 I/meteo   ( 2538): previsione pronta: 24 ore
-09-04 09:23:17.068 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:17.269 W/ActivityTaskManager(  508): Force removing ActivityRecord{9adcd5f u0 io.github.noximiliencoxen.caelum/.MainActivity t9 f}}: app died, no saved state
-09-04 09:23:17.382 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:17.476 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{b89c899 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:17.476 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:20.429 I/meteo   ( 2618): previsione pronta: 24 ore
-09-04 09:23:21.094 E/WifiHealthMonitor(  508):  Hit PackageManager exception
-09-04 09:23:21.094 E/WifiHealthMonitor(  508): android.content.pm.PackageManager$NameNotFoundException: No module info for package: com.android.wifi
-09-04 09:23:25.517 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:25.882 W/ActivityTaskManager(  508): Force removing ActivityRecord{a318f93 u0 io.github.noximiliencoxen.caelum/.MainActivity t10 f}}: app died, no saved state
-09-04 09:23:26.125 I/binder  (    0): undelivered transaction 129419, process died.
-09-04 09:23:26.127 I/binder  (    0): undelivered transaction 129445, process died.
-09-04 09:23:26.016 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{6c23e2 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:26.016 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:29.343 I/meteo   ( 2705): previsione pronta: 24 ore
-09-04 09:23:35.498 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:35.631 W/ActivityTaskManager(  508): Force removing ActivityRecord{99325c6 u0 io.github.noximiliencoxen.caelum/.MainActivity t11 f}}: app died, no saved state
-09-04 09:23:35.860 I/binder  (    0): undelivered transaction 133518, process died.
-09-04 09:23:35.814 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{fc23281 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:35.814 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:38.704 I/meteo   ( 2794): previsione pronta: 24 ore
-09-04 09:23:43.810 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:44.061 W/ActivityTaskManager(  508): Force removing ActivityRecord{6fb0981 u0 io.github.noximiliencoxen.caelum/.MainActivity t12 f}}: app died, no saved state
-09-04 09:23:44.114 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:44.260 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:44.262 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{16c6a4f u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:44.262 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:47.770 I/meteo   ( 2879): previsione pronta: 24 ore
-09-04 09:23:53.716 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:23:54.175 W/ActivityTaskManager(  508): Force removing ActivityRecord{575f534 u0 io.github.noximiliencoxen.caelum/.MainActivity t13 f}}: app died, no saved state
-09-04 09:23:54.287 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:54.339 W/WindowManager(  508): Exception thrown during dispatchAppVisibility Window{aadcfa6 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-04 09:23:54.339 W/WindowManager(  508): android.os.DeadObjectException
-09-04 09:23:57.151 I/meteo   ( 2965): previsione pronta: 24 ore
-09-04 09:24:01.605 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:24:04.773 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:24:07.962 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-04 09:24:11.564 W/ModernMediaScanner( 1424): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:50:42.294 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.535 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.584 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:42.584 W/Telephony( 1004): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:42.600 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.607 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.609 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.610 W/BestClock(  507): java.time.DateTimeException: Missing network time fix
+09-04 11:50:42.791 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:42.791 W/Telephony( 1004): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:42.956 I/netd    (  326): networkAddInterface(101, eth0) -> ServiceSpecificException(64, "Machine is not on the network") <0.04ms>
+09-04 11:50:42.966 W/ConnectivityService(  507): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-04 11:50:42.967 I/netd    (  326): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: eth0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+09-04 11:50:42.967 E/ConnectivityService(  507): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-04 11:50:42.967 I/netd    (  326): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: eth0, nextHop: 10.0.2.2, mtu: 1500}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+09-04 11:50:42.967 E/ConnectivityService(  507): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+09-04 11:50:43.008 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:43.396 E/TaskWorkerFactory( 1630): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+09-04 11:50:43.878 E/SystemServiceRegistry(  957): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-04 11:50:43.936 E/RkpdPeriodicProvisioner( 2241): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
+09-04 11:50:43.979 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:43.980 W/Telephony( 1004): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.054 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.054 W/Telephony( 1004): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.061 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.196 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.372 E/SystemServiceRegistry(  957): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+09-04 11:50:44.447 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.447 W/Telephony( 1004): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.468 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.585 W/Telephony( 1004): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+09-04 11:50:44.771 E/BackupHelper(  812): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+09-04 11:50:44.771 E/BackupHelper(  812): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+09-04 11:50:45.356 W/ModernMediaScanner( 1463): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-04 11:50:45.356 W/ModernMediaScanner( 1463): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-04 11:50:45.807 W/ModernMediaScanner( 1463): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-04 11:50:45.807 W/ModernMediaScanner( 1463): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-04 11:50:45.810 W/ModernMediaScanner( 1463): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+09-04 11:50:45.810 W/ModernMediaScanner( 1463): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+09-04 11:50:45.885 W/MediaProvider( 1463): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+09-04 11:50:45.887 W/MediaProvider( 1463): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+09-04 11:50:45.902 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:50:49.015 I/meteo   ( 2398): previsione pronta: 24 ore
+09-04 11:50:51.783 W/OverlayManager(  507): service 'idmap' died
+09-04 11:50:59.288 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:01.737 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:06.143 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:08.902 W/ActivityTaskManager(  507): Force removing ActivityRecord{4f8bcaf u0 io.github.noximiliencoxen.caelum/.MainActivity t8 f}}: app died, no saved state
+09-04 11:51:08.919 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:08.919 W/WindowManager(  507): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-04 11:51:08.919 W/WindowManager(  507): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-04 11:51:09.453 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{3c98977 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:09.453 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:11.878 I/meteo   ( 2566): previsione pronta: 24 ore
+09-04 11:51:14.699 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:15.010 W/ActivityTaskManager(  507): Force removing ActivityRecord{7a168f5 u0 io.github.noximiliencoxen.caelum/.MainActivity t9 f}}: app died, no saved state
+09-04 11:51:15.052 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:15.151 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:15.154 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{f0e03bf u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:15.154 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:18.079 I/meteo   ( 2649): previsione pronta: 24 ore
+09-04 11:51:18.574 E/WifiHealthMonitor(  507):  Hit PackageManager exception
+09-04 11:51:18.574 E/WifiHealthMonitor(  507): android.content.pm.PackageManager$NameNotFoundException: No module info for package: com.android.wifi
+09-04 11:51:23.373 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:23.618 W/ActivityTaskManager(  507): Force removing ActivityRecord{d3a7fe4 u0 io.github.noximiliencoxen.caelum/.MainActivity t10 f}}: app died, no saved state
+09-04 11:51:23.654 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:23.773 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{f8ced57 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:23.773 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:27.357 I/meteo   ( 2731): previsione pronta: 24 ore
+09-04 11:51:33.176 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:33.341 W/ActivityTaskManager(  507): Force removing ActivityRecord{90334 u0 io.github.noximiliencoxen.caelum/.MainActivity t11 f}}: app died, no saved state
+09-04 11:51:33.428 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:33.585 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:33.617 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{c41ada6 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:33.617 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:37.654 I/meteo   ( 2819): previsione pronta: 24 ore
+09-04 11:51:42.856 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:43.157 W/ActivityTaskManager(  507): Force removing ActivityRecord{77b3be8 u0 io.github.noximiliencoxen.caelum/.MainActivity t12 f}}: app died, no saved state
+09-04 11:51:43.201 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:43.305 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{ba25c3a u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:43.305 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:47.075 I/meteo   ( 2907): previsione pronta: 24 ore
+09-04 11:51:52.659 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:51:53.034 W/ActivityTaskManager(  507): Force removing ActivityRecord{b318fdd u0 io.github.noximiliencoxen.caelum/.MainActivity t13 f}}: app died, no saved state
+09-04 11:51:53.092 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:53.193 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:53.194 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{a8d2bb9 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:51:53.194 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:51:56.685 I/meteo   ( 2993): previsione pronta: 24 ore
+09-04 11:51:57.027 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:00.574 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:00.713 W/ActivityTaskManager(  507): Force removing ActivityRecord{40b7435 u0 io.github.noximiliencoxen.caelum/.MainActivity t14 f}}: app died, no saved state
+09-04 11:52:00.791 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:00.835 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:00.903 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{99b6cff u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:52:00.903 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:04.658 I/meteo   ( 3084): previsione pronta: 24 ore
+09-04 11:52:04.775 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:08.545 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:08.728 W/ActivityTaskManager(  507): Force removing ActivityRecord{b85afcb u0 io.github.noximiliencoxen.caelum/.MainActivity t15 f}}: app died, no saved state
+09-04 11:52:08.784 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:08.851 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{9612dfa u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:52:08.851 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:12.418 I/meteo   ( 3180): previsione pronta: 24 ore
+09-04 11:52:17.044 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:20.292 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:23.718 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:27.128 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:30.540 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:34.070 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:37.370 W/ModernMediaScanner( 1463): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-04 11:52:37.648 W/ActivityTaskManager(  507): Force removing ActivityRecord{1d4f30d u0 io.github.noximiliencoxen.caelum/.MainActivity t16 f}}: app died, no saved state
+09-04 11:52:37.875 I/binder  (    0): undelivered transaction 154925, process died.
+09-04 11:52:37.689 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:37.689 W/WindowManager(  507): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-04 11:52:37.689 W/WindowManager(  507): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-04 11:52:37.795 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:37.812 W/WindowManager(  507): Exception thrown during dispatchAppVisibility Window{a901617 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-04 11:52:37.812 W/WindowManager(  507): android.os.DeadObjectException
+09-04 11:52:52.907 I/meteo   ( 3364): previsione pronta: 24 ore
