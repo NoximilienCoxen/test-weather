@@ -135,6 +135,25 @@ jobs:
           sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
             || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
 
+      # Lint gira accanto ai test e non dentro `build`: sono i due controlli che
+      # parlano del codice, mentre `build` produce l'artefatto.
+      #
+      # Al primo giro la baseline non esiste e Lint la crea, segnalando il fatto
+      # come "errore": e' il suo modo di dire "guardala prima di fidartene".
+      # Va letta fra gli artefatti e messa nel repository.
+      - name: lintDebug
+        continue-on-error: true
+        run: ./gradlew lintDebug --no-daemon || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/lint-baseline.xml
+          if-no-files-found: warn
+
       - name: testDebugUnitTest
         run: |
           set -o pipefail

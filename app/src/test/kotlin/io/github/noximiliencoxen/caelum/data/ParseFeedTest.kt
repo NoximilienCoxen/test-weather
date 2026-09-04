@@ -1,11 +1,13 @@
 package io.github.noximiliencoxen.caelum.data
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.time.OffsetDateTime
 
 /**
@@ -26,6 +28,17 @@ import java.time.OffsetDateTime
  * questa stessa risposta, e un test non vale quel rischio.
  */
 @RunWith(RobolectricTestRunner::class)
+// Il livello va dichiarato. Il progetto compila contro il 37, e Robolectric non
+// ha (ancora) l'android-all corrispondente: senza questa riga prova a
+// procurarselo e solleva UnsupportedOperationException prima ancora del primo
+// test, cioe' fallisce tutta la classe per una ragione che non c'entra niente
+// col parser.
+//
+// Trentaquattro e non un altro numero: e' un livello che Robolectric copre
+// sicuramente, e qui l'unica cosa che serve dalla piattaforma e'
+// `android.util.Xml`, che da API 1 non e' cambiata. Il parser non guarda il
+// livello e non ha modo di comportarsi diversamente.
+@Config(sdk = [34])
 class ParseFeedTest {
 
     private fun feed(): String =
@@ -77,9 +90,9 @@ class ParseFeedTest {
     @Test
     fun `una voce scaduta non risulta in corso`() {
         val e = entries().first { it.expires != null }
-        val dopo = e.expires!!.plusDays(1)
-        assertTrue(e.isCurrent(e.expires!!.minusDays(1)))
-        assertTrue(!e.isCurrent(dopo))
+        val scadenza = checkNotNull(e.expires)
+        assertTrue("prima della scadenza deve risultare in corso", e.isCurrent(scadenza.minusDays(1)))
+        assertFalse("dopo la scadenza non deve piu' risultarlo", e.isCurrent(scadenza.plusDays(1)))
     }
 
     @Test
