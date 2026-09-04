@@ -9,7 +9,7 @@
 # che non produce nulla e' peggio di un job rosso.
 set -uo pipefail
 
-PKG="com.forli.meteo"
+PKG="io.github.noximiliencoxen.caelum"
 ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"

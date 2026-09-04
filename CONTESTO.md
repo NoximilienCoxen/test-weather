@@ -324,7 +324,7 @@ contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
+adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
@@ -369,7 +369,7 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-Per le prestazioni, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
+Per le prestazioni, `dumpsys gfxinfo io.github.noximiliencoxen.caelum framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di
@@ -801,7 +801,7 @@ Prima di toccare queste schermate, tre regole che sono costate la passata
 intera.
 
 **Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
-cadra', con [`readableOn`](app/src/main/kotlin/com/forli/meteo/ui/theme/Contrast.kt)
+cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/theme/Contrast.kt)
 e la formula di contrasto della WCAG 2.1. Il difetto che questo toglie di mezzo
 era esattamente uno scritto a mano: il titolo del dettaglio era `colors.text`,
 cioe' quasi nero a mezzogiorno, sopra un pannello antracite fisso. E l'etichetta

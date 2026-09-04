@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.forli.meteo"
+    namespace = "io.github.noximiliencoxen.caelum"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.forli.meteo"
+        applicationId = "io.github.noximiliencoxen.caelum"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
