@@ -84,7 +84,22 @@ class ParseFeedTest {
 
     @Test
     fun `il collegamento al documento CAP e' un attributo, non testo`() {
-        assertTrue(entries().any { it.capUrl?.contains("cap") == true })
+        // L'indirizzo sta su `<link type="application/cap+xml" href="...">`,
+        // cioe' in un **attributo**: il parser lo legge prima di chiedere il
+        // contenuto dell'elemento, che li' non c'e'.
+        //
+        // La prima stesura di questa prova cercava la parola "cap" dentro
+        // l'indirizzo, e falliva: nel feed vero "cap" compare solo nel `type`,
+        // mentre l'href e'
+        // `https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/<uuid>`.
+        // Che e' la stessa lezione del parser - **com'e' fatto il feed non si
+        // deduce, si guarda** - ripetuta una volta di piu' da chi lo provava.
+        val letti = entries().mapNotNull { it.capUrl }
+        assertEquals("ogni voce porta il suo documento CAP", 27, letti.size)
+        assertTrue(
+            "gli indirizzi non sono quelli attesi: ${letti.firstOrNull()}",
+            letti.all { it.startsWith("https://feeds.meteoalarm.org/") },
+        )
     }
 
     @Test
