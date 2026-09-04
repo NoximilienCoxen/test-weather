@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
+  <link rel="hub" href="https://pubsubhubbub.appspot.com/"/>
+  <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-italy"/>
+  <link type="text/html" rel="alternate" href="https://meteoalarm.org"/>
+  <rights>Copyright © 2026 MeteoAlarm.Org. Licensed under terms equivalent to CC BY 4.0, with additional requirements for redistributing outlined in our Terms and Conditions.</rights>
+  <generator>MeteoAlarm Producer Server</generator>
+  <logo>https://feeds.meteoalarm.org/images/logo.svg</logo>
+  <author>
+    <name>meteoalarm.org</name>
+    <uri>https://meteoalarm.org</uri>
+    <email>meteoalarm@geosphere.at</email>
+  </author>
+  <id>tag:meteoalarm.org,2021-02-19:IT</id>
+  <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
+  <updated>2026-09-04T08:35:57.511756Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT015</value>
+    </cap:geocode>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:28+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T12:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T12:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.076</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/f5e080d1-60fe-4fc1-a8ce-b000efd04853"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:28Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/f5e080d1-60fe-4fc1-a8ce-b000efd04853?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Puglia</title>
+    <updated>2026-09-04T08:07:28Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT015</value>
+    </cap:geocode>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:28+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T12:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T12:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.075</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/425b6fe0-e54d-47b5-8c41-f0d9ca6a1797"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:28Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/425b6fe0-e54d-47b5-8c41-f0d9ca6a1797?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Puglia</title>
+    <updated>2026-09-04T08:07:28Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT017</value>
+    </cap:geocode>
+    <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
+    <cap:areaDesc>Basilicata</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.073</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7d8b4db7-6f48-409b-a08c-7a7381216ad8"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7d8b4db7-6f48-409b-a08c-7a7381216ad8?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Basilicata</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT017</value>
+    </cap:geocode>
+    <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
+    <cap:areaDesc>Basilicata</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T12:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T12:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.072</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9b9b439f-6151-45c4-a50a-a697fcfa08d3"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9b9b439f-6151-45c4-a50a-a697fcfa08d3?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Basilicata</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT001</value>
+    </cap:geocode>
+    <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
+    <cap:areaDesc>Calabria</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.071</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/59346215-d6a2-4c23-8bf6-53c7fceb7fb7"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/59346215-d6a2-4c23-8bf6-53c7fceb7fb7?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Calabria</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT016</value>
+    </cap:geocode>
+    <link title="Campania" href="https://meteoalarm.org?geocode=EMMA_ID:IT016" hreflang="en"/>
+    <cap:areaDesc>Campania</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.070</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/971baa9a-47a5-4e98-a750-5a25664f9a53"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/971baa9a-47a5-4e98-a750-5a25664f9a53?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Campania</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT014</value>
+    </cap:geocode>
+    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
+    <cap:areaDesc>Molise</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.069</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/04a16e98-33f9-4e8d-8e5a-65190bfac326"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/04a16e98-33f9-4e8d-8e5a-65190bfac326?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Molise</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT013</value>
+    </cap:geocode>
+    <link title="Abruzzo" href="https://meteoalarm.org?geocode=EMMA_ID:IT013" hreflang="en"/>
+    <cap:areaDesc>Abruzzo</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.068</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/4af3062d-287e-41d9-82fa-df5c9f5473ea"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/4af3062d-287e-41d9-82fa-df5c9f5473ea?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Abruzzo</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT011</value>
+    </cap:geocode>
+    <link title="Marche" href="https://meteoalarm.org?geocode=EMMA_ID:IT011" hreflang="en"/>
+    <cap:areaDesc>Marche</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.067</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5909c9b2-e51e-4d6a-9e79-caffd9eebb2d"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5909c9b2-e51e-4d6a-9e79-caffd9eebb2d?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Marche</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT019</value>
+    </cap:geocode>
+    <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
+    <cap:areaDesc>Sardegna</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.065</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/388b44d8-ddb8-4089-afb4-b5c008cb8b68"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/388b44d8-ddb8-4089-afb4-b5c008cb8b68?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Sardegna</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT019</value>
+    </cap:geocode>
+    <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
+    <cap:areaDesc>Sardegna</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.064</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d182a793-29a2-4725-98ad-1c7f79be2256"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d182a793-29a2-4725-98ad-1c7f79be2256?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Sardegna</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT018</value>
+    </cap:geocode>
+    <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
+    <cap:areaDesc>Sicilia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.062</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/99878672-7e24-479e-8a7f-d713f9a1cad6"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/99878672-7e24-479e-8a7f-d713f9a1cad6?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Sicilia</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT018</value>
+    </cap:geocode>
+    <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
+    <cap:areaDesc>Sicilia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.061</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/366c16ef-e99a-4e5f-9d42-7cbc8031d4e7"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/366c16ef-e99a-4e5f-9d42-7cbc8031d4e7?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Sicilia</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT012</value>
+    </cap:geocode>
+    <link title="Lazio" href="https://meteoalarm.org?geocode=EMMA_ID:IT012" hreflang="en"/>
+    <cap:areaDesc>Lazio</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.059</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/23d865f9-6d67-48db-a3b6-8d04aa4cd052"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/23d865f9-6d67-48db-a3b6-8d04aa4cd052?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Lazio</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT012</value>
+    </cap:geocode>
+    <link title="Lazio" href="https://meteoalarm.org?geocode=EMMA_ID:IT012" hreflang="en"/>
+    <cap:areaDesc>Lazio</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.058</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/efb69b0b-8ad9-469d-8a52-a2419c2b0783"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/efb69b0b-8ad9-469d-8a52-a2419c2b0783?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Lazio</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT010</value>
+    </cap:geocode>
+    <link title="Umbria" href="https://meteoalarm.org?geocode=EMMA_ID:IT010" hreflang="en"/>
+    <cap:areaDesc>Umbria</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.056</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/84f762de-c335-4e21-ab8b-94509a2bc26b"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/84f762de-c335-4e21-ab8b-94509a2bc26b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Umbria</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT010</value>
+    </cap:geocode>
+    <link title="Umbria" href="https://meteoalarm.org?geocode=EMMA_ID:IT010" hreflang="en"/>
+    <cap:areaDesc>Umbria</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.055</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/6907e103-c941-4f8c-871b-60fb2fd27655"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/6907e103-c941-4f8c-871b-60fb2fd27655?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Umbria</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT009</value>
+    </cap:geocode>
+    <link title="Toscana" href="https://meteoalarm.org?geocode=EMMA_ID:IT009" hreflang="en"/>
+    <cap:areaDesc>Toscana</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.053</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/707f5972-40b0-4558-84cd-749b863b5d9a"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/707f5972-40b0-4558-84cd-749b863b5d9a?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Toscana</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT009</value>
+    </cap:geocode>
+    <link title="Toscana" href="https://meteoalarm.org?geocode=EMMA_ID:IT009" hreflang="en"/>
+    <cap:areaDesc>Toscana</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.052</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/04680b34-ed32-4f58-b401-a68458a2990f"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/04680b34-ed32-4f58-b401-a68458a2990f?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Toscana</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT008</value>
+    </cap:geocode>
+    <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
+    <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.050</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d95d3e79-2aff-43e6-96d1-fb888df032b4"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d95d3e79-2aff-43e6-96d1-fb888df032b4?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Emilia e Romagna</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT008</value>
+    </cap:geocode>
+    <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
+    <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.049</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ec2ca69d-3fb5-4d9c-a8e1-cb3a1315c140"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ec2ca69d-3fb5-4d9c-a8e1-cb3a1315c140?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Emilia e Romagna</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT006</value>
+    </cap:geocode>
+    <link title="Veneto" href="https://meteoalarm.org?geocode=EMMA_ID:IT006" hreflang="en"/>
+    <cap:areaDesc>Veneto</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.047</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/538b82e7-8984-4118-a8ba-707fec966999"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/538b82e7-8984-4118-a8ba-707fec966999?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Veneto</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT006</value>
+    </cap:geocode>
+    <link title="Veneto" href="https://meteoalarm.org?geocode=EMMA_ID:IT006" hreflang="en"/>
+    <cap:areaDesc>Veneto</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.046</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/4e908032-8477-4357-a4d0-9bbf9bf66374"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/4e908032-8477-4357-a4d0-9bbf9bf66374?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Veneto</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT003</value>
+    </cap:geocode>
+    <link title="Lombardia" href="https://meteoalarm.org?geocode=EMMA_ID:IT003" hreflang="en"/>
+    <cap:areaDesc>Lombardia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.044</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/529467dc-e95d-4993-a187-dbef970f360b"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/529467dc-e95d-4993-a187-dbef970f360b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Lombardia</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT003</value>
+    </cap:geocode>
+    <link title="Lombardia" href="https://meteoalarm.org?geocode=EMMA_ID:IT003" hreflang="en"/>
+    <cap:areaDesc>Lombardia</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.043</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1de5dc76-b38e-454e-ae4e-a496c07e4c36"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1de5dc76-b38e-454e-ae4e-a496c07e4c36?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Lombardia</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT005</value>
+    </cap:geocode>
+    <link title="Piemonte" href="https://meteoalarm.org?geocode=EMMA_ID:IT005" hreflang="en"/>
+    <cap:areaDesc>Piemonte</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-05T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-05T07:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-05T07:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.041</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d5d17383-c194-4bab-bebe-5e8e74dcccbd"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d5d17383-c194-4bab-bebe-5e8e74dcccbd?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Piemonte</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT005</value>
+    </cap:geocode>
+    <link title="Piemonte" href="https://meteoalarm.org?geocode=EMMA_ID:IT005" hreflang="en"/>
+    <cap:areaDesc>Piemonte</cap:areaDesc>
+    <cap:event>Yellow High-temperature Warning</cap:event>
+    <cap:sent>2026-09-04T08:07:27+00:00</cap:sent>
+    <cap:expires>2026-09-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-04T10:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-04T10:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260904100727.040</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c485631e-3e11-42de-91a0-c865c68c5045"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-04T08:07:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c485631e-3e11-42de-91a0-c865c68c5045?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow High-temperature Warning issued for Italy - Piemonte</title>
+    <updated>2026-09-04T08:07:27Z</updated>
+  </entry>
+</feed>

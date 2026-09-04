@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.lerp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberWeatherHaptics
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
@@ -1445,10 +1446,6 @@ private val Lightning = Color(0xFFFFFFFF)
 private val Glow = Color(0xFFBBD6FF)
 
 private val Halo = Color(0xFF6E9BF0)
-
-/** Famiglie che portano precipitazione, e quindi una nuvola carica. */
-internal fun Wmo.Family.isWet(): Boolean =
-    this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE
 
 /**
  * Una stella: dove sta **sullo schermo**, quanto e' grande, quanto brilla.

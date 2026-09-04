@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertBanner
