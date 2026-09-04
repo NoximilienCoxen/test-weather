@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.forli.meteo.data.Wmo
 import com.forli.meteo.ui.render3d.Camera
+import com.forli.meteo.ui.render3d.MOON_SEAS
 import com.forli.meteo.ui.render3d.glow
 import com.forli.meteo.ui.render3d.moon
 import com.forli.meteo.ui.render3d.sphere
@@ -31,14 +32,6 @@ private val CLOUD_MASSES = listOf(
     Lump(0.26f, 0.03f, 0.12f, 0.20f),
     Lump(-0.11f, 0.10f, -0.19f, 0.18f),
     Lump(0.15f, 0.11f, -0.14f, 0.17f),
-)
-
-/** I mari lunari, per non far sembrare la luna una pallina liscia. */
-private val MOON_SEAS = listOf(
-    Triple(-0.30f, -0.24f, 0.20f),
-    Triple(0.16f, 0.05f, 0.26f),
-    Triple(-0.08f, 0.42f, 0.15f),
-    Triple(0.42f, -0.34f, 0.12f),
 )
 
 /**

@@ -83,8 +83,13 @@ d'uscita: un permesso negato non e' un vicolo cieco.
 
 **Poi si apre sulla schermata principale** (`ui/home/HomeScreen.kt`): pulsante
 impostazioni a sinistra, nome della localita' al centro, scultura meteo,
-temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo,
-e sotto l'ora mostrata.
+temperatura dell'ora scelta, condizione, barra delle 24 ore colorata per meteo.
+**L'ora sta in una bolla sopra il cursore della barra**, non piu' scritta sotto:
+sotto la barra sta il pollice che la scorre, e l'unica cosa che dicesse quale ora
+si era trovata era coperta dalla mano proprio mentre la si cercava. Nello spazio
+che si e' liberato sotto c'e' il solo tasto TORNA AD ADESSO, che prima era
+appiccicato all'etichetta dell'ora - un bersaglio con due mestieri, e per giunta
+spento quando diceva la cosa piu' utile.
 
 **Il fondo e' un cielo, non piu' un grigio** (`ui/theme/Colors.kt`). Era una
 tinta piatta sola, interpolata fra antracite e grigio chiaro: mezzogiorno usciva
@@ -689,6 +694,34 @@ ordine le primitive componibili, l'ampiezza, gli effetti gia' pronti del sistema
 e infine la sola durata. Qui finisce su `EFFECT_TICK` contro `EFFECT_HEAVY_CLICK`,
 che sono tarati bene e si distinguono davvero.
 
+**35. Un avanzo di scorrimento non e' un dito.** `SheetNestedScroll` riceve un
+`NestedScrollSource` a ogni callback e non lo leggeva nessuno. Arrivati in fondo
+a una pagina del dettaglio bastava una scorsa decisa perche' il foglio si
+chiudesse da solo: quello che il contenuto non consumava - lo slancio che si
+esaurisce, l'elastico di fine corsa che si rilassa - entrava nel foglio
+indistinguibile da una mano. Il commento sopra la classe descriveva la regola
+giusta, *"il contenuto scorre finche' ha strada, e solo l'avanzo muove il
+foglio"*, e il codice la applicava all'avanzo **di chiunque**. Ora il foglio
+risponde al solo `NestedScrollSource.UserInput`, e in piu' si assesta solo se e'
+stato quel gesto a muoverlo.
+
+Nello stesso punto c'era un secondo difetto che si nascondeva dietro il primo:
+la guardia era `open >= 1f`, un confronto **esatto** su un numero che viene da
+una molla, e `begin()` quella molla la cancella dove la trova. Chi cominciava a
+scorrere mentre il foglio stava ancora salendo lo lasciava a 0,997 per sempre;
+da li' in poi la guardia non scattava piu' e `onPreScroll` si mangiava anche i
+delta verso l'alto, cioe' **il contenuto non scorreva piu' affatto**. Serve una
+tolleranza, e serve rimettere il foglio su un'ancora quando una molla e' stata
+cancellata senza che un trascinamento le sia subentrato.
+
+**36. La mediana della luna non gira, e non e' un difetto.** Nella pagina LUNA
+la sfera si gira col dito: i mari scivolano verso il bordo e spariscono dietro,
+perche' stanno sulla sfera e passano dalla camera. Il taglio fra luce e ombra
+no, perche' `moon()` lo costruisce in coordinate di schermo - da che parte cada
+lo decide il Sole, non chi guarda (e' la trappola #24 vista dall'altro lato).
+Una falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
+perche' ci si e' spostati di venti centimetri.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -738,7 +771,14 @@ comunque a ogni fotogramma.
    dentro il foglio. In particolare **non sono mai state viste in mano** la fila
    di pillole che si porta al centro e la sfumatura del titolo durante il
    trascinamento: sono movimenti, e un movimento in uno scatto non si giudica.
-5. **Le allerte non sono mai state viste con un bollettino vero.** Il parser e'
+5. **La barra con la bolla, la pagina della luna e l'elenco dei pannelli non
+   sono mai stati provati in mano.** Valgono la nota qui sopra e in piu' una
+   cosa che gli scatti non possono mostrare: la bolla scivola col dito, e la
+   sfera della luna gira col dito. Da guardare per primi: la bolla alle due
+   estremita' della barra (li' si ferma al bordo e la codina si inclina per
+   continuare a puntare il cursore), e se il tasto indietro con l'elenco aperto
+   chiuda l'elenco invece del foglio.
+6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser e'
    scritto sullo schema CAP/Atom documentato e il job `probe-api` controlla che
    i campi su cui si fida esistano ancora, ma nessuno ha ancora aperto l'app in
    un giorno di allerta arancione: gli scatti usano l'aggancio `--ei allerta`.
@@ -892,6 +932,25 @@ con `horizontalScroll` restava incollato a sinistra in entrambi i casi.
 sole l'intestazione diceva "OGGI · 15:00" sopra tredici *ore di sole*, che sono
 quelle di tutta la giornata. `DetailMode.isDailyTotal` sapeva gia' distinguere i
 due casi; adesso il sottotitolo glielo chiede.
+
+**La sesta pagina e' la luna**, e non chiede niente alla rete: la fase la calcola
+`MoonPhase` in locale (Open-Meteo non la fornisce), quindi e' l'unica pagina che
+ha ancora qualcosa da dire quando la previsione non arriva. Per questo il suo
+ramo dentro `Hero` sta **prima** del controllo sulla cifra, che spegne tutte le
+altre. Il corpo e' quello della scultura e del widget - stessa sfera, stessa
+luce, stessi mari - e gira con il `rotatesScene` che l'eroe aveva gia': niente
+secondo riconoscitore da mettere d'accordo con il carosello. Vedi la trappola
+\#36 per cosa gira e cosa no.
+
+**Con sei pagine la fila di pillole non basta piu' da sola**, e il pulsante che
+apre l'elenco (`PanelPicker.kt`) sta **fuori** dalla `LazyRow`: dentro
+scorrerebbe via insieme alle pillole, cioe' sparirebbe proprio quando serve -
+quando ci si e' scorsi lontano. Le pillole restano perche' fanno un mestiere che
+l'elenco non fa: spostarsi di una posizione e dire dove si e'. L'elenco fa i due
+che loro non fanno: mostrare tutto insieme, e portare dalla prima all'ultima in
+un tocco. Il suo stato e' locale e non in `UiState`: sopravvivergli alla chiusura
+del foglio vorrebbe dire riaprire il dettaglio e trovarsi davanti un elenco che
+nessuno ha chiesto.
 
 ## 8-ter. Le allerte meteo
 

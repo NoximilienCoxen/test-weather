@@ -52,6 +52,13 @@ internal val AirTint = Color(0xFF6FD09A)
 internal val AlertTint = Color(0xFFFF8A6B)
 
 /**
+ * Il pallore della luna, ripreso dal corpo che la scultura disegna gia'
+ * (`MeteoColors.moonCore`): la pillola e il pallino della pagina devono avere
+ * il colore della cosa che annunciano, non un azzurro scelto a parte.
+ */
+internal val MoonTint = Color(0xFFDDE3EE)
+
+/**
  * I colori che l'app usa **oltre** a quelli che Material 3 nomina.
  *
  * Material non ha un token per "il colore della pioggia" ne' per "la linea di
@@ -65,6 +72,7 @@ data class MeteoAccents(
     val rain: Color,
     val wind: Color,
     val air: Color,
+    val moon: Color,
     val alert: Color,
     /** La curva di riferimento dietro quella colorata: l'effettiva sotto la percepita. */
     val ghost: Color,
@@ -158,6 +166,7 @@ fun MeteoColors.toAccents(): MeteoAccents {
         rain = RainTint.readableOn(on, CONTRAST_AA_LARGE),
         wind = WindTint.readableOn(on, CONTRAST_AA_LARGE),
         air = AirTint.readableOn(on, CONTRAST_AA_LARGE),
+        moon = MoonTint.readableOn(on, CONTRAST_AA_LARGE),
         alert = AlertTint.readableOn(on, CONTRAST_AA_LARGE),
         ghost = Color(0xFFB4B4BE).readableOn(on, CONTRAST_AA_LARGE),
         norm = Color(0xFFCFCFD8).readableOn(on, CONTRAST_AA_LARGE),
