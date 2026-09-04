@@ -1,12 +1,12 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"error":true,"reason":"Data corrupted at path ''. Cannot initialize MultiDomains from invalid String value zzz."}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
     Noceto   48/48 ore  quota 74.0 m  prime [22.2, 21.6, 20.8]
     Forli    48/48 ore  quota 40.0 m  prime [23.1, 22.6, 22.1]
   italia_meteo_arpae_icon_2i
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [21.1, 21.7, 21.9]
     Forli    48/48 ore  quota 40.0 m  prime [21.5, 21.2, 20.8]
   icon_d2
     Noceto   48/48 ore  quota 74.0 m  prime [22.2, 21.6, 20.8]
@@ -24,7 +24,7 @@
     Noceto   48/48 ore  quota 74.0 m  prime [21.5, 20.9, 20.3]
     Forli    48/48 ore  quota 40.0 m  prime [21.6, 21.1, 20.7]
   meteofrance_seamless
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [23.2, 22.7, 22.1]
     Forli    48/48 ore  quota 40.0 m  prime [23.5, 22.9, 22.8]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
@@ -41,10 +41,10 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0022649765014648438,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.004410743713378906,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0013113021850585938,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.003933906555175781,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0032186508178710938,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0035762786865234375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.011920928955078125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [19.8, 20.0, 20.2]
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
