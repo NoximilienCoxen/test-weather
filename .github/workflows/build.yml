@@ -93,10 +93,83 @@ jobs:
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 
+      # Quali versioni delle dipendenze esistano oggi non si risponde a memoria,
+      # ed e' un guaio silenzioso: il progetto si e' ritrovato una Compose BOM
+      # del 2026 accanto a un core-ktx del 2024 senza che niente lo segnalasse.
+      # Da dentro il container di sviluppo dl.google.com e Maven Central non si
+      # raggiungono (403 al CONNECT), quindi la domanda si gira qui, come gia'
+      # si fa per i modelli numerici e per il formato del feed MeteoAlarm.
+      #
+      # Non fa fallire il giro: una dipendenza vecchia e' una decisione da
+      # prendere leggendo l'elenco, non un errore di compilazione.
+      - name: Quali versioni esistono davvero
+        continue-on-error: true
+        run: OUT=/tmp/ciout/dipendenze.txt python3 scripts/probe_deps.py
+
       - name: Pubblica
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/publish.sh api
+
+  # I test stanno in un job loro e non dentro `build`: sono veloci, non hanno
+  # bisogno dell'SDK completo, e con l'APK che dipende da `build` un test rosso
+  # non deve impedire di avere comunque un APK da installare. Cio' che dicono
+  # si legge lo stesso.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Componenti SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
+            || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
+
+      # Lint gira accanto ai test e non dentro `build`: sono i due controlli che
+      # parlano del codice, mentre `build` produce l'artefatto.
+      #
+      # Con `textReport` il referto finisce **nel log**, non solo in un HTML da
+      # scaricare: da qui gli artefatti non si aprono, e un rapporto che nessuno
+      # legge non e' un controllo.
+      - name: lintDebug
+        run: ./gradlew lintDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint
+          path: app/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+
+      - name: testDebugUnitTest
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --no-daemon 2>&1 | tee /tmp/test.log || {
+            echo ""
+            echo "===================== TEST FALLITI ======================="
+            grep -E "^e: |FAILED|expected:|AssertionError|junit" /tmp/test.log | head -60
+            echo "=========================================================="
+            exit 1
+          }
+
+      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
+      # caduto e l'XML dice perche'.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
+          if-no-files-found: warn
 
   build:
     runs-on: ubuntu-latest
@@ -136,6 +209,20 @@ jobs:
             echo ""
             echo "================= ERRORI DI COMPILAZIONE ================="
             grep -E "^e: |^w: .*(error|Error)" /tmp/build.log | head -40
+            echo "=========================================================="
+            exit 1
+          }
+
+      # La release adesso passa da R8, e un flag che non compila nessuno non e'
+      # acceso: e' solo scritto. Qui ci passa a ogni giro, cosi' una regola di
+      # keep che manca si vede subito invece che il giorno in cui si pubblica.
+      - name: assembleRelease
+        run: |
+          set -o pipefail
+          ./gradlew assembleRelease --no-daemon 2>&1 | tee /tmp/release.log || {
+            echo ""
+            echo "=================== ERRORI SULLA RELEASE ================="
+            grep -E "^e: |R8|Missing class|proguard" /tmp/release.log | head -40
             echo "=========================================================="
             exit 1
           }

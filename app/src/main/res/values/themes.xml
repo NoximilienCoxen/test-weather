@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MeteoForli" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@android:color/black</item>
+    <!--
+        Il tema serve solo al lampo fra il tocco sull'icona e il primo
+        fotogramma di Compose: da li' in poi comanda MeteoTheme, che i colori li
+        ricava dall'ora della localita'.
+
+        Quel lampo era **nero fisso**, anche a mezzogiorno con l'app che si
+        apriva su un cielo azzurro chiaro: un buco scuro di un fotogramma prima
+        di ogni avvio. Adesso e' il fondo dei pannelli del tema chiaro, che e'
+        il colore piu' vicino a cio' che comparira' davvero.
+    -->
+    <style name="Theme.Caelum" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 </resources>

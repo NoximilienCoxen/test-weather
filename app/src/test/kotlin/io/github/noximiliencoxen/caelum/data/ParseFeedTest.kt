@@ -1,0 +1,139 @@
+package io.github.noximiliencoxen.caelum.data
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import java.time.OffsetDateTime
+
+/**
+ * Il parser del feed MeteoAlarm, contro una risposta vera.
+ *
+ * `src/test/resources/meteoalarm-italia.xml` e' una cattura del feed italiano
+ * ripresa da `ci-artifacts/api/allerte.xml`, non un file scritto a mano su
+ * quello che il formato dovrebbe essere. La differenza non e' teorica: **la
+ * prima stesura del parser era scritta su `awareness_level` e
+ * `awareness_type`**, che sono i campi descritti dalla documentazione di terze
+ * parti e che nel feed vero non esistono - zero occorrenze su trentacinquemila
+ * byte. Ogni allerta sarebbe uscita come una gialla generica, senza un errore
+ * da nessuna parte.
+ *
+ * Robolectric serve per una ragione sola: `parseFeed` passa da
+ * `android.util.Xml`, che su una JVM non c'e'. Riscrivere il parser su SAX per
+ * evitarlo sarebbe stato rifare da capo del codice gia' pagato caro contro
+ * questa stessa risposta, e un test non vale quel rischio.
+ */
+@RunWith(RobolectricTestRunner::class)
+// Il livello va dichiarato. Il progetto compila contro il 37, e Robolectric non
+// ha (ancora) l'android-all corrispondente: senza questa riga prova a
+// procurarselo e solleva UnsupportedOperationException prima ancora del primo
+// test, cioe' fallisce tutta la classe per una ragione che non c'entra niente
+// col parser.
+//
+// Trentaquattro e non un altro numero: e' un livello che Robolectric copre
+// sicuramente, e qui l'unica cosa che serve dalla piattaforma e'
+// `android.util.Xml`, che da API 1 non e' cambiata. Il parser non guarda il
+// livello e non ha modo di comportarsi diversamente.
+@Config(sdk = [34])
+class ParseFeedTest {
+
+    private fun feed(): String =
+        checkNotNull(javaClass.classLoader?.getResourceAsStream("meteoalarm-italia.xml"))
+            .bufferedReader().readText()
+
+    private fun entries() = parseFeed(feed())
+
+    @Test
+    fun `legge tutte le voci del feed`() {
+        assertEquals(27, entries().size)
+    }
+
+    @Test
+    fun `nessuna voce esce senza identificativo`() {
+        // L'identificativo e' cio' con cui si evita di mostrare due volte la
+        // stessa cosa, e cio' su cui si ricorda una fascia chiusa.
+        assertTrue(entries().all { it.id.isNotBlank() })
+    }
+
+    @Test
+    fun `il colore si legge dentro la frase inglese di cap-event`() {
+        // "Yellow High-temperature Warning": il colore e' la prima parola.
+        // `cap:severity` accanto e' piu' grossolana - nella cattura tutte e
+        // ventisette le voci dicono `Moderate`, comprese le gialle - quindi
+        // fidarsi di quella avrebbe appiattito tutto su un gradino solo.
+        val livelli = entries().mapNotNull { it.level }.toSet()
+        assertTrue("nessun livello riconosciuto: il parser guarda il campo sbagliato", livelli.isNotEmpty())
+    }
+
+    @Test
+    fun `riconosce il tipo di fenomeno e non lo lascia tutto su ALTRO`() {
+        val tipi = entries().map { it.kind }.toSet()
+        assertTrue("i tipi non vengono riconosciuti: $tipi", tipi.any { it != AlertKind.ALTRO })
+    }
+
+    @Test
+    fun `area e scadenza ci sono`() {
+        val e = entries().first()
+        assertNotNull("cap:areaDesc non viene letto", e.areaDesc)
+        assertNotNull("cap:expires non viene letto", e.expires)
+    }
+
+    @Test
+    fun `il collegamento al documento CAP e' un attributo, non testo`() {
+        // L'indirizzo sta su `<link type="application/cap+xml" href="...">`,
+        // cioe' in un **attributo**: il parser lo legge prima di chiedere il
+        // contenuto dell'elemento, che li' non c'e'.
+        //
+        // La prima stesura di questa prova cercava la parola "cap" dentro
+        // l'indirizzo, e falliva: nel feed vero "cap" compare solo nel `type`,
+        // mentre l'href e'
+        // `https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/<uuid>`.
+        // Che e' la stessa lezione del parser - **com'e' fatto il feed non si
+        // deduce, si guarda** - ripetuta una volta di piu' da chi lo provava.
+        val letti = entries().mapNotNull { it.capUrl }
+        assertEquals("ogni voce porta il suo documento CAP", 27, letti.size)
+        assertTrue(
+            "gli indirizzi non sono quelli attesi: ${letti.firstOrNull()}",
+            letti.all { it.startsWith("https://feeds.meteoalarm.org/") },
+        )
+    }
+
+    @Test
+    fun `una voce scaduta non risulta in corso`() {
+        val e = entries().first { it.expires != null }
+        val scadenza = checkNotNull(e.expires)
+        assertTrue("prima della scadenza deve risultare in corso", e.isCurrent(scadenza.minusDays(1)))
+        assertFalse("dopo la scadenza non deve piu' risultarlo", e.isCurrent(scadenza.plusDays(1)))
+    }
+
+    @Test
+    fun `un feed vuoto non fa esplodere niente`() {
+        assertEquals(emptyList<FeedEntry>(), parseFeed("<feed></feed>"))
+    }
+
+    @Test
+    fun `le voci si trasformano in allerte gia' in italiano`() {
+        // Il feed scrive "Yellow High-temperature Warning": messo in cima a una
+        // schermata italiana sarebbe la traduzione mancante piu' visibile
+        // dell'app. Il titolo si compone, non si copia.
+        val alert = entries().first().toAlert(null)
+        assertTrue("il titolo non e' in italiano: ${alert.headline}", alert.headline.contains("ALLERTA"))
+        assertTrue(alert.official)
+    }
+
+    @Test
+    fun `il verde non diventa un'allerta`() {
+        // Il verde vuol dire "nessun avviso": una fascia che comparisse per dire
+        // che non succede niente insegnerebbe a ignorare la fascia.
+        val verde = FeedEntry(
+            id = "v", event = "Green Wind Warning", severity = "Minor",
+            areaDesc = "Puglia", onset = null,
+            expires = OffsetDateTime.now().plusDays(1), capUrl = null,
+        )
+        assertEquals(null, verde.level)
+    }
+}

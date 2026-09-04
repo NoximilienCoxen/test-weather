@@ -30,16 +30,32 @@ Due accorgimenti per gli strumenti da riga di comando:
 irraggiungibile. Da li' viene la CI, che resta valida come banco di prova
 indipendente e come punto di pubblicazione.
 
-`.github/workflows/build.yml` ha quattro job: `probe-api` (interroga Open-Meteo
-e pubblica il JSON reale), `build`, `rilascio` (pubblica l'APK sul tag fisso
-`apk-latest`), `screenshots` (emulatore API 34). Gli output finiscono sul branch
-`ci-artifacts`, separato da quello di sviluppo:
+`.github/workflows/build.yml` ha cinque job: `probe-api` (interroga Open-Meteo,
+MeteoAlarm, i modelli numerici e le versioni delle dipendenze, e pubblica le
+risposte vere), `test` (`lintDebug` e `testDebugUnitTest`), `build` (`assembleDebug` **e**
+`assembleRelease`, cosi' R8 gira davvero), `rilascio` (pubblica l'APK sul tag
+fisso `apk-latest`), `screenshots` (emulatore API 34). Gli output finiscono sul
+branch `ci-artifacts`, separato da quello di sviluppo:
 
 ```bash
 git fetch origin ci-artifacts
 git show origin/ci-artifacts:screenshots/scuro-1-temp.png > /tmp/x.png
+git show origin/ci-artifacts:screenshots/scuro-d3-allerta-pallino.png > /tmp/y.png
 git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 ```
+
+**Il nome dell'app e' Caelum**, `io.github.noximiliencoxen.caelum`. Era
+`com.forli.meteo` con l'etichetta `Weather`, e nessuna delle due cose andava:
+l'app cerca qualunque localita' del mondo, quindi una citta' nel nome e' una
+smentita in cima allo schermo, e un'etichetta inglese in un'app tutta italiana
+era un segnaposto. *Caelum* e' il cielo in latino, ed e' anche lo scalpello del
+bulinatore - c'e' pure una costellazione: cielo e oggetto fresato, che e'
+esattamente cio' che l'app disegna.
+
+**Chi aveva la vecchia app deve reinstallarla una volta**: cambiando
+`applicationId` l'APK nuovo non si sovrappone al vecchio. Le preferenze
+sopravvivono comunque a un aggiornamento normale, perche' il nome del DataStore
+(`impostazioni`) e le sue chiavi non sono cambiati.
 
 **L'APK sta sempre a**
 <https://github.com/NoximilienCoxen/test-weather/releases/tag/apk-latest>
@@ -52,17 +68,58 @@ sopra l'altra senza disinstallare).
 
 | | |
 |---|---|
-| AGP | 9.2.1 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
-| Gradle | 9.4.1 (minimo e default di AGP 9.2) |
+| AGP | 9.4.0 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
+| Gradle | 9.6.0 — **minimo di AGP 9.4**, non una scelta |
 | JDK | 17 |
 | compileSdk | **37** — Compose 1.12 lo pretende; 36 non basta |
 | targetSdk / minSdk | 36 / 26 |
 | Kotlin | 2.4.10 |
 | Compose BOM | 2026.08.00 |
-| Glance | 1.1.1 |
+| Glance | 1.2.0 |
+| core-ktx / activity-compose / lifecycle | 1.19.0 / 1.13.0 / 2.11.0 |
+| Test | JUnit 4.13.2, Robolectric 4.16.1 — solo `testImplementation` |
+
+**Le versioni non si scrivono a memoria: le misura la CI.** Da questo container
+`dl.google.com` e Maven Central rispondono 403 al CONNECT del proxy, quindi qui
+la domanda non ha modo di ricevere una risposta vera. Il passo *Quali versioni
+esistono davvero* (`scripts/probe_deps.py`) legge le coordinate da
+`libs.versions.toml`, chiede il `maven-metadata.xml`, scarta alpha, beta, rc e
+istantanee, e pubblica l'elenco:
+
+```bash
+git show origin/ci-artifacts:api/dipendenze.txt
+```
+
+Leggendo dalla toml e non da una lista sua, una dipendenza aggiunta domani
+finisce nel controllo da sola. E' cosi' che si e' scoperto che il progetto
+teneva una Compose BOM del 2026 accanto a un core-ktx, un activity-compose e un
+lifecycle di fine 2024, **senza che niente lo segnalasse**.
+
+**AGP e' passata da 9.2.1 a 9.4.0 per ultima e da sola**, dopo che tutto il
+resto era verde: un salto di toolchain **si porta dietro il wrapper di Gradle**,
+e messo in mezzo ad altro non si saprebbe chi ha rotto cosa. Qui e' successo
+esattamente: AGP 9.4 pretende Gradle **9.6.0**, e con il 9.4.1 il plugin non si
+applica nemmeno.
+
+Non e' stato indovinato. Il messaggio di Gradle dice il numero e dice anche il
+file da toccare:
+
+```
+Minimum supported Gradle version is 9.6.0. Current version is 9.4.1.
+Try updating the 'distributionUrl' property in gradle/wrapper/...
+```
+
+Con questa in `dipendenze.txt` non resta piu' una riga `DA AGGIORNARE`.
 
 `kotlin { compilerOptions }` sta a **livello radice**, non dentro `android {}`.
 `jvmTarget` non si dichiara: eredita da `compileOptions.targetCompatibility`.
+
+**La release passa da R8** (`isMinifyEnabled`, `isShrinkResources`) con
+`app/proguard-rules.pro` accanto. Flag e regole vanno insieme: con
+`kotlinx.serialization` in gioco, minificare senza dire cosa tenere rompe la
+deserializzazione **in silenzio**. La CI compila anche `assembleRelease`, se no
+il flag non lo verifica nessuno. Sul telefono continua ad andare la build di
+debug, che non e' minificata.
 
 **Il tipo di build `debug` ha `isDebuggable = false`.** Non e' una svista: una
 app debuggabile gira con ottimizzazioni ridotte, e questa schermata fa geometria
@@ -324,7 +381,7 @@ contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
+adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
@@ -335,6 +392,8 @@ adb shell am start -n com.forli.meteo/.MainActivity --ei ora 2 --ei meteo 63
 | `--ei giorno` | apre il dettaglio di quel giorno della settimana |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
+| `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
+| `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
 dell'installazione**, e sull'emulatore quella volta e' gia' passata al primo
@@ -369,7 +428,7 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-Per le prestazioni, `dumpsys gfxinfo com.forli.meteo framestats`. **Attenzione
+Per le prestazioni, `dumpsys gfxinfo io.github.noximiliencoxen.caelum framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di
@@ -638,13 +697,13 @@ era un numero di secondi. Quando uno scatto usciva "IN ATTESA DEI DATI" il
 rimedio era alzarlo: otto, poi quattordici, poi diciannove. A diciannove uno
 scatto su undici e' uscito lo stesso vuoto — ed e' li' che si vede che il numero
 non era mai il problema. Adesso l'app scrive una riga di log quando la
-previsione atterra (`meteo: previsione pronta`, l'unico `Log` di tutto il
+previsione atterra (`meteo: previsione pronta`, l'unico `Log.i` di tutto il
 progetto) e `attendi_previsione` aspetta **quella**, con un tetto di tempo che
 serve solo a non restare appesi. Nota per chi cerchera' la via ovvia:
 `uiautomator dump` qui non si puo' usare, perche' aspetta che la finestra sia
 ferma e la schermata principale anima in continuazione per scelta.
 
-**33. L'emulatore della CI muore a meta' corsa, e muore in silenzio.** Tre giri
+**38. L'emulatore della CI muore a meta' corsa, e muore in silenzio.** Tre giri
 di seguito, in tre punti diversi ma sempre dopo qualche minuto: l'emulatore
 sparisce e non risponde nemmeno a `emu kill`. **Non e' l'app**: il logcat
 finisce pulito sull'ultimo scatto riuscito - nessuna eccezione, nessun ANR,
@@ -686,6 +745,48 @@ Tre conseguenze in `capture.sh`:
   **verde** con dodici scatti mancanti su trentasette, perche' guardava solo che
   ce ne fosse almeno uno - e un job verde che ha fotografato meta' delle
   schermate e' peggio di uno rosso: sembra una verifica fatta.
+
+**37. Un log di diagnostica lasciato acceso smentisce in silenzio una
+dichiarazione su cui si appoggia qualcun altro.** Nei widget erano rimasti
+sedici `Log.d("WidgetResolve", ...)` dalle sessioni in cui si inseguiva quale
+localita' finisse nel widget. Il guaio non e' il rumore: e' che `capture.sh`
+aspetta **quella** riga di log per sapere quando la previsione e' atterrata
+(trappola #31), quindi "l'unico Log del progetto" non era un vezzo di stile ma
+un invariante di cui qualcosa si fida. In piu' alcune di quelle righe
+stampavano in logcat le coordinate di chi usa l'app. Adesso restano un `Log.i`
+- quello - e due `Log.w` su guasti veri.
+
+Togliendoli, due cose sono venute a galla da sole. In `resolvePlace` i rami del
+`when` erano blocchi **solo** perche' contenevano un log, e tornano espressioni.
+In `refreshWidget` invece la rilettura delle preferenze **resta**, col commento
+che adesso dice perche': serve la lettura, che sospende finche' il DataStore non
+consegna. Aspettare non era un effetto collaterale del logging, e buttarla via
+avrebbe cambiato una tempistica costata cara.
+
+**39. Di un'icona adattiva il telefono garantisce solo il cerchio centrale.**
+Su 108 unita' di lato, quelle sicure sono i 66 centrali: tutto il resto puo'
+essere tagliato, e ogni marca taglia con una maschera sua. **Un'icona si guarda
+sotto le maschere, non nel suo riquadro** - il cerchio e lo squircle stretto
+sono i due casi che bastano, e si vedono cose che nel quadrato non esistono:
+una sagoma con gli spigoli viene affettata, e una sagoma tonda dentro la
+maschera tonda diventa un bersaglio se non le si lascia aria attorno.
+
+Il livello monocromatico va centrato **per conto suo**: lo spostamento che nel
+foreground bilancia l'ombra, li' dove l'ombra non c'e' lascia la sagoma storta.
+
+**40. Un'icona non e' una scelta di forma, e' una scelta di significato.**
+La prima stesura era una cifra estrusa - un "2" - scelto perche' curva,
+diagonale e base piatta danno tre orientamenti di piano e mostrano bene
+l'estrusione. Cioe' scelto per **come si scolpisce**, non per **cosa vuol
+dire**: il 2 non c'entra niente con questa app, e su una schermata puo' leggersi
+come un badge di notifica.
+
+Adesso e' il **grado**, ed e' l'unica scelta non arbitraria disponibile: e' il
+solo segno che dice "temperatura" senza una parola, e soprattutto **l'app lo
+estrude gia'** - e' `smallTail` in `NumberSpec`, l'ultimo carattere della
+scritta, estruso illuminato e girato insieme alle cifre. In piu' un anello
+mostra anche la **parete interna**, che una cifra piena non fa vedere mai:
+l'estrusione si legge meglio di prima.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
@@ -778,11 +879,21 @@ comunque a ogni fotogramma.
    estremita' della barra (li' si ferma al bordo e la codina si inclina per
    continuare a puntare il cursore), e se il tasto indietro con l'elenco aperto
    chiuda l'elenco invece del foglio.
-6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser e'
-   scritto sullo schema CAP/Atom documentato e il job `probe-api` controlla che
-   i campi su cui si fida esistano ancora, ma nessuno ha ancora aperto l'app in
-   un giorno di allerta arancione: gli scatti usano l'aggancio `--ei allerta`.
-   La prima allerta vera e' anche la prima verifica vera.
+6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser
+   adesso ha un test contro la risposta vera del feed (sezione 8-quater) e il
+   job `probe-api` controlla che i campi su cui si fida esistano ancora, ma
+   nessuno ha ancora aperto l'app in un giorno di allerta arancione: gli scatti
+   usano gli agganci `--ei allerta` e `--ez allertaridotta`. La prima allerta
+   vera e' anche la prima verifica vera - e con lei si giudica anche il
+   passaggio fascia -> pallino, che e' un movimento e in uno scatto non si
+   giudica.
+8. **I widget si aggiornano con `updatePeriodMillis="1800000"`**, che Android
+   limita a mezz'ora e rimanda in Doze: il widget mostra il meteo di un'ora fa
+   senza dirlo. La risposta moderna e' `WorkManager` periodico, ed e' una
+   dipendenza e un ciclo di vita nuovi - da fare quando i widget saranno stati
+   visti almeno una volta su una home vera.
+9. **`PredictiveBackHandler`** al posto di `BackHandler` sui quattro strati, per
+   il ritorno con animazione di Android 14+.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
@@ -801,7 +912,7 @@ Prima di toccare queste schermate, tre regole che sono costate la passata
 intera.
 
 **Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
-cadra', con [`readableOn`](app/src/main/kotlin/com/forli/meteo/ui/theme/Contrast.kt)
+cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/theme/Contrast.kt)
 e la formula di contrasto della WCAG 2.1. Il difetto che questo toglie di mezzo
 era esattamente uno scritto a mano: il titolo del dettaglio era `colors.text`,
 cioe' quasi nero a mezzogiorno, sopra un pannello antracite fisso. E l'etichetta
@@ -989,6 +1100,55 @@ un'allerta, non darla.
 barra invece che dentro il carosello: un avviso che si trova solo scorrendo fino
 alla sesta pillola non avvisa nessuno.
 
+**La fascia si riduce a un pallino, e il pallino la riporta.** Un'allerta puo'
+durare tre giorni, e prima la fascia restava in cima per tutti e tre senza modo
+di toglierla ne' di ritrovarla. Adesso ha una croce; chiusa, diventa un cerchio
+col triangolo (`ui/alerts/AlertPill.kt`), e toccarlo riapre **insieme** la
+fascia e il bollettino - un gesto solo, cosi' chi entra per leggere ritrova la
+riga dov'era invece di dover cercare come farla riapparire.
+
+Il pallino **sta nei 48dp che la riga in cima teneva gia' vuoti** per bilanciare
+il pulsante delle impostazioni e tenere il nome della localita' al centro dello
+schermo. E' esattamente `MinTouchTarget`, cioe' la misura di `MeteoIconButton`:
+fra i due stati il nome non si sposta di un pixel, e il pallino non ruba
+altezza - che e' precisamente cio' che si cerca chiudendo la fascia. Nel
+dettaglio la fascia si riduce lo stesso, ma li' il pallino non compare: quella
+barra non ha 48dp liberi, e infilarcelo vorrebbe dire spingere il titolo fuori
+centro per un avviso che si e' appena chiesto di togliere.
+
+**Quando la fascia torna intera** lo decide `alertsAreDismissed`, in
+`data/WeatherAlert.kt` e non nell'interfaccia: e' una regola sui dati - quando
+un avviso archiviato torna a essere una notizia - e da li' si prova senza far
+partire niente di Android. Non basta ricordare **che** e' stata chiusa, va
+ricordato **cosa**: si salvano gli identificativi e il peso del livello
+peggiore, e la fascia resta ridotta se e solo se ogni allerta in scena era gia'
+fra quelle **e** la peggiore di adesso non e' piu' grave della peggiore di
+allora. Quindi un'allerta nuova la riapre, un peggioramento la riapre (stesso
+identificativo, altra notizia), una che scade no - la condizione e' per
+inclusione, non per uguaglianza degli insiemi.
+
+**La riga della fascia non scrive "ALLERTA".** Il triangolo tinto accanto dice
+gia' che e' un'allerta e di che gravita': legge `ARANCIONE  ·  TEMPORALI`. Non
+e' una scorciatoia estetica - vedi qui sotto.
+
+Tre cose imparate scrivendolo:
+
+- **Aggiungere un comando a una riga sola fa troncare qualcos'altro, e i pesi
+  decidono cosa.** Con la croce che si prende i suoi 48dp, la fascia usciva
+  `ALLERTA ARANCI...`: a cedere era il **colore**, cioe' il pezzo per cui la
+  fascia esiste, perche' il titolo aveva peso 1.4 contro 1 e il secondario
+  mangiava il principale. Adesso il livello non ha peso - prende lo spazio che
+  gli serve, per primo - e il titolo cede, che e' giusto: per esteso sta nel
+  bollettino, a un tocco. Gli otto caratteri di `"ALLERTA "` erano il resto del
+  margine. **Questo difetto lo ha trovato uno scatto, non un ragionamento.**
+- **`clearAndSetSemantics` su tutta la riga non si puo' piu' fare.** Con un
+  secondo bersaglio dentro, cancellerebbe anche il pulsante di chiusura, e un
+  lettore di schermo resterebbe senza il modo di ridurre la fascia. La semantica
+  a blocco sta adesso sulla sola parte leggibile.
+- **`fillMaxHeight` li' non fa niente.** Il vincolo di altezza che arriva dal
+  genitore e' illimitato e Compose lo ignora: l'area toccabile sarebbe rimasta
+  alta quanto il testo invece che quanto la fascia. Ci vuole `heightIn`.
+
 **Com'e' fatto il feed non si deduce: si guarda.** La prima stesura del parser
 era scritta su `awareness_level` e `awareness_type`, che sono i campi che la
 documentazione di terze parti descrive e che nel feed vero **non esistono** -
@@ -1032,6 +1192,44 @@ Quattro trappole gia' pagate qui:
   primo caricamento sovrascrive quella lista con le allerte vere, e lo scatto
   usciva senza fascia. Le schermate leggono `UiState.shownAlerts`.
 
+## 8-quater. I test
+
+`app/src/test/`
+
+Il progetto non ne aveva **nessuno**. Sotto c'era solo `probe-api`, che verifica
+i contratti delle API ma non una riga di logica.
+
+Trentanove prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
+stante. Sono scelte per cio' che coprono, non per fare numero — e tre di loro
+stanno esattamente sopra trappole gia' pagate:
+
+| Cosa | Perche' proprio quello |
+|---|---|
+| `parseFeed` sul feed vero | `src/test/resources/meteoalarm-italia.xml` e' la cattura da `ci-artifacts/api/allerte.xml`, ventisette voci, **non** un file scritto su come il formato dovrebbe essere. E' il punto in cui la prima stesura era interamente sbagliata senza che niente lo dicesse. |
+| Il confronto fra nomi di regione | `"Emilia e Romagna"` vs `"Emilia-Romagna"`: nessuna contiene l'altra, e per sottostringa Forli' sarebbe rimasta senza allerte per sempre, in silenzio. |
+| `derivedAlerts` | Le soglie, e il vincolo che **nessuna soglia emette una rossa**. Il test prova con 200 m/s e 900 mm e pretende che non esca. |
+| `alertsAreDismissed` | I quattro casi che a mano vorrebbero dire aspettare un'allerta vera, poi una seconda, poi un peggioramento, poi una scadenza. |
+| `Wmo.family` / `isWet` | La trappola #14 vive qui: se il codice dice che piove, deve piovere. |
+| `readableOn` | Mantiene la soglia che dichiara, su una griglia di fondi che comprende il grigio medio - il caso peggiore, perche' di li' non si scappa ne' verso il bianco ne' verso il nero. |
+| `TempUnit.from` | 21 °C -> 70 °F, la coppia gia' verificata sul telefono. |
+
+**Robolectric serve a un file solo**, e va **configurato**: `parseFeed` passa da
+`android.util.Xml`, che su una JVM non c'e'. Il progetto compila contro il
+compileSdk 37 e Robolectric non ha l'`android-all` corrispondente, quindi senza
+un `@Config(sdk = [34])` prova a procurarselo e solleva
+`UnsupportedOperationException` **prima ancora del primo test** - fallisce
+l'intera classe per una ragione che non c'entra niente col parser. Trentaquattro
+e non un altro numero perche' e' un livello che Robolectric copre di sicuro, e
+qui della piattaforma serve solo `android.util.Xml`, che da API 1 non cambia. Riscrivere il parser su SAX per togliere la dipendenza
+avrebbe voluto dire rifare da capo codice gia' pagato caro contro questa stessa
+risposta, e un test non vale quel rischio. Resta fuori dall'APK.
+
+**`isWet()` e' passata da `WeatherSculpture.kt` a `Wmo.kt`.** Parla di codici
+WMO, non di come si disegna una nuvola, e stava in millequattrocento righe di
+Compose solo perche' la scultura e' stato il primo posto in cui e' servita.
+
+---
+
 ## 9. Preferenze dell'utente, dette esplicitamente
 
 - Stile **minimal e compatto**, **pochi spazi vuoti**, movimenti responsive.
@@ -1044,6 +1242,15 @@ Quattro trappole gia' pagate qui:
   10-15% della superficie.
 - Vuole essere avvisato in anticipo dei limiti, non dopo.
 - **Non vuole spiegazioni sugli errori commessi**: vanno corretti e basta.
+- **I commit non portano firme di strumenti.** Niente trailer di paternita'
+  automatica, niente link a sessioni: nessun riferimento all'assistente, ne' nei
+  messaggi ne' fra gli autori. Il lavoro e' firmato
+  `NoximilienCoxen <313902161+NoximilienCoxen@users.noreply.github.com>`, che e'
+  l'identita' da usare per `user.name` e `user.email`.
+
+  Questa regola e' stata data piu' volte e altrettante volte disattesa, perche'
+  la firma automatica viene reinserita a ogni sessione nuova: **e' scritta qui
+  apposta**, ed e' la prima cosa da impostare prima di committare.
 
 ---
 

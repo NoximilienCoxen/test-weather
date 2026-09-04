@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tre livelli e non due. Il <monochrome> serve alle icone a tema di Android
+    13+: senza, con quella impostazione accesa il telefono se la cava da solo e
+    l'icona esce come gli pare. Con il livello dichiarato, la cifra resta la
+    cifra e il colore lo mette il sistema.
+
+    Tutto e' vettoriale, come il resto delle risorse del progetto: non ci sono
+    PNG in mipmap e non ne servono, perche' minSdk e' 26 e da li' in poi
+    l'icona adattiva c'e' su ogni telefono.
+-->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background" />
+    <background android:drawable="@drawable/ic_launcher_background" />
     <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
 </adaptive-icon>

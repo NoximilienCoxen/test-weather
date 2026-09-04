@@ -9,7 +9,7 @@
 # che non produce nulla e' peggio di un job rosso.
 set -uo pipefail
 
-PKG="com.forli.meteo"
+PKG="io.github.noximiliencoxen.caelum"
 ACT="$PKG/.MainActivity"
 OUT="/tmp/ciout"
 mkdir -p "$OUT"
@@ -189,6 +189,12 @@ session() {
   # dell'aria, e da li' in poi non e' arrivato piu' niente - ne' le ore di
   # contrasto, ne' le allerte. Quattro riavvii veloci messi qui costano meno di
   # un minuto e sono gli unici scatti che dicono se il fondo e' un cielo.
+  #
+  # **Poi le allerte, e anche loro prima del carosello.** Stessa regola applicata
+  # una volta di piu': il giro che ha introdotto il pallino e' morto a
+  # `d4-vento`, cioe' ancora dentro il carosello, e le allerte stavano in coda -
+  # la funzione appena aggiunta e' rimasta senza un solo scatto. Cio' che non e'
+  # mai stato fotografato va davanti a cio' che una galleria ce l'ha gia'.
 
   # ── Il cielo alle sue ore ───────────────────────────────────────────────────
   #
@@ -233,6 +239,68 @@ session() {
     alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
   fi
 
+  # L'ora della sessione e il centro dello schermo servono da qui in giu': sia
+  # alle allerte sia al foglio di dettaglio. Dichiarate una volta sola, in cima
+  # a chi le usa.
+  local ora_dettaglio
+  case "$tema" in
+    SCURO) ora_dettaglio=2  ;;   # notte piena
+    *)     ora_dettaglio=13 ;;   # mezzogiorno passato, fondo grigio chiaro
+  esac
+  local cx=$(( W / 2 ))
+
+  # ── La fascia delle allerte ─────────────────────────────────────────────────
+  #
+  # Con un'allerta imposta, non aspettando che ne arrivi una vera: la fascia
+  # compare solo quando la Protezione Civile ha diramato qualcosa sulla
+  # localita' mostrata, cioe' quasi mai e mai su richiesta. Fotografarla solo
+  # nei giorni di maltempo vuol dire non fotografarla, e un riquadro che non e'
+  # mai stato visto in uno scatto e' un riquadro che nessuno ha verificato.
+  #
+  # Quattro scatti: la principale, dove la fascia sta in cima; il dettaglio,
+  # dove deve convivere con le pillole senza spingerle fuori; la fascia ridotta
+  # a pallino; e il ritorno al bollettino toccandolo.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d1-allerta-principale"
+
+  # Il tocco sulla cifra apre il dettaglio: la schermata principale distingue
+  # un tocco fermo da un trascinamento, e il tocco apre il foglio.
+  alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
+  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d2-allerta-dettaglio"
+
+  # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
+  #
+  # Lo stato ridotto si raggiunge con un tocco sulla croce, e qui non c'e' un
+  # dito: l'aggancio `--ez allertaridotta` lo impone. E' l'unico modo di
+  # fotografarlo, e senza scatto sarebbe l'unico pezzo dell'interfaccia che
+  # nessuno ha mai verificato.
+  #
+  # Due cose da guardare in questo scatto, e sono le due che possono rompersi:
+  # il nome della localita' deve restare **nella stessa identica posizione**
+  # dello scatto d8 - il pallino sta nei 48dp che erano gia' riservati - e il
+  # triangolo deve leggersi sul fondo del contenitore d'errore.
+  alive || { echo "dispositivo caduto prima dello scatto del pallino"; return; }
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
+    --ei allerta 2 --ez allertaridotta true >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d3-allerta-pallino"
+
+  # Il pallino deve riportare alle allerte per esteso: e' tutto il suo mestiere.
+  # Sta in alto a destra, nei 48dp simmetrici al pulsante delle impostazioni.
+  alive || { echo "dispositivo caduto prima dello scatto del bollettino"; return; }
+  adbt shell input tap "$(( W - 44 ))" "$(( H * 7 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d4-allerta-riaperta"
+
   # ── Il foglio di dettaglio ──────────────────────────────────────────────────
   #
   # **Finora non e' mai stato fotografato davvero.** Lo scatto che si chiamava
@@ -254,12 +322,6 @@ session() {
   # `benvenuto`, e giorno e notte li decide l'ora mostrata. Le due sessioni
   # continuavano a passarselo e a fotografare due volte lo stesso cielo,
   # qualunque fosse, senza che il nome del file lo lasciasse sospettare.
-  local ora_dettaglio
-  case "$tema" in
-    SCURO) ora_dettaglio=2  ;;   # notte piena
-    *)     ora_dettaglio=13 ;;   # mezzogiorno passato, fondo grigio chiaro
-  esac
-
   echo "  -- dettaglio (ora $ora_dettaglio) --"
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -268,10 +330,9 @@ session() {
   attendi_previsione
   alive || { echo "dispositivo caduto prima del dettaglio"; return; }
 
-  local cx=$(( W / 2 ))
   adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d1-temperatura"
+  shoot "${slug}-d5-temperatura"
 
   # Le altre cinque pagine, raggiunte scorrendo sul contenuto sotto la cifra:
   # e' il gesto vero, quello che usa chi guarda. Sulla cifra invece il gesto
@@ -282,7 +343,7 @@ session() {
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
   local pager_y=$(( H * 72 / 100 ))
-  local n=2
+  local n=6
   for pagina in sole pioggia vento aria luna; do
     adbt shell input swipe "$FROM_X" "$pager_y" "$TO_X" "$pager_y" 320 >/dev/null 2>&1 || true
     sleep 2
@@ -294,7 +355,7 @@ session() {
   # BackHandler sia agganciato.
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d7-tornato-alla-principale"
+  shoot "${slug}-d11-tornato-alla-principale"
 
   # ── Il dettaglio di un giorno ───────────────────────────────────────────────
   #
@@ -311,30 +372,7 @@ session() {
   adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
-  shoot "${slug}-d7-giorno"
-
-  # ── La fascia delle allerte ─────────────────────────────────────────────────
-  #
-  # Con un'allerta imposta, non aspettando che ne arrivi una vera: la fascia
-  # compare solo quando la Protezione Civile ha diramato qualcosa sulla
-  # localita' mostrata, cioe' quasi mai e mai su richiesta. Fotografarla solo
-  # nei giorni di maltempo vuol dire non fotografarla, e un riquadro che non e'
-  # mai stato visto in uno scatto e' un riquadro che nessuno ha verificato.
-  #
-  # Due scatti: la principale, dove la fascia sta in cima, e il dettaglio, dove
-  # deve convivere con le pillole senza spingerle fuori.
-  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  sleep 1
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
-  attendi_previsione
-  sleep 1
-  shoot "${slug}-d8-allerta-principale"
-
-  # Il tocco sulla cifra apre il dettaglio: stessa coordinata usata sopra.
-  alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
-  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d9-allerta-dettaglio"
+  shoot "${slug}-d12-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
+        Il lampo d'avvio col tema scuro: se no chi apre l'app di notte prende un
+        flash chiaro in faccia prima del primo fotogramma di Compose.
+    -->
+    <color name="window_background">#FF101216</color>
+
     <!-- Widget, tema scuro. Il sistema sceglie fra questo e values/. -->
     <color name="widget_background">#000000</color>
     <color name="widget_primary">#FFFFFF</color>

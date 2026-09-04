@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.forli.meteo"
+    namespace = "io.github.noximiliencoxen.caelum"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.forli.meteo"
+        applicationId = "io.github.noximiliencoxen.caelum"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -40,7 +40,21 @@ android {
             isDebuggable = false
         }
         release {
-            isMinifyEnabled = false
+            // R8 acceso, con le sue regole accanto in proguard-rules.pro.
+            // Accenderlo senza dire cosa tenere, con kotlinx.serialization in
+            // gioco, rompe la deserializzazione in silenzio: l'app compila, si
+            // installa, e poi non legge piu' una previsione.
+            //
+            // La build che finisce sul telefono e' quella di debug, che non e'
+            // minificata: qui il rischio e' zero e il guadagno e' avere un
+            // percorso di release che qualcuno ha davvero provato. La CI
+            // compila anche questa, se no il flag non lo verifica nessuno.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 
@@ -52,6 +66,30 @@ android {
     buildFeatures {
         compose = true
     }
+
+    lint {
+        // Android Lint sta gia' dentro AGP: niente plugin nuovo, niente versione
+        // in piu' da tenere aggiornata per dire cose che qui direbbe comunque.
+        //
+        // **Referta, non blocca**, e non e' pigrizia: una baseline si puo'
+        // scrivere solo dopo aver letto cosa segnala, e da questo container non
+        // si compila. Il rapporto va nel log della CI, si legge, si sistema cio'
+        // che va sistemato, e solo allora ha senso alzare `abortOnError`. Un
+        // controllo acceso su un debito mai letto lo si spegne dopo due giri.
+        textReport = true
+        warningsAsErrors = false
+        abortOnError = false
+        checkDependencies = false
+    }
+
+    testOptions {
+        unitTests {
+            // I test leggono i colori del tema e le stringhe: senza questo, le
+            // risorse di Android rispondono null e i fallimenti raccontano
+            // tutt'altra storia rispetto a quella vera.
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -59,6 +97,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // Per collectAsStateWithLifecycle: con il semplice collectAsState la
+    // raccolta continua anche con l'app in sottofondo.
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
@@ -73,4 +114,11 @@ dependencies {
 
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
+
+    // Solo per i test, e fuori dall'APK. Robolectric serve a un file solo -
+    // il parser del feed passa da android.util.Xml, che su una JVM non c'e' -
+    // e riscrivere quel parser su SAX per evitarlo avrebbe voluto dire rifare
+    // da capo codice gia' pagato caro contro la risposta vera del feed.
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
 }
