@@ -17,6 +17,7 @@ import com.forli.meteo.ui.temperature.MeteoChart
 import com.forli.meteo.ui.theme.LocalMeteoAccents
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -109,4 +110,12 @@ internal fun MoonPage(
     }
 }
 
-private val DAY_MONTH: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
+/**
+ * Il mese va chiesto **in italiano**, non alla lingua del telefono.
+ *
+ * Senza, "26 set" esce "26 Sep": il formattatore prende la lingua di sistema, e
+ * l'app e' scritta in italiano da cima a fondo. E' la stessa ragione per cui
+ * `DayDetailScreen` e `HomeScreen` lo dichiarano gia' sui loro.
+ */
+private val DAY_MONTH: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("d MMM", Locale.ITALIAN)
