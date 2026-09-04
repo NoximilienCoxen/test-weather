@@ -40,6 +40,7 @@ branch `ci-artifacts`, separato da quello di sviluppo:
 ```bash
 git fetch origin ci-artifacts
 git show origin/ci-artifacts:screenshots/scuro-1-temp.png > /tmp/x.png
+git show origin/ci-artifacts:screenshots/scuro-d3-allerta-pallino.png > /tmp/y.png
 git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 ```
 
@@ -1119,8 +1120,20 @@ allora. Quindi un'allerta nuova la riapre, un peggioramento la riapre (stesso
 identificativo, altra notizia), una che scade no - la condizione e' per
 inclusione, non per uguaglianza degli insiemi.
 
-Due cose imparate scrivendolo:
+**La riga della fascia non scrive "ALLERTA".** Il triangolo tinto accanto dice
+gia' che e' un'allerta e di che gravita': legge `ARANCIONE  ·  TEMPORALI`. Non
+e' una scorciatoia estetica - vedi qui sotto.
 
+Tre cose imparate scrivendolo:
+
+- **Aggiungere un comando a una riga sola fa troncare qualcos'altro, e i pesi
+  decidono cosa.** Con la croce che si prende i suoi 48dp, la fascia usciva
+  `ALLERTA ARANCI...`: a cedere era il **colore**, cioe' il pezzo per cui la
+  fascia esiste, perche' il titolo aveva peso 1.4 contro 1 e il secondario
+  mangiava il principale. Adesso il livello non ha peso - prende lo spazio che
+  gli serve, per primo - e il titolo cede, che e' giusto: per esteso sta nel
+  bollettino, a un tocco. Gli otto caratteri di `"ALLERTA "` erano il resto del
+  margine. **Questo difetto lo ha trovato uno scatto, non un ragionamento.**
 - **`clearAndSetSemantics` su tutta la riga non si puo' piu' fare.** Con un
   secondo bersaglio dentro, cancellerebbe anche il pulsante di chiusura, e un
   lettore di schermo resterebbe senza il modo di ridurre la fascia. La semantica
