@@ -68,7 +68,7 @@ sopra l'altra senza disinstallare).
 | | |
 |---|---|
 | AGP | 9.4.0 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
-| Gradle | 9.4.1 |
+| Gradle | 9.6.0 — **minimo di AGP 9.4**, non una scelta |
 | JDK | 17 |
 | compileSdk | **37** — Compose 1.12 lo pretende; 36 non basta |
 | targetSdk / minSdk | 36 / 26 |
@@ -95,9 +95,20 @@ teneva una Compose BOM del 2026 accanto a un core-ktx, un activity-compose e un
 lifecycle di fine 2024, **senza che niente lo segnalasse**.
 
 **AGP e' passata da 9.2.1 a 9.4.0 per ultima e da sola**, dopo che tutto il
-resto era verde: un salto di toolchain puo' portarsi dietro il wrapper di
-Gradle, e messo in mezzo ad altro non si saprebbe chi ha rotto cosa. Con questa
-in `dipendenze.txt` non resta piu' una riga `DA AGGIORNARE`.
+resto era verde: un salto di toolchain **si porta dietro il wrapper di Gradle**,
+e messo in mezzo ad altro non si saprebbe chi ha rotto cosa. Qui e' successo
+esattamente: AGP 9.4 pretende Gradle **9.6.0**, e con il 9.4.1 il plugin non si
+applica nemmeno.
+
+Non e' stato indovinato. Il messaggio di Gradle dice il numero e dice anche il
+file da toccare:
+
+```
+Minimum supported Gradle version is 9.6.0. Current version is 9.4.1.
+Try updating the 'distributionUrl' property in gradle/wrapper/...
+```
+
+Con questa in `dipendenze.txt` non resta piu' una riga `DA AGGIORNARE`.
 
 `kotlin { compilerOptions }` sta a **livello radice**, non dentro `android {}`.
 `jvmTarget` non si dichiara: eredita da `compileOptions.targetCompatibility`.
