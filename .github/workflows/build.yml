@@ -93,6 +93,19 @@ jobs:
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 
+      # Quali versioni delle dipendenze esistano oggi non si risponde a memoria,
+      # ed e' un guaio silenzioso: il progetto si e' ritrovato una Compose BOM
+      # del 2026 accanto a un core-ktx del 2024 senza che niente lo segnalasse.
+      # Da dentro il container di sviluppo dl.google.com e Maven Central non si
+      # raggiungono (403 al CONNECT), quindi la domanda si gira qui, come gia'
+      # si fa per i modelli numerici e per il formato del feed MeteoAlarm.
+      #
+      # Non fa fallire il giro: una dipendenza vecchia e' una decisione da
+      # prendere leggendo l'elenco, non un errore di compilazione.
+      - name: Quali versioni esistono davvero
+        continue-on-error: true
+        run: OUT=/tmp/ciout/dipendenze.txt python3 scripts/probe_deps.py
+
       - name: Pubblica
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
