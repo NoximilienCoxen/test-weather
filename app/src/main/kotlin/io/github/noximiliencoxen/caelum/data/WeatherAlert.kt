@@ -73,3 +73,39 @@ enum class AlertKind(val label: String) {
     VALANGHE("VALANGHE"),
     ALTRO("AVVISO"),
 }
+
+/**
+ * Se la fascia dell'allerta vada disegnata ridotta a pallino.
+ *
+ * Sta qui e non dentro lo stato dell'interfaccia perche' e' una regola sul
+ * dominio, non sulla schermata: dice quando un avviso gia' visto e archiviato
+ * torna a essere una notizia. Da qui si prova senza far partire niente di
+ * Android.
+ *
+ * La fascia resta ridotta **se e solo se** ogni allerta in scena era gia' fra
+ * quelle chiuse e la peggiore di adesso non e' piu' grave della peggiore di
+ * allora. Quindi:
+ *
+ * - un'allerta **nuova** riapre la fascia, anche se le vecchie erano state
+ *   chiuse: nascondere un avviso appena arrivato perche' ieri se n'e' chiuso un
+ *   altro sarebbe il modo esatto di smettere di avvisare quando conta;
+ * - un **peggioramento** la riapre pur senza allerte nuove - la gialla che
+ *   diventa arancione ha lo stesso identificativo e non e' la stessa notizia;
+ * - una che **scade** non la riapre: la condizione e' per inclusione, non per
+ *   uguaglianza degli insiemi. Se ne restano due su tre gia' viste, non e'
+ *   successo niente di nuovo.
+ *
+ * @param shown le allerte in scena adesso.
+ * @param dismissedIds gli identificativi di quelle per cui si e' gia' chiuso.
+ * @param dismissedWeight il peso del livello peggiore fra quelle.
+ */
+fun alertsAreDismissed(
+    shown: List<WeatherAlert>,
+    dismissedIds: Set<String>,
+    dismissedWeight: Int,
+): Boolean {
+    // Nessuna allerta: non c'e' niente da ridurre, e nemmeno da mostrare.
+    if (shown.isEmpty()) return false
+    val worst = shown.maxOf { it.level.weight }
+    return worst <= dismissedWeight && shown.all { it.id in dismissedIds }
+}
