@@ -1,6 +1,14 @@
 package io.github.noximiliencoxen.caelum.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +48,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -71,6 +80,18 @@ import kotlin.math.abs
  * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
  * come sara' nelle prossime ore. Tutto il resto sta un trascinamento piu' su.
  */
+/**
+ * La molla del passaggio fra la fascia dell'allerta e il pallino.
+ *
+ * Una sola, dichiarata qui, perche' i due si muovono **insieme**: con due
+ * animazioni tarate a parte il pallino comparirebbe prima che la fascia abbia
+ * finito di chiudersi, e per un istante ci sarebbero due avvisi in scena.
+ * Stessi valori dei quattro strati di `MeteoApp`.
+ */
+private val ALERT_SPRING = spring<Float>(dampingRatio = 0.9f, stiffness = 420f)
+
+private val ALERT_SPRING_SIZE = spring<IntSize>(dampingRatio = 0.9f, stiffness = 420f)
+
 @Composable
 fun HomeScreen(
     state: UiState,
@@ -179,7 +200,11 @@ fun HomeScreen(
             // altezza a niente. Che e' esattamente cio' che si cerca chiudendo
             // la fascia.
             Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
-                if (state.alertsCollapsed) {
+                AnimatedVisibility(
+                    visible = state.alertsCollapsed,
+                    enter = scaleIn(ALERT_SPRING) + fadeIn(ALERT_SPRING),
+                    exit = scaleOut(ALERT_SPRING) + fadeOut(ALERT_SPRING),
+                ) {
                     AlertPill(alerts = state.shownAlerts, onOpen = onReopenAlerts)
                 }
             }
@@ -191,15 +216,24 @@ fun HomeScreen(
         // dal cielo: e' l'unico riquadro che deve leggersi uguale a mezzanotte
         // e a mezzogiorno, mentre tutto il resto di questa schermata cambia con
         // l'ora. Se non ci sono allerte non occupa spazio.
-        // Ridotta, la fascia non si disegna: il suo posto e' il pallino nella
-        // riga qui sopra. `AlertBanner` non disegna gia' niente quando non ci
-        // sono allerte, quindi i due stati muti restano uno solo.
-        if (!state.alertsCollapsed) AlertBanner(
-            alerts = state.shownAlerts,
-            onOpen = onOpenAlerts,
-            onDismiss = onDismissAlerts,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
-        )
+        // Ridotta, la fascia lascia il posto al pallino nella riga qui sopra.
+        // I due **non si scambiano, passano**: sono lo stesso avviso in due
+        // misure, e uno scambio secco li farebbe leggere come due oggetti
+        // diversi che si danno il cambio. La fascia si accartoccia in altezza
+        // mentre il pallino cresce, con la stessa molla dei quattro strati di
+        // MeteoApp.
+        AnimatedVisibility(
+            visible = !state.alertsCollapsed && state.shownAlerts.isNotEmpty(),
+            enter = expandVertically(ALERT_SPRING_SIZE) + fadeIn(ALERT_SPRING),
+            exit = shrinkVertically(ALERT_SPRING_SIZE) + fadeOut(ALERT_SPRING),
+        ) {
+            AlertBanner(
+                alerts = state.shownAlerts,
+                onOpen = onOpenAlerts,
+                onDismiss = onDismissAlerts,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+            )
+        }
 
         // Scultura e cifra dentro lo stesso riquadro sensibile: il dito li
         // gira insieme dovunque lo si appoggi, invece di dover indovinare

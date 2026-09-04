@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Il fondo del lampo d'avvio, prima che Compose dipinga il cielo. -->
+    <color name="window_background">#FFF7F8FA</color>
+
     <!-- Widget, tema chiaro: bianco pieno, e nero col tema scuro. -->
     <color name="widget_background">#FFFFFF</color>
     <color name="widget_primary">#000000</color>

@@ -67,6 +67,19 @@ android {
         compose = true
     }
 
+    lint {
+        // Android Lint sta gia' dentro AGP: niente plugin nuovo, niente versione
+        // in piu' da tenere aggiornata per dire cose che qui direbbe comunque.
+        //
+        // Con una baseline: il debito che c'e' oggi non blocca il primo giro,
+        // ma quello che si aggiunge da domani si'. Senza, o si accetta un passo
+        // rosso per sempre - che vuol dire ignorarlo - o si spegne il controllo.
+        baseline = file("lint-baseline.xml")
+        warningsAsErrors = false
+        abortOnError = true
+        checkDependencies = false
+    }
+
     testOptions {
         unitTests {
             // I test leggono i colori del tema e le stringhe: senza questo, le

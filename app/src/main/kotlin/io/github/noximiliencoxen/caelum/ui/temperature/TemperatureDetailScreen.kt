@@ -1,6 +1,11 @@
 package io.github.noximiliencoxen.caelum.ui.temperature
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -180,12 +185,18 @@ fun TemperatureDetailScreen(
             // titolo fuori centro per un avviso che si e' appena chiesto di
             // togliere di mezzo. Chi lo vuole riaprire lo trova sulla schermata
             // da cui si e' entrati.
-            if (!state.alertsCollapsed) AlertBanner(
-                alerts = state.shownAlerts,
-                onOpen = viewModel::openAlerts,
-                onDismiss = viewModel::collapseAlerts,
-                modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
-            )
+            AnimatedVisibility(
+                visible = !state.alertsCollapsed && state.shownAlerts.isNotEmpty(),
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                AlertBanner(
+                    alerts = state.shownAlerts,
+                    onOpen = viewModel::openAlerts,
+                    onDismiss = viewModel::collapseAlerts,
+                    modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
+                )
+            }
 
             // Il pulsante sta **fuori** dalla fila, non dentro: la fila scorre, e
             // una voce dentro di lei scorrerebbe via insieme alle pillole - cioe'

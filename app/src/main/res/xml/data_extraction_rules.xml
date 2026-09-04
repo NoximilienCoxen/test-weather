@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Lo stesso, per Android 12 e successivi, che distingue due casi che prima
+    erano uno solo: il backup sul cloud e il trasferimento diretto da telefono a
+    telefono. Le regole qui sono le stesse - non c'e' ragione perche' un
+    trasloco porti piu' cose di un ripristino - ma vanno dichiarate due volte
+    perche' il sistema le legge da due posti diversi.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="file" path="datastore/impostazioni.preferences_pb" />
+        <exclude domain="file" path="datastore/widget_config.preferences_pb" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path="datastore/impostazioni.preferences_pb" />
+        <exclude domain="file" path="datastore/widget_config.preferences_pb" />
+    </device-transfer>
+</data-extraction-rules>

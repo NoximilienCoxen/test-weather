@@ -148,7 +148,7 @@ class WeatherRepository(
                         ?.key ?: days.first().date.month
 
                     val today = LocalDate.now()
-                    val archiveJson = Json { ignoreUnknownKeys = true; isLenient = true }
+                    val archiveJson = lenientJson
                     val normByDate = mutableMapOf<LocalDate, Double>()
 
                     // Legge gli ultimi NORM_YEARS anni per questo mese.
@@ -223,7 +223,7 @@ class WeatherRepository(
                 } finally {
                     connection.disconnect()
                 }
-                val parsed = Json { ignoreUnknownKeys = true; isLenient = true }
+                val parsed = lenientJson
                     .decodeFromString<GeocodingResponse>(body)
                 parsed.results.map { hit ->
                     Place(
@@ -368,4 +368,20 @@ private fun DayOfWeek.italianShort(): String = when (this) {
     DayOfWeek.FRIDAY -> "VEN"
     DayOfWeek.SATURDAY -> "SAB"
     DayOfWeek.SUNDAY -> "DOM"
+}
+
+/**
+ * Il lettore JSON delle due chiamate accessorie, costruito una volta sola.
+ *
+ * Costruire un `Json` non e' gratis - il compilatore stesso lo segnala - e
+ * questo veniva rifatto a ogni ricerca di localita' e a ogni richiesta della
+ * norma storica, cioe' proprio dove si digita una lettera per volta.
+ *
+ * E' separato da quello dell'istanza (`json`, piu' permissivo) apposta: quello
+ * legge la previsione, che ha campi nulli e valori da correggere; questi due
+ * leggono risposte semplici e non hanno bisogno delle stesse concessioni.
+ */
+private val lenientJson = Json {
+    ignoreUnknownKeys = true
+    isLenient = true
 }

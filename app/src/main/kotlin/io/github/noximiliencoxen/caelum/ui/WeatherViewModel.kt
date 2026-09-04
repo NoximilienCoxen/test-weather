@@ -425,9 +425,15 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                             Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
                             _state.update { current ->
                                 val last = (forecast.hours.size - 1).coerceAtLeast(0)
+                                // Copiata in una locale prima del `when`: e' una
+                                // proprieta' di classe modificabile, quindi il
+                                // compilatore non puo' restringerne il tipo fra la
+                                // condizione e il ramo, e serviva un `!!` - l'unico
+                                // di tutto il progetto.
+                                val forced = pendingHour
                                 val hour = when {
                                     // L'aggancio di verifica vince su tutto.
-                                    pendingHour != null -> pendingHour!!.coerceIn(0, last)
+                                    forced != null -> forced.coerceIn(0, last)
                                     // Su una **ricarica** l'ora scelta resta quella:
                                     // chi stava guardando le sei di sera non deve
                                     // ritrovarsi sbalzato ad adesso solo perche' e'

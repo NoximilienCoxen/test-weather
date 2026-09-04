@@ -750,6 +750,24 @@ che adesso dice perche': serve la lettura, che sospende finche' il DataStore non
 consegna. Aspettare non era un effetto collaterale del logging, e buttarla via
 avrebbe cambiato una tempistica costata cara.
 
+**39. Di un'icona adattiva il telefono garantisce solo il cerchio centrale.**
+Su 108 unita' di lato, quelle sicure sono i 66 centrali: tutto il resto puo'
+essere tagliato, e ogni marca taglia con una maschera sua. Disegnata a grandezza
+piena, la cifra stava benissimo nell'anteprima quadrata e sotto la maschera tonda
+il trattino di base veniva **affettato** - non mascherato con grazia, proprio
+tagliato a meta' - mentre l'ombra usciva del tutto.
+
+Il rimedio non e' stato rifare le coordinate: l'intera composizione (ombra,
+parete, smusso e faccia insieme) passa per un `<group>` che la rimpicciolisce
+attorno al proprio centro, cosi' i rapporti restano quelli disegnati e il
+controllo del raggio si fa una volta sola. Gli stessi tre numeri valgono per il
+livello monocromatico, se no la sagoma a tinta unita non starebbe dove sta la
+faccia.
+
+Vale come metodo, non solo per questa icona: **un'icona si guarda sotto le
+maschere, non nel suo riquadro.** Il cerchio e lo squircle stretto sono i due
+casi che bastano.
+
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
 ignorata: la pioggia usciva forte quanto il tuono. `WeatherHaptics` prova in
@@ -1152,7 +1170,7 @@ Quattro trappole gia' pagate qui:
 Il progetto non ne aveva **nessuno**. Sotto c'era solo `probe-api`, che verifica
 i contratti delle API ma non una riga di logica.
 
-Trentadue prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
+Trentanove prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
 stante. Sono scelte per cio' che coprono, non per fare numero — e tre di loro
 stanno esattamente sopra trappole gia' pagate:
 
@@ -1166,8 +1184,14 @@ stanno esattamente sopra trappole gia' pagate:
 | `readableOn` | Mantiene la soglia che dichiara, su una griglia di fondi che comprende il grigio medio - il caso peggiore, perche' di li' non si scappa ne' verso il bianco ne' verso il nero. |
 | `TempUnit.from` | 21 °C -> 70 °F, la coppia gia' verificata sul telefono. |
 
-**Robolectric serve a un file solo**: `parseFeed` passa da `android.util.Xml`,
-che su una JVM non c'e'. Riscrivere il parser su SAX per togliere la dipendenza
+**Robolectric serve a un file solo**, e va **configurato**: `parseFeed` passa da
+`android.util.Xml`, che su una JVM non c'e'. Il progetto compila contro il
+compileSdk 37 e Robolectric non ha l'`android-all` corrispondente, quindi senza
+un `@Config(sdk = [34])` prova a procurarselo e solleva
+`UnsupportedOperationException` **prima ancora del primo test** - fallisce
+l'intera classe per una ragione che non c'entra niente col parser. Trentaquattro
+e non un altro numero perche' e' un livello che Robolectric copre di sicuro, e
+qui della piattaforma serve solo `android.util.Xml`, che da API 1 non cambia. Riscrivere il parser su SAX per togliere la dipendenza
 avrebbe voluto dire rifare da capo codice gia' pagato caro contro questa stessa
 risposta, e un test non vale quel rischio. Resta fuori dall'APK.
 
