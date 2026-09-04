@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.ui.alerts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,7 +73,12 @@ fun AlertBanner(
 
     val others = alerts.size - 1
     val line = buildString {
-        append(worst.level.label)
+        // **Senza il "ALLERTA " davanti.** Il triangolo tinto accanto dice gia'
+        // che e' un'allerta e di che colore: ripeterlo a parole costa otto
+        // caratteri su una riga sola, e sono gli otto che facevano finire il
+        // colore in "ALLERTA ARANCI...". Il nome per esteso resta dove serve -
+        // nel bollettino e in cio' che legge il lettore di schermo.
+        append(worst.level.label.removePrefix("ALLERTA "))
         append("  ·  ")
         append(worst.kind.label)
         if (others > 0) append(if (others == 1) "  ·  +1 ALTRA" else "  ·  +$others ALTRE")
@@ -109,23 +113,27 @@ fun AlertBanner(
         ) {
             WarningTriangle(levelTint, Modifier.size(18.dp))
             Spacer(Modifier.width(10.dp))
-            Box(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = line,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = levelTint,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            // **Senza peso**: prende lo spazio che gli serve, per primo. E' il
+            // pezzo per cui la fascia esiste - quanto e' grave e di cosa - e
+            // non puo' troncarsi. Con il peso che aveva prima si spartiva la
+            // riga col titolo, e appena la croce si e' presa i suoi 48dp il
+            // colore usciva come "ALLERTA ARANCI...".
+            Text(
+                text = line,
+                style = MaterialTheme.typography.labelMedium,
+                color = levelTint,
+                maxLines = 1,
+            )
             Spacer(Modifier.width(8.dp))
+            // Il titolo invece cede: prende quel che avanza e si accorcia. Per
+            // esteso sta nel bollettino, a un tocco di distanza.
             Text(
                 text = worst.headline,
                 style = MaterialTheme.typography.labelSmall,
                 color = onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1.4f, fill = false),
+                modifier = Modifier.weight(1f),
             )
         }
 
