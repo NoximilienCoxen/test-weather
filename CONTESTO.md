@@ -67,8 +67,8 @@ sopra l'altra senza disinstallare).
 
 | | |
 |---|---|
-| AGP | 9.2.1 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
-| Gradle | 9.4.1 (minimo e default di AGP 9.2) |
+| AGP | 9.4.0 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
+| Gradle | 9.4.1 |
 | JDK | 17 |
 | compileSdk | **37** — Compose 1.12 lo pretende; 36 non basta |
 | targetSdk / minSdk | 36 / 26 |
@@ -94,9 +94,10 @@ finisce nel controllo da sola. E' cosi' che si e' scoperto che il progetto
 teneva una Compose BOM del 2026 accanto a un core-ktx, un activity-compose e un
 lifecycle di fine 2024, **senza che niente lo segnalasse**.
 
-**AGP e' rimasto a 9.2.1 apposta.** La 9.4.0 esiste - il probe la vede - ma un
-salto di toolchain puo' portarsi dietro il wrapper di Gradle, e quello merita un
-giro di CI suo invece di stare in mezzo ad altro. E' il primo lavoro in coda.
+**AGP e' passata da 9.2.1 a 9.4.0 per ultima e da sola**, dopo che tutto il
+resto era verde: un salto di toolchain puo' portarsi dietro il wrapper di
+Gradle, e messo in mezzo ad altro non si saprebbe chi ha rotto cosa. Con questa
+in `dipendenze.txt` non resta piu' una riga `DA AGGIORNARE`.
 
 `kotlin { compilerOptions }` sta a **livello radice**, non dentro `android {}`.
 `jvmTarget` non si dichiara: eredita da `compileOptions.targetCompatibility`.
@@ -867,9 +868,6 @@ comunque a ogni fotogramma.
    vera e' anche la prima verifica vera - e con lei si giudica anche il
    passaggio fascia -> pallino, che e' un movimento e in uno scatto non si
    giudica.
-7. **AGP 9.4.0**, che il probe delle versioni vede e che qui e' rimasta a 9.2.1:
-   un salto di toolchain puo' portarsi dietro il wrapper di Gradle e merita un
-   giro di CI suo.
 8. **I widget si aggiornano con `updatePeriodMillis="1800000"`**, che Android
    limita a mezz'ora e rimanda in Doze: il widget mostra il meteo di un'ora fa
    senza dirlo. La risposta moderna e' `WorkManager` periodico, ed e' una
