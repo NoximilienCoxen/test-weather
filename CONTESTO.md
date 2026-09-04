@@ -3,6 +3,11 @@
 Documento di passaggio. Leggilo prima di toccare qualsiasi cosa: contiene
 vincoli d'ambiente che non si deducono dal codice e diagnosi gia' pagate care.
 
+**Se apri il progetto per la prima volta, o se ci lavori in parallelo a
+qualcun altro, il giro di comandi da seguire dal primo all'ultimo e' la
+sezione 11** — come si firma, come si arriva a `main`, e perche' l'APK sulla
+release cambia solo passando di li'.
+
 ---
 
 ## 1. L'ambiente
@@ -1287,3 +1292,205 @@ sono cartone).
 **Quello che il motore non fa** e che quindi non va modellato: ombre proprie fra
 parti, trasparenze, riflessi. Una sola luce direzionale fissa e Lambert
 dimezzato.
+
+---
+
+## 11. Comandi universali — lavorare in due sullo stesso progetto
+
+Questa sezione e' per chi arriva adesso, con una sessione di Claude propria, e
+vuole contribuire senza rompere niente. Vale anche per chi il progetto lo
+conosce: sono gli stessi comandi, sempre gli stessi, e l'ordine conta.
+
+L'obiettivo di tutto quello che segue e' uno solo: **`main` sempre aggiornato, e
+la release `apk-latest` sempre allineata a `main`**, cosi' chi installa l'APK dal
+telefono si ritrova davvero l'ultimo lavoro di tutti e due e non la build di
+ieri di uno solo.
+
+### 11.1 Come comportarsi, prima ancora dei comandi
+
+- **Leggi questo documento dall'inizio.** La sezione 7 e' un elenco di trappole
+  gia' pagate: ripeterle costa le stesse ore una seconda volta. La sezione 9 e'
+  cosa vuole l'utente, detto da lui.
+- **Misura invece di dedurre.** Compilare e installare dura una manciata di
+  secondi (sezione 1); un dubbio su come si vede una cosa si chiude con uno
+  screenshot, non con un ragionamento.
+- **Aggiorna CONTESTO.md nello stesso commit del cambiamento.** Questo file e'
+  la memoria condivisa fra due persone che non si vedono lavorare: una cosa
+  scoperta e non scritta qui verra' riscoperta dall'altro, pagandola di nuovo.
+- **Una cosa per branch.** Branch corti e a tema unico si uniscono senza
+  conflitti; un branch che tocca mezza app resta aperto per giorni e litiga con
+  tutto.
+- **Avvisa prima dei limiti, non dopo.** Se una richiesta non si puo' fare come
+  e' stata chiesta, si dice subito.
+
+### 11.2 Chi firma i commit — da impostare **prima** di committare
+
+Ogni sessione nuova di Claude riparte con la propria identita' come autore, e
+quella identita' qui non e' voluta (sezione 9). Due comandi, prima di qualsiasi
+altra cosa:
+
+```bash
+git config user.name  "NoximilienCoxen"
+git config user.email "313902161+NoximilienCoxen@users.noreply.github.com"
+```
+
+Nel messaggio di commit **niente trailer di paternita' automatica, niente link
+a sessioni, nessun riferimento all'assistente**. Se una firma e' scappata
+comunque, si toglie dalla storia con `bash scripts/spolvera_firme.sh <branch>` —
+che e' una riscrittura, quindi si fa prima che il branch sia stato unito, e si
+guarda il risultato prima di spingerlo con `--force-with-lease`.
+
+Verifica veloce, prima di spingere:
+
+```bash
+git log -3 --format='%an <%ae>%n%B'
+```
+
+### 11.3 Il giro completo, dal primo comando all'APK sul telefono
+
+```bash
+# 1. si parte sempre da un main aggiornato
+git checkout main && git pull --ff-only origin main
+
+# 2. un branch a tema, dentro claude/
+git checkout -b claude/<argomento>-<sigla>
+
+# 3. si lavora, si prova sul telefono
+./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/*.apk
+
+# 4. si committa (identita' gia' impostata, vedi 11.2)
+git add -A && git commit -m "Cosa cambia, in una riga"
+
+# 5. si pubblica il branch
+git push -u origin claude/<argomento>-<sigla>
+```
+
+Poi si apre una pull request verso `main`, si aspetta che la CI sia verde, e si
+unisce. **Il passo 5 non basta**: finche' il lavoro sta su un branch, sul
+telefono non arriva niente.
+
+`git push` che fallisce per rete si ritenta, non si aggira: quattro tentativi
+con attese di 2, 4, 8, 16 secondi.
+
+### 11.4 Perche' bisogna passare da `main` (e non e' una formalita')
+
+In `.github/workflows/build.yml` il job che pubblica ha questa condizione:
+
+```yaml
+  rilascio:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+```
+
+Cioe':
+
+- un push su `claude/**` **compila, prova e fotografa**, ma non pubblica niente;
+- solo un `main` che si muove, e con `build` verde, riscrive l'allegato
+  `weather.apk` sul tag fisso `apk-latest`.
+
+La condizione c'e' apposta e non va tolta: prima che ci fosse, ogni branch in
+corso poteva spedire sul telefono una build a meta', e con due persone che
+lavorano in parallelo succederebbe di continuo — l'ultimo che spinge vince, e
+l'altro si ritrova l'app senza il proprio lavoro dentro.
+
+Ne segue la regola pratica: **il telefono vede solo cio' che e' stato unito a
+`main`.** Se l'APK non ha la tua modifica, quasi sempre non e' un difetto:
+e' un merge che non e' stato fatto, o una CI rossa.
+
+### 11.5 Dopo il merge: controllare che l'APK sia davvero cambiato
+
+Un `main` verde e una release aggiornata non sono la stessa cosa: se `build`
+fallisce su `main`, il job `rilascio` non parte e l'allegato resta quello di
+prima, **senza dirlo a nessuno**. Va guardato ogni volta.
+
+```bash
+git checkout main && git pull --ff-only origin main
+git rev-parse main          # e' questo lo SHA che ci si aspetta nella release
+```
+
+Il corpo della release riporta la riga `Commit: <sha>`: se coincide con quello
+qui sopra, l'APK in linea e' l'ultimo. La pagina e' sempre la stessa,
+<https://github.com/NoximilienCoxen/test-weather/releases/tag/apk-latest>.
+
+Con `gh` installato (macchina locale) lo si chiede senza aprire il browser:
+
+```bash
+gh run list  --branch main --limit 3 --repo NoximilienCoxen/test-weather
+gh release view apk-latest --repo NoximilienCoxen/test-weather --json publishedAt,body
+```
+
+Dentro Claude Code sul web `gh` non c'e': la stessa cosa si chiede con gli
+strumenti GitHub dell'agente (elenco dei run, ultima release).
+
+Se il run su `main` e' rosso, **il lavoro non e' finito**: si corregge e si
+spinge su `main` finche' torna verde, perche' fino ad allora chiunque scarichi
+l'APK installa l'app di prima.
+
+### 11.6 Tenere il proprio branch al passo con l'altro
+
+Con due branch aperti insieme, chi unisce per secondo trova `main` cambiato
+sotto i piedi. Si riallinea **prima** di aprire la pull request:
+
+```bash
+git fetch origin main
+git merge origin/main        # merge, non rebase: il branch e' gia' pubblicato
+```
+
+Rebase e `--force-push` su un branch che l'altro potrebbe aver gia' preso
+invalidano il suo clone: non si fanno.
+
+Il file che litiga piu' spesso e' proprio `CONTESTO.md`, perche' lo scrivono
+tutti e due. Risolvendo il conflitto **si tengono entrambe le versioni**: si
+accodano le righe nuove, non si riscrive la sezione dell'altro. E' un diario, e
+in un diario non si cancella.
+
+### 11.7 Cosa non fare mai
+
+- **Non caricare l'APK a mano** sulla release: lo produce e lo firma la CI. Un
+  allegato messo a mano con un nome diverso resta li' accanto a `weather.apk` e
+  chi arriva sulla pagina scarica quello sbagliato.
+- **Non spostare ne' ricreare il tag `apk-latest`**: e' fisso apposta, cosi' il
+  link si puo' tenere fra i preferiti.
+- **Non togliere la condizione `if: github.ref == 'refs/heads/main'`** dal job
+  `rilascio` (vedi 11.4).
+- **Non riscrivere la storia di `main`** senza che sia una decisione presa
+  insieme: i link ai commit vecchi — il corpo della release, gli `INFO.txt` su
+  `ci-artifacts` — puntano nel vuoto.
+- **Non spegnere ne' saltare i test per far passare la CI.** Un test rosso e'
+  una notizia, non un ostacolo.
+- **Non firmare i commit con lo strumento** (11.2).
+
+### 11.8 Quando la CI e' rossa: cosa guardare, in ordine
+
+Gli stessi controlli girano in locale, e li' rispondono in secondi:
+
+```bash
+./gradlew assembleDebug      # errori Kotlin, righe che cominciano con "e: "
+./gradlew testDebugUnitTest  # i test
+./gradlew lintDebug          # il referto finisce nel log, non solo in un HTML
+./gradlew assembleRelease    # R8: una regola di keep mancante si vede solo qui
+```
+
+Niente `--stacktrace`: seppellisce gli errori veri sotto trecento righe di
+stack Gradle (trappola #1).
+
+Cio' che la CI ha visto davvero — risposte delle API, screenshot
+dall'emulatore — sta sul branch `ci-artifacts`, che non si controlla:
+
+```bash
+git fetch origin ci-artifacts
+git show origin/ci-artifacts:api/hourly.json > /tmp/hourly.json
+git show origin/ci-artifacts:screenshots/scuro-1-temp.png > /tmp/x.png
+```
+
+### 11.9 L'inizio di ogni sessione, gia' automatico
+
+In `.claude/settings.json` c'e' un hook che a ogni avvio di sessione fa:
+
+```
+git checkout main && git pull --ff-only origin main
+```
+
+Cioe' ogni sessione nuova parte da un `main` aggiornato senza doverlo ricordare.
+Se il comando fallisce, quasi sempre e' perche' ci sono modifiche non
+committate: si guardano con `git status` e si decide, non si forza.
