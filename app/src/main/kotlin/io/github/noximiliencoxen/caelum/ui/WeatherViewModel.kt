@@ -15,6 +15,7 @@ import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
+import io.github.noximiliencoxen.caelum.data.alertsAreDismissed
 import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
@@ -173,33 +174,15 @@ data class UiState(
         get() = forcedAlert?.let { listOf(it) } ?: alerts
 
     /**
-     * Vero quando la fascia va disegnata come un pallino invece che per esteso.
+     * Vero quando la fascia dell'allerta va disegnata ridotta a pallino.
      *
-     * La regola sta qui e non nelle impostazioni perche' dipende da **cosa c'e'
-     * adesso**, non solo da cosa e' stato chiuso: la fascia resta ridotta se e
-     * solo se ogni allerta in scena era gia' fra quelle chiuse **e** la
-     * peggiore di adesso non e' piu' grave della peggiore di allora.
-     *
-     * Due conseguenze volute:
-     * - un'allerta **nuova** riapre la fascia, anche se le vecchie erano state
-     *   chiuse. Un avviso che compare mentre il pallino e' chiuso resterebbe
-     *   altrimenti un puntino in un angolo, ed e' esattamente il caso in cui
-     *   avvisare conta;
-     * - un **peggioramento** riapre la fascia pur senza allerte nuove: la
-     *   gialla di stamattina che diventa arancione ha lo stesso identificativo
-     *   e non e' piu' la stessa notizia.
-     *
-     * Una che **scade**, invece, non la riapre: la condizione e' per
-     * inclusione, non per uguaglianza degli insiemi. Se ne restano due su tre
-     * gia' viste, non e' successo niente di nuovo.
+     * La regola sta in `data/WeatherAlert.kt` con la sua spiegazione: e' una
+     * regola sul dominio - quando un avviso archiviato torna a essere una
+     * notizia - non sulla schermata, e da li' si prova senza far partire
+     * niente di Android.
      */
     val alertsCollapsed: Boolean
-        get() {
-            val shown = shownAlerts
-            if (shown.isEmpty()) return false
-            val worst = shown.maxOf { it.level.weight }
-            return worst <= dismissedAlertWeight && shown.all { it.id in dismissedAlertIds }
-        }
+        get() = alertsAreDismissed(shownAlerts, dismissedAlertIds, dismissedAlertWeight)
 
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 

@@ -18,7 +18,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.Lifecycle
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertsSheet
 import io.github.noximiliencoxen.caelum.ui.home.HomeScreen
@@ -71,7 +71,7 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun MeteoApp(viewModel: WeatherViewModel) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     // Un solo numero anima tutto il cielo, e da quello si ricavano insieme il
     // fondo, il colore del sole e la comparsa della luna. Animando le tre cose

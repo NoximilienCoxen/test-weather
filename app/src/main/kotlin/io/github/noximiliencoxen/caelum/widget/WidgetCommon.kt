@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -74,36 +73,11 @@ internal suspend fun WidgetConfig.resolvePlace(context: Context): Place {
 
     return when {
         // REGOLA 1: GPS richiesto
-        useLocation -> {
-            Log.d("WidgetResolve", "resolvePlace: useLocation=true — tento GPS")
-            val gps = DeviceLocation.current(context)
-            when {
-                gps != null -> {
-                    Log.d("WidgetResolve", "resolvePlace: R1 GPS ✓ → ${gps.name}")
-                    gps
-                }
-                place != null -> {
-                    Log.d("WidgetResolve", "resolvePlace: R1 GPS null → fallback place istanza: ${place.name}")
-                    place
-                }
-                else -> {
-                    val app = fromApp()
-                    Log.d("WidgetResolve", "resolvePlace: R1 GPS null, place null → fallback app: ${app.name}")
-                    app
-                }
-            }
-        }
+        useLocation -> DeviceLocation.current(context) ?: place ?: fromApp()
         // REGOLA 2: citta' manuale impostata per questa istanza
-        place != null -> {
-            Log.d("WidgetResolve", "resolvePlace: R2 citta' istanza → ${place.name}")
-            place
-        }
+        place != null -> place
         // REGOLA 3: widget mai configurato — placeholder globale app
-        else -> {
-            val app = fromApp()
-            Log.d("WidgetResolve", "resolvePlace: R3 mai configurato → fallback app: ${app.name}")
-            app
-        }
+        else -> fromApp()
     }
 }
 
@@ -164,16 +138,15 @@ enum class WidgetKind {
 internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
 
-    // Conferma che il DataStore contenga i dati aggiornati prima di procedere.
-    val confirmedConfig = withContext(Dispatchers.IO) {
-        WidgetPrefs(context).load(appWidgetId)
-    }
-    Log.d(
-        "WidgetResolve",
-        "refreshWidget: widget=$appWidgetId kind=${resolved.name} " +
-            "| DataStore confermato → useLocation=${confirmedConfig.useLocation}, " +
-            "place=${confirmedConfig.place?.name ?: "null"}",
-    )
+    // Rilegge le preferenze prima di procedere, e il valore non serve a
+    // nessuno: serve la **lettura**, che sospende finche' il DataStore non
+    // consegna, cioe' finche' la scrittura appena fatta non e' visibile. Da
+    // qui in poi la nuova sessione Glance trovera' i dati aggiornati.
+    //
+    // Qui c'era anche una riga di log che stampava la localita' confermata, ed
+    // e' quella che se n'e' andata: la chiamata resta perche' aspettare non era
+    // un effetto collaterale del logging.
+    withContext(Dispatchers.IO) { WidgetPrefs(context).load(appWidgetId) }
 
     // Determina la classe receiver corretta per questo tipo di widget.
     val receiverClass = when (resolved) {
@@ -201,7 +174,6 @@ internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: Wid
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
     }
     context.sendBroadcast(intent)
-    Log.d("WidgetResolve", "refreshWidget: broadcast ACTION_APPWIDGET_UPDATE inviato → nuova sessione Glance")
 }
 
 /**

@@ -40,7 +40,21 @@ android {
             isDebuggable = false
         }
         release {
-            isMinifyEnabled = false
+            // R8 acceso, con le sue regole accanto in proguard-rules.pro.
+            // Accenderlo senza dire cosa tenere, con kotlinx.serialization in
+            // gioco, rompe la deserializzazione in silenzio: l'app compila, si
+            // installa, e poi non legge piu' una previsione.
+            //
+            // La build che finisce sul telefono e' quella di debug, che non e'
+            // minificata: qui il rischio e' zero e il guadagno e' avere un
+            // percorso di release che qualcuno ha davvero provato. La CI
+            // compila anche questa, se no il flag non lo verifica nessuno.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 
@@ -59,6 +73,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // Per collectAsStateWithLifecycle: con il semplice collectAsState la
+    // raccolta continua anche con l'app in sottofondo.
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
