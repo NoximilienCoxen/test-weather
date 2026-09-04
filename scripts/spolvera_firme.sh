@@ -9,6 +9,14 @@
 # INFO.txt su ci-artifacts - puntano nel vuoto. Il contenuto dei file non viene
 # toccato: lo script lo verifica da solo alla fine e si ferma se non e' vero.
 #
+# Cosa NON tocca, e apposta: i nomi dei branch citati dai commit di merge
+# ("Merge pull request #5 from NoximilienCoxen/claude/..."), e i percorsi di
+# file che esistono davvero (`.claude/settings.local.json`). Quelli non sono
+# firme: sono descrizioni di cose reali, e riscriverle farebbe raccontare alla
+# storia dei branch mai esistiti. Su main ne restano una dozzina, tutte di
+# questo tipo. Per farle sparire davvero servirebbe rinominare i branch e la
+# cartella di configurazione, che e' una decisione diversa e piu' larga.
+#
 #   uso:  bash scripts/spolvera_firme.sh <branch>
 #   es.:  bash scripts/spolvera_firme.sh main
 #
