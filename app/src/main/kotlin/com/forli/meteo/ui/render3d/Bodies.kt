@@ -143,6 +143,25 @@ fun DrawScope.sphere(
  * Col gradiente dal lembo verso la mediana il bordo torna il piu' chiaro, la
  * luce cala andando verso il taglio, e il taglio si legge.
  */
+/**
+ * I mari lunari: due componenti sulla sfera unitaria e il raggio della macchia.
+ *
+ * Non sono una mappa fedele, sono l'appiglio che permette di vedere che la luna
+ * sta girando invece di stare ferma a farsi guardare.
+ *
+ * **Sta qui e non presso chi disegna** perche' i chiamanti sono tre - la
+ * scultura della schermata principale, il widget e la pagina del dettaglio - e
+ * finche' erano due se ne sono tenuti una copia privata a testa. Due copie degli
+ * stessi quattro numeri sono due copie destinate a divergere alla prima volta
+ * che qualcuno ne sposta una.
+ */
+val MOON_SEAS: List<Triple<Float, Float, Float>> = listOf(
+    Triple(-0.30f, -0.24f, 0.20f),
+    Triple(0.16f, 0.05f, 0.26f),
+    Triple(-0.08f, 0.42f, 0.15f),
+    Triple(0.42f, -0.34f, 0.12f),
+)
+
 fun DrawScope.moon(
     camera: Camera,
     x: Float,

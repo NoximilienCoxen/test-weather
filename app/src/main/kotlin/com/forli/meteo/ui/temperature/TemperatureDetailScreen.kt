@@ -1,10 +1,12 @@
 package com.forli.meteo.ui.temperature
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,19 +31,30 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.forli.meteo.ui.UiState
 import com.forli.meteo.ui.alerts.AlertBanner
 import com.forli.meteo.ui.WeatherViewModel
 import com.forli.meteo.ui.common.MeteoEmptyState
+import com.forli.meteo.ui.common.MeteoIconButton
 import com.forli.meteo.ui.common.MeteoPillRow
 import com.forli.meteo.ui.common.MeteoTopBar
 import com.forli.meteo.ui.common.rememberMeteoLayout
+import com.forli.meteo.ui.home.MoonPhase
+import com.forli.meteo.ui.home.MoonSegment
 import com.forli.meteo.ui.motion.PhysicalNumber
 import com.forli.meteo.ui.motion.rememberSceneRotation
 import com.forli.meteo.ui.motion.rotatesScene
+import com.forli.meteo.ui.render3d.Camera
+import com.forli.meteo.ui.render3d.MOON_SEAS
+import com.forli.meteo.ui.render3d.glow
+import com.forli.meteo.ui.render3d.moon
 import com.forli.meteo.ui.temperature.pages.AirPage
+import com.forli.meteo.ui.temperature.pages.MoonPage
 import com.forli.meteo.ui.temperature.pages.RainPage
 import com.forli.meteo.ui.temperature.pages.SunPage
 import com.forli.meteo.ui.temperature.pages.TemperaturePage
@@ -46,15 +62,19 @@ import com.forli.meteo.ui.temperature.pages.WindPage
 import com.forli.meteo.ui.temperature.pages.heroMissingReason
 import com.forli.meteo.ui.temperature.pages.heroSmallTail
 import com.forli.meteo.ui.temperature.pages.heroValue
+import com.forli.meteo.ui.temperature.pages.pageDay
+import com.forli.meteo.ui.theme.LocalMeteoAccents
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
 /**
  * Il dettaglio: sale trascinando in alto la principale, oppure toccando la
  * cifra della temperatura.
  *
- * Cinque pagine, una per grandezza. La cifra sta **fuori** dal carosello e
+ * Sei pagine, una per grandezza. La cifra sta **fuori** dal carosello e
  * rimane fissa: il gesto orizzontale sulla cifra gira la scena 3D come nella
  * schermata principale, quello sul contenuto sotto cambia pagina. I due non si
  * contendono niente perche' non si sovrappongono - e' la stessa ragione per cui
@@ -63,8 +83,12 @@ import kotlinx.coroutines.launch
  *
  * **La settimana e' uscita dal carosello.** Stava dentro la sola pagina della
  * temperatura, il che la rendeva lunga il doppio delle altre e la nascondeva a
- * chi guardava il vento. E' la stessa informazione per tutte e cinque, quindi
- * sta sotto tutte e cinque.
+ * chi guardava il vento. E' la stessa informazione per tutte, quindi sta sotto
+ * tutte.
+ *
+ * **La sesta pagina e' la luna**, e con lei arriva il pulsante che apre
+ * l'elenco: sei pillole su un telefono stretto non stanno in una schermata, e
+ * una fila che scorre non ha modo di dire cosa c'e' oltre il bordo.
  */
 @Composable
 fun TemperatureDetailScreen(
@@ -123,94 +147,136 @@ fun TemperatureDetailScreen(
     val drift = { pagerState.currentPageOffsetFraction }
     val position = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        MeteoTopBar(
-            title = shownMode.title,
-            subtitle = subtitle(state, shownMode),
-            onBack = onBack,
-            backLabel = "Chiudi il dettaglio",
-            transition = drift,
-        )
+    // L'elenco dei pannelli e' interfaccia effimera: si apre, si sceglie, si
+    // chiude. Non appartiene a `UiState` - sopravvivergli alla chiusura del
+    // foglio vorrebbe dire riaprire il dettaglio e ritrovarsi davanti un elenco
+    // che nessuno ha chiesto.
+    var pickerOpen by remember { mutableStateOf(false) }
 
-        // Sotto la barra e **fuori** dal carosello: l'allerta vale per la
-        // localita', non per la grandezza che si sta guardando, e deve restare
-        // in scena su tutte e cinque le pagine. Non disegna niente quando non
-        // c'e' niente da dire.
-        AlertBanner(
-            alerts = state.shownAlerts,
-            onOpen = viewModel::openAlerts,
-            modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
-        )
+    fun goTo(picked: DetailMode) {
+        val page = modes.indexOf(picked)
+        if (page >= 0) scope.launch { pagerState.animateScrollToPage(page) }
+    }
 
-        MeteoPillRow(
-            items = modes,
-            selected = shownMode,
-            label = { it.chipLabel },
-            // La pillola muove il carosello **direttamente**, senza passare
-            // dallo stato: l'animazione non vive piu' dentro un effetto
-            // chiavato su cio' che essa stessa cambia, quindi nessuno la
-            // interrompe a meta'.
-            onSelect = { picked ->
-                val page = modes.indexOf(picked)
-                if (page >= 0) scope.launch { pagerState.animateScrollToPage(page) }
-            },
-            contentPadding = PaddingValues(horizontal = layout.gutter),
-            position = position,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            MeteoTopBar(
+                title = shownMode.title,
+                subtitle = subtitle(state, shownMode),
+                onBack = onBack,
+                backLabel = "Chiudi il dettaglio",
+                transition = drift,
+            )
 
-        PageDots(
-            position = position,
-            accents = accents,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 2.dp),
-        )
+            // Sotto la barra e **fuori** dal carosello: l'allerta vale per la
+            // localita', non per la grandezza che si sta guardando, e deve restare
+            // in scena su tutte le pagine. Non disegna niente quando non c'e'
+            // niente da dire.
+            AlertBanner(
+                alerts = state.shownAlerts,
+                onOpen = viewModel::openAlerts,
+                modifier = Modifier.padding(horizontal = layout.gutter, vertical = 4.dp),
+            )
 
-        Hero(
-            state = state,
-            mode = shownMode,
-            accent = accent,
-            rotation = rotation,
-            tilt = tilt,
-            drift = drift,
-            heightFraction = layout.heroFraction,
-            modifier = Modifier.fillMaxWidth(),
-        )
+            // Il pulsante sta **fuori** dalla fila, non dentro: la fila scorre, e
+            // una voce dentro di lei scorrerebbe via insieme alle pillole - cioe'
+            // sparirebbe proprio quando serve, che e' quando si e' scorsi lontano.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                MeteoPillRow(
+                    items = modes,
+                    selected = shownMode,
+                    label = { it.chipLabel },
+                    // La pillola muove il carosello **direttamente**, senza passare
+                    // dallo stato: l'animazione non vive piu' dentro un effetto
+                    // chiavato su cio' che essa stessa cambia, quindi nessuno la
+                    // interrompe a meta'.
+                    onSelect = ::goTo,
+                    contentPadding = PaddingValues(start = layout.gutter, end = 4.dp),
+                    position = position,
+                    modifier = Modifier.weight(1f),
+                )
+                MeteoIconButton(
+                    onClick = { pickerOpen = true },
+                    contentDescription = "Mostra tutti i pannelli",
+                    icon = { PanelListIcon(MaterialTheme.colorScheme.onSurfaceVariant) },
+                    modifier = Modifier.padding(end = layout.gutter - 12.dp),
+                )
+            }
 
-        // La settimana chiude ogni pagina: appartiene alla schermata, non a una
-        // grandezza sola. Sta dentro lo scorrimento delle pagine e non appesa
-        // sotto il carosello, dove sarebbe un'altezza fissa che in orizzontale
-        // non lascia piu' spazio al carosello stesso.
-        val week: @Composable () -> Unit = {
-            DailyForecastCard(
-                days = state.forecast?.days.orEmpty(),
-                unit = state.unit,
-                selected = state.selectedDay,
-                onSelectDay = viewModel::openDayDetail,
+            PageDots(
+                position = position,
+                accents = accents,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 2.dp),
+            )
+
+            Hero(
+                state = state,
+                mode = shownMode,
+                accent = accent,
+                rotation = rotation,
+                tilt = tilt,
+                drift = drift,
+                heightFraction = layout.heroFraction,
                 modifier = Modifier.fillMaxWidth(),
             )
+
+            // La settimana chiude ogni pagina: appartiene alla schermata, non a una
+            // grandezza sola. Sta dentro lo scorrimento delle pagine e non appesa
+            // sotto il carosello, dove sarebbe un'altezza fissa che in orizzontale
+            // non lascia piu' spazio al carosello stesso.
+            val week: @Composable () -> Unit = {
+                DailyForecastCard(
+                    days = state.forecast?.days.orEmpty(),
+                    unit = state.unit,
+                    selected = state.selectedDay,
+                    onSelectDay = viewModel::openDayDetail,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) { page ->
+                when (modes.getOrNull(page)) {
+                    DetailMode.TEMPERATURA ->
+                        TemperaturePage(state, layout, viewModel::setWeekMode, week = week)
+                    DetailMode.SOLE ->
+                        SunPage(state, layout, viewModel::setWeekMode, week = week)
+                    DetailMode.PRECIPITAZIONI ->
+                        RainPage(state, layout, viewModel::setWeekMode, week = week)
+                    DetailMode.VENTO ->
+                        WindPage(state, layout, viewModel::setWeekMode, week = week)
+                    DetailMode.ARIA ->
+                        AirPage(state, layout, week = week)
+                    DetailMode.LUNA ->
+                        MoonPage(state, layout, week = week)
+                    null -> Unit
+                }
+            }
         }
 
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-        ) { page ->
-            when (modes.getOrNull(page)) {
-                DetailMode.TEMPERATURA ->
-                    TemperaturePage(state, layout, viewModel::setWeekMode, week = week)
-                DetailMode.SOLE ->
-                    SunPage(state, layout, viewModel::setWeekMode, week = week)
-                DetailMode.PRECIPITAZIONI ->
-                    RainPage(state, layout, viewModel::setWeekMode, week = week)
-                DetailMode.VENTO ->
-                    WindPage(state, layout, viewModel::setWeekMode, week = week)
-                DetailMode.ARIA ->
-                    AirPage(state, layout, week = week)
-                null -> Unit
-            }
+        // Sopra tutto, e con il suo tasto indietro. E' composto **dopo** il
+        // foglio che lo contiene, quindi il suo `BackHandler` viene prima:
+        // indietro chiude l'elenco e lascia il dettaglio dov'e'.
+        if (pickerOpen) {
+            BackHandler(enabled = true) { pickerOpen = false }
+            PanelPicker(
+                modes = modes,
+                selected = shownMode,
+                onPick = { picked ->
+                    goTo(picked)
+                    pickerOpen = false
+                },
+                onClose = { pickerOpen = false },
+            )
         }
     }
 }
@@ -256,6 +322,9 @@ private val HOUR_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm"
  *
  * Se un numero non c'e', **non si disegna niente**: si dice cosa manca e
  * perche'. Un "--" alto mezzo schermo non comunica attesa, comunica guasto.
+ *
+ * **La luna non ha una cifra**: al suo posto sta il corpo, e gira con lo stesso
+ * gesto. Vedi [MoonHero].
  */
 @Composable
 private fun Hero(
@@ -279,6 +348,23 @@ private fun Hero(
         },
     ) {
         val heroHeight = maxHeight * heightFraction
+
+        // La luna va **prima** del controllo sulla cifra, e per due ragioni.
+        // La prima e' che non ha una cifra: il suo eroe e' il corpo. La seconda
+        // e' che non ha bisogno della previsione - la fase si calcola in locale
+        // - quindi e' l'unica pagina che ha ancora qualcosa da mostrare quando
+        // la rete tace, e passare di li' la spegnerebbe insieme alle altre.
+        if (mode == DetailMode.LUNA) {
+            MoonHero(
+                date = state.pageDay?.date ?: LocalDate.now(),
+                rotation = rotation,
+                tilt = tilt,
+                height = heroHeight,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            return@BoxWithConstraints
+        }
+
         val value = heroValue(mode, state)
         if (value == null) {
             // Un guasto globale - previsione che non arriva, rete muta - lo
@@ -326,6 +412,76 @@ private fun Hero(
                     modifier = Modifier.padding(top = 2.dp),
                 )
             }
+        }
+    }
+}
+
+/**
+ * La luna, girabile col dito.
+ *
+ * E' lo stesso corpo della scultura della schermata principale e del widget -
+ * stessa sfera, stessa luce, stessi mari - e sta nello stesso posto in cui le
+ * altre pagine mettono la cifra: sopra il carosello, dentro il `Box` che porta
+ * [rotatesScene]. Il gesto quindi e' gia' quello di sempre, e non c'e' un
+ * secondo riconoscitore da mettere d'accordo con nessuno.
+ *
+ * **I mari girano, la mediana no**, e non e' un difetto da correggere: i mari
+ * stanno sulla sfera e passano dalla camera, quindi ruotando scivolano verso il
+ * bordo e spariscono dietro; la mediana invece la disegna [moon] in coordinate
+ * di schermo, perche' da che parte cada lo decide il Sole e non chi guarda. Una
+ * falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
+ * perche' ci si e' spostati di venti centimetri.
+ */
+@Composable
+private fun MoonHero(
+    date: LocalDate,
+    rotation: com.forli.meteo.ui.motion.SceneRotation,
+    tilt: State<Offset>,
+    height: Dp,
+    modifier: Modifier = Modifier,
+) {
+    val light = LocalMeteoAccents.current.moon
+    // Il tondo spento e i mari vogliono un grigio medio, non un grigio da
+    // testo: `outline` e' il tono che il tema tiene per i contorni, ed e' quello
+    // che al 24 per cento legge come "disco che c'e' ma non e' illuminato".
+    val dark = MaterialTheme.colorScheme.outline
+    val phase = remember(date) { MoonPhase.at(date) }
+    val spoken = remember(phase) {
+        val percent = (MoonPhase.illumination(phase) * 100f).roundToInt()
+        "${MoonSegment.of(phase).label.lowercase()}, illuminata al $percent per cento"
+    }
+    Box(
+        modifier = modifier
+            .height(height)
+            .rotatesScene(rotation),
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .semantics { contentDescription = spoken },
+        ) {
+            // Giro e inclinazione si leggono **qui dentro**, non in
+            // composizione: girare deve ridipingere, non ricomporre.
+            val unit = minOf(size.width, size.height)
+            val camera = Camera(
+                yawDeg = rotation.yawDeg,
+                pitchDeg = tilt.value.y * 5f,
+                distance = unit * 2.7f,
+                origin = Offset(size.width / 2f, size.height / 2f),
+            )
+            val radius = unit * 0.40f
+            glow(camera, 0f, 0f, 0f, radius, light, 0.28f, spread = 2.0f)
+            moon(
+                camera = camera,
+                x = 0f, y = 0f, z = 0f,
+                radius = radius,
+                phase = phase,
+                light = light,
+                dark = dark,
+                alpha = 1f,
+                marks = MOON_SEAS,
+            )
         }
     }
 }
