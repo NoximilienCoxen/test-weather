@@ -66,6 +66,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            // I test leggono i colori del tema e le stringhe: senza questo, le
+            // risorse di Android rispondono null e i fallimenti raccontano
+            // tutt'altra storia rispetto a quella vera.
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -90,4 +99,11 @@ dependencies {
 
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
+
+    // Solo per i test, e fuori dall'APK. Robolectric serve a un file solo -
+    // il parser del feed passa da android.util.Xml, che su una JVM non c'e' -
+    // e riscrivere quel parser su SAX per evitarlo avrebbe voluto dire rifare
+    // da capo codice gia' pagato caro contro la risposta vera del feed.
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
 }

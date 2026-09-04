@@ -82,3 +82,19 @@ object Wmo {
         else -> Family.ASCIUTTO
     }
 }
+
+/**
+ * Le famiglie che portano precipitazione.
+ *
+ * Sta qui e non nel file della scultura, dov'era: parla di codici WMO, non di
+ * come si disegna una nuvola, e la scultura era solo il primo posto in cui e'
+ * servita. Da qui la usano la schermata principale e la barra delle ore senza
+ * dipendere da millequattrocento righe di Compose - e si puo' provare.
+ *
+ * Attorno a questa funzione c'e' una trappola gia' pagata: **se il codice dice
+ * che piove, deve piovere**. I millimetri decidono quanto forte, non se. Un
+ * temporale previsto all'ottanta per cento puo' avere zero millimetri in
+ * quell'ora esatta, e sotto la scritta TEMPORALE non cadeva niente.
+ */
+fun Wmo.Family.isWet(): Boolean =
+    this == Wmo.Family.PIOGGIA || this == Wmo.Family.NEVE || this == Wmo.Family.TEMPORALE

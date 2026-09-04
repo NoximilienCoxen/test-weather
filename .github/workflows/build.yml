@@ -111,6 +111,50 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/publish.sh api
 
+  # I test stanno in un job loro e non dentro `build`: sono veloci, non hanno
+  # bisogno dell'SDK completo, e con l'APK che dipende da `build` un test rosso
+  # non deve impedire di avere comunque un APK da installare. Cio' che dicono
+  # si legge lo stesso.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Componenti SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
+            || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
+
+      - name: testDebugUnitTest
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --no-daemon 2>&1 | tee /tmp/test.log || {
+            echo ""
+            echo "===================== TEST FALLITI ======================="
+            grep -E "^e: |FAILED|expected:|AssertionError|junit" /tmp/test.log | head -60
+            echo "=========================================================="
+            exit 1
+          }
+
+      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
+      # caduto e l'XML dice perche'.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
+          if-no-files-found: warn
+
   build:
     runs-on: ubuntu-latest
     steps:
