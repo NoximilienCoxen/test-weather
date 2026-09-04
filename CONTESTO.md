@@ -1242,6 +1242,15 @@ Compose solo perche' la scultura e' stato il primo posto in cui e' servita.
   10-15% della superficie.
 - Vuole essere avvisato in anticipo dei limiti, non dopo.
 - **Non vuole spiegazioni sugli errori commessi**: vanno corretti e basta.
+- **I commit non portano firme di strumenti.** Niente trailer di paternita'
+  automatica, niente link a sessioni: nessun riferimento all'assistente, ne' nei
+  messaggi ne' fra gli autori. Il lavoro e' firmato
+  `NoximilienCoxen <313902161+NoximilienCoxen@users.noreply.github.com>`, che e'
+  l'identita' da usare per `user.name` e `user.email`.
+
+  Questa regola e' stata data piu' volte e altrettante volte disattesa, perche'
+  la firma automatica viene reinserita a ogni sessione nuova: **e' scritta qui
+  apposta**, ed e' la prima cosa da impostare prima di committare.
 
 ---
 
