@@ -3,55 +3,26 @@
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
 
-    <group android:pivotX="52.9" android:pivotY="55.35"
-        android:scaleX="0.78" android:scaleY="0.78"
-        android:translateX="1.1" android:translateY="-1.35">
-    <!-- L'ombra portata. Scostata piu' della parete perche' cade su un
-         piano che sta dietro l'oggetto, non sul suo fianco. -->
-    <group android:translateX="9.0" android:translateY="8.0">
-        <path android:fillColor="#26000000" android:pathData="M30.81,55.50 A21.0,21.0 0 1 1 67.19,55.50 L56.79,49.50 A9.0,9.0 0 1 0 41.21,49.50 Z" />
-        <path android:fillColor="#26000000" android:pathData="M56.79,49.50L67.19,55.50L40.19,74.50L29.79,68.50Z" />
-        <path android:fillColor="#26000000" android:pathData="M28.0,68.0 L70.0,68.0 L70.0,80.0 L28.0,80.0 Z" />
-    </group>
+    <group android:translateX="-4.5" android:translateY="-4.0">
+    <!-- L'ombra: cade su un piano dietro l'oggetto, quindi e' scostata piu'
+         della parete. -->
+        <path android:fillColor="#26000000" android:fillType="evenOdd" android:pathData="M43.00,62.00 A20.0,20.0 0 1 1 83.00,62.00 A20.0,20.0 0 1 1 43.00,62.00 Z M51.50,62.00 A11.5,11.5 0 1 1 74.50,62.00 A11.5,11.5 0 1 1 51.50,62.00 Z" />
 
-    <!-- La parete. E' la stessa sagoma spostata: vista di fronte, e'
-         esattamente quello che un'estrusione lascia vedere. -->
-    <group android:translateX="4.5" android:translateY="3.5">
-        <path android:pathData="M30.81,55.50 A21.0,21.0 0 1 1 67.19,55.50 L56.79,49.50 A9.0,9.0 0 1 0 41.21,49.50 Z">
+    <!-- La parete. La stessa sagoma spostata: vista di fronte e' esattamente
+         cio' che un'estrusione lascia vedere - e su un anello si vede anche la
+         parete **interna**, che una cifra piena non mostra mai. -->
+        <path android:pathData="M38.50,57.50 A20.0,20.0 0 1 1 78.50,57.50 A20.0,20.0 0 1 1 38.50,57.50 Z M47.00,57.50 A11.5,11.5 0 1 1 70.00,57.50 A11.5,11.5 0 1 1 47.00,57.50 Z" android:fillType="evenOdd">
             <aapt:attr name="android:fillColor">
-                <gradient android:type="linear" android:startX="30" android:startY="26" android:endX="78" android:endY="86" android:startColor="#FFE9EAEE" android:endColor="#FF43464C">
+                <gradient android:type="linear" android:startX="32" android:startY="30" android:endX="86" android:endY="86" android:startColor="#FFE9EAEE" android:endColor="#FF43464C">
                 </gradient>
             </aapt:attr>
         </path>
-        <path android:pathData="M56.79,49.50L67.19,55.50L40.19,74.50L29.79,68.50Z">
-            <aapt:attr name="android:fillColor">
-                <gradient android:type="linear" android:startX="30" android:startY="26" android:endX="78" android:endY="86" android:startColor="#FFE9EAEE" android:endColor="#FF43464C">
-                </gradient>
-            </aapt:attr>
-        </path>
-        <path android:pathData="M28.0,68.0 L70.0,68.0 L70.0,80.0 L28.0,80.0 Z">
-            <aapt:attr name="android:fillColor">
-                <gradient android:type="linear" android:startX="30" android:startY="26" android:endX="78" android:endY="86" android:startColor="#FFE9EAEE" android:endColor="#FF43464C">
-                </gradient>
-            </aapt:attr>
-        </path>
-    </group>
 
-    <!-- Lo smusso, fra la faccia e la parete e non sopra la faccia: la
-         faccia e' bianca piena, e un filo piu' chiaro sopra il bianco non
-         si vede. Nella tavolozza dell'app numberChamfer e' infatti piu'
-         scuro della faccia, non piu' chiaro. -->
-    <group android:translateX="1.7" android:translateY="1.4">
-        <path android:fillColor="#FFDFE1E5" android:pathData="M30.81,55.50 A21.0,21.0 0 1 1 67.19,55.50 L56.79,49.50 A9.0,9.0 0 1 0 41.21,49.50 Z" />
-        <path android:fillColor="#FFDFE1E5" android:pathData="M56.79,49.50L67.19,55.50L40.19,74.50L29.79,68.50Z" />
-        <path android:fillColor="#FFDFE1E5" android:pathData="M28.0,68.0 L70.0,68.0 L70.0,80.0 L28.0,80.0 Z" />
-    </group>
+    <!-- Lo smusso, fra la faccia e la parete: la faccia e' bianca piena e un
+         filo piu' chiaro sopra il bianco non si vedrebbe. -->
+        <path android:fillColor="#FFDFE1E5" android:fillType="evenOdd" android:pathData="M35.70,55.40 A20.0,20.0 0 1 1 75.70,55.40 A20.0,20.0 0 1 1 35.70,55.40 Z M44.20,55.40 A11.5,11.5 0 1 1 67.20,55.40 A11.5,11.5 0 1 1 44.20,55.40 Z" />
 
-    <!-- La faccia. Bianca piena: e' plastica opaca, non cromo. -->
-    <group android:translateX="0.0" android:translateY="0.0">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M30.81,55.50 A21.0,21.0 0 1 1 67.19,55.50 L56.79,49.50 A9.0,9.0 0 1 0 41.21,49.50 Z" />
-        <path android:fillColor="#FFFFFFFF" android:pathData="M56.79,49.50L67.19,55.50L40.19,74.50L29.79,68.50Z" />
-        <path android:fillColor="#FFFFFFFF" android:pathData="M28.0,68.0 L70.0,68.0 L70.0,80.0 L28.0,80.0 Z" />
-    </group>
+    <!-- La faccia. Plastica bianca opaca, non cromo. -->
+        <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M34.00,54.00 A20.0,20.0 0 1 1 74.00,54.00 A20.0,20.0 0 1 1 34.00,54.00 Z M42.50,54.00 A11.5,11.5 0 1 1 65.50,54.00 A11.5,11.5 0 1 1 42.50,54.00 Z" />
     </group>
 </vector>

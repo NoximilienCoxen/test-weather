@@ -765,21 +765,28 @@ avrebbe cambiato una tempistica costata cara.
 
 **39. Di un'icona adattiva il telefono garantisce solo il cerchio centrale.**
 Su 108 unita' di lato, quelle sicure sono i 66 centrali: tutto il resto puo'
-essere tagliato, e ogni marca taglia con una maschera sua. Disegnata a grandezza
-piena, la cifra stava benissimo nell'anteprima quadrata e sotto la maschera tonda
-il trattino di base veniva **affettato** - non mascherato con grazia, proprio
-tagliato a meta' - mentre l'ombra usciva del tutto.
+essere tagliato, e ogni marca taglia con una maschera sua. **Un'icona si guarda
+sotto le maschere, non nel suo riquadro** - il cerchio e lo squircle stretto
+sono i due casi che bastano, e si vedono cose che nel quadrato non esistono:
+una sagoma con gli spigoli viene affettata, e una sagoma tonda dentro la
+maschera tonda diventa un bersaglio se non le si lascia aria attorno.
 
-Il rimedio non e' stato rifare le coordinate: l'intera composizione (ombra,
-parete, smusso e faccia insieme) passa per un `<group>` che la rimpicciolisce
-attorno al proprio centro, cosi' i rapporti restano quelli disegnati e il
-controllo del raggio si fa una volta sola. Gli stessi tre numeri valgono per il
-livello monocromatico, se no la sagoma a tinta unita non starebbe dove sta la
-faccia.
+Il livello monocromatico va centrato **per conto suo**: lo spostamento che nel
+foreground bilancia l'ombra, li' dove l'ombra non c'e' lascia la sagoma storta.
 
-Vale come metodo, non solo per questa icona: **un'icona si guarda sotto le
-maschere, non nel suo riquadro.** Il cerchio e lo squircle stretto sono i due
-casi che bastano.
+**40. Un'icona non e' una scelta di forma, e' una scelta di significato.**
+La prima stesura era una cifra estrusa - un "2" - scelto perche' curva,
+diagonale e base piatta danno tre orientamenti di piano e mostrano bene
+l'estrusione. Cioe' scelto per **come si scolpisce**, non per **cosa vuol
+dire**: il 2 non c'entra niente con questa app, e su una schermata puo' leggersi
+come un badge di notifica.
+
+Adesso e' il **grado**, ed e' l'unica scelta non arbitraria disponibile: e' il
+solo segno che dice "temperatura" senza una parola, e soprattutto **l'app lo
+estrude gia'** - e' `smallTail` in `NumberSpec`, l'ultimo carattere della
+scritta, estruso illuminato e girato insieme alle cifre. In piu' un anello
+mostra anche la **parete interna**, che una cifra piena non fa vedere mai:
+l'estrusione si legge meglio di prima.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
