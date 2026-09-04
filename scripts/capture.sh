@@ -336,6 +336,33 @@ session() {
   sleep 2
   shoot "${slug}-d9-allerta-dettaglio"
 
+  # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
+  #
+  # Lo stato ridotto si raggiunge con un tocco sulla croce, e qui non c'e' un
+  # dito: l'aggancio `--ez allertaridotta` lo impone. E' l'unico modo di
+  # fotografarlo, e senza scatto sarebbe l'unico pezzo dell'interfaccia che
+  # nessuno ha mai verificato.
+  #
+  # Due cose da guardare in questo scatto, e sono le due che possono rompersi:
+  # il nome della localita' deve restare **nella stessa identica posizione**
+  # dello scatto d8 - il pallino sta nei 48dp che erano gia' riservati - e il
+  # triangolo deve leggersi sul fondo del contenitore d'errore.
+  alive || { echo "dispositivo caduto prima dello scatto del pallino"; return; }
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
+    --ei allerta 2 --ez allertaridotta true >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d10-allerta-pallino"
+
+  # Il pallino deve riportare alle allerte per esteso: e' tutto il suo mestiere.
+  # Sta in alto a destra, nei 48dp simmetrici al pulsante delle impostazioni.
+  alive || { echo "dispositivo caduto prima dello scatto del bollettino"; return; }
+  adbt shell input tap "$(( W - 44 ))" "$(( H * 7 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d11-allerta-riaperta"
+
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #
   # Il fondo del cielo e il colore del testo si interpolano su due scale

@@ -47,6 +47,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertBanner
+import io.github.noximiliencoxen.caelum.ui.alerts.AlertPill
 import io.github.noximiliencoxen.caelum.ui.asBigDegrees
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
 import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
@@ -79,6 +80,10 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenTemperatureDetail: () -> Unit = {},
     onOpenAlerts: () -> Unit = {},
+    /** Riduce la fascia dell'allerta al pallino. */
+    onDismissAlerts: () -> Unit = {},
+    /** Riapre la fascia **e** il bollettino: e' il tocco sul pallino. */
+    onReopenAlerts: () -> Unit = {},
     onRefresh: () -> Unit = {},
     /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
     pullArmed: Boolean = false,
@@ -165,7 +170,18 @@ fun HomeScreen(
             }
             // Occupa quanto il pulsante a sinistra, cosi' il nome resta al
             // centro dello schermo e non al centro di quel che avanza.
-            Spacer(Modifier.width(48.dp))
+            //
+            // Quando la fascia dell'allerta e' ridotta, questi 48dp non restano
+            // vuoti: ci sta il pallino. E' la stessa misura - `MinTouchTarget`,
+            // cioe' quella di `MeteoIconButton` - quindi il nome della localita'
+            // non si sposta di un pixel fra i due stati, e il pallino non ruba
+            // altezza a niente. Che e' esattamente cio' che si cerca chiudendo
+            // la fascia.
+            Box(modifier = Modifier.width(48.dp), contentAlignment = Alignment.Center) {
+                if (state.alertsCollapsed) {
+                    AlertPill(alerts = state.shownAlerts, onOpen = onReopenAlerts)
+                }
+            }
         }
 
         // L'allerta sta qui, in cima alla schermata che si apre per prima.
@@ -174,9 +190,13 @@ fun HomeScreen(
         // dal cielo: e' l'unico riquadro che deve leggersi uguale a mezzanotte
         // e a mezzogiorno, mentre tutto il resto di questa schermata cambia con
         // l'ora. Se non ci sono allerte non occupa spazio.
-        AlertBanner(
+        // Ridotta, la fascia non si disegna: il suo posto e' il pallino nella
+        // riga qui sopra. `AlertBanner` non disegna gia' niente quando non ci
+        // sono allerte, quindi i due stati muti restano uno solo.
+        if (!state.alertsCollapsed) AlertBanner(
             alerts = state.shownAlerts,
             onOpen = onOpenAlerts,
+            onDismiss = onDismissAlerts,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
         )
 

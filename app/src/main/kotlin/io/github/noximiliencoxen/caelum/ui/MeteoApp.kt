@@ -217,6 +217,15 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onOpenSettings = viewModel::openSettings,
                 onOpenTemperatureDetail = sheet::openFully,
                 onOpenAlerts = viewModel::openAlerts,
+                onDismissAlerts = viewModel::collapseAlerts,
+                // Un gesto solo per due effetti: il pallino rimette la fascia e
+                // apre il bollettino. Chi lo tocca vuole leggere l'avviso, e
+                // trovarselo di nuovo per esteso tornando indietro e' la
+                // risposta che non richiede di cercare come si fa.
+                onReopenAlerts = {
+                    viewModel.expandAlerts()
+                    viewModel.openAlerts()
+                },
                 onRefresh = viewModel::refresh,
                 pullArmed = pullArmed,
                 modifier = Modifier
