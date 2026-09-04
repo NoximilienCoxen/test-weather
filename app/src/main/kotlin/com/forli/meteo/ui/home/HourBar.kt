@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -104,6 +105,15 @@ fun HourBar(
         measurer.measure(text = label, style = bubbleStyle)
     }
 
+    // L'altezza della bolla la decide **il testo misurato**, non una costante.
+    // Con il carattere di sistema ingrandito quindici punti ne diventano
+    // ventidue, e una bolla alta ventiquattro fissi taglierebbe l'ora a meta' -
+    // che e' lo stesso difetto per cui esiste `MeteoLayout`. Da qui viene anche
+    // l'altezza della barra, cosi' il conto torna per forza invece che a occhio.
+    val bubbleHeight = with(LocalDensity.current) { bubbleText.size.height.toDp() } + 8.dp
+    val barHeight = bubbleHeight + TAIL_HEIGHT + THUMB_OVERHANG * 2 +
+        TRACK_HEIGHT + NOTE_GAP + NOW_DOT_RADIUS * 2 + 1.dp
+
     fun indexAt(x: Float, width: Float): Int =
         floor(x / width * hours.size).toInt().coerceIn(0, hours.lastIndex)
 
@@ -117,7 +127,7 @@ fun HourBar(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(BAR_HEIGHT)
+            .height(barHeight)
             // Una tela e' muta: chi ascolta la schermata trovava una striscia
             // senza nome dove chi guarda ha ventiquattro ore da scegliere.
             .semantics { contentDescription = "Ora mostrata: $label" }
@@ -147,8 +157,8 @@ fun HourBar(
         // Le fasce si misurano in punti dal bordo di sopra, non in frazioni
         // dell'altezza: una bolla che si allarga o si stringe col telefono
         // conterrebbe un testo che invece resta della sua misura.
-        val bubbleHeight = BUBBLE_HEIGHT.toPx()
-        val thumbTop = bubbleHeight + TAIL_HEIGHT.toPx()
+        val bubbleBand = bubbleHeight.toPx()
+        val thumbTop = bubbleBand + TAIL_HEIGHT.toPx()
         val trackHeight = TRACK_HEIGHT.toPx()
         val top = thumbTop + THUMB_OVERHANG.toPx()
         val thumbBottom = top + trackHeight + THUMB_OVERHANG.toPx()
@@ -257,8 +267,8 @@ fun HourBar(
         drawRoundRect(
             color = colors.pillBackground,
             topLeft = Offset(bubbleLeft, 0f),
-            size = Size(bubbleWidth, bubbleHeight),
-            cornerRadius = CornerRadius(bubbleHeight / 2f, bubbleHeight / 2f),
+            size = Size(bubbleWidth, bubbleBand),
+            cornerRadius = CornerRadius(bubbleBand / 2f, bubbleBand / 2f),
         )
 
         // La codina ha la punta sul cursore e la base dentro la bolla. Alle due
@@ -274,8 +284,8 @@ fun HourBar(
         )
         drawPath(
             path = Path().apply {
-                moveTo(baseX - tailHalf, bubbleHeight - 1f)
-                lineTo(baseX + tailHalf, bubbleHeight - 1f)
+                moveTo(baseX - tailHalf, bubbleBand - 1f)
+                lineTo(baseX + tailHalf, bubbleBand - 1f)
                 lineTo(thumbX, thumbTop)
                 close()
             },
@@ -286,16 +296,16 @@ fun HourBar(
             textLayoutResult = bubbleText,
             topLeft = Offset(
                 x = bubbleLeft + BUBBLE_PADDING.toPx(),
-                y = (bubbleHeight - bubbleText.size.height) / 2f,
+                y = (bubbleBand - bubbleText.size.height) / 2f,
             ),
         )
     }
 }
 
-// Le misure della barra, in un posto solo: la somma di queste deve stare dentro
-// [BAR_HEIGHT], e leggerle sparse dentro il disegno rendeva impossibile
-// verificarlo a occhio.
-private val BUBBLE_HEIGHT = 24.dp
+// Le misure della barra, in un posto solo. L'altezza totale e' la loro somma
+// piu' la bolla (`barHeight`, che si calcola sopra): cosi' non c'e' un numero
+// da tenere allineato a mano con le fasce che deve contenere - era il modo in
+// cui una fascia in piu' finiva per uscire dal fondo senza che si vedesse.
 private val BUBBLE_PADDING = 10.dp
 private val TAIL_HEIGHT = 6.dp
 private val TAIL_HALF_WIDTH = 5.dp
@@ -305,9 +315,6 @@ private val THUMB_RING = 2.dp
 private val TRACK_HEIGHT = 18.dp
 private val NOTE_GAP = 6.dp
 private val NOW_DOT_RADIUS = 2.5.dp
-
-/** 24 + 6 + 5 + 18 + 5 + 6 + 2,5, piu' un punto di margine in fondo. */
-private val BAR_HEIGHT = 68.dp
 
 /** Colore di un'ora: asciutto resta neutro, il resto si dichiara. */
 private fun tintOf(hour: HourForecast, colors: MeteoColors): Color {

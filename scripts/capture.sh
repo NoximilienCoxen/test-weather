@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Installa l'APK sull'emulatore e fotografa le schermate nei due temi:
-# principale, benvenuto, impostazioni, e le cinque pagine del dettaglio piu'
+# principale, benvenuto, impostazioni, e le sei pagine del dettaglio piu'
 # il dettaglio di un giorno.
 #
 # Ogni chiamata adb ha un timeout: senza, una adb su dispositivo caduto resta
@@ -273,13 +273,17 @@ session() {
   sleep 2
   shoot "${slug}-d1-temperatura"
 
-  # Le altre quattro pagine, raggiunte scorrendo sul contenuto sotto la cifra:
+  # Le altre cinque pagine, raggiunte scorrendo sul contenuto sotto la cifra:
   # e' il gesto vero, quello che usa chi guarda. Sulla cifra invece il gesto
   # orizzontale gira la scena, e i due non si contendono niente proprio perche'
   # stanno in due zone diverse.
+  #
+  # La luna chiude la fila: il suo eroe non e' una cifra ma la sfera, quindi e'
+  # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
+  # della cifra invece che accanto.
   local pager_y=$(( H * 72 / 100 ))
   local n=2
-  for pagina in sole pioggia vento aria; do
+  for pagina in sole pioggia vento aria luna; do
     adbt shell input swipe "$FROM_X" "$pager_y" "$TO_X" "$pager_y" 320 >/dev/null 2>&1 || true
     sleep 2
     shoot "${slug}-d${n}-${pagina}"
@@ -290,7 +294,7 @@ session() {
   # BackHandler sia agganciato.
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d6-tornato-alla-principale"
+  shoot "${slug}-d7-tornato-alla-principale"
 
   # ── Il dettaglio di un giorno ───────────────────────────────────────────────
   #
