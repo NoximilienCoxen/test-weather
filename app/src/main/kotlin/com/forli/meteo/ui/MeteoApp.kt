@@ -399,6 +399,22 @@ private class SheetGesture(private val scope: CoroutineScope) {
     val open: Float get() = raised.floatValue
     val pull: Float get() = pulled.floatValue
 
+    /**
+     * Vero quando il foglio e' arrivato in cima **davvero**.
+     *
+     * Con tolleranza e non `== 1f`: `raised` e' il valore di una molla, e
+     * `begin()` la cancella dove la trova. Chi cominciava a scorrere mentre il
+     * foglio stava ancora salendo lo lasciava a 0,997 **per sempre**, e da li'
+     * in poi la guardia non scattava piu': il foglio restava armato per
+     * chiudersi, e per giunta `onPreScroll` si mangiava anche i delta verso
+     * l'alto, cioe' il contenuto non scorreva piu' affatto.
+     */
+    val opened: Boolean get() = raised.floatValue >= ANCHOR_EPSILON
+
+    /** Vero quando il foglio sta su un'ancora: tutto su o tutto giu'. */
+    val atRest: Boolean
+        get() = raised.floatValue >= ANCHOR_EPSILON || raised.floatValue <= 1f - ANCHOR_EPSILON
+
     /** Vero quando il tiro basta a valere una ricarica, e si puo' lasciare. */
     val armed: Boolean get() = pulled.floatValue >= PULL_TRIGGER
 
@@ -497,6 +513,10 @@ private class SheetGesture(private val scope: CoroutineScope) {
  * resta chiude; da foglio socchiuso, il dito che va su lo rialza **prima** di
  * toccare il contenuto, altrimenti si scorrerebbe dentro una schermata che non
  * e' ancora arrivata al suo posto.
+ *
+ * **L'avanzo dev'essere quello di un dito.** La regola sopra era giusta e il
+ * codice la applicava a qualunque delta, compresi quelli che nessuno stava
+ * facendo: vedi [isFinger] e il campo `moved` qui sotto.
  */
 @Stable
 private class SheetNestedScroll(
@@ -504,10 +524,21 @@ private class SheetNestedScroll(
     private val heightPx: Float,
 ) : NestedScrollConnection {
 
+    /**
+     * Se **questo** gesto ha davvero mosso il foglio.
+     *
+     * Senza, l'avanzo di velocita' di uno scorrimento tutto interno alla pagina
+     * finiva lo stesso in `release()`, e il foglio decideva di se' in base a una
+     * corsa che non era la sua.
+     */
+    private var moved = false
+
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        if (!source.isFinger) return Offset.Zero
         val delta = available.y
-        if (delta >= 0f || sheet.open >= 1f) return Offset.Zero
+        if (delta >= 0f || sheet.opened) return Offset.Zero
         sheet.begin()
+        moved = true
         sheet.dragSheet(delta, heightPx)
         return Offset(0f, delta)
     }
@@ -517,9 +548,11 @@ private class SheetNestedScroll(
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
+        if (!source.isFinger) return Offset.Zero
         val delta = available.y
         if (delta <= 0f) return Offset.Zero
         sheet.begin()
+        moved = true
         sheet.dragSheet(delta, heightPx)
         return Offset(0f, delta)
     }
@@ -530,11 +563,36 @@ private class SheetNestedScroll(
         settle(available)
 
     private fun settle(available: Velocity): Velocity {
-        if (sheet.open >= 1f) return Velocity.Zero
+        if (!moved) {
+            // Il gesto non ha mosso il foglio, quindi non tocca a lui
+            // assestarlo. Se pero' il foglio e' rimasto a meta' - una molla che
+            // uno scorrimento cominciato troppo presto ha cancellato - va
+            // rimesso su un'ancora adesso: altrimenti `opened` non torna vero
+            // mai piu' e da li' in avanti il contenuto non scorre.
+            if (!sheet.atRest) sheet.release(0f)
+            return Velocity.Zero
+        }
+        moved = false
+        if (sheet.opened) return Velocity.Zero
         sheet.release(available.y)
         return available
     }
 }
+
+/**
+ * Un avanzo di scorrimento **non e' un dito**.
+ *
+ * `NestedScrollSource` c'e' da sempre in questi callback e non lo leggeva
+ * nessuno: uno slancio che si esaurisce, e l'elastico di fine corsa che si
+ * rilassa, arrivavano qui indistinguibili da una mano e muovevano il foglio.
+ * Arrivati in fondo a una pagina bastava una scorsa decisa perche' il dettaglio
+ * si chiudesse da solo, senza che nessuno gli avesse chiesto di farlo.
+ *
+ * Un foglio si chiude perche' lo si chiude, non perche' una molla ha finito di
+ * tornare a posto.
+ */
+private val NestedScrollSource.isFinger: Boolean
+    get() = this == NestedScrollSource.UserInput
 
 /**
  * Chiare o scure, le icone delle barre di sistema.
@@ -578,3 +636,12 @@ private const val SNAP_VELOCITY = 800f
 /** Quanto dito serve per chiedere una ricarica, e quanto se ne accetta in tutto. */
 private const val PULL_TRIGGER = 190f
 private const val PULL_LIMIT = 300f
+
+/**
+ * Quanto vicino a un'ancora conta come esserci arrivati.
+ *
+ * Serve perche' `raised` e' il valore di una molla che qualcuno puo' cancellare
+ * a meta': un confronto esatto con 1 lasciava il foglio "quasi aperto" per il
+ * resto della sua vita.
+ */
+private const val ANCHOR_EPSILON = 0.999f

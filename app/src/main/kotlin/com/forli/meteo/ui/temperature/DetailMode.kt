@@ -25,9 +25,17 @@ enum class DetailMode(
     SOLE(title = "SOLE", chipLabel = "Sole", unitLabel = "ORE DI SOLE"),
     PRECIPITAZIONI(title = "PRECIPITAZIONI", chipLabel = "Pioggia", unitLabel = "MM NEL GIORNO"),
     VENTO(title = "VENTO", chipLabel = "Vento", unitLabel = "M/S"),
-    ARIA(title = "QUALITA' DELL'ARIA", chipLabel = "Aria", unitLabel = "INDICE EUROPEO");
+    ARIA(title = "QUALITA' DELL'ARIA", chipLabel = "Aria", unitLabel = "INDICE EUROPEO"),
+    LUNA(title = "LUNA", chipLabel = "Luna", unitLabel = "");
 
-    /** Vero per le grandezze la cui cifra e' un totale del giorno, non un'istantanea. */
+    /**
+     * Vero per le grandezze la cui cifra e' un totale del giorno, non
+     * un'istantanea.
+     *
+     * La luna ci sta dentro: la fase e' del giorno, e scriverle accanto un'ora
+     * precisa sarebbe la stessa bugia che l'intestazione diceva sulle ore di
+     * sole - "OGGI  ·  15:00" sopra un numero che parla di tutta la giornata.
+     */
     val isDailyTotal: Boolean
-        get() = this == SOLE || this == PRECIPITAZIONI
+        get() = this == SOLE || this == PRECIPITAZIONI || this == LUNA
 }

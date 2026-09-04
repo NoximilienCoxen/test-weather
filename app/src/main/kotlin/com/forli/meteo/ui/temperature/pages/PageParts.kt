@@ -261,6 +261,12 @@ internal fun heroValue(
 
         com.forli.meteo.ui.temperature.DetailMode.ARIA ->
             state.air?.europeanAqi?.toString()
+
+        // La luna non ha una cifra da estrudere: il suo eroe e' il corpo, non
+        // un numero. La percentuale illuminata sta nella prima scheda della
+        // pagina, dove puo' stare accanto al nome della fase invece che sotto
+        // un'unita' scritta a parte.
+        com.forli.meteo.ui.temperature.DetailMode.LUNA -> null
     }
 }
 

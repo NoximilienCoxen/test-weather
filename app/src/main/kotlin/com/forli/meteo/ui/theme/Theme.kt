@@ -44,10 +44,12 @@ fun MeteoColors.toNumberPalette(): NumberPalette = NumberPalette(
  * la gerarchia si fa con gli assi invece che con file diversi: le etichette
  * strette e pesanti, i valori normali. Costo zero, perche' il file c'era gia'.
  *
- * **Il monospace resta dove serve la larghezza fissa**, e cioe' su un numero solo:
- * l'ora sotto la barra. Scorrendo, "09:00" e "14:00" devono restare incolonnate,
- * e con un carattere proporzionale l'etichetta ballerebbe da sinistra a destra a
- * ogni ora.
+ * **Il monospace non serve piu' a niente.** Restava per un'etichetta sola -
+ * l'ora sotto la barra - dove scorrendo "09:00" e "14:00" devono restare
+ * incolonnate. Quell'ora adesso sta nella bolla sopra il cursore e usa
+ * [MeteoType.metric], che le cifre a larghezza fissa ce le ha per conto suo
+ * (`tnum`) senza dover cambiare famiglia: stessa immobilita', ma col carattere
+ * dell'app invece che con quello del sistema.
  */
 private fun archivo(weight: Int, width: Float): FontFamily = FontFamily(
     Font(
@@ -123,13 +125,6 @@ object MeteoType {
         fontFeatureSettings = "tnum",
     )
 
-    /** Solo per cio' che deve restare incolonnato mentre i valori cambiano. */
-    val tabular = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
-        letterSpacing = 0.18.em,
-    )
 }
 
 /**
