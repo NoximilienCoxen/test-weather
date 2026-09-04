@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
+        Caelum: in latino il cielo, e insieme lo scalpello del bulinatore - c'e'
+        anche una costellazione con questo nome. L'app disegna un cielo e un
+        oggetto fresato con gli smussi netti, quindi il doppio senso e' esatto.
+
         Il nome non nomina piu' una citta': la localita' la sceglie chi usa
         l'app, e "Meteo Forli'" su una schermata che mostra Singapore era una
-        smentita in cima allo schermo.
+        smentita in cima allo schermo. Non e' nemmeno piu' "Weather", che era il
+        segnaposto inglese rimasto in mezzo a un'app tutta in italiano.
     -->
-    <string name="app_name">Weather</string>
+    <string name="app_name">Caelum</string>
 
     <!--
         I tre widget si scelgono da una lista in cui compare solo il nome: se si
-        chiamassero tutti "Weather" non ci sarebbe modo di sapere quale si sta
+        chiamassero tutti "Caelum" non ci sarebbe modo di sapere quale si sta
         trascinando.
     -->
     <string name="widget_weather_label">Meteo attuale</string>
