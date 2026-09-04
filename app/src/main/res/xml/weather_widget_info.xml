@@ -12,5 +12,5 @@
     android:updatePeriodMillis="1800000"
     android:resizeMode="none"
     android:widgetCategory="home_screen"
-    android:configure="com.forli.meteo.widget.WidgetConfigActivity"
+    android:configure="io.github.noximiliencoxen.caelum.widget.WidgetConfigActivity"
     android:initialLayout="@layout/widget_loading" />
