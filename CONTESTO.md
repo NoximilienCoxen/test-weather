@@ -828,6 +828,65 @@ lo decide il Sole, non chi guarda (e' la trappola #24 vista dall'altro lato).
 Una falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
 perche' ci si e' spostati di venti centimetri.
 
+**41. `NaN` non fa cadere niente, e per questo arriva lontano.** Sull'emulatore
+"localizzami" ha prodotto una `Place` chiamata **MOUNTAIN VIEW** con latitudine e
+longitudine a `NaN`: il `Location` di sistema le aveva cosi', ma il nome si
+geocodificava benissimo, quindi la localita' sembrava a tutti gli effetti buona.
+Da li' in poi nessuno si e' opposto - `NaN` passa i confronti, si concatena in
+una stringa, entra in un URL come testo - finche' Open-Meteo non ha risposto
+`{"latitude":NaN,"longitude":NaN,...}` e il lettore JSON si e' fermato:
+*Unexpected JSON token at offset 15: Failed to parse type 'double' for input
+'NaN'*.
+
+Il guasto quindi si presentava **a due passaggi da dove era nato**, e travestito
+da errore di formato: chi legge quel messaggio va a guardare il parser, che e'
+l'unico pezzo innocente della catena. E' la trappola #9 in una forma nuova - la
+prima diagnosi la suggerisce il messaggio, e il messaggio parla del posto
+sbagliato.
+
+Il guardiano sta alla sorgente: `DeviceLocation.describe()` torna **nullo** se
+il rilevamento non ha coordinate finite, cioe' lo tratta come tutti gli altri
+modi di non riuscire (permesso negato, posizione spenta, nessun fix in tempo), e
+chi ha chiamato resta dov'era. `lastKnown()` scarta le posizioni non finite
+prima di sceglierle, altrimenti un'ultima posizione nota rotta scarterebbe da
+sola il rilevamento vero, che si chiede solo quando li' non c'e' niente.
+
+Due punti in piu', perche' la falla aveva gia' lasciato dei residui:
+`WeatherRepository.load()` si ferma **prima** della richiesta con un `require`
+che nomina la localita', e `SettingsPrefs` rilegge una localita' salvata solo se
+le sue coordinate sono numeri veri. Quel secondo non e' teoria: la `Place` con
+`NaN` era **gia' scritta nel DataStore**, e da sola non se ne sarebbe mai
+andata - a ogni avvio l'app la rileggeva, la mandava alla rete e falliva di
+nuovo. Un difetto che si ripara solo in avanti lascia i dispositivi che lo hanno
+gia' incontrato rotti per sempre.
+
+Il guardiano e' `Place.hasFiniteCoordinates`, ed e' sotto test
+(`FiniteCoordinatesTest`) perche' un valore che non si nota si toglie una volta
+e torna la volta dopo.
+
+**42. Il messaggio di un'eccezione non e' un messaggio per l'utente.**
+`UiState.error` finisce in tre punti dell'interfaccia, e in uno di quelli -
+la condizione della schermata principale - viene scritto **in maiuscolo, al
+posto della parola sul tempo**. Finche' li' dentro ci arrivava
+`failure.message`, il fallimento della trappola #41 si e' visto cosi': sei righe
+di JSON maiuscolo, coordinate di chi stava usando l'app comprese, dove doveva
+esserci "SERENO".
+
+Adesso `failureMessage()` traduce il guasto in una riga sola, e le categorie sono
+tre perche' tre sono le risposte diverse che puo' dare chi legge: **la rete**
+(aspetta), **il servizio** (non dipende da te), **il resto** (riprova).
+Distinguere di piu' vorrebbe dire spiegare in un'app del meteo la differenza fra
+un timeout e un handshake TLS.
+
+Il dettaglio tecnico non si perde, va nel log - dove prima **non c'era affatto**:
+un fallimento di rete non lasciava una riga. E li' c'e' una sorpresa da sapere:
+`Log.getStackTraceString` torna la **stringa vuota** se nella catena delle cause
+c'e' una `UnknownHostException`. Lo fa apposta, per non riempire il log ogni
+volta che manca la rete, ma vuol dire che nel caso piu' frequente il terzo
+argomento di `Log.w` non stampa niente. Per questo l'eccezione compare due volte,
+come testo nel messaggio e come oggetto: senza la prima resterebbe una riga che
+dice solo che e' andata male.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -1204,8 +1263,8 @@ Quattro trappole gia' pagate qui:
 Il progetto non ne aveva **nessuno**. Sotto c'era solo `probe-api`, che verifica
 i contratti delle API ma non una riga di logica.
 
-Trentanove prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
-stante. Sono scelte per cio' che coprono, non per fare numero — e tre di loro
+Quarantasei prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
+stante. Sono scelte per cio' che coprono, non per fare numero — e cinque di loro
 stanno esattamente sopra trappole gia' pagate:
 
 | Cosa | Perche' proprio quello |
@@ -1217,6 +1276,8 @@ stanno esattamente sopra trappole gia' pagate:
 | `Wmo.family` / `isWet` | La trappola #14 vive qui: se il codice dice che piove, deve piovere. |
 | `readableOn` | Mantiene la soglia che dichiara, su una griglia di fondi che comprende il grigio medio - il caso peggiore, perche' di li' non si scappa ne' verso il bianco ne' verso il nero. |
 | `TempUnit.from` | 21 °C -> 70 °F, la coppia gia' verificata sul telefono. |
+| `hasFiniteCoordinates` | La trappola #41: `NaN` non fa cadere niente e arriva fino alla rete travestito da errore di formato. Il test prova anche che `WeatherRepository.load()` si fermi **senza aprire una connessione**. |
+| `failureMessage` | La trappola #42, e non prova il testo esatto: prova che cio' che si mostra **non sia** il messaggio dell'eccezione, che stia su una riga e che sia corto. Sono i tre modi in cui quel dump era arrivato sullo schermo. |
 
 **Robolectric serve a un file solo**, e va **configurato**: `parseFeed` passa da
 `android.util.Xml`, che su una JVM non c'e'. Il progetto compila contro il
