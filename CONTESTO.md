@@ -153,6 +153,37 @@ che si e' liberato sotto c'e' il solo tasto TORNA AD ADESSO, che prima era
 appiccicato all'etichetta dell'ora - un bersaglio con due mestieri, e per giunta
 spento quando diceva la cosa piu' utile.
 
+**Sopra la barra delle ore c'e' il diagramma della giornata**, alto ventidue
+punti: la temperatura come linea, la pioggia come colonnine sotto. E' lo stesso
+disegno di "ANDAMENTO DELLA GIORNATA" nel dettaglio - stessa spline
+(`buildLinePath`), stessa scala di colore (`temperatureRamp`) - ma senza assi,
+numeri, griglia e tocco. Qui non e' una cosa da leggere punto per punto, e' la
+forma della giornata vista di sfuggita mentre si sceglie un'ora; chi vuole i
+numeri apre il dettaglio. Sta **dentro la tela di `HourBar`** e non in un
+composable sopra, per la ragione gia' scritta in cima a quel file: la scala
+orizzontale dev'essere la stessa della pista, e due tele che si accordano sulla
+geometria vanno d'accordo finche' qualcuno non tocca una sola delle due.
+
+**E la pista adesso e' colorata anche dai gradi.** Era gia' "colorata dal meteo",
+ma solo il bagnato aveva un colore suo: l'asciutto era `colors.line` e basta,
+quindi una giornata di sole - la maggioranza dei giorni - usciva ventiquattro
+caselle grigie identiche. Una barra che sul meteo piu' comune non dice niente.
+Adesso l'asciutto vira verso `temperatureTint` al 62% e il nuvoloso al 32%,
+mentre **pioggia, neve e temporale tengono il loro colore intero**: sono la cosa
+che si cerca guardando la barra, e annacquarle coi gradi renderebbe una mattina
+di pioggia calda meno azzurra di una fredda, cioe' meno riconoscibile dove conta.
+
+**Al posto di "TORNA AD ADESSO" c'e' un orologio.** La pillola era una parola in
+un fondo pieno, larga un terzo di schermo, che compariva e spariva a ogni
+scorrimento: pesava come un comando primario per una cosa che si fa di rado, ed
+era l'unico rettangolo opaco in una schermata fatta di cielo. Adesso e' un
+cerchio con due lancette, disegnato (niente `material-icons-extended`, come la
+freccia di `MeteoSurfaces`), senza fondo, al 62% di opacita'. Il **bersaglio**
+pero' resta pieno (`MinTouchTarget`): il disegno e' piccolo, la zona che lo
+riceve no. Sotto, il margine inferiore e' largo apposta - tutta la colonna vive
+dello spazio che avanza alla scultura, quindi allontanarla dal bordo la fa salire
+tutta insieme.
+
 **In fondo, ore e settimana si danno il cambio** (`ui/home/WeekBar.kt`). Sopra la
 barra ci sono due parole, `ORE · SETTIMANA`, e quella accesa e' quella che si sta
 guardando. La spenta e' **`colors.text` al 42%**, non `colors.label`: la prima
