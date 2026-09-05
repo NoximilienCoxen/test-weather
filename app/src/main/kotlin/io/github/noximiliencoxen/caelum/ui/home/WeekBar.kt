@@ -13,8 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,20 +37,27 @@ import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
  * oggi, l'altro dice **quale giorno** - e mettendoli uno sotto l'altro la
  * scultura sopra avrebbe dovuto stringersi per far posto a entrambi.
  *
- * **Solo lettura, per adesso.** La striscia delle ore e' un comando: la si
- * scorre e la scena cambia. Questa no, si guarda e basta. Un tocco per aprire
- * il giorno sarebbe l'aggiunta ovvia - il dettaglio esiste gia' - ma renderebbe
- * toccabili otto bersagli larghi un ottavo di schermo proprio dove il pollice
- * passa per scorrere le ore, e prima vale la pena vedere la striscia in mano.
+ * **Una colonna si tocca e il giorno si apre**, sullo stesso dettaglio che apre
+ * la scheda "LA SETTIMANA": `openDayDetail` esisteva gia' e porta con se' anche
+ * la linguetta giusta in cima alla schermata nuova. Il bersaglio e' la colonna
+ * intera - sigla, icona e le due cifre - e non la sola icona: sono novanta punti
+ * per un ottavo di larghezza, cioe' abbondantemente sopra il minimo, mentre
+ * centrare un glifo da ventisei punti sarebbe una prova di mira.
+ *
+ * Che gli otto bersagli stiano dove passa il pollice che scorre le ore non e' un
+ * conflitto: quando c'e' la settimana la striscia delle ore non c'e', e viceversa.
+ * Nessun dito puo' trovarsi sull'una credendo di toccare l'altra.
  *
  * Non c'e' un giorno "selezionato" evidenziato: qui il giorno che conta e'
  * sempre oggi, che sta gia' in prima colonna e si chiama OGGI. L'evidenza
- * servirebbe se si potesse scegliere, e non si puo'.
+ * servirebbe se restasse una scelta in piedi, e aprire un giorno porta via da
+ * questa schermata invece di cambiare qualcosa qui.
  */
 @Composable
 fun WeekBar(
     days: List<DayForecast>,
     unit: TempUnit,
+    onOpenDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -64,11 +74,16 @@ fun WeekBar(
     // Meglio poche colonne piene che otto mezze vuote: chi ha scelto un modello
     // locale ha scelto la precisione al posto della distanza, e la striscia lo
     // rispecchia invece di lasciare i buchi in mostra.
-    val shown = days.filter { it.tempMax != null }.take(GIORNI)
+    // `withIndex` prima del filtro, e non dopo: chi apre il dettaglio conta
+    // sulla posizione dentro `forecast.days`, non dentro le colonne mostrate. Se
+    // un giorno resta fuori perche' il modello non ci arriva, gli indici delle
+    // colonne e quelli della previsione smettono di coincidere - e si aprirebbe
+    // il giorno sbagliato.
+    val shown = days.withIndex().filter { it.value.tempMax != null }.take(GIORNI)
     if (shown.isEmpty()) return
 
     Row(modifier = modifier.fillMaxWidth()) {
-        shown.forEach { day ->
+        shown.forEach { (indice, day) ->
             // Ogni colonna e' una voce sola per chi ascolta: letta a pezzi
             // sarebbe "lunedi", "sereno", "trentadue gradi", "venti gradi",
             // quattro fermate per un'informazione che si guarda in un colpo.
@@ -79,10 +94,30 @@ fun WeekBar(
                 "minima ${day.tempMin.asPlainDegrees(unit)}",
             ).joinToString(", ")
 
+            val interaction = remember { MutableInteractionSource() }
+
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .clearAndSetSemantics { contentDescription = detto },
+                    .clickable(
+                        interactionSource = interaction,
+                        // Come dappertutto in questa schermata: sopra un cielo
+                        // che cambia colore un alone grigio e' l'unica cosa che
+                        // sembri un pulsante di sistema. Il riscontro qui e' il
+                        // dettaglio che entra in scena.
+                        indication = null,
+                        onClickLabel = APERTURA,
+                        onClick = { onOpenDay(indice) },
+                    )
+                    // `clearAndSetSemantics` cancella anche l'azione del
+                    // `clickable`, non solo il testo dei figli: va rimessa a
+                    // mano, altrimenti la colonna si legge ma non si attiva da
+                    // TalkBack.
+                    .clearAndSetSemantics {
+                        contentDescription = detto
+                        role = Role.Button
+                        onClick(label = APERTURA) { onOpenDay(indice); true }
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -212,6 +247,13 @@ private fun Voce(
  * per colonna, che bastano a "OGGI" e a due cifre e non a molto altro.
  */
 private const val GIORNI = 8
+
+/**
+ * Cosa promette il tocco, detto a chi la schermata la ascolta invece di
+ * guardarla. TalkBack lo legge come "doppio tocco per <questo>", quindi e' un
+ * verbo all'infinito e non una frase.
+ */
+private const val APERTURA = "aprire il dettaglio del giorno"
 
 private val GLIFO = 26.dp
 
