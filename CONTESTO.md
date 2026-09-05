@@ -155,7 +155,18 @@ spento quando diceva la cosa piu' utile.
 
 **In fondo, ore e settimana si danno il cambio** (`ui/home/WeekBar.kt`). Sopra la
 barra ci sono due parole, `ORE · SETTIMANA`, e quella accesa e' quella che si sta
-guardando. Al posto della barra delle ore compare una striscia di giorni -
+guardando. La spenta e' **`colors.text` al 42%**, non `colors.label`: la prima
+versione usava l'accoppiata `text`/`label` che la schermata adopera dappertutto,
+e qui non funzionava. Altrove quei due colori separano un titolo da una
+didascalia - due cose che si distinguono anche dal posto e dalla dimensione -
+mentre qui dovevano dire *quale delle due e' accesa*, e `label` e' `text`
+smorzato sul cielo (`mutedOnBoth`): su un cielo diurno chiaro i due grigi
+finivano a un soffio l'uno dall'altro. Il risultato e' che `ORE · SETTIMANA` si
+leggeva come una didascalia sola, e chi cercava le ore non trovava il comando per
+tornarci - **e' successo davvero, alla prima persona che ha provato l'app**.
+L'opacita' invece non dipende da quanto il cielo e' chiaro. Regola generale per
+questa schermata: ogni tinta fissa va riprovata contro un fondo che cambia tutto
+il giorno. Al posto della barra delle ore compare una striscia di giorni -
 sigla, icona, massima grande e minima sotto, piu' spenta - fino a otto colonne,
 oggi compreso.
 
