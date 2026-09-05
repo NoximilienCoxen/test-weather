@@ -17,9 +17,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -31,6 +36,9 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.ui.temperature.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.temperature.temperatureRamp
+import io.github.noximiliencoxen.caelum.ui.temperature.temperatureTint
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
@@ -111,7 +119,7 @@ fun HourBar(
     // che e' lo stesso difetto per cui esiste `MeteoLayout`. Da qui viene anche
     // l'altezza della barra, cosi' il conto torna per forza invece che a occhio.
     val bubbleHeight = with(LocalDensity.current) { bubbleText.size.height.toDp() } + 8.dp
-    val barHeight = bubbleHeight + TAIL_HEIGHT + THUMB_OVERHANG * 2 +
+    val barHeight = CHART_HEIGHT + CHART_GAP + bubbleHeight + TAIL_HEIGHT + THUMB_OVERHANG * 2 +
         TRACK_HEIGHT + NOTE_GAP + NOW_DOT_RADIUS * 2 + 1.dp
 
     fun indexAt(x: Float, width: Float): Int =
@@ -157,13 +165,86 @@ fun HourBar(
         // Le fasce si misurano in punti dal bordo di sopra, non in frazioni
         // dell'altezza: una bolla che si allarga o si stringe col telefono
         // conterrebbe un testo che invece resta della sua misura.
-        val bubbleBand = bubbleHeight.toPx()
-        val thumbTop = bubbleBand + TAIL_HEIGHT.toPx()
+        val chartBand = CHART_HEIGHT.toPx()
+        val bubbleTop = chartBand + CHART_GAP.toPx()
+        val bubbleHeightPx = bubbleHeight.toPx()
+        val bubbleBottom = bubbleTop + bubbleHeightPx
+        val thumbTop = bubbleBottom + TAIL_HEIGHT.toPx()
         val trackHeight = TRACK_HEIGHT.toPx()
         val top = thumbTop + THUMB_OVERHANG.toPx()
         val thumbBottom = top + trackHeight + THUMB_OVERHANG.toPx()
         val radius = trackHeight / 2f
         val slot = size.width / hours.size
+
+        // ── Il diagramma della giornata ────────────────────────────────────────
+        //
+        // Una fascia bassa sopra la barra: la temperatura come linea, la pioggia
+        // come colonnine sotto di essa. E' lo stesso disegno di "ANDAMENTO DELLA
+        // GIORNATA" nel dettaglio - stessa spline, stessa scala di colore - ma
+        // senza assi, numeri, griglia e tocco: qui non e' una cosa da leggere
+        // punto per punto, e' la forma della giornata vista di sfuggita mentre
+        // si sceglie un'ora. Chi vuole i numeri apre il dettaglio.
+        //
+        // Sta **dentro questa tela** e non in un composable sopra, per la
+        // ragione scritta in cima al file: la scala orizzontale dev'essere la
+        // stessa della pista, e due tele che si accordano sulla geometria vanno
+        // d'accordo finche' qualcuno non tocca una sola delle due. Qui `slot` e'
+        // uno.
+        val gradi = hours.map { it.temperature?.toFloat() }
+        val noti = gradi.filterNotNull()
+        if (noti.size >= 2) {
+            val minimo = noti.min()
+            val massimo = noti.max()
+            // Una giornata piatta non deve diventare una linea che ondeggia:
+            // senza questo pavimento, mezzo grado di scarto verrebbe stirato su
+            // tutta l'altezza della fascia e sembrerebbe uno sbalzo.
+            val escursione = (massimo - minimo).coerceAtLeast(GRADI_MINIMI)
+            val margine = CHART_INSET.toPx()
+
+            // La pioggia per prima, cosi' la linea le passa sopra e resta
+            // leggibile anche dentro un temporale.
+            val mmMassimi = hours.mapNotNull { it.precipitation?.toFloat() }.maxOrNull() ?: 0f
+            if (mmMassimi > 0f) {
+                val piedi = chartBand
+                val cima = chartBand * RAIN_SHARE
+                hours.forEachIndexed { index, hour ->
+                    val mm = hour.precipitation?.toFloat() ?: 0f
+                    if (mm <= 0f) return@forEachIndexed
+                    val altezza = (mm / mmMassimi).coerceIn(0f, 1f) * (piedi - cima)
+                    drawRect(
+                        color = RAIN_TINT.copy(alpha = 0.50f),
+                        topLeft = Offset(index * slot + slot * 0.30f, piedi - altezza),
+                        size = Size(slot * 0.40f, altezza),
+                    )
+                }
+            }
+
+            val punti = gradi.mapIndexed { index, valore ->
+                valore?.let {
+                    Offset(
+                        x = (index + 0.5f) * slot,
+                        y = chartBand - margine -
+                            ((it - minimo) / escursione) * (chartBand - margine * 2f),
+                    )
+                }
+            }
+            drawPath(
+                path = buildLinePath(punti),
+                // Il gradiente e' verticale e copre la fascia: cosi' il tratto
+                // caldo sta in alto e quello fresco in basso, che e' dove la
+                // curva li porta. Un colore solo direbbe la forma e non i gradi.
+                brush = Brush.verticalGradient(
+                    colors = temperatureRamp(minimo, massimo),
+                    startY = margine,
+                    endY = chartBand - margine,
+                ),
+                style = Stroke(
+                    width = CHART_STROKE.toPx(),
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                ),
+            )
+        }
 
         // Ritaglio sulla pista arrotondata e poi dipingo le ore dentro: cosi'
         // gli estremi sono tondi senza dover coprire nulla.
@@ -266,9 +347,9 @@ fun HourBar(
         }
         drawRoundRect(
             color = colors.pillBackground,
-            topLeft = Offset(bubbleLeft, 0f),
-            size = Size(bubbleWidth, bubbleBand),
-            cornerRadius = CornerRadius(bubbleBand / 2f, bubbleBand / 2f),
+            topLeft = Offset(bubbleLeft, bubbleTop),
+            size = Size(bubbleWidth, bubbleHeightPx),
+            cornerRadius = CornerRadius(bubbleHeightPx / 2f, bubbleHeightPx / 2f),
         )
 
         // La codina ha la punta sul cursore e la base dentro la bolla. Alle due
@@ -284,8 +365,8 @@ fun HourBar(
         )
         drawPath(
             path = Path().apply {
-                moveTo(baseX - tailHalf, bubbleBand - 1f)
-                lineTo(baseX + tailHalf, bubbleBand - 1f)
+                moveTo(baseX - tailHalf, bubbleBottom - 1f)
+                lineTo(baseX + tailHalf, bubbleBottom - 1f)
                 lineTo(thumbX, thumbTop)
                 close()
             },
@@ -296,7 +377,7 @@ fun HourBar(
             textLayoutResult = bubbleText,
             topLeft = Offset(
                 x = bubbleLeft + BUBBLE_PADDING.toPx(),
-                y = (bubbleBand - bubbleText.size.height) / 2f,
+                y = bubbleTop + (bubbleHeightPx - bubbleText.size.height) / 2f,
             ),
         )
     }
@@ -316,18 +397,83 @@ private val TRACK_HEIGHT = 18.dp
 private val NOTE_GAP = 6.dp
 private val NOW_DOT_RADIUS = 2.5.dp
 
+// ── Il diagramma sopra la barra ───────────────────────────────────────────────
+
+/**
+ * Quanto e' alta la fascia del grafico.
+ *
+ * Ventidue punti, ed e' un tetto piu' che una misura: quello che c'e' sotto -
+ * bolla, pista, annotazioni - non si puo' stringere, e la scultura in mezzo allo
+ * schermo vive di cio' che avanza. Sopra i trenta si vedeva la cifra gigante
+ * farsi piu' piccola, che e' un prezzo troppo alto per un disegno che si guarda
+ * di sfuggita.
+ */
+private val CHART_HEIGHT = 22.dp
+private val CHART_GAP = 3.dp
+
+/** Aria sopra e sotto la curva, perche' i colmi non tocchino i bordi. */
+private val CHART_INSET = 2.5.dp
+private val CHART_STROKE = 1.6.dp
+
+/** Quanta parte della fascia possono prendersi le colonnine di pioggia. */
+private const val RAIN_SHARE = 0.55f
+
+/**
+ * Sotto questa escursione la giornata si considera piatta.
+ *
+ * Tre gradi: la curva si normalizza sempre fra minimo e massimo del giorno, e
+ * senza un pavimento una giornata da 24,2 a 24,6 riempirebbe tutta la fascia -
+ * una collina inventata da quattro decimi di grado.
+ */
+private const val GRADI_MINIMI = 3f
+
+/** Quanto l'asciutto e il nuvoloso virano verso il colore dei gradi. */
+private const val GRADI_ASCIUTTO = 0.62f
+private const val GRADI_NUVOLOSO = 0.32f
+
+private val RAIN_TINT = Color(0xFF2C7BF2)
+
 /** Colore di un'ora: asciutto resta neutro, il resto si dichiara. */
+/**
+ * Il colore di un'ora sulla pista.
+ *
+ * **Il bagnato batte il caldo.** Pioggia, neve e temporale tengono il loro
+ * colore intero: sono la cosa che si cerca guardando la barra - "quando piove" -
+ * e annacquarli coi gradi renderebbe una mattina di pioggia calda meno azzurra
+ * di una fredda, cioe' meno riconoscibile proprio dove conta.
+ *
+ * **L'asciutto invece prende i gradi.** Prima era `colors.line` e basta, e una
+ * giornata di sole - che qui e' la maggioranza dei giorni - usciva ventiquattro
+ * caselle grigie tutte uguali: una barra "colorata dal meteo" che sul meteo piu'
+ * comune non diceva niente. Adesso vira verso [temperatureTint], la stessa scala
+ * dei grafici del dettaglio, quindi le ore fresche del mattino e il colmo del
+ * pomeriggio si distinguono. Il nuvoloso la prende a meta': e' comunque una
+ * giornata in cui il cielo conta piu' del termometro.
+ */
 private fun tintOf(hour: HourForecast, colors: MeteoColors): Color {
     val base = when (Wmo.family(hour.weatherCode)) {
-        Wmo.Family.ASCIUTTO -> colors.line
-        Wmo.Family.NUVOLOSO -> colors.label.copy(alpha = 0.55f)
+        Wmo.Family.ASCIUTTO -> hour.temperature.warming(colors.line, GRADI_ASCIUTTO)
+        Wmo.Family.NUVOLOSO ->
+            hour.temperature.warming(colors.label.copy(alpha = 0.55f), GRADI_NUVOLOSO)
         Wmo.Family.NEBBIA -> colors.label.copy(alpha = 0.40f)
-        Wmo.Family.PIOGGIA -> Color(0xFF2C7BF2)
+        Wmo.Family.PIOGGIA -> RAIN_TINT
         Wmo.Family.NEVE -> Color(0xFF8FC7F5)
         Wmo.Family.TEMPORALE -> Color(0xFF5B4BC4)
     }
     // La notte smorza, cosi' la striscia racconta anche il passare del giorno.
     return if (hour.isDay) base else base.copy(alpha = base.alpha * 0.55f)
+}
+
+/**
+ * Il colore di partenza spostato verso quello dei gradi, di [quanto].
+ *
+ * L'opacita' resta quella di partenza: `lerp` interpolerebbe anche quella, e il
+ * nuvoloso - che vive al 55% - si sarebbe schiarito verso l'opaco proprio nelle
+ * ore piu' calde, cambiando due cose mentre se ne intendeva una.
+ */
+private fun Double?.warming(base: Color, quanto: Float): Color {
+    val celsius = this?.toFloat() ?: return base
+    return lerp(base, temperatureTint(celsius).copy(alpha = base.alpha), quanto)
 }
 
 internal fun nearestHourIndex(hours: List<HourForecast>, target: java.time.LocalDateTime): Int {

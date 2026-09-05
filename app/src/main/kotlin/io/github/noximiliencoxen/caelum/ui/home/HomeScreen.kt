@@ -11,7 +11,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +39,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -64,6 +63,7 @@ import io.github.noximiliencoxen.caelum.ui.alerts.AlertPill
 import io.github.noximiliencoxen.caelum.ui.asBigDegrees
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
 import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
+import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.motion.PhysicalNumber
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberSceneRotation
@@ -451,15 +451,18 @@ fun HomeScreen(
         // nella bolla sopra il cursore, dove il pollice non la copre, e qui
         // resta il solo comando.
         val onNow = state.selectedHour == state.nowIndex
-        val interaction = remember { MutableInteractionSource() }
         Box(
             // L'altezza si riserva anche quando il tasto non c'e'. Comparendo e
             // sparendo a ogni scorrimento farebbe saltare in su e in giu' la
             // scultura che sta sopra, e un sussulto a ogni ora scelta e' peggio
             // dei pochi punti che si risparmierebbero.
+            //
+            // Il margine di sotto e' largo apposta: tutta la colonna vive dello
+            // spazio che avanza alla scultura, quindi allontanarla dal bordo la
+            // fa salire tutta insieme invece di lasciarla appiccicata in fondo.
             modifier = Modifier
-                .padding(top = 4.dp, bottom = 6.dp)
-                .height(40.dp),
+                .padding(top = 2.dp, bottom = 26.dp)
+                .height(MinTouchTarget),
             contentAlignment = Alignment.Center,
         ) {
             // Non con la settimana in scena: li' non c'e' un'ora scelta da cui
@@ -467,22 +470,63 @@ fun HomeScreen(
             // prossimi otto giorni promette di riportare da qualche parte dove
             // non si e' andati.
             if (!onNow && !settimana) {
-                Text(
-                    text = "TORNA AD ADESSO",
-                    style = MeteoType.caption,
-                    color = colors.pillText,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(colors.pillBackground)
-                        .clickable(
-                            interactionSource = interaction,
-                            indication = null,
-                            onClick = onBackToNow,
-                        )
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                MeteoIconButton(
+                    onClick = onBackToNow,
+                    contentDescription = "Torna all'ora attuale",
+                    icon = { NowIcon(color = colors.text.copy(alpha = 0.62f)) },
                 )
             }
         }
+    }
+}
+
+/**
+ * Il segno che riporta all'ora vera: un orologio, disegnato.
+ *
+ * **Era la pillola "TORNA AD ADESSO".** Una parola in un fondo pieno, larga un
+ * terzo di schermo, che compariva e spariva a ogni scorrimento: pesava come un
+ * comando primario per una cosa che si fa di rado, e in mezzo a una schermata
+ * fatta di cielo era l'unico rettangolo opaco.
+ *
+ * Adesso e' un cerchio con due lancette, senza fondo, al 62% di opacita'. Un
+ * orologio dice *tempo*, e sotto una barra di ore in cui si e' andati altrove
+ * dice l'unica cosa che li' si puo' volere: tornare. Il bersaglio resta pero'
+ * quello pieno di [MinTouchTarget] - il disegno e' piccolo, la zona che lo
+ * riceve no, che e' la differenza fra un'icona discreta e una da centrare.
+ *
+ * Disegnata e non importata, come la freccia di `MeteoSurfaces`: il progetto non
+ * ha `material-icons-extended` e non vale mezzo megabyte per un cerchio e due
+ * segmenti.
+ */
+@Composable
+private fun NowIcon(color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier.size(19.dp)) {
+        val stroke = 1.6.dp.toPx()
+        val centre = Offset(size.width / 2f, size.height / 2f)
+        val radius = size.minDimension / 2f - stroke / 2f
+        drawCircle(
+            color = color,
+            radius = radius,
+            center = centre,
+            style = Stroke(width = stroke),
+        )
+        // Le dieci e dieci no: e' la posa dei cataloghi, e a diciannove punti le
+        // due lancette quasi simmetriche si leggono come un segno solo. Una in
+        // su e una a destra restano due.
+        drawLine(
+            color = color,
+            start = centre,
+            end = Offset(centre.x, centre.y - radius * 0.52f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = color,
+            start = centre,
+            end = Offset(centre.x + radius * 0.40f, centre.y),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round,
+        )
     }
 }
 
