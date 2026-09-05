@@ -34,8 +34,40 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
+import java.io.IOException
 import java.time.Duration
 import java.time.LocalDateTime
+
+/**
+ * Il guasto, detto a chi guarda lo schermo.
+ *
+ * `state.error` non e' una nota di diagnostica: finisce in tre punti
+ * dell'interfaccia - la condizione della schermata principale, il vuoto delle
+ * pagine di dettaglio, il vuoto del dettaglio di un giorno - e in uno di quelli
+ * viene pure scritto tutto in maiuscolo. Il messaggio di un'eccezione li' dentro
+ * non e' un'informazione: e' stato mostrato per davvero, ed erano sei righe di
+ * JSON maiuscolo con dentro le coordinate di chi stava usando l'app, al posto
+ * della parola che dice che tempo fa.
+ *
+ * Le categorie sono tre perche' tre sono le risposte diverse che puo' dare chi
+ * legge: **la rete** (aspetta, o spostati), **il servizio** (non dipende da te),
+ * **il resto** (riprova). Distinguere di piu' vorrebbe dire spiegare a chi
+ * guarda un'app del meteo la differenza fra un timeout e un handshake TLS.
+ *
+ * Il dettaglio vero non si perde: va nel log, che e' il posto dove serve
+ * davvero, insieme all'eccezione intera con la sua traccia.
+ */
+internal fun failureMessage(failure: Throwable): String = when (failure) {
+    // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
+    // dichiara di essere. Non c'e' niente che chi guarda possa fare.
+    is SerializationException -> "Il servizio meteo ha risposto male"
+    // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
+    // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
+    // stessa cosa.
+    is IOException -> "Rete non raggiungibile"
+    else -> "Previsione non disponibile"
+}
 
 data class UiState(
     val loading: Boolean = true,
@@ -48,6 +80,13 @@ data class UiState(
      * annunciare che ne sta cercando di piu' freschi.
      */
     val refreshing: Boolean = false,
+    /**
+     * Perche' non c'e' una previsione, **detto a chi guarda**.
+     *
+     * Ci arriva solo cio' che esce da [failureMessage]: e' testo da mostrare,
+     * non il messaggio di un'eccezione. Chi lo legge lo mette in scena cosi'
+     * com'e', maiuscolo compreso.
+     */
     val error: String? = null,
     val forecast: Forecast? = null,
     /**
@@ -533,6 +572,25 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
+                        // Il dettaglio tecnico esce di qui e va nel log: e' il
+                        // solo posto in cui serve, ed e' il solo posto in cui
+                        // prima non c'era. Cio' che finisce in `error` lo legge
+                        // chi guarda lo schermo, e non e' questo.
+                        //
+                        // L'eccezione compare **due volte**, come testo e come
+                        // oggetto, e non e' una svista: `Log.getStackTraceString`
+                        // torna la stringa vuota se nella catena c'e' una
+                        // `UnknownHostException` - lo fa apposta, per non
+                        // riempire il log ogni volta che manca la rete. Cioe'
+                        // proprio nel caso piu' frequente il terzo argomento non
+                        // stampa niente, e senza il nome scritto nel messaggio
+                        // resterebbe una riga che dice solo che e' andata male.
+                        Log.w(
+                            TAG,
+                            "previsione non arrivata " +
+                                "(tentativo ${attempt + 1} di $MAX_ATTEMPTS): $failure",
+                            failure,
+                        )
                         _state.update {
                             // Una ricarica fallita non cancella quello che c'e'
                             // gia': si tiene il dato vecchio e si continua a
@@ -542,7 +600,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 loading = !lastAttempt && it.forecast == null,
                                 refreshing = !lastAttempt && it.forecast != null,
                                 error = if (lastAttempt) {
-                                    failure.message ?: "Errore di rete"
+                                    failureMessage(failure)
                                 } else {
                                     null
                                 },

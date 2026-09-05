@@ -352,6 +352,11 @@ fun HomeScreen(
                 // dati validi non deve cancellare la condizione per annunciare
                 // che la rete non risponde: il dato vecchio resta, e a dire che
                 // e' vecchio ci pensa la riga in alto.
+                //
+                // Va in maiuscolo come le altre condizioni perche' e' testo
+                // scritto per essere letto qui: `UiState.error` non porta piu'
+                // il messaggio di un'eccezione, che qui dentro diventava un
+                // muro di JSON al posto della parola sul tempo.
                 hour == null && state.error != null -> state.error.uppercase()
                 hour == null -> "IN ATTESA DEI DATI"
                 else -> conditionLabel(hour, state.forcedWeatherCode)
