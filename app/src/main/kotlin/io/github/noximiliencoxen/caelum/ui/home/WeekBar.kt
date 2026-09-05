@@ -161,12 +161,25 @@ fun WeekBar(
  *
  * Due parole e nessuna cornice: interruttori, linguette e pillole sono tutta
  * grafica che va disegnata, colorata nei due temi e tenuta leggibile sopra un
- * cielo che cambia colore tutto il giorno. Qui la parola accesa e' quella che
- * si sta guardando, la spenta e' l'altra, e si tocca quella per andarci - lo
- * stesso codice a due colori che la schermata usa gia' dappertutto.
+ * cielo che cambia colore tutto il giorno. La parola accesa e' quella che si sta
+ * guardando, la spenta e' l'altra, e si tocca quella per andarci.
  *
  * Il puntino in mezzo non e' decorazione: senza, le due parole si leggono come
  * una sola etichetta ("ORE SETTIMANA") invece che come due scelte.
+ *
+ * **`colors.text` contro `colors.label` non bastava.** Era la prima versione, ed
+ * e' l'accoppiata che la schermata usa dappertutto - ma altrove distingue un
+ * titolo da una didascalia, cioe' due cose che si capiscono anche dal posto e
+ * dalla dimensione. Qui doveva dire *quale delle due e' accesa*, e non ce la
+ * faceva: `label` e' `text` smorzato sul cielo (`mutedOnBoth`), e su un cielo
+ * diurno chiaro i due grigi finiscono a un soffio l'uno dall'altro. Sullo
+ * schermo si leggeva "ORE · SETTIMANA" come una didascalia sola, e chi cercava
+ * le ore non trovava il comando per tornarci.
+ *
+ * Adesso la spenta e' anche **trasparente**: l'opacita' non dipende da quanto il
+ * cielo e' chiaro, quindi la differenza c'e' alle sette del mattino come a
+ * mezzanotte. Vale la pena ricordarlo prima di sostituirla con un colore nuovo:
+ * ogni tinta fissa qui va riprovata contro un fondo che cambia tutto il giorno.
  */
 @Composable
 fun BarSwitch(
@@ -223,7 +236,7 @@ private fun Voce(
     Text(
         text = testo,
         style = MeteoType.caption,
-        color = if (attiva) colors.text else colors.label,
+        color = if (attiva) colors.text else colors.text.copy(alpha = SPENTA),
         maxLines = 1,
         modifier = Modifier
             .clickable(
@@ -254,6 +267,16 @@ private const val GIORNI = 8
  * verbo all'infinito e non una frase.
  */
 private const val APERTURA = "aprire il dettaglio del giorno"
+
+/**
+ * Quanto resta della parola spenta.
+ *
+ * Poco meno della meta': abbastanza da leggerla - e' pur sempre il comando per
+ * arrivarci - e abbastanza poco da non scambiarla per quella accesa nemmeno con
+ * la coda dell'occhio. Sotto un terzo sparirebbe sul cielo chiaro di
+ * mezzogiorno, che e' proprio il caso in cui serviva di piu'.
+ */
+private const val SPENTA = 0.42f
 
 private val GLIFO = 26.dp
 
