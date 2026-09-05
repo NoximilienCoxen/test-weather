@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -389,15 +391,52 @@ fun HomeScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        HourBar(
-            hours = hours,
-            selected = state.selectedHour,
-            nowIndex = state.nowIndex,
-            sunrise = today?.sunrise,
-            sunset = today?.sunset,
-            onSelect = onSelectHour,
-            modifier = Modifier.padding(horizontal = 24.dp),
+        // ── Ore e settimana, nello stesso posto ────────────────────────────────
+        //
+        // Sono due domande diverse sulla stessa previsione - "quando, dentro
+        // oggi" e "quale giorno" - e messe una sotto l'altra costringerebbero la
+        // scultura a stringersi per far posto a entrambe. Qui si danno il cambio.
+        //
+        // La scelta sopravvive alla rotazione dello schermo (`rememberSaveable`)
+        // ma non alla chiusura dell'app: e' un modo di guardare, non una
+        // preferenza, e riaprendo l'app la domanda e' di nuovo "che tempo fa
+        // adesso".
+        var settimana by rememberSaveable { mutableStateOf(false) }
+
+        BarSwitch(
+            settimana = settimana,
+            onChoose = { settimana = it },
         )
+
+        // L'altezza cambia - la settimana e' alta quattro righe, le ore una - e
+        // il riquadro la insegue invece di saltarci. Il salto qui e' voluto da
+        // chi tocca, non subito come quello che il commento sotto evita, ma
+        // resta uno strappo di ottanta punti in mezzo allo schermo: animarlo
+        // costa una riga e lo rende un movimento invece che uno scatto.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (settimana) {
+                WeekBar(
+                    days = state.forecast?.days.orEmpty(),
+                    unit = state.unit,
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                )
+            } else {
+                HourBar(
+                    hours = hours,
+                    selected = state.selectedHour,
+                    nowIndex = state.nowIndex,
+                    sunrise = today?.sunrise,
+                    sunset = today?.sunset,
+                    onSelect = onSelectHour,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+            }
+        }
 
         // Tornare all'ora vera deve costare un tocco. Scorrendo la barra si
         // finisce facilmente lontani, e ritrovare la posizione a mano annulla
@@ -420,7 +459,11 @@ fun HomeScreen(
                 .height(40.dp),
             contentAlignment = Alignment.Center,
         ) {
-            if (!onNow) {
+            // Non con la settimana in scena: li' non c'e' un'ora scelta da cui
+            // tornare, e un tasto che rimanda a "adesso" mentre si guardano i
+            // prossimi otto giorni promette di riportare da qualche parte dove
+            // non si e' andati.
+            if (!onNow && !settimana) {
                 Text(
                     text = "TORNA AD ADESSO",
                     style = MeteoType.caption,

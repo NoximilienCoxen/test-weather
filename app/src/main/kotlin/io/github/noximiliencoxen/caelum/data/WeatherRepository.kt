@@ -45,7 +45,11 @@ class WeatherRepository(
         append("?latitude=").append(place.latitude)
         append("&longitude=").append(place.longitude)
         append("&timezone=auto")
-        append("&forecast_days=7")
+        // Otto e non sette: la striscia della settimana in fondo alla schermata
+        // principale mostra oggi piu' sette giorni. Open-Meteo arriva a sedici,
+        // quindi l'ottavo non costa una richiesta in piu' ne' un endpoint
+        // diverso - allunga soltanto la lista che gia' arriva.
+        append("&forecast_days=8")
         append("&wind_speed_unit=ms")
         modelsQueryValue()?.let { append("&models=").append(it) }
         append("&current=").append(CURRENT_VARS)
