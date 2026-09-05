@@ -153,6 +153,29 @@ che si e' liberato sotto c'e' il solo tasto TORNA AD ADESSO, che prima era
 appiccicato all'etichetta dell'ora - un bersaglio con due mestieri, e per giunta
 spento quando diceva la cosa piu' utile.
 
+**In fondo, ore e settimana si danno il cambio** (`ui/home/WeekBar.kt`). Sopra la
+barra ci sono due parole, `ORE · SETTIMANA`, e quella accesa e' quella che si sta
+guardando. Al posto della barra delle ore compare una striscia di giorni -
+sigla, icona, massima grande e minima sotto, piu' spenta - fino a otto colonne,
+oggi compreso.
+
+Sono due domande diverse sulla stessa previsione: *quando, dentro oggi* e *quale
+giorno*. **Non stanno una sotto l'altra** perche' la scultura in mezzo allo
+schermo vive dello spazio che le resta, e due strisce impilate gliene toglievano
+un'ottantina di punti: la scelta e' stata tenere la scultura grande e far
+alternare le due strisce nello stesso posto. Il riquadro che le ospita si
+allunga e si accorcia animato (`animateContentSize`), cosi' il passaggio e' un
+movimento e non uno scatto.
+
+Due conseguenze da sapere. La striscia dei giorni **non e' un comando**: le ore
+si scorrono e cambiano la scena, i giorni si guardano e basta - il tocco per
+aprire il giorno sarebbe l'aggiunta ovvia, ma metterebbe otto bersagli stretti
+proprio dove passa il pollice che scorre le ore. E **TORNA AD ADESSO sparisce
+con la settimana in scena**: li' non c'e' un'ora scelta da cui tornare, e il
+tasto prometterebbe di riportare dove non si e' andati. La scelta fra le due
+sopravvive alla rotazione ma non alla chiusura: riaprendo l'app la domanda torna
+a essere "che tempo fa adesso".
+
 **Il fondo e' un cielo, non piu' un grigio** (`ui/theme/Colors.kt`). Era una
 tinta piatta sola, interpolata fra antracite e grigio chiaro: mezzogiorno usciva
 grigio per costruzione, alba e tramonto viravano su un malva fangoso, e sereno e
@@ -861,6 +884,31 @@ no, perche' `moon()` lo costruisce in coordinate di schermo - da che parte cada
 lo decide il Sole, non chi guarda (e' la trappola #24 vista dall'altro lato).
 Una falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
 perche' ci si e' spostati di venti centimetri.
+
+**42. ICON-2I non arriva a otto giorni, e non e' un guasto.** La striscia della
+settimana nasceva vuota da meta' in poi: `37° 33° 33° -- -- -- -- --`. Non era
+l'app, ed e' bastata una chiamata a mano per saperlo:
+
+```
+models=italia_meteo_arpae_icon_2i  ->  [36.5, 32.8, 32.8, null, null, null, null, null]
+(nessun models, cioe' globale)     ->  [36.2, 32.0, 33.0, 33.6, 31.9, 24.8, 26.0, 29.4]
+```
+
+**Un modello ad alta risoluzione e' anche un modello a corto raggio**: ICON-2I e'
+piu' preciso sull'Italia proprio perche' guarda vicino, e si ferma intorno alle
+settantadue ore. Chi lo sceglie ha scelto la precisione al posto della distanza,
+e la striscia lo rispecchia mostrando **solo i giorni che hanno una temperatura**
+invece di stampare `--` a riempire. Tre colonne piene dicono la verita'; otto
+colonne mezze vuote sembrano un difetto dell'app.
+
+Da qui e' saltata fuori una seconda cosa: **`Place.isItaly` non la usa nessuno**.
+E' scritta, documentata, e `grep` la trova in un punto solo - la sua definizione.
+Doveva servire a forzare ICON-2I in Italia quando il modello e' AUTO, ma nel
+codice di `main` quella forzatura non c'e': `modelsQueryValue()` restituisce
+`null` per AUTO, quindi AUTO e' il modello globale e basta. Non e' stato toccato
+niente qui - una funzione morta non fa danni e cambiarla e' una decisione di
+prodotto, non di pulizia - ma chi legge il commit che parla di ICON-2I in Italia
+sappia che in `main` non e' attivo.
 
 **41. Lint segnalava undici errori, e nessuno era un difetto vero.** Il referto
 di `lintDebug` li portava da tre giri, e chi lo leggeva ci passava sopra perche'
