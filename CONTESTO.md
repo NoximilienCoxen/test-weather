@@ -828,6 +828,40 @@ lo decide il Sole, non chi guarda (e' la trappola #24 vista dall'altro lato).
 Una falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
 perche' ci si e' spostati di venti centimetri.
 
+**41. Lint segnalava undici errori, e nessuno era un difetto vero.** Il referto
+di `lintDebug` li portava da tre giri, e chi lo leggeva ci passava sopra perche'
+`abortOnError = false`: e' esattamente il debito mai letto di cui parla il
+commento in `app/build.gradle.kts`. Sono di tre specie, e vale la pena
+distinguerle perche' si correggono in tre modi diversi.
+
+Tre erano **`FullBackupContent`**: in `backup_rules.xml` e
+`data_extraction_rules.xml` c'era un `<exclude>` per
+`datastore/widget_config.preferences_pb`, che pero' non sta dentro nessun
+`<include>`. Appena si scrive un `<include>` esplicito, l'incluso e' l'unica
+cosa che parte e tutto il resto e' gia' fuori: quell'`<exclude>` non era
+ridondante e basta, era un errore. Tolto - il comportamento non cambia di un
+byte, e l'intenzione resta scritta nel commento.
+
+Dieci erano **`NewApi`** in `ui/motion/WeatherHaptics.kt`: primitive componibili
+(API 30) ed effetti predefiniti (29) chiamati in un'app che dichiara 26. **Non
+si rompe niente**: la scelta la fa `modeOf()`, che guarda `Build.VERSION.SDK_INT`
+prima di tutto, e su un telefono vecchio quei rami non si raggiungono. Ma la
+garanzia passa per un valore di enum, e lint non la sa seguire fin li'. Risolta
+con `@SuppressLint("NewApi")` sui due metodi piu' il perche' in testa alla
+classe - la stessa forma che `DeviceLocation` usa gia' per `MissingPermission`,
+dove a garantire e' `granted()`.
+
+L'ultimo era **`SuspiciousIndentation`** in `WeatherViewModel.kt`: `outcome` era
+rientrato di quattro spazi in piu' e sembrava la continuazione di
+`val outcome = repository.load()`, mentre e' l'istruzione dopo. Solo
+incolonnatura, nessun cambio di comportamento - ma e' il genere di riga che si
+legge male una volta e si capisce al contrario.
+
+Adesso `lintDebug` dice **0 errori, 18 avvisi**. E' la condizione che il commento
+in `app/build.gradle.kts` poneva per alzare `abortOnError`: non e' stato alzato
+qui - lo si fa quando anche gli avvisi sono stati guardati - ma da adesso il
+prossimo errore che compare e' nuovo, e si vede.
+
 ---
 
 ## 8. Stato: fatto / non fatto

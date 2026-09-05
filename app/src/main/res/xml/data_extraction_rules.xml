@@ -5,14 +5,16 @@
     telefono. Le regole qui sono le stesse - non c'e' ragione perche' un
     trasloco porti piu' cose di un ripristino - ma vanno dichiarate due volte
     perche' il sistema le legge da due posti diversi.
+
+    Anche qui la configurazione dei widget resta fuori senza doverlo dire: con
+    un <include> esplicito e' incluso solo quello, e un <exclude> fuori da esso
+    e' un errore di lint (FullBackupContent). Vale per tutti e due i blocchi.
 -->
 <data-extraction-rules>
     <cloud-backup>
         <include domain="file" path="datastore/impostazioni.preferences_pb" />
-        <exclude domain="file" path="datastore/widget_config.preferences_pb" />
     </cloud-backup>
     <device-transfer>
         <include domain="file" path="datastore/impostazioni.preferences_pb" />
-        <exclude domain="file" path="datastore/widget_config.preferences_pb" />
     </device-transfer>
 </data-extraction-rules>

@@ -14,8 +14,13 @@
     La configurazione dei widget no: gli identificativi delle istanze non
     sopravvivono al trasloco, e ripristinarli vorrebbe dire riferirsi a widget
     che sul telefono nuovo non ci sono.
+
+    Che `widget_config.preferences_pb` resti fuori non ha bisogno di una riga
+    sua: appena si scrive un <include>, l'incluso e' l'unica cosa che parte e
+    tutto il resto e' gia' escluso. Un <exclude> per un percorso che non sta
+    dentro nessun <include> non e' ridondante e basta - lint lo segnala come
+    errore (FullBackupContent), e sono tre errori a build.
 -->
 <full-backup-content>
     <include domain="file" path="datastore/impostazioni.preferences_pb" />
-    <exclude domain="file" path="datastore/widget_config.preferences_pb" />
 </full-backup-content>

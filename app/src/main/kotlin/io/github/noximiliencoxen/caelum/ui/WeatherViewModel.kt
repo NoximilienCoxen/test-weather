@@ -411,126 +411,126 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
                 val outcome = repository.load()
-                    outcome
-                        .onSuccess { forecast ->
-                            // L'unico log dell'app, e non serve a chi sviluppa:
-                            // serve alla cattura in CI, che finora aspettava **a
-                            // tempo** che i dati arrivassero. Un'attesa a tempo e'
-                            // una scommessa sulla rete del runner, e la scommessa
-                            // si perde: otto secondi non bastavano, quattordici
-                            // nemmeno, e a diciannove uno scatto su undici e'
-                            // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
-                            // qui l'attesa smette di essere una durata e diventa
-                            // una condizione.
-                            Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
-                            _state.update { current ->
-                                val last = (forecast.hours.size - 1).coerceAtLeast(0)
-                                // Copiata in una locale prima del `when`: e' una
-                                // proprieta' di classe modificabile, quindi il
-                                // compilatore non puo' restringerne il tipo fra la
-                                // condizione e il ramo, e serviva un `!!` - l'unico
-                                // di tutto il progetto.
-                                val forced = pendingHour
-                                val hour = when {
-                                    // L'aggancio di verifica vince su tutto.
-                                    forced != null -> forced.coerceIn(0, last)
-                                    // Su una **ricarica** l'ora scelta resta quella:
-                                    // chi stava guardando le sei di sera non deve
-                                    // ritrovarsi sbalzato ad adesso solo perche' e'
-                                    // arrivata una risposta dalla rete.
-                                    current.forecast != null -> current.selectedHour.coerceIn(0, last)
-                                    // All'apertura invece si mostra l'ora corrente,
-                                    // non la prima disponibile: e' cio' che ci si
-                                    // aspetta di vedere. Ed e' l'ora della
-                                    // localita', non quella dell'orologio di chi
-                                    // guarda.
-                                    else -> nearestHourIndex(forecast.hours, forecast.nowThere())
-                                }
-                                val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
-                                val wantedDay = pendingDay?.coerceIn(0, lastDay)
-                                current.copy(
-                                    loading = false,
-                                    refreshing = false,
-                                    forecast = forecast,
-                                    error = null,
-                                    selectedHour = hour,
-                                    selectedDay = wantedDay ?: current.selectedDay,
-                                    dayDetail = wantedDay ?: current.dayDetail,
-                                )
+                outcome
+                    .onSuccess { forecast ->
+                        // L'unico log dell'app, e non serve a chi sviluppa:
+                        // serve alla cattura in CI, che finora aspettava **a
+                        // tempo** che i dati arrivassero. Un'attesa a tempo e'
+                        // una scommessa sulla rete del runner, e la scommessa
+                        // si perde: otto secondi non bastavano, quattordici
+                        // nemmeno, e a diciannove uno scatto su undici e'
+                        // uscito lo stesso "IN ATTESA DEI DATI". Con una riga
+                        // qui l'attesa smette di essere una durata e diventa
+                        // una condizione.
+                        Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
+                        _state.update { current ->
+                            val last = (forecast.hours.size - 1).coerceAtLeast(0)
+                            // Copiata in una locale prima del `when`: e' una
+                            // proprieta' di classe modificabile, quindi il
+                            // compilatore non puo' restringerne il tipo fra la
+                            // condizione e il ramo, e serviva un `!!` - l'unico
+                            // di tutto il progetto.
+                            val forced = pendingHour
+                            val hour = when {
+                                // L'aggancio di verifica vince su tutto.
+                                forced != null -> forced.coerceIn(0, last)
+                                // Su una **ricarica** l'ora scelta resta quella:
+                                // chi stava guardando le sei di sera non deve
+                                // ritrovarsi sbalzato ad adesso solo perche' e'
+                                // arrivata una risposta dalla rete.
+                                current.forecast != null -> current.selectedHour.coerceIn(0, last)
+                                // All'apertura invece si mostra l'ora corrente,
+                                // non la prima disponibile: e' cio' che ci si
+                                // aspetta di vedere. Ed e' l'ora della
+                                // localita', non quella dell'orologio di chi
+                                // guarda.
+                                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
                             }
-
-                            // La qualita' dell'aria vive su un altro host: si
-                            // chiede a parte e senza far aspettare nessuno. Se
-                            // non arriva, la pagina ARIA lo dichiara invece di
-                            // mostrare una colonna di trattini muti.
-                            viewModelScope.launch {
-                                AirQualityRepository(place).load()
-                                    .onSuccess { air ->
-                                        _state.update { it.copy(air = air, airUnavailable = false) }
-                                    }
-                                    .onFailure {
-                                        _state.update { it.copy(airUnavailable = true) }
-                                    }
-                            }
-
-                            // Le allerte: prima i bollettini ufficiali, e le
-                            // soglie a coprire cio' che quelli non dicono.
-                            //
-                            // Le derivate si calcolano **subito e in ogni
-                            // caso**, perche' sono gratis - i numeri sono gia'
-                            // qui - e perche' cosi' la fascia compare senza
-                            // aspettare una risposta di rete. Quando
-                            // l'ufficiale arriva, rimpiazza le derivate dello
-                            // stesso fenomeno.
-                            val derived = derivedAlerts(forecast)
-                            _state.update { it.copy(alerts = derived) }
-                            viewModelScope.launch {
-                                WeatherAlertsRepository(place).load()
-                                    .onSuccess { official ->
-                                        _state.update {
-                                            it.copy(
-                                                alerts = mergeAlerts(official, derived),
-                                                alertsUnavailable = false,
-                                            )
-                                        }
-                                    }
-                                    .onFailure { failure ->
-                                        // Fuori copertura non e' un guasto: si
-                                        // resta sulle derivate senza dire che
-                                        // qualcosa e' andato storto, perche'
-                                        // non e' andato storto niente.
-                                        val broken =
-                                            failure !is WeatherAlertsRepository.OutOfCoverage
-                                        _state.update {
-                                            it.copy(
-                                                alerts = derived,
-                                                alertsUnavailable = broken,
-                                            )
-                                        }
-                                    }
-                            }
-
-                            // La Norma storica arriva dopo, in background, e
-                            // aggiorna i giorni gia' visibili senza bloccare la
-                            // schermata. Se fallisce non succede nulla: il grafico
-                            // la mostra solo quando c'e'.
-                            viewModelScope.launch {
-                                WeatherRepository.loadNorm(place, forecast.days)
-                                    .onSuccess { norms ->
-                                        if (norms.isEmpty()) return@onSuccess
-                                        _state.update { current ->
-                                            val f = current.forecast ?: return@update current
-                                            current.copy(
-                                                forecast = f.copy(
-                                                    days = f.days.map { day ->
-                                                        day.copy(normTemp = norms[day.date])
-                                                    },
-                                                ),
-                                            )
-                                        }
-                                    }
-                            }
+                            val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
+                            val wantedDay = pendingDay?.coerceIn(0, lastDay)
+                            current.copy(
+                                loading = false,
+                                refreshing = false,
+                                forecast = forecast,
+                                error = null,
+                                selectedHour = hour,
+                                selectedDay = wantedDay ?: current.selectedDay,
+                                dayDetail = wantedDay ?: current.dayDetail,
+                            )
                         }
+
+                        // La qualita' dell'aria vive su un altro host: si
+                        // chiede a parte e senza far aspettare nessuno. Se
+                        // non arriva, la pagina ARIA lo dichiara invece di
+                        // mostrare una colonna di trattini muti.
+                        viewModelScope.launch {
+                            AirQualityRepository(place).load()
+                                .onSuccess { air ->
+                                    _state.update { it.copy(air = air, airUnavailable = false) }
+                                }
+                                .onFailure {
+                                    _state.update { it.copy(airUnavailable = true) }
+                                }
+                        }
+
+                        // Le allerte: prima i bollettini ufficiali, e le
+                        // soglie a coprire cio' che quelli non dicono.
+                        //
+                        // Le derivate si calcolano **subito e in ogni
+                        // caso**, perche' sono gratis - i numeri sono gia'
+                        // qui - e perche' cosi' la fascia compare senza
+                        // aspettare una risposta di rete. Quando
+                        // l'ufficiale arriva, rimpiazza le derivate dello
+                        // stesso fenomeno.
+                        val derived = derivedAlerts(forecast)
+                        _state.update { it.copy(alerts = derived) }
+                        viewModelScope.launch {
+                            WeatherAlertsRepository(place).load()
+                                .onSuccess { official ->
+                                    _state.update {
+                                        it.copy(
+                                            alerts = mergeAlerts(official, derived),
+                                            alertsUnavailable = false,
+                                        )
+                                    }
+                                }
+                                .onFailure { failure ->
+                                    // Fuori copertura non e' un guasto: si
+                                    // resta sulle derivate senza dire che
+                                    // qualcosa e' andato storto, perche'
+                                    // non e' andato storto niente.
+                                    val broken =
+                                        failure !is WeatherAlertsRepository.OutOfCoverage
+                                    _state.update {
+                                        it.copy(
+                                            alerts = derived,
+                                            alertsUnavailable = broken,
+                                        )
+                                    }
+                                }
+                        }
+
+                        // La Norma storica arriva dopo, in background, e
+                        // aggiorna i giorni gia' visibili senza bloccare la
+                        // schermata. Se fallisce non succede nulla: il grafico
+                        // la mostra solo quando c'e'.
+                        viewModelScope.launch {
+                            WeatherRepository.loadNorm(place, forecast.days)
+                                .onSuccess { norms ->
+                                    if (norms.isEmpty()) return@onSuccess
+                                    _state.update { current ->
+                                        val f = current.forecast ?: return@update current
+                                        current.copy(
+                                            forecast = f.copy(
+                                                days = f.days.map { day ->
+                                                    day.copy(normTemp = norms[day.date])
+                                                },
+                                            ),
+                                        )
+                                    }
+                                }
+                        }
+                    }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
                         _state.update {
