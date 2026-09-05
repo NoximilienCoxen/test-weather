@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -51,6 +52,7 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
@@ -77,7 +79,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
@@ -473,7 +478,12 @@ fun HomeScreen(
                 MeteoIconButton(
                     onClick = onBackToNow,
                     contentDescription = "Torna all'ora attuale",
-                    icon = { NowIcon(color = colors.text.copy(alpha = 0.62f)) },
+                    icon = {
+                        NowIcon(
+                            color = colors.text.copy(alpha = 0.62f),
+                            minutesOfDay = rememberMinutesThere(state.forecast),
+                        )
+                    },
                 )
             }
         }
@@ -494,12 +504,24 @@ fun HomeScreen(
  * quello pieno di [MinTouchTarget] - il disegno e' piccolo, la zona che lo
  * riceve no, che e' la differenza fra un'icona discreta e una da centrare.
  *
+ * **Le lancette segnano l'ora vera**, non una posa fissa. Costa un seno e un
+ * coseno, e cambia cosa dice il segno: non piu' "torna indietro" in astratto ma
+ * *torna a quest'ora*, che e' proprio l'ora che l'utente ha lasciato scorrendo
+ * la barra. La lancetta delle ore avanza anche dentro l'ora - mezzo grado al
+ * minuto - come su un orologio vero: alle sette e mezza sta a meta' strada fra
+ * il sette e l'otto, e non ferma sul sette.
+ *
+ * L'ora e' quella **della localita'**, presa da [Forecast.nowThere]: gli orari
+ * della barra sono nel fuso del posto, e col telefono a Los Angeles e la
+ * previsione su Forli' un orologio sul fuso del telefono segnerebbe nove ore
+ * diverse da quelle che sta indicando il pallino sulla pista.
+ *
  * Disegnata e non importata, come la freccia di `MeteoSurfaces`: il progetto non
  * ha `material-icons-extended` e non vale mezzo megabyte per un cerchio e due
  * segmenti.
  */
 @Composable
-private fun NowIcon(color: Color, modifier: Modifier = Modifier) {
+private fun NowIcon(color: Color, minutesOfDay: Int, modifier: Modifier = Modifier) {
     Canvas(modifier.size(19.dp)) {
         val stroke = 1.6.dp.toPx()
         val centre = Offset(size.width / 2f, size.height / 2f)
@@ -510,24 +532,59 @@ private fun NowIcon(color: Color, modifier: Modifier = Modifier) {
             center = centre,
             style = Stroke(width = stroke),
         )
-        // Le dieci e dieci no: e' la posa dei cataloghi, e a diciannove punti le
-        // due lancette quasi simmetriche si leggono come un segno solo. Una in
-        // su e una a destra restano due.
-        drawLine(
-            color = color,
-            start = centre,
-            end = Offset(centre.x, centre.y - radius * 0.52f),
-            strokeWidth = stroke,
-            cap = StrokeCap.Round,
-        )
-        drawLine(
-            color = color,
-            start = centre,
-            end = Offset(centre.x + radius * 0.40f, centre.y),
-            strokeWidth = stroke,
-            cap = StrokeCap.Round,
-        )
+
+        // Gradi in senso orario a partire dal mezzogiorno, come si legge un
+        // quadrante: lo zero e' in alto, quindi la x segue il seno e la y il
+        // coseno cambiato di segno, perche' sullo schermo si scende crescendo.
+        fun lancetta(gradi: Float, lunghezza: Float) {
+            val radianti = gradi * PI / 180.0
+            drawLine(
+                color = color,
+                start = centre,
+                end = Offset(
+                    x = centre.x + (sin(radianti) * radius * lunghezza).toFloat(),
+                    y = centre.y - (cos(radianti) * radius * lunghezza).toFloat(),
+                ),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round,
+            )
+        }
+
+        // Dodici ore sono 720 minuti su 360 gradi: mezzo grado al minuto.
+        lancetta(gradi = (minutesOfDay % 720) * 0.5f, lunghezza = 0.46f)
+        lancetta(gradi = (minutesOfDay % 60) * 6f, lunghezza = 0.68f)
+
+        // Il perno, e non e' un vezzo. Con l'ora vera le due lancette finiscono
+        // spesso nello stesso quadrante - alle nove e trentacinque escono
+        // entrambe a sinistra - e senza un centro dichiarato il disegno si legge
+        // come una spezzata qualunque invece che come un quadrante. Il puntino
+        // dice dove sono attaccate, ed e' quello che lo rende un orologio anche
+        // quando le lancette sono vicine.
+        drawCircle(color = color, radius = stroke * 0.7f, center = centre)
     }
+}
+
+/**
+ * Che ore sono nella localita', in minuti dalla mezzanotte.
+ *
+ * Batte ogni venti secondi ma **scrive solo al cambio di minuto**, che e' la
+ * stessa regola di [rememberFreshness] e per la stessa ragione: un valore nuovo
+ * a ogni battito terrebbe la schermata a ricomporsi per sempre a schermo
+ * immobile. Qui il risparmio e' anche piu' netto, perche' cio' che dipende da
+ * questo numero e' un disegno di diciannove punti.
+ */
+@Composable
+private fun rememberMinutesThere(forecast: Forecast?): Int {
+    fun leggi(): Int = forecast?.nowThere()?.let { it.hour * 60 + it.minute } ?: 0
+    var minuti by remember(forecast) { mutableIntStateOf(leggi()) }
+    LaunchedEffect(forecast) {
+        while (true) {
+            val prossimo = leggi()
+            if (prossimo != minuti) minuti = prossimo
+            delay(CLOCK_TICK_MS)
+        }
+    }
+    return minuti
 }
 
 /**
@@ -689,6 +746,9 @@ private fun conditionLabel(
 private const val STALE_MINUTES = 30L
 
 private const val FRESHNESS_TICK_MS = 30_000L
+
+/** Ogni quanto si guarda l'orologio della localita' per le lancette dell'icona. */
+private const val CLOCK_TICK_MS = 20_000L
 
 /** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
 private const val FELT_THRESHOLD = 1.5
