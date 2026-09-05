@@ -751,6 +751,40 @@ Tre conseguenze in `capture.sh`:
   ce ne fosse almeno uno - e un job verde che ha fotografato meta' delle
   schermate e' peggio di uno rosso: sembra una verifica fatta.
 
+**Il meccanismo si e' trovato, e non era nel logcat.** "Non c'e' un log da
+leggere perche' a morire e' il processo che il log lo ospita" era vero solo per
+il logcat: **l'emulatore ha un log suo**, che finisce nel log del job e che
+nessuno aveva ancora aperto. Li' dentro, nel giro `33910250383`, c'e' la riga
+che mancava:
+
+```
+ERROR | Failed to find ColorBuffer: 121
+```
+
+e poco dopo `screencap: error: closed`, poi `device 'emulator-5554' not found`
+per tutto il resto del giro. Un `ColorBuffer` e' una texture che vive sul lato
+host: il guest la nomina per numero e l'host gliela tiene. Quel messaggio dice
+che il guest ne ha chiesta una che l'host non aveva piu' - non memoria finita,
+proprio i due lati che non sono piu' d'accordo su cosa esiste.
+
+Da qui si spiega anche perche' moriva "sempre nel foglio di dettaglio" senza
+che il foglio c'entrasse: **la coda degli scatti e' fatta di riavvii**. Ogni
+`restart_with` chiude l'app e la riapre per fissare un'ora o un codice meteo, e
+ogni riavvio butta via una superficie GL e ne crea un'altra. Trenta scatti sono
+una trentina di cicli, e il conto si rompe intorno al quindicesimo - che e'
+esattamente dove sta la coda, cioe' il dettaglio. La correlazione col foglio era
+vera e la causa no, come il testo qui sopra sospettava: e' l'ordine, non il
+contenuto.
+
+**Cosa si e' cambiato, e con che aspettative.** In `build.yml`: `-no-snapshot`
+(nel log lo snapshot `default_boot` falliva gia' il caricamento, quindi era peso
+inutile), `ram-size` da 2048M a 4096M e `cores: 4`, che il runner ha e
+l'emulatore non stava usando. **Non e' una correzione di cui si conosca l'esito**:
+tolgono due condizioni che rendono il disallineamento piu' probabile, non lo
+rendono impossibile. Se il giro muore ancora, la leva successiva non e' un'altra
+opzione dell'emulatore ma **ridurre i riavvii**: raggruppare gli scatti che
+condividono lo stesso stato, cosi' che una sessione sola ne produca piu' d'uno.
+
 **37. Un log di diagnostica lasciato acceso smentisce in silenzio una
 dichiarazione su cui si appoggia qualcun altro.** Nei widget erano rimasti
 sedici `Log.d("WidgetResolve", ...)` dalle sessioni in cui si inseguiva quale
