@@ -139,6 +139,8 @@ fun HomeScreen(
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenTemperatureDetail: () -> Unit = {},
+    /** Un giorno della striscia della settimana, toccato: apre il suo dettaglio. */
+    onOpenDay: (Int) -> Unit = {},
     onOpenAlerts: () -> Unit = {},
     /** Riduce la fascia dell'allerta al pallino. */
     onDismissAlerts: () -> Unit = {},
@@ -423,6 +425,7 @@ fun HomeScreen(
                 WeekBar(
                     days = state.forecast?.days.orEmpty(),
                     unit = state.unit,
+                    onOpenDay = onOpenDay,
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
             } else {

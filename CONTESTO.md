@@ -167,10 +167,15 @@ alternare le due strisce nello stesso posto. Il riquadro che le ospita si
 allunga e si accorcia animato (`animateContentSize`), cosi' il passaggio e' un
 movimento e non uno scatto.
 
-Due conseguenze da sapere. La striscia dei giorni **non e' un comando**: le ore
-si scorrono e cambiano la scena, i giorni si guardano e basta - il tocco per
-aprire il giorno sarebbe l'aggiunta ovvia, ma metterebbe otto bersagli stretti
-proprio dove passa il pollice che scorre le ore. E **TORNA AD ADESSO sparisce
+Due conseguenze da sapere. **Una colonna si tocca e il giorno si apre**, sullo
+stesso dettaglio della scheda "LA SETTIMANA" (`openDayDetail`, che esisteva
+gia'). Il bersaglio e' la colonna intera - sigla, icona e le due cifre - non il
+solo glifo da ventisei punti. Che gli otto bersagli cadano dove passa il pollice
+che scorre le ore non e' un conflitto: quando c'e' una striscia l'altra non c'e'.
+Attenzione a un punto solo, ed e' scritto anche nel codice: l'indice da passare
+e' quello dentro `forecast.days`, non quello della colonna - `withIndex()` viene
+**prima** del filtro dei giorni senza temperatura, altrimenti con un modello
+corto si aprirebbe il giorno sbagliato. E **TORNA AD ADESSO sparisce
 con la settimana in scena**: li' non c'e' un'ora scelta da cui tornare, e il
 tasto prometterebbe di riportare dove non si e' andati. La scelta fra le due
 sopravvive alla rotazione ma non alla chiusura: riaprendo l'app la domanda torna
