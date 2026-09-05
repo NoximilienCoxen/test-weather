@@ -178,7 +178,25 @@ un fondo pieno, larga un terzo di schermo, che compariva e spariva a ogni
 scorrimento: pesava come un comando primario per una cosa che si fa di rado, ed
 era l'unico rettangolo opaco in una schermata fatta di cielo. Adesso e' un
 cerchio con due lancette, disegnato (niente `material-icons-extended`, come la
-freccia di `MeteoSurfaces`), senza fondo, al 62% di opacita'. Il **bersaglio**
+freccia di `MeteoSurfaces`), senza fondo, al 62% di opacita'.
+
+**Le lancette segnano l'ora vera**, e quella della **localita'**, non del
+telefono: la prende da `Forecast.nowThere()`, perche' gli orari della barra sono
+nel fuso del posto - col telefono a Los Angeles e la previsione su Forli' un
+orologio sul fuso del telefono segnerebbe nove ore diverse da quelle che indica
+il pallino sulla pista. La lancetta delle ore avanza anche dentro l'ora, mezzo
+grado al minuto, come su un quadrante vero. Il valore si aggiorna con un battito
+ogni venti secondi che **scrive solo al cambio di minuto**, la stessa regola di
+`rememberFreshness` e per la stessa ragione.
+
+Il **perno** al centro non e' un vezzo: con l'ora vera le due lancette finiscono
+spesso nello stesso quadrante - alle nove e trentacinque escono tutte e due a
+sinistra - e senza un centro dichiarato il disegno si legge come una spezzata
+qualunque. E' il prezzo dell'ora vera rispetto a una posa fissa, ed e' stato
+accettato sapendolo: un quadrante che segna davvero l'ora vale una lettura un po'
+meno immediata in certi momenti della giornata.
+
+Il **bersaglio**
 pero' resta pieno (`MinTouchTarget`): il disegno e' piccolo, la zona che lo
 riceve no. Sotto, il margine inferiore e' largo apposta - tutta la colonna vive
 dello spazio che avanza alla scultura, quindi allontanarla dal bordo la fa salire
