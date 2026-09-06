@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.ui.home
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -100,6 +103,31 @@ fun HourBar(
     val liveSelected by rememberUpdatedState(selected)
     val liveOnSelect by rememberUpdatedState(onSelect)
 
+    // ── Il diagramma si mostra solo sotto il dito ──────────────────────────────
+    //
+    // A riposo la schermata deve dire poche cose grandi: la scultura, la cifra,
+    // la condizione. Una curva sempre accesa sopra la barra e' un quarto oggetto
+    // che chiede attenzione anche a chi sta solo guardando che tempo fa adesso.
+    // Serve invece **mentre si scorre**, che e' l'unico momento in cui si sta
+    // ragionando sull'andamento della giornata: li' dice dove si sta andando.
+    //
+    // Lo stato lo alza il riconoscitore di gesti che c'e' gia'. Non se ne
+    // aggiunge un secondo apposta per il tocco: due riconoscitori sulla stessa
+    // area si rubano l'evento di discesa (e' scritto sotto, dove il gesto viene
+    // gestito) e il risultato sarebbe una barra che ogni tanto ignora il dito.
+    var premuto by remember { mutableStateOf(false) }
+
+    // Dissolvenza **asimmetrica**, e non e' un vezzo: comparendo deve essere gia'
+    // li' quando l'occhio arriva - il dito e' appena sceso e si sta guardando la
+    // barra - mentre uscendo non deve sbattere via nell'istante in cui si stacca,
+    // che si legge come uno scatto. Duecentosessanta millisecondi sono il tempo
+    // di togliere il pollice e alzare lo sguardo.
+    val diagramma by animateFloatAsState(
+        targetValue = if (premuto) 1f else 0f,
+        animationSpec = tween(durationMillis = if (premuto) COMPARSA_MS else SPARIZIONE_MS),
+        label = "diagramma",
+    )
+
     // Il testo della bolla si misura **in composizione**, non nel disegno:
     // cambia una volta per ora, mentre il disegno gira a ogni fotogramma del
     // dito. La cache a zero non e' una precauzione generica: quella del
@@ -147,17 +175,27 @@ fun HourBar(
             .pointerInput(hours.size) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
-                    choose(indexAt(down.position.x, size.width.toFloat()))
-                    down.consume()
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        if (!change.pressed) {
+                    premuto = true
+                    // `finally` e non una riga dopo il ciclo: un gesto puo'
+                    // finire anche per annullamento - una chiamata in arrivo, un
+                    // altro elemento che se lo prende - e in quel caso l'uscita
+                    // non passa da qui sotto. Senza, il diagramma resterebbe
+                    // acceso per sempre senza un dito sopra.
+                    try {
+                        choose(indexAt(down.position.x, size.width.toFloat()))
+                        down.consume()
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            if (!change.pressed) {
+                                change.consume()
+                                break
+                            }
+                            choose(indexAt(change.position.x, size.width.toFloat()))
                             change.consume()
-                            break
                         }
-                        choose(indexAt(change.position.x, size.width.toFloat()))
-                        change.consume()
+                    } finally {
+                        premuto = false
                     }
                 }
             },
@@ -190,9 +228,16 @@ fun HourBar(
         // stessa della pista, e due tele che si accordano sulla geometria vanno
         // d'accordo finche' qualcuno non tocca una sola delle due. Qui `slot` e'
         // uno.
+        // `diagramma` si legge **qui**, dentro il disegno, per la stessa ragione
+        // di `position` piu' sotto: letto in composizione rifarebbe misura e
+        // impaginazione di tutta la colonna a ogni fotogramma della dissolvenza.
+        //
+        // E sotto l'uno per cento non si disegna proprio: a riposo - che e' come
+        // la barra sta quasi sempre - non si costruisce nemmeno la spline. Il
+        // caso piu' comune diventa cosi' piu' leggero di prima, non piu' pesante.
         val gradi = hours.map { it.temperature?.toFloat() }
         val noti = gradi.filterNotNull()
-        if (noti.size >= 2) {
+        if (diagramma > 0.01f && noti.size >= 2) {
             val minimo = noti.min()
             val massimo = noti.max()
             // Una giornata piatta non deve diventare una linea che ondeggia:
@@ -212,7 +257,7 @@ fun HourBar(
                     if (mm <= 0f) return@forEachIndexed
                     val altezza = (mm / mmMassimi).coerceIn(0f, 1f) * (piedi - cima)
                     drawRect(
-                        color = RAIN_TINT.copy(alpha = 0.50f),
+                        color = RAIN_TINT.copy(alpha = 0.50f * diagramma),
                         topLeft = Offset(index * slot + slot * 0.30f, piedi - altezza),
                         size = Size(slot * 0.40f, altezza),
                     )
@@ -233,8 +278,12 @@ fun HourBar(
                 // Il gradiente e' verticale e copre la fascia: cosi' il tratto
                 // caldo sta in alto e quello fresco in basso, che e' dove la
                 // curva li porta. Un colore solo direbbe la forma e non i gradi.
+                // `temperatureRamp` prende gia' l'opacita': si passa di li'
+                // invece di avvolgere il disegno in un livello trasparente, che
+                // per una curva sola vorrebbe dire allocare un buffer fuori
+                // schermo a ogni fotogramma della dissolvenza.
                 brush = Brush.verticalGradient(
-                    colors = temperatureRamp(minimo, massimo),
+                    colors = temperatureRamp(minimo, massimo, alpha = diagramma),
                     startY = margine,
                     endY = chartBand - margine,
                 ),
@@ -430,6 +479,16 @@ private const val GRADI_MINIMI = 3f
 /** Quanto l'asciutto e il nuvoloso virano verso il colore dei gradi. */
 private const val GRADI_ASCIUTTO = 0.62f
 private const val GRADI_NUVOLOSO = 0.32f
+
+/**
+ * I due tempi della dissolvenza del diagramma.
+ *
+ * Entrare in fretta e uscire piano: quando il dito scende l'occhio e' gia' sulla
+ * barra e la curva deve esserci; quando si stacca, lo sguardo si sta gia'
+ * spostando altrove e una sparizione netta si legge come uno scatto.
+ */
+private const val COMPARSA_MS = 120
+private const val SPARIZIONE_MS = 260
 
 private val RAIN_TINT = Color(0xFF2C7BF2)
 

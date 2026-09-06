@@ -154,7 +154,26 @@ appiccicato all'etichetta dell'ora - un bersaglio con due mestieri, e per giunta
 spento quando diceva la cosa piu' utile.
 
 **Sopra la barra delle ore c'e' il diagramma della giornata**, alto ventidue
-punti: la temperatura come linea, la pioggia come colonnine sotto. E' lo stesso
+punti, e **si vede solo mentre il dito e' sulla barra**: la temperatura come
+linea, la pioggia come colonnine sotto.
+
+Perche' non sempre acceso: a riposo la schermata deve dire poche cose grandi -
+scultura, cifra, condizione - e una curva permanente e' un quarto oggetto che
+chiede attenzione a chi ha aperto l'app solo per sapere che tempo fa adesso.
+Serve invece **mentre si scorre**, che e' l'unico momento in cui si sta
+ragionando sull'andamento della giornata. Lo stato lo alza il riconoscitore di
+gesti gia' esistente, dentro un `try/finally` - un gesto puo' finire anche per
+annullamento, e senza il `finally` il diagramma resterebbe acceso senza un dito
+sopra. La dissolvenza e' **asimmetrica**, 120 ms in entrata e 260 in uscita:
+comparendo deve essere gia' li' quando l'occhio arriva, uscendo non deve sbattere
+via nell'istante in cui ci si stacca.
+
+I ventidue punti **restano riservati** anche da spento: si anima la sola
+opacita'. Chiuderli farebbe allargare la scultura a ogni tocco, ed e' lo stesso
+sussulto che il riquadro di TORNA AD ADESSO evita gia' riservando la propria
+altezza. Sotto l'uno per cento di opacita' il blocco non viene disegnato affatto:
+a riposo - cioe' quasi sempre - non si costruisce nemmeno la spline, quindi il
+caso piu' comune e' piu' leggero di prima, non piu' pesante. E' lo stesso
 disegno di "ANDAMENTO DELLA GIORNATA" nel dettaglio - stessa spline
 (`buildLinePath`), stessa scala di colore (`temperatureRamp`) - ma senza assi,
 numeri, griglia e tocco. Qui non e' una cosa da leggere punto per punto, e' la
