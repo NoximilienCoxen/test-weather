@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -10,7 +11,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -27,21 +27,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -50,6 +52,7 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
@@ -62,6 +65,7 @@ import io.github.noximiliencoxen.caelum.ui.alerts.AlertPill
 import io.github.noximiliencoxen.caelum.ui.asBigDegrees
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
 import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
+import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.motion.PhysicalNumber
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberSceneRotation
@@ -75,7 +79,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
@@ -137,6 +144,8 @@ fun HomeScreen(
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenTemperatureDetail: () -> Unit = {},
+    /** Un giorno della striscia della settimana, toccato: apre il suo dettaglio. */
+    onOpenDay: (Int) -> Unit = {},
     onOpenAlerts: () -> Unit = {},
     /** Riduce la fascia dell'allerta al pallino. */
     onDismissAlerts: () -> Unit = {},
@@ -375,13 +384,15 @@ fun HomeScreen(
 
         Spacer(Modifier.height(6.dp))
 
-        // Minima, massima e percepita: sono gia' nella stessa risposta che
-        // porta la temperatura, e finora non le leggeva nessuno.
+        // Qui restava solo la percepita. **Minima e massima se ne sono andate**
+        // sul diagramma della barra, dove stanno appoggiate al picco e
+        // all'avvallamento della curva: li' dicono anche *a che ora* accadono,
+        // che e' piu' di quanto dicessero scritte qui. Ripeterle in due posti
+        // sarebbe stata la stessa informazione due volte, e quella meno ricca
+        // per giunta.
         val today = hour?.time?.let { state.forecast?.dayOf(it) }
         Text(
-            text = rangeLabel(
-                min = today?.tempMin,
-                max = today?.tempMax,
+            text = feltLabel(
                 apparent = hour?.apparent,
                 real = hour?.temperature,
                 unit = state.unit,
@@ -389,20 +400,64 @@ fun HomeScreen(
             style = MeteoType.caption,
             color = colors.label,
             textAlign = TextAlign.Center,
+            // La riga e' vuota per gran parte della giornata - la percepita
+            // compare solo quando stacca davvero - e senza un'altezza garantita
+            // comparirebbe e sparirebbe facendo sussultare in su e in giu' tutto
+            // cio' che le sta sopra, scultura compresa.
+            minLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(10.dp))
 
-        HourBar(
-            hours = hours,
-            selected = state.selectedHour,
-            nowIndex = state.nowIndex,
-            sunrise = today?.sunrise,
-            sunset = today?.sunset,
-            onSelect = onSelectHour,
-            modifier = Modifier.padding(horizontal = 24.dp),
+        // ── Ore e settimana, nello stesso posto ────────────────────────────────
+        //
+        // Sono due domande diverse sulla stessa previsione - "quando, dentro
+        // oggi" e "quale giorno" - e messe una sotto l'altra costringerebbero la
+        // scultura a stringersi per far posto a entrambe. Qui si danno il cambio.
+        //
+        // La scelta sopravvive alla rotazione dello schermo (`rememberSaveable`)
+        // ma non alla chiusura dell'app: e' un modo di guardare, non una
+        // preferenza, e riaprendo l'app la domanda e' di nuovo "che tempo fa
+        // adesso".
+        var settimana by rememberSaveable { mutableStateOf(false) }
+
+        BarSwitch(
+            settimana = settimana,
+            onChoose = { settimana = it },
         )
+
+        // L'altezza cambia - la settimana e' alta quattro righe, le ore una - e
+        // il riquadro la insegue invece di saltarci. Il salto qui e' voluto da
+        // chi tocca, non subito come quello che il commento sotto evita, ma
+        // resta uno strappo di ottanta punti in mezzo allo schermo: animarlo
+        // costa una riga e lo rende un movimento invece che uno scatto.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (settimana) {
+                WeekBar(
+                    days = state.forecast?.days.orEmpty(),
+                    unit = state.unit,
+                    onOpenDay = onOpenDay,
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                )
+            } else {
+                HourBar(
+                    hours = hours,
+                    selected = state.selectedHour,
+                    nowIndex = state.nowIndex,
+                    sunrise = today?.sunrise,
+                    sunset = today?.sunset,
+                    unit = state.unit,
+                    onSelect = onSelectHour,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+            }
+        }
 
         // Tornare all'ora vera deve costare un tocco. Scorrendo la barra si
         // finisce facilmente lontani, e ritrovare la posizione a mano annulla
@@ -414,35 +469,135 @@ fun HomeScreen(
         // nella bolla sopra il cursore, dove il pollice non la copre, e qui
         // resta il solo comando.
         val onNow = state.selectedHour == state.nowIndex
-        val interaction = remember { MutableInteractionSource() }
         Box(
             // L'altezza si riserva anche quando il tasto non c'e'. Comparendo e
             // sparendo a ogni scorrimento farebbe saltare in su e in giu' la
             // scultura che sta sopra, e un sussulto a ogni ora scelta e' peggio
             // dei pochi punti che si risparmierebbero.
+            //
+            // Il margine di sotto e' largo apposta: tutta la colonna vive dello
+            // spazio che avanza alla scultura, quindi allontanarla dal bordo la
+            // fa salire tutta insieme invece di lasciarla appiccicata in fondo.
             modifier = Modifier
-                .padding(top = 4.dp, bottom = 6.dp)
-                .height(40.dp),
+                .padding(top = 2.dp, bottom = 26.dp)
+                .height(MinTouchTarget),
             contentAlignment = Alignment.Center,
         ) {
-            if (!onNow) {
-                Text(
-                    text = "TORNA AD ADESSO",
-                    style = MeteoType.caption,
-                    color = colors.pillText,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(colors.pillBackground)
-                        .clickable(
-                            interactionSource = interaction,
-                            indication = null,
-                            onClick = onBackToNow,
+            // Non con la settimana in scena: li' non c'e' un'ora scelta da cui
+            // tornare, e un tasto che rimanda a "adesso" mentre si guardano i
+            // prossimi otto giorni promette di riportare da qualche parte dove
+            // non si e' andati.
+            if (!onNow && !settimana) {
+                MeteoIconButton(
+                    onClick = onBackToNow,
+                    contentDescription = "Torna all'ora attuale",
+                    icon = {
+                        NowIcon(
+                            color = colors.text.copy(alpha = 0.62f),
+                            minutesOfDay = rememberMinutesThere(state.forecast),
                         )
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    },
                 )
             }
         }
     }
+}
+
+/**
+ * Il segno che riporta all'ora vera: un orologio, disegnato.
+ *
+ * **Era la pillola "TORNA AD ADESSO".** Una parola in un fondo pieno, larga un
+ * terzo di schermo, che compariva e spariva a ogni scorrimento: pesava come un
+ * comando primario per una cosa che si fa di rado, e in mezzo a una schermata
+ * fatta di cielo era l'unico rettangolo opaco.
+ *
+ * Adesso e' un cerchio con due lancette, senza fondo, al 62% di opacita'. Un
+ * orologio dice *tempo*, e sotto una barra di ore in cui si e' andati altrove
+ * dice l'unica cosa che li' si puo' volere: tornare. Il bersaglio resta pero'
+ * quello pieno di [MinTouchTarget] - il disegno e' piccolo, la zona che lo
+ * riceve no, che e' la differenza fra un'icona discreta e una da centrare.
+ *
+ * **Le lancette segnano l'ora vera**, non una posa fissa. Costa un seno e un
+ * coseno, e cambia cosa dice il segno: non piu' "torna indietro" in astratto ma
+ * *torna a quest'ora*, che e' proprio l'ora che l'utente ha lasciato scorrendo
+ * la barra. La lancetta delle ore avanza anche dentro l'ora - mezzo grado al
+ * minuto - come su un orologio vero: alle sette e mezza sta a meta' strada fra
+ * il sette e l'otto, e non ferma sul sette.
+ *
+ * L'ora e' quella **della localita'**, presa da [Forecast.nowThere]: gli orari
+ * della barra sono nel fuso del posto, e col telefono a Los Angeles e la
+ * previsione su Forli' un orologio sul fuso del telefono segnerebbe nove ore
+ * diverse da quelle che sta indicando il pallino sulla pista.
+ *
+ * Disegnata e non importata, come la freccia di `MeteoSurfaces`: il progetto non
+ * ha `material-icons-extended` e non vale mezzo megabyte per un cerchio e due
+ * segmenti.
+ */
+@Composable
+private fun NowIcon(color: Color, minutesOfDay: Int, modifier: Modifier = Modifier) {
+    Canvas(modifier.size(19.dp)) {
+        val stroke = 1.6.dp.toPx()
+        val centre = Offset(size.width / 2f, size.height / 2f)
+        val radius = size.minDimension / 2f - stroke / 2f
+        drawCircle(
+            color = color,
+            radius = radius,
+            center = centre,
+            style = Stroke(width = stroke),
+        )
+
+        // Gradi in senso orario a partire dal mezzogiorno, come si legge un
+        // quadrante: lo zero e' in alto, quindi la x segue il seno e la y il
+        // coseno cambiato di segno, perche' sullo schermo si scende crescendo.
+        fun lancetta(gradi: Float, lunghezza: Float) {
+            val radianti = gradi * PI / 180.0
+            drawLine(
+                color = color,
+                start = centre,
+                end = Offset(
+                    x = centre.x + (sin(radianti) * radius * lunghezza).toFloat(),
+                    y = centre.y - (cos(radianti) * radius * lunghezza).toFloat(),
+                ),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round,
+            )
+        }
+
+        // Dodici ore sono 720 minuti su 360 gradi: mezzo grado al minuto.
+        lancetta(gradi = (minutesOfDay % 720) * 0.5f, lunghezza = 0.46f)
+        lancetta(gradi = (minutesOfDay % 60) * 6f, lunghezza = 0.68f)
+
+        // Il perno, e non e' un vezzo. Con l'ora vera le due lancette finiscono
+        // spesso nello stesso quadrante - alle nove e trentacinque escono
+        // entrambe a sinistra - e senza un centro dichiarato il disegno si legge
+        // come una spezzata qualunque invece che come un quadrante. Il puntino
+        // dice dove sono attaccate, ed e' quello che lo rende un orologio anche
+        // quando le lancette sono vicine.
+        drawCircle(color = color, radius = stroke * 0.7f, center = centre)
+    }
+}
+
+/**
+ * Che ore sono nella localita', in minuti dalla mezzanotte.
+ *
+ * Batte ogni venti secondi ma **scrive solo al cambio di minuto**, che e' la
+ * stessa regola di [rememberFreshness] e per la stessa ragione: un valore nuovo
+ * a ogni battito terrebbe la schermata a ricomporsi per sempre a schermo
+ * immobile. Qui il risparmio e' anche piu' netto, perche' cio' che dipende da
+ * questo numero e' un disegno di diciannove punti.
+ */
+@Composable
+private fun rememberMinutesThere(forecast: Forecast?): Int {
+    fun leggi(): Int = forecast?.nowThere()?.let { it.hour * 60 + it.minute } ?: 0
+    var minuti by remember(forecast) { mutableIntStateOf(leggi()) }
+    LaunchedEffect(forecast) {
+        while (true) {
+            val prossimo = leggi()
+            if (prossimo != minuti) minuti = prossimo
+            delay(CLOCK_TICK_MS)
+        }
+    }
+    return minuti
 }
 
 /**
@@ -564,24 +719,14 @@ private val DAY_FORMAT: DateTimeFormatter =
  * della conversione, perche' in Fahrenheit la stessa differenza vale quasi il
  * doppio e la soglia cambierebbe senso a seconda dell'unita' scelta.
  */
-private fun rangeLabel(
-    min: Double?,
-    max: Double?,
+private fun feltLabel(
     apparent: Double?,
     real: Double?,
     unit: TempUnit,
 ): String {
-    val span = if (min != null && max != null) {
-        "${min.asPlainDegrees(unit)} / ${max.asPlainDegrees(unit)}"
-    } else {
-        null
-    }
-    val felt = if (apparent != null && real != null && abs(apparent - real) >= FELT_THRESHOLD) {
-        "PERCEPITI ${apparent.asPlainDegrees(unit)}"
-    } else {
-        null
-    }
-    return listOfNotNull(span, felt).joinToString("   \u00B7   ")
+    if (apparent == null || real == null) return ""
+    if (abs(apparent - real) < FELT_THRESHOLD) return ""
+    return "PERCEPITI ${apparent.asPlainDegrees(unit)}"
 }
 
 /**
@@ -604,6 +749,9 @@ private fun conditionLabel(
 private const val STALE_MINUTES = 30L
 
 private const val FRESHNESS_TICK_MS = 30_000L
+
+/** Ogni quanto si guarda l'orologio della localita' per le lancette dell'icona. */
+private const val CLOCK_TICK_MS = 20_000L
 
 /** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
 private const val FELT_THRESHOLD = 1.5
