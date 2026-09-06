@@ -159,6 +159,29 @@ Settima voce di `DetailMode` (`FULMINI`, etichetta breve "Fulmini"), smistata in
 `TemperatureDetailScreen` come le altre sei. Nessuna struttura di navigazione
 nuova: il foglio del dettaglio sale gia' col dito e il carosello esiste.
 
+> **Emendamento del 7 settembre 2026.** Il foglio del dettaglio sta per cambiare
+> forma: da carosello orizzontale di pagine a **pila verticale di schede
+> agganciate**, una per schermata ma contenuta con margini
+> (`2026-09-07-foglio-dettaglio-pila-design.md`). Il radar diventa quindi la
+> **settima scheda**, non la settima pagina.
+>
+> Per il contenuto non cambia nulla - la scena disegnata, i dati, la raccolta e
+> la scia restano identici - ma cambiano due cose che vanno decise **quando si
+> implementa, non adesso**:
+>
+> 1. **Cosa mostra la scheda da chiusa.** Ogni scheda tiene in evidenza una sola
+>    cosa. Per il radar il candidato ovvio e' la distanza della scarica piu'
+>    vicina ("12 km, a nord-ovest"), oppure il vuoto dichiarato quando non c'e'
+>    niente. La scena col cerchio e gli anelli vive nello stato espanso.
+> 2. **L'ordine nella pila.** Sei schede su sette parlano sempre; questa tace per
+>    gran parte dell'anno. Metterla in mezzo significa un buco nello scorrimento
+>    nei giorni sereni. Va valutato se debba stare in fondo, o comparire solo
+>    quando ha qualcosa da dire - che e' la stessa domanda gia' posta, e allora
+>    risolta scegliendo "schermata sempre raggiungibile".
+>
+> **Ordine di lavoro**: prima la pila, poi il radar. Al contrario si scriverebbe
+> una pagina destinata a essere riscritta dopo pochi giorni.
+
 ---
 
 ## 4. La scena disegnata
