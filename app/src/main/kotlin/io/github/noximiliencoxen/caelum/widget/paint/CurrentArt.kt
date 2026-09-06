@@ -52,8 +52,15 @@ private fun DrawScope.small(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    val name = type.brush(box.height * 0.105f, weight = 600, width = 78, letterSpacingEm = 0.10f)
-    text(place.name.uppercase(), box.left, box.top, name, ink.secondary)
+    val name = placeName(
+        value = place.name.uppercase(),
+        x = box.left,
+        y = box.top,
+        maxWidth = box.width,
+        sizePx = box.height * 0.105f,
+        type = type,
+        color = ink.secondary,
+    )
 
     val digits = type.brush(box.height * 0.30f, weight = 700, width = 72)
     val digitsTop = box.top + lineHeight(name) * 0.95f
@@ -153,16 +160,31 @@ private fun DrawScope.header(
     val digitsTop = box.top + (box.height - digitsHeight) * 0.35f
     text(degrees, box.left, digitsTop, digits, ink.primary)
 
-    val name = type.brush(box.height * 0.15f, weight = 600, width = 78, letterSpacingEm = 0.10f)
+    val nameSize = box.height * 0.15f
     val what = type.brush(box.height * 0.21f, weight = 700, width = 76, letterSpacingEm = 0.02f)
     val textLeft = box.left + type.widthOf(degrees, digits) + box.height * 0.10f
-    val block = lineHeight(name) + lineHeight(what)
+    val side = box.height * 0.92f
+    // Il testo si ferma dove comincia il disegno del cielo, non al bordo: a
+    // destra c'e' il sole o la nuvola, e il nome ci finiva sopra.
+    val textWidth = (box.right - side) - textLeft - box.height * 0.06f
+
+    // Il corpo non cambia stringendo, quindi il blocco si puo' misurare prima
+    // di scrivere: `placeName` restituisce lo stesso `lineHeight` che avrebbe
+    // avuto il pennello largo.
+    val block = lineHeight(type.brush(nameSize, 600, 78, 0.10f)) + lineHeight(what)
     val blockTop = digitsTop + (digitsHeight - block) / 2f
 
-    text(place.name.uppercase(), textLeft, blockTop, name, ink.secondary)
+    val name = placeName(
+        value = place.name.uppercase(),
+        x = textLeft,
+        y = blockTop,
+        maxWidth = textWidth,
+        sizePx = nameSize,
+        type = type,
+        color = ink.secondary,
+    )
     text(condition, textLeft, blockTop + lineHeight(name), what, ink.primary)
 
-    val side = box.height * 0.92f
     weatherBody(
         Rect(box.right - side, box.top, box.right, box.top + side),
         family,

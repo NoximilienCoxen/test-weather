@@ -2,11 +2,13 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup|resume",
         "hooks": [
           {
             "type": "command",
-            "command": "git checkout main && git pull --ff-only origin main",
-            "statusMessage": "Checking out and updating main branch..."
+            "command": "git fetch --quiet origin main 2>/dev/null; b=$(git rev-parse --abbrev-ref HEAD); s=$(git status --porcelain | wc -l); d=$(git rev-list --count HEAD..origin/main 2>/dev/null); d=${d:-0}; if [ \"$d\" -gt 0 ] || [ \"$s\" -gt 0 ]; then echo \"ATTENZIONE: ramo $b, $s file non committati, $d commit indietro rispetto a origin/main. Vedi CONTESTO.md sezione 11.3 prima di lavorare.\"; else echo \"ramo $b: albero pulito, allineato a origin/main.\"; fi",
+            "timeout": 20,
+            "statusMessage": "Guardo com'e' messo il repository..."
           }
         ]
       }

@@ -1049,6 +1049,134 @@ in `app/build.gradle.kts` poneva per alzare `abortOnError`: non e' stato alzato
 qui - lo si fa quando anche gli avvisi sono stati guardati - ma da adesso il
 prossimo errore che compare e' nuovo, e si vede.
 
+**43. La molla che rimbalza passa dallo zero, e il padding non lo perdona.**
+L'app terminava toccando TROVAMI: `IllegalArgumentException: Padding must be
+non-negative`, da `WelcomeScreen.kt` dove il pulsante affondava di
+`(sink * 3).dp`. `sink` e' una `animateFloatAsState` con `dampingRatio = 0.7f`,
+cioe' sottosmorzata **apposta** - senza sorpasso non c'e' rimbalzo - ma il
+sorpasso e' simmetrico: tornando a zero non si ferma, lo passa. Quattro
+centesimi sotto per circa un sesto di secondo, una decina di fotogrammi, e in
+uno di quelli `PaddingElement` trova un valore negativo e lancia.
+
+Il valore si legge tagliato a zero alla dichiarazione, non al punto d'uso: il
+negativo non lo vuole nessuno dei due consumatori. Anche `pinned`
+(`dampingRatio = 0.55f`) e' stato tagliato: non schiantava perche' finisce
+dentro un `Canvas`, dove pero' diventava un'opacita' negativa.
+
+**Il "succede solo sul mio telefono" aveva una spiegazione, e non era il
+Pixel.** La molla e' matematica in unita' di tempo, non di fotogrammi: gira
+uguale ovunque. Quel che cambia e' se il permesso di posizione e' **gia'
+concesso**. Se va chiesto, si apre la finestra di sistema, che ruba il fuoco e
+ferma la ricomposizione: i fotogrammi negativi non vengono mai composti e non
+schianta niente. Se e' gia' concesso, il rilascio del dito si anima tutto dentro
+l'app e il fotogramma arriva. Misurato: `input swipe` sul pulsante con il
+permesso da concedere, dieci giri, nessun crash; con il permesso concesso,
+crash al primo tocco; con il taglio a zero, cinque giri su cinque puliti.
+
+**44. `goAsync()` si consegna una volta sola, e in `onDeleted` lo chiedono in
+due.** L'app moriva a ogni widget tolto dalla Home:
+`NullPointerException` su `PendingResult.finish()`.
+`GlanceAppWidgetReceiver.onDeleted` chiede gia' il permesso per conto suo, e
+`goAsync()` azzera il proprio campo dopo averlo dato: il secondo che chiede
+riceve `null`. Siccome `PendingResult!` e' un tipo di piattaforma, Kotlin
+lasciava passare l'assegnazione e il conto arrivava nel `finally`.
+
+**Invertire l'ordine non risolve, sposta**, ed e' stato provato sul telefono:
+chiedendolo noi per primi schianta Glance, in `CoroutineBroadcastReceiver.kt:70`,
+dove quel `finish()` non e' protetto. Vale la pena scriverlo perche' una lettura
+frettolosa del bytecode dice il contrario, e il logcat ha ragione. Resta quindi
+`super` per primo e il nostro `pending` nullabile: la ripulita e' **al meglio
+possibile**, e quando salta lascia qualche chiave orfana che la configurazione
+riscrive per intero appena quell'identificativo viene riusato.
+
+**45. Il widget prendeva la citta' dell'app, e il difetto era invisibile.** Un
+widget senza configurazione cadeva su un ramo che restituiva
+`SettingsPrefs.place`: disegnava una citta' plausibile, e da fuori era
+**indistinguibile** da un widget che funziona. Chi ne configurava un altro non
+aveva modo di sapere se la scelta non fosse stata salvata o non fosse stata
+riletta. Adesso quel ramo restituisce `null` e i widget disegnano "TOCCA PER
+SCEGLIERE LA CITTA'", con il tocco che apre la configurazione di **quella**
+istanza. Il ripiego resta solo dentro la regola del GPS, dove e' una rete
+motivata e non un mascheramento.
+
+Attorno a questo sono cadute quattro cose che lo tenevano in piedi:
+
+- **I widget non erano riconfigurabili.** Con il solo `android:configure` la
+  schermata gira una volta, al momento del piazzamento: una citta' sbagliata
+  restava sbagliata per sempre. Aggiunto `widgetFeatures="reconfigurable"` a
+  meteo e aria (non alla luna, che non ha una citta'). Lint lo conta come
+  `UnusedAttribute` - vale da API 28, il minimo qui e' 26 - ed e' il motivo per
+  cui il referto della sezione 41 e' passato da 18 avvisi a 21. E' la stessa
+  nota che vale gia' per `targetCellWidth`, ed e' innocua: su Android 8
+  l'attributo viene ignorato e il widget resta configurabile una volta sola,
+  cioe' come si comportava prima ovunque.
+- **La schermata ripartiva in bianco**, il che rendeva la riconfigurazione
+  inutilizzabile: adesso e' seminata con `WidgetPrefs.load()`.
+- **`setResult(RESULT_OK)` arrivava dopo il ridisegno.** Se `lifecycleScope`
+  moriva in mezzo restava il `RESULT_CANCELED`, il lanciatore cancellava
+  l'identificativo e `onDeleted` buttava via le preferenze appena scritte.
+  Adesso l'esito si cede appena la scrittura e' a terra.
+- **Il `delay(800)` era una premessa sbagliata, non un numero tarato male.** Il
+  commento diceva che dopo la chiusura della sessione Glance `update()` non ha
+  effetto; da li' venivano il broadcast e l'attesa, spostata da tre commit di
+  fila. `GlanceAppWidget.update()` passa per `getOrCreateAppWidgetSession`: se
+  una sessione non c'e', la **crea**. Non c'era niente da attendere. Misurato
+  sul telefono: dal salvataggio al `provideGlance` con la citta' nuova passano
+  280 ms, e il broadcast e' rimasto solo come ripiego.
+
+**46. La cosa giusta da fare era ricopiata a mano in ogni widget.** Leggere
+l'identificativo, caricare la configurazione, accorgersi che la citta' non c'e',
+disegnare l'invito, agganciarci il tocco: sette passi scritti per intero dentro
+ciascuno dei tre, che un widget nuovo doveva ricopiare **sapendo quali**. Chi ne
+dimenticava uno otteneva un widget che sembrava funzionare - e' esattamente il
+difetto della sezione 45.
+
+Adesso i sette passi stanno in `CaelumWidget`, con `provideGlance` dichiarato
+`final`: un widget nuovo non puo' sbagliarli perche' non li scrive. Quel che
+scrive e' `paint()`, cioe' il suo disegno. E `WidgetKind` e' diventato l'unico
+posto in cui un widget si dichiara - nome esteso, nome corto, se vuole una
+citta', il ricevitore, la fabbrica: prima le stesse risposte stavano in
+**quattro** elenchi separati (il tipo qui, il titolo nella schermata di
+configurazione, il `kind != LUNA` scritto a mano, il ricevitore in
+`refreshWidget`), da tenere allineati a mano. I tre widget sono passati da una
+sessantina di righe a una trentina, e le tre `ActionCallback` identiche sono
+diventate una.
+
+**47. Il nome della citta' non sapeva quanto spazio aveva.** La qualita'
+dell'aria configurata su "Aoraki / Monte Cook" scriveva il nome fuori dal
+riquadro, sotto il pallino della banda, tagliato dal bordo dell'immagine. Non
+era un difetto di quel widget: `AirArt` e `CurrentArt` - quest'ultimo in **due**
+punti - scrivevano tutti il nome con un `text()` nudo. Non si era mai visto
+perche' le citta' provate erano corte.
+
+L'adattamento sta adesso in `placeName()`, accanto a `text()`, per la stessa
+ragione per cui ci sta `text()`: un disegno nuovo non deve ricordarsi di
+rimpicciolire. **Stringe di larghezza, non di corpo** - il carattere ha un asse
+variabile per la larghezza, e stringendo quello `lineHeight` non cambia, quindi
+non balla l'impaginazione di tutto cio' che sta sotto, che e' calcolata proprio
+su `lineHeight`. Quando anche la larghezza minima non basta, tronca con i
+puntini. Nel meteo il testo si ferma anche prima del disegno del cielo, dove
+pure ci finiva sopra.
+
+**48. La ridenominazione del pacchetto era ferma a meta', e il progetto non
+compilava.** Nell'indice convivevano due alberi sorgente: i 76 file nuovi sotto
+`io/github/noximiliencoxen/caelum`, aggiunti, e i 55 vecchi sotto
+`com/forli/meteo`, mai cancellati. `build.gradle.kts` e il manifesto puntavano
+gia' al pacchetto nuovo, quindi i vecchi cercavano una `com.forli.meteo.R` che
+non esisteva piu': dieci errori di compilazione, e niente da installare su un
+telefono per provare qualunque cosa.
+
+I 55 file sono stati rimossi - sono in `HEAD`, quindi recuperabili con
+`git checkout HEAD -- app/src/main/kotlin/com` se dovessero servire. Vale la
+pena sapere cos'erano, perche' erano piu' pericolosi di un semplice avanzo:
+contenevano copie di `WidgetPrefs.kt` e `prefs/SettingsPrefs.kt` che
+dichiaravano `preferencesDataStore` con gli **stessi due nomi di file** del
+codice vivo (`widget_config`, `impostazioni`). Morti, perche' niente nel
+manifesto li raggiungeva - ma se una di quelle proprieta' fosse mai stata toccata
+nello stesso processo, `androidx.datastore` avrebbe lanciato *"There are multiple
+DataStores active for the same file"*. Contenevano anche i sedici
+`Log.d("WidgetResolve", ...)` che la sezione 37 da' per rimossi.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -1061,6 +1189,20 @@ nuvola, fulmini con alone e bagliore, vibrazione leggera sulla pioggia e pesante
 sul tuono (viste nella cronologia del vibratore), fondo che segue l'ora, **tutte
 e ventiquattro le ore raggiungibili una per una**, impostazioni, cambio localita',
 cambio unita' (21 °C -> 70 °F), persistenza delle scelte.
+
+Aggiunti in seguito, su Pixel 9 Pro (Android 17 / SDK 37), con le sezioni 43-47:
+il **pulsante TROVAMI** premuto e rilasciato con il permesso di posizione gia'
+concesso, cinque giri su cinque senza terminare - e la controprova, cioe' la
+stessa build senza il taglio a zero che schianta al primo tocco; il **widget
+meteo** che disegna una citta' scelta a mano diversa da quella dell'app, e un
+secondo widget sulla stessa Home che segue invece il GPS; la **riconfigurazione**
+di un widget gia' posato, che si riapre mostrando la citta' corrente e, cambiata
+in Milano, ridisegna il riquadro in 280 ms senza che l'app venga aperta; il
+**widget della qualita' dell'aria** su "Aoraki / Monte Cook", che e' il nome
+lungo con cui e' venuto fuori il difetto della sezione 47; la **rimozione** di un
+widget dalla Home, di cui si e' visto l'effetto - le chiavi di quell'istanza
+sparite dall'archivio - ma non il percorso, perche' `APPWIDGET_DELETED` e' un
+broadcast protetto e da `adb` non si puo' inviare.
 
 **Misurato**: da fermo 0 fotogrammi. Con la pioggia che cade, 19 ms mediani e
 nessun fotogramma in ritardo, di giorno come di notte. In rotazione il lavoro
@@ -1083,7 +1225,9 @@ comunque a ogni fotogramma.
   rovescio
 - **come si legge il grado** accanto a una cifra a tre caratteri (`-10`, `100`):
   li' il riadattamento in larghezza scatta e la cifra si rimpicciolisce
-- il **widget Glance** su una home reale (legge la localita' scelta, non provato)
+- il **widget della luna** dopo il tronco comune della sezione 45: e' l'unico
+  dei tre che non e' stato posato su una Home vera, quindi di lui si sa che
+  compila, non che disegna
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 
