@@ -74,3 +74,18 @@ val Place.isItaly: Boolean
         }
         return latitude in ITALY_LATITUDE_RANGE && longitude in ITALY_LONGITUDE_RANGE
     }
+
+/**
+ * Vero se le coordinate sono due numeri veri.
+ *
+ * Non e' una cautela teorica: il `Location` di un emulatore appena avviato puo'
+ * avere latitudine e longitudine a `NaN` pur avendo un nome che si geocodifica
+ * benissimo, e una [Place] cosi' non si vede finche' non e' troppo tardi.
+ * `NaN` non fa cadere niente - passa i confronti, si concatena in una stringa,
+ * arriva fino alla rete - e Open-Meteo lo prende sul serio: risponde
+ * `{"latitude":NaN,...}`, che nessun lettore JSON accetta come numero. Il guasto
+ * si presenta quindi come un errore di lettura del formato, a due passaggi di
+ * distanza da dove e' nato.
+ */
+val Place.hasFiniteCoordinates: Boolean
+    get() = latitude.isFinite() && longitude.isFinite()

@@ -33,6 +33,17 @@ class WeatherRepository(
 
     suspend fun load(): Result<Forecast> = withContext(Dispatchers.IO) {
         runCatching {
+            // Una coordinata non finita non si concatena in un URL: `NaN` ci
+            // finisce come testo, Open-Meteo lo rimanda indietro dentro il JSON
+            // e il fallimento si presenta come un errore di lettura del
+            // formato, dove non c'e' niente da capire. Meglio fermarsi qui, con
+            // il nome di chi ha portato il numero. La sorgente vera si tura a
+            // monte (vedi `DeviceLocation.describe`): questa e' la rete di
+            // sicurezza per una localita' salvata quando la falla c'era ancora.
+            require(place.hasFiniteCoordinates) {
+                "Coordinate non utilizzabili per ${place.name}: " +
+                    "${place.latitude}, ${place.longitude}"
+            }
             val body = httpGet(buildUrl())
             val dto = json.decodeFromString<OpenMeteoResponse>(body)
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")

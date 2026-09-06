@@ -1425,8 +1425,8 @@ Quattro trappole gia' pagate qui:
 Il progetto non ne aveva **nessuno**. Sotto c'era solo `probe-api`, che verifica
 i contratti delle API ma non una riga di logica.
 
-Trentanove prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
-stante. Sono scelte per cio' che coprono, non per fare numero — e tre di loro
+Quarantasei prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
+stante. Sono scelte per cio' che coprono, non per fare numero — e cinque di loro
 stanno esattamente sopra trappole gia' pagate:
 
 | Cosa | Perche' proprio quello |
@@ -1438,6 +1438,8 @@ stanno esattamente sopra trappole gia' pagate:
 | `Wmo.family` / `isWet` | La trappola #14 vive qui: se il codice dice che piove, deve piovere. |
 | `readableOn` | Mantiene la soglia che dichiara, su una griglia di fondi che comprende il grigio medio - il caso peggiore, perche' di li' non si scappa ne' verso il bianco ne' verso il nero. |
 | `TempUnit.from` | 21 °C -> 70 °F, la coppia gia' verificata sul telefono. |
+| `hasFiniteCoordinates` | La trappola #41: `NaN` non fa cadere niente e arriva fino alla rete travestito da errore di formato. Il test prova anche che `WeatherRepository.load()` si fermi **senza aprire una connessione**. |
+| `failureMessage` | La trappola #42, e non prova il testo esatto: prova che cio' che si mostra **non sia** il messaggio dell'eccezione, che stia su una riga e che sia corto. Sono i tre modi in cui quel dump era arrivato sullo schermo. |
 
 **Robolectric serve a un file solo**, e va **configurato**: `parseFeed` passa da
 `android.util.Xml`, che su una JVM non c'e'. Il progetto compila contro il
