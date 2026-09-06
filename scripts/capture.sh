@@ -30,6 +30,83 @@ ATTESA_DATI=45
 
 adbt() { timeout 60 adb "$@"; }
 
+# ── Strumentazione: il polso, prima di ogni scatto ────────────────────────────
+#
+# La trappola #38 dice che l'emulatore muore a meta' corsa e muore in silenzio,
+# e per tre giri la diagnosi si e' fermata li' perche' l'unico testimone
+# interrogato era il logcat - che pero' vive **dentro** la cosa che muore.
+# Queste righe interrogano i testimoni di fuori.
+#
+# **La domanda che conta e' una sola, e taglia il problema in due:** quando adb
+# dice "offline", il processo dell'emulatore sull'host e' ancora vivo?
+#
+#   emulatore morto  -> a cadere e' il lato host (grafica, memoria del processo)
+#   emulatore vivo   -> a cadere e' il guest: kernel, surfaceflinger, o l'OOM
+#
+# Sono due guasti diversi con due rimedi diversi, e finora non si sapeva quale
+# dei due si stesse guardando. Una riga per scatto costa qualche decimo di
+# secondo e produce una serie storica: cosi' non si vede solo *dove* si rompe,
+# si vede anche se qualcosa scendeva gia' da prima.
+emu_pid() { pgrep -f "qemu-system" | head -1; }
+
+host_mb() { awk '/MemAvailable/{print int($2/1024)}' /proc/meminfo 2>/dev/null || echo "?"; }
+
+# Otto secondi e non sessanta come `adbt`: il polso e' una misura, non un
+# tentativo. Su un dispositivo gia' morto verrebbe chiamato per ognuno dei venti
+# scatti che restano, e con timeout lunghi da solo sfonderebbe il tetto di trenta
+# minuti del job - trasformando lo strumento di misura in una seconda causa di
+# fallimento.
+polso() {
+  local quando="$1"
+  local stato pid rss ospite app
+  stato=$(timeout 8 adb get-state 2>&1 | tr -d '\r' | head -1)
+  pid=$(emu_pid)
+  if [ -n "$pid" ]; then
+    rss=$(awk '{print int($1/1024)}' "/proc/$pid/statm" 2>/dev/null || echo "?")
+  else
+    pid="MORTO"; rss="-"
+  fi
+  # Il guest si interroga solo se adb risponde: su un dispositivo caduto ogni
+  # chiamata costa il suo timeout intero, e trenta scatti di attese inutili
+  # allungherebbero il giro di minuti.
+  if [ "$stato" = "device" ]; then
+    ospite=$(timeout 8 adb shell "awk '/MemAvailable/{print int(\$2/1024)}' /proc/meminfo" 2>/dev/null | tr -d '\r')
+    app=$(timeout 8 adb shell pidof "$PKG" 2>/dev/null | tr -d '\r')
+    [ -z "$app" ] && app="assente"
+  else
+    ospite="-"; app="-"
+  fi
+  local host
+  host=$(host_mb)
+  echo "  polso[$quando] adb=$stato host=${host}MB emu=$pid/${rss}MB guest=${ospite}MB app=$app"
+}
+
+# Cosa si riesce ancora a sapere quando il dispositivo non c'e' piu'.
+#
+# Va chiamata **subito** dopo aver constatato la morte: piu' si aspetta, piu'
+# il runner ripulisce. Non usa adb per le cose importanti, apposta.
+autopsia() {
+  local dove="$1"
+  echo "== autopsia dopo: $dove =="
+  local pid
+  pid=$(emu_pid)
+  if [ -n "$pid" ]; then
+    echo "  emulatore VIVO (pid $pid): a cadere non e' il processo, e' il guest"
+    echo "  stato del processo: $(awk '{print $3}' "/proc/$pid/stat" 2>/dev/null)"
+    echo "  memoria del processo: $(awk '{print int($1/1024)}' "/proc/$pid/statm" 2>/dev/null) MB"
+  else
+    echo "  emulatore MORTO: a cadere e' il lato host, non il guest"
+  fi
+  echo "  memoria host disponibile: $(host_mb) MB"
+  echo "  carico: $(cat /proc/loadavg 2>/dev/null)"
+  echo "  --- l'OOM killer dell'host ha colpito? ---"
+  dmesg 2>/dev/null | grep -iE "out of memory|killed process|oom-kill" | tail -5     || echo "  (dmesg non leggibile senza privilegi, oppure nulla)"
+  echo "  --- rapporti di crash dell'emulatore ---"
+  ls -la "$HOME/.android/breakpad" 2>/dev/null | tail -5 || echo "  (nessuno)"
+  find /tmp -maxdepth 2 -name "*.dmp" -newermt "-30 minutes" 2>/dev/null | head -5
+  echo "== fine autopsia =="
+}
+
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
 # questo file e' l'unica testimonianza del perche'.
 adb logcat -c >/dev/null 2>&1 || true
@@ -37,6 +114,7 @@ adb logcat -c >/dev/null 2>&1 || true
 
 shoot() {
   local name="$1"
+  polso "$name"
   # /data/local/tmp e' sempre scrivibile dall'utente shell ed esiste da subito.
   # /sdcard no: e' storage emulato, viene montato tardi nel boot ed e' soggetto
   # allo scoped storage. Era la causa degli scatti mancati.
@@ -151,7 +229,7 @@ session() {
   local tema="$1" slug
   slug=$(echo "$tema" | tr '[:upper:]' '[:lower:]')
   echo "== tema $tema =="
-  alive || { echo "dispositivo non raggiungibile, salto"; return; }
+  alive || { echo "dispositivo non raggiungibile, salto"; autopsia "avvio sessione $tema"; return; }
 
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -170,7 +248,7 @@ session() {
   # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
   # per primo, quindi vale l'attesa vera come per tutti gli altri.
   attendi_previsione
-  alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; return; }
+  alive || { echo "dispositivo caduto subito dopo l'avvio dell'app"; autopsia "avvio app"; return; }
 
   shoot "${slug}-1-temp"
 
@@ -236,7 +314,7 @@ session() {
     cielo 12 0 mezzogiorno-sereno
     cielo 20 0 tramonto
     cielo 12 3 mezzogiorno-coperto
-    alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
+    alive || { echo "dispositivo caduto dopo gli scatti del cielo"; autopsia "scatti del cielo"; return; }
   fi
 
   # L'ora della sessione e il centro dello schermo servono da qui in giu': sia
@@ -269,7 +347,7 @@ session() {
 
   # Il tocco sulla cifra apre il dettaglio: la schermata principale distingue
   # un tocco fermo da un trascinamento, e il tocco apre il foglio.
-  alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
+  alive || { echo "dispositivo caduto prima dello scatto delle allerte"; autopsia "allerte"; return; }
   adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
   shoot "${slug}-d2-allerta-dettaglio"
@@ -285,7 +363,7 @@ session() {
   # il nome della localita' deve restare **nella stessa identica posizione**
   # dello scatto d8 - il pallino sta nei 48dp che erano gia' riservati - e il
   # triangolo deve leggersi sul fondo del contenitore d'errore.
-  alive || { echo "dispositivo caduto prima dello scatto del pallino"; return; }
+  alive || { echo "dispositivo caduto prima dello scatto del pallino"; autopsia "pallino"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
@@ -296,7 +374,7 @@ session() {
 
   # Il pallino deve riportare alle allerte per esteso: e' tutto il suo mestiere.
   # Sta in alto a destra, nei 48dp simmetrici al pulsante delle impostazioni.
-  alive || { echo "dispositivo caduto prima dello scatto del bollettino"; return; }
+  alive || { echo "dispositivo caduto prima dello scatto del bollettino"; autopsia "bollettino"; return; }
   adbt shell input tap "$(( W - 44 ))" "$(( H * 7 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
   shoot "${slug}-d4-allerta-riaperta"
@@ -328,7 +406,7 @@ session() {
   adbt shell logcat -c >/dev/null 2>&1 || true
   adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" >/dev/null 2>&1 || true
   attendi_previsione
-  alive || { echo "dispositivo caduto prima del dettaglio"; return; }
+  alive || { echo "dispositivo caduto prima del dettaglio"; autopsia "dettaglio"; return; }
 
   adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
@@ -524,6 +602,7 @@ echo "scatti riusciti: $shots, mancati: $MANCATI"
 # mezza galleria con la faccia di una verifica completa.
 if ! alive; then
   echo "il dispositivo non c'e' piu': il giro e' incompleto ($MANCATI scatti mancati)"
+  autopsia "fine del giro"
   exit 1
 fi
 [ "$MANCATI" -eq 0 ] || echo "attenzione: $MANCATI scatti non catturati"
