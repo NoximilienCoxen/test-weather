@@ -216,6 +216,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
                 onOpenTemperatureDetail = sheet::openFully,
+                onOpenDay = viewModel::openDayDetail,
                 onOpenAlerts = viewModel::openAlerts,
                 onDismissAlerts = viewModel::collapseAlerts,
                 // Un gesto solo per due effetti: il pallino rimette la fascia e

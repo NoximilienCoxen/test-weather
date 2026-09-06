@@ -330,10 +330,19 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel_6
-          ram-size: 2048M
+          # Il giro precedente moriva a meta' con "Failed to find ColorBuffer"
+          # (trappola #38, e adesso se ne conosce il meccanismo): trenta scatti
+          # vogliono trenta riavvii dell'app, ogni riavvio ricrea una superficie
+          # GL, e prima o poi il guest chiede al lato host un buffer che il lato
+          # host non ha piu'. Qui si tolgono le due cose che glielo rendono piu'
+          # probabile - poca memoria e uno snapshot che gia' nel log falliva il
+          # caricamento - e gli si danno i quattro processori del runner invece
+          # di uno.
+          ram-size: 4096M
+          cores: 4
           disable-animations: true
           emulator-boot-timeout: 900
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
           script: bash scripts/capture.sh
 
       - name: Pubblica

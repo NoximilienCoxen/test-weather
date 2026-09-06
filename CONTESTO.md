@@ -153,6 +153,134 @@ che si e' liberato sotto c'e' il solo tasto TORNA AD ADESSO, che prima era
 appiccicato all'etichetta dell'ora - un bersaglio con due mestieri, e per giunta
 spento quando diceva la cosa piu' utile.
 
+**Sopra la barra delle ore c'e' il diagramma della giornata**, alto ventidue
+punti, e **si vede solo mentre il dito e' sulla barra**: la temperatura come
+linea, la pioggia come colonnine sotto.
+
+Perche' non sempre acceso: a riposo la schermata deve dire poche cose grandi -
+scultura, cifra, condizione - e una curva permanente e' un quarto oggetto che
+chiede attenzione a chi ha aperto l'app solo per sapere che tempo fa adesso.
+Serve invece **mentre si scorre**, che e' l'unico momento in cui si sta
+ragionando sull'andamento della giornata. Lo stato lo alza il riconoscitore di
+gesti gia' esistente, dentro un `try/finally` - un gesto puo' finire anche per
+annullamento, e senza il `finally` il diagramma resterebbe acceso senza un dito
+sopra. La dissolvenza e' **asimmetrica**, 120 ms in entrata e 260 in uscita:
+comparendo deve essere gia' li' quando l'occhio arriva, uscendo non deve sbattere
+via nell'istante in cui ci si stacca.
+
+**Massima e minima stanno sul diagramma**, in alto a sinistra, a nove punti,
+ciascuna col colore che `temperatureTint` da' al proprio valore - la stessa scala
+del gradiente della curva. Erano scritte sotto la condizione, come `23° / 37°`:
+di li' sono state tolte, perche' ripeterle in due posti sarebbe la stessa
+informazione due volte. La riga sotto la condizione resta, ma ci vive solo la
+percepita, e ha `minLines = 1` perche' e' vuota per gran parte della giornata e
+senza un'altezza garantita farebbe sussultare tutto cio' che le sta sopra.
+
+Due cose provate e scartate sul telefono, che vale la pena non riprovare:
+
+- **Incolonnate**, massima in alto e minima in basso. E' la lettura giusta - alto
+  in alto - ma non ci stanno: due righe da nove punti ne occupano quasi
+  cinquantotto su ventidue di fascia, i numeri si toccavano e quello di sotto
+  finiva a cavallo della curva.
+- **Un margine a sinistra** per far loro posto restringendo la curva. Sposta ogni
+  punto rispetto all'ora che gli sta sotto: il diagramma direbbe "questa
+  temperatura a quest'ora" indicando l'ora sbagliata, e l'allineamento con la
+  pista e' l'intera ragione per cui vive nella stessa tela. I numeri passano
+  quindi **sopra** al tratto, e l'angolo in alto a sinistra e' libero perche' a
+  mezzanotte la temperatura non e' quasi mai il colmo della giornata.
+
+I ventidue punti **restano riservati** anche da spento: si anima la sola
+opacita'. Chiuderli farebbe allargare la scultura a ogni tocco, ed e' lo stesso
+sussulto che il riquadro di TORNA AD ADESSO evita gia' riservando la propria
+altezza. Sotto l'uno per cento di opacita' il blocco non viene disegnato affatto:
+a riposo - cioe' quasi sempre - non si costruisce nemmeno la spline, quindi il
+caso piu' comune e' piu' leggero di prima, non piu' pesante. E' lo stesso
+disegno di "ANDAMENTO DELLA GIORNATA" nel dettaglio - stessa spline
+(`buildLinePath`), stessa scala di colore (`temperatureRamp`) - ma senza assi,
+numeri, griglia e tocco. Qui non e' una cosa da leggere punto per punto, e' la
+forma della giornata vista di sfuggita mentre si sceglie un'ora; chi vuole i
+numeri apre il dettaglio. Sta **dentro la tela di `HourBar`** e non in un
+composable sopra, per la ragione gia' scritta in cima a quel file: la scala
+orizzontale dev'essere la stessa della pista, e due tele che si accordano sulla
+geometria vanno d'accordo finche' qualcuno non tocca una sola delle due.
+
+**E la pista adesso e' colorata anche dai gradi.** Era gia' "colorata dal meteo",
+ma solo il bagnato aveva un colore suo: l'asciutto era `colors.line` e basta,
+quindi una giornata di sole - la maggioranza dei giorni - usciva ventiquattro
+caselle grigie identiche. Una barra che sul meteo piu' comune non dice niente.
+Adesso l'asciutto vira verso `temperatureTint` al 62% e il nuvoloso al 32%,
+mentre **pioggia, neve e temporale tengono il loro colore intero**: sono la cosa
+che si cerca guardando la barra, e annacquarle coi gradi renderebbe una mattina
+di pioggia calda meno azzurra di una fredda, cioe' meno riconoscibile dove conta.
+
+**Al posto di "TORNA AD ADESSO" c'e' un orologio.** La pillola era una parola in
+un fondo pieno, larga un terzo di schermo, che compariva e spariva a ogni
+scorrimento: pesava come un comando primario per una cosa che si fa di rado, ed
+era l'unico rettangolo opaco in una schermata fatta di cielo. Adesso e' un
+cerchio con due lancette, disegnato (niente `material-icons-extended`, come la
+freccia di `MeteoSurfaces`), senza fondo, al 62% di opacita'.
+
+**Le lancette segnano l'ora vera**, e quella della **localita'**, non del
+telefono: la prende da `Forecast.nowThere()`, perche' gli orari della barra sono
+nel fuso del posto - col telefono a Los Angeles e la previsione su Forli' un
+orologio sul fuso del telefono segnerebbe nove ore diverse da quelle che indica
+il pallino sulla pista. La lancetta delle ore avanza anche dentro l'ora, mezzo
+grado al minuto, come su un quadrante vero. Il valore si aggiorna con un battito
+ogni venti secondi che **scrive solo al cambio di minuto**, la stessa regola di
+`rememberFreshness` e per la stessa ragione.
+
+Il **perno** al centro non e' un vezzo: con l'ora vera le due lancette finiscono
+spesso nello stesso quadrante - alle nove e trentacinque escono tutte e due a
+sinistra - e senza un centro dichiarato il disegno si legge come una spezzata
+qualunque. E' il prezzo dell'ora vera rispetto a una posa fissa, ed e' stato
+accettato sapendolo: un quadrante che segna davvero l'ora vale una lettura un po'
+meno immediata in certi momenti della giornata.
+
+Il **bersaglio**
+pero' resta pieno (`MinTouchTarget`): il disegno e' piccolo, la zona che lo
+riceve no. Sotto, il margine inferiore e' largo apposta - tutta la colonna vive
+dello spazio che avanza alla scultura, quindi allontanarla dal bordo la fa salire
+tutta insieme.
+
+**In fondo, ore e settimana si danno il cambio** (`ui/home/WeekBar.kt`). Sopra la
+barra ci sono due parole, `ORE · SETTIMANA`, e quella accesa e' quella che si sta
+guardando. La spenta e' **`colors.text` al 42%**, non `colors.label`: la prima
+versione usava l'accoppiata `text`/`label` che la schermata adopera dappertutto,
+e qui non funzionava. Altrove quei due colori separano un titolo da una
+didascalia - due cose che si distinguono anche dal posto e dalla dimensione -
+mentre qui dovevano dire *quale delle due e' accesa*, e `label` e' `text`
+smorzato sul cielo (`mutedOnBoth`): su un cielo diurno chiaro i due grigi
+finivano a un soffio l'uno dall'altro. Il risultato e' che `ORE · SETTIMANA` si
+leggeva come una didascalia sola, e chi cercava le ore non trovava il comando per
+tornarci - **e' successo davvero, alla prima persona che ha provato l'app**.
+L'opacita' invece non dipende da quanto il cielo e' chiaro. Regola generale per
+questa schermata: ogni tinta fissa va riprovata contro un fondo che cambia tutto
+il giorno. Al posto della barra delle ore compare una striscia di giorni -
+sigla, icona, massima grande e minima sotto, piu' spenta - fino a otto colonne,
+oggi compreso.
+
+Sono due domande diverse sulla stessa previsione: *quando, dentro oggi* e *quale
+giorno*. **Non stanno una sotto l'altra** perche' la scultura in mezzo allo
+schermo vive dello spazio che le resta, e due strisce impilate gliene toglievano
+un'ottantina di punti: la scelta e' stata tenere la scultura grande e far
+alternare le due strisce nello stesso posto. Il riquadro che le ospita si
+allunga e si accorcia animato (`animateContentSize`), cosi' il passaggio e' un
+movimento e non uno scatto.
+
+Due conseguenze da sapere. **Una colonna si tocca e il giorno si apre**, sullo
+stesso dettaglio della scheda "LA SETTIMANA" (`openDayDetail`, che esisteva
+gia'). Il bersaglio e' la colonna intera - sigla, icona e le due cifre - non il
+solo glifo da ventisei punti. Che gli otto bersagli cadano dove passa il pollice
+che scorre le ore non e' un conflitto: quando c'e' una striscia l'altra non c'e'.
+Attenzione a un punto solo, ed e' scritto anche nel codice: l'indice da passare
+e' quello dentro `forecast.days`, non quello della colonna - `withIndex()` viene
+**prima** del filtro dei giorni senza temperatura, altrimenti con un modello
+corto si aprirebbe il giorno sbagliato. E **TORNA AD ADESSO sparisce
+con la settimana in scena**: li' non c'e' un'ora scelta da cui tornare, e il
+tasto prometterebbe di riportare dove non si e' andati. La scelta fra le due
+sopravvive alla rotazione ma non alla chiusura: riaprendo l'app la domanda torna
+a essere "che tempo fa adesso".
+
 **Il fondo e' un cielo, non piu' un grigio** (`ui/theme/Colors.kt`). Era una
 tinta piatta sola, interpolata fra antracite e grigio chiaro: mezzogiorno usciva
 grigio per costruzione, alba e tramonto viravano su un malva fangoso, e sereno e
@@ -751,6 +879,40 @@ Tre conseguenze in `capture.sh`:
   ce ne fosse almeno uno - e un job verde che ha fotografato meta' delle
   schermate e' peggio di uno rosso: sembra una verifica fatta.
 
+**Il meccanismo si e' trovato, e non era nel logcat.** "Non c'e' un log da
+leggere perche' a morire e' il processo che il log lo ospita" era vero solo per
+il logcat: **l'emulatore ha un log suo**, che finisce nel log del job e che
+nessuno aveva ancora aperto. Li' dentro, nel giro `33910250383`, c'e' la riga
+che mancava:
+
+```
+ERROR | Failed to find ColorBuffer: 121
+```
+
+e poco dopo `screencap: error: closed`, poi `device 'emulator-5554' not found`
+per tutto il resto del giro. Un `ColorBuffer` e' una texture che vive sul lato
+host: il guest la nomina per numero e l'host gliela tiene. Quel messaggio dice
+che il guest ne ha chiesta una che l'host non aveva piu' - non memoria finita,
+proprio i due lati che non sono piu' d'accordo su cosa esiste.
+
+Da qui si spiega anche perche' moriva "sempre nel foglio di dettaglio" senza
+che il foglio c'entrasse: **la coda degli scatti e' fatta di riavvii**. Ogni
+`restart_with` chiude l'app e la riapre per fissare un'ora o un codice meteo, e
+ogni riavvio butta via una superficie GL e ne crea un'altra. Trenta scatti sono
+una trentina di cicli, e il conto si rompe intorno al quindicesimo - che e'
+esattamente dove sta la coda, cioe' il dettaglio. La correlazione col foglio era
+vera e la causa no, come il testo qui sopra sospettava: e' l'ordine, non il
+contenuto.
+
+**Cosa si e' cambiato, e con che aspettative.** In `build.yml`: `-no-snapshot`
+(nel log lo snapshot `default_boot` falliva gia' il caricamento, quindi era peso
+inutile), `ram-size` da 2048M a 4096M e `cores: 4`, che il runner ha e
+l'emulatore non stava usando. **Non e' una correzione di cui si conosca l'esito**:
+tolgono due condizioni che rendono il disallineamento piu' probabile, non lo
+rendono impossibile. Se il giro muore ancora, la leva successiva non e' un'altra
+opzione dell'emulatore ma **ridurre i riavvii**: raggruppare gli scatti che
+condividono lo stesso stato, cosi' che una sessione sola ne produca piu' d'uno.
+
 **37. Un log di diagnostica lasciato acceso smentisce in silenzio una
 dichiarazione su cui si appoggia qualcun altro.** Nei widget erano rimasti
 sedici `Log.d("WidgetResolve", ...)` dalle sessioni in cui si inseguiva quale
@@ -828,64 +990,64 @@ lo decide il Sole, non chi guarda (e' la trappola #24 vista dall'altro lato).
 Una falce che si raddrizza girando il telefono sarebbe una luna che cambia fase
 perche' ci si e' spostati di venti centimetri.
 
-**41. `NaN` non fa cadere niente, e per questo arriva lontano.** Sull'emulatore
-"localizzami" ha prodotto una `Place` chiamata **MOUNTAIN VIEW** con latitudine e
-longitudine a `NaN`: il `Location` di sistema le aveva cosi', ma il nome si
-geocodificava benissimo, quindi la localita' sembrava a tutti gli effetti buona.
-Da li' in poi nessuno si e' opposto - `NaN` passa i confronti, si concatena in
-una stringa, entra in un URL come testo - finche' Open-Meteo non ha risposto
-`{"latitude":NaN,"longitude":NaN,...}` e il lettore JSON si e' fermato:
-*Unexpected JSON token at offset 15: Failed to parse type 'double' for input
-'NaN'*.
+**42. ICON-2I non arriva a otto giorni, e non e' un guasto.** La striscia della
+settimana nasceva vuota da meta' in poi: `37° 33° 33° -- -- -- -- --`. Non era
+l'app, ed e' bastata una chiamata a mano per saperlo:
 
-Il guasto quindi si presentava **a due passaggi da dove era nato**, e travestito
-da errore di formato: chi legge quel messaggio va a guardare il parser, che e'
-l'unico pezzo innocente della catena. E' la trappola #9 in una forma nuova - la
-prima diagnosi la suggerisce il messaggio, e il messaggio parla del posto
-sbagliato.
+```
+models=italia_meteo_arpae_icon_2i  ->  [36.5, 32.8, 32.8, null, null, null, null, null]
+(nessun models, cioe' globale)     ->  [36.2, 32.0, 33.0, 33.6, 31.9, 24.8, 26.0, 29.4]
+```
 
-Il guardiano sta alla sorgente: `DeviceLocation.describe()` torna **nullo** se
-il rilevamento non ha coordinate finite, cioe' lo tratta come tutti gli altri
-modi di non riuscire (permesso negato, posizione spenta, nessun fix in tempo), e
-chi ha chiamato resta dov'era. `lastKnown()` scarta le posizioni non finite
-prima di sceglierle, altrimenti un'ultima posizione nota rotta scarterebbe da
-sola il rilevamento vero, che si chiede solo quando li' non c'e' niente.
+**Un modello ad alta risoluzione e' anche un modello a corto raggio**: ICON-2I e'
+piu' preciso sull'Italia proprio perche' guarda vicino, e si ferma intorno alle
+settantadue ore. Chi lo sceglie ha scelto la precisione al posto della distanza,
+e la striscia lo rispecchia mostrando **solo i giorni che hanno una temperatura**
+invece di stampare `--` a riempire. Tre colonne piene dicono la verita'; otto
+colonne mezze vuote sembrano un difetto dell'app.
 
-Due punti in piu', perche' la falla aveva gia' lasciato dei residui:
-`WeatherRepository.load()` si ferma **prima** della richiesta con un `require`
-che nomina la localita', e `SettingsPrefs` rilegge una localita' salvata solo se
-le sue coordinate sono numeri veri. Quel secondo non e' teoria: la `Place` con
-`NaN` era **gia' scritta nel DataStore**, e da sola non se ne sarebbe mai
-andata - a ogni avvio l'app la rileggeva, la mandava alla rete e falliva di
-nuovo. Un difetto che si ripara solo in avanti lascia i dispositivi che lo hanno
-gia' incontrato rotti per sempre.
+Da qui e' saltata fuori una seconda cosa: **`Place.isItaly` non la usa nessuno**.
+E' scritta, documentata, e `grep` la trova in un punto solo - la sua definizione.
+Doveva servire a forzare ICON-2I in Italia quando il modello e' AUTO, ma nel
+codice di `main` quella forzatura non c'e': `modelsQueryValue()` restituisce
+`null` per AUTO, quindi AUTO e' il modello globale e basta. Non e' stato toccato
+niente qui - una funzione morta non fa danni e cambiarla e' una decisione di
+prodotto, non di pulizia - ma chi legge il commit che parla di ICON-2I in Italia
+sappia che in `main` non e' attivo.
 
-Il guardiano e' `Place.hasFiniteCoordinates`, ed e' sotto test
-(`FiniteCoordinatesTest`) perche' un valore che non si nota si toglie una volta
-e torna la volta dopo.
+**41. Lint segnalava undici errori, e nessuno era un difetto vero.** Il referto
+di `lintDebug` li portava da tre giri, e chi lo leggeva ci passava sopra perche'
+`abortOnError = false`: e' esattamente il debito mai letto di cui parla il
+commento in `app/build.gradle.kts`. Sono di tre specie, e vale la pena
+distinguerle perche' si correggono in tre modi diversi.
 
-**42. Il messaggio di un'eccezione non e' un messaggio per l'utente.**
-`UiState.error` finisce in tre punti dell'interfaccia, e in uno di quelli -
-la condizione della schermata principale - viene scritto **in maiuscolo, al
-posto della parola sul tempo**. Finche' li' dentro ci arrivava
-`failure.message`, il fallimento della trappola #41 si e' visto cosi': sei righe
-di JSON maiuscolo, coordinate di chi stava usando l'app comprese, dove doveva
-esserci "SERENO".
+Tre erano **`FullBackupContent`**: in `backup_rules.xml` e
+`data_extraction_rules.xml` c'era un `<exclude>` per
+`datastore/widget_config.preferences_pb`, che pero' non sta dentro nessun
+`<include>`. Appena si scrive un `<include>` esplicito, l'incluso e' l'unica
+cosa che parte e tutto il resto e' gia' fuori: quell'`<exclude>` non era
+ridondante e basta, era un errore. Tolto - il comportamento non cambia di un
+byte, e l'intenzione resta scritta nel commento.
 
-Adesso `failureMessage()` traduce il guasto in una riga sola, e le categorie sono
-tre perche' tre sono le risposte diverse che puo' dare chi legge: **la rete**
-(aspetta), **il servizio** (non dipende da te), **il resto** (riprova).
-Distinguere di piu' vorrebbe dire spiegare in un'app del meteo la differenza fra
-un timeout e un handshake TLS.
+Dieci erano **`NewApi`** in `ui/motion/WeatherHaptics.kt`: primitive componibili
+(API 30) ed effetti predefiniti (29) chiamati in un'app che dichiara 26. **Non
+si rompe niente**: la scelta la fa `modeOf()`, che guarda `Build.VERSION.SDK_INT`
+prima di tutto, e su un telefono vecchio quei rami non si raggiungono. Ma la
+garanzia passa per un valore di enum, e lint non la sa seguire fin li'. Risolta
+con `@SuppressLint("NewApi")` sui due metodi piu' il perche' in testa alla
+classe - la stessa forma che `DeviceLocation` usa gia' per `MissingPermission`,
+dove a garantire e' `granted()`.
 
-Il dettaglio tecnico non si perde, va nel log - dove prima **non c'era affatto**:
-un fallimento di rete non lasciava una riga. E li' c'e' una sorpresa da sapere:
-`Log.getStackTraceString` torna la **stringa vuota** se nella catena delle cause
-c'e' una `UnknownHostException`. Lo fa apposta, per non riempire il log ogni
-volta che manca la rete, ma vuol dire che nel caso piu' frequente il terzo
-argomento di `Log.w` non stampa niente. Per questo l'eccezione compare due volte,
-come testo nel messaggio e come oggetto: senza la prima resterebbe una riga che
-dice solo che e' andata male.
+L'ultimo era **`SuspiciousIndentation`** in `WeatherViewModel.kt`: `outcome` era
+rientrato di quattro spazi in piu' e sembrava la continuazione di
+`val outcome = repository.load()`, mentre e' l'istruzione dopo. Solo
+incolonnatura, nessun cambio di comportamento - ma e' il genere di riga che si
+legge male una volta e si capisce al contrario.
+
+Adesso `lintDebug` dice **0 errori, 18 avvisi**. E' la condizione che il commento
+in `app/build.gradle.kts` poneva per alzare `abortOnError`: non e' stato alzato
+qui - lo si fa quando anche gli avvisi sono stati guardati - ma da adesso il
+prossimo errore che compare e' nuovo, e si vede.
 
 ---
 
