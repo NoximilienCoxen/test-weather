@@ -379,13 +379,15 @@ fun HomeScreen(
 
         Spacer(Modifier.height(6.dp))
 
-        // Minima, massima e percepita: sono gia' nella stessa risposta che
-        // porta la temperatura, e finora non le leggeva nessuno.
+        // Qui restava solo la percepita. **Minima e massima se ne sono andate**
+        // sul diagramma della barra, dove stanno appoggiate al picco e
+        // all'avvallamento della curva: li' dicono anche *a che ora* accadono,
+        // che e' piu' di quanto dicessero scritte qui. Ripeterle in due posti
+        // sarebbe stata la stessa informazione due volte, e quella meno ricca
+        // per giunta.
         val today = hour?.time?.let { state.forecast?.dayOf(it) }
         Text(
-            text = rangeLabel(
-                min = today?.tempMin,
-                max = today?.tempMax,
+            text = feltLabel(
                 apparent = hour?.apparent,
                 real = hour?.temperature,
                 unit = state.unit,
@@ -393,6 +395,11 @@ fun HomeScreen(
             style = MeteoType.caption,
             color = colors.label,
             textAlign = TextAlign.Center,
+            // La riga e' vuota per gran parte della giornata - la percepita
+            // compare solo quando stacca davvero - e senza un'altezza garantita
+            // comparirebbe e sparirebbe facendo sussultare in su e in giu' tutto
+            // cio' che le sta sopra, scultura compresa.
+            minLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -440,6 +447,7 @@ fun HomeScreen(
                     nowIndex = state.nowIndex,
                     sunrise = today?.sunrise,
                     sunset = today?.sunset,
+                    unit = state.unit,
                     onSelect = onSelectHour,
                     modifier = Modifier.padding(horizontal = 24.dp),
                 )
@@ -706,24 +714,14 @@ private val DAY_FORMAT: DateTimeFormatter =
  * della conversione, perche' in Fahrenheit la stessa differenza vale quasi il
  * doppio e la soglia cambierebbe senso a seconda dell'unita' scelta.
  */
-private fun rangeLabel(
-    min: Double?,
-    max: Double?,
+private fun feltLabel(
     apparent: Double?,
     real: Double?,
     unit: TempUnit,
 ): String {
-    val span = if (min != null && max != null) {
-        "${min.asPlainDegrees(unit)} / ${max.asPlainDegrees(unit)}"
-    } else {
-        null
-    }
-    val felt = if (apparent != null && real != null && abs(apparent - real) >= FELT_THRESHOLD) {
-        "PERCEPITI ${apparent.asPlainDegrees(unit)}"
-    } else {
-        null
-    }
-    return listOfNotNull(span, felt).joinToString("   \u00B7   ")
+    if (apparent == null || real == null) return ""
+    if (abs(apparent - real) < FELT_THRESHOLD) return ""
+    return "PERCEPITI ${apparent.asPlainDegrees(unit)}"
 }
 
 /**
