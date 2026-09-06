@@ -751,6 +751,42 @@ Tre conseguenze in `capture.sh`:
   ce ne fosse almeno uno - e un job verde che ha fotografato meta' delle
   schermate e' peggio di uno rosso: sembra una verifica fatta.
 
+**Adesso c'e' un testimone di fuori.** "Non c'e' un log da leggere perche' a
+morire e' il processo che il log lo ospita" era vero, ed e' precisamente il
+motivo per cui per tre giri non si e' saputo niente: l'unico interrogato era il
+logcat, che **vive dentro la cosa che muore**. `capture.sh` adesso ha due
+funzioni che guardano da fuori.
+
+`polso()` scrive una riga prima di ogni scatto - stato di adb, memoria
+disponibile dell'host, memoria del guest, pid e memoria del processo
+dell'emulatore, pid dell'app - e produce quindi una serie storica: non si vede
+solo *dove* si rompe, si vede se qualcosa stava gia' scendendo da prima. Ha
+timeout di otto secondi e non sessanta come `adbt`, ed e' voluto: e' una misura,
+non un tentativo, e su un dispositivo gia' morto verrebbe chiamata per ognuno
+degli scatti rimasti - con timeout lunghi sfonderebbe da sola il tetto di trenta
+minuti del job, diventando una seconda causa di fallimento.
+
+`autopsia()` scatta appena si constata la morte, e risponde alla **domanda che
+taglia il problema in due**: il processo dell'emulatore sull'host e' ancora vivo?
+
+- **morto** -> a cadere e' il lato host: grafica, memoria del processo. Si lavora
+  sulle opzioni dell'emulatore.
+- **vivo** -> a cadere e' il guest: kernel, `surfaceflinger`, o l'OOM killer di
+  Android. Si lavora su cosa gli si chiede di fare.
+
+Sono due guasti diversi con due rimedi diversi, e finora non si sapeva quale dei
+due si stesse guardando. L'autopsia guarda anche l'OOM killer dell'host in
+`dmesg` e i rapporti di crash dell'emulatore in `~/.android/breakpad`.
+
+**Un'ipotesi di questo documento e' gia' caduta.** Il giro `33987756751` mostra
+diciassette scatti lisci in un minuto e quarantacinque, poi trentacinque secondi
+di silenzio e il dispositivo offline; il primo perso e' `scuro-d9-aria`, cioe'
+**dentro il carosello del dettaglio**, prima ancora della coda coi riavvii
+dell'app. Quindi "ridurre i riavvii" - che sembrava la leva successiva - e'
+puntato nel posto sbagliato: a quel punto i riavvii non sono ancora cominciati.
+E il punto si sposta comunque: 17, 20, 17 scatti su tre giri con la stessa
+configurazione. Un guasto che cambia posto non si insegue a tentativi, si misura.
+
 **37. Un log di diagnostica lasciato acceso smentisce in silenzio una
 dichiarazione su cui si appoggia qualcun altro.** Nei widget erano rimasti
 sedici `Log.d("WidgetResolve", ...)` dalle sessioni in cui si inseguiva quale
