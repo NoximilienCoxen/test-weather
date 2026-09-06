@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.WeatherModel
+import io.github.noximiliencoxen.caelum.data.hasFiniteCoordinates
 import io.github.noximiliencoxen.caelum.data.key
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -91,6 +92,12 @@ class SettingsPrefs(private val context: Context) {
         // Nome e coordinate si salvano insieme e si rileggono insieme: una meta'
         // sola descriverebbe un posto che non e' ne' quello scelto ne' il
         // predefinito.
+        //
+        // E si rilegge solo se le coordinate sono numeri veri: una localita'
+        // con `NaN` dentro e' stata scritta qui davvero, da un rilevamento
+        // dell'emulatore, e da sola non se ne sarebbe mai andata - a ogni
+        // avvio l'app la rileggeva, la mandava alla rete e falliva. Un
+        // predefinito e' meglio di un posto che non esiste.
         val place = if (latitude != null && longitude != null && name != null) {
             Place(
                 name = name,
@@ -98,7 +105,7 @@ class SettingsPrefs(private val context: Context) {
                 country = prefs[KEY_COUNTRY],
                 latitude = latitude,
                 longitude = longitude,
-            )
+            ).takeIf { it.hasFiniteCoordinates } ?: Place.FORLI
         } else {
             Place.FORLI
         }
