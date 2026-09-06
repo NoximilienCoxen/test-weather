@@ -49,6 +49,9 @@ object DeviceLocation {
      * vero, e con un tempo massimo - restare in attesa di un satellite
      * mentre l'utente guarda le impostazioni non e' un comportamento, e' un
      * blocco.
+     *
+     * Fra i modi di non riuscire c'e' anche un rilevamento che arriva ma senza
+     * coordinate utilizzabili: vedi [describe].
      */
     suspend fun current(context: Context): Place? = withContext(Dispatchers.IO) {
         if (!granted(context)) return@withContext null
@@ -62,9 +65,13 @@ object DeviceLocation {
     private fun lastKnown(manager: LocationManager): Location? = runCatching {
         // Tutti i fornitori e non uno solo: quale sia acceso dipende dal
         // telefono e da cosa ha fatto l'utente. Fra quelli che rispondono si
-        // prende il piu' recente.
+        // prende il piu' recente, e solo fra quelli che hanno davvero delle
+        // coordinate: un'ultima posizione nota con `NaN` dentro scarterebbe da
+        // sola il rilevamento vero, che verrebbe chiesto solo se qui non ci
+        // fosse niente.
         manager.allProviders
             .mapNotNull { provider -> manager.getLastKnownLocation(provider) }
+            .filter { it.latitude.isFinite() && it.longitude.isFinite() }
             .maxByOrNull { it.time }
     }.getOrNull()
 
@@ -113,15 +120,26 @@ object DeviceLocation {
         }
 
     /**
-     * Coordinate piu' un nome, che e' quello che [Place] vuole.
+     * Coordinate piu' un nome, che e' quello che [Place] vuole - oppure nulla,
+     * se quelle coordinate non sono numeri.
      *
      * Il nome lo prova la geocodifica inversa della piattaforma. **Su
      * un'immagine AOSP non risolve niente** - e' scritto anche in `Place.kt` -
      * e Open-Meteo non ne offre una: la sua ricerca va per nome, non per
      * coordinate. Quando non torna nulla il posto si chiama e basta, invece di
      * costare una richiesta in piu' alla rete per una sola parola.
+     *
+     * **Il nome non fa fede sulle coordinate.** Un `Location` con latitudine e
+     * longitudine a `NaN` si geocodifica lo stesso - l'emulatore ne ha dato uno
+     * che si chiamava "MOUNTAIN VIEW" - e una [Place] con un nome giusto e
+     * numeri finti sembra a tutti gli effetti valida, fino a quando non arriva
+     * alla rete. Un rilevamento senza coordinate e' un rilevamento mancato:
+     * torna nulla come tutti gli altri modi di non riuscire, e chi ha chiamato
+     * resta dov'era invece di guardare una previsione di nessun posto.
      */
-    private fun describe(context: Context, fix: Location): Place {
+    private fun describe(context: Context, fix: Location): Place? {
+        if (!fix.latitude.isFinite() || !fix.longitude.isFinite()) return null
+
         val address = runCatching {
             @Suppress("DEPRECATION")
             Geocoder(context, Locale.ITALIAN)
