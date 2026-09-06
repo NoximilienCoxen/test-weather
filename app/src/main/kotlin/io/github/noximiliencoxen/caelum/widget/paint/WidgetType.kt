@@ -95,3 +95,69 @@ internal fun DrawScope.textCentered(
 /** Quanto spazio verticale occupa una riga con questo pennello. */
 internal fun lineHeight(paint: Paint): Float =
     paint.fontMetrics.descent - paint.fontMetrics.ascent
+
+/**
+ * Scrive il nome di una localita' dentro la larghezza che ha davvero.
+ *
+ * **Serve perche' prima nessuno lo faceva.** Il nome veniva scritto con un
+ * `text()` nudo, senza sapere quanto spazio c'era: con NOCETO e MILANO non si
+ * vedeva niente, con "Aoraki / Monte Cook" la scritta usciva dal riquadro, si
+ * infilava sotto il pallino della qualita' dell'aria e veniva tagliata a meta'
+ * dal bordo dell'immagine. Era in tutti e tre i disegni, identico, e a
+ * incontrarlo per primo e' stato quello dell'aria solo perche' quel widget ha
+ * il pallino in alto a destra che rende la collisione evidente.
+ *
+ * Sta qui, e non in ciascun disegno, per la stessa ragione per cui sta qui
+ * `text()`: un disegno nuovo che scrive il nome di un posto non deve
+ * ricordarsi di rimpicciolirlo.
+ *
+ * **Si stringe prima di troncare, e si stringe di larghezza, non di corpo.** Il
+ * carattere ha un asse variabile per la larghezza: stringendo quello l'altezza
+ * della riga non cambia, e non cambia quindi nemmeno l'impaginazione di tutto
+ * cio' che sta sotto - che e' calcolata proprio su `lineHeight`. Rimpicciolire
+ * il corpo avrebbe fatto ballare il resto del widget a seconda di quanto e'
+ * lungo il nome della citta'.
+ *
+ * Quando anche la larghezza minima non basta, si taglia con i puntini: un nome
+ * illeggibile perche' compresso non e' meglio di un nome accorciato.
+ *
+ * Restituisce il pennello davvero usato, perche' chi impagina ha bisogno del
+ * suo [lineHeight].
+ */
+internal fun DrawScope.placeName(
+    value: String,
+    x: Float,
+    y: Float,
+    maxWidth: Float,
+    sizePx: Float,
+    type: WidgetType,
+    color: Color,
+    weight: Int = 600,
+    letterSpacingEm: Float = 0.10f,
+): Paint {
+    var brush = type.brush(sizePx, weight, WIDTH_WIDEST, letterSpacingEm)
+    var axis = WIDTH_WIDEST
+    while (type.widthOf(value, brush) > maxWidth && axis > WIDTH_NARROWEST) {
+        axis -= WIDTH_STEP
+        brush = type.brush(sizePx, weight, axis, letterSpacingEm)
+    }
+
+    if (type.widthOf(value, brush) <= maxWidth) {
+        text(value, x, y, brush, color)
+        return brush
+    }
+
+    // Non ci sta nemmeno stretto: si taglia. Un carattere alla volta invece che
+    // a stima, perche' le lettere non sono larghe uguali e una stima sbaglia
+    // proprio sui nomi che hanno tante lettere strette.
+    var cut = value.length
+    while (cut > 1 && type.widthOf(value.take(cut) + "…", brush) > maxWidth) {
+        cut--
+    }
+    text(value.take(cut).trimEnd() + "…", x, y, brush, color)
+    return brush
+}
+
+private const val WIDTH_WIDEST = 78
+private const val WIDTH_NARROWEST = 58
+private const val WIDTH_STEP = 4

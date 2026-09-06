@@ -22,9 +22,19 @@ internal fun DrawScope.airArt(
     val box = Rect(pad, pad, size.width - pad, size.height - pad)
     val band = air?.band
 
-    val name = type.brush(box.height * 0.095f, weight = 600, width = 78, letterSpacingEm = 0.10f)
     val dotRadius = box.height * 0.055f
-    text(place, box.left, box.top, name, ink.secondary)
+    // La larghezza per il nome finisce dove comincia il pallino, con un
+    // respiro in mezzo: il pallino sta in alto a destra sulla stessa riga, e
+    // prima il nome ci finiva sotto.
+    val name = placeName(
+        value = place,
+        x = box.left,
+        y = box.top,
+        maxWidth = box.width - dotRadius * 2f - box.height * 0.04f,
+        sizePx = box.height * 0.095f,
+        type = type,
+        color = ink.secondary,
+    )
 
     val dotCentre = Offset(box.right - dotRadius, box.top + lineHeight(name) * 0.45f)
     if (band != null) {

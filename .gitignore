@@ -16,3 +16,26 @@ local.properties
 
 # Impostazioni personali di Claude Code: non sono del progetto.
 .claude/settings.local.json
+
+# Roba scaricata che vive nella cartella del progetto senza farne parte.
+#
+# `awesome-claude-skills-master` e' la raccolta pubblica di Composio: 14 MB e
+# 1142 file di terze parti. `test-weather-main` e' una copia completa del
+# progetto del 30 agosto, ferma a prima della ridenominazione del pacchetto -
+# dentro ha ancora `com/forli/meteo` e un CONTESTO.md vecchio, ed e' l'antenato
+# dei 55 file che impedivano di compilare (sezione 48).
+#
+# Nessuna delle due e' in settings.gradle.kts, quindi Gradle le ignora gia'.
+# Sono elencate qui perche' git no: comparivano a ogni `git status`, e un
+# `git add .` distratto le avrebbe portate dentro - dove la storia non si
+# ripulisce piu'. La CI, per giunta, fa checkout in cinque job.
+#
+# La barra iniziale ancora la regola alla radice: una cartella omonima piu' in
+# basso resta visibile.
+/awesome-claude-skills-master/
+/test-weather-main/
+
+# Lo lascia Python eseguendo gli script di sonda della CI (probe_models.py,
+# probe_deps.py) quando li si prova da qui. E' cache compilata, cambia a ogni
+# versione dell'interprete e non descrive niente.
+__pycache__/

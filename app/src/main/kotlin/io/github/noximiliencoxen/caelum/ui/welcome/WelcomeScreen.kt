@@ -144,16 +144,31 @@ fun WelcomeScreen(
 
     val press = remember { MutableInteractionSource() }
     val pressed by press.collectIsPressedAsState()
-    val sink by animateFloatAsState(
+    // **Le due molle si leggono tagliate sotto lo zero, e non e' pignoleria.**
+    // Sono sottosmorzate apposta - senza sorpasso il pulsante non rimbalza e lo
+    // spillo non si posa - ma il sorpasso e' simmetrico: tornando a zero non si
+    // ferma, lo passa. Con dampingRatio 0.7 sono quattro centesimi sotto per
+    // circa un sesto di secondo, cioe' una decina di fotogrammi, e in quei
+    // fotogrammi `sink` alimentava un padding: `PaddingElement` pretende un
+    // valore non negativo e terminava l'app appena si rilasciava TROVAMI.
+    //
+    // Il taglio sta qui e non al punto d'uso perche' quel negativo non lo vuole
+    // nessuno dei due consumatori: `pinned` non schiantava solo perche' finisce
+    // dentro un Canvas, dove diventava un'opacita' negativa e una caduta piu'
+    // lunga del dovuto. La meta' che serve - il sorpasso sopra l'uno - resta
+    // intera, e il rimbalzo si vede ancora.
+    val sinkOvershoot by animateFloatAsState(
         targetValue = if (pressed) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = 900f),
         label = "affondo",
     )
-    val pinned by animateFloatAsState(
+    val sink = sinkOvershoot.coerceAtLeast(0f)
+    val pinnedOvershoot by animateFloatAsState(
         targetValue = if (found) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.55f, stiffness = 240f),
         label = "spillo",
     )
+    val pinned = pinnedOvershoot.coerceAtLeast(0f)
 
     Column(
         modifier = modifier.fillMaxSize(),
