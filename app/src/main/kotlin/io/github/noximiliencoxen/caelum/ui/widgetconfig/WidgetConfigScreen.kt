@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
+import io.github.noximiliencoxen.caelum.widget.WidgetConfig
 import io.github.noximiliencoxen.caelum.widget.WidgetKind
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
@@ -83,17 +85,37 @@ fun WidgetConfigScreen(
     modifier: Modifier = Modifier,
     /** Quale dei tre widget si sta configurando, per l'anteprima e la localita'. */
     kind: WidgetKind? = null,
+    /**
+     * Cosa aveva gia' scelto questo widget.
+     *
+     * Vuota al primo piazzamento, piena quando la schermata viene riaperta per
+     * cambiare la citta'. Serve a mostrare la scelta corrente invece di
+     * chiederla di nuovo da zero.
+     */
+    initial: WidgetConfig = WidgetConfig(),
 ) {
-    // La luna e' la stessa da qualunque parte la si guardi: chiederle una
-    // citta' sarebbe una domanda senza conseguenze.
-    val showLocation = kind != WidgetKind.LUNA
+    // Chi vuole una citta' lo dice il widget stesso, in WidgetKind: qui non si
+    // elencano piu' i tipi a mano. Un widget nuovo che non ne vuole - come la
+    // luna, che e' la stessa da qualunque parte la si guardi - lo dichiara la'
+    // e questa schermata si adegua da sola.
+    //
+    // Sconosciuto vuol dire che il lanciatore non ha ancora agganciato
+    // l'istanza: si chiede la citta', perche' quasi tutti i widget la vogliono
+    // e una domanda in piu' si annulla, una configurazione mancante no.
+    val showLocation = kind?.needsPlace ?: true
     val context = LocalContext.current
     val settingsPrefs = remember { SettingsPrefs(context) }
 
-    var source by remember { mutableStateOf(LocationSource.SEARCH) }
-    var useLocation by remember { mutableStateOf(false) }
-    var selectedPlace by remember { mutableStateOf<Place?>(null) }
     var locationGranted by remember { mutableStateOf(DeviceLocation.granted(context)) }
+    var useLocation by remember { mutableStateOf(initial.useLocation && locationGranted) }
+    var selectedPlace by remember { mutableStateOf(initial.place) }
+    // La scheda che si apre e' quella da cui viene la scelta gia' fatta: chi
+    // riapre per cambiare citta' trova sotto il dito quel che aveva usato.
+    var source by remember {
+        mutableStateOf(
+            if (initial.useLocation) LocationSource.GPS else LocationSource.SEARCH,
+        )
+    }
 
     var query by remember { mutableStateOf("") }
     var results by remember { mutableStateOf<List<Place>>(emptyList()) }
@@ -101,6 +123,20 @@ fun WidgetConfigScreen(
 
     val favorites by remember(settingsPrefs) { settingsPrefs.settings.map { it.favorites } }
         .collectAsStateWithLifecycle(initialValue = emptyList())
+
+    // I preferiti arrivano da un Flow, cioe' un fotogramma dopo: se la citta'
+    // gia' scelta e' fra questi, la scheda si sposta su "Preferiti" appena si
+    // sa. Una volta sola, e solo se nessuno ha ancora toccato le schede - se no
+    // strapperebbe di mano la navigazione a chi ha gia' iniziato a scegliere.
+    var tabSettled by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(favorites) {
+        if (tabSettled || initial.useLocation) return@LaunchedEffect
+        val chosen = initial.place ?: return@LaunchedEffect
+        if (favorites.any { it.key == chosen.key }) {
+            source = LocationSource.FAVORITES
+            tabSettled = true
+        }
+    }
 
     val askPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -156,6 +192,7 @@ fun WidgetConfigScreen(
                         current = source,
                         onChoose = { chosen ->
                             source = chosen
+                            tabSettled = true
                             useLocation = chosen == LocationSource.GPS && locationGranted
                         },
                     )
@@ -406,14 +443,9 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
  */
 @Composable
 private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean) {
-    val titolo = when (kind) {
-        WidgetKind.METEO -> "METEO"
-        WidgetKind.LUNA -> "LUNA"
-        WidgetKind.ARIA -> "QUALITÀ DELL'ARIA"
-        null -> "WIDGET"
-    }
+    val titolo = kind?.label ?: "WIDGET"
     val dove = when {
-        kind == WidgetKind.LUNA -> "La luna e' la stessa da ogni punto della Terra"
+        kind != null && !kind.needsPlace -> "Questo widget non dipende da dove ti trovi"
         following -> "Seguira' la posizione del telefono"
         place != null -> "Mostrera' ${place.name}"
         else -> "Scegli da dove prendere i dati"

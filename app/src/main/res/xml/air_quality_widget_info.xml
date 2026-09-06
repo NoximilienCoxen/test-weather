@@ -3,6 +3,9 @@
     Due celle di lato, dimensione fissa: il disegno e' costruito per occupare
     esattamente 2x2 celle e il ridimensionamento e' disabilitato per evitare
     che l'utente deformi il widget.
+
+    Per `widgetFeatures="reconfigurable"` vale la nota in weather_widget_info.xml:
+    senza, la citta' si sceglie una volta e non si cambia piu'.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
@@ -13,4 +16,5 @@
     android:resizeMode="none"
     android:widgetCategory="home_screen"
     android:configure="io.github.noximiliencoxen.caelum.widget.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable"
     android:initialLayout="@layout/widget_loading" />

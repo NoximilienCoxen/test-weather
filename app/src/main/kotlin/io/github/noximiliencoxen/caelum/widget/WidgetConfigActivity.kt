@@ -51,16 +51,30 @@ class WidgetConfigActivity : ComponentActivity() {
         // domanda potrebbe non avere piu' risposta.
         kind = WidgetKind.of(this, appWidgetId)
 
-        setContent {
-            // Palette neutra, non quella dell'ora del giorno: e' una schermata
-            // di sistema, non una schermata dell'app.
-            MeteoTheme(colors = skyColors(SkyState.Giorno)) {
-                WidgetConfigScreen(
-                    kind = kind,
-                    onSave = { place, useLocation ->
-                        lifecycleScope.launch { saveAndFinish(place, useLocation) }
-                    },
-                )
+        // La scelta gia' fatta, se c'e'. Adesso questa schermata si riapre - i
+        // widget sono `reconfigurable` - e riaprirla in bianco vorrebbe dire
+        // che chi voleva solo controllare quale citta' aveva impostato e'
+        // costretto a ripeterla alla cieca, con il rischio di salvarne una
+        // diversa per sbaglio.
+        //
+        // Si legge prima di comporre, non dopo: montare la schermata vuota e
+        // poi riempirla sovrascriverebbe la scelta di chi ha gia' iniziato a
+        // toccare. La lettura e' un file locale, dura un attimo, e nel
+        // frattempo non c'e' niente da mostrare.
+        lifecycleScope.launch {
+            val initial = withContext(Dispatchers.IO) { WidgetPrefs(this@WidgetConfigActivity).load(appWidgetId) }
+            setContent {
+                // Palette neutra, non quella dell'ora del giorno: e' una
+                // schermata di sistema, non una schermata dell'app.
+                MeteoTheme(colors = skyColors(SkyState.Giorno)) {
+                    WidgetConfigScreen(
+                        kind = kind,
+                        initial = initial,
+                        onSave = { place, useLocation ->
+                            lifecycleScope.launch { saveAndFinish(place, useLocation) }
+                        },
+                    )
+                }
             }
         }
     }
@@ -76,18 +90,25 @@ class WidgetConfigActivity : ComponentActivity() {
             )
         }
 
-        // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
-        // una volta, prima che questa schermata si aprisse, con le preferenze
-        // ancora vuote. refreshWidget() legge le preferenze su IO per
-        // confermare il flush prima di schedulare il re-render di Glance:
-        // questo elimina la race condition tra save() e provideGlance().
-        runCatching { refreshWidget(this, appWidgetId, kind) }
-            .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
-
+        // **L'esito si cede appena la scrittura e' a terra, prima del
+        // ridisegno.** Prima veniva dopo, e in mezzo c'era un'attesa: se
+        // `lifecycleScope` moriva in quella finestra restava il
+        // RESULT_CANCELED impostato in onCreate, il lanciatore cancellava
+        // l'identificativo, e onDeleted buttava via le preferenze appena
+        // salvate. Il contratto col sistema riguarda la configurazione, e la
+        // configurazione a questo punto c'e'.
         setResult(
             RESULT_OK,
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
         )
+
+        // Il ridisegno non e' una cortesia: il widget e' gia' stato disegnato
+        // una volta, prima che questa schermata si aprisse, con le preferenze
+        // ancora vuote. E' un miglioramento dell'esperienza, non parte del
+        // contratto: se fallisce si perde un ridisegno, non la scelta.
+        runCatching { refreshWidget(this, appWidgetId, kind) }
+            .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
+
         finish()
     }
 

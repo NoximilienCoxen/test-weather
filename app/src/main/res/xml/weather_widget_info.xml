@@ -3,6 +3,18 @@
     Due celle di lato, dimensione fissa: il disegno e' costruito per occupare
     esattamente 2x2 celle e il ridimensionamento e' disabilitato per evitare
     che l'utente deformi il widget.
+
+    `widgetFeatures="reconfigurable"` non e' un di piu': con il solo
+    `configure` la schermata di scelta gira **una volta sola**, al momento in
+    cui il widget si posa sulla Home. Una citta' sbagliata restava sbagliata
+    per sempre, e l'unico rimedio era cancellare il widget e rifarlo. Con
+    questo, un tocco lungo sul widget offre di riaprirla.
+
+    Lint lo segnala come `UnusedAttribute`: vale da API 28 e qui il minimo e'
+    26. E' la stessa nota che vale gia' per `targetCellWidth`/`targetCellHeight`
+    (API 31) due righe piu' sotto, ed e' innocua: su Android 8 l'attributo viene
+    ignorato e il widget resta configurabile una volta sola, cioe' come si
+    comportava prima ovunque. Non c'e' niente da ripiegare.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
@@ -13,4 +25,5 @@
     android:resizeMode="none"
     android:widgetCategory="home_screen"
     android:configure="io.github.noximiliencoxen.caelum.widget.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable"
     android:initialLayout="@layout/widget_loading" />
