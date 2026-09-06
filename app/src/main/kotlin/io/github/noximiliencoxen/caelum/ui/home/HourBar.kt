@@ -37,8 +37,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.prefs.TempUnit
+import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
 import io.github.noximiliencoxen.caelum.ui.temperature.buildLinePath
 import io.github.noximiliencoxen.caelum.ui.temperature.temperatureRamp
 import io.github.noximiliencoxen.caelum.ui.temperature.temperatureTint
@@ -80,6 +83,8 @@ fun HourBar(
     /** Alba e tramonto del giorno mostrato, se l'API li ha dati. */
     sunrise: java.time.LocalDateTime? = null,
     sunset: java.time.LocalDateTime? = null,
+    /** Serve ai due estremi scritti sul diagramma: gradi o Fahrenheit. */
+    unit: TempUnit = TempUnit.CELSIUS,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,6 +144,36 @@ fun HourBar(
     val bubbleStyle = MeteoType.metric.copy(color = colors.pillText)
     val bubbleText = remember(label, bubbleStyle) {
         measurer.measure(text = label, style = bubbleStyle)
+    }
+
+    // ── I due estremi scritti sul diagramma ────────────────────────────────────
+    //
+    // Massima e minima della giornata, in colonna a sinistra: la prima appoggiata
+    // al bordo di sopra, la seconda a quello di sotto - cioe' dalla parte in cui
+    // la curva le raggiunge. Erano scritte sotto la condizione, e li' dicevano
+    // solo due numeri; qui stanno addosso alla curva che li disegna.
+    //
+    // **La curva resta larga quanto la barra e non si stringe per far loro
+    // posto.** Un margine a sinistra sposterebbe ogni punto rispetto all'ora che
+    // gli sta sotto, e il diagramma direbbe "questa temperatura a quest'ora"
+    // indicando l'ora sbagliata - che e' esattamente cio' che vivere nella
+    // stessa tela della pista serve a evitare. I numeri quindi passano sopra al
+    // tratto; si sfiorano solo se il minimo della giornata cade nella prima ora,
+    // e un tratto di un punto e mezzo sotto una cifra si legge comunque.
+    //
+    // Misurati **in composizione** e non nel disegno, e senza colore nello
+    // stile: la cache del misuratore ignora colore e pennello (trappola #3), e
+    // due cifre di colore diverso si scambierebbero il tono. Il colore lo prende
+    // `drawText`.
+    val gradiNoti = remember(hours) { hours.mapNotNull { it.temperature?.toFloat() } }
+    val estremoAlto = gradiNoti.maxOrNull()
+    val estremoBasso = gradiNoti.minOrNull()
+    val stileEstremi = remember { MeteoType.caption.copy(fontSize = ESTREMI_SP) }
+    val testoAlto = remember(estremoAlto, unit, stileEstremi) {
+        estremoAlto?.let { measurer.measure(it.toDouble().asPlainDegrees(unit), stileEstremi) }
+    }
+    val testoBasso = remember(estremoBasso, unit, stileEstremi) {
+        estremoBasso?.let { measurer.measure(it.toDouble().asPlainDegrees(unit), stileEstremi) }
     }
 
     // L'altezza della bolla la decide **il testo misurato**, non una costante.
@@ -293,6 +328,33 @@ fun HourBar(
                     join = StrokeJoin.Round,
                 ),
             )
+
+            // I due numeri per ultimi, sopra il tratto. Ognuno prende il colore
+            // del **proprio** valore sulla stessa scala del gradiente: il piu'
+            // alto esce caldo, il piu' basso fresco. Un colore solo per tutti e
+            // due direbbe "sono due numeri" invece di "sono i due capi di questa
+            // curva".
+            // **Su una riga sola, non incolonnati.** Impilati erano la lettura
+            // giusta - alto in alto, basso in basso - ma non in ventidue punti:
+            // due righe da nove ne occupano quasi cinquantotto, i due numeri si
+            // toccavano e quello di sotto finiva a cavallo della curva. Provato
+            // sul telefono e scartato. Affiancati stanno comodi nell'angolo in
+            // alto a sinistra, che e' libero perche' a mezzanotte la temperatura
+            // non e' quasi mai il colmo della giornata.
+            testoAlto?.let { alto ->
+                drawText(
+                    textLayoutResult = alto,
+                    color = temperatureTint(massimo).copy(alpha = diagramma),
+                    topLeft = Offset(0f, 0f),
+                )
+                testoBasso?.let { basso ->
+                    drawText(
+                        textLayoutResult = basso,
+                        color = temperatureTint(minimo).copy(alpha = diagramma),
+                        topLeft = Offset(alto.size.width + ESTREMI_SPAZIO.toPx(), 0f),
+                    )
+                }
+            }
         }
 
         // Ritaglio sulla pista arrotondata e poi dipingo le ore dentro: cosi'
@@ -487,6 +549,18 @@ private const val GRADI_NUVOLOSO = 0.32f
  * barra e la curva deve esserci; quando si stacca, lo sguardo si sta gia'
  * spostando altrove e una sparizione netta si legge come uno scatto.
  */
+/**
+ * Il corpo dei due estremi scritti sul diagramma.
+ *
+ * Nove punti: la didascalia del progetto e' dodici, e questi devono stare sotto
+ * di essa - sono un'annotazione della curva, non una riga da leggere. Sotto gli
+ * otto, su un cielo che cambia colore, il grado si confonde con la cifra.
+ */
+private val ESTREMI_SP = 9.sp
+
+/** Lo stacco fra i due estremi sulla stessa riga: bastano a farli due numeri. */
+private val ESTREMI_SPAZIO = 6.dp
+
 private const val COMPARSA_MS = 120
 private const val SPARIZIONE_MS = 260
 

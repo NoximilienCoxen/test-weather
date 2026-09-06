@@ -168,6 +168,27 @@ sopra. La dissolvenza e' **asimmetrica**, 120 ms in entrata e 260 in uscita:
 comparendo deve essere gia' li' quando l'occhio arriva, uscendo non deve sbattere
 via nell'istante in cui ci si stacca.
 
+**Massima e minima stanno sul diagramma**, in alto a sinistra, a nove punti,
+ciascuna col colore che `temperatureTint` da' al proprio valore - la stessa scala
+del gradiente della curva. Erano scritte sotto la condizione, come `23° / 37°`:
+di li' sono state tolte, perche' ripeterle in due posti sarebbe la stessa
+informazione due volte. La riga sotto la condizione resta, ma ci vive solo la
+percepita, e ha `minLines = 1` perche' e' vuota per gran parte della giornata e
+senza un'altezza garantita farebbe sussultare tutto cio' che le sta sopra.
+
+Due cose provate e scartate sul telefono, che vale la pena non riprovare:
+
+- **Incolonnate**, massima in alto e minima in basso. E' la lettura giusta - alto
+  in alto - ma non ci stanno: due righe da nove punti ne occupano quasi
+  cinquantotto su ventidue di fascia, i numeri si toccavano e quello di sotto
+  finiva a cavallo della curva.
+- **Un margine a sinistra** per far loro posto restringendo la curva. Sposta ogni
+  punto rispetto all'ora che gli sta sotto: il diagramma direbbe "questa
+  temperatura a quest'ora" indicando l'ora sbagliata, e l'allineamento con la
+  pista e' l'intera ragione per cui vive nella stessa tela. I numeri passano
+  quindi **sopra** al tratto, e l'angolo in alto a sinistra e' libero perche' a
+  mezzanotte la temperatura non e' quasi mai il colmo della giornata.
+
 I ventidue punti **restano riservati** anche da spento: si anima la sola
 opacita'. Chiuderli farebbe allargare la scultura a ogni tocco, ed e' lo stesso
 sussulto che il riquadro di TORNA AD ADESSO evita gia' riservando la propria
