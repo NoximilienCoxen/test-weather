@@ -1177,6 +1177,39 @@ nello stesso processo, `androidx.datastore` avrebbe lanciato *"There are multipl
 DataStores active for the same file"*. Contenevano anche i sedici
 `Log.d("WidgetResolve", ...)` che la sezione 37 da' per rimossi.
 
+**49. `minSdk` sale a 31, ed e' una decisione presa, non una conseguenza.**
+Il piano `docs/superpowers/plans/2026-09-07-foglio-dettaglio-pila.md` la porta
+dentro al Task 1 come "la potatura che libera": serve a usare API moderne senza
+guardie. Ma alzare il minimo da 26 a 31 **taglia fuori Android 8, 9, 10 e 11**,
+e quest'app non si distribuisce da uno store - si installa da un APK diretto,
+quindi non c'e' nessun filtro che nasconda l'aggiornamento a chi non lo puo'
+installare: lo scarica e fallisce.
+
+E' stata posta come domanda di prodotto e ha avuto risposta: **nessuno usa
+l'app sotto Android 12**, quindi si fa. Sta scritto qui perche' la prossima
+persona che trova del codice difensivo per API vecchie sappia che e' stato
+lasciato indietro di proposito, e non lo rimetta.
+
+**Le tre note che quel cambio manda in soffitta.** Vanno tolte insieme al
+cambio, non prima e non "quando capita" - un commento che descrive una guardia
+che non c'e' piu' e' peggio di nessun commento:
+
+- le guardie API in `ui/motion/WeatherHaptics.kt`, con i due
+  `@SuppressLint("NewApi")` e il perche' in testa alla classe (sezione 41): a 31
+  le primitive componibili e gli effetti predefiniti ci sono sempre, e
+  `modeOf()` non deve piu' guardare `Build.VERSION.SDK_INT`;
+- la nota su `drawVertices` per Android 8, nell'elenco delle cose mai
+  verificate della sezione 8: a 31 quel dispositivo non esiste piu';
+- il commento in `res/xml/weather_widget_info.xml` che spiega perche'
+  `widgetFeatures` (API 28) e `targetCellWidth`/`targetCellHeight` (API 31)
+  facciano scattare `UnusedAttribute` con un minimo di 26. A 31 lint smette di
+  segnalarli e il referto scende da 21 avvisi a 18 - il che vuol dire che
+  **quel commento va tolto, non aggiornato**: non descrive piu' niente.
+
+Il cambio in se' non e' stato fatto qui: `app/build.gradle.kts`,
+`WeatherHaptics.kt` e `DeviceLocation.kt` restano al ramo che li ha in piano,
+per non spaccare in due un lavoro gia' progettato.
+
 ---
 
 ## 8. Stato: fatto / non fatto
