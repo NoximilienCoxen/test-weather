@@ -101,7 +101,11 @@ fun SectionCard(
     ) {
         Text(
             text = section.title,
-            style = MeteoType.caption,
+            // `label` e non `caption`: e' la riga che dice di cosa parla la
+            // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
+            // usa questo. Il sottotitolo sotto resta una didascalia, e la
+            // differenza fra le due si vede dalla misura oltre che dal colore.
+            style = MeteoType.label,
             color = accent,
             textAlign = TextAlign.Center,
             maxLines = 1,
@@ -170,6 +174,15 @@ private fun SectionHero(
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
+        // **L'altezza si prende qui e si tiene in una variabile.** Piu' sotto la
+        // cifra vive dentro un `Box` dentro una `Column`, e li' dentro
+        // `maxHeight` non si risolve piu': i riceventi impliciti piu' vicini
+        // sono `BoxScope` e `ColumnScope`, e Kotlin rifiuta di risalire al
+        // `BoxWithConstraintsScope` che sta fuori - *cannot be called in this
+        // context with an implicit receiver*. E' la stessa trappola di
+        // `AlertPillSlot` sulla prima scheda, vista da un'altra angolazione.
+        val available = maxHeight
+
         if (section == FeedSection.LUNA) {
             MoonBody(
                 date = state.pageDay?.date ?: LocalDate.now(),
@@ -193,6 +206,10 @@ private fun SectionHero(
         }
 
         val unit = section.unitLabel
+        // La cifra sta dentro il riquadro che le tocca, e sotto di lei ci va
+        // l'unita': con l'unita' in scena il corpo si riduce, se no il numero
+        // sconfina di quel tanto che l'etichetta gli ha portato via.
+        val body = available * if (unit.isBlank()) HERO_TYPE_SHARE else HERO_TYPE_SHARE_UNIT
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -213,7 +230,7 @@ private fun SectionHero(
                 PhysicalNumber(
                     text = value,
                     smallTail = heroSmallTail(section),
-                    fontSize = maxHeight * HERO_TYPE_SHARE,
+                    fontSize = body,
                     rotation = rotation,
                     tilt = tilt,
                     modifier = Modifier.fillMaxSize(),
@@ -332,7 +349,10 @@ private fun Stage(
         }
         Text(
             text = caption,
-            style = MeteoType.caption,
+            // `body` e non `caption`: e' una frase intera, e una frase in
+            // maiuscolo spaziato si compita invece di leggersi. E' la stessa
+            // ragione per cui `body` esiste.
+            style = MeteoType.body,
             color = label,
             textAlign = TextAlign.Center,
             maxLines = 3,
@@ -420,7 +440,10 @@ private fun SectionNumbers(
                 )
                 Text(
                     text = value,
-                    style = MeteoType.label,
+                    // `metric` porta le cifre a larghezza fissa: tre valori
+                    // affiancati che cambiano scorrendo le ore devono restare
+                    // incolonnati invece di ballare.
+                    style = MeteoType.metric,
                     color = accent,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -505,8 +528,16 @@ private const val MISSING = "--"
 private const val HERO_SHARE = 1f
 private const val STAGE_SHARE = 0.85f
 
-/** Il corpo della cifra, in frazione dell'altezza che le tocca. */
+/**
+ * Il corpo della cifra, in frazione dell'altezza che le tocca.
+ *
+ * Due valori e non uno: sotto la cifra ci va l'unita' quando c'e', e quella
+ * riga si prende la sua altezza dalla stessa colonna. Con un valore solo la
+ * cifra della pioggia - che l'unita' ce l'ha - sarebbe alta quanto quella della
+ * temperatura, che non ce l'ha, e sconfinerebbe di quel tanto.
+ */
 private const val HERO_TYPE_SHARE = 0.74f
+private const val HERO_TYPE_SHARE_UNIT = 0.66f
 
 /** Quanto l'inclinazione del telefono piega l'ombra, in gradi. */
 private const val SHADOW_PITCH = 5f
