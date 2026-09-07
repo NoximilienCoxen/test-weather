@@ -195,11 +195,13 @@ sussulto che il riquadro di TORNA AD ADESSO evita gia' riservando la propria
 altezza. Sotto l'uno per cento di opacita' il blocco non viene disegnato affatto:
 a riposo - cioe' quasi sempre - non si costruisce nemmeno la spline, quindi il
 caso piu' comune e' piu' leggero di prima, non piu' pesante. E' lo stesso
-disegno di "ANDAMENTO DELLA GIORNATA" nel dettaglio - stessa spline
+disegno che il grafico del dettaglio faceva per esteso - stessa spline
 (`buildLinePath`), stessa scala di colore (`temperatureRamp`) - ma senza assi,
 numeri, griglia e tocco. Qui non e' una cosa da leggere punto per punto, e' la
-forma della giornata vista di sfuggita mentre si sceglie un'ora; chi vuole i
-numeri apre il dettaglio. Sta **dentro la tela di `HourBar`** e non in un
+forma della giornata vista di sfuggita mentre si sceglie un'ora. **Da quando il
+grafico non c'e' piu' e' anche l'unica curva rimasta nell'app**, e questo alza
+il suo peso: era un accenno accanto a un disegno completo, adesso e' tutto
+quello che si dice sull'andamento. Sta **dentro la tela di `HourBar`** e non in un
 composable sopra, per la ragione gia' scritta in cima a quel file: la scala
 orizzontale dev'essere la stessa della pista, e due tele che si accordano sulla
 geometria vanno d'accordo finche' qualcuno non tocca una sola delle due.
@@ -267,9 +269,9 @@ alternare le due strisce nello stesso posto. Il riquadro che le ospita si
 allunga e si accorcia animato (`animateContentSize`), cosi' il passaggio e' un
 movimento e non uno scatto.
 
-Due conseguenze da sapere. **Una colonna si tocca e il giorno si apre**, sullo
-stesso dettaglio della scheda "LA SETTIMANA" (`openDayDetail`, che esisteva
-gia'). Il bersaglio e' la colonna intera - sigla, icona e le due cifre - non il
+Due conseguenze da sapere. **Una colonna si tocca e il giorno si sceglie**, e da
+li' lo raccontano tutte le schede del feed: il giorno e' un asse, non una
+schermata (`selectDay`). Il bersaglio e' la colonna intera - sigla, icona e le due cifre - non il
 solo glifo da ventisei punti. Che gli otto bersagli cadano dove passa il pollice
 che scorre le ore non e' un conflitto: quando c'e' una striscia l'altra non c'e'.
 Attenzione a un punto solo, ed e' scritto anche nel codice: l'indice da passare
@@ -301,16 +303,18 @@ diceva niente. Adesso sono tre decisioni:
   tavolozza della nuvolosita', e ci si scivola dentro con `Wmo.cloudiness`; il
   decile alto - pioggia forte e temporale - scurisce ancora.
 
-**Il dettaglio sale trascinando verso l'alto** (`ui/MeteoApp.kt`): un foglio che
-segue il dito, reversibile a meta' corsa. **In fondo alla principale il foglio
-sporge** (`ui/home/SheetEdge.kt`): una maniglia e i sei pallini delle grandezze,
-che sono il suo bordo superiore disegnato dove il foglio sta da chiuso. Toccarne
-uno apre il foglio **gia' su quella pagina**. **Le impostazioni entrano da
-sinistra**, da dove sta il loro pulsante.
+**Quella che si e' appena descritta e' la prima scheda di sei** (`ui/feed/`).
+Scorrendo dal basso verso l'alto si passa alla pioggia, poi all'aria, al vento,
+al sole, alla luna: una schermata piena ciascuna, sullo stesso cielo. Vedi la
+sezione 8-bis, che e' dove sta il ragionamento per intero.
 
-**Il giorno non e' una schermata**: e' un asse dentro lo stesso foglio, scelto
-dalla striscia in cima (`ui/temperature/DayStrip.kt`), da una colonna della
-settimana o dalla scheda "LA SETTIMANA". Vedi la sezione 8-bis.
+**Le impostazioni entrano da sinistra**, da dove sta il loro pulsante; **le
+allerte da destra**, perche' si scende dentro qualcosa di piu' specifico. Sono
+gli unici due strati rimasti sopra il feed.
+
+**Il giorno non e' una schermata**: e' un asse che tutte le schede leggono
+(`state.selectedDay`, e da li' `pageDay` e `detailHour`), scelto da una colonna
+della striscia della settimana sulla prima scheda.
 
 **Le impostazioni** (`ui/settings/SettingsScreen.kt`) hanno tre sezioni:
 localita' (ricerca per nome piu' un elenco di scorciatoie), unita' della
@@ -529,8 +533,8 @@ adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 
 | `--ei ora` | fissa l'ora mostrata (ricordata se i dati non sono ancora arrivati) |
 | `--ei meteo` | impone il codice WMO |
 | `--ei giro` | blocca la scena a un angolo, in gradi (accetta lo zero) |
-| `--ei giorno` | apre il dettaglio di quel giorno della settimana |
-| `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
+| `--ei giorno` | sceglie quel giorno della settimana: lo leggono tutte le schede |
+| `--ei sezione` | apre il feed su una scheda: 0 temperatura, 1 pioggia, 2 aria, 3 vento, 4 sole, 5 luna |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
 | `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
@@ -556,6 +560,15 @@ localita' mostrata**, cioe' quasi mai e mai su richiesta. Fotografarla solo nei
 giorni di maltempo vuol dire non fotografarla. Si applica **in lettura** e non
 scrivendo dentro `UiState.alerts`, se no il primo caricamento la cancella prima
 dello scatto.
+
+L'aggancio sulla sezione c'e' per la ragione dell'emulatore, non per comodita':
+le sei schede stanno una sotto l'altra, e raggiungerle col dito vuol dire cinque
+trascinate verticali di fila - **esattamente il carico che ha gia' fatto morire
+l'emulatore due volte** (trappola #38), con il logcat dell'app pulito e la
+macchina virtuale sparita. Con l'aggancio ogni scheda si fotografa da un avvio,
+e un avvio non puo' cadere a meta' come una trascinata. Il prezzo e' che gli
+scatti non provano piu' che lo scorrimento funzioni: ma quello e' un movimento,
+e un movimento in uno scatto non si giudica comunque - si prova in mano.
 
 L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da scegliere:
 giorno e notte li decide l'ora mostrata, e per fotografare la notte basta
@@ -594,7 +607,9 @@ le facce rivolte come l'estrusione, opposta alla luce: erano **tutte esattamente
 
 **5. `detectDragGestures` consuma qualunque direzione.** La rotazione ingoiava
 la trascinata verso l'alto, cioe' **il gesto piu' importante dell'app veniva
-bloccato da quello decorativo**. Orizzontale ruota, verticale apre.
+bloccato da quello decorativo**. Orizzontale ruota, verticale scorre - allora
+apriva il foglio, adesso cambia scheda del feed, ed e' la stessa spartizione con
+un contenuto diverso dentro.
 
 **6. La trasparenza non rappresenta la quantita'.** Una nuvola al venti per cento
 di opacita' non legge come nuvola leggera, legge come sporco. La copertura cambia
@@ -807,7 +822,9 @@ quanto fosse vecchio il dato. Un'app meteo lasciata aperta ieri sera mostrava
 ieri sera con la stessa faccia di adesso. E il gesto che sarebbe servito a
 ricaricare **c'era gia' e veniva buttato via**: col foglio del dettaglio chiuso,
 lo scorrimento verso il basso finiva dentro un `coerceIn(0f, 1f)` e non
-succedeva niente.
+succedeva niente. Il foglio poi e' uscito di scena, il tiro no: adesso vive in
+`ui/feed/FeedScreen.kt` e si prende il dito sulla prima scheda, dove sopra non
+c'e' nessuna scheda da mostrare.
 
 **27. Una ricarica non e' un primo carico.** Il ritorno dei dati riportava
 l'ora scelta ad "adesso" e, fallendo, sostituiva la condizione con un errore.
@@ -873,9 +890,9 @@ della CI; se muore, si e' trovato il pezzo.
 
 Tre conseguenze in `capture.sh`:
 
-- l'aggancio `--ei giorno` apre il dettaglio di un giorno senza gesti, come
-  `--ei giro` fa per la cifra di taglio: sono entrambi stati che col dito, qui,
-  non si raggiungono in modo affidabile;
+- gli agganci `--ei giorno` e `--ei sezione` mettono in scena un altro giorno e
+  un'altra scheda **senza gesti**, come `--ei giro` fa per la cifra di taglio:
+  sono stati che col dito, qui, non si raggiungono in modo affidabile;
 - **si fotografa prima cio' che non ha mai avuto uno scatto** e poi le prove del
   motore 3D, che una galleria alle spalle ce l'hanno. Quel che resta fuori e'
   sempre la coda, quindi in coda va messo cio' che si puo' perdere;
@@ -979,7 +996,10 @@ ordine le primitive componibili, l'ampiezza, gli effetti gia' pronti del sistema
 e infine la sola durata. Qui finisce su `EFFECT_TICK` contro `EFFECT_HEAVY_CLICK`,
 che sono tarati bene e si distinguono davvero.
 
-**35. Un avanzo di scorrimento non e' un dito.** `SheetNestedScroll` riceve un
+**35. Un avanzo di scorrimento non e' un dito.** La classe di allora
+(`SheetNestedScroll`) e' uscita di scena col foglio; **la regola no**, e vive in
+`PullNestedScroll`, che fa lo stesso mestiere fra il carosello verticale e il
+tiro per ricaricare. Il difetto: riceveva un
 `NestedScrollSource` a ogni callback e non lo leggeva nessuno. Arrivati in fondo
 a una pagina del dettaglio bastava una scorsa decisa perche' il foglio si
 chiudesse da solo: quello che il contenuto non consumava - lo slancio che si
@@ -995,9 +1015,14 @@ la guardia era `open >= 1f`, un confronto **esatto** su un numero che viene da
 una molla, e `begin()` quella molla la cancella dove la trova. Chi cominciava a
 scorrere mentre il foglio stava ancora salendo lo lasciava a 0,997 per sempre;
 da li' in poi la guardia non scattava piu' e `onPreScroll` si mangiava anche i
-delta verso l'alto, cioe' **il contenuto non scorreva piu' affatto**. Serve una
-tolleranza, e serve rimettere il foglio su un'ancora quando una molla e' stata
-cancellata senza che un trascinamento le sia subentrato.
+delta verso l'alto, cioe' **il contenuto non scorreva piu' affatto**. Serviva
+una tolleranza, e serviva rimettere il foglio su un'ancora quando una molla era
+stata cancellata senza che un trascinamento le fosse subentrato.
+
+Questo secondo difetto **non puo' piu' ripresentarsi**, ed e' l'unico guadagno
+gratuito del cambio: non c'e' piu' un numero di molla su cui fare da guardia -
+a dire dove si e' c'e' il carosello, con `currentPage` e lo scostamento, che
+sono valori suoi e non di un'animazione che qualcuno puo' cancellare a meta'.
 
 **36. La mediana della luna non gira, e non e' un difetto.** Nella pagina LUNA
 la sfera si gira col dito: i mari scivolano verso il bordo e spariscono dietro,
@@ -1328,20 +1353,41 @@ comunque a ogni fotogramma.
 
 1. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
-2. **Il dettaglio non e' mai stato provato in mano.** Il rifacimento e le
-   correzioni alla navigazione (sezioni 8-bis e 8-ter) sono verificati dalla CI
-   - compila, e gli scatti mostrano tutte e cinque le pagine nei due temi - ma
-   nessuno ha ancora scorso il carosello col pollice ne' girato la cifra da
-   dentro il foglio. In particolare **non sono mai state viste in mano** la fila
-   di pillole che si porta al centro e la sfumatura del titolo durante il
-   trascinamento: sono movimenti, e un movimento in uno scatto non si giudica.
-5. **La barra con la bolla, la pagina della luna e l'elenco dei pannelli non
-   sono mai stati provati in mano.** Valgono la nota qui sopra e in piu' una
-   cosa che gli scatti non possono mostrare: la bolla scivola col dito, e la
-   sfera della luna gira col dito. Da guardare per primi: la bolla alle due
-   estremita' della barra (li' si ferma al bordo e la codina si inclina per
-   continuare a puntare il cursore), e se il tasto indietro con l'elenco aperto
-   chiuda l'elenco invece del foglio.
+2. **Il feed non e' mai stato provato in mano, ed e' l'unica prova che conta.**
+   La CI dice che compila e gli scatti mostrano le sei schede nei due temi, ma
+   **il feed e' fatto di movimento**, e un movimento in uno scatto non si
+   giudica. Da guardare per primi, in quest'ordine:
+   - come si sente lo scorrimento fra una scheda e l'altra, e se la molla del
+     pager e' della stessa famiglia del resto dei movimenti dell'app;
+   - che il dito **orizzontale** sulla cifra giri ancora la scena senza che il
+     carosello rubi il gesto, e che il **verticale** cambi scheda senza che la
+     rotazione lo ingoi: e' la trappola #5 vista dall'altro lato, e i due
+     riconoscitori adesso si toccano piu' di prima;
+   - che la barra delle ore sulla prima scheda si scorra ancora col pollice
+     senza far scattare la scheda - li' il dito sta in orizzontale su una zona
+     alta poche decine di punti, ed e' il punto piu' esposto di tutto il cambio;
+   - che il tiro per ricaricare parta **solo** dalla prima scheda, e non da un
+     avanzo di slancio arrivato dall'alto;
+   - se la colonna di icone si tocca davvero, larga quarantotto punti al bordo
+     dello schermo, e se i sei glifi si distinguono a diciotto punti - aria e
+     vento sono i due che si somigliano, e sono stati separati apposta
+     (granelli dentro un contorno contro linee che scorrono).
+5. **La barra con la bolla e la sfera della luna non sono mai state provate in
+   mano.** Vale la nota qui sopra e in piu' una cosa che gli scatti non possono
+   mostrare: la bolla scivola col dito, e la sfera gira col dito. Da guardare
+   la bolla alle due estremita' della barra, dove si ferma al bordo e la codina
+   si inclina per continuare a puntare il cursore.
+5-bis. **Quanto costa la prima scheda mentre e' composta ma fuori vista.** Il
+   carosello tiene composta anche la scheda accanto, e il respiro della
+   scultura e' un `withFrameNanos` che gira finche' la finestra si vede: stando
+   sulla pioggia, la scultura continua a ridisegnarsi. **Non e' un peggioramento
+   rispetto a prima** - il foglio aperto copriva la principale senza smontarla,
+   quindi si pagava lo stesso, e adesso si paga su due schede su sei invece che
+   sempre - ma non e' stato misurato. Si misura con `dumpsys gfxinfo ... reset`,
+   quattro secondi fermi sulla seconda scheda, e si legge quanti fotogrammi
+   sono usciti. Se pesa, la strada e' spegnere i cicli della scultura sul
+   `feelsIt` che gia' riceve, non aggiungere un secondo flag che dice quasi la
+   stessa cosa.
 6-bis. **Niente di questa passata e' stato provato in mano, e non poteva
    esserlo**: da questo container `dl.google.com` non si raggiunge (403 al
    CONNECT del proxy), quindi non ci sono ne' l'AGP ne' l'SDK - `lintDebug` e
@@ -1378,11 +1424,16 @@ comunque a ogni fotogramma.
    sei merge**, e nessuno dei due punti di morte si sposta fra un giro e
    l'altro - quindi non e' un guasto occasionale, e' riproducibile. La seconda:
    **il ramo che porta il foglio unico ci arriva quattro scatti prima**, e
-   questo e' il suo, non della base. Non c'e' niente di rotto nell'app - il
-   Compose compila, lint e' pulito, i test passano - ma il foglio adesso
-   disegna di piu' (la striscia dei giorni e' una `LazyRow` al posto di una
-   tela sola, e la pagina della temperatura ha in piu' le due meta' della
-   giornata coi loro glifi), e la GPU software dell'emulatore regge meno.
+   questo e' il suo, non della base.
+
+   Il passaggio al feed toglie di mezzo una delle due cause sospette: **la coda
+   degli scatti non ha piu' un solo gesto**. Prima erano un tocco piu' cinque
+   trascinate orizzontali dentro il foglio; adesso ogni scheda si mette in scena
+   con `--ei sezione`, cioe' con un avvio, e un avvio non puo' cadere a meta'
+   come una trascinata. Se il job continua a morire nello stesso punto, allora
+   il colpevole e' la coda di riavvii e non il gesto - che e' esattamente
+   l'ipotesi scritta piu' sotto, e questo giro la mette alla prova senza che
+   nessuno debba costruire un esperimento apposta.
 
    Il difetto vero da aggredire e' comunque quello della base: **un giro di
    scatti che non arriva in fondo non e' una verifica**, e finche' resta cosi'
@@ -1404,24 +1455,138 @@ comunque a ogni fotogramma.
    senza dirlo. La risposta moderna e' `WorkManager` periodico, ed e' una
    dipendenza e un ciclo di vita nuovi - da fare quando i widget saranno stati
    visti almeno una volta su una home vera.
-9. **`PredictiveBackHandler`** al posto di `BackHandler` sui quattro strati, per
-   il ritorno con animazione di Android 14+.
+9. **`PredictiveBackHandler`** al posto di `BackHandler`, per il ritorno con
+   animazione di Android 14+. Gli strati adesso sono due - allerte e
+   impostazioni - piu' l'indietro del feed, che dalla scheda in cui si e'
+   riporta alla prima invece di chiudere l'app.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
-4. **Il dettaglio in orizzontale** e' adattato nelle misure (`MeteoLayout`) ma
-   non nella disposizione: grafico e statistiche restano impilati anche dove
-   ci starebbero affiancati.
+4. **Le schede in orizzontale** non sono state pensate: in landscape una
+   schermata piena e' larga e bassa, e cifra, segnaposto e numeri restano
+   impilati dove ci starebbero affiancati. `MeteoLayout.landscape` c'e' gia' e
+   nessuno glielo chiede.
+10. **Le cinque schede sono segnaposto**, ed e' voluto: cosa ospita ciascuna si
+   decide una sezione alla volta. `FeedSection.stage` porta la consegna scritta
+   accanto al riquadro vuoto - dalla pioggia sul vetro all'erba che si piega
+   dalla parte da cui tira. E' li' che va il lavoro adesso.
 
 ---
 
-## 8-bis. Il rifacimento delle schermate di dettaglio
+## 8-bis. Il feed verticale, e le regole sul colore che restano
 
-`ui/theme/Contrast.kt`, `ui/theme/MeteoColorScheme.kt`, `ui/common/`,
-`ui/temperature/`, `ui/temperature/pages/`
+`ui/feed/`, `ui/theme/Contrast.kt`, `ui/theme/MeteoColorScheme.kt`,
+`ui/common/`
 
-Prima di toccare queste schermate, tre regole che sono costate la passata
-intera.
+**Le sei grandezze sono la navigazione.** Si scorre dal basso verso l'alto e si
+passa dalla temperatura alla pioggia, dalla pioggia all'aria: una schermata
+piena ciascuna, sullo stesso cielo. Prima vivevano dentro un foglio che saliva
+dal basso, in un carosello orizzontale - due gesti di profondita' sotto la
+schermata che si apre per prima - e per farlo scoprire c'era voluta una striscia
+in fondo alla principale che ne disegnasse il bordo. Adesso la profondita' e'
+zero: la pioggia sta uno scorrimento sotto la temperatura, non dentro qualcosa
+che va aperto.
+
+**Il gesto verticale era libero, e non per caso.** La regola di questa app
+divide gli assi da sempre (trappola #5): orizzontale gira la scena, verticale
+apre. Il feed prende l'asse che il foglio aveva; la rotazione della cifra, la
+barra delle ore e la scelta del giorno restano orizzontali e non si contendono
+niente. E' la stessa spartizione, con un contenuto diverso dentro.
+
+**Le schede sono ancora segnaposto**, tranne la prima. Ognuna ha titolo, la
+cifra girabile, un riquadro tratteggiato che dichiara cosa ospitera'
+(`FeedSection.stage`) e due o tre numeri che l'app sa gia' dire. Cosa metterci
+davvero si decide una sezione alla volta - e' il modo di lavorare di questo
+progetto - e un riquadro che dice cosa manca e' un lavoro in corso, mentre uno
+vuoto e muto e' un difetto.
+
+**La prima scheda e' la schermata di sempre, intatta.** E' la parte piu' provata
+dell'app, e un cambio di navigazione non e' una ragione per rimetterla in
+discussione. Cambia ai bordi: niente piu' tocco sulla cifra che apriva il foglio
+(e con lui e' uscito `detectTapOrRotate`, che esisteva solo per distinguerlo dal
+giro), niente piu' striscia delle grandezze in fondo, e il margine destro lascia
+il posto alla colonna di icone.
+
+**Niente scorrimento dentro una scheda.** Una scheda sta in una schermata e
+basta. Le vecchie pagine erano colonne che scorrevano, ed e' per quello che
+esisteva `SheetNestedScroll`: arbitrare fra lo scorrimento interno e il foglio
+che lo conteneva. Tolto il foglio e' tolta la contesa, e va tenuta tolta - una
+colonna che scorre dentro una pagina che scorre e' quella contesa che ritorna.
+
+**Il tiro per ricaricare si prende il dito prima del carosello**, in
+`onPreScroll`, e non sull'avanzo. La strada dell'avanzo - lasciar scorrere e
+raccogliere cio' che resta - dipende da cosa l'effetto di sovrascorrimento
+decide di trattenere per la sua stiratura: sarebbe un comportamento ereditato
+invece che deciso. Sulla prima scheda sopra non c'e' niente da mostrare, quindi
+prenderselo non toglie niente a nessuno. **Resta la guardia sul
+`NestedScrollSource`** (trappola #35): un avanzo di slancio non e' un dito, e
+un'app non chiede dati alla rete perche' una molla ha finito di tornare a posto.
+
+**La colonna di icone sta sopra il carosello, non dentro.** E' l'unica cosa in
+scena che non scorre, ed e' cio' che la rende un punto di riferimento invece di
+un settimo contenuto: uno scorrimento profondo sei senza una mappa e' un pozzo.
+Le caselle hanno misura fissa e l'accensione si legge **dentro il disegno**, da
+una lambda sulla posizione del carosello - cosi' la tinta si travasa da un'icona
+alla successiva senza che nessun fotogramma ricomponga o rifaccia il layout. I
+sei glifi sono disegnati a mano, come tutte le icone di questa app.
+
+**Le tinte della colonna e delle schede vengono da `skyAccents()`**, non da
+`LocalMeteoAccents`. Le seconde sono tarate sull'antracite dei pannelli, e le
+schede del feed non hanno superfici: vivono direttamente sul cielo, che a meta'
+mattina e' grigio chiaro, e li' il giallo del sole sparirebbe. Vale la regola
+qui sotto, ed e' il motivo per cui una scheda non usa `MaterialTheme.colorScheme`
+per i suoi testi.
+
+**Una sola sorgente di verita': il carosello.** `state.section` e' dove si
+riparte, non una seconda copia di "su quale scheda sono". Tre regole da non
+sciogliere, che erano gia' costate un giro sul carosello orizzontale:
+
+- si scrive nello stato **solo su `settledPage`** - un trascinamento annullato
+  non e' una scelta e non deve lasciare traccia;
+- si legge `currentPage` per **cio' che si vede**: la scheda posata cambia
+  troppo tardi, e la colonna resterebbe indietro per tutto il gesto;
+- la colonna anima il pager **direttamente**, non passando dal ViewModel. La
+  versione che passava dallo stato si cancellava l'animazione da sola, perche'
+  l'effetto era chiavato su cio' che essa stessa cambiava.
+
+**Cio' che si muove col dito passa per lambda, non per valore.**
+`currentPageOffsetFraction` cambia a ogni fotogramma: letto nel corpo di un
+composable ricompone l'intera schermata sessanta volte al secondo per travasare
+una tinta. Letto **dentro** `graphicsLayer` o dentro una tela si ferma alla fase
+di disegno.
+
+**Il giorno e' un asse, non una schermata**, e adesso lo e' fino in fondo: lo
+leggono tutte le schede (`pageDay`, `pageHours`, `detailHour`) e a sceglierlo c'e'
+una colonna della striscia della settimana sulla prima. C'era una
+`DayDetailScreen` che entrava da destra con un carosello suo; poi era diventata
+una striscia in cima al foglio; adesso non serve nessuna delle due.
+
+**Un'ora precisa sopra un totale del giorno e' una bugia.** La sezione del sole
+diceva "OGGI · 15:00" sopra tredici *ore di sole*, che sono quelle di tutta la
+giornata. `FeedSection.isDailyTotal` distingue i due casi, e il sottotitolo
+della scheda glielo chiede.
+
+**La luna non chiede niente alla rete**: la fase la calcola `MoonPhase` in
+locale (Open-Meteo non la fornisce), quindi e' l'unica scheda che ha ancora
+qualcosa da mostrare quando la previsione non arriva. Per questo il suo ramo sta
+**prima** del controllo sulla cifra, che spegne tutte le altre. Il corpo e'
+quello della scultura e del widget - stessa sfera, stessa luce, stessi mari - e
+gira con il `rotatesScene` che la scheda ha gia'. Vedi la trappola #36 per cosa
+gira e cosa no.
+
+**Ogni scheda ha la sua `SceneRotation`.** Girare la cifra della pioggia non
+deve girare la luna: sono oggetti diversi visti da punti diversi, non lo stesso
+oggetto in due posti.
+
+**Il carosello tiene composta anche la scheda accanto**, per averla pronta a
+meta' trascinamento. Da qui il flag `alive` sulla prima: senza, il telefono
+continuerebbe a vibrare di pioggia mentre si guarda la luna, e un tocco che non
+corrisponde a niente di visibile non e' un riscontro. Resta invece **da
+misurare** quanto costa il respiro della scultura mentre la prima scheda e'
+composta ma fuori vista - vedi la sezione 8, "non fatto".
+
+Le tre regole sul colore che seguono sono costate una passata intera e valgono
+identiche sul feed.
 
 **Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
 cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/theme/Contrast.kt)
@@ -1481,124 +1646,25 @@ il parzialmente nuvoloso attorno all'alba e il coperto attorno al tramonto,
 cioe' i momenti gia' meno colorati. Dopo la correzione il caso peggiore su tutta
 la giornata e' **4,50:1**, e nessuna lettura sta sotto la soglia.
 
-**Le etichette dentro le tele hanno un fondo.** La scala dell'asse Y cade sempre
-sopra l'area riempita del grafico, che sotto la scala dei gradi copre
-all'ottantadue per cento: li' un grigio su un arancione non si legge. Ogni
-`drawText` di `MeteoChart` passa da `drawLabel`, che gli mette sotto una
-pillola.
+**`@ReadOnlyComposable` e `remember` non convivono.** La prima dichiara che la
+funzione non scrive nella composizione, la seconda ci scrive.
 
-**La scala di un grafico non inventa valori.** Con una serie piatta il vecchio
-grafico allargava l'intervallo a `mid ± 1.5`, e su una giornata asciutta l'asse
-delle probabilita' dichiarava "-1" e "2". `ChartBounds` dice cosa la grandezza
-puo' davvero valere, e l'allargamento resta dentro.
+**Cosa e' uscito di scena con il foglio, e sta nella cronologia.**
+`TemperatureDetailScreen`, `PanelPicker`, `DayStrip`, `DailyForecastCard`,
+`MeteoChart` e le sei pagine di `ui/temperature/pages/`. Con loro se ne sono
+andate le lezioni che ci vivevano dentro - le etichette con la pillola sotto
+perche' un grigio su un arancione non si legge, `ChartBounds` perche' la scala
+di un grafico non inventa valori, il `clamp` al posto di `coerceIn` perche' su
+schermo stretto il minimo puo' superare il massimo. **Non sono sbagliate: sono
+senza chiamante.** Chi rimettera' un grafico dentro una scheda le rilegga da
+`git show`, invece di ripagarle.
 
-Tre trappole minori, gia' pagate:
-
-- **`coerceIn` solleva quando il minimo supera il massimo.** Succede: su schermo
-  stretto un'etichetta puo' essere piu' larga del grafico che la contiene, e
-  `plotRight - larghezza` diventa negativo. Le tele usano `clamp`, che in quel
-  caso preferisce il minimo e tira avanti.
-- **La falce di luna e' un disco meno un disco**, e il secondo va del colore di
-  cio' che sta sotto. `skyMark` non ha piu' un valore di riposo per quel colore:
-  il valore di riposo era il fondo delle schede, mentre il grafico del giorno si
-  disegna sul fondo del pannello, e il ritaglio si vedeva come una macchia
-  scura sopra la luna.
-- **`@ReadOnlyComposable` e `remember` non convivono.** La prima dichiara che la
-  funzione non scrive nella composizione, la seconda ci scrive.
-
-**Il gesto orizzontale e' spartito per zone, non conteso.** Sulla cifra gira la
-scena, sul contenuto sotto cambia pagina. Il carosello era gia' stato tolto una
-volta per questa ragione (trappola #5): adesso il confine e' dichiarato invece
-che sottinteso, e la cifra vive fuori dal carosello. Il grafico consuma **solo**
-la componente orizzontale del trascinamento, se no dentro una colonna che scorre
-il dito sul grafico blocca la pagina.
-
-**La settimana sta fuori dal carosello.** E' la stessa informazione per tutte e
-cinque le grandezze: dentro la sola pagina della temperatura la rendeva lunga il
-doppio delle altre e la nascondeva a chi guardava il vento.
-
-**Una sola sorgente di verita' per la pagina: il carosello.** `detailMode` nello
-stato e' la *modalita' d'ingresso*, non una seconda copia di "su quale pagina
-sono". C'erano due copie riconciliate da due `LaunchedEffect`, e il secondo era
-chiavato su cio' che il primo cambiava: mentre `animateScrollToPage` girava, la
-pagina intermedia faceva cambiare la modalita', l'effetto veniva rilanciato e
-**cancellava la propria animazione**. Toccare "Aria" da "Temp" lasciava il
-carosello a meta' strada. Tre regole da non sciogliere:
-
-- si scrive nello stato **solo su `settledPage`** - un trascinamento annullato
-  non e' una scelta e non deve lasciare traccia nello stato globale;
-- si legge `currentPage` per **cio' che si vede** (titolo, pillola accesa,
-  cifra, tinta): la pagina posata cambia troppo tardi e l'intestazione
-  resterebbe indietro per tutto il gesto;
-- le pillole animano il pager **direttamente**, non passando dal ViewModel.
-
-Lo stesso schema vale in `DayDetailScreen`, che lo aveva duplicato.
-
-**Cio' che si muove col dito passa per lambda, non per valore.**
-`currentPageOffsetFraction` cambia a ogni fotogramma: letto nel corpo di un
-composable ricompone l'intera schermata sessanta volte al secondo per spostare
-una trasparenza. Letto **dentro** `graphicsLayer` o dentro una tela si ferma
-alla fase di disegno. Per la stessa ragione i pallini sono **una tela sola**
-invece di cinque `Canvas` larghi in `dp`, che a ogni frame avrebbero rifatto
-misura e posizionamento. E per la stessa ragione `snapshotFlow` riceve una
-lambda: con un `Float` gia' calcolato dal chiamante non c'e' nessuno stato di
-Compose da osservare e il flusso emette **una volta sola**.
-
-**Una fila che scorre deve portare la selezione al centro, e
-`animateScrollToItem` non lo fa**: quella si ferma al bordo d'ingresso. Il
-residuo si calcola da `layoutInfo` - `centerOn` in `MeteoSurfaces.kt`, usata sia
-dalle pillole sia dalle linguette dei giorni. E `spacedBy(..., CenterHorizontally)`
-su una `LazyRow` centra quando il contenuto ci sta e scorre quando non ci sta:
-con `horizontalScroll` restava incollato a sinistra in entrambi i casi.
-
-**Un'ora precisa sopra un totale del giorno e' una bugia.** Sulla pagina del
-sole l'intestazione diceva "OGGI · 15:00" sopra tredici *ore di sole*, che sono
-quelle di tutta la giornata. `DetailMode.isDailyTotal` sapeva gia' distinguere i
-due casi; adesso il sottotitolo glielo chiede.
-
-**La sesta pagina e' la luna**, e non chiede niente alla rete: la fase la calcola
-`MoonPhase` in locale (Open-Meteo non la fornisce), quindi e' l'unica pagina che
-ha ancora qualcosa da dire quando la previsione non arriva. Per questo il suo
-ramo dentro `Hero` sta **prima** del controllo sulla cifra, che spegne tutte le
-altre. Il corpo e' quello della scultura e del widget - stessa sfera, stessa
-luce, stessi mari - e gira con il `rotatesScene` che l'eroe aveva gia': niente
-secondo riconoscitore da mettere d'accordo con il carosello. Vedi la trappola
-\#36 per cosa gira e cosa no.
-
-**Il giorno e' un asse, non una schermata.** C'era una `DayDetailScreen` che
-entrava da destra con un carosello suo, e ripeteva grafico, statistiche e
-probabilita' per dire le stesse cose di un altro giorno - mentre queste sei
-pagine leggevano gia' `state.selectedDay` (`pageDay`, `pageHours`,
-`detailHour`) e nessuno gliene passava mai uno diverso da oggi. Adesso la
-striscia dei giorni (`DayStrip.kt`) sta in cima al foglio e il giorno lo
-scelgono lei, una colonna della settimana sulla principale, o la scheda "LA
-SETTIMANA": il carosello sceglie **quale grandezza**, la striscia **quale
-giorno**, e non c'e' un secondo carosello da tenere d'accordo con il primo.
-
-La striscia **ha preso il posto dei pallini del carosello**, e non e' uno
-scambio a caso: i pallini dicevano su quale pagina si fosse, cioe' quello che
-dice gia' la fila di pillole sopra, accesa e portata al centro dal
-trascinamento. Al loro posto sta l'unica cosa che nessuno diceva, e l'altezza
-del foglio non cambia.
-
-Della vecchia schermata **non si e' perso niente**: le due meta' della giornata
-(`HalfDayHeads`) e il selettore EFFETTIVA/PERCEPITA sono in
-`pages/TemperaturePage.kt`, dove il selettore comanda anche quale delle due
-curve e' quella piena; i due picchi di probabilita' (`RainOdds`) sono in
-`pages/RainPage.kt`. Il resto della griglia del dossier - alba, tramonto, sole
-effettivo, UV, vento e raffica massimi, umidita' media, pioggia attesa - era
-gia' scritto voce per voce nelle pagine del sole, del vento e della pioggia:
-verificato prima di cancellare, non dopo.
-
-**Con sei pagine la fila di pillole non basta piu' da sola**, e il pulsante che
-apre l'elenco (`PanelPicker.kt`) sta **fuori** dalla `LazyRow`: dentro
-scorrerebbe via insieme alle pillole, cioe' sparirebbe proprio quando serve -
-quando ci si e' scorsi lontano. Le pillole restano perche' fanno un mestiere che
-l'elenco non fa: spostarsi di una posizione e dire dove si e'. L'elenco fa i due
-che loro non fanno: mostrare tutto insieme, e portare dalla prima all'ultima in
-un tocco. Il suo stato e' locale e non in `UiState`: sopravvivergli alla chiusura
-del foglio vorrebbe dire riaprire il dettaglio e trovarsi davanti un elenco che
-nessuno ha chiesto.
+`DetailChrome.kt` e' passato in `ui/common/MeteoGeometry.kt` e ha perso meta' di
+se': il sole in miniatura sopra il grafico orario, l'area sotto la curva e il
+nastro fra massime e minime vivevano per i grafici. Quel che resta -
+l'illustrazione del tempo, la scala di colore dei gradi, la spline - lo leggono
+la barra delle ventiquattro ore, la striscia della settimana e le schede, e non
+ha piu' niente a che vedere con la temperatura in particolare.
 
 ## 8-ter. Le allerte meteo
 
