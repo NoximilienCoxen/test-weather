@@ -664,14 +664,33 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * l'app possa restare bloccata.
      */
     fun forceAlert(level: Int) {
+        // **Lo zero e' l'avviso calcolato**, e non e' un valore di ripiego: da
+        // quando fascia, pallino e bollettino distinguono le due fonti - segno
+        // diverso, colore diverso, parola diversa - la differenza e' qualcosa
+        // che si guarda, e quindi qualcosa da fotografare. Aspettare di
+        // trovarsi fuori dalla copertura di MeteoAlarm in un giorno di raffiche
+        // non e' un piano di verifica piu' di quanto lo fosse aspettare
+        // un'arancione vera.
+        val derivata = level == 0
         val chosen = when (level) {
-            1 -> AlertLevel.GIALLA
             2 -> AlertLevel.ARANCIONE
-            else -> AlertLevel.ROSSA
+            3 -> AlertLevel.ROSSA
+            else -> AlertLevel.GIALLA
         }
         _state.update {
             it.copy(
-                forcedAlert =
+                forcedAlert = if (derivata) {
+                    WeatherAlert(
+                        id = "prova-derivata",
+                        level = AlertLevel.GIALLA,
+                        kind = AlertKind.VENTO,
+                        headline = "Vento forte oggi",
+                        description = "Raffiche fino a 76 km/h.",
+                        areaDesc = it.place.name,
+                        source = "Calcolata dai dati Open-Meteo",
+                        official = false,
+                    )
+                } else {
                     WeatherAlert(
                         id = "prova-${chosen.name}",
                         level = chosen,
@@ -683,7 +702,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         areaDesc = it.place.name,
                         source = "Aggancio di verifica",
                         official = true,
-                    ),
+                    )
+                },
             )
         }
     }

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
+import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.common.MeteoCard
 import io.github.noximiliencoxen.caelum.ui.common.MeteoDivider
 import io.github.noximiliencoxen.caelum.ui.common.MeteoEmptyState
@@ -97,8 +98,12 @@ private fun AlertCard(alert: WeatherAlert, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // La stessa parola che dicono fascia e pallino: "ALLERTA
+                // ARANCIONE" per un bollettino, "SOGLIA SUPERATA" per un conto
+                // fatto in casa. Con tre superfici che se la scrivevano per
+                // conto proprio, la prima a divergere sarebbe stata questa.
                 Text(
-                    text = alert.level.label,
+                    text = alert.badgeLabel,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
