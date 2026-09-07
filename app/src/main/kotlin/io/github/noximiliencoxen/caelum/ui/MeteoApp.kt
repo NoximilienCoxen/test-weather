@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertsSheet
 import io.github.noximiliencoxen.caelum.ui.home.HomeScreen
-import io.github.noximiliencoxen.caelum.ui.temperature.DayDetailScreen
+import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
 import io.github.noximiliencoxen.caelum.ui.temperature.TemperatureDetailScreen
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
@@ -171,7 +171,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // che per meta' giornata
             // sono invisibili: e' il motivo per cui negli scatti la barra di
             // navigazione appariva bianca sotto un'app scura.
-            val panelled = state.settingsOpen || state.dayDetail != null || sheetCovers
+            val panelled = state.settingsOpen || state.alertsOpen || sheetCovers
             SystemBarIcons(
                 behindStatusBar = if (panelled) {
                     MaterialTheme.colorScheme.surface
@@ -215,8 +215,33 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
-                onOpenTemperatureDetail = sheet::openFully,
-                onOpenDay = viewModel::openDayDetail,
+                // La cifra apre **sulla temperatura**, non sull'ultima pagina
+                // guardata: e' la temperatura quella che si sta toccando, e
+                // ritrovarsi davanti il vento perche' ieri lo si era guardato
+                // e' una risposta che non ha niente a che fare col gesto.
+                onOpenTemperatureDetail = {
+                    viewModel.setDetailMode(DetailMode.TEMPERATURA)
+                    sheet.openFully()
+                },
+                // **La modalita' prima dell'apertura, e non dopo.** Il foglio si
+                // compone solo da quando `sheet.open` supera lo zero, e li'
+                // `rememberPagerState` legge `state.detailMode` una volta sola,
+                // alla nascita. Invertendo i due il carosello nascerebbe sulla
+                // pagina di prima e ci arriverebbe scorrendo: un salto, per un
+                // tocco che aveva gia' detto dove andare.
+                onOpenPanel = { mode ->
+                    viewModel.setDetailMode(mode)
+                    sheet.openFully()
+                },
+                // **Una colonna della settimana porta allo stesso foglio.**
+                // Prima apriva una seconda schermata, che entrava da destra e
+                // ripeteva grafico, statistiche e probabilita' per dire le
+                // stesse cose di un altro giorno. Il giorno non era una
+                // schermata: era un asse, e le sei pagine lo leggevano gia'.
+                onOpenDay = { day ->
+                    viewModel.selectDay(day)
+                    sheet.openFully()
+                },
                 onOpenAlerts = viewModel::openAlerts,
                 onDismissAlerts = viewModel::collapseAlerts,
                 // Un gesto solo per due effetti: il pallino rimette la fascia e
@@ -290,37 +315,11 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 }
             }
 
-            // Il dettaglio di un giorno entra da destra: si scende dentro
-            // qualcosa, e il verso lo racconta. Le impostazioni entrano da
-            // sinistra perche' li' sta il loro pulsante.
-            val dayOpen = state.dayDetail != null
-            val dayShift by animateFloatAsState(
-                targetValue = if (dayOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "giorno",
-            )
-            if (dayShift > 0.001f) {
-                BackHandler(enabled = dayOpen, onBack = viewModel::closeDayDetail)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset(((1f - dayShift) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    DayDetailScreen(
-                        state = state,
-                        viewModel = viewModel,
-                        onBack = viewModel::closeDayDetail,
-                        modifier = Modifier.systemBarsPadding(),
-                    )
-                }
-            }
-
-            // Le allerte entrano da destra come il dettaglio di un giorno: si
-            // scende dentro qualcosa di piu' specifico, e il verso lo racconta.
-            // Stanno **dopo** il dettaglio nella pila perche' la fascia si puo'
-            // toccare anche da li', e un foglio che si apre sotto quello da cui
-            // e' stato aperto non si vedrebbe.
+            // Le allerte entrano da destra: si scende dentro qualcosa di piu'
+            // specifico, e il verso lo racconta. Stanno **dopo** il dettaglio
+            // nella pila perche' la fascia si puo' toccare anche da li', e un
+            // foglio che si apre sotto quello da cui e' stato aperto non si
+            // vedrebbe.
             val alertsShift by animateFloatAsState(
                 targetValue = if (state.alertsOpen) 1f else 0f,
                 animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),

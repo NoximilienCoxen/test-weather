@@ -35,7 +35,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -91,6 +90,15 @@ import kotlinx.coroutines.launch
  * chi guardava il vento. E' la stessa informazione per tutte, quindi sta sotto
  * tutte.
  *
+ * **E il giorno non e' piu' una schermata: e' un asse.** C'era una seconda
+ * schermata che entrava da destra e ripeteva grafico, statistiche e
+ * probabilita' per dire le stesse cose di un altro giorno, mentre queste sei
+ * pagine leggevano gia' `state.selectedDay` (`pageDay`, `pageHours`,
+ * `detailHour`) e nessuno gliene passava mai uno diverso da oggi. Adesso la
+ * striscia in cima ([DayStrip]) sceglie **quale giorno** e il carosello sceglie
+ * **quale grandezza**: due domande su due assi, e nessun secondo carosello da
+ * tenere d'accordo con questo.
+ *
  * **La sesta pagina e' la luna**, e con lei arriva il pulsante che apre
  * l'elenco: sei pillole su un telefono stretto non stanno in una schermata, e
  * una fila che scorre non ha modo di dire cosa c'e' oltre il bordo.
@@ -141,12 +149,11 @@ fun TemperatureDetailScreen(
     // scavalco, quindi ricomporre qui costa una volta a pagina.
     val shownMode = modes.getOrNull(pagerState.currentPage) ?: modes.first()
     val accent = shownMode.accent()
-    val accents = modes.map { it.accent() }
 
     // Cio' che si muove col dito passa invece per **lambda**, non per valore.
     // `currentPageOffsetFraction` cambia a ogni fotogramma del trascinamento:
     // leggerlo qui nel corpo ricomporrebbe l'intera schermata sessanta volte al
-    // secondo per spostare una trasparenza e allungare un pallino. Letto dentro
+    // secondo per spostare una trasparenza e una pillola. Letto dentro
     // `graphicsLayer` o dentro una tela, l'aggiornamento si ferma alla fase di
     // disegno.
     val drift = { pagerState.currentPageOffsetFraction }
@@ -226,12 +233,22 @@ fun TemperatureDetailScreen(
                 )
             }
 
-            PageDots(
-                position = position,
-                accents = accents,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 2.dp),
+            // **Qui stavano i pallini del carosello.** Dicevano su quale pagina
+            // si fosse, che e' esattamente cio' che dice gia' la fila di
+            // pillole qui sopra - accesa, e portata al centro dal
+            // trascinamento. Al loro posto sta l'unica cosa che nessuno diceva:
+            // quale giorno si sta guardando. Stessa altezza, una domanda in
+            // piu' e nessuna ripetuta.
+            //
+            // Il giorno e' uno stato che tutte e sei le pagine leggono gia'
+            // (`pageDay`, `pageHours`, `detailHour`), non un secondo carosello
+            // da mettere d'accordo con questo.
+            DayStrip(
+                days = state.forecast?.days.orEmpty(),
+                selected = state.selectedDay,
+                width = layout.dayTabWidth,
+                onSelect = viewModel::selectDay,
+                modifier = Modifier.padding(top = 4.dp),
             )
 
             Hero(
@@ -254,7 +271,7 @@ fun TemperatureDetailScreen(
                     days = state.forecast?.days.orEmpty(),
                     unit = state.unit,
                     selected = state.selectedDay,
-                    onSelectDay = viewModel::openDayDetail,
+                    onSelectDay = viewModel::selectDay,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -266,8 +283,13 @@ fun TemperatureDetailScreen(
                     .weight(1f),
             ) { page ->
                 when (modes.getOrNull(page)) {
-                    DetailMode.TEMPERATURA ->
-                        TemperaturePage(state, layout, viewModel::setWeekMode, week = week)
+                    DetailMode.TEMPERATURA -> TemperaturePage(
+                        state,
+                        layout,
+                        viewModel::setWeekMode,
+                        viewModel::setFeelsLike,
+                        week = week,
+                    )
                     DetailMode.SOLE ->
                         SunPage(state, layout, viewModel::setWeekMode, week = week)
                     DetailMode.PRECIPITAZIONI ->
@@ -502,66 +524,6 @@ private fun MoonHero(
                 alpha = 1f,
                 marks = MOON_SEAS,
             )
-        }
-    }
-}
-
-/**
- * I pallini che dicono quante pagine ci sono e a quale si e'.
- *
- * Le pillole sopra scorrono, quindi non bastano: con cinque grandezze su uno
- * schermo stretto le ultime restano fuori, e chi guarda non ha modo di sapere
- * che esistono. Era una delle mancanze annotate in CONTESTO, «non c'e' segno di
- * quante pagine ci siano».
- *
- * **Continui, non a scatti.** Prima prendevano un indice intero e il pallino
- * lungo saltava da una posizione all'altra a meta' trascinamento, cioe' nello
- * stesso istante sbagliato in cui saltava il titolo. Qui prendono la posizione
- * frazionaria del carosello: l'allungamento si travasa da un pallino al
- * successivo mentre il dito si muove, e a meta' strada sono lunghi meta'
- * ciascuno - che e' esattamente dov'e' la pagina.
- *
- * Un pallino non e' testo, quindi qui interpolare un colore e' lecito: la
- * regola sul contrasto calcolato riguarda cio' che si legge, e i due estremi
- * dell'interpolazione vengono comunque dal tema.
- */
-@Composable
-private fun PageDots(
-    position: () -> Float,
-    accents: List<Color>,
-    modifier: Modifier = Modifier,
-) {
-    val idle = MaterialTheme.colorScheme.outlineVariant
-    val count = accents.size
-    // **Una tela sola, non un pallino per composable.** La posizione si legge
-    // dentro il blocco di disegno: il travaso da un pallino al successivo
-    // avviene in fase di disegno, senza ricomporre niente e senza rimisurare un
-    // layout a ogni fotogramma. Con un `Row` di cinque `Canvas` larghi in `dp`
-    // ogni frame del trascinamento avrebbe rifatto misura e posizionamento di
-    // tutti e cinque.
-    Canvas(modifier = modifier.height(6.dp)) {
-        if (count == 0) return@Canvas
-        val at = position()
-        val gap = 6.dp.toPx()
-        val small = 6.dp.toPx()
-        val grown = 16.dp.toPx()
-        val radius = androidx.compose.ui.geometry.CornerRadius(size.height / 2f)
-
-        // Larghezze prima, cosi' la fila si puo' centrare sapendo quanto misura
-        // davvero: allungandosi un pallino, il totale cambia a ogni fotogramma.
-        val shares = FloatArray(count) { i -> (1f - abs(i - at)).coerceIn(0f, 1f) }
-        val widths = FloatArray(count) { i -> small + (grown - small) * shares[i] }
-        val total = widths.sum() + gap * (count - 1)
-
-        var x = (size.width - total) / 2f
-        for (i in 0 until count) {
-            drawRoundRect(
-                color = lerp(idle, accents[i], shares[i]),
-                topLeft = Offset(x, 0f),
-                size = Size(widths[i], size.height),
-                cornerRadius = radius,
-            )
-            x += widths[i] + gap
         }
     }
 }

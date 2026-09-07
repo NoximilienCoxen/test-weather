@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE)
             .takeIf { it != Int.MIN_VALUE }
             ?.let { viewModel.forceYaw(it.toFloat()) }
-        intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDayDetail)
+        intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
         // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
