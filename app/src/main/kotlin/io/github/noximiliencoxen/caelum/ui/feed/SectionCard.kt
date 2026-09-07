@@ -32,7 +32,6 @@ import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.asMetresPerSecond
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
 import io.github.noximiliencoxen.caelum.ui.asPercent
-import io.github.noximiliencoxen.caelum.ui.common.MeteoEmptyState
 import io.github.noximiliencoxen.caelum.ui.common.MeteoLayout
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
@@ -201,7 +200,7 @@ private fun SectionHero(
             // aspettando", dice che l'app e' rotta. Si dice invece **perche'**
             // manca, che e' l'unica cosa utile in quel momento.
             val (title, message) = heroMissingReason(section, state)
-            MeteoEmptyState(title = title, message = message)
+            SkyMessage(title = title, message = message)
             return@BoxWithConstraints
         }
 
@@ -300,7 +299,7 @@ private fun MoonBody(
                 distance = unit * 2.7f,
                 origin = Offset(size.width / 2f, size.height / 2f),
             )
-            val radius = unit * 0.40f
+            val radius = unit * MOON_RADIUS
             glow(camera, 0f, 0f, 0f, radius, light, 0.28f, spread = 2.0f)
             moon(
                 camera = camera,
@@ -456,6 +455,45 @@ private fun SectionNumbers(
 }
 
 /**
+ * Cosa manca, e perche', scritto **coi colori del cielo**.
+ *
+ * `MeteoEmptyState` faceva gia' questo mestiere e qui non andava bene: prende i
+ * suoi toni da `MaterialTheme.colorScheme`, che e' tarato sull'antracite dei
+ * pannelli. Sul cielo il messaggio secondario usciva marroncino su azzurro -
+ * visto in uno scatto, illeggibile - ed e' esattamente il difetto della sezione
+ * 8-bis di CONTESTO, reintrodotto dalla porta di servizio. Chi disegna sul cielo
+ * prende le proprie tinte da `LocalMeteoColors`, dove sono gia' calcolate per
+ * contrasto contro i due capi della sfumatura.
+ */
+@Composable
+private fun SkyMessage(title: String, message: String?, modifier: Modifier = Modifier) {
+    val colors = LocalMeteoColors.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = title,
+            style = MeteoType.label,
+            color = colors.text,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        if (!message.isNullOrBlank()) {
+            Text(
+                text = message,
+                style = MeteoType.body,
+                color = colors.label,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            )
+        }
+    }
+}
+
+/**
  * L'ombra ellittica sotto la cifra.
  *
  * Non e' l'ombra proiettata della prima scheda - quella e' geometria vera dentro
@@ -524,9 +562,16 @@ private val CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 private const val MISSING = "--"
 
-/** Quanta altezza prendono la cifra e il palco, dell'altezza che avanza. */
+/**
+ * Quanta altezza prendono la cifra e il palco, dell'altezza che avanza.
+ *
+ * Il palco era otto decimi della cifra, e in uno scatto si vedeva perche' era
+ * troppo: un riquadro vuoto alto mezza scheda non dice "qui arrivera'
+ * qualcosa", dice che la scheda e' vuota. Ridotto, resta una fascia dichiarata
+ * sotto l'oggetto invece di essere l'oggetto stesso.
+ */
 private const val HERO_SHARE = 1f
-private const val STAGE_SHARE = 0.85f
+private const val STAGE_SHARE = 0.62f
 
 /**
  * Il corpo della cifra, in frazione dell'altezza che le tocca.
@@ -541,6 +586,18 @@ private const val HERO_TYPE_SHARE_UNIT = 0.66f
 
 /** Quanto l'inclinazione del telefono piega l'ombra, in gradi. */
 private const val SHADOW_PITCH = 5f
+
+/**
+ * Il raggio della luna, in frazione del lato corto del riquadro.
+ *
+ * Era quaranta centesimi, che e' il valore della vecchia pagina del dettaglio -
+ * ma li' il riquadro dell'eroe era una frazione dell'altezza (`heroFraction`),
+ * mentre qui prende tutto lo spazio che avanza. Visto in uno scatto, il corpo
+ * riempiva la scheda da bordo a bordo e il segnaposto sotto sembrava
+ * schiacciato: un oggetto che tocca i margini non si legge come un corpo nel
+ * cielo, si legge come una macchia.
+ */
+private const val MOON_RADIUS = 0.32f
 
 private val CORNER = 18.dp
 private val STROKE = 1.dp

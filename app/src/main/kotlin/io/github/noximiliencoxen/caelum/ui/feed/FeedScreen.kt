@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -192,9 +191,22 @@ fun FeedScreen(
                     onRefresh = viewModel::refresh,
                     pullArmed = armed,
                     alive = pagerState.currentPage == 0,
-                    modifier = Modifier
-                        .systemBarsPadding()
-                        .padding(end = RAIL_WIDTH),
+                    // **A piena larghezza, e non ristretta per far posto alla
+                    // colonna.** Ristretta lo era, e in uno scatto si vedeva:
+                    // il nome della localita', la scultura, la cifra e la barra
+                    // delle ore finivano tutti quarantaquattro punti a sinistra
+                    // del centro dello schermo. Questa schermata ha una regola
+                    // esplicita sul punto - i 48dp vuoti a destra del nome
+                    // esistono apposta perche' resti "al centro dello schermo e
+                    // non al centro di quel che avanza" - e il margine la
+                    // violava in blocco.
+                    //
+                    // La colonna galleggia invece nel margine che c'e' gia': sta
+                    // a meta' altezza, dove questa scheda ha la scultura e la
+                    // cifra, che sono centrate e non arrivano al bordo. Le
+                    // schede del feed il margine se lo tengono, perche' li'
+                    // titolo e numeri vanno davvero da bordo a bordo.
+                    modifier = Modifier.systemBarsPadding(),
                 )
 
                 null -> Unit

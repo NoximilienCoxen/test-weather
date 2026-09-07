@@ -1354,9 +1354,24 @@ comunque a ogni fotogramma.
 1. **Transizioni continue** — cifre a contachilometri al cambio valore, tabella
    scaglionata, curve che si deformano invece di saltare.
 2. **Il feed non e' mai stato provato in mano, ed e' l'unica prova che conta.**
-   La CI dice che compila e gli scatti mostrano le sei schede nei due temi, ma
-   **il feed e' fatto di movimento**, e un movimento in uno scatto non si
-   giudica. Da guardare per primi, in quest'ordine:
+   Gli scatti ci sono, tutte e sei le schede nei due temi, e hanno gia' fatto il
+   loro mestiere: **tre difetti li ha trovati il primo giro**, ed erano tre cose
+   che nessuno poteva dedurre leggendo il codice.
+   - Lo stato vuoto usava `MeteoEmptyState`, che prende i toni dai pannelli: sul
+     cielo il messaggio secondario usciva marroncino su azzurro, illeggibile. E'
+     la trappola di questa stessa sezione rientrata dalla porta di servizio -
+     chi riusa un componente dei pannelli sul cielo la ripaga.
+   - La prima scheda era ristretta di quarantaquattro punti per far posto alla
+     colonna, e quindi **tutta spostata a sinistra**: nome, scultura, cifra e
+     barra delle ore. Quella schermata ha una regola scritta contro questo
+     preciso difetto, e il margine la violava in blocco. Adesso la scheda e' a
+     piena larghezza e la colonna galleggia nel margine che c'era gia'.
+   - Il corpo della luna riempiva la scheda da bordo a bordo: quaranta centesimi
+     del lato erano il valore della vecchia pagina, dove pero' l'eroe era una
+     frazione dell'altezza e non tutto lo spazio che avanza.
+
+   Quello che gli scatti **non** possono dire resta tutto, perche' il feed e'
+   fatto di movimento. Da guardare per primi in mano, in quest'ordine:
    - come si sente lo scorrimento fra una scheda e l'altra, e se la molla del
      pager e' della stessa famiglia del resto dei movimenti dell'app;
    - che il dito **orizzontale** sulla cifra giri ancora la scena senza che il
@@ -1426,21 +1441,19 @@ comunque a ogni fotogramma.
    **il ramo che porta il foglio unico ci arriva quattro scatti prima**, e
    questo e' il suo, non della base.
 
-   Il passaggio al feed toglie di mezzo una delle due cause sospette: **la coda
-   degli scatti non ha piu' un solo gesto**. Prima erano un tocco piu' cinque
-   trascinate orizzontali dentro il foglio; adesso ogni scheda si mette in scena
-   con `--ei sezione`, cioe' con un avvio, e un avvio non puo' cadere a meta'
-   come una trascinata. Se il job continua a morire nello stesso punto, allora
-   il colpevole e' la coda di riavvii e non il gesto - che e' esattamente
-   l'ipotesi scritta piu' sotto, e questo giro la mette alla prova senza che
-   nessuno debba costruire un esperimento apposta.
+   **E adesso si sa qual era.** Il passaggio al feed ha tolto di mezzo i gesti
+   dalla coda degli scatti: prima erano un tocco piu' cinque trascinate
+   orizzontali dentro il foglio, adesso ogni scheda si mette in scena con
+   `--ei sezione`, cioe' con un avvio. **Il giro e' arrivato in fondo, verde,
+   in sei minuti**, con tutti e cinquantasette i file al loro posto - il primo
+   da almeno sei merge.
 
-   Il difetto vero da aggredire e' comunque quello della base: **un giro di
-   scatti che non arriva in fondo non e' una verifica**, e finche' resta cosi'
-   la CI ha un job che nessuno puo' leggere. Le due strade, per chi ci si
-   metta: far ripartire l'emulatore fra una fase e l'altra invece di tirare
-   avanti per trentotto scatti, oppure spezzare il giro in job piu' corti.
-   Nessuna delle due e' stata provata.
+   Quindi non era la coda di riavvii, che e' l'ipotesi scritta qui sotto e che
+   era la piu' plausibile: **erano le trascinate**. Chi tornera' a metterne una
+   in `capture.sh` sappia che paga questo prezzo, e che il prezzo e' l'intero
+   giro di verifica. Le due strade che restavano da provare - riavviare
+   l'emulatore fra una fase e l'altra, o spezzare il giro in job piu' corti -
+   **non servono piu'**, e non vanno intraprese per abitudine.
 
 6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser
    adesso ha un test contro la risposta vera del feed (sezione 8-quater) e il
