@@ -93,10 +93,19 @@ fun FeedScreen(
     // Lo stato riceve la sezione **posata**, non quella sfiorata. Un
     // trascinamento annullato non e' una scelta: se scrivesse comunque, l'app
     // riaperta si troverebbe su una scheda che nessuno ha voluto.
+    //
+    // **Si scrive sempre, senza confrontare con `state.section`.** Il confronto
+    // ci sarebbe stato bene, ma questo effetto e' chiavato sul solo
+    // `pagerState` e quindi non riparte mai: lo `state` che vedrebbe e' quello
+    // della composizione in cui e' nato, cioe' congelato. Con un valore vecchio
+    // il confronto risponde a caso, e la volta in cui risponde "uguale" mentre
+    // non lo e' la scheda posata non finisce nello stato affatto. Scrivere e
+    // basta e' corretto e non costa niente: uno `StateFlow` che riceve un
+    // valore uguale al proprio non emette.
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.settledPage }.collect { page ->
             val next = sections.getOrNull(page) ?: return@collect
-            if (next != state.section) viewModel.showSection(next)
+            viewModel.showSection(next)
         }
     }
 
