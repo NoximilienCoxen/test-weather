@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AlertLevel
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
+import io.github.noximiliencoxen.caelum.data.badgeLabel
+import io.github.noximiliencoxen.caelum.data.shortBadge
 import io.github.noximiliencoxen.caelum.ui.common.CloseIcon
 import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
@@ -64,29 +67,24 @@ fun AlertBanner(
 
     val background = MaterialTheme.colorScheme.errorContainer
     val onBackground = MaterialTheme.colorScheme.onErrorContainer
-    // `readableOn` costa una manciata di elevamenti a potenza per passo e non
-    // va chiamata a ogni fotogramma: qui sta dentro un `remember` con il fondo
-    // e il livello per chiave, cioe' si ricalcola solo quando cambia il tema.
-    val levelTint = remember(worst.level, background) {
-        rawTint(worst.level).readableOn(background, CONTRAST_AA_LARGE)
-    }
+    val levelTint = alertTint(worst, background)
 
     val others = alerts.size - 1
     val line = buildString {
-        // **Senza il "ALLERTA " davanti.** Il triangolo tinto accanto dice gia'
-        // che e' un'allerta e di che colore: ripeterlo a parole costa otto
+        // **Senza il "ALLERTA " davanti.** Il segno tinto accanto dice gia'
+        // che e' un avviso e di che colore: ripeterlo a parole costa otto
         // caratteri su una riga sola, e sono gli otto che facevano finire il
         // colore in "ALLERTA ARANCI...". Il nome per esteso resta dove serve -
         // nel bollettino e in cio' che legge il lettore di schermo.
-        append(worst.level.label.removePrefix("ALLERTA "))
+        //
+        // Per un avviso calcolato qui non c'e' un colore ma la parola SOGLIA:
+        // vedi `WeatherAlert.badgeLabel`.
+        append(worst.shortBadge)
         append("  ·  ")
         append(worst.kind.label)
         if (others > 0) append(if (others == 1) "  ·  +1 ALTRA" else "  ·  +$others ALTRE")
     }
-    // Letta tutta insieme: un lettore di schermo che dice "ALLERTA ARANCIONE",
-    // pausa, "TEMPORALI", pausa, il titolo, costringe a ricucire i pezzi.
-    val spoken = listOfNotNull(worst.level.label, worst.kind.label, worst.headline)
-        .joinToString(". ")
+    val spoken = worst.spoken()
 
     Row(
         modifier = modifier
@@ -111,7 +109,7 @@ fun AlertBanner(
                 },
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            WarningTriangle(levelTint, Modifier.size(18.dp))
+            AlertMark(worst, levelTint, Modifier.size(18.dp))
             Spacer(Modifier.width(10.dp))
             // **Senza peso**: prende lo spazio che gli serve, per primo. E' il
             // pezzo per cui la fascia esiste - quanto e' grave e di cosa - e
@@ -155,6 +153,10 @@ fun AlertBanner(
  * Sono i colori che l'allerta ha per convenzione in Italia e in mezza Europa, e
  * qui vanno dichiarati grezzi apposta: chi li usa li passa da `readableOn` sul
  * proprio fondo, che e' l'unico punto in cui si decide quanto schiarirli.
+ *
+ * **Si passa sempre da [alertTint], mai di qui direttamente**: sono i colori
+ * dei bollettini ufficiali, e chiamarla su un avviso calcolato gli metterebbe
+ * addosso il grado di un ente che non l'ha diramato.
  */
 internal fun rawTint(level: AlertLevel): Color = when (level) {
     AlertLevel.GIALLA -> Color(0xFFF2C230)
@@ -181,7 +183,7 @@ internal fun WarningTriangle(color: Color, modifier: Modifier = Modifier) {
             lineTo(w * 0.03f, h * 0.92f)
             close()
         }
-        drawPath(path, color, style = androidx.compose.ui.graphics.drawscope.Stroke(stroke))
+        drawPath(path, color, style = Stroke(stroke))
         drawLine(
             color = color,
             start = Offset(w / 2f, h * 0.38f),
@@ -190,5 +192,91 @@ internal fun WarningTriangle(color: Color, modifier: Modifier = Modifier) {
             cap = StrokeCap.Round,
         )
         drawCircle(color, radius = stroke * 0.6f, center = Offset(w / 2f, h * 0.78f))
+    }
+}
+
+/**
+ * Il colore con cui un avviso si presenta sul suo fondo.
+ *
+ * **I tre colori ufficiali sono solo dei bollettini ufficiali.** Giallo,
+ * arancione e rosso sono il codice del sistema di allertamento, non una scala
+ * di gravita' che chiunque possa usare: un avviso nato da un confronto fra una
+ * raffica e una costante prende invece il colore del testo del contenitore,
+ * cioe' si legge come una nota e non come un grado. La gravita' del calcolato
+ * la dice l'ordine in cui compare - le allerte sono gia' ordinate per peso - e
+ * il bollettino, dove c'e' spazio per le parole.
+ *
+ * `readableOn` costa una manciata di elevamenti a potenza e non va rifatta a
+ * ogni fotogramma: sta dietro un `remember` chiavato su cio' che la puo'
+ * cambiare, cioe' il tema e il livello.
+ */
+@Composable
+internal fun alertTint(alert: WeatherAlert, background: Color): Color {
+    val notice = MaterialTheme.colorScheme.onErrorContainer
+    return remember(alert.official, alert.level, background, notice) {
+        if (alert.official) {
+            rawTint(alert.level).readableOn(background, CONTRAST_AA_LARGE)
+        } else {
+            notice
+        }
+    }
+}
+
+/**
+ * Cio' che un lettore di schermo dice di un avviso.
+ *
+ * Tutto insieme e non a pezzi: "ALLERTA ARANCIONE", pausa, "TEMPORALI", pausa,
+ * il titolo, costringe a ricucire. E per un avviso calcolato la frase si chiude
+ * dicendolo - e' l'unico posto in cui la cosa va detta a parole, perche' un
+ * lettore di schermo il segno e il colore non li vede.
+ */
+internal fun WeatherAlert.spoken(): String {
+    val corpo = listOfNotNull(badgeLabel, kind.label, headline).joinToString(". ")
+    return if (official) corpo else "$corpo. Non e' un bollettino ufficiale."
+}
+
+/**
+ * Il segno dell'avviso: il triangolo se lo dice un ente, il cerchio se lo dice
+ * un conto.
+ *
+ * Due forme e non due colori soltanto, perche' il colore da solo non basta:
+ * chi non lo distingue - e sono uno su dodici fra gli uomini - resterebbe senza
+ * la differenza. Il triangolo e' il segno del pericolo e resta ai bollettini;
+ * il cerchio e' il segno della nota.
+ */
+@Composable
+internal fun AlertMark(alert: WeatherAlert, color: Color, modifier: Modifier = Modifier) {
+    if (alert.official) WarningTriangle(color, modifier) else NoticeCircle(color, modifier)
+}
+
+/**
+ * Il cerchio col punto esclamativo, disegnato come il triangolo che affianca.
+ *
+ * Stesse proporzioni interne di [WarningTriangle] - stesso spessore, asta e
+ * punto alle stesse quote - cosi' i due si leggono come due stati dello stesso
+ * segno invece che come due icone prese da due parti.
+ */
+@Composable
+internal fun NoticeCircle(color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        val stroke = h * 0.10f
+        drawCircle(
+            color = color,
+            // Il raggio tiene conto della meta' del tratto: con `h / 2` il
+            // cerchio uscirebbe dalla tela di mezzo spessore e verrebbe tagliato.
+            radius = (minOf(w, h) - stroke) / 2f,
+            center = Offset(w / 2f, h / 2f),
+            style = Stroke(stroke),
+        )
+        drawLine(
+            color = color,
+            start = Offset(w / 2f, h * 0.30f),
+            end = Offset(w / 2f, h * 0.58f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round,
+        )
+        drawCircle(color, radius = stroke * 0.6f, center = Offset(w / 2f, h * 0.72f))
     }
 }
