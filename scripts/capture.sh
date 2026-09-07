@@ -301,6 +301,28 @@ session() {
   sleep 2
   shoot "${slug}-d4-allerta-riaperta"
 
+  # ── L'avviso calcolato, che non e' un bollettino ────────────────────────────
+  #
+  # `--ei allerta 0` impone un avviso nato da una soglia invece che da un ente.
+  # Deve leggersi **diverso a colpo d'occhio** da d1: la riga dice SOGLIA e non
+  # ARANCIONE, il segno e' un cerchio e non un triangolo, e il colore non e' ne'
+  # giallo ne' arancione ne' rosso - quelli sono i tre gradini del sistema di
+  # allertamento nazionale e appartengono a chi li dirama.
+  #
+  # Due scatti: la fascia, e il bollettino aperto, dove in fondo alla scheda
+  # deve stare per esteso che non e' un atto ufficiale.
+  alive || { echo "dispositivo caduto prima dello scatto dell'avviso calcolato"; return; }
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 0 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d4b-avviso-calcolato"
+
+  adbt shell input tap "$cx" "$(( H * 13 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d4c-avviso-calcolato-bollettino"
+
   # ── Il foglio di dettaglio ──────────────────────────────────────────────────
   #
   # **Finora non e' mai stato fotografato davvero.** Lo scatto che si chiamava
@@ -357,21 +379,32 @@ session() {
   sleep 2
   shoot "${slug}-d11-tornato-alla-principale"
 
-  # ── Il dettaglio di un giorno ───────────────────────────────────────────────
+  # ── Il dettaglio letto su un altro giorno ───────────────────────────────────
   #
-  # Si apre con l'aggancio `--ei giorno` e **non col dito**, e non e' una
-  # scorciatoia: la settimana sta in coda a una pagina che scorre, quindi per
-  # toccarla bisogna prima scorrere, e la trascinata lunga che ci vuole **fa
-  # morire l'emulatore**. Provato due volte, stesso punto esatto: il logcat
-  # dell'app finisce pulito - nessuna eccezione, nessun ANR - e sparisce la
-  # macchina virtuale, non l'app. E' la stessa ragione per cui esiste
-  # l'aggancio sul giro: certi stati, qui, col dito non si raggiungono.
+  # **Il giorno non e' piu' una schermata.** Era una seconda schermata che
+  # entrava da destra e ripeteva grafico, statistiche e probabilita' per dire
+  # le stesse cose di un altro giorno; adesso e' lo stesso foglio, letto su un
+  # altro giorno, e a sceglierlo c'e' la striscia in cima.
+  #
+  # L'aggancio `--ei giorno` **sceglie e basta**, quindi il foglio va aperto
+  # come lo aprirebbe chiunque: col tocco sulla cifra. Sceglierlo col dito -
+  # una colonna della settimana, o una linguetta dentro il foglio - resta
+  # irraggiungibile in modo affidabile, ed e' la ragione per cui l'aggancio
+  # esiste: la trascinata lunga che ci vorrebbe **fa morire l'emulatore**.
+  # Provato due volte, stesso punto esatto: il logcat dell'app finisce pulito -
+  # nessuna eccezione, nessun ANR - e sparisce la macchina virtuale, non l'app.
+  #
+  # Cosa guardare: il sottotitolo in cima deve dire quel giorno e non OGGI, la
+  # linguetta accesa nella striscia deve essere la terza e stare **al centro**,
+  # e le due meta' della giornata devono essere quelle di quel giorno.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
   adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 >/dev/null 2>&1 || true
   attendi_previsione
-  sleep 1
+  alive || { echo "dispositivo caduto prima dello scatto del giorno"; return; }
+  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
   shoot "${slug}-d12-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
