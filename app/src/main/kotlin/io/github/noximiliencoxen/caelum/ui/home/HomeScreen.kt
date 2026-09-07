@@ -52,6 +52,11 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -71,6 +76,7 @@ import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberSceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rotatesScene
 import io.github.noximiliencoxen.caelum.ui.render3d.SceneContact
+import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
 import kotlinx.coroutines.delay
@@ -144,6 +150,8 @@ fun HomeScreen(
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenTemperatureDetail: () -> Unit = {},
+    /** Una grandezza della striscia in fondo: apre il foglio gia' su quella pagina. */
+    onOpenPanel: (DetailMode) -> Unit = {},
     /** Un giorno della striscia della settimana, toccato: apre il suo dettaglio. */
     onOpenDay: (Int) -> Unit = {},
     onOpenAlerts: () -> Unit = {},
@@ -325,6 +333,18 @@ fun HomeScreen(
                     // stesso trascinamento.
                     .pointerInput(Unit) {
                         detectTapOrRotate(liveRotation) { liveOnOpenDetail() }
+                    }
+                    // **La scorciatoia esisteva e per un lettore di schermo non
+                    // esisteva.** `detectTapOrRotate` e' un riconoscitore di
+                    // gesti, e un gesto non ha semantica: qui non c'erano ne'
+                    // ruolo ne' descrizione, quindi da TalkBack la cifra era una
+                    // decorazione e il dettaglio si raggiungeva solo dalla
+                    // striscia in fondo. Il tocco che apre va dichiarato, non
+                    // solo riconosciuto.
+                    .semantics {
+                        contentDescription = APRI_TEMPERATURA
+                        role = Role.Button
+                        onClick(label = APRI_TEMPERATURA) { onOpenTemperatureDetail(); true }
                     },
             ) {
                 // Finche' non c'e' un numero non si disegna niente. Un "--"
@@ -475,12 +495,11 @@ fun HomeScreen(
             // scultura che sta sopra, e un sussulto a ogni ora scelta e' peggio
             // dei pochi punti che si risparmierebbero.
             //
-            // Il margine di sotto e' largo apposta: tutta la colonna vive dello
-            // spazio che avanza alla scultura, quindi allontanarla dal bordo la
-            // fa salire tutta insieme invece di lasciarla appiccicata in fondo.
-            modifier = Modifier
-                .padding(top = 2.dp, bottom = 26.dp)
-                .height(MinTouchTarget),
+            // **Il margine largo che stava qui sotto se n'e' andato nella
+            // striscia.** Serviva ad allontanare la colonna dal bordo, e adesso
+            // a farlo c'e' il bordo del foglio: ventisei punti di vuoto sono
+            // diventati cinquanta punti che dicono qualcosa.
+            modifier = Modifier.height(MinTouchTarget),
             contentAlignment = Alignment.Center,
         ) {
             // Non con la settimana in scena: li' non c'e' un'ora scelta da cui
@@ -500,6 +519,14 @@ fun HomeScreen(
                 )
             }
         }
+
+        // Il bordo del foglio, in fondo a tutto e a filo del margine: e' li' che
+        // il dettaglio sta quando e' chiuso, e disegnarlo altrove vorrebbe dire
+        // promettere un movimento che poi non parte da dove si e' toccato.
+        SheetEdge(
+            current = state.detailMode,
+            onOpenPanel = onOpenPanel,
+        )
     }
 }
 
@@ -755,3 +782,12 @@ private const val CLOCK_TICK_MS = 20_000L
 
 /** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
 private const val FELT_THRESHOLD = 1.5
+
+/**
+ * Cosa dice la cifra a chi la ascolta invece di vederla.
+ *
+ * Una frase sola per la descrizione e per l'etichetta dell'azione: sono la
+ * stessa cosa detta due volte in due punti dell'API, e tenerle separate
+ * significa solo poterle far divergere.
+ */
+private const val APRI_TEMPERATURA = "Apri il dettaglio della temperatura"

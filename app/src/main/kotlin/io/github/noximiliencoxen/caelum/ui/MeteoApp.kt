@@ -47,6 +47,7 @@ import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertsSheet
 import io.github.noximiliencoxen.caelum.ui.home.HomeScreen
 import io.github.noximiliencoxen.caelum.ui.temperature.DayDetailScreen
+import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
 import io.github.noximiliencoxen.caelum.ui.temperature.TemperatureDetailScreen
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
@@ -215,7 +216,24 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 onSelectHour = viewModel::selectHour,
                 onBackToNow = viewModel::backToNow,
                 onOpenSettings = viewModel::openSettings,
-                onOpenTemperatureDetail = sheet::openFully,
+                // La cifra apre **sulla temperatura**, non sull'ultima pagina
+                // guardata: e' la temperatura quella che si sta toccando, e
+                // ritrovarsi davanti il vento perche' ieri lo si era guardato
+                // e' una risposta che non ha niente a che fare col gesto.
+                onOpenTemperatureDetail = {
+                    viewModel.setDetailMode(DetailMode.TEMPERATURA)
+                    sheet.openFully()
+                },
+                // **La modalita' prima dell'apertura, e non dopo.** Il foglio si
+                // compone solo da quando `sheet.open` supera lo zero, e li'
+                // `rememberPagerState` legge `state.detailMode` una volta sola,
+                // alla nascita. Invertendo i due il carosello nascerebbe sulla
+                // pagina di prima e ci arriverebbe scorrendo: un salto, per un
+                // tocco che aveva gia' detto dove andare.
+                onOpenPanel = { mode ->
+                    viewModel.setDetailMode(mode)
+                    sheet.openFully()
+                },
                 onOpenDay = viewModel::openDayDetail,
                 onOpenAlerts = viewModel::openAlerts,
                 onDismissAlerts = viewModel::collapseAlerts,
