@@ -115,7 +115,7 @@ internal fun MoonPage(
  *
  * Senza, "26 set" esce "26 Sep": il formattatore prende la lingua di sistema, e
  * l'app e' scritta in italiano da cima a fondo. E' la stessa ragione per cui
- * `DayDetailScreen` e `HomeScreen` lo dichiarano gia' sui loro.
+ * `HomeScreen` lo dichiara gia' sul suo.
  */
 private val DAY_MONTH: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM", Locale.ITALIAN)
