@@ -37,12 +37,15 @@ import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
  * oggi, l'altro dice **quale giorno** - e mettendoli uno sotto l'altro la
  * scultura sopra avrebbe dovuto stringersi per far posto a entrambi.
  *
- * **Una colonna si tocca e il giorno si apre**, sullo stesso dettaglio che apre
- * la scheda "LA SETTIMANA": `openDayDetail` esisteva gia' e porta con se' anche
- * la linguetta giusta in cima alla schermata nuova. Il bersaglio e' la colonna
- * intera - sigla, icona e le due cifre - e non la sola icona: sono novanta punti
- * per un ottavo di larghezza, cioe' abbondantemente sopra il minimo, mentre
- * centrare un glifo da ventisei punti sarebbe una prova di mira.
+ * **Una colonna si tocca e il giorno si apre**, e si apre nel foglio del
+ * dettaglio - lo stesso che sale dalla cifra e dalla striscia in fondo, letto
+ * su quel giorno. Prima portava a una seconda schermata che entrava da destra e
+ * ripeteva grafico, statistiche e probabilita' per dire le stesse cose di un
+ * altro giorno: il giorno non era una schermata, era un asse, e le sei pagine
+ * lo leggevano gia' (`pageDay`, `pageHours`, `detailHour`). Il bersaglio e' la
+ * colonna intera - sigla, icona e le due cifre - e non la sola icona: sono
+ * novanta punti per un ottavo di larghezza, cioe' abbondantemente sopra il
+ * minimo, mentre centrare un glifo da ventisei punti sarebbe una prova di mira.
  *
  * Che gli otto bersagli stiano dove passa il pollice che scorre le ore non e' un
  * conflitto: quando c'e' la settimana la striscia delle ore non c'e', e viceversa.

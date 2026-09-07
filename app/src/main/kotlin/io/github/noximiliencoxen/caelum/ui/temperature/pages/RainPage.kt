@@ -1,11 +1,18 @@
 package io.github.noximiliencoxen.caelum.ui.temperature.pages
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.PrecipKind
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
@@ -13,6 +20,7 @@ import io.github.noximiliencoxen.caelum.ui.asCentimetres
 import io.github.noximiliencoxen.caelum.ui.asHours
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
 import io.github.noximiliencoxen.caelum.ui.asPercent
+import io.github.noximiliencoxen.caelum.ui.common.MeteoCard
 import io.github.noximiliencoxen.caelum.ui.common.MeteoLayout
 import io.github.noximiliencoxen.caelum.ui.common.MeteoMetric
 import io.github.noximiliencoxen.caelum.ui.common.MeteoMetricCard
@@ -124,5 +132,76 @@ internal fun RainPage(
                     .padding(start = 10.dp, end = 10.dp, bottom = 8.dp),
             )
         }
+
+        // I due picchi, che vivevano nel dossier del giorno. La tabella qui
+        // sopra dice gia' la probabilita' massima e a che ora cade, ma su
+        // tutte e ventiquattro le ore: questa e' l'altra domanda, quella che si
+        // fa uscendo di casa - se conviene di piu' la mattina o la sera.
+        RainOdds(hours = hours, fallback = day?.precipProbability)
+    }
+}
+
+/**
+ * I due picchi, dichiarati come picchi.
+ *
+ * Prima il dossier del giorno scriveva il massimo della mezza giornata sotto
+ * l'etichetta "DI GIORNO", cioe' presentava un estremo come se fosse il
+ * valore: un'ora al settanta per cento faceva sembrare piovosa un'intera
+ * mattinata serena. Si dice che e' un picco, e a che ora cade.
+ */
+@Composable
+private fun RainOdds(hours: List<HourForecast>, fallback: Int?) {
+    val accents = LocalMeteoAccents.current
+    val byDay = hours.filter { it.isDay }.maxByOrNull { it.precipProbability ?: 0 }
+    val byNight = hours.filter { !it.isDay }.maxByOrNull { it.precipProbability ?: 0 }
+
+    MeteoCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
+            Text(
+                text = "PROBABILITA' DI PRECIPITAZIONI",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Odds("PICCO DI GIORNO", byDay, fallback, accents.rain, Modifier.weight(1f))
+                Odds("PICCO DI NOTTE", byNight, fallback, accents.rain, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun Odds(
+    title: String,
+    peak: HourForecast?,
+    fallback: Int?,
+    accent: Color,
+    modifier: Modifier = Modifier,
+) {
+    val value = peak?.precipProbability ?: fallback
+    Column(modifier = modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = value.asPercent(),
+            style = MaterialTheme.typography.displaySmall,
+            color = if ((value ?: 0) > 0) accent else MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = peak?.takeIf { (it.precipProbability ?: 0) > 0 }
+                ?.let { "alle ${it.time.format(CLOCK)}" }
+                .orEmpty(),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+        )
     }
 }

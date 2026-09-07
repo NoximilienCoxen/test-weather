@@ -144,15 +144,6 @@ data class UiState(
     val weekMode: Boolean = false,
     /** Quale grandezza mostra la schermata di dettaglio. */
     val detailMode: DetailMode = DetailMode.TEMPERATURA,
-    /**
-     * Il giorno aperto nel dettaglio, o nullo se quella schermata e' chiusa.
-     *
-     * Distinto da [selectedDay] apposta: `selectedDay` dice **quale giorno si
-     * sta guardando** e sopravvive alla chiusura, questo dice **se la schermata
-     * e' in scena**. Con un campo solo, tornare indietro avrebbe voluto dire
-     * dimenticare anche il giorno.
-     */
-    val dayDetail: Int? = null,
     /** false = EFFETTIVA, true = PERCEPITI, nel dettaglio del giorno. */
     val feelsLike: Boolean = false,
     /** Indice dell'ora mostrata dalla schermata principale. */
@@ -354,11 +345,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     private var pendingHour: Int? = null
 
     /**
-     * Giorno di cui aprire il dettaglio, chiesto prima che i dati arrivino.
+     * Giorno da mostrare nel dettaglio, chiesto prima che i dati arrivino.
      *
      * Stessa ragione di [pendingHour]: l'intent arriva all'avvio, la previsione
-     * qualche secondo dopo, e `openDayDetail` senza dati stringerebbe l'indice
-     * a zero - aprirebbe sempre oggi, qualunque giorno si sia chiesto.
+     * qualche secondo dopo, e `selectDay` senza dati stringerebbe l'indice a
+     * zero - mostrerebbe sempre oggi, qualunque giorno si sia chiesto.
      */
     private var pendingDay: Int? = null
 
@@ -494,7 +485,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 error = null,
                                 selectedHour = hour,
                                 selectedDay = wantedDay ?: current.selectedDay,
-                                dayDetail = wantedDay ?: current.dayDetail,
                             )
                         }
 
@@ -664,14 +654,33 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * l'app possa restare bloccata.
      */
     fun forceAlert(level: Int) {
+        // **Lo zero e' l'avviso calcolato**, e non e' un valore di ripiego: da
+        // quando fascia, pallino e bollettino distinguono le due fonti - segno
+        // diverso, colore diverso, parola diversa - la differenza e' qualcosa
+        // che si guarda, e quindi qualcosa da fotografare. Aspettare di
+        // trovarsi fuori dalla copertura di MeteoAlarm in un giorno di raffiche
+        // non e' un piano di verifica piu' di quanto lo fosse aspettare
+        // un'arancione vera.
+        val derivata = level == 0
         val chosen = when (level) {
-            1 -> AlertLevel.GIALLA
             2 -> AlertLevel.ARANCIONE
-            else -> AlertLevel.ROSSA
+            3 -> AlertLevel.ROSSA
+            else -> AlertLevel.GIALLA
         }
         _state.update {
             it.copy(
-                forcedAlert =
+                forcedAlert = if (derivata) {
+                    WeatherAlert(
+                        id = "prova-derivata",
+                        level = AlertLevel.GIALLA,
+                        kind = AlertKind.VENTO,
+                        headline = "Vento forte oggi",
+                        description = "Raffiche fino a 76 km/h.",
+                        areaDesc = it.place.name,
+                        source = "Calcolata dai dati Open-Meteo",
+                        official = false,
+                    )
+                } else {
                     WeatherAlert(
                         id = "prova-${chosen.name}",
                         level = chosen,
@@ -683,7 +692,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         areaDesc = it.place.name,
                         source = "Aggancio di verifica",
                         official = true,
-                    ),
+                    )
+                },
             )
         }
     }
@@ -714,24 +724,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun expandAlerts() {
         viewModelScope.launch { prefs.restoreAlertBar() }
-    }
-
-    /**
-     * Apre il dettaglio di un giorno preciso, toccandolo nella card della
-     * settimana. Porta con se' anche `selectedDay`, cosi' le linguette in cima
-     * alla schermata nuova si aprono gia' sul giorno toccato.
-     */
-    fun openDayDetail(index: Int) {
-        _state.update { current ->
-            val last = (current.forecast?.days?.size ?: 1) - 1
-            val day = index.coerceIn(0, maxOf(last, 0))
-            current.copy(selectedDay = day, dayDetail = day)
-        }
-    }
-
-    fun closeDayDetail() {
-        pendingDay = null
-        _state.update { it.copy(dayDetail = null) }
     }
 
     fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
@@ -802,18 +794,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Aggancio per la cattura automatica: apre il dettaglio di un giorno.
+     * Aggancio per la cattura automatica: sceglie il giorno che il dettaglio
+     * racconta.
      *
-     * Esiste perche' raggiungerlo col dito **non si puo' fare in modo
-     * affidabile**: la settimana sta in coda a una pagina che scorre, quindi
-     * bisogna prima scorrere, e la trascinata lunga necessaria a farlo fa
+     * Esiste perche' sceglierlo col dito **non si puo' fare in modo
+     * affidabile**: la striscia dei giorni sta in cima al foglio, quindi
+     * bisogna prima aprire il foglio, e la trascinata necessaria a farlo fa
      * morire l'emulatore della CI (vedi CONTESTO, trappola sull'emulatore).
      * E' lo stesso motivo per cui esiste l'aggancio sul giro: certi stati col
      * dito, li', non si raggiungono.
+     *
+     * **Sceglie il giorno e basta, non apre piu' niente.** Il dettaglio di un
+     * giorno non e' piu' una schermata: e' il foglio, letto su un altro giorno.
+     * Chi scatta apre il foglio come lo aprirebbe chiunque.
      */
-    fun requestDayDetail(index: Int) {
+    fun requestDay(index: Int) {
         pendingDay = index
-        if (_state.value.forecast != null) openDayDetail(index)
+        if (_state.value.forecast != null) selectDay(index)
     }
 
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */

@@ -39,6 +39,47 @@ data class WeatherAlert(
 )
 
 /**
+ * Come l'avviso si annuncia, per esteso.
+ *
+ * **Un avviso calcolato non si chiama "allerta gialla".** Giallo, arancione e
+ * rosso non sono tre aggettivi: sono i gradini del sistema di allertamento
+ * nazionale, e chi li legge capisce - giustamente - che a dirli e' stata la
+ * Protezione Civile. Un confronto fra una raffica e una costante scritta in
+ * `DerivedAlerts.kt` non ha quel peso e non deve prendersi quelle parole: la
+ * fascia direbbe la stessa cosa di un bollettino vero, e il silenzio dell'app
+ * si leggerebbe come il silenzio dell'ente.
+ *
+ * Non e' una cautela estetica. Presentare un'informazione come se venisse da
+ * un'altra fonte e' esattamente cio' che gli artt. 21-22 del Codice del
+ * consumo chiamano ingannevole, e il caso pericoloso e' quello **al
+ * contrario**: chi non vede nessuna "gialla" da' per buono che nessuno l'abbia
+ * diramata.
+ *
+ * Sta nei dati e non nelle schermate per la stessa ragione di
+ * [alertsAreDismissed]: e' una regola sul dominio - come questo avviso ha
+ * diritto di presentarsi - e da qui si prova senza far partire niente di
+ * Android. Le tre superfici che lo mostrano (fascia, pallino, bollettino)
+ * leggono questo, quindi non possono divergere.
+ */
+val WeatherAlert.badgeLabel: String
+    get() = if (official) level.label else SOGLIA_LABEL
+
+/**
+ * La stessa cosa, accorciata per la riga della fascia.
+ *
+ * Li' lo spazio e' una riga sola e il "ALLERTA " davanti se n'era gia' andato
+ * per quello (vedi `ui/alerts/AlertBanner.kt`): il segno accanto dice gia' che
+ * e' un avviso, la parola dice solo di che tipo.
+ */
+val WeatherAlert.shortBadge: String
+    get() = if (official) level.label.removePrefix("ALLERTA ") else SOGLIA_SHORT
+
+/** Come si chiama un avviso nato da una soglia, per esteso e in breve. */
+const val SOGLIA_LABEL: String = "SOGLIA SUPERATA"
+
+const val SOGLIA_SHORT: String = "SOGLIA"
+
+/**
  * La gravita', nei tre gradini che l'Italia usa a voce.
  *
  * MeteoAlarm ne usa quattro - verde, giallo, arancione, rosso - ma il verde
