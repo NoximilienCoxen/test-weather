@@ -154,6 +154,35 @@ fun MeteoColors.toColorScheme(): ColorScheme {
     )
 }
 
+/**
+ * Le stesse tinte, ma leggibili **sul cielo**.
+ *
+ * [toAccents] le tara su `PanelContainer`, che e' un antracite fermo: e' il
+ * fondo dei pannelli, dove queste tinte passano quasi tutta la loro vita. La
+ * schermata principale pero' non ha un fondo, ha una sfumatura che gira con
+ * l'ora, e a meta' mattina arriva a un grigio chiaro: il giallo del sole tarato
+ * sull'antracite li' sparisce. E' lo stesso difetto della sezione 8-bis di
+ * CONTESTO, con un'altra faccia.
+ *
+ * Si chiede la soglia **ai due capi** della sfumatura e non al tono medio,
+ * perche' sotto un segno solo ci sono due colori diversi. Soglia da segno
+ * grande, come in [toAccents] e per la stessa ragione: portarle a 4,5:1 le
+ * sbiadirebbe tutte verso lo stesso bianco sporco, e sei pallini identici non
+ * direbbero piu' quale grandezza sono.
+ *
+ * Restano fuori i colori che sul cielo non ci vanno mai - griglia, fondo delle
+ * etichette, curve di riferimento: quelli vivono dentro le tele dei pannelli, e
+ * li' il fondo e' quello di [toAccents].
+ */
+fun MeteoColors.skyAccents(): MeteoAccents = toAccents().copy(
+    sun = SunTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+    rain = RainTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+    wind = WindTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+    air = AirTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+    moon = MoonTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+    alert = AlertTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
+)
+
 /** Le tinte delle grandezze, gia' rese leggibili sulla superficie che le ospita. */
 fun MeteoColors.toAccents(): MeteoAccents {
     val on = PanelContainer
