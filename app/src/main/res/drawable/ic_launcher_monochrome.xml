@@ -1,5 +1,41 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-        <path android:fillColor="#FF000000" android:fillType="evenOdd" android:pathData="M34.00,54.00 A20.0,20.0 0 1 1 74.00,54.00 A20.0,20.0 0 1 1 34.00,54.00 Z M42.50,54.00 A11.5,11.5 0 1 1 65.50,54.00 A11.5,11.5 0 1 1 42.50,54.00 Z" />
+
+    <!--
+        La stessa sagoma per le icone a tema di Android 13+, in tinta unita: il
+        colore lo mette il sistema, qui c'e' solo la forma.
+
+        **Ricentrata per conto suo**, ed e' il punto della sezione 39. Nel
+        foreground il disegno sta volutamente storto - il sole in alto a
+        sinistra, la pioggia in basso a destra - perche' e' quello a raccontare
+        la diagonale del fondo. Ma qui il fondo non c'e': senza il taglio dietro,
+        una sagoma spostata si legge come una sagoma sbagliata. Il gruppo la
+        riporta al centro dei 108, e basta quello.
+
+        Il rettangolo che la contiene va da (27.35, 25.35) a (67.96, 76.2) -
+        punte dei raggi comprese, e le gocce con il loro cap tondo. Centro
+        (47.66, 50.78), quindi lo spostamento e' +6.34 e +3.22.
+
+        La diagonale non c'e' e non ci puo' essere: qui il colore e' uno solo, e
+        una nuvola meta' piena e meta' vuota si leggerebbe come una nuvola
+        rotta. Restano sole, nuvola e pioggia, che bastano a dire di che app si
+        tratta.
+    -->
+    <group android:translateX="6.34" android:translateY="3.22">
+
+        <!-- Le otto lame -->
+        <path android:fillColor="#FF000000" android:pathData="M42.02,30.5 L45.98,30.5 L44,25.35 Z M34.79,33.77 L37.5,31.06 L32.22,30.2 Z M32.5,40.02 L32.5,43.98 L27.35,42 Z M34.79,50.23 L37.5,52.94 L32.22,53.8 Z M42.02,53.5 L45.98,53.5 L44,58.65 Z M50.5,50.23 L53.21,52.94 L55.78,53.8 Z M55.5,40.02 L55.5,43.98 L60.65,42 Z M50.5,33.77 L53.21,31.06 L55.78,30.2 Z" />
+
+        <!-- Il disco, pieno: qui la falce ambrata non ha senso -->
+        <path android:fillColor="#FF000000" android:pathData="M35,42 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 Z" />
+
+        <!-- La nuvola, intera -->
+        <path android:fillColor="#FF000000" android:pathData="M35.28,56.54 a8.74,8.74 0 1,0 17.48,0 a8.74,8.74 0 1,0 -17.48,0 Z M52.76,56.92 a7.6,7.6 0 1,0 15.2,0 a7.6,7.6 0 1,0 -15.2,0 Z M40.98,52.36 a11.02,11.02 0 1,0 22.04,0 a11.02,11.02 0 1,0 -22.04,0 Z M40.6,53.88 L63.4,53.88 a4.94,4.94 0 0,1 0,9.88 L40.6,63.76 a4.94,4.94 0 0,1 0,-9.88 Z" />
+
+        <!-- Le tre gocce -->
+        <path android:strokeColor="#FF000000" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M47,65 L44.6,72.4" />
+        <path android:strokeColor="#FF000000" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M56.1,67.4 L53.7,74.8" />
+        <path android:strokeColor="#FF000000" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M65.3,64.6 L62.9,72" />
+    </group>
 </vector>
