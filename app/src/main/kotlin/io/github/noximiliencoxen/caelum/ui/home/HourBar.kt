@@ -42,9 +42,9 @@ import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
-import io.github.noximiliencoxen.caelum.ui.temperature.buildLinePath
-import io.github.noximiliencoxen.caelum.ui.temperature.temperatureRamp
-import io.github.noximiliencoxen.caelum.ui.temperature.temperatureTint
+import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.common.temperatureRamp
+import io.github.noximiliencoxen.caelum.ui.common.temperatureTint
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType

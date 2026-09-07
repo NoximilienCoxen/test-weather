@@ -25,7 +25,7 @@ import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
-import io.github.noximiliencoxen.caelum.ui.temperature.WeatherGlyph
+import io.github.noximiliencoxen.caelum.ui.common.WeatherGlyph
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
 
