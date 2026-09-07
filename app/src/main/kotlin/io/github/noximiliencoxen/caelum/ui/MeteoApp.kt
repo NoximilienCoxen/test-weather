@@ -1,14 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -17,57 +12,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.Velocity
 import androidx.lifecycle.Lifecycle
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertsSheet
-import io.github.noximiliencoxen.caelum.ui.home.HomeScreen
-import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
-import io.github.noximiliencoxen.caelum.ui.temperature.TemperatureDetailScreen
+import io.github.noximiliencoxen.caelum.ui.feed.FeedScreen
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
 import io.github.noximiliencoxen.caelum.ui.settings.SettingsScreen
 import io.github.noximiliencoxen.caelum.ui.welcome.WelcomeScreen
-import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
 import io.github.noximiliencoxen.caelum.ui.theme.relativeLuminance
 import io.github.noximiliencoxen.caelum.ui.theme.skyColors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * L'app si apre sulla schermata essenziale. Il dettaglio non e' una schermata
- * diversa: e' un foglio che sale seguendo il dito, reversibile a meta' corsa.
- * Dietro, la principale arretra e si smorza, cosi' resti nello stesso mondo
- * invece di essere trasportato altrove.
+ * La pila dell'app: il cielo, il feed, e i due pannelli che gli si mettono
+ * davanti.
  *
- * Le impostazioni entrano invece da sinistra, da dove sta il loro pulsante.
+ * **Il feed ha preso il posto del foglio.** Prima qui c'erano una schermata
+ * essenziale e un dettaglio che saliva dal basso seguendo il dito: le sei
+ * grandezze stavano dentro il foglio, in un carosello orizzontale. Adesso sono
+ * le sezioni del feed - una schermata piena ciascuna, si scorre dal basso verso
+ * l'alto - e questo file non ha piu' un gesto suo: quello verticale appartiene
+ * al carosello, che se lo gestisce insieme al tiro per ricaricare.
+ *
+ * Restano davanti al feed due pannelli veri, che dipingono sopra il cielo: le
+ * allerte entrano da destra perche' si scende dentro qualcosa di piu' specifico,
+ * le impostazioni da sinistra, da dove sta il loro pulsante.
  */
 @Composable
 fun MeteoApp(viewModel: WeatherViewModel) {
@@ -124,11 +108,8 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         // uno stato: letto dentro il disegno invece che in composizione, il
         // sensore fa ridipingere e non ricomporre.
         val tilt = rememberDeviceTilt()
-        val scope = rememberCoroutineScope()
 
-        val sheet = remember(scope) { SheetGesture(scope) }
         val density = LocalDensity.current
-        val haptics = LocalHapticFeedback.current
 
         // I dati si ricaricano tornando in primo piano, se hanno passato la
         // loro eta'. La composizione resta viva anche in sottofondo, quindi il
@@ -149,21 +130,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 .fillMaxSize()
                 .background(skyBrush),
         ) {
-            val heightPx = with(density) { maxHeight.toPx() }.coerceAtLeast(1f)
             val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
-
-            // Booleani derivati e non letture dirette: il foglio si muove a
-            // ogni fotogramma del dito, e leggerne il valore qui in
-            // composizione ricomporrebbe tutto l'albero sessanta volte al
-            // secondo per rispondere a una domanda la cui risposta cambia due
-            // volte in tutto il gesto.
-            val sheetVisible by remember { derivedStateOf { sheet.open > 0.001f } }
-            val pullArmed by remember { derivedStateOf { sheet.armed } }
-            // Vero quando il foglio copre abbastanza schermo da decidere lui
-            // il colore sotto le barre di sistema. Derivato come gli altri: il
-            // foglio si muove a ogni fotogramma del dito, e questa risposta
-            // cambia due volte in tutto il gesto.
-            val sheetCovers by remember { derivedStateOf { sheet.open > 0.5f } }
 
             // Le icone delle barre di sistema seguono cio' che hanno sotto. Con
             // le barre trasparenti e un fondo che va dall'azzurro di
@@ -171,7 +138,13 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // che per meta' giornata
             // sono invisibili: e' il motivo per cui negli scatti la barra di
             // navigazione appariva bianca sotto un'app scura.
-            val panelled = state.settingsOpen || state.alertsOpen || sheetCovers
+            //
+            // **Il feed non entra in questo conto.** Le sue schede vivono tutte
+            // sul cielo: sopra e sotto ci sono lo zenit e l'orizzonte a
+            // qualunque scheda si sia, quindi la risposta e' la stessa per tutte
+            // e sei. A cambiarla restano i due pannelli veri, che dipingono
+            // sopra il cielo.
+            val panelled = state.settingsOpen || state.alertsOpen
             SystemBarIcons(
                 behindStatusBar = if (panelled) {
                     MaterialTheme.colorScheme.surface
@@ -185,17 +158,9 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                 },
             )
 
-            fun release(velocity: Float) {
-                if (sheet.release(velocity)) {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    viewModel.refresh()
-                }
-            }
-
             // Al primo avvio l'app chiede dove sei, invece di dare per scontato
-            // un posto che nessuno ha scelto. Il foglio del dettaglio non entra
-            // in scena finche' il benvenuto non ha finito: non c'e' ancora
-            // niente da approfondire.
+            // un posto che nessuno ha scelto. Il feed non entra in scena finche'
+            // il benvenuto non ha finito: non c'e' ancora niente da raccontare.
             if (!state.welcomed) {
                 WelcomeScreen(
                     state = state,
@@ -208,111 +173,23 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     onDone = viewModel::dismissWelcome,
                     modifier = Modifier.systemBarsPadding(),
                 )
-            } else HomeScreen(
-                state = state,
-                sky = sky,
-                tilt = tilt,
-                onSelectHour = viewModel::selectHour,
-                onBackToNow = viewModel::backToNow,
-                onOpenSettings = viewModel::openSettings,
-                // La cifra apre **sulla temperatura**, non sull'ultima pagina
-                // guardata: e' la temperatura quella che si sta toccando, e
-                // ritrovarsi davanti il vento perche' ieri lo si era guardato
-                // e' una risposta che non ha niente a che fare col gesto.
-                onOpenTemperatureDetail = {
-                    viewModel.setDetailMode(DetailMode.TEMPERATURA)
-                    sheet.openFully()
-                },
-                // **La modalita' prima dell'apertura, e non dopo.** Il foglio si
-                // compone solo da quando `sheet.open` supera lo zero, e li'
-                // `rememberPagerState` legge `state.detailMode` una volta sola,
-                // alla nascita. Invertendo i due il carosello nascerebbe sulla
-                // pagina di prima e ci arriverebbe scorrendo: un salto, per un
-                // tocco che aveva gia' detto dove andare.
-                onOpenPanel = { mode ->
-                    viewModel.setDetailMode(mode)
-                    sheet.openFully()
-                },
-                // **Una colonna della settimana porta allo stesso foglio.**
-                // Prima apriva una seconda schermata, che entrava da destra e
-                // ripeteva grafico, statistiche e probabilita' per dire le
-                // stesse cose di un altro giorno. Il giorno non era una
-                // schermata: era un asse, e le sei pagine lo leggevano gia'.
-                onOpenDay = { day ->
-                    viewModel.selectDay(day)
-                    sheet.openFully()
-                },
-                onOpenAlerts = viewModel::openAlerts,
-                onDismissAlerts = viewModel::collapseAlerts,
-                // Un gesto solo per due effetti: il pallino rimette la fascia e
-                // apre il bollettino. Chi lo tocca vuole leggere l'avviso, e
-                // trovarselo di nuovo per esteso tornando indietro e' la
-                // risposta che non richiede di cercare come si fa.
-                onReopenAlerts = {
-                    viewModel.expandAlerts()
-                    viewModel.openAlerts()
-                },
-                onRefresh = viewModel::refresh,
-                pullArmed = pullArmed,
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .graphicsLayer {
-                        val open = sheet.open
-                        alpha = 1f - open * 0.85f
-                        scaleX = 1f - open * 0.06f
-                        scaleY = 1f - open * 0.06f
-                        // Il tiro per ricaricare sposta la schermata di meno di
-                        // quanto vada il dito: e' la resistenza che dice che si
-                        // sta tirando qualcosa, non scorrendo una pagina.
-                        translationY = sheet.pull * 0.42f
-                    }
-                    .draggable(
-                        state = rememberDraggableState { delta -> sheet.drag(delta, heightPx) },
-                        orientation = Orientation.Vertical,
-                        onDragStarted = { sheet.begin() },
-                        onDragStopped = { velocity -> release(velocity) },
-                    ),
-            )
-
-            if (sheetVisible) {
-                // Il contenuto del dettaglio scorre, e un `draggable` sul
-                // contenitore non puo' convivere con uno scorrimento interno:
-                // il figlio riceve il tocco per primo e il foglio non si
-                // chiuderebbe mai piu'. Con il nesting il gesto e' uno solo e
-                // sono i due a spartirselo - prima il contenuto, e il foglio
-                // solo su quello che avanza.
-                val sheetScroll = remember(sheet, heightPx) {
-                    SheetNestedScroll(sheet, heightPx)
-                }
-                BackHandler(enabled = sheetVisible, onBack = sheet::closeFully)
-                // Una `Surface` e non un `Box` col fondo dipinto: cosi' il
-                // colore di contenuto scende ai figli invece di restare quello
-                // di riposo di Material, che e' nero. E la tinta e' quella del
-                // tema, non una costante ricopiata in quattro file - i testi
-                // che ci stanno sopra sono calcolati su di essa
-                // (vedi ui/theme/Contrast.kt), quindi pannello e scritte non
-                // possono piu' divergere.
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset(0, ((1f - sheet.open) * heightPx).roundToInt()) }
-                        .nestedScroll(sheetScroll),
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    TemperatureDetailScreen(
-                        state = state,
-                        viewModel = viewModel,
-                        tilt = tilt,
-                        onBack = sheet::closeFully,
-                        // L'inserto delle barre di sistema sta sul **contenuto**
-                        // e non sulla superficie: cosi' il pannello dipinge da
-                        // bordo a bordo. Con l'inserto sulla superficie il
-                        // foglio si fermava prima delle barre, e sopra e sotto
-                        // restava una striscia di cielo - a mezzogiorno una
-                        // banda grigio chiaro attorno a un foglio scuro.
-                        modifier = Modifier.systemBarsPadding(),
-                    )
-                }
+            } else {
+                // **Il feed, e non piu' una schermata con un foglio sopra.** Le
+                // sei grandezze erano pagine di un carosello dentro un foglio
+                // che saliva dal basso: adesso sono le schede del feed, una
+                // schermata piena ciascuna, e ci si passa scorrendo. Il gesto
+                // verticale che apriva il foglio e' lo stesso che adesso cambia
+                // sezione - e' passato di mano, non e' stato aggiunto.
+                //
+                // L'inserto delle barre di sistema sta **dentro**, scheda per
+                // scheda: il cielo dipinge da bordo a bordo, e fermarlo qui
+                // lascerebbe una striscia grigia sopra e sotto il feed.
+                FeedScreen(
+                    state = state,
+                    sky = sky,
+                    tilt = tilt,
+                    viewModel = viewModel,
+                )
             }
 
             // Le allerte entrano da destra: si scende dentro qualcosa di piu'
@@ -376,232 +253,6 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         }
     }
 }
-
-/**
- * Il gesto verticale della schermata: il foglio del dettaglio che sale, e il
- * tiro verso il basso che ricarica.
- *
- * Stessa forma di `SceneRotation`, e per la stessa ragione. Prima il foglio era
- * un `Animatable` e ogni delta apriva una coroutine per il proprio `snapTo`: il
- * dispatcher della composizione consegna **al fotogramma**, quindi l'ultimo
- * `snapTo` prima del rilascio poteva atterrare dopo l'avvio della molla e
- * annullarla, lasciando il foglio piantato a meta' corsa (trappola #22). Il
- * dito scrive il valore sul posto; solo il rilascio anima, e la molla sta in un
- * `Job` che il gesto successivo cancella.
- *
- * **Il tiro verso il basso e' quello che prima veniva buttato via.** Con il
- * foglio chiuso, lo scorrimento in giu' finiva dentro un `coerceIn` e non
- * succedeva niente: e' anche il motivo per cui non c'era alcun modo di
- * ricaricare i dati a mano.
- */
-@Stable
-private class SheetGesture(private val scope: CoroutineScope) {
-
-    /** Da 0 (chiuso) a 1 (dettaglio aperto). */
-    private val raised = mutableFloatStateOf(0f)
-
-    /** Quanto si e' tirato oltre la chiusura, in pixel di dito. */
-    private val pulled = mutableFloatStateOf(0f)
-
-    private var settling: Job? = null
-
-    val open: Float get() = raised.floatValue
-    val pull: Float get() = pulled.floatValue
-
-    /**
-     * Vero quando il foglio e' arrivato in cima **davvero**.
-     *
-     * Con tolleranza e non `== 1f`: `raised` e' il valore di una molla, e
-     * `begin()` la cancella dove la trova. Chi cominciava a scorrere mentre il
-     * foglio stava ancora salendo lo lasciava a 0,997 **per sempre**, e da li'
-     * in poi la guardia non scattava piu': il foglio restava armato per
-     * chiudersi, e per giunta `onPreScroll` si mangiava anche i delta verso
-     * l'alto, cioe' il contenuto non scorreva piu' affatto.
-     */
-    val opened: Boolean get() = raised.floatValue >= ANCHOR_EPSILON
-
-    /** Vero quando il foglio sta su un'ancora: tutto su o tutto giu'. */
-    val atRest: Boolean
-        get() = raised.floatValue >= ANCHOR_EPSILON || raised.floatValue <= 1f - ANCHOR_EPSILON
-
-    /** Vero quando il tiro basta a valere una ricarica, e si puo' lasciare. */
-    val armed: Boolean get() = pulled.floatValue >= PULL_TRIGGER
-
-    fun begin() {
-        settling?.cancel()
-        settling = null
-    }
-
-    fun drag(deltaPx: Float, heightPx: Float) {
-        val next = raised.floatValue - deltaPx / heightPx
-        if (next >= 0f) {
-            raised.floatValue = next.coerceAtMost(1f)
-            pulled.floatValue = 0f
-        } else {
-            // Il foglio e' gia' chiuso: quello che avanza tira giu' la
-            // schermata invece di andare perso. Con un tetto, perche' oltre un
-            // certo punto non e' piu' un gesto, e' un trascinamento.
-            raised.floatValue = 0f
-            pulled.floatValue = (pulled.floatValue - next * heightPx).coerceAtMost(PULL_LIMIT)
-        }
-    }
-
-    /**
-     * Apre il foglio del dettaglio senza passare dal trascinamento: lo chiama
-     * il tocco sulla cifra della temperatura, che non ha ne' un delta ne' una
-     * velocita' da darle in pasto a `release`.
-     */
-    fun openFully() = glideTo(1f)
-
-    /** Chiude il foglio: la freccia in alto a sinistra e il tasto indietro. */
-    fun closeFully() = glideTo(0f)
-
-    private fun glideTo(target: Float) {
-        settling?.cancel()
-        settling = scope.launch {
-            animate(
-                initialValue = raised.floatValue,
-                targetValue = target,
-                animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
-            ) { value, _ -> raised.floatValue = value }
-            settling = null
-        }
-    }
-
-    /**
-     * Il trascinamento che arriva da **dentro** il foglio.
-     *
-     * Muove solo il foglio e mai il tiro per ricaricare: quello appartiene alla
-     * schermata principale, e un avanzo di scorrimento nato dentro il dettaglio
-     * non deve poter chiedere dati alla rete. Senza questa porta separata,
-     * arrivando in fondo alla corsa il valore scivolava in `pulled` e la
-     * schermata sotto si ritrovava armata per una ricarica che nessuno aveva
-     * chiesto.
-     */
-    fun dragSheet(deltaPx: Float, heightPx: Float) {
-        raised.floatValue = (raised.floatValue - deltaPx / heightPx).coerceIn(0f, 1f)
-    }
-
-    /** Torna vero se il gesto e' arrivato abbastanza in giu' da chiedere i dati. */
-    fun release(velocityPx: Float): Boolean {
-        val asked = armed
-        val target = when {
-            velocityPx < -SNAP_VELOCITY -> 1f
-            velocityPx > SNAP_VELOCITY -> 0f
-            else -> if (raised.floatValue > 0.4f) 1f else 0f
-        }
-        settling?.cancel()
-        settling = scope.launch {
-            // Le due corse si escludono: si tira solo a foglio chiuso, e il
-            // foglio sale solo quando non si sta tirando.
-            if (pulled.floatValue > 0f) {
-                animate(
-                    initialValue = pulled.floatValue,
-                    targetValue = 0f,
-                    animationSpec = spring(dampingRatio = 0.70f, stiffness = 520f),
-                ) { value, _ -> pulled.floatValue = value }
-            } else {
-                animate(
-                    initialValue = raised.floatValue,
-                    targetValue = target,
-                    animationSpec = spring(dampingRatio = 0.85f, stiffness = 380f),
-                ) { value, _ -> raised.floatValue = value }
-            }
-            settling = null
-        }
-        return asked
-    }
-}
-
-/**
- * Il ponte fra lo scorrimento del dettaglio e il foglio che lo contiene.
- *
- * Le due meta' del gesto verticale non sono in concorrenza, sono in fila: il
- * contenuto scorre finche' ha strada, e solo l'avanzo muove il foglio. Da fermo
- * in cima, il dito che va giu' non ha piu' contenuto da scorrere e quello che
- * resta chiude; da foglio socchiuso, il dito che va su lo rialza **prima** di
- * toccare il contenuto, altrimenti si scorrerebbe dentro una schermata che non
- * e' ancora arrivata al suo posto.
- *
- * **L'avanzo dev'essere quello di un dito.** La regola sopra era giusta e il
- * codice la applicava a qualunque delta, compresi quelli che nessuno stava
- * facendo: vedi [isFinger] e il campo `moved` qui sotto.
- */
-@Stable
-private class SheetNestedScroll(
-    private val sheet: SheetGesture,
-    private val heightPx: Float,
-) : NestedScrollConnection {
-
-    /**
-     * Se **questo** gesto ha davvero mosso il foglio.
-     *
-     * Senza, l'avanzo di velocita' di uno scorrimento tutto interno alla pagina
-     * finiva lo stesso in `release()`, e il foglio decideva di se' in base a una
-     * corsa che non era la sua.
-     */
-    private var moved = false
-
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        if (!source.isFinger) return Offset.Zero
-        val delta = available.y
-        if (delta >= 0f || sheet.opened) return Offset.Zero
-        sheet.begin()
-        moved = true
-        sheet.dragSheet(delta, heightPx)
-        return Offset(0f, delta)
-    }
-
-    override fun onPostScroll(
-        consumed: Offset,
-        available: Offset,
-        source: NestedScrollSource,
-    ): Offset {
-        if (!source.isFinger) return Offset.Zero
-        val delta = available.y
-        if (delta <= 0f) return Offset.Zero
-        sheet.begin()
-        moved = true
-        sheet.dragSheet(delta, heightPx)
-        return Offset(0f, delta)
-    }
-
-    override suspend fun onPreFling(available: Velocity): Velocity = settle(available)
-
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
-        settle(available)
-
-    private fun settle(available: Velocity): Velocity {
-        if (!moved) {
-            // Il gesto non ha mosso il foglio, quindi non tocca a lui
-            // assestarlo. Se pero' il foglio e' rimasto a meta' - una molla che
-            // uno scorrimento cominciato troppo presto ha cancellato - va
-            // rimesso su un'ancora adesso: altrimenti `opened` non torna vero
-            // mai piu' e da li' in avanti il contenuto non scorre.
-            if (!sheet.atRest) sheet.release(0f)
-            return Velocity.Zero
-        }
-        moved = false
-        if (sheet.opened) return Velocity.Zero
-        sheet.release(available.y)
-        return available
-    }
-}
-
-/**
- * Un avanzo di scorrimento **non e' un dito**.
- *
- * `NestedScrollSource` c'e' da sempre in questi callback e non lo leggeva
- * nessuno: uno slancio che si esaurisce, e l'elastico di fine corsa che si
- * rilassa, arrivavano qui indistinguibili da una mano e muovevano il foglio.
- * Arrivati in fondo a una pagina bastava una scorsa decisa perche' il dettaglio
- * si chiudesse da solo, senza che nessuno gli avesse chiesto di farlo.
- *
- * Un foglio si chiude perche' lo si chiude, non perche' una molla ha finito di
- * tornare a posto.
- */
-private val NestedScrollSource.isFinger: Boolean
-    get() = this == NestedScrollSource.UserInput
 
 /**
  * Chiare o scure, le icone delle barre di sistema.

@@ -1,4 +1,4 @@
-package io.github.noximiliencoxen.caelum.ui.temperature
+package io.github.noximiliencoxen.caelum.ui.common
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
@@ -9,67 +9,29 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoAccents
-import io.github.noximiliencoxen.caelum.ui.theme.MeteoAccents
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetInk
 import io.github.noximiliencoxen.caelum.widget.paint.weatherBody
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
- * Quello che resta di questo file dopo il passaggio a Material 3: **geometria**.
+ * Il disegno in comune: l'illustrazione del tempo, la scala di colore dei gradi,
+ * e la spline che passa per i punti.
  *
- * La tavolozza che stava qui - `CardBackground`, `MetricLabel`, `PillWhite` e
- * compagnia - era una delle tre palette parallele del progetto e se n'e'
- * andata: i colori vengono da `MaterialTheme.colorScheme`, che li calcola per
- * contrasto, e le tinte delle grandezze da [LocalMeteoAccents].
+ * **Stava in `ui/temperature`, che era il pacchetto del foglio di dettaglio.**
+ * Il foglio non c'e' piu' - le grandezze sono le sezioni del feed - e con lui se
+ * ne sono andati i grafici che consumavano meta' di questo file: il sole in
+ * miniatura sopra il grafico orario, l'area sotto la curva, il nastro fra
+ * massime e minime. Quello che resta lo leggono la barra delle ventiquattro
+ * ore, la striscia della settimana e le schede, e non ha piu' niente a che
+ * vedere con la temperatura in particolare: e' geometria e sono tinte.
  *
- * Le spline, il nastro fra due curve, la scala di colore dei gradi e il disegno
- * dei corpi celesti invece restano: sono matematica e disegno, non stile, e
- * hanno gia' tre chiamanti a testa.
+ * `MaterialTheme.colorScheme` compare ancora, ed e' corretto: [WeatherGlyph] si
+ * disegna dentro le superfici dei pannelli. Chi disegna sul cielo prende le
+ * proprie tinte da `LocalMeteoColors`, dove sono gia' calcolate per contrasto.
  */
-
-// ---------------------------------------------------------------------------
-// La tinta di una grandezza
-// ---------------------------------------------------------------------------
-
-/**
- * Il colore che identifica una pagina del dettaglio.
- *
- * Per la temperatura non c'e' una tinta sola e non e' una mancanza: la
- * temperatura **ha gia'** una scala di colore che dice quanto caldo fa
- * ([temperatureTint]), e sovrapporle un accento unico la contraddirebbe. Li' si
- * usa il colore del testo, e a colorare pensa la curva.
- */
-@Composable
-fun DetailMode.accent(): Color {
-    val accents = LocalMeteoAccents.current
-    return when (this) {
-        DetailMode.TEMPERATURA -> MaterialTheme.colorScheme.onSurface
-        DetailMode.SOLE -> accents.sun
-        DetailMode.PRECIPITAZIONI -> accents.rain
-        DetailMode.VENTO -> accents.wind
-        DetailMode.ARIA -> accents.air
-        DetailMode.LUNA -> accents.moon
-    }
-}
-
-/** La stessa scelta, fuori dalla composizione: per chi disegna dentro una tela. */
-fun DetailMode.accentOf(accents: MeteoAccents, onSurface: Color): Color = when (this) {
-    DetailMode.TEMPERATURA -> onSurface
-    DetailMode.SOLE -> accents.sun
-    DetailMode.PRECIPITAZIONI -> accents.rain
-    DetailMode.VENTO -> accents.wind
-    DetailMode.ARIA -> accents.air
-    DetailMode.LUNA -> accents.moon
-}
-
 // ---------------------------------------------------------------------------
 // Illustrazioni del tempo
 // ---------------------------------------------------------------------------
@@ -115,58 +77,6 @@ fun WeatherGlyph(
         )
     }
 }
-
-/**
- * Sole o luna in miniatura, piatti.
- *
- * Sopra il grafico orario ce ne stanno una dozzina: passarli tutti dal
- * renderer dei corpi - sfere con alone e gradienti - vorrebbe dire pagare una
- * scultura per dire soltanto "qui e' giorno". A quattordici punti di lato la
- * differenza non si vede, il costo si'.
- *
- * **[behind] non ha piu' un valore di riposo**, e non e' pignoleria: la falce
- * e' un disco meno un disco, e il secondo disco va del colore di cio' che sta
- * sotto. Il valore di riposo era il fondo delle schede, mentre il grafico del
- * dettaglio di un giorno si disegna direttamente sul fondo del pannello: due
- * grigi diversi, e il ritaglio si vedeva come una macchia scura sopra la luna.
- * Chi disegna sa su cosa sta disegnando; questa funzione no.
- */
-fun DrawScope.skyMark(
-    center: Offset,
-    radius: Float,
-    isDay: Boolean,
-    behind: Color,
-    sun: Color,
-    moon: Color,
-) {
-    if (isDay) {
-        drawCircle(sun, radius * 0.60f, center)
-        val inner = radius * 0.76f
-        val outer = radius * 1.02f
-        repeat(8) { i ->
-            val angle = (Math.PI.toFloat() / 4f) * i
-            val dx = cos(angle)
-            val dy = sin(angle)
-            drawLine(
-                color = sun,
-                start = Offset(center.x + dx * inner, center.y + dy * inner),
-                end = Offset(center.x + dx * outer, center.y + dy * outer),
-                strokeWidth = radius * 0.20f,
-                cap = StrokeCap.Round,
-            )
-        }
-    } else {
-        drawCircle(moon, radius * 0.82f, center)
-        drawCircle(
-            color = behind,
-            radius = radius * 0.72f,
-            center = Offset(center.x + radius * 0.40f, center.y - radius * 0.26f),
-        )
-    }
-}
-
-/** Il pallore della luna in miniatura. */
-val MoonPale = Color(0xFFA9C8F0)
 
 // ---------------------------------------------------------------------------
 // Colore della temperatura
@@ -233,21 +143,6 @@ fun buildLinePath(points: List<Offset?>): Path {
     return result
 }
 
-fun buildAreaPath(points: List<Offset?>, baseline: Float): Path {
-    val result = Path()
-    segmentRuns(points).forEach { run ->
-        result.addPath(
-            Path().apply {
-                addPath(catmullRomPath(run))
-                lineTo(run.last().x, baseline)
-                lineTo(run.first().x, baseline)
-                close()
-            },
-        )
-    }
-    return result
-}
-
 /** Divide la serie nullable in sotto-sequenze continue di punti validi. */
 private fun segmentRuns(points: List<Offset?>): List<List<Offset>> {
     val runs = mutableListOf<List<Offset>>()
@@ -275,7 +170,7 @@ private fun segmentRuns(points: List<Offset?>): List<List<Offset>> {
  * al nastro fra massime e minime: e' **un** contorno chiuso, e con due `moveTo`
  * diventerebbero due tratti separati che il riempimento non sa collegare.
  */
-fun Path.catmullRomTo(points: List<Offset>, move: Boolean) {
+private fun Path.catmullRomTo(points: List<Offset>, move: Boolean) {
     if (points.isEmpty()) return
     if (move) moveTo(points[0].x, points[0].y) else lineTo(points[0].x, points[0].y)
     if (points.size == 1) return
@@ -292,48 +187,5 @@ fun Path.catmullRomTo(points: List<Offset>, move: Boolean) {
     }
 }
 
-fun catmullRomPath(points: List<Offset>): Path =
+private fun catmullRomPath(points: List<Offset>): Path =
     Path().apply { catmullRomTo(points, move = true) }
-
-/** Il contorno chiuso fra due curve: la prima in avanti, la seconda all'indietro. */
-fun ribbonPath(upper: List<Offset>, lower: List<Offset>): Path {
-    val path = Path()
-    if (upper.size < 2 || lower.size < 2) return path
-    path.catmullRomTo(upper, move = true)
-    path.catmullRomTo(lower.reversed(), move = false)
-    path.close()
-    return path
-}
-
-/**
- * Nastro fra due curve con gestione corretta dei null.
- *
- * [ribbonPath] riceve liste gia' filtrate con filterNotNull(): questo comprime
- * gli indici e sposta le X — il punto che era in posizione 4 viene disegnato
- * alla X della posizione 3, e il nastro si chiude nel posto sbagliato.
- *
- * Questa funzione preserva la posizione X originale di ogni punto: per ogni
- * sequenza contigua in cui sia upper[i] che lower[i] sono non-null, disegna
- * un segmento di area separato. I buchi (dove uno dei due e' null) vengono
- * saltati senza alterare le posizioni dei punti successivi.
- */
-fun nullSafeRibbonPath(upper: List<Offset?>, lower: List<Offset?>): Path {
-    val result = Path()
-    val n = minOf(upper.size, lower.size)
-    var runU = mutableListOf<Offset>()
-    var runL = mutableListOf<Offset>()
-    for (i in 0 until n) {
-        val u = upper[i]
-        val l = lower[i]
-        if (u != null && l != null) {
-            runU += u
-            runL += l
-        } else {
-            if (runU.size >= 2) result.addPath(ribbonPath(runU, runL))
-            runU = mutableListOf()
-            runL = mutableListOf()
-        }
-    }
-    if (runU.size >= 2) result.addPath(ribbonPath(runU, runL))
-    return result
-}
