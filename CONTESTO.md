@@ -948,12 +948,22 @@ l'estrusione. Cioe' scelto per **come si scolpisce**, non per **cosa vuol
 dire**: il 2 non c'entra niente con questa app, e su una schermata puo' leggersi
 come un badge di notifica.
 
-Adesso e' il **grado**, ed e' l'unica scelta non arbitraria disponibile: e' il
-solo segno che dice "temperatura" senza una parola, e soprattutto **l'app lo
-estrude gia'** - e' `smallTail` in `NumberSpec`, l'ultimo carattere della
-scritta, estruso illuminato e girato insieme alle cifre. In piu' un anello
-mostra anche la **parete interna**, che una cifra piena non fa vedere mai:
-l'estrusione si legge meglio di prima.
+Poi e' stato il **grado**, un anello estruso: il solo segno che dice
+"temperatura" senza una parola, e per giunta una cosa che **l'app estrude
+gia'** - `smallTail` in `NumberSpec`, l'ultimo carattere della scritta. Un
+anello mostrava anche la parete interna, che una cifra piena non fa vedere mai.
+
+**Adesso e' il cielo tagliato in diagonale** (sezione 50), e il criterio di
+questa sezione **non e' cambiato**: sole, nuvola e pioggia sono anch'essi cose
+che l'app disegna davvero, ogni giorno, nella scultura e nei widget. Cambia la
+frase - da "questa app misura la temperatura" a "questa app dice che tempo fa" -
+non la regola.
+
+Quel che si e' perso col grado va detto, perche' non lo si riscopra come una
+sorpresa: il grado era **un** segno solo, e un segno solo si legge a qualunque
+misura. Il disegno nuovo ne ha quattro, e ha dovuto pagare il prezzo di
+starci - lame del sole piu' larghe dell'originale, nessuna sfera illuminata,
+niente luna.
 
 **16. Chiedere l'intensita' della vibrazione non basta a ottenerla.** Su questo
 telefono `hasAmplitudeControl()` risponde di no e un'ampiezza dichiarata viene
@@ -1209,6 +1219,49 @@ che non c'e' piu' e' peggio di nessun commento:
 Il cambio in se' non e' stato fatto qui: `app/build.gradle.kts`,
 `WeatherHaptics.kt` e `DeviceLocation.kt` restano al ramo che li ha in piano,
 per non spaccare in due un lavoro gia' progettato.
+
+**50. L'icona e' il cielo tagliato in diagonale, e il taglio sta nel fondo.**
+Meta' in alto a sinistra il sereno - sole e nuvola bianca - meta' in basso a
+destra il tempo brutto - la stessa nuvola, grigia, con la pioggia. Sostituisce
+il grado della sezione 40, che resta li' a spiegare perche' c'era.
+
+**Il taglio e' nel livello di fondo, non disegnato sopra.** E' il livello che si
+muove in parallasse: la diagonale scorre sotto il disegno invece di essere una
+riga incollata. Il fondo dipinge da bordo a bordo, perche' la maschera la decide
+il telefono.
+
+**La nuvola e' una sola, ridipinta due volte.** Lo stesso `pathData` compare in
+`ic_launcher_foreground.xml` due volte: bianco per intero, poi grigio dentro un
+`<group>` con `<clip-path>` sul triangolo cupo. Identico profilo, quindi il
+bordo fra le due tinte cade **esattamente** sul taglio del fondo - cosa che due
+sagome disegnate a mano non garantirebbero mai. A 48dp una forma sola si legge;
+due macchie vicine si leggono come una macchia sporca.
+
+**Tinte piatte, e non e' pigrizia.** E' la lezione che `dayGlyph` aveva gia'
+scritto per la striscia oraria - *"una sagoma piena e non una sfera illuminata:
+a questa misura il volume diventa poltiglia"* - e l'icona e' una miniatura. Il
+solo rilievo e' la falce ambrata del sole, ottenuta con **due dischi sfalsati**
+invece che con un gradiente: cio' che avanza sta dalla parte da cui la luce non
+viene, coerente con `Light.Standard`.
+
+**Le forme vengono dall'app.** La nuvola ha le proporzioni di `puff()` in
+`WidgetParts.kt` - tre gobbe e un ventre piatto, agli stessi rapporti col
+raggio - e i raggi sono le otto lame triangolari di `sunRays()`. Le lame sono
+pero' **piu' larghe dell'originale**, semilarghezza `0.22r` invece di `0.11r`:
+a 48dp una lama sottile non si vede, e un'icona non e' una miniatura del
+disegno grande, e' un disegno diverso con lo stesso vocabolario. Le tre gocce
+sono ai passi asimmetrici di `drops()`, spostati a destra perche' cadano tutte
+nella meta' cupa.
+
+**Perche' la luna non c'e'.** Era stata proposta ("forse ci sta"). Non ci sta:
+nel cerchio garantito da 66 (sezione 39) ci sono gia' sole, nuvola bianca,
+nuvola grigia e pioggia, che a 48dp si spartiscono una quindicina di dp l'uno.
+Il quinto soggetto non si leggerebbe come luna, si leggerebbe come sporco.
+
+**I colori sono quelli dell'app**, non scelti a occhio: `#5A9BD4` e' lo zenit di
+mezzogiorno sereno e `#1E222A` e' `Gloom`, entrambi da `ui/theme/Colors.kt`; il
+resto viene da `WidgetInk`. Restano scritti nei vector e non in `colors.xml`,
+come gia' erano.
 
 ---
 
