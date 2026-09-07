@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Installa l'APK sull'emulatore e fotografa le schermate nei due temi:
-# principale, benvenuto, impostazioni, e le sei pagine del dettaglio piu'
-# il dettaglio di un giorno.
+# benvenuto, impostazioni, le allerte, e le sei schede del feed - piu' una
+# scheda letta su un altro giorno.
 #
 # Ogni chiamata adb ha un timeout: senza, una adb su dispositivo caduto resta
 # appesa per sempre. Niente set -e, perche' voglio comunque il logcat; ma alla
@@ -110,7 +110,6 @@ case "$SIZE" in
   *x*) W=${SIZE%x*}; H=${SIZE#*x} ;;
   *)   W=1080; H=2400 ;;
 esac
-FROM_X=$(( W * 82 / 100 )); TO_X=$(( W * 18 / 100 )); MID_Y=$(( H * 42 / 100 ))
 echo "schermo ${W}x${H}"
 
 # Il benvenuto viene prima di tutto, e non solo perche' e' la prima cosa che si
@@ -257,9 +256,10 @@ session() {
   # nei giorni di maltempo vuol dire non fotografarla, e un riquadro che non e'
   # mai stato visto in uno scatto e' un riquadro che nessuno ha verificato.
   #
-  # Quattro scatti: la principale, dove la fascia sta in cima; il dettaglio,
-  # dove deve convivere con le pillole senza spingerle fuori; la fascia ridotta
-  # a pallino; e il ritorno al bollettino toccandolo.
+  # Quattro scatti: la prima scheda, dove la fascia sta in cima; la seconda,
+  # dove si controlla che scendendo la fascia non segua - appartiene alla
+  # localita' e sta scritta in cima al feed, non su ogni scheda; la fascia
+  # ridotta a pallino; e il ritorno al bollettino toccandolo.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
@@ -267,12 +267,18 @@ session() {
   sleep 1
   shoot "${slug}-d1-allerta-principale"
 
-  # Il tocco sulla cifra apre il dettaglio: la schermata principale distingue
-  # un tocco fermo da un trascinamento, e il tocco apre il foglio.
+  # La seconda scheda si raggiunge senza un gesto: `--ei sezione` la mette in
+  # scena all'avvio. Il tocco sulla cifra non apre piu' niente - il foglio non
+  # esiste - e una trascinata verticale qui costerebbe un rischio che non serve
+  # correre.
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
-  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d2-allerta-dettaglio"
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 \
+    --ei sezione 1 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-d2-allerta-seconda-scheda"
 
   # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
   #
@@ -323,88 +329,82 @@ session() {
   sleep 2
   shoot "${slug}-d4c-avviso-calcolato-bollettino"
 
-  # ── Il foglio di dettaglio ──────────────────────────────────────────────────
+  # ── Le sei schede del feed ──────────────────────────────────────────────────
   #
-  # **Finora non e' mai stato fotografato davvero.** Lo scatto che si chiamava
-  # "dettaglio" ritraeva la schermata principale: la trascinata che doveva
-  # aprire il foglio partiva dal settantotto per cento dell'altezza, dove la
-  # barra delle ore intercetta il gesto, e non apriva niente. Nessuno se n'e'
-  # accorto perche' le due schermate, a colpo d'occhio, cominciano uguali.
+  # **Nessun gesto, e non e' pigrizia.** Prima si apriva il foglio col tocco
+  # sulla cifra e si scorreva il carosello cinque volte in orizzontale; adesso
+  # le schede stanno una sotto l'altra, e cinque trascinate verticali di fila
+  # sono esattamente il carico che ha gia' fatto morire l'emulatore due volte
+  # (logcat dell'app pulito, nessun ANR: sparisce la macchina virtuale). Con
+  # `--ei sezione` ogni scheda si mette in scena da sola, e un avvio non puo'
+  # cadere a meta' come una trascinata.
   #
-  # Qui si apre col **tocco sulla cifra**, che e' deterministico: la schermata
-  # principale distingue un tocco fermo da un trascinamento
-  # (`detectTapOrRotate`), e il tocco apre il dettaglio.
+  # Ci si perde la prova che lo scorrimento funzioni: e' un movimento, e un
+  # movimento in uno scatto non si giudica comunque - va provato in mano.
+  # Quello che questi scatti provano e' che ogni scheda esista, si componga, e
+  # che le sue scritte si leggano sul cielo dell'ora.
   #
   # E si fotografa **a due ore diverse**, non solo al buio: il punto di questa
-  # passata e' che ogni scritta si legga a qualunque ora, e finora non c'era
-  # uno scatto che lo mostrasse.
-  #
-  # L'ora si impone con `--ei ora`, non con `--es tema`: quell'aggancio **non
-  # esiste piu'** - `MainActivity` legge soltanto `ora`, `meteo`, `giro` e
-  # `benvenuto`, e giorno e notte li decide l'ora mostrata. Le due sessioni
-  # continuavano a passarselo e a fotografare due volte lo stesso cielo,
-  # qualunque fosse, senza che il nome del file lo lasciasse sospettare.
-  echo "  -- dettaglio (ora $ora_dettaglio) --"
-  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  sleep 1
-  adbt shell logcat -c >/dev/null 2>&1 || true
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" >/dev/null 2>&1 || true
-  attendi_previsione
-  alive || { echo "dispositivo caduto prima del dettaglio"; return; }
-
-  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d5-temperatura"
-
-  # Le altre cinque pagine, raggiunte scorrendo sul contenuto sotto la cifra:
-  # e' il gesto vero, quello che usa chi guarda. Sulla cifra invece il gesto
-  # orizzontale gira la scena, e i due non si contendono niente proprio perche'
-  # stanno in due zone diverse.
+  # passata e' che ogni scritta si legga a qualunque ora, e il cielo di meta'
+  # giornata e' il fondo su cui il contrasto si e' gia' rotto una volta.
   #
   # La luna chiude la fila: il suo eroe non e' una cifra ma la sfera, quindi e'
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
-  local pager_y=$(( H * 72 / 100 ))
-  local n=6
-  for pagina in sole pioggia vento aria luna; do
-    adbt shell input swipe "$FROM_X" "$pager_y" "$TO_X" "$pager_y" 320 >/dev/null 2>&1 || true
-    sleep 2
-    shoot "${slug}-d${n}-${pagina}"
+  echo "  -- feed (ora $ora_dettaglio) --"
+  adbt shell logcat -c >/dev/null 2>&1 || true
+
+  local n=5
+  local i=0
+  for scheda in temperatura pioggia aria vento sole luna; do
+    alive || { echo "dispositivo caduto alla scheda $scheda"; return; }
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
+      --ei sezione "$i" >/dev/null 2>&1 || true
+    attendi_previsione
+    sleep 1
+    shoot "${slug}-d${n}-${scheda}"
     n=$(( n + 1 ))
+    i=$(( i + 1 ))
   done
 
-  # Si esce dal foglio con l'indietro di sistema: e' anche una prova che il
-  # BackHandler sia agganciato.
+  # L'indietro da una scheda qualunque riporta alla prima, invece di chiudere
+  # l'app: da sei schede sotto, uscire non e' quasi mai la risposta cercata.
+  # Questo scatto e' anche la prova che il BackHandler sia agganciato - e che
+  # non lo sia sulla prima, dove non deve fare niente.
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d11-tornato-alla-principale"
+  shoot "${slug}-d11-tornato-alla-prima"
 
-  # ── Il dettaglio letto su un altro giorno ───────────────────────────────────
+  # ── Una scheda letta su un altro giorno ─────────────────────────────────────
   #
-  # **Il giorno non e' piu' una schermata.** Era una seconda schermata che
+  # **Il giorno e' un asse, non una schermata.** Era una schermata a se' che
   # entrava da destra e ripeteva grafico, statistiche e probabilita' per dire
-  # le stesse cose di un altro giorno; adesso e' lo stesso foglio, letto su un
-  # altro giorno, e a sceglierlo c'e' la striscia in cima.
+  # le stesse cose di un altro giorno; adesso lo leggono tutte le schede -
+  # `pageDay`, `detailHour` - e a sceglierlo c'e' la striscia della settimana
+  # sulla prima.
   #
-  # L'aggancio `--ei giorno` **sceglie e basta**, quindi il foglio va aperto
-  # come lo aprirebbe chiunque: col tocco sulla cifra. Sceglierlo col dito -
-  # una colonna della settimana, o una linguetta dentro il foglio - resta
-  # irraggiungibile in modo affidabile, ed e' la ragione per cui l'aggancio
-  # esiste: la trascinata lunga che ci vorrebbe **fa morire l'emulatore**.
-  # Provato due volte, stesso punto esatto: il logcat dell'app finisce pulito -
-  # nessuna eccezione, nessun ANR - e sparisce la macchina virtuale, non l'app.
+  # Sceglierlo col dito resta irraggiungibile in modo affidabile, ed e' la
+  # ragione per cui `--ei giorno` esiste: la trascinata lunga che ci vorrebbe
+  # **fa morire l'emulatore**. Provato due volte, stesso punto esatto: il
+  # logcat dell'app finisce pulito - nessuna eccezione, nessun ANR - e sparisce
+  # la macchina virtuale, non l'app.
   #
-  # Cosa guardare: il sottotitolo in cima deve dire quel giorno e non OGGI, la
-  # linguetta accesa nella striscia deve essere la terza e stare **al centro**,
-  # e le due meta' della giornata devono essere quelle di quel giorno.
+  # Si fotografa sulla pioggia e non sulla temperatura: la prima scheda dice il
+  # giorno solo nella striscia in fondo, mentre una scheda del feed lo scrive
+  # nel sottotitolo, che e' cio' che qui va verificato.
+  #
+  # Cosa guardare: il sottotitolo deve dire quel giorno e non OGGI, e i
+  # millimetri devono essere quelli di quel giorno.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 >/dev/null 2>&1 || true
+  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 \
+    --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
   alive || { echo "dispositivo caduto prima dello scatto del giorno"; return; }
-  adbt shell input tap "$cx" "$(( H * 52 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
+  sleep 1
   shoot "${slug}-d12-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────

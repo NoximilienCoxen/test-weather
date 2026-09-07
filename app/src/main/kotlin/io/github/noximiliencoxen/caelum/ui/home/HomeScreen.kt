@@ -12,8 +12,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,19 +41,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -76,7 +63,6 @@ import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberSceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rotatesScene
 import io.github.noximiliencoxen.caelum.ui.render3d.SceneContact
-import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
 import kotlinx.coroutines.delay
@@ -91,8 +77,22 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Quello che serve sapere aprendo l'app: che tempo fa adesso, quanti gradi, e
- * come sara' nelle prossime ore. Tutto il resto sta un trascinamento piu' su.
+ * La prima scheda del feed: che tempo fa adesso, quanti gradi, e come sara'
+ * nelle prossime ore.
+ *
+ * **Era la schermata, adesso e' la prima di sei.** Dentro non e' cambiato
+ * niente - scultura, cifra girabile, barra delle ventiquattro ore con la bolla,
+ * striscia della settimana, orologio - ed e' una scelta: e' la parte piu'
+ * provata dell'app, e un cambio di navigazione non e' una ragione per rimetterla
+ * in discussione. Quello che e' cambiato sta ai bordi: non c'e' piu' il tocco
+ * sulla cifra che apriva il foglio, non c'e' piu' la striscia delle grandezze in
+ * fondo - a dire cosa c'e' oltre ci pensa la colonna di icone del feed - e il
+ * margine destro lascia il posto a quella colonna.
+ *
+ * Il gesto verticale non e' piu' suo: scorrere porta alla scheda dopo. Restano
+ * suoi l'orizzontale sulla cifra, che gira la scena, e quello sulla barra delle
+ * ore, che sceglie l'ora - e l'ora scelta qui e' quella che raccontano tutte le
+ * altre schede.
  */
 /**
  * I 48dp in cima a destra: vuoti, o col pallino dell'allerta.
@@ -149,10 +149,13 @@ fun HomeScreen(
     onSelectHour: (Int) -> Unit,
     onBackToNow: () -> Unit,
     onOpenSettings: () -> Unit,
-    onOpenTemperatureDetail: () -> Unit = {},
-    /** Una grandezza della striscia in fondo: apre il foglio gia' su quella pagina. */
-    onOpenPanel: (DetailMode) -> Unit = {},
-    /** Un giorno della striscia della settimana, toccato: apre il suo dettaglio. */
+    /**
+     * Un giorno della striscia della settimana, toccato.
+     *
+     * **Sceglie il giorno, non apre niente.** Il giorno e' un asse, non una
+     * schermata: sceglierlo qui cambia cio' che raccontano tutte le schede del
+     * feed, perche' leggono tutte `state.selectedDay`.
+     */
     onOpenDay: (Int) -> Unit = {},
     onOpenAlerts: () -> Unit = {},
     /** Riduce la fascia dell'allerta al pallino. */
@@ -162,6 +165,15 @@ fun HomeScreen(
     onRefresh: () -> Unit = {},
     /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
     pullArmed: Boolean = false,
+    /**
+     * Vero quando questa e' la scheda che si sta guardando.
+     *
+     * Il carosello tiene composta anche la scheda accanto, per averla pronta a
+     * meta' trascinamento: senza questo, il telefono continuerebbe a vibrare di
+     * pioggia mentre si guarda la luna. **Un tocco che non corrisponde a niente
+     * di visibile non e' un riscontro, e' un difetto.**
+     */
+    alive: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -181,12 +193,6 @@ fun HomeScreen(
     // sta in un'altra tela. Qui passano la sagoma e le due origini.
     val contact = remember { SceneContact() }
 
-    // Letti dentro il gesto e non catturati alla composizione: `pointerInput`
-    // parte una volta sola (chiave `Unit`) e altrimenti continuerebbe a
-    // chiamare la lambda di quel primo giro, con dentro un `rotation` o un
-    // `onOpenTemperatureDetail` ormai vecchi.
-    val liveRotation by rememberUpdatedState(rotation)
-    val liveOnOpenDetail by rememberUpdatedState(onOpenTemperatureDetail)
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -309,43 +315,31 @@ fun HomeScreen(
                 date = hour?.time?.toLocalDate() ?: LocalDate.now(),
                 rotation = rotation,
                 tilt = tilt,
-                // Dietro le impostazioni la schermata resta viva: senza questo
-                // il telefono continuerebbe a vibrare di pioggia mentre si
-                // sceglie una citta'.
-                feelsIt = !state.settingsOpen,
+                // Dietro le impostazioni, e sotto un'altra scheda del feed, la
+                // schermata resta viva ma non la guarda nessuno: li' la
+                // vibrazione non accompagnerebbe piu' niente, e un tocco che
+                // non corrisponde a niente di visibile non e' un riscontro.
+                feelsIt = alive && !state.settingsOpen,
                 contact = contact,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.62f),
             )
 
+            // **Niente riconoscitore di gesti su questo riquadro.** Ce n'era
+            // uno che distingueva il tocco fermo - apriva il foglio del
+            // dettaglio - dal trascinamento che gira la scena, e stava sul
+            // figlio apposta per non lasciar salire l'evento al genitore. Il
+            // foglio non c'e' piu': le grandezze sono schede del feed, e ci si
+            // arriva scorrendo o dalla colonna a destra. Senza niente da aprire
+            // resta il solo trascinamento, e a riceverlo c'e' gia' il
+            // `.rotatesScene()` del genitore - che adesso lo riceve davvero,
+            // perche' nessuno glielo intercetta piu'.
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(horizontal = 16.dp)
-                    // Un tocco fermo apre il dettaglio, un trascinamento gira
-                    // la scena: sono lo stesso dito sullo stesso numero, e la
-                    // differenza si vede solo a gesto finito. Questo
-                    // `pointerInput` sta sul figlio e non lascia salire
-                    // l'evento al genitore - che ha il suo `.rotatesScene()` -
-                    // altrimenti i due gestori risponderebbero insieme allo
-                    // stesso trascinamento.
-                    .pointerInput(Unit) {
-                        detectTapOrRotate(liveRotation) { liveOnOpenDetail() }
-                    }
-                    // **La scorciatoia esisteva e per un lettore di schermo non
-                    // esisteva.** `detectTapOrRotate` e' un riconoscitore di
-                    // gesti, e un gesto non ha semantica: qui non c'erano ne'
-                    // ruolo ne' descrizione, quindi da TalkBack la cifra era una
-                    // decorazione e il dettaglio si raggiungeva solo dalla
-                    // striscia in fondo. Il tocco che apre va dichiarato, non
-                    // solo riconosciuto.
-                    .semantics {
-                        contentDescription = APRI_TEMPERATURA
-                        role = Role.Button
-                        onClick(label = APRI_TEMPERATURA) { onOpenTemperatureDetail(); true }
-                    },
+                    .padding(horizontal = 16.dp),
             ) {
                 // Finche' non c'e' un numero non si disegna niente. Un "--"
                 // alto mezzo schermo, con tanto di spessore e di ombra, non
@@ -519,14 +513,6 @@ fun HomeScreen(
                 )
             }
         }
-
-        // Il bordo del foglio, in fondo a tutto e a filo del margine: e' li' che
-        // il dettaglio sta quando e' chiuso, e disegnarlo altrove vorrebbe dire
-        // promettere un movimento che poi non parte da dove si e' toccato.
-        SheetEdge(
-            current = state.detailMode,
-            onOpenPanel = onOpenPanel,
-        )
     }
 }
 
@@ -626,51 +612,6 @@ private fun rememberMinutesThere(forecast: Forecast?): Int {
     }
     return minuti
 }
-
-/**
- * Distingue un tocco da un trascinamento sulla stessa cifra.
- *
- * Sotto la soglia di scorrimento resta un tocco possibile; superata, diventa
- * un giro di scena e non torna piu' indietro - un dito che parte fermo e poi
- * scivola non deve aprire il dettaglio **e** girare la scena insieme.
- */
-private suspend fun PointerInputScope.detectTapOrRotate(
-    rotation: SceneRotation,
-    onTap: () -> Unit,
-) {
-    val slopPx = TAP_SLOP_DP.dp.toPx()
-    awaitEachGesture {
-        val down = awaitFirstDown(requireUnconsumed = false)
-        val tracker = VelocityTracker()
-        tracker.addPosition(down.uptimeMillis, down.position)
-        var dragging = false
-        while (true) {
-            val event = awaitPointerEvent()
-            val change: PointerInputChange = event.changes.firstOrNull { it.id == down.id }
-                ?: break
-            tracker.addPosition(change.uptimeMillis, change.position)
-            if (!dragging && (change.position - down.position).getDistance() > slopPx) {
-                dragging = true
-                rotation.begin()
-            }
-            if (dragging) {
-                rotation.drag(change.positionChange().x)
-                change.consume()
-            }
-            if (!change.pressed) {
-                if (dragging) {
-                    rotation.release(tracker.calculateVelocity().x)
-                } else {
-                    change.consume()
-                    onTap()
-                }
-                break
-            }
-        }
-    }
-}
-
-private const val TAP_SLOP_DP = 5f
 
 /**
  * Tre righe: e' il segno universale, e non serve una libreria di icone.
@@ -782,12 +723,3 @@ private const val CLOCK_TICK_MS = 20_000L
 
 /** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
 private const val FELT_THRESHOLD = 1.5
-
-/**
- * Cosa dice la cifra a chi la ascolta invece di vederla.
- *
- * Una frase sola per la descrizione e per l'etichetta dell'azione: sono la
- * stessa cosa detta due volte in due punti dell'API, e tenerle separate
- * significa solo poterle far divergere.
- */
-private const val APRI_TEMPERATURA = "Apri il dettaglio della temperatura"

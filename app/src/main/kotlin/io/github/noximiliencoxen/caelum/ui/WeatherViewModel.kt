@@ -25,7 +25,7 @@ import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.home.nearestHourIndex
-import io.github.noximiliencoxen.caelum.ui.temperature.DetailMode
+import io.github.noximiliencoxen.caelum.ui.feed.FeedSection
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -142,8 +142,25 @@ data class UiState(
     val selectedDay: Int = 0,
     /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
     val weekMode: Boolean = false,
-    /** Quale grandezza mostra la schermata di dettaglio. */
-    val detailMode: DetailMode = DetailMode.TEMPERATURA,
+    /**
+     * Quale sezione del feed e' in scena.
+     *
+     * **La sorgente di verita' e' il carosello, non questo campo.** Qui ci
+     * finisce la sezione che il carosello ha **posato**, e serve a due cose
+     * sole: sapere da quale scheda ripartire, e dire alla colonna di icone chi
+     * accendere quando il dito non sta trascinando. Chi vuole sapere dove si e'
+     * durante un gesto legge il carosello.
+     */
+    val section: FeedSection = FeedSection.TEMPERATURA,
+    /**
+     * Quante volte una sezione e' stata chiesta **da fuori**: l'aggancio di
+     * cattura `--ei sezione`.
+     *
+     * E' un contatore e non un booleano perche' la CI chiede due volte di fila
+     * la stessa sezione, e un valore che non cambia non fa ripartire l'effetto
+     * che porta il carosello dove le si e' detto.
+     */
+    val sectionRequest: Int = 0,
     /** false = EFFETTIVA, true = PERCEPITI, nel dettaglio del giorno. */
     val feelsLike: Boolean = false,
     /** Indice dell'ora mostrata dalla schermata principale. */
@@ -641,7 +658,22 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
 
-    fun setDetailMode(mode: DetailMode) = _state.update { it.copy(detailMode = mode) }
+    /** Il carosello ha posato una scheda: da li' si riparte alla prossima apertura. */
+    fun showSection(section: FeedSection) = _state.update { it.copy(section = section) }
+
+    /**
+     * Aggancio per la cattura automatica: porta il feed su una sezione.
+     *
+     * Esiste per la stessa ragione di [requestDay]: col dito ci si arriva solo
+     * scorrendo, e cinque trascinate verticali di fila fanno morire l'emulatore
+     * della CI (vedi CONTESTO, la trappola sull'emulatore). Con questo un solo
+     * `am start` mette in scena la scheda da fotografare, senza un gesto.
+     */
+    fun requestSection(index: Int) {
+        val sections = FeedSection.entries
+        val picked = sections.getOrNull(index) ?: return
+        _state.update { it.copy(section = picked, sectionRequest = it.sectionRequest + 1) }
+    }
 
     /**
      * Un'allerta finta, solo per la verifica automatica.
