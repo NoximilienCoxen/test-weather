@@ -1357,6 +1357,40 @@ comunque a ogni fotogramma.
    la striscia dei giorni, cambiando giorno da una colonna della settimana,
    arriva centrata invece che di scatto.
 
+6-ter. **Il job `screenshots` cade da solo, e non da adesso.** L'emulatore della
+   CI muore a meta' giro: `screencap: error: closed`, poi `device offline`, poi
+   `device 'emulator-5554' not found`, e alla fine `adb emu kill` risponde
+   `could not connect to TCP port 5554`. E' la morte gia' descritta nella
+   sezione 8 - sparisce la macchina virtuale, non l'app - e il logcat lo
+   conferma: l'ultima riga e' un normale `previsione pronta: 24 ore`, nessuna
+   eccezione, nessun ANR, nessun OOM. Poi il file finisce.
+
+   Misurato, due giri per parte sullo stesso pomeriggio:
+
+   | | dove muore | scatti |
+   |---|---|---|
+   | `main` `e0f6613`, giro 1 | sul `d12` | 20 ok, 18 mancati |
+   | `main` `e0f6613`, giro 2 | sul `d12` | 20 ok, 18 mancati |
+   | ramo del foglio, giro 1 | sul `d9-aria` | 19 ok, 3 mancati |
+   | ramo del foglio, giro 2 | sul `d9-aria` | 19 ok, 3 mancati |
+
+   Due cose da leggere insieme. La prima: **il job e' rosso su `main` da almeno
+   sei merge**, e nessuno dei due punti di morte si sposta fra un giro e
+   l'altro - quindi non e' un guasto occasionale, e' riproducibile. La seconda:
+   **il ramo che porta il foglio unico ci arriva quattro scatti prima**, e
+   questo e' il suo, non della base. Non c'e' niente di rotto nell'app - il
+   Compose compila, lint e' pulito, i test passano - ma il foglio adesso
+   disegna di piu' (la striscia dei giorni e' una `LazyRow` al posto di una
+   tela sola, e la pagina della temperatura ha in piu' le due meta' della
+   giornata coi loro glifi), e la GPU software dell'emulatore regge meno.
+
+   Il difetto vero da aggredire e' comunque quello della base: **un giro di
+   scatti che non arriva in fondo non e' una verifica**, e finche' resta cosi'
+   la CI ha un job che nessuno puo' leggere. Le due strade, per chi ci si
+   metta: far ripartire l'emulatore fra una fase e l'altra invece di tirare
+   avanti per trentotto scatti, oppure spezzare il giro in job piu' corti.
+   Nessuna delle due e' stata provata.
+
 6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser
    adesso ha un test contro la risposta vera del feed (sezione 8-quater) e il
    job `probe-api` controlla che i campi su cui si fida esistano ancora, ma
