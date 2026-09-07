@@ -302,8 +302,15 @@ diceva niente. Adesso sono tre decisioni:
   decile alto - pioggia forte e temporale - scurisce ancora.
 
 **Il dettaglio sale trascinando verso l'alto** (`ui/MeteoApp.kt`): un foglio che
-segue il dito, reversibile a meta' corsa. **Le impostazioni entrano da
+segue il dito, reversibile a meta' corsa. **In fondo alla principale il foglio
+sporge** (`ui/home/SheetEdge.kt`): una maniglia e i sei pallini delle grandezze,
+che sono il suo bordo superiore disegnato dove il foglio sta da chiuso. Toccarne
+uno apre il foglio **gia' su quella pagina**. **Le impostazioni entrano da
 sinistra**, da dove sta il loro pulsante.
+
+**Il giorno non e' una schermata**: e' un asse dentro lo stesso foglio, scelto
+dalla striscia in cima (`ui/temperature/DayStrip.kt`), da una colonna della
+settimana o dalla scheda "LA SETTIMANA". Vedi la sezione 8-bis.
 
 **Le impostazioni** (`ui/settings/SettingsScreen.kt`) hanno tre sezioni:
 localita' (ricerca per nome piu' un elenco di scorciatoie), unita' della
@@ -1335,6 +1342,21 @@ comunque a ogni fotogramma.
    estremita' della barra (li' si ferma al bordo e la codina si inclina per
    continuare a puntare il cursore), e se il tasto indietro con l'elenco aperto
    chiuda l'elenco invece del foglio.
+6-bis. **Niente di questa passata e' stato provato in mano, e non poteva
+   esserlo**: da questo container `dl.google.com` non si raggiunge (403 al
+   CONNECT del proxy), quindi non ci sono ne' l'AGP ne' l'SDK - `lintDebug` e
+   `assembleDebug` non partono affatto. Compilano e girano solo i test del
+   pacchetto `data`, che non hanno niente di Android (fatto a mano col
+   compilatore Kotlin preso da Maven Central: 21 test verdi, compresi i quattro
+   nuovi di `AlertBadgeTest`). **Tutto cio' che e' Compose l'ha compilato la
+   CI, non questa sessione.** Da guardare per primi, che sono movimenti e
+   misure e in uno scatto non si giudicano: se la striscia in fondo si trascina
+   davvero col pollice invece di essere solo un disegno; quanti punti toglie
+   davvero alla scultura su uno schermo corto; se le sei parole ci stanno a
+   10sp sotto i 360 punti di larghezza o se la soglia dei 340 va alzata; e se
+   la striscia dei giorni, cambiando giorno da una colonna della settimana,
+   arriva centrata invece che di scatto.
+
 6. **Le allerte non sono mai state viste con un bollettino vero.** Il parser
    adesso ha un test contro la risposta vera del feed (sezione 8-quater) e il
    job `probe-api` controlla che i campi su cui si fida esistano ancora, ma
@@ -1509,6 +1531,31 @@ luce, stessi mari - e gira con il `rotatesScene` che l'eroe aveva gia': niente
 secondo riconoscitore da mettere d'accordo con il carosello. Vedi la trappola
 \#36 per cosa gira e cosa no.
 
+**Il giorno e' un asse, non una schermata.** C'era una `DayDetailScreen` che
+entrava da destra con un carosello suo, e ripeteva grafico, statistiche e
+probabilita' per dire le stesse cose di un altro giorno - mentre queste sei
+pagine leggevano gia' `state.selectedDay` (`pageDay`, `pageHours`,
+`detailHour`) e nessuno gliene passava mai uno diverso da oggi. Adesso la
+striscia dei giorni (`DayStrip.kt`) sta in cima al foglio e il giorno lo
+scelgono lei, una colonna della settimana sulla principale, o la scheda "LA
+SETTIMANA": il carosello sceglie **quale grandezza**, la striscia **quale
+giorno**, e non c'e' un secondo carosello da tenere d'accordo con il primo.
+
+La striscia **ha preso il posto dei pallini del carosello**, e non e' uno
+scambio a caso: i pallini dicevano su quale pagina si fosse, cioe' quello che
+dice gia' la fila di pillole sopra, accesa e portata al centro dal
+trascinamento. Al loro posto sta l'unica cosa che nessuno diceva, e l'altezza
+del foglio non cambia.
+
+Della vecchia schermata **non si e' perso niente**: le due meta' della giornata
+(`HalfDayHeads`) e il selettore EFFETTIVA/PERCEPITA sono in
+`pages/TemperaturePage.kt`, dove il selettore comanda anche quale delle due
+curve e' quella piena; i due picchi di probabilita' (`RainOdds`) sono in
+`pages/RainPage.kt`. Il resto della griglia del dossier - alba, tramonto, sole
+effettivo, UV, vento e raffica massimi, umidita' media, pioggia attesa - era
+gia' scritto voce per voce nelle pagine del sole, del vento e della pioggia:
+verificato prima di cancellare, non dopo.
+
 **Con sei pagine la fila di pillole non basta piu' da sola**, e il pulsante che
 apre l'elenco (`PanelPicker.kt`) sta **fuori** dalla `LazyRow`: dentro
 scorrerebbe via insieme alle pillole, cioe' sparirebbe proprio quando serve -
@@ -1567,7 +1614,10 @@ Il pallino **sta nei 48dp che la riga in cima teneva gia' vuoti** per bilanciare
 il pulsante delle impostazioni e tenere il nome della localita' al centro dello
 schermo. E' esattamente `MinTouchTarget`, cioe' la misura di `MeteoIconButton`:
 fra i due stati il nome non si sposta di un pixel, e il pallino non ruba
-altezza - che e' precisamente cio' che si cerca chiudendo la fascia. Nel
+altezza - che e' precisamente cio' che si cerca chiudendo la fascia. Il **disco
+e' da 36dp e il segno da 18** (erano 30 e 15): a crescere e' il disegno, il
+bersaglio resta quello del pulsante, quindi l'invariante regge. Sopra i 40 il
+disco arriva a filo del bersaglio e si legge come un pulsante pieno. Nel
 dettaglio la fascia si riduce lo stesso, ma li' il pallino non compare: quella
 barra non ha 48dp liberi, e infilarcelo vorrebbe dire spingere il titolo fuori
 centro per un avviso che si e' appena chiesto di togliere.
@@ -1583,9 +1633,38 @@ allora. Quindi un'allerta nuova la riapre, un peggioramento la riapre (stesso
 identificativo, altra notizia), una che scade no - la condizione e' per
 inclusione, non per uguaglianza degli insiemi.
 
-**La riga della fascia non scrive "ALLERTA".** Il triangolo tinto accanto dice
-gia' che e' un'allerta e di che gravita': legge `ARANCIONE  ·  TEMPORALI`. Non
-e' una scorciatoia estetica - vedi qui sotto.
+**La riga della fascia non scrive "ALLERTA".** Il segno tinto accanto dice gia'
+che e' un avviso e di che gravita': legge `ARANCIONE  ·  TEMPORALI`. Non e' una
+scorciatoia estetica - vedi qui sotto.
+
+**Un avviso calcolato non si chiama "allerta gialla".** Giallo, arancione e
+rosso non sono tre aggettivi: sono i gradini del sistema di allertamento
+nazionale (D.lgs. 1/2018, Direttiva PCM 27/02/2004, colori nelle *Indicazioni
+operative* del 2016), e a diramarli sono il Dipartimento e i centri funzionali
+regionali. Un confronto fra una raffica e una costante scritta in
+`DerivedAlerts.kt` che se li prendesse direbbe a chi legge che a pronunciarsi e'
+stato l'ente. La distinzione c'era - `WeatherAlert.official` - e viveva **solo**
+in fondo alla scheda del bollettino: fascia e pallino non la leggevano mai.
+
+Adesso un derivato si annuncia `SOGLIA` nella fascia e `SOGLIA SUPERATA` nel
+bollettino (`WeatherAlert.badgeLabel` e `shortBadge`, nei dati e non
+nell'interfaccia, per la stessa ragione di `alertsAreDismissed`), prende il
+colore del testo del contenitore invece di uno dei tre (`alertTint`), e porta un
+**cerchio** al posto del triangolo (`NoticeCircle`). Due forme e non due tinte
+soltanto: il colore da solo lascerebbe fuori chi non lo distingue.
+
+Il rischio che questo chiude non e' "calcolare", e' "sembrare": presentare
+un'informazione come se venisse da un'altra fonte e' cio' che gli artt. 21-22
+del Codice del consumo (D.lgs. 206/2005, direttiva 2005/29/CE) chiamano
+ingannevole. E il caso pericoloso e' quello **al contrario** - chi non vede
+nessuna gialla da' per buono che l'ente non abbia niente da dire. Restano da
+decidere, da parte di chi pubblica: una riga nelle impostazioni che dichiari le
+due fonti, e se il titolo di `AlertsSheet` debba continuare a scrivere `ALLERTE`
+anche quando in scena ci sono solo avvisi calcolati.
+
+L'aggancio `--ei allerta 0` impone un avviso calcolato, cosi' la differenza si
+fotografa invece di aspettare un giorno di vento fuori dalla copertura di
+MeteoAlarm.
 
 Tre cose imparate scrivendolo:
 
