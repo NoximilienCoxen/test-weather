@@ -1,19 +1,27 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
 
-    <!-- Il cielo di mezzogiorno, gli stessi due toni che skyColors produce
-         a quota piena: zenit #5A9BD4 in alto, orizzonte #C9E2F4 in basso.
-         Il fondo di un'icona adattiva deve dipingere da bordo a bordo,
-         perche' la maschera la decide il telefono. -->
-    <path android:pathData="M0,0h108v108h-108z">
-        <aapt:attr name="android:fillColor">
-            <gradient android:type="linear"
-                android:startX="54" android:startY="0"
-                android:endX="54" android:endY="108"
-                android:startColor="#FF5A9BD4" android:endColor="#FFC9E2F4">
-            </gradient>
-        </aapt:attr>
-    </path>
+    <!--
+        Il cielo tagliato in diagonale, e il taglio sta qui - nel fondo - non
+        nel disegno sopra. E' quello che rende l'icona leggibile a colpo
+        d'occhio: la meta' chiara e' il sereno, la scura il tempo brutto, e la
+        nuvola sopra le attraversa cambiando colore.
+
+        Nel fondo perche' e' il livello che si muove in parallasse: il taglio
+        scorre sotto il disegno invece di essere una riga incollata sopra.
+
+        La linea corre da (0,108) a (108,0): il triangolo che contiene l'angolo
+        in alto a sinistra e' il sereno, quello con l'angolo in basso a destra
+        e' il cupo. Due tinte piatte e nessun gradiente - a 48dp una sfumatura
+        si impasta e il contrasto col disegno cala.
+
+        I due colori non sono scelti a occhio: #5A9BD4 e' lo zenit che
+        `skyColors` produce a mezzogiorno sereno, #1E222A e' `Gloom`. Un'icona
+        con una tavolozza sua smentirebbe la schermata che apre.
+
+        Il fondo dipinge da bordo a bordo: la maschera la decide il telefono.
+    -->
+    <path android:fillColor="#FF5A9BD4" android:pathData="M0,0 L108,0 L0,108 Z" />
+    <path android:fillColor="#FF1E222A" android:pathData="M108,0 L108,108 L0,108 Z" />
 </vector>

@@ -1,28 +1,59 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
 
-    <group android:translateX="-4.5" android:translateY="-4.0">
-    <!-- L'ombra: cade su un piano dietro l'oggetto, quindi e' scostata piu'
-         della parete. -->
-        <path android:fillColor="#26000000" android:fillType="evenOdd" android:pathData="M43.00,62.00 A20.0,20.0 0 1 1 83.00,62.00 A20.0,20.0 0 1 1 43.00,62.00 Z M51.50,62.00 A11.5,11.5 0 1 1 74.50,62.00 A11.5,11.5 0 1 1 51.50,62.00 Z" />
+    <!--
+        Sole e nuvola che piove, con la nuvola sola a fare da ponte fra le due
+        meta' del cielo tagliato in diagonale.
 
-    <!-- La parete. La stessa sagoma spostata: vista di fronte e' esattamente
-         cio' che un'estrusione lascia vedere - e su un anello si vede anche la
-         parete **interna**, che una cifra piena non mostra mai. -->
-        <path android:pathData="M38.50,57.50 A20.0,20.0 0 1 1 78.50,57.50 A20.0,20.0 0 1 1 38.50,57.50 Z M47.00,57.50 A11.5,11.5 0 1 1 70.00,57.50 A11.5,11.5 0 1 1 47.00,57.50 Z" android:fillType="evenOdd">
-            <aapt:attr name="android:fillColor">
-                <gradient android:type="linear" android:startX="32" android:startY="30" android:endX="86" android:endY="86" android:startColor="#FFE9EAEE" android:endColor="#FF43464C">
-                </gradient>
-            </aapt:attr>
-        </path>
+        **Una nuvola sola, non due.** Il taglio la colora - bianca sopra la
+        diagonale, grigia sotto - invece di separarla. A 48dp una forma sola si
+        legge; due macchie vicine si leggono come una macchia sporca.
 
-    <!-- Lo smusso, fra la faccia e la parete: la faccia e' bianca piena e un
-         filo piu' chiaro sopra il bianco non si vedrebbe. -->
-        <path android:fillColor="#FFDFE1E5" android:fillType="evenOdd" android:pathData="M35.70,55.40 A20.0,20.0 0 1 1 75.70,55.40 A20.0,20.0 0 1 1 35.70,55.40 Z M44.20,55.40 A11.5,11.5 0 1 1 67.20,55.40 A11.5,11.5 0 1 1 44.20,55.40 Z" />
+        **Tinte piatte, non sfere illuminate.** E' la lezione che `dayGlyph` ha
+        gia' scritto per la striscia oraria: "una sagoma piena e non una sfera
+        illuminata: a questa misura il volume diventa poltiglia". L'icona e' una
+        miniatura. L'unico rilievo e' la falce ambrata del sole, ottenuta con
+        due dischi sfalsati invece che con un gradiente.
 
-    <!-- La faccia. Plastica bianca opaca, non cromo. -->
-        <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M34.00,54.00 A20.0,20.0 0 1 1 74.00,54.00 A20.0,20.0 0 1 1 34.00,54.00 Z M42.50,54.00 A11.5,11.5 0 1 1 65.50,54.00 A11.5,11.5 0 1 1 42.50,54.00 Z" />
+        **Tutto sta nel cerchio di raggio 33** attorno a (54,54): su 108 unita'
+        di lato quelle garantite sono i 66 centrali, e ogni marca taglia con una
+        maschera sua (sezione 39). Il punto piu' esterno e' la punta del raggio
+        di sole in alto a sinistra, a circa 32 dal centro.
+
+        Le proporzioni non sono inventate: la nuvola ha quelle di `puff()` in
+        WidgetParts.kt - tre gobbe piu' un ventre piatto - e i raggi sono le
+        otto lame triangolari di `sunRays()`, base larga al disco e punta in
+        fuori. Le lame qui sono piu' larghe dell'originale (semilarghezza 0.22r
+        invece di 0.11r): a questa misura una lama sottile sparisce.
+    -->
+
+    <!-- Le otto lame. Base a 1.28r dal centro, punta a 1.85r, r=9 su (44,42). -->
+    <path android:fillColor="#FFFFDE59" android:pathData="M42.02,30.5 L45.98,30.5 L44,25.35 Z M34.79,33.77 L37.5,31.06 L32.22,30.2 Z M32.5,40.02 L32.5,43.98 L27.35,42 Z M34.79,50.23 L37.5,52.94 L32.22,53.8 Z M42.02,53.5 L45.98,53.5 L44,58.65 Z M50.5,50.23 L53.21,52.94 L55.78,53.8 Z M55.5,40.02 L55.5,43.98 L60.65,42 Z M50.5,33.77 L53.21,31.06 L55.78,30.2 Z" />
+
+    <!-- Il disco: ambra sotto, giallo sopra scostato in alto a sinistra. Cio'
+         che avanza e' una falce dalla parte da cui la luce non viene, che e'
+         alto-sinistra come vuole Light.Standard. -->
+    <path android:fillColor="#FFE39A0C" android:pathData="M35,42 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 Z" />
+    <path android:fillColor="#FFFFDE59" android:pathData="M34.8,41.1 a8.3,8.3 0 1,0 16.6,0 a8.3,8.3 0 1,0 -16.6,0 Z" />
+
+    <!-- La nuvola, per intero e bianca. Proporzioni di puff(): c=(52,53.5),
+         r=19 - gobba sinistra 0.46r, destra 0.40r, cupola 0.58r, ventre
+         1.72r x 0.52r. -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M35.28,56.54 a8.74,8.74 0 1,0 17.48,0 a8.74,8.74 0 1,0 -17.48,0 Z M52.76,56.92 a7.6,7.6 0 1,0 15.2,0 a7.6,7.6 0 1,0 -15.2,0 Z M40.98,52.36 a11.02,11.02 0 1,0 22.04,0 a11.02,11.02 0 1,0 -22.04,0 Z M40.6,53.88 L63.4,53.88 a4.94,4.94 0 0,1 0,9.88 L40.6,63.76 a4.94,4.94 0 0,1 0,-9.88 Z" />
+
+    <!-- La stessa identica sagoma, ridipinta in grigio e ritagliata sotto la
+         diagonale. Stesso profilo, quindi il bordo fra bianco e grigio cade
+         esattamente sul taglio del fondo. -->
+    <group>
+        <clip-path android:pathData="M108,0 L108,108 L0,108 Z" />
+        <path android:fillColor="#FF9BA1AB" android:pathData="M35.28,56.54 a8.74,8.74 0 1,0 17.48,0 a8.74,8.74 0 1,0 -17.48,0 Z M52.76,56.92 a7.6,7.6 0 1,0 15.2,0 a7.6,7.6 0 1,0 -15.2,0 Z M40.98,52.36 a11.02,11.02 0 1,0 22.04,0 a11.02,11.02 0 1,0 -22.04,0 Z M40.6,53.88 L63.4,53.88 a4.94,4.94 0 0,1 0,9.88 L40.6,63.76 a4.94,4.94 0 0,1 0,-9.88 Z" />
     </group>
+
+    <!-- Tre gocce, come ovunque nell'app: stanghette oblique con la punta
+         tonda, ai passi -0.42 / +0.06 / +0.54 del raggio - asimmetrici, e qui
+         spostati a destra perche' cadano tutte nella meta' cupa. -->
+    <path android:strokeColor="#FF3C8DF5" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M47,65 L44.6,72.4" />
+    <path android:strokeColor="#FF3C8DF5" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M56.1,67.4 L53.7,74.8" />
+    <path android:strokeColor="#FF3C8DF5" android:strokeWidth="2.8" android:strokeLineCap="round" android:pathData="M65.3,64.6 L62.9,72" />
 </vector>
