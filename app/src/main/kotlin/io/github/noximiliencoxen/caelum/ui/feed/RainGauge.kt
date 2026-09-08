@@ -368,12 +368,17 @@ private fun DrawScope.drawGauge(
     // va di taglio a novanta gradi e' un numero che non si legge. Chi passera'
     // di qui a "correggerlo" facendolo ruotare stia leggendo questa riga.
     run {
-        camera.place(radius, waterY, 0f)
+        // Il punto si prende **sull'asse**, non su un bordo del modello: un
+        // bordo gira con l'oggetto e a mezzo giro la scritta passerebbe
+        // dall'altra parte, finendo sopra la vasca. L'asse sta fermo, e lo
+        // scostamento e' in punti di schermo.
+        camera.place(0f, waterY, 0f)
         val laid = measurer.measure(reading, readingStyle)
         drawText(
             laid,
             topLeft = Offset(
-                x = (camera.sx + unit * 0.06f).coerceAtMost(size.width - laid.size.width),
+                x = (camera.sx + radius * 1.25f)
+                    .coerceAtMost(size.width - laid.size.width),
                 y = camera.sy - laid.size.height / 2f,
             ),
         )
@@ -464,13 +469,15 @@ private fun DrawScope.drawScaleLabels(
     val majors = if (snowy) SNOW_MAJORS else RAIN_MAJORS
     for (share in majors) {
         val y = floorY - span * share.toFloat()
-        camera.place(-radius, y, 0f)
+        // Come per la lettura: il punto sta sull'asse e lo scostamento e' in
+        // punti di schermo, cosi' la scaletta resta a sinistra a ogni angolo.
+        camera.place(0f, y, 0f)
         val text = (top * share).roundToInt().toString()
         val laid = measurer.measure(text, style)
         drawText(
             laid,
             topLeft = Offset(
-                x = (camera.sx - unit * 0.05f - laid.size.width).coerceAtLeast(0f),
+                x = (camera.sx - radius * 1.25f - laid.size.width).coerceAtLeast(0f),
                 y = camera.sy - laid.size.height / 2f,
             ),
         )
