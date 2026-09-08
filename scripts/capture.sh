@@ -528,31 +528,33 @@ session() {
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
 
-    # ── La vasca della scheda della pioggia ──────────────────────────────────
+    # ── La finestra della scheda della pioggia ───────────────────────────────
     #
     # Due scatti, e **in coda apposta**: l'emulatore muore attorno al
     # quindicesimo riavvio, e la coda e' cio' che ci si puo' permettere di
     # perdere. Sono i due casi che nessuno degli altri copre.
     #
     # Girata, perche' e' l'unico modo di fotografare **cio' per cui il gesto
-    # esiste**: la vasca e' un prisma a sei facce proprio perche' un cilindro
-    # girando non cambierebbe sagoma, e le tacche incise sulla parete vengono
-    # avanti solo di traverso. Fino a ieri `--ei giro` arrivava alla sola prima
-    # schermata, quindi questo scatto non era nemmeno possibile.
+    # esiste**: girando si scopre lo strombo, cioe' la parete di dentro del
+    # foro, e il cielo scivola rispetto all'apertura. Da fermo la finestra e' un
+    # rettangolo bianco e quella profondita' non si vede. Fino a poco fa
+    # `--ei giro` arrivava alla sola prima schermata, quindi questo scatto non
+    # era nemmeno possibile.
     #
-    # Con la neve, perche' li' cambiano tre cose insieme - il contenuto e'
-    # bianco opaco, la scala e' in centimetri, e i fiocchi si posano invece di
-    # schizzare - e sono tre rami che nessun altro scatto attraversa.
+    # E con la pioggia, perche' e' l'unico modo di vedere le gocce **sul vetro**:
+    # la previsione vera del giorno dello scatto e' quasi sempre asciutta, e
+    # senza il codice imposto la lastra resterebbe pulita in ogni scatto della
+    # galleria.
     #
-    # Cosa **non** si fotografa, e va detto invece di aggiungere un terzo
-    # riavvio per averlo: il traboccamento sopra i quaranta millimetri non e'
-    # raggiungibile da nessun aggancio, perche' i millimetri vengono dalla
-    # previsione vera e non da `--ei`.
+    # Cosa **non** si fotografa, e va detto invece di comprarlo con un terzo
+    # riavvio: la neve, che cambia due rami - i fiocchi che ondeggiano dietro e
+    # il vetro che resta pulito - ma li cambia in un modo che una foto ferma
+    # racconta male.
     restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei giro 60"
-    shoot "${slug}-12-vasca-girata"
+    shoot "${slug}-12-finestra-girata"
 
-    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 73"
-    shoot "${slug}-13-vasca-neve"
+    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
+    shoot "${slug}-13-finestra-pioggia"
 
   fi
 
