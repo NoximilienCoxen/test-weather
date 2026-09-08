@@ -1,6 +1,8 @@
 package io.github.noximiliencoxen.caelum.ui.feed
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -16,6 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -29,6 +38,8 @@ import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
+import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 /**
@@ -48,11 +59,22 @@ import kotlin.math.roundToInt
  * accordano sulla geometria vanno d'accordo finche' nessuno tocca l'uno senza
  * l'altro. Qui la larghezza di un'ora dev'essere la stessa per tutti e tre.
  *
- * **Nessun gesto qui sopra**, ed e' un non-obiettivo dichiarato. L'ora si sceglie
- * sulla prima scheda: un secondo selettore darebbe due scrittori allo stesso
- * stato, e un secondo riconoscitore orizzontale dentro lo stesso carosello
- * comprerebbe due volte un rischio che su questa app non e' ancora stato provato
- * in mano.
+ * **L'ora si sceglie da qui**, e prima era un non-obiettivo dichiarato. La
+ * ragione scritta era doppia, e vale ancora meta': due scrittori sullo stesso
+ * stato sarebbero un difetto, e infatti non ce ne sono due - questa fascia
+ * chiama `selectHour`, che e' lo scrittore che c'era gia'. L'altra meta' era il
+ * rischio del secondo riconoscitore orizzontale, e quello si e' scelto di
+ * correrlo: tornare sulla prima scheda per cambiare ora e ridiscendere era
+ * scomodo, e una scheda che racconta un'ora senza lasciarla scegliere fa fare
+ * due gesti per una domanda sola.
+ *
+ * **Il riconoscitore e' uno solo**, e non consuma la discesa. Finche' non si sa
+ * se il dito va in orizzontale o in verticale, il carosello ha lo stesso diritto
+ * di questa fascia: si aspetta la soglia, e se vince il verticale ci si ritira.
+ * Due riconoscitori separati - uno per il tocco, uno per il trascinamento -
+ * sarebbero il difetto che la barra delle ore ha gia' pagato: *"il primo consuma
+ * l'evento di discesa e il secondo annulla il proprio scorrimento, e il
+ * risultato e' una barra che ogni tanto ignora il dito"*.
  */
 @Composable
 internal fun RainHours(
@@ -66,11 +88,21 @@ internal fun RainHours(
     forcedCode: Int?,
     accent: Color,
     compact: Boolean,
+    /** Sceglie un'ora del giorno mostrato. Riceve **l'ora**, non la posizione. */
+    onSelectHour: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
     val measurer = rememberTextMeasurer(cacheSize = 0)
     val snowy = kind.isSnowy()
+    val haptics = LocalHapticFeedback.current
+
+    // Trappola #7: un riconoscitore di gesti **congela** quello che cattura. Ogni
+    // valore che legge dentro passa da `rememberUpdatedState`, se no la fascia
+    // continuerebbe a scegliere sulle ore di ieri.
+    val liveHours = rememberUpdatedState(hours)
+    val liveSelected = rememberUpdatedState(selectedHour)
+    val liveSelect = rememberUpdatedState(onSelectHour)
 
     // La frase guarda avanti solo su oggi: `nowHour` e' nullo sugli altri
     // giorni, e li' si racconta la giornata intera.
@@ -102,11 +134,71 @@ internal fun RainHours(
         val ceiling = bandCeiling(peak, snowy)
         val bandHeight = if (compact) BAND_HEIGHT_COMPACT else BAND_HEIGHT
 
+        // **Cosa sente chi non la vede.** Un trascinamento e basta e' muto: la
+        // fascia si dichiara per quello che e' e dice l'ora scelta. Scegliere
+        // un'ora **da qui** resta pero' un gesto continuo, che TalkBack non
+        // sa fare - e chi lo usa l'ora la sceglie dalla barra della prima
+        // scheda, che quel mestiere ce l'ha gia'. Va detto invece di lasciar
+        // credere che questa fascia sia un comando per tutti.
+        val spoken = remember(sentence, selectedHour, ceiling, snowy) {
+            val unita = if (snowy) "centimetri" else "millimetri"
+            val ora = selectedHour?.let { ", ora scelta le $it" }.orEmpty()
+            "Le ventiquattro ore: ${sentence.orEmpty()} " +
+                "La scala arriva a ${ceiling.roundToInt()} $unita all'ora$ora"
+        }
+
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bandHeight + AXIS_ROW)
-                .padding(top = SENTENCE_GAP),
+                .padding(top = SENTENCE_GAP)
+                .semantics { contentDescription = spoken }
+                .pointerInput(Unit) {
+                    // ── Un riconoscitore solo: tocco e trascinamento ─────────
+                    //
+                    // **La discesa non si consuma.** Consumarla, come fa la
+                    // barra della prima scheda, renderebbe questa fascia una
+                    // zona morta alta centoquattordici punti in cui il pollice
+                    // non puo' piu' cambiare scheda: li' e' accettabile perche'
+                    // la barra e' alta poche decine di punti, qui no.
+                    //
+                    // Si aspetta invece la soglia e si guarda da che parte va il
+                    // dito. Se prevale il verticale ci si ritira e il carosello
+                    // se lo prende: e' la spartizione di sempre - orizzontale
+                    // sceglie, verticale apre.
+                    val slop = viewConfiguration.touchSlop
+                    awaitEachGesture {
+                        val down = awaitFirstDown(requireUnconsumed = false)
+                        var claimed = false
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            if (!change.pressed) {
+                                // Sollevato senza aver mai superato la soglia:
+                                // era un tocco, e un tocco sceglie l'ora sotto
+                                // il dito.
+                                if (!claimed) {
+                                    pick(change.position.x, size.width.toFloat(),
+                                        liveHours.value, liveSelected.value,
+                                        liveSelect.value, haptics)
+                                }
+                                break
+                            }
+                            if (!claimed) {
+                                val dx = abs(change.position.x - down.position.x)
+                                val dy = abs(change.position.y - down.position.y)
+                                if (dy > slop && dy > dx) break
+                                claimed = dx > slop
+                            }
+                            if (claimed) {
+                                pick(change.position.x, size.width.toFloat(),
+                                    liveHours.value, liveSelected.value,
+                                    liveSelect.value, haptics)
+                                change.consume()
+                            }
+                        }
+                    }
+                },
         ) {
             val slot = size.width / hours.size
             val floor = bandHeight.toPx()
@@ -258,6 +350,35 @@ internal fun RainHours(
             }
         }
     }
+}
+
+/**
+ * Da una posizione sulla fascia all'**ora del giorno** sotto il dito.
+ *
+ * Torna l'ora e non l'indice nella lista, e la differenza conta in un giorno
+ * solo all'anno: quello del cambio d'ora non ha ventiquattro voci, e passare la
+ * posizione sposterebbe la scelta di un'ora esatta proprio nel giorno in cui
+ * nessuno se lo aspetta. `selectHour` conta sulle prime ventiquattro ore, che
+ * cominciano a mezzanotte, quindi l'indice **e'** l'ora del giorno e i due
+ * combaciano - ma solo perche' qui si passa l'ora.
+ *
+ * Il colpetto va solo quando l'ora cambia davvero, se no scorrendo il vibratore
+ * non stacca piu' - la stessa regola della pioggia che vibra.
+ */
+private fun pick(
+    x: Float,
+    width: Float,
+    hours: List<HourForecast>,
+    selected: Int?,
+    onSelect: (Int) -> Unit,
+    haptics: HapticFeedback,
+) {
+    if (hours.isEmpty() || width <= 0f) return
+    val index = floor(x / width * hours.size).toInt().coerceIn(0, hours.lastIndex)
+    val hour = hours[index].time.hour
+    if (hour == selected) return
+    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+    onSelect(hour)
 }
 
 private const val NO_HOURS = "Le ore di questo giorno non sono nella previsione."
