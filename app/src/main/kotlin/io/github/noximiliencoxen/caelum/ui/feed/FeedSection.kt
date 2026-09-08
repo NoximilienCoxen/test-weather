@@ -57,6 +57,9 @@ enum class FeedSection(
     ARIA(
         title = "QUALITA' DELL'ARIA",
         chipLabel = "Aria",
+        // Il ripiego, per quando l'indice non e' ancora arrivato e non si sa
+        // ancora con quale metro sara' misurato. Quando arriva, a scriverlo e'
+        // `unitLabelFor`: la scala cambia col posto, e l'etichetta con lei.
         unitLabel = "INDICE EUROPEO",
         stage = "Il pulviscolo in sospensione: piu' l'indice sale, piu' l'aria si fa densa da attraversare",
     ),

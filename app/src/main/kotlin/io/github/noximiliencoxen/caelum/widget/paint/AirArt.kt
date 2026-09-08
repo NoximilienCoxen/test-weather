@@ -45,7 +45,7 @@ internal fun DrawScope.airArt(
 
     val index = type.brush(box.height * 0.135f, weight = 700, width = 80)
     val indexTop = box.top + lineHeight(name) * 0.95f
-    text(air?.europeanAqi?.toString() ?: "--", box.left, indexTop, index, ink.secondary)
+    text(air?.index?.toString() ?: "--", box.left, indexTop, index, ink.secondary)
 
     // La parola prende tutta la larghezza che resta: si sceglie il corpo piu'
     // grande che ci sta, invece di tagliarla o di rimpicciolirla sempre.
