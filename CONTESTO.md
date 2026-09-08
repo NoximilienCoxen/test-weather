@@ -2116,6 +2116,17 @@ prendere i busti: al cielo restano solo le teste.
 potenza per passo, e sta dentro il `remember` che gia' calcola il cielo di
 quell'ora.
 
+**E l'asfalto ha un tono suo, che non prende in prestito dal cielo.** Di giorno
+e' **piu' scuro** del cielo, perche' e' il cielo a illuminarlo; di notte e' **piu'
+chiaro**, perche' a illuminarlo sono i lampioni. Una regola sola che dia tutte e
+due le cose non esiste, e il primo tentativo - ricavare la via dal solo contrasto
+con le sagome - dava una strada **piu' chiara del cielo anche a mezzogiorno**:
+ghiaccio, non asfalto. Misurato sullo scatto: via (200,221,236) su cielo
+(176,204,227). Quindi due passi, ciascuno con un mestiere solo: prima si scurisce
+come fa l'asfalto, che di giorno basta; poi si tira su **solo se** e' rimasto
+tanto buio che le sagome ci sparirebbero dentro - e quella e' la notte, e sono i
+lampioni.
+
 **La soglia pero' non e' quella del testo.** Tre a uno e' quanto serve a una
 scritta per essere letta; applicato qui spinge l'asfalto a un grigio medio,
 cioe' **trasforma la notte in pieno giorno** pur di far risaltare quattro
