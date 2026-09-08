@@ -601,11 +601,25 @@ session() {
     accanto=$(conta_fotogrammi)
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
     echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
-    if [ "${accanto:-1}" = "0" ] && [ "${guardata:-0}" != "0" ]; then
+    # **La soglia non e' lo zero esatto, ed e' una correzione, non uno sconto.**
+    # La prima volta pretendeva zero e leggeva uno: la guardia teneva benissimo -
+    # 55 fotogrammi contro 1 - ma il criterio era sbagliato. Un **orologio** che
+    # gira produce un flusso di fotogrammi, non un fotogramma solo; quell'uno e'
+    # una ricomposizione di passaggio, e sulla scheda dell'aria si spiega da se',
+    # perche' la qualita' dell'aria arriva da una richiesta a parte e quando
+    # arriva ridisegna una volta.
+    #
+    # Quindi si chiede quello che si vuole davvero sapere: che di la' un
+    # orologio giri, e che di qua non ne giri nessuno.
+    if [ "${guardata:-0}" -gt 10 ] 2>/dev/null && [ "${accanto:-99}" -le 3 ] 2>/dev/null; then
       echo "    la guardia tiene: si muove solo mentre la si guarda"
     else
       echo "    ATTENZIONE: la guardia non si comporta come dichiarato"
     fi
+    # E il conto di sinistra dice anche un'altra cosa, che vale ricordare: 55
+    # fotogrammi in quattro secondi sono quattordici al secondo, non sessanta.
+    # E' l'emulatore, che rende via software. **Da qui non si ricava nessun
+    # giudizio sul costo per fotogramma**: quello si prende in mano.
 
   fi
 

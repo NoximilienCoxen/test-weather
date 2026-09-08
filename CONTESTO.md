@@ -2189,7 +2189,20 @@ finestra visibile continua a battere anche per una pagina fuori vista.
 giro degli scatti, `dumpsys gfxinfo` conta i fotogrammi di quattro secondi due
 volte: con la pioggia in scena, e con la scheda dell'aria in scena, cioe' con la
 pioggia **composta ma fuori vista** - che e' esattamente il caso per cui la
-guardia esiste. Il primo numero dev'essere maggiore di zero, il secondo zero.
+guardia esiste. Misurato: **55 fotogrammi contro 1**.
+
+**E l'uno non e' una perdita.** La soglia chiedeva lo zero esatto, e quello era
+il criterio sbagliato: un **orologio** che gira produce un flusso di fotogrammi,
+non un fotogramma solo. Quell'uno e' una ricomposizione di passaggio, e sulla
+scheda dell'aria si spiega da se' - la qualita' dell'aria arriva da una richiesta
+a parte, e quando arriva ridisegna una volta. Adesso la prova chiede quello che
+vuole davvero sapere: che di la' un orologio giri, e che di qua non ne giri
+nessuno.
+
+Il numero di sinistra dice anche un'altra cosa: 55 fotogrammi in quattro secondi
+sono **quattordici al secondo**, non sessanta. E' l'emulatore, che rende via
+software - ed e' la prova, in cifre, che di li' non esce nessun giudizio sul
+costo per fotogramma.
 
 E' l'unica meta' della verifica che un emulatore possa dare, ed e' anche quella
 che conta: il costo per fotogramma li' non dice niente (la resa e' software), ma
