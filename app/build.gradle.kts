@@ -76,7 +76,7 @@ android {
         // si compila. Il rapporto va nel log della CI, si legge, si sistema cio'
         // che va sistemato, e solo allora ha senso alzare `abortOnError`. Un
         // controllo acceso su un debito mai letto lo si spegne dopo due giri.
-        textReport = true
+        // (textReport rimosso: AGP genera sempre i report lint in automatico.)
         warningsAsErrors = false
         abortOnError = false
         checkDependencies = false

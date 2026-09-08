@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AirBand
+import io.github.noximiliencoxen.caelum.data.AirScale
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.common.MeteoCard
@@ -86,7 +87,8 @@ internal fun AirPage(
                 )
                 Spacer(Modifier.height(14.dp))
                 BandScale(
-                    aqi = air.europeanAqi,
+                    aqi = air.index,
+                    scale = air.scale,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(16.dp),
@@ -97,7 +99,10 @@ internal fun AirPage(
                         .padding(top = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    listOf("0", "40", "80", "100+").forEach {
+                    // Etichette ricavate dai tagli reali della scala scelta:
+                    // europeo "0 40 80 100+", statunitense "0 100 200 300+".
+                    val cuts = air.scale.cuts
+                    listOf("0", "${cuts[1]}", "${cuts[3]}", "${cuts.last()}+").forEach {
                         Text(
                             text = it,
                             style = MaterialTheme.typography.labelSmall,
@@ -111,8 +116,8 @@ internal fun AirPage(
         MeteoMetricCard(
             rows = listOf(
                 MeteoMetric(
-                    "INDICE EUROPEO",
-                    air.europeanAqi?.toString() ?: "--",
+                    air.scale.label,
+                    air.index?.toString() ?: "--",
                     emphasis = true,
                 ),
                 MeteoMetric("BANDA", air.band?.label ?: "--"),
@@ -156,28 +161,42 @@ private val BandColors = listOf(
     Color(0xFF8E4B8E),
 )
 
-/** I confini delle fasce, in unita' dell'indice. L'ultima e' aperta verso l'alto. */
-private val BandEdges = listOf(0f, 20f, 40f, 60f, 80f, 100f, 130f)
+/**
+ * I confini delle fasce per una scala data, in unita' dell'indice.
+ *
+ * L'ultima banda e' aperta verso l'alto: le gets un'estensione visiva pari
+ * a 1.5 volte l'ultimo intervallo fisso, cosi' rimane proporzionata alle
+ * altre senza richiedere un valore massimo arbitrario codificato a mano.
+ *
+ * Europeo: [0, 20, 40, 60, 80, 100, 130]
+ * Statunitense: [0, 50, 100, 150, 200, 300, 450]
+ */
+private fun bandEdgesFor(scale: AirScale): List<Float> {
+    val c = scale.cuts
+    val lastInterval = (c.last() - c[c.lastIndex - 1]).toFloat()
+    return listOf(0f) + c.map { it.toFloat() } + listOf(c.last() + lastInterval * 1.5f)
+}
 
 /**
  * La scala, coi suoi sei gradini e un segno dove cade il valore.
  *
  * A larghezze proporzionali all'ampiezza reale di ogni fascia, non a sei
- * segmenti uguali: le fasce sono tutte larghe venti tranne l'ultima, e
- * disegnarle uguali farebbe leggere "molto scarsa" come se cominciasse molto
- * piu' in la' di dove comincia.
+ * segmenti uguali. Riceve la scala scelta (europea o statunitense) cosi'
+ * le proporzioni riflettono i tagli reali di quella scala.
  */
 @Composable
-private fun BandScale(aqi: Int?, modifier: Modifier = Modifier) {
+private fun BandScale(aqi: Int?, scale: AirScale, modifier: Modifier = Modifier) {
+    val bandEdges = bandEdgesFor(scale)
+    val maxLabel = scale.cuts.last()
     val marker = MaterialTheme.colorScheme.onSurface
-    val spoken = aqi?.let { "Indice $it su una scala che arriva a 100 e oltre" }
+    val spoken = aqi?.let { "Indice $it su una scala che arriva a $maxLabel e oltre" }
         ?: "Indice non disponibile"
     Canvas(modifier.semantics { contentDescription = spoken }) {
-        val total = BandEdges.last() - BandEdges.first()
+        val total = bandEdges.last() - bandEdges.first()
         val radius = CornerRadius(size.height / 2f)
         BandColors.forEachIndexed { i, color ->
-            val from = (BandEdges[i] - BandEdges.first()) / total * size.width
-            val to = (BandEdges[i + 1] - BandEdges.first()) / total * size.width
+            val from = (bandEdges[i] - bandEdges.first()) / total * size.width
+            val to = (bandEdges[i + 1] - bandEdges.first()) / total * size.width
             drawRoundRect(
                 color = color,
                 topLeft = Offset(from, 0f),
@@ -186,7 +205,7 @@ private fun BandScale(aqi: Int?, modifier: Modifier = Modifier) {
             )
         }
         val value = aqi?.toFloat() ?: return@Canvas
-        val x = (value.coerceIn(BandEdges.first(), BandEdges.last()) / total * size.width)
+        val x = (value.coerceIn(bandEdges.first(), bandEdges.last()) / total * size.width)
             .coerceIn(0f, size.width)
         // Il segno e' un bastoncino chiaro con un bordo scuro attorno: sulle
         // fasce chiare un segno bianco sparirebbe, sulle scure uno nero.

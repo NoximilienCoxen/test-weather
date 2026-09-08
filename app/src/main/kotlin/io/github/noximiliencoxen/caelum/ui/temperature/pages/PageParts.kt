@@ -260,7 +260,7 @@ internal fun heroValue(
             hour?.windSpeed?.roundToInt()?.toString()
 
         io.github.noximiliencoxen.caelum.ui.temperature.DetailMode.ARIA ->
-            state.air?.europeanAqi?.toString()
+            state.air?.index?.toString()
 
         // La luna non ha una cifra da estrudere: il suo eroe e' il corpo, non
         // un numero. La percentuale illuminata sta nella prima scheda della

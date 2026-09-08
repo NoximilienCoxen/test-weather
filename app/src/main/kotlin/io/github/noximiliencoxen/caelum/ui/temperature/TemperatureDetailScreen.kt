@@ -254,7 +254,7 @@ fun TemperatureDetailScreen(
                     days = state.forecast?.days.orEmpty(),
                     unit = state.unit,
                     selected = state.selectedDay,
-                    onSelectDay = viewModel::openDayDetail,
+                    onSelectDay = viewModel::selectDay,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
