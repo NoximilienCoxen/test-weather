@@ -1406,6 +1406,17 @@ quadrilatero, e se e' negativa lo si percorre al contrario. Sta in
 `ui/render3d/Facets.kt`, con i suoi test, e vale per qualunque solido
 proiettato.
 
+**52. Un'attesa che legge il logcat va rimessa a zero a ogni giro.**
+`attendi_previsione` aspetta la riga "previsione pronta"; nel giro delle sei
+schede il buffer era svuotato **una volta sola prima del ciclo**, quindi dalla
+seconda scheda in poi trovava la riga della scheda precedente e tornava
+all'istante - un'attesa che non aspettava niente. Si vedeva come uno scatto ogni
+tanto con scritto IN ATTESA DEI DATI, ed e' passata per sfortuna finche' non e'
+capitata due volte di fila sullo stesso scatto. `restart_with` aveva gia' il
+commento che lo diceva; il ciclo delle schede non lo seguiva. **Un difetto che
+si manifesta come rumore casuale e' un difetto che nessuno guarda**: e' il
+motivo per cui questa sta scritta.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -2105,9 +2116,26 @@ prendere i busti: al cielo restano solo le teste.
 potenza per passo, e sta dentro il `remember` che gia' calcola il cielo di
 quell'ora.
 
+**La soglia pero' non e' quella del testo.** Tre a uno e' quanto serve a una
+scritta per essere letta; applicato qui spinge l'asfalto a un grigio medio,
+cioe' **trasforma la notte in pieno giorno** pur di far risaltare quattro
+sagome - visto in uno scatto, e corretto a una soglia da scena. Una sagoma alta
+sessanta pixel non e' una didascalia: le basta staccare. E la fascia non e' di
+un tono solo: va dal cielo in fondo all'asfalto sotto, se no si legge come una
+parete e non come una superficie vista di taglio.
+
+**La via ha profondita', e la profondita' e' in altezza.** Avevano tutti i piedi
+sulla stessa riga, quindi due che si avvicinavano si accavallavano e basta: un
+mucchio, non una via. Chi cammina in fondo sta **piu' in alto sulla fascia** - la
+sua testa arriva appena all'orizzonte, quella di chi passa sotto casa lo supera -
+ed e' cosi' che una strada si guarda dall'alto. E' anche quello che rende
+naturale un incrocio invece che una collisione: chi si sovrappone lo fa a
+distanze diverse.
+
 **Erano sei e alte un terzo dell'apertura**, ed erano una folla schiacciata
-contro il vetro invece di gente in una via. Quattro, alte un sesto, con corsie e
-fasi distanti. E' l'unica cosa di questa scheda che non si deduce: si guarda.
+contro il vetro invece di gente in una via. Quattro, alte un ottavo, con corsie,
+fasi e distanze diverse. E' l'unica cosa di questa scheda che non si deduce: si
+guarda.
 
 ### Gli orologi sono due
 

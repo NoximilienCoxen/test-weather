@@ -327,6 +327,7 @@ private fun DrawScope.drawWindow(
             origin = Offset(bounds.left, bounds.top),
             wetness = wetness,
             road = ink.road,
+            haze = ink.haze,
             sheen = ink.sheen,
         )
         drawWalkers(

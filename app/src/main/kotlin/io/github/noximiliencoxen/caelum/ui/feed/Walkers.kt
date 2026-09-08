@@ -2,12 +2,12 @@ package io.github.noximiliencoxen.caelum.ui.feed
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
-import io.github.noximiliencoxen.caelum.ui.theme.CONTRAST_AA_LARGE
 import io.github.noximiliencoxen.caelum.ui.theme.onColor
 import io.github.noximiliencoxen.caelum.ui.theme.readableOn
 import kotlin.math.PI
@@ -103,9 +103,9 @@ private class Walker(
 
 private val WALKERS = listOf(
     Walker(0, 1.00f, 0.05f, laps = 2, rightward = true, hasUmbrella = true),
-    Walker(1, 0.44f, 0.61f, laps = 1, rightward = false, hasUmbrella = true),
-    Walker(2, 0.78f, 0.33f, laps = 2, rightward = false, hasUmbrella = true),
-    Walker(1, 0.60f, 0.86f, laps = 1, rightward = true, hasUmbrella = false),
+    Walker(1, 0.42f, 0.37f, laps = 1, rightward = false, hasUmbrella = true),
+    Walker(2, 0.78f, 0.62f, laps = 2, rightward = false, hasUmbrella = true),
+    Walker(1, 0.60f, 0.88f, laps = 1, rightward = true, hasUmbrella = false),
 )
 
 /**
@@ -129,8 +129,10 @@ internal class StreetInk(
     val figure: Color,
     /** Gli ombrelli: un gradino sopra le sagome, se no la calotta sparisce nella testa. */
     val umbrella: Color,
-    /** L'asfalto. */
+    /** L'asfalto, dove e' piu' vicino. */
     val road: Color,
+    /** L'asfalto dove si allontana: quasi il cielo, ed e' quello che gli da' fondo. */
+    val haze: Color,
     /** I riflessi sull'asfalto bagnato. */
     val sheen: Color,
 )
@@ -138,11 +140,12 @@ internal class StreetInk(
 /** I colori della via sotto un cielo di quel colore. */
 internal fun streetInk(sky: Color): StreetInk {
     val figure = lerp(sky, Color.Black, FIGURE_INK)
-    val road = sky.readableOn(figure, CONTRAST_AA_LARGE)
+    val road = sky.readableOn(figure, STREET_LIFT)
     return StreetInk(
         figure = figure,
         umbrella = lerp(sky, Color.Black, UMBRELLA_INK),
         road = road,
+        haze = lerp(sky, road, 0.42f),
         // Bianco o nero secondo cosa si vede sull'asfalto: su una via accesa
         // dalla notte un riflesso bianco non c'e' piu', e il riflesso e' il
         // segno che dice che e' bagnata.
@@ -193,7 +196,14 @@ internal fun DrawScope.drawWalkers(
         // camminando invece di scivolare. I passi per traversata sono interi
         // anche loro, se no il giro chiuderebbe nella posizione e non nel passo.
         val bob = sin(travel * PI.toFloat() * 2f * STEPS_PER_CROSSING) * scale * BOB
-        val feet = street + bob
+        // **La via ha profondita', e la profondita' e' in altezza.** Prima
+        // avevano tutti i piedi sulla stessa riga, quindi due che si
+        // avvicinavano si accavallavano e basta: un mucchio, non una via. Chi
+        // e' lontano sta piu' in alto sulla fascia dell'asfalto - la sua testa
+        // arriva appena all'orizzonte, mentre quella di chi passa sotto casa
+        // lo supera - ed e' cosi' che una strada si guarda dall'alto.
+        val depth = (1f - w.lane) * bounds.height * STREET_BAND * STREET_DEPTH
+        val feet = street - depth + bob
 
         // Piu' lontano, piu' sbiadito: e' l'aria che sta in mezzo, ed e' quello
         // che separa una figura dall'altra senza contorni.
@@ -316,26 +326,38 @@ internal fun DrawScope.drawStreet(
     origin: Offset,
     wetness: Float,
     road: Color,
+    haze: Color,
     sheen: Color,
 ) {
     val street = origin.y + bounds.height
+    val band = bounds.height * STREET_BAND
+    // **Non una lastra.** Un rettangolo di un tono solo si legge come una
+    // parete: e' una superficie vista di taglio, quindi in fondo va verso il
+    // cielo e sotto verso l'asfalto, e la riga dell'orizzonte smette di essere
+    // un taglio netto.
     drawRect(
-        color = road,
-        topLeft = Offset(origin.x, street - bounds.height * STREET_BAND),
-        size = Size(bounds.width, bounds.height * STREET_BAND),
+        brush = Brush.verticalGradient(
+            colors = listOf(haze, road),
+            startY = street - band,
+            endY = street,
+        ),
+        topLeft = Offset(origin.x, street - band),
+        size = Size(bounds.width, band),
     )
     if (wetness <= 0f) return
     // L'asfalto bagnato riflette, e a questa misura riflettere vuol dire due
     // strisce chiare che corrono per il lungo: una pozza disegnata come una
     // macchia diventa una toppa.
     for (i in 0 until 3) {
-        val y = street - bounds.height * STREET_BAND * (0.25f + i * 0.28f)
+        val y = street - band * (0.14f + i * 0.22f)
         val w = bounds.width * (0.5f - abs(i - 1) * 0.14f)
         drawLine(
-            color = sheen.copy(alpha = 0.10f + 0.10f * wetness),
+            // Appena accennati: sono il luccichio dell'asfalto, e alzandoli si
+            // trasformano in tre sbarre appoggiate sopra la scena.
+            color = sheen.copy(alpha = 0.05f + 0.07f * wetness),
             start = Offset(origin.x + bounds.width * 0.5f - w * 0.5f, y),
             end = Offset(origin.x + bounds.width * 0.5f + w * 0.5f, y),
-            strokeWidth = bounds.height * 0.006f,
+            strokeWidth = bounds.height * 0.004f,
             cap = StrokeCap.Round,
         )
     }
@@ -348,7 +370,7 @@ internal fun DrawScope.drawStreet(
  * finestra e' una persona **dentro la stanza**. Questa e' la misura di qualcuno
  * visto dall'altra parte della via.
  */
-private const val WALKER_TALL = 0.16f
+private const val WALKER_TALL = 0.13f
 
 /** Quanti passi in una traversata: **intero**, se no il giro non chiude nel passo. */
 private const val STEPS_PER_CROSSING = 24f
@@ -364,6 +386,20 @@ private const val UMBRELLA_DROP = 0.13f
 /** Quanto le sagome sono piu' scure del cielo dietro, e gli ombrelli con loro. */
 private const val FIGURE_INK = 0.85f
 private const val UMBRELLA_INK = 0.70f
+
+/**
+ * Di quanto la via si stacca dalle sagome.
+ *
+ * **Non e' la soglia da testo**, ed e' una scelta e non una dimenticanza: 3:1 e'
+ * quanto serve a una scritta per essere letta, e applicato qui spinge l'asfalto
+ * a un grigio medio - cioe' trasforma la notte in pieno giorno pur di far
+ * risaltare quattro sagome. Una sagoma alta sessanta pixel non e' una
+ * didascalia: le basta staccare.
+ */
+private const val STREET_LIFT = 1.9f
+
+/** Quanto in alto sulla fascia arriva chi cammina in fondo alla via. */
+private const val STREET_DEPTH = 0.80f
 
 /**
  * Quanta parte in basso dell'apertura e' via, e non cielo.
