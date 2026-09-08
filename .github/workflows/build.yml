@@ -133,8 +133,15 @@ jobs:
       # scrivere il parser adesso vorrebbe dire scriverlo a memoria: **prima si
       # guarda cosa risponde davvero.**
       #
-      # Si provano piu' indirizzi perche' quale sia quello buono e' parte della
-      # domanda. Nessuno di questi fa fallire il giro.
+      # **Il primo giro ha gia' insegnato qualcosa**: quattro indirizzi provati a
+      # memoria, quattro 404. Risponde solo la pagina che li elenca, e gli
+      # indirizzi veri stanno scritti dentro di lei - quindi adesso si leggono
+      # di li' invece di continuare a indovinarli. E' la stessa disciplina di
+      # `probe_models`, che l'elenco dei modelli se lo fa dare dall'errore
+      # dell'API invece di tenerne una copia.
+      #
+      # Nessun passo qui fa fallire il giro: una fonte di allertamento
+      # momentaneamente giu' non e' un difetto del codice.
       #
       # Il FOSS Public Alert Server, l'altra fonte mondiale in circolazione, non
       # e' fra questi apposta: chi lo scrive dichiara che **non e' ancora pronto
@@ -145,24 +152,39 @@ jobs:
         run: |
           mkdir -p /tmp/ciout
           {
-            echo "=== fonti di allerta mondiali: chi risponde, e con che cosa ==="
+            echo "=== la pagina degli indirizzi, e quali indirizzi porta ==="
+            #
+            # Il primo giro aveva provato quattro strade indovinate a memoria e
+            # **tutte e quattro erano 404**: risponde solo questa pagina, e gli
+            # indirizzi veri stanno scritti dentro. Leggerli di li' e' l'unico
+            # modo che non passa per un'ipotesi.
+            PAGE="https://severeweather.wmo.int/feeds.html"
+            curl -sSL --max-time 25 -H "User-Agent: caelum-probe" "$PAGE" \
+              -o /tmp/ciout/_feeds.html || true
+            echo "--- $PAGE  byte=$(wc -c < /tmp/ciout/_feeds.html)"
+            echo "--- indirizzi che sembrano feed, presi dalla pagina:"
+            grep -oE 'https?://[^"'"'"'<> ]+\.(xml|json|rss|atom|cap)[^"'"'"'<> ]*' \
+              /tmp/ciout/_feeds.html | sort -u | head -40
+            echo "--- ogni altro indirizzo assoluto della pagina:"
+            grep -oE 'https?://[^"'"'"'<> ]+' /tmp/ciout/_feeds.html \
+              | grep -viE '\.(css|js|png|jpg|ico|ttf|woff2?)' | sort -u | head -40
+            echo
+
+            echo "=== cosa risponde davvero ==="
             for url in \
-              "https://severeweather.wmo.int/feeds.html" \
-              "https://severeweather.wmo.int/v2/cap-alerts/rss.xml" \
               "https://severeweather.wmo.int/v2/json/list.json" \
-              "https://severeweather.wmo.int/json/list.json" \
-              "https://alert-hub.s3.amazonaws.com/rss/rss_aggregator.xml" \
               "https://api.weather.gov/alerts/active?limit=1" \
               ; do
               echo "--- $url"
               code=$(curl -sSL -o /tmp/ciout/_a -w "%{http_code}" \
-                     -H "User-Agent: caelum-probe" --max-time 25 "$url" || echo 000)
+                     -H "User-Agent: caelum-probe (github.com/NoximilienCoxen/test-weather)" \
+                     -H "Accept: application/json" --max-time 25 "$url" || echo 000)
               echo "HTTP $code  tipo=$(file -b --mime-type /tmp/ciout/_a 2>/dev/null)" \
                    " byte=$(wc -c < /tmp/ciout/_a)"
-              head -c 900 /tmp/ciout/_a; echo; echo
+              head -c 1200 /tmp/ciout/_a; echo; echo
             done
           } > /tmp/ciout/allerte-mondo.txt 2>&1
-          rm -f /tmp/ciout/_a
+          rm -f /tmp/ciout/_a /tmp/ciout/_feeds.html
           cat /tmp/ciout/allerte-mondo.txt
 
       - name: Quali modelli coprono l'Italia
