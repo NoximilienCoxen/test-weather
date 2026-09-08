@@ -43,16 +43,16 @@ enum class FeedSection(
         title = "PRECIPITAZIONI",
         chipLabel = "Pioggia",
         // Vuota come quella della luna, e per la stessa ragione: qui non c'e'
-        // piu' una cifra sotto cui scrivere un'unita'. La vasca porta la
-        // propria scala incisa, in millimetri o in centimetri secondo cosa e'
-        // caduto, e "MM NEL GIORNO" scritto altrove sarebbe una seconda unita'
-        // che parla di un numero che non c'e'.
+        // piu' una cifra sotto cui scrivere un'unita'. I millimetri stanno fra
+        // i tre numeri in fondo, e "MM NEL GIORNO" scritto quassu' sarebbe una
+        // seconda unita' che parla di un numero che non c'e'.
         unitLabel = "",
-        // Il segnaposto e' stato **preso in parola**: le gocce sono finite
-        // dentro la vasca, dove hanno una scala, e al posto del riquadro c'e' la
-        // fascia delle ventiquattro ore. Come per la temperatura, la riga resta
-        // a dire cosa la scheda ospita - solo che adesso lo ospita davvero.
-        stage = "La vasca graduata e le ventiquattro ore",
+        // Il segnaposto e' stato **preso in parola**: al posto del riquadro
+        // vuoto c'e' la fascia delle ventiquattro ore, e al posto della cifra
+        // una finestra sul cielo di quell'ora. Come per la temperatura, la riga
+        // resta a dire cosa la scheda ospita - solo che adesso lo ospita
+        // davvero.
+        stage = "La finestra sull'ora scelta e le ventiquattro ore",
     ),
     ARIA(
         title = "QUALITA' DELL'ARIA",

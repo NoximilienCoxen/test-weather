@@ -14,8 +14,8 @@ import kotlin.random.Random
  *
  * **Stava dentro `WeatherSculpture.kt`**, ed era privata, per la sola ragione
  * che la scultura e' stato il primo posto in cui e' servita. Adesso i posti
- * sono due - la scultura della prima scheda e la vasca graduata della scheda
- * della pioggia - e il progetto ha gia' deciso due volte cosa si fa in questo
+ * sono due - la scultura della prima scheda e la finestra della scheda della
+ * pioggia - e il progetto ha gia' deciso due volte cosa si fa in questo
  * caso. La prima e' `isWet()`, passata a `Wmo.kt` perche' *"parla di codici
  * WMO, non di come si disegna una nuvola"*: qui vale identica, perche' uno
  * schizzo parla di acqua che tocca una superficie, non di una scultura. La
@@ -36,8 +36,8 @@ import kotlin.random.Random
  *
  * Cosa **non** e' venuto qui: `drawRain` e `drawSnow`. Sono saldate a
  * `SceneContact` e a `Skyline` - chiedono alla sagoma della cifra dove sta la
- * superficie - mentre la vasca il suo piano d'acqua lo conosce per via
- * analitica. Chi ne ha bisogno si scrive il proprio ciclo di caduta e riusa i
+ * superficie - mentre la finestra sa per via analitica dove sta il suo vetro e
+ * dove la sua via. Chi ne ha bisogno si scrive il proprio ciclo di caduta e riusa i
  * pezzi che stanno qui, invece di costruire una sagoma finta per farsi
  * rispondere quello che gia' sa.
  */
