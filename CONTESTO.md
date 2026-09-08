@@ -1375,6 +1375,37 @@ mezzogiorno sereno e `#1E222A` e' `Gloom`, entrambi da `ui/theme/Colors.kt`; il
 resto viene da `WidgetInk`. Restano scritti nei vector e non in `colors.xml`,
 come gia' erano.
 
+**50. Un ciclo che si ripete non e' il tempo che avanza.** La scena della
+pioggia aveva un orologio solo: un dente di sega da 0 a 1 ogni secondo e mezzo,
+perfetto per le gocce - una esce dal fondo, un'altra nasce in cima, e il ritorno
+a zero non si vede. Poi la gente ha cominciato a camminare leggendo **quello
+stesso numero** come se fosse il tempo trascorso: ogni passante avanzava un
+decimo di traversata e poi scattava indietro insieme a tutti gli altri, **ogni
+secondo e mezzo**. Chi si ripete e chi avanza hanno bisogno di due orologi.
+
+E il secondo si chiude cosi': **periodi commensurabili, non tarature**. Se ogni
+oggetto compie un numero **intero** di giri per ogni giro dell'orologio, quando
+l'orologio cala di uno la posizione cala di un intero e il resto su uno non se
+ne accorge - il ciclo e' continuo per costruzione, e nessuno deve cercare a
+occhio il punto in cui nascondere il salto. Vale per la posizione e vale per il
+passo, che infatti ha un numero intero di battute per traversata. Corollario:
+perche' un rientro non si veda, il margine fuori campo si **ricava dalla parte
+piu' larga dell'oggetto** - qui l'ombrello, che era piu' largo del margine
+scritto a mano, e spuntava.
+
+**51. Le facce proiettate di un solido non si avvolgono tutte nello stesso
+verso.** Il fondo della vasca graduata non si riempiva: sei quadrilateri in un
+solo `Path`, tre avvolti in un senso e tre nell'altro, e con la regola `NonZero`
+si cancellano a vicenda - misurato, il **cinquantotto per cento** della colonna
+spariva. Le due correzioni che vengono in mente non funzionano: `EvenOdd` non
+aggiusta niente perche' due sovrapposizioni sono parita' pari, cioe' lo stesso
+buco; e disegnare ogni faccia per conto suo con un'opacita' fa comporre le
+sovrapposizioni - da 0,42 si arriva a 0,66, cioe' tre bande scure che si
+muovono. La correzione e' **normalizzare il verso**: area con segno del
+quadrilatero, e se e' negativa lo si percorre al contrario. Sta in
+`ui/render3d/Facets.kt`, con i suoi test, e vale per qualunque solido
+proiettato.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -1426,6 +1457,18 @@ comunque a ogni fotogramma.
 - il **widget della luna** dopo il tronco comune della sezione 45: e' l'unico
   dei tre che non e' stato posato su una Home vera, quindi di lui si sa che
   compila, non che disegna
+- **quanto costa la scena della finestra**, che e' l'unica parte dell'app che si
+  muove sempre mentre la si guarda (sezione 8-quinquies): `dumpsys gfxinfo`,
+  quattro secondi sulla scheda, mediano e ritardi. Se non regge i 16 ms cedono
+  gli strati e non il movimento - prima le persone, poi le gocce sul vetro
+- **che la guardia `alive` spenga davvero la scena**: quattro secondi sulla
+  scheda accanto, e i fotogrammi devono tornare a **zero**. E' l'unica cosa che
+  tiene l'eccezione dentro un limite, ed e' dichiarata proprio per questo
+- **che il ritorno a zero dell'orologio lento non si veda**: e' una cosa che uno
+  scatto non puo' dire, per costruzione
+- **che lo scorrimento delle ore sulla fascia non rubi il cambio di scheda**: il
+  dito per il lungo sceglie l'ora, il dito verso il basso deve ancora portare
+  alla scheda dopo. E' il punto piu' esposto del cambio
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 
