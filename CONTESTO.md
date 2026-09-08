@@ -381,8 +381,23 @@ di una seconda fonte non si scrive a memoria**: la prima stesura di quello di
 MeteoAlarm cercava `awareness_level` e `awareness_type`, che nel feed non
 esistono. La sonda nuova interroga il Severe Weather Information Centre della
 WMO - CAP, cioe' il formato che l'app **sa gia' leggere** - e pubblica quello che
-risponde; il lettore si scrive su quello. Il FOSS Public Alert Server resta fuori
-apposta: chi lo scrive dichiara che non e' pronto per la produzione.
+risponde. Il FOSS Public Alert Server resta fuori apposta: chi lo scrive dichiara
+che non e' pronto per la produzione.
+
+**E ha gia' risposto due volte, e le due risposte valgono la sonda.** Al primo
+giro: quattro indirizzi provati a memoria, **quattro 404**. Se ne fosse stato
+scelto uno e ci si fosse costruito sopra un lettore, adesso ci sarebbe del codice
+che deserializza una pagina di errore - la trappola di `awareness_level` presa un
+giro prima. Al secondo, letta la pagina che gli indirizzi dovrebbe elencarli:
+**nel suo HTML non ce n'e' nessuno**, la lista se la costruisce con JavaScript, e
+il titolo della pagina dice "(Demo)".
+
+Quindi **la fonte mondiale non e' agganciabile cosi' com'e'**, e questo e' il
+punto in cui C1 sta adesso: non un lettore da scrivere, ma un indirizzo da
+trovare. Il candidato che la pagina stessa indica e' il registro delle autorita'
+di allertamento (`alertingauthority.wmo.int`), ed e' quello che la sonda chiede
+adesso. Chi riprende: **non si scrive il lettore finche' un giro non pubblica una
+risposta CAP vera**, ed e' la stessa regola per cui questo passo esiste.
 
 E intanto una cosa che non aspetta nessun indirizzo: fuori copertura la schermata
 scriveva "NESSUNA ALLERTA - non risultano avvisi in corso", cioe' **rassicurava
