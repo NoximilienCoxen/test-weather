@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,6 +26,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
@@ -83,6 +86,19 @@ fun SectionCard(
     state: UiState,
     tilt: State<Offset>,
     layout: MeteoLayout,
+    /**
+     * Falso quando la scheda e' composta ma non la guarda nessuno.
+     *
+     * Il carosello tiene composta anche la scheda accanto per averla pronta a
+     * meta' trascinamento, e un `withFrameNanos` dentro una finestra visibile
+     * continua a battere anche se la sua pagina e' fuori vista. Senza questa
+     * guardia, stando sull'aria la pioggia continuerebbe a cadere in una vasca
+     * che non si vede - e il telefono a vibrare per gocce che nessuno guarda.
+     * E' la stessa ragione del flag della prima scheda (`FeedScreen.kt`), e la
+     * stessa regola: **un tocco che non corrisponde a niente di visibile non e'
+     * un riscontro.**
+     */
+    alive: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -92,64 +108,104 @@ fun SectionCard(
     // non deve girare la luna. Sono oggetti diversi visti da punti diversi.
     val rotation: SceneRotation = rememberSceneRotation()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(start = layout.gutter, end = layout.gutter + RAIL_WIDTH),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = section.title,
-            // `label` e non `caption`: e' la riga che dice di cosa parla la
-            // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
-            // usa questo. Il sottotitolo sotto resta una didascalia, e la
-            // differenza fra le due si vede dalla misura oltre che dal colore.
-            style = MeteoType.label,
-            color = accent,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-        )
-        Text(
-            text = subtitle(state, section),
-            style = MeteoType.caption,
-            color = colors.label,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    // L'aggancio `--ei giro`, che finora arrivava alla sola prima schermata:
+    // `rotation.pin` era chiamata in un posto solo, in `HomeScreen`. Senza,
+    // **nessuna scheda del feed si puo' fotografare girata** - la luna
+    // compresa - e siccome tutta la ragione per cui la vasca della pioggia si
+    // gira e' che girandola si legge la scala incisa, quel giro sarebbe
+    // infotografabile e quindi non verificabile.
+    LaunchedEffect(state.forcedYawDeg) { rotation.pin(state.forcedYawDeg) }
 
-        SectionHero(
-            section = section,
-            state = state,
-            rotation = rotation,
-            tilt = tilt,
-            accent = accent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(HERO_SHARE),
-        )
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        // ── Il centro della scheda e' il centro dello schermo ───────────────
+        //
+        // Non il centro di quel che avanza accanto alla colonna di icone. Il
+        // margine asimmetrico che stava qui - `end = gutter + RAIL_WIDTH` -
+        // spostava titolo, cifra, riquadro e numeri **ventidue punti a
+        // sinistra**, ed e' lo stesso difetto gia' corretto sulla prima scheda:
+        // il commento in `FeedScreen` racconta che li' il margine faceva
+        // sembrare tutto spostato e che adesso la colonna galleggia nel margine
+        // che c'e' gia'. Le altre cinque schede erano rimaste indietro.
+        //
+        // **Un margine simmetrico non sposta il centro: costa solo larghezza.**
+        // Quindi la domanda per ogni riga e' una sola - passa davanti alla
+        // colonna? La colonna e' alta [RAIL_SPAN] e sta a meta' altezza, quindi
+        // le righe in cima e in fondo la scavalcano **se la scheda e' alta
+        // abbastanza**. Sotto quella misura - cioe' in orizzontale, dove la
+        // colonna occupa quasi tutta l'altezza - non la scavalca piu' nessuno,
+        // e l'inserto va sull'intera colonna: resta centrata lo stesso, e non
+        // collide.
+        val railClearsEnds = maxHeight >= RAIL_SPAN + endsBlock() * 2
+        val edgeInset = if (railClearsEnds) 0.dp else RAIL_WIDTH
+        val bodyInset = if (railClearsEnds) RAIL_WIDTH else 0.dp
 
-        Stage(
-            caption = section.stage,
-            color = colors.line,
-            label = colors.label,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(STAGE_SHARE)
-                .padding(vertical = 10.dp),
-        )
+                .fillMaxSize()
+                .padding(horizontal = layout.gutter + edgeInset),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = section.title,
+                // `label` e non `caption`: e' la riga che dice di cosa parla la
+                // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
+                // usa questo. Il sottotitolo sotto resta una didascalia, e la
+                // differenza fra le due si vede dalla misura oltre che dal colore.
+                style = MeteoType.label,
+                color = accent,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            )
+            Text(
+                text = subtitle(state, section),
+                style = MeteoType.caption,
+                color = colors.label,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
 
-        SectionNumbers(
-            section = section,
-            state = state,
-            accent = accent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-        )
+            // Eroe e palco sono le due righe che passano davanti alla
+            // colonna, e l'inserto che se ne tengono lontane e' **simmetrico**:
+            // non le sposta, le stringe. Titolo, sottotitolo e numeri restano a
+            // piena larghezza - la scavalcano - e ci guadagnano i
+            // quarantaquattro punti che il vecchio margine si prendeva: su uno
+            // schermo stretto una colonna dei numeri passa da novantasei a
+            // centodieci punti, e PROBABILITA' smette di rischiare il taglio.
+            SectionHero(
+                section = section,
+                state = state,
+                rotation = rotation,
+                tilt = tilt,
+                accent = accent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(HERO_SHARE)
+                    .padding(horizontal = bodyInset),
+            )
+
+            Stage(
+                caption = section.stage,
+                color = colors.line,
+                label = colors.label,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(STAGE_SHARE)
+                    .padding(horizontal = bodyInset, vertical = 10.dp),
+            )
+
+            SectionNumbers(
+                section = section,
+                state = state,
+                accent = accent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+            )
+        }
     }
 }
 
@@ -570,6 +626,21 @@ private const val MISSING = "--"
  * qualcosa", dice che la scheda e' vuota. Ridotto, resta una fascia dichiarata
  * sotto l'oggetto invece di essere l'oggetto stesso.
  */
+/**
+ * Quanto prendono, in cima e in fondo, le righe che scavalcano la colonna.
+ *
+ * Titolo e sottotitolo da una parte, i tre numeri dall'altra. Cinquantasei
+ * punti coprono il caso peggiore delle due.
+ *
+ * **Segue la scala del carattere di sistema**, e non e' un vezzo: a scala
+ * doppia i tre numeri sono alti novanta punti e non quarantotto, e con una
+ * soglia fissa il caso che questo controllo esiste per evitare rientrerebbe
+ * dalla finestra proprio su chi ha il carattere grande - cioe' su chi ha piu'
+ * bisogno che il conto torni.
+ */
+@Composable
+private fun endsBlock(): Dp = 56.dp * LocalDensity.current.fontScale
+
 private const val HERO_SHARE = 1f
 private const val STAGE_SHARE = 0.62f
 
@@ -596,8 +667,16 @@ private const val SHADOW_PITCH = 5f
  * riempiva la scheda da bordo a bordo e il segnaposto sotto sembrava
  * schiacciato: un oggetto che tocca i margini non si legge come un corpo nel
  * cielo, si legge come una macchia.
+ *
+ * **Da trentadue a trentacinque centesimi con la centratura.** Il raggio e'
+ * frazione del lato corto del riquadro, che qui e' la larghezza, e l'inserto
+ * simmetrico che tiene l'eroe lontano dalla colonna gliene toglie
+ * quarantaquattro punti: a parita' di frazione la luna usciva **un sesto piu'
+ * piccola** di prima, senza che niente lo dicesse. Trentacinque e' un
+ * compromesso e non un ripristino - ci vorrebbe trentotto, cioe' quasi il
+ * quaranta gia' scartato qui sopra - e va guardato in uno scatto, non dedotto.
  */
-private const val MOON_RADIUS = 0.32f
+private const val MOON_RADIUS = 0.35f
 
 private val CORNER = 18.dp
 private val STROKE = 1.dp

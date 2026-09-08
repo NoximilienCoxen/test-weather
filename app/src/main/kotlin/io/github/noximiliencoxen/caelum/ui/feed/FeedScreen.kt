@@ -216,6 +216,12 @@ fun FeedScreen(
                     state = state,
                     tilt = tilt,
                     layout = layout,
+                    // `currentPage` e non `settledPage`: la scheda che si vede
+                    // e' quella corrente, e la posata cambia troppo tardi - la
+                    // pioggia della vasca comincerebbe a cadere solo dopo che
+                    // il dito si e' staccato. E' la stessa lettura, sulla
+                    // stessa riga, del flag della prima scheda qui sopra.
+                    alive = pagerState.currentPage == page,
                     modifier = Modifier.systemBarsPadding(),
                 )
             }
