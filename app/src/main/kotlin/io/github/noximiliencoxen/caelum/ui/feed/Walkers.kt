@@ -6,6 +6,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.lerp
+import io.github.noximiliencoxen.caelum.ui.theme.CONTRAST_AA_LARGE
+import io.github.noximiliencoxen.caelum.ui.theme.onColor
+import io.github.noximiliencoxen.caelum.ui.theme.readableOn
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
@@ -30,18 +34,19 @@ import kotlin.math.sin
  * geometria disegnata a mano, i profili delle coste del globo: numeri in fila,
  * non `Path` scritti riga per riga.
  *
- * **Cosa dicono, oltre a essere belle.** Non sono un salvaschermo: **quanti
- * hanno l'ombrello aperto e' la probabilita' di pioggia**, e quanto vanno curvi
- * e' l'intensita'. Con il sereno camminano dritti e l'ombrello resta chiuso, che
- * e' anche il motivo per cui la strada non e' vuota nelle giornate belle.
+ * **Cosa dicono, oltre a essere belle.** Non sono un salvaschermo: **chi ha
+ * l'ombrello aperto** dice se in quell'ora piove e quanto e' probabile che
+ * piova, e quanto vanno curvi dice l'intensita'. Con il sereno camminano dritti
+ * e l'ombrello resta chiuso, che e' anche il motivo per cui la strada non e'
+ * vuota nelle giornate belle.
  */
 
 /**
  * Una sagoma: profilo rivolto a destra, dal taglio del busto alla cima del capo.
  *
- * Sedici punti bastano perche' a questa misura - novanta punti scarsi di altezza
- * - il naso e' due pixel. Quello che si legge e' la nuca, la spalla e il petto;
- * il resto e' fiducia.
+ * Sedici punti bastano perche' a questa misura - una cinquantina di punti di
+ * altezza - il naso e' un pixel. Quello che si legge e' la nuca, la spalla e il
+ * petto; il resto e' fiducia.
  */
 private val BUSTO_CAPPUCCIO = floatArrayOf(
     -0.30f, 0.00f, -0.29f, 0.34f, -0.27f, 0.55f, -0.24f, 0.66f,
@@ -71,17 +76,25 @@ private val BUSTO_CODA = floatArrayOf(
 private val SAGOME = listOf(BUSTO_CAPPUCCIO, BUSTO_SCOPERTO, BUSTO_CODA)
 
 /**
- * Chi passa: quale sagoma, in che corsia, a che velocita', da che parte.
+ * Chi passa: quale sagoma, in che corsia, quante traversate, da che parte.
  *
- * Sono sei, seminati a mano e non a caso: la corsia decide la misura e la
- * velocita' insieme - piu' lontano vuol dire piu' piccolo e piu' lento - e le
- * fasi sono sparse perche' non partano in fila.
+ * Sono quattro, seminati a mano e non a caso. Erano sei, e sei in un'apertura
+ * larga duecentocinquanta punti sono una folla schiacciata contro il vetro:
+ * quattro, con le corsie e le fasi distanti, sono una via.
  */
 private class Walker(
     val shape: Int,
-    /** 0 lontano, 1 vicino. Decide misura, velocita' e quanto e' sbiadito. */
+    /** 0 lontano, 1 vicino. Decide misura e quanto e' sbiadito. */
     val lane: Float,
     val phase: Float,
+    /**
+     * Quante volte traversa a ogni giro dell'orologio lento. **E' un intero, e
+     * dev'esserlo**: e' quello che rende invisibile il ritorno a zero.
+     * Chi sta piu' vicino ne fa due, e cosi' la corsia vicina e' anche la piu'
+     * veloce - la parallasse fatta con la velocita' invece che con la
+     * geometria, che a questa scala e' quella che si legge.
+     */
+    val laps: Int,
     /** Vero se cammina verso destra. Al contrario la sagoma si specchia. */
     val rightward: Boolean,
     /** Se ha l'ombrello, quando serve. Chi non ce l'ha resta senza anche sotto l'acqua. */
@@ -89,62 +102,121 @@ private class Walker(
 )
 
 private val WALKERS = listOf(
-    Walker(0, 1.00f, 0.05f, rightward = true, hasUmbrella = true),
-    Walker(1, 0.62f, 0.38f, rightward = false, hasUmbrella = true),
-    Walker(2, 0.85f, 0.71f, rightward = true, hasUmbrella = true),
-    Walker(1, 0.40f, 0.22f, rightward = true, hasUmbrella = false),
-    Walker(0, 0.72f, 0.90f, rightward = false, hasUmbrella = true),
-    Walker(2, 0.48f, 0.55f, rightward = false, hasUmbrella = true),
+    Walker(0, 1.00f, 0.05f, laps = 2, rightward = true, hasUmbrella = true),
+    Walker(1, 0.44f, 0.61f, laps = 1, rightward = false, hasUmbrella = true),
+    Walker(2, 0.78f, 0.33f, laps = 2, rightward = false, hasUmbrella = true),
+    Walker(1, 0.60f, 0.86f, laps = 1, rightward = true, hasUmbrella = false),
 )
+
+/**
+ * I colori della via e di chi ci cammina, ricavati dal cielo di quell'ora.
+ *
+ * **Le sagome sono scure per scelta**: una silhouette e' un buco nella luce, non
+ * una figura grigia. Ma quattro buchi neri su un cielo notturno si fondono in
+ * una macchia sola, e la risposta non e' schiarire la gente - **e' accendere la
+ * strada**, che e' anche come stanno le cose davvero: di notte una via e'
+ * illuminata, ed e' per questo che chi ci passa ci si staglia contro.
+ *
+ * Quindi la via si ricava **dalle sagome**, con lo stesso attrezzo con cui
+ * questo progetto sceglie il colore di ogni segno disegnato sul cielo.
+ *
+ * **Non e' roba da fotogramma.** `readableOn` costa una manciata di elevamenti a
+ * potenza per passo, e la sua documentazione lo dice: va chiamata una volta per
+ * ora mostrata, dentro il `remember` di chi disegna, non dentro il disegno.
+ */
+internal class StreetInk(
+    /** Le sagome. */
+    val figure: Color,
+    /** Gli ombrelli: un gradino sopra le sagome, se no la calotta sparisce nella testa. */
+    val umbrella: Color,
+    /** L'asfalto. */
+    val road: Color,
+    /** I riflessi sull'asfalto bagnato. */
+    val sheen: Color,
+)
+
+/** I colori della via sotto un cielo di quel colore. */
+internal fun streetInk(sky: Color): StreetInk {
+    val figure = lerp(sky, Color.Black, FIGURE_INK)
+    val road = sky.readableOn(figure, CONTRAST_AA_LARGE)
+    return StreetInk(
+        figure = figure,
+        umbrella = lerp(sky, Color.Black, UMBRELLA_INK),
+        road = road,
+        // Bianco o nero secondo cosa si vede sull'asfalto: su una via accesa
+        // dalla notte un riflesso bianco non c'e' piu', e il riflesso e' il
+        // segno che dice che e' bagnata.
+        sheen = road.onColor(),
+    )
+}
 
 /**
  * La via sotto la finestra.
  *
- * [chance] e' la probabilita' di pioggia da 0 a 1, ed e' cio' che decide **quanti
- * ombrelli sono aperti**: e' l'unico modo che questa scena ha di dire una cosa
- * che i numeri in fondo dicono in cifre, e di dirla senza scriverla.
+ * [walk] e' l'**orologio lento**, quello che avanza invece di ripetersi: la
+ * pioggia gira su un ciclo di un secondo e mezzo, e leggere quel ciclo come se
+ * fosse il tempo vuol dire tornare indietro di un pezzo di traversata ogni volta
+ * che ricomincia. E' il tremolio che si vedeva.
+ *
+ * [chance] e' la probabilita' di pioggia da 0 a 1, ed e' cio' che decide quanti
+ * ombrelli sono aperti **quando ancora non piove**.
  */
 internal fun DrawScope.drawWalkers(
     bounds: Size,
     origin: Offset,
-    progress: Float,
+    walk: Float,
     /** Da 0 a 1: quanto forte piove. Piega le schiene e inclina gli ombrelli. */
     wetness: Float,
-    /** Da 0 a 1: quanti ombrelli sono aperti. */
+    /** Da 0 a 1: quanti ombrelli sono aperti anche senza acqua. */
     chance: Float,
-    ink: Color,
-    umbrella: Color,
+    ink: StreetInk,
 ) {
     val street = origin.y + bounds.height
     val tall = bounds.height * WALKER_TALL
 
     for ((index, w) in WALKERS.withIndex()) {
-        // Piu' vicino, piu' veloce: e' la parallasse fatta con la velocita'
-        // invece che con la geometria, ed e' quella che a questa scala si legge.
-        val speed = WALK_SLOW + w.lane * (WALK_FAST - WALK_SLOW)
-        val travel = (w.phase + progress * speed) % 1f
+        // **Il giro chiude per costruzione.** Quando `walk` torna da 1 a 0,
+        // `walk * laps` cala di un intero, e il resto su 1 non se ne accorge:
+        // il passante prosegue dov'era invece di scattare indietro. E' il
+        // motivo per cui `laps` e' un intero e non una velocita'.
+        val travel = (w.phase + walk * w.laps) % 1f
         val across = if (w.rightward) travel else 1f - travel
 
         val scale = tall * (0.62f + w.lane * 0.38f)
-        val x = origin.x - bounds.width * 0.15f + across * bounds.width * 1.30f
+        // Fuori dall'apertura di tutta la sua mezza larghezza - ombrello
+        // compreso, che e' la parte piu' larga - se no il rientro si vede.
+        // Ricavato e non scelto: con il margine scritto a mano l'ombrello era
+        // piu' largo del margine, e spuntava.
+        val margin = scale * (UMBRELLA_WIDE + LEAN)
+        val x = origin.x - margin + across * (bounds.width + margin * 2f)
         // Il saliscendi del passo: senza gambe e' l'unica cosa che dice che sta
-        // camminando invece di scivolare.
+        // camminando invece di scivolare. I passi per traversata sono interi
+        // anche loro, se no il giro chiuderebbe nella posizione e non nel passo.
         val bob = sin(travel * PI.toFloat() * 2f * STEPS_PER_CROSSING) * scale * BOB
         val feet = street + bob
 
-        // Piu' lontano, piu' sbiadito: e' l'aria che sta in mezzo.
+        // Piu' lontano, piu' sbiadito: e' l'aria che sta in mezzo, ed e' quello
+        // che separa una figura dall'altra senza contorni.
         val fade = 0.30f + w.lane * 0.55f
         // Sotto l'acqua si cammina curvi, e piu' forte piove piu' ci si piega.
         val lean = (if (w.rightward) 1f else -1f) * wetness * LEAN
 
-        val open = w.hasUmbrella && chance > (index + 0.5f) / WALKERS.size
+        // **Se piove, l'ombrello e' aperto.** Prima lo decideva la sola
+        // probabilita', ed era la domanda sbagliata: la probabilita' dice se
+        // piovera', ma la scena mostra **un'ora**, e in quell'ora o piove o non
+        // piove. Con il codice imposto degli scatti - pioggia certa, previsione
+        // a zero - si vedeva la scena piovere con quattro persone a spasso
+        // senza niente in mano. La probabilita' resta a decidere **quanti** si
+        // coprono quando l'acqua non e' ancora arrivata, che e' la lettura
+        // giusta di "il modello non lo esclude".
+        val open = w.hasUmbrella && (wetness > 0f || chance > (index + 0.5f) / WALKERS.size)
         drawWalker(
             shape = SAGOME[w.shape],
             centre = Offset(x, feet),
             scale = scale,
             mirrored = !w.rightward,
             lean = lean,
-            ink = ink.copy(alpha = fade),
+            ink = ink.figure.copy(alpha = fade),
         )
         if (open) {
             drawUmbrella(
@@ -155,7 +227,7 @@ internal fun DrawScope.drawWalkers(
                 // esatto sembrerebbe incollato alla testa.
                 sway = sin(travel * PI.toFloat() * 2f * STEPS_PER_CROSSING - 0.9f) * SWAY,
                 lean = lean,
-                colour = umbrella.copy(alpha = fade),
+                colour = ink.umbrella.copy(alpha = fade),
             )
         }
     }
@@ -231,22 +303,24 @@ private fun DrawScope.drawUmbrella(
 }
 
 /**
- * La linea della via, e le pozze che ci stanno sopra.
+ * La via sotto la finestra, e le pozze che ci stanno sopra.
  *
- * Serve perche' senza le sagome galleggiano: una figura tagliata a meta' in
+ * Serve perche' senza, le sagome galleggiano: una figura tagliata a meta' in
  * mezzo al cielo si legge come un errore di ritaglio, non come qualcuno visto
- * da una finestra.
+ * da una finestra. **E serve anche come fondo**: e' la fascia contro cui le
+ * sagome si staccano, e per questo e' alta abbastanza da prendere i busti e
+ * lasciare al cielo solo le teste.
  */
 internal fun DrawScope.drawStreet(
     bounds: Size,
     origin: Offset,
     wetness: Float,
-    ink: Color,
+    road: Color,
     sheen: Color,
 ) {
     val street = origin.y + bounds.height
     drawRect(
-        color = ink.copy(alpha = 0.55f),
+        color = road,
         topLeft = Offset(origin.x, street - bounds.height * STREET_BAND),
         size = Size(bounds.width, bounds.height * STREET_BAND),
     )
@@ -267,23 +341,34 @@ internal fun DrawScope.drawStreet(
     }
 }
 
-/** Quanto e' alta una sagoma della corsia piu' vicina, sull'apertura. */
-private const val WALKER_TALL = 0.30f
+/**
+ * Quanto e' alta una sagoma della corsia piu' vicina, sull'apertura.
+ *
+ * Era 0,30, cioe' un terzo della finestra, e una persona alta un terzo della
+ * finestra e' una persona **dentro la stanza**. Questa e' la misura di qualcuno
+ * visto dall'altra parte della via.
+ */
+private const val WALKER_TALL = 0.16f
 
-/** Quanti passi in una traversata: e' quello che regola il saliscendi. */
-private const val STEPS_PER_CROSSING = 9f
+/** Quanti passi in una traversata: **intero**, se no il giro non chiude nel passo. */
+private const val STEPS_PER_CROSSING = 24f
 
 private const val BOB = 0.022f
 private const val LEAN = 0.13f
 private const val SWAY = 0.06f
 
-/** Quanto ci mette a traversare, dal fondo alla corsia vicina. */
-private const val WALK_SLOW = 0.055f
-private const val WALK_FAST = 0.115f
-
 private const val UMBRELLA_HIGH = 1.16f
 private const val UMBRELLA_WIDE = 0.46f
 private const val UMBRELLA_DROP = 0.13f
 
-/** Quanta parte in basso dell'apertura e' via, e non cielo. */
-private const val STREET_BAND = 0.14f
+/** Quanto le sagome sono piu' scure del cielo dietro, e gli ombrelli con loro. */
+private const val FIGURE_INK = 0.85f
+private const val UMBRELLA_INK = 0.70f
+
+/**
+ * Quanta parte in basso dell'apertura e' via, e non cielo.
+ *
+ * Presa alta apposta: i busti stanno contro l'asfalto, che e' il fondo che li
+ * fa leggere, e al cielo restano solo le teste.
+ */
+private const val STREET_BAND = 0.20f

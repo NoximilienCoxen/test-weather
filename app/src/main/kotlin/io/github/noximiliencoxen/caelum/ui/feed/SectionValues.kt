@@ -85,10 +85,10 @@ internal fun heroValue(section: FeedSection, state: UiState): String? {
         FeedSection.TEMPERATURA -> hour?.temperature?.let { it.asBigDegrees(state.unit) }
 
         // La pioggia non ha piu' una cifra da estrudere, come la luna: il suo
-        // eroe e' la vasca, e il numero sta inciso accanto al livello
-        // dell'acqua, dove una scala gli da' un senso che una cifra sola non
-        // ha. Chi disegna la vasca fa il proprio controllo sui dati, perche'
-        // gli serve il giorno intero e non una stringa.
+        // eroe e' la finestra sull'ora scelta, e i millimetri stanno fra i tre
+        // numeri in fondo, dove sono un numero come gli altri. Chi disegna la
+        // finestra fa il proprio controllo sui dati, perche' gli serve l'ora
+        // intera e non una stringa.
         FeedSection.PRECIPITAZIONI -> null
 
         FeedSection.ARIA -> state.air?.index?.toString()

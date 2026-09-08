@@ -48,7 +48,7 @@ internal fun precipKindOf(day: DayForecast, forcedCode: Int? = null): PrecipKind
     }
 }
 
-/** Vero se la vasca e la fascia vanno lette in centimetri invece che in millimetri. */
+/** Vero se la fascia e i numeri vanno letti in centimetri invece che in millimetri. */
 internal fun PrecipKind.isSnowy(): Boolean = this == PrecipKind.SNOW
 
 // ---------------------------------------------------------------------------
@@ -68,9 +68,11 @@ internal fun PrecipKind.isSnowy(): Boolean = this == PrecipKind.SNOW
  * legge, e quello che si legge va scritto - il soffitto scelto sta in chiaro
  * sulla fascia.
  *
- * **Il soffitto della fascia non ha niente a che vedere con il colmo della
- * vasca**: uno misura millimetri in un'ora, l'altro millimetri in un giorno, e
- * stanno su due righe diverse. Non vanno unificati.
+ * **E non ha niente a che vedere con il totale del giorno** che sta fra i
+ * numeri in fondo: uno misura millimetri in un'ora, l'altro millimetri in un
+ * giorno. Erano due righe diverse quando il totale stava dentro una vasca
+ * graduata, e restano due righe diverse adesso che e' un numero. Non vanno
+ * unificati.
  */
 internal val BAND_STEPS_MM = doubleArrayOf(4.0, 10.0, 30.0)
 
@@ -81,8 +83,9 @@ internal val BAND_STEPS_CM = doubleArrayOf(1.0, 3.0, 8.0)
  * Il primo gradino che contiene il massimo orario del giorno.
  *
  * Oltre l'ultimo si resta li' e la colonna viene tagliata: chi disegna lo
- * dichiara con una tacca in cima, che e' la stessa scelta della vasca che
- * trabocca invece di ritarare la scala.
+ * dichiara con una tacca in cima, invece di ritarare la scala. Una scala che si
+ * riscala da sola non e' una scala, e due giornate affiancate smetterebbero di
+ * essere confrontabili - che e' l'unica ragione per averne una.
  */
 internal fun bandCeiling(peak: Double, snow: Boolean = false): Double {
     val steps = if (snow) BAND_STEPS_CM else BAND_STEPS_MM

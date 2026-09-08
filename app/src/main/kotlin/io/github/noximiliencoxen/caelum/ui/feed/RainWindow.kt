@@ -104,6 +104,11 @@ internal fun RainWindow(
         }
         skyColors(sky, Wmo.cloudiness(code))
     }
+    // I colori della via e di chi ci passa: si ricavano dal cielo di
+    // quell'ora, e **si ricavano qui**. `readableOn` costa una manciata di
+    // elevamenti a potenza per passo, e la sua documentazione dice a chiare
+    // lettere che non e' roba da chiamare a ogni fotogramma.
+    val ink = remember(outside.skyHorizon) { streetInk(outside.skyHorizon) }
     val journey = remember(hour?.time, day?.sunrise, day?.sunset) {
         val moment = hour?.time ?: return@remember 0.5f
         SunClock.journey(moment, day?.sunrise, day?.sunset)
@@ -114,7 +119,7 @@ internal fun RainWindow(
     }
     val phase = remember(day?.date) { MoonPhase.at(day?.date ?: LocalDate.now()) }
 
-    // ── L'orologio della scena ──────────────────────────────────────────────
+    // ── Gli orologi della scena ─────────────────────────────────────────────
     //
     // Esplicito, mai `rememberInfiniteTransition`: su questa app e' gia' stato
     // misurato **non animare affatto** - le gocce sembravano cadere e invece
@@ -131,11 +136,27 @@ internal fun RainWindow(
     // dentro una finestra che nessuno vede. Va misurata, non dedotta:
     // `dumpsys gfxinfo`, quattro secondi sulla scheda accanto, e i fotogrammi
     // devono tornare a zero.
+    //
+    // **E gli orologi sono due**, per un difetto gia' pagato.
+    //
+    // Ce n'era uno solo: un dente di sega da 0 a 1 ogni secondo e mezzo. Per la
+    // pioggia va benissimo, perche' la pioggia **si ripete**: una goccia esce
+    // dal fondo e ne rinasce una in cima, e il ritorno a zero non si vede.
+    //
+    // Ma la gente che cammina non si ripete, **avanza**. Leggendo quel ciclo
+    // come se fosse il tempo, ogni passante faceva un decimo di traversata e
+    // poi tornava indietro insieme a tutti gli altri, ogni secondo e mezzo: non
+    // una via, un tremolio sul posto. Serviva un secondo orologio, lento quanto
+    // una traversata - e serviva che il suo ritorno a zero fosse invisibile
+    // **per costruzione**, che e' quello che fanno le traversate intere in
+    // `Walkers.kt`.
     val fall = remember { mutableFloatStateOf(0f) }
+    val stroll = remember { mutableFloatStateOf(0f) }
     val running = alive
     LaunchedEffect(running) {
         if (!running) {
             fall.floatValue = 0f
+            stroll.floatValue = 0f
             return@LaunchedEffect
         }
         var origin = 0L
@@ -143,7 +164,10 @@ internal fun RainWindow(
             withFrameNanos { now ->
                 if (origin == 0L) origin = now
                 val elapsed = (now - origin) / 1_000_000L
+                // Due numeri scritti nello stesso fotogramma invece di uno: il
+                // costo di questo e' zero, e sono letti solo dentro il disegno.
                 fall.floatValue = (elapsed % SCENE_CYCLE_MS) / SCENE_CYCLE_MS.toFloat()
+                stroll.floatValue = (elapsed % WALK_CYCLE_MS) / WALK_CYCLE_MS.toFloat()
             }
         }
     }
@@ -193,13 +217,13 @@ internal fun RainWindow(
                 phase = phase,
                 night = altitude < 0f,
                 progress = fall.floatValue,
+                walk = stroll.floatValue,
                 wetness = wetness,
                 kind = kind,
                 rain = room.rain,
                 flake = room.cloudCore,
                 chance = (hour?.precipProbability ?: 0) / 100f,
-                walkerInk = outside.skyHorizon,
-                street = outside.skyHorizon,
+                ink = ink,
             )
         }
     }
@@ -233,14 +257,16 @@ private fun DrawScope.drawWindow(
     altitude: Float,
     phase: Float,
     night: Boolean,
+    /** Il ciclo della pioggia: si ripete, e il suo ritorno a zero non si vede. */
     progress: Float,
+    /** L'orologio lento della via: avanza, e chiude il giro senza scatti. */
+    walk: Float,
     wetness: Float,
     kind: PrecipKind,
     rain: Color,
     flake: Color,
     chance: Float,
-    walkerInk: Color,
-    street: Color,
+    ink: StreetInk,
 ) {
     val depth = halfWide * BLOCK_DEPTH
     val openWide = halfWide * OPENING_WIDE
@@ -300,17 +326,16 @@ private fun DrawScope.drawWindow(
             bounds = Size(bounds.width, bounds.height),
             origin = Offset(bounds.left, bounds.top),
             wetness = wetness,
-            ink = lerp(street, Color.Black, 0.55f),
-            sheen = Color.White,
+            road = ink.road,
+            sheen = ink.sheen,
         )
         drawWalkers(
             bounds = Size(bounds.width, bounds.height),
             origin = Offset(bounds.left, bounds.top),
-            progress = progress,
+            walk = walk,
             wetness = wetness,
             chance = chance,
-            ink = lerp(walkerInk, Color.Black, 0.70f),
-            umbrella = lerp(walkerInk, Color.Black, 0.45f),
+            ink = ink,
         )
         drawBehindGlass(
             bounds = Size(bounds.width, bounds.height),
@@ -460,7 +485,14 @@ private fun DrawScope.drawAstro(
     moonShade: Color,
 ) {
     val x = (journey * 2f - 1f) * openWide * ASTRO_SPAN
-    val y = -altitude.coerceIn(-1f, 1f) * openTall * ASTRO_RISE
+    // **Da una finestra si vede la fetta alta di cielo**, ed e' cosi' che sono
+    // fatte le finestre: l'orizzonte lo copre il muro di fronte. Prima l'altezza
+    // comandava tutta l'apertura, e con l'astro basso - la notte, l'alba, il
+    // tramonto - la luna finiva in mezzo alla gente che passa. Adesso l'altezza
+    // muove l'astro **dentro la meta' alta**: l'informazione resta - piu' alto
+    // il sole, piu' in alto sta - e sotto il pavimento non scende mai.
+    val high = (altitude.coerceIn(-1f, 1f) + 1f) * 0.5f
+    val y = -(ASTRO_FLOOR + high * (ASTRO_RISE - ASTRO_FLOOR)) * openTall
     val z = depth * ASTRO_DEPTH
     val radius = unit * ASTRO_RADIUS
 
@@ -504,12 +536,26 @@ private const val CHAMFER = 0.008f
 /** Il giro completo delle gocce, in millisecondi. */
 private const val SCENE_CYCLE_MS = 1400L
 
+/**
+ * Il giro dell'orologio lento, in millisecondi: una traversata della corsia
+ * lontana, due di quella vicina.
+ *
+ * Venti secondi e non due: chi passa sotto una finestra cammina, e una
+ * traversata di due secondi sarebbe gente che scappa.
+ */
+private const val WALK_CYCLE_MS = 20000L
+
 /** Quanto l'inclinazione del telefono piega la scena, in gradi. */
 private const val WINDOW_TILT = 4f
 
 /** Dove sta l'astro dentro il foro, e quanto e' grande. */
 private const val ASTRO_SPAN = 0.62f
-private const val ASTRO_RISE = 0.58f
+
+/** Il piu' in alto che arriva, col sole a picco. */
+private const val ASTRO_RISE = 0.82f
+
+/** Il piu' in basso, e resta comunque sopra le teste di chi passa. */
+private const val ASTRO_FLOOR = 0.30f
 private const val ASTRO_DEPTH = 6f
 private const val ASTRO_RADIUS = 0.085f
 
