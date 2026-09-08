@@ -220,9 +220,25 @@ def who_answered(name: str, lat: float, lon: float) -> str:
     if reference is None:
         return f"  {name:14s} best_match NON RISPONDE qui"
     matches = [m for m in NATIONAL if fingerprint(m, lat, lon) == reference]
+    return when_matched(name, matches)
+
+
+def when_matched(name: str, matches: list) -> str:
+    """Come si dice il risultato, compreso il caso in cui non e' uno solo.
+
+    Piu' nomi non vuol dire "e' uno di questi": vuol dire che **qui non si
+    distinguono**, perche' fuori dal proprio dominio piu' fornitori servono lo
+    stesso modello globale e danno gli stessi identici decimali. Scriverli in
+    fila come alternative farebbe leggere una scelta dove c'e' una coincidenza.
+    """
     if not matches:
         return f"  {name:14s} best_match = ? (nessun candidato coincide)"
-    return f"  {name:14s} best_match = {', '.join(matches)}"
+    if len(matches) == 1:
+        return f"  {name:14s} best_match = {matches[0]}"
+    return (
+        f"  {name:14s} best_match indistinguibile fra {', '.join(matches)} "
+        f"(stessi valori: qui servono tutti lo stesso modello globale)"
+    )
 
 
 def coverage(name: str, lat: float, lon: float) -> list:

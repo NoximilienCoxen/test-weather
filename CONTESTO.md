@@ -347,6 +347,22 @@ vale piu' della prima: una variabile accettata ma non riempita torna come una
 colonna di `null`, e chi la disegna ci vede una linea a zero - cioe' una
 previsione di niente invece di un "non lo so".
 
+**Misurato, e non piu' supposto** (`ci-artifacts:api/modelli.txt`):
+
+| punto | chi risponde sotto `best_match` |
+|---|---|
+| Tokyo | `jma_seamless` — **JMA c'e' gia'** |
+| New York | `gfs_seamless` (NOAA/NWS) |
+| Oslo | `metno_seamless` |
+| Noceto | `icon_seamless` (DWD) |
+| Nairobi, Citta' del Capo, Sydney, San Paolo, Delhi, Singapore | indistinguibile fra `metno_seamless` e `knmi_seamless`: fuori dai loro domini servono lo stesso modello globale e danno gli stessi identici decimali |
+
+E la risposta che serviva alla scheda della pioggia: su **tutti** i punti tornano
+centosessantotto ore e sette giorni, **nessuna variabile assente e nessuna
+colonna tutta nulla**. `precipitation_probability` c'e' ovunque, quindi la curva
+della fascia non esce vuota da nessuna parte. Reykjavik e' l'unica riga senza
+risposta, e per un timeout TLS della CI: e' un guasto di rete, non un dato.
+
 **I buchi veri sono due, e nessuno dei due e' la previsione.**
 
 *L'aria si misurava sempre con la scala europea.* Il dato e' mondiale, la scala
