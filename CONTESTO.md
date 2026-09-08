@@ -2189,18 +2189,26 @@ finestra visibile continua a battere anche per una pagina fuori vista.
 giro degli scatti, `dumpsys gfxinfo` conta i fotogrammi di quattro secondi due
 volte: con la pioggia in scena, e con la scheda dell'aria in scena, cioe' con la
 pioggia **composta ma fuori vista** - che e' esattamente il caso per cui la
-guardia esiste. Misurato: **55 fotogrammi contro 1**.
+guardia esiste. Misurato: **55 contro 1** al primo giro, **60 contro 0** al
+secondo - e i due giri insieme dicono piu' di ciascuno da solo.
 
-**E l'uno non e' una perdita.** La soglia chiedeva lo zero esatto, e quello era
-il criterio sbagliato: un **orologio** che gira produce un flusso di fotogrammi,
-non un fotogramma solo. Quell'uno e' una ricomposizione di passaggio, e sulla
-scheda dell'aria si spiega da se' - la qualita' dell'aria arriva da una richiesta
-a parte, e quando arriva ridisegna una volta. Adesso la prova chiede quello che
-vuole davvero sapere: che di la' un orologio giri, e che di qua non ne giri
-nessuno.
+**E l'uno non era una perdita.** La soglia chiedeva lo zero esatto e il primo
+giro ha stampato un avviso; ma un **orologio** che gira produce un flusso di
+fotogrammi, non un fotogramma solo. Quell'uno era una ricomposizione di
+passaggio - sulla scheda dell'aria si spiega da se', perche' la qualita' dell'aria
+arriva da una richiesta a parte e quando arriva ridisegna una volta - e il giro
+dopo, senza toccare l'app, ha dato zero. **Un valore che oscilla fra zero e uno e'
+rumore**, ed e' esattamente per questo che pretendere lo zero esatto avrebbe reso
+la prova capricciosa: avrebbe suonato l'allarme a caso, che e' il modo piu'
+sicuro perche' nessuno le creda piu'. Adesso chiede quello che vuole davvero
+sapere: che di la' un orologio giri, e che di qua non ne giri nessuno.
 
-Il numero di sinistra dice anche un'altra cosa: 55 fotogrammi in quattro secondi
-sono **quattordici al secondo**, non sessanta. E' l'emulatore, che rende via
+I due numeri finiscono anche in `misure.txt`, accanto agli scatti: un numero che
+si legge solo scorrendo diecimila righe di registro e' un numero che nessuno
+rilegge.
+
+Il numero di sinistra dice anche un'altra cosa: sessanta fotogrammi in quattro
+secondi sono **quindici al secondo**, non sessanta. E' l'emulatore, che rende via
 software - ed e' la prova, in cifre, che di li' non esce nessun giudizio sul
 costo per fotogramma.
 
