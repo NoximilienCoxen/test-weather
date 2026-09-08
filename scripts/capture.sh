@@ -612,14 +612,27 @@ session() {
     # Quindi si chiede quello che si vuole davvero sapere: che di la' un
     # orologio giri, e che di qua non ne giri nessuno.
     if [ "${guardata:-0}" -gt 10 ] 2>/dev/null && [ "${accanto:-99}" -le 3 ] 2>/dev/null; then
-      echo "    la guardia tiene: si muove solo mentre la si guarda"
+      esito="la guardia tiene: si muove solo mentre la si guarda"
     else
-      echo "    ATTENZIONE: la guardia non si comporta come dichiarato"
+      esito="ATTENZIONE: la guardia non si comporta come dichiarato"
     fi
-    # E il conto di sinistra dice anche un'altra cosa, che vale ricordare: 55
-    # fotogrammi in quattro secondi sono quattordici al secondo, non sessanta.
-    # E' l'emulatore, che rende via software. **Da qui non si ricava nessun
-    # giudizio sul costo per fotogramma**: quello si prende in mano.
+    echo "    $esito"
+    # Scritta anche accanto agli scatti, non solo nel registro del job: un
+    # numero che si legge solo scorrendo diecimila righe di log e' un numero
+    # che nessuno rilegge.
+    {
+      echo "la guardia della scheda della pioggia"
+      echo "  fotogrammi in 4s, pioggia in scena:  ${guardata:-?}"
+      echo "  fotogrammi in 4s, pioggia accanto:   ${accanto:-?}"
+      echo "  $esito"
+      echo
+      echo "Il primo numero non dice niente sul costo per fotogramma: qui rende"
+      echo "l'emulatore, via software. Quello si prende in mano."
+    } > "$OUT/misure.txt"
+    # E il conto di sinistra dice anche un'altra cosa, che vale ricordare:
+    # sessanta fotogrammi in quattro secondi sono quindici al secondo, non
+    # sessanta. E' l'emulatore, che rende via software. **Da qui non si ricava
+    # nessun giudizio sul costo per fotogramma**: quello si prende in mano.
 
   fi
 
