@@ -120,14 +120,19 @@ internal fun RainWindow(
     // misurato **non animare affatto** - le gocce sembravano cadere e invece
     // l'app disegnava zero fotogrammi.
     //
-    // Gira mentre la scheda si guarda **e c'e' qualcosa che si muove**. Oggi
-    // quel qualcosa e' solo il tempo: con il sereno non c'e' niente da animare,
-    // e un orologio che batte per non muovere niente e' batteria buttata. Quando
-    // arrivera' la strada con la gente sotto gli ombrelli la condizione si
-    // allarghera' a loro, ed e' li' che questa scheda diventera' l'eccezione
-    // dichiarata alla regola dei zero fotogrammi da fermo.
+    // **Qui questa scheda diventa l'eccezione dichiarata** alla regola per cui
+    // da fermo l'app disegna zero fotogrammi. Da quando c'e' la gente che passa,
+    // qualcosa si muove sempre - anche con il sereno, dove camminano con
+    // l'ombrello chiuso - e spegnere la via nelle giornate belle vorrebbe dire
+    // una strada di manichini fermi, che e' peggio di una strada vuota.
+    //
+    // L'eccezione vale **solo mentre la scheda si guarda**: `alive` la spegne
+    // appena il carosello passa oltre, e senza quella guardia si camminerebbe
+    // dentro una finestra che nessuno vede. Va misurata, non dedotta:
+    // `dumpsys gfxinfo`, quattro secondi sulla scheda accanto, e i fotogrammi
+    // devono tornare a zero.
     val fall = remember { mutableFloatStateOf(0f) }
-    val running = alive && wetness > 0f
+    val running = alive
     LaunchedEffect(running) {
         if (!running) {
             fall.floatValue = 0f
@@ -192,6 +197,9 @@ internal fun RainWindow(
                 kind = kind,
                 rain = room.rain,
                 flake = room.cloudCore,
+                chance = (hour?.precipProbability ?: 0) / 100f,
+                walkerInk = outside.skyHorizon,
+                street = outside.skyHorizon,
             )
         }
     }
@@ -230,6 +238,9 @@ private fun DrawScope.drawWindow(
     kind: PrecipKind,
     rain: Color,
     flake: Color,
+    chance: Float,
+    walkerInk: Color,
+    street: Color,
 ) {
     val depth = halfWide * BLOCK_DEPTH
     val openWide = halfWide * OPENING_WIDE
@@ -281,6 +292,25 @@ private fun DrawScope.drawWindow(
             sunShade = sunShade,
             moonCore = moonCore,
             moonShade = moonShade,
+        )
+        // La via e la gente stanno **fra il cielo e la pioggia**: la pioggia le
+        // passa davanti, ed e' cosi' che si legge la profondita' senza doverla
+        // simulare.
+        drawStreet(
+            bounds = Size(bounds.width, bounds.height),
+            origin = Offset(bounds.left, bounds.top),
+            wetness = wetness,
+            ink = lerp(street, Color.Black, 0.55f),
+            sheen = Color.White,
+        )
+        drawWalkers(
+            bounds = Size(bounds.width, bounds.height),
+            origin = Offset(bounds.left, bounds.top),
+            progress = progress,
+            wetness = wetness,
+            chance = chance,
+            ink = lerp(walkerInk, Color.Black, 0.70f),
+            umbrella = lerp(walkerInk, Color.Black, 0.45f),
         )
         drawBehindGlass(
             bounds = Size(bounds.width, bounds.height),

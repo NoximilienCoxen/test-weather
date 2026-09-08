@@ -222,7 +222,7 @@ fun SectionCard(
                     hours = state.pageHours,
                     selectedHour = state.detailHour?.time?.hour,
                     nowHour = state.nowHourOnShownDay,
-                    kind = state.pageDay?.let { precipKindOf(it) } ?: PrecipKind.NONE,
+                    kind = state.pageDay?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE,
                     forcedCode = state.forcedWeatherCode,
                     accent = accent,
                     compact = layout.compact,
@@ -513,7 +513,7 @@ private fun SectionNumbers(
         FeedSection.TEMPERATURA -> emptyList()
 
         FeedSection.PRECIPITAZIONI -> {
-            val kind = day?.let { precipKindOf(it) } ?: PrecipKind.NONE
+            val kind = day?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE
             listOf(
                 // Lo stesso numero inciso sulla vasca, e ripeterlo non e'
                 // ridondanza: sulla vasca sta accanto al livello e si legge
