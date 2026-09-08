@@ -51,55 +51,6 @@ internal fun PrecipKind.isSnowy(): Boolean = this == PrecipKind.SNOW
 // Le scale
 
 /**
- * Il colmo della vasca graduata, in millimetri di pioggia in un giorno.
- *
- * **Quaranta non e' un numero tondo scelto a occhio: e' la soglia con cui l'app
- * stessa alza un'allerta gialla** per la pioggia di una giornata
- * (`DerivedAlerts`, `mm >= 40.0`; settanta e' l'arancione). La vasca e' quindi
- * colma esattamente quando l'app direbbe che quel giorno merita un avviso, ed
- * e' una scala che significa qualcosa invece di riempire lo spazio.
- */
-internal const val GAUGE_TOP_MM = 40.0
-
-/**
- * Il colmo della vasca quando dentro c'e' neve, in centimetri.
- *
- * Stessa logica: cinque e quindici centimetri sono la gialla e l'arancione
- * della neve in `DerivedAlerts`, e venti e' il gradino dopo.
- */
-internal const val GAUGE_TOP_CM = 20.0
-
-/**
- * Il velo minimo nella vasca, in frazione dell'altezza utile.
- *
- * Due decimi di millimetro sono mezzo punto percentuale di quaranta, cioe'
- * niente: una giornata bagnata uscirebbe identica a una asciutta, e le due cose
- * devono distinguersi. E' il pavimento di `GRADI_MINIMI` della barra delle ore
- * visto dall'altro capo - li' serviva a non gonfiare una giornata piatta, qui a
- * non azzerarne una bagnata.
- *
- * **Zero resta zero**: esattamente zero lascia il fondo asciutto.
- */
-internal const val GAUGE_FLOOR = 0.020f
-
-/**
- * Quanto e' piena la vasca, da 0 a 1, e se sta traboccando.
- *
- * Sopra il colmo **non si taglia in silenzio**: si torna 1 e [overflowing], e
- * chi disegna fa uscire l'acqua dall'orlo. Il numero scritto accanto dice
- * sempre il valore vero. Una vasca che si riscala da sola non e' graduata, e
- * due giornate affiancate smetterebbero di essere confrontabili - che e'
- * l'unica ragione per avere una scala.
- */
-internal fun gaugeFill(amount: Double, top: Double): Float {
-    if (amount <= 0.0) return 0f
-    val share = (amount / top).toFloat()
-    return share.coerceIn(GAUGE_FLOOR, 1f)
-}
-
-internal fun gaugeOverflowing(amount: Double, top: Double): Boolean = amount > top
-
-/**
  * I soffitti della fascia delle 24 ore, in millimetri **in un'ora**.
  *
  * Tre gradini dichiarati, e non una scala continua che si adatta al massimo del

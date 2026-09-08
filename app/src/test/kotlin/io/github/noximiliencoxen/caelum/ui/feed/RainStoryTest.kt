@@ -242,25 +242,6 @@ class RainStoryTest {
         assertEquals(8.0, bandCeiling(4.0, snow = true), 0.0)
     }
 
-    @Test
-    fun `la vasca ha un velo minimo, ma zero resta zero`() {
-        // Due decimi di millimetro su quaranta sono mezzo punto percentuale:
-        // senza pavimento una giornata bagnata uscirebbe identica a una
-        // asciutta, e le due cose devono distinguersi.
-        assertEquals(0f, gaugeFill(0.0, GAUGE_TOP_MM), 0.0f)
-        assertEquals(GAUGE_FLOOR, gaugeFill(0.2, GAUGE_TOP_MM), 0.0001f)
-        assertEquals(0.5f, gaugeFill(20.0, GAUGE_TOP_MM), 0.0001f)
-    }
-
-    @Test
-    fun `sopra il colmo la vasca trabocca invece di ritarare la scala`() {
-        // Un numero tagliato dalla scala e' una bugia; un recipiente che
-        // trabocca e' la stessa informazione, detta.
-        assertEquals(1f, gaugeFill(126.4, GAUGE_TOP_MM), 0.0f)
-        assertTrue(gaugeOverflowing(126.4, GAUGE_TOP_MM))
-        assertTrue(!gaugeOverflowing(39.0, GAUGE_TOP_MM))
-    }
-
     // ── La tipologia, che era scritta e non la chiamava nessuno ─────────────
 
     private fun day(

@@ -68,9 +68,9 @@ import kotlin.math.sin
  * manca invece di essere un buco.
  *
  * **La pioggia e' la prima ad essere uscita dal segnaposto**, e si vede da due
- * rami di `when`: al posto della cifra c'e' la vasca graduata
- * (`RainGauge`), al posto del riquadro tratteggiato la fascia delle
- * ventiquattro ore (`RainHours`). Le due vivono in file loro e non qui: questo
+ * rami di `when`: al posto della cifra c'e' una finestra sul cielo dell'ora
+ * scelta (`RainWindow`), al posto del riquadro tratteggiato la fascia delle
+ * ventiquattro ore (`RainHours`), da cui quell'ora si sceglie. Le due vivono in file loro e non qui: questo
  * e' lo scheletro generico, e duecentocinquanta righe di una sola sezione lo
  * renderebbero il file di quella sezione. E' la stessa scelta della barra delle
  * ore, che ha il suo file e un mestiere solo.
@@ -302,25 +302,22 @@ private fun SectionHero(
 
         if (section == FeedSection.PRECIPITAZIONI) {
             // Il controllo sui dati se lo fa da se', e non passa da
-            // `heroValue`: alla vasca serve il **giorno**, non una stringa, e
-            // un recipiente vuoto disegnato senza previsione si leggerebbe come
-            // "zero millimetri" invece che come "non lo so ancora" - che e'
-            // esattamente la differenza che la prima scheda ha una regola
-            // esplicita per non perdere.
+            // `heroValue`: alla finestra serve il **giorno**, non una stringa -
+            // alba e tramonto sono il solo modo in cui il posto entra nel conto
+            // del cielo - e una finestra disegnata senza previsione mostrerebbe
+            // un cielo inventato invece di dire che non si sa ancora.
             val day = state.pageDay
             if (day == null || (day.precipitationSum == null && day.snowfallSum == null)) {
                 val (title, message) = heroMissingReason(section, state)
                 SkyMessage(title = title, message = message)
                 return@BoxWithConstraints
             }
-            RainGauge(
+            RainWindow(
+                hour = state.pageHour,
                 day = day,
-                wet = state.shownHourIsWet,
-                hourMm = state.pageHour?.precipitation,
+                forcedCode = state.forcedWeatherCode,
                 rotation = rotation,
                 tilt = tilt,
-                accent = accent,
-                alive = alive,
                 modifier = Modifier.fillMaxSize(),
             )
             return@BoxWithConstraints
