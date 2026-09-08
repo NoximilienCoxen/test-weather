@@ -85,11 +85,13 @@ class RainStoryTest {
         assertEquals("debole", intensityWord(0.8, snow = true))
         assertEquals("forte", intensityWord(5.0, snow = true))
 
+        // La frase intera, e non un `contains`: cominciando con la maiuscola
+        // "neve" minuscolo non ci si trova, e un controllo che cerca un pezzo
+        // passa anche quando il resto e' sbagliato.
         val ore = (0..23).map { h ->
             if (h in 8..11) ora(h, code = 73, mm = 2.0, neve = 2.0) else ora(h)
         }
-        val frase = rainSentence(ore)!!
-        assertTrue(frase, frase.contains("neve"))
+        assertEquals("Neve dalle 8 alle 12, moderata.", rainSentence(ore))
     }
 
     // ── I tratti: quando fondere e quando no ────────────────────────────────

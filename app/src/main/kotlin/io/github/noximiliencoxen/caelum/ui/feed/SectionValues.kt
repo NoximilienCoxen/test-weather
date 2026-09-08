@@ -26,12 +26,15 @@ internal val UiState.pageDay: DayForecast?
 internal val UiState.pageHour: HourForecast?
     get() = detailHour
 
-/** Le ore del giorno mostrato: quelle vere, non quelle di oggi. */
+/**
+ * Le ore del giorno mostrato: quelle vere, non quelle di oggi.
+ *
+ * Adesso e' `UiState.shownHours` e sta accanto a `detailHour` e `detailDay`,
+ * perche' e' la stessa domanda e perche' **la fa anche la prima schermata**.
+ * Qui resta il nome con cui le schede la chiamano.
+ */
 internal val UiState.pageHours: List<HourForecast>
-    get() {
-        val date = pageDay?.date ?: return emptyList()
-        return forecast?.hoursOf(date).orEmpty()
-    }
+    get() = shownHours
 
 /**
  * Se all'ora mostrata piove davvero.

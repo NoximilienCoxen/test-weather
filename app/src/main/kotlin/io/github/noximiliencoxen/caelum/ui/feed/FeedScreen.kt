@@ -189,6 +189,7 @@ fun FeedScreen(
                         viewModel.openAlerts()
                     },
                     onRefresh = viewModel::refresh,
+                    onSetWeek = viewModel::setWeekMode,
                     pullArmed = armed,
                     alive = pagerState.currentPage == 0,
                     // **A piena larghezza, e non ristretta per far posto alla
