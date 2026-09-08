@@ -110,6 +110,61 @@ jobs:
       # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
       # accettato non e' lo stesso di uno che ha davvero dei valori sopra
       # Noceto. Lo si chiede all'API, e la risposta finisce fra gli artefatti.
+      # ── E le allerte fuori Europa? ──────────────────────────────────────────
+      #
+      # MeteoAlarm copre l'Europa e basta: a Tokyo, New York o Sydney l'app non
+      # mostra **nessun** avviso, e non perche' non ce ne siano. Il buco di
+      # copertura mondiale e' questo, non la previsione - quella `best_match` la
+      # prende gia' dai modelli nazionali.
+      #
+      # La fonte mondiale plausibile e' il Severe Weather Information Centre
+      # della WMO, gestito dall'osservatorio di Hong Kong, che raccoglie in CAP
+      # i bollettini di oltre centotrenta servizi nazionali. Il formato e' lo
+      # stesso che l'app **sa gia' leggere**: `parseFeed` e `toAlert` esistono,
+      # sono provati contro il bollettino vero, e una seconda fonte CAP
+      # riuserebbe parser, modello e schermata.
+      #
+      # Qui non si scrive ancora una riga di parser, e non e' prudenza: e' la
+      # lezione che questo passo si e' gia' guadagnata una volta. La prima
+      # stesura del lettore di MeteoAlarm cercava `awareness_level` e
+      # `awareness_type`, che nel feed **non esistono** - zero occorrenze su
+      # trentacinquemila byte - e ogni allerta sarebbe uscita gialla generica.
+      # Da questo container gli indirizzi qui sotto non si raggiungono, quindi
+      # scrivere il parser adesso vorrebbe dire scriverlo a memoria: **prima si
+      # guarda cosa risponde davvero.**
+      #
+      # Si provano piu' indirizzi perche' quale sia quello buono e' parte della
+      # domanda. Nessuno di questi fa fallire il giro.
+      #
+      # Il FOSS Public Alert Server, l'altra fonte mondiale in circolazione, non
+      # e' fra questi apposta: chi lo scrive dichiara che **non e' ancora pronto
+      # per la produzione**, e una fonte di allertamento in sviluppo e' la cosa
+      # meno adatta a cui affidare un avviso di temporale.
+      - name: Interroga le allerte mondiali
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/ciout
+          {
+            echo "=== fonti di allerta mondiali: chi risponde, e con che cosa ==="
+            for url in \
+              "https://severeweather.wmo.int/feeds.html" \
+              "https://severeweather.wmo.int/v2/cap-alerts/rss.xml" \
+              "https://severeweather.wmo.int/v2/json/list.json" \
+              "https://severeweather.wmo.int/json/list.json" \
+              "https://alert-hub.s3.amazonaws.com/rss/rss_aggregator.xml" \
+              "https://api.weather.gov/alerts/active?limit=1" \
+              ; do
+              echo "--- $url"
+              code=$(curl -sSL -o /tmp/ciout/_a -w "%{http_code}" \
+                     -H "User-Agent: caelum-probe" --max-time 25 "$url" || echo 000)
+              echo "HTTP $code  tipo=$(file -b --mime-type /tmp/ciout/_a 2>/dev/null)" \
+                   " byte=$(wc -c < /tmp/ciout/_a)"
+              head -c 900 /tmp/ciout/_a; echo; echo
+            done
+          } > /tmp/ciout/allerte-mondo.txt 2>&1
+          rm -f /tmp/ciout/_a
+          cat /tmp/ciout/allerte-mondo.txt
+
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 

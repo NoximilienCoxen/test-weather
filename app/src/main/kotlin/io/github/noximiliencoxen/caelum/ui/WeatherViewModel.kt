@@ -119,6 +119,17 @@ data class UiState(
      * insegnerebbe a ignorare l'avviso quando invece e' vero.
      */
     val alertsUnavailable: Boolean = false,
+    /**
+     * Vero dove **non esiste una fonte ufficiale**, non dove non ci sono avvisi.
+     *
+     * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
+     * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
+     * localita' non risultano avvisi in corso", che e' un'affermazione che
+     * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
+     * ha guardato da nessuna parte. **Un silenzio non e' una risposta
+     * rassicurante: e' un silenzio**, e va detto quale dei due e'.
+     */
+    val alertsOutOfCoverage: Boolean = false,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -470,6 +481,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     airUnavailable = false,
                     alerts = emptyList(),
                     alertsUnavailable = false,
+                    alertsOutOfCoverage = false,
                 )
             }
         }
@@ -557,6 +569,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
                                             alertsUnavailable = false,
+                                            alertsOutOfCoverage = false,
                                         )
                                     }
                                 }
@@ -565,12 +578,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     // resta sulle derivate senza dire che
                                     // qualcosa e' andato storto, perche'
                                     // non e' andato storto niente.
-                                    val broken =
-                                        failure !is WeatherAlertsRepository.OutOfCoverage
+                                    val uncovered =
+                                        failure is WeatherAlertsRepository.OutOfCoverage
                                     _state.update {
                                         it.copy(
                                             alerts = derived,
-                                            alertsUnavailable = broken,
+                                            alertsUnavailable = !uncovered,
+                                            alertsOutOfCoverage = uncovered,
                                         )
                                     }
                                 }
