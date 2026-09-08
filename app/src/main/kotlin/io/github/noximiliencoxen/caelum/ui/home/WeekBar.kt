@@ -1,18 +1,24 @@
 package io.github.noximiliencoxen.caelum.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -51,15 +57,21 @@ import io.github.noximiliencoxen.caelum.ui.theme.MeteoType
  * conflitto: quando c'e' la settimana la striscia delle ore non c'e', e viceversa.
  * Nessun dito puo' trovarsi sull'una credendo di toccare l'altra.
  *
- * Non c'e' un giorno "selezionato" evidenziato: qui il giorno che conta e'
- * sempre oggi, che sta gia' in prima colonna e si chiama OGGI. L'evidenza
- * servirebbe se restasse una scelta in piedi, e aprire un giorno porta via da
- * questa schermata invece di cambiare qualcosa qui.
+ * **La colonna scelta si segna**, e prima non si segnava. Il commento che stava
+ * qui diceva che l'evidenza servirebbe solo "se restasse una scelta in piedi", e
+ * che aprire un giorno "porta via da questa schermata invece di cambiare
+ * qualcosa qui": era vero quando il tocco apriva il foglio del dettaglio. **Il
+ * foglio non c'e' piu'** - l'ha tolto il passaggio al feed - e la
+ * giustificazione se n'e' andata con lui lasciando in piedi la conseguenza. Da
+ * quando la prima scheda racconta il giorno scelto, la scelta resta in piedi
+ * eccome, ed e' esattamente il caso in cui l'evidenza serve.
  */
 @Composable
 fun WeekBar(
     days: List<DayForecast>,
     unit: TempUnit,
+    /** L'indice del giorno scelto, dentro `forecast.days`. */
+    selected: Int,
     onOpenDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -98,6 +110,7 @@ fun WeekBar(
             ).joinToString(", ")
 
             val interaction = remember { MutableInteractionSource() }
+            val chosen = indice == selected
 
             Column(
                 modifier = Modifier
@@ -126,9 +139,27 @@ fun WeekBar(
                 Text(
                     text = day.label,
                     style = MeteoType.caption,
-                    color = colors.label,
+                    // La sigla in tinta piena, non un fondo: sopra un cielo che
+                    // cambia colore tutto il giorno una pillola opaca sarebbe
+                    // l'unico rettangolo della schermata, ed e' la stessa
+                    // ragione per cui il tasto di adesso ha smesso di essere
+                    // una pillola.
+                    color = if (chosen) colors.text else colors.label,
                     maxLines = 1,
                     textAlign = TextAlign.Center,
+                )
+                // Il tratto sotto la sigla: e' quello che dice **quale**, e
+                // l'altezza se la riserva anche da spento, se no scegliendo un
+                // giorno l'intera striscia salterebbe di due punti.
+                Box(
+                    modifier = Modifier
+                        .padding(top = 3.dp)
+                        .height(SEGNO)
+                        .width(SEGNO_LARGO)
+                        .background(
+                            color = if (chosen) colors.text else Color.Transparent,
+                            shape = RoundedCornerShape(SEGNO),
+                        ),
                 )
                 WeatherGlyph(
                     weatherCode = day.weatherCode,
@@ -280,6 +311,16 @@ private const val APERTURA = "aprire il dettaglio del giorno"
  * mezzogiorno, che e' proprio il caso in cui serviva di piu'.
  */
 private const val SPENTA = 0.42f
+
+/**
+ * Il tratto che segna il giorno scelto.
+ *
+ * Due punti di spessore e quattordici di larghezza: si vede senza diventare un
+ * secondo oggetto sotto la sigla. Lo spazio se lo riserva anche da spento, se no
+ * scegliendo un giorno l'intera striscia salterebbe in su di due punti.
+ */
+private val SEGNO = 2.dp
+private val SEGNO_LARGO = 14.dp
 
 private val GLIFO = 26.dp
 

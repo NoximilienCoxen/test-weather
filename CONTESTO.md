@@ -334,6 +334,86 @@ successore.
 Da questo container `api.open-meteo.com` **non si raggiunge** (403 al CONNECT del
 proxy): domande sull'API si girano alla CI, non alla memoria.
 
+**Che fonti copra davvero l'app, e dove no.** La domanda "a Tokyo si puo' usare
+JMA" ha gia' una risposta nel codice, e nessuno l'aveva verificata: **Open-Meteo
+non e' un modello, e' un aggregatore**, e `best_match` sceglie da se' quello
+nazionale del posto - ICON del DWD sull'Europa centrale, AROME sulla Francia,
+**JMA sul Giappone**, GFS/HRRR sugli Stati Uniti. Quindi la previsione a Tokyo
+non e' sbagliata. Ma era memoria, e qui la memoria non vale: `probe_models.py`
+adesso fa un **giro mondiale** su undici punti e pubblica, per ciascuno, quale
+modello risponde sotto `best_match` (ricavato per confronto dei valori, perche'
+l'API il nome non lo dichiara) e **quali colonne tornano nulle**. La seconda meta'
+vale piu' della prima: una variabile accettata ma non riempita torna come una
+colonna di `null`, e chi la disegna ci vede una linea a zero - cioe' una
+previsione di niente invece di un "non lo so".
+
+**Misurato, e non piu' supposto** (`ci-artifacts:api/modelli.txt`):
+
+| punto | chi risponde sotto `best_match` |
+|---|---|
+| Tokyo | `jma_seamless` — **JMA c'e' gia'** |
+| New York | `gfs_seamless` (NOAA/NWS) |
+| Oslo | `metno_seamless` |
+| Noceto | `icon_seamless` (DWD) |
+| Nairobi, Citta' del Capo, Sydney, San Paolo, Delhi, Singapore | indistinguibile fra `metno_seamless` e `knmi_seamless`: fuori dai loro domini servono lo stesso modello globale e danno gli stessi identici decimali |
+
+E la risposta che serviva alla scheda della pioggia: su **tutti** i punti tornano
+centosessantotto ore e sette giorni, **nessuna variabile assente e nessuna
+colonna tutta nulla**. `precipitation_probability` c'e' ovunque, quindi la curva
+della fascia non esce vuota da nessuna parte. Reykjavik e' l'unica riga senza
+risposta, e per un timeout TLS della CI: e' un guasto di rete, non un dato.
+
+**I buchi veri sono due, e nessuno dei due e' la previsione.**
+
+*L'aria si misurava sempre con la scala europea.* Il dato e' mondiale, la scala
+no: applicare l'indice dell'Agenzia europea a Tokyo da' **un numero giusto su una
+scala sbagliata**, e cinquanta e' aria mediocre in Europa e aria buona negli Stati
+Uniti - due bande di distanza. Adesso si chiedono tutte e due e **a scegliere sono
+i dati**: se l'endpoint riempie `european_aqi` si e' dentro il dominio della sua
+convenzione, se lo lascia nullo si e' fuori. Un rettangolo di longitudini
+disegnato a mano sbaglierebbe sui bordi, e in silenzio. **Quale scala si sta
+usando sta scritto sotto la cifra**: due indici con lo stesso nome e soglie
+diverse, senza etichetta, sono peggio di uno solo.
+
+*Le allerte fuori Europa non ci sono.* MeteoAlarm copre trentasette paesi
+europei, e a Tokyo, New York o Sydney l'app non mostra nessun avviso. **Il parser
+di una seconda fonte non si scrive a memoria**: la prima stesura di quello di
+MeteoAlarm cercava `awareness_level` e `awareness_type`, che nel feed non
+esistono. La sonda nuova interroga il Severe Weather Information Centre della
+WMO - CAP, cioe' il formato che l'app **sa gia' leggere** - e pubblica quello che
+risponde. Il FOSS Public Alert Server resta fuori apposta: chi lo scrive dichiara
+che non e' pronto per la produzione.
+
+**E ha gia' risposto due volte, e le due risposte valgono la sonda.** Al primo
+giro: quattro indirizzi provati a memoria, **quattro 404**. Se ne fosse stato
+scelto uno e ci si fosse costruito sopra un lettore, adesso ci sarebbe del codice
+che deserializza una pagina di errore - la trappola di `awareness_level` presa un
+giro prima. Al secondo, letta la pagina che gli indirizzi dovrebbe elencarli:
+**nel suo HTML non ce n'e' nessuno**, la lista se la costruisce con JavaScript, e
+il titolo della pagina dice "(Demo)".
+
+Quindi **la fonte mondiale non e' agganciabile cosi' com'e'**, e questo e' il
+punto in cui C1 sta adesso: non un lettore da scrivere, ma un indirizzo da
+trovare. Il candidato che la pagina stessa indica e' il registro delle autorita'
+di allertamento (`alertingauthority.wmo.int`), ed e' quello che la sonda chiede
+adesso. Chi riprende: **non si scrive il lettore finche' un giro non pubblica una
+risposta CAP vera**, ed e' la stessa regola per cui questo passo esiste.
+
+E intanto una cosa che non aspetta nessun indirizzo: fuori copertura la schermata
+scriveva "NESSUNA ALLERTA - non risultano avvisi in corso", cioe' **rassicurava
+su un posto dove non aveva guardato**. Adesso gli stati sono tre - non c'e' una
+fonte, la fonte non risponde, la fonte ha risposto e non c'e' niente. **Un
+silenzio non e' una risposta rassicurante: e' un silenzio.**
+
+**Perche' non si aggiungono JMA, NWS e compagnia come sorgenti di previsione.**
+Duplicherebbero una strada gia' percorsa - `best_match` quei modelli li porta
+gia' - aggiungendo per ciascuna un DTO, una traduzione di codici meteo, un fuso,
+un formato di data e un modo nuovo di fallire, per gli stessi numeri. E questo
+progetto non ha una libreria di rete, per scelta: ogni fonte e' un client e un
+parser scritti a mano. Breezy Weather ne regge una cinquantina perche' ha un
+intero strato di astrazione, ed e' la sua ragione sociale; quella di Caelum e'
+una schermata disegnata a mano.
+
 Dati: Open-Meteo senza chiave, `HttpURLConnection` + `kotlinx.serialization`.
 Una richiesta porta `current`, `daily` (7 giorni, alba e tramonto compresi) e
 `hourly`. La ricerca dei luoghi passa dalla geocodifica di Open-Meteo.
@@ -1295,6 +1375,48 @@ mezzogiorno sereno e `#1E222A` e' `Gloom`, entrambi da `ui/theme/Colors.kt`; il
 resto viene da `WidgetInk`. Restano scritti nei vector e non in `colors.xml`,
 come gia' erano.
 
+**50. Un ciclo che si ripete non e' il tempo che avanza.** La scena della
+pioggia aveva un orologio solo: un dente di sega da 0 a 1 ogni secondo e mezzo,
+perfetto per le gocce - una esce dal fondo, un'altra nasce in cima, e il ritorno
+a zero non si vede. Poi la gente ha cominciato a camminare leggendo **quello
+stesso numero** come se fosse il tempo trascorso: ogni passante avanzava un
+decimo di traversata e poi scattava indietro insieme a tutti gli altri, **ogni
+secondo e mezzo**. Chi si ripete e chi avanza hanno bisogno di due orologi.
+
+E il secondo si chiude cosi': **periodi commensurabili, non tarature**. Se ogni
+oggetto compie un numero **intero** di giri per ogni giro dell'orologio, quando
+l'orologio cala di uno la posizione cala di un intero e il resto su uno non se
+ne accorge - il ciclo e' continuo per costruzione, e nessuno deve cercare a
+occhio il punto in cui nascondere il salto. Vale per la posizione e vale per il
+passo, che infatti ha un numero intero di battute per traversata. Corollario:
+perche' un rientro non si veda, il margine fuori campo si **ricava dalla parte
+piu' larga dell'oggetto** - qui l'ombrello, che era piu' largo del margine
+scritto a mano, e spuntava.
+
+**51. Le facce proiettate di un solido non si avvolgono tutte nello stesso
+verso.** Il fondo della vasca graduata non si riempiva: sei quadrilateri in un
+solo `Path`, tre avvolti in un senso e tre nell'altro, e con la regola `NonZero`
+si cancellano a vicenda - misurato, il **cinquantotto per cento** della colonna
+spariva. Le due correzioni che vengono in mente non funzionano: `EvenOdd` non
+aggiusta niente perche' due sovrapposizioni sono parita' pari, cioe' lo stesso
+buco; e disegnare ogni faccia per conto suo con un'opacita' fa comporre le
+sovrapposizioni - da 0,42 si arriva a 0,66, cioe' tre bande scure che si
+muovono. La correzione e' **normalizzare il verso**: area con segno del
+quadrilatero, e se e' negativa lo si percorre al contrario. Sta in
+`ui/render3d/Facets.kt`, con i suoi test, e vale per qualunque solido
+proiettato.
+
+**52. Un'attesa che legge il logcat va rimessa a zero a ogni giro.**
+`attendi_previsione` aspetta la riga "previsione pronta"; nel giro delle sei
+schede il buffer era svuotato **una volta sola prima del ciclo**, quindi dalla
+seconda scheda in poi trovava la riga della scheda precedente e tornava
+all'istante - un'attesa che non aspettava niente. Si vedeva come uno scatto ogni
+tanto con scritto IN ATTESA DEI DATI, ed e' passata per sfortuna finche' non e'
+capitata due volte di fila sullo stesso scatto. `restart_with` aveva gia' il
+commento che lo diceva; il ciclo delle schede non lo seguiva. **Un difetto che
+si manifesta come rumore casuale e' un difetto che nessuno guarda**: e' il
+motivo per cui questa sta scritta.
+
 ---
 
 ## 8. Stato: fatto / non fatto
@@ -1346,6 +1468,17 @@ comunque a ogni fotogramma.
 - il **widget della luna** dopo il tronco comune della sezione 45: e' l'unico
   dei tre che non e' stato posato su una Home vera, quindi di lui si sa che
   compila, non che disegna
+- **quanto costa la scena della finestra**, che e' l'unica parte dell'app che si
+  muove sempre mentre la si guarda (sezione 8-quinquies): `dumpsys gfxinfo`,
+  quattro secondi sulla scheda, mediano e ritardi. Va preso **in mano**: il costo
+  per fotogramma di un emulatore non dice niente di un telefono, perche' la resa
+  e' software. Se non regge i 16 ms cedono gli strati e non il movimento - prima
+  le persone, poi le gocce sul vetro
+- **che il ritorno a zero dell'orologio lento non si veda**: e' una cosa che uno
+  scatto non puo' dire, per costruzione
+- **che lo scorrimento delle ore sulla fascia non rubi il cambio di scheda**: il
+  dito per il lungo sceglie l'ora, il dito verso il basso deve ancora portare
+  alla scheda dopo. E' il punto piu' esposto del cambio
 - Android 8, per via della nota su `drawVertices`
 - la ricerca dei luoghi per nome con la tastiera (provate solo le scorciatoie)
 
@@ -1479,10 +1612,11 @@ comunque a ogni fotogramma.
    schermata piena e' larga e bassa, e cifra, segnaposto e numeri restano
    impilati dove ci starebbero affiancati. `MeteoLayout.landscape` c'e' gia' e
    nessuno glielo chiede.
-10. **Le cinque schede sono segnaposto**, ed e' voluto: cosa ospita ciascuna si
-   decide una sezione alla volta. `FeedSection.stage` porta la consegna scritta
-   accanto al riquadro vuoto - dalla pioggia sul vetro all'erba che si piega
-   dalla parte da cui tira. E' li' che va il lavoro adesso.
+10. **Quattro schede su sei sono ancora segnaposto**, ed e' voluto: cosa ospita
+   ciascuna si decide una sezione alla volta. `FeedSection.stage` porta la
+   consegna scritta accanto al riquadro vuoto - dall'erba che si piega dalla
+   parte da cui tira all'arco della giornata da percorrere col dito. La pioggia
+   e' uscita dal segnaposto (sezione 8-quinquies); restano aria, vento, sole e luna.
 
 ---
 
@@ -1506,7 +1640,8 @@ apre. Il feed prende l'asse che il foglio aveva; la rotazione della cifra, la
 barra delle ore e la scelta del giorno restano orizzontali e non si contendono
 niente. E' la stessa spartizione, con un contenuto diverso dentro.
 
-**Le schede sono ancora segnaposto**, tranne la prima. Ognuna ha titolo, la
+**Le schede sono ancora segnaposto**, tranne le prime due - la temperatura e la
+pioggia, che ha la sua sezione qui sotto. Ognuna ha titolo, la
 cifra girabile, un riquadro tratteggiato che dichiara cosa ospitera'
 (`FeedSection.stage`) e due o tre numeri che l'app sa gia' dire. Cosa metterci
 davvero si decide una sezione alla volta - e' il modo di lavorare di questo
@@ -1534,6 +1669,43 @@ invece che deciso. Sulla prima scheda sopra non c'e' niente da mostrare, quindi
 prenderselo non toglie niente a nessuno. **Resta la guardia sul
 `NestedScrollSource`** (trappola #35): un avanzo di slancio non e' un dito, e
 un'app non chiede dati alla rete perche' una molla ha finito di tornare a posto.
+
+**Le schede si centrano sul centro dello schermo, non su quel che avanza.** Il
+margine che riservava la colonna era asimmetrico e spostava tutto ventidue punti
+a sinistra: e' lo stesso difetto gia' corretto sulla prima scheda, che le altre
+cinque si erano tenute. **Un margine simmetrico non sposta il centro: costa solo
+larghezza**, quindi la domanda per ogni riga e' una sola - passa davanti alla
+colonna? Titolo e numeri la scavalcano finche' la scheda e' alta piu' di
+`RAIL_SPAN + 2 * endsBlock`, cioe' 394 punti: **ogni telefono in verticale passa,
+l'orizzontale no** (914x411 lascia 363 punti e li' la colonna copre anche i
+numeri), e sotto la soglia l'inserto va sull'intera colonna. `endsBlock` segue la
+scala del carattere di sistema, se no il caso che il controllo evita rientra
+proprio su chi ha il carattere grande.
+
+Titolo, sottotitolo e numeri ci guadagnano quarantaquattro punti; la luna li
+perde, e `MOON_RADIUS` e' passato da 0,32 a 0,35 - un compromesso, non un
+ripristino.
+
+**Toccare un giorno adesso fa qualcosa.** Il tocco era gia' collegato e scriveva
+`selectedDay`; il difetto era che `HomeScreen` leggeva `state.hours` e
+`state.hour`, cioe' **le ore di oggi e basta**, quindi scultura, cifra,
+condizione e barra raccontavano oggi qualunque giorno si scegliesse. E la
+striscia non segnava la colonna scelta di proposito: il suo commento diceva che
+aprire un giorno "porta via da questa schermata", che era vero **col foglio del
+dettaglio**. Il foglio non c'e' piu' e la giustificazione se n'e' andata con lui,
+lasciando in piedi la conseguenza.
+
+Adesso la prima scheda legge il giorno scelto (`shownHours` sale in `UiState`
+accanto a `detailHour` e `detailDay`), la colonna si segna, e tre cose vanno con
+lei o il giorno diverso diventa una bugia: il segno dell'ora vera **sparisce**
+sugli altri giorni, alba e tramonto si prendono dal giorno mostrato, e il tasto
+diventa **TORNA A OGGI** riportando indietro tutti e due gli assi. Il commutatore
+ore/settimana passa da un `rememberSaveable` locale a `UiState.weekMode`, che
+era gia' scritto e non lo usava nessuno.
+
+Di contorno: il caso "un'altra giornata" diventa raggiungibile col dito. Ci si
+arrivava solo con `--ei giorno`, perche' la trascinata che ci vorrebbe fa morire
+l'emulatore.
 
 **La colonna di icone sta sopra il carosello, non dentro.** E' l'unica cosa in
 scena che non scorre, ed e' cio' che la rende un punto di riferimento invece di
@@ -1839,6 +2011,318 @@ Quattro trappole gia' pagate qui:
 - **L'allerta imposta si applica in lettura, non scrivendo in `alerts`.** Il
   primo caricamento sovrascrive quella lista con le allerte vere, e lo scatto
   usciva senza fascia. Le schermate leggono `UiState.shownAlerts`.
+
+## 8-quinquies. La scheda della pioggia
+
+`ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,
+`ui/feed/RainHours.kt`, `ui/feed/RainStory.kt`, `ui/render3d/Facets.kt`,
+`ui/render3d/Precip.kt`
+
+**E' la seconda scheda uscita dal segnaposto**, e il modello per le quattro che
+restano. E' anche l'unica che e' stata rifatta due volte: prima una vasca
+graduata, poi una finestra. Le due parti che seguono - com'era, e perche' non lo
+e' piu' - sono la parte che vale.
+
+### La vasca, e perche' non c'e' piu'
+
+La vasca metteva l'acqua del giorno dentro un recipiente graduato, e la ragione
+era giusta: **un numero senza scala non dice niente**, quattro e quaranta sono
+due cifre e non due quantita'. Le sue scale venivano dalle soglie dell'app -
+colmo a quaranta millimetri perche' e' li' che `DerivedAlerts` alza una gialla -
+e sopra il colmo traboccava invece di ritararsi, perche' una vasca che si riscala
+da sola non e' graduata.
+
+E' caduta per le **misure**, non per il gusto: il riquadro dell'eroe e' una
+feritoia di 283 punti per 600, e la vasca - che si dimensionava sul lato corto,
+come ogni altro corpo di questa app - ne usava centotrentadue in altezza. Due
+terzi del riquadro erano vuoti, e si vedeva. **Il lato corto e' l'unita' giusta
+per una sfera o per una cifra, che sono larghe quanto alte; non per un riquadro
+alto piu' del doppio della sua larghezza.** Una finestra verticale invece ci sta
+dentro tutta.
+
+**Il costo dichiarato**: con la vasca se ne sono andati i millimetri incisi
+accanto al pelo dell'acqua, cioe' l'unico posto in cui il numero aveva una
+scala addosso. Restano fra i tre numeri in fondo alla scheda, dove sono un
+numero come gli altri. E' una perdita vera, ed e' stata scelta sapendola.
+
+### La finestra
+
+**Un blocco fresato con un foro rettangolare**, della stessa plastica bianca
+opaca della cifra (`numberFace`, `numberSideNear`, `numberSideFar`,
+`numberChamfer`), e dentro il foro **il cielo dell'ora scelta**. Scorrendo la
+fascia delle ventiquattro ore qui sotto passa la giornata: l'alba, il
+mezzogiorno, il temporale, la notte.
+
+**Lo strombo e' la parallasse.** Girando il blocco col dito si scopre la parete
+di dentro del foro, esattamente come si guarda di lato attraverso una finestra:
+un montante copre una parte di cielo e lo scopre dall'altra. Non c'e' niente da
+simulare, lo fa la geometria del muro spesso. Ed e' quello che da' finalmente un
+mestiere alla rotazione, che sulla vasca era un giro attorno a un barattolo.
+
+**Va detto perche' e' controintuitivo**: qui la camera **ruota l'oggetto**, non
+sposta la testa di chi guarda. I due movimenti non sono lo stesso, e chi si
+aspetta il secondo scrive il segno sbagliato.
+
+**Il cielo dell'ora si calcola, non si prende dal tema.** `LocalMeteoColors`
+porta il cielo di **adesso**, che e' quello giusto per la scheda attorno; qui
+dentro serve l'ora scelta, e le tinte si passano **come valore**. Rifornire il
+local sarebbe la strada corta e la trappola lunga: e' `staticCompositionLocalOf`,
+e ogni fotogramma dello scorrimento invaliderebbe tutto il sotto-albero.
+
+**Da una finestra si vede la fetta alta di cielo.** L'altezza del sole muove
+l'astro **dentro la meta' superiore** dell'apertura, con un pavimento sotto cui
+non scende mai. Prima comandava tutta l'apertura, ed era corretto e sbagliato
+insieme: con l'astro basso - la notte, l'alba, il tramonto - la luna finiva in
+mezzo alla gente che passa per strada. L'informazione resta (piu' alto il sole,
+piu' in alto sta), il conflitto no. E' anche come sono fatte le finestre:
+l'orizzonte lo copre il muro di fronte.
+
+### La via e la gente
+
+Sotto la finestra passa gente **tagliata al busto** dal davanzale, con gli
+ombrelli.
+
+**Non e' il personaggio gia' provato e bocciato** (sezione 10). Quello era un
+esploratore *articolato*, una gerarchia di sfere con le braccia a collana, e il
+verdetto fu *"se il risultato e' questo, lasciamo perdere"*. Qui non c'e' rig,
+non c'e' articolazione, non c'e' faccia: sono contorni chiusi visti di profilo,
+tabelle di coordinate come i profili delle coste del globo, e **il taglio al
+busto toglie proprio le gambe**, cioe' la parte che rende difficile far
+camminare qualcuno. Il rischio che resta e' estetico, e resta: quattro sagome
+che si ripetono in una via si notano.
+
+**Dicono qualcosa, non sono un salvaschermo**: chi ha l'ombrello aperto dice se
+in quell'ora piove, quanto vanno curvi dice l'intensita'.
+
+**Se piove, l'ombrello e' aperto.** Prima lo decideva la sola probabilita'
+prevista, ed era la domanda sbagliata: la probabilita' dice se *piovera'*, ma la
+scena mostra **un'ora**, e in quell'ora o piove o non piove. Con il codice
+imposto degli scatti - pioggia certa, previsione a zero - si vedeva la scena
+piovere con quattro persone a spasso senza niente in mano. La probabilita' resta
+a decidere **quanti** si coprono quando l'acqua non e' ancora arrivata.
+
+**Le sagome sono scure, e allora e' la via a portare la luce.** Una silhouette e'
+un buco nella luce, non una figura grigia; ma quattro buchi neri su un cielo
+notturno si fondono in una macchia sola. La risposta non e' schiarire la gente -
+**e' accendere la strada**, che e' anche come stanno le cose davvero: di notte
+una via e' illuminata, ed e' per questo che chi ci passa ci si staglia contro.
+Quindi la via si ricava **dalle sagome**, con `readableOn` e la soglia da segno
+grande, cioe' con lo stesso attrezzo con cui questo progetto sceglie il colore di
+ogni segno disegnato sul cielo. E la fascia dell'asfalto e' alta abbastanza da
+prendere i busti: al cielo restano solo le teste.
+
+**Non e' roba da fotogramma**: `readableOn` costa una manciata di elevamenti a
+potenza per passo, e sta dentro il `remember` che gia' calcola il cielo di
+quell'ora.
+
+**E l'asfalto ha un tono suo, che non prende in prestito dal cielo.** Di giorno
+e' **piu' scuro** del cielo, perche' e' il cielo a illuminarlo; di notte e' **piu'
+chiaro**, perche' a illuminarlo sono i lampioni. Una regola sola che dia tutte e
+due le cose non esiste, e il primo tentativo - ricavare la via dal solo contrasto
+con le sagome - dava una strada **piu' chiara del cielo anche a mezzogiorno**:
+ghiaccio, non asfalto. Misurato sullo scatto: via (200,221,236) su cielo
+(176,204,227). Quindi due passi, ciascuno con un mestiere solo: prima si scurisce
+come fa l'asfalto, che di giorno basta; poi si tira su **solo se** e' rimasto
+tanto buio che le sagome ci sparirebbero dentro - e quella e' la notte, e sono i
+lampioni.
+
+**La soglia pero' non e' quella del testo.** Tre a uno e' quanto serve a una
+scritta per essere letta; applicato qui spinge l'asfalto a un grigio medio,
+cioe' **trasforma la notte in pieno giorno** pur di far risaltare quattro
+sagome - visto in uno scatto, e corretto a una soglia da scena. Una sagoma alta
+sessanta pixel non e' una didascalia: le basta staccare. E la fascia non e' di
+un tono solo: va dal cielo in fondo all'asfalto sotto, se no si legge come una
+parete e non come una superficie vista di taglio.
+
+**La via ha profondita', e la profondita' e' in altezza.** Avevano tutti i piedi
+sulla stessa riga, quindi due che si avvicinavano si accavallavano e basta: un
+mucchio, non una via. Chi cammina in fondo sta **piu' in alto sulla fascia** - la
+sua testa arriva appena all'orizzonte, quella di chi passa sotto casa lo supera -
+ed e' cosi' che una strada si guarda dall'alto. E' anche quello che rende
+naturale un incrocio invece che una collisione: chi si sovrappone lo fa a
+distanze diverse.
+
+**Erano sei e alte un terzo dell'apertura**, ed erano una folla schiacciata
+contro il vetro invece di gente in una via. Quattro, alte un ottavo, con corsie,
+fasi e distanze diverse. E' l'unica cosa di questa scheda che non si deduce: si
+guarda.
+
+### Gli orologi sono due
+
+**Ce n'era uno solo, ed era il difetto peggiore della scheda.** Un dente di sega
+da 0 a 1 ogni secondo e mezzo, che per la pioggia va benissimo perche' la pioggia
+**si ripete**: una goccia esce dal fondo e ne rinasce una in cima, e il ritorno a
+zero non si vede.
+
+Ma **la gente che cammina non si ripete, avanza**. Leggendo quel ciclo come se
+fosse il tempo, ogni passante faceva un decimo di traversata e poi tornava
+indietro insieme a tutti gli altri, ogni secondo e mezzo: non una via, un
+tremolio sul posto.
+
+Il secondo orologio gira in venti secondi, e **il suo ritorno a zero e'
+invisibile per costruzione**: ogni passante compie un numero **intero** di
+traversate per giro, quindi quando l'orologio cala di uno la sua posizione cala
+di un intero, e il resto su uno non se ne accorge. Vale anche per il passo, e per
+la stessa ragione i passi per traversata sono interi. **La regola generale: un
+ciclo si chiude scegliendo periodi commensurabili, non tarando a occhio dove
+mettere il salto.** E perche' il rientro non si veda, il margine fuori
+dall'apertura si **ricava dalla mezza larghezza dell'ombrello** invece di essere
+scritto a mano - con il margine a occhio l'ombrello era piu' largo del margine, e
+spuntava.
+
+Due numeri scritti nello stesso `withFrameNanos`, letti solo dentro il disegno:
+il costo del secondo orologio e' zero.
+
+### L'eccezione dichiarata alla regola dei zero fotogrammi
+
+Prima la pioggia batteva **solo mentre pioveva**. Da quando c'e' la gente,
+**questa scheda si muove sempre mentre la si guarda** - anche col sereno, dove
+camminano con l'ombrello chiuso - perche' spegnere la via nelle giornate belle
+vorrebbe dire una strada di manichini fermi, che e' peggio di una strada vuota.
+
+E' un'eccezione alla regola per cui da fermo l'app disegna zero fotogrammi
+(trappola #8), ed e' dichiarata, non dimenticata. Il suo limite e' `alive`: il
+carosello tiene composta anche la scheda accanto, e `withFrameNanos` dentro una
+finestra visibile continua a battere anche per una pagina fuori vista.
+
+**Va misurata, non dedotta - e adesso la misura la prende la CI.** In coda al
+giro degli scatti, `dumpsys gfxinfo` conta i fotogrammi di quattro secondi due
+volte: con la pioggia in scena, e con la scheda dell'aria in scena, cioe' con la
+pioggia **composta ma fuori vista** - che e' esattamente il caso per cui la
+guardia esiste. Misurato: **55 contro 1** al primo giro, **60 contro 0** al
+secondo - e i due giri insieme dicono piu' di ciascuno da solo.
+
+**E l'uno non era una perdita.** La soglia chiedeva lo zero esatto e il primo
+giro ha stampato un avviso; ma un **orologio** che gira produce un flusso di
+fotogrammi, non un fotogramma solo. Quell'uno era una ricomposizione di
+passaggio - sulla scheda dell'aria si spiega da se', perche' la qualita' dell'aria
+arriva da una richiesta a parte e quando arriva ridisegna una volta - e il giro
+dopo, senza toccare l'app, ha dato zero. **Un valore che oscilla fra zero e uno e'
+rumore**, ed e' esattamente per questo che pretendere lo zero esatto avrebbe reso
+la prova capricciosa: avrebbe suonato l'allarme a caso, che e' il modo piu'
+sicuro perche' nessuno le creda piu'. Adesso chiede quello che vuole davvero
+sapere: che di la' un orologio giri, e che di qua non ne giri nessuno.
+
+I due numeri finiscono anche in `misure.txt`, accanto agli scatti: un numero che
+si legge solo scorrendo diecimila righe di registro e' un numero che nessuno
+rilegge.
+
+Il numero di sinistra dice anche un'altra cosa: sessanta fotogrammi in quattro
+secondi sono **quindici al secondo**, non sessanta. E' l'emulatore, che rende via
+software - ed e' la prova, in cifre, che di li' non esce nessun giudizio sul
+costo per fotogramma.
+
+E' l'unica meta' della verifica che un emulatore possa dare, ed e' anche quella
+che conta: il costo per fotogramma li' non dice niente (la resa e' software), ma
+"i fotogrammi si fermano oppure no" e' una domanda binaria e la risposta e' la
+stessa dappertutto. **Il costo vero resta da prendere in mano.**
+
+Se il costo per fotogramma non regge i 16 ms, **cedono gli strati e non il
+movimento**: prima le persone, poi le gocce sul vetro.
+
+### Il vetro
+
+Dietro il vetro cade la pioggia, e **sul** vetro restano le gocce, con la loro
+scia. Sono due strati e non uno perche' e' la differenza fra guardare la pioggia
+e guardarla da dentro. **Nessun velo traslucido sopra tutto**: e' la trappola #18
+- una sola forma grande e traslucida ha portato un fotogramma da 18 a 36 ms con
+il settanta per cento di ritardi.
+
+### La fascia delle ventiquattro ore
+
+Risponde a quello che la cifra non poteva: venti millimetri distribuiti su tutto
+il giorno e venti caduti in due ore sono due giornate diverse con lo stesso
+numero. Una tela sola per colonne, curva della probabilita', cursore ed
+etichette, perche' la larghezza di un'ora dev'essere la stessa per tutti e tre.
+L'altezza e' **in punti e non in frazione**: con lo 0,62 del vecchio palco le
+ventiquattro colonne diventavano ventiquattro pali alti mezzo schermo.
+
+- il soffitto ha **tre gradini dichiarati e scritti** (4, 10, 30 mm/h). Adattivo
+  direbbe sempre la stessa cosa - la colonna piu' alta tocca il bordo tutti i
+  giorni; fisso a un valore solo, la pioviggine sparirebbe;
+- un'ora bagnata a **zero millimetri** e' un contorno e non un pieno, cosi'
+  "piove e il modello non dice quanto" si distingue da "sono caduti due decimi".
+  E' la trappola #14 disegnata invece che solo rispettata;
+- una colonna tagliata dal soffitto lo **dichiara** con una tacca.
+
+**Il non-obiettivo "nessun gesto sulla fascia" e' caduto, e con una ragione.**
+Era scritto per non avere due scrittori sullo stesso stato: l'ora si sceglie
+sulla prima scheda. Ma tornare su per scorrere le ore e poi riscendere per
+vederne l'effetto e' scomodo, e la scomodita' era vera. Il gesto adesso c'e', e
+non ha aggiunto un secondo stato: **la fascia manda l'ora del giorno allo stesso
+`selectHour`** che usa la prima scheda - le ore di un giorno partono da mezzanotte
+e sono ventiquattro, quindi l'indice della colonna **e'** l'ora, e non serve una
+seconda verita'.
+
+Il riconoscitore e' uno solo e **non consuma la discesa**: aspetta lo scarto,
+lascia perdere se il dito va piu' in verticale che in orizzontale - il carosello
+se lo prende - e reclama solo quando va per il lungo. E' la trappola #5 (l'asse
+decide) applicata dentro una pagina invece che fra le pagine.
+
+### La lezione dell'avvolgimento, in `ui/render3d/Facets.kt`
+
+Il fondo della vasca non si riempiva. Il motivo: **le facce proiettate di un
+prisma non si avvolgono tutte nello stesso verso**, e con la regola `NonZero` due
+quadrilateri avvolti al contrario si cancellano. Misurato: sei quadrilateri, tre
+per verso, il cinquantotto per cento della colonna spariva.
+
+Le due correzioni ovvie non funzionano, ed e' il pezzo che vale:
+
+- `EvenOdd` non la aggiusta - due sovrapposizioni sono parita' pari, cioe' lo
+  stesso buco;
+- disegnare ogni faccia per conto suo con un'opacita' non la aggiusta - le
+  sovrapposizioni si compongono, e da 0,42 si arriva a 0,66: tre bande scure che
+  si muovono.
+
+La correzione e' **normalizzare il verso**, e sta in `addFacet`: si calcola
+l'area con segno del quadrilatero e, se e' negativa, lo si percorre al contrario.
+Il file resta anche se la vasca non c'e' piu', perche' la lezione vale per
+qualunque solido proiettato - e infatti la usa la faccia davanti della finestra.
+
+Sotto il buco c'era **un secondo difetto**, che il buco nascondeva: l'acqua era
+dipinta *dopo* le pareti vicine traslucide, quindi una volta riempita si sarebbe
+letta spalmata fuori dalla vasca. Le pareti sono state divise in due passate con
+l'acqua in mezzo.
+
+### Il resto, che vale ancora
+
+**La frase e' in italiano vero, non in maiuscolo spaziato**: "una frase in
+maiuscolo spaziato si compita invece di leggersi" era gia' scritto, e vale qui.
+Il temporale non prende aggettivo - "temporale moderata" non e' italiano, e gli
+aggettivi di intensita' concordano al femminile con pioggia e neve. Due tratti
+separati da una sola ora asciutta si fondono, se no una normale giornata di
+fronte si spezza in cinque e la frase diventa un inventario. Su oggi si guarda
+avanti dall'ora corrente: alle diciotto, "asciutto fino alle sedici" e' una
+previsione del passato. **A picco zero non c'e' nessun aggettivo**: dire "debole"
+partendo da un'assenza e' inventare un valore.
+
+Le soglie di intensita' sono la scala d'uso comune dei servizi regionali italiani
+(2 / 6 / 10 mm/h) e non quella americana, tarata sull'intensita' istantanea di un
+pluviometro mentre una casella oraria e' gia' una media su un'ora.
+
+**Tutto quel che si puo' provare senza emulatore sta in `RainStory.kt`**, senza
+una riga di Compose: la frase, i tratti, le soglie, la tipologia. E' la stessa
+scelta di `isWet()`, e per la stessa ragione. `Facets.kt` e' l'altro pezzo cosi':
+la convessa e l'avvolgimento si provano con JUnit, senza uno schermo.
+
+**`PrecipKind` e' stata completata, non solo chiamata.** `Wmo.precipKind` non
+restituisce mai `MISTA` - nessun suo ramo la produce - perche' un codice
+giornaliero dice il fenomeno prevalente e non i due insieme. `precipKindOf` la
+ricava dalle due somme, **e il codice imposto vince su quello vero**: senza,
+negli scatti la finestra pioveva mentre TIPOLOGIA diceva "--", che e' la scheda
+che si contraddice da sola.
+
+**`--ei giro` non arrivava al feed.** `rotation.pin` era chiamata in un posto
+solo, in `HomeScreen`: nessuna scheda del feed si poteva fotografare girata, la
+luna compresa. Adesso arriva, ed e' quello che rende verificabile lo strombo -
+senza, l'unica cosa per cui il gesto esiste sarebbe infotografabile.
+
+**Gli scatti nuovi sono due, in coda** (trappola #38): la finestra girata e la
+finestra sotto la pioggia. **Il giro degli orologi pero' non si scatta**: che il
+ritorno a zero non si veda e' una cosa che un fotogramma non puo' dire, e va
+guardata in mano.
+
+---
 
 ## 8-quater. I test
 

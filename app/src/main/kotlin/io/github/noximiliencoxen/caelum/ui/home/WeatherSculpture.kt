@@ -35,10 +35,20 @@ import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberWeatherHaptics
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
+import io.github.noximiliencoxen.caelum.ui.render3d.DROPS
+import io.github.noximiliencoxen.caelum.ui.render3d.FALL_CYCLE_MS
+import io.github.noximiliencoxen.caelum.ui.render3d.Lightning
 import io.github.noximiliencoxen.caelum.ui.render3d.MOON_SEAS
+import io.github.noximiliencoxen.caelum.ui.render3d.PUDDLE_LIFE
+import io.github.noximiliencoxen.caelum.ui.render3d.RainImpacts
+import io.github.noximiliencoxen.caelum.ui.render3d.SPLASH_LIFE
 import io.github.noximiliencoxen.caelum.ui.render3d.SceneContact
+import io.github.noximiliencoxen.caelum.ui.render3d.TAP_GAP_NS
 import io.github.noximiliencoxen.caelum.ui.render3d.glow
 import io.github.noximiliencoxen.caelum.ui.render3d.moon
+import io.github.noximiliencoxen.caelum.ui.render3d.microSplashRing
+import io.github.noximiliencoxen.caelum.ui.render3d.puddle
+import io.github.noximiliencoxen.caelum.ui.render3d.splash
 import io.github.noximiliencoxen.caelum.ui.render3d.sphere
 import io.github.noximiliencoxen.caelum.ui.render3d.sunRays
 import io.github.noximiliencoxen.caelum.ui.theme.LocalMeteoColors
@@ -780,77 +790,6 @@ private val CLOUD_MASSES = listOf(
 )
 
 /**
- * Quali gocce stanno toccando la cifra, e quante hanno appena cominciato.
- *
- * Lo stato sta qui e non in Compose apposta: viene scritto dentro il disegno e
- * riletto dal ciclo della caduta, sullo stesso filo e a un fotogramma di
- * distanza. Uno stato osservabile chiederebbe una ricomposizione per qualcosa
- * che sullo schermo non cambia niente - la vibrazione non si vede.
- */
-private class RainImpacts {
-
-    /** Se ognuna stava gia' toccando al fotogramma prima. */
-    private val touching = BooleanArray(DROPS.size)
-
-    private var landed = 0
-
-    /**
-     * Dal disegno: questa goccia sta toccando, o no.
-     *
-     * Conta solo il passaggio dall'aria alla superficie. Senza il confronto col
-     * fotogramma prima, ogni goccia gia' arrivata ne segnerebbe uno per
-     * fotogramma e non ci sarebbe piu' differenza fra una goccia che arriva e
-     * una goccia ferma sul posto.
-     */
-    fun mark(index: Int, hitting: Boolean) {
-        if (index !in touching.indices) return
-        if (hitting && !touching[index]) landed++
-        touching[index] = hitting
-    }
-
-    /** Dal ciclo: quante ne sono arrivate dall'ultima volta che si e' guardato. */
-    fun take(): Int {
-        val count = landed
-        landed = 0
-        return count
-    }
-
-    fun forget() {
-        java.util.Arrays.fill(touching, false)
-        landed = 0
-    }
-}
-
-/**
- * Una goccia, con un posto suo sotto la nuvola.
- *
- * Le gocce vivono nello spazio del modello, non sullo schermo. Prima cadevano
- * lungo una fascia fissa attorno al centro: non seguivano la nuvola quando la
- * si girava, non ne rispettavano la larghezza, e da qualunque angolo la si
- * guardasse restavano li'. Cosi' invece ruotano con lei, quelle davanti scorrono
- * piu' di quelle dietro, e sono grandi quanto la loro distanza impone.
- */
-private class Drop(
-    /** Posizione sotto la nuvola, da -1 a 1 sui due assi orizzontali. */
-    val x: Float,
-    val z: Float,
-    val phase: Float,
-    val speed: Float,
-    val length: Float,
-)
-
-private val DROPS: List<Drop> = List(48) { i ->
-    val r = Random(i * 7919 + 13)
-    Drop(
-        x = r.nextFloat() * 2f - 1f,
-        z = r.nextFloat() * 2f - 1f,
-        phase = r.nextFloat(),
-        speed = 0.85f + r.nextFloat() * 0.5f,
-        length = 0.05f + r.nextFloat() * 0.05f,
-    )
-}
-
-/**
  * Un uccello: la corsia in cui vola, la fase, quanto e' veloce e quanto grande.
  */
 private class Bird(val lane: Float, val phase: Float, val speed: Float, val size: Float)
@@ -1246,101 +1185,6 @@ private fun DrawScope.drawRain(
 }
 
 /**
- * Una mini-pozzanghera alla base della cifra.
- *
- * Un'ellisse molto schiacciata, non un cerchio: il piano d'appoggio si guarda
- * di sbieco, e un cerchio pieno li' si legge come una pallina appoggiata a
- * terra invece che come acqua distesa.
- *
- * Si allarga mentre si smorza, e la smorzatura va al quadrato: l'acqua non
- * evapora a velocita' costante, sparisce in fretta sul finire. Con una
- * dissolvenza lineare si vedeva un disco grigio restare li' troppo a lungo.
- */
-private fun DrawScope.puddle(
-    at: Offset,
-    stroke: Float,
-    age: Float,
-    colour: Color,
-    alpha: Float,
-) {
-    val half = stroke * (1.1f + age * 5.0f)
-    val tall = half * 0.30f
-    drawOval(
-        color = colour.copy(alpha = alpha * 0.45f * (1f - age) * (1f - age)),
-        topLeft = Offset(at.x - half, at.y - tall * 0.5f),
-        size = Size(half * 2f, tall),
-    )
-}
-
-/**
- * Lo schizzo: due schegge che partono ai lati del punto colpito e si aprono.
- *
- * Non una corona tonda vista di taglio, che a questa dimensione sarebbe una
- * riga. E non due segmenti attaccati al punto d'impatto: staccate dal centro si
- * leggono come acqua che rimbalza, unite come una punta di freccia.
- *
- * Piu' invecchiano piu' si allontanano e si abbassano, come se ricadessero.
- */
-private fun DrawScope.splash(
-    at: Offset,
-    stroke: Float,
-    age: Float,
-    colour: Color,
-    alpha: Float,
-) {
-    val fade = alpha * (1f - age) * 0.9f
-    if (fade <= 0.01f) return
-
-    // Nasce gia' aperto e radente. Partendo stretto e ripido, i due segmenti
-    // restavano appesi sotto la goccia e insieme a lei formavano una punta di
-    // freccia: l'acqua che rimbalza si allarga subito, non parte a coda.
-    val gap = stroke * (0.9f + age * 1.3f)
-    val reach = stroke * (1.5f + age * 3.2f)
-    val lift = stroke * (1.15f - age * 0.8f)
-    val tint = lerp(colour, Lightning, 0.30f).copy(alpha = fade)
-
-    drawLine(
-        color = tint,
-        start = Offset(at.x - gap, at.y),
-        end = Offset(at.x - gap - reach, at.y - lift),
-        strokeWidth = stroke * 0.60f,
-        cap = StrokeCap.Round,
-    )
-    drawLine(
-        color = tint,
-        start = Offset(at.x + gap, at.y),
-        end = Offset(at.x + gap + reach * 0.88f, at.y - lift * 0.85f),
-        strokeWidth = stroke * 0.60f,
-        cap = StrokeCap.Round,
-    )
-}
-
-/**
- * Un piccolo anello che si allarga dal punto colpito, accanto allo schizzo.
- *
- * Lo schizzo dice "acqua che rimbalza", l'anello dice "onda che si apre": sono
- * due letture diverse dello stesso urto, e insieme rendono l'impatto piu'
- * ricco senza aggiungere nessuno stato - la stessa eta' che gia' guida lo
- * schizzo basta anche a lui.
- */
-private fun DrawScope.microSplashRing(
-    at: Offset,
-    stroke: Float,
-    age: Float,
-    colour: Color,
-    alpha: Float,
-) {
-    val fade = alpha * (1f - age) * (1f - age)
-    if (fade <= 0.01f) return
-    drawCircle(
-        color = colour.copy(alpha = fade * 0.5f),
-        radius = stroke * (0.8f + age * 2.4f),
-        center = at,
-        style = Stroke(width = stroke * 0.35f),
-    )
-}
-
-/**
  * La saetta: una spezzata che scende dalla nuvola, piu' una diramazione.
  *
  * Rigenerata a ogni lampo. Sempre la stessa si riconoscerebbe al secondo colpo,
@@ -1438,9 +1282,6 @@ private fun DrawScope.drawBolt(
     stroke(bolt.points, unit * 0.013f, Lightning.copy(alpha = glare))
     stroke(bolt.fork, unit * 0.008f, Lightning.copy(alpha = 0.9f * glare))
 }
-
-/** Bianco pieno: e' il nucleo, e un nucleo non ha colore. */
-private val Lightning = Color(0xFFFFFFFF)
 
 /** L'azzurro attorno al filo. Un lampo caldo non si e' mai visto. */
 private val Glow = Color(0xFFBBD6FF)
@@ -1645,10 +1486,6 @@ private const val LONG_FALL = 2.6f
  */
 private const val SURFACE_FALL = 1.65f
 
-/** Quanto vive una pozzanghera e quanto uno schizzo, in unita' di caduta. */
-private const val PUDDLE_LIFE = 0.34f
-private const val SPLASH_LIFE = 0.16f
-
 private const val SHOOTING_DARK = 0.80f
 
 /** Quanto dura la caduta, in secondi: le veloci corrono, le lente indugiano. */
@@ -1685,18 +1522,8 @@ private const val DRIFT = 0.022f
 /** Quanto la nuvola scivola di lato quando si inclina il telefono: la differenza fra strati, non un secondo giro di camera. */
 private const val CLOUD_PARALLAX = 0.05f
 
-private const val FALL_CYCLE_MS = 1400L
 private const val TILT_YAW = 7f
 private const val TILT_PITCH = 5f
 
 /** Il posto dell'astro nella fila dei corpi tondi: non e' una massa di nuvola. */
 private const val ASTRO = -1
-
-/**
- * Quanto deve passare, come minimo, fra un colpetto e il successivo.
- *
- * Un decimo di secondo. Sotto, in un rovescio, il vibratore non stacca piu' e
- * quello che dovrebbe leggersi come pioggia si legge come un ronzio; sopra, si
- * perde il legame fra la goccia che si vede arrivare e quella che si sente.
- */
-private const val TAP_GAP_NS = 110_000_000L
