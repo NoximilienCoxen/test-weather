@@ -41,6 +41,14 @@ import java.time.format.DateTimeFormatter
 fun AlertsSheet(
     alerts: List<WeatherAlert>,
     unavailable: Boolean,
+    /**
+     * Vero dove non esiste una fonte ufficiale da interrogare.
+     *
+     * Diverso da [unavailable], che vuol dire "c'e' e non risponde". Dirli allo
+     * stesso modo faceva scrivere "nessun avviso in corso" a Tokyo, dove l'app
+     * non ha guardato da nessuna parte.
+     */
+    outOfCoverage: Boolean = false,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,13 +62,26 @@ fun AlertsSheet(
         )
 
         if (alerts.isEmpty()) {
+            // Tre stati, e prima erano due. "Non c'e' una fonte" e "non ci
+            // sono avvisi" si dicevano allo stesso modo, e il secondo e' una
+            // rassicurazione che l'app non ha modo di dare fuori dai paesi che
+            // MeteoAlarm copre.
             MeteoEmptyState(
-                title = if (unavailable) "BOLLETTINI NON RAGGIUNGIBILI" else "NESSUNA ALLERTA",
-                message = if (unavailable) {
-                    "Il servizio di allertamento non risponde. Le soglie sui dati " +
-                        "della previsione non hanno comunque superato nessun limite."
-                } else {
-                    "Per questa localita' non risultano avvisi in corso."
+                title = when {
+                    outOfCoverage -> "NESSUN BOLLETTINO QUI"
+                    unavailable -> "BOLLETTINI NON RAGGIUNGIBILI"
+                    else -> "NESSUNA ALLERTA"
+                },
+                message = when {
+                    outOfCoverage ->
+                        "MeteoAlarm, la fonte ufficiale che l'app interroga, copre l'Europa: " +
+                            "per questa localita' non c'e' un bollettino da leggere. Restano le " +
+                            "soglie sui dati della previsione, che qui non ne hanno superata " +
+                            "nessuna."
+                    unavailable ->
+                        "Il servizio di allertamento non risponde. Le soglie sui dati " +
+                            "della previsione non hanno comunque superato nessun limite."
+                    else -> "Per questa localita' non risultano avvisi in corso."
                 },
             )
             return@Column
@@ -76,10 +97,16 @@ fun AlertsSheet(
             // Un avviso ufficiale mancato si dice **sopra** gli altri: chi
             // legge deve sapere che quello che sta guardando potrebbe non
             // essere tutto, prima di leggerlo, non dopo.
-            if (unavailable) {
+            if (unavailable || outOfCoverage) {
                 Text(
-                    text = "I bollettini ufficiali non sono raggiungibili: " +
-                        "qui sotto ci sono solo le allerte calcolate dai dati della previsione.",
+                    text = if (outOfCoverage) {
+                        "Qui non c'e' un bollettino ufficiale da leggere - MeteoAlarm copre " +
+                            "l'Europa: qui sotto ci sono solo le allerte calcolate dai dati " +
+                            "della previsione."
+                    } else {
+                        "I bollettini ufficiali non sono raggiungibili: " +
+                            "qui sotto ci sono solo le allerte calcolate dai dati della previsione."
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

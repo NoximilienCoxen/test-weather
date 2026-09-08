@@ -213,6 +213,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     AlertsSheet(
                         alerts = state.shownAlerts,
                         unavailable = state.alertsUnavailable,
+                        outOfCoverage = state.alertsOutOfCoverage,
                         onBack = viewModel::closeAlerts,
                         modifier = Modifier.systemBarsPadding(),
                     )

@@ -33,7 +33,7 @@ internal class AirQualityWidget : CaelumWidget(WidgetKind.ARIA) {
 
         val spoken = buildString {
             append("Qualità dell'aria a ${where.name}")
-            air?.europeanAqi?.let { append(", indice $it") }
+            air?.index?.let { append(", indice $it") }
             air?.band?.let { append(", ${it.label.lowercase()}") }
         }
 

@@ -119,6 +119,17 @@ data class UiState(
      * insegnerebbe a ignorare l'avviso quando invece e' vero.
      */
     val alertsUnavailable: Boolean = false,
+    /**
+     * Vero dove **non esiste una fonte ufficiale**, non dove non ci sono avvisi.
+     *
+     * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
+     * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
+     * localita' non risultano avvisi in corso", che e' un'affermazione che
+     * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
+     * ha guardato da nessuna parte. **Un silenzio non e' una risposta
+     * rassicurante: e' un silenzio**, e va detto quale dei due e'.
+     */
+    val alertsOutOfCoverage: Boolean = false,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -256,6 +267,26 @@ data class UiState(
     /** Il giorno aperto dal dettaglio, dentro i limiti di cio' che esiste. */
     val detailDay: io.github.noximiliencoxen.caelum.data.DayForecast?
         get() = forecast?.days?.getOrNull(selectedDay)
+
+    /**
+     * Le ore del giorno mostrato: quelle vere, non quelle di oggi.
+     *
+     * Sta qui accanto a [detailHour] e [detailDay] perche' e' la stessa
+     * domanda - **quale giorno sto guardando** - e perche' adesso la fa anche
+     * la prima schermata. Prima la faceva solo il feed, e la prima schermata
+     * era l'unica a non farla: si toccava una colonna della settimana e li'
+     * non cambiava niente.
+     *
+     * Puo' tornare vuota con un giorno che esiste: un modello a corto raggio
+     * si ferma attorno alle settantadue ore, e dal quarto giorno in poi ci sono
+     * i totali ma non le ore. Chi la legge lo dichiara invece di disegnare una
+     * giornata piatta.
+     */
+    val shownHours: List<io.github.noximiliencoxen.caelum.data.HourForecast>
+        get() {
+            val date = detailDay?.date ?: return emptyList()
+            return forecast?.hoursOf(date).orEmpty()
+        }
 
     /** L'ora vera nella localita' mostrata, come indice nella barra. */
     val nowIndex: Int
@@ -450,6 +481,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     airUnavailable = false,
                     alerts = emptyList(),
                     alertsUnavailable = false,
+                    alertsOutOfCoverage = false,
                 )
             }
         }
@@ -537,6 +569,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
                                             alertsUnavailable = false,
+                                            alertsOutOfCoverage = false,
                                         )
                                     }
                                 }
@@ -545,12 +578,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     // resta sulle derivate senza dire che
                                     // qualcosa e' andato storto, perche'
                                     // non e' andato storto niente.
-                                    val broken =
-                                        failure !is WeatherAlertsRepository.OutOfCoverage
+                                    val uncovered =
+                                        failure is WeatherAlertsRepository.OutOfCoverage
                                     _state.update {
                                         it.copy(
                                             alerts = derived,
-                                            alertsUnavailable = broken,
+                                            alertsUnavailable = !uncovered,
+                                            alertsOutOfCoverage = uncovered,
                                         )
                                     }
                                 }
@@ -636,10 +670,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** Riporta la schermata all'ora vera, quella segnata sulla barra. */
+    /**
+     * Riporta la schermata al presente: l'ora vera **e** il giorno di oggi.
+     *
+     * Il giorno ci e' entrato quando la prima scheda ha smesso di raccontare
+     * sempre oggi. Da allora ci si puo' allontanare su due assi, e un tasto che
+     * ne riportasse indietro uno solo lascerebbe l'altro dov'era: si tornerebbe
+     * all'ora giusta di mercoledi', che non e' il presente di nessuno.
+     */
     fun backToNow() {
         pendingHour = null
-        _state.update { it.copy(selectedHour = it.nowIndex) }
+        _state.update { it.copy(selectedDay = 0, selectedHour = it.nowIndex) }
     }
 
     fun selectDay(index: Int) {

@@ -44,12 +44,32 @@ jobs:
       # La qualita' dell'aria sta su un altro host e ha un contratto suo: il
       # widget che la mostra si fida di questi nomi di campo, e qui si vede se
       # sono ancora quelli.
+      # **E fuori Europa?** L'indice europeo e' una scala europea, e applicarla
+      # a Tokyo da' un numero giusto su una scala sbagliata. La domanda vera e'
+      # se l'endpoint lo riempia comunque fuori dal suo dominio o lo lasci
+      # nullo: da quella risposta dipende se l'app puo' lasciar decidere ai
+      # dati quale scala usare, o se deve deciderlo da se'. Si chiede quindi
+      # negli stessi tre punti in cui si guarda tutto il resto.
       - name: Interroga la qualita' dell'aria
         run: |
           mkdir -p /tmp/ciout
-          AIR="https://air-quality-api.open-meteo.com/v1/air-quality?latitude=44.2226&longitude=12.0407&timezone=auto&current=european_aqi,pm2_5,pm10"
+          VARS="european_aqi,us_aqi,pm2_5,pm10"
+          BASE="https://air-quality-api.open-meteo.com/v1/air-quality"
+          AIR="$BASE?latitude=44.2226&longitude=12.0407&timezone=auto&current=$VARS"
           curl -sS -w "\nHTTP %{http_code}\n" "$AIR" -o /tmp/ciout/aria.json
           cat /tmp/ciout/aria.json; echo
+          {
+            echo "=== l'indice europeo, dentro e fuori il suo dominio ==="
+            for punto in "Forli:44.2226:12.0407" "Tokyo:35.68:139.69" \
+                         "NewYork:40.71:-74.01" "Nairobi:-1.29:36.82"; do
+              nome="${punto%%:*}"; resto="${punto#*:}"
+              lat="${resto%%:*}"; lon="${resto#*:}"
+              echo "--- $nome"
+              curl -sS "$BASE?latitude=$lat&longitude=$lon&timezone=auto&current=$VARS"
+              echo
+            done
+          } > /tmp/ciout/aria-mondo.txt 2>&1
+          cat /tmp/ciout/aria-mondo.txt
 
       # Le allerte vengono da MeteoAlarm, che e' l'unica fonte pubblica e senza
       # accordi su cui i servizi nazionali - per l'Italia la Protezione Civile e
@@ -90,6 +110,91 @@ jobs:
       # risponde a memoria: i modelli vengono aggiunti e ritirati, e uno
       # accettato non e' lo stesso di uno che ha davvero dei valori sopra
       # Noceto. Lo si chiede all'API, e la risposta finisce fra gli artefatti.
+      # ── E le allerte fuori Europa? ──────────────────────────────────────────
+      #
+      # MeteoAlarm copre l'Europa e basta: a Tokyo, New York o Sydney l'app non
+      # mostra **nessun** avviso, e non perche' non ce ne siano. Il buco di
+      # copertura mondiale e' questo, non la previsione - quella `best_match` la
+      # prende gia' dai modelli nazionali.
+      #
+      # La fonte mondiale plausibile e' il Severe Weather Information Centre
+      # della WMO, gestito dall'osservatorio di Hong Kong, che raccoglie in CAP
+      # i bollettini di oltre centotrenta servizi nazionali. Il formato e' lo
+      # stesso che l'app **sa gia' leggere**: `parseFeed` e `toAlert` esistono,
+      # sono provati contro il bollettino vero, e una seconda fonte CAP
+      # riuserebbe parser, modello e schermata.
+      #
+      # Qui non si scrive ancora una riga di parser, e non e' prudenza: e' la
+      # lezione che questo passo si e' gia' guadagnata una volta. La prima
+      # stesura del lettore di MeteoAlarm cercava `awareness_level` e
+      # `awareness_type`, che nel feed **non esistono** - zero occorrenze su
+      # trentacinquemila byte - e ogni allerta sarebbe uscita gialla generica.
+      # Da questo container gli indirizzi qui sotto non si raggiungono, quindi
+      # scrivere il parser adesso vorrebbe dire scriverlo a memoria: **prima si
+      # guarda cosa risponde davvero.**
+      #
+      # **Il primo giro ha gia' insegnato qualcosa**: quattro indirizzi provati a
+      # memoria, quattro 404. Risponde solo la pagina che li elenca, e gli
+      # indirizzi veri stanno scritti dentro di lei - quindi adesso si leggono
+      # di li' invece di continuare a indovinarli. E' la stessa disciplina di
+      # `probe_models`, che l'elenco dei modelli se lo fa dare dall'errore
+      # dell'API invece di tenerne una copia.
+      #
+      # Nessun passo qui fa fallire il giro: una fonte di allertamento
+      # momentaneamente giu' non e' un difetto del codice.
+      #
+      # Il FOSS Public Alert Server, l'altra fonte mondiale in circolazione, non
+      # e' fra questi apposta: chi lo scrive dichiara che **non e' ancora pronto
+      # per la produzione**, e una fonte di allertamento in sviluppo e' la cosa
+      # meno adatta a cui affidare un avviso di temporale.
+      - name: Interroga le allerte mondiali
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/ciout
+          {
+            echo "=== la pagina degli indirizzi, e quali indirizzi porta ==="
+            #
+            # Il primo giro aveva provato quattro strade indovinate a memoria e
+            # **tutte e quattro erano 404**: risponde solo questa pagina, e gli
+            # indirizzi veri stanno scritti dentro. Leggerli di li' e' l'unico
+            # modo che non passa per un'ipotesi.
+            PAGE="https://severeweather.wmo.int/feeds.html"
+            curl -sSL --max-time 25 -H "User-Agent: caelum-probe" "$PAGE" \
+              -o /tmp/ciout/_feeds.html || true
+            echo "--- $PAGE  byte=$(wc -c < /tmp/ciout/_feeds.html)"
+            echo "--- indirizzi che sembrano feed, presi dalla pagina:"
+            grep -oE 'https?://[^"'"'"'<> ]+\.(xml|json|rss|atom|cap)[^"'"'"'<> ]*' \
+              /tmp/ciout/_feeds.html | sort -u | head -40
+            echo "--- ogni altro indirizzo assoluto della pagina:"
+            grep -oE 'https?://[^"'"'"'<> ]+' /tmp/ciout/_feeds.html \
+              | grep -viE '\.(css|js|png|jpg|ico|ttf|woff2?)' | sort -u | head -40
+            echo
+
+            # **La pagina non porta nessun indirizzo di feed nel suo HTML**: la
+            # lista se la costruisce da sola con JavaScript, e il titolo dice
+            # "(Demo)". Restano allora i link che la pagina **s'i** contiene, e
+            # il piu' promettente e' il registro delle autorita' di
+            # allertamento: e' li' che stanno, se stanno da qualche parte, gli
+            # indirizzi CAP dei servizi nazionali.
+            echo "=== cosa risponde davvero ==="
+            for url in \
+              "https://alertingauthority.wmo.int/authorities.json" \
+              "https://alertingauthority.wmo.int/" \
+              "https://severeweather.wmo.int/v2/json/list.json" \
+              "https://api.weather.gov/alerts/active?limit=1" \
+              ; do
+              echo "--- $url"
+              code=$(curl -sSL -o /tmp/ciout/_a -w "%{http_code}" \
+                     -H "User-Agent: caelum-probe (github.com/NoximilienCoxen/test-weather)" \
+                     -H "Accept: application/json" --max-time 25 "$url" || echo 000)
+              echo "HTTP $code  tipo=$(file -b --mime-type /tmp/ciout/_a 2>/dev/null)" \
+                   " byte=$(wc -c < /tmp/ciout/_a)"
+              head -c 1200 /tmp/ciout/_a; echo; echo
+            done
+          } > /tmp/ciout/allerte-mondo.txt 2>&1
+          rm -f /tmp/ciout/_a /tmp/ciout/_feeds.html
+          cat /tmp/ciout/allerte-mondo.txt
+
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 

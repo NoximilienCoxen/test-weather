@@ -286,6 +286,18 @@ private val GLYPH = 18.dp
 
 private val GAP = 2.dp
 
+/**
+ * Quanto e' **alta** la colonna: sei caselle piu' i cinque stacchi.
+ *
+ * Serve alle schede, che devono sapere quali delle loro righe le passano
+ * davanti. La colonna sta a meta' altezza (`align(CenterEnd)`) e scheda e
+ * colonna portano entrambe `systemBarsPadding()`, quindi condividono il
+ * centro: titolo e numeri la scavalcano **se la scheda e' alta abbastanza**, e
+ * quanto sia abbastanza si ricava da qui invece che da un numero scritto a mano
+ * dall'altra parte, che divergerebbe alla prima casella aggiunta.
+ */
+internal val RAIL_SPAN = TARGET * 6 + GAP * 5
+
 /** Quanto e' spenta l'icona di una sezione che non e' quella in scena. */
 private const val SPENTO = 0.42f
 

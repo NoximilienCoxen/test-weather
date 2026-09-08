@@ -33,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -163,6 +162,8 @@ fun HomeScreen(
     /** Riapre la fascia **e** il bollettino: e' il tocco sul pallino. */
     onReopenAlerts: () -> Unit = {},
     onRefresh: () -> Unit = {},
+    /** Il commutatore fra le ventiquattro ore e la settimana. */
+    onSetWeek: (Boolean) -> Unit = {},
     /** Vero quando il tiro verso il basso basta gia' a chiedere una ricarica. */
     pullArmed: Boolean = false,
     /**
@@ -177,8 +178,24 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
-    val hours = state.hours
-    val hour = state.hour
+
+    // ── La schermata racconta il **giorno scelto**, non sempre oggi ─────────
+    //
+    // Leggeva `state.hours` e `state.hour`, che sono le ore di oggi e basta: il
+    // tocco su una colonna della settimana scriveva `selectedDay` e **qui non
+    // cambiava niente**. Scultura, cifra, condizione, percepita e barra
+    // raccontavano oggi qualunque giorno si scegliesse, e l'asse del giorno lo
+    // leggevano solo le schede sotto. Un bersaglio che si accende sotto il dito,
+    // non muove niente e non lascia traccia e' la stessa cosa che questa
+    // schermata ha gia' una regola per non fare: **un tocco che non corrisponde
+    // a niente di visibile non e' un riscontro, e' un difetto.**
+    //
+    // `hoursOf` e `detailHour` esistono gia' e le usano gia' tutte le altre
+    // schede: qui non si aggiunge un modo di leggere il giorno, si smette di
+    // essere l'unica schermata che non lo legge.
+    val today = state.selectedDay == 0
+    val hours = if (today) state.hours else state.shownHours
+    val hour = state.detailHour
 
     // Un solo orientamento per la scultura e la cifra: sono un oggetto solo
     // visto da un punto solo, e il gesto che li gira e' lo stesso.
@@ -404,7 +421,10 @@ fun HomeScreen(
         // che e' piu' di quanto dicessero scritte qui. Ripeterle in due posti
         // sarebbe stata la stessa informazione due volte, e quella meno ricca
         // per giunta.
-        val today = hour?.time?.let { state.forecast?.dayOf(it) }
+        // Il giorno mostrato, per l'alba e il tramonto della barra: si prende da
+        // `selectedDay`, non dall'ora corrente. Prendendolo dall'ora si
+        // otteneva il giorno giusto solo finche' il giorno mostrato era oggi.
+        val shownDay = state.detailDay ?: hour?.time?.let { state.forecast?.dayOf(it) }
         Text(
             text = feltLabel(
                 apparent = hour?.apparent,
@@ -430,15 +450,20 @@ fun HomeScreen(
         // oggi" e "quale giorno" - e messe una sotto l'altra costringerebbero la
         // scultura a stringersi per far posto a entrambe. Qui si danno il cambio.
         //
-        // La scelta sopravvive alla rotazione dello schermo (`rememberSaveable`)
-        // ma non alla chiusura dell'app: e' un modo di guardare, non una
-        // preferenza, e riaprendo l'app la domanda e' di nuovo "che tempo fa
-        // adesso".
-        var settimana by rememberSaveable { mutableStateOf(false) }
+        // La scelta sta **nello stato**, non piu' in un `rememberSaveable`
+        // locale. `UiState.weekMode` e `setWeekMode` erano gia' scritti e non li
+        // usava nessuno; adesso servono, perche' scegliere un giorno dalla
+        // striscia cambia cosa racconta la scheda e chi l'ha appena scelto deve
+        // ritrovare la striscia dov'era - non le ore. Da locale, il giro dello
+        // schermo la conservava ma la scheda ricomposta dal carosello no.
+        //
+        // Resta un modo di guardare e non una preferenza: non va in DataStore, e
+        // riaprendo l'app la domanda e' di nuovo "che tempo fa adesso".
+        val settimana = state.weekMode
 
         BarSwitch(
             settimana = settimana,
-            onChoose = { settimana = it },
+            onChoose = onSetWeek,
         )
 
         // L'altezza cambia - la settimana e' alta quattro righe, le ore una - e
@@ -456,6 +481,7 @@ fun HomeScreen(
                 WeekBar(
                     days = state.forecast?.days.orEmpty(),
                     unit = state.unit,
+                    selected = state.selectedDay,
                     onOpenDay = onOpenDay,
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
@@ -463,9 +489,11 @@ fun HomeScreen(
                 HourBar(
                     hours = hours,
                     selected = state.selectedHour,
-                    nowIndex = state.nowIndex,
-                    sunrise = today?.sunrise,
-                    sunset = today?.sunset,
+                    // Su un altro giorno "adesso" non ci cade dentro: il segno
+                    // dell'ora vera sparisce invece di indicare un'ora a caso.
+                    nowIndex = if (today) state.nowIndex else -1,
+                    sunrise = shownDay?.sunrise,
+                    sunset = shownDay?.sunset,
                     unit = state.unit,
                     onSelect = onSelectHour,
                     modifier = Modifier.padding(horizontal = 24.dp),
@@ -482,7 +510,12 @@ fun HomeScreen(
         // spento proprio quando diceva la cosa piu' utile. L'ora se n'e' andata
         // nella bolla sopra il cursore, dove il pollice non la copre, e qui
         // resta il solo comando.
-        val onNow = state.selectedHour == state.nowIndex
+        // **Su un altro giorno il tasto cambia mestiere.** Li' non c'e' un'ora
+        // vera da cui ci si e' allontanati - "adesso" non cade dentro
+        // mercoledi' - quindi quello che si puo' volere e' tornare al presente
+        // per intero. Un tasto solo, che sulla prima scheda dice sempre la
+        // stessa cosa: riportami a dove sono.
+        val onNow = today && state.selectedHour == state.nowIndex
         Box(
             // L'altezza si riserva anche quando il tasto non c'e'. Comparendo e
             // sparendo a ogni scorrimento farebbe saltare in su e in giu' la
@@ -500,10 +533,15 @@ fun HomeScreen(
             // tornare, e un tasto che rimanda a "adesso" mentre si guardano i
             // prossimi otto giorni promette di riportare da qualche parte dove
             // non si e' andati.
-            if (!onNow && !settimana) {
+            // Con la settimana in scena il tasto resta, ma **solo** se si sta
+            // guardando un altro giorno: li' e' l'unica via per tornare a oggi,
+            // e senza sarebbe un vicolo cieco. Su oggi invece non c'e' un'ora
+            // scelta da cui tornare, e un tasto che promette di riportare da
+            // qualche parte dove non si e' andati non serve a nessuno.
+            if (!onNow && (!settimana || !today)) {
                 MeteoIconButton(
                     onClick = onBackToNow,
-                    contentDescription = "Torna all'ora attuale",
+                    contentDescription = if (today) "Torna all'ora attuale" else "Torna a oggi",
                     icon = {
                         NowIcon(
                             color = colors.text.copy(alpha = 0.62f),

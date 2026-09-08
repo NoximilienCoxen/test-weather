@@ -352,7 +352,6 @@ session() {
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
   echo "  -- feed (ora $ora_dettaglio) --"
-  adbt shell logcat -c >/dev/null 2>&1 || true
 
   local n=5
   local i=0
@@ -360,6 +359,14 @@ session() {
     alive || { echo "dispositivo caduto alla scheda $scheda"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
+    # **Il buffer va svuotato a ogni giro**, come in `restart_with`, e qui era
+    # svuotato una volta sola prima del ciclo: dalla seconda scheda in poi
+    # `attendi_previsione` trovava la riga "previsione pronta" della scheda
+    # precedente e tornava all'istante, cioe' non aspettava niente. Si vedeva
+    # come uno scatto ogni tanto con scritto IN ATTESA DEI DATI - due volte di
+    # fila sulla pioggia in tema chiaro, che e' quando ho smesso di crederci
+    # come sfortuna.
+    adbt shell logcat -c >/dev/null 2>&1 || true
     adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
@@ -527,6 +534,105 @@ session() {
 
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
+
+    # ── La finestra della scheda della pioggia ───────────────────────────────
+    #
+    # Due scatti, e **in coda apposta**: l'emulatore muore attorno al
+    # quindicesimo riavvio, e la coda e' cio' che ci si puo' permettere di
+    # perdere. Sono i due casi che nessuno degli altri copre.
+    #
+    # Girata, perche' e' l'unico modo di fotografare **cio' per cui il gesto
+    # esiste**: girando si scopre lo strombo, cioe' la parete di dentro del
+    # foro, e il cielo scivola rispetto all'apertura. Da fermo la finestra e' un
+    # rettangolo bianco e quella profondita' non si vede. Fino a poco fa
+    # `--ei giro` arrivava alla sola prima schermata, quindi questo scatto non
+    # era nemmeno possibile.
+    #
+    # E con la pioggia, perche' e' l'unico modo di vedere le gocce **sul vetro**:
+    # la previsione vera del giorno dello scatto e' quasi sempre asciutta, e
+    # senza il codice imposto la lastra resterebbe pulita in ogni scatto della
+    # galleria.
+    #
+    # Cosa **non** si fotografa, e va detto invece di comprarlo con un terzo
+    # riavvio: la neve, che cambia due rami - i fiocchi che ondeggiano dietro e
+    # il vetro che resta pulito - ma li cambia in un modo che una foto ferma
+    # racconta male.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei giro 60"
+    shoot "${slug}-12-finestra-girata"
+
+    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
+    shoot "${slug}-13-finestra-pioggia"
+
+    # ── La guardia della scheda che si muove sempre ──────────────────────────
+    #
+    # La scheda della pioggia e' l'**eccezione dichiarata** alla regola per cui
+    # da fermo l'app disegna zero fotogrammi: da quando sotto la finestra passa
+    # gente, qualcosa si muove sempre mentre la si guarda. L'eccezione sta in
+    # piedi solo se si spegne appena la scheda non si guarda piu', e quella
+    # guardia e' `alive`.
+    #
+    # **Questa e' la sola parte di quella verifica che un emulatore puo' dare**,
+    # ed e' anche quella che conta: il costo per fotogramma di un emulatore non
+    # dice niente di un telefono - la resa e' software - ma "i fotogrammi si
+    # fermano oppure no" e' una domanda binaria, e la risposta e' la stessa
+    # dappertutto. Il numero vero resta da prendere in mano.
+    #
+    # Il caso e' scelto apposta: con la scheda dell'aria in scena (sezione 2) il
+    # carosello tiene la pioggia **composta ma fuori vista**, che e' esattamente
+    # la situazione per cui la guardia esiste. Se leggesse fotogrammi anche li',
+    # la finestra camminerebbe per nessuno.
+    #
+    # Non fa fallire il giro: e' una misura, e va letta nel registro.
+    conta_fotogrammi() {
+      adbt shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
+      sleep 4
+      adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null \
+        | tr -d '\r' | awk -F': *' '/Total frames rendered/ { print $2; exit }'
+    }
+
+    # Un riavvio solo, e non due: la pioggia e' gia' in scena dallo scatto qui
+    # sopra, quindi il primo conteggio si prende com'e'. **L'emulatore muore
+    # attorno al quindicesimo riavvio** (trappola #38), e questo pezzo sta in
+    # coda a tutto: un riavvio risparmiato qui e' la differenza fra una misura
+    # in piu' e una galleria in meno.
+    echo "  -- la guardia della scena --"
+    guardata=$(conta_fotogrammi)
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    accanto=$(conta_fotogrammi)
+    echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
+    echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
+    # **La soglia non e' lo zero esatto, ed e' una correzione, non uno sconto.**
+    # La prima volta pretendeva zero e leggeva uno: la guardia teneva benissimo -
+    # 55 fotogrammi contro 1 - ma il criterio era sbagliato. Un **orologio** che
+    # gira produce un flusso di fotogrammi, non un fotogramma solo; quell'uno e'
+    # una ricomposizione di passaggio, e sulla scheda dell'aria si spiega da se',
+    # perche' la qualita' dell'aria arriva da una richiesta a parte e quando
+    # arriva ridisegna una volta.
+    #
+    # Quindi si chiede quello che si vuole davvero sapere: che di la' un
+    # orologio giri, e che di qua non ne giri nessuno.
+    if [ "${guardata:-0}" -gt 10 ] 2>/dev/null && [ "${accanto:-99}" -le 3 ] 2>/dev/null; then
+      esito="la guardia tiene: si muove solo mentre la si guarda"
+    else
+      esito="ATTENZIONE: la guardia non si comporta come dichiarato"
+    fi
+    echo "    $esito"
+    # Scritta anche accanto agli scatti, non solo nel registro del job: un
+    # numero che si legge solo scorrendo diecimila righe di log e' un numero
+    # che nessuno rilegge.
+    {
+      echo "la guardia della scheda della pioggia"
+      echo "  fotogrammi in 4s, pioggia in scena:  ${guardata:-?}"
+      echo "  fotogrammi in 4s, pioggia accanto:   ${accanto:-?}"
+      echo "  $esito"
+      echo
+      echo "Il primo numero non dice niente sul costo per fotogramma: qui rende"
+      echo "l'emulatore, via software. Quello si prende in mano."
+    } > "$OUT/misure.txt"
+    # E il conto di sinistra dice anche un'altra cosa, che vale ricordare:
+    # sessanta fotogrammi in quattro secondi sono quindici al secondo, non
+    # sessanta. E' l'emulatore, che rende via software. **Da qui non si ricava
+    # nessun giudizio sul costo per fotogramma**: quello si prende in mano.
 
   fi
 

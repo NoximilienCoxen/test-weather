@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,9 +26,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.PrecipKind
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.asCentimetres
 import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.asMetresPerSecond
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
@@ -53,14 +58,22 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
- * Una scheda del feed, per ora **con il posto dell'oggetto ancora vuoto**.
+ * Una scheda del feed: lo scheletro comune, e i rami di chi e' gia' fatto.
  *
  * Lo scheletro e' lo stesso per tutte e cinque le sezioni che non sono la
- * temperatura: titolo, la cifra girabile col dito, il palco dell'oggetto che
- * verra', e sotto i due o tre numeri che l'app sa gia'. Si decide una sezione
- * alla volta cosa metterci - e' la regola di lavoro del progetto, una schermata
- * per volta e quella diventa il modello per le altre - e intanto il palco
- * dichiara cosa manca invece di essere un buco.
+ * temperatura: titolo, la cifra girabile col dito, il posto dell'oggetto, e
+ * sotto i due o tre numeri che l'app sa gia'. Si decide una sezione alla volta
+ * cosa metterci - e' la regola di lavoro del progetto, una schermata per volta e
+ * quella diventa il modello per le altre - e intanto il palco dichiara cosa
+ * manca invece di essere un buco.
+ *
+ * **La pioggia e' la prima ad essere uscita dal segnaposto**, e si vede da due
+ * rami di `when`: al posto della cifra c'e' una finestra sul cielo dell'ora
+ * scelta (`RainWindow`), al posto del riquadro tratteggiato la fascia delle
+ * ventiquattro ore (`RainHours`), da cui quell'ora si sceglie. Le due vivono in file loro e non qui: questo
+ * e' lo scheletro generico, e duecentocinquanta righe di una sola sezione lo
+ * renderebbero il file di quella sezione. E' la stessa scelta della barra delle
+ * ore, che ha il suo file e un mestiere solo.
  *
  * **Niente scorrimento interno.** Una scheda sta in una schermata e basta: il
  * gesto verticale appartiene tutto al feed, e una colonna che scorre dentro una
@@ -70,7 +83,9 @@ import kotlin.math.sin
  * **Niente animazioni a riposo**, per la trappola #8: da fermo l'app deve
  * disegnare zero fotogrammi, e con sei schede da comporre e' piu' facile
  * romperlo di prima. Quello che si muove qui e' la cifra, e si muove solo
- * mentre un dito la gira.
+ * mentre un dito la gira. L'unica eccezione e' la pioggia dentro la vasca, che
+ * batte **solo mentre piove davvero e solo mentre la scheda si guarda** - da cui
+ * [alive], che senza un orologio non servirebbe a nessuno.
  *
  * I colori vengono da `LocalMeteoColors` e le tinte da [rememberSkyAccents], mai
  * da `MaterialTheme.colorScheme`: le schede vivono **sul cielo**, non su una
@@ -83,6 +98,28 @@ fun SectionCard(
     state: UiState,
     tilt: State<Offset>,
     layout: MeteoLayout,
+    /**
+     * Falso quando la scheda e' composta ma non la guarda nessuno.
+     *
+     * Il carosello tiene composta anche la scheda accanto per averla pronta a
+     * meta' trascinamento, e un `withFrameNanos` dentro una finestra visibile
+     * continua a battere anche se la sua pagina e' fuori vista. Senza questa
+     * guardia, stando sull'aria la pioggia continuerebbe a cadere in una vasca
+     * che non si vede - e il telefono a vibrare per gocce che nessuno guarda.
+     * E' la stessa ragione del flag della prima scheda (`FeedScreen.kt`), e la
+     * stessa regola: **un tocco che non corrisponde a niente di visibile non e'
+     * un riscontro.**
+     */
+    alive: Boolean = true,
+    /**
+     * Sceglie un'ora del giorno mostrato, dalla fascia delle ventiquattro.
+     *
+     * Prende **l'ora del giorno**, non una posizione: `selectHour` conta sulle
+     * prime ventiquattro ore, che cominciano a mezzanotte, quindi l'indice e'
+     * l'ora - ma passare l'ora e' l'unica cosa che resta giusta anche il giorno
+     * del cambio d'ora, che di voci non ne ha ventiquattro.
+     */
+    onSelectHour: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -92,64 +129,133 @@ fun SectionCard(
     // non deve girare la luna. Sono oggetti diversi visti da punti diversi.
     val rotation: SceneRotation = rememberSceneRotation()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(start = layout.gutter, end = layout.gutter + RAIL_WIDTH),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = section.title,
-            // `label` e non `caption`: e' la riga che dice di cosa parla la
-            // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
-            // usa questo. Il sottotitolo sotto resta una didascalia, e la
-            // differenza fra le due si vede dalla misura oltre che dal colore.
-            style = MeteoType.label,
-            color = accent,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-        )
-        Text(
-            text = subtitle(state, section),
-            style = MeteoType.caption,
-            color = colors.label,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    // L'aggancio `--ei giro`, che finora arrivava alla sola prima schermata:
+    // `rotation.pin` era chiamata in un posto solo, in `HomeScreen`. Senza,
+    // **nessuna scheda del feed si puo' fotografare girata** - la luna
+    // compresa - e siccome tutta la ragione per cui la vasca della pioggia si
+    // gira e' che girandola si legge la scala incisa, quel giro sarebbe
+    // infotografabile e quindi non verificabile.
+    LaunchedEffect(state.forcedYawDeg) { rotation.pin(state.forcedYawDeg) }
 
-        SectionHero(
-            section = section,
-            state = state,
-            rotation = rotation,
-            tilt = tilt,
-            accent = accent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(HERO_SHARE),
-        )
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        // ── Il centro della scheda e' il centro dello schermo ───────────────
+        //
+        // Non il centro di quel che avanza accanto alla colonna di icone. Il
+        // margine asimmetrico che stava qui - `end = gutter + RAIL_WIDTH` -
+        // spostava titolo, cifra, riquadro e numeri **ventidue punti a
+        // sinistra**, ed e' lo stesso difetto gia' corretto sulla prima scheda:
+        // il commento in `FeedScreen` racconta che li' il margine faceva
+        // sembrare tutto spostato e che adesso la colonna galleggia nel margine
+        // che c'e' gia'. Le altre cinque schede erano rimaste indietro.
+        //
+        // **Un margine simmetrico non sposta il centro: costa solo larghezza.**
+        // Quindi la domanda per ogni riga e' una sola - passa davanti alla
+        // colonna? La colonna e' alta [RAIL_SPAN] e sta a meta' altezza, quindi
+        // le righe in cima e in fondo la scavalcano **se la scheda e' alta
+        // abbastanza**. Sotto quella misura - cioe' in orizzontale, dove la
+        // colonna occupa quasi tutta l'altezza - non la scavalca piu' nessuno,
+        // e l'inserto va sull'intera colonna: resta centrata lo stesso, e non
+        // collide.
+        val railClearsEnds = maxHeight >= RAIL_SPAN + endsBlock() * 2
+        val edgeInset = if (railClearsEnds) 0.dp else RAIL_WIDTH
+        val bodyInset = if (railClearsEnds) RAIL_WIDTH else 0.dp
 
-        Stage(
-            caption = section.stage,
-            color = colors.line,
-            label = colors.label,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(STAGE_SHARE)
-                .padding(vertical = 10.dp),
-        )
+                .fillMaxSize()
+                .padding(horizontal = layout.gutter + edgeInset),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = section.title,
+                // `label` e non `caption`: e' la riga che dice di cosa parla la
+                // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
+                // usa questo. Il sottotitolo sotto resta una didascalia, e la
+                // differenza fra le due si vede dalla misura oltre che dal colore.
+                style = MeteoType.label,
+                color = accent,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            )
+            Text(
+                text = subtitle(state, section),
+                style = MeteoType.caption,
+                color = colors.label,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
 
-        SectionNumbers(
-            section = section,
-            state = state,
-            accent = accent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-        )
+            // Eroe e palco sono le due righe che passano davanti alla
+            // colonna, e l'inserto che se ne tengono lontane e' **simmetrico**:
+            // non le sposta, le stringe. Titolo, sottotitolo e numeri restano a
+            // piena larghezza - la scavalcano - e ci guadagnano i
+            // quarantaquattro punti che il vecchio margine si prendeva: su uno
+            // schermo stretto una colonna dei numeri passa da novantasei a
+            // centodieci punti, e PROBABILITA' smette di rischiare il taglio.
+            SectionHero(
+                section = section,
+                state = state,
+                rotation = rotation,
+                tilt = tilt,
+                accent = accent,
+                alive = alive,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(HERO_SHARE)
+                    .padding(horizontal = bodyInset),
+            )
+
+            // La pioggia non ha piu' un segnaposto: la fascia delle
+            // ventiquattro ore ha preso il posto del riquadro tratteggiato, e
+            // prende **un'altezza in punti** invece di una frazione dello
+            // spazio che avanza - se no le colonne diventerebbero pali alti
+            // mezzo schermo e la vasca si prenderebbe quel che resta invece del
+            // contrario. Le altre quattro sezioni il riquadro se lo tengono,
+            // perche' sono ancora da fare e un riquadro che dichiara cosa manca
+            // e' un lavoro in corso mentre uno muto e' un difetto.
+            if (section == FeedSection.PRECIPITAZIONI) {
+                RainHours(
+                    hours = state.pageHours,
+                    selectedHour = state.detailHour?.time?.hour,
+                    nowHour = state.nowHourOnShownDay,
+                    kind = state.pageDay?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE,
+                    forcedCode = state.forcedWeatherCode,
+                    accent = accent,
+                    compact = layout.compact,
+                    // **Non un secondo scrittore**: `selectHour` e' quello che
+                    // gia' scrive l'ora dalla prima scheda, e la fascia chiama
+                    // lui. L'ora e' un asse solo, come il giorno.
+                    onSelectHour = onSelectHour,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = bodyInset)
+                        .padding(bottom = 10.dp),
+                )
+            } else {
+                Stage(
+                    caption = section.stage,
+                    color = colors.line,
+                    label = colors.label,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(STAGE_SHARE)
+                        .padding(horizontal = bodyInset, vertical = 10.dp),
+                )
+            }
+
+            SectionNumbers(
+                section = section,
+                state = state,
+                accent = accent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+            )
+        }
     }
 }
 
@@ -170,6 +276,7 @@ private fun SectionHero(
     rotation: SceneRotation,
     tilt: State<Offset>,
     accent: Color,
+    alive: Boolean,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -193,6 +300,30 @@ private fun SectionHero(
             return@BoxWithConstraints
         }
 
+        if (section == FeedSection.PRECIPITAZIONI) {
+            // Il controllo sui dati se lo fa da se', e non passa da
+            // `heroValue`: alla finestra serve il **giorno**, non una stringa -
+            // alba e tramonto sono il solo modo in cui il posto entra nel conto
+            // del cielo - e una finestra disegnata senza previsione mostrerebbe
+            // un cielo inventato invece di dire che non si sa ancora.
+            val day = state.pageDay
+            if (day == null || (day.precipitationSum == null && day.snowfallSum == null)) {
+                val (title, message) = heroMissingReason(section, state)
+                SkyMessage(title = title, message = message)
+                return@BoxWithConstraints
+            }
+            RainWindow(
+                hour = state.pageHour,
+                day = day,
+                forcedCode = state.forcedWeatherCode,
+                rotation = rotation,
+                tilt = tilt,
+                alive = alive,
+                modifier = Modifier.fillMaxSize(),
+            )
+            return@BoxWithConstraints
+        }
+
         val value = heroValue(section, state)
         if (value == null) {
             // Finche' non c'e' un numero non si disegna niente: un "--" alto
@@ -204,7 +335,7 @@ private fun SectionHero(
             return@BoxWithConstraints
         }
 
-        val unit = section.unitLabel
+        val unit = unitLabelFor(section, state)
         // La cifra sta dentro il riquadro che le tocca, e sotto di lei ci va
         // l'unita': con l'unita' in scena il corpo si riduce, se no il numero
         // sconfina di quel tanto che l'etichetta gli ha portato via.
@@ -381,11 +512,30 @@ private fun SectionNumbers(
     val entries: List<Pair<String, String>> = when (section) {
         FeedSection.TEMPERATURA -> emptyList()
 
-        FeedSection.PRECIPITAZIONI -> listOf(
-            "PROBABILITA'" to hour?.precipProbability.asPercent(),
-            "IN QUEST'ORA" to hour?.precipitation.asMillimetres(),
-            "ORE DI PIOGGIA" to (day?.precipHours?.roundToInt()?.let { "$it H" } ?: MISSING),
-        )
+        FeedSection.PRECIPITAZIONI -> {
+            val kind = day?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE
+            listOf(
+                // Lo stesso numero inciso sulla vasca, e ripeterlo non e'
+                // ridondanza: sulla vasca sta accanto al livello e si legge
+                // come una misura, qui sta in colonna con gli altri due e si
+                // legge come un dato. Sono due letture che servono in momenti
+                // diversi.
+                "TOTALE" to if (kind.isSnowy()) {
+                    day?.snowfallSum.asCentimetres()
+                } else {
+                    day?.precipitationSum.asMillimetres()
+                },
+                // La probabilita' **del giorno**, non dell'ora. Il sottotitolo
+                // dice TUTTO IL GIORNO, e un'ora precisa sopra un totale del
+                // giorno e' esattamente la bugia che `isDailyTotal` esiste per
+                // togliere di mezzo: qui c'era, ed era rimasta.
+                "PROBABILITA'" to day?.precipProbability.asPercent(),
+                // `PrecipKind` era scritta, documentata "per la tabella della
+                // pagina Precip", e non la chiamava nessuno. Quella pagina
+                // adesso c'e'.
+                "TIPOLOGIA" to kind.label,
+            )
+        }
 
         FeedSection.ARIA -> listOf(
             "GIUDIZIO" to (state.air?.band?.label ?: MISSING),
@@ -570,6 +720,21 @@ private const val MISSING = "--"
  * qualcosa", dice che la scheda e' vuota. Ridotto, resta una fascia dichiarata
  * sotto l'oggetto invece di essere l'oggetto stesso.
  */
+/**
+ * Quanto prendono, in cima e in fondo, le righe che scavalcano la colonna.
+ *
+ * Titolo e sottotitolo da una parte, i tre numeri dall'altra. Cinquantasei
+ * punti coprono il caso peggiore delle due.
+ *
+ * **Segue la scala del carattere di sistema**, e non e' un vezzo: a scala
+ * doppia i tre numeri sono alti novanta punti e non quarantotto, e con una
+ * soglia fissa il caso che questo controllo esiste per evitare rientrerebbe
+ * dalla finestra proprio su chi ha il carattere grande - cioe' su chi ha piu'
+ * bisogno che il conto torni.
+ */
+@Composable
+private fun endsBlock(): Dp = 56.dp * LocalDensity.current.fontScale
+
 private const val HERO_SHARE = 1f
 private const val STAGE_SHARE = 0.62f
 
@@ -596,8 +761,16 @@ private const val SHADOW_PITCH = 5f
  * riempiva la scheda da bordo a bordo e il segnaposto sotto sembrava
  * schiacciato: un oggetto che tocca i margini non si legge come un corpo nel
  * cielo, si legge come una macchia.
+ *
+ * **Da trentadue a trentacinque centesimi con la centratura.** Il raggio e'
+ * frazione del lato corto del riquadro, che qui e' la larghezza, e l'inserto
+ * simmetrico che tiene l'eroe lontano dalla colonna gliene toglie
+ * quarantaquattro punti: a parita' di frazione la luna usciva **un sesto piu'
+ * piccola** di prima, senza che niente lo dicesse. Trentacinque e' un
+ * compromesso e non un ripristino - ci vorrebbe trentotto, cioe' quasi il
+ * quaranta gia' scartato qui sopra - e va guardato in uno scatto, non dedotto.
  */
-private const val MOON_RADIUS = 0.32f
+private const val MOON_RADIUS = 0.35f
 
 private val CORNER = 18.dp
 private val STROKE = 1.dp

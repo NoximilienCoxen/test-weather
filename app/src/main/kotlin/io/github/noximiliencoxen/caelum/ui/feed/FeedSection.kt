@@ -20,10 +20,12 @@ package io.github.noximiliencoxen.caelum.ui.feed
  * al secondo. Solo la temperatura porta il suo grado, perche' e' l'unico
  * simbolo che il prisma estrude insieme alle cifre.
  *
- * [stage] e' cio' che la scheda **ospitera'**, e sta scritto sul segnaposto.
- * Le schede nascono vuote apposta: cosa metterci dentro si decide una sezione
- * alla volta, e un riquadro che dichiara cosa manca e' un lavoro in corso,
- * mentre un riquadro vuoto e muto e' un difetto.
+ * [stage] e' cio' che la scheda ospita, e sta scritto sul segnaposto **finche'
+ * un segnaposto c'e'**. Le schede nascono vuote apposta: cosa metterci dentro si
+ * decide una sezione alla volta, e un riquadro che dichiara cosa manca e' un
+ * lavoro in corso mentre un riquadro vuoto e muto e' un difetto. Sulle sezioni
+ * gia' fatte - la temperatura e la pioggia - la riga resta a dire cosa la scheda
+ * contiene, e il riquadro non si disegna piu'.
  */
 enum class FeedSection(
     val title: String,
@@ -40,12 +42,24 @@ enum class FeedSection(
     PRECIPITAZIONI(
         title = "PRECIPITAZIONI",
         chipLabel = "Pioggia",
-        unitLabel = "MM NEL GIORNO",
-        stage = "Gocce che si posano sul vetro e scendono, e una pozza che cresce con i millimetri",
+        // Vuota come quella della luna, e per la stessa ragione: qui non c'e'
+        // piu' una cifra sotto cui scrivere un'unita'. I millimetri stanno fra
+        // i tre numeri in fondo, e "MM NEL GIORNO" scritto quassu' sarebbe una
+        // seconda unita' che parla di un numero che non c'e'.
+        unitLabel = "",
+        // Il segnaposto e' stato **preso in parola**: al posto del riquadro
+        // vuoto c'e' la fascia delle ventiquattro ore, e al posto della cifra
+        // una finestra sul cielo di quell'ora. Come per la temperatura, la riga
+        // resta a dire cosa la scheda ospita - solo che adesso lo ospita
+        // davvero.
+        stage = "La finestra sull'ora scelta e le ventiquattro ore",
     ),
     ARIA(
         title = "QUALITA' DELL'ARIA",
         chipLabel = "Aria",
+        // Il ripiego, per quando l'indice non e' ancora arrivato e non si sa
+        // ancora con quale metro sara' misurato. Quando arriva, a scriverlo e'
+        // `unitLabelFor`: la scala cambia col posto, e l'etichetta con lei.
         unitLabel = "INDICE EUROPEO",
         stage = "Il pulviscolo in sospensione: piu' l'indice sale, piu' l'aria si fa densa da attraversare",
     ),
