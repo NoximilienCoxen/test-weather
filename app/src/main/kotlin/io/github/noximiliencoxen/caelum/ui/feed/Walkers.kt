@@ -140,7 +140,20 @@ internal class StreetInk(
 /** I colori della via sotto un cielo di quel colore. */
 internal fun streetInk(sky: Color): StreetInk {
     val figure = lerp(sky, Color.Black, FIGURE_INK)
-    val road = sky.readableOn(figure, STREET_LIFT)
+    // **L'asfalto ha un tono suo, e non lo prende in prestito dal cielo.** Di
+    // giorno e' **piu' scuro** del cielo, perche' e' il cielo a illuminarlo; di
+    // notte e' **piu' chiaro**, perche' a illuminarlo sono i lampioni. Una
+    // regola sola che dia tutte e due le cose non esiste, e infatti il primo
+    // tentativo - ricavare la via dal solo contrasto con le sagome - dava una
+    // strada piu' chiara del cielo **anche a mezzogiorno**: ghiaccio, non
+    // asfalto.
+    //
+    // Quindi due passi, e ciascuno fa una cosa sola: prima lo si scurisce come
+    // fa l'asfalto, che di giorno basta e avanza; poi lo si tira su **solo se**
+    // e' rimasto tanto buio che le sagome ci sparirebbero dentro, che e' la
+    // notte e sono i lampioni.
+    val asphalt = lerp(sky, Color.Black, ROAD_SHADE)
+    val road = asphalt.readableOn(figure, STREET_LIFT)
     return StreetInk(
         figure = figure,
         umbrella = lerp(sky, Color.Black, UMBRELLA_INK),
@@ -387,8 +400,11 @@ private const val UMBRELLA_DROP = 0.13f
 private const val FIGURE_INK = 0.85f
 private const val UMBRELLA_INK = 0.70f
 
+/** Quanto l'asfalto e' piu' scuro del cielo che lo illumina. */
+private const val ROAD_SHADE = 0.42f
+
 /**
- * Di quanto la via si stacca dalle sagome.
+ * Di quanto la via si stacca dalle sagome, **quando ce n'e' bisogno**.
  *
  * **Non e' la soglia da testo**, ed e' una scelta e non una dimenticanza: 3:1 e'
  * quanto serve a una scritta per essere letta, e applicato qui spinge l'asfalto
