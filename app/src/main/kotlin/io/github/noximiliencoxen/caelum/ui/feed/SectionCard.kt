@@ -324,7 +324,7 @@ private fun SectionHero(
             return@BoxWithConstraints
         }
 
-        val unit = section.unitLabel
+        val unit = unitLabelFor(section, state)
         // La cifra sta dentro il riquadro che le tocca, e sotto di lei ci va
         // l'unita': con l'unita' in scena il corpo si riduce, se no il numero
         // sconfina di quel tanto che l'etichetta gli ha portato via.

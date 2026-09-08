@@ -44,12 +44,32 @@ jobs:
       # La qualita' dell'aria sta su un altro host e ha un contratto suo: il
       # widget che la mostra si fida di questi nomi di campo, e qui si vede se
       # sono ancora quelli.
+      # **E fuori Europa?** L'indice europeo e' una scala europea, e applicarla
+      # a Tokyo da' un numero giusto su una scala sbagliata. La domanda vera e'
+      # se l'endpoint lo riempia comunque fuori dal suo dominio o lo lasci
+      # nullo: da quella risposta dipende se l'app puo' lasciar decidere ai
+      # dati quale scala usare, o se deve deciderlo da se'. Si chiede quindi
+      # negli stessi tre punti in cui si guarda tutto il resto.
       - name: Interroga la qualita' dell'aria
         run: |
           mkdir -p /tmp/ciout
-          AIR="https://air-quality-api.open-meteo.com/v1/air-quality?latitude=44.2226&longitude=12.0407&timezone=auto&current=european_aqi,pm2_5,pm10"
+          VARS="european_aqi,us_aqi,pm2_5,pm10"
+          BASE="https://air-quality-api.open-meteo.com/v1/air-quality"
+          AIR="$BASE?latitude=44.2226&longitude=12.0407&timezone=auto&current=$VARS"
           curl -sS -w "\nHTTP %{http_code}\n" "$AIR" -o /tmp/ciout/aria.json
           cat /tmp/ciout/aria.json; echo
+          {
+            echo "=== l'indice europeo, dentro e fuori il suo dominio ==="
+            for punto in "Forli:44.2226:12.0407" "Tokyo:35.68:139.69" \
+                         "NewYork:40.71:-74.01" "Nairobi:-1.29:36.82"; do
+              nome="${punto%%:*}"; resto="${punto#*:}"
+              lat="${resto%%:*}"; lon="${resto#*:}"
+              echo "--- $nome"
+              curl -sS "$BASE?latitude=$lat&longitude=$lon&timezone=auto&current=$VARS"
+              echo
+            done
+          } > /tmp/ciout/aria-mondo.txt 2>&1
+          cat /tmp/ciout/aria-mondo.txt
 
       # Le allerte vengono da MeteoAlarm, che e' l'unica fonte pubblica e senza
       # accordi su cui i servizi nazionali - per l'Italia la Protezione Civile e

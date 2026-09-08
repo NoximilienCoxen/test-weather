@@ -91,7 +91,7 @@ internal fun heroValue(section: FeedSection, state: UiState): String? {
         // gli serve il giorno intero e non una stringa.
         FeedSection.PRECIPITAZIONI -> null
 
-        FeedSection.ARIA -> state.air?.europeanAqi?.toString()
+        FeedSection.ARIA -> state.air?.index?.toString()
 
         FeedSection.VENTO -> hour?.windSpeed?.roundToInt()?.toString()
 
@@ -104,6 +104,24 @@ internal fun heroValue(section: FeedSection, state: UiState): String? {
         FeedSection.LUNA -> null
     }
 }
+
+/**
+ * L'unita' scritta sotto la cifra, che per l'aria **non e' fissa**.
+ *
+ * L'indice dell'aria arriva su due scale diverse secondo dove si e' - quella
+ * europea dentro il suo dominio, quella statunitense fuori - e i due numeri non
+ * si confrontano: cinquanta sull'una e' aria mediocre, cinquanta sull'altra e'
+ * aria buona. Scrivere "INDICE EUROPEO" sotto un numero americano sarebbe la
+ * bugia peggiore delle due, perche' e' quella che sembra un'informazione.
+ *
+ * Le altre sezioni hanno un'unita' sola e se la tengono scritta nell'enum.
+ */
+internal fun unitLabelFor(section: FeedSection, state: UiState): String =
+    if (section == FeedSection.ARIA) {
+        state.air?.scale?.label ?: section.unitLabel
+    } else {
+        section.unitLabel
+    }
 
 /**
  * Quanti caratteri finali vanno in corpo ridotto.
