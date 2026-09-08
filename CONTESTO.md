@@ -1470,11 +1470,10 @@ comunque a ogni fotogramma.
   compila, non che disegna
 - **quanto costa la scena della finestra**, che e' l'unica parte dell'app che si
   muove sempre mentre la si guarda (sezione 8-quinquies): `dumpsys gfxinfo`,
-  quattro secondi sulla scheda, mediano e ritardi. Se non regge i 16 ms cedono
-  gli strati e non il movimento - prima le persone, poi le gocce sul vetro
-- **che la guardia `alive` spenga davvero la scena**: quattro secondi sulla
-  scheda accanto, e i fotogrammi devono tornare a **zero**. E' l'unica cosa che
-  tiene l'eccezione dentro un limite, ed e' dichiarata proprio per questo
+  quattro secondi sulla scheda, mediano e ritardi. Va preso **in mano**: il costo
+  per fotogramma di un emulatore non dice niente di un telefono, perche' la resa
+  e' software. Se non regge i 16 ms cedono gli strati e non il movimento - prima
+  le persone, poi le gocce sul vetro
 - **che il ritorno a zero dell'orologio lento non si veda**: e' una cosa che uno
   scatto non puo' dire, per costruzione
 - **che lo scorrimento delle ore sulla fascia non rubi il cambio di scheda**: il
@@ -2184,9 +2183,18 @@ vorrebbe dire una strada di manichini fermi, che e' peggio di una strada vuota.
 E' un'eccezione alla regola per cui da fermo l'app disegna zero fotogrammi
 (trappola #8), ed e' dichiarata, non dimenticata. Il suo limite e' `alive`: il
 carosello tiene composta anche la scheda accanto, e `withFrameNanos` dentro una
-finestra visibile continua a battere anche per una pagina fuori vista. **Va
-misurata, non dedotta**: `dumpsys gfxinfo`, quattro secondi sulla scheda accanto,
-e i fotogrammi devono tornare a zero.
+finestra visibile continua a battere anche per una pagina fuori vista.
+
+**Va misurata, non dedotta - e adesso la misura la prende la CI.** In coda al
+giro degli scatti, `dumpsys gfxinfo` conta i fotogrammi di quattro secondi due
+volte: con la pioggia in scena, e con la scheda dell'aria in scena, cioe' con la
+pioggia **composta ma fuori vista** - che e' esattamente il caso per cui la
+guardia esiste. Il primo numero dev'essere maggiore di zero, il secondo zero.
+
+E' l'unica meta' della verifica che un emulatore possa dare, ed e' anche quella
+che conta: il costo per fotogramma li' non dice niente (la resa e' software), ma
+"i fotogrammi si fermano oppure no" e' una domanda binaria e la risposta e' la
+stessa dappertutto. **Il costo vero resta da prendere in mano.**
 
 Se il costo per fotogramma non regge i 16 ms, **cedono gli strati e non il
 movimento**: prima le persone, poi le gocce sul vetro.

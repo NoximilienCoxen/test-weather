@@ -563,6 +563,50 @@ session() {
     restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
     shoot "${slug}-13-finestra-pioggia"
 
+    # ── La guardia della scheda che si muove sempre ──────────────────────────
+    #
+    # La scheda della pioggia e' l'**eccezione dichiarata** alla regola per cui
+    # da fermo l'app disegna zero fotogrammi: da quando sotto la finestra passa
+    # gente, qualcosa si muove sempre mentre la si guarda. L'eccezione sta in
+    # piedi solo se si spegne appena la scheda non si guarda piu', e quella
+    # guardia e' `alive`.
+    #
+    # **Questa e' la sola parte di quella verifica che un emulatore puo' dare**,
+    # ed e' anche quella che conta: il costo per fotogramma di un emulatore non
+    # dice niente di un telefono - la resa e' software - ma "i fotogrammi si
+    # fermano oppure no" e' una domanda binaria, e la risposta e' la stessa
+    # dappertutto. Il numero vero resta da prendere in mano.
+    #
+    # Il caso e' scelto apposta: con la scheda dell'aria in scena (sezione 2) il
+    # carosello tiene la pioggia **composta ma fuori vista**, che e' esattamente
+    # la situazione per cui la guardia esiste. Se leggesse fotogrammi anche li',
+    # la finestra camminerebbe per nessuno.
+    #
+    # Non fa fallire il giro: e' una misura, e va letta nel registro.
+    conta_fotogrammi() {
+      adbt shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
+      sleep 4
+      adbt shell dumpsys gfxinfo "$PKG" 2>/dev/null \
+        | tr -d '\r' | awk -F': *' '/Total frames rendered/ { print $2; exit }'
+    }
+
+    # Un riavvio solo, e non due: la pioggia e' gia' in scena dallo scatto qui
+    # sopra, quindi il primo conteggio si prende com'e'. **L'emulatore muore
+    # attorno al quindicesimo riavvio** (trappola #38), e questo pezzo sta in
+    # coda a tutto: un riavvio risparmiato qui e' la differenza fra una misura
+    # in piu' e una galleria in meno.
+    echo "  -- la guardia della scena --"
+    guardata=$(conta_fotogrammi)
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    accanto=$(conta_fotogrammi)
+    echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
+    echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
+    if [ "${accanto:-1}" = "0" ] && [ "${guardata:-0}" != "0" ]; then
+      echo "    la guardia tiene: si muove solo mentre la si guarda"
+    else
+      echo "    ATTENZIONE: la guardia non si comporta come dichiarato"
+    fi
+
   fi
 
 
