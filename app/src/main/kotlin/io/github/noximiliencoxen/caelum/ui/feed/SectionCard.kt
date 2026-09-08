@@ -111,6 +111,15 @@ fun SectionCard(
      * un riscontro.**
      */
     alive: Boolean = true,
+    /**
+     * Sceglie un'ora del giorno mostrato, dalla fascia delle ventiquattro.
+     *
+     * Prende **l'ora del giorno**, non una posizione: `selectHour` conta sulle
+     * prime ventiquattro ore, che cominciano a mezzanotte, quindi l'indice e'
+     * l'ora - ma passare l'ora e' l'unica cosa che resta giusta anche il giorno
+     * del cambio d'ora, che di voci non ne ha ventiquattro.
+     */
+    onSelectHour: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalMeteoColors.current
@@ -217,6 +226,10 @@ fun SectionCard(
                     forcedCode = state.forcedWeatherCode,
                     accent = accent,
                     compact = layout.compact,
+                    // **Non un secondo scrittore**: `selectHour` e' quello che
+                    // gia' scrive l'ora dalla prima scheda, e la fascia chiama
+                    // lui. L'ora e' un asse solo, come il giorno.
+                    onSelectHour = onSelectHour,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = bodyInset)

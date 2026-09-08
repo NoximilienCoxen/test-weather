@@ -223,6 +223,7 @@ fun FeedScreen(
                     // il dito si e' staccato. E' la stessa lettura, sulla
                     // stessa riga, del flag della prima scheda qui sopra.
                     alive = pagerState.currentPage == page,
+                    onSelectHour = viewModel::selectHour,
                     modifier = Modifier.systemBarsPadding(),
                 )
             }
