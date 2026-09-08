@@ -18,6 +18,48 @@ https://worldweather.wmo.int
 https://wwmiws.wmo.int/index.php
 
 === cosa risponde davvero ===
+--- https://alertingauthority.wmo.int/authorities.json
+HTTP 200  tipo=text/html  byte=43203
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+           	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+	<head>
+	    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+		<link href="https://alertingauthority.wmo.int/rss.xml" rel="alternate" type="application/rss+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<link href="https://alertingauthority.wmo.int/atom.xml" rel="alternate" type="application/atom+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="keywords" content="alerting, authorities, WMO, member, official, list" />
+		<meta name="description" content="WMO Register of Alerting Authorities" />
+		<meta name="owner" content="WMO-OMM" />
+		<meta name="robots" content="INDEX, FOLLOW" />
+		<meta name="publisher" content="WMO" />
+		<meta name="distribution" content="global" /> 
+		<meta name="rating" content="GENERAL" />
+		<meta name="page-topic" content="Scientific" />
+		<meta name="abstract" content="Working together in weather, climate, and wate
+
+--- https://alertingauthority.wmo.int/
+HTTP 200  tipo=text/html  byte=43203
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+           	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+	<head>
+	    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+		<link href="https://alertingauthority.wmo.int/rss.xml" rel="alternate" type="application/rss+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<link href="https://alertingauthority.wmo.int/atom.xml" rel="alternate" type="application/atom+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="keywords" content="alerting, authorities, WMO, member, official, list" />
+		<meta name="description" content="WMO Register of Alerting Authorities" />
+		<meta name="owner" content="WMO-OMM" />
+		<meta name="robots" content="INDEX, FOLLOW" />
+		<meta name="publisher" content="WMO" />
+		<meta name="distribution" content="global" /> 
+		<meta name="rating" content="GENERAL" />
+		<meta name="page-topic" content="Scientific" />
+		<meta name="abstract" content="Working together in weather, climate, and wate
+
 --- https://severeweather.wmo.int/v2/json/list.json
 HTTP 404  tipo=text/html  byte=18984
 <!DOCTYPE html>
@@ -60,7 +102,7 @@ HTTP 404  tipo=text/html  byte=18984
 --- https://api.weather.gov/alerts/active?limit=1
 HTTP 400  tipo=application/json  byte=392
 {
-    "correlationId": "870c9297",
+    "correlationId": "240ec8be",
     "parameterErrors": [
         {
             "parameter": "query.limit",
@@ -71,6 +113,6 @@ HTTP 400  tipo=application/json  byte=392
     "type": "https://api.weather.gov/problems/BadRequest",
     "status": 400,
     "detail": "Bad Request",
-    "instance": "https://api.weather.gov/requests/870c9297"
+    "instance": "https://api.weather.gov/requests/240ec8be"
 }
 
