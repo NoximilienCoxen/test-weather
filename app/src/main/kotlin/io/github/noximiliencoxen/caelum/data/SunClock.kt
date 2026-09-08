@@ -165,6 +165,32 @@ object SunClock {
         moment.hour * 60f + moment.minute + moment.second / 60f
 
     /** Transizione morbida: senza, i colori cambierebbero a scatti. */
+    /**
+     * Il cielo di un momento qualunque, non solo di adesso.
+     *
+     * Le tre grandezze si chiedevano sempre una alla volta, e va bene finche' a
+     * chiederle e' la schermata principale: li' ciascuna passa da una molla sua
+     * prima di essere combinata, cosi' il cielo scivola invece di scattare. Chi
+     * invece vuole **lo stato di un'ora precisa** - la finestra della scheda
+     * della pioggia, che segue l'ora scelta col dito - le vuole tutte e tre
+     * insieme e nessuna animata, e ripetere le stesse tre chiamate in un secondo
+     * posto sarebbe la copia destinata a divergere.
+     *
+     * Prende alba e tramonto **del giorno di quel momento**, non di oggi: sono
+     * il solo modo in cui il posto entra nel conto, e su un altro giorno sono
+     * altri.
+     */
+    fun skyAt(
+        moment: java.time.LocalDateTime,
+        sunrise: java.time.LocalDateTime?,
+        sunset: java.time.LocalDateTime?,
+        isDay: Boolean,
+    ): SkyState = SkyState.of(
+        altitude = altitude(moment, sunrise, sunset, isDay),
+        journey = journey(moment, sunrise, sunset),
+        evening = eveningness(moment, sunrise, sunset),
+    )
+
     fun smoothstep(from: Float, to: Float, value: Float): Float {
         if (to <= from) return if (value >= to) 1f else 0f
         val t = ((value - from) / (to - from)).coerceIn(0f, 1f)
