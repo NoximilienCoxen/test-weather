@@ -318,6 +318,7 @@ private fun SectionHero(
                 forcedCode = state.forcedWeatherCode,
                 rotation = rotation,
                 tilt = tilt,
+                alive = alive,
                 modifier = Modifier.fillMaxSize(),
             )
             return@BoxWithConstraints

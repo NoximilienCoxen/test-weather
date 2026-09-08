@@ -4,8 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -21,8 +24,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
+import io.github.noximiliencoxen.caelum.data.PrecipKind
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rotatesScene
@@ -73,10 +78,15 @@ internal fun RainWindow(
     forcedCode: Int?,
     rotation: SceneRotation,
     tilt: State<Offset>,
+    /** Falso quando la scheda e' composta ma non la guarda nessuno. */
+    alive: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val room = LocalMeteoColors.current
     val code = forcedCode ?: hour?.weatherCode
+    val wet = Wmo.family(code).isWet()
+    val kind = Wmo.precipKind(code)
+    val wetness = wetnessOf(wet, hour?.precipitation)
 
     // **Il cielo dell'ora si calcola, non si prende dal tema.**
     //
@@ -103,6 +113,35 @@ internal fun RainWindow(
         SunClock.altitude(moment, day?.sunrise, day?.sunset, hour.isDay)
     }
     val phase = remember(day?.date) { MoonPhase.at(day?.date ?: LocalDate.now()) }
+
+    // ── L'orologio della scena ──────────────────────────────────────────────
+    //
+    // Esplicito, mai `rememberInfiniteTransition`: su questa app e' gia' stato
+    // misurato **non animare affatto** - le gocce sembravano cadere e invece
+    // l'app disegnava zero fotogrammi.
+    //
+    // Gira mentre la scheda si guarda **e c'e' qualcosa che si muove**. Oggi
+    // quel qualcosa e' solo il tempo: con il sereno non c'e' niente da animare,
+    // e un orologio che batte per non muovere niente e' batteria buttata. Quando
+    // arrivera' la strada con la gente sotto gli ombrelli la condizione si
+    // allarghera' a loro, ed e' li' che questa scheda diventera' l'eccezione
+    // dichiarata alla regola dei zero fotogrammi da fermo.
+    val fall = remember { mutableFloatStateOf(0f) }
+    val running = alive && wetness > 0f
+    LaunchedEffect(running) {
+        if (!running) {
+            fall.floatValue = 0f
+            return@LaunchedEffect
+        }
+        var origin = 0L
+        while (true) {
+            withFrameNanos { now ->
+                if (origin == 0L) origin = now
+                val elapsed = (now - origin) / 1_000_000L
+                fall.floatValue = (elapsed % SCENE_CYCLE_MS) / SCENE_CYCLE_MS.toFloat()
+            }
+        }
+    }
 
     val spoken = remember(hour?.time, code) {
         val ora = hour?.time?.hour?.let { "alle $it" } ?: "adesso"
@@ -148,6 +187,11 @@ internal fun RainWindow(
                 altitude = altitude,
                 phase = phase,
                 night = altitude < 0f,
+                progress = fall.floatValue,
+                wetness = wetness,
+                kind = kind,
+                rain = room.rain,
+                flake = room.cloudCore,
             )
         }
     }
@@ -181,6 +225,11 @@ private fun DrawScope.drawWindow(
     altitude: Float,
     phase: Float,
     night: Boolean,
+    progress: Float,
+    wetness: Float,
+    kind: PrecipKind,
+    rain: Color,
+    flake: Color,
 ) {
     val depth = halfWide * BLOCK_DEPTH
     val openWide = halfWide * OPENING_WIDE
@@ -232,6 +281,14 @@ private fun DrawScope.drawWindow(
             sunShade = sunShade,
             moonCore = moonCore,
             moonShade = moonShade,
+        )
+        drawBehindGlass(
+            bounds = Size(bounds.width, bounds.height),
+            origin = Offset(bounds.left, bounds.top),
+            progress = progress,
+            wetness = wetness,
+            kind = kind,
+            colour = if (kind == PrecipKind.SNOW) flake else rain,
         )
     }
 
@@ -320,11 +377,31 @@ private fun DrawScope.drawWindow(
         )
     }
 
+    // ── Le gocce **sul** vetro ──────────────────────────────────────────────
+    //
+    // Dopo lo strombo e prima della cornice: la lastra sta a filo della faccia
+    // davanti, quindi nessuna parete la copre, ma la cornice si'.
+    if (kind != PrecipKind.SNOW) {
+        clipPath(holePath) {
+            val b = holePath.getBounds()
+            drawOnGlass(
+                bounds = Size(b.width, b.height),
+                origin = Offset(b.left, b.top),
+                progress = progress,
+                wetness = wetness,
+                colour = rain,
+            )
+        }
+    }
+
     // Lo smusso attorno al foro: e' quello che la fa sembrare fresata invece che
     // ritagliata con le forbici.
+    // Scuro e non chiaro: `numberChamfer` e' quasi bianco come la faccia, e uno
+    // smusso bianco su bianco non si vede. Un solco lo si legge perche' e'
+    // **in ombra**, non perche' e' piu' chiaro.
     drawPath(
         holePath,
-        color = chamfer.copy(alpha = 0.55f),
+        color = lerp(sideFar, chamfer, 0.35f).copy(alpha = 0.5f),
         style = Stroke(width = unit * CHAMFER),
     )
 }
@@ -374,8 +451,15 @@ private fun DrawScope.drawAstro(
 }
 
 /** Quanto del riquadro prende il blocco, per lato. */
-private const val BLOCK_WIDE = 0.42f
-private const val BLOCK_TALL = 0.34f
+/**
+ * Guardato in uno scatto: con 0,42 e 0,34 il blocco riempiva poco piu' di meta'
+ * del riquadro, e restava un oggetto piccolo in mezzo al vuoto - cioe' il
+ * difetto per cui la vasca e' uscita di scena. Girando **si stringe** invece di
+ * allargarsi (la faccia si accorcia piu' di quanto il fianco si scopra), quindi
+ * crescere non costa margine.
+ */
+private const val BLOCK_WIDE = 0.46f
+private const val BLOCK_TALL = 0.43f
 
 /** Quanto e' spesso il muro, in frazione della sua mezza larghezza. */
 private const val BLOCK_DEPTH = 0.17f
@@ -385,7 +469,10 @@ private const val OPENING_WIDE = 0.76f
 private const val OPENING_TALL = 0.86f
 
 /** Lo smusso attorno al foro, in frazione della larghezza del riquadro. */
-private const val CHAMFER = 0.006f
+private const val CHAMFER = 0.008f
+
+/** Il giro completo delle gocce, in millisecondi. */
+private const val SCENE_CYCLE_MS = 1400L
 
 /** Quanto l'inclinazione del telefono piega la scena, in gradi. */
 private const val WINDOW_TILT = 4f
