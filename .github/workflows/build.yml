@@ -170,8 +170,16 @@ jobs:
               | grep -viE '\.(css|js|png|jpg|ico|ttf|woff2?)' | sort -u | head -40
             echo
 
+            # **La pagina non porta nessun indirizzo di feed nel suo HTML**: la
+            # lista se la costruisce da sola con JavaScript, e il titolo dice
+            # "(Demo)". Restano allora i link che la pagina **s'i** contiene, e
+            # il piu' promettente e' il registro delle autorita' di
+            # allertamento: e' li' che stanno, se stanno da qualche parte, gli
+            # indirizzi CAP dei servizi nazionali.
             echo "=== cosa risponde davvero ==="
             for url in \
+              "https://alertingauthority.wmo.int/authorities.json" \
+              "https://alertingauthority.wmo.int/" \
               "https://severeweather.wmo.int/v2/json/list.json" \
               "https://api.weather.gov/alerts/active?limit=1" \
               ; do
