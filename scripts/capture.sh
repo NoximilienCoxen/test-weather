@@ -352,7 +352,6 @@ session() {
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
   echo "  -- feed (ora $ora_dettaglio) --"
-  adbt shell logcat -c >/dev/null 2>&1 || true
 
   local n=5
   local i=0
@@ -360,6 +359,14 @@ session() {
     alive || { echo "dispositivo caduto alla scheda $scheda"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
+    # **Il buffer va svuotato a ogni giro**, come in `restart_with`, e qui era
+    # svuotato una volta sola prima del ciclo: dalla seconda scheda in poi
+    # `attendi_previsione` trovava la riga "previsione pronta" della scheda
+    # precedente e tornava all'istante, cioe' non aspettava niente. Si vedeva
+    # come uno scatto ogni tanto con scritto IN ATTESA DEI DATI - due volte di
+    # fila sulla pioggia in tema chiaro, che e' quando ho smesso di crederci
+    # come sfortuna.
+    adbt shell logcat -c >/dev/null 2>&1 || true
     adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
