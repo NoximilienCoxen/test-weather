@@ -1,0 +1,132 @@
+=== fonti di allerta mondiali: chi risponde, e con che cosa ===
+--- https://severeweather.wmo.int/feeds.html
+HTTP 200  tipo=text/html  byte=25806
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SWIC3.0 - Alert Hub CAP Feeds (Demo)</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="SHORTCUT ICON" type="image/x-icon" href="./images/wmo.ico"/>
+        <script src="./js/jquery.min.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <script src="./js/bootstrap.bundle.min.js"></script>
+        <script src="./js/moment-with-locales.min.js"></script>
+
+        <style style="text/css">
+			@font-face{
+				font-family:"Montserrat-Regular";
+				src:url('./fonts/Montserrat-Regular.ttf') format('truetype');
+				font-style:normal;
+				font-weight:normal;
+			}
+			@font-face{
+				font-family:"Montserrat-Bold";
+				src:url('./fonts/Montserrat-Bold.ttf') format('truetype');
+				font-style:normal;
+				font-weight:normal;
+		
+
+--- https://severeweather.wmo.int/v2/cap-alerts/rss.xml
+HTTP 404  tipo=text/html  byte=18984
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SWIC3.0 - 404</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Refresh" content="10; url='https://severeweather.wmo.int/'"/>
+		<link rel="SHORTCUT ICON" type="image/x-icon" href="/images/wmo.ico"/>
+        <script src="/js/jquery.min.js"></script>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/moment-with-locales.min.js"></script>
+
+        <style style="text/css">
+			@font-face{
+				font-family:"Montserrat-Regular";
+				src:url('/fonts/Montserrat-Regular.ttf') format('truetype');
+				font-style:normal;
+				font-weight:normal;
+			}
+			@font-face{
+				font-family:"Montserrat-Bold";
+				src:url('/fonts/Montserrat-Bold.ttf') format('truetype');
+			
+
+--- https://severeweather.wmo.int/v2/json/list.json
+HTTP 404  tipo=text/html  byte=18984
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SWIC3.0 - 404</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Refresh" content="10; url='https://severeweather.wmo.int/'"/>
+		<link rel="SHORTCUT ICON" type="image/x-icon" href="/images/wmo.ico"/>
+        <script src="/js/jquery.min.js"></script>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/moment-with-locales.min.js"></script>
+
+        <style style="text/css">
+			@font-face{
+				font-family:"Montserrat-Regular";
+				src:url('/fonts/Montserrat-Regular.ttf') format('truetype');
+				font-style:normal;
+				font-weight:normal;
+			}
+			@font-face{
+				font-family:"Montserrat-Bold";
+				src:url('/fonts/Montserrat-Bold.ttf') format('truetype');
+			
+
+--- https://severeweather.wmo.int/json/list.json
+HTTP 404  tipo=text/html  byte=18984
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SWIC3.0 - 404</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Refresh" content="10; url='https://severeweather.wmo.int/'"/>
+		<link rel="SHORTCUT ICON" type="image/x-icon" href="/images/wmo.ico"/>
+        <script src="/js/jquery.min.js"></script>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/moment-with-locales.min.js"></script>
+
+        <style style="text/css">
+			@font-face{
+				font-family:"Montserrat-Regular";
+				src:url('/fonts/Montserrat-Regular.ttf') format('truetype');
+				font-style:normal;
+				font-weight:normal;
+			}
+			@font-face{
+				font-family:"Montserrat-Bold";
+				src:url('/fonts/Montserrat-Bold.ttf') format('truetype');
+			
+
+--- https://alert-hub.s3.amazonaws.com/rss/rss_aggregator.xml
+HTTP 404  tipo=text/xml  byte=313
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>rss/rss_aggregator.xml</Key><RequestId>NJ28J7RR8X0N6SXW</RequestId><HostId>1oOJvZVT5I7N1sNrOmiLR3gEciCvYHras9043vADa+3OoEP+Pgb8I6UEixkdRlFfB7DKXOpm7GVHjkkZKDltFzSB3b1BRHxZ</HostId></Error>
+
+--- https://api.weather.gov/alerts/active?limit=1
+HTTP 400  tipo=application/json  byte=392
+{
+    "correlationId": "35d17d7a",
+    "parameterErrors": [
+        {
+            "parameter": "query.limit",
+            "message": "Query parameter \"limit\" is not recognized"
+        }
+    ],
+    "title": "Bad Request",
+    "type": "https://api.weather.gov/problems/BadRequest",
+    "status": 400,
+    "detail": "Bad Request",
+    "instance": "https://api.weather.gov/requests/35d17d7a"
+}
+
