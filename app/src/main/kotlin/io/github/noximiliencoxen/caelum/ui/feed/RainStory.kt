@@ -29,7 +29,11 @@ import io.github.noximiliencoxen.caelum.data.isWet
  * produce - perche' un codice giornaliero dice il fenomeno prevalente, non i
  * due insieme. Le somme lo sanno, e ci sono gia'.
  */
-internal fun precipKindOf(day: DayForecast): PrecipKind {
+internal fun precipKindOf(day: DayForecast, forcedCode: Int? = null): PrecipKind {
+    // Il codice imposto vince, come vince dappertutto: senza, negli scatti di
+    // verifica la finestra pioveva e TIPOLOGIA diceva "--", cioe' la scheda si
+    // contraddiceva dentro la stessa schermata.
+    if (forcedCode != null) return Wmo.precipKind(forcedCode)
     val byCode = Wmo.precipKind(day.weatherCode)
     val rain = day.rainSum ?: 0.0
     val snow = day.snowfallSum ?: 0.0
