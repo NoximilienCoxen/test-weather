@@ -2,6 +2,8 @@ package io.github.noximiliencoxen.caelum.ui.feed
 
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
+import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.data.isWet
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.asBigDegrees
 import kotlin.math.roundToInt
@@ -32,6 +34,35 @@ internal val UiState.pageHours: List<HourForecast>
     }
 
 /**
+ * Se all'ora mostrata piove davvero.
+ *
+ * **Il codice per primo, i millimetri poi**, che e' la trappola #14: un
+ * temporale previsto all'ottanta per cento puo' avere zero millimetri in
+ * quell'ora esatta, e sotto la scritta TEMPORALE deve comunque piovere. I
+ * millimetri dicono quanto forte, non se.
+ *
+ * Il codice imposto viene prima di quello vero: e' l'aggancio con cui gli
+ * scatti mettono in scena un tempo che quel giorno non fa.
+ */
+internal val UiState.shownHourIsWet: Boolean
+    get() = Wmo.family(forcedWeatherCode ?: pageHour?.weatherCode).isWet()
+
+/**
+ * L'ora vera, se il giorno mostrato e' oggi; **nulla** se e' un altro giorno.
+ *
+ * Segnare "adesso" su mercoledi' sarebbe un punto senza significato: adesso non
+ * cade dentro mercoledi'. E l'ora e' quella della localita' mostrata, non quella
+ * del telefono - da quando il posto lo sceglie chi usa l'app, i due possono
+ * distare mezza giornata.
+ */
+internal val UiState.nowHourOnShownDay: Int?
+    get() {
+        val current = forecast ?: return null
+        val now = current.nowThere()
+        return if (pageDay?.date == now.toLocalDate()) now.hour else null
+    }
+
+/**
  * Il numero che la scheda mette in mezzo, o **nulla** se non c'e'.
  *
  * Nulla e non "--", e la differenza conta: la prima scheda ha una regola
@@ -50,7 +81,12 @@ internal fun heroValue(section: FeedSection, state: UiState): String? {
         // punto interrogativo alto mezzo schermo.
         FeedSection.TEMPERATURA -> hour?.temperature?.let { it.asBigDegrees(state.unit) }
 
-        FeedSection.PRECIPITAZIONI -> day?.precipitationSum?.roundToInt()?.toString()
+        // La pioggia non ha piu' una cifra da estrudere, come la luna: il suo
+        // eroe e' la vasca, e il numero sta inciso accanto al livello
+        // dell'acqua, dove una scala gli da' un senso che una cifra sola non
+        // ha. Chi disegna la vasca fa il proprio controllo sui dati, perche'
+        // gli serve il giorno intero e non una stringa.
+        FeedSection.PRECIPITAZIONI -> null
 
         FeedSection.ARIA -> state.air?.europeanAqi?.toString()
 
