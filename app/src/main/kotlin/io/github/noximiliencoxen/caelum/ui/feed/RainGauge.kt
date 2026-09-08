@@ -34,6 +34,7 @@ import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rotatesScene
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
 import io.github.noximiliencoxen.caelum.ui.render3d.DROPS
+import io.github.noximiliencoxen.caelum.ui.render3d.addFacet
 import io.github.noximiliencoxen.caelum.ui.render3d.FALL_CYCLE_MS
 import io.github.noximiliencoxen.caelum.ui.render3d.Light
 import io.github.noximiliencoxen.caelum.ui.render3d.SPLASH_LIFE
@@ -272,47 +273,71 @@ private fun DrawScope.drawGauge(
         camera.vz
     }
 
-    for (k in order) {
-        val front = facing(k) > 0f
-        val lit = camera.lambert(Light.Standard)
-        val wall = lerp(sideFar, sideNear, lit)
-        val path = Path().apply {
-            val a = corner(k, rimY)
-            moveTo(a.x, a.y)
-            val b = corner(k + 1, rimY); lineTo(b.x, b.y)
-            val c = corner(k + 1, floorY); lineTo(c.x, c.y)
-            val d = corner(k, floorY); lineTo(d.x, d.y)
-            close()
-        }
+    fun wallPath(k: Int): Path = Path().apply {
+        val a = corner(k, rimY)
+        moveTo(a.x, a.y)
+        val b = corner(k + 1, rimY); lineTo(b.x, b.y)
+        val c = corner(k + 1, floorY); lineTo(c.x, c.y)
+        val d = corner(k, floorY); lineTo(d.x, d.y)
+        close()
+    }
 
-        if (!front) {
-            // La parete dietro e' opaca: e' il fondale su cui si leggono la
-            // graduazione e il pelo dell'acqua.
-            drawPath(path, color = wall)
-            drawTicks(::corner, k, rimY, floorY, radius, ink, snowy)
-        } else {
-            // ── Le facce davanti sono traslucide ────────────────────────────
-            //
-            // **Non e' la trappola dell'opacita' che codifica una quantita'**:
-            // qui e' una costante e non codifica niente. E' l'unico modo perche'
-            // il vetro si legga come vetro - attraverso di lui si vedono
-            // l'acqua e la parete lontana - e leggere il livello dalla sola
-            // apertura smetterebbe di funzionare appena l'inclinazione cala.
-            drawPath(path, color = wall.copy(alpha = WALL_SEE_THROUGH))
-        }
+    // **Le pareti si dipingono in due passate, con l'acqua in mezzo**, e non in
+    // una sola come prima. Con una passata sola il liquido finiva sopra il vetro
+    // vicino, e si leggeva come spalmato **fuori** dal recipiente - il contrario
+    // di quello che il commento qui sotto promette. Il buco nel riempimento lo
+    // nascondeva; corretto quello, veniva fuori.
+    for (k in order) {
+        if (facing(k) > 0f) continue
+        // La parete dietro e' opaca: e' il fondale su cui si leggono la
+        // graduazione e il pelo dell'acqua.
+        val lit = camera.lambert(Light.Standard)
+        drawPath(wallPath(k), color = lerp(sideFar, sideNear, lit))
+        drawTicks(::corner, k, rimY, floorY, radius, ink, snowy)
     }
 
     // ── L'acqua ─────────────────────────────────────────────────────────────
     if (fill > 0f) {
         // Il corpo dell'acqua, dal pelo al fondo, e poi la superficie sopra: la
         // superficie va per ultima, se no il corpo gliela copre.
-        drawPath(prism(::corner, waterY, floorY), color = liquid.copy(alpha = 0.42f))
+        //
+        // **Le facce passano da `addFacet`**, che normalizza l'avvolgimento.
+        // Aggiunte cosi' come venivano, tre giravano in un verso e tre
+        // nell'altro e il *non-zero* le annullava dove si sovrappongono: il
+        // cinquantotto per cento della colonna era un buco, e restavano due
+        // fettine che si confondevano con la superficie e col fondo. Il perche',
+        // e le due correzioni che sembrano ovvie e non funzionano, stanno in
+        // `Facets.kt`.
+        val body = Path().apply {
+            for (k in 0 until GAUGE_FACES) {
+                addFacet(
+                    corner(k, waterY),
+                    corner(k + 1, waterY),
+                    corner(k + 1, floorY),
+                    corner(k, floorY),
+                )
+            }
+        }
+        drawPath(body, color = liquid.copy(alpha = 0.42f))
         drawPath(ring(::corner, waterY), color = liquid.copy(alpha = 0.80f))
         drawPath(
             ring(::corner, waterY),
             color = Color.White.copy(alpha = 0.22f),
             style = Stroke(width = unit * 0.004f),
         )
+    }
+
+    // ── Le facce davanti, traslucide, sopra l'acqua ─────────────────────────
+    //
+    // **Non e' la trappola dell'opacita' che codifica una quantita'**: qui e'
+    // una costante e non codifica niente. E' l'unico modo perche' il vetro si
+    // legga come vetro - attraverso di lui si vedono l'acqua e la parete
+    // lontana - e leggere il livello dalla sola apertura smetterebbe di
+    // funzionare appena l'inclinazione cala.
+    for (k in order) {
+        if (facing(k) <= 0f) continue
+        val lit = camera.lambert(Light.Standard)
+        drawPath(wallPath(k), color = lerp(sideFar, sideNear, lit).copy(alpha = WALL_SEE_THROUGH))
     }
 
     // ── Lo smusso del bordo: e' quello che la fa sembrare fresata ───────────
@@ -399,22 +424,6 @@ private fun ring(corner: (Int, Float) -> Offset, y: Float): Path = Path().apply 
     }
     close()
 }
-
-/** Il corpo fra due quote: la colonna d'acqua. */
-private fun prism(corner: (Int, Float) -> Offset, topY: Float, bottomY: Float): Path =
-    Path().apply {
-        for (k in 0 until GAUGE_FACES) {
-            val a = corner(k, topY)
-            val b = corner(k + 1, topY)
-            val c = corner(k + 1, bottomY)
-            val d = corner(k, bottomY)
-            moveTo(a.x, a.y)
-            lineTo(b.x, b.y)
-            lineTo(c.x, c.y)
-            lineTo(d.x, d.y)
-            close()
-        }
-    }
 
 /**
  * Le tacche incise sulla parete interna.
