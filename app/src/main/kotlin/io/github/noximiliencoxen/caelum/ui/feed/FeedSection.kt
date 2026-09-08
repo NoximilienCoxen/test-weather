@@ -20,10 +20,12 @@ package io.github.noximiliencoxen.caelum.ui.feed
  * al secondo. Solo la temperatura porta il suo grado, perche' e' l'unico
  * simbolo che il prisma estrude insieme alle cifre.
  *
- * [stage] e' cio' che la scheda **ospitera'**, e sta scritto sul segnaposto.
- * Le schede nascono vuote apposta: cosa metterci dentro si decide una sezione
- * alla volta, e un riquadro che dichiara cosa manca e' un lavoro in corso,
- * mentre un riquadro vuoto e muto e' un difetto.
+ * [stage] e' cio' che la scheda ospita, e sta scritto sul segnaposto **finche'
+ * un segnaposto c'e'**. Le schede nascono vuote apposta: cosa metterci dentro si
+ * decide una sezione alla volta, e un riquadro che dichiara cosa manca e' un
+ * lavoro in corso mentre un riquadro vuoto e muto e' un difetto. Sulle sezioni
+ * gia' fatte - la temperatura e la pioggia - la riga resta a dire cosa la scheda
+ * contiene, e il riquadro non si disegna piu'.
  */
 enum class FeedSection(
     val title: String,
@@ -40,8 +42,17 @@ enum class FeedSection(
     PRECIPITAZIONI(
         title = "PRECIPITAZIONI",
         chipLabel = "Pioggia",
-        unitLabel = "MM NEL GIORNO",
-        stage = "Gocce che si posano sul vetro e scendono, e una pozza che cresce con i millimetri",
+        // Vuota come quella della luna, e per la stessa ragione: qui non c'e'
+        // piu' una cifra sotto cui scrivere un'unita'. La vasca porta la
+        // propria scala incisa, in millimetri o in centimetri secondo cosa e'
+        // caduto, e "MM NEL GIORNO" scritto altrove sarebbe una seconda unita'
+        // che parla di un numero che non c'e'.
+        unitLabel = "",
+        // Il segnaposto e' stato **preso in parola**: le gocce sono finite
+        // dentro la vasca, dove hanno una scala, e al posto del riquadro c'e' la
+        // fascia delle ventiquattro ore. Come per la temperatura, la riga resta
+        // a dire cosa la scheda ospita - solo che adesso lo ospita davvero.
+        stage = "La vasca graduata e le ventiquattro ore",
     ),
     ARIA(
         title = "QUALITA' DELL'ARIA",

@@ -29,8 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.PrecipKind
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.asCentimetres
 import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.asMetresPerSecond
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
@@ -56,14 +58,22 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
- * Una scheda del feed, per ora **con il posto dell'oggetto ancora vuoto**.
+ * Una scheda del feed: lo scheletro comune, e i rami di chi e' gia' fatto.
  *
  * Lo scheletro e' lo stesso per tutte e cinque le sezioni che non sono la
- * temperatura: titolo, la cifra girabile col dito, il palco dell'oggetto che
- * verra', e sotto i due o tre numeri che l'app sa gia'. Si decide una sezione
- * alla volta cosa metterci - e' la regola di lavoro del progetto, una schermata
- * per volta e quella diventa il modello per le altre - e intanto il palco
- * dichiara cosa manca invece di essere un buco.
+ * temperatura: titolo, la cifra girabile col dito, il posto dell'oggetto, e
+ * sotto i due o tre numeri che l'app sa gia'. Si decide una sezione alla volta
+ * cosa metterci - e' la regola di lavoro del progetto, una schermata per volta e
+ * quella diventa il modello per le altre - e intanto il palco dichiara cosa
+ * manca invece di essere un buco.
+ *
+ * **La pioggia e' la prima ad essere uscita dal segnaposto**, e si vede da due
+ * rami di `when`: al posto della cifra c'e' la vasca graduata
+ * (`RainGauge`), al posto del riquadro tratteggiato la fascia delle
+ * ventiquattro ore (`RainHours`). Le due vivono in file loro e non qui: questo
+ * e' lo scheletro generico, e duecentocinquanta righe di una sola sezione lo
+ * renderebbero il file di quella sezione. E' la stessa scelta della barra delle
+ * ore, che ha il suo file e un mestiere solo.
  *
  * **Niente scorrimento interno.** Una scheda sta in una schermata e basta: il
  * gesto verticale appartiene tutto al feed, e una colonna che scorre dentro una
@@ -73,7 +83,9 @@ import kotlin.math.sin
  * **Niente animazioni a riposo**, per la trappola #8: da fermo l'app deve
  * disegnare zero fotogrammi, e con sei schede da comporre e' piu' facile
  * romperlo di prima. Quello che si muove qui e' la cifra, e si muove solo
- * mentre un dito la gira.
+ * mentre un dito la gira. L'unica eccezione e' la pioggia dentro la vasca, che
+ * batte **solo mentre piove davvero e solo mentre la scheda si guarda** - da cui
+ * [alive], che senza un orologio non servirebbe a nessuno.
  *
  * I colori vengono da `LocalMeteoColors` e le tinte da [rememberSkyAccents], mai
  * da `MaterialTheme.colorScheme`: le schede vivono **sul cielo**, non su una
@@ -181,21 +193,46 @@ fun SectionCard(
                 rotation = rotation,
                 tilt = tilt,
                 accent = accent,
+                alive = alive,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(HERO_SHARE)
                     .padding(horizontal = bodyInset),
             )
 
-            Stage(
-                caption = section.stage,
-                color = colors.line,
-                label = colors.label,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(STAGE_SHARE)
-                    .padding(horizontal = bodyInset, vertical = 10.dp),
-            )
+            // La pioggia non ha piu' un segnaposto: la fascia delle
+            // ventiquattro ore ha preso il posto del riquadro tratteggiato, e
+            // prende **un'altezza in punti** invece di una frazione dello
+            // spazio che avanza - se no le colonne diventerebbero pali alti
+            // mezzo schermo e la vasca si prenderebbe quel che resta invece del
+            // contrario. Le altre quattro sezioni il riquadro se lo tengono,
+            // perche' sono ancora da fare e un riquadro che dichiara cosa manca
+            // e' un lavoro in corso mentre uno muto e' un difetto.
+            if (section == FeedSection.PRECIPITAZIONI) {
+                RainHours(
+                    hours = state.pageHours,
+                    selectedHour = state.detailHour?.time?.hour,
+                    nowHour = state.nowHourOnShownDay,
+                    kind = state.pageDay?.let { precipKindOf(it) } ?: PrecipKind.NONE,
+                    forcedCode = state.forcedWeatherCode,
+                    accent = accent,
+                    compact = layout.compact,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = bodyInset)
+                        .padding(bottom = 10.dp),
+                )
+            } else {
+                Stage(
+                    caption = section.stage,
+                    color = colors.line,
+                    label = colors.label,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(STAGE_SHARE)
+                        .padding(horizontal = bodyInset, vertical = 10.dp),
+                )
+            }
 
             SectionNumbers(
                 section = section,
@@ -226,6 +263,7 @@ private fun SectionHero(
     rotation: SceneRotation,
     tilt: State<Offset>,
     accent: Color,
+    alive: Boolean,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -244,6 +282,32 @@ private fun SectionHero(
                 rotation = rotation,
                 tilt = tilt,
                 light = accent,
+                modifier = Modifier.fillMaxSize(),
+            )
+            return@BoxWithConstraints
+        }
+
+        if (section == FeedSection.PRECIPITAZIONI) {
+            // Il controllo sui dati se lo fa da se', e non passa da
+            // `heroValue`: alla vasca serve il **giorno**, non una stringa, e
+            // un recipiente vuoto disegnato senza previsione si leggerebbe come
+            // "zero millimetri" invece che come "non lo so ancora" - che e'
+            // esattamente la differenza che la prima scheda ha una regola
+            // esplicita per non perdere.
+            val day = state.pageDay
+            if (day == null || (day.precipitationSum == null && day.snowfallSum == null)) {
+                val (title, message) = heroMissingReason(section, state)
+                SkyMessage(title = title, message = message)
+                return@BoxWithConstraints
+            }
+            RainGauge(
+                day = day,
+                wet = state.shownHourIsWet,
+                hourMm = state.pageHour?.precipitation,
+                rotation = rotation,
+                tilt = tilt,
+                accent = accent,
+                alive = alive,
                 modifier = Modifier.fillMaxSize(),
             )
             return@BoxWithConstraints
@@ -437,11 +501,30 @@ private fun SectionNumbers(
     val entries: List<Pair<String, String>> = when (section) {
         FeedSection.TEMPERATURA -> emptyList()
 
-        FeedSection.PRECIPITAZIONI -> listOf(
-            "PROBABILITA'" to hour?.precipProbability.asPercent(),
-            "IN QUEST'ORA" to hour?.precipitation.asMillimetres(),
-            "ORE DI PIOGGIA" to (day?.precipHours?.roundToInt()?.let { "$it H" } ?: MISSING),
-        )
+        FeedSection.PRECIPITAZIONI -> {
+            val kind = day?.let { precipKindOf(it) } ?: PrecipKind.NONE
+            listOf(
+                // Lo stesso numero inciso sulla vasca, e ripeterlo non e'
+                // ridondanza: sulla vasca sta accanto al livello e si legge
+                // come una misura, qui sta in colonna con gli altri due e si
+                // legge come un dato. Sono due letture che servono in momenti
+                // diversi.
+                "TOTALE" to if (kind.isSnowy()) {
+                    day?.snowfallSum.asCentimetres()
+                } else {
+                    day?.precipitationSum.asMillimetres()
+                },
+                // La probabilita' **del giorno**, non dell'ora. Il sottotitolo
+                // dice TUTTO IL GIORNO, e un'ora precisa sopra un totale del
+                // giorno e' esattamente la bugia che `isDailyTotal` esiste per
+                // togliere di mezzo: qui c'era, ed era rimasta.
+                "PROBABILITA'" to day?.precipProbability.asPercent(),
+                // `PrecipKind` era scritta, documentata "per la tabella della
+                // pagina Precip", e non la chiamava nessuno. Quella pagina
+                // adesso c'e'.
+                "TIPOLOGIA" to kind.label,
+            )
+        }
 
         FeedSection.ARIA -> listOf(
             "GIUDIZIO" to (state.air?.band?.label ?: MISSING),
