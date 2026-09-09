@@ -168,6 +168,19 @@ fun HourBar(
     val gradiNoti = remember(hours) { hours.mapNotNull { it.temperature?.toFloat() } }
     val estremoAlto = gradiNoti.maxOrNull()
     val estremoBasso = gradiNoti.minOrNull()
+
+    // I gradi **con i buchi**, che sono una lista diversa da `gradiNoti`: qui
+    // l'indice deve restare quello dell'ora, perche' la spline ci legge sopra la
+    // posizione lungo la fascia. Togliere i nulli sposterebbe tutto a sinistra
+    // di quante ore mancano.
+    //
+    // Sta qui e non nel disegno perche' dipende solo da `hours`. Prima si
+    // costruiva dentro il blocco di disegno, e per giunta **prima** del
+    // controllo che doveva evitarla: ventiquattro `Float?` incartati a ogni
+    // fotogramma anche a riposo, che e' come la barra sta quasi sempre. Il
+    // commento piu' sotto prometteva l'opposto - "sotto l'uno per cento non si
+    // disegna proprio" - e valeva per la spline, non per le due liste.
+    val gradi = remember(hours) { hours.map { it.temperature?.toFloat() } }
     val stileEstremi = remember { MeteoType.caption.copy(fontSize = ESTREMI_SP) }
     val testoAlto = remember(estremoAlto, unit, stileEstremi) {
         estremoAlto?.let { measurer.measure(it.toDouble().asPlainDegrees(unit), stileEstremi) }
@@ -270,11 +283,12 @@ fun HourBar(
         // E sotto l'uno per cento non si disegna proprio: a riposo - che e' come
         // la barra sta quasi sempre - non si costruisce nemmeno la spline. Il
         // caso piu' comune diventa cosi' piu' leggero di prima, non piu' pesante.
-        val gradi = hours.map { it.temperature?.toFloat() }
-        val noti = gradi.filterNotNull()
-        if (diagramma > 0.01f && noti.size >= 2) {
-            val minimo = noti.min()
-            val massimo = noti.max()
+        //
+        // Le due liste dei gradi non si costruiscono nemmeno: stanno in
+        // composizione, ricordate su `hours`. Vedi la nota accanto a `gradi`.
+        if (diagramma > 0.01f && gradiNoti.size >= 2) {
+            val minimo = gradiNoti.min()
+            val massimo = gradiNoti.max()
             // Una giornata piatta non deve diventare una linea che ondeggia:
             // senza questo pavimento, mezzo grado di scarto verrebbe stirato su
             // tutta l'altezza della fascia e sembrerebbe uno sbalzo.
