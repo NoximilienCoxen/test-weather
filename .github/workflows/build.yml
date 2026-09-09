@@ -249,14 +249,29 @@ jobs:
       - name: lintDebug
         run: ./gradlew lintDebug --no-daemon
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lint
-          path: app/build/reports/lint-results-debug.html
-          if-no-files-found: warn
-
+      # **I test girano prima di qualunque caricamento, e girano comunque.**
+      #
+      # Prima stavano dopo l'upload del referto di lint, e questo bastava a
+      # saltarli del tutto. Il change che lo ha insegnato: sul commit 87746a1 di
+      # `main` il caricamento ha trasferito i suoi trentamila byte e poi e'
+      # morto nel *finalizzare* l'artefatto, con un 403 che veniva
+      # dall'archivio di GitHub e non da noi:
+      #
+      #   Failed to FinalizeArtifact: non-retryable error: (403) Forbidden
+      #
+      # Il passo non aveva `continue-on-error`, quindi `testDebugUnitTest` e'
+      # stato **saltato**, e il caricamento seguente lo ha confermato senza che
+      # nessuno lo leggesse: "No files were found with the provided path:
+      # app/build/reports/tests/". Ottantasei prove non eseguite, e la
+      # schermata delle Actions che diceva "test: failure" - cioe' la stessa
+      # faccia che avrebbe avuto un test rosso davvero.
+      #
+      # Da qui le tre regole di questo job: i test stanno prima, hanno
+      # `if: always()` cosi' un lint rosso non se li porta dietro, e **nessun
+      # caricamento puo' far fallire niente**. Un artefatto e' una comodita' per
+      # chi legge dopo; le prove sono il controllo.
       - name: testDebugUnitTest
+        if: always()
         run: |
           set -o pipefail
           ./gradlew testDebugUnitTest --no-daemon 2>&1 | tee /tmp/test.log || {
@@ -267,13 +282,63 @@ jobs:
             exit 1
           }
 
-      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
-      # caduto e l'XML dice perche'.
+      # **Il conto, scritto nel log.**
+      #
+      # Un giro verde non dice se le prove sono girate: puo' voler dire che sono
+      # passate tutte, oppure che non ne e' partita nessuna. Sono due cose molto
+      # diverse e finora avevano la stessa faccia. Qui si contano dagli XML e il
+      # numero finisce nel log, dove si legge senza scaricare niente.
+      #
+      # Zero prove **fa fallire il giro**: e' la guardia che sarebbe servita.
+      - name: Quante prove sono girate
+        if: always()
+        run: |
+          risultati=app/build/test-results/testDebugUnitTest
+          if [ ! -d "$risultati" ]; then
+            echo "NESSUN RISULTATO: $risultati non esiste."
+            echo "I test non sono partiti affatto - non e' che siano passati."
+            exit 1
+          fi
+          prove=$(grep -ho 'tests="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          falliti=$(grep -ho 'failures="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          errori=$(grep -ho 'errors="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          echo "=========================================================="
+          echo "  prove eseguite: ${prove:-0}"
+          echo "  fallite: ${falliti:-0}   in errore: ${errori:-0}"
+          echo "=========================================================="
+          if [ "${prove:-0}" -eq 0 ]; then
+            echo "ZERO PROVE ESEGUITE: il job e' verde ma non ha controllato niente."
+            exit 1
+          fi
+
+      # I due referti, in coda e senza potere di nuocere.
+      #
+      # `continue-on-error` su entrambi: un 403 dell'archivio artefatti di
+      # GitHub non e' un difetto di questo progetto, e non deve tingere di rosso
+      # un giro in cui il codice sta bene ne' - come e' successo - impedire ai
+      # test di partire.
       - uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
+        with:
+          name: lint
+          path: app/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+
+      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
+      # caduto e l'XML dice perche'. L'HTML si legge, l'XML si interroga: qui
+      # servono tutti e due.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
         with:
           name: test-results
-          path: app/build/reports/tests/
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
           if-no-files-found: warn
 
   build:
