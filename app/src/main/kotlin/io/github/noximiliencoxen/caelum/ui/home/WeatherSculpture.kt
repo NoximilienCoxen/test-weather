@@ -220,7 +220,20 @@ fun WeatherSculpture(
 
     // Il tuono. Il colpo in mano parte insieme al lampo, non dopo: e' il lampo
     // che si vede, ed e' quello che si deve sentire.
-    LaunchedEffect(storming, feelsIt) {
+    //
+    // **`feelsIt` non e' una chiave, e la ragione e' la stessa scritta trenta
+    // righe piu' su per la pioggia** - solo che qui non era stata applicata.
+    // Quel valore cambia ogni volta che la schermata perde il primo piano,
+    // cioe' a ogni apertura e chiusura delle impostazioni. Da chiave faceva
+    // ripartire l'effetto da capo: `seed` tornava a 7, il `delay` in corso
+    // veniva buttato, e il temporale ricominciava **sempre dalla stessa
+    // saetta**. Chi apriva le impostazioni ogni pochi secondi non vedeva mai
+    // un lampo, perche' l'attesa non arrivava mai in fondo.
+    //
+    // La vibrazione deve comunque sapere se la schermata e' davanti, e lo
+    // chiede a `feels.value`, che e' aggiornato senza essere una chiave: e'
+    // esattamente lo stesso `rememberUpdatedState` che la pioggia usa gia'.
+    LaunchedEffect(storming) {
         if (!storming) {
             flash.snapTo(0f)
             return@LaunchedEffect
@@ -230,7 +243,7 @@ fun WeatherSculpture(
             delay(Random(seed).nextLong(2600, 5200))
             bolt = Bolt.of(Random(seed))
             seed = (seed * 31 + 17) and 0xFFFF
-            if (feelsIt) haptics.thunder()
+            if (feels.value) haptics.thunder()
             flash.snapTo(1f)
             delay(70)
             flash.snapTo(0.3f)
