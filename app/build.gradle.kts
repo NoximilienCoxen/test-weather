@@ -22,14 +22,32 @@ plugins {
  * Se git non c'e' - un sorgente scaricato come zip - si ripiega su 1 e su
  * "1.0-ignoto": la build deve funzionare lo stesso, ma non deve **fingere** di
  * sapere una cosa che non sa.
+ *
+ * **`providers.exec` e non `ProcessBuilder`, e la differenza non e' di gusto.**
+ * La prima stesura lanciava il processo a mano e la CI l'ha bocciata subito:
+ *
+ *     > Starting an external process 'git rev-list --count HEAD' during
+ *       configuration time is unsupported.
+ *     Configuration cache entry discarded with 2 problems.
+ *
+ * `gradle.properties` tiene accesa `org.gradle.configuration-cache`, e quella
+ * cache esiste per saltare la fase di configurazione quando niente e'
+ * cambiato. Un processo lanciato li' dentro le toglie il terreno sotto i piedi:
+ * Gradle non ha modo di sapere se quel comando risponderebbe ancora lo stesso,
+ * quindi vieta la cosa invece di servire un risultato vecchio.
+ *
+ * `providers.exec` e' la via che la cache capisce: il comando diventa un input
+ * dichiarato, e quando il suo risultato cambia - cioe' a ogni commit - la
+ * configurazione si rifa' da sola. Stessa risposta, ma detta in un modo che
+ * Gradle puo' verificare.
  */
 fun comando(vararg argomenti: String): String? = runCatching {
-    val processo = ProcessBuilder(*argomenti)
-        .directory(rootDir)
-        .redirectErrorStream(true)
-        .start()
-    val uscita = processo.inputStream.bufferedReader().use { it.readText() }.trim()
-    if (processo.waitFor() == 0 && uscita.isNotEmpty()) uscita else null
+    providers.exec {
+        commandLine(argomenti.toList())
+        // Un git che non risponde non e' un errore di build: e' il caso dello
+        // zip senza storia, e sotto ha gia' il suo ripiego.
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().trim().ifEmpty { null }
 }.getOrNull()
 
 val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
