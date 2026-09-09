@@ -172,8 +172,6 @@ data class UiState(
      * che porta il carosello dove le si e' detto.
      */
     val sectionRequest: Int = 0,
-    /** false = EFFETTIVA, true = PERCEPITI, nel dettaglio del giorno. */
-    val feelsLike: Boolean = false,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -824,7 +822,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.restoreAlertBar() }
     }
 
-    fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
+    // `setFeelsLike` stava qui, e scriveva `UiState.feelsLike`. Erano due
+    // meta' della stessa cosa morta: il campo lo scriveva solo questo setter,
+    // e questo setter non lo chiamava nessuno. Sceglievano fra EFFETTIVA e
+    // PERCEPITI nel dettaglio del giorno, che il feed non ha piu'.
+    //
+    // Da non confondere con `feelsIt`, che e' vivo e vuol dire un'altra cosa:
+    // se la schermata e' davanti, e quindi se le vibrazioni si sentono.
 
     fun openSettings() = _state.update { it.copy(settingsOpen = true) }
 
@@ -844,8 +848,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.toggleFavorite(place) }
     }
 
-    fun isFavorite(place: Place): Boolean =
-        _state.value.favorites.any { it.key == place.key }
+    // `isFavorite` stava qui e non la chiamava nessuna schermata: le due che
+    // avrebbero potuto - impostazioni e configurazione del widget - fanno da
+    // se' lo stesso confronto su `favorites`. Una terza copia della stessa
+    // riga, in un posto in cui nessuno andava a cercarla.
 
     fun choosePlace(place: Place) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
