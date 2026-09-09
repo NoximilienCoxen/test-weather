@@ -606,26 +606,35 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 }
                         }
 
-                        // La Norma storica arriva dopo, in background, e
-                        // aggiorna i giorni gia' visibili senza bloccare la
-                        // schermata. Se fallisce non succede nulla: il grafico
-                        // la mostra solo quando c'e'.
-                        viewModelScope.launch {
-                            WeatherRepository.loadNorm(place, forecast.days)
-                                .onSuccess { norms ->
-                                    if (norms.isEmpty()) return@onSuccess
-                                    _state.update { current ->
-                                        val f = current.forecast ?: return@update current
-                                        current.copy(
-                                            forecast = f.copy(
-                                                days = f.days.map { day ->
-                                                    day.copy(normTemp = norms[day.date])
-                                                },
-                                            ),
-                                        )
-                                    }
-                                }
-                        }
+                        // **Qui c'era la Norma storica, e se n'e' andata.**
+                        //
+                        // Caricava la media della temperatura degli ultimi
+                        // dieci anni e la scriveva in `DayForecast.normTemp`.
+                        // Quel campo non lo leggeva **nessuno**: due sole
+                        // occorrenze in tutto il progetto, la dichiarazione e
+                        // questa scrittura. Il grafico che la mostrava - citato
+                        // al presente dal commento che stava qui, "il grafico
+                        // la mostra solo quando c'e'" - era gia' stato tolto
+                        // dalla schermata, e il percorso dati e' rimasto
+                        // acceso da solo.
+                        //
+                        // Non era gratis: `loadNorm` faceva **dieci richieste
+                        // HTTP in fila** all'archivio, una per anno, a ogni
+                        // previsione andata a buon fine. Con dieci secondi di
+                        // timeout l'una, fino a cento secondi di rete e di
+                        // batteria per riempire un campo che non compariva da
+                        // nessuna parte.
+                        //
+                        // Portava con se' anche un errore di conto mai visto,
+                        // perche' il valore non si vedeva: la media divideva
+                        // sempre per dieci, mentre gli anni che non
+                        // rispondevano venivano scartati in silenzio. Tre anni
+                        // persi su dieci davano una Norma piu' bassa del trenta
+                        // per cento, senza un segnale.
+                        //
+                        // Se la Norma dovesse tornare, torna **con il grafico
+                        // che la mostra**, non prima: e allora il divisore
+                        // conta i campioni veri.
                     }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1

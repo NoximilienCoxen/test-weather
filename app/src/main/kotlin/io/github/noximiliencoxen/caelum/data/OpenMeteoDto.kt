@@ -89,26 +89,10 @@ data class GeocodingHit(
     val country: String? = null,
 )
 
-/**
- * Risposta dell'API storica (archive-api.open-meteo.com).
- *
- * Serve solo a ricavare la media mensile della temperatura: un campo solo,
- * una lista di valori giornalieri da mediare. La struttura e' identica alla
- * forecast, ma in un tipo separato perche' i campi non coincidono e mischiare
- * i due causerebbe deserializzazioni silenziose con campi nulli.
- */
-@Serializable
-data class ArchiveResponse(
-    val daily: ArchiveDailyDto? = null,
-    val error: Boolean? = null,
-    val reason: String? = null,
-)
-
-@Serializable
-data class ArchiveDailyDto(
-    val time: List<String> = emptyList(),
-    @SerialName("temperature_2m_mean") val tempMean: List<Double?> = emptyList(),
-)
+// Qui stavano `ArchiveResponse` e `ArchiveDailyDto`, i due tipi dell'API
+// storica. Se ne sono andati con `loadNorm`, l'unica che li deserializzava:
+// vedi la nota in `WeatherRepository`. L'archivio non lo interroga piu'
+// nessuno, quindi non serve piu' un tipo per la sua risposta.
 
 /** Anche il blocco orario e' colonnare: una lista per variabile. */
 @Serializable

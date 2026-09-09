@@ -38,15 +38,10 @@ data class DayForecast(
     /** Alba e tramonto: governano il colore del sole e quello del cielo. */
     val sunrise: LocalDateTime? = null,
     val sunset: LocalDateTime? = null,
-    /**
-     * Media storica della temperatura per questo mese del calendario.
-     *
-     * Ricavata dall'API archivio storico (ultimi 10 anni, stesso mese):
-     * e' la "Norma" che si vede come linea tratteggiata nel grafico del
-     * dettaglio del giorno. Nulla se la chiamata non e' ancora tornata o
-     * e' fallita: il grafico la disegna solo quando e' disponibile.
-     */
-    val normTemp: Double? = null,
+    // Qui stava `normTemp`, la Norma storica. Il suo commento descriveva "la
+    // linea tratteggiata nel grafico del dettaglio del giorno" - un grafico che
+    // dalla schermata era gia' sparito, mentre il campo e il suo caricamento
+    // erano rimasti. Vedi la nota in `WeatherRepository`.
     /** Millimetri di sola pioggia, distinti dalla neve dentro il totale. */
     val rainSum: Double? = null,
     /** Centimetri di neve. */
