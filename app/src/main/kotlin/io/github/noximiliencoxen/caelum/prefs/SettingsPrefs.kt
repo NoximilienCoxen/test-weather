@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -15,9 +16,11 @@ import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.hasFiniteCoordinates
 import io.github.noximiliencoxen.caelum.data.key
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.IOException
 
 /**
  * Unita' della temperatura.
@@ -85,7 +88,27 @@ private val favoritesJson = Json { ignoreUnknownKeys = true }
 
 class SettingsPrefs(private val context: Context) {
 
-    val settings: Flow<Settings> = context.settingsDataStore.data.map { prefs ->
+    /**
+     * Le impostazioni, e cosa succede se il file non si legge.
+     *
+     * **Il `catch` non e' cintura e bretelle: senza, un file illeggibile e' un
+     * crash all'avvio.** Questo Flow lo raccoglie `WeatherViewModel` dentro un
+     * `launch` che non ha try/catch, quindi un `IOException` qui - disco pieno
+     * a meta' scrittura, permessi cambiati, file troncato da uno spegnimento
+     * brusco - non ha nessuno che lo prenda e porta giu' il processo. La prima
+     * apertura dopo il guasto e' anche l'ultima.
+     *
+     * Con il ripiego su `emptyPreferences()` l'app riparte invece dai valori
+     * predefiniti: si perdono le scelte, il che si vede e si rimedia
+     * riscegliendole, invece di un'app che non si apre piu' e non dice perche'.
+     *
+     * **Solo `IOException`.** Il resto - un tipo sbagliato, un errore di
+     * programmazione - viene rilanciato: quello non e' un file rovinato, e'
+     * un difetto, e coprirlo con i valori predefiniti lo renderebbe invisibile.
+     */
+    val settings: Flow<Settings> = context.settingsDataStore.data.catch { cause ->
+        if (cause is IOException) emit(emptyPreferences()) else throw cause
+    }.map { prefs ->
         val latitude = prefs[KEY_LAT]
         val longitude = prefs[KEY_LON]
         val name = prefs[KEY_NAME]
