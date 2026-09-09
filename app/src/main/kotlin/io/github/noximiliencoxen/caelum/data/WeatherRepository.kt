@@ -3,8 +3,6 @@ package io.github.noximiliencoxen.caelum.data
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import java.net.HttpURLConnection
-import java.net.URL
 import java.net.URLEncoder
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -44,7 +42,7 @@ class WeatherRepository(
                 "Coordinate non utilizzabili per ${place.name}: " +
                     "${place.latitude}, ${place.longitude}"
             }
-            val body = httpGet(buildUrl())
+            val body = httpGet(buildUrl(), fonte = "Open-Meteo")
             val dto = json.decodeFromString<OpenMeteoResponse>(body)
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
             dto.toForecast(place)
@@ -81,24 +79,6 @@ class WeatherRepository(
      */
     private fun modelsQueryValue(): String? =
         if (model != WeatherModel.AUTO) model.apiValue else null
-
-    private fun httpGet(url: String): String {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 10_000
-            readTimeout = 10_000
-            setRequestProperty("Accept", "application/json")
-        }
-        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) error("HTTP $code da Open-Meteo: ${text.take(200)}")
-            return text
-        } finally {
-            connection.disconnect()
-        }
-    }
 
     companion object {
         const val FORECAST_ENDPOINT = "https://api.open-meteo.com/v1/forecast"
@@ -155,21 +135,10 @@ class WeatherRepository(
                     append("?name=").append(URLEncoder.encode(trimmed, "UTF-8"))
                     append("&count=8&language=it&format=json")
                 }
-                val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 8_000
-                    readTimeout = 8_000
-                    setRequestProperty("Accept", "application/json")
-                }
-                val body = try {
-                    val code = connection.responseCode
-                    val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-                    val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-                    if (code !in 200..299) error("HTTP $code dalla ricerca localita'")
-                    text
-                } finally {
-                    connection.disconnect()
-                }
+                // Otto secondi e non dieci: qui si sta scrivendo in una
+                // casella, e chi scrive aspetta meno volentieri di chi ha
+                // appena aperto l'app.
+                val body = httpGet(url, fonte = "la ricerca localita'", timeoutMs = 8_000)
                 val parsed = lenientJson
                     .decodeFromString<GeocodingResponse>(body)
                 parsed.results.map { hit ->
