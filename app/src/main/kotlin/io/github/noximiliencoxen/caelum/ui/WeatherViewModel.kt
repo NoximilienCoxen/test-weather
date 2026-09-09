@@ -541,7 +541,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // chiede a parte e senza far aspettare nessuno. Se
                         // non arriva, la pagina ARIA lo dichiara invece di
                         // mostrare una colonna di trattini muti.
-                        viewModelScope.launch {
+                        //
+                        // **`launch` e non `viewModelScope.launch`**, e la
+                        // differenza non e' di stile. Da `viewModelScope`
+                        // questo lavoro nascerebbe fratello di `loading`
+                        // invece che figlio, e `loading?.cancel()` non lo
+                        // toccherebbe: cambiando citta' mentre la richiesta e'
+                        // in volo, la risposta della citta' **precedente**
+                        // arriverebbe dopo l'azzeramento qui sopra e si
+                        // scriverebbe nello stato nuovo. Le polveri di Forli'
+                        // sotto il nome di Bergen, e nessun modo di
+                        // accorgersene: il dato non porta con se' il posto da
+                        // cui viene. Figlio del job giusto, si annulla con lui.
+                        launch {
                             AirQualityRepository(place).load()
                                 .onSuccess { air ->
                                     _state.update { it.copy(air = air, airUnavailable = false) }
@@ -562,7 +574,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // stesso fenomeno.
                         val derived = derivedAlerts(forecast)
                         _state.update { it.copy(alerts = derived) }
-                        viewModelScope.launch {
+                        // `launch` figlio, non `viewModelScope`: vedi la nota
+                        // sulla qualita' dell'aria poco sopra. Qui il danno
+                        // sarebbe anche peggiore - un'allerta della citta'
+                        // sbagliata e' un avviso di maltempo dove non c'e'.
+                        launch {
                             WeatherAlertsRepository(place).load()
                                 .onSuccess { official ->
                                     _state.update {
