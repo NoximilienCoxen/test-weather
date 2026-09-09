@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.ui.theme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.lerp
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -162,13 +161,5 @@ fun Color.mutedOnBoth(first: Color, second: Color, minRatio: Float = CONTRAST_AA
     return best
 }
 
-/**
- * Vero quando due colori sono cosi' vicini da non distinguersi.
- *
- * Serve a decidere se un bordo serve davvero: fra due superfici che gia'
- * staccano, una riga in piu' e' rumore.
- */
-fun Color.isNear(other: Color, tolerance: Float = 0.04f): Boolean =
-    abs(red - other.red) < tolerance &&
-        abs(green - other.green) < tolerance &&
-        abs(blue - other.blue) < tolerance
+// `Color.isNear` stava qui, per decidere se fra due superfici servisse un
+// bordo. La domanda non se l'e' mai posta nessuno: zero chiamanti.
