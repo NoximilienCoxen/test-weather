@@ -344,7 +344,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # `fetch-depth: 0`, cioe' la storia intera, e non e' un vezzo: il
+      # `versionCode` adesso e' il numero di commit del ramo, e il checkout
+      # predefinito ne scarica **uno solo**. Con lo shallow ogni build direbbe
+      # di essere la versione 1 - esattamente il numero fisso da cui si voleva
+      # uscire, ma stavolta in un modo che sembra funzionare. Il repository sta
+      # in due megabyte: la storia intera non costa niente.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@v4
         with:
