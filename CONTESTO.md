@@ -2331,8 +2331,13 @@ guardata in mano.
 Il progetto non ne aveva **nessuno**. Sotto c'era solo `probe-api`, che verifica
 i contratti delle API ma non una riga di logica.
 
-Quarantasei prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
-stante. Sono scelte per cio' che coprono, non per fare numero — e cinque di loro
+Novantatre prove, tutte su funzioni pure, nessun emulatore, un job `test` a se'
+stante. **Erano quarantasei quando questa riga e' stata scritta, e la riga non
+e' piu' cambiata mentre il numero raddoppiava** - un conto scritto a mano in un
+documento e' esatto il giorno in cui lo si scrive e sbagliato tutti gli altri.
+Adesso il numero vero lo stampa la CI a ogni giro, nel passo "Quante prove sono
+girate", che fallisce anche se ne trova zero: quello e' il posto in cui
+guardarlo. Sono scelte per cio' che coprono, non per fare numero — e cinque di loro
 stanno esattamente sopra trappole gia' pagate:
 
 | Cosa | Perche' proprio quello |
