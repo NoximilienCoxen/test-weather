@@ -3,8 +3,6 @@ package io.github.noximiliencoxen.caelum.data
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import java.net.HttpURLConnection
-import java.net.URL
 import java.net.URLEncoder
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -44,7 +42,7 @@ class WeatherRepository(
                 "Coordinate non utilizzabili per ${place.name}: " +
                     "${place.latitude}, ${place.longitude}"
             }
-            val body = httpGet(buildUrl())
+            val body = httpGet(buildUrl(), fonte = "Open-Meteo")
             val dto = json.decodeFromString<OpenMeteoResponse>(body)
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
             dto.toForecast(place)
@@ -82,31 +80,9 @@ class WeatherRepository(
     private fun modelsQueryValue(): String? =
         if (model != WeatherModel.AUTO) model.apiValue else null
 
-    private fun httpGet(url: String): String {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 10_000
-            readTimeout = 10_000
-            setRequestProperty("Accept", "application/json")
-        }
-        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) error("HTTP $code da Open-Meteo: ${text.take(200)}")
-            return text
-        } finally {
-            connection.disconnect()
-        }
-    }
-
     companion object {
         const val FORECAST_ENDPOINT = "https://api.open-meteo.com/v1/forecast"
-        const val ARCHIVE_ENDPOINT = "https://archive-api.open-meteo.com/v1/archive"
         const val GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search"
-
-        /** Quanti anni di storico usare per calcolare la Norma. */
-        private const val NORM_YEARS = 10
 
         const val CURRENT_VARS =
             "temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m," +
@@ -137,77 +113,13 @@ class WeatherRepository(
                 "relative_humidity_2m_mean,dew_point_2m_mean,precipitation_hours," +
                 "rain_sum,snowfall_sum,sunshine_duration,sunrise,sunset"
 
-        /**
-         * Media storica della temperatura per ogni giorno della previsione.
-         *
-         * Chiama l'API archivio degli ultimi [NORM_YEARS] anni per il mese
-         * che copre la maggior parte dei giorni previsti, ne calcola la media
-         * giornaliera e la restituisce come mappa data->valore. La chiamata e'
-         * leggera: un campo solo, al massimo 31 giorni per anno richiesto.
-         *
-         * Torna vuota senza eccezione se qualcosa va storto: la Norma e' un
-         * arricchimento, non un dato indispensabile, e il grafico la omette
-         * silenziosamente se non c'e'.
-         */
-        suspend fun loadNorm(place: Place, days: List<DayForecast>): Result<Map<LocalDate, Double>> =
-            withContext(Dispatchers.IO) {
-                runCatching {
-                    if (days.isEmpty()) return@runCatching emptyMap()
-
-                    // Il mese piu' frequente fra i giorni previsti: di solito e'
-                    // sempre lo stesso, ma a cavallo di fine mese potrebbe cambiare.
-                    val month = days
-                        .groupingBy { it.date.month }
-                        .eachCount()
-                        .maxByOrNull { it.value }
-                        ?.key ?: days.first().date.month
-
-                    val today = LocalDate.now()
-                    val archiveJson = lenientJson
-                    val normByDate = mutableMapOf<LocalDate, Double>()
-
-                    // Legge gli ultimi NORM_YEARS anni per questo mese.
-                    for (yearsBack in 1..NORM_YEARS) {
-                        val year = today.year - yearsBack
-                        val firstDay = LocalDate.of(year, month, 1)
-                        val lastDay = firstDay.withDayOfMonth(firstDay.lengthOfMonth())
-                        val url = buildString {
-                            append(ARCHIVE_ENDPOINT)
-                            append("?latitude=").append(place.latitude)
-                            append("&longitude=").append(place.longitude)
-                            append("&start_date=").append(firstDay)
-                            append("&end_date=").append(lastDay)
-                            append("&daily=temperature_2m_mean")
-                            append("&timezone=auto")
-                        }
-                        runCatching {
-                            val body = simpleHttpGet(url)
-                            val dto = archiveJson.decodeFromString<ArchiveResponse>(body)
-                            dto.daily?.let { d ->
-                                d.time.forEachIndexed { i, iso ->
-                                    val date = runCatching { LocalDate.parse(iso) }.getOrNull()
-                                        ?: return@forEachIndexed
-                                    val value = d.tempMean.getOrNull(i) ?: return@forEachIndexed
-                                    // Chiave: giorno-del-mese (anonimizzato all'anno 2000
-                                    // per aggregare fra anni diversi).
-                                    val key = LocalDate.of(2000, date.month, date.dayOfMonth)
-                                    normByDate[key] = (normByDate[key] ?: 0.0) + value
-                                }
-                            }
-                        } // errori di rete su singolo anno: si ignora quell'anno
-                    }
-
-                    // Divide per il numero di anni effettivi per ottenere la media.
-                    // Mappa il risultato sui giorni della previsione.
-                    val result = mutableMapOf<LocalDate, Double>()
-                    days.forEach { day ->
-                        val key = LocalDate.of(2000, day.date.month, day.date.dayOfMonth)
-                        val sum = normByDate[key] ?: return@forEach
-                        result[day.date] = sum / NORM_YEARS
-                    }
-                    result
-                }
-            }
+        // **Qui stava `loadNorm`, la media storica degli ultimi dieci anni.**
+        // Scriveva in `DayForecast.normTemp`, che non leggeva nessuno da quando
+        // il grafico che la mostrava e' uscito dalla schermata. Costava dieci
+        // richieste in fila all'archivio a ogni previsione, e la sua media
+        // divideva per dieci anche quando dieci anni non avevano risposto.
+        // Rimossa insieme a `ARCHIVE_ENDPOINT`, `NORM_YEARS`, `simpleHttpGet`,
+        // `ArchiveResponse` e `ArchiveDailyDto`. Se torna, torna col grafico.
 
         /**
          * Ricerca di localita' per nome, sempre su Open-Meteo e sempre senza
@@ -223,21 +135,10 @@ class WeatherRepository(
                     append("?name=").append(URLEncoder.encode(trimmed, "UTF-8"))
                     append("&count=8&language=it&format=json")
                 }
-                val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 8_000
-                    readTimeout = 8_000
-                    setRequestProperty("Accept", "application/json")
-                }
-                val body = try {
-                    val code = connection.responseCode
-                    val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-                    val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-                    if (code !in 200..299) error("HTTP $code dalla ricerca localita'")
-                    text
-                } finally {
-                    connection.disconnect()
-                }
+                // Otto secondi e non dieci: qui si sta scrivendo in una
+                // casella, e chi scrive aspetta meno volentieri di chi ha
+                // appena aperto l'app.
+                val body = httpGet(url, fonte = "la ricerca localita'", timeoutMs = 8_000)
                 val parsed = lenientJson
                     .decodeFromString<GeocodingResponse>(body)
                 parsed.results.map { hit ->
@@ -251,33 +152,6 @@ class WeatherRepository(
                 }
             }
         }
-    }
-}
-
-/**
- * GET HTTP minimale condivisa fra le chiamate del companion object.
- *
- * Duplica intenzionalmente la logica di `httpGet` di istanza: il companion
- * non puo' chiamare metodi di istanza, e una funzione di estensione su
- * HttpURLConnection richiederebbe di aprire la connessione fuori dal try,
- * rendendo il flusso piu' complicato senza vantaggi. La ripetizione e' ridotta:
- * sono sette righe che fanno una cosa sola.
- */
-private fun simpleHttpGet(url: String): String {
-    val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-        requestMethod = "GET"
-        connectTimeout = 10_000
-        readTimeout = 10_000
-        setRequestProperty("Accept", "application/json")
-    }
-    try {
-        val code = connection.responseCode
-        val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-        val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-        if (code !in 200..299) error("HTTP $code da Open-Meteo: ${text.take(200)}")
-        return text
-    } finally {
-        connection.disconnect()
     }
 }
 

@@ -5,8 +5,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlin.math.roundToInt
 
 /**
@@ -126,7 +124,7 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 append("&timezone=auto")
                 append("&current=").append(CURRENT_VARS)
             }
-            val dto = json.decodeFromString<AirQualityDto>(httpGet(url))
+            val dto = json.decodeFromString<AirQualityDto>(httpGet(url, fonte = "la qualita' dell'aria"))
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
             // **Sceglie il dato, non un rettangolo di longitudini.** Se
             // l'endpoint riempie l'indice europeo si e' dentro il dominio della
@@ -144,23 +142,6 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
         }
     }
 
-    private fun httpGet(url: String): String {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 10_000
-            readTimeout = 10_000
-            setRequestProperty("Accept", "application/json")
-        }
-        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) error("HTTP $code dalla qualita' dell'aria: ${text.take(200)}")
-            return text
-        } finally {
-            connection.disconnect()
-        }
-    }
 
     companion object {
         const val ENDPOINT = "https://air-quality-api.open-meteo.com/v1/air-quality"

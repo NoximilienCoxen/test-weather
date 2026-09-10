@@ -22,6 +22,19 @@ import androidx.compose.ui.unit.dp
  *
  * Non serve `material3-window-size-class`: e' un artefatto in piu' nel catalogo
  * per tre soglie che qui si leggono in due righe.
+ *
+ * **Erano nove misure, adesso sono tre.** Le altre sei - `heroFraction`,
+ * `chartHeight`, `tallChartHeight`, `dayTabWidth`, `statColumns` e `landscape`
+ * col suo `sideBySide` - descrivevano il foglio di dettaglio e le griglie di
+ * statistiche che il feed ha sostituito. Nessuna era piu' letta da nessuno:
+ * i consumatori reali di questo file, in tutto il progetto, sono quattro righe
+ * fra `SectionCard` e `AlertsSheet`. Restavano pero' da tenere allineate su
+ * quattro rami, e ogni ramo era un invito a tararle.
+ *
+ * Con loro se n'e' andata anche la distinzione fra ritratto e orizzontale, che
+ * in `CONTESTO.md` sezione 8 e' ancora scritta fra le cose non fatte: quando le
+ * schede orizzontali si faranno davvero, la misura che serve si scrivera'
+ * sapendo cosa deve reggere, invece di aspettarla ferma da mesi.
  */
 @Immutable
 data class MeteoLayout(
@@ -29,22 +42,8 @@ data class MeteoLayout(
     val gutter: Dp,
     /** Spazio fra due blocchi consecutivi. */
     val gap: Dp,
-    /** Quanta altezza dello schermo prende la cifra del dettaglio. */
-    val heroFraction: Float,
-    /** Altezza dei grafici a piena larghezza. */
-    val chartHeight: Dp,
-    /** Altezza del grafico orario del dettaglio di un giorno. */
-    val tallChartHeight: Dp,
-    /** Larghezza di una linguetta nella striscia dei giorni. */
-    val dayTabWidth: Dp,
-    /** Quante colonne per la griglia delle statistiche. */
-    val statColumns: Int,
     val compact: Boolean,
-    val landscape: Boolean,
-) {
-    /** In orizzontale non c'e' altezza da spendere: grafico e numeri si affiancano. */
-    val sideBySide: Boolean get() = landscape
-}
+)
 
 /**
  * Le misure per lo schermo corrente.
@@ -61,52 +60,10 @@ fun rememberMeteoLayout(): MeteoLayout {
     val landscape = width > height
     return remember(width, height) {
         when {
-            landscape -> MeteoLayout(
-                gutter = 28.dp,
-                gap = 14.dp,
-                // In orizzontale l'altezza e' la risorsa scarsa: la cifra
-                // prende meno, se no il resto non entra.
-                heroFraction = 0.32f,
-                chartHeight = 170.dp,
-                tallChartHeight = 200.dp,
-                dayTabWidth = 80.dp,
-                statColumns = 4,
-                compact = false,
-                landscape = true,
-            )
-            width < 360 -> MeteoLayout(
-                gutter = 14.dp,
-                gap = 10.dp,
-                heroFraction = 0.20f,
-                chartHeight = 170.dp,
-                tallChartHeight = 220.dp,
-                dayTabWidth = 64.dp,
-                statColumns = 2,
-                compact = true,
-                landscape = false,
-            )
-            width >= 600 -> MeteoLayout(
-                gutter = 32.dp,
-                gap = 20.dp,
-                heroFraction = 0.24f,
-                chartHeight = 260.dp,
-                tallChartHeight = 320.dp,
-                dayTabWidth = 96.dp,
-                statColumns = 4,
-                compact = false,
-                landscape = false,
-            )
-            else -> MeteoLayout(
-                gutter = 20.dp,
-                gap = 14.dp,
-                heroFraction = 0.22f,
-                chartHeight = 200.dp,
-                tallChartHeight = 260.dp,
-                dayTabWidth = 80.dp,
-                statColumns = 3,
-                compact = false,
-                landscape = false,
-            )
+            landscape -> MeteoLayout(gutter = 28.dp, gap = 14.dp, compact = false)
+            width < 360 -> MeteoLayout(gutter = 14.dp, gap = 10.dp, compact = true)
+            width >= 600 -> MeteoLayout(gutter = 32.dp, gap = 20.dp, compact = false)
+            else -> MeteoLayout(gutter = 20.dp, gap = 14.dp, compact = false)
         }
     }
 }

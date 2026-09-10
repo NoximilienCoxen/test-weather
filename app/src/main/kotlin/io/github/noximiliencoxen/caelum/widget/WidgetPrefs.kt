@@ -6,11 +6,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import java.io.IOException
 
 /**
  * Le scelte fatte nella configurazione, una riga per ogni widget piazzato.
@@ -53,9 +56,22 @@ class WidgetPrefs(private val context: Context) {
      * fallire: se lat e nome sono presenti, il Place viene costruito senza
      * eccezioni. Nessun parsing JSON, nessun runCatching, nessun fallback
      * silenzioso.
+     *
+     * **Il file, pero', puo' non leggersi affatto**, e quello e' un caso
+     * diverso dal contenuto sbagliato. Un `IOException` qui - disco pieno,
+     * file troncato da uno spegnimento brusco - risalirebbe dentro
+     * `provideGlance`, cioe' dentro il disegno del widget sulla Home di
+     * qualcun altro. Col ripiego su `emptyPreferences()` l'istanza si
+     * comporta come una mai configurata: disegna "TOCCA PER CONFIGURARE", che
+     * e' una faccia che il progetto ha gia' e che porta dove si rimedia.
+     *
+     * Solo `IOException`: un difetto di programmazione deve continuare a farsi
+     * sentire, non a travestirsi da widget da configurare.
      */
     suspend fun load(appWidgetId: Int): WidgetConfig {
-        val prefs = context.widgetDataStore.data.first()
+        val prefs = context.widgetDataStore.data
+            .catch { cause -> if (cause is IOException) emit(emptyPreferences()) else throw cause }
+            .first()
         val useLocation = prefs[useLocationKey(appWidgetId)] ?: false
         val lat = prefs[latKey(appWidgetId)]
         val lon = prefs[lonKey(appWidgetId)]

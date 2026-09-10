@@ -220,7 +220,20 @@ fun WeatherSculpture(
 
     // Il tuono. Il colpo in mano parte insieme al lampo, non dopo: e' il lampo
     // che si vede, ed e' quello che si deve sentire.
-    LaunchedEffect(storming, feelsIt) {
+    //
+    // **`feelsIt` non e' una chiave, e la ragione e' la stessa scritta trenta
+    // righe piu' su per la pioggia** - solo che qui non era stata applicata.
+    // Quel valore cambia ogni volta che la schermata perde il primo piano,
+    // cioe' a ogni apertura e chiusura delle impostazioni. Da chiave faceva
+    // ripartire l'effetto da capo: `seed` tornava a 7, il `delay` in corso
+    // veniva buttato, e il temporale ricominciava **sempre dalla stessa
+    // saetta**. Chi apriva le impostazioni ogni pochi secondi non vedeva mai
+    // un lampo, perche' l'attesa non arrivava mai in fondo.
+    //
+    // La vibrazione deve comunque sapere se la schermata e' davanti, e lo
+    // chiede a `feels.value`, che e' aggiornato senza essere una chiave: e'
+    // esattamente lo stesso `rememberUpdatedState` che la pioggia usa gia'.
+    LaunchedEffect(storming) {
         if (!storming) {
             flash.snapTo(0f)
             return@LaunchedEffect
@@ -230,7 +243,7 @@ fun WeatherSculpture(
             delay(Random(seed).nextLong(2600, 5200))
             bolt = Bolt.of(Random(seed))
             seed = (seed * 31 + 17) and 0xFFFF
-            if (feelsIt) haptics.thunder()
+            if (feels.value) haptics.thunder()
             flash.snapTo(1f)
             delay(70)
             flash.snapTo(0.3f)
@@ -1397,24 +1410,16 @@ private class ShootingStar(
     }
 }
 
-/** Quanto deriva una massa della nuvola, in frazioni di unita'. */
-/**
- * Quanto e' lunga la caduta quando si sa dove appoggia, in unita'.
- *
- * Non e' un numero estetico: e' quanto serve perche' una goccia che passa
- * accanto alla cifra arrivi alla sua base invece di fermarsi a mezz'aria. Se un
- * giorno la disposizione cambiasse le proporzioni fra scultura e cifra, questo
- * va rimisurato - non indovinato.
- */
-/**
- * La neve.
- *
- * [SNOW_SLOW] e' quanto va piu' piano della pioggia, [SNOW_SWAY] quanto sbanda
- * di lato in frazione della larghezza, [SNOW_TURNS] quante oscillazioni fa in
- * una discesa. Sono i tre numeri che decidono se si legge neve o coriandoli:
- * sbandamento troppo largo o troppo veloce e diventano farfalle.
- */
-/** Battiti d'ala al secondo, in radianti: sotto sembrano alianti, sopra insetti. */
+// **Qui stavano cinque KDoc di fila, senza niente in mezzo.**
+//
+// Un riordino delle costanti li aveva lasciati impilati: Kotlin attribuisce
+// solo l'ultimo alla dichiarazione che segue, quindi `OVERCAST_SPREAD` si
+// prendeva il commento del coperto - giusto per caso - e gli altri quattro
+// documentavano costanti che stanno cento righe piu' giu', senza piu' nessun
+// legame con loro. Tre sono tornati accanto a `BIRD_BEAT`, alla neve e a
+// `DRIFT`; il quarto descriveva `SURFACE_FALL`, che nel frattempo si era
+// scritto un commento suo, piu' lungo e piu' preciso, e non serviva due volte.
+
 /**
  * Il coperto: quanto si allarga la fila oltre i bordi e quanto respira.
  *
@@ -1450,6 +1455,7 @@ private const val ARC_CLIMB = 0.22f
 /** Quanto resta visibile il sole a coperto pieno, in frazione della sua alpha piena. */
 private const val SUN_PEEK_FLOOR = 0.22f
 
+/** Battiti d'ala al secondo, in radianti: sotto sembrano alianti, sopra insetti. */
 private const val BIRD_BEAT = 4.2f
 
 /**
@@ -1462,6 +1468,14 @@ private const val BIRD_BEAT = 4.2f
  */
 private const val BIRD_INK = 0.85f
 
+/**
+ * La neve.
+ *
+ * [SNOW_SLOW] e' quanto va piu' piano della pioggia, [SNOW_SWAY] quanto sbanda
+ * di lato in frazione della larghezza, [SNOW_TURNS] quante oscillazioni fa in
+ * una discesa. Sono i tre numeri che decidono se si legge neve o coriandoli:
+ * sbandamento troppo largo o troppo veloce e diventano farfalle.
+ */
 private const val SNOW_SLOW = 0.34f
 private const val SNOW_SWAY = 0.16f
 private const val SNOW_TURNS = 7.5f
@@ -1517,6 +1531,7 @@ private const val TWINKLE_PHASE_STEP = 2.399963f
 
 private const val PI_F = kotlin.math.PI.toFloat()
 
+/** Quanto deriva una massa della nuvola, in frazioni di unita'. */
 private const val DRIFT = 0.022f
 
 /** Quanto la nuvola scivola di lato quando si inclina il telefono: la differenza fra strati, non un secondo giro di camera. */

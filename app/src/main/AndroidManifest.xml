@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--
+        ACCESS_NETWORK_STATE se n'e' andato: era chiesto e mai usato. Zero
+        occorrenze di ConnectivityManager in tutto il sorgente - l'app non
+        guarda se la rete c'e', prova a chiedere e legge l'errore, che e' anche
+        la cosa piu' onesta da fare (una rete "presente" che non porta da
+        nessuna parte e' il caso normale, non l'eccezione).
+
+        Stava per giunta due righe sopra al principio che lo smentiva.
+    -->
     <!-- La pioggia si sente in mano, e il tuono si sente di piu'. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!--

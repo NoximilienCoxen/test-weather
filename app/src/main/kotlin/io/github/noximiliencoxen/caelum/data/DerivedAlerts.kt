@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import java.time.LocalDate
 import java.time.LocalTime
 
 /**
@@ -162,9 +163,34 @@ private fun kmh(ms: Double): Int = (ms * 3.6).toInt()
  *
  * Il confronto e' per **tipo di fenomeno**, non per testo: due avvisi sul vento
  * sono lo stesso avviso anche se scritti in modo diverso.
+ *
+ * **E per giorno, che prima mancava.** [derivedAlerts] ne emette due per
+ * fenomeno, una per oggi e una per domani, con id distinti per data. Scartando
+ * per il solo tipo, un bollettino ufficiale valido **oggi** portava via anche
+ * l'avviso calcolato per **domani** - e domani non lo copriva nessuno. Il buco
+ * si vedeva solo il giorno in cui c'era qualcosa da dire, che e' il giorno
+ * sbagliato per accorgersene.
+ *
+ * Un bollettino ufficiale copre un intervallo, non una data: la derivata cade
+ * se quell'intervallo tocca il suo giorno. Le due estremita' possono mancare -
+ * il feed non sempre le scrive - e allora quel lato non limita: un avviso senza
+ * scadenza vale da qui in avanti, ed e' la lettura prudente. Un ufficiale senza
+ * ne' inizio ne' fine copre quel fenomeno e basta, come faceva prima.
  */
 fun mergeAlerts(official: List<WeatherAlert>, derived: List<WeatherAlert>): List<WeatherAlert> {
-    val covered = official.map { it.kind }.toSet()
-    return (official + derived.filterNot { it.kind in covered })
-        .sortedByDescending { it.level.weight }
+    fun coversDay(alert: WeatherAlert, day: LocalDate): Boolean {
+        val startsBefore = alert.onset?.toLocalDate()?.let { it <= day } ?: true
+        val endsAfter = alert.expires?.toLocalDate()?.let { it >= day } ?: true
+        return startsBefore && endsAfter
+    }
+
+    return (
+        official + derived.filterNot { d ->
+            // Il giorno della derivata sta nel suo `onset`, che
+            // `derivedAlerts` mette sempre: e' `giorno.atStartOfDay()`. Senza,
+            // non si sa di quale giorno parli e la si tiene.
+            val day = d.onset?.toLocalDate() ?: return@filterNot false
+            official.any { it.kind == d.kind && coversDay(it, day) }
+        }
+        ).sortedByDescending { it.level.weight }
 }
