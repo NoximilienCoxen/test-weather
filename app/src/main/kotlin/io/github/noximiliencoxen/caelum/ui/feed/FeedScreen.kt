@@ -7,9 +7,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -115,13 +118,21 @@ fun FeedScreen(
         }
     }
 
-    // L'aggancio della cattura automatica, `--ei sezione`, che con il carosello
-    // aveva smesso di funzionare: tutte e sei le schede fotografate uscivano
-    // uguali alla prima. Qui e' uno scorrimento, che e' un'operazione che una
-    // lista sa sempre fare, e non dipende piu' da quando il carosello nasce.
+    // L'aggancio della cattura automatica, `--ei sezione`.
+    //
+    // **Legge `requestedSection` e non `section`**, ed e' la correzione di un
+    // difetto che e' costato due passate di scatti. Il raccoglitore qui sopra
+    // usa `snapshotFlow`, che emette subito il valore corrente: alla prima
+    // composizione scrive `TEMPERATURA` prima ancora che qualcuno si muova.
+    // Leggendo `section`, questo effetto trovava quel valore e scorreva verso la
+    // sezione che il raccoglitore aveva appena registrato - obbediva a se stesso
+    // invece che all'intent, e tutte e sei le sezioni fotografate uscivano
+    // uguali alla prima. Il campo della richiesta non lo tocca nessuno
+    // scorrendo. Vedi il KDoc di `UiState.requestedSection`.
     LaunchedEffect(state.sectionRequest) {
         if (state.sectionRequest == 0) return@LaunchedEffect
-        val index = sections.indexOf(state.section)
+        val target = state.requestedSection ?: return@LaunchedEffect
+        val index = sections.indexOf(target)
         if (index >= 0) listState.scrollToItem(index)
     }
 
@@ -172,7 +183,19 @@ fun FeedScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer { translationY = pull.offset * PULL_DRAG },
-                contentPadding = PaddingValues(top = openDp, bottom = 28.dp),
+                // **Il margine in fondo comprende i tasti di sistema.** Ventotto
+                // punti scritti a mano non sono l'inserto della barra di
+                // navigazione, che cambia da telefono a telefono e con i gesti
+                // vale quasi nulla: negli scatti la barra delle ventiquattro ore
+                // finiva sotto i tre tasti, col cursore leggibile a meta'. La
+                // scena in cima il suo inserto ce l'aveva gia'; era la coda
+                // della colonna a non averlo.
+                contentPadding = PaddingValues(
+                    top = openDp,
+                    bottom = 28.dp + WindowInsets.navigationBars
+                        .asPaddingValues()
+                        .calculateBottomPadding(),
+                ),
             ) {
                 sections.forEach { section ->
                     item(key = section.name) {

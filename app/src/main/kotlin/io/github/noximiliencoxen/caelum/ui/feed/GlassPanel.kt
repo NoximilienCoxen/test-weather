@@ -1,6 +1,5 @@
 package io.github.noximiliencoxen.caelum.ui.feed
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
@@ -11,6 +10,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -84,7 +86,34 @@ internal fun GlassPanel(
         Column(
             modifier = modifier
                 .clip(shape)
-                .background(ink.veil, shape)
+                .drawBehind {
+                    // **Il bordo di sopra entra da trasparente.** Sul cielo il
+                    // velo si posava su una tinta e il salto non si vedeva;
+                    // sopra una scena dipinta scura il velo cede - deve, o il
+                    // testo non si legge - e il risultato era una lastra di
+                    // grigio chiaro appoggiata sopra il quadro, con uno scalino
+                    // netto lungo tutto il bordo. Abbassare l'opacita'
+                    // riporterebbe il difetto di contrasto; farla **entrare** no,
+                    // perche' il testo comincia comunque sotto la fascia.
+                    val fade = FADE.toPx().coerceAtMost(size.height)
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, ink.veilTop),
+                            startY = 0f,
+                            endY = fade,
+                        ),
+                        size = Size(size.width, fade),
+                    )
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(ink.veilTop, ink.veilBottom),
+                            startY = fade,
+                            endY = size.height,
+                        ),
+                        topLeft = Offset(0f, fade),
+                        size = Size(size.width, size.height - fade),
+                    )
+                }
                 .padding(top = GLASS_TOP_PAD, bottom = GLASS_BOTTOM_PAD),
             content = content,
         )
@@ -102,8 +131,9 @@ internal fun GlassPanel(
 internal class GlassInk(
     /** La palette da fornire al sottoalbero: i due capi qui dentro sono il vetro. */
     val colors: MeteoColors,
-    /** La sfumatura da dipingere davvero, con le opacita' che il conto ha scelto. */
-    val veil: Brush,
+    /** I due capi del velo, **traslucidi**, con le opacita' che il conto ha scelto. */
+    val veilTop: Color,
+    val veilBottom: Color,
 )
 
 /**
@@ -208,7 +238,8 @@ internal fun MeteoColors.onGlass(): GlassInk {
             // grande: e' una colonna, non una scritta.
             cloudCore = cloudCore.readableOnBoth(top, bottom, CONTRAST_AA_LARGE),
         ),
-        veil = Brush.verticalGradient(listOf(veilTop, veilBottom)),
+        veilTop = veilTop,
+        veilBottom = veilBottom,
     )
 }
 
@@ -240,6 +271,9 @@ internal val GLASS_BOTTOM = Color.White.copy(alpha = 0.33f)
 /** Di quanti passi il velo puo' farsi piu' denso prima di arrendersi. */
 private const val VEIL_STEPS = 8
 
+/** Quanto e' alta la fascia in cui il velo entra da trasparente. */
+private val FADE = 22.dp
+
 private val GLASS_CORNER = 20.dp
 
 /**
@@ -250,7 +284,14 @@ private val GLASS_CORNER = 20.dp
  * cielo. La cornice non c'e' piu' - le schede sono blocchi di una colonna - e
  * qui torna a essere quello che e': un margine.
  */
-private val GLASS_TOP_PAD = 14.dp
+/**
+ * Il margine di sopra, che deve stare **sotto la fascia sfumata**.
+ *
+ * Dentro [FADE] il velo non e' ancora pieno, quindi li' il conto del contrasto
+ * non vale: una riga di testo in quella fascia starebbe su un fondo piu' sottile
+ * di quello su cui e' stata tarata.
+ */
+private val GLASS_TOP_PAD = 26.dp
 private val GLASS_BOTTOM_PAD = 10.dp
 
 

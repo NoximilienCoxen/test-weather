@@ -2324,152 +2324,143 @@ guardata in mano.
 
 ---
 
-## 8-sexies. Lo stile Art Gallery, e cosa costa
+## 8-sexies. Il diorama: la scena dipinta al posto della scultura
 
-`ui/feed/ArtFrame.kt`, `ui/feed/GlassPanel.kt`, `ui/common/EditorialHeader.kt`,
-`ui/common/MetricsBar.kt`, `ui/feed/SectionCard.kt`, `ui/home/HomeScreen.kt`
+`ui/scene/`, `app/src/main/assets/scene/`, `ui/feed/FeedScreen.kt`,
+`scripts/scene_placeholder.py`
 
-**E' un esperimento visivo, non una correzione.** Fino a qui le sei schede
-vivevano *sul* cielo senza superfici, e la sezione 8-bis ne porta il
-ragionamento per intero. Qui si prova il canone opposto: ogni schermata e' una
-composizione incorniciata, con il corpo dentro una finestra da galleria e una
-scheda traslucida appoggiata sopra il bordo di sotto. Molte scelte precedenti
-sono rovesciate di proposito, e sotto c'e' scritto quali e a che prezzo.
+**C'e' stato prima un tentativo, ed e' servito a capire cosa non era.** Si era
+applicato uno stile da galleria incorniciando quello che c'era: la scultura di
+sfere e prismi. Il verdetto e' stato che la cornice incorniciava il vuoto, ed
+era giusto - il limite non era la veste, era il motore. La sezione 10 lo dice
+per esteso: rasterizzatore software, millecinquecento triangoli, nessuna
+texture, una luce sola. Quel motore sa fare solidi, non luoghi.
 
-**Il cielo cambia mestiere, ed e' la differenza che si vede.** Fuori dalla
-cornice resta il fondo della stanza; dentro diventa la tela, cioe' parte del
-disegno. E' l'unica cosa che questa passata fa davvero, e tutto il resto le va
-dietro.
+### L'idea: la scena e' un palco, non un'immagine
 
-### Le quattro decisioni, e i loro perche'
+Ogni condizione ha **un dipinto e una mappa di profondita'**, e niente di cio'
+che si muove e' registrato. Il dipinto da' il luogo e l'umore; il movimento lo
+genera la previsione:
 
-**Il tracciamento si scrive in `em`.** La consegna diceva "tracciamento ampio,
-`letterSpacing = 0.15.sp`", e i due pezzi si contraddicono: `sp` e' una misura
-assoluta, quindi 0,15sp su un corpo da 17 sono quindici centesimi di punto, cioe'
-**un ventesimo** di quello che il tema gia' usava per le etichette (`label`,
-0,10em, che a quel corpo vale 1,7sp). Preso alla lettera avrebbe **stretto** i
-titoli. `MeteoType.masthead` e `MeteoType.kicker` usano `0.15.em`, che segue il
-corpo ed e' l'unico modo perche' un titolo resti tracciato uguale a scala del
-carattere di sistema doppia.
+- **la parallasse** e' per-pixel, dalla profondita' e dall'accelerometro che
+  `rememberDeviceTilt` gia' ascoltava;
+- **la deriva dell'aria** va col vento previsto, e la stessa mappa fa doppio
+  mestiere - il campionamento scorre in proporzione alla distanza, quindi il
+  cielo scivola e il primo piano sta fermo;
+- **la luce dell'ora** tinge le distanze con lo stesso cielo che `skyColors`
+  calcola per il resto della schermata, quindi un dipinto di mezzogiorno diventa
+  lo stesso posto all'alba senza ridipingerlo;
+- **la precipitazione** e' disegnata sopra e non dentro, quindi un acquazzone e
+  una pioggerella non sono la stessa immagine con due etichette. E' anche il
+  motivo per cui ai dipinti si chiede di non avere pioggia addosso.
 
-**Niente sfocatura, e non e' pigrizia.** `minSdk` e' 26 e `Modifier.blur` non fa
-niente sotto la 31, quindi meta' dei telefoni vedrebbe comunque il ripiego. E
-soprattutto c'e' una misura gia' pagata, che sta in `WindowGlass.kt`: **un solo
-rettangolo traslucido a piena larghezza** aveva portato un fotogramma da 18 a 36
-millisecondi con il settanta per cento di scatti. Un vetro smerigliato vero
-vorrebbe ridisegnare la cornice dentro un livello sfocato, e dentro la cornice
-c'e' la finestra della pioggia. Il velo si paga una volta in composizione; la
-sfocatura si pagherebbe a ogni fotogramma.
+**La transizione e' la parte che vale.** Le due scene non si dissolvono insieme
+ma **sfalsate per profondita'**: il fondo per primo, il primo piano per ultimo,
+su novecento millisecondi. E' l'ordine in cui il tempo cambia davvero -
+l'orizzonte si scurisce prima della strada - e costa un termine solo nel conto.
+Novecento e non trecento perche' qui la dissolvenza **e' il contenuto**, non un
+raccordo da togliersi di mezzo.
 
-**`PICCO` prende il posto di `TIPOLOGIA`.** Il tipo la scheda lo diceva gia' due
-volte - le colonne della neve sono bianche invece che azzurre, e la frase sopra
-la fascia lo chiama per nome - quindi era un numero che rispondeva a una domanda
-gia' risposta. Il massimo orario invece non lo diceva nessuno, ed e' la meta'
-mancante del totale: il totale dice **quanta**, il picco dice **quanto in
-fretta**. Quaranta millimetri su tutta la giornata e quaranta in due ore sono due
-giornate diverse con lo stesso totale. Sta in `peakPrecipitation`, e non si legge
-da `bandCeiling`: quella torna il **gradino** della scala, cioe' un numero tondo
-scelto fra tre, e scriverlo fra i dati direbbe dieci dove ne erano caduti sei.
+### Cosa deve avere un dipinto
 
-**Massima e minima tornano scritte, e rovescia la sezione 3.** Erano state tolte
-da sotto la condizione e messe sul diagramma della barra, appoggiate al colmo e
-all'avvallamento, perche' ripeterle in due posti sarebbe stata la stessa
-informazione due volte. Solo che sul diagramma si vedono **unicamente mentre il
-dito preme**: a riposo, cioe' quasi sempre, non c'era nessun posto in cui l'app
-dicesse quanto fara' oggi. Non e' un doppione di una cosa che si vede: e' l'unica
-volta in cui si vede. Sul diagramma restano, e li' dicono anche *a che ora*.
-
-### Il perno tecnico: il vetro riprovvede `LocalMeteoColors`
-
-E' la decisione che tiene in piedi tutto il resto, e va capita prima di toccare
-`GlassPanel.kt`.
-
-La scheda e' **pallida a qualunque ora**: bianco al quarantacinque per cento
-sopra il cielo di mezzanotte da' comunque un grigio medio-chiaro. Ma i colori del
-feed sono tarati sul cielo, dove di notte `text` e' quasi bianco: scritto sul
-vetro sparirebbe. E' il difetto a 1,01:1 della sezione 8-bis che rientra dalla
-porta di servizio, come fa ogni volta che nasce una superficie nuova.
-
-La strada corta sarebbe passare tinte nuove a mano a ogni figlio. Ma i figli sono
-`HourBar`, `WeekBar`, `RainHours` e `MetricsBar` - quattro file, una quindicina
-di letture di `LocalMeteoColors` - e dimenticarne una e' la regola, non
-l'eccezione. E' la stessa ragione per cui `skyColors` corregge il contrasto **alla
-sorgente e non nei chiamanti**.
-
-Quindi `GlassPanel` **fornisce al proprio sottoalbero una `MeteoColors`
-derivata**, costruita con la ricetta identica di `skyColors` ma contro i due capi
-del vetro invece che contro i due capi del cielo. Ogni figlio continua a leggere
-`LocalMeteoColors` come ha sempre fatto ed esce corretto da solo, e
-`rememberSkyAccents()` chiamata dentro la scheda si ritara sulla scheda.
-
-**Il vincolo da rispettare** e' scritto in `RainWindow.kt`: `LocalMeteoColors` e'
-`staticCompositionLocalOf`, e riprovvederlo invalida tutto il sottoalbero. Il
-valore derivato sta percio' dietro un `remember` sul cielo - cambia col cielo, un
-pugno di volte al giorno - e **non** a ogni ora scorsa sulla fascia. Chi lo
-ricalcolasse nel corpo della composizione rifarebbe la barra delle ore a ogni
-fotogramma del dito.
-
-### Quando nessun testo regge il vetro, e' il velo a cedere
-
-Stessa medicina di `legibleSky`, applicata a una superficie invece che al cielo,
-e stesso meccanismo del difetto: sotto un testo solo ci sono due colori diversi, e
-quando uno sta sopra e l'altro sotto la luminanza di mezzo il bianco perde in
-cima e il nero perde in fondo. Una terza risposta non esiste.
-
-Qui a cedere e' l'opacita' del velo: un velo chiaro **piu' denso** spinge i due
-capi verso il bianco e li avvicina, finche' il nero li regge tutti e due.
-Misurato su 845 coppie zenit/orizzonte - tutte quelle su cui un testo esiste gia'
-sul cielo nudo, cioe' quelle che `legibleSky` lascia passare:
+Otto condizioni, due file ciascuna, in `assets/` e non fra le risorse: il
+sistema delle risorse riscala per densita', e **la profondita' non va
+interpolata da nessuno** tranne che dal motore.
 
 | | |
 |---|---|
-| col velo di progetto vanno gia' bene | 83% |
-| passi di cedimento necessari, al massimo | 2 su 8 |
-| coppie irrisolvibili anche a velo pieno | nessuna |
+| misura | 1536 x 2048, verticale |
+| dipinto | WebP con perdita q90, sRGB |
+| profondita' | WebP **senza perdita**, scala di grigi, **bianco vicino nero lontano** |
+| luce | neutra di mezzogiorno: alba, tramonto e notte le calcola l'app |
+| orizzonte | fra il 55% e il 60% dell'altezza |
+| margine | 8% di scena in piu' per lato, che la parallasse campiona fuori dal bordo |
+| dentro | le nuvole si', sole luna e pioggia no: quelli vanno nel posto vero |
 
-**La leggibilita' non e' negoziabile, l'opacita' si.** Da qui `GlassInk`, che
-porta insieme la palette e il pennello: se il velo cedesse solo per il conto del
-contrasto, si dipingerebbe un vetro diverso da quello su cui il testo e' stato
-tarato.
+La profondita' con perdita e' l'errore che non si vede finche' la scena non si
+muove: un bordo sporco diventa uno sfrigolio. Il dipinto invece comprime
+benissimo, perche' l'acquerello non ha i gradienti piatti che fanno banding.
 
-Il tutto e' verificato da `GlassInkTest`, che spazza la giornata intera per
-undici nuvolosita' **senza emulatore**: `onGlass` e' una funzione pura su colori.
-E' l'unica prova di questo stile che non ha bisogno di un telefono in mano.
+### Sotto la 33 e' un altro disegno, non lo stesso peggiore
 
-### Le misure, e la cosa da guardare per prima
+`RuntimeShader` esiste dalla 33 e il minimo di quest'app e' la 26. Sotto quella
+soglia non c'e' modo di spostare un pixel in funzione della sua profondita', e
+la scena passa a **tre lastre** ritagliate al caricamento che scorrono a
+velocita' diverse - la parallasse dei cartoni animati coi piani di vetro. Fra
+una lastra e l'altra il salto c'e' e si vede su un profilo che le attraversa: il
+bordo morbido con cui si ritagliano lo attenua, non lo toglie. Tre e non sei
+perche' ogni fascia e' una bitmap piena, e il guadagno si ferma alla terza.
 
-`ArtGalleryStage` e' un `Layout` a mano, e non un `Box` con un margine scritto:
-la scheda e' alta quanto il suo contenuto, che cambia da sezione a sezione, e la
-cornice deve prendersi quel che resta piu' i punti di sovrapposizione. Indovinare
-l'altezza vuol dire sbagliarla a ogni carattere di sistema ingrandito; misurarla
-con un `onSizeChanged` costa una seconda passata di layout a ogni ricomposizione,
-e la prima si vedrebbe saltare. Qui si misura la scheda per prima e la cornice
-con l'avanzo: una passata sola, nessuno stato di mezzo.
+### Cosa e' cambiato attorno
 
-La sovrapposizione e' 22 punti, e **il margine di sopra della scheda vale
-altrettanto**: dentro quei punti il fondo non e' il cielo, e' il disegno dentro la
-cornice. Nessun calcolo di contrasto puo' garantire una riga di testo sopra una
-finestra illuminata, quindi li' passa solo il bordo del vetro.
+**Il feed non e' piu' un carosello.** Una colonna sola: la scena occupa il primo
+schermo e si ritira in una fascia di centotrentadue punti mentre le informazioni
+le scorrono sotto. Cade con essa **la spartizione degli assi** che valeva dalla
+prima riga di questo progetto - orizzontale gira, verticale apre - perche' adesso
+il verticale scorre e non c'e' piu' niente da aprire.
 
-**Il prezzo, dichiarato.** La prima scheda e' quella che rischia di piu', ed e'
-la piu' provata dell'app:
+**La contrazione non ha uno stato suo**, e non e' una scorciatoia: si ricava da
+dove sta la lista. Con un numero a parte, due cose descriverebbero la stessa
+posizione e prima o poi non sarebbero d'accordo. La lista ha in cima un margine
+alto quanto la scena aperta, quindi il primo blocco resta attaccato al bordo di
+sotto della fascia per tutta la corsa.
 
-- La cifra gigante ha meno altezza di prima, perche' la scheda in vetro si
-  prende il blocco inferiore per intero e ci aggiunge la barra delle metriche.
-- Ha anche meno **larghezza**: l'inserto laterale e' ora simmetrico e largo
-  quanto la colonna di icone, se no la colonna finirebbe dentro il quadro. Il
-  centro non si sposta - un margine simmetrico costa larghezza, non posizione,
-  ed e' lo stesso conto che le altre cinque schede facevano gia' - ma la cornice
-  **ritaglia** invece di lasciar sconfinare. Da guardare in uno scatto con una
-  temperatura sotto zero, che e' la stringa piu' larga che esista.
-- `feltLabel` e' uscita: la percepita e' una colonna della barra, cioe' un posto
-  riservato per costruzione, e la riga con `minLines = 1` che le teneva il posto
-  non serve piu' a nessuno.
+**Il tiro per ricaricare e' passato sull'avanzo.** Prima prendeva il dito
+**prima** del carosello, perche' sulla prima pagina sopra non c'era niente da
+mostrare. Adesso sopra c'e' una lista che puo' essere scorsa, e prendere il dito
+prima di lei vorrebbe dire non poter piu' risalire. La guardia sul
+`NestedScrollSource` resta intatta (trappola #35).
 
-**Il riquadro tratteggiato non c'e' piu'**, e la regola che lo motivava resta in
-piedi: dentro una cornice si leggerebbe come una cornice annidata, quindi a dire
-cosa manca e' ora una riga di testo dentro la scheda in vetro. Un segnaposto
-dichiarato e' un lavoro in corso; uno spazio muto sarebbe un difetto.
+**Il titolo e' in grazie**, ed e' l'unica cosa dell'app che non e' Archivo. Un
+grottesco spaziato dice etichetta, un serif spaziato dice didascalia, e sopra un
+dipinto il secondo e' il registro giusto. E' `FontFamily.Serif`, cioe' Noto Serif
+di sistema: per Playfair Display basta il file in `res/font/` e una riga in
+`MeteoType.masthead`.
+
+**Sopra un dipinto il contrasto non si calcola, si costruisce.** La regola
+dell'app - il colore del testo si ricava dal fondo - vale finche' il fondo e' un
+colore. Sotto la testata c'e' un'immagine qualunque, e nessuna formula garantisce
+una riga sopra una nuvola bianca. La garanzia la da' una velatura nera al 45%, e
+il bianco ci sta sopra a piu' di sette a uno comunque sia il dipinto. E' l'unico
+posto dell'app in cui un colore di testo si passa a mano.
+
+**Il vetro entra da trasparente.** Sul cielo il velo si posava su una tinta;
+sopra una scena scura cede - deve, o il testo non si legge - e diventava una
+lastra di grigio con uno scalino netto. Una fascia di ventidue punti in cui entra
+da trasparente toglie lo scalino senza toccare il conto del contrasto, perche' il
+testo comincia comunque sotto.
+
+### Il difetto che e' costato due passate di scatti
+
+**`--ei sezione` non funzionava, e non era colpa del carosello.** Tutte e sei le
+sezioni fotografate uscivano uguali alla prima; tolto il carosello, il difetto e'
+rimasto identico, ed e' li' che si e' visto il meccanismo.
+
+Alla prima composizione partono due effetti. Uno registra dove sta la colonna e
+legge con `snapshotFlow`, che **emette subito il valore corrente**: scrive
+`TEMPERATURA` prima che qualcuno si muova. L'altro e' l'aggancio della cattura, e
+leggeva `state.section` per sapere dove andare - cioe' leggeva il campo che il
+primo aveva appena riscritto. Obbediva a se stesso invece che all'intent.
+
+La correzione e' `UiState.requestedSection`, un campo che **nessuno tiene
+aggiornato scorrendo**: lo deposita solo `requestSection`, e chi lo legge lo
+trova come e' arrivato. Chi tocca questa zona non rimetta la lettura su
+`section`.
+
+### Il costo, dichiarato
+
+- **La regola dei zero fotogrammi a riposo e' rotta di proposito** (trappola #8):
+  una scena viva disegna. Il freno resta il flag `alive`, che la ferma quando si
+  apre un pannello sopra. Quanto costi in batteria **si misura in mano**.
+- **`WeatherSculpture` e `HomeScreen` sono usciti di scena**, circa duemilatrecento
+  righe: senza la schermata principale non avevano piu' chiamanti. I widget non
+  li usavano, hanno il loro disegno in `widget/paint/`.
+- Le otto scene in `assets/` sono **segnaposto generati** da
+  `scripts/scene_placeholder.py` - bande e sagome con la loro profondita'
+  coerente. Sembrano striate sotto la parallasse, e non e' il motore: sono bordi
+  netti, e un bordo netto sotto uno spostamento per-pixel striscia. Un acquerello
+  non ha di che strisciare. **Non tarare il motore su questo**: si taglierebbe
+  addosso a un difetto dei segnaposto.
 
 ## 8-quater. I test
 

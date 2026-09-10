@@ -169,9 +169,30 @@ data class UiState(
      *
      * E' un contatore e non un booleano perche' la CI chiede due volte di fila
      * la stessa sezione, e un valore che non cambia non fa ripartire l'effetto
-     * che porta il carosello dove le si e' detto.
+     * che porta la colonna dove le si e' detto.
      */
     val sectionRequest: Int = 0,
+    /**
+     * **Quale** sezione e' stata chiesta da fuori, e perche' non basta [section].
+     *
+     * E' la correzione di un difetto che e' costato due passate di scatti: tutte
+     * e sei le sezioni fotografate uscivano uguali alla prima, e non era colpa
+     * del carosello, perche' tolto il carosello il difetto e' rimasto identico.
+     *
+     * Alla prima composizione partono due effetti. Uno registra nello stato la
+     * sezione in cima, e legge la posizione della colonna con `snapshotFlow`,
+     * che **emette subito il valore corrente**: quindi scrive `TEMPERATURA`
+     * prima ancora che qualcuno si muova. L'altro e' l'aggancio della cattura, e
+     * leggeva [section] per sapere dove andare - cioe' leggeva il campo che il
+     * primo aveva appena riscritto, e obbediva a se stesso invece che
+     * all'intent.
+     *
+     * Qui la richiesta ha un campo suo, che **nessuno tiene aggiornato scorrendo**:
+     * chi la deposita e' solo `requestSection`, e chi la legge la trova come e'
+     * arrivata. [section] resta a fare il proprio mestiere - da dove ripartire
+     * alla prossima apertura - e i due smettono di contendersi la stessa riga.
+     */
+    val requestedSection: FeedSection? = null,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -736,7 +757,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun requestSection(index: Int) {
         val sections = FeedSection.entries
         val picked = sections.getOrNull(index) ?: return
-        _state.update { it.copy(section = picked, sectionRequest = it.sectionRequest + 1) }
+        _state.update {
+            it.copy(
+                section = picked,
+                // La richiesta va **anche** nel campo suo: `section` da sola non
+                // sopravvive al raccoglitore che registra dove sta la colonna.
+                // Vedi il KDoc di `UiState.requestedSection`.
+                requestedSection = picked,
+                sectionRequest = it.sectionRequest + 1,
+            )
+        }
     }
 
     /**
