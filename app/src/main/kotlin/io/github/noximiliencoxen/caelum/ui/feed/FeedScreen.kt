@@ -267,7 +267,7 @@ fun FeedScreen(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .systemBarsPadding()
-                    .padding(horizontal = 10.dp, top = 2.dp),
+                    .padding(start = 10.dp, end = 10.dp, top = 2.dp),
             )
 
             // La colonna di icone resta il punto di riferimento che era: non
