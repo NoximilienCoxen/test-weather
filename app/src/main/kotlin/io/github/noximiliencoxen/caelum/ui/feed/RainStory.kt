@@ -92,6 +92,33 @@ internal fun bandCeiling(peak: Double, snow: Boolean = false): Double {
     return steps.firstOrNull { peak <= it } ?: steps.last()
 }
 
+/**
+ * Il massimo orario del giorno: **quanto forte**, nell'ora peggiore.
+ *
+ * E' il terzo numero della scheda della pioggia, e prende il posto di
+ * `TIPOLOGIA`. La ragione e' che i tre numeri devono rispondere a tre domande
+ * diverse, e `TIPOLOGIA` rispondeva a una che la scheda dice gia' due volte: le
+ * colonne della neve sono bianche invece che azzurre, e la frase sopra la fascia
+ * la chiama per nome. `PICCO` invece dice una cosa che nessun altro pezzo della
+ * scheda dice.
+ *
+ * **Non e' il totale del giorno diviso qualcosa.** Quaranta millimetri
+ * distribuiti su tutta la giornata e quaranta caduti in due ore sono due
+ * giornate diverse con lo stesso totale: e' esattamente la domanda per cui
+ * esiste la fascia delle ventiquattro ore, e qui e' scritta in cifre.
+ *
+ * Nulla quando la previsione non porta valori orari - un giorno oltre la portata
+ * del modello ha il giorno e non le ore - e nulla quando nessuna ora ne ha uno.
+ * Uno zero scritto direbbe "misurato, ed e' zero", che e' un'altra cosa.
+ *
+ * E' il medesimo massimo che [bandCeiling] cerca per tararsi la scala, ma non si
+ * puo' leggere di li': quella torna il **gradino**, cioe' un numero tondo scelto
+ * fra tre, e scriverlo fra i dati direbbe che alle sedici sono caduti dieci
+ * millimetri quando ne erano caduti sei.
+ */
+internal fun peakPrecipitation(hours: List<HourForecast>, snow: Boolean = false): Double? =
+    hours.mapNotNull { if (snow) it.snowfall else it.precipitation }.maxOrNull()
+
 // ---------------------------------------------------------------------------
 // La frase
 

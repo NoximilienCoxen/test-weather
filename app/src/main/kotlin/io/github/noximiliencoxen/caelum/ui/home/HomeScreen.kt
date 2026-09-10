@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.Forecast
@@ -49,14 +49,22 @@ import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.isWet
-import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertBanner
 import io.github.noximiliencoxen.caelum.ui.alerts.AlertPill
 import io.github.noximiliencoxen.caelum.ui.asBigDegrees
 import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
+import io.github.noximiliencoxen.caelum.ui.common.EditorialHeader
 import io.github.noximiliencoxen.caelum.ui.common.MeteoIconButton
+import io.github.noximiliencoxen.caelum.ui.common.MetricsBar
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
+import io.github.noximiliencoxen.caelum.ui.feed.ArtFrame
+import io.github.noximiliencoxen.caelum.ui.feed.ArtGalleryStage
+import io.github.noximiliencoxen.caelum.ui.feed.FeedSection
+import io.github.noximiliencoxen.caelum.ui.feed.GLASS_INSET
+import io.github.noximiliencoxen.caelum.ui.feed.GLASS_PAD
+import io.github.noximiliencoxen.caelum.ui.feed.GlassPanel
+import io.github.noximiliencoxen.caelum.ui.feed.RAIL_WIDTH
 import io.github.noximiliencoxen.caelum.ui.motion.PhysicalNumber
 import io.github.noximiliencoxen.caelum.ui.motion.SceneRotation
 import io.github.noximiliencoxen.caelum.ui.motion.rememberSceneRotation
@@ -71,7 +79,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -97,7 +104,7 @@ import kotlin.math.sin
  * I 48dp in cima a destra: vuoti, o col pallino dell'allerta.
  *
  * **Sta in una funzione sua per una ragione di compilazione, non di stile.**
- * Dentro il `Box`, in mezzo alla `Row` della barra, ci sono due riceventi
+ * Dentro il `Box`, in mezzo alla `Row` della testata, ci sono due riceventi
  * impliciti - `BoxScope` da vicino e `RowScope` da fuori - e Kotlin risolve
  * `AnimatedVisibility` sulla versione di `RowScope`, che li' non puo' chiamare:
  * *cannot be called in this context with an implicit receiver*. In una funzione
@@ -216,71 +223,54 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 24.dp, top = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            SettingsButton(onClick = onOpenSettings)
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = state.place.name.uppercase(),
-                    style = MeteoType.caption,
-                    color = colors.label,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
+        // ── La testata editoriale ──────────────────────────────────────────
+        //
+        // **Il nome della localita' scende a fare da occhiello e TEMPERATURA
+        // sale a fare da titolo.** Sulla prima scheda il posto era la riga
+        // grande e il resto veniva dopo, perche' era la schermata dell'app; ora
+        // e' la prima di sei, e le altre cinque dichiarano tutte la propria
+        // grandezza in testa. Una schermata che non lo fa e' quella in cui non
+        // si sa di che si sta leggendo.
+        //
+        // **La riga dinamica resta intera, e resta un bersaglio.** Di norma dice
+        // il giorno; quando serve prende il posto per dire che il dato e'
+        // vecchio, che si sta ricaricando, o che basta lasciare il dito. Sempre
+        // presente e non a comparsa: apparendo e sparendo sposterebbe in su e in
+        // giu' tutto quello che ha sotto. Ora sta in coda al posto, dentro
+        // l'occhiello, e il tocco per ricaricare la segue.
+        val stale = rememberFreshness(state.fetchedAt)
+        EditorialHeader(
+            kicker = listOf(
+                state.place.name.uppercase(),
+                when {
+                    pullArmed -> "RILASCIA"
+                    state.refreshing -> "AGGIORNO"
+                    stale != null -> stale
+                    else -> dayLabel(hour)
+                },
+            ).joinToString("  ·  "),
+            title = FeedSection.TEMPERATURA.title,
+            // La temperatura non ha una tinta sua e non e' una mancanza: ha gia'
+            // una scala di colore che dice quanto caldo fa. Vedi `accentOf`.
+            accent = colors.text,
+            kickerModifier = Modifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onRefresh,
+            ),
+            leading = { SettingsButton(onClick = onOpenSettings) },
+            // Le due caselle laterali sono larghe uguali, quindi il titolo resta
+            // al centro dello **schermo** e non al centro di quel che avanza - e
+            // il pallino dell'allerta che compare o sparisce non sposta niente.
+            trailing = {
+                AlertPillSlot(
+                    alerts = state.shownAlerts,
+                    collapsed = state.alertsCollapsed,
+                    onOpen = onReopenAlerts,
                 )
-                // La riga sotto il nome dice sempre qualcosa, e non e' un
-                // riempitivo: di norma il giorno - la barra copre oggi e basta,
-                // quindi vale la pena dire quale oggi - e quando serve prende
-                // il posto per dire che il dato e' vecchio, che si sta
-                // ricaricando, o che basta lasciare il dito.
-                //
-                // Sempre presente e non a comparsa: apparendo e sparendo
-                // sposterebbe in su e in giu' tutto quello che ha sotto.
-                val stale = rememberFreshness(state.fetchedAt)
-                Text(
-                    text = when {
-                        pullArmed -> "RILASCIA"
-                        state.refreshing -> "AGGIORNO"
-                        stale != null -> stale
-                        else -> dayLabel(hour)
-                    },
-                    style = MeteoType.caption,
-                    color = if (stale != null || pullArmed || state.refreshing) {
-                        colors.text
-                    } else {
-                        colors.line
-                    },
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onRefresh,
-                        ),
-                )
-            }
-            // Occupa quanto il pulsante a sinistra, cosi' il nome resta al
-            // centro dello schermo e non al centro di quel che avanza.
-            //
-            // Quando la fascia dell'allerta e' ridotta, questi 48dp non restano
-            // vuoti: ci sta il pallino. E' la stessa misura - `MinTouchTarget`,
-            // cioe' quella di `MeteoIconButton` - quindi il nome della localita'
-            // non si sposta di un pixel fra i due stati, e il pallino non ruba
-            // altezza a niente. Che e' esattamente cio' che si cerca chiudendo
-            // la fascia.
-            AlertPillSlot(
-                alerts = state.shownAlerts,
-                collapsed = state.alertsCollapsed,
-                onOpen = onReopenAlerts,
-            )
-        }
+            },
+            modifier = Modifier.padding(start = 6.dp, end = 6.dp, top = 2.dp),
+        )
 
         // L'allerta sta qui, in cima alla schermata che si apre per prima.
         //
@@ -307,199 +297,232 @@ fun HomeScreen(
             )
         }
 
-        // Scultura e cifra dentro lo stesso riquadro sensibile: il dito li
-        // gira insieme dovunque lo si appoggi, invece di dover indovinare
-        // quale dei due accetta il gesto.
-        Column(
+        // Il giorno mostrato, per l'alba e il tramonto della barra e per la
+        // massima e la minima: si prende da `selectedDay`, non dall'ora
+        // corrente. Prendendolo dall'ora si otteneva il giorno giusto solo
+        // finche' il giorno mostrato era oggi.
+        val shownDay = state.detailDay ?: hour?.time?.let { state.forecast?.dayOf(it) }
+
+        // La scelta fra le ventiquattro ore e la settimana sta **nello stato**,
+        // non in un `rememberSaveable` locale: scegliere un giorno dalla
+        // striscia cambia cosa racconta la scheda, e chi l'ha appena scelto deve
+        // ritrovare la striscia dov'era - non le ore. Resta un modo di guardare
+        // e non una preferenza: non va in DataStore, e riaprendo l'app la
+        // domanda e' di nuovo "che tempo fa adesso".
+        val settimana = state.weekMode
+
+        // ── La composizione: la finestra, e la scheda che le si appoggia ────
+        //
+        // Scultura e cifra vanno **dentro la cornice**, e sono lo stesso
+        // riquadro sensibile di prima: il dito li gira insieme dovunque lo si
+        // appoggi. `rotatesScene` resta sul contenuto, quindi la cornice non
+        // tocca il gesto - vedi il KDoc di `ArtFrame`.
+        //
+        // **L'inserto laterale e' simmetrico, ed e' largo quanto la colonna di
+        // icone.** Questa schermata ha una regola esplicita sul punto: sta al
+        // centro dello schermo e non al centro di quel che avanza, ed e' per
+        // questo che finora era a piena larghezza. Un margine simmetrico pero'
+        // non sposta il centro - costa solo larghezza - ed e' lo stesso conto
+        // che le altre cinque schede fanno gia' per il proprio eroe. Senza, la
+        // colonna finirebbe **dentro** la cornice, cioe' dentro il quadro.
+        //
+        // Il prezzo e' che la cifra ha meno larghezza di prima e la cornice la
+        // ritaglia invece di lasciarla sconfinare: da guardare in uno scatto con
+        // una temperatura sotto zero, che e' la stringa piu' larga che esista.
+        ArtGalleryStage(
+            frame = {
+                ArtFrame(
+                    line = colors.line,
+                    modifier = Modifier.padding(horizontal = RAIL_WIDTH),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotatesScene(rotation),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        WeatherSculpture(
+                            weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
+                            // L'aggancio di verifica deve restare fedele: imporre pioggia a
+                            // qualunque codice faceva piovere anche su "coperto", che e'
+                            // asciutto. Solo i codici bagnati portano gocce.
+                            precipitationMm = state.forcedWeatherCode
+                                ?.let { if (Wmo.family(it).isWet()) 2.5 else 0.0 }
+                                ?: hour?.precipitation,
+                            probability = state.forcedWeatherCode
+                                ?.let { if (Wmo.family(it).isWet()) 80 else 0 }
+                                ?: hour?.precipProbability,
+                            sky = sky,
+                            date = hour?.time?.toLocalDate() ?: LocalDate.now(),
+                            rotation = rotation,
+                            tilt = tilt,
+                            // Dietro le impostazioni, e sotto un'altra scheda del feed, la
+                            // schermata resta viva ma non la guarda nessuno: li' la
+                            // vibrazione non accompagnerebbe piu' niente, e un tocco che
+                            // non corrisponde a niente di visibile non e' un riscontro.
+                            feelsIt = alive && !state.settingsOpen,
+                            contact = contact,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.62f),
+                        )
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            // Finche' non c'e' un numero non si disegna niente. Un "--"
+                            // alto mezzo schermo, con tanto di spessore e di ombra, non
+                            // dice "sto aspettando": dice che l'app e' rotta.
+                            val degrees = hour?.temperature
+                            if (degrees != null) PhysicalNumber(
+                                text = degrees.asBigDegrees(state.unit),
+                                // Il grado e' l'ultimo carattere e non e' una cifra: va in
+                                // corpo ridotto, a filo della cima delle altre.
+                                smallTail = 1,
+                                fontSize = maxHeight * 0.86f,
+                                rotation = rotation,
+                                tilt = tilt,
+                                // Un filo verso l'alto: la cifra e la scultura devono
+                                // leggersi come un oggetto solo, e fra loro non ci deve
+                                // stare il vuoto che ci starebbe centrandole entrambe.
+                                verticalBias = -0.04f,
+                                contact = contact,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
+                    }
+                }
+            },
+            card = {
+                GlassPanel(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = RAIL_WIDTH + GLASS_INSET),
+                ) {
+                    // **Le tinte del vetro, non quelle del cielo.** Dentro la
+                    // scheda `LocalMeteoColors` e' quella derivata dal vetro:
+                    // rileggerla qui e' quello che tiene leggibili condizione,
+                    // metriche, barra delle ore e striscia della settimana senza
+                    // passare un colore a nessuna delle quattro.
+                    val ink = LocalMeteoColors.current
+
+                    // Crossfade e non sostituzione secca: scorrendo le ore la
+                    // condizione cambia spesso, e uno scatto di testo si nota
+                    // piu' del testo stesso. Al posto della condizione, finche'
+                    // non c'e', si dice cosa sta succedendo: uno schermo fermo
+                    // sui trattini lascia credere che l'attesa sia il risultato.
+                    Crossfade(
+                        targetState = when {
+                            // L'errore prende la parola solo se non c'e' altro
+                            // da dire. Una ricarica fallita mentre si ha in mano
+                            // una giornata intera di dati validi non deve
+                            // cancellare la condizione per annunciare che la rete
+                            // non risponde: il dato vecchio resta, e a dire che
+                            // e' vecchio ci pensa l'occhiello in cima.
+                            hour == null && state.error != null -> state.error.uppercase()
+                            hour == null -> "IN ATTESA DEI DATI"
+                            else -> conditionLabel(hour, state.forcedWeatherCode)
+                        },
+                        label = "condizione",
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { label ->
+                        Text(
+                            text = label,
+                            style = MeteoType.label,
+                            color = ink.text,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = GLASS_PAD),
+                        )
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    // ── I tre dati chiave ──────────────────────────────────
+                    //
+                    // **Massima e minima tornano scritte**, e rovescia una
+                    // scelta presa apposta: erano state tolte da qui e messe sul
+                    // diagramma della barra, appoggiate al colmo e
+                    // all'avvallamento della curva, perche' ripeterle in due
+                    // posti sarebbe stata la stessa informazione due volte.
+                    //
+                    // Solo che sul diagramma si vedono **unicamente mentre il
+                    // dito preme**: a riposo - cioe' quasi sempre - non c'e'
+                    // nessun posto in cui l'app dica quanto fara' oggi. Non e'
+                    // un doppione di una cosa che si vede: e' l'unica volta in
+                    // cui si vede. Sul diagramma restano, e li' dicono anche *a
+                    // che ora*, che e' di piu'.
+                    //
+                    // **La percepita ha lasciato la sua riga e sta qui.** Era
+                    // una riga a se' con `minLines = 1` per non far sussultare
+                    // la scultura quando compariva; dentro una colonna di tre e'
+                    // sempre presente per costruzione, quindi il sussulto non ha
+                    // piu' di che nascere e la riga riservata non serve piu'.
+                    MetricsBar(
+                        entries = listOf(
+                            "MASSIMA" to shownDay?.tempMax.asPlainDegrees(state.unit),
+                            "PERCEPITA" to hour?.apparent.asPlainDegrees(state.unit),
+                            "MINIMA" to shownDay?.tempMin.asPlainDegrees(state.unit),
+                        ),
+                        accent = ink.text,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = GLASS_PAD),
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    BarSwitch(
+                        settimana = settimana,
+                        onChoose = onSetWeek,
+                    )
+
+                    // L'altezza cambia - la settimana e' alta quattro righe, le ore una - e
+                    // il riquadro la insegue invece di saltarci. Il salto qui e' voluto da
+                    // chi tocca, non subito come quello che il commento sotto evita, ma
+                    // resta uno strappo di ottanta punti in mezzo allo schermo: animarlo
+                    // costa una riga e lo rende un movimento invece che uno scatto.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (settimana) {
+                            WeekBar(
+                                days = state.forecast?.days.orEmpty(),
+                                unit = state.unit,
+                                selected = state.selectedDay,
+                                onOpenDay = onOpenDay,
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                            )
+                        } else {
+                            HourBar(
+                                hours = hours,
+                                selected = state.selectedHour,
+                                // Su un altro giorno "adesso" non ci cade dentro: il segno
+                                // dell'ora vera sparisce invece di indicare un'ora a caso.
+                                nowIndex = if (today) state.nowIndex else -1,
+                                sunrise = shownDay?.sunrise,
+                                sunset = shownDay?.sunset,
+                                unit = state.unit,
+                                onSelect = onSelectHour,
+                                modifier = Modifier.padding(horizontal = 24.dp),
+                            )
+                        }
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .rotatesScene(rotation),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            WeatherSculpture(
-                weatherCode = state.forcedWeatherCode ?: hour?.weatherCode,
-                // L'aggancio di verifica deve restare fedele: imporre pioggia a
-                // qualunque codice faceva piovere anche su "coperto", che e'
-                // asciutto. Solo i codici bagnati portano gocce.
-                precipitationMm = state.forcedWeatherCode
-                    ?.let { if (Wmo.family(it).isWet()) 2.5 else 0.0 }
-                    ?: hour?.precipitation,
-                probability = state.forcedWeatherCode
-                    ?.let { if (Wmo.family(it).isWet()) 80 else 0 }
-                    ?: hour?.precipProbability,
-                sky = sky,
-                date = hour?.time?.toLocalDate() ?: LocalDate.now(),
-                rotation = rotation,
-                tilt = tilt,
-                // Dietro le impostazioni, e sotto un'altra scheda del feed, la
-                // schermata resta viva ma non la guarda nessuno: li' la
-                // vibrazione non accompagnerebbe piu' niente, e un tocco che
-                // non corrisponde a niente di visibile non e' un riscontro.
-                feelsIt = alive && !state.settingsOpen,
-                contact = contact,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.62f),
-            )
-
-            // **Niente riconoscitore di gesti su questo riquadro.** Ce n'era
-            // uno che distingueva il tocco fermo - apriva il foglio del
-            // dettaglio - dal trascinamento che gira la scena, e stava sul
-            // figlio apposta per non lasciar salire l'evento al genitore. Il
-            // foglio non c'e' piu': le grandezze sono schede del feed, e ci si
-            // arriva scorrendo o dalla colonna a destra. Senza niente da aprire
-            // resta il solo trascinamento, e a riceverlo c'e' gia' il
-            // `.rotatesScene()` del genitore - che adesso lo riceve davvero,
-            // perche' nessuno glielo intercetta piu'.
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
-            ) {
-                // Finche' non c'e' un numero non si disegna niente. Un "--"
-                // alto mezzo schermo, con tanto di spessore e di ombra, non
-                // dice "sto aspettando": dice che l'app e' rotta.
-                val degrees = hour?.temperature
-                if (degrees != null) PhysicalNumber(
-                    text = degrees.asBigDegrees(state.unit),
-                    // Il grado e' l'ultimo carattere e non e' una cifra: va in
-                    // corpo ridotto, a filo della cima delle altre.
-                    smallTail = 1,
-                    fontSize = maxHeight * 0.86f,
-                    rotation = rotation,
-                    tilt = tilt,
-                    // Un filo verso l'alto: la cifra e la scultura devono
-                    // leggersi come un oggetto solo, e fra loro non ci deve
-                    // stare il vuoto che ci starebbe centrandole entrambe.
-                    verticalBias = -0.04f,
-                    contact = contact,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
-
-        // Crossfade e non sostituzione secca: scorrendo le ore la condizione
-        // cambia spesso, e uno scatto di testo si nota piu' del testo stesso.
-        // Al posto della condizione, finche' non c'e', si dice cosa sta
-        // succedendo. Uno schermo fermo sui trattini lascia credere che
-        // l'attesa sia il risultato.
-        Crossfade(
-            targetState = when {
-                // L'errore prende la parola solo se non c'e' altro da dire. Una
-                // ricarica fallita mentre si ha in mano una giornata intera di
-                // dati validi non deve cancellare la condizione per annunciare
-                // che la rete non risponde: il dato vecchio resta, e a dire che
-                // e' vecchio ci pensa la riga in alto.
-                //
-                // Va in maiuscolo come le altre condizioni perche' e' testo
-                // scritto per essere letto qui: `UiState.error` non porta piu'
-                // il messaggio di un'eccezione, che qui dentro diventava un
-                // muro di JSON al posto della parola sul tempo.
-                hour == null && state.error != null -> state.error.uppercase()
-                hour == null -> "IN ATTESA DEI DATI"
-                else -> conditionLabel(hour, state.forcedWeatherCode)
-            },
-            label = "condizione",
-            modifier = Modifier.fillMaxWidth(),
-        ) { label ->
-            Text(
-                text = label,
-                style = MeteoType.label,
-                color = colors.text,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        // Qui restava solo la percepita. **Minima e massima se ne sono andate**
-        // sul diagramma della barra, dove stanno appoggiate al picco e
-        // all'avvallamento della curva: li' dicono anche *a che ora* accadono,
-        // che e' piu' di quanto dicessero scritte qui. Ripeterle in due posti
-        // sarebbe stata la stessa informazione due volte, e quella meno ricca
-        // per giunta.
-        // Il giorno mostrato, per l'alba e il tramonto della barra: si prende da
-        // `selectedDay`, non dall'ora corrente. Prendendolo dall'ora si
-        // otteneva il giorno giusto solo finche' il giorno mostrato era oggi.
-        val shownDay = state.detailDay ?: hour?.time?.let { state.forecast?.dayOf(it) }
-        Text(
-            text = feltLabel(
-                apparent = hour?.apparent,
-                real = hour?.temperature,
-                unit = state.unit,
-            ),
-            style = MeteoType.caption,
-            color = colors.label,
-            textAlign = TextAlign.Center,
-            // La riga e' vuota per gran parte della giornata - la percepita
-            // compare solo quando stacca davvero - e senza un'altezza garantita
-            // comparirebbe e sparirebbe facendo sussultare in su e in giu' tutto
-            // cio' che le sta sopra, scultura compresa.
-            minLines = 1,
-            modifier = Modifier.fillMaxWidth(),
+                .padding(top = 8.dp, bottom = 10.dp),
         )
-
-        Spacer(Modifier.height(10.dp))
-
-        // ── Ore e settimana, nello stesso posto ────────────────────────────────
-        //
-        // Sono due domande diverse sulla stessa previsione - "quando, dentro
-        // oggi" e "quale giorno" - e messe una sotto l'altra costringerebbero la
-        // scultura a stringersi per far posto a entrambe. Qui si danno il cambio.
-        //
-        // La scelta sta **nello stato**, non piu' in un `rememberSaveable`
-        // locale. `UiState.weekMode` e `setWeekMode` erano gia' scritti e non li
-        // usava nessuno; adesso servono, perche' scegliere un giorno dalla
-        // striscia cambia cosa racconta la scheda e chi l'ha appena scelto deve
-        // ritrovare la striscia dov'era - non le ore. Da locale, il giro dello
-        // schermo la conservava ma la scheda ricomposta dal carosello no.
-        //
-        // Resta un modo di guardare e non una preferenza: non va in DataStore, e
-        // riaprendo l'app la domanda e' di nuovo "che tempo fa adesso".
-        val settimana = state.weekMode
-
-        BarSwitch(
-            settimana = settimana,
-            onChoose = onSetWeek,
-        )
-
-        // L'altezza cambia - la settimana e' alta quattro righe, le ore una - e
-        // il riquadro la insegue invece di saltarci. Il salto qui e' voluto da
-        // chi tocca, non subito come quello che il commento sotto evita, ma
-        // resta uno strappo di ottanta punti in mezzo allo schermo: animarlo
-        // costa una riga e lo rende un movimento invece che uno scatto.
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .animateContentSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (settimana) {
-                WeekBar(
-                    days = state.forecast?.days.orEmpty(),
-                    unit = state.unit,
-                    selected = state.selectedDay,
-                    onOpenDay = onOpenDay,
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                )
-            } else {
-                HourBar(
-                    hours = hours,
-                    selected = state.selectedHour,
-                    // Su un altro giorno "adesso" non ci cade dentro: il segno
-                    // dell'ora vera sparisce invece di indicare un'ora a caso.
-                    nowIndex = if (today) state.nowIndex else -1,
-                    sunrise = shownDay?.sunrise,
-                    sunset = shownDay?.sunset,
-                    unit = state.unit,
-                    onSelect = onSelectHour,
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                )
-            }
-        }
 
         // Tornare all'ora vera deve costare un tocco. Scorrendo la barra si
         // finisce facilmente lontani, e ritrovare la posizione a mano annulla
@@ -716,24 +739,12 @@ private fun dayLabel(hour: HourForecast?): String =
 private val DAY_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("EEE d MMM", Locale.ITALIAN)
 
-/**
- * Minima e massima del giorno, e la percepita quando ha qualcosa da aggiungere.
- *
- * La percepita compare solo se stacca di almeno un grado e mezzo dalla reale:
- * scritta accanto a un numero uguale al suo non e' un'informazione, e' la
- * stessa riga stampata due volte. Il confronto si fa in gradi Celsius, prima
- * della conversione, perche' in Fahrenheit la stessa differenza vale quasi il
- * doppio e la soglia cambierebbe senso a seconda dell'unita' scelta.
- */
-private fun feltLabel(
-    apparent: Double?,
-    real: Double?,
-    unit: TempUnit,
-): String {
-    if (apparent == null || real == null) return ""
-    if (abs(apparent - real) < FELT_THRESHOLD) return ""
-    return "PERCEPITI ${apparent.asPlainDegrees(unit)}"
-}
+// `feltLabel` stava qui, e con lei la soglia di un grado e mezzo sotto la quale
+// la percepita non si scriveva: accanto a un numero uguale al suo non era
+// un'informazione, era la stessa riga stampata due volte. La percepita adesso e'
+// una colonna della barra delle metriche, cioe' un posto **riservato**: la sua
+// altezza c'e' comunque, quindi nasconderla non fa guadagnare niente e lascia
+// solo una colonna vuota fra due piene. Il confronto non serve piu' a nessuno.
 
 /**
  * La probabilita' compare solo quando c'e' davvero qualcosa da prevedere:
@@ -759,5 +770,3 @@ private const val FRESHNESS_TICK_MS = 30_000L
 /** Ogni quanto si guarda l'orologio della localita' per le lancette dell'icona. */
 private const val CLOCK_TICK_MS = 20_000L
 
-/** In gradi Celsius: sotto, percepita e reale sono la stessa notizia. */
-private const val FELT_THRESHOLD = 1.5

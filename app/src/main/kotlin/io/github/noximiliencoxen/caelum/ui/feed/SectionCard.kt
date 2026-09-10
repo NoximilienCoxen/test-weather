@@ -1,11 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui.feed
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,13 +13,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +31,9 @@ import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.asMetresPerSecond
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
 import io.github.noximiliencoxen.caelum.ui.asPercent
+import io.github.noximiliencoxen.caelum.ui.common.EditorialHeader
 import io.github.noximiliencoxen.caelum.ui.common.MeteoLayout
+import io.github.noximiliencoxen.caelum.ui.common.MetricsBar
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
 import io.github.noximiliencoxen.caelum.ui.motion.PhysicalNumber
@@ -60,20 +56,31 @@ import kotlin.math.sin
 /**
  * Una scheda del feed: lo scheletro comune, e i rami di chi e' gia' fatto.
  *
- * Lo scheletro e' lo stesso per tutte e cinque le sezioni che non sono la
- * temperatura: titolo, la cifra girabile col dito, il posto dell'oggetto, e
- * sotto i due o tre numeri che l'app sa gia'. Si decide una sezione alla volta
- * cosa metterci - e' la regola di lavoro del progetto, una schermata per volta e
- * quella diventa il modello per le altre - e intanto il palco dichiara cosa
- * manca invece di essere un buco.
+ * **E' una composizione incorniciata, non piu' una colonna sul cielo.** Tre
+ * blocchi, gli stessi per tutte e cinque le sezioni che non sono la
+ * temperatura: la testata editoriale in cima (`EditorialHeader`), la finestra da
+ * galleria che tiene il corpo (`ArtFrame`), e la scheda traslucida che le si
+ * appoggia sopra il bordo di sotto (`GlassPanel`) con dentro cio' che si legge -
+ * la fascia delle ore quando c'e', e i tre numeri. A tenerle in rapporto c'e'
+ * `ArtGalleryStage`, che misura la scheda e da' alla cornice quel che resta.
+ *
+ * Prima era: titolo, sottotitolo, la cifra sul cielo nudo, un riquadro
+ * tratteggiato, tre numeri distanziati in fondo. La differenza non e' solo di
+ * veste - **il cielo cambia mestiere**. Fuori dalla cornice resta il fondo della
+ * stanza; dentro diventa la tela, cioe' parte del disegno.
  *
  * **La pioggia e' la prima ad essere uscita dal segnaposto**, e si vede da due
- * rami di `when`: al posto della cifra c'e' una finestra sul cielo dell'ora
- * scelta (`RainWindow`), al posto del riquadro tratteggiato la fascia delle
- * ventiquattro ore (`RainHours`), da cui quell'ora si sceglie. Le due vivono in file loro e non qui: questo
- * e' lo scheletro generico, e duecentocinquanta righe di una sola sezione lo
- * renderebbero il file di quella sezione. E' la stessa scelta della barra delle
- * ore, che ha il suo file e un mestiere solo.
+ * rami di `when`: dentro la cornice c'e' una finestra sul cielo dell'ora scelta
+ * (`RainWindow`), dentro la scheda la fascia delle ventiquattro ore
+ * (`RainHours`), da cui quell'ora si sceglie. Le due vivono in file loro e non
+ * qui: questo e' lo scheletro generico, e duecentocinquanta righe di una sola
+ * sezione lo renderebbero il file di quella sezione. E' la stessa scelta della
+ * barra delle ore, che ha il suo file e un mestiere solo.
+ *
+ * **Il riquadro tratteggiato e' uscito di scena.** Dentro una cornice si
+ * leggerebbe come una cornice annidata. La regola che lo motivava - un
+ * segnaposto dichiara cosa manca, mentre uno spazio muto e' un difetto - vale
+ * ancora, e a rispettarla e' ora una riga di testo dentro la scheda in vetro.
  *
  * **Niente scorrimento interno.** Una scheda sta in una schermata e basta: il
  * gesto verticale appartiene tutto al feed, e una colonna che scorre dentro una
@@ -91,6 +98,11 @@ import kotlin.math.sin
  * da `MaterialTheme.colorScheme`: le schede vivono **sul cielo**, non su una
  * superficie antracite, e il grigio dei pannelli sopra un cielo di meta'
  * mattina e' il difetto a 1,01:1 della sezione 8-bis di CONTESTO.
+ *
+ * **Dentro la scheda in vetro le due letture vanno rifatte**, ed e' l'unica
+ * regola nuova da ricordare qui: `GlassPanel` riprovvede `LocalMeteoColors` con
+ * una palette ricavata dal vetro, quindi l'accento calcolato qui fuori - contro
+ * il cielo - li' dentro e' quello sbagliato. Vedi il KDoc di `GlassPanel`.
  */
 @Composable
 fun SectionCard(
@@ -166,94 +178,115 @@ fun SectionCard(
                 .padding(horizontal = layout.gutter + edgeInset),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = section.title,
-                // `label` e non `caption`: e' la riga che dice di cosa parla la
-                // scheda, e sulla prima lo stesso mestiere lo fa la condizione, che
-                // usa questo. Il sottotitolo sotto resta una didascalia, e la
-                // differenza fra le due si vede dalla misura oltre che dal colore.
-                style = MeteoType.label,
-                color = accent,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-            )
-            Text(
-                text = subtitle(state, section),
-                style = MeteoType.caption,
-                color = colors.label,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
+            // La testata editoriale: il posto e il momento fanno da occhiello,
+            // il nome della grandezza da titolo. Era il contrario - titolo sopra
+            // e didascalia sotto - ed e' il rovesciamento che si nota di piu' di
+            // questo stile. Vedi il KDoc di `EditorialHeader`.
+            EditorialHeader(
+                kicker = subtitle(state, section),
+                title = section.title,
+                accent = accent,
+                modifier = Modifier.padding(top = 4.dp),
             )
 
-            // Eroe e palco sono le due righe che passano davanti alla
-            // colonna, e l'inserto che se ne tengono lontane e' **simmetrico**:
-            // non le sposta, le stringe. Titolo, sottotitolo e numeri restano a
-            // piena larghezza - la scavalcano - e ci guadagnano i
-            // quarantaquattro punti che il vecchio margine si prendeva: su uno
-            // schermo stretto una colonna dei numeri passa da novantasei a
-            // centodieci punti, e PROBABILITA' smette di rischiare il taglio.
-            SectionHero(
-                section = section,
-                state = state,
-                rotation = rotation,
-                tilt = tilt,
-                accent = accent,
-                alive = alive,
+            // ── La composizione: la finestra, e la scheda che le si appoggia ─
+            //
+            // Cornice e scheda sono le due righe che passano davanti alla
+            // colonna di icone, e l'inserto che se ne tengono lontane e'
+            // **simmetrico**: non le sposta, le stringe. La testata resta a
+            // piena larghezza e la scavalca.
+            //
+            // **Il riquadro tratteggiato non c'e' piu'.** Dentro una cornice si
+            // leggerebbe come una seconda cornice annidata, che e' il rumore che
+            // questo stile esiste per togliere. La regola che lo motivava resta
+            // in piedi - un segnaposto dichiara cosa manca invece di essere un
+            // buco, e un riquadro muto sarebbe un difetto - solo che adesso a
+            // dirlo e' una riga dentro la scheda in vetro, sopra i numeri.
+            ArtGalleryStage(
+                frame = {
+                    ArtFrame(
+                        line = colors.line,
+                        modifier = Modifier.padding(horizontal = bodyInset),
+                    ) {
+                        SectionHero(
+                            section = section,
+                            state = state,
+                            rotation = rotation,
+                            tilt = tilt,
+                            accent = accent,
+                            alive = alive,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                },
+                card = {
+                    GlassPanel(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = bodyInset + GLASS_INSET),
+                    ) {
+                        // **Le tinte si rileggono qui dentro.** Sopra il vetro
+                        // `LocalMeteoColors` non e' piu' quella del cielo, e
+                        // l'accento della sezione va ritarato contro la scheda:
+                        // l'azzurro della pioggia calcolato per un cielo
+                        // notturno, scritto su un vetro pallido, e' il difetto a
+                        // 1,01:1 con un'altra faccia.
+                        val inkAccent = section.accentOf(rememberSkyAccents(), LocalMeteoColors.current.text)
+
+                        if (section == FeedSection.PRECIPITAZIONI) {
+                            // La fascia prende **un'altezza in punti** e non una
+                            // frazione: dentro una scheda che si misura sul
+                            // proprio contenuto, una frazione non avrebbe di che
+                            // essere una frazione.
+                            RainHours(
+                                hours = state.pageHours,
+                                selectedHour = state.detailHour?.time?.hour,
+                                nowHour = state.nowHourOnShownDay,
+                                kind = state.pageDay?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE,
+                                forcedCode = state.forcedWeatherCode,
+                                accent = inkAccent,
+                                compact = layout.compact,
+                                // **Non un secondo scrittore**: `selectHour` e'
+                                // quello che gia' scrive l'ora dalla prima
+                                // scheda, e la fascia chiama lui. L'ora e' un
+                                // asse solo, come il giorno.
+                                onSelectHour = onSelectHour,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = GLASS_PAD, vertical = 2.dp),
+                            )
+                        } else if (section != FeedSection.LUNA) {
+                            Text(
+                                text = section.stage,
+                                // `body` e non `kicker`: e' una frase intera, e
+                                // una frase in maiuscolo spaziato si compita
+                                // invece di leggersi.
+                                style = MeteoType.body,
+                                color = LocalMeteoColors.current.label,
+                                textAlign = TextAlign.Center,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = GLASS_PAD)
+                                    .padding(bottom = 10.dp),
+                            )
+                        }
+
+                        SectionNumbers(
+                            section = section,
+                            state = state,
+                            accent = inkAccent,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = GLASS_PAD),
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(HERO_SHARE)
-                    .padding(horizontal = bodyInset),
-            )
-
-            // La pioggia non ha piu' un segnaposto: la fascia delle
-            // ventiquattro ore ha preso il posto del riquadro tratteggiato, e
-            // prende **un'altezza in punti** invece di una frazione dello
-            // spazio che avanza - se no le colonne diventerebbero pali alti
-            // mezzo schermo e la vasca si prenderebbe quel che resta invece del
-            // contrario. Le altre quattro sezioni il riquadro se lo tengono,
-            // perche' sono ancora da fare e un riquadro che dichiara cosa manca
-            // e' un lavoro in corso mentre uno muto e' un difetto.
-            if (section == FeedSection.PRECIPITAZIONI) {
-                RainHours(
-                    hours = state.pageHours,
-                    selectedHour = state.detailHour?.time?.hour,
-                    nowHour = state.nowHourOnShownDay,
-                    kind = state.pageDay?.let { precipKindOf(it, state.forcedWeatherCode) } ?: PrecipKind.NONE,
-                    forcedCode = state.forcedWeatherCode,
-                    accent = accent,
-                    compact = layout.compact,
-                    // **Non un secondo scrittore**: `selectHour` e' quello che
-                    // gia' scrive l'ora dalla prima scheda, e la fascia chiama
-                    // lui. L'ora e' un asse solo, come il giorno.
-                    onSelectHour = onSelectHour,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = bodyInset)
-                        .padding(bottom = 10.dp),
-                )
-            } else {
-                Stage(
-                    caption = section.stage,
-                    color = colors.line,
-                    label = colors.label,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(STAGE_SHARE)
-                        .padding(horizontal = bodyInset, vertical = 10.dp),
-                )
-            }
-
-            SectionNumbers(
-                section = section,
-                state = state,
-                accent = accent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
+                    .weight(1f)
+                    .padding(top = 10.dp, bottom = 12.dp),
             )
         }
     }
@@ -447,52 +480,6 @@ private fun MoonBody(
 }
 
 /**
- * Il palco dell'oggetto che verra'.
- *
- * Un riquadro tratteggiato e una riga che dice cosa ci andra'. E' un segnaposto
- * dichiarato, e la differenza con uno spazio lasciato bianco e' tutta qui: chi
- * apre l'app vede un lavoro in corso invece di una schermata rotta, e chi ci
- * lavora legge la consegna dove serve.
- *
- * Il tratteggio si disegna in una tela sola: e' una figura, non un bordo di
- * layout, e passare da un `Modifier.border` vorrebbe dire una forma nuova solo
- * per farla tratteggiata.
- */
-@Composable
-private fun Stage(
-    caption: String,
-    color: Color,
-    label: Color,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val dash = PathEffect.dashPathEffect(floatArrayOf(DASH_ON, DASH_OFF), 0f)
-            val stroke = STROKE.toPx()
-            drawRoundRect(
-                color = color,
-                topLeft = Offset(stroke / 2f, stroke / 2f),
-                size = Size(size.width - stroke, size.height - stroke),
-                cornerRadius = CornerRadius(CORNER.toPx()),
-                style = Stroke(width = stroke, cap = StrokeCap.Round, pathEffect = dash),
-            )
-        }
-        Text(
-            text = caption,
-            // `body` e non `caption`: e' una frase intera, e una frase in
-            // maiuscolo spaziato si compita invece di leggersi. E' la stessa
-            // ragione per cui `body` esiste.
-            style = MeteoType.body,
-            color = label,
-            textAlign = TextAlign.Center,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 18.dp),
-        )
-    }
-}
-
-/**
  * I due o tre numeri che la sezione sa gia' dire.
  *
  * Non sono un riempitivo del segnaposto: sono cio' che impedisce a una scheda
@@ -530,10 +517,19 @@ private fun SectionNumbers(
                 // giorno e' esattamente la bugia che `isDailyTotal` esiste per
                 // togliere di mezzo: qui c'era, ed era rimasta.
                 "PROBABILITA'" to day?.precipProbability.asPercent(),
-                // `PrecipKind` era scritta, documentata "per la tabella della
-                // pagina Precip", e non la chiamava nessuno. Quella pagina
-                // adesso c'e'.
-                "TIPOLOGIA" to kind.label,
+                // **PICCO al posto di TIPOLOGIA.** Il tipo la scheda lo dice
+                // gia' due volte - le colonne della neve sono bianche invece che
+                // azzurre, e la frase sopra la fascia la chiama per nome - e tre
+                // numeri che rispondono a due domande sono due numeri e un
+                // doppione. Il massimo orario invece non lo dice nessun altro
+                // pezzo della scheda, ed e' la meta' mancante del totale: il
+                // totale dice **quanta**, il picco dice **quanto in fretta**.
+                "PICCO" to (
+                    peakPrecipitation(state.pageHours, kind.isSnowy())
+                        ?.let { if (kind.isSnowy()) it.asCentimetres() else it.asMillimetres() }
+                        ?.plus("/H")
+                        ?: MISSING
+                    ),
             )
         }
 
@@ -565,43 +561,10 @@ private fun SectionNumbers(
             )
         }
     }
-    if (entries.isEmpty()) return
-
-    val colors = LocalMeteoColors.current
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top,
-    ) {
-        entries.forEach { (label, value) ->
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = label,
-                    style = MeteoType.caption,
-                    color = colors.label,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Text(
-                    text = value,
-                    // `metric` porta le cifre a larghezza fissa: tre valori
-                    // affiancati che cambiano scorrendo le ore devono restare
-                    // incolonnati invece di ballare.
-                    style = MeteoType.metric,
-                    color = accent,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-    }
+    // Il disegno sta in `MetricsBar`, che vive in `ui/common/` perche' lo usa
+    // anche la prima scheda: qui resta la sola composizione dei dati, che e' la
+    // parte che cambia da sezione a sezione.
+    MetricsBar(entries = entries, accent = accent, modifier = modifier)
 }
 
 /**
@@ -713,14 +676,6 @@ private val CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 private const val MISSING = "--"
 
 /**
- * Quanta altezza prendono la cifra e il palco, dell'altezza che avanza.
- *
- * Il palco era otto decimi della cifra, e in uno scatto si vedeva perche' era
- * troppo: un riquadro vuoto alto mezza scheda non dice "qui arrivera'
- * qualcosa", dice che la scheda e' vuota. Ridotto, resta una fascia dichiarata
- * sotto l'oggetto invece di essere l'oggetto stesso.
- */
-/**
  * Quanto prendono, in cima e in fondo, le righe che scavalcano la colonna.
  *
  * Titolo e sottotitolo da una parte, i tre numeri dall'altra. Cinquantasei
@@ -735,8 +690,6 @@ private const val MISSING = "--"
 @Composable
 private fun endsBlock(): Dp = 56.dp * LocalDensity.current.fontScale
 
-private const val HERO_SHARE = 1f
-private const val STAGE_SHARE = 0.62f
 
 /**
  * Il corpo della cifra, in frazione dell'altezza che le tocca.
@@ -771,8 +724,3 @@ private const val SHADOW_PITCH = 5f
  * quaranta gia' scartato qui sopra - e va guardato in uno scatto, non dedotto.
  */
 private const val MOON_RADIUS = 0.35f
-
-private val CORNER = 18.dp
-private val STROKE = 1.dp
-private const val DASH_ON = 9f
-private const val DASH_OFF = 9f

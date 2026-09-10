@@ -276,4 +276,39 @@ class RainStoryTest {
         assertEquals(PrecipKind.RAIN, precipKindOf(day(code = 95)))
         assertEquals(PrecipKind.NONE, precipKindOf(day(code = 0)))
     }
+
+    // ── Il picco: il terzo numero della scheda ──────────────────────────────
+
+    @Test
+    fun `il picco e' il massimo orario, non il totale ne il gradino della scala`() {
+        // Sei millimetri nell'ora peggiore: il totale del giorno e' un altro
+        // numero, e `bandCeiling` risponderebbe dieci, che e' il gradino della
+        // scala e non un valore misurato.
+        val ore = giornata(14..16 to (63 to 2.0), 17..17 to (63 to 6.0))
+
+        assertEquals(6.0, peakPrecipitation(ore)!!, 1e-9)
+        assertEquals(10.0, bandCeiling(peakPrecipitation(ore)!!), 1e-9)
+    }
+
+    @Test
+    fun `senza ore, e senza un solo valore, il picco non c'e'`() {
+        // Due casi veri e non codice difensivo: un giorno oltre la portata del
+        // modello ha il giorno e non le ore, e un modello corto puo' dare le ore
+        // senza i millimetri. Uno zero direbbe "misurato, ed e' zero".
+        assertNull(peakPrecipitation(emptyList()))
+        assertNull(peakPrecipitation((0..23).map { ora(it, mm = null) }))
+    }
+
+    @Test
+    fun `il picco della neve legge i centimetri, non i millimetri`() {
+        // La colonna della fascia misura l'equivalente in acqua, ma il numero
+        // scritto sotto dice centimetri: leggere `precipitation` in una giornata
+        // di neve darebbe la grandezza sbagliata con l'unita' giusta accanto.
+        val ore = (0..23).map { h ->
+            if (h in 8..10) ora(h, code = 73, mm = 1.5, neve = 2.0) else ora(h)
+        }
+
+        assertEquals(2.0, peakPrecipitation(ore, snow = true)!!, 1e-9)
+        assertEquals(1.5, peakPrecipitation(ore, snow = false)!!, 1e-9)
+    }
 }

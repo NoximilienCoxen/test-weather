@@ -2324,6 +2324,153 @@ guardata in mano.
 
 ---
 
+## 8-sexies. Lo stile Art Gallery, e cosa costa
+
+`ui/feed/ArtFrame.kt`, `ui/feed/GlassPanel.kt`, `ui/common/EditorialHeader.kt`,
+`ui/common/MetricsBar.kt`, `ui/feed/SectionCard.kt`, `ui/home/HomeScreen.kt`
+
+**E' un esperimento visivo, non una correzione.** Fino a qui le sei schede
+vivevano *sul* cielo senza superfici, e la sezione 8-bis ne porta il
+ragionamento per intero. Qui si prova il canone opposto: ogni schermata e' una
+composizione incorniciata, con il corpo dentro una finestra da galleria e una
+scheda traslucida appoggiata sopra il bordo di sotto. Molte scelte precedenti
+sono rovesciate di proposito, e sotto c'e' scritto quali e a che prezzo.
+
+**Il cielo cambia mestiere, ed e' la differenza che si vede.** Fuori dalla
+cornice resta il fondo della stanza; dentro diventa la tela, cioe' parte del
+disegno. E' l'unica cosa che questa passata fa davvero, e tutto il resto le va
+dietro.
+
+### Le quattro decisioni, e i loro perche'
+
+**Il tracciamento si scrive in `em`.** La consegna diceva "tracciamento ampio,
+`letterSpacing = 0.15.sp`", e i due pezzi si contraddicono: `sp` e' una misura
+assoluta, quindi 0,15sp su un corpo da 17 sono quindici centesimi di punto, cioe'
+**un ventesimo** di quello che il tema gia' usava per le etichette (`label`,
+0,10em, che a quel corpo vale 1,7sp). Preso alla lettera avrebbe **stretto** i
+titoli. `MeteoType.masthead` e `MeteoType.kicker` usano `0.15.em`, che segue il
+corpo ed e' l'unico modo perche' un titolo resti tracciato uguale a scala del
+carattere di sistema doppia.
+
+**Niente sfocatura, e non e' pigrizia.** `minSdk` e' 26 e `Modifier.blur` non fa
+niente sotto la 31, quindi meta' dei telefoni vedrebbe comunque il ripiego. E
+soprattutto c'e' una misura gia' pagata, che sta in `WindowGlass.kt`: **un solo
+rettangolo traslucido a piena larghezza** aveva portato un fotogramma da 18 a 36
+millisecondi con il settanta per cento di scatti. Un vetro smerigliato vero
+vorrebbe ridisegnare la cornice dentro un livello sfocato, e dentro la cornice
+c'e' la finestra della pioggia. Il velo si paga una volta in composizione; la
+sfocatura si pagherebbe a ogni fotogramma.
+
+**`PICCO` prende il posto di `TIPOLOGIA`.** Il tipo la scheda lo diceva gia' due
+volte - le colonne della neve sono bianche invece che azzurre, e la frase sopra
+la fascia lo chiama per nome - quindi era un numero che rispondeva a una domanda
+gia' risposta. Il massimo orario invece non lo diceva nessuno, ed e' la meta'
+mancante del totale: il totale dice **quanta**, il picco dice **quanto in
+fretta**. Quaranta millimetri su tutta la giornata e quaranta in due ore sono due
+giornate diverse con lo stesso totale. Sta in `peakPrecipitation`, e non si legge
+da `bandCeiling`: quella torna il **gradino** della scala, cioe' un numero tondo
+scelto fra tre, e scriverlo fra i dati direbbe dieci dove ne erano caduti sei.
+
+**Massima e minima tornano scritte, e rovescia la sezione 3.** Erano state tolte
+da sotto la condizione e messe sul diagramma della barra, appoggiate al colmo e
+all'avvallamento, perche' ripeterle in due posti sarebbe stata la stessa
+informazione due volte. Solo che sul diagramma si vedono **unicamente mentre il
+dito preme**: a riposo, cioe' quasi sempre, non c'era nessun posto in cui l'app
+dicesse quanto fara' oggi. Non e' un doppione di una cosa che si vede: e' l'unica
+volta in cui si vede. Sul diagramma restano, e li' dicono anche *a che ora*.
+
+### Il perno tecnico: il vetro riprovvede `LocalMeteoColors`
+
+E' la decisione che tiene in piedi tutto il resto, e va capita prima di toccare
+`GlassPanel.kt`.
+
+La scheda e' **pallida a qualunque ora**: bianco al quarantacinque per cento
+sopra il cielo di mezzanotte da' comunque un grigio medio-chiaro. Ma i colori del
+feed sono tarati sul cielo, dove di notte `text` e' quasi bianco: scritto sul
+vetro sparirebbe. E' il difetto a 1,01:1 della sezione 8-bis che rientra dalla
+porta di servizio, come fa ogni volta che nasce una superficie nuova.
+
+La strada corta sarebbe passare tinte nuove a mano a ogni figlio. Ma i figli sono
+`HourBar`, `WeekBar`, `RainHours` e `MetricsBar` - quattro file, una quindicina
+di letture di `LocalMeteoColors` - e dimenticarne una e' la regola, non
+l'eccezione. E' la stessa ragione per cui `skyColors` corregge il contrasto **alla
+sorgente e non nei chiamanti**.
+
+Quindi `GlassPanel` **fornisce al proprio sottoalbero una `MeteoColors`
+derivata**, costruita con la ricetta identica di `skyColors` ma contro i due capi
+del vetro invece che contro i due capi del cielo. Ogni figlio continua a leggere
+`LocalMeteoColors` come ha sempre fatto ed esce corretto da solo, e
+`rememberSkyAccents()` chiamata dentro la scheda si ritara sulla scheda.
+
+**Il vincolo da rispettare** e' scritto in `RainWindow.kt`: `LocalMeteoColors` e'
+`staticCompositionLocalOf`, e riprovvederlo invalida tutto il sottoalbero. Il
+valore derivato sta percio' dietro un `remember` sul cielo - cambia col cielo, un
+pugno di volte al giorno - e **non** a ogni ora scorsa sulla fascia. Chi lo
+ricalcolasse nel corpo della composizione rifarebbe la barra delle ore a ogni
+fotogramma del dito.
+
+### Quando nessun testo regge il vetro, e' il velo a cedere
+
+Stessa medicina di `legibleSky`, applicata a una superficie invece che al cielo,
+e stesso meccanismo del difetto: sotto un testo solo ci sono due colori diversi, e
+quando uno sta sopra e l'altro sotto la luminanza di mezzo il bianco perde in
+cima e il nero perde in fondo. Una terza risposta non esiste.
+
+Qui a cedere e' l'opacita' del velo: un velo chiaro **piu' denso** spinge i due
+capi verso il bianco e li avvicina, finche' il nero li regge tutti e due.
+Misurato su 845 coppie zenit/orizzonte - tutte quelle su cui un testo esiste gia'
+sul cielo nudo, cioe' quelle che `legibleSky` lascia passare:
+
+| | |
+|---|---|
+| col velo di progetto vanno gia' bene | 83% |
+| passi di cedimento necessari, al massimo | 2 su 8 |
+| coppie irrisolvibili anche a velo pieno | nessuna |
+
+**La leggibilita' non e' negoziabile, l'opacita' si.** Da qui `GlassInk`, che
+porta insieme la palette e il pennello: se il velo cedesse solo per il conto del
+contrasto, si dipingerebbe un vetro diverso da quello su cui il testo e' stato
+tarato.
+
+Il tutto e' verificato da `GlassInkTest`, che spazza la giornata intera per
+undici nuvolosita' **senza emulatore**: `onGlass` e' una funzione pura su colori.
+E' l'unica prova di questo stile che non ha bisogno di un telefono in mano.
+
+### Le misure, e la cosa da guardare per prima
+
+`ArtGalleryStage` e' un `Layout` a mano, e non un `Box` con un margine scritto:
+la scheda e' alta quanto il suo contenuto, che cambia da sezione a sezione, e la
+cornice deve prendersi quel che resta piu' i punti di sovrapposizione. Indovinare
+l'altezza vuol dire sbagliarla a ogni carattere di sistema ingrandito; misurarla
+con un `onSizeChanged` costa una seconda passata di layout a ogni ricomposizione,
+e la prima si vedrebbe saltare. Qui si misura la scheda per prima e la cornice
+con l'avanzo: una passata sola, nessuno stato di mezzo.
+
+La sovrapposizione e' 22 punti, e **il margine di sopra della scheda vale
+altrettanto**: dentro quei punti il fondo non e' il cielo, e' il disegno dentro la
+cornice. Nessun calcolo di contrasto puo' garantire una riga di testo sopra una
+finestra illuminata, quindi li' passa solo il bordo del vetro.
+
+**Il prezzo, dichiarato.** La prima scheda e' quella che rischia di piu', ed e'
+la piu' provata dell'app:
+
+- La cifra gigante ha meno altezza di prima, perche' la scheda in vetro si
+  prende il blocco inferiore per intero e ci aggiunge la barra delle metriche.
+- Ha anche meno **larghezza**: l'inserto laterale e' ora simmetrico e largo
+  quanto la colonna di icone, se no la colonna finirebbe dentro il quadro. Il
+  centro non si sposta - un margine simmetrico costa larghezza, non posizione,
+  ed e' lo stesso conto che le altre cinque schede facevano gia' - ma la cornice
+  **ritaglia** invece di lasciar sconfinare. Da guardare in uno scatto con una
+  temperatura sotto zero, che e' la stringa piu' larga che esista.
+- `feltLabel` e' uscita: la percepita e' una colonna della barra, cioe' un posto
+  riservato per costruzione, e la riga con `minLines = 1` che le teneva il posto
+  non serve piu' a nessuno.
+
+**Il riquadro tratteggiato non c'e' piu'**, e la regola che lo motivava resta in
+piedi: dentro una cornice si leggerebbe come una cornice annidata, quindi a dire
+cosa manca e' ora una riga di testo dentro la scheda in vetro. Un segnaposto
+dichiarato e' un lavoro in corso; uno spazio muto sarebbe un difetto.
+
 ## 8-quater. I test
 
 `app/src/test/`

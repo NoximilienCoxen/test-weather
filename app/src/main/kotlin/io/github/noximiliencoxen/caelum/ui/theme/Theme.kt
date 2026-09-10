@@ -125,6 +125,47 @@ object MeteoType {
         fontFeatureSettings = "tnum",
     )
 
+    // ── Lo stile editoriale del feed ────────────────────────────────────────
+    //
+    // Due stili soli, e sono quelli che danno alle schede l'aria della
+    // didascalia da galleria: un titolo tracciato largo e un occhiello sopra.
+    //
+    // **La spaziatura si scrive in `em` e non in `sp`, e non e' un dettaglio.**
+    // La consegna diceva "tracciamento ampio, `letterSpacing = 0.15.sp`": i due
+    // pezzi si contraddicono. `sp` e' una misura assoluta, quindi 0,15sp su un
+    // corpo da 17 sono **quindici centesimi di punto**, cioe' un ventesimo di
+    // quello che il tema gia' usa per le etichette (`label`, 0,10em = 1,7sp a
+    // quel corpo) - il contrario di ampio. In `em` la spaziatura segue il corpo,
+    // che e' l'unico modo perche' un titolo resti tracciato uguale a scala del
+    // carattere di sistema doppia. Chi rilegge la consegna e rimette `0.15.sp`
+    // stringe i titoli invece di allargarli.
+
+    /**
+     * Il titolo della scheda: poche parole in maiuscolo, larghe.
+     *
+     * Un gradino sotto [heading] come corpo e uno sopra come presenza: qui il
+     * peso non lo fa la misura, lo fa lo spazio fra le lettere.
+     */
+    val masthead = TextStyle(
+        fontFamily = archivo(weight = 620, width = 84f),
+        fontSize = 17.sp,
+        letterSpacing = 0.15.em,
+        lineHeight = 22.sp,
+    )
+
+    /**
+     * L'occhiello sopra il titolo: di chi e di quando parla la scheda.
+     *
+     * Stesso tracciamento del titolo, corpo piu' piccolo e peso minore: e' la
+     * riga che si legge dopo, non prima. La usano anche le etichette della barra
+     * delle metriche, che fanno lo stesso mestiere in fondo alla scheda.
+     */
+    val kicker = TextStyle(
+        fontFamily = archivo(weight = 560, width = 78f),
+        fontSize = 11.sp,
+        letterSpacing = 0.15.em,
+    )
+
 }
 
 /**
