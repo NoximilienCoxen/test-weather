@@ -65,10 +65,23 @@ fun EditorialHeader(
     modifier: Modifier = Modifier,
     /** Il modificatore dell'occhiello: la prima scheda ci appende il tocco per ricaricare. */
     kickerModifier: Modifier = Modifier,
+    /**
+     * Occhiello e filo, quando il fondo non e' un colore.
+     *
+     * Nulli, si prendono da `LocalMeteoColors`, dove `mutedOnBoth` li ha gia'
+     * calcolati contro i due capi del cielo: e' il caso normale. Sopra la scena
+     * dipinta invece **non c'e' un fondo da cui ricavarli** - c'e' un'immagine -
+     * e a garantire la lettura ci pensa la velatura che la testata si porta
+     * sotto. Li' il colore si passa, ed e' l'unico posto dell'app in cui e'
+     * giusto farlo.
+     */
+    muted: Color? = null,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val colors = LocalMeteoColors.current
+    val quiet = muted ?: colors.label
+    val rule = muted ?: colors.line
     val sides = leading != null || trailing != null
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -88,7 +101,7 @@ fun EditorialHeader(
                 Text(
                     text = kicker,
                     style = MeteoType.kicker,
-                    color = colors.label,
+                    color = quiet,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -123,7 +136,7 @@ fun EditorialHeader(
                 .fillMaxWidth()
                 .padding(top = 7.dp, start = RULE_INSET, end = RULE_INSET)
                 .height(1.dp)
-                .background(colors.line.copy(alpha = RULE_ALPHA)),
+                .background(rule.copy(alpha = RULE_ALPHA)),
         )
     }
 }

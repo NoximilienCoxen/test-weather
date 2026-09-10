@@ -243,26 +243,14 @@ private const val VEIL_STEPS = 8
 private val GLASS_CORNER = 20.dp
 
 /**
- * Il margine di sopra della scheda, e perche' vale almeno quanto la
- * sovrapposizione.
+ * Il margine di sopra della scheda.
  *
- * Dentro i primi [STAGE_OVERLAP] punti della scheda il fondo non e' il cielo: e'
- * la cornice, cioe' un disegno qualunque - la finestra della pioggia illuminata,
- * la sfera della luna. Nessun calcolo di contrasto puo' garantire una riga di
- * testo li' sopra, perche' il fondo non e' un colore. Quindi il testo comincia
- * **dopo**, e sotto il bordo della cornice passa solo il bordo del vetro.
+ * Valeva quanto la sovrapposizione, quando la scheda si appoggiava sopra il
+ * bordo di una cornice e nei primi punti aveva sotto un disegno invece del
+ * cielo. La cornice non c'e' piu' - le schede sono blocchi di una colonna - e
+ * qui torna a essere quello che e': un margine.
  */
-private val GLASS_TOP_PAD = STAGE_OVERLAP
+private val GLASS_TOP_PAD = 14.dp
 private val GLASS_BOTTOM_PAD = 10.dp
 
-/**
- * Quanto la scheda rientra rispetto alla cornice.
- *
- * Non e' allineata al bordo: una scheda a filo si leggerebbe come la parte bassa
- * della cornice invece che come un secondo oggetto appoggiato sopra. Rientrando,
- * fra i due bordi resta una striscia di cielo che li dichiara separati.
- */
-internal val GLASS_INSET = 8.dp
 
-/** Il margine laterale del contenuto dentro la scheda. */
-internal val GLASS_PAD = 12.dp

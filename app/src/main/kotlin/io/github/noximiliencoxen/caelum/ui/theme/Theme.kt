@@ -141,16 +141,28 @@ object MeteoType {
     // stringe i titoli invece di allargarli.
 
     /**
-     * Il titolo della scheda: poche parole in maiuscolo, larghe.
+     * Il titolo della scheda: poche parole in maiuscolo, larghe, **in grazie**.
      *
-     * Un gradino sotto [heading] come corpo e uno sopra come presenza: qui il
-     * peso non lo fa la misura, lo fa lo spazio fra le lettere.
+     * E' l'unica cosa dell'app che non e' Archivo, e la deroga e' voluta. Un
+     * grottesco stretto in maiuscolo spaziato dice "etichetta"; un serif in
+     * maiuscolo spaziato dice "didascalia", ed e' la differenza fra un pannello
+     * di controllo e la targhetta accanto a un quadro. Con la scena dipinta
+     * sotto, il secondo e' il registro giusto.
+     *
+     * **`FontFamily.Serif`, cioe' quello di sistema** - Noto Serif su Android -
+     * e non un file nel progetto. Non e' un ripiego di comodo: e' un carattere
+     * disegnato bene, presente su ogni telefono, che non pesa un byte e non ha
+     * bisogno di una licenza. Volendo un serif dal carattere piu' marcato -
+     * Playfair Display ha le grazie sottili e il contrasto alto che le riviste
+     * usano - basta metterne il file in `res/font/` e cambiare **questa riga**:
+     * il resto del tema non se ne accorge.
      */
     val masthead = TextStyle(
-        fontFamily = archivo(weight = 620, width = 84f),
-        fontSize = 17.sp,
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight(560),
+        fontSize = 18.sp,
         letterSpacing = 0.15.em,
-        lineHeight = 22.sp,
+        lineHeight = 23.sp,
     )
 
     /**
@@ -161,6 +173,11 @@ object MeteoType {
      * delle metriche, che fanno lo stesso mestiere in fondo alla scheda.
      */
     val kicker = TextStyle(
+        // **Archivo e non il serif del titolo**, ed e' una scelta: sotto gli
+        // undici punti le grazie non si leggono come grazie, si leggono come
+        // bordi sporchi. Il contrasto fra le due righe ci guadagna comunque -
+        // e' la coppia titolo in grazie piu' occhiello in bastoni che la carta
+        // stampata usa da sempre.
         fontFamily = archivo(weight = 560, width = 78f),
         fontSize = 11.sp,
         letterSpacing = 0.15.em,

@@ -3,11 +3,17 @@ package io.github.noximiliencoxen.caelum.ui.feed
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -20,56 +26,71 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.ui.common.EditorialHeader
 import io.github.noximiliencoxen.caelum.ui.common.rememberMeteoLayout
-import io.github.noximiliencoxen.caelum.ui.home.HomeScreen
+import io.github.noximiliencoxen.caelum.ui.scene.WeatherDiorama
+import io.github.noximiliencoxen.caelum.ui.scene.sceneOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import kotlin.math.min
 
 /**
- * Il feed: una sezione per schermata, e ci si passa scorrendo dal basso verso
- * l'alto.
+ * Il feed: una scena dipinta in cima, e sotto tutto il resto in una colonna
+ * sola.
  *
- * **Era una schermata sola con tutto il resto sovrapposto.** Le sei grandezze
- * vivevano dentro un foglio che saliva dal basso, in un carosello orizzontale:
- * due gesti di profondita' sotto la schermata che si apre per prima. Adesso
- * sono la navigazione, e la profondita' e' zero - la pioggia sta uno
- * scorrimento sotto la temperatura, non dentro qualcosa che va aperto.
+ * **Era un carosello di sei schermate piene.** Si scorreva dal basso verso
+ * l'alto e si passava dalla temperatura alla pioggia, una pagina per grandezza.
+ * Adesso e' **una colonna**: la scena occupa il primo schermo e si ritira in una
+ * fascia mentre le informazioni le scorrono sotto. Le sei grandezze restano
+ * sei, ma sono sezioni di un documento invece che pagine di un libro.
  *
- * **Il gesto verticale era libero, e non per caso.** La regola di questa app
- * divide gli assi da sempre: orizzontale gira la scena, verticale apre. Il
- * feed prende l'asse che il foglio aveva; la rotazione della cifra, la barra
- * delle ore e la scelta del giorno restano orizzontali e non si contendono
- * niente. E' la stessa spartizione di prima, con un contenuto diverso dentro.
+ * **Cade la spartizione degli assi**, che era una regola dichiarata di questa
+ * app dalla prima riga: orizzontale gira la scena, verticale apre. Adesso il
+ * verticale **scorre**, e non c'e' piu' niente da aprire. Chi torna su questo
+ * file sappia che non e' una svista: e' il prezzo pagato per avere una
+ * schermata sola che si legge dall'alto in basso invece di sei che si
+ * sfogliano, ed e' cio' che rende la scena in cima un'immagine di apertura e
+ * non la copertina di una delle sei.
  *
- * Tre regole ereditate dal vecchio carosello, che erano costate un giro
- * ciascuna e valgono identiche qui:
+ * **La contrazione non ha un suo stato**, e va capito prima di toccare questo
+ * file. Si potrebbe tenere un numero "quanto e' chiusa la scena" e muoverlo con
+ * un `NestedScrollConnection`, ma allora due cose descriverebbero la stessa
+ * posizione - quel numero e lo scorrimento della lista - e prima o poi non
+ * sarebbero d'accordo. Qui la contrazione si **ricava** da dove sta la lista, e
+ * l'accordo e' garantito per costruzione. La lista ha in cima un margine alto
+ * quanto la scena aperta, quindi il primo blocco parte esattamente dal bordo di
+ * sotto della fascia e ci resta attaccato per tutta la corsa.
  *
- * - **il carosello e' la sorgente di verita'**, e si scrive nello stato solo su
- *   `settledPage`: un trascinamento lasciato a meta' e tornato indietro non e'
- *   una scelta, e non deve lasciare traccia;
- * - si legge **`currentPage`** per cio' che si vede, perche' la pagina posata
- *   cambia troppo tardi e la colonna resterebbe indietro per tutto il gesto;
- * - cio' che si muove col dito passa per **lambda**, letta dentro il disegno:
- *   `currentPageOffsetFraction` cambia a ogni fotogramma, e letta in
- *   composizione ricomporrebbe l'albero sessanta volte al secondo.
- *
- * **La prima scheda e' la schermata di sempre**, intatta: scultura, cifra,
- * barra delle ventiquattro ore, striscia della settimana, orologio. Le altre
- * cinque sono ancora segnaposto - si decide una sezione alla volta cosa
- * ospitano, che e' il modo di lavorare di questo progetto.
+ * **Il tiro per ricaricare e' passato sull'avanzo**, e rovescia una scelta
+ * documentata. Prima si prendeva il dito **prima** del carosello, in
+ * `onPreScroll`, perche' sulla prima pagina sopra non c'era niente da mostrare e
+ * prenderselo non toglieva niente a nessuno. Adesso sopra c'e' una lista che
+ * puo' essere scorsa: prendere il dito prima di lei vorrebbe dire che non si
+ * puo' piu' risalire. Quindi il tiro riceve **cio' che la lista non ha usato**,
+ * che e' esattamente il dito che scende quando si e' gia' in cima. Resta invece
+ * intatta la guardia sul `NestedScrollSource` (trappola #35): un avanzo di
+ * slancio non e' un dito, e un'app non chiede dati alla rete perche' una molla
+ * ha finito di tornare a posto.
  */
 @Composable
 fun FeedScreen(
@@ -83,64 +104,55 @@ fun FeedScreen(
     val scope = rememberCoroutineScope()
     val layout = rememberMeteoLayout()
     val haptics = LocalHapticFeedback.current
+    val listState = rememberLazyListState()
 
-    val pagerState = rememberPagerState(
-        initialPage = sections.indexOf(state.section).coerceAtLeast(0),
-        pageCount = { sections.size },
-    )
-
-    // Lo stato riceve la sezione **posata**, non quella sfiorata. Un
-    // trascinamento annullato non e' una scelta: se scrivesse comunque, l'app
-    // riaperta si troverebbe su una scheda che nessuno ha voluto.
-    //
-    // **Si scrive sempre, senza confrontare con `state.section`.** Il confronto
-    // ci sarebbe stato bene, ma questo effetto e' chiavato sul solo
-    // `pagerState` e quindi non riparte mai: lo `state` che vedrebbe e' quello
-    // della composizione in cui e' nato, cioe' congelato. Con un valore vecchio
-    // il confronto risponde a caso, e la volta in cui risponde "uguale" mentre
-    // non lo e' la scheda posata non finisce nello stato affatto. Scrivere e
-    // basta e' corretto e non costa niente: uno `StateFlow` che riceve un
-    // valore uguale al proprio non emette.
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.settledPage }.collect { page ->
-            val next = sections.getOrNull(page) ?: return@collect
-            viewModel.showSection(next)
+    // La sezione posata finisce nello stato, come prima: e' da li' che si
+    // riparte alla prossima apertura. Adesso "posata" vuol dire "quella in cima
+    // alla colonna", non "quella su cui il carosello si e' fermato".
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }.collect { index ->
+            sections.getOrNull(index)?.let(viewModel::showSection)
         }
     }
 
-    // L'aggancio della cattura automatica: `--ei sezione`. Senza animazione,
-    // perche' chi scatta vuole la scheda **subito**, non fra trecento
-    // millisecondi che nessuno gli garantisce di aspettare.
+    // L'aggancio della cattura automatica, `--ei sezione`, che con il carosello
+    // aveva smesso di funzionare: tutte e sei le schede fotografate uscivano
+    // uguali alla prima. Qui e' uno scorrimento, che e' un'operazione che una
+    // lista sa sempre fare, e non dipende piu' da quando il carosello nasce.
     LaunchedEffect(state.sectionRequest) {
         if (state.sectionRequest == 0) return@LaunchedEffect
-        val page = sections.indexOf(state.section)
-        if (page >= 0 && page != pagerState.currentPage) pagerState.scrollToPage(page)
+        val index = sections.indexOf(state.section)
+        if (index >= 0) listState.scrollToItem(index)
     }
 
-    val position = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
-
-    // Il tasto indietro riporta alla prima scheda invece di chiudere l'app: da
-    // sei schede sotto, uscire non e' quasi mai la risposta cercata. Sulla
-    // prima non fa niente e l'app si chiude come sempre.
-    BackHandler(enabled = pagerState.currentPage != 0) {
-        scope.launch { pagerState.animateScrollToPage(0) }
+    BackHandler(enabled = listState.firstVisibleItemIndex != 0) {
+        scope.launch { listState.animateScrollToItem(0) }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val density = LocalDensity.current
+        val openPx = with(density) { (maxHeight * SCENE_SHARE).toPx() }
+        val bandPx = with(density) { SCENE_BAND.toPx() }
+        val range = (openPx - bandPx).coerceAtLeast(1f)
+        val openDp = with(density) { openPx.toDp() }
+
+        // Quanto si e' ritirata: si legge dalla lista, non si tiene da parte.
+        val collapse by remember(range) {
+            derivedStateOf {
+                if (listState.firstVisibleItemIndex > 0) range
+                else min(listState.firstVisibleItemScrollOffset.toFloat(), range)
+            }
+        }
+
         val pull = remember(scope) { PullToRefresh(scope) }
-        // Booleano derivato e non lettura diretta: il tiro si muove a ogni
-        // fotogramma del dito, e leggerlo qui ricomporrebbe tutto l'albero per
-        // rispondere a una domanda la cui risposta cambia due volte in tutto il
-        // gesto.
         val armed by remember { derivedStateOf { pull.armed } }
-
-        // Il ponte fra il carosello e il tiro. **Sopra** il pager: prende cio'
-        // che il pager non consuma, cioe' esattamente il dito che va in giu'
-        // quando sopra non c'e' piu' nessuna scheda.
-        val edge = remember(pull, pagerState, haptics) {
+        val edge = remember(pull, listState, haptics) {
             PullNestedScroll(
                 pull = pull,
-                atTop = { pagerState.currentPage == 0 && pagerState.currentPageOffsetFraction == 0f },
+                atTop = {
+                    listState.firstVisibleItemIndex == 0 &&
+                        listState.firstVisibleItemScrollOffset == 0
+                },
                 onAsked = {
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.refresh()
@@ -148,126 +160,201 @@ fun FeedScreen(
             )
         }
 
-        VerticalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(edge)
-                .graphicsLayer {
-                    // Il tiro sposta il feed di meno di quanto vada il dito:
-                    // e' la resistenza che dice che si sta tirando qualcosa,
-                    // non scorrendo una pagina. Letto qui dentro, sposta senza
-                    // ricomporre.
-                    translationY = pull.offset * PULL_DRAG
-                },
-        ) { page ->
-            when (sections.getOrNull(page)) {
-                // La prima scheda e' la schermata di sempre. L'inserto delle
-                // barre di sistema sta qui e non sul carosello: il cielo deve
-                // dipingere da bordo a bordo, e le schede scorrono sotto le
-                // barre invece di fermarsi prima.
-                FeedSection.TEMPERATURA -> HomeScreen(
-                    state = state,
+        Box(modifier = Modifier.fillMaxSize().nestedScroll(edge)) {
+            // ── La colonna ─────────────────────────────────────────────────
+            //
+            // Il margine in cima e' **fisso** e alto quanto la scena aperta: se
+            // seguisse la contrazione, ogni fotogramma dello scorrimento
+            // rimisurerebbe la lista intera per spostare di un pixel una cosa
+            // che si sposta gia' da sola.
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer { translationY = pull.offset * PULL_DRAG },
+                contentPadding = PaddingValues(top = openDp, bottom = 28.dp),
+            ) {
+                sections.forEach { section ->
+                    item(key = section.name) {
+                        SectionBlock(
+                            section = section,
+                            state = state,
+                            tilt = tilt,
+                            layout = layout,
+                            onSelectHour = viewModel::selectHour,
+                            onSelectDay = viewModel::selectDay,
+                            onBackToNow = viewModel::backToNow,
+                            onSetWeek = viewModel::setWeekMode,
+                            onOpenAlerts = viewModel::openAlerts,
+                            onDismissAlerts = viewModel::collapseAlerts,
+                            onReopenAlerts = {
+                                viewModel.expandAlerts()
+                                viewModel.openAlerts()
+                            },
+                        )
+                    }
+                }
+            }
+
+            // ── La scena, sopra la colonna ─────────────────────────────────
+            //
+            // Sopra e non dietro: contraendosi deve **coprire** cio' che le
+            // passa sotto, se no le righe della prima sezione si vedrebbero
+            // salire attraverso il dipinto.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clipToBounds()
+                    .layout { measurable, constraints ->
+                        // **Si ritaglia, non si schiaccia.** Scalando in
+                        // verticale il dipinto si deformerebbe, e una collina
+                        // schiacciata si vede subito. Qui il contenuto si misura
+                        // sempre all'altezza aperta e il riquadro ne dichiara
+                        // meno: quello che sparisce e' il terreno in fondo, e
+                        // resta il cielo. Che e' anche cio' che si vuole vedere
+                        // in una fascia alta centotrenta punti.
+                        val full = openPx.toInt().coerceAtLeast(1)
+                        val shown = (openPx - collapse).coerceIn(bandPx, openPx).toInt()
+                        val placeable = measurable.measure(
+                            constraints.copy(minHeight = full, maxHeight = full)
+                        )
+                        layout(placeable.width, shown) { placeable.place(0, 0) }
+                    }
+                    .graphicsLayer { translationY = pull.offset * PULL_DRAG },
+            ) {
+                WeatherDiorama(
+                    kind = sceneOf(state.forcedWeatherCode ?: state.pageHour?.weatherCode),
                     sky = sky,
                     tilt = tilt,
-                    onSelectHour = viewModel::selectHour,
-                    onBackToNow = viewModel::backToNow,
-                    onOpenSettings = viewModel::openSettings,
-                    // Una colonna della settimana sceglie il giorno, e basta.
-                    // Il giorno e' un asse: sceglierlo qui cambia cio' che
-                    // raccontano tutte le schede sotto.
-                    onOpenDay = viewModel::selectDay,
-                    onOpenAlerts = viewModel::openAlerts,
-                    onDismissAlerts = viewModel::collapseAlerts,
-                    // Un gesto solo per due effetti: il pallino rimette la
-                    // fascia e apre il bollettino. Chi lo tocca vuole leggere
-                    // l'avviso, e trovarselo di nuovo per esteso tornando
-                    // indietro e' la risposta che non richiede di cercare come
-                    // si fa.
-                    onReopenAlerts = {
-                        viewModel.expandAlerts()
-                        viewModel.openAlerts()
-                    },
-                    onRefresh = viewModel::refresh,
-                    onSetWeek = viewModel::setWeekMode,
-                    pullArmed = armed,
-                    alive = pagerState.currentPage == 0,
-                    // **A piena larghezza, e non ristretta per far posto alla
-                    // colonna.** Ristretta lo era, e in uno scatto si vedeva:
-                    // il nome della localita', la scultura, la cifra e la barra
-                    // delle ore finivano tutti quarantaquattro punti a sinistra
-                    // del centro dello schermo. Questa schermata ha una regola
-                    // esplicita sul punto - i 48dp vuoti a destra del nome
-                    // esistono apposta perche' resti "al centro dello schermo e
-                    // non al centro di quel che avanza" - e il margine la
-                    // violava in blocco.
-                    //
-                    // La colonna galleggia invece nel margine che c'e' gia': sta
-                    // a meta' altezza, dove questa scheda ha la scultura e la
-                    // cifra, che sono centrate e non arrivano al bordo. Le
-                    // schede del feed il margine se lo tengono, perche' li'
-                    // titolo e numeri vanno davvero da bordo a bordo.
-                    modifier = Modifier.systemBarsPadding(),
+                    windSpeed = state.pageHour?.windSpeed,
+                    precipitationMm = state.pageHour?.precipitation,
+                    // Il freno della scena viva: ferma appena si apre un
+                    // pannello sopra, dove nessuno la sta piu' guardando.
+                    alive = !state.settingsOpen && !state.alertsOpen,
+                    modifier = Modifier.fillMaxSize(),
                 )
 
-                null -> Unit
-
-                else -> SectionCard(
-                    section = sections[page],
-                    state = state,
-                    tilt = tilt,
-                    layout = layout,
-                    // `currentPage` e non `settledPage`: la scheda che si vede
-                    // e' quella corrente, e la posata cambia troppo tardi - la
-                    // pioggia della vasca comincerebbe a cadere solo dopo che
-                    // il dito si e' staccato. E' la stessa lettura, sulla
-                    // stessa riga, del flag della prima scheda qui sopra.
-                    alive = pagerState.currentPage == page,
-                    onSelectHour = viewModel::selectHour,
-                    modifier = Modifier.systemBarsPadding(),
+                // **Sopra un dipinto il contrasto non si calcola, si
+                // costruisce.** La regola dell'app - il colore del testo si
+                // ricava dal fondo - vale finche' il fondo e' un colore. Qui
+                // sotto c'e' un'immagine qualunque, e nessuna formula puo'
+                // garantire una riga di testo sopra una nuvola bianca. La
+                // garanzia la da' questa velatura: nera al 45% in cima, il
+                // bianco ci sta sopra a piu' di sette a uno **comunque sia il
+                // dipinto**.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(SCRIM)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent)
+                            )
+                        ),
                 )
             }
-        }
 
-        // La colonna sta **sopra** il carosello e fuori da esso: e' l'unica cosa
-        // in scena che non scorre, ed e' cio' che la rende un punto di
-        // riferimento invece di un settimo contenuto.
-        FeedRail(
-            sections = sections,
-            position = position,
-            onPick = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .systemBarsPadding(),
-        )
+            // ── La testata, sopra la scena ─────────────────────────────────
+            val stale = rememberFreshness(state.fetchedAt)
+            EditorialHeader(
+                kicker = feedKicker(state, armed, stale),
+                leading = { SettingsButton(Color.White) { viewModel.openSettings() } },
+                title = Wmo.condition(state.forcedWeatherCode ?: state.pageHour?.weatherCode),
+                // Bianco e non calcolato: sotto c'e' un'immagine, non un
+                // colore, e a garantirlo e' la velatura qui sopra.
+                accent = Color.White,
+                muted = Color.White.copy(alpha = 0.78f),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .systemBarsPadding()
+                    .padding(horizontal = 10.dp, top = 2.dp),
+            )
+
+            // La colonna di icone resta il punto di riferimento che era: non
+            // scorre, e adesso porta la lista alla sezione invece di animare un
+            // carosello.
+            FeedRail(
+                sections = sections,
+                position = {
+                    val first = listState.layoutInfo.visibleItemsInfo.firstOrNull()
+                    if (first == null || first.size <= 0) 0f
+                    else first.index + (-first.offset).toFloat() / first.size
+                },
+                onPick = { index -> scope.launch { listState.animateScrollToItem(index) } },
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .systemBarsPadding(),
+            )
+        }
     }
 }
 
 /**
+ * Di chi, di quando, e cosa sta facendo l'app.
+ *
+ * Una riga sola sopra il titolo, come nei riferimenti: `NOCETO · OGGI · 15:00`.
+ * Quando c'e' qualcosa di piu' urgente da dire - si sta tirando per ricaricare,
+ * si sta ricaricando, il dato e' vecchio - **prende il posto del momento** e non
+ * si aggiunge: una riga che cresce sposta il titolo, e il titolo sta sopra un
+ * dipinto dove ogni spostamento si nota.
+ */
+private fun feedKicker(state: UiState, armed: Boolean, stale: String?): String {
+    val place = state.place.name.uppercase()
+    val day = when (state.selectedDay) {
+        0 -> "OGGI"
+        1 -> "DOMANI"
+        else -> state.forecast?.days?.getOrNull(state.selectedDay)?.label ?: "--"
+    }
+    val moment = when {
+        armed -> "RILASCIA"
+        state.refreshing -> "AGGIORNO"
+        // Un dato vecchio ha la precedenza sull'ora: sapere **quando** e' stato
+        // preso conta piu' che sapere di quale ora parla, e sono la stessa riga.
+        stale != null -> stale
+        else -> state.detailHour?.time?.let {
+            runCatching { it.format(KICKER_CLOCK) }.getOrNull()
+        }
+    }
+    return listOfNotNull(place, day, moment).joinToString("  ·  ")
+}
+
+private val KICKER_CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+/**
+ * Quanto della schermata prende la scena da aperta.
+ *
+ * Cinquantotto centesimi, che e' anche dove i dipinti mettono l'orizzonte: da
+ * aperta si vede tutto il cielo e la linea di terra, e sotto comincia la prima
+ * sezione. Piu' alta la scena diventa un fondale e la previsione sparisce sotto
+ * la piega; piu' bassa non e' piu' un'immagine di apertura, e' un'illustrazione.
+ */
+private const val SCENE_SHARE = 0.58f
+
+/** La fascia che resta in cima a colonna scorsa. */
+private val SCENE_BAND = 132.dp
+
+/** L'altezza della velatura che garantisce la testata sul dipinto. */
+private val SCRIM = 160.dp
+
+/**
  * Il tiro verso il basso che ricarica i dati.
  *
- * **E' quello che c'era, meno il foglio.** Prima viveva dentro `SheetGesture`
- * insieme all'apertura del dettaglio: il foglio non c'e' piu', il tiro si', ed
- * e' l'unico modo a mano di chiedere dati nuovi.
- *
- * Stessa forma di `SceneRotation`, e per la stessa ragione: **il dito scrive il
- * valore sul posto**, in un `MutableFloatState`, e solo il rilascio anima. Un
- * `Animatable` che riceve uno `snapTo` per ogni delta annulla la molla che sta
- * girando, perche' il dispatcher della composizione consegna al fotogramma e
- * non subito - da fuori si vedeva il movimento piantarsi a meta' corsa, tanto
- * piu' spesso quanto piu' il gesto era stato deciso.
+ * **E' quello di sempre.** Cambia solo da che parte gli arriva il dito - dopo la
+ * lista invece che prima del carosello - e il perche' sta nel KDoc di
+ * [FeedScreen]. Stessa forma di `SceneRotation`, e per la stessa ragione: il
+ * dito scrive il valore sul posto, in un `MutableFloatState`, e solo il rilascio
+ * anima. Un `Animatable` che riceve uno `snapTo` per ogni delta annulla la molla
+ * che sta girando, perche' il dispatcher della composizione consegna al
+ * fotogramma e non subito - da fuori si vedeva il movimento piantarsi a meta'
+ * corsa, tanto piu' spesso quanto piu' il gesto era stato deciso.
  */
 @Stable
 private class PullToRefresh(private val scope: CoroutineScope) {
 
-    /** Quanto si e' tirato, in pixel di dito. */
     private val pulled = mutableFloatStateOf(0f)
-
     private var settling: Job? = null
 
     val offset: Float get() = pulled.floatValue
-
-    /** Vero quando il tiro basta a valere una ricarica, e si puo' lasciare. */
     val armed: Boolean get() = pulled.floatValue >= PULL_TRIGGER
 
     fun begin() {
@@ -275,16 +362,12 @@ private class PullToRefresh(private val scope: CoroutineScope) {
         settling = null
     }
 
-    /** Torna quanto del delta si e' preso davvero. */
     fun drag(deltaPx: Float): Float {
         val before = pulled.floatValue
-        // Con un tetto: oltre un certo punto non e' piu' un gesto, e' un
-        // trascinamento.
         pulled.floatValue = (before + deltaPx).coerceIn(0f, PULL_LIMIT)
         return pulled.floatValue - before
     }
 
-    /** Torna vero se il gesto e' arrivato abbastanza in giu' da chiedere i dati. */
     fun release(): Boolean {
         val asked = armed
         settling?.cancel()
@@ -301,22 +384,20 @@ private class PullToRefresh(private val scope: CoroutineScope) {
 }
 
 /**
- * Il ponte fra il carosello e il tiro per ricaricare.
+ * Il ponte fra la colonna e il tiro per ricaricare.
  *
- * Le due meta' del gesto verticale non sono in concorrenza, sono in fila: il
- * carosello scorre finche' ha schede, e **solo l'avanzo** tira. Sulla prima
- * scheda, il dito che va giu' non ha piu' niente sopra da mostrare, e quello che
- * resta chiede i dati.
+ * Le due meta' del gesto verticale non sono in concorrenza, sono in fila: la
+ * lista scorre finche' ha contenuto, e **solo l'avanzo** tira. Da qui
+ * `onPostScroll`: si riceve cio' che la lista non ha consumato, cioe'
+ * esattamente il dito che va giu' quando si e' gia' in cima.
  *
- * **L'avanzo dev'essere quello di un dito.** `NestedScrollSource` arriva a ogni
- * richiamo e va letto: uno slancio che si esaurisce e l'elastico di fine corsa
- * che si rilassa entrerebbero qui indistinguibili da una mano, e basterebbe una
- * scorsa decisa perche' l'app chiedesse dati alla rete da sola. E' costata una
- * volta gia', sul foglio; non si ripaga.
+ * Verso l'alto invece si interviene **prima**, e solo per restituire quello che
+ * si era preso: chi ha tirato e risale deve rimettere a posto la schermata
+ * prima che la lista cominci a scorrere, se no si scorrerebbe con tutto ancora
+ * spostato in giu'.
  *
- * [atTop] e non il solo `currentPage == 0`: durante un trascinamento la prima
- * pagina e' ancora "corrente" mentre si sta gia' scoprendo la seconda, e senza
- * il controllo sullo scostamento si tirerebbe mentre si scorre.
+ * [atTop] e non un booleano tenuto da parte: la lista sa dove sta, e chiederglielo
+ * nell'istante in cui serve e' l'unica risposta che non puo' essere vecchia.
  */
 @Stable
 private class PullNestedScroll(
@@ -325,31 +406,28 @@ private class PullNestedScroll(
     private val onAsked: () -> Unit,
 ) : NestedScrollConnection {
 
-    /** Se **questo** gesto ha davvero tirato: se no, non tocca a lui assestare. */
     private var moved = false
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         if (!source.isFinger) return Offset.Zero
         val delta = available.y
-
-        // **Prima** del carosello, non dopo. La strada dell'avanzo - lasciar
-        // scorrere e prendere cio' che resta - dipende da cosa l'effetto di
-        // sovrascorrimento decide di trattenere per la sua stiratura, e
-        // sarebbe un comportamento ereditato invece che deciso. Sulla prima
-        // scheda, sopra, non c'e' niente da mostrare: il dito che va giu' e'
-        // gia' tutto del tiro, e prenderselo qui non toglie niente a nessuno.
-        if (delta > 0f) {
-            if (!atTop()) return Offset.Zero
-            pull.begin()
-            moved = true
-            return Offset(0f, pull.drag(delta))
-        }
-
-        // Verso l'alto: chi ha tirato e risale rida' indietro quello che ha
-        // preso **prima** che il carosello si muova, se no si comincerebbe a
-        // scorrere con la schermata ancora spostata in giu'.
-        if (pull.offset <= 0f) return Offset.Zero
+        if (delta >= 0f || pull.offset <= 0f) return Offset.Zero
+        // Si restituisce, non si prende: verso l'alto la lista ha la
+        // precedenza appena la schermata e' tornata al suo posto.
         return Offset(0f, pull.drag(-min(pull.offset, -delta)))
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource,
+    ): Offset {
+        if (!source.isFinger) return Offset.Zero
+        val delta = available.y
+        if (delta <= 0f || !atTop()) return Offset.Zero
+        pull.begin()
+        moved = true
+        return Offset(0f, pull.drag(delta))
     }
 
     override suspend fun onPreFling(available: Velocity): Velocity = settle()
@@ -360,9 +438,6 @@ private class PullNestedScroll(
         if (!moved && pull.offset <= 0f) return Velocity.Zero
         moved = false
         if (pull.release()) onAsked()
-        // La velocita' non si restituisce: il tiro l'ha consumata tutta, e
-        // lasciarla passare farebbe partire il carosello nell'istante in cui il
-        // dito si stacca da una ricarica.
         return Velocity.Zero
     }
 }
@@ -377,9 +452,6 @@ private class PullNestedScroll(
 private val NestedScrollSource.isFinger: Boolean
     get() = this == NestedScrollSource.UserInput
 
-/** Quanto dito serve per chiedere una ricarica, e quanto se ne accetta in tutto. */
 private const val PULL_TRIGGER = 190f
 private const val PULL_LIMIT = 300f
-
-/** Quanto del tiro finisce davvero sullo schermo: il resto e' resistenza. */
 private const val PULL_DRAG = 0.42f
