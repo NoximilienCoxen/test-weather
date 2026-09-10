@@ -195,6 +195,98 @@ jobs:
           rm -f /tmp/ciout/_a /tmp/ciout/_feeds.html
           cat /tmp/ciout/allerte-mondo.txt
 
+      # ── Si puo' avere il radar delle precipitazioni? ────────────────────────
+      #
+      # La domanda e' arrivata da fuori e non ha ancora una risposta, quindi qui
+      # non si scrive una riga di codice: si chiede. E' la stessa disciplina che
+      # questo passo si e' gia' guadagnata due volte - col parser di MeteoAlarm,
+      # che cercava campi inesistenti, e coi quattro indirizzi WMO indovinati a
+      # memoria che erano quattro 404.
+      #
+      # **Sono due cose diverse, e vanno separate prima di scegliere.**
+      #
+      # 1. Il **nowcast**: quanta pioggia nei prossimi minuti, qui. Non e' una
+      #    mappa, e' una serie di numeri, e Open-Meteo la darebbe con
+      #    `minutely_15` - stesso host, stessa chiamata, nessuna chiave, nessuna
+      #    dipendenza nuova. Se risponde, Caelum puo' averla **oggi**, e la
+      #    scheda della pioggia ha gia' il posto dove metterla.
+      #
+      # 2. Il **radar vero**, cioe' l'eco dei radar meteo su una mappa che
+      #    scorre nel tempo. Quello sono tessere PNG e un fondo cartografico, e
+      #    vuol dire: una libreria di mappe, la gestione della cache, e
+      #    l'attribuzione della cartografia. RainViewer le pubblica senza
+      #    chiave; qui si guarda se il suo indice risponde davvero e che forma
+      #    hanno gli indirizzi delle tessere.
+      #
+      # Nessuno dei due fa fallire il giro: e' una domanda, non un requisito.
+      - name: Si puo' avere il radar delle precipitazioni
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/ciout
+          {
+            echo "=== 1. NOWCAST: Open-Meteo minutely_15 ==="
+            # Se questo risponde, la pioggia nei prossimi minuti costa zero
+            # dipendenze nuove: e' l'host che l'app gia' interroga.
+            Q="minutely_15=precipitation,rain,snowfall,weather_code,precipitation_probability"
+            for punto in "Forli:44.2226:12.0407" "Tokyo:35.68:139.69" "Nairobi:-1.29:36.82"; do
+              nome="${punto%%:*}"; resto="${punto#*:}"
+              lat="${resto%%:*}"; lon="${resto#*:}"
+              echo "--- $nome"
+              curl -sS --max-time 25 -w "\nHTTP %{http_code}\n" \
+                "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&timezone=auto&forecast_days=1&$Q" \
+                | head -c 700
+              echo
+            done
+
+            echo
+            echo "=== 2. RADAR: l'indice dei fotogrammi di RainViewer ==="
+            # Interessa sapere tre cose: se risponde senza chiave, quanti
+            # fotogrammi passati e futuri offre, e con che forma si compone
+            # l'indirizzo di una tessera. La risposta porta un `host` e una
+            # lista di `path`: e' da li' che si costruisce l'URL, non a memoria.
+            curl -sSL --max-time 25 -H "User-Agent: caelum-probe" \
+              -w "\nHTTP %{http_code}\n" \
+              "https://api.rainviewer.com/public/weather-maps.json" \
+              -o /tmp/ciout/_rv.json
+            echo "byte=$(wc -c < /tmp/ciout/_rv.json)"
+            head -c 1200 /tmp/ciout/_rv.json; echo
+            echo "--- quanti fotogrammi:"
+            grep -o '"time"' /tmp/ciout/_rv.json | wc -l
+            echo "--- l'host da cui vengono le tessere:"
+            grep -o '"host"[^,]*' /tmp/ciout/_rv.json | head -1
+
+            echo
+            echo "=== 3. Una tessera vera si scarica? ==="
+            # Zoom 0, tessera unica del mondo: se torna un PNG, la strada
+            # esiste; se torna HTML o un 403, non esiste e si smette di
+            # parlarne. Il percorso si prende dalla risposta qui sopra invece di
+            # inventarlo.
+            PERCORSO=$(grep -o '"path":"[^"]*"' /tmp/ciout/_rv.json | head -1 | cut -d'"' -f4)
+            HOST=$(grep -o '"host":"[^"]*"' /tmp/ciout/_rv.json | cut -d'"' -f4)
+            echo "host=$HOST percorso=$PERCORSO"
+            if [ -n "$PERCORSO" ] && [ -n "$HOST" ]; then
+              TESSERA="$HOST$PERCORSO/256/0/0/0/1/1_1.png"
+              echo "--- $TESSERA"
+              curl -sSL --max-time 25 -o /tmp/ciout/_t.png -w "HTTP %{http_code} byte=%{size_download}\n" "$TESSERA"
+              echo "tipo: $(file -b --mime-type /tmp/ciout/_t.png 2>/dev/null)"
+            else
+              echo "nessun percorso nella risposta: non si prova a indovinarlo"
+            fi
+
+            echo
+            echo "=== 4. E il fondo cartografico? ==="
+            # Un radar senza mappa sotto e' una macchia colorata sul nulla.
+            # Le tessere di OpenStreetMap hanno una policy d'uso che chiede
+            # user-agent identificabile e vieta il traffico di massa: si guarda
+            # cosa risponde, e la decisione e' di chi legge.
+            curl -sSL --max-time 25 -H "User-Agent: caelum-probe (github.com/NoximilienCoxen/test-weather)" \
+              -o /tmp/ciout/_osm.png -w "tile.openstreetmap.org HTTP %{http_code} byte=%{size_download}\n" \
+              "https://tile.openstreetmap.org/0/0/0.png"
+            echo "tipo: $(file -b --mime-type /tmp/ciout/_osm.png 2>/dev/null)"
+          } > /tmp/ciout/radar.txt 2>&1
+          rm -f /tmp/ciout/_t.png /tmp/ciout/_osm.png
+          cat /tmp/ciout/radar.txt
+
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 
@@ -249,14 +341,29 @@ jobs:
       - name: lintDebug
         run: ./gradlew lintDebug --no-daemon
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lint
-          path: app/build/reports/lint-results-debug.html
-          if-no-files-found: warn
-
+      # **I test girano prima di qualunque caricamento, e girano comunque.**
+      #
+      # Prima stavano dopo l'upload del referto di lint, e questo bastava a
+      # saltarli del tutto. Il change che lo ha insegnato: sul commit 87746a1 di
+      # `main` il caricamento ha trasferito i suoi trentamila byte e poi e'
+      # morto nel *finalizzare* l'artefatto, con un 403 che veniva
+      # dall'archivio di GitHub e non da noi:
+      #
+      #   Failed to FinalizeArtifact: non-retryable error: (403) Forbidden
+      #
+      # Il passo non aveva `continue-on-error`, quindi `testDebugUnitTest` e'
+      # stato **saltato**, e il caricamento seguente lo ha confermato senza che
+      # nessuno lo leggesse: "No files were found with the provided path:
+      # app/build/reports/tests/". Ottantasei prove non eseguite, e la
+      # schermata delle Actions che diceva "test: failure" - cioe' la stessa
+      # faccia che avrebbe avuto un test rosso davvero.
+      #
+      # Da qui le tre regole di questo job: i test stanno prima, hanno
+      # `if: always()` cosi' un lint rosso non se li porta dietro, e **nessun
+      # caricamento puo' far fallire niente**. Un artefatto e' una comodita' per
+      # chi legge dopo; le prove sono il controllo.
       - name: testDebugUnitTest
+        if: always()
         run: |
           set -o pipefail
           ./gradlew testDebugUnitTest --no-daemon 2>&1 | tee /tmp/test.log || {
@@ -267,19 +374,77 @@ jobs:
             exit 1
           }
 
-      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
-      # caduto e l'XML dice perche'.
+      # **Il conto, scritto nel log.**
+      #
+      # Un giro verde non dice se le prove sono girate: puo' voler dire che sono
+      # passate tutte, oppure che non ne e' partita nessuna. Sono due cose molto
+      # diverse e finora avevano la stessa faccia. Qui si contano dagli XML e il
+      # numero finisce nel log, dove si legge senza scaricare niente.
+      #
+      # Zero prove **fa fallire il giro**: e' la guardia che sarebbe servita.
+      - name: Quante prove sono girate
+        if: always()
+        run: |
+          risultati=app/build/test-results/testDebugUnitTest
+          if [ ! -d "$risultati" ]; then
+            echo "NESSUN RISULTATO: $risultati non esiste."
+            echo "I test non sono partiti affatto - non e' che siano passati."
+            exit 1
+          fi
+          prove=$(grep -ho 'tests="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          falliti=$(grep -ho 'failures="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          errori=$(grep -ho 'errors="[0-9]*"' "$risultati"/*.xml \
+            | grep -o '[0-9]*' | paste -sd+ - | bc)
+          echo "=========================================================="
+          echo "  prove eseguite: ${prove:-0}"
+          echo "  fallite: ${falliti:-0}   in errore: ${errori:-0}"
+          echo "=========================================================="
+          if [ "${prove:-0}" -eq 0 ]; then
+            echo "ZERO PROVE ESEGUITE: il job e' verde ma non ha controllato niente."
+            exit 1
+          fi
+
+      # I due referti, in coda e senza potere di nuocere.
+      #
+      # `continue-on-error` su entrambi: un 403 dell'archivio artefatti di
+      # GitHub non e' un difetto di questo progetto, e non deve tingere di rosso
+      # un giro in cui il codice sta bene ne' - come e' successo - impedire ai
+      # test di partire.
       - uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
+        with:
+          name: lint
+          path: app/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+
+      # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
+      # caduto e l'XML dice perche'. L'HTML si legge, l'XML si interroga: qui
+      # servono tutti e due.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
         with:
           name: test-results
-          path: app/build/reports/tests/
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
           if-no-files-found: warn
 
   build:
     runs-on: ubuntu-latest
     steps:
+      # `fetch-depth: 0`, cioe' la storia intera, e non e' un vezzo: il
+      # `versionCode` adesso e' il numero di commit del ramo, e il checkout
+      # predefinito ne scarica **uno solo**. Con lo shallow ogni build direbbe
+      # di essere la versione 1 - esattamente il numero fisso da cui si voleva
+      # uscire, ma stavolta in un modo che sembra funzionare. Il repository sta
+      # in due megabyte: la storia intera non costa niente.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@v4
         with:

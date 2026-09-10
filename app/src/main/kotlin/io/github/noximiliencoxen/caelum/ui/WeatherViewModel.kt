@@ -172,8 +172,6 @@ data class UiState(
      * che porta il carosello dove le si e' detto.
      */
     val sectionRequest: Int = 0,
-    /** false = EFFETTIVA, true = PERCEPITI, nel dettaglio del giorno. */
-    val feelsLike: Boolean = false,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -541,7 +539,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // chiede a parte e senza far aspettare nessuno. Se
                         // non arriva, la pagina ARIA lo dichiara invece di
                         // mostrare una colonna di trattini muti.
-                        viewModelScope.launch {
+                        //
+                        // **`launch` e non `viewModelScope.launch`**, e la
+                        // differenza non e' di stile. Da `viewModelScope`
+                        // questo lavoro nascerebbe fratello di `loading`
+                        // invece che figlio, e `loading?.cancel()` non lo
+                        // toccherebbe: cambiando citta' mentre la richiesta e'
+                        // in volo, la risposta della citta' **precedente**
+                        // arriverebbe dopo l'azzeramento qui sopra e si
+                        // scriverebbe nello stato nuovo. Le polveri di Forli'
+                        // sotto il nome di Bergen, e nessun modo di
+                        // accorgersene: il dato non porta con se' il posto da
+                        // cui viene. Figlio del job giusto, si annulla con lui.
+                        launch {
                             AirQualityRepository(place).load()
                                 .onSuccess { air ->
                                     _state.update { it.copy(air = air, airUnavailable = false) }
@@ -562,7 +572,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // stesso fenomeno.
                         val derived = derivedAlerts(forecast)
                         _state.update { it.copy(alerts = derived) }
-                        viewModelScope.launch {
+                        // `launch` figlio, non `viewModelScope`: vedi la nota
+                        // sulla qualita' dell'aria poco sopra. Qui il danno
+                        // sarebbe anche peggiore - un'allerta della citta'
+                        // sbagliata e' un avviso di maltempo dove non c'e'.
+                        launch {
                             WeatherAlertsRepository(place).load()
                                 .onSuccess { official ->
                                     _state.update {
@@ -590,26 +604,35 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 }
                         }
 
-                        // La Norma storica arriva dopo, in background, e
-                        // aggiorna i giorni gia' visibili senza bloccare la
-                        // schermata. Se fallisce non succede nulla: il grafico
-                        // la mostra solo quando c'e'.
-                        viewModelScope.launch {
-                            WeatherRepository.loadNorm(place, forecast.days)
-                                .onSuccess { norms ->
-                                    if (norms.isEmpty()) return@onSuccess
-                                    _state.update { current ->
-                                        val f = current.forecast ?: return@update current
-                                        current.copy(
-                                            forecast = f.copy(
-                                                days = f.days.map { day ->
-                                                    day.copy(normTemp = norms[day.date])
-                                                },
-                                            ),
-                                        )
-                                    }
-                                }
-                        }
+                        // **Qui c'era la Norma storica, e se n'e' andata.**
+                        //
+                        // Caricava la media della temperatura degli ultimi
+                        // dieci anni e la scriveva in `DayForecast.normTemp`.
+                        // Quel campo non lo leggeva **nessuno**: due sole
+                        // occorrenze in tutto il progetto, la dichiarazione e
+                        // questa scrittura. Il grafico che la mostrava - citato
+                        // al presente dal commento che stava qui, "il grafico
+                        // la mostra solo quando c'e'" - era gia' stato tolto
+                        // dalla schermata, e il percorso dati e' rimasto
+                        // acceso da solo.
+                        //
+                        // Non era gratis: `loadNorm` faceva **dieci richieste
+                        // HTTP in fila** all'archivio, una per anno, a ogni
+                        // previsione andata a buon fine. Con dieci secondi di
+                        // timeout l'una, fino a cento secondi di rete e di
+                        // batteria per riempire un campo che non compariva da
+                        // nessuna parte.
+                        //
+                        // Portava con se' anche un errore di conto mai visto,
+                        // perche' il valore non si vedeva: la media divideva
+                        // sempre per dieci, mentre gli anni che non
+                        // rispondevano venivano scartati in silenzio. Tre anni
+                        // persi su dieci davano una Norma piu' bassa del trenta
+                        // per cento, senza un segnale.
+                        //
+                        // Se la Norma dovesse tornare, torna **con il grafico
+                        // che la mostra**, non prima: e allora il divisore
+                        // conta i campioni veri.
                     }
                     .onFailure { failure ->
                         val lastAttempt = attempt == MAX_ATTEMPTS - 1
@@ -799,7 +822,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.restoreAlertBar() }
     }
 
-    fun setFeelsLike(feels: Boolean) = _state.update { it.copy(feelsLike = feels) }
+    // `setFeelsLike` stava qui, e scriveva `UiState.feelsLike`. Erano due
+    // meta' della stessa cosa morta: il campo lo scriveva solo questo setter,
+    // e questo setter non lo chiamava nessuno. Sceglievano fra EFFETTIVA e
+    // PERCEPITI nel dettaglio del giorno, che il feed non ha piu'.
+    //
+    // Da non confondere con `feelsIt`, che e' vivo e vuol dire un'altra cosa:
+    // se la schermata e' davanti, e quindi se le vibrazioni si sentono.
 
     fun openSettings() = _state.update { it.copy(settingsOpen = true) }
 
@@ -819,8 +848,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.toggleFavorite(place) }
     }
 
-    fun isFavorite(place: Place): Boolean =
-        _state.value.favorites.any { it.key == place.key }
+    // `isFavorite` stava qui e non la chiamava nessuna schermata: le due che
+    // avrebbero potuto - impostazioni e configurazione del widget - fanno da
+    // se' lo stesso confronto su `favorites`. Una terza copia della stessa
+    // riga, in un posto in cui nessuno andava a cercarla.
 
     fun choosePlace(place: Place) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe

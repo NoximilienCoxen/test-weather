@@ -54,9 +54,32 @@ class MainActivity : ComponentActivity() {
      * L'aggancio sul tema non c'e' piu' perche' non c'e' piu' un tema da
      * scegliere: giorno e notte adesso li decide l'ora mostrata, e per
      * fotografare la notte basta chiedere un'ora notturna.
+     *
+     * **Solo nelle build di debug, e non e' una pignoleria.** Questa Activity
+     * e' `exported` perche' e' il lanciatore: chiunque puo' avviarla, e finche'
+     * questi extra erano letti in ogni build, **qualunque app installata sul
+     * telefono** poteva far comparire a Caelum un'allerta arancione che nessun
+     * ente aveva diramato:
+     *
+     *   am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei allerta 2
+     *
+     * Non esce nessun dato e non si scrive niente, quindi il danno pratico e'
+     * modesto. Ma e' la stessa questione della regola sul rosso: un'app che
+     * mostra avvisi di maltempo non deve prestare la propria faccia a un avviso
+     * che non viene da dove sembra. Li' la regola vale per il codice
+     * dell'app, qui per chi sta fuori.
+     *
+     * **`BuildConfig.DEBUG` e non un flag nuovo**, perche' `capture.sh` in CI
+     * pilota con questi extra l'APK di debug, ed e' l'unico modo che il giro ha
+     * di mettere in scena pioggia, allerte e ore notturne senza un dito. Un
+     * interruttore inventato apposta li spegnerebbe anche li'. Attenzione a non
+     * confonderlo con `isDebuggable`, che in questo progetto e' **falso** anche
+     * in debug (si misura la fluidita' della build vera): `BuildConfig.DEBUG`
+     * resta comunque vero, e resta quello giusto.
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
+        if (!BuildConfig.DEBUG) return
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il

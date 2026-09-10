@@ -5,8 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
-import java.net.HttpURLConnection
-import java.net.URL
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -74,7 +72,7 @@ class WeatherAlertsRepository(private val place: Place) {
                 // interrogare, e non e' un errore: si dichiara e basta, cosi'
                 // chi chiama sa che deve cavarsela con le soglie.
                 ?: throw OutOfCoverage(place.country)
-            val body = httpGet(FEED_ENDPOINT + slug)
+            val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = CAP_ACCEPT)
             val now = OffsetDateTime.now()
             val mine = parseFeed(body)
                 .filter { it.isCurrent(now) }
@@ -98,33 +96,23 @@ class WeatherAlertsRepository(private val place: Place) {
      */
     private fun fetchDetail(url: String?): CapDetail? {
         if (url == null) return null
-        return runCatching { parseDetail(httpGet(url)) }.getOrNull()
+        return runCatching {
+            parseDetail(httpGet(url, fonte = "MeteoAlarm", accept = CAP_ACCEPT))
+        }.getOrNull()
     }
 
     /** Il posto non e' fra quelli che MeteoAlarm serve. */
     class OutOfCoverage(val country: String?) :
         Exception("MeteoAlarm non copre " + (country ?: "questa localita'"))
 
-    private fun httpGet(url: String): String {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 10_000
-            readTimeout = 10_000
-            instanceFollowRedirects = true
-            setRequestProperty("Accept", "application/atom+xml, application/cap+xml, application/xml")
-        }
-        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) error("HTTP $code da MeteoAlarm: ${text.take(200)}")
-            return text
-        } finally {
-            connection.disconnect()
-        }
-    }
-
     companion object {
+        /**
+         * Le allerte sono l'unica cosa che non arriva in JSON: Atom per
+         * l'elenco delle voci, CAP per il dettaglio di ognuna.
+         */
+        private const val CAP_ACCEPT =
+            "application/atom+xml, application/cap+xml, application/xml"
+
         const val FEED_ENDPOINT = "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-"
 
         /** Quante voci al massimo meritano una seconda richiesta per il testo. */

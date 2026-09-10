@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Le allerte calcolate dalle soglie, che coprono dove MeteoAlarm non arriva.
@@ -86,5 +87,117 @@ class DerivedAlertsTest {
         // mai: alertsAreDismissed confronta gli identificativi.
         val f = forecastWith(day(gust = 30.0))
         assertEquals(derivedAlerts(f).map { it.id }, derivedAlerts(f).map { it.id })
+    }
+
+    // ---------------------------------------------------------------------
+    // mergeAlerts: quando l'ufficiale copre la derivata, e quando no.
+    //
+    // Il difetto che questi test fermano: il confronto era per solo tipo di
+    // fenomeno, quindi un bollettino valido **oggi** portava via anche
+    // l'avviso calcolato per **domani**, che nessuno copriva. Il buco si
+    // vedeva solo il giorno in cui c'era qualcosa da dire.
+    // ---------------------------------------------------------------------
+
+    private val oggi = LocalDate.of(2026, 9, 4)
+    private val domani = oggi.plusDays(1)
+
+    private fun ufficiale(
+        kind: AlertKind = AlertKind.VENTO,
+        onset: LocalDate? = oggi,
+        expires: LocalDate? = oggi,
+    ) = WeatherAlert(
+        id = "uff-$kind-$onset",
+        level = AlertLevel.ARANCIONE,
+        kind = kind,
+        headline = "Bollettino",
+        onset = onset?.atStartOfDay(),
+        expires = expires?.atTime(LocalTime.MAX),
+        source = "Ente",
+        official = true,
+    )
+
+    private fun derivata(kind: AlertKind = AlertKind.VENTO, giorno: LocalDate = oggi) =
+        WeatherAlert(
+            id = "derivata-$kind-$giorno",
+            level = AlertLevel.GIALLA,
+            kind = kind,
+            headline = "Calcolata",
+            onset = giorno.atStartOfDay(),
+            expires = giorno.atTime(LocalTime.MAX),
+            source = "Soglia",
+            official = false,
+        )
+
+    @Test
+    fun `l'ufficiale copre la derivata dello stesso giorno`() {
+        val merged = mergeAlerts(listOf(ufficiale()), listOf(derivata()))
+        assertEquals(1, merged.size)
+        assertTrue("deve restare quella dell'ente", merged.single().official)
+    }
+
+    @Test
+    fun `un bollettino di oggi non porta via l'avviso di domani`() {
+        // E' il difetto vero: prima ne restava una sola, e domani nessuno lo
+        // copriva piu'.
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(onset = oggi, expires = oggi)),
+            derived = listOf(derivata(giorno = oggi), derivata(giorno = domani)),
+        )
+        assertEquals(2, merged.size)
+        assertTrue(
+            "l'avviso calcolato per domani deve sopravvivere",
+            merged.any { !it.official && it.onset?.toLocalDate() == domani },
+        )
+    }
+
+    @Test
+    fun `un bollettino lungo due giorni li copre tutti e due`() {
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(onset = oggi, expires = domani)),
+            derived = listOf(derivata(giorno = oggi), derivata(giorno = domani)),
+        )
+        assertEquals(1, merged.size)
+        assertTrue(merged.single().official)
+    }
+
+    @Test
+    fun `un bollettino sul vento non tocca la derivata sulla pioggia`() {
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(kind = AlertKind.VENTO)),
+            derived = listOf(derivata(kind = AlertKind.PIOGGIA)),
+        )
+        assertEquals(2, merged.size)
+    }
+
+    @Test
+    fun `un ufficiale senza scadenza vale da li' in avanti`() {
+        // Il feed non sempre scrive le due estremita'. Il lato che manca non
+        // limita: e' la lettura prudente, perche' toglie un doppione invece di
+        // lasciarne uno che l'ente sta gia' coprendo.
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(onset = oggi, expires = null)),
+            derived = listOf(derivata(giorno = domani)),
+        )
+        assertEquals(1, merged.size)
+        assertTrue(merged.single().official)
+    }
+
+    @Test
+    fun `un ufficiale gia' scaduto non copre il giorno dopo`() {
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(onset = oggi.minusDays(3), expires = oggi.minusDays(2))),
+            derived = listOf(derivata(giorno = oggi)),
+        )
+        assertEquals(2, merged.size)
+    }
+
+    @Test
+    fun `l'ordine resta per gravita' decrescente`() {
+        val merged = mergeAlerts(
+            official = listOf(ufficiale(kind = AlertKind.VENTO)),
+            derived = listOf(derivata(kind = AlertKind.PIOGGIA)),
+        )
+        assertEquals(AlertLevel.ARANCIONE, merged.first().level)
+        assertEquals(AlertLevel.GIALLA, merged.last().level)
     }
 }

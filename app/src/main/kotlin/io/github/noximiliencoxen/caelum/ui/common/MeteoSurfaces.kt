@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -253,33 +252,6 @@ fun MeteoCard(
     )
 }
 
-/** L'intestazione di un gruppo: una parola e un filo. */
-@Composable
-fun MeteoSectionHeader(
-    text: String,
-    modifier: Modifier = Modifier,
-    trailing: @Composable (() -> Unit)? = null,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
-            trailing?.invoke()
-        }
-        Spacer(
-            Modifier
-                .padding(top = 6.dp)
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(MaterialTheme.colorScheme.outlineVariant),
-        )
-    }
-}
-
 /** Il filo che separa due cose dentro lo stesso blocco. */
 @Composable
 fun MeteoDivider(modifier: Modifier = Modifier, inset: androidx.compose.ui.unit.Dp = 0.dp) {
@@ -466,209 +438,20 @@ internal suspend fun LazyListState.centerOn(position: Float, animate: Boolean = 
     if (animate) animateScrollBy(delta) else scrollBy(delta)
 }
 
-/**
- * Due o piu' pillole affiancate a larghezza uguale.
- *
- * A larghezza uguale perche' sono alternative dello stesso valore e devono
- * pesare uguale: una piu' larga dell'altra suggerirebbe che sia quella giusta.
- */
-@Composable
-fun MeteoSplitPills(
-    labels: List<String>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        labels.forEachIndexed { index, label ->
-            MeteoPill(
-                label = label,
-                selected = index == selectedIndex,
-                onClick = { onSelect(index) },
-                role = Role.RadioButton,
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
 // ---------------------------------------------------------------------------
 // Righe di valori
+//
+// **Qui stavano MeteoSplitPills, MeteoMetricRow, MeteoMetricCard, MeteoMetric,
+// MeteoStat, MeteoStatGrid e MeteoStatData**, circa duecentodieci righe.
+//
+// Erano i mattoni del vecchio foglio di dettaglio, quello che si apriva sopra
+// la schermata principale. Il feed lo ha sostituito e si disegna da se', con
+// SectionCard e SectionValues: da allora nessuno chiamava piu' nessuno di
+// questi, e la verifica e' stata fatta simbolo per simbolo su main e su test.
+//
+// MeteoDivider e' rimasto dov'era, qui sopra: quello lo usa ancora
+// AlertsSheet.
 // ---------------------------------------------------------------------------
-
-/**
- * Una riga etichetta/valore.
- *
- * `clearAndSetSemantics` con la frase intera: un lettore di schermo che legge
- * "UMIDITA'" e poi, dopo una pausa, "58%" costringe chi ascolta a ricucire i due
- * pezzi. Letti insieme sono una frase.
- */
-@Composable
-fun MeteoMetricRow(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-    emphasis: Boolean = false,
-    accent: Color? = null,
-) {
-    val labelColor = if (emphasis) {
-        MaterialTheme.colorScheme.onSurface
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val valueColor = accent ?: MaterialTheme.colorScheme.onSurface
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = MinTouchTarget)
-            .padding(horizontal = 18.dp, vertical = 6.dp)
-            .clearAndSetSemantics { contentDescription = "$label: $value" },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = labelColor,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.labelLarge,
-            color = valueColor,
-            maxLines = 1,
-        )
-    }
-}
-
-/** Una scheda di righe etichetta/valore, con i fili in mezzo. */
-@Composable
-fun MeteoMetricCard(
-    rows: List<MeteoMetric>,
-    modifier: Modifier = Modifier,
-) {
-    if (rows.isEmpty()) return
-    MeteoCard(modifier = modifier) {
-        Spacer(Modifier.height(4.dp))
-        rows.forEachIndexed { index, row ->
-            MeteoMetricRow(
-                label = row.label,
-                value = row.value,
-                emphasis = row.emphasis,
-                accent = row.accent,
-            )
-            if (index < rows.lastIndex) MeteoDivider(inset = 18.dp)
-        }
-        Spacer(Modifier.height(4.dp))
-    }
-}
-
-/** Una riga di tabella. [accent] tinge il solo valore, mai l'etichetta. */
-data class MeteoMetric(
-    val label: String,
-    val value: String,
-    val emphasis: Boolean = false,
-    val accent: Color? = null,
-)
-
-/**
- * Un valore grande con la sua didascalia sopra e una nota sotto.
- *
- * L'etichetta sta **sopra** il numero: si legge dall'alto, e sapere cosa si sta
- * per leggere prima di leggerlo e' meta' della comprensione.
- */
-@Composable
-fun MeteoStat(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-    caption: String? = null,
-    accent: Color? = null,
-) {
-    Column(
-        modifier = modifier.clearAndSetSemantics {
-            contentDescription = listOfNotNull(label, value, caption).joinToString(": ")
-        },
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            color = accent ?: MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-        )
-        if (!caption.isNullOrBlank()) {
-            Text(
-                text = caption,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-/**
- * Una griglia di statistiche, a colonne decise dalla larghezza dello schermo.
- *
- * Righe costruite a mano e non `LazyVerticalGrid`: la griglia pigra non puo'
- * stare dentro una colonna che scorre gia' - si contendono l'altezza infinita -
- * e qui gli elementi sono sei, non seicento.
- */
-@Composable
-fun MeteoStatGrid(
-    stats: List<MeteoStatData>,
-    columns: Int,
-    modifier: Modifier = Modifier,
-) {
-    if (stats.isEmpty()) return
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        stats.chunked(columns.coerceAtLeast(1)).forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                row.forEach { stat ->
-                    MeteoStat(
-                        label = stat.label,
-                        value = stat.value,
-                        caption = stat.caption,
-                        accent = stat.accent,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                // Le celle mancanti dell'ultima riga occupano spazio senza
-                // disegnare: senza, tre statistiche su quattro colonne si
-                // allargherebbero a riempire, e le righe non sarebbero piu'
-                // incolonnate fra loro.
-                repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
-            }
-        }
-    }
-}
-
-data class MeteoStatData(
-    val label: String,
-    val value: String,
-    val caption: String? = null,
-    val accent: Color? = null,
-)
 
 // ---------------------------------------------------------------------------
 // Quando non c'e' niente da mostrare

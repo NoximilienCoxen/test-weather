@@ -291,18 +291,14 @@ private tailrec fun android.content.Context.findActivity(): android.app.Activity
     else -> null
 }
 
-/** Oltre questa velocita' il gesto decide da solo, senza guardare la posizione. */
-private const val SNAP_VELOCITY = 800f
-
-/** Quanto dito serve per chiedere una ricarica, e quanto se ne accetta in tutto. */
-private const val PULL_TRIGGER = 190f
-private const val PULL_LIMIT = 300f
-
-/**
- * Quanto vicino a un'ancora conta come esserci arrivati.
- *
- * Serve perche' `raised` e' il valore di una molla che qualcuno puo' cancellare
- * a meta': un confronto esatto con 1 lasciava il foglio "quasi aperto" per il
- * resto della sua vita.
- */
-private const val ANCHOR_EPSILON = 0.999f
+// **Qui c'erano quattro costanti del foglio, e due di loro erano doppie.**
+//
+// `SNAP_VELOCITY` e `ANCHOR_EPSILON` descrivevano le ancore del foglio che si
+// alzava sopra la schermata: il foglio non c'e' piu' da quando c'e' il feed, e
+// le due misure sono rimaste a descrivere un movimento che nessuno fa.
+//
+// `PULL_TRIGGER` e `PULL_LIMIT` erano il caso peggiore: il tiro per ricaricare
+// e' migrato in `FeedScreen`, che se le e' **ridichiarate identiche** invece di
+// importarle. Due copie con lo stesso valore e nessun legame fra loro sono due
+// numeri destinati a divergere al primo che ne tara uno. Restano quelle di
+// `FeedScreen`, che sono le uniche che qualcuno legge davvero.

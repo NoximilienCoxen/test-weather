@@ -22,22 +22,8 @@ private const val DEGREE = "\u00B0"
  * la richiesta per cambiare un'unita' di misura, cioe' aspettare davanti a una
  * schermata vuota per una scelta che e' solo di scrittura.
  */
-fun Double?.asDegrees(unit: TempUnit = TempUnit.CELSIUS): String =
-    this?.let { "${unit.from(it).roundToInt()}${unit.symbol}" } ?: EMPTY
-
 fun Double?.asPlainDegrees(unit: TempUnit = TempUnit.CELSIUS): String =
     this?.let { "${unit.from(it).roundToInt()}°" } ?: EMPTY
-
-/**
- * Il numero gigante non porta unita': solo la cifra, arrotondata.
- * Due funzioni e non una con un parametro opzionale: la cifra gigante mostra
- * anche millimetri e metri al secondo, e una conversione di temperatura
- * applicata per svista al vento non lascerebbe traccia di se'.
- */
-fun Double?.asBigNumber(): String = this?.roundToInt()?.toString() ?: EMPTY
-
-fun Double?.asBigTemperature(unit: TempUnit): String =
-    this?.let { unit.from(it).roundToInt().toString() } ?: EMPTY
 
 /**
  * La stessa cifra col grado in coda.
@@ -75,9 +61,7 @@ private fun Double.fixed(decimals: Int = 1): String =
     String.format(NUM, "%.${decimals}f", this)
 
 fun Double?.asMillimetres(): String = this?.let { "${it.fixed()} MM" } ?: EMPTY
-fun Double?.asMillimetresPerDay(): String = this?.let { "${it.fixed()} MM/GIORNO" } ?: EMPTY
 fun Double?.asMetresPerSecond(): String = this?.let { "${it.fixed()} M/S" } ?: EMPTY
-fun Double?.asHours(): String = this?.let { "${it.roundToInt()} H" } ?: EMPTY
 fun Double?.asIndex(): String = this?.let { it.fixed() } ?: EMPTY
 fun Double?.asPercent(): String = this?.let { "${it.roundToInt()}%" } ?: EMPTY
 fun Int?.asPercent(): String = this?.let { "$it%" } ?: EMPTY
@@ -85,38 +69,22 @@ fun Int?.asPercent(): String = this?.let { "$it%" } ?: EMPTY
 /** Centimetri di neve: Open-Meteo li da' cosi', e convertirli sarebbe inventare. */
 fun Double?.asCentimetres(): String = this?.let { "${it.fixed()} CM" } ?: EMPTY
 
-/** Pressione al suolo. L'intero basta: il decimo di hPa non lo guarda nessuno. */
-fun Double?.asHectopascal(): String = this?.let { "${it.roundToInt()} HPA" } ?: EMPTY
-
-/**
- * Visibilita': in chilometri sopra il chilometro, in metri sotto.
- *
- * L'API la da' sempre in metri, e "24140 M" e' un numero che nessuno legge.
- * Sotto il chilometro invece i metri contano davvero, perche' e' li' che la
- * visibilita' smette di essere un dettaglio.
- */
-fun Double?.asDistance(): String = when {
-    this == null -> EMPTY
-    this >= 1000.0 -> "${(this / 1000.0).fixed()} KM"
-    else -> "${roundToInt()} M"
-}
-
-/**
- * Una durata in ore e minuti.
- *
- * "8 H" per otto ore e cinquanta minuti sbaglia di quasi un'ora, ed era il
- * modo in cui si scrivevano le ore di luce. Su una giornata di dicembre,
- * dove la luce e' otto ore in tutto, e' un decimo della giornata.
- */
-fun Double?.asHoursMinutes(): String {
-    val hours = this ?: return EMPTY
-    if (hours < 0) return EMPTY
-    val total = (hours * 60).roundToInt()
-    val h = total / 60
-    val m = total % 60
-    return if (h == 0) "${m}m" else "${h}h ${m.toString().padStart(2, '0')}m"
-}
-
-/** Gli stessi minuti, partendo dai secondi che restituisce l'API. */
-fun Double?.secondsAsHoursMinutes(): String =
-    this?.let { (it / 3600.0).asHoursMinutes() } ?: EMPTY
+// ---------------------------------------------------------------------------
+// **Qui c'erano altri nove formattatori, e non li chiamava nessuno.**
+//
+// `asDegrees`, `asBigNumber`, `asBigTemperature`, `asMillimetresPerDay`,
+// `asHours`, `asHectopascal`, `asDistance`, `asHoursMinutes` e
+// `secondsAsHoursMinutes`: verificati uno per uno su main e su test, zero
+// chiamanti fuori da questo file.
+//
+// Erano piu' della meta' del file, ed e' una meta' che raccontava bene: due di
+// loro portavano un commento lungo che spiegava **perche' erano due funzioni e
+// non una**, e quella spiegazione e' sopravvissuta di parecchio al codice che
+// la giustificava. `asHoursMinutes` scriveva le ore di luce in ore e minuti
+// per non sbagliare di un decimo di giornata a dicembre - un ragionamento
+// giusto, per una schermata che poi non e' stata fatta.
+//
+// Le sezioni del feed che le vorranno (vento, sole, aria) le riscriveranno
+// quando avranno qualcosa da mostrare: allora si sapra' anche in quale forma
+// servono davvero, invece di indovinarla in anticipo come e' successo qui.
+// ---------------------------------------------------------------------------

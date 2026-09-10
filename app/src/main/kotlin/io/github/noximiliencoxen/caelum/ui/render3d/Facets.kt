@@ -89,15 +89,10 @@ internal fun facetTwiceArea(a: Offset, b: Offset, c: Offset, d: Offset): Float =
  * dire niente, ed e' il modo peggiore di sbagliare - va bene per prismi, casse e
  * vani, non per una sagoma qualunque.
  */
-fun convexHullPath(points: List<Offset>): Path {
-    val hull = convexHull(points)
-    val path = Path()
-    if (hull.size < 3) return path
-    path.moveTo(hull[0].x, hull[0].y)
-    for (i in 1 until hull.size) path.lineTo(hull[i].x, hull[i].y)
-    path.close()
-    return path
-}
+// `convexHullPath` stava qui e non la chiamava nessuno, nemmeno il suo test:
+// `FacetsTest` prova `convexHull`, che e' quella che fa il lavoro. Chi
+// volesse di nuovo un Path invece di una lista di punti lo costruisce da
+// `convexHull` in cinque righe, sapendo per cosa gli serve.
 
 /**
  * L'inviluppo come **elenco di punti**, che e' la parte che si puo' provare.
