@@ -170,7 +170,19 @@ fun WeatherDiorama(
                     time = time,
                     intensity = intensityOf(precipitationMm),
                     wind = wind,
-                    ink = lerp(colors.rain, Color.White, 0.35f),
+                    // **La neve non e' pioggia bianca, e non e' pioggia
+                    // azzurra.** L'inchiostro della precipitazione partiva
+                    // dall'azzurro della pioggia per tutti, e negli scatti i
+                    // fiocchi uscivano celesti sopra una scena di neve: il
+                    // colore diceva "acqua" mentre la forma diceva "ghiaccio".
+                    // Quello che cade ghiacciato prende il bianco della nuvola,
+                    // che il vetro ha gia' reso leggibile; la pioggia tiene il
+                    // suo azzurro, che e' il colore con cui l'app la disegna
+                    // dappertutto.
+                    ink = when (shown) {
+                        SceneKind.NEVE, SceneKind.GRANDINE -> colors.cloudCore
+                        else -> lerp(colors.rain, Color.White, 0.35f)
+                    },
                     flash = flashAt(time),
                 )
             }
