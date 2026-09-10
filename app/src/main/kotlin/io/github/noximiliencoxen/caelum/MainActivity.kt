@@ -69,17 +69,28 @@ class MainActivity : ComponentActivity() {
      * che non viene da dove sembra. Li' la regola vale per il codice
      * dell'app, qui per chi sta fuori.
      *
-     * **`BuildConfig.DEBUG` e non un flag nuovo**, perche' `capture.sh` in CI
-     * pilota con questi extra l'APK di debug, ed e' l'unico modo che il giro ha
-     * di mettere in scena pioggia, allerte e ore notturne senza un dito. Un
-     * interruttore inventato apposta li spegnerebbe anche li'. Attenzione a non
-     * confonderlo con `isDebuggable`, che in questo progetto e' **falso** anche
-     * in debug (si misura la fluidita' della build vera): `BuildConfig.DEBUG`
-     * resta comunque vero, e resta quello giusto.
+     * **`BuildConfig.AGGANCI` e non `BuildConfig.DEBUG`**, e la differenza e'
+     * costata piu' di un giro di scatti buttato.
+     *
+     * Qui c'era scritto che `DEBUG` resta vero anche con `isDebuggable` falso,
+     * e che quindi era il flag giusto. **Non e' cosi'**: AGP genera `DEBUG` da
+     * `isDebuggable`, che questo progetto tiene falso anche in debug per
+     * misurare la fluidita' della build vera. Le due cose si erano legate senza
+     * che nessuno lo chiedesse, e il risultato era che **ogni aggancio qui
+     * dentro era muto**: la CI chiedeva l'ora notturna, la sezione, il giorno,
+     * il codice meteo, e l'app li ignorava tutti in silenzio. Sei sezioni
+     * fotografate erano sei copie della prima, e per due passate si e' cercata
+     * la colpa nella schermata.
+     *
+     * `AGGANCI` sta in `app/build.gradle.kts`, dichiarato a voce sui due tipi
+     * di build. La proprieta' di sicurezza e' identica - falso sulla release,
+     * quindi nessuna app installata puo' far comparire a Caelum un'allerta che
+     * nessun ente ha diramato - ma adesso non dipende da come AGP interpreta un
+     * flag che parla d'altro.
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
-        if (!BuildConfig.DEBUG) return
+        if (!BuildConfig.AGGANCI) return
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il

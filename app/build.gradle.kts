@@ -89,8 +89,33 @@ android {
             // reale a ogni fotogramma. Misurando la fluidita' su una build
             // debuggabile si misurerebbe un'app che non esiste.
             isDebuggable = false
+
+            // **Gli agganci di verifica hanno un flag loro.**
+            //
+            // Erano dietro `BuildConfig.DEBUG`, e li' sono rimasti muti per
+            // chissa' quanti giri senza che niente lo dicesse: `--ei ora`,
+            // `--ei sezione`, `--ei giorno`, `--ei meteo`, tutti ignorati, e
+            // ogni scatto della CI usciva con l'ora vera e la prima sezione.
+            // Si e' visto dagli scatti, non dai log: sei sezioni fotografate
+            // che erano sei copie della prima.
+            //
+            // La ragione e' la riga qui sopra. `BuildConfig.DEBUG` non e'
+            // "questo e' il tipo debug": lo genera AGP a partire da
+            // `isDebuggable`, che questo progetto tiene **falso** anche in
+            // debug per misurare la fluidita' vera. Le due cose si erano
+            // legate senza che nessuno lo chiedesse, e un commento in
+            // `MainActivity` affermava il contrario.
+            //
+            // Un flag dichiarato qui non dipende da come AGP interpreta
+            // qualcos'altro, e dice a voce cosa vuole dire. La proprieta' di
+            // sicurezza resta identica: sulla release e' falso, quindi
+            // nessuna app installata puo' far comparire a Caelum un'allerta
+            // che nessun ente ha diramato.
+            buildConfigField("boolean", "AGGANCI", "true")
         }
         release {
+            buildConfigField("boolean", "AGGANCI", "false")
+
             // R8 acceso, con le sue regole accanto in proguard-rules.pro.
             // Accenderlo senza dire cosa tenere, con kotlinx.serialization in
             // gioco, rompe la deserializzazione in silenzio: l'app compila, si
