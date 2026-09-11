@@ -41,12 +41,25 @@ private fun SalaHeader(
     ink: Color,
     inkSoft: Color,
     onLeadingClick: (() -> Unit)? = null,
+    onMenuClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().height(MinTouchTarget),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Le impostazioni hanno un comando **loro**, e non sono piu' nascoste
+        // dietro il nome della citta': quel nome dice dove sei, non e' un menu,
+        // e chi lo tocca si aspetta di cambiare posto - che infatti e' quello
+        // che fa, aprendo le localita'.
+        if (onMenuClick != null) {
+            Box(
+                modifier = Modifier.size(MinTouchTarget).clickable(onClick = onMenuClick),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                TreLinee(ink)
+            }
+        }
         Box(
             modifier = Modifier
                 .weight(1f, fill = false)
@@ -66,6 +79,29 @@ private fun SalaHeader(
             color = inkSoft,
             maxLines = 1,
         )
+    }
+}
+
+/**
+ * Le tre linee delle impostazioni, disegnate invece che importate.
+ *
+ * Il progetto non ha una libreria di icone e non vale la pena aprirne una per
+ * tre segmenti: sono tre righe, e in un'app che disegna lune e nuvole a mano
+ * importare un pacchetto per questo sarebbe sproporzionato.
+ */
+@Composable
+private fun TreLinee(ink: Color) {
+    Canvas(modifier = Modifier.size(20.dp, 14.dp)) {
+        val spessore = 1.6.dp.toPx()
+        listOf(0f, 0.5f, 1f).forEach { t ->
+            val y = t * (size.height - spessore) + spessore / 2f
+            drawLine(
+                color = ink,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = spessore,
+            )
+        }
     }
 }
 
@@ -125,6 +161,7 @@ fun SalaRoomScaffold(
     position: () -> Float,
     modifier: Modifier = Modifier,
     onPlaceClick: (() -> Unit)? = null,
+    onMenuClick: (() -> Unit)? = null,
     content: @Composable (Modifier) -> Unit,
 ) {
     SalaBackground(palette = palette, blobs = room.blobs, modifier = modifier) {
@@ -140,6 +177,7 @@ fun SalaRoomScaffold(
                 ink = palette.ink,
                 inkSoft = palette.inkSoft,
                 onLeadingClick = onPlaceClick,
+                onMenuClick = onMenuClick,
             )
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 content(Modifier.fillMaxSize())

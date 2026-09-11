@@ -11,7 +11,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -96,111 +95,113 @@ fun SalaShell(
         salaPalette(sky, phase, condition, state.cardTheme)
     }
 
-    // I timbri dell'acquerello si caricano **qui e una volta sola**: sotto ci
-    // sono sette sale, e caricarli in ognuna vorrebbe dire decodificare sette
-    // volte le stesse immagini.
-    CompositionLocalProvider(LocalAcquerello provides rememberAcquerello()) {
-        Box(modifier = modifier.fillMaxSize()) {
-            VerticalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
-                when (rooms.getOrNull(page)) {
-                    SalaRoom.OGGI -> SalaOggiScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        viewModel = viewModel,
-                        onPlaceClick = viewModel::openLocations,
-                    )
-                    SalaRoom.SETTIMANA -> SalaSettimanaScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        viewModel = viewModel,
-                        onPlaceClick = viewModel::openLocations,
-                    )
-                    SalaRoom.PIOGGIA -> SalaPioggiaScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        onPlaceClick = viewModel::openLocations,
-                        onSelectHour = viewModel::selectHour,
-                    )
-                    SalaRoom.LUNA -> SalaLunaScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        onPlaceClick = viewModel::openLocations,
-                    )
-                    SalaRoom.ARIA -> SalaAriaScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        onPlaceClick = viewModel::openLocations,
-                    )
-                    SalaRoom.VENTO -> SalaVentoScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        onPlaceClick = viewModel::openLocations,
-                    )
-                    SalaRoom.UV -> SalaUvScreen(
-                        state = state,
-                        palette = palette,
-                        position = position,
-                        onPlaceClick = viewModel::openLocations,
-                        onSelectHour = viewModel::selectHour,
-                    )
-                    null -> Unit
-                }
+    Box(modifier = modifier.fillMaxSize()) {
+        VerticalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+            when (rooms.getOrNull(page)) {
+                SalaRoom.OGGI -> SalaOggiScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    viewModel = viewModel,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                )
+                SalaRoom.SETTIMANA -> SalaSettimanaScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    viewModel = viewModel,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                )
+                SalaRoom.PIOGGIA -> SalaPioggiaScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                    onSelectHour = viewModel::selectHour,
+                )
+                SalaRoom.LUNA -> SalaLunaScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                )
+                SalaRoom.ARIA -> SalaAriaScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                )
+                SalaRoom.VENTO -> SalaVentoScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                )
+                SalaRoom.UV -> SalaUvScreen(
+                    state = state,
+                    palette = palette,
+                    position = position,
+                    onPlaceClick = viewModel::openLocations,
+                    onMenuClick = viewModel::openSettings,
+                    onSelectHour = viewModel::selectHour,
+                )
+                null -> Unit
             }
+        }
 
-            val locationsShift by animateFloatAsState(
-                targetValue = if (state.locationsOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "localita",
-            )
-            if (locationsShift > 0.001f) {
-                BackHandler(enabled = state.locationsOpen, onBack = viewModel::closeLocations)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset(((1f - locationsShift) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    SalaLocalitaScreen(
-                        state = state,
-                        palette = palette,
-                        onPick = viewModel::choosePlace,
-                        onAdd = viewModel::toggleFavorite,
-                        onRemove = viewModel::toggleFavorite,
-                        onClose = viewModel::closeLocations,
-                    )
-                }
+        val locationsShift by animateFloatAsState(
+            targetValue = if (state.locationsOpen) 1f else 0f,
+            animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+            label = "localita",
+        )
+        if (locationsShift > 0.001f) {
+            BackHandler(enabled = state.locationsOpen, onBack = viewModel::closeLocations)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset { IntOffset(((1f - locationsShift) * widthPx).roundToInt(), 0) },
+                color = MaterialTheme.colorScheme.surface,
+            ) {
+                SalaLocalitaScreen(
+                    state = state,
+                    palette = palette,
+                    onPick = viewModel::choosePlace,
+                    onAdd = viewModel::toggleFavorite,
+                    onRemove = viewModel::toggleFavorite,
+                    onClose = viewModel::closeLocations,
+                )
             }
+        }
 
-            val settingsShift by animateFloatAsState(
-                targetValue = if (state.settingsOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "impostazioni",
-            )
-            if (settingsShift > 0.001f) {
-                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset((-(1f - settingsShift) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    SalaImpostazioniScreen(
-                        state = state,
-                        palette = palette,
-                        onChooseTheme = viewModel::setCardTheme,
-                        onChooseUnit = viewModel::setUnit,
-                        onChooseWindUnit = viewModel::setWindUnit,
-                        onChooseCaptionStyle = viewModel::setCaptionStyle,
-                        onToggleAlert = viewModel::setAlertToggle,
-                        onClose = viewModel::closeSettings,
-                    )
-                }
+        val settingsShift by animateFloatAsState(
+            targetValue = if (state.settingsOpen) 1f else 0f,
+            animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+            label = "impostazioni",
+        )
+        if (settingsShift > 0.001f) {
+            BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset { IntOffset((-(1f - settingsShift) * widthPx).roundToInt(), 0) },
+                color = MaterialTheme.colorScheme.surface,
+            ) {
+                SalaImpostazioniScreen(
+                    state = state,
+                    palette = palette,
+                    onChooseTheme = viewModel::setCardTheme,
+                    onChooseUnit = viewModel::setUnit,
+                    onChooseWindUnit = viewModel::setWindUnit,
+                    onChooseCaptionStyle = viewModel::setCaptionStyle,
+                    onToggleAlert = viewModel::setAlertToggle,
+                    onClose = viewModel::closeSettings,
+                )
             }
         }
     }

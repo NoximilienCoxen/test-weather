@@ -38,6 +38,7 @@ fun SalaPioggiaScreen(
     palette: SalaPalette,
     position: () -> Float,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
     onSelectHour: (Int) -> Unit,
 ) {
     val hours = state.hours
@@ -54,6 +55,7 @@ fun SalaPioggiaScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(20.dp)) {

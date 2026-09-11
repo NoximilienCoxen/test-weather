@@ -53,6 +53,7 @@ fun SalaUvScreen(
     palette: SalaPalette,
     position: () -> Float,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
     onSelectHour: (Int) -> Unit,
 ) {
     val hours = state.hours
@@ -68,6 +69,7 @@ fun SalaUvScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(15.dp)) {
