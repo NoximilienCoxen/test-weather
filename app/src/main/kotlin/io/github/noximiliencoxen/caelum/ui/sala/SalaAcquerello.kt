@@ -4,16 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.roundToInt
 
 /**
@@ -168,6 +174,28 @@ private fun tintaPioggia(palette: SalaPalette): Color =
     if (palette.dark) SalaTokens.accent300 else SalaTokens.accent700
 
 /**
+ * La sagoma della parte illuminata, alla fase data.
+ *
+ * E' la stessa costruzione di `Bodies.kt::moon`: un semicerchio dal lato
+ * illuminato piu' la mediana, che rientra quando la luna e' falce e sporge
+ * quando e' gibbosa. Ripetuta qui e non richiamata perche' li' e' intrecciata
+ * col disegno; se dovesse cambiare, vanno cambiate tutte e due - ed e' scritto
+ * qui perche' chi tocca l'una trovi l'altra.
+ */
+private fun parteIlluminata(centro: Offset, r: Float, fase: Float): Path {
+    val crescente = fase < 0.5f
+    val terminatore = abs(cos(2.0 * PI * fase).toFloat())
+    val gibbosa = ((1f - cos(2.0 * PI * fase).toFloat()) / 2f) > 0.5f
+    val disco = Rect(centro.x - r, centro.y - r, centro.x + r, centro.y + r)
+    val mediana = Rect(centro.x - r * terminatore, centro.y - r, centro.x + r * terminatore, centro.y + r)
+    return Path().apply {
+        arcTo(disco, if (crescente) -90f else 90f, 180f, true)
+        arcTo(mediana, if (crescente) 90f else -90f, if (gibbosa) 180f else -180f, false)
+        close()
+    }
+}
+
+/**
  * La scultura di Sala I: disco, masse, pioggia, ombra.
  *
  * @param giroDeg quanto e' girata attorno alla verticale. E' il dito, e basta
@@ -180,6 +208,8 @@ fun DrawScope.scultura(
     palette: SalaPalette,
     notte: Boolean,
     giroDeg: Float,
+    /** La fase lunare vera, 0 novilunio e 0,5 plenilunio. Serve solo di notte. */
+    fase: Float? = null,
 ) {
     // L'unita' si misura sulla **larghezza**, non sul lato corto: la scultura
     // deve occupare la cassa come nel concept, e prendendo il minimo restava un
@@ -215,14 +245,33 @@ fun DrawScope.scultura(
         if (coperto) -0.32f * unita else -0.04f * unita,
         0.30f * unita,
     )
-    timbra(
-        timbro = acquerello.disco,
-        centro = Offset(camera.sx, camera.sy),
-        larghezza = discoRaggio * 2f * camera.scale,
-        altezza = discoRaggio * 2f * camera.scale,
-        tinta = tintaSole(notte),
-        alfa = if (coperto) 0.78f else 0.88f,
-    )
+    val centroDisco = Offset(camera.sx, camera.sy)
+    val diametro = discoRaggio * 2f * camera.scale
+    if (notte && fase != null) {
+        // **Di notte il disco e' la luna vera, con la sua fase.**
+        // Mostrava un tondo pieno a qualunque fase: Sala IV diceva "novilunio"
+        // e Sala I, nella stessa notte, dipingeva una luna piena. Due stanze
+        // della stessa galleria non possono raccontare due cieli diversi.
+        //
+        // Il tondo spento sotto, e sopra la sola parte illuminata, ritagliata
+        // sulla stessa geometria che usa `ui/render3d/Bodies.kt::moon`. Resta
+        // un timbro d'acquerello, non un disco piatto: la fase decide **dove**
+        // il pigmento si posa, non come.
+        timbra(acquerello.disco, centroDisco, diametro, diametro, tintaSole(true), alfa = 0.20f)
+        val illuminata = parteIlluminata(centroDisco, diametro / 2f, fase)
+        clipPath(illuminata) {
+            timbra(acquerello.disco, centroDisco, diametro, diametro, tintaSole(true), alfa = 0.92f)
+        }
+    } else {
+        timbra(
+            timbro = acquerello.disco,
+            centro = centroDisco,
+            larghezza = diametro,
+            altezza = diametro,
+            tinta = tintaSole(notte),
+            alfa = if (coperto) 0.78f else 0.88f,
+        )
+    }
 
     // ── Le masse, dalla piu' lontana alla piu' vicina ────────────────────────
     if (coperto) {

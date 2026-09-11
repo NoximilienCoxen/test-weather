@@ -105,6 +105,17 @@ private fun TreLinee(ink: Color) {
     }
 }
 
+/** La punta dell'indietro: due segmenti, disegnati come le tre linee. */
+@Composable
+private fun Freccia(ink: Color) {
+    Canvas(modifier = Modifier.size(10.dp, 16.dp)) {
+        val spessore = 1.8.dp.toPx()
+        val x = size.width
+        drawLine(ink, Offset(x, 0f), Offset(0f, size.height / 2f), strokeWidth = spessore)
+        drawLine(ink, Offset(0f, size.height / 2f), Offset(x, size.height), strokeWidth = spessore)
+    }
+}
+
 /**
  * L'indicatore di percorso: sette trattini, uno per sala, al posto della
  * colonna di icone del feed. Legge la posizione del carosello **dentro il
@@ -210,15 +221,22 @@ fun SalaServiceScaffold(
                 .padding(SalaContentPadding),
         ) {
             if (onClose != null) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(MinTouchTarget)
-                            .clickable(onClick = onClose),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        Text(text = "‹", style = SalaType.cardTitle, color = palette.ink)
-                    }
+                // **L'indietro era un carattere tipografico in un riquadro.**
+                // Un "‹" preso dal font sta dove decide il font, non dove
+                // serve: usciva piccolo, appoggiato in alto a sinistra di un
+                // bersaglio da 48dp, e senza una parola accanto nessuno sapeva
+                // cosa chiudesse. Adesso e' un segno **disegnato**, allineato
+                // al suo bersaglio, con scritto dove riporta.
+                Row(
+                    modifier = Modifier
+                        .height(MinTouchTarget)
+                        .clickable(onClick = onClose)
+                        .padding(end = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Freccia(palette.ink)
+                    Text(text = "Indietro", style = SalaType.sectionLabel, color = palette.ink)
                 }
             }
             SalaHeader(leading = title, trailing = "Servizi", ink = palette.ink, inkSoft = palette.inkSoft)

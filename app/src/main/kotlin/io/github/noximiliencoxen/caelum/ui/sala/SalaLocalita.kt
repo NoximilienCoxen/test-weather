@@ -156,9 +156,13 @@ private fun Riga(testo: String, colore: Color) {
     )
 }
 
-/** Il campo di ricerca, con lo stesso impianto che aveva nelle vecchie impostazioni. */
+/**
+ * Il campo di ricerca, con lo stesso impianto che aveva nelle vecchie
+ * impostazioni. Lo usano sia "Le localita'" sia il pannello delle impostazioni:
+ * due campi uguali scritti due volte divergono al primo che ne tocca uno.
+ */
 @Composable
-private fun CampoDiRicerca(
+internal fun CampoDiRicerca(
     valore: String,
     palette: SalaPalette,
     onValore: (String) -> Unit,

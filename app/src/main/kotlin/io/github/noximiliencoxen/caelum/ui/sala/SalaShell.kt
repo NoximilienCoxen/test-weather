@@ -201,6 +201,9 @@ fun SalaShell(
                     onChooseWindUnit = viewModel::setWindUnit,
                     onChooseCaptionStyle = viewModel::setCaptionStyle,
                     onToggleAlert = viewModel::setAlertToggle,
+                    onSearch = viewModel::search,
+                    onPickPlace = viewModel::choosePlace,
+                    onUseLocation = viewModel::useDeviceLocation,
                     onClose = viewModel::closeSettings,
                 )
             }

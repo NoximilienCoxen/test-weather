@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
 import io.github.noximiliencoxen.caelum.prefs.AlertToggles
@@ -26,6 +28,7 @@ import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 
 /**
  * Impostazioni: la carta e' collegata al tema che governa tutta la galleria.
@@ -41,6 +44,9 @@ fun SalaImpostazioniScreen(
     onChooseWindUnit: (SalaWindUnit) -> Unit,
     onChooseCaptionStyle: (CaptionStyle) -> Unit,
     onToggleAlert: (AlertToggleKind, Boolean) -> Unit,
+    onSearch: (String) -> Unit,
+    onPickPlace: (io.github.noximiliencoxen.caelum.data.Place) -> Unit,
+    onUseLocation: () -> Unit,
     onClose: () -> Unit,
 ) {
     SalaServiceScaffold(
@@ -59,6 +65,53 @@ fun SalaImpostazioniScreen(
                         style = SalaType.sectionLabel,
                         color = palette.inkAccent,
                     )
+                }
+            }
+            // **La localita' sta in cima**, prima di carta e gradi: e' l'unica
+            // impostazione che cambia i numeri invece di come si vedono.
+            item {
+                Column(modifier = Modifier.padding(top = 30.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(text = "Località", style = SalaType.sectionLabel, color = palette.inkSoft)
+                    Text(
+                        text = state.place.name,
+                        style = SalaType.cardTitle,
+                        color = palette.ink,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = "Usa la mia posizione",
+                        style = SalaType.sectionLabel,
+                        color = palette.inkAccent,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(MinTouchTarget)
+                            .clickable(onClick = onUseLocation)
+                            .padding(top = 12.dp),
+                    )
+                    CampoDiRicerca(valore = state.query, palette = palette, onValore = onSearch)
+                    when {
+                        state.searchError != null ->
+                            Text(state.searchError!!, style = SalaType.footnote, color = palette.inkSoft)
+                        state.searching ->
+                            Text("Sto cercando…", style = SalaType.footnote, color = palette.inkSoft)
+                        state.query.trim().length >= 2 && state.results.isEmpty() ->
+                            Text("Nessuna località con questo nome", style = SalaType.footnote, color = palette.inkSoft)
+                    }
+                    state.results.take(6).forEach { trovata ->
+                        Text(
+                            text = listOfNotNull(trovata.name, trovata.admin).joinToString(" · "),
+                            style = SalaType.value,
+                            color = palette.ink,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(MinTouchTarget)
+                                .clickable { onPickPlace(trovata); onSearch("") }
+                                .padding(top = 12.dp),
+                        )
+                    }
                 }
             }
             item {
