@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,11 +40,12 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.label
+import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
+import io.github.noximiliencoxen.caelum.ui.sala.scultura
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
-import kotlin.math.cos
 import kotlin.math.roundToInt
 
 /**
@@ -170,64 +170,31 @@ private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
 @Composable
 private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaPalette) {
     var rotationDeg by remember { mutableFloatStateOf(0f) }
-    val night = phase == SalaPhase.NOTTE
-    val heavy = condition == SalaCondition.TEMPORALE || condition == SalaCondition.TEMPORALE_GRANDINE
-    val cloudy = condition != SalaCondition.SERENO
-    val skewX = (0.42f + 0.58f * cos(Math.toRadians(rotationDeg.toDouble()))).toFloat()
+    val acquerello = LocalAcquerello.current
+    val notte = phase == SalaPhase.NOTTE
 
-    Box(
+    // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
+    // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
+    // l'albero a ogni fotogramma del dito invece di ridipingere e basta.
+    val giro = { rotationDeg }
+
+    Canvas(
         modifier = Modifier
-            .size(230.dp, 190.dp)
+            .size(250.dp, 200.dp)
             .pointerInput(Unit) {
+                // Solo orizzontale: il verticale e' del carosello fra le sale.
                 detectHorizontalDragGestures { _, dragAmount ->
                     rotationDeg = (rotationDeg + dragAmount * 0.35f).coerceIn(-70f, 70f)
                 }
             },
-        contentAlignment = Alignment.Center,
     ) {
-        Canvas(modifier = Modifier.size(230.dp, 190.dp).graphicsLayer { scaleX = skewX }) {
-            val sunFill = if (night) palette.ink.copy(alpha = 0.85f) else palette.wash.getOrElse(0) { palette.inkAccent }
-            val cx = if (cloudy) size.width * 0.40f else size.width * 0.5f
-            val cy = if (cloudy) size.height * 0.35f else size.height * 0.44f
-            val r = if (cloudy) size.width * 0.16f else size.width * 0.23f
-
-            val discAlpha = if (night) 0.9f else if (cloudy) 0.6f else 0.9f
-            drawCircle(color = sunFill.copy(alpha = discAlpha), radius = r, center = Offset(cx, cy))
-
-            if (cloudy) {
-                val cloudColor = if (heavy) palette.ink.copy(alpha = 0.5f) else palette.inkSoft
-                drawOval(color = cloudColor, topLeft = Offset(size.width * 0.28f, size.height * 0.46f), size = androidx.compose.ui.geometry.Size(size.width * 0.54f, size.height * 0.30f))
-                drawOval(color = cloudColor.copy(alpha = cloudColor.alpha * 0.7f), topLeft = Offset(size.width * 0.5f, size.height * 0.40f), size = androidx.compose.ui.geometry.Size(size.width * 0.4f, size.height * 0.24f))
-            }
-
-            if (condition == SalaCondition.PIOGGIA || heavy) {
-                val rainColor = palette.inkAccent
-                for (i in 0 until 7) {
-                    val x = size.width * (0.28f + i * 0.075f)
-                    val yTop = size.height * (0.72f + (i % 3) * 0.03f)
-                    drawLine(rainColor, Offset(x, yTop), Offset(x - 4f, yTop + 26f), strokeWidth = if (i % 2 == 0) 3f else 2f)
-                }
-            }
-            if (condition == SalaCondition.GRANDINE || condition == SalaCondition.TEMPORALE_GRANDINE) {
-                for (i in 0 until 6) {
-                    val x = size.width * (0.30f + i * 0.08f)
-                    val y = size.height * (if (i % 2 == 0) 0.80f else 0.86f)
-                    drawCircle(palette.inkAccent, radius = if (i % 2 == 0) 4.6f else 3.4f, center = Offset(x, y))
-                }
-            }
-            if (heavy) {
-                val bolt = Path().apply {
-                    moveTo(size.width * 0.62f, size.height * 0.54f)
-                    lineTo(size.width * 0.52f, size.height * 0.76f)
-                    lineTo(size.width * 0.59f, size.height * 0.76f)
-                    lineTo(size.width * 0.53f, size.height * 0.92f)
-                    lineTo(size.width * 0.70f, size.height * 0.70f)
-                    lineTo(size.width * 0.61f, size.height * 0.70f)
-                    close()
-                }
-                drawPath(bolt, color = SalaTokens.accent2, alpha = 0.85f)
-            }
-        }
+        scultura(
+            acquerello = acquerello,
+            condition = condition,
+            palette = palette,
+            notte = notte,
+            giroDeg = giro(),
+        )
     }
 }
 

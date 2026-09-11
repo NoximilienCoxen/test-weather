@@ -82,10 +82,14 @@ fun SalaBackground(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    // La carta sta **sotto le macchie**, come su un foglio vero: la fibra e' la
+    // pagina, non un filtro appiccicato sopra il disegno.
+    val acquerello = LocalAcquerello.current
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(palette.ground)
+            .drawBehind { granaDiCarta(acquerello, forza = if (palette.dark) 0.14f else 0.09f) }
             .drawBehind {
                 val sx = size.width / SalaBlobs.REF_W
                 val sy = size.height / SalaBlobs.REF_H
