@@ -22,12 +22,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
@@ -37,6 +42,7 @@ import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
+import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.label
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
@@ -82,7 +88,7 @@ fun SalaSettimanaScreen(
                 modifier = Modifier.padding(top = 15.dp),
             )
 
-            WeekChart(days = days, selected = selected, palette = palette, modifier = Modifier.padding(top = 15.dp))
+            WeekChart(days = days, selected = selected, unit = state.unit, palette = palette, modifier = Modifier.padding(top = 15.dp))
 
             Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
                 days.forEachIndexed { index, d ->
@@ -124,27 +130,93 @@ fun SalaSettimanaScreen(
 private fun WeekChart(
     days: List<DayForecast>,
     selected: Int,
+    unit: TempUnit,
     palette: SalaPalette,
     modifier: Modifier = Modifier,
 ) {
-    Canvas(modifier = modifier.fillMaxWidth().height(104.dp)) {
+    val misure = SalaType.hourLabel
+    val disegnatore = rememberTextMeasurer()
+    Canvas(modifier = modifier.fillMaxWidth().height(150.dp)) {
         if (days.isEmpty()) return@Canvas
-        val maxes = days.map { it.tempMax ?: 0.0 }
-        val mins = days.map { it.tempMin ?: 0.0 }
-        val lo = (mins.minOrNull() ?: 0.0) - 2.0
-        val hi = (maxes.maxOrNull() ?: 1.0) + 2.0
-        val span = (hi - lo).takeIf { it > 0.01 } ?: 1.0
-        fun y(v: Double) = (size.height - 18f - ((v - lo) / span).toFloat() * (size.height - 50f))
-        fun x(i: Int) = i / (days.size - 1).coerceAtLeast(1).toFloat() * size.width
+        val maxes = days.map { it.tempMax }
+        val mins = days.map { it.tempMin }
+        val validi = (maxes + mins).filterNotNull()
+        if (validi.isEmpty()) return@Canvas
 
-        val maxPoints = days.indices.map { i -> Offset(x(i), y(maxes[i])) }
-        val minPoints = days.indices.map { i -> Offset(x(i), y(mins[i])) }
-        drawPath(buildLinePath(maxPoints), color = io.github.noximiliencoxen.caelum.ui.sala.SalaTokens.accent2_400, style = Stroke(width = 3.5f))
-        drawPath(buildLinePath(minPoints), color = palette.inkAccent, style = Stroke(width = 3.5f))
+        // La scala si prende dai dati veri, con un margine sopra e sotto per
+        // non far toccare le etichette al bordo.
+        val lo = validi.min() - 1.5
+        val hi = validi.max() + 1.5
+        val span = (hi - lo).takeIf { it > 0.01 } ?: 1.0
+
+        val altoTesti = 22f
+        val bassoTesti = 22f
+        val utile = size.height - altoTesti - bassoTesti
+        fun y(v: Double) = altoTesti + (1.0 - (v - lo) / span).toFloat() * utile
+        fun x(i: Int) = (i + 0.5f) / days.size * size.width
+
+        // ── La banda: e' lei il dato ─────────────────────────────────────────
+        // Due linee nude dicevano soltanto "una sta sopra l'altra". Quello che
+        // conta di un giorno e' **l'escursione**: quanto si passa dal minimo al
+        // massimo. Riempita, la si legge senza doverla ricostruire con gli
+        // occhi, e il giorno piu' sbalzato salta fuori da solo.
         days.indices.forEach { i ->
-            val r = if (i == selected) 5f else 3f
-            drawCircle(io.github.noximiliencoxen.caelum.ui.sala.SalaTokens.accent2_400, radius = r, center = maxPoints[i])
-            drawCircle(palette.inkAccent, radius = r, center = minPoints[i])
+            val ma = maxes[i] ?: return@forEach
+            val mi = mins[i] ?: return@forEach
+            val larghezza = size.width / days.size * 0.30f
+            drawRoundRect(
+                color = palette.inkAccent.copy(alpha = if (i == selected) 0.34f else 0.16f),
+                topLeft = Offset(x(i) - larghezza / 2f, y(ma)),
+                size = Size(larghezza, (y(mi) - y(ma)).coerceAtLeast(2f)),
+                cornerRadius = CornerRadius(larghezza / 2f),
+            )
+        }
+
+        // Le due linee restano, ma sopra la banda e piu' sottili: dicono
+        // l'andamento della settimana, che la banda da sola non racconta.
+        val puntiMax = days.indices.mapNotNull { i -> maxes[i]?.let { Offset(x(i), y(it)) } }
+        val puntiMin = days.indices.mapNotNull { i -> mins[i]?.let { Offset(x(i), y(it)) } }
+        if (puntiMax.size > 1) {
+            drawPath(buildLinePath(puntiMax), color = SalaTokens.accent2_500, style = Stroke(width = 2.2f))
+        }
+        if (puntiMin.size > 1) {
+            drawPath(buildLinePath(puntiMin), color = palette.inkAccent, style = Stroke(width = 2.2f))
+        }
+
+        // ── I numeri, che erano quello che mancava ───────────────────────────
+        days.indices.forEach { i ->
+            val ma = maxes[i]
+            val mi = mins[i]
+            val scelto = i == selected
+            if (ma != null) {
+                val testo = "${unit.from(ma).roundToInt()}°"
+                val m = disegnatore.measure(testo, misure)
+                drawText(
+                    textLayoutResult = m,
+                    color = if (scelto) palette.ink else palette.inkSoft,
+                    topLeft = Offset(x(i) - m.size.width / 2f, y(ma) - m.size.height - 3f),
+                )
+            }
+            if (mi != null) {
+                val testo = "${unit.from(mi).roundToInt()}°"
+                val m = disegnatore.measure(testo, misure)
+                drawText(
+                    textLayoutResult = m,
+                    color = if (scelto) palette.ink else palette.inkSoft,
+                    topLeft = Offset(x(i) - m.size.width / 2f, y(mi) + 3f),
+                )
+            }
+            if (scelto) {
+                // Il giorno scelto ha un filo verticale che lo lega alla
+                // striscia sotto: senza, la selezione si vedeva solo da un
+                // pallino piu' grosso, che non e' un legame.
+                drawLine(
+                    color = palette.inkAccent.copy(alpha = 0.45f),
+                    start = Offset(x(i), altoTesti - 6f),
+                    end = Offset(x(i), size.height - bassoTesti + 6f),
+                    strokeWidth = 1.2f,
+                )
+            }
         }
     }
 }
