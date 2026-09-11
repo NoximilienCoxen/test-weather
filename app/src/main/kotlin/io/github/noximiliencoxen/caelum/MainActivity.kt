@@ -70,17 +70,29 @@ class MainActivity : ComponentActivity() {
      * che non viene da dove sembra. Li' la regola vale per il codice
      * dell'app, qui per chi sta fuori.
      *
-     * **`BuildConfig.DEBUG` e non un flag nuovo**, perche' `capture.sh` in CI
-     * pilota con questi extra l'APK di debug, ed e' l'unico modo che il giro ha
-     * di mettere in scena pioggia, allerte e ore notturne senza un dito. Un
-     * interruttore inventato apposta li spegnerebbe anche li'. Attenzione a non
-     * confonderlo con `isDebuggable`, che in questo progetto e' **falso** anche
-     * in debug (si misura la fluidita' della build vera): `BuildConfig.DEBUG`
-     * resta comunque vero, e resta quello giusto.
+     * **La guardia e' `AGGANCI_CATTURA`, e non piu' `BuildConfig.DEBUG`, e il
+     * perche' e' una lezione pagata.** Qui c'era scritto che `DEBUG` non va
+     * confuso con `isDebuggable` - falso in questo progetto anche in debug,
+     * perche' la fluidita' si misura sulla build vera - e che `DEBUG` "resta
+     * comunque vero". **Non e' cosi'**: AGP genera `BuildConfig.DEBUG`
+     * proprio da `isDebuggable`, non dal nome del tipo di build. Spegnendo
+     * `isDebuggable` si era spento anche `DEBUG`, e questa funzione usciva
+     * alla seconda riga **in ogni build**: `--ei ora`, `--ei sezione`,
+     * `--ei allerta` e `--ei meteo` non hanno mai fatto niente.
+     *
+     * Nessuno se n'era accorto perche' la prima scheda del feed era animata:
+     * sei scatti della stessa scheda uscivano diversi fra loro e passavano per
+     * sei schede. Sala da ferma disegna zero fotogrammi, e sei scatti identici
+     * hanno fatto vedere il guasto. A dirlo con certezza, pero', non sono stati
+     * i pixel - due deduzioni di fila da quelli erano sbagliate - ma la riga di
+     * log qui sotto, che non e' mai comparsa nel logcat della cattura.
+     *
+     * Il flag nuovo fa quello che si credeva facesse `DEBUG`: acceso sulla
+     * build di debug che `capture.sh` pilota, spento sulla release.
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
-        if (!BuildConfig.DEBUG) return
+        if (!BuildConfig.AGGANCI_CATTURA) return
         // Stessa ragione dell'unico log del modello (vedi `previsione pronta`):
         // serve alla cattura in CI. Senza, che un aggancio sia arrivato si puo'
         // solo **dedurre dai pixel**, e dedurlo e' gia' costato due giri interi
