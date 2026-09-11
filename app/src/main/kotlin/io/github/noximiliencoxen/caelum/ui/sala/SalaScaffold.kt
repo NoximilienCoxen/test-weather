@@ -2,7 +2,6 @@ package io.github.noximiliencoxen.caelum.ui.sala
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.weight
-import androidx.compose.foundation.ripple.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -54,17 +51,7 @@ private fun SalaHeader(
         Box(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .let {
-                    if (onLeadingClick != null) {
-                        it.clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ripple(bounded = false),
-                            onClick = onLeadingClick,
-                        )
-                    } else {
-                        it
-                    }
-                },
+                .let { if (onLeadingClick != null) it.clickable(onClick = onLeadingClick) else it },
         ) {
             Text(
                 text = leading.uppercase(),
@@ -190,11 +177,7 @@ fun SalaServiceScaffold(
                     Box(
                         modifier = Modifier
                             .size(MinTouchTarget)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = ripple(bounded = false),
-                                onClick = onClose,
-                            ),
+                            .clickable(onClick = onClose),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Text(text = "‹", style = SalaType.cardTitle, color = palette.ink)
