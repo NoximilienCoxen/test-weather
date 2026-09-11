@@ -744,6 +744,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
     fun requestRoom(index: Int) {
         val picked = SalaRoom.entries.getOrNull(index) ?: return
+        Log.i(TAG, "sala chiesta: $index -> $picked")
         _state.update { it.copy(room = picked, roomRequest = picked) }
     }
 

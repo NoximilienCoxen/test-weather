@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -80,6 +81,17 @@ class MainActivity : ComponentActivity() {
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
         if (!BuildConfig.DEBUG) return
+        // Stessa ragione dell'unico log del modello (vedi `previsione pronta`):
+        // serve alla cattura in CI. Senza, che un aggancio sia arrivato si puo'
+        // solo **dedurre dai pixel**, e dedurlo e' gia' costato due giri interi
+        // su `--ei sezione` muto - per due volte la deduzione era sbagliata.
+        Log.i(
+            TAG,
+            "agganci: ora=${intent.getIntExtra(EXTRA_HOUR, -1)} " +
+                "sezione=${intent.getIntExtra(EXTRA_SECTION, -1)} " +
+                "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
+                "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)}",
+        )
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il
@@ -99,6 +111,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
+        /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
+        const val TAG = "meteo"
+
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
         const val EXTRA_YAW = "giro"
