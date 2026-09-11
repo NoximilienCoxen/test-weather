@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.Tema
 import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.hasFiniteCoordinates
 import io.github.noximiliencoxen.caelum.data.key
@@ -59,6 +60,8 @@ data class Settings(
     val welcomed: Boolean = false,
     /** Motore numerico scelto per la previsione. */
     val model: WeatherModel = WeatherModel.AUTO,
+    /** Chiaro, scuro, o l'ora vera. Vedi `data/Tema.kt`. */
+    val tema: Tema = Tema.AUTO,
     /** Localita' salvate a parte dalla scelta corrente. */
     val favorites: List<Place> = emptyList(),
     /**
@@ -142,6 +145,7 @@ class SettingsPrefs(private val context: Context) {
             model = prefs[KEY_MODEL]
                 ?.let { saved -> WeatherModel.entries.firstOrNull { it.name == saved } }
                 ?: WeatherModel.AUTO,
+            tema = Tema.of(prefs[KEY_TEMA]),
             favorites = decodeFavorites(prefs[KEY_FAVORITES]),
             dismissedAlertIds = prefs[KEY_ALERTS_DISMISSED].orEmpty(),
             dismissedAlertWeight = prefs[KEY_ALERTS_WEIGHT] ?: 0,
@@ -175,6 +179,10 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setModel(model: WeatherModel) {
         context.settingsDataStore.edit { it[KEY_MODEL] = model.name }
+    }
+
+    suspend fun setTema(tema: Tema) {
+        context.settingsDataStore.edit { it[KEY_TEMA] = tema.name }
     }
 
     /** Aggiunge o toglie una localita' dai preferiti, a seconda che ci sia gia'. */
@@ -233,6 +241,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_FOLLOWS = booleanPreferencesKey("segue_posizione")
         val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
         val KEY_MODEL = stringPreferencesKey("modello")
+        val KEY_TEMA = stringPreferencesKey("tema")
         val KEY_FAVORITES = stringPreferencesKey("preferiti")
         val KEY_ALERTS_DISMISSED = stringSetPreferencesKey("allerte_chiuse")
         val KEY_ALERTS_WEIGHT = intPreferencesKey("allerte_chiuse_peso")

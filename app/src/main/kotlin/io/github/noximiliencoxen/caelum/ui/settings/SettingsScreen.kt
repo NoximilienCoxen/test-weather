@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.ui.settings
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,22 +26,17 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.Tema
 import io.github.noximiliencoxen.caelum.data.WeatherModel
-import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
@@ -87,6 +81,7 @@ fun SettingsScreen(
     onChoosePlace: (Place) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseModel: (WeatherModel) -> Unit,
+    onChooseTema: (Tema) -> Unit,
     onToggleFavorite: (Place) -> Unit,
     onUseLocation: () -> Unit,
     onClose: () -> Unit,
@@ -98,8 +93,6 @@ fun SettingsScreen(
     val askPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted -> if (granted) onUseLocation() }
-
-    var sourcesOpen by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -128,7 +121,84 @@ fun SettingsScreen(
             // stesso blocco: prima era un elenco verticale unico in cui il nome
             // della citta', le coordinate, il rilevamento e la ricerca avevano
             // tutti lo stesso peso, e quindi nessuno ne aveva.
+            // ── DOVE ────────────────────────────────────────────────────
+            //
+            // **L'ordine e' rovesciato, e non e' un vezzo.** Prima veniva il
+            // nome della localita' a corpo venticinque, poi il dettaglio, poi le
+            // coordinate, poi un divisore, poi la posizione, e solo allora la
+            // ricerca: quasi trecento punti prima di arrivare all'unica cosa
+            // che chi apre questa schermata sta quasi sempre cercando. Su un
+            // telefono la ricerca finiva sotto la piega, e da li' nasceva il
+            // vicolo cieco vero - scelta una localita' proposta, non si tornava
+            // piu' indietro perche' i due modi per farlo erano entrambi fuori
+            // schermo.
+            //
+            // Adesso vengono per primi i due comandi, e il posto in cui si e'
+            // viene dopo: si legge come "dove vuoi andare", non come "dove sei".
             item { SectionTitle("DOVE") }
+            item {
+                SearchField(
+                    value = state.query,
+                    onValueChange = onQuery,
+                    placeholder = "CERCA UNA CITTÀ",
+                )
+            }
+            item { Spacer(Modifier.height(8.dp)) }
+            item {
+                Block {
+                    LocationRow(
+                        following = state.followsLocation,
+                        locating = state.locating,
+                        unavailable = state.locationUnavailable,
+                        onClick = {
+                            askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        },
+                    )
+                }
+            }
+
+            // I risultati della ricerca, quando ce ne sono. In colonna e non a
+            // pillole: un chip mostra solo il nome, e fra due omonimi e' la riga
+            // di dettaglio a dire quale sia quello giusto.
+            //
+            // **Le localita' proposte non ci sono piu'.** Erano suggerimenti
+            // dell'app - i posti piu' piovosi del mondo, messi li' per poter
+            // vedere la pioggia senza aspettarla - e facevano due danni: si
+            // prendevano lo spazio della ricerca, e chi ne toccava una per
+            // curiosita' si ritrovava altrove senza una via di ritorno
+            // evidente. Per vedere la pioggia c'e' `--ei meteo`, che e' il posto
+            // giusto per una cosa che serve a chi sviluppa.
+            item {
+                val message = when {
+                    state.searching -> "RICERCA IN CORSO…"
+                    state.searchError != null -> state.searchError.uppercase()
+                    state.query.trim().length >= 2 && state.results.isEmpty() -> "NESSUN RISULTATO"
+                    else -> null
+                }
+                if (message != null) {
+                    Text(
+                        text = message,
+                        style = MeteoType.caption,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+                    )
+                } else {
+                    Spacer(Modifier.height(10.dp))
+                }
+            }
+            items(state.results, key = { "${it.name}${it.latitude}${it.longitude}" }) { place ->
+                PlaceRow(
+                    place = place,
+                    selected = place.latitude == state.place.latitude &&
+                        place.longitude == state.place.longitude,
+                    onClick = { onChoosePlace(place) },
+                )
+            }
+
+            // Dove si sta adesso: sotto i comandi, perche' e' una conferma e non
+            // una scelta. La stella resta qui - e' l'unico posto in cui si puo'
+            // salvare la localita' corrente.
+            item { Spacer(Modifier.height(10.dp)) }
             item {
                 Block {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -144,9 +214,7 @@ fun SettingsScreen(
                         )
                     }
                     Text(
-                        text = listOf(state.place.detail.uppercase())
-                            .filter { it.isNotBlank() }
-                            .joinToString(),
+                        text = state.place.detail.uppercase(),
                         style = MeteoType.caption,
                         color = SettingsSecondary,
                     )
@@ -157,80 +225,7 @@ fun SettingsScreen(
                         text = coordinates(state.place.latitude, state.place.longitude),
                         style = MeteoType.caption,
                         color = SettingsSecondary,
-                        modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
-                    )
-                    Divider()
-                    LocationRow(
-                        following = state.followsLocation,
-                        locating = state.locating,
-                        unavailable = state.locationUnavailable,
-                        onClick = {
-                            askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        },
-                    )
-                }
-            }
-
-            item { Spacer(Modifier.height(10.dp)) }
-            item {
-                SearchField(
-                    value = state.query,
-                    onValueChange = onQuery,
-                    placeholder = "CERCA UNA CITTÀ",
-                )
-            }
-
-            item {
-                val message = when {
-                    state.searching -> "RICERCA IN CORSO…"
-                    state.searchError != null -> state.searchError.uppercase()
-                    state.query.trim().length >= 2 && state.results.isEmpty() -> "NESSUN RISULTATO"
-                    state.query.isBlank() -> "OPPURE SCEGLI FRA QUESTE"
-                    else -> null
-                }
-                Text(
-                    text = message.orEmpty(),
-                    style = MeteoType.caption,
-                    color = SettingsSecondary,
-                    modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
-                )
-            }
-
-            // Le scorciatoie scorrono di lato, non in colonna: sono una manciata
-            // di nomi brevi, e in verticale si mangiavano mezza schermata per
-            // dire quello che una fila dice in una riga. Le prime della lista
-            // sono fra i posti piu' piovosi che esistano, ed e' voluto: con una
-            // citta' sola non c'era modo di vedere la pioggia se non aspettando
-            // che piovesse.
-            if (state.results.isEmpty()) {
-                item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        items(
-                            items = Place.SUGGESTIONS,
-                            key = { "${it.name}${it.latitude}" },
-                        ) { place ->
-                            PlaceChip(
-                                place = place,
-                                selected = place.latitude == state.place.latitude &&
-                                    place.longitude == state.place.longitude,
-                                onClick = { onChoosePlace(place) },
-                            )
-                        }
-                    }
-                }
-            } else {
-                // I risultati della ricerca restano in colonna, e non e' una
-                // dimenticanza: un chip mostra solo il nome, e fra due omonimi
-                // e' la riga di dettaglio a dire quale sia quello giusto.
-                items(state.results, key = { "${it.name}${it.latitude}${it.longitude}" }) { place ->
-                    PlaceRow(
-                        place = place,
-                        selected = place.latitude == state.place.latitude &&
-                            place.longitude == state.place.longitude,
-                        onClick = { onChoosePlace(place) },
+                        modifier = Modifier.padding(top = 2.dp),
                     )
                 }
             }
@@ -307,55 +302,58 @@ fun SettingsScreen(
                 }
             }
 
-            // DA DOVE. Undici righe di documentazione che aperte occupavano piu'
-            // schermo di tutto il resto messo insieme: non sono impostazioni,
-            // sono una dichiarazione di provenienza, e stanno chiuse finche' non
-            // le si cerca.
+            // ── ASPETTO ─────────────────────────────────────────────────
+            //
+            // **Il tema qui non e' una tavolozza, e' un orologio.** In
+            // quest'app non esistono due insiemi di colori fra cui scegliere:
+            // fondo, testi, tinte delle grandezze e luce della scena dipinta
+            // discendono tutti da quanto e' alto il sole all'ora mostrata.
+            // Quindi chiaro e scuro **bloccano l'ora** - mezzogiorno e
+            // mezzanotte - e tutto il resto si ricalcola da solo. Vedi
+            // `data/Tema.kt` per il ragionamento per esteso.
+            item { Spacer(Modifier.height(26.dp)) }
+            item { SectionTitle("ASPETTO") }
+            item {
+                Block {
+                    TemaChoice(
+                        current = state.tema,
+                        onChoose = onChooseTema,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                    )
+                    Text(
+                        text = "Automatico segue il sole della località: l'app si " +
+                            "schiarisce all'alba e si spegne al tramonto. Chiaro e " +
+                            "scuro fermano quell'ora.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = SettingsSecondary,
+                        modifier = Modifier.padding(top = 10.dp),
+                    )
+                }
+            }
+
+            // ── LA PROVENIENZA, IN UNA RIGA ─────────────────────────────────
+            //
+            // Erano undici righe dietro un interruttore: servizio, quattro
+            // endpoint, chiave d'accesso, fuso orario, alba e tramonto, fase
+            // lunare. Sono uscite, e resta questa.
+            //
+            // **Non resta per gusto: la CC BY 4.0 la pretende.** I dati di
+            // Open-Meteo si possono usare liberamente, anche qui, a condizione
+            // di dire da dove vengono. Togliere anche questa riga non sarebbe
+            // una schermata piu' pulita, sarebbe distribuire dati altrui senza
+            // credito - e il giorno in cui l'app finisce su uno store diventa un
+            // problema vero, non una questione di stile.
+            //
+            // Il resto era documentazione tecnica: chi la vuole la trova nel
+            // codice, che e' dove vive la documentazione tecnica.
             item { Spacer(Modifier.height(26.dp)) }
             item {
-                SectionTitle(
-                    text = "DA DOVE ARRIVANO I DATI",
-                    open = sourcesOpen,
-                    onToggle = { sourcesOpen = !sourcesOpen },
+                Text(
+                    text = "Dati meteo di Open-Meteo.com, licenza CC BY 4.0. " +
+                        "La fase lunare è calcolata nell'app.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = SettingsSecondary,
                 )
-            }
-            if (sourcesOpen) {
-                item {
-                    Block {
-                        SourceRow("SERVIZIO", "OPEN-METEO.COM")
-                        SourceRow(
-                            "MODELLO",
-                            if (state.model == WeatherModel.AUTO) {
-                                "MISCELA AUTOMATICA DEI MODELLI NAZIONALI"
-                            } else {
-                                "${state.model.label} (ARPAE, ALTA RISOLUZIONE ITALIA)"
-                            },
-                        )
-                        SourceRow("PREVISIONE", WeatherRepository.FORECAST_ENDPOINT)
-                        SourceRow("RICERCA LUOGHI", WeatherRepository.GEOCODING_ENDPOINT)
-                        SourceRow(
-                            "GRANDEZZE ORARIE",
-                            WeatherRepository.HOURLY_VARS.replace(",", ", ").uppercase(),
-                        )
-                        SourceRow(
-                            "GRANDEZZE GIORNALIERE",
-                            WeatherRepository.DAILY_VARS.replace(",", ", ").uppercase(),
-                        )
-                        SourceRow("FUSO ORARIO", "QUELLO DELLA LOCALITÀ, DEDOTTO DALLE COORDINATE")
-                        SourceRow(
-                            "ULTIMO AGGIORNAMENTO",
-                            state.forecast?.fetchedAt?.format(CLOCK)
-                                ?.let { "$it, ORA DEL TELEFONO" } ?: "MAI",
-                        )
-                        SourceRow("CHIAVE D'ACCESSO", "NESSUNA: L'USO NON COMMERCIALE È LIBERO")
-                        SourceRow("LICENZA DEI DATI", "CC BY 4.0")
-                        SourceRow(
-                            "ALBA E TRAMONTO",
-                            "CALCOLATI DA OPEN-METEO PER QUESTE COORDINATE",
-                        )
-                        SourceRow("FASE LUNARE", "CALCOLATA NELL'APP: L'API NON LA FORNISCE")
-                    }
-                }
             }
 
             item { Spacer(Modifier.height(40.dp)) }
@@ -406,39 +404,19 @@ private fun LocationRow(
 }
 
 @Composable
-private fun SectionTitle(
-    text: String,
-    open: Boolean? = null,
-    onToggle: (() -> Unit)? = null,
-) {
-    val interaction = remember { MutableInteractionSource() }
-    Column(
-        modifier = if (onToggle == null) {
-            Modifier
-        } else {
-            Modifier.clickable(
-                interactionSource = interaction,
-                indication = null,
-                onClick = onToggle,
-            )
-        },
-    ) {
+private fun SectionTitle(text: String) {
+    // **Niente piu' ramo apribile.** I due parametri `open` e `onToggle`
+    // servivano a un blocco solo - il papiro della provenienza - e con quello
+    // se ne vanno: un titolo che *puo'* essere un interruttore e' un titolo che
+    // ogni chiamante deve chiedersi se lo sia.
+    Column {
         Spacer(Modifier.height(10.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = text,
-                style = MeteoType.caption,
-                color = SettingsSecondary,
-                modifier = Modifier.weight(1f),
-            )
-            if (open != null) {
-                Text(
-                    text = if (open) "CHIUDI" else "MOSTRA",
-                    style = MeteoType.caption,
-                    color = SettingsPrimary,
-                )
-            }
-        }
+        Text(
+            text = text,
+            style = MeteoType.caption,
+            color = SettingsSecondary,
+            modifier = Modifier.fillMaxWidth(),
+        )
         Box(
             modifier = Modifier
                 .padding(top = 6.dp, bottom = 10.dp)
@@ -495,19 +473,6 @@ private fun PlaceChip(place: Place, selected: Boolean, onClick: () -> Unit) {
         onClick = onClick,
         role = androidx.compose.ui.semantics.Role.RadioButton,
     )
-}
-
-@Composable
-private fun SourceRow(label: String, value: String) {
-    Column(modifier = Modifier.padding(bottom = 12.dp)) {
-        Text(text = label, style = MeteoType.caption, color = SettingsSecondary)
-        Text(
-            text = value,
-            style = MeteoType.value,
-            color = SettingsPrimary,
-            modifier = Modifier.padding(top = 3.dp),
-        )
-    }
 }
 
 @Composable
@@ -592,6 +557,31 @@ private fun ModelChoice(
  * dell'app. Il nome cambia con lo stato, cosi' chi ascolta sente cosa fara' il
  * tocco invece di sentire "stella".
  */
+/**
+ * Chiaro, scuro, automatico.
+ *
+ * Tre pillole e non un interruttore a due stati: "automatico" non e' il mezzo
+ * fra chiaro e scuro, e' una terza cosa - lascia decidere al sole - e un
+ * cursore lo farebbe sembrare una via di mezzo.
+ */
+@Composable
+private fun TemaChoice(
+    current: Tema,
+    onChoose: (Tema) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Tema.entries.forEach { tema ->
+            MeteoPill(
+                label = tema.label,
+                selected = tema == current,
+                onClick = { onChoose(tema) },
+                role = androidx.compose.ui.semantics.Role.RadioButton,
+            )
+        }
+    }
+}
+
 @Composable
 private fun FavoriteStar(filled: Boolean, onClick: () -> Unit) {
     val color = SettingsPrimary

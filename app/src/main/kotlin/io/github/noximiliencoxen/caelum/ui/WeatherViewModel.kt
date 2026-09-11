@@ -13,6 +13,8 @@ import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.data.Tema
+import io.github.noximiliencoxen.caelum.data.forcedAltitude
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelum.data.alertsAreDismissed
@@ -214,6 +216,8 @@ data class UiState(
     val forcedYawDeg: Float? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
+    /** Chiaro, scuro, o l'ora vera. Vedi `data/Tema.kt`. */
+    val tema: Tema = Tema.AUTO,
     /** Motore numerico scelto per la previsione. */
     val model: WeatherModel = WeatherModel.AUTO,
     /** Localita' salvate a parte dalla scelta corrente. */
@@ -340,6 +344,14 @@ data class UiState(
      */
     val skyAltitude: Float
         get() {
+            // **Il tema scelto vince, e vince qui.** Non esiste una tavolozza
+            // chiara e una scura fra cui scegliere: tutto il colore di
+            // quest'app discende da questo numero, quindi bloccare il tema vuol
+            // dire bloccare l'ora del sole. Intervenendo alla sorgente, il
+            // fondo, i testi, le tinte delle grandezze e la luce della scena
+            // dipinta si ricalcolano tutti da soli - nessuno di loro deve
+            // sapere che esiste un tema.
+            tema.forcedAltitude?.let { return it }
             val moment = hour?.time ?: return 0.62f
             val day = forecast?.dayOf(moment)
             return SunClock.altitude(
@@ -374,6 +386,11 @@ data class UiState(
      */
     val skyEvening: Float
         get() {
+            // A ora bloccata anche questo si ferma a meta': alba e tramonto
+            // sono i due estremi, e un tema fisso non guarda ne' di qua ne' di
+            // la'. Senza, il cielo scuro prenderebbe il rosa del mattino su un
+            // sole che non sta sorgendo.
+            if (tema != Tema.AUTO) return 0.5f
             val moment = hour?.time ?: return 0.5f
             val day = forecast?.dayOf(moment)
             return SunClock.eveningness(moment, day?.sunrise, day?.sunset)
@@ -449,6 +466,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         place = settings.place,
                         unit = settings.unit,
                         model = settings.model,
+                        tema = settings.tema,
                         favorites = settings.favorites,
                         dismissedAlertIds = settings.dismissedAlertIds,
                         dismissedAlertWeight = settings.dismissedAlertWeight,
@@ -742,6 +760,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
+
+    /**
+     * Chiaro, scuro, o l'ora vera.
+     *
+     * Passa dalle preferenze come l'unita' e il modello, e non dallo stato
+     * diretto: e' una scelta che deve sopravvivere alla chiusura dell'app, e il
+     * giro dal DataStore torna indietro da solo attraverso il collettore in
+     * `init`. Scrivere anche nello stato qui vorrebbe dire due strade per lo
+     * stesso valore, e la seconda si dimentica sempre qualcosa.
+     */
+    fun chooseTema(tema: Tema) {
+        viewModelScope.launch { prefs.setTema(tema) }
+    }
 
     /** Il carosello ha posato una scheda: da li' si riparte alla prossima apertura. */
     fun showSection(section: FeedSection) = _state.update { it.copy(section = section) }

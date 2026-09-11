@@ -244,6 +244,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                         onChoosePlace = viewModel::choosePlace,
                         onChooseUnit = viewModel::setUnit,
                         onChooseModel = viewModel::setModel,
+                        onChooseTema = viewModel::chooseTema,
                         onToggleFavorite = viewModel::toggleFavorite,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeSettings,
