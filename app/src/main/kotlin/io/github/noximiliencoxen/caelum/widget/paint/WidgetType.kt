@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import io.github.noximiliencoxen.caelum.R
-import io.github.noximiliencoxen.caelum.ui.render.NumberType
 
 /**
  * Le scritte dei widget, con lo stesso carattere dell'app.
@@ -44,7 +43,7 @@ internal class WidgetType(context: Context) {
             Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 this.typeface = this@WidgetType.typeface
                 textSize = sizePx
-                fontVariationSettings = NumberType.axes(weight, width)
+                fontVariationSettings = numberTypeAxes(weight, width)
                 letterSpacing = letterSpacingEm
                 isSubpixelText = true
             }
@@ -161,3 +160,13 @@ internal fun DrawScope.placeName(
 private const val WIDTH_WIDEST = 78
 private const val WIDTH_NARROWEST = 58
 private const val WIDTH_STEP = 4
+
+/**
+ * Gli assi, nella forma che vuole `Paint.fontVariationSettings`.
+ *
+ * Portato qui da `ui/render/ExtrudedText.kt` (cancellato con la scultura 3D
+ * dei numeri): il resto di quel file serviva solo al feed, ma questa riga
+ * la usano ancora i widget.
+ */
+private fun numberTypeAxes(weight: Int, width: Int): String =
+    "'wght' $weight, 'wdth' $width"
