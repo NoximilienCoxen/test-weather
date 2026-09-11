@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
+import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
@@ -43,6 +44,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
 import io.github.noximiliencoxen.caelum.ui.sala.label
 import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
+import io.github.noximiliencoxen.caelum.ui.sala.rememberTempoScena
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
@@ -67,6 +69,8 @@ fun SalaOggiScreen(
     viewModel: WeatherViewModel,
     onPlaceClick: () -> Unit,
     onMenuClick: () -> Unit,
+    /** Vero solo quando questa e' la sala che si sta guardando. */
+    inVista: Boolean,
 ) {
     val sky = remember(state.skyAltitude, state.skyJourney, state.skyEvening) {
         SkyState.of(state.skyAltitude, state.skyJourney, state.skyEvening)
@@ -93,7 +97,13 @@ fun SalaOggiScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Sculpture(condition = condition, phase = phase, palette = palette)
+                Sculpture(
+                    condition = condition,
+                    phase = phase,
+                    palette = palette,
+                    nevica = Wmo.family(state.forcedWeatherCode ?: state.hour?.weatherCode) == Wmo.Family.NEVE,
+                    inVista = inVista,
+                )
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
                         text = hour?.temperature?.let { state.unit.from(it).roundToInt().toString() } ?: "--",
@@ -192,7 +202,13 @@ private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
 }
 
 @Composable
-private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaPalette) {
+private fun Sculpture(
+    condition: SalaCondition,
+    phase: SalaPhase,
+    palette: SalaPalette,
+    nevica: Boolean,
+    inVista: Boolean,
+) {
     // La fase e' quella vera di stanotte, la stessa che calcola Sala IV: le due
     // stanze non possono raccontare due lune diverse nella stessa notte.
     val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
@@ -200,6 +216,12 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
     val notte = phase == SalaPhase.NOTTE
 
     val giroAnim = rememberGiro()
+
+    // **L'orologio gira solo se c'e' qualcosa da muovere e la sala e' in
+    // vista.** Col cielo coperto e senza precipitazioni non si muove niente, e
+    // allora non deve muoversi nemmeno un fotogramma (trappola #8).
+    val siMuove = condition != SalaCondition.NUVOLOSO
+    val tempo = rememberTempoScena(attivo = inVista && siMuove)
 
     // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
     // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
@@ -221,6 +243,8 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
             notte = notte,
             giroDeg = giro(),
             fase = faseLunare,
+            nevica = nevica,
+            tempo = tempo(),
         )
     }
 }

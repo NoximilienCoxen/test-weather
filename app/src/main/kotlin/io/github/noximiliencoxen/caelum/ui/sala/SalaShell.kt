@@ -105,6 +105,10 @@ fun SalaShell(
                     viewModel = viewModel,
                     onPlaceClick = viewModel::openLocations,
                     onMenuClick = viewModel::openSettings,
+                    // `currentPage` e non `settledPage`: cambia una volta per
+                    // pagina, quindi non ricompone a ogni fotogramma del dito,
+                    // e spegne l'orologio appena si comincia ad andare altrove.
+                    inVista = pagerState.currentPage == page,
                 )
                 SalaRoom.SETTIMANA -> SalaSettimanaScreen(
                     state = state,

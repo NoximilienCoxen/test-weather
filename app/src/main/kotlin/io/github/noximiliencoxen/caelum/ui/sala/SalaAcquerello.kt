@@ -205,11 +205,15 @@ private fun parteIlluminata(centro: Offset, r: Float, fase: Float): Path {
 fun DrawScope.scultura(
     acquerello: Acquerello,
     condition: SalaCondition,
+    /** Vero se cio' che cade e' neve: `SalaCondition` non lo distingue. */
+    nevica: Boolean = false,
     palette: SalaPalette,
     notte: Boolean,
     giroDeg: Float,
     /** La fase lunare vera, 0 novilunio e 0,5 plenilunio. Serve solo di notte. */
     fase: Float? = null,
+    /** I secondi da quando la sala e' in vista. Zero quando niente si muove. */
+    tempo: Float = 0f,
 ) {
     // L'unita' si misura sulla **larghezza**, non sul lato corto: la scultura
     // deve occupare la cassa come nel concept, e prendendo il minimo restava un
@@ -227,6 +231,10 @@ fun DrawScope.scultura(
         condition == SalaCondition.TEMPORALE_GRANDINE
     val bagnato = condition == SalaCondition.PIOGGIA ||
         condition == SalaCondition.GRANDINE || temporale
+    // `SalaCondition` non distingue la neve dalla pioggia - la tavolozza le
+    // tratta uguali, ed e' giusto cosi' per il colore. Ma **cadere non e' la
+    // stessa cosa**, quindi la neve si chiede al codice WMO vero.
+    val neve = nevica
 
     // ── L'ombra portata, per prima: sta sotto tutto ──────────────────────────
     timbra(
@@ -303,24 +311,33 @@ fun DrawScope.scultura(
         }
     }
 
-    // ── La pioggia: pennellate, non gocce ────────────────────────────────────
+    // ── Cio' che cade, e cade davvero ────────────────────────────────────────
+    val origine = Offset(size.width * 0.52f, size.height * 0.46f)
     if (bagnato) {
-        val tinta = tintaPioggia(palette)
-        val quanti = if (temporale) 8 else 6
-        val larghezza = unita * 0.115f
-        val altezza = unita * 0.42f
-        for (i in 0 until quanti) {
-            val fx = (i + 0.5f) / quanti
-            camera.place((fx - 0.5f) * 1.05f * unita, 0.30f * unita, (if (i % 2 == 0) 0.10f else -0.12f) * unita)
-            val sfalsa = if (i % 3 == 0) 0.10f else if (i % 3 == 1) 0f else 0.06f
-            timbra(
-                timbro = acquerello.pennellate[i % acquerello.pennellate.size],
-                centro = Offset(camera.sx, camera.sy + (altezza * (0.5f + sfalsa))),
-                larghezza = larghezza * camera.scale,
-                altezza = altezza * camera.scale,
-                tinta = tinta,
-                alfa = 0.72f,
-            )
+        val tipo = when (condition) {
+            SalaCondition.GRANDINE, SalaCondition.TEMPORALE_GRANDINE -> Caduta.GRANDINE
+            else -> if (neve) Caduta.NEVE else Caduta.PIOGGIA
+        }
+        caduta(
+            tipo = tipo,
+            acquerello = acquerello,
+            unita = unita,
+            origine = origine,
+            tempo = tempo,
+            tinta = if (tipo == Caduta.NEVE) SalaTokens.neutral100 else tintaPioggia(palette),
+            quanti = if (temporale) 9 else 7,
+        )
+    }
+    if (temporale) {
+        fulmine(unita, origine, tempo, SalaTokens.accent2)
+    }
+
+    // ── Cielo sereno: uccelli di giorno, stelle di notte ─────────────────────
+    if (!coperto) {
+        if (notte) {
+            stelle(unita, origine, tempo, SalaTokens.neutral100, velo = 0.9f)
+        } else {
+            uccelli(unita, origine, tempo, palette.ink)
         }
     }
 }
