@@ -1,7 +1,10 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,7 +32,9 @@ import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.SalaCondition
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPhase
@@ -40,13 +43,13 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.label
-import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
-import io.github.noximiliencoxen.caelum.ui.sala.scultura
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
+import io.github.noximiliencoxen.caelum.ui.sala.scultura
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 /**
  * Sala I — Oggi: la stanza di sempre, sotto una carta nuova.
@@ -63,6 +66,7 @@ fun SalaOggiScreen(
     position: () -> Float,
     viewModel: WeatherViewModel,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     val sky = remember(state.skyAltitude, state.skyJourney, state.skyEvening) {
         SkyState.of(state.skyAltitude, state.skyJourney, state.skyEvening)
@@ -79,6 +83,7 @@ fun SalaOggiScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier) {
             AlertsBlock(activeAlerts, palette)
@@ -110,6 +115,25 @@ fun SalaOggiScreen(
                     color = palette.inkAccent,
                 )
                 Text(text = salaBody(condition), style = SalaType.body, color = palette.ink)
+            }
+
+            // Il ritorno al presente compare **solo quando serve**: se si sta
+            // gia' guardando adesso, un tasto che riporta ad adesso e' un
+            // comando che non fa niente, e un comando che non fa niente insegna
+            // a non fidarsi degli altri. `backToNow` rimette a posto tutti e
+            // due gli assi, ora e giorno.
+            val lontanoDalPresente = state.selectedHour != state.nowIndex || state.selectedDay != 0
+            if (lontanoDalPresente) {
+                Text(
+                    text = "Torna ad adesso",
+                    style = SalaType.sectionLabel,
+                    color = palette.inkAccent,
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(MinTouchTarget)
+                        .clickable(onClick = viewModel::backToNow)
+                        .padding(top = 10.dp),
+                )
             }
 
             HourBar(
@@ -169,22 +193,47 @@ private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
 
 @Composable
 private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaPalette) {
-    var rotationDeg by remember { mutableFloatStateOf(0f) }
     val acquerello = LocalAcquerello.current
     val notte = phase == SalaPhase.NOTTE
+
+    // **Il giro e' un `Animatable`, non un float.** Serve perche' fa due cose
+    // che un float nudo non fa: durante il dito lo si sposta di scatto
+    // (`snapTo`), al rilascio lo si lascia tornare a casa con una molla vera
+    // (`animateTo`), e un nuovo tocco a meta' del ritorno **interrompe** la
+    // molla invece di litigarci. Un'animazione che non si puo' interrompere,
+    // sotto un dito, si sente come un ritardo.
+    val giroAnim = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
 
     // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
     // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
     // l'albero a ogni fotogramma del dito invece di ridipingere e basta.
-    val giro = { rotationDeg }
+    val giro = { giroAnim.value }
 
     Canvas(
         modifier = Modifier
             .size(280.dp, 240.dp)
             .pointerInput(Unit) {
                 // Solo orizzontale: il verticale e' del carosello fra le sale.
-                detectHorizontalDragGestures { _, dragAmount ->
-                    rotationDeg = (rotationDeg + dragAmount * 0.35f).coerceIn(-70f, 70f)
+                //
+                // Nessun limite d'angolo: si fa il giro intero, e al rilascio
+                // la posa iniziale se la riprende la molla. Prima si fermava a
+                // settanta gradi e ci restava, che voleva dire che la scultura
+                // aveva un dritto e un rovescio ma il rovescio non si vedeva.
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        scope.launch {
+                            giroAnim.animateTo(
+                                targetValue = 0f,
+                                animationSpec = spring(
+                                    dampingRatio = 0.62f,
+                                    stiffness = 180f,
+                                ),
+                            )
+                        }
+                    },
+                ) { _, dragAmount ->
+                    scope.launch { giroAnim.snapTo(giroAnim.value + dragAmount * 0.45f) }
                 }
             },
     ) {

@@ -7,8 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,8 +28,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
-import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
+import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.SalaShell
+import io.github.noximiliencoxen.caelum.ui.sala.rememberAcquerello
 import io.github.noximiliencoxen.caelum.ui.welcome.WelcomeScreen
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
 import io.github.noximiliencoxen.caelum.ui.theme.relativeLuminance
@@ -95,11 +96,9 @@ fun MeteoApp(viewModel: WeatherViewModel) {
     }
 
     MeteoTheme(colors = colors) {
-        // Un solo ascoltatore del sensore per tutta l'app, e il valore resta
-        // uno stato: letto dentro il disegno invece che in composizione, il
-        // sensore fa ridipingere e non ricomporre.
-        val tilt = rememberDeviceTilt()
-
+        // L'ascoltatore dell'accelerometro non c'e' piu': serviva a inclinare
+        // il mappamondo dell'Ingresso, e il mappamondo e' uscito col redisegno.
+        // Nessun'altra schermata di Sala legge il sensore.
         val density = LocalDensity.current
 
         // I dati si ricaricano tornando in primo piano, se hanno passato la
@@ -135,25 +134,29 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // Al primo avvio l'app chiede dove sei, invece di dare per scontato
             // un posto che nessuno ha scelto. Sala non entra in scena finche'
             // il benvenuto non ha finito: non c'e' ancora niente da raccontare.
-            if (!state.welcomed) {
-                WelcomeScreen(
-                    state = state,
-                    tilt = tilt,
-                    onFindMe = viewModel::useDeviceLocation,
-                    onChooseByHand = {
-                        viewModel.dismissWelcome()
-                        viewModel.openSettings()
-                    },
-                    onDone = viewModel::dismissWelcome,
-                    modifier = Modifier.systemBarsPadding(),
-                )
-            } else {
-                SalaShell(
-                    state = state,
-                    sky = sky,
-                    viewModel = viewModel,
-                    widthPx = widthPx,
-                )
+            // I timbri dell'acquerello si caricano **qui, sopra al bivio**: li
+            // usano sia l'Ingresso sia le sette sale, e sotto ci sono sette
+            // composizioni separate che altrimenti decodificherebbero sette
+            // volte le stesse immagini.
+            CompositionLocalProvider(LocalAcquerello provides rememberAcquerello()) {
+                if (!state.welcomed) {
+                    WelcomeScreen(
+                        state = state,
+                        onFindMe = viewModel::useDeviceLocation,
+                        onChooseByHand = {
+                            viewModel.dismissWelcome()
+                            viewModel.openSettings()
+                        },
+                        onDone = viewModel::dismissWelcome,
+                    )
+                } else {
+                    SalaShell(
+                        state = state,
+                        sky = sky,
+                        viewModel = viewModel,
+                        widthPx = widthPx,
+                    )
+                }
             }
         }
     }

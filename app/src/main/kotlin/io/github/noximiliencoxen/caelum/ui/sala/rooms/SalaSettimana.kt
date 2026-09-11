@@ -59,6 +59,7 @@ fun SalaSettimanaScreen(
     position: () -> Float,
     viewModel: WeatherViewModel,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     val days = state.forecast?.days.orEmpty()
     var open by rememberSaveable { mutableStateOf(false) }
@@ -71,6 +72,7 @@ fun SalaSettimanaScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier) {
             Text(

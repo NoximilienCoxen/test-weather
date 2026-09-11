@@ -49,6 +49,7 @@ fun SalaLunaScreen(
     palette: SalaPalette,
     position: () -> Float,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     var offsetDays by remember { mutableIntStateOf(0) }
     val today = LocalDate.now()
@@ -65,6 +66,7 @@ fun SalaLunaScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier) {
             Box(

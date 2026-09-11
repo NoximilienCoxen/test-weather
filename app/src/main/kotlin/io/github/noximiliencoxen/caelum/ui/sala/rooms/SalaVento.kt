@@ -49,6 +49,7 @@ fun SalaVentoScreen(
     palette: SalaPalette,
     position: () -> Float,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     val hours = state.hours
     val idx = state.selectedHour
@@ -65,6 +66,7 @@ fun SalaVentoScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
             Box(modifier = Modifier.fillMaxWidth().height(300.dp), contentAlignment = Alignment.Center) {

@@ -42,6 +42,7 @@ fun SalaAriaScreen(
     palette: SalaPalette,
     position: () -> Float,
     onPlaceClick: () -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     val air = state.air
 
@@ -51,6 +52,7 @@ fun SalaAriaScreen(
         placeName = state.place.name,
         position = position,
         onPlaceClick = onPlaceClick,
+        onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
             AirArc(air = air, palette = palette)
