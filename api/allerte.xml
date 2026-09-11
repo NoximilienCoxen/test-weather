@@ -13,7 +13,7 @@
   </author>
   <id>tag:meteoalarm.org,2021-02-19:IT</id>
   <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
-  <updated>2026-09-10T12:05:46.604153Z</updated>
+  <updated>2026-09-11T10:05:40.599694Z</updated>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
@@ -22,27 +22,87 @@
     <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
     <cap:areaDesc>Sardegna</cap:areaDesc>
     <cap:event>Yellow Wind Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.116</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/baeb613c-a912-4e64-a651-739116c14ce1"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.103</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/97d56db2-eddc-46e0-b44b-151914811826"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/baeb613c-a912-4e64-a651-739116c14ce1?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/97d56db2-eddc-46e0-b44b-151914811826?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Wind Warning issued for Italy - Sardegna</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT018</value>
+    </cap:geocode>
+    <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
+    <cap:areaDesc>Sicilia</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.101</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/40ad7d6e-aea3-4239-8036-d47953214e0e"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/40ad7d6e-aea3-4239-8036-d47953214e0e?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Sicilia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT018</value>
+    </cap:geocode>
+    <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
+    <cap:areaDesc>Sicilia</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.100</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/938ec4b4-254e-48f0-8d86-c28d9f8cd494"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/938ec4b4-254e-48f0-8d86-c28d9f8cd494?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Italy - Sicilia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -52,57 +112,27 @@
     <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
     <cap:areaDesc>Sicilia</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.115</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/34c178a7-abd1-4e42-8276-53b3ccb2d454"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.099</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ff120b71-a80b-46ba-a614-8b7dcd883112"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/34c178a7-abd1-4e42-8276-53b3ccb2d454?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ff120b71-a80b-46ba-a614-8b7dcd883112?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Sicilia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT018</value>
-    </cap:geocode>
-    <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
-    <cap:areaDesc>Sicilia</cap:areaDesc>
-    <cap:event>Yellow High-temperature Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.114</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/94f9a1f4-f88d-4a34-9a6f-eb11552264ad"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/94f9a1f4-f88d-4a34-9a6f-eb11552264ad?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow High-temperature Warning issued for Italy - Sicilia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -112,27 +142,87 @@
     <link title="Sicilia" href="https://meteoalarm.org?geocode=EMMA_ID:IT018" hreflang="en"/>
     <cap:areaDesc>Sicilia</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.113</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/15dbeba0-3324-4f7a-8e6a-4b4619356aef"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.098</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/13a5b539-a798-4bef-ac1b-b1462c862720"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/15dbeba0-3324-4f7a-8e6a-4b4619356aef?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/13a5b539-a798-4bef-ac1b-b1462c862720?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Sicilia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT001</value>
+    </cap:geocode>
+    <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
+    <cap:areaDesc>Calabria</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.096</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/2b496210-9a6e-46fb-8ccf-8dd7e35c486b"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/2b496210-9a6e-46fb-8ccf-8dd7e35c486b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Calabria</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT001</value>
+    </cap:geocode>
+    <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
+    <cap:areaDesc>Calabria</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.095</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/8737c33d-c257-47bd-a1ec-ab5b7b4904e5"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/8737c33d-c257-47bd-a1ec-ab5b7b4904e5?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Italy - Calabria</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -142,27 +232,147 @@
     <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
     <cap:areaDesc>Calabria</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
-    <cap:message_type>Alert</cap:message_type>
+    <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.112</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5daada2d-dee0-4872-865c-a7de9107399a"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.094</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/259933f1-3d80-4975-90b0-b6792b637fd1"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5daada2d-dee0-4872-865c-a7de9107399a?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/259933f1-3d80-4975-90b0-b6792b637fd1?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Calabria</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT001</value>
+    </cap:geocode>
+    <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
+    <cap:areaDesc>Calabria</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.093</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/6bb792a2-e9d3-4616-a677-4efe8ab4d6d1"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/6bb792a2-e9d3-4616-a677-4efe8ab4d6d1?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Calabria</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT001</value>
+    </cap:geocode>
+    <link title="Calabria" href="https://meteoalarm.org?geocode=EMMA_ID:IT001" hreflang="en"/>
+    <cap:areaDesc>Calabria</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.092</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/683f5549-83b8-4306-b3a4-7bfd1908df27"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/683f5549-83b8-4306-b3a4-7bfd1908df27?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Calabria</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT017</value>
+    </cap:geocode>
+    <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
+    <cap:areaDesc>Basilicata</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.091</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/35725343-1659-425a-ac7c-c1b19eb9dffb"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/35725343-1659-425a-ac7c-c1b19eb9dffb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Basilicata</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT017</value>
+    </cap:geocode>
+    <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
+    <cap:areaDesc>Basilicata</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.090</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9c704fac-0e10-4f17-a547-6b3c9729b7e2"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9c704fac-0e10-4f17-a547-6b3c9729b7e2?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Italy - Basilicata</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -172,117 +382,117 @@
     <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
     <cap:areaDesc>Basilicata</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.111</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1d74d6fb-d530-4668-9471-7021cf758619"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.089</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7925f7a5-e1fb-44f4-848d-28e408b6e766"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1d74d6fb-d530-4668-9471-7021cf758619?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7925f7a5-e1fb-44f4-848d-28e408b6e766?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Basilicata</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT016</value>
+      <value>IT017</value>
     </cap:geocode>
-    <link title="Campania" href="https://meteoalarm.org?geocode=EMMA_ID:IT016" hreflang="en"/>
-    <cap:areaDesc>Campania</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <link title="Basilicata" href="https://meteoalarm.org?geocode=EMMA_ID:IT017" hreflang="en"/>
+    <cap:areaDesc>Basilicata</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
+    <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.110</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/0ad0118f-70d5-4d8a-985c-e5d368eda399"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.088</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/573f114b-0ddd-4280-82c4-9c5a0c2e41eb"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/0ad0118f-70d5-4d8a-985c-e5d368eda399?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Campania</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/573f114b-0ddd-4280-82c4-9c5a0c2e41eb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Basilicata</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT014</value>
+      <value>IT015</value>
     </cap:geocode>
-    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
-    <cap:areaDesc>Molise</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
+    <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.109</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/b7fb80ff-cbc7-4795-ba76-ad949fc47feb"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.087</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/dd2e28a8-31ef-46b1-abb9-797a297f93eb"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/b7fb80ff-cbc7-4795-ba76-ad949fc47feb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Molise</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/dd2e28a8-31ef-46b1-abb9-797a297f93eb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Puglia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT012</value>
+      <value>IT015</value>
     </cap:geocode>
-    <link title="Lazio" href="https://meteoalarm.org?geocode=EMMA_ID:IT012" hreflang="en"/>
-    <cap:areaDesc>Lazio</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T08:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
+    <cap:event>Yellow Rain Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T23:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
+    <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.108</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9bf364bb-d44d-4d88-81f5-7f29ffcf26ca"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.086</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d19c729a-9e74-4c8d-bd19-f4b0fb551f07"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9bf364bb-d44d-4d88-81f5-7f29ffcf26ca?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Lazio</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d19c729a-9e74-4c8d-bd19-f4b0fb551f07?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Rain Warning issued for Italy - Puglia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -292,147 +502,207 @@
     <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
     <cap:areaDesc>Puglia</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T23:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.107</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d7871171-5af3-44ba-a188-15a74aec566c"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.085</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/320fc4ec-4948-4946-8e74-a770882b747d"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d7871171-5af3-44ba-a188-15a74aec566c?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/320fc4ec-4948-4946-8e74-a770882b747d?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Puglia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT011</value>
+      <value>IT015</value>
     </cap:geocode>
-    <link title="Marche" href="https://meteoalarm.org?geocode=EMMA_ID:IT011" hreflang="en"/>
-    <cap:areaDesc>Marche</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.106</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7b7e2466-c674-47e3-a94f-5b4c5f6f64c3"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.084</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/42fecf7a-e4ec-4b6b-9943-a79e528e55d8"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7b7e2466-c674-47e3-a94f-5b4c5f6f64c3?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Marche</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/42fecf7a-e4ec-4b6b-9943-a79e528e55d8?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Puglia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT010</value>
+      <value>IT015</value>
     </cap:geocode>
-    <link title="Umbria" href="https://meteoalarm.org?geocode=EMMA_ID:IT010" hreflang="en"/>
-    <cap:areaDesc>Umbria</cap:areaDesc>
+    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
+    <cap:areaDesc>Puglia</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T11:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T06:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T06:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T23:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.105</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/35360a1f-8ce8-4ab5-b4ba-dbb41323968b"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.083</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5b14bbfa-aa9c-46f3-a23e-ae6a3ea09ef3"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/35360a1f-8ce8-4ab5-b4ba-dbb41323968b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Umbria</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/5b14bbfa-aa9c-46f3-a23e-ae6a3ea09ef3?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Puglia</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT009</value>
+      <value>IT016</value>
     </cap:geocode>
-    <link title="Toscana" href="https://meteoalarm.org?geocode=EMMA_ID:IT009" hreflang="en"/>
-    <cap:areaDesc>Toscana</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T11:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T06:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T06:00:00+00:00</cap:onset>
+    <link title="Campania" href="https://meteoalarm.org?geocode=EMMA_ID:IT016" hreflang="en"/>
+    <cap:areaDesc>Campania</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.104</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1acb9ea0-6bbf-4205-8c33-89bfb16d1abb"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.082</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9b5619a6-6b98-4864-b111-f99bebd2dc9b"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/1acb9ea0-6bbf-4205-8c33-89bfb16d1abb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Toscana</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9b5619a6-6b98-4864-b111-f99bebd2dc9b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Campania</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
       <valueName>EMMA_ID</valueName>
-      <value>IT008</value>
+      <value>IT016</value>
     </cap:geocode>
-    <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
-    <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
+    <link title="Campania" href="https://meteoalarm.org?geocode=EMMA_ID:IT016" hreflang="en"/>
+    <cap:areaDesc>Campania</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T11:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.103</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/3b2dc617-5d75-47d3-bf61-0ef9aa939250"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.081</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/438dcb34-005a-4eab-ba30-93c074f64ec9"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/3b2dc617-5d75-47d3-bf61-0ef9aa939250?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Emilia e Romagna</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/438dcb34-005a-4eab-ba30-93c074f64ec9?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Campania</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT014</value>
+    </cap:geocode>
+    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
+    <cap:areaDesc>Molise</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.080</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9332df76-001d-485a-8e25-03573bafabbb"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/9332df76-001d-485a-8e25-03573bafabbb?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Molise</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT014</value>
+    </cap:geocode>
+    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
+    <cap:areaDesc>Molise</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.079</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c124e140-0fe6-4f22-b12a-d40ba76d4d14"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c124e140-0fe6-4f22-b12a-d40ba76d4d14?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Molise</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -442,27 +712,117 @@
     <link title="Abruzzo" href="https://meteoalarm.org?geocode=EMMA_ID:IT013" hreflang="en"/>
     <cap:areaDesc>Abruzzo</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.102</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/09a16256-43bb-473e-a2c8-be8aae8d3c74"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.078</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/cdfdf079-1715-447c-a48f-c376967ec33d"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/09a16256-43bb-473e-a2c8-be8aae8d3c74?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/cdfdf079-1715-447c-a48f-c376967ec33d?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Abruzzo</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT011</value>
+    </cap:geocode>
+    <link title="Marche" href="https://meteoalarm.org?geocode=EMMA_ID:IT011" hreflang="en"/>
+    <cap:areaDesc>Marche</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T23:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.077</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/df77dc05-c769-44ab-8cda-b12dbf46c91b"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/df77dc05-c769-44ab-8cda-b12dbf46c91b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Marche</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT011</value>
+    </cap:geocode>
+    <link title="Marche" href="https://meteoalarm.org?geocode=EMMA_ID:IT011" hreflang="en"/>
+    <cap:areaDesc>Marche</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.076</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/149a9296-12c4-4543-844a-c736de6dd918"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/149a9296-12c4-4543-844a-c736de6dd918?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Marche</title>
+    <updated>2026-09-11T09:37:15Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT008</value>
+    </cap:geocode>
+    <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
+    <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
+    <cap:expires>2026-09-12T16:59:00+00:00</cap:expires>
+    <cap:effective>2026-09-12T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-12T08:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Update</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.075</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/923457fc-f88e-4d62-aa54-96ea48d56644"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/923457fc-f88e-4d62-aa54-96ea48d56644?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Emilia e Romagna</title>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -472,27 +832,27 @@
     <link title="Veneto" href="https://meteoalarm.org?geocode=EMMA_ID:IT006" hreflang="en"/>
     <cap:areaDesc>Veneto</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.101</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/18ccb419-6da4-41c3-9b5e-59830b7a2a11"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.074</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/13d26a19-a1da-4293-b3c4-5f16a824678b"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/18ccb419-6da4-41c3-9b5e-59830b7a2a11?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/13d26a19-a1da-4293-b3c4-5f16a824678b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Veneto</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -502,27 +862,27 @@
     <link title="Friuli Venezia Giulia" href="https://meteoalarm.org?geocode=EMMA_ID:IT020" hreflang="en"/>
     <cap:areaDesc>Friuli Venezia Giulia</cap:areaDesc>
     <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
+    <cap:sent>2026-09-11T09:37:15+00:00</cap:sent>
     <cap:expires>2026-09-11T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-11T00:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-11T00:00:00+00:00</cap:onset>
+    <cap:effective>2026-09-11T08:00:00+00:00</cap:effective>
+    <cap:onset>2026-09-11T08:00:00+00:00</cap:onset>
     <cap:certainty>Likely</cap:certainty>
     <cap:severity>Moderate</cap:severity>
     <cap:urgency>Future</cap:urgency>
     <cap:scope>Public</cap:scope>
     <cap:message_type>Update</cap:message_type>
     <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.100</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/bd2f79f3-ebce-43fa-ba1d-a55b821659d3"/>
+    <cap:identifier>2.49.0.0.380.3.IT.260911113715.073</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c65c3ea7-24ab-4c01-ae4d-9c8d586489a0"/>
     <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
     <author>
       <name>meteoalarm.org</name>
       <uri>https://meteoalarm.org</uri>
     </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/bd2f79f3-ebce-43fa-ba1d-a55b821659d3?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <published>2026-09-11T09:37:15Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c65c3ea7-24ab-4c01-ae4d-9c8d586489a0?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Thunderstorm Warning issued for Italy - Friuli Venezia Giulia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
+    <updated>2026-09-11T09:37:15Z</updated>
   </entry>
   <entry>
     <cap:geocode>
@@ -552,66 +912,6 @@
     <published>2026-09-10T08:58:31Z</published>
     <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/948d8eb7-16cc-47eb-93d1-dac6148ba737?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow High-temperature Warning issued for Italy - Sicilia</title>
-    <updated>2026-09-10T08:58:31Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT019</value>
-    </cap:geocode>
-    <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
-    <cap:areaDesc>Sardegna</cap:areaDesc>
-    <cap:event>Yellow Wind Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-11T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T08:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T08:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.098</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/e4995751-6776-49e8-9de4-a9a871fcefd4"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/e4995751-6776-49e8-9de4-a9a871fcefd4?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Wind Warning issued for Italy - Sardegna</title>
-    <updated>2026-09-10T08:58:31Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT016</value>
-    </cap:geocode>
-    <link title="Campania" href="https://meteoalarm.org?geocode=EMMA_ID:IT016" hreflang="en"/>
-    <cap:areaDesc>Campania</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T18:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T18:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.097</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/226d6ff5-3683-44f2-b5de-9dba84f74806"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/226d6ff5-3683-44f2-b5de-9dba84f74806?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Campania</title>
     <updated>2026-09-10T08:58:31Z</updated>
   </entry>
   <entry>
@@ -651,36 +951,6 @@
     </cap:geocode>
     <link title="Abruzzo" href="https://meteoalarm.org?geocode=EMMA_ID:IT013" hreflang="en"/>
     <cap:areaDesc>Abruzzo</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T18:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T18:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.095</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/fb7dfb1e-1d82-4648-8406-c82a610bcd75"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/fb7dfb1e-1d82-4648-8406-c82a610bcd75?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Abruzzo</title>
-    <updated>2026-09-10T08:58:31Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT013</value>
-    </cap:geocode>
-    <link title="Abruzzo" href="https://meteoalarm.org?geocode=EMMA_ID:IT013" hreflang="en"/>
-    <cap:areaDesc>Abruzzo</cap:areaDesc>
     <cap:event>Yellow Rain Warning</cap:event>
     <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
     <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
@@ -702,36 +972,6 @@
     <published>2026-09-10T08:58:31Z</published>
     <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/43fd136d-df7b-46ab-a09d-f765f36d0150?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Rain Warning issued for Italy - Abruzzo</title>
-    <updated>2026-09-10T08:58:31Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT014</value>
-    </cap:geocode>
-    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
-    <cap:areaDesc>Molise</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:31+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T18:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T18:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.093</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d29fe159-4d8d-4039-b9dd-6069eabbe29b"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:31Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d29fe159-4d8d-4039-b9dd-6069eabbe29b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Molise</title>
     <updated>2026-09-10T08:58:31Z</updated>
   </entry>
   <entry>
@@ -1011,36 +1251,6 @@
     </cap:geocode>
     <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
     <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T08:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T08:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.083</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/bb5ebae9-30c5-45d1-9da8-7a8891c92943"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:30Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/bb5ebae9-30c5-45d1-9da8-7a8891c92943?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Emilia e Romagna</title>
-    <updated>2026-09-10T08:58:30Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT008</value>
-    </cap:geocode>
-    <link title="Emilia e Romagna" href="https://meteoalarm.org?geocode=EMMA_ID:IT008" hreflang="en"/>
-    <cap:areaDesc>Emilia e Romagna</cap:areaDesc>
     <cap:event>Orange Rain Warning</cap:event>
     <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
     <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
@@ -1062,36 +1272,6 @@
     <published>2026-09-10T08:58:30Z</published>
     <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/7d64bc68-94a1-403e-9268-977d63d84b68?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Orange Rain Warning issued for Italy - Emilia e Romagna</title>
-    <updated>2026-09-10T08:58:30Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT006</value>
-    </cap:geocode>
-    <link title="Veneto" href="https://meteoalarm.org?geocode=EMMA_ID:IT006" hreflang="en"/>
-    <cap:areaDesc>Veneto</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T08:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T08:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.081</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d98f64d8-605a-418a-ad4c-7d57a9210b0b"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:30Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/d98f64d8-605a-418a-ad4c-7d57a9210b0b?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Veneto</title>
     <updated>2026-09-10T08:58:30Z</updated>
   </entry>
   <entry>
@@ -1131,36 +1311,6 @@
     </cap:geocode>
     <link title="Friuli Venezia Giulia" href="https://meteoalarm.org?geocode=EMMA_ID:IT020" hreflang="en"/>
     <cap:areaDesc>Friuli Venezia Giulia</cap:areaDesc>
-    <cap:event>Orange Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T08:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T08:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Severe</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.079</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/b70b8a95-7299-4c1d-9cab-6cc0b7db75b6"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:30Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/b70b8a95-7299-4c1d-9cab-6cc0b7db75b6?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Orange Thunderstorm Warning issued for Italy - Friuli Venezia Giulia</title>
-    <updated>2026-09-10T08:58:30Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT020</value>
-    </cap:geocode>
-    <link title="Friuli Venezia Giulia" href="https://meteoalarm.org?geocode=EMMA_ID:IT020" hreflang="en"/>
-    <cap:areaDesc>Friuli Venezia Giulia</cap:areaDesc>
     <cap:event>Orange Rain Warning</cap:event>
     <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
     <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
@@ -1182,36 +1332,6 @@
     <published>2026-09-10T08:58:30Z</published>
     <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/dffcdfb0-7ad9-47e3-b0e4-5b0bfc92d4de?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Orange Rain Warning issued for Italy - Friuli Venezia Giulia</title>
-    <updated>2026-09-10T08:58:30Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT011</value>
-    </cap:geocode>
-    <link title="Marche" href="https://meteoalarm.org?geocode=EMMA_ID:IT011" hreflang="en"/>
-    <cap:areaDesc>Marche</cap:areaDesc>
-    <cap:event>Yellow Thunderstorm Warning</cap:event>
-    <cap:sent>2026-09-10T08:58:30+00:00</cap:sent>
-    <cap:expires>2026-09-10T23:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-10T08:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-10T08:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260910105830.077</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/f730d11b-8876-4dc4-a20d-b30913869aaf"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-10T08:58:30Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/f730d11b-8876-4dc4-a20d-b30913869aaf?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow Thunderstorm Warning issued for Italy - Marche</title>
     <updated>2026-09-10T08:58:30Z</updated>
   </entry>
   <entry>
@@ -1423,66 +1543,6 @@
     <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/a7828f0f-3d37-4b69-b7ce-f7468182cdcd?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
     <title>Yellow Rain Warning issued for Italy - Piemonte</title>
     <updated>2026-09-10T08:58:30Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT015</value>
-    </cap:geocode>
-    <link title="Puglia" href="https://meteoalarm.org?geocode=EMMA_ID:IT015" hreflang="en"/>
-    <cap:areaDesc>Puglia</cap:areaDesc>
-    <cap:event>Yellow High-temperature Warning</cap:event>
-    <cap:sent>2026-09-09T09:46:21+00:00</cap:sent>
-    <cap:expires>2026-09-09T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-09T09:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-09T09:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260909114620.088</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/84cae527-894e-4f80-b454-e81804ffd78c"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-09T09:46:21Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/84cae527-894e-4f80-b454-e81804ffd78c?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow High-temperature Warning issued for Italy - Puglia</title>
-    <updated>2026-09-09T09:46:21Z</updated>
-  </entry>
-  <entry>
-    <cap:geocode>
-      <valueName>EMMA_ID</valueName>
-      <value>IT014</value>
-    </cap:geocode>
-    <link title="Molise" href="https://meteoalarm.org?geocode=EMMA_ID:IT014" hreflang="en"/>
-    <cap:areaDesc>Molise</cap:areaDesc>
-    <cap:event>Yellow High-temperature Warning</cap:event>
-    <cap:sent>2026-09-09T09:46:21+00:00</cap:sent>
-    <cap:expires>2026-09-09T17:59:00+00:00</cap:expires>
-    <cap:effective>2026-09-09T09:00:00+00:00</cap:effective>
-    <cap:onset>2026-09-09T09:00:00+00:00</cap:onset>
-    <cap:certainty>Likely</cap:certainty>
-    <cap:severity>Moderate</cap:severity>
-    <cap:urgency>Future</cap:urgency>
-    <cap:scope>Public</cap:scope>
-    <cap:message_type>Update</cap:message_type>
-    <cap:status>Actual</cap:status>
-    <cap:identifier>2.49.0.0.380.3.IT.260909114620.087</cap:identifier>
-    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ea6fa868-5166-4b9d-85ff-8e6e1c32696d"/>
-    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
-    <author>
-      <name>meteoalarm.org</name>
-      <uri>https://meteoalarm.org</uri>
-    </author>
-    <published>2026-09-09T09:46:21Z</published>
-    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/ea6fa868-5166-4b9d-85ff-8e6e1c32696d?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
-    <title>Yellow High-temperature Warning issued for Italy - Molise</title>
-    <updated>2026-09-09T09:46:21Z</updated>
   </entry>
   <entry>
     <cap:geocode>
