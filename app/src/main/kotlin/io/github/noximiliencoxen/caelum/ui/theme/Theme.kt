@@ -17,9 +17,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.R
+import io.github.noximiliencoxen.caelum.ui.render.NumberPalette
+import io.github.noximiliencoxen.caelum.ui.render.TemperatureRenderer
+import io.github.noximiliencoxen.caelum.ui.render3d.PrismRenderer
+
+val LocalTemperatureRenderer = staticCompositionLocalOf<TemperatureRenderer> { PrismRenderer() }
 
 /** Le tinte delle grandezze, che Material 3 non nomina. Vedi [MeteoAccents]. */
 val LocalMeteoAccents = staticCompositionLocalOf { skyColors(io.github.noximiliencoxen.caelum.data.SkyState.Giorno).toAccents() }
+
+fun MeteoColors.toNumberPalette(): NumberPalette = NumberPalette(
+    face = numberFace,
+    sideNear = numberSideNear,
+    sideFar = numberSideFar,
+    chamfer = numberChamfer,
+    iridescence = IridescenceStops,
+    iridescenceAlpha = 0.55f,
+    shadowAlpha = numberShadowAlpha,
+)
 
 /**
  * Un carattere solo per tutta l'app: Archivo, lo stesso della cifra gigante.
@@ -155,6 +170,7 @@ fun MeteoTheme(
     colors: MeteoColors,
     content: @Composable () -> Unit,
 ) {
+    val renderer = remember { PrismRenderer() }
     // Lo schema e le tinte costano una manciata di conversioni di gamma per
     // colore: si ricalcolano al cambio d'ora, non a ogni ricomposizione.
     val scheme = remember(colors) { colors.toColorScheme() }
@@ -162,6 +178,7 @@ fun MeteoTheme(
     CompositionLocalProvider(
         LocalMeteoColors provides colors,
         LocalMeteoAccents provides accents,
+        LocalTemperatureRenderer provides renderer,
     ) {
         MaterialTheme(
             colorScheme = scheme,
