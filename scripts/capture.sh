@@ -130,13 +130,26 @@ welcome() {
   shoot "00-benvenuto-guarda"
   adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
 
-  # "SCELGO IO" chiude il benvenuto per sempre e apre le impostazioni: due cose
-  # con un tocco solo, e le impostazioni non avevano ancora nessuno scatto.
-  adbt shell input tap "$(( W / 2 ))" "$(( H * 71 / 100 ))" >/dev/null 2>&1 || true
+  # "Scelgo io la citta'" chiude l'Ingresso e apre le impostazioni: due cose con
+  # un tocco solo, e le impostazioni non avevano altrimenti nessuno scatto.
+  #
+  # **L'altezza e' l'89% e non piu' il 71%, e il numero va tenuto d'occhio.**
+  # Col rimando spostato dal redisegno, il tocco al 71% e' caduto nel vuoto:
+  # l'Ingresso non si e' chiuso, e **ogni scatto del giro lo ha ritratto** -
+  # sette sale e due schermate di servizio, tutte uguali, su un giro verde.
+  # Una galleria che mente e' peggio di una che manca.
+  adbt shell input tap "$(( W / 2 ))" "$(( H * 89 / 100 ))" >/dev/null 2>&1 || true
   sleep 3
   shoot "00-impostazioni"
   # E si richiudono dal loro pulsante, in alto a sinistra.
   adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+
+  # **La rete di sicurezza.** Qualunque cosa abbiano combinato i due tocchi qui
+  # sopra, da adesso l'Ingresso e' chiuso per sempre: `--ez saltabenvenuto`
+  # scrive la preferenza senza passare da un dito. Il resto della galleria non
+  # deve dipendere da una coordinata che il prossimo redisegno spostera'.
+  adbt shell am start -n "$ACT" --ez saltabenvenuto true >/dev/null 2>&1 || true
   sleep 2
 }
 
