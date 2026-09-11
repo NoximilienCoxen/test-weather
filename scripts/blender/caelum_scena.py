@@ -135,6 +135,22 @@ def per_tipo(nodi, tipo):
     return next((n for n in nodi if n.bl_idname == tipo), None)
 
 
+def bsdf_di(nodi, fili):
+    """Il Principled di questo materiale, e se non c'e' lo si mette.
+
+    Un materiale nuovo ce l'ha sempre; ma "sempre" dipende dal file di
+    partenza, e un materiale senza Principled non deve far cadere il pezzo che
+    lo stava costruendo. Costa due righe e toglie un modo di rompersi.
+    """
+    trovato = per_tipo(nodi, "ShaderNodeBsdfPrincipled")
+    if trovato is not None:
+        return trovato
+    trovato = nodi.new("ShaderNodeBsdfPrincipled")
+    uscita = per_tipo(nodi, "ShaderNodeOutputMaterial") or nodi.new("ShaderNodeOutputMaterial")
+    fili.new(trovato.outputs[0], uscita.inputs["Surface"])
+    return trovato
+
+
 def materiale(nome, colore, emissione=0.0, ruvidita=0.9, alpha_nodo=None):
     """Un materiale semplice, con l'emissione quando serve.
 
@@ -149,11 +165,7 @@ def materiale(nome, colore, emissione=0.0, ruvidita=0.9, alpha_nodo=None):
     # come si chiama il nodo nel file di partenza, e basta un template diverso
     # o una versione che lo rinomina per ritrovarsi un `None` e un errore a
     # tre righe di distanza da dove sta la causa.
-    bsdf = per_tipo(nodi, "ShaderNodeBsdfPrincipled")
-    if bsdf is None:
-        bsdf = nodi.new("ShaderNodeBsdfPrincipled")
-        uscita = per_tipo(nodi, "ShaderNodeOutputMaterial") or nodi.new("ShaderNodeOutputMaterial")
-        fili.new(bsdf.outputs[0], uscita.inputs["Surface"])
+    bsdf = bsdf_di(nodi, fili)
     bsdf.inputs["Base Color"].default_value = (*colore, 1.0)
     bsdf.inputs["Roughness"].default_value = ruvidita
     if "Emission Color" in bsdf.inputs:
@@ -187,6 +199,49 @@ def trasparenza(mat):
             mat.shadow_method = "HASHED"
         except TypeError:
             pass
+
+
+ESITI = []
+
+
+def passo(nome, funzione, *args, **kwargs):
+    """Un pezzo della scena, e il suo esito, senza fermare il resto.
+
+    **Serve perche' questo script si prova alla cieca.** Chi lo scrive non ha
+    Blender sotto mano, e ogni versione sposta qualcosa: le azioni a strati
+    della 4.4, i metodi di trasparenza della 4.3, e chissa' cos'altro piu'
+    avanti. Con un'eccezione che risale fino in cima, un giro di prova dice
+    **un** problema e nasconde tutti quelli dopo: dieci ostacoli vogliono dieci
+    giri, e ogni giro e' qualcuno che riapre Blender e riprova.
+
+    Cosi' invece un giro solo li elenca tutti. La scena esce incompleta - e lo
+    dice - ma il rapporto in fondo e' la cosa utile: da li' si correggono tutti
+    insieme.
+    """
+    try:
+        esito = funzione(*args, **kwargs)
+        ESITI.append((nome, None))
+        return esito
+    except Exception as guaio:
+        ESITI.append((nome, f"{type(guaio).__name__}: {guaio}"))
+        return None
+
+
+def rapporto():
+    """Cosa e' riuscito e cosa no, in fondo, dove si legge."""
+    caduti = [(nome, guaio) for nome, guaio in ESITI if guaio]
+    print("")
+    print("=" * 62)
+    for nome, guaio in ESITI:
+        print(f"  {'ok  ' if guaio is None else 'CADE'}  {nome}" + (f"  -> {guaio}" if guaio else ""))
+    print("=" * 62)
+    if caduti:
+        print(f"{len(caduti)} pezzi su {len(ESITI)} non sono passati su Blender "
+              f"{bpy.app.version_string}. La scena e' incompleta.")
+        print("Le righe 'CADE' qui sopra sono quello che serve per correggerli tutti insieme.")
+    else:
+        print(f"tutti i {len(ESITI)} pezzi sono passati su Blender {bpy.app.version_string}")
+    return len(caduti)
 
 
 class interpolazione_lineare:
@@ -250,7 +305,7 @@ def acqua():
     mat = bpy.data.materials.new("acqua")
     mat.use_nodes = True
     nodi, fili = mat.node_tree.nodes, mat.node_tree.links
-    bsdf = per_tipo(nodi, "ShaderNodeBsdfPrincipled")
+    bsdf = bsdf_di(nodi, fili)
     bsdf.inputs["Base Color"].default_value = (0.30, 0.38, 0.46, 1.0)
     bsdf.inputs["Roughness"].default_value = 0.18
 
@@ -544,27 +599,29 @@ def costruisci(variante, con_pioggia):
 
 def _costruisci(variante, con_pioggia):
     conto = VARIANTI[variante]
-    svuota()
+    ESITI.clear()
     scena = bpy.context.scene
-    motore(scena)
-    camera()
-    acqua()
+
+    passo("svuota la scena", svuota)
+    passo("motore e formato", motore, scena)
+    passo("camera", camera)
+    passo("acqua", acqua)
 
     # Il sole alto a sinistra, la luna bassa a destra: si vedono insieme come
     # capita davvero all'alba e al tramonto, ed e' l'unica disposizione in cui
     # nessuno dei due copre l'altro.
-    astro("sole", (-150.0, 700.0, 430.0), 34.0, (1.0, 0.90, 0.66), emissione=14.0)
-    astro("luna", (210.0, 780.0, 250.0), 22.0, (0.92, 0.93, 0.96), emissione=3.0)
-    luce_del_sole((-150.0, 700.0, 430.0), 4.0, conto["copertura"])
+    passo("sole", astro, "sole", (-150.0, 700.0, 430.0), 34.0, (1.0, 0.90, 0.66), 14.0)
+    passo("luna", astro, "luna", (210.0, 780.0, 250.0), 22.0, (0.92, 0.93, 0.96), 3.0)
+    passo("luce del sole", luce_del_sole, (-150.0, 700.0, 430.0), 4.0, conto["copertura"])
 
     if conto["nuvole"]:
-        nuvole(conto["nuvole"], conto["copertura"])
+        passo("nuvole", nuvole, conto["nuvole"], conto["copertura"])
     if con_pioggia and conto["pioggia"] > 0.0:
-        pioggia(conto["pioggia"])
+        passo("pioggia", pioggia, conto["pioggia"])
     if conto["fulmini"]:
-        fulmine()
+        passo("fulmine", fulmine)
 
-    return profondita(scena)
+    return passo("profondita'", profondita, scena)
 
 
 def rendi(variante, cartella, uscita_profondita):
@@ -610,14 +667,20 @@ def esegui():
         print("varianti disponibili: " + ", ".join(VARIANTI))
         return
 
-    print(f"Blender {bpy.app.version_string}, motore {bpy.context.scene.render.engine}")
+    print(f"Blender {bpy.app.version_string}")
+    print(f"scena '{scelta['variante']}': {CICLO} fotogrammi a {FPS} al secondo, "
+          f"orizzonte al {ORIZZONTE:.0%}, alzata camera {math.degrees(ALZATA):.1f} gradi")
+
     uscita = costruisci(scelta["variante"], scelta["pioggia"])
-    print(f"scena '{scelta['variante']}' costruita: {CICLO} fotogrammi a {FPS} al secondo")
-    print(f"orizzonte al {ORIZZONTE:.0%}, alzata camera {math.degrees(ALZATA):.1f} gradi")
-    if scelta["rendi"]:
-        rendi(scelta["variante"], scelta["out"], uscita)
-    else:
+    caduti = rapporto()
+
+    if not scelta["rendi"]:
         print("nessun --out: la scena resta aperta, niente e' stato reso")
+        return
+    if caduti or uscita is None:
+        print("non rendo una scena incompleta: prima i pezzi caduti qui sopra")
+        return
+    rendi(scelta["variante"], scelta["out"], uscita)
 
 
 # **Senza la guardia su `__main__`, e non e' una svista.** Questo file esiste per
