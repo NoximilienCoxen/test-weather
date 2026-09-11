@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -75,7 +76,9 @@ fun SalaShell(
     LaunchedEffect(state.roomRequest) {
         val wanted = state.roomRequest ?: return@LaunchedEffect
         val page = rooms.indexOf(wanted)
+        Log.i("meteo", "sala da esaudire: $wanted -> pagina $page (ora ${pagerState.currentPage})")
         if (page >= 0 && page != pagerState.currentPage) pagerState.scrollToPage(page)
+        Log.i("meteo", "sala esaudita: pagina ${pagerState.currentPage}")
         viewModel.roomRequestHonoured()
     }
 
