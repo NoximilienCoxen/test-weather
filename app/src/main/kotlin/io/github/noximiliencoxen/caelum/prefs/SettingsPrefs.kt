@@ -37,6 +37,40 @@ enum class TempUnit(val symbol: String) {
         if (this == CELSIUS) celsius else celsius * 9.0 / 5.0 + 32.0
 }
 
+/**
+ * La carta di Sala: segue l'ora (AUTO), oppure l'interruttore manuale
+ * (CHIARO/SCURO) che ha sempre la precedenza.
+ */
+enum class CardTheme { AUTO, CHIARO, SCURO }
+
+/** L'unita' di velocita' del vento mostrata in Sala VI. */
+enum class SalaWindUnit(val label: String) {
+    KMH("km/h"),
+    MS("m/s"),
+    KN("nodi"),
+    ;
+
+    /** Da metri al secondo, che e' l'unita' in cui viaggia il dato. */
+    fun from(metresPerSecond: Double): Double = when (this) {
+        KMH -> metresPerSecond * 3.6
+        MS -> metresPerSecond
+        KN -> metresPerSecond * 1.9438444924
+    }
+}
+
+/** Quanto raccontano le didascalie sotto il titolo di ogni sala. */
+enum class CaptionStyle { BREVI, COMPLETE }
+
+/** Quali avvisi calcolati sono richiesti, sala per sala. */
+data class AlertToggles(
+    val pioggiaIntensa: Boolean = true,
+    val temporali: Boolean = true,
+    val uvAlto: Boolean = true,
+    val ventoForte: Boolean = false,
+)
+
+enum class AlertToggleKind { PIOGGIA, TEMPORALE, UV, VENTO }
+
 /** Tutto cio' che l'utente ha scelto e che deve sopravvivere alla chiusura. */
 data class Settings(
     val place: Place = Place.FORLI,
@@ -79,6 +113,11 @@ data class Settings(
      * stesso id e non e' piu' la stessa notizia.
      */
     val dismissedAlertWeight: Int = 0,
+    /** La carta: automatica seguendo l'ora, o forzata chiara/scura. */
+    val cardTheme: CardTheme = CardTheme.AUTO,
+    val windUnit: SalaWindUnit = SalaWindUnit.KMH,
+    val captionStyle: CaptionStyle = CaptionStyle.COMPLETE,
+    val alertToggles: AlertToggles = AlertToggles(),
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -145,6 +184,21 @@ class SettingsPrefs(private val context: Context) {
             favorites = decodeFavorites(prefs[KEY_FAVORITES]),
             dismissedAlertIds = prefs[KEY_ALERTS_DISMISSED].orEmpty(),
             dismissedAlertWeight = prefs[KEY_ALERTS_WEIGHT] ?: 0,
+            cardTheme = prefs[KEY_CARD_THEME]
+                ?.let { saved -> CardTheme.entries.firstOrNull { it.name == saved } }
+                ?: CardTheme.AUTO,
+            windUnit = prefs[KEY_WIND_UNIT]
+                ?.let { saved -> SalaWindUnit.entries.firstOrNull { it.name == saved } }
+                ?: SalaWindUnit.KMH,
+            captionStyle = prefs[KEY_CAPTION_STYLE]
+                ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
+                ?: CaptionStyle.COMPLETE,
+            alertToggles = AlertToggles(
+                pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
+                temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
+                uvAlto = prefs[KEY_ALERT_UV] ?: true,
+                ventoForte = prefs[KEY_ALERT_VENTO] ?: false,
+            ),
         )
     }
 
@@ -175,6 +229,28 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setModel(model: WeatherModel) {
         context.settingsDataStore.edit { it[KEY_MODEL] = model.name }
+    }
+
+    suspend fun setCardTheme(theme: CardTheme) {
+        context.settingsDataStore.edit { it[KEY_CARD_THEME] = theme.name }
+    }
+
+    suspend fun setWindUnit(unit: SalaWindUnit) {
+        context.settingsDataStore.edit { it[KEY_WIND_UNIT] = unit.name }
+    }
+
+    suspend fun setCaptionStyle(style: CaptionStyle) {
+        context.settingsDataStore.edit { it[KEY_CAPTION_STYLE] = style.name }
+    }
+
+    suspend fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
+        val key = when (kind) {
+            AlertToggleKind.PIOGGIA -> KEY_ALERT_PIOGGIA
+            AlertToggleKind.TEMPORALE -> KEY_ALERT_TEMPORALE
+            AlertToggleKind.UV -> KEY_ALERT_UV
+            AlertToggleKind.VENTO -> KEY_ALERT_VENTO
+        }
+        context.settingsDataStore.edit { it[key] = value }
     }
 
     /** Aggiunge o toglie una localita' dai preferiti, a seconda che ci sia gia'. */
@@ -236,5 +312,12 @@ class SettingsPrefs(private val context: Context) {
         val KEY_FAVORITES = stringPreferencesKey("preferiti")
         val KEY_ALERTS_DISMISSED = stringSetPreferencesKey("allerte_chiuse")
         val KEY_ALERTS_WEIGHT = intPreferencesKey("allerte_chiuse_peso")
+        val KEY_CARD_THEME = stringPreferencesKey("sala_carta")
+        val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
+        val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
+        val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
+        val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
+        val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")
+        val KEY_ALERT_VENTO = booleanPreferencesKey("sala_avviso_vento")
     }
 }

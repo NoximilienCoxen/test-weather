@@ -2628,3 +2628,173 @@ git checkout main && git pull --ff-only origin main
 Cioe' ogni sessione nuova parte da un `main` aggiornato senza doverlo ricordare.
 Se il comando fallisce, quasi sempre e' perche' ci sono modifiche non
 committate: si guardano con `git status` e si decide, non si forza.
+
+---
+
+## 12. Sala: la galleria che ha sostituito il feed
+
+`ui/sala/` (nuovo), al posto di `ui/home/` (tranne `MoonPhase.kt`, che resta),
+`ui/feed/`, `ui/alerts/`, `ui/settings/SettingsScreen.kt`, e la meta' di
+`ui/render3d/` che serviva solo alla cifra prismatica (`TextPrism.kt`,
+`PrismRenderer.kt`, `Facets.kt`, `Precip.kt`, `Skyline.kt`) e a `ui/render/`
+(`TemperatureRenderer.kt`, `ExtrudedText.kt`). `ui/motion/SceneRotation.kt`,
+`WeatherHaptics.kt` e `PhysicalNumber.kt` sono usciti con lei: servivano solo
+al trascinamento della cifra. `ui/render3d/Camera.kt` e `Bodies.kt` **restano**
+- li usano ancora i widget, il mappamondo del benvenuto e adesso anche la
+luna di Sala IV - e cosi' `ui/motion/DeviceTilt.kt`, che serve al benvenuto.
+
+**Perche' un cambio cosi' grande.** Non e' un restyling sopra il feed: e' la
+sostituzione decisa nella chat di Claude Design "Mobile app design watercolor"
+(`chats/` nel bundle di handoff) - la direzione **1a - Sala**, scelta esplicita
+dell'utente contro **1b - Catalogo**. Sette sale sfogliabili in un carosello
+verticale al posto delle sei schede del feed, un indicatore di percorso al
+posto della colonna di icone, un cartellino da museo (titolo, dati, didascalia)
+sotto un lavaggio ad acquerello che cambia con l'ora e col tempo. La scultura
+3D in plastica bianca fresata e il fondo a cielo sfumato - il cuore tecnico del
+feed, sezioni 4 e 8-bis - non fanno piu' parte della schermata principale.
+Restano nella cronologia (`git show`), e nei widget dove la sfera e il sole
+prospettici vivono ancora.
+
+### La tavolozza: `ui/sala/SalaTheme.kt`
+
+Il fondo non e' piu' un cielo continuo (`skyColors`, che resta per il
+benvenuto e i widget): e' una **carta** che scurisce a scatti con l'ora, sopra
+la quale galleggiano tre macchie d'acquerello il cui colore dipende dalla fase
+del giorno (`SalaPhase`: alba/giorno/tramonto/notte) e dal tempo
+(`SalaCondition`: sereno/nuvoloso/pioggia/grandine/temporale/temporale con
+grandine). E' la tabella colori del prototipo (`PHASE_WASH`, `COND_WASH`,
+`PHASE_TINT`) portata 1:1 in `washColors()`, coi token del sistema Broadsheet
+(`SalaTokens`) copiati dal suo `styles.css` - e' una tavolozza tutta nuova,
+ciano/magenta/giallo di quadricromia, non piu' l'azzurro del cielo.
+
+**`paperDarkness()` non legge l'orologio come il prototipo**: legge
+`SkyState.dayness`, che e' gia' la transizione morbida (reale, per la
+localita' mostrata) fra notte e giorno pieno che governa comparsa di sole e
+luna altrove in app. Stessa forma della curva del prototipo - **un salto solo,
+che scavalca la fascia grigia di mezzo dove nessun colore di testo reggerebbe**
+- ma guidata dai dati veri invece che da un orologio finto tarato su Forli'
+d'agosto.
+
+**La fase (`salaPhaseOf`)** si legge dall'altezza reale del sole
+(`sky.altitude`), non da un intervallo di ore fisso: sopra 0,22 e' giorno,
+sotto -0,42 e' notte, in mezzo alba o tramonto secondo `sky.evening`. Sono le
+stesse soglie che governa `SkyState.of` per il cielo del feed.
+
+**Semplificazioni dichiarate, non dimenticanze:**
+
+- **Niente distorsione a turbolenza.** Il filtro SVG (`feTurbulence` +
+  `feDisplacementMap`) che nel prototipo rende il bordo delle macchie
+  irregolare, "acquerellato", non e' stato riprodotto: le macchie sono cerchi
+  puliti che sfumano a trasparente (`Brush.radialGradient`), che e' gia' il
+  grosso dell'effetto. Chi vuole il bordo vero puo' provare un `RenderEffect`
+  (API 31+).
+- **Niente respiro (`animation:breathe`).** Il prototipo fa pulsare piano le
+  macchie su quasi tutte le sale. E' stato tolto apposta: e' un'animazione
+  sempre accesa, ed e' esattamente quello che la trappola #8 vieta - da fermo
+  l'app deve disegnare zero fotogrammi. Un respiro sempre attivo su sette
+  schermate e' un costo di batteria per un tocco decorativo.
+- **Font Source Serif 4, ma statico.** Il prototipo lo carica variabile da
+  Google Fonts (`ital,opsz,wght@0,8..60,300..700`). Qui sono stati scaricati
+  quattro pesi statici (300/400/600/700, `res/font/source_serif_*.ttf`) invece
+  del file variabile vero: costruire l'XML del font variabile e verificarne
+  gli assi senza poter compilare qui sembrava piu' rischio che valore. Chi
+  vuole il file variabile vero lo trova sulla stessa CSS2 API con uno
+  user-agent che dichiari supporto alle variazioni **e non** al WOFF2 - non
+  banale da ottenere in un colpo solo.
+
+### Cosa e' cambiato nei dati, non solo nel disegno
+
+- **`AirQualityRepository`** adesso chiede anche `nitrogen_dioxide` e `ozone`
+  a Open-Meteo (erano gia' nel suo endpoint, non si chiedevano). Servono a
+  Sala V, che mostra quattro inquinanti veri (PM2,5, PM10, NO₂, O₃) e non i
+  cinque del prototipo - i pollini non sono nell'endpoint base e non sono
+  stati aggiunti.
+- **Sala III (pioggia) e Sala VII (UV) scrivono sullo stesso `selectHour`**
+  della prima sala, come gia' faceva la vecchia scheda della pioggia del feed
+  (sezione 8-quinquies): il giorno resta un asse solo per tutta la galleria.
+  Sala VII nel prototipo aveva un cursore *suo*, separato, sulle sole ore
+  6-21; qui legge le ventiquattro ore vere e lo stesso asse di tutti.
+- **Gli avvisi di Sala I si filtrano sull'ora scelta** (`activeAt`, in
+  `SalaOggi.kt`) confrontando `onset`/`expires` veri con l'ora scorsa sulla
+  barra - non piu' un intervallo scritto a mano come nel prototipo.
+- **La luna di Sala IV e' la sfera vera** (`ui/render3d/Bodies.kt::moon`,
+  la stessa dei widget), non un disco piatto SVG: fase e illuminazione da
+  `MoonPhase` (gia' in app, epoca sinodica nota), non dal calcolo del
+  prototipo. Il trascinamento orizzontale sposta solo quale giorno del mese si
+  guarda (`-15..15`); il prototipo aveva anche un'inclinazione verticale che
+  nell'ultima versione veniva comunque azzerata a ogni trascinata, quindi non
+  e' stata portata.
+- **Niente rotazione verticale sulla scultura di Sala I.** Il prototipo la
+  aveva (`scTilt`), ma verticale e' l'asse con cui il carosello cambia sala:
+  tenerla avrebbe riacceso la trappola #5 (i due gesti si sarebbero contesi il
+  dito) su un tocco decorativo. Resta solo la rotazione orizzontale.
+- **"Le localita'" chiede il meteo vero per ogni preferita** aprendo il
+  pannello (`WeatherViewModel.loadFavoritesWeather`), una richiesta completa
+  per localita' invece di un'iconcina inventata - il prototipo mostrava un
+  meteo demo per ogni citta' del suo elenco fisso. E' la stessa chiamata della
+  previsione principale, presa per intero e tenuto solo `current`: costa piu'
+  di un endpoint dedicato, ma non ne aggiunge uno nuovo da scrivere e provare.
+  Finche' non arriva, quella riga non mostra un'iconcina inventata.
+- **`SalaImpostazioniScreen`** aggiunge preferenze nuove a `SettingsPrefs`:
+  `CardTheme` (Auto/Chiaro/Scuro, l'interruttore di Sala), `SalaWindUnit`
+  (km/h, m/s, nodi), `CaptionStyle` (Brevi/Complete - "Brevi" e' gia' cablato
+  a nascondere il solo corpo del testo, non ancora ripreso da nessuna sala:
+  serve una passata perche' ogni sala guardi questa preferenza) e
+  `AlertToggles` per i quattro avvisi calcolati. Sono preferenze nuove, non
+  ancora lette da nessun produttore di notifiche vere - oggi decidono solo
+  cosa l'interruttore mostra acceso.
+
+### Cosa e' rimasto fuori, in ordine di probabile utilita'
+
+1. **Il tiro per ricaricare.** Il feed lo aveva (`PullToRefresh` in
+   `FeedScreen.kt`, cancellata insieme al resto); Sala per ora ricarica solo
+   all'avvio, al cambio di localita' o tornando in primo piano dopo venti
+   minuti (`refreshIfStale`). La classe andrebbe estratta in un file suo
+   invece di essere ricopiata.
+2. **Il bollettino allerta per esteso.** `ui/alerts/AlertsSheet.kt` e'
+   cancellato: Sala I mostra titolo e riga breve di ogni avviso attivo, ma non
+   c'e' piu' un posto dove leggere descrizione e istruzioni per intero.
+   `WeatherViewModel.openAlerts/closeAlerts` esistono ancora (senza
+   chiamante): risistemare un bollettino - magari toccando la riga
+   dell'avviso in Sala I - e' la strada piu' diretta per riprenderselo.
+3. **Il tema Scuro forzato non e' mai stato visto su un fondo scuro vero.**
+   `CardTheme.SCURO` esiste e `paperDarkness` gli risponde, ma nessuna sala e'
+   stata fotografata cosi': va provato che macchie e inchiostro restino
+   leggibili sulla carta scurita quanto lo sono su quella chiara.
+4. **Le didascalie "Brevi"** sono un'opzione salvata ma senza lettore: nessuna
+   sala controlla ancora `state.captionStyle`.
+5. **`WeatherViewModel.forceAlert`/`collapseAlerts`** (gli agganci di verifica
+   automatica su un'allerta finta) restano validi, ma senza un bollettino da
+   aprire il gesto "tocca il pallino per riaprire tutto" del feed non ha piu'
+   un posto dove atterrare.
+
+### Due test sono usciti insieme al codice che provavano
+
+`FacetsTest.kt` provava `convexHull`/`facetTwiceArea` di `Facets.kt` - la
+matematica della vasca della vecchia scheda della pioggia, cancellata con
+lei. `RainStoryTest.kt` provava `RainStory.kt`, in `ui/feed/`, uscito con
+tutto il resto del feed. Cancellati insieme ai file che provavano: un test
+verde su codice che non esiste piu' non prova niente, e uno che non compila
+piu' avrebbe rotto il job `test` per intero.
+
+### Niente di questo e' stato provato in mano, e non poteva esserlo
+
+Stessa nota di ogni passata scritta da questo container (sezione 8, punto
+6-bis): **niente SDK Android qui**, quindi ne' `lintDebug` ne' `assembleDebug`
+sono partiti da questa sessione. Tutto cio' che e' Compose - le sette sale, le
+due schermate di servizio, il carosello, i gesti - l'ha compilato **solo** la
+CI, non questa sessione. Il font scaricato (`source_serif_*.ttf`) e' stato
+verificato per firma SFNT (`\x00\x01\x00\x00`), non per rendering.
+
+Da guardare per primi, in mano, appena la CI e' verde:
+
+- che il trascinamento orizzontale sulla scultura di Sala I giri la scena
+  senza che il carosello verticale rubi il gesto (trappola #5, di nuovo);
+- che la barra dell'ora di Sala I, la fascia di Sala III e la curva di Sala
+  VII si scorrano senza far scattare il cambio sala - lo stesso punto esposto
+  che il feed aveva gia' pagato;
+- se le macchie d'acquerello, senza turbolenza, si leggono ancora come tali o
+  se servono comunque un bordo mosso;
+- il costo per fotogramma della sfera lunare di Sala IV mentre la sala
+  accanto e' in vista nel carosello (stessa domanda mai chiusa della sezione
+  8, "non fatto", per la scultura della vecchia prima scheda).

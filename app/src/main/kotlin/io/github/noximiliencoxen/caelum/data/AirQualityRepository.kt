@@ -39,6 +39,8 @@ private data class AirQualityCurrentDto(
     @SerialName("us_aqi") val usAqi: Double? = null,
     @SerialName("pm2_5") val pm25: Double? = null,
     val pm10: Double? = null,
+    @SerialName("nitrogen_dioxide") val nitrogenDioxide: Double? = null,
+    val ozone: Double? = null,
 )
 
 /**
@@ -100,6 +102,8 @@ data class AirQuality(
     val scale: AirScale,
     val pm25: Double?,
     val pm10: Double?,
+    val nitrogenDioxide: Double? = null,
+    val ozone: Double? = null,
 ) {
     val band: AirBand? get() = scale.band(index)
 }
@@ -134,17 +138,21 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
             // sbaglierebbe in silenzio.
             val european = dto.current?.europeanAqi?.roundToInt()
             val american = dto.current?.usAqi?.roundToInt()
-            if (european != null) {
-                AirQuality(european, AirScale.EUROPEA, dto.current?.pm25, dto.current?.pm10)
-            } else {
-                AirQuality(american, AirScale.STATUNITENSE, dto.current?.pm25, dto.current?.pm10)
-            }
+            val scale = if (european != null) AirScale.EUROPEA else AirScale.STATUNITENSE
+            AirQuality(
+                index = european ?: american,
+                scale = scale,
+                pm25 = dto.current?.pm25,
+                pm10 = dto.current?.pm10,
+                nitrogenDioxide = dto.current?.nitrogenDioxide,
+                ozone = dto.current?.ozone,
+            )
         }
     }
 
 
     companion object {
         const val ENDPOINT = "https://air-quality-api.open-meteo.com/v1/air-quality"
-        const val CURRENT_VARS = "european_aqi,us_aqi,pm2_5,pm10"
+        const val CURRENT_VARS = "european_aqi,us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone"
     }
 }

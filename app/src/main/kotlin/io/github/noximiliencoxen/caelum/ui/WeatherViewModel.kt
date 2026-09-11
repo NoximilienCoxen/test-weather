@@ -22,10 +22,14 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.derivedAlerts
 import io.github.noximiliencoxen.caelum.data.mergeAlerts
 import io.github.noximiliencoxen.caelum.data.key
+import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
+import io.github.noximiliencoxen.caelum.prefs.AlertToggles
+import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
+import io.github.noximiliencoxen.caelum.prefs.CardTheme
+import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
-import io.github.noximiliencoxen.caelum.ui.home.nearestHourIndex
-import io.github.noximiliencoxen.caelum.ui.feed.FeedSection
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -151,27 +155,6 @@ data class UiState(
     val forcedAlert: WeatherAlert? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
     val selectedDay: Int = 0,
-    /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
-    val weekMode: Boolean = false,
-    /**
-     * Quale sezione del feed e' in scena.
-     *
-     * **La sorgente di verita' e' il carosello, non questo campo.** Qui ci
-     * finisce la sezione che il carosello ha **posato**, e serve a due cose
-     * sole: sapere da quale scheda ripartire, e dire alla colonna di icone chi
-     * accendere quando il dito non sta trascinando. Chi vuole sapere dove si e'
-     * durante un gesto legge il carosello.
-     */
-    val section: FeedSection = FeedSection.TEMPERATURA,
-    /**
-     * Quante volte una sezione e' stata chiesta **da fuori**: l'aggancio di
-     * cattura `--ei sezione`.
-     *
-     * E' un contatore e non un booleano perche' la CI chiede due volte di fila
-     * la stessa sezione, e un valore che non cambia non fa ripartire l'effetto
-     * che porta il carosello dove le si e' detto.
-     */
-    val sectionRequest: Int = 0,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -219,6 +202,25 @@ data class UiState(
     val searching: Boolean = false,
     val results: List<Place> = emptyList(),
     val searchError: String? = null,
+
+    // ── Sala ─────────────────────────────────────────────────────────────
+    /** In quale sala si e', per il carosello verticale di Sala. */
+    val room: SalaRoom = SalaRoom.OGGI,
+    /** Quante volte una stanza e' stata chiesta da fuori: l'aggancio `--ei sezione`. */
+    val roomRequest: Int = 0,
+    /** L'interruttore Carta di Sala: Auto segue l'ora, gli altri due forzano. */
+    val cardTheme: CardTheme = CardTheme.AUTO,
+    val windUnit: SalaWindUnit = SalaWindUnit.KMH,
+    val captionStyle: CaptionStyle = CaptionStyle.COMPLETE,
+    val alertToggles: AlertToggles = AlertToggles(),
+    /** Vero mentre e' aperta la schermata "Le localita'". */
+    val locationsOpen: Boolean = false,
+    /**
+     * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
+     * localita'". Manca finche' non e' stato chiesto: quella riga resta
+     * muta invece di mostrare un simbolo inventato.
+     */
+    val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
 ) {
     /**
      * Le allerte da mettere in scena: quella imposta se c'e', se no le vere.
@@ -433,6 +435,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         dismissedAlertWeight = settings.dismissedAlertWeight,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
+                        cardTheme = settings.cardTheme,
+                        windUnit = settings.windUnit,
+                        captionStyle = settings.captionStyle,
+                        alertToggles = settings.alertToggles,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -720,23 +726,67 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
+    /** Il carosello di Sala ha posato una stanza: da li' si riparte alla prossima apertura. */
+    fun showRoom(room: SalaRoom) = _state.update { it.copy(room = room) }
 
-    /** Il carosello ha posato una scheda: da li' si riparte alla prossima apertura. */
-    fun showSection(section: FeedSection) = _state.update { it.copy(section = section) }
+    /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
+    fun requestRoom(index: Int) {
+        val picked = SalaRoom.entries.getOrNull(index) ?: return
+        _state.update { it.copy(room = picked, roomRequest = it.roomRequest + 1) }
+    }
+
+    fun setCardTheme(theme: CardTheme) {
+        viewModelScope.launch { prefs.setCardTheme(theme) }
+    }
+
+    fun setWindUnit(unit: SalaWindUnit) {
+        viewModelScope.launch { prefs.setWindUnit(unit) }
+    }
+
+    fun setCaptionStyle(style: CaptionStyle) {
+        viewModelScope.launch { prefs.setCaptionStyle(style) }
+    }
+
+    fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
+        viewModelScope.launch { prefs.setAlertToggle(kind, value) }
+    }
+
+    fun openLocations() {
+        _state.update { it.copy(locationsOpen = true) }
+        loadFavoritesWeather()
+    }
+
+    fun closeLocations() = _state.update { it.copy(locationsOpen = false) }
 
     /**
-     * Aggancio per la cattura automatica: porta il feed su una sezione.
+     * Il meteo attuale di ogni localita' salvata, per la sua iconcina in "Le
+     * localita'".
      *
-     * Esiste per la stessa ragione di [requestDay]: col dito ci si arriva solo
-     * scorrendo, e cinque trascinate verticali di fila fanno morire l'emulatore
-     * della CI (vedi CONTESTO, la trappola sull'emulatore). Con questo un solo
-     * `am start` mette in scena la scheda da fotografare, senza un gesto.
+     * Una richiesta per localita', in parallelo: e' la stessa chiamata della
+     * previsione principale, presa per intero e tenuto solo `current` -
+     * ripetere qui un endpoint a parte non aggiungerebbe niente che
+     * `WeatherRepository` non sappia gia' fare, e la risposta e' piccola.
+     * Fallisce in silenzio localita' per localita': una non raggiungibile non
+     * deve svuotare le altre.
      */
-    fun requestSection(index: Int) {
-        val sections = FeedSection.entries
-        val picked = sections.getOrNull(index) ?: return
-        _state.update { it.copy(section = picked, sectionRequest = it.sectionRequest + 1) }
+    private var favoritesJob: Job? = null
+
+    private fun loadFavoritesWeather() {
+        favoritesJob?.cancel()
+        val places = _state.value.favorites
+        if (places.isEmpty()) return
+        favoritesJob = viewModelScope.launch {
+            places.forEach { place ->
+                launch {
+                    WeatherRepository(place, WeatherModel.AUTO).load()
+                        .onSuccess { forecast ->
+                            _state.update {
+                                it.copy(favoritesWeather = it.favoritesWeather + (place.key to forecast.current))
+                            }
+                        }
+                }
+            }
+        }
     }
 
     /**
@@ -1009,4 +1059,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         const val FIRST_RETRY_MS = 1_200L
         const val SEARCH_DEBOUNCE_MS = 320L
     }
+}
+
+/** L'ora della previsione piu' vicina a un istante dato. */
+private fun nearestHourIndex(hours: List<HourForecast>, target: LocalDateTime): Int {
+    if (hours.isEmpty()) return 0
+    var best = 0
+    var bestDistance = Long.MAX_VALUE
+    hours.forEachIndexed { index, hour ->
+        val distance = kotlin.math.abs(Duration.between(target, hour.time).toMinutes())
+        if (distance < bestDistance) {
+            bestDistance = distance
+            best = index
+        }
+    }
+    return best
 }

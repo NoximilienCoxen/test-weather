@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
             .takeIf { it != Int.MIN_VALUE }
             ?.let { viewModel.forceYaw(it.toFloat()) }
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
-        intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestSection)
+        intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
         // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
@@ -111,13 +111,13 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_DAY = "giorno"
 
         /**
-         * Apre il feed su una sezione: 0 temperatura, 1 pioggia, 2 aria,
-         * 3 vento, 4 sole, 5 luna.
+         * Apre Sala su una stanza: 0 oggi, 1 settimana, 2 pioggia, 3 luna,
+         * 4 aria, 5 vento, 6 UV.
          *
          * Serve per la stessa ragione di [EXTRA_DAY]: col dito ci si arriva
-         * solo scorrendo, e cinque trascinate verticali di fila fanno morire
+         * solo scorrendo, e sei trascinate verticali di fila fanno morire
          * l'emulatore della CI. Con questo un solo avvio mette in scena la
-         * scheda da fotografare, senza un gesto.
+         * sala da fotografare, senza un gesto.
          */
         const val EXTRA_SECTION = "sezione"
         const val EXTRA_WELCOME = "benvenuto"

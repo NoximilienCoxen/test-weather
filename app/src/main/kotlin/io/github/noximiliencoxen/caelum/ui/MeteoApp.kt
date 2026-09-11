@@ -27,31 +27,22 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
-import io.github.noximiliencoxen.caelum.ui.alerts.AlertsSheet
-import io.github.noximiliencoxen.caelum.ui.feed.FeedScreen
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
-import io.github.noximiliencoxen.caelum.ui.settings.SettingsScreen
+import io.github.noximiliencoxen.caelum.ui.sala.SalaShell
 import io.github.noximiliencoxen.caelum.ui.welcome.WelcomeScreen
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
 import io.github.noximiliencoxen.caelum.ui.theme.relativeLuminance
 import io.github.noximiliencoxen.caelum.ui.theme.skyColors
-import kotlin.math.roundToInt
 
 /**
- * La pila dell'app: il cielo, il feed, e i due pannelli che gli si mettono
- * davanti.
+ * La pila dell'app: il benvenuto, e Sala.
  *
- * **Il feed ha preso il posto del foglio.** Prima qui c'erano una schermata
- * essenziale e un dettaglio che saliva dal basso seguendo il dito: le sei
- * grandezze stavano dentro il foglio, in un carosello orizzontale. Adesso sono
- * le sezioni del feed - una schermata piena ciascuna, si scorre dal basso verso
- * l'alto - e questo file non ha piu' un gesto suo: quello verticale appartiene
- * al carosello, che se lo gestisce insieme al tiro per ricaricare.
- *
- * Restano davanti al feed due pannelli veri, che dipingono sopra il cielo: le
- * allerte entrano da destra perche' si scende dentro qualcosa di piu' specifico,
- * le impostazioni da sinistra, da dove sta il loro pulsante.
+ * **Sala ha preso il posto del feed.** Le sette sale sono un carosello
+ * verticale che gestisce da solo il proprio cielo (la carta acquerello, non
+ * piu' quella a sfumatura) e i propri due pannelli di servizio — localita' e
+ * impostazioni. Questo file resta responsabile solo del benvenuto e del
+ * ricaricamento quando l'app torna in primo piano.
  */
 @Composable
 fun MeteoApp(viewModel: WeatherViewModel) {
@@ -132,34 +123,17 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         ) {
             val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
 
-            // Le icone delle barre di sistema seguono cio' che hanno sotto. Con
-            // le barre trasparenti e un fondo che va dall'azzurro di
-            // mezzogiorno all'indaco della notte, lasciarle fisse vuol dire
-            // che per meta' giornata
-            // sono invisibili: e' il motivo per cui negli scatti la barra di
-            // navigazione appariva bianca sotto un'app scura.
-            //
-            // **Il feed non entra in questo conto.** Le sue schede vivono tutte
-            // sul cielo: sopra e sotto ci sono lo zenit e l'orizzonte a
-            // qualunque scheda si sia, quindi la risposta e' la stessa per tutte
-            // e sei. A cambiarla restano i due pannelli veri, che dipingono
-            // sopra il cielo.
-            val panelled = state.settingsOpen || state.alertsOpen
+            // Le icone delle barre di sistema seguono cio' che hanno sotto.
+            // Sala dipinge la propria carta da bordo a bordo con le sue tinte
+            // (vedi `SalaPalette`), non piu' il cielo a sfumatura: qui restano
+            // solo i colori del benvenuto, l'unica schermata che li usa ancora.
             SystemBarIcons(
-                behindStatusBar = if (panelled) {
-                    MaterialTheme.colorScheme.surface
-                } else {
-                    colors.skyZenith
-                },
-                behindNavigationBar = if (panelled) {
-                    MaterialTheme.colorScheme.surface
-                } else {
-                    colors.skyHorizon
-                },
+                behindStatusBar = colors.skyZenith,
+                behindNavigationBar = colors.skyHorizon,
             )
 
             // Al primo avvio l'app chiede dove sei, invece di dare per scontato
-            // un posto che nessuno ha scelto. Il feed non entra in scena finche'
+            // un posto che nessuno ha scelto. Sala non entra in scena finche'
             // il benvenuto non ha finito: non c'e' ancora niente da raccontare.
             if (!state.welcomed) {
                 WelcomeScreen(
@@ -174,82 +148,12 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     modifier = Modifier.systemBarsPadding(),
                 )
             } else {
-                // **Il feed, e non piu' una schermata con un foglio sopra.** Le
-                // sei grandezze erano pagine di un carosello dentro un foglio
-                // che saliva dal basso: adesso sono le schede del feed, una
-                // schermata piena ciascuna, e ci si passa scorrendo. Il gesto
-                // verticale che apriva il foglio e' lo stesso che adesso cambia
-                // sezione - e' passato di mano, non e' stato aggiunto.
-                //
-                // L'inserto delle barre di sistema sta **dentro**, scheda per
-                // scheda: il cielo dipinge da bordo a bordo, e fermarlo qui
-                // lascerebbe una striscia grigia sopra e sotto il feed.
-                FeedScreen(
+                SalaShell(
                     state = state,
                     sky = sky,
-                    tilt = tilt,
                     viewModel = viewModel,
+                    widthPx = widthPx,
                 )
-            }
-
-            // Le allerte entrano da destra: si scende dentro qualcosa di piu'
-            // specifico, e il verso lo racconta. Stanno **dopo** il dettaglio
-            // nella pila perche' la fascia si puo' toccare anche da li', e un
-            // foglio che si apre sotto quello da cui e' stato aperto non si
-            // vedrebbe.
-            val alertsShift by animateFloatAsState(
-                targetValue = if (state.alertsOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "allerte",
-            )
-            if (alertsShift > 0.001f) {
-                BackHandler(enabled = state.alertsOpen, onBack = viewModel::closeAlerts)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset(((1f - alertsShift) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    AlertsSheet(
-                        alerts = state.shownAlerts,
-                        unavailable = state.alertsUnavailable,
-                        outOfCoverage = state.alertsOutOfCoverage,
-                        onBack = viewModel::closeAlerts,
-                        modifier = Modifier.systemBarsPadding(),
-                    )
-                }
-            }
-
-            val settings by animateFloatAsState(
-                targetValue = if (state.settingsOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "impostazioni",
-            )
-            if (settings > 0.001f) {
-                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
-                // **Opaco.** Era nero all'ottantacinque per cento, e la
-                // schermata sotto traspariva: negli scatti si legge la cifra
-                // della temperatura in mezzo al testo delle impostazioni. Un
-                // velo non e' uno sfondo, e un testo che poggia su un velo non
-                // ha un contrasto: ne ha uno diverso a ogni pixel.
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset((-(1f - settings) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    SettingsScreen(
-                        state = state,
-                        onQuery = viewModel::search,
-                        onChoosePlace = viewModel::choosePlace,
-                        onChooseUnit = viewModel::setUnit,
-                        onChooseModel = viewModel::setModel,
-                        onToggleFavorite = viewModel::toggleFavorite,
-                        onUseLocation = viewModel::useDeviceLocation,
-                        onClose = viewModel::closeSettings,
-                        modifier = Modifier.systemBarsPadding(),
-                    )
-                }
             }
         }
     }
