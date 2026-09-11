@@ -189,14 +189,34 @@ def trasparenza(mat):
             pass
 
 
-def lineare(oggetto):
-    """Interpolazione lineare su tutte le curve: un ciclo cucito non accelera."""
-    azione = oggetto.animation_data.action if oggetto.animation_data else None
-    if azione is None:
-        return
-    for curva in azione.fcurves:
-        for punto in curva.keyframe_points:
-            punto.interpolation = "LINEAR"
+class interpolazione_lineare:
+    """Tutte le chiavi nascono lineari, invece di raddrizzarle dopo.
+
+    **E' la correzione di uno script che si piantava su Blender 4.4.** Prima si
+    inserivano le chiavi e poi si rileggevano le curve per metterle a `LINEAR`,
+    passando da `azione.fcurves`. Nella 4.4 le azioni sono diventate a strati -
+    livelli, strisce, sacche di canali, una per slot - e `fcurves` su un'azione
+    nuova non esiste piu': `AttributeError` a meta' della costruzione
+    dell'acqua.
+
+    Si potrebbe inseguire la nuova API e tenere un ramo per ogni versione. Ma la
+    domanda vera non e' "come si raggiungono le curve": e' **come nascono le
+    chiavi**, e per quella c'e' una preferenza che ha lo stesso nome da dieci
+    versioni. Impostata prima di inserire, non c'e' piu' niente da raddrizzare
+    dopo, e il codice non sa piu' come sia fatta un'azione dentro.
+
+    Si rimette com'era uscendo: e' una preferenza dell'utente, non nostra.
+    """
+
+    def __enter__(self):
+        self.modifica = bpy.context.preferences.edit
+        self.prima = self.modifica.keyframe_new_interpolation_type
+        self.modifica.keyframe_new_interpolation_type = "LINEAR"
+        return self
+
+    def __exit__(self, *_):
+        self.modifica.keyframe_new_interpolation_type = self.prima
+        return False
 
 
 def cicla(oggetto, campo, partenza, arrivo, indice=None):
@@ -215,7 +235,6 @@ def cicla(oggetto, campo, partenza, arrivo, indice=None):
         else:
             getattr(oggetto, campo)[indice] = valore
             oggetto.keyframe_insert(data_path=campo, frame=fotogramma, index=indice)
-    lineare(oggetto)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -254,12 +273,6 @@ def acqua():
     for fotogramma, valore in ((1, 0.0), (CICLO + 1, 1.0 / 2.5)):
         mappa.inputs["Location"].default_value[1] = valore
         mappa.inputs["Location"].keyframe_insert("default_value", index=1, frame=fotogramma)
-    animazione = mat.node_tree.animation_data
-    if animazione is not None and animazione.action is not None:
-        for curva in animazione.action.fcurves:
-            for punto in curva.keyframe_points:
-                punto.interpolation = "LINEAR"
-
     piano.data.materials.append(mat)
     return piano
 
@@ -525,6 +538,11 @@ def profondita(scena):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def costruisci(variante, con_pioggia):
+    with interpolazione_lineare():
+        return _costruisci(variante, con_pioggia)
+
+
+def _costruisci(variante, con_pioggia):
     conto = VARIANTI[variante]
     svuota()
     scena = bpy.context.scene
