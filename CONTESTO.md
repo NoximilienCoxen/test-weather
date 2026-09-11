@@ -2768,6 +2768,36 @@ stesse soglie che governa `SkyState.of` per il cielo del feed.
    aprire il gesto "tocca il pallino per riaprire tutto" del feed non ha piu'
    un posto dove atterrare.
 
+### La richiesta di una sala non poteva stare dentro `room`
+
+**L'ha trovata la galleria della CI, non una rilettura del codice.** Il primo
+giro verde ha prodotto sei scatti di sale diverse in cui si vedeva sei volte
+**la stessa sala, la prima** - quattro di loro byte per byte identici. Sul feed,
+il giro precedente, i sei erano sei.
+
+Il difetto: `requestRoom` scriveva la sala chiesta in `state.room`, che e' lo
+stesso campo che il carosello **riscrive da se'** a ogni pagina posata
+(`showRoom(settledPage)`). All'avvio le due cose corrono: se l'emissione del
+carosello - pagina zero - arriva prima che l'effetto legga la richiesta, la
+richiesta e' gia' stata sovrascritta. L'effetto chiedeva allora "dove devo
+andare?" a un campo che nel frattempo gli rispondeva "dove sei gia'", e non si
+muoveva. `--ei sezione` diventava un comando che non faceva niente, in silenzio.
+
+Adesso `roomRequest` e' `SalaRoom?` e non piu' un contatore: porta **la sala
+chiesta**, il carosello non la tocca, e chi la esaudisce la spegne
+(`roomRequestHonoured`). Cosi' la stessa sala chiesta due volte di fila riparte
+davvero - che era l'unica ragione per cui prima serviva un contatore.
+
+Il codice copiato veniva dal feed, dov'era identico e dove funzionava: e' una
+gara che sul feed non si perdeva e in Sala si', e nessuna rilettura l'avrebbe
+mostrata. Vale come promemoria che **un campo scritto da due parti non e' uno
+stato, e' una gara**.
+
+`scripts/capture.sh` e' stato allineato nello stesso passaggio: le sale sono
+sette e in un ordine loro, mentre il giro fotografava ancora le sei schede del
+feed coi loro nomi. Gli scatti della "finestra" della pioggia hanno perso quel
+nome insieme alla lastra di vetro, cancellata con `ui/feed/`.
+
 ### Due test sono usciti insieme al codice che provavano
 
 `FacetsTest.kt` provava `convexHull`/`facetTwiceArea` di `Facets.kt` - la
