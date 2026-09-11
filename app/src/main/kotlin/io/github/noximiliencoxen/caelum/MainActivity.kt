@@ -115,6 +115,10 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
+        // Va letto **dopo** EXTRA_WELCOME: chi chiede l'uno non chiede l'altro,
+        // ma se arrivassero insieme vince chiudere, che e' la richiesta piu'
+        // specifica.
+        if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
         // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
         // identificativi di cio' che c'e' in scena, e se l'allerta imposta non
@@ -148,6 +152,21 @@ class MainActivity : ComponentActivity() {
          */
         const val EXTRA_SECTION = "sezione"
         const val EXTRA_WELCOME = "benvenuto"
+
+        /**
+         * Chiude l'Ingresso per sempre, scrivendo la preferenza.
+         *
+         * **Esiste per un guasto vero, non per comodita'.** La cattura lo
+         * chiudeva toccando il rimando in fondo a un'altezza fissa - il 71%
+         * dello schermo - e quel numero era tarato sul benvenuto vecchio.
+         * Ridisegnato l'Ingresso, il rimando e' finito all'89%, il tocco e'
+         * caduto nel vuoto e **ogni scatto del giro ha ritratto l'Ingresso**:
+         * sette sale, due schermate di servizio, tutte uguali. Il giro era
+         * verde e la galleria diceva il falso.
+         *
+         * Un aggancio non si sposta quando qualcuno cambia un margine.
+         */
+        const val EXTRA_SKIP_WELCOME = "saltabenvenuto"
 
         /**
          * Mette in scena un'allerta finta, per gradino: 1 gialla, 2 arancione,
