@@ -39,7 +39,7 @@ import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 
 /**
- * "Le localita'": dove si e' adesso, cosa si e' salvato, e come aggiungere.
+ * "Le località": dove si e' adesso, cosa si e' salvato, e come aggiungere.
  *
  * **Le citta' consigliate non ci sono piu'.** Sotto "Aggiungi" c'era una fila
  * di nomi decisi da noi - Milano, Roma, e altre - che non avevano niente a che
@@ -63,14 +63,14 @@ fun SalaLocalitaScreen(
 
     SalaServiceScaffold(
         palette = palette,
-        title = "Le localita'",
+        title = "Le località",
         blobs = SalaBlobs.localita,
         onClose = onClose,
     ) { modifier ->
         LazyColumn(modifier = modifier) {
             item {
                 Column(modifier = Modifier.padding(top = 40.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(text = "Le tue localita'", style = SalaType.pageTitle, color = palette.ink)
+                    Text(text = "Le tue località", style = SalaType.pageTitle, color = palette.ink)
                     Text(
                         text = "${favorites.size} salvate",
                         style = SalaType.sectionLabel,
@@ -94,7 +94,7 @@ fun SalaLocalitaScreen(
             item {
                 Column(modifier = Modifier.padding(top = 40.dp)) {
                     Text(
-                        text = if (cercando) "Chiudi la ricerca" else "Aggiungi una citta'",
+                        text = if (cercando) "Chiudi la ricerca" else "Aggiungi una città",
                         style = SalaType.sectionLabel,
                         color = palette.inkAccent,
                         modifier = Modifier
@@ -118,7 +118,7 @@ fun SalaLocalitaScreen(
                             esito != null -> Riga(esito, palette.inkSoft)
                             state.searching -> Riga("Sto cercando…", palette.inkSoft)
                             state.query.trim().length >= 2 && state.results.isEmpty() ->
-                                Riga("Nessuna localita' con questo nome", palette.inkSoft)
+                                Riga("Nessuna località con questo nome", palette.inkSoft)
                         }
                         state.results.forEach { trovata ->
                             Text(
@@ -171,7 +171,7 @@ private fun CampoDiRicerca(
             .padding(horizontal = 12.dp, vertical = 12.dp),
     ) {
         if (valore.isEmpty()) {
-            Text(text = "Nome della citta'", style = SalaType.body, color = palette.inkSoft)
+            Text(text = "Nome della città", style = SalaType.body, color = palette.inkSoft)
         }
         BasicTextField(
             value = valore,

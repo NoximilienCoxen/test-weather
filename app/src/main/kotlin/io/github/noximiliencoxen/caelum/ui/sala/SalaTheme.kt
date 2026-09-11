@@ -236,7 +236,7 @@ private fun lightVeil(bg: Color): Brush = Brush.verticalGradient(
 /**
  * Le tinte complete di una sala, per la fase, il tempo e il tema scelti.
  *
- * @param intensity il cursore "intensita' lavaggi": nel prototipo era una
+ * @param intensity il cursore "intensità lavaggi": nel prototipo era una
  *   leva di messa a punto, qui resta un moltiplicatore a disposizione di chi
  *   regola l'app, di norma 1.
  */

@@ -150,7 +150,7 @@ private fun lerpColor(from: Color, to: Color, t: Float): Color = Color(
 )
 
 /**
- * La cornice di una sala: fondo acquerello, intestazione "localita' / SALA N",
+ * La cornice di una sala: fondo acquerello, intestazione "località / SALA N",
  * il contenuto della stanza, e l'indicatore di percorso in fondo.
  */
 @Composable

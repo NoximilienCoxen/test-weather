@@ -2833,6 +2833,71 @@ tutto il resto del feed. Cancellati insieme ai file che provavano: un test
 verde su codice che non esiste piu' non prova niente, e uno che non compila
 piu' avrebbe rotto il job `test` per intero.
 
+### 12-bis. L'Ingresso, e le altre cose chieste dopo il primo giro
+
+**Il mappamondo e' uscito.** Girava cercando casa, si fermava sulla longitudine
+giusta e ci piantava uno spillo: era il pezzo piu' ingegnoso della vecchia
+schermata di benvenuto, ed e' uscito lo stesso perche' raccontava la cosa
+sbagliata. Una galleria non si apre con un globo che cerca - si apre con una
+parete, un cartellino e una frase. Con lui e' uscito l'ultimo lettore
+dell'accelerometro: `rememberDeviceTilt` non lo chiama piu' nessuno, mentre
+`findLifecycleOwner`, che sta nello stesso file, serve ancora a `MeteoApp`.
+
+**La frase e' di un artista vero, e ogni frase porta la sua fonte** (vedi
+`ui/welcome/Citazioni.kt`). Le tre in elenco sono state verificate una per una
+contro la fonte primaria: Constable nella lettera a John Fisher del 23 ottobre
+1821, Van Gogh nelle lettere a Theo dell'8 settembre e del 9-10 luglio 1888.
+Un paio attribuite a Monet e il "The Sun is God" di Turner sono state
+**escluse apposta**: circolano dappertutto ma non si e' risaliti a un
+originale, e circolare molto non e' una fonte.
+
+E' la stessa regola della nota sugli agganci in `MainActivity`, applicata
+altrove: un'app che mette in bocca a un artista vero una frase mai detta sta
+prestando la propria faccia a qualcosa che non viene da dove sembra. Una
+citazione inventata e' anche **piu' difficile** da smentire di un'allerta
+finta, non piu' facile. La traduzione italiana e' nostra, quindi l'originale
+resta scritto accanto: e' il punto in cui una citazione verificata puo'
+comunque tradire.
+
+**"Guardando il cielo…" respira, e non viola niente.** Due trappole la
+riguardano e vanno lette per intero. La #8 vieta di disegnare fotogrammi da
+fermi: qui fermi non si e', e un'attesa in cui niente si muove e'
+indistinguibile da un'app bloccata. La #17 dice che `rememberInfiniteTransition`
+"qui non anima": non animava dove il valore si leggeva **solo dentro il
+disegno** - erano le gocce di pioggia - mentre qui finisce nel colore di un
+`Text`, cioe' in composizione, che e' il caso in cui la comodita' funziona.
+L'animazione muore con l'attesa.
+
+**Il giro della scultura e' completo e torna a casa da solo.** Era bloccato a
+settanta gradi e ci restava: voleva dire che la scultura aveva un rovescio che
+nessuno poteva vedere. Adesso il giro e' un `Animatable` - `snapTo` sotto il
+dito, molla al rilascio - e un nuovo tocco a meta' del ritorno **interrompe**
+la molla invece di litigarci. Un'animazione non interrompibile, sotto un dito,
+si sente come un ritardo.
+
+**Le impostazioni hanno un comando loro.** Tre linee disegnate a mano - non
+c'e' una libreria di icone e non vale aprirne una per tre segmenti - e il nome
+della citta' smette di essere la porta di servizio: torna a dire dove sei, e
+toccandolo si cambia posto, che e' quello che chiunque si aspetta.
+
+**"Torna ad adesso" compare solo quando si e' lontani dal presente.** Un
+comando che non fa niente insegna a non fidarsi anche degli altri.
+
+**Le citta' consigliate sono uscite da "Le localita'".** Erano nomi decisi da
+noi, senza rapporto con chi guarda: una scorciatoia verso posti che nessuno
+aveva chiesto, mentre chi voleva la propria citta' doveva comunque cercarla.
+Resta un modo solo, la ricerca, che era gia' l'unico buono per tutti. La citta'
+che si sta guardando ha un segno accanto al nome, **fermo**: un pallino che
+pulsa sarebbe la scelta ovvia e sarebbe la trappola #8 riaperta per dire "sei
+qui".
+
+**La luna e' una sfera.** Usava gia' il corpo vero, coi mari al posto giusto,
+ma lo riempiva di tinta piatta: al novilunio si vedeva un disco grigio, non un
+corpo. Adesso il pigmento si addensa verso il lembo, col centro del degrade'
+spostato verso la luce - ombreggiatura, non vignettatura. Il trascinamento
+orizzontale li' resta del mese: darglielo anche alla rotazione avrebbe
+riaperto la trappola #5 su due gesti che si contendono lo stesso dito.
+
 ### Niente di questo e' stato provato in mano, e non poteva esserlo
 
 Stessa nota di ogni passata scritta da questo container (sezione 8, punto

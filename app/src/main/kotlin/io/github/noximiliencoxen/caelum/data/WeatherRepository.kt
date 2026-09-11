@@ -138,7 +138,7 @@ class WeatherRepository(
                 // Otto secondi e non dieci: qui si sta scrivendo in una
                 // casella, e chi scrive aspetta meno volentieri di chi ha
                 // appena aperto l'app.
-                val body = httpGet(url, fonte = "la ricerca localita'", timeoutMs = 8_000)
+                val body = httpGet(url, fonte = "la ricerca località", timeoutMs = 8_000)
                 val parsed = lenientJson
                     .decodeFromString<GeocodingResponse>(body)
                 parsed.results.map { hit ->

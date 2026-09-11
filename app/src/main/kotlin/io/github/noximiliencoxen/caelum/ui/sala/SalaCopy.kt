@@ -21,7 +21,7 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
     ),
     SalaCondition.PIOGGIA to mapOf(
         SalaPhase.ALBA to "Piove dalle prime luci",
-        SalaPhase.GIORNO to "Rovescio di meta' pomeriggio",
+        SalaPhase.GIORNO to "Rovescio di metà pomeriggio",
         SalaPhase.TRAMONTO to "Pioggia fino a notte",
         SalaPhase.NOTTE to "Pioggia nella notte",
     ),
@@ -46,12 +46,12 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
 )
 
 private val SalaBodies: Map<SalaCondition, String> = mapOf(
-    SalaCondition.SERENO to "Cielo aperto e visibilita' ottima.",
+    SalaCondition.SERENO to "Cielo aperto e visibilità ottima.",
     SalaCondition.NUVOLOSO to "Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.",
-    SalaCondition.PIOGGIA to "Pioggia in corso: i millimetri e la probabilita' ora per ora sono in Sala III.",
+    SalaCondition.PIOGGIA to "Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.",
     SalaCondition.GRANDINE to "Chicchi in caduta: copri le piante in vaso e sposta l'auto se puoi.",
     SalaCondition.TEMPORALE to "Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.",
-    SalaCondition.TEMPORALE_GRANDINE to "Cella temporalesca con grandine: raffiche improvvise e visibilita' ridotta.",
+    SalaCondition.TEMPORALE_GRANDINE to "Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.",
 )
 
 fun salaTitle(condition: SalaCondition, phase: SalaPhase): String =

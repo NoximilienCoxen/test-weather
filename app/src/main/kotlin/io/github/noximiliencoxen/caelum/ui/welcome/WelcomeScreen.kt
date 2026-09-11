@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.LaunchedEffect
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
@@ -104,9 +105,24 @@ fun WelcomeScreen(
 
             Box(modifier = Modifier.weight(1f)) {
                 Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                    // **Il corpo si adatta alla lunghezza della frase**, come
+                    // farebbe chi impagina a mano un cartellino da parete. Col
+                    // corpo fisso la citazione di Constable - centocinquanta
+                    // battute - riempiva lo schermo da cima a fondo e scacciava
+                    // tutto il resto, mentre quella di una riga ci nuotava
+                    // dentro. Sono frasi scritte da altri: la lunghezza non la
+                    // sceglie chi impagina.
+                    val corpo = when {
+                        citazione.testo.length > 140 -> 25
+                        citazione.testo.length > 85 -> 32
+                        else -> 42
+                    }
                     Text(
                         text = citazione.testo,
-                        style = SalaType.pageTitle,
+                        style = SalaType.pageTitle.copy(
+                            fontSize = corpo.sp,
+                            lineHeight = (corpo * 1.12f).sp,
+                        ),
                         color = SalaTokens.text,
                     )
                     Text(
@@ -140,7 +156,7 @@ fun WelcomeScreen(
             )
 
             Text(
-                text = "Scelgo io la citta'",
+                text = "Scelgo io la città",
                 style = SalaType.body,
                 color = SalaTokens.accent700,
                 textAlign = TextAlign.Center,
@@ -158,7 +174,7 @@ fun WelcomeScreen(
 /** Cosa dice la riga sotto la frase, secondo cosa sta succedendo. */
 private fun quandoDice(state: UiState): String = when {
     state.followsLocation -> "Trovato. Apro il percorso."
-    state.locationUnavailable -> "Non riesco a trovarti. Puoi scegliere la citta' a mano."
+    state.locationUnavailable -> "Non riesco a trovarti. Puoi scegliere la città a mano."
     else -> "Per aprire il percorso mi serve sapere da dove guardi il cielo."
 }
 

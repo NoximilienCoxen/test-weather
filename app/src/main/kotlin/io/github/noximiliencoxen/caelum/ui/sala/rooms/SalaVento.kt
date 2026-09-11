@@ -124,7 +124,7 @@ fun SalaVentoScreen(
                     color = palette.inkAccent,
                 )
                 Text(
-                    text = "La lancetta indica la direzione reale del vento all'ora scelta e si allunga verso la testa quando soffia piu' forte.",
+                    text = "La lancetta indica la direzione reale del vento all'ora scelta e si allunga verso la testa quando soffia più forte.",
                     style = SalaType.body,
                     color = palette.ink,
                 )

@@ -128,7 +128,7 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 append("&timezone=auto")
                 append("&current=").append(CURRENT_VARS)
             }
-            val dto = json.decodeFromString<AirQualityDto>(httpGet(url, fonte = "la qualita' dell'aria"))
+            val dto = json.decodeFromString<AirQualityDto>(httpGet(url, fonte = "la qualità dell'aria"))
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
             // **Sceglie il dato, non un rettangolo di longitudini.** Se
             // l'endpoint riempie l'indice europeo si e' dentro il dominio della

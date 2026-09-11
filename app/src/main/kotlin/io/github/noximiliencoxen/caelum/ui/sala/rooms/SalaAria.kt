@@ -69,7 +69,7 @@ fun SalaAriaScreen(
 
             Column(modifier = Modifier.padding(top = 30.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val title = when {
-                    air == null -> "Qualita' dell'aria non disponibile"
+                    air == null -> "Qualità dell'aria non disponibile"
                     else -> "Aria ${air.band?.label?.lowercase() ?: "--"}"
                 }
                 Text(text = title, style = SalaType.cardTitle, color = palette.ink)
@@ -80,9 +80,9 @@ fun SalaAriaScreen(
                 )
                 Text(
                     text = if (state.airUnavailable) {
-                        "La qualita' dell'aria non e' arrivata da questa richiesta."
+                        "La qualità dell'aria non è arrivata da questa richiesta."
                     } else {
-                        "Ogni riga e' rapportata alla propria soglia di riferimento, non a una scala comune."
+                        "Ogni riga è rapportata alla propria soglia di riferimento, non a una scala comune."
                     },
                     style = SalaType.body,
                     color = palette.ink,
