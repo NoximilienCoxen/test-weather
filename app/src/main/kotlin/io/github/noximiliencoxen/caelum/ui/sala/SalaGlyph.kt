@@ -53,17 +53,20 @@ fun DrawScope.weatherGlyph(condition: SalaCondition, ink: Color) {
         return
     }
 
-    // ── La nuvola: tre lobi e la base piatta ─────────────────────────────────
-    val baseY = h * 0.60f
-    val sinistra = w * 0.14f
-    val destra = w * 0.90f
+    // ── La nuvola: tre gobbe e la base piatta ────────────────────────────────
+    //
+    // **Unione di sottotracciati, non una catena di archi.** La prima stesura
+    // incatenava tre `arcTo` con angoli di spazzata indovinati a mano, e usciva
+    // una macchia con la coda: gli angoli di un arco su un rettangolo non sono
+    // intuitivi, e a occhio si sbagliano. Tre ovali piu' un rettangolo dentro
+    // **un solo** `Path` si uniscono da soli col riempimento non-zero, e la
+    // forma e' esattamente quella che si immagina guardando i numeri.
+    val baseY = h * 0.64f
     val nuvola = Path().apply {
-        moveTo(sinistra, baseY)
-        arcTo(Rect(sinistra, baseY - w * 0.26f, sinistra + w * 0.30f, baseY + w * 0.04f), 160f, 170f, false)
-        arcTo(Rect(w * 0.32f, baseY - w * 0.40f, w * 0.72f, baseY), 175f, 185f, false)
-        arcTo(Rect(destra - w * 0.30f, baseY - w * 0.28f, destra, baseY + w * 0.02f), 200f, 150f, false)
-        lineTo(sinistra, baseY)
-        close()
+        addOval(Rect(w * 0.10f, baseY - w * 0.26f, w * 0.48f, baseY + w * 0.06f))
+        addOval(Rect(w * 0.30f, baseY - w * 0.42f, w * 0.74f, baseY + w * 0.04f))
+        addOval(Rect(w * 0.56f, baseY - w * 0.28f, w * 0.92f, baseY + w * 0.06f))
+        addRect(Rect(w * 0.18f, baseY - w * 0.12f, w * 0.84f, baseY))
     }
     drawPath(nuvola, color = ink.copy(alpha = if (temporale) 0.85f else 0.60f))
 
