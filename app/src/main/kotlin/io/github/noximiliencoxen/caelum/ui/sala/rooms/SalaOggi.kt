@@ -3,6 +3,7 @@ package io.github.noximiliencoxen.caelum.ui.sala.rooms
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -197,12 +199,6 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
     val acquerello = LocalAcquerello.current
     val notte = phase == SalaPhase.NOTTE
 
-    // **Il giro e' un `Animatable`, non un float.** Serve perche' fa due cose
-    // che un float nudo non fa: durante il dito lo si sposta di scatto
-    // (`snapTo`), al rilascio lo si lascia tornare a casa con una molla vera
-    // (`animateTo`), e un nuovo tocco a meta' del ritorno **interrompe** la
-    // molla invece di litigarci. Un'animazione che non si puo' interrompere,
-    // sotto un dito, si sente come un ritardo.
     val giroAnim = rememberGiro()
 
     // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
