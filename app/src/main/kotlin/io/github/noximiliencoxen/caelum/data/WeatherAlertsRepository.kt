@@ -103,7 +103,7 @@ class WeatherAlertsRepository(private val place: Place) {
 
     /** Il posto non e' fra quelli che MeteoAlarm serve. */
     class OutOfCoverage(val country: String?) :
-        Exception("MeteoAlarm non copre " + (country ?: "questa localita'"))
+        Exception("MeteoAlarm non copre " + (country ?: "questa località"))
 
     companion object {
         /**
@@ -128,7 +128,7 @@ class WeatherAlertsRepository(private val place: Place) {
          *
          * Un paese che non c'e' torna nullo e non tira a indovinare: uno slug
          * inventato darebbe un 404, cioe' un guasto, dove la verita' e'
-         * semplicemente "qui non c'e' copertura".
+         * semplicemente "qui non c'è copertura".
          */
         fun countrySlug(country: String?): String? =
             COUNTRIES[country?.trim()?.lowercase() ?: return null]

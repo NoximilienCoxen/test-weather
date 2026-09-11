@@ -162,7 +162,7 @@ fun SalaLunaScreen(
                 )
                 Text(
                     text = if (offsetDays == 0) {
-                        "Il disco qui sopra e' la luna di questa notte, calcolata sulla data di oggi. Trascina in orizzontale per attraversare il mese lunare."
+                        "Il disco qui sopra è la luna di questa notte, calcolata sulla data di oggi. Trascina in orizzontale per attraversare il mese lunare."
                     } else {
                         "Stai guardando la luna del ${shownDate.format(DayMonth)}, a ${kotlin.math.abs(offsetDays)} giorni da oggi. Torna a stasera per rimetterla in pari con il cielo."
                     },

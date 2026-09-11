@@ -28,7 +28,7 @@ data class Citazione(
 
 internal val Citazioni = listOf(
     Citazione(
-        testo = "Sara' difficile nominare un genere di paesaggio in cui il cielo " +
+        testo = "Sarà difficile nominare un genere di paesaggio in cui il cielo " +
             "non sia la nota dominante, la misura di ogni scala, l'organo " +
             "principale del sentimento.",
         autore = "John Constable",
@@ -38,7 +38,7 @@ internal val Citazioni = listOf(
         fonte = "Lettera a John Fisher, 23 ottobre 1821",
     ),
     Citazione(
-        testo = "Mi capita spesso di pensare che la notte sia piu' viva e piu' " +
+        testo = "Mi capita spesso di pensare che la notte sia più viva e più " +
             "riccamente colorata del giorno.",
         autore = "Vincent van Gogh",
         originale = "I often think that the night is more alive and more richly " +

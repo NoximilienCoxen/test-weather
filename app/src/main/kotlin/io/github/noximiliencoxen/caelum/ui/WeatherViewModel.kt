@@ -128,7 +128,7 @@ data class UiState(
      *
      * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
      * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
-     * localita' non risultano avvisi in corso", che e' un'affermazione che
+     * località non risultano avvisi in corso", che e' un'affermazione che
      * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
      * ha guardato da nessuna parte. **Un silenzio non e' una risposta
      * rassicurante: e' un silenzio**, e va detto quale dei due e'.
@@ -216,7 +216,7 @@ data class UiState(
      * zero, prima ancora che la richiesta fosse letta - la cancellava, e con
      * lei l'unica traccia di dove si voleva andare. L'effetto che doveva
      * portarcelo chiedeva "dove devo andare?" a un campo che nel frattempo gli
-     * rispondeva "dove sei gia'", e non si muoveva. In CI si vedeva cosi': sei
+     * rispondeva "dove sei già", e non si muoveva. In CI si vedeva cosi': sei
      * scatti di sale diverse, tutti e sei della prima sala.
      */
     val roomRequest: SalaRoom? = null,
@@ -225,11 +225,11 @@ data class UiState(
     val windUnit: SalaWindUnit = SalaWindUnit.KMH,
     val captionStyle: CaptionStyle = CaptionStyle.COMPLETE,
     val alertToggles: AlertToggles = AlertToggles(),
-    /** Vero mentre e' aperta la schermata "Le localita'". */
+    /** Vero mentre e' aperta la schermata "Le località". */
     val locationsOpen: Boolean = false,
     /**
      * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
-     * localita'". Manca finche' non e' stato chiesto: quella riga resta
+     * località". Manca finche' non e' stato chiesto: quella riga resta
      * muta invece di mostrare un simbolo inventato.
      */
     val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
@@ -630,7 +630,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // occorrenze in tutto il progetto, la dichiarazione e
                         // questa scrittura. Il grafico che la mostrava - citato
                         // al presente dal commento che stava qui, "il grafico
-                        // la mostra solo quando c'e'" - era gia' stato tolto
+                        // la mostra solo quando c'è" - era gia' stato tolto
                         // dalla schermata, e il percorso dati e' rimasto
                         // acceso da solo.
                         //
@@ -778,7 +778,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     /**
      * Il meteo attuale di ogni localita' salvata, per la sua iconcina in "Le
-     * localita'".
+     * località".
      *
      * Una richiesta per localita', in parallelo: e' la stessa chiamata della
      * previsione principale, presa per intero e tenuto solo `current` -
@@ -1021,7 +1021,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             // DataStore. Nessuno di questi e' garantito: un file delle
             // preferenze corrotto, per dire, fa fallire `prefs.setPlace` con
             // un'eccezione che altrimenti risalirebbe non presa fino a far
-            // cadere l'app. E' la stessa filosofia di "permesso negato non e'
+            // cadere l'app. E' la stessa filosofia di "permesso negato non è
             // un errore" applicata a tutta la catena, non solo al permesso.
             try {
                 val found = DeviceLocation.current(getApplication<Application>())

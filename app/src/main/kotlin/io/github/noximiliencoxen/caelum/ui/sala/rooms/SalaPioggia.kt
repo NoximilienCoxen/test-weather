@@ -87,7 +87,7 @@ fun SalaPioggiaScreen(
                 }
                 Text(text = meta, style = SalaType.sectionLabel, color = palette.inkAccent)
                 Text(
-                    text = "Le colonne piene sono i millimetri, la linea sottile la probabilita' ora per ora.",
+                    text = "Le colonne piene sono i millimetri, la linea sottile la probabilità ora per ora.",
                     style = SalaType.body,
                     color = palette.ink,
                 )

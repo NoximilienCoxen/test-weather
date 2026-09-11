@@ -114,8 +114,8 @@ fun SalaUvScreen(
                     color = palette.inkAccent,
                 )
                 val body = when {
-                    current < 3 -> "A quest'ora la radiazione e' debole: la pelle chiara regge oltre un'ora senza protezione."
-                    current < 6 -> "Servono crema e cappello se resti fuori piu' di mezz'ora."
+                    current < 3 -> "A quest'ora la radiazione è debole: la pelle chiara regge oltre un'ora senza protezione."
+                    current < 6 -> "Servono crema e cappello se resti fuori più di mezz'ora."
                     current < 8 -> "Fra mezzogiorno e le due conviene stare all'ombra."
                     else -> "Radiazione molto forte: protezione alta, occhiali e maniche lunghe."
                 }
