@@ -1,7 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,9 +22,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
@@ -34,6 +34,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
+import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -54,6 +56,7 @@ fun SalaLunaScreen(
     onMenuClick: () -> Unit,
 ) {
     var offsetDays by remember { mutableIntStateOf(0) }
+    val giroAnim = rememberGiro()
     val today = LocalDate.now()
     val shownDate = today.plusDays(offsetDays.toLong())
     val phase = MoonPhase.at(shownDate)
@@ -71,30 +74,25 @@ fun SalaLunaScreen(
         onMenuClick = onMenuClick,
     ) { modifier ->
         Column(modifier = modifier) {
+            // **Il dito adesso gira la luna, non sfoglia il mese.**
+            // Erano due gesti sullo stesso asse e ne restava uno solo: il mese
+            // e' passato ai due passi qui sotto, che lo dicono anche a chi non
+            // prova a trascinare. Astronomicamente la Luna mostra sempre la
+            // stessa faccia - i mari infatti stanno fermi rispetto a lei - e
+            // farla girare e' una liberta': qui e' un oggetto in una sala, e
+            // in una sala gli oggetti si guardano da tutti i lati.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp)
                     .size(280.dp)
-                    .pointerInput(Unit) {
-                        var accum = 0f
-                        detectHorizontalDragGestures(
-                            onDragStart = { accum = 0f },
-                        ) { _, dragAmount ->
-                            accum += dragAmount
-                            val step = (accum / 14f).toInt()
-                            if (step != 0) {
-                                offsetDays = (offsetDays + step).coerceIn(-15, 15)
-                                accum -= step * 14f
-                            }
-                        }
-                    },
+                    .giroConLancio(giroAnim),
                 contentAlignment = Alignment.Center,
             ) {
                 Canvas(modifier = Modifier.size(240.dp)) {
                     val minDim = minOf(size.width, size.height)
                     val centerOffset = Offset(size.width / 2f, size.height / 2f)
-                    val camera = Camera(yawDeg = 0f, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
+                    val camera = Camera(yawDeg = giroAnim.value, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
                     val dark = lerp(palette.ink, palette.ground, 0.65f)
                     val raggio = minDim * 0.42f
                     moon(
@@ -139,14 +137,19 @@ fun SalaLunaScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = "Trascina in orizzontale per attraversare il mese",
-                    style = SalaType.hourLabel,
-                    color = palette.inkSoft,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    PassoDelMese("‹", palette) { offsetDays = (offsetDays - 1).coerceAtLeast(-15) }
+                    Text(
+                        text = if (offsetDays == 0) "Stasera" else shownDate.format(DayMonth),
+                        style = SalaType.sectionLabel,
+                        color = palette.inkAccent,
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                    )
+                    PassoDelMese("›", palette) { offsetDays = (offsetDays + 1).coerceAtMost(15) }
+                }
                 if (offsetDays != 0) {
                     TextButton(onClick = { offsetDays = 0 }) {
-                        Text(text = "Stasera", style = SalaType.sectionLabel, color = palette.inkAccent)
+                        Text(text = "Torna a stasera", style = SalaType.sectionLabel, color = palette.inkAccent)
                     }
                 }
             }
@@ -162,7 +165,7 @@ fun SalaLunaScreen(
                 )
                 Text(
                     text = if (offsetDays == 0) {
-                        "Il disco qui sopra è la luna di questa notte, calcolata sulla data di oggi. Trascina in orizzontale per attraversare il mese lunare."
+                        "Il disco qui sopra è la luna di questa notte, calcolata sulla data di oggi. Trascinala per girarla; i due passi qui sopra attraversano il mese."
                     } else {
                         "Stai guardando la luna del ${shownDate.format(DayMonth)}, a ${kotlin.math.abs(offsetDays)} giorni da oggi. Torna a stasera per rimetterla in pari con il cielo."
                     },
@@ -184,5 +187,16 @@ private fun Stat(label: String, value: String, palette: SalaPalette) {
     Column {
         Text(text = label, style = SalaType.hourLabel, color = palette.inkSoft)
         Text(text = value, style = SalaType.value, color = palette.ink)
+    }
+}
+
+/** Un passo avanti o indietro nel mese lunare. */
+@Composable
+private fun PassoDelMese(segno: String, palette: SalaPalette, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier.size(MinTouchTarget).clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = segno, style = SalaType.cardTitle, color = palette.inkAccent)
     }
 }

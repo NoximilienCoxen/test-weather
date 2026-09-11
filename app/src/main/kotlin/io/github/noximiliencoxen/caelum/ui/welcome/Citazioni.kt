@@ -19,6 +19,9 @@ package io.github.noximiliencoxen.caelum.ui.welcome
  *   e' il punto in cui una citazione verificata puo' comunque tradire, quindi
  *   l'originale resta scritto qui accanto e chiunque puo' controllarla.
  */
+/** Quello che si sa della provenienza, quando non si e' potuto aprire un originale. */
+internal const val FORNITA = "Raccolta fornita per l'app; originale non verificato"
+
 data class Citazione(
     val testo: String,
     val autore: String,
@@ -50,6 +53,104 @@ internal val Citazioni = listOf(
         autore = "Vincent van Gogh",
         originale = "The sight of the stars always makes me dream.",
         fonte = "Lettera a Theo n. 638, Arles, 9 o 10 luglio 1888",
+    ),
+    // ── Le frasi arrivate da chi ha commissionato l'app ──────────────────────
+    //
+    // **Portano `fonte = FORNITA` e non una citazione inventata.** Vengono da un
+    // elenco raccolto altrove, non da un originale che si sia potuto aprire:
+    // scriverci accanto "Lettera del tal giorno" sarebbe stato inventare la
+    // parte che conta. Sono quasi certamente vere - sono fra le piu' note di
+    // ognuno - ma "quasi certamente" e' esattamente il grado di certezza che
+    // questo campo serve a dichiarare, non a nascondere.
+    //
+    // Chi vuole promuoverne una: ne trovi l'originale, lo metta in `originale`
+    // e la fonte precisa in `fonte`. Fino ad allora restano cosi'.
+    Citazione(
+        testo = "Il colore è un mezzo per esercitare un influsso diretto " +
+            "sull'anima. Il colore è il tasto, l'occhio è il martelletto, " +
+            "l'anima è un pianoforte con molte corde.",
+        autore = "Wassily Kandinsky",
+        originale = "Lo spirituale nell'arte, 1912",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Non aver paura della perfezione: non la raggiungerai mai.",
+        autore = "Salvador Dalí",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Le idee non si rifiutano: germinano nella società, poi " +
+            "pensatori e artisti le esprimono.",
+        autore = "Lucio Fontana",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Più la critica è ostile, più l'artista dovrebbe essere incoraggiato.",
+        autore = "Marcel Duchamp",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "La creatività richiede coraggio.",
+        autore = "Henri Matisse",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "L'artista moderno, mi pare, lavora per esprimere un mondo " +
+            "interiore: il movimento, l'energia e altre forze interiori.",
+        autore = "Jackson Pollock",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Fai alle tue figure dei capelli che un vento invisibile sembri " +
+            "far danzare intorno ai loro volti giovanili.",
+        autore = "Leonardo da Vinci",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Il mondo della realtà ha i suoi limiti; il mondo " +
+            "dell'immaginazione è senza limiti.",
+        autore = "Jean-Jacques Rousseau",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "L'oggetto dell'arte non è riprodurre la realtà, ma creare una " +
+            "realtà della stessa intensità.",
+        autore = "Alberto Giacometti",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "La natura non è solo tutto ciò che è visibile agli occhi: " +
+            "include anche le immagini interiori dell'anima.",
+        autore = "Edvard Munch",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "La pittura è il nipote della natura.",
+        autore = "Rembrandt",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Tutti discutono la mia arte e affermano di comprenderla, come " +
+            "se fosse necessario comprendere, quando invece basterebbe amare.",
+        autore = "Claude Monet",
+        originale = "",
+        fonte = FORNITA,
+    ),
+    Citazione(
+        testo = "Non dipingo mai sogni o incubi. Dipingo la mia realtà.",
+        autore = "Frida Kahlo",
+        originale = "",
+        fonte = FORNITA,
     ),
 )
 

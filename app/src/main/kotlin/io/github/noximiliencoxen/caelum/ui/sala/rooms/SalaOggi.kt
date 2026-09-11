@@ -1,11 +1,8 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -34,6 +29,7 @@ import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.SalaCondition
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
@@ -42,14 +38,16 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
 import io.github.noximiliencoxen.caelum.ui.sala.label
+import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
 import io.github.noximiliencoxen.caelum.ui.sala.scultura
+import java.time.LocalDate
 import kotlin.math.roundToInt
-import kotlinx.coroutines.launch
 
 /**
  * Sala I — Oggi: la stanza di sempre, sotto una carta nuova.
@@ -193,6 +191,9 @@ private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
 
 @Composable
 private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaPalette) {
+    // La fase e' quella vera di stanotte, la stessa che calcola Sala IV: le due
+    // stanze non possono raccontare due lune diverse nella stessa notte.
+    val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
     val acquerello = LocalAcquerello.current
     val notte = phase == SalaPhase.NOTTE
 
@@ -202,8 +203,7 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
     // (`animateTo`), e un nuovo tocco a meta' del ritorno **interrompe** la
     // molla invece di litigarci. Un'animazione che non si puo' interrompere,
     // sotto un dito, si sente come un ritardo.
-    val giroAnim = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
+    val giroAnim = rememberGiro()
 
     // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
     // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
@@ -211,31 +211,12 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
     val giro = { giroAnim.value }
 
     Canvas(
+        // Solo orizzontale: il verticale e' del carosello fra le sale.
+        // Il gesto - verso, inerzia, ritorno - sta in `giroConLancio`, che lo
+        // condivide con la luna di Sala IV.
         modifier = Modifier
             .size(280.dp, 240.dp)
-            .pointerInput(Unit) {
-                // Solo orizzontale: il verticale e' del carosello fra le sale.
-                //
-                // Nessun limite d'angolo: si fa il giro intero, e al rilascio
-                // la posa iniziale se la riprende la molla. Prima si fermava a
-                // settanta gradi e ci restava, che voleva dire che la scultura
-                // aveva un dritto e un rovescio ma il rovescio non si vedeva.
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        scope.launch {
-                            giroAnim.animateTo(
-                                targetValue = 0f,
-                                animationSpec = spring(
-                                    dampingRatio = 0.62f,
-                                    stiffness = 180f,
-                                ),
-                            )
-                        }
-                    },
-                ) { _, dragAmount ->
-                    scope.launch { giroAnim.snapTo(giroAnim.value + dragAmount * 0.45f) }
-                }
-            },
+            .giroConLancio(giroAnim),
     ) {
         scultura(
             acquerello = acquerello,
@@ -243,6 +224,7 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
             palette = palette,
             notte = notte,
             giroDeg = giro(),
+            fase = faseLunare,
         )
     }
 }
