@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -154,6 +153,9 @@ private val MasseNuvola = listOf(
 )
 private const val MASSE_TEMPORALE = 2
 
+/** Quanto le masse si compenetrano. Sotto 1,2 si leggono come dischi separati. */
+private const val FUSIONE = 1.24f
+
 /** Le tinte della scultura, prese dai token e non dall'inchiostro del testo. */
 private fun tintaNuvola(palette: SalaPalette): Color =
     if (palette.dark) SalaTokens.accent400 else SalaTokens.accent
@@ -179,12 +181,15 @@ fun DrawScope.scultura(
     notte: Boolean,
     giroDeg: Float,
 ) {
-    val unita = min(size.width, size.height) * 0.46f
+    // L'unita' si misura sulla **larghezza**, non sul lato corto: la scultura
+    // deve occupare la cassa come nel concept, e prendendo il minimo restava un
+    // francobollo in mezzo a una pagina vuota.
+    val unita = size.width * 0.80f
     val camera = Camera(
         yawDeg = giroDeg,
         pitchDeg = 0f,
         distance = unita * 2.6f,
-        origin = Offset(size.width / 2f, size.height * 0.44f),
+        origin = Offset(size.width * 0.52f, size.height * 0.46f),
     )
 
     val coperto = condition != SalaCondition.SERENO
@@ -196,9 +201,9 @@ fun DrawScope.scultura(
     // ── L'ombra portata, per prima: sta sotto tutto ──────────────────────────
     timbra(
         timbro = acquerello.ombra,
-        centro = Offset(size.width / 2f, size.height * 0.88f),
-        larghezza = unita * 1.5f,
-        altezza = unita * 0.34f,
+        centro = Offset(size.width * 0.52f, size.height * 0.82f),
+        larghezza = unita * 1.15f,
+        altezza = unita * 0.26f,
         tinta = if (palette.dark) Color.Black else SalaTokens.neutral900,
         alfa = if (palette.dark) 0.22f else 0.13f,
     )
@@ -206,8 +211,8 @@ fun DrawScope.scultura(
     // ── Il disco: dietro le masse quando c'e' nuvola, al centro quando e' sereno ─
     val discoRaggio = if (coperto) unita * 0.46f else unita * 0.66f
     camera.place(
-        if (coperto) -0.34f * unita else 0f,
-        if (coperto) -0.30f * unita else -0.04f * unita,
+        if (coperto) -0.30f * unita else 0f,
+        if (coperto) -0.32f * unita else -0.04f * unita,
         0.30f * unita,
     )
     timbra(
@@ -232,7 +237,10 @@ fun DrawScope.scultura(
         indici.forEachIndexed { posto, i ->
             val m = MasseNuvola[i]
             camera.place(m[0] * unita, m[1] * unita, m[2] * unita)
-            val d = m[3] * unita * 2f * camera.scale
+            // Il fattore allarga le masse fino a farle **compenetrare**. Ai
+            // raggi nudi restavano dischi affiancati - si leggevano come bolle,
+            // non come una nuvola sola.
+            val d = m[3] * FUSIONE * unita * 2f * camera.scale
             timbra(
                 timbro = acquerello.macchie[i % acquerello.macchie.size],
                 centro = Offset(camera.sx, camera.sy),

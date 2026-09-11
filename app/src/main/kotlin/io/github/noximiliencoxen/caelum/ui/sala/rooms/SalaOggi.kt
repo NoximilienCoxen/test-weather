@@ -180,7 +180,7 @@ private fun Sculpture(condition: SalaCondition, phase: SalaPhase, palette: SalaP
 
     Canvas(
         modifier = Modifier
-            .size(250.dp, 200.dp)
+            .size(280.dp, 240.dp)
             .pointerInput(Unit) {
                 // Solo orizzontale: il verticale e' del carosello fra le sale.
                 detectHorizontalDragGestures { _, dragAmount ->
