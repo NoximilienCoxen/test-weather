@@ -174,6 +174,7 @@ fun SalaShell(
                     onPick = viewModel::choosePlace,
                     onAdd = viewModel::toggleFavorite,
                     onRemove = viewModel::toggleFavorite,
+                    onSearch = viewModel::search,
                     onClose = viewModel::closeLocations,
                 )
             }

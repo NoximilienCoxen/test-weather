@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -94,15 +96,40 @@ fun SalaLunaScreen(
                     val centerOffset = Offset(size.width / 2f, size.height / 2f)
                     val camera = Camera(yawDeg = 0f, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
                     val dark = lerp(palette.ink, palette.ground, 0.65f)
+                    val raggio = minDim * 0.42f
                     moon(
                         camera = camera,
                         x = 0f, y = 0f, z = 0f,
-                        radius = minDim * 0.42f,
+                        radius = raggio,
                         phase = phase,
                         light = palette.ink,
                         dark = dark,
                         alpha = 1f,
                         marks = MOON_SEAS,
+                    )
+
+                    // **Il bordo che scurisce: e' questo che fa una sfera.**
+                    // `moon` da' la fase giusta e i mari al posto giusto, ma
+                    // riempie di tinta piatta, e una tinta piatta dentro un
+                    // cerchio resta un cerchio - al novilunio si vedeva un
+                    // disco grigio, non un corpo. Qui il pigmento si addensa
+                    // verso il lembo, che e' come si legge la curvatura: piu'
+                    // superficie per unita' di schermo dove la sfera fugge via.
+                    //
+                    // Il centro del degrade' e' spostato verso la luce, cosi'
+                    // il lembo lontano e' piu' scuro del vicino invece che
+                    // uniforme: e' l'ombreggiatura, non una vignettatura.
+                    val versoLaLuce = Offset(-raggio * 0.30f, -raggio * 0.30f)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            0.00f to Color.Transparent,
+                            0.58f to Color.Transparent,
+                            1.00f to palette.ink.copy(alpha = 0.30f),
+                            center = centerOffset + versoLaLuce,
+                            radius = raggio * 1.45f,
+                        ),
+                        radius = raggio,
+                        center = centerOffset,
                     )
                 }
             }
