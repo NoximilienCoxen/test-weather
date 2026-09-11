@@ -1,11 +1,28 @@
 """Le scene di Caelum, costruite in Blender e rese per il diorama dell'app.
 
-    blender --background --python scripts/blender/caelum_scena.py -- \
-        --variante astri_nuvole_pioggia --out app/src/main/assets/scene
+## Come si esegue
 
-Senza `--background` si apre nell'editor di testo di Blender e si esegue: la
-scena resta li' da guardare e da ritoccare a mano, che e' il punto - questo
-script **prepara** la scena, non la sostituisce. Quello che fa a mano e' il
+**Non dalla Console Python di Blender.** Quella e' un interprete riga per riga:
+incollandoci dentro un file con funzioni e righe vuote, la prima riga vuota
+chiude la definizione e da li' in poi sono errori di indentazione a catena. Non
+e' un difetto dello script, e' cosa fa una REPL. Le tre strade che funzionano:
+
+1. **Editor di testo** (la piu' comoda). In Blender: `Scripting` in alto, poi
+   `Apri`, si sceglie questo file, e `Esegui` (o Alt+P). La scena si costruisce
+   e resta li' da guardare e da ritoccare.
+
+2. **Da terminale**, senza aprire Blender:
+
+       blender --background --python scripts/blender/caelum_scena.py -- \
+           --variante astri_nuvole_pioggia --out app/src/main/assets/scene
+
+3. **Dalla console, ma facendola leggere come file**, che e' il modo giusto di
+   dare un file a una REPL:
+
+       p = "/percorso/assoluto/caelum_scena.py"
+       exec(compile(open(p).read(), p, "exec"))
+
+Questo script **prepara** la scena, non la sostituisce. Quello che fa a mano e' il
 lavoro noioso e facile da sbagliare: la camera con la focale giusta,
 l'orizzonte all'altezza che l'app si aspetta, il passe di profondita' tarato e
 **invertito**, e il ciclo cucito.
@@ -107,6 +124,17 @@ def svuota():
             collezione.remove(elemento, do_unlink=True)
 
 
+def per_tipo(nodi, tipo):
+    """Il primo nodo di un certo tipo, o nulla.
+
+    I nomi dei nodi si possono cambiare, duplicare, tradurre; `bl_idname` no.
+    Cercare per nome funziona finche' il file di partenza e' quello previsto, e
+    quando smette di funzionare l'errore arriva a tre righe di distanza dalla
+    causa, parlando di un `None` invece che di un nodo che non c'era.
+    """
+    return next((n for n in nodi if n.bl_idname == tipo), None)
+
+
 def materiale(nome, colore, emissione=0.0, ruvidita=0.9, alpha_nodo=None):
     """Un materiale semplice, con l'emissione quando serve.
 
@@ -117,7 +145,15 @@ def materiale(nome, colore, emissione=0.0, ruvidita=0.9, alpha_nodo=None):
     mat.use_nodes = True
     nodi = mat.node_tree.nodes
     fili = mat.node_tree.links
-    bsdf = nodi.get("Principled BSDF")
+    # **Per tipo e non per nome.** `nodes.get("Principled BSDF")` dipende da
+    # come si chiama il nodo nel file di partenza, e basta un template diverso
+    # o una versione che lo rinomina per ritrovarsi un `None` e un errore a
+    # tre righe di distanza da dove sta la causa.
+    bsdf = per_tipo(nodi, "ShaderNodeBsdfPrincipled")
+    if bsdf is None:
+        bsdf = nodi.new("ShaderNodeBsdfPrincipled")
+        uscita = per_tipo(nodi, "ShaderNodeOutputMaterial") or nodi.new("ShaderNodeOutputMaterial")
+        fili.new(bsdf.outputs[0], uscita.inputs["Surface"])
     bsdf.inputs["Base Color"].default_value = (*colore, 1.0)
     bsdf.inputs["Roughness"].default_value = ruvidita
     if "Emission Color" in bsdf.inputs:
@@ -125,10 +161,32 @@ def materiale(nome, colore, emissione=0.0, ruvidita=0.9, alpha_nodo=None):
         bsdf.inputs["Emission Strength"].default_value = emissione
     if alpha_nodo is not None:
         fili.new(alpha_nodo(nodi, fili), bsdf.inputs["Alpha"])
-        mat.blend_method = "BLEND"
-        if hasattr(mat, "shadow_method"):
-            mat.shadow_method = "HASHED"
+        trasparenza(mat)
     return mat
+
+
+def trasparenza(mat):
+    """Dire a Blender che questo materiale ha dei buchi, su tre versioni diverse.
+
+    E' il punto in cui uno script scritto per una versione si pianta su
+    un'altra. `blend_method` e `shadow_method` sono spariti con EEVEE Next
+    nella 4.2-4.3, sostituiti da `surface_render_method`; nelle versioni prima
+    esistono solo i vecchi. Si prova quello che c'e' e si tace su quello che non
+    c'e': una nuvola senza trasparenza si vede subito, un errore qui fermerebbe
+    tutto lo script per un attributo rinominato.
+    """
+    if hasattr(mat, "surface_render_method"):
+        mat.surface_render_method = "BLENDED"
+    if hasattr(mat, "blend_method"):
+        try:
+            mat.blend_method = "BLEND"
+        except TypeError:
+            pass
+    if hasattr(mat, "shadow_method"):
+        try:
+            mat.shadow_method = "HASHED"
+        except TypeError:
+            pass
 
 
 def lineare(oggetto):
@@ -173,7 +231,7 @@ def acqua():
     mat = bpy.data.materials.new("acqua")
     mat.use_nodes = True
     nodi, fili = mat.node_tree.nodes, mat.node_tree.links
-    bsdf = nodi.get("Principled BSDF")
+    bsdf = per_tipo(nodi, "ShaderNodeBsdfPrincipled")
     bsdf.inputs["Base Color"].default_value = (0.30, 0.38, 0.46, 1.0)
     bsdf.inputs["Roughness"].default_value = 0.18
 
@@ -196,9 +254,11 @@ def acqua():
     for fotogramma, valore in ((1, 0.0), (CICLO + 1, 1.0 / 2.5)):
         mappa.inputs["Location"].default_value[1] = valore
         mappa.inputs["Location"].keyframe_insert("default_value", index=1, frame=fotogramma)
-    for curva in mat.node_tree.animation_data.action.fcurves:
-        for punto in curva.keyframe_points:
-            punto.interpolation = "LINEAR"
+    animazione = mat.node_tree.animation_data
+    if animazione is not None and animazione.action is not None:
+        for curva in animazione.action.fcurves:
+            for punto in curva.keyframe_points:
+                punto.interpolation = "LINEAR"
 
     piano.data.materials.append(mat)
     return piano
@@ -423,12 +483,20 @@ def profondita(scena):
 
     mondo = scena.world or bpy.data.worlds.new("mondo")
     scena.world = mondo
+    # **Un mondo appena creato non ha nodi**, e `node_tree` e' `None`: due righe
+    # piu' sotto sarebbe un errore su un attributo di nulla, col messaggio che
+    # parla di `NoneType` invece che di questo.
+    mondo.use_nodes = True
     mondo.mist_settings.use_mist = True
     mondo.mist_settings.start = MIST_START
     mondo.mist_settings.depth = MIST_DEPTH
     mondo.mist_settings.falloff = "LINEAR"
-    mondo.node_tree.nodes["Background"].inputs[0].default_value = (0.52, 0.60, 0.72, 1.0)
-    mondo.node_tree.nodes["Background"].inputs[1].default_value = 0.6
+    sfondo = next(
+        (n for n in mondo.node_tree.nodes if n.bl_idname == "ShaderNodeBackground"), None
+    )
+    if sfondo is not None:
+        sfondo.inputs[0].default_value = (0.52, 0.60, 0.72, 1.0)
+        sfondo.inputs[1].default_value = 0.6
 
     scena.use_nodes = True
     albero = scena.node_tree
@@ -518,14 +586,26 @@ def argomenti():
     return scelta
 
 
-if __name__ == "__main__":
+def esegui():
     scelta = argomenti()
     if scelta["variante"] not in VARIANTI:
-        print("varianti: " + ", ".join(VARIANTI))
-        sys.exit(1)
+        print("varianti disponibili: " + ", ".join(VARIANTI))
+        return
 
+    print(f"Blender {bpy.app.version_string}, motore {bpy.context.scene.render.engine}")
     uscita = costruisci(scelta["variante"], scelta["pioggia"])
     print(f"scena '{scelta['variante']}' costruita: {CICLO} fotogrammi a {FPS} al secondo")
     print(f"orizzonte al {ORIZZONTE:.0%}, alzata camera {math.degrees(ALZATA):.1f} gradi")
     if scelta["rendi"]:
         rendi(scelta["variante"], scelta["out"], uscita)
+    else:
+        print("nessun --out: la scena resta aperta, niente e' stato reso")
+
+
+# **Senza la guardia su `__main__`, e non e' una svista.** Questo file esiste per
+# essere eseguito, mai importato, e le tre strade per eseguirlo danno tre valori
+# diversi a `__name__`: l'editor di testo di Blender lo mette a `__main__`, un
+# `exec` dalla console lo lascia a quello che c'era, e `--python` da terminale
+# dipende dalla versione. Una guardia che a volte non scatta e' peggio di
+# nessuna guardia: lo script sembra partito e non ha fatto niente.
+esegui()
