@@ -1,6 +1,5 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -69,16 +68,15 @@ fun SalaShell(
 
     // L'aggancio di verifica automatica: `--ei sezione`, riletto per le sale.
     //
-    // Legge la sala **dalla richiesta**, non da `state.room`: quest'ultimo lo
-    // riscrive il carosello qui sopra a ogni pagina posata, e la sua prima
-    // emissione - pagina zero - arrivava prima che la richiesta fosse letta,
-    // cancellandola. Senza animazione, perche' chi scatta vuole la sala subito.
+    // Legge la sala **dalla richiesta** e non da `state.room`, che il carosello
+    // qui sopra riscrive da se' a ogni pagina posata: due scrittori sullo
+    // stesso campo sono una gara, e la richiesta la perderebbe ogni volta che
+    // la prima emissione - pagina zero - arriva prima che l'effetto la legga.
+    // Senza animazione, perche' chi scatta vuole la sala subito.
     LaunchedEffect(state.roomRequest) {
         val wanted = state.roomRequest ?: return@LaunchedEffect
         val page = rooms.indexOf(wanted)
-        Log.i("meteo", "sala da esaudire: $wanted -> pagina $page (ora ${pagerState.currentPage})")
         if (page >= 0 && page != pagerState.currentPage) pagerState.scrollToPage(page)
-        Log.i("meteo", "sala esaudita: pagina ${pagerState.currentPage}")
         viewModel.roomRequestHonoured()
     }
 

@@ -89,6 +89,20 @@ android {
             // reale a ogni fotogramma. Misurando la fluidita' su una build
             // debuggabile si misurerebbe un'app che non esiste.
             isDebuggable = false
+
+            // **Gli agganci della cattura non possono appendersi a
+            // `BuildConfig.DEBUG`**, ed e' la riga qui sopra a impedirlo: AGP
+            // genera `DEBUG` da `isDebuggable`, non dal nome del tipo di build.
+            // Spegnendo `isDebuggable` si e' spento anche `DEBUG`, e con lui -
+            // in silenzio - ogni `--ei ora`, `--ei sezione`, `--ei allerta`,
+            // `--ei meteo` della galleria in CI.
+            //
+            // Il difetto e' passato inosservato finche' la prima scheda del
+            // feed era animata: sei scatti della **stessa** scheda uscivano
+            // comunque diversi fra loro, e passavano per sei schede. Sala da
+            // ferma disegna zero fotogrammi, e sei scatti identici hanno reso
+            // visibile una cosa che era rotta da prima.
+            buildConfigField("boolean", "AGGANCI_CATTURA", "true")
         }
         release {
             // R8 acceso, con le sue regole accanto in proguard-rules.pro.
@@ -102,6 +116,11 @@ android {
             // compila anche questa, se no il flag non lo verifica nessuno.
             isMinifyEnabled = true
             isShrinkResources = true
+
+            // L'Activity e' `exported` perche' e' il lanciatore: qui gli
+            // agganci restano spenti, se no qualunque app installata potrebbe
+            // far comparire a Caelum un'allerta che nessun ente ha diramato.
+            buildConfigField("boolean", "AGGANCI_CATTURA", "false")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -117,7 +136,7 @@ android {
     buildFeatures {
         compose = true
 
-        // Serve a `BuildConfig.DEBUG`, che e' quello che tiene gli agganci di
+        // Serve a `BuildConfig.AGGANCI_CATTURA`, che tiene gli agganci di
         // verifica fuori dalla build di release: vedi `MainActivity.applyExtras`.
         // Da AGP 8 in poi va chiesto, non arriva piu' da se'.
         buildConfig = true
