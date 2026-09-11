@@ -206,8 +206,20 @@ data class UiState(
     // ── Sala ─────────────────────────────────────────────────────────────
     /** In quale sala si e', per il carosello verticale di Sala. */
     val room: SalaRoom = SalaRoom.OGGI,
-    /** Quante volte una stanza e' stata chiesta da fuori: l'aggancio `--ei sezione`. */
-    val roomRequest: Int = 0,
+    /**
+     * La sala chiesta **da fuori** - l'aggancio `--ei sezione` - finche' il
+     * carosello non ci e' arrivato. Nulla quando non c'e' niente in sospeso.
+     *
+     * **Sta in un campo suo e non dentro [room], dov'era prima.** `room` e' il
+     * campo che il carosello riscrive da se' a ogni pagina posata: tenendoci
+     * dentro anche la richiesta, la prima emissione del carosello - pagina
+     * zero, prima ancora che la richiesta fosse letta - la cancellava, e con
+     * lei l'unica traccia di dove si voleva andare. L'effetto che doveva
+     * portarcelo chiedeva "dove devo andare?" a un campo che nel frattempo gli
+     * rispondeva "dove sei gia'", e non si muoveva. In CI si vedeva cosi': sei
+     * scatti di sale diverse, tutti e sei della prima sala.
+     */
+    val roomRequest: SalaRoom? = null,
     /** L'interruttore Carta di Sala: Auto segue l'ora, gli altri due forzano. */
     val cardTheme: CardTheme = CardTheme.AUTO,
     val windUnit: SalaWindUnit = SalaWindUnit.KMH,
@@ -732,8 +744,14 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
     fun requestRoom(index: Int) {
         val picked = SalaRoom.entries.getOrNull(index) ?: return
-        _state.update { it.copy(room = picked, roomRequest = it.roomRequest + 1) }
+        _state.update { it.copy(room = picked, roomRequest = picked) }
     }
+
+    /**
+     * Il carosello e' arrivato dove gli era stato chiesto: la richiesta si
+     * spegne, cosi' la stessa sala chiesta due volte di fila riparte davvero.
+     */
+    fun roomRequestHonoured() = _state.update { it.copy(roomRequest = null) }
 
     fun setCardTheme(theme: CardTheme) {
         viewModelScope.launch { prefs.setCardTheme(theme) }

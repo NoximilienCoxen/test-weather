@@ -267,10 +267,13 @@ session() {
   sleep 1
   shoot "${slug}-d1-allerta-principale"
 
-  # La seconda scheda si raggiunge senza un gesto: `--ei sezione` la mette in
-  # scena all'avvio. Il tocco sulla cifra non apre piu' niente - il foglio non
-  # esiste - e una trascinata verticale qui costerebbe un rischio che non serve
-  # correre.
+  # La seconda sala si raggiunge senza un gesto: `--ei sezione` la mette in
+  # scena all'avvio. Una trascinata verticale qui costerebbe un rischio che non
+  # serve correre.
+  #
+  # **Cosa prova questo scatto, adesso che c'e' Sala**: gli avvisi li mostra la
+  # prima sala e basta, quindi qui la fascia non deve esserci. E' il controllo
+  # che l'allerta non segua chi sfoglia di stanza in stanza.
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -278,7 +281,7 @@ session() {
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
-  shoot "${slug}-d2-allerta-seconda-scheda"
+  shoot "${slug}-d2-allerta-seconda-sala"
 
   # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
   #
@@ -351,12 +354,16 @@ session() {
   # La luna chiude la fila: il suo eroe non e' una cifra ma la sfera, quindi e'
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
-  echo "  -- feed (ora $ora_dettaglio) --"
+  echo "  -- sale (ora $ora_dettaglio) --"
 
+  # Le sale sono sette e non sei, e in un ordine loro: `--ei sezione` conta
+  # sull'ordine di `SalaRoom`, non su quello che aveva il feed. Tenere i vecchi
+  # nomi avrebbe dato scatti con l'etichetta di una scheda e il contenuto di
+  # un'altra - un referto che mente e' peggio di uno che manca.
   local n=5
   local i=0
-  for scheda in temperatura pioggia aria vento sole luna; do
-    alive || { echo "dispositivo caduto alla scheda $scheda"; return; }
+  for sala in oggi settimana pioggia luna aria vento uv; do
+    alive || { echo "dispositivo caduto alla sala $sala"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
     # **Il buffer va svuotato a ogni giro**, come in `restart_with`, e qui era
@@ -371,7 +378,7 @@ session() {
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
     sleep 1
-    shoot "${slug}-d${n}-${scheda}"
+    shoot "${slug}-d${n}-${sala}"
     n=$(( n + 1 ))
     i=$(( i + 1 ))
   done
@@ -382,7 +389,7 @@ session() {
   # non lo sia sulla prima, dove non deve fare niente.
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d11-tornato-alla-prima"
+  shoot "${slug}-d12-tornato-alla-prima"
 
   # ── Una scheda letta su un altro giorno ─────────────────────────────────────
   #
@@ -412,7 +419,7 @@ session() {
   attendi_previsione
   alive || { echo "dispositivo caduto prima dello scatto del giorno"; return; }
   sleep 1
-  shoot "${slug}-d12-giorno"
+  shoot "${slug}-d13-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #
@@ -557,11 +564,16 @@ session() {
     # riavvio: la neve, che cambia due rami - i fiocchi che ondeggiano dietro e
     # il vetro che resta pulito - ma li cambia in un modo che una foto ferma
     # racconta male.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei giro 60"
-    shoot "${slug}-12-finestra-girata"
+    # **La lastra di vetro non c'e' piu'**: gocce, rivoli e passanti sono usciti
+    # con `ui/feed/RainWindow.kt` e `WindowGlass.kt`. Qui resta la sala della
+    # pioggia - `--ei sezione 2`, che in Sala e' lei e non piu' la prima scheda -
+    # e i nomi degli scatti lo dicono, invece di continuare a promettere una
+    # finestra che nessuno disegna piu'.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei giro 60"
+    shoot "${slug}-12-pioggia-girata"
 
-    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
-    shoot "${slug}-13-finestra-pioggia"
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    shoot "${slug}-13-pioggia-imposta"
 
     # ── La guardia della scheda che si muove sempre ──────────────────────────
     #
@@ -597,7 +609,9 @@ session() {
     # in piu' e una galleria in meno.
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
-    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    # La sala accanto alla pioggia adesso e' la quarta, la luna: in Sala la
+    # pioggia e' la terza, e la 2 di prima era l'aria del feed.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 3 --ei meteo 63"
     accanto=$(conta_fotogrammi)
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
     echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"

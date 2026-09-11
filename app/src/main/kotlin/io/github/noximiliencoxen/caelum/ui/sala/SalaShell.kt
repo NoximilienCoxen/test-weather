@@ -67,10 +67,16 @@ fun SalaShell(
     }
 
     // L'aggancio di verifica automatica: `--ei sezione`, riletto per le sale.
+    //
+    // Legge la sala **dalla richiesta**, non da `state.room`: quest'ultimo lo
+    // riscrive il carosello qui sopra a ogni pagina posata, e la sua prima
+    // emissione - pagina zero - arrivava prima che la richiesta fosse letta,
+    // cancellandola. Senza animazione, perche' chi scatta vuole la sala subito.
     LaunchedEffect(state.roomRequest) {
-        if (state.roomRequest == 0) return@LaunchedEffect
-        val page = rooms.indexOf(state.room)
+        val wanted = state.roomRequest ?: return@LaunchedEffect
+        val page = rooms.indexOf(wanted)
         if (page >= 0 && page != pagerState.currentPage) pagerState.scrollToPage(page)
+        viewModel.roomRequestHonoured()
     }
 
     val position = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
