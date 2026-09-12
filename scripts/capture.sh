@@ -538,6 +538,16 @@ session() {
     # col dito non si arriva: per portare la cifra di taglio servono quattrocento
     # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
     # schermo e' largo mille.
+    #
+    # **Questi sei scatti hanno mentito per mesi.** `--ei giro` arrivava fino a
+    # `UiState.forcedYawDeg` e li' si fermava: nessuna schermata di Sala lo
+    # leggeva, perche' il lettore era `SceneRotation.pin()` ed e' uscito col
+    # vecchio feed. Ritraevano quindi la scena **ferma** nella posa di riposo,
+    # e nessuno se n'e' accorto perche' una scultura girata di novanta gradi
+    # somiglia comunque a una scultura. E' lo stesso guasto della galleria che
+    # ritraeva l'Ingresso dappertutto: il banco di prova che mente non fallisce,
+    # dice di si'. Da adesso il giro lo legge `rememberGiro(state.forcedYawDeg)`
+    # e questi scatti cambiano per la prima volta: non e' una regressione.
     restart_with "--ei giro 90"
     shoot "${slug}-7-di-taglio"
 
@@ -554,6 +564,35 @@ session() {
 
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
+
+    # ── Cio' che questo giro ha cambiato, e che va guardato ──────────────────
+    #
+    # Quattro scatti nuovi, uno per difetto corretto. Senza di loro le quattro
+    # correzioni resterebbero **dedotte dal codice**, e in questo progetto tre
+    # volte su tre il difetto vero l'ha mostrato una misura e mai una rilettura.
+
+    # La luna in tema chiaro: prima la parte illuminata era dipinta col nero del
+    # testo e il disco in ombra spariva nella carta. Al novilunio non doveva
+    # restare un disco pieno.
+    restart_with "--ei ora 12 --ei sezione 3"
+    shoot "${slug}-14-luna-chiara"
+
+    # Notte coperta: le stelle si devono vedere **attraverso**. Prima c'erano
+    # solo a cielo sereno, cioe' dove contano meno.
+    restart_with "--ei ora 23 --ei meteo 3"
+    shoot "${slug}-15-notte-coperta-stelle"
+
+    # La pioggia che arriva a terra, con le fioriture sulla riga di caduta. Le
+    # gocce di prima erano alte un quarto di schermo e svanivano a mezz'aria
+    # sopra il numero dei gradi.
+    restart_with "--ei ora 15 --ei meteo 65"
+    shoot "${slug}-16-pioggia-a-terra"
+
+    # La barra delle ore: maniglia visibile, ora scritta sopra di lei, binario
+    # colorato ora per ora. Presa a meta' giornata, se no la maniglia sta su un
+    # capo e non si vede che viaggia.
+    restart_with "--ei ora 15"
+    shoot "${slug}-17-barra-ore"
 
     # ── La finestra della scheda della pioggia ───────────────────────────────
     #
@@ -582,8 +621,14 @@ session() {
     # pioggia - `--ei sezione 2`, che in Sala e' lei e non piu' la prima scheda -
     # e i nomi degli scatti lo dicono, invece di continuare a promettere una
     # finestra che nessuno disegna piu'.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei giro 60"
-    shoot "${slug}-12-pioggia-girata"
+    # **Il `--ei giro` se n'e' andato da qui, e non per svista.** Sala III non ha
+    # un oggetto che gira: la scultura sta nella prima sala, la luna nella
+    # quarta. Chiedere un angolo a questa schermata era un comando che non fa
+    # niente, ed e' rimasto nello script perche' nessuno lo rileggeva - lo stesso
+    # motivo per cui il giro e' restato scollegato per mesi. Uno scatto che
+    # promette qualcosa che non puo' mostrare e' peggio di uno scatto in meno.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2"
+    shoot "${slug}-12-pioggia"
 
     restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
     shoot "${slug}-13-pioggia-imposta"

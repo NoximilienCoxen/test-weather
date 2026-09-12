@@ -118,6 +118,17 @@ data class Settings(
     val windUnit: SalaWindUnit = SalaWindUnit.KMH,
     val captionStyle: CaptionStyle = CaptionStyle.COMPLETE,
     val alertToggles: AlertToggles = AlertToggles(),
+    /**
+     * Ferma cio' che in Sala si muove da solo: le stelle, gli uccelli, cio' che
+     * cade, e le vibrazioni che ne seguono.
+     *
+     * Spenta di norma. Esiste perche' quel movimento e' **un'eccezione
+     * dichiarata** alla regola per cui a schermo fermo l'app disegna zero
+     * fotogrammi: finche' la prima sala e' in vista, un orologio gira. Una
+     * regola con un'eccezione e nessuna via d'uscita e' una regola dichiarata a
+     * meta'.
+     */
+    val animazioniRidotte: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -193,6 +204,7 @@ class SettingsPrefs(private val context: Context) {
             captionStyle = prefs[KEY_CAPTION_STYLE]
                 ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
                 ?: CaptionStyle.COMPLETE,
+            animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -241,6 +253,10 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setCaptionStyle(style: CaptionStyle) {
         context.settingsDataStore.edit { it[KEY_CAPTION_STYLE] = style.name }
+    }
+
+    suspend fun setAnimazioniRidotte(ridotte: Boolean) {
+        context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
     }
 
     suspend fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
@@ -315,6 +331,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_CARD_THEME = stringPreferencesKey("sala_carta")
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
+        val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

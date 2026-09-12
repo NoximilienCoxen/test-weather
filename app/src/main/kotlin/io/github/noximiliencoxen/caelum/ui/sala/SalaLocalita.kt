@@ -198,7 +198,7 @@ internal fun CampoDiRicerca(
  * "sei qui" costa batteria tutto il giorno.
  */
 @Composable
-private fun SegnoCorrente(palette: SalaPalette, modifier: Modifier = Modifier) {
+internal fun SegnoCorrente(palette: SalaPalette, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(12.dp)) {
         val r = size.minDimension / 2f
         drawCircle(color = palette.inkAccent, radius = r, style = Stroke(width = 1.4.dp.toPx()))
@@ -207,7 +207,7 @@ private fun SegnoCorrente(palette: SalaPalette, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PlaceRow(
+internal fun PlaceRow(
     place: Place,
     isCurrent: Boolean,
     current: CurrentWeather?,

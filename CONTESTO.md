@@ -580,7 +580,8 @@ contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 
 ## 5. Movimento
 
-- `ui/motion/SceneRotation.kt`: un solo orientamento per la scultura e la cifra.
+- `ui/sala/SalaGiro.kt` (era `ui/motion/SceneRotation.kt`, uscito col feed):
+  un solo orientamento per la scultura di Sala I e la luna di Sala IV.
   **Il trascinamento scrive l'angolo sul posto**, in un `MutableFloatState`, e
   solo il rilascio anima (trappola #22). **Nessun limite**: si gira quanto si
   vuole, anche piu' volte.
@@ -2870,10 +2871,20 @@ L'animazione muore con l'attesa.
 
 **Il giro della scultura e' completo e torna a casa da solo.** Era bloccato a
 settanta gradi e ci restava: voleva dire che la scultura aveva un rovescio che
-nessuno poteva vedere. Adesso il giro e' un `Animatable` - `snapTo` sotto il
-dito, molla al rilascio - e un nuovo tocco a meta' del ritorno **interrompe**
-la molla invece di litigarci. Un'animazione non interrompibile, sotto un dito,
-si sente come un ritardo.
+nessuno poteva vedere.
+
+> **Questo paragrafo diceva una cosa sbagliata, e la cosa sbagliata e' tornata
+> in codice.** Diceva: *"adesso il giro e' un `Animatable` - `snapTo` sotto il
+> dito, molla al rilascio"*. E' esattamente la costruzione che
+> `ui/motion/SceneRotation.kt` aveva **gia' abbandonato**, col perche' scritto
+> nel suo commento: ogni delta apre una coroutine per il proprio `snapTo`, il
+> dispatcher consegna al fotogramma e non subito, gli ultimi `snapTo` di un
+> gesto veloce arrivano *dopo* l'avvio della molla, e un `Animatable` che
+> riceve uno `snapTo` **annulla l'animazione in corso**. L'oggetto parte e si
+> pianta a meta' giro, tanto piu' spesso quanto piu' deciso e' stato il gesto.
+> La documentazione ha fatto da ponte per riportare dentro una trappola gia'
+> pagata: **una nota sbagliata e' peggio di una nota assente**, perche' chi la
+> legge smette di cercare. Vedi `ui/sala/SalaGiro.kt`, sezione 12-ter.
 
 **Le impostazioni hanno un comando loro.** Tre linee disegnate a mano - non
 c'e' una libreria di icone e non vale aprirne una per tre segmenti - e il nome
@@ -2919,3 +2930,259 @@ Da guardare per primi, in mano, appena la CI e' verde:
 - il costo per fotogramma della sfera lunare di Sala IV mentre la sala
   accanto e' in vista nel carosello (stessa domanda mai chiusa della sezione
   8, "non fatto", per la scultura della vecchia prima scheda).
+
+### 12-ter. Da stati a passaggi, e le quattro misure che mentivano
+
+Sesto giro su Sala. Il punto di partenza e' una misura, non un'impressione:
+cercando `spring(`, `tween(`, `animate*AsState`, `AnimatedVisibility` e
+`Crossfade` in tutto `ui/sala` si trovavano **tre** animazioni in totale - i due
+pannelli di servizio e la molla del giro. Tutto il resto scattava. E' questo che
+si sentiva come "lenta e meccanica": non la velocita', l'**assenza di passaggi**.
+
+#### L'aggancio del giro era morto, e sei scatti mentivano da mesi
+
+`grep -rn forcedYawDeg app/src/` dava tre occorrenze, **tutte dentro
+`WeatherViewModel.kt`**: il commento, il campo, il setter. Nessuno lo leggeva.
+`MainActivity` instradava l'extra, `capture.sh` mandava ancora `--ei giro 90` e
+`135`, e sei scatti - 90°, 135°, 180°, la luna a 155°, la pioggia a 45° e 60° -
+ritraevano la scena **ferma nella posa di riposo**. Il lettore era
+`SceneRotation.pin()`, uscito col vecchio feed; il resto della catena e' rimasto
+in piedi e ha continuato a sembrare che funzionasse.
+
+E' la terza volta che questo progetto scopre che **il banco di prova non
+fallisce, dice di si'**: prima gli agganci muti sotto `BuildConfig.DEBUG`, poi la
+galleria che ritraeva l'Ingresso in ogni scatto, adesso il giro. La lezione non
+e' "controllare meglio": e' che uno scatto va confrontato con **cosa dovrebbe
+mostrare di diverso**, e una scultura girata di novanta gradi somiglia comunque a
+una scultura - che e' precisamente perche' e' passata.
+
+Gli scatti girati ora cambiano davvero, per la prima volta. Non e' una
+regressione, ed e' scritto anche dentro `capture.sh` accanto al comando.
+
+Uscito anche il `--ei giro 60` su Sala III: quella sala non ha un oggetto che
+gira, quindi era un comando che non fa niente in uno scatto che prometteva di
+mostrarlo.
+
+#### Il giro: una molla sola, e il conto dei secondi
+
+`SalaGiro.kt` faceva **due animazioni in fila** - `animateDecay` con attrito 1,1,
+e solo dopo `animateTo(0f)` a rigidita' 45. Il conto: costante di tempo
+`1/(0,80·√45)` = 186 ms, e portare 360° sotto la soglia implicita di 0,01° vuole
+`ln(36000)·0,186` ≈ 1,95 s, **dopo** circa un secondo e mezzo di decadimento.
+Tre secondi e mezzo per tornare a casa.
+
+Adesso: nessun decadimento separato, l'energia del lancio entra come velocita'
+iniziale di **una** molla che punta gia' al giro intero piu' vicino;
+`dampingRatio = 0.82f`, `stiffness = 90f`, `visibilityThreshold = 0.05f`. Un
+ritorno da quaranta gradi in ~0,86 s, un giro intero in ~1,14 s. La
+sovraelongazione e' l'uno per cento, cioe' nessun rimbalzo percepibile: si
+assesta prima **senza** diventare scattante, perche' e' salita solo la rigidita'
+e non lo smorzamento.
+
+`onDragStarted` e' il pezzo che `SalaGiro` non aveva mai avuto, ed e' meta' della
+cura: prima un tocco a meta' del ritorno non fermava la molla, ci **correva
+contro**, due scrittori sullo stesso valore da coroutine diverse.
+
+La soglia dichiarata non e' solo velocita': senza, la molla resta viva a limare
+centesimi di grado, e ogni fotogramma li' e' un ridisegno intero della scultura a
+schermo fermo - la trappola #8 rientrata dalla porta di servizio.
+
+#### Fase e tempo: due interpolazioni diverse, e il perche'
+
+> **Fase → interpolazione geometrica. Tempo → interpolazione temporale.**
+
+La fase e' un continuo vero che il codice buttava via: `salaPhaseOf` sceglieva
+una delle quattro caselle con soglie nette. Alle cinque e mezza il cielo **e'**
+mezza alba, e deve sembrarlo **anche stando fermi li'** - col cursore delle ore
+ci si puo' parcheggiare. Una molla non basterebbe: mostrerebbe i valori di mezzo
+solo mentre passa. Quindi `faseContinua(sky)` restituisce le due fasi adiacenti e
+quanto si e' fra loro, e `washColors` mescola i **risultati** delle due tabelle -
+che restano intatte, sono il porting uno a uno del prototipo tarato a mano.
+
+Il tempo non ha un continuo: non esiste un codice WMO "sessanta per cento
+piovoso". L'unica cosa che deve essere morbida e' il **cambio**, ed e' una molla
+sul risultato.
+
+**L'avvolgimento non ha cuciture, e non e' un'affermazione.** Le giunture sono
+due. A mezzanotte entrambe le fasi sono NOTTE con avanzamento zero. Al
+mezzogiorno solare il crepuscolo nominato passa da ALBA a TRAMONTO perche'
+`evening` scavalca la meta' - ma `SunClock.eveningness` e'
+`smoothstep(0,42 → 0,58)` sulla frazione di giornata e attraversa la meta' a
+frazione 0,5, cioe' al mezzogiorno solare, dove l'altezza del sole vale 1,0. Li'
+entrambi gli smoothstep sono saturi, l'avanzamento vale 1, e la miscela e' cento
+per cento GIORNO **qualunque** crepuscolo sia nominato.
+
+#### `paperDarkness` non si tocca, e il suo scalino nemmeno
+
+Il salto da 0,21 a 0,62 non e' una scelta di resa: e' una **garanzia
+sull'insieme degli stati raggiungibili**. Nessun valore di `dayness` porta la
+carta nella fascia in cui ne' il nero del testo ne' il bianco reggono il fondo.
+Appianarlo per renderlo continuo butterebbe via la garanzia - e con una barra
+delle ore su cui si puo' **parcheggiare** alle cinque e mezza, "brevemente
+illeggibile" diventerebbe "illeggibile finche' non ci si sposta".
+
+La cura non e' appianare lo scalino, e' **attraversarlo nel tempo**: il bersaglio
+della molla sta sempre fuori dalla fascia, quindi la fascia si attraversa e non
+si abita mai. Criticamente smorzata, perche' un rimbalzo oltre 1 darebbe una
+carta piu' scura di `paperDark`, che non e' un colore che esiste.
+
+`SalaPalette.dark: Boolean` e' diventato `buio: Float` (con un `dark` derivato
+per lo stile delle barre di sistema, che e' o chiaro o scuro e non ha vie di
+mezzo da dichiarare). `darkVeil` e `lightVeil` sono una funzione sola: i due
+pennelli differivano in tinta, **posizione delle fermate** e opacita', e tutte e
+tre si interpolano pulite. `salaPalette` ha perso `sky`, `phase` e `theme` dalla
+firma ed e' un assemblatore puro di numeri gia' animati - ed e' questo che rende
+tutto il resto possibile senza toccare le sale.
+
+#### La scultura ha smesso di ramificare
+
+Sette scalari 0..1 - sole, copertura, tempesta, bagnato, ghiaccio, neve, notte -
+al posto di `condition`, `nevica` e `notte`. Due arrivano gratis:
+`SkyState.sunPresence` e `moonPresence` erano gia' continui, gia' smorzati a
+monte in `MeteoApp`, e sono **gli stessi** che usano i widget. E la copertura
+viene dal dato vero (`HourForecast.cloudCover`): il codice WMO da cui l'enum
+nasce e' esso stesso derivato da quello, quindi leggerlo direttamente non e' una
+scorciatoia, e' togliere un passaggio che buttava via precisione.
+
+Tre cose vanno lette prima di toccare quel file.
+
+**Come compare una massa di nuvola senza schioccare.** Nessuna delle due
+risposte ovvie basta da sola: con la sola opacita' compare un fantasma **a
+grandezza piena** al cinque per cento, che l'occhio legge come un errore di resa
+e non come una cosa che arriva; con la sola scala compare un punto **pienamente
+opaco** che si gonfia, cioe' uno schiocco con una rampa incollata davanti.
+Servono entrambe, con l'alfa **al quadrato** perche' la massa resti tenue finche'
+e' piccola. E l'ordinamento in profondita' si calcola su tutte e sette **sempre**:
+se dipendesse dalla presenza, le masse si riordinerebbero mentre una entra.
+
+**Pioggia, neve e grandine non si mescolano: si sovrappongono.** Sono tre segni
+genuinamente diversi, e interpolare fra un tratto e un fiocco non da' niente.
+Due cadute che condividono corsie e orologio e sfumano l'una nell'altra sono
+esattamente com'e' fatto il nevischio, e non costano una riga di geometria nuova.
+
+**Il sole e la luna sono lo stesso timbro con pesi complementari.** Non e' solo
+piu' morbido del salto: e' un'immagine migliore. Il disco si **raffredda** dal
+giallo al grigio mentre il terminatore lo morde, che e' quello che fa il
+crepuscolo. Un `if (notte)` non puo' dirlo.
+
+#### Una collisione sottile, fra i valori animati e l'orologio
+
+`rememberTempoScena` riparte da zero a ogni riaccensione. Se la condizione di
+accensione si ricalcolasse dai valori **animati**, si ribalterebbe a meta'
+transizione: gli uccelli si congelerebbero a mezz'aria prima di svanire, e la
+pioggia risalirebbe in cima mentre sfuma. La regola, scritta anche nel codice:
+**i valori animati possono solo allungare l'orologio, mai accorciarlo**. Il
+bersaglio dice se ci sara' qualcosa da muovere; i valori animati lo tengono
+acceso finche' un passaggio e' in volo. E gia' che e' diventato portante,
+l'orologio adesso **accumula** invece di azzerarsi.
+
+#### La luna: prendeva in prestito l'inchiostro del testo
+
+Due difetti distinti, stessa causa. In Sala IV si passava `light = palette.ink`,
+che in tema chiaro e' `#201E1D`: la parte **illuminata** veniva dipinta quasi
+nera. E `dark = lerp(ink, ground, 0.65)` disegnato a un quarto di opacita' era un
+disco in ombra invisibile sulla carta `#F3F2F2` - cio' che si vedeva nello scatto
+non era la luna, era la sola vignettatura del lembo, sotto una scritta che
+diceva "Novilunio · 0 % illuminata". In Sala I `tintaSole(notte = true)` valeva
+`neutral200 #EAE7E7`, due per cento di stacco dalla carta.
+
+In tema scuro funzionava **per combinazione**, perche' li' l'inchiostro e' quasi
+bianco e i ruoli tornavano da soli. E' il modo piu' insidioso in cui una cosa
+puo' sembrare giusta.
+
+Adesso `SalaTokens.lunaLuce` (avorio caldo) e `lunaOmbra` (ardesia), **fisse nei
+due temi**, piu' un filo di contorno perche' la sfera si stacchi dalla carta
+chiara: un corpo celeste non ha il colore dell'inchiostro della pagina che lo
+mostra.
+
+#### La barra delle ore era un grafico travestito da comando
+
+Riconosceva **solo** `detectHorizontalDragGestures`: un tocco secco non faceva
+niente. Chi ci provava non otteneva risposta, e da un comando che non risponde si
+impara che non e' un comando. L'ora scelta non era scritta sulla barra, e il
+colore era lo stesso grigio dal primo minuto all'ultimo.
+
+`SalaBarraOre.kt`: binario colorato **ora per ora** col tempo di quell'ora - la
+forma della giornata si legge senza toccare niente - maniglia visibile, ora
+scritta **sopra la maniglia** e che viaggia con lei, tocco secco oltre al
+trascinamento, colpetto di vibrazione a ogni ora attraversata. La curva della
+temperatura resta dietro, in sordina: era l'unica cosa buona di prima.
+
+Ogni valore letto dentro i riconoscitori passa da `rememberUpdatedState`. E' la
+trappola #7, e il progetto l'ha gia' pagata **su questa stessa barra**.
+
+#### Le vibrazioni, e perche' hanno un tetto
+
+Il permesso `VIBRATE` stava nel manifesto da sempre, col commento "la pioggia si
+sente in mano", e non lo usava nessuno da quando `WeatherHaptics.kt` e' uscito
+col feed.
+
+Gli istanti d'impatto **non li decide** `VibrazioniMeteo.kt`: li calcola
+`Corsie`, la stessa che disegna le gocce, con la stessa formula - una corsia
+tocca quando la sua corsa scavalca un intero. Un contatore suo andrebbe in fase
+per un po' e poi scivolerebbe, e una vibrazione fuori tempo rispetto a cio' che
+si vede e' peggio di nessuna vibrazione. Non si vibra dal disegno: un `DrawScope`
+puo' essere invocato piu' volte per fotogramma, o nessuna.
+
+**Il tetto sugli impatti al secondo non tradisce la richiesta.** Con la pioggia
+fitta le corsie toccano decine di volte al secondo: farle sentire tutte non da'
+"la pioggia in mano", da' un ronzio continuo, che in mano si legge come un guasto
+del telefono. Il tetto si allenta col crescere della pioggia - due colpi al
+secondo per una pioviggine, sei per un rovescio - cosi' e' il **ritmo** a dire
+quanto piove.
+
+#### L'eccezione dichiarata, e la sua via d'uscita
+
+Sala I adesso si muove **sempre** mentre la si guarda: stelle di notte (anche
+coperta - le nuvole non spengono le stelle, le coprono), uccelli e pulviscolo di
+giorno, cio' che cade quando cade. E' un'eccezione alla regola dei zero
+fotogrammi a schermo fermo, ed e' la seconda che il progetto si concede dopo la
+via della vecchia scheda della pioggia.
+
+Dichiararla senza lasciare una via d'uscita sarebbe stato dichiararla a meta':
+`SettingsPrefs.animazioniRidotte` la spegne, e con lei le vibrazioni. L'orologio
+resta legato a `inVista`, quindi sotto le altre sei sale non gira comunque.
+
+#### `animazioniIstantanee`: perche' gli scatti non possono animare
+
+Gli extra `--ei` si applicano in `onCreate`, prima della composizione, quindi non
+animano. **Ma la previsione arriva dopo il primo fotogramma** e muove altezza del
+sole, nuvolosita' e condizione. Finche' Sala quantizzava tutto in enum questo era
+innocuo: erano gia' definitivi allo scatto. Con le molle sarebbero **in volo**,
+con un solo secondo di margine nello script - la carta si assesta in circa sei
+decimi, i colori in quattro, la scena in cinque. Dentro il secondo, ma non di
+molto, e "non di molto" e' esattamente come gli ultimi due guasti della cattura
+sono rimasti invisibili per due giri interi.
+
+Quindi `MainActivity` dichiara la cattura e le molle diventano `snap()`. Un campo,
+scatti riproducibili byte per byte, e la galleria smette di dipendere da un
+`sleep`.
+
+#### `scripts/import_audit.py`
+
+Qui non c'e' l'SDK: la CI e' il compilatore, e due giri rossi di questo progetto
+sono stati import morti e import mancanti - cose che **non si vedono
+rileggendo**. Lo script ha trovato tre funzioni Compose senza import in un file
+appena scritto, che sarebbero state tre minuti di CI ciascuna.
+
+Due note su come e' fatto, perche' il primo tentativo era sbagliato in un modo
+istruttivo. Le stringhe si scansionano **a mano e non con una espressione
+regolare**: in Kotlin dentro `${...}` ci sta del codice, e dentro quello
+un'altra stringa; una regolare si ferma alla prima virgoletta, e il primo
+tentativo dichiarava morto un `roundToInt` che il file chiamava due volte -
+cioe' il controllo produceva proprio il guasto che esiste per evitare. E i tipi
+non bastano: un tipo mancante si nota rileggendo, una `animateFloatAsState`
+senza import no, perche' somiglia a tutto il resto del file.
+
+Resta un buco noto: le estensioni di `Modifier` si chiamano con un punto davanti
+e passano per membri, quindi un `Modifier.offset` senza import non viene
+segnalato.
+
+#### Cosa non e' stato provato
+
+Come ogni passata scritta da questo container: **niente SDK Android qui**, quindi
+ne' `lintDebug` ne' `assembleDebug` sono partiti. Le molle, il tatto del giro, il
+ritmo delle vibrazioni e il costo per fotogramma vanno presi in mano - e
+l'emulatore della CI rende via software, quindi di li' non esce nessun giudizio
+sul costo per fotogramma. Cio' che la CI puo' dire resta binario e resta utile:
+se compila, se i fotogrammi si fermano, e cosa si vede negli scatti.

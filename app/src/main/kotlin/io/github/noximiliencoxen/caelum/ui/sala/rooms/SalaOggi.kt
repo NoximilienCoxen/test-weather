@@ -1,9 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -31,12 +27,13 @@ import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
-import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
+import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.ui.sala.BarraDelleOre
 import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
-import io.github.noximiliencoxen.caelum.ui.sala.SalaCondition
+import io.github.noximiliencoxen.caelum.ui.sala.Scena
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaPhase
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
@@ -45,7 +42,12 @@ import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
 import io.github.noximiliencoxen.caelum.ui.sala.label
 import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
 import io.github.noximiliencoxen.caelum.ui.sala.rememberTempoScena
+import io.github.noximiliencoxen.caelum.ui.sala.cieloStellato
+import io.github.noximiliencoxen.caelum.ui.sala.mollaScena
+import io.github.noximiliencoxen.caelum.ui.sala.pulviscolo
+import io.github.noximiliencoxen.caelum.ui.sala.riverbero
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
+import io.github.noximiliencoxen.caelum.ui.sala.scenaBersaglio
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
@@ -64,6 +66,10 @@ import kotlin.math.roundToInt
 @Composable
 fun SalaOggiScreen(
     state: UiState,
+    /** Il cielo **gia' smorzato** da `MeteoApp`, lo stesso che tinge la carta.
+     *  Prima questa sala se lo ricostruiva dai valori grezzi, e leggeva quindi
+     *  un cielo mezzo passo avanti a quello che aveva sotto. */
+    sky: SkyState,
     palette: SalaPalette,
     position: () -> Float,
     viewModel: WeatherViewModel,
@@ -72,14 +78,54 @@ fun SalaOggiScreen(
     /** Vero solo quando questa e' la sala che si sta guardando. */
     inVista: Boolean,
 ) {
-    val sky = remember(state.skyAltitude, state.skyJourney, state.skyEvening) {
-        SkyState.of(state.skyAltitude, state.skyJourney, state.skyEvening)
-    }
     val phase = salaPhaseOf(sky)
     val condition = salaConditionOf(state.forcedWeatherCode ?: state.hour?.weatherCode)
     val hours = state.hours
     val hour = state.hour
     val activeAlerts = remember(state.shownAlerts, hour?.time) { state.shownAlerts.activeAt(hour?.time) }
+
+    // ── La scena, in numeri che scorrono ─────────────────────────────────────
+    val bersaglio = remember(sky, condition, hour) {
+        scenaBersaglio(
+            sky = sky,
+            condition = condition,
+            nevica = Wmo.family(state.forcedWeatherCode ?: hour?.weatherCode) == Wmo.Family.NEVE,
+            coperturaOraria = hour?.cloudCover,
+            pioggiaMm = hour?.precipitation,
+        )
+    }
+    val m = mollaScena(state.animazioniIstantanee, state.animazioniRidotte)
+    val scena = Scena(
+        sole = animateFloatAsState(bersaglio.sole, m, label = "sole").value,
+        copertura = animateFloatAsState(bersaglio.copertura, m, label = "copertura").value,
+        tempesta = animateFloatAsState(bersaglio.tempesta, m, label = "tempesta").value,
+        bagnato = animateFloatAsState(bersaglio.bagnato, m, label = "bagnato").value,
+        ghiaccio = animateFloatAsState(bersaglio.ghiaccio, m, label = "ghiaccio").value,
+        neve = animateFloatAsState(bersaglio.neve, m, label = "neve").value,
+        notte = animateFloatAsState(bersaglio.notte, m, label = "notte").value,
+    )
+
+    // ── L'orologio della scena ───────────────────────────────────────────────
+    //
+    // **I valori animati possono solo allungarlo, mai accorciarlo**, ed e' una
+    // regola precisa, non una cautela. Se la condizione di accensione si
+    // ricalcolasse dai soli valori animati, si ribalterebbe a meta' transizione:
+    // gli uccelli si congelerebbero a mezz'aria prima di svanire, e la pioggia
+    // ripartirebbe da capo mentre sfuma. Quindi: il **bersaglio** dice se ci
+    // sara' qualcosa da muovere, e i valori animati tengono acceso finche' un
+    // passaggio e' ancora in volo.
+    val siMuoveBersaglio = !state.animazioniRidotte &&
+        (bersaglio.bagnato > 0.01f || bersaglio.tempesta > 0.01f ||
+            bersaglio.notte > 0.01f || bersaglio.copertura < 0.99f)
+    val tempo = rememberTempoScena(attivo = inVista && (siMuoveBersaglio || scena.inTransito))
+
+    // Il telefono sente cio' che cade. Tace se la sala non e' in vista, se
+    // l'orologio e' fermo, o se l'interruttore delle animazioni e' giu'.
+    VibrazioniDellaScena(
+        scena = scena,
+        tempo = tempo,
+        attiva = inVista && !state.animazioniRidotte && !state.animazioniIstantanee,
+    )
 
     SalaRoomScaffold(
         palette = palette,
@@ -89,7 +135,31 @@ fun SalaOggiScreen(
         onPlaceClick = onPlaceClick,
         onMenuClick = onMenuClick,
     ) { modifier ->
-        Column(modifier = modifier) {
+        Column(
+            modifier = modifier.drawBehind {
+                // **Il cielo sta dietro tutto e occupa tutta la pagina.**
+                // Prima le stelle erano dieci, misurate in unita' della
+                // scultura e disegnate dentro la sua cassa: erano un ornamento
+                // attorno a un oggetto. E c'erano solo a cielo sereno, cioe'
+                // proprio dove contano meno - le nuvole non spengono le
+                // stelle, le coprono, e da sotto una notte coperta qualcuna si
+                // vede lo stesso. Qui il velo **cala** con la copertura invece
+                // di azzerarsi.
+                cieloStellato(
+                    tempo = tempo(),
+                    inchiostro = SalaTokens.neutral100,
+                    velo = scena.notte * (1f - scena.copertura * 0.72f),
+                )
+                pulviscolo(
+                    tempo = tempo(),
+                    inchiostro = palette.ink,
+                    velo = (1f - scena.notte) * (1f - scena.copertura) * (1f - scena.bagnato),
+                )
+                // Il riverbero del lampo si prende la pagina intera: un
+                // temporale non illumina solo la nuvola che lo fa.
+                riverbero(tempo(), SalaTokens.neutral100, forza = scena.tempesta)
+            },
+        ) {
             AlertsBlock(activeAlerts, palette)
 
             Column(
@@ -98,11 +168,10 @@ fun SalaOggiScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Sculpture(
-                    condition = condition,
-                    phase = phase,
+                    scena = scena,
                     palette = palette,
-                    nevica = Wmo.family(state.forcedWeatherCode ?: state.hour?.weatherCode) == Wmo.Family.NEVE,
-                    inVista = inVista,
+                    tempo = tempo,
+                    giroImposto = state.forcedYawDeg,
                 )
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
@@ -146,11 +215,13 @@ fun SalaOggiScreen(
                 )
             }
 
-            HourBar(
+            val vibrazioni = rememberVibrazioniMeteo()
+            BarraDelleOre(
                 hours = hours,
                 selected = state.selectedHour,
                 palette = palette,
                 onSelect = viewModel::selectHour,
+                onTick = { if (!state.animazioniRidotte) vibrazioni.scatto() },
                 modifier = Modifier.padding(top = 12.dp),
             )
         }
@@ -203,30 +274,21 @@ private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
 
 @Composable
 private fun Sculpture(
-    condition: SalaCondition,
-    phase: SalaPhase,
+    scena: Scena,
     palette: SalaPalette,
-    nevica: Boolean,
-    inVista: Boolean,
+    tempo: () -> Float,
+    giroImposto: Float?,
 ) {
     // La fase e' quella vera di stanotte, la stessa che calcola Sala IV: le due
     // stanze non possono raccontare due lune diverse nella stessa notte.
     val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
     val acquerello = LocalAcquerello.current
-    val notte = phase == SalaPhase.NOTTE
-
-    val giroAnim = rememberGiro()
-
-    // **L'orologio gira solo se c'e' qualcosa da muovere e la sala e' in
-    // vista.** Col cielo coperto e senza precipitazioni non si muove niente, e
-    // allora non deve muoversi nemmeno un fotogramma (trappola #8).
-    val siMuove = condition != SalaCondition.NUVOLOSO
-    val tempo = rememberTempoScena(attivo = inVista && siMuove)
+    val giroAnim = rememberGiro(giroImposto)
 
     // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
     // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
     // l'albero a ogni fotogramma del dito invece di ridipingere e basta.
-    val giro = { giroAnim.value }
+    val giro = { giroAnim.gradi }
 
     Canvas(
         // Solo orizzontale: il verticale e' del carosello fra le sale.
@@ -238,69 +300,11 @@ private fun Sculpture(
     ) {
         scultura(
             acquerello = acquerello,
-            condition = condition,
+            scena = scena,
             palette = palette,
-            notte = notte,
             giroDeg = giro(),
             fase = faseLunare,
-            nevica = nevica,
             tempo = tempo(),
         )
-    }
-}
-
-@Composable
-private fun HourBar(
-    hours: List<io.github.noximiliencoxen.caelum.data.HourForecast>,
-    selected: Int,
-    palette: SalaPalette,
-    onSelect: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .pointerInput(hours) {
-                    detectHorizontalDragGestures { change, _ ->
-                        val idx = (change.position.x / size.width * 23f).roundToInt().coerceIn(0, 23)
-                        onSelect(idx)
-                    }
-                },
-        ) {
-            if (hours.isEmpty()) return@Canvas
-            val temps = hours.map { it.temperature ?: 0.0 }
-            val minT = temps.minOrNull() ?: 0.0
-            val maxT = temps.maxOrNull() ?: 1.0
-            val span = (maxT - minT).takeIf { it > 0.01 } ?: 1.0
-            val points = hours.mapIndexed { i, h ->
-                val x = i / 23f * size.width
-                val t = h.temperature
-                if (t == null) null else Offset(x, size.height * 0.92f - ((t - minT) / span).toFloat() * size.height * 0.85f)
-            }
-            val curve = buildLinePath(points)
-            val area = Path().apply {
-                addPath(curve)
-                if (points.isNotEmpty()) {
-                    lineTo(size.width, size.height)
-                    lineTo(0f, size.height)
-                    close()
-                }
-            }
-            drawPath(area, color = palette.inkFaint)
-            drawPath(curve, color = palette.ink.copy(alpha = 0.62f), style = Stroke(width = 3f))
-
-            val x = selected / 23f * size.width
-            drawLine(palette.inkAccent, Offset(x, 0f), Offset(x, size.height), strokeWidth = 2f)
-            points.getOrNull(selected)?.let {
-                drawCircle(palette.inkAccent, radius = 5f, center = Offset(x, it.y))
-            }
-        }
-        Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf("00", "06", "12", "18", "23").forEach {
-                Text(text = it, style = SalaType.hourLabel, color = palette.inkSoft)
-            }
-        }
     }
 }

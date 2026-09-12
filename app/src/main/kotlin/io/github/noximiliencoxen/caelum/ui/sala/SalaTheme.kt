@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
@@ -9,10 +10,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -66,6 +68,28 @@ object SalaTokens {
      * quadricromia le tiene addosso il calore della stampa.
      */
     val paperDark: Color = lerp(processYellow, neutral900, 0.86f)
+
+    // ── La luna ha colori suoi, e li tiene nei due temi ──────────────────────
+    //
+    // **Prima la luna prendeva in prestito l'inchiostro del testo**, e in tema
+    // chiaro il risultato era assurdo: la parte **illuminata** veniva dipinta
+    // col nero del corpo del testo, e il disco in ombra - un grigio chiarissimo
+    // al ventiquattro per cento di opacita' - spariva dentro la carta. Al
+    // novilunio non restava niente sullo schermo, e la sala dichiarava
+    // "0 % illuminata" sotto un disco pieno.
+    //
+    // Il difetto non era il contrasto ma il **prestito**: un corpo celeste non
+    // ha il colore dell'inchiostro della pagina che lo mostra. La luna e' la
+    // stessa cosa di giorno e di notte, in tema chiaro e in tema scuro; cambia
+    // solo cio' che ha intorno. Quindi due tinte fisse, e nessun ramo sul tema.
+
+    /** La faccia al sole: avorio caldo, non bianco. Un bianco puro su carta
+     *  chiara e' invisibile, e su carta scura sembra un foro. */
+    val lunaLuce = Color(0xFFF6F1E6)
+
+    /** La faccia in ombra: ardesia vera. Deve reggere **sulla carta chiara**,
+     *  che e' il caso che prima non reggeva. */
+    val lunaOmbra = Color(0xFF3B4450)
 }
 
 /** Le quattro ore della giornata su cui e' costruita la tavolozza di Sala. */
@@ -94,6 +118,54 @@ fun salaPhaseOf(sky: SkyState): SalaPhase = when {
     sky.altitude >= 0.22f -> SalaPhase.GIORNO
     sky.evening < 0.5f -> SalaPhase.ALBA
     else -> SalaPhase.TRAMONTO
+}
+
+/** Le due fasi che si stanno attraversando, e quanto si e' avanti fra loro. */
+@Immutable
+data class FaseContinua(val da: SalaPhase, val a: SalaPhase, val avanzamento: Float)
+
+/**
+ * La fase del giorno **senza scalini**.
+ *
+ * [salaPhaseOf] sceglie una delle quattro e butta via il resto: alle cinque e
+ * mezza il cielo e' mezza alba, e la carta lo diceva "notte" fino a un istante
+ * prima e "alba" un istante dopo. Qui la stessa informazione resta intera - due
+ * fasi e quanto si e' fra loro - e chi disegna mescola.
+ *
+ * **Non serve una molla per questo, e la differenza conta.** Una molla
+ * mostrerebbe i valori di mezzo solo *mentre* passa: fermandosi alle cinque e
+ * mezza col cursore delle ore si tornerebbe a una delle quattro caselle. Qui a
+ * meta' strada ci si puo' **stare**, perche' meta' alba non e' una transizione
+ * verso qualcosa, e' che ore sono.
+ *
+ * ### L'avvolgimento non ha cuciture, ed e' dimostrabile
+ *
+ * Le giunture del giro NOTTE → ALBA → GIORNO → TRAMONTO → NOTTE sono due.
+ *
+ * A **mezzanotte** entrambe le fasi sono NOTTE e l'avanzamento e' zero: non c'e'
+ * niente da attraversare.
+ *
+ * Al **mezzogiorno solare** il crepuscolo nominato cambia da ALBA a TRAMONTO,
+ * perche' `evening` scavalca la meta'. Ma `SunClock.eveningness` e'
+ * `smoothstep(0,42 → 0,58)` sulla frazione di giornata, quindi attraversa la
+ * meta' a frazione 0,5 - cioe' **esattamente al mezzogiorno solare**, dove
+ * `SunClock.altitude` vale 1,0. Li' tutti e due gli smoothstep qui sotto sono
+ * saturi, l'avanzamento vale 1 e la miscela e' cento per cento GIORNO
+ * **qualunque** crepuscolo sia nominato. L'identita' del crepuscolo conta solo
+ * finche' l'avanzamento e' sotto 1; `evening` gira solo quando vale 1 esatto.
+ */
+fun faseContinua(sky: SkyState): FaseContinua {
+    val crepuscolo = if (sky.evening >= 0.5f) SalaPhase.TRAMONTO else SalaPhase.ALBA
+    // 0 = notte piena, 1 = crepuscolo pieno, 2 = giorno pieno. Le due fasce non
+    // si sovrappongono, quindi la somma cresce con l'altezza del sole senza
+    // tornare indietro, e le due fasi scelte sono sempre adiacenti nel giro.
+    val salita = SunClock.smoothstep(-0.62f, -0.22f, sky.altitude) +
+        SunClock.smoothstep(0.02f, 0.34f, sky.altitude)
+    return if (salita <= 1f) {
+        FaseContinua(SalaPhase.NOTTE, crepuscolo, salita)
+    } else {
+        FaseContinua(crepuscolo, SalaPhase.GIORNO, salita - 1f)
+    }
 }
 
 /** Il codice WMO ridotto alle sei famiglie della tavolozza. */
@@ -167,7 +239,7 @@ private val CondWashTable: Map<SalaCondition, CondWash> = mapOf(
  * pesano un quarto in piu', perche' sulla carta scurita un colore debole
  * sparisce.
  */
-fun washColors(phase: SalaPhase, condition: SalaCondition, intensity: Float = 1f): List<Color> {
+private fun washDiFase(phase: SalaPhase, condition: SalaCondition, intensity: Float): List<Color> {
     val base = PhaseWash.getValue(phase)
     val override = CondWashTable[condition] ?: CondWash()
     val mul = override.mul * (if (phase == SalaPhase.NOTTE) 1.25f else 1f) * intensity
@@ -192,6 +264,28 @@ fun washColors(phase: SalaPhase, condition: SalaCondition, intensity: Float = 1f
 }
 
 /**
+ * Le tre macchie per una fase **a meta' strada**.
+ *
+ * Si mescolano i **risultati** delle due tabelle, non le tabelle: quelle sono il
+ * porting uno a uno del prototipo, tarate a mano, e restano intatte. Il `lerp`
+ * di Compose passa per Oklab, quindi i valori di mezzo non ingrigiscono come
+ * farebbe una media sui canali.
+ *
+ * **Da non "semplificare":** dentro [washDiFase] c'e' un moltiplicatore che vale
+ * un quarto in piu' di notte. Li' e' giusto - ogni capo si calcola con la
+ * propria fase, e il `lerp` se lo porta dietro. Sollevarlo qui, al livello
+ * mescolato, rimetterebbe uno scalino del venticinque per cento esattamente
+ * dove si sta lavorando per toglierlo.
+ */
+fun washColors(fase: FaseContinua, condition: SalaCondition, intensity: Float = 1f): List<Color> {
+    if (fase.avanzamento <= 0f) return washDiFase(fase.da, condition, intensity)
+    if (fase.avanzamento >= 1f) return washDiFase(fase.a, condition, intensity)
+    val a = washDiFase(fase.da, condition, intensity)
+    val b = washDiFase(fase.a, condition, intensity)
+    return List(3) { lerp(a[it], b[it], fase.avanzamento) }
+}
+
+/**
  * Quanto e' scura la carta, da 0 (piena) a 1 (scurita nel cuore della notte).
  *
  * L'inchiostro non segue con continuita': scatta una volta sola appena la
@@ -206,8 +300,17 @@ fun paperDarkness(dayness: Float): Float {
 }
 
 /** Le tinte di una sala: fondo, inchiostro, velo e macchie, gia' pronte da disegnare. */
+@Immutable
 data class SalaPalette(
-    val dark: Boolean,
+    /**
+     * Quanto e' scura la carta, da 0 a 1.
+     *
+     * **Era un booleano, e ogni tinta della galleria ci scattava sopra**: un
+     * `if (dark)` per l'inchiostro, uno per l'accento, uno per il velo, uno per
+     * la grana. Attraversando il crepuscolo si ribaltavano tutti nello stesso
+     * fotogramma. Da qui in poi si interpola.
+     */
+    val buio: Float,
     val ground: Color,
     val ink: Color,
     val inkSoft: Color,
@@ -215,56 +318,63 @@ data class SalaPalette(
     val inkAccent: Color,
     val veil: Brush,
     val wash: List<Color>,
-)
-
-private fun darkVeil(paperDark: Color): Brush = Brush.verticalGradient(
-    0.00f to paperDark.copy(alpha = 0.34f),
-    0.26f to paperDark.copy(alpha = 0f),
-    0.46f to paperDark.copy(alpha = 0f),
-    0.66f to paperDark.copy(alpha = 0.82f),
-    0.86f to paperDark,
-)
-
-private fun lightVeil(bg: Color): Brush = Brush.verticalGradient(
-    0.00f to bg.copy(alpha = 0.26f),
-    0.22f to bg.copy(alpha = 0f),
-    0.40f to bg.copy(alpha = 0f),
-    0.62f to bg.copy(alpha = 0.74f),
-    0.84f to bg,
-)
+) {
+    /** Per chi davvero non puo' mescolare: lo stile delle icone di sistema e' o
+     *  chiaro o scuro, non c'e' una via di mezzo da dichiarare. */
+    val dark: Boolean get() = buio > 0.5f
+}
 
 /**
- * Le tinte complete di una sala, per la fase, il tempo e il tema scelti.
+ * Il velo che appoggia il testo sulla carta piatta, a qualunque grado di buio.
  *
- * @param intensity il cursore "intensità lavaggi": nel prototipo era una
- *   leva di messa a punto, qui resta un moltiplicatore a disposizione di chi
- *   regola l'app, di norma 1.
+ * Erano due pennelli distinti, uno per tema, e passare dall'uno all'altro era un
+ * lampo. Differiscono in tre cose - la tinta, la **posizione delle fermate** e
+ * l'opacita' - e tutte e tre si interpolano pulite, quindi ce n'e' uno solo.
  */
-fun salaPalette(
-    sky: SkyState,
-    phase: SalaPhase,
-    condition: SalaCondition,
-    theme: CardTheme,
-    intensity: Float = 1f,
-): SalaPalette {
-    val autoDark = paperDarkness(sky.dayness)
-    val dk = when (theme) {
-        CardTheme.CHIARO -> 0f
-        CardTheme.SCURO -> 1f
-        CardTheme.AUTO -> autoDark
-    }
-    val dark = dk > 0.5f
-    val ground = lerp(SalaTokens.bg, SalaTokens.paperDark, dk)
-    val inkBase = if (dark) SalaTokens.neutral100 else SalaTokens.text
+private fun velo(buio: Float): Brush {
+    val tinta = lerp(SalaTokens.bg, SalaTokens.paperDark, buio)
+    fun dove(chiaro: Float, scuro: Float) = lerp(chiaro, scuro, buio)
+    fun quanto(chiaro: Float, scuro: Float) = lerp(chiaro, scuro, buio)
+    return Brush.verticalGradient(
+        0.00f to tinta.copy(alpha = quanto(0.26f, 0.34f)),
+        dove(0.22f, 0.26f) to tinta.copy(alpha = 0f),
+        dove(0.40f, 0.46f) to tinta.copy(alpha = 0f),
+        dove(0.62f, 0.66f) to tinta.copy(alpha = quanto(0.74f, 0.82f)),
+        dove(0.84f, 0.86f) to tinta,
+    )
+}
+
+/**
+ * Le tinte complete di una sala, a partire da numeri **gia' animati**.
+ *
+ * Non legge piu' il cielo, la fase ne' il tema: quelli li ha gia' risolti e
+ * smorzati [io.github.noximiliencoxen.caelum.ui.sala.SalaShell], che e' l'unico
+ * posto in cui l'animazione del tema deve vivere. Qui si assembla e basta, e
+ * questa e' la ragione per cui un colore che passa puo' arrivare fin qui senza
+ * che nessuna sala se ne accorga.
+ *
+ * @param dk quanto e' scura la carta, gia' passato per la sua molla.
+ * @param wash le tre macchie, gia' mescolate fra le fasi e gia' smorzate.
+ */
+fun salaPalette(dk: Float, wash: List<Color>): SalaPalette {
+    // **L'inchiostro passa su una finestra piu' stretta della carta.** Se
+    // seguisse `dk` per intero, per tutto il tragitto ci sarebbe un inchiostro a
+    // meta' strada fra il nero e il bianco, e a meta' strada nessuno dei due si
+    // legge. Stringendolo attorno all'attraversamento, i due inchiostri si
+    // sovrappongono solo nei pochi centesimi di secondo in cui anche la carta
+    // sta attraversando la fascia che `paperDarkness` esiste apposta per
+    // saltare.
+    val buio = SunClock.smoothstep(0.40f, 0.60f, dk)
+    val inkBase = lerp(SalaTokens.text, SalaTokens.neutral100, buio)
     return SalaPalette(
-        dark = dark,
-        ground = ground,
+        buio = buio,
+        ground = lerp(SalaTokens.bg, SalaTokens.paperDark, dk),
         ink = inkBase,
-        inkSoft = inkBase.copy(alpha = if (dark) 0.62f else 0.58f),
-        inkFaint = inkBase.copy(alpha = if (dark) 0.16f else 0.12f),
-        inkAccent = if (dark) SalaTokens.accent400 else SalaTokens.accent700,
-        veil = if (dark) darkVeil(SalaTokens.paperDark) else lightVeil(SalaTokens.bg),
-        wash = washColors(phase, condition, intensity),
+        inkSoft = inkBase.copy(alpha = lerp(0.58f, 0.62f, buio)),
+        inkFaint = inkBase.copy(alpha = lerp(0.12f, 0.16f, buio)),
+        inkAccent = lerp(SalaTokens.accent700, SalaTokens.accent400, buio),
+        veil = velo(buio),
+        wash = wash,
     )
 }
 

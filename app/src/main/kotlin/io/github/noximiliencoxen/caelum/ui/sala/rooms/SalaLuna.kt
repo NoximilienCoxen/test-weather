@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
@@ -33,6 +33,7 @@ import io.github.noximiliencoxen.caelum.ui.render3d.moon
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
+import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
 import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
@@ -56,7 +57,7 @@ fun SalaLunaScreen(
     onMenuClick: () -> Unit,
 ) {
     var offsetDays by remember { mutableIntStateOf(0) }
-    val giroAnim = rememberGiro()
+    val giroAnim = rememberGiro(state.forcedYawDeg)
     val today = LocalDate.now()
     val shownDate = today.plusDays(offsetDays.toLong())
     val phase = MoonPhase.at(shownDate)
@@ -92,18 +93,39 @@ fun SalaLunaScreen(
                 Canvas(modifier = Modifier.size(240.dp)) {
                     val minDim = minOf(size.width, size.height)
                     val centerOffset = Offset(size.width / 2f, size.height / 2f)
-                    val camera = Camera(yawDeg = giroAnim.value, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
-                    val dark = lerp(palette.ink, palette.ground, 0.65f)
+                    val camera = Camera(yawDeg = giroAnim.gradi, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
                     val raggio = minDim * 0.42f
+
+                    // **I colori sono della luna, non della pagina.** Prima
+                    // qui passavano `palette.ink` come luce e una sua
+                    // schiaritura come ombra: in tema scuro funzionava per
+                    // combinazione - l'inchiostro **e'** quasi bianco li' - e in
+                    // tema chiaro dava una parte illuminata quasi nera e un
+                    // disco in ombra invisibile sulla carta. Vedi
+                    // `SalaTokens.lunaLuce` per il perche' per esteso.
                     moon(
                         camera = camera,
                         x = 0f, y = 0f, z = 0f,
                         radius = raggio,
                         phase = phase,
-                        light = palette.ink,
-                        dark = dark,
+                        light = SalaTokens.lunaLuce,
+                        dark = SalaTokens.lunaOmbra,
                         alpha = 1f,
                         marks = MOON_SEAS,
+                    )
+
+                    // **Il filo di contorno.** Il disco in ombra si disegna a
+                    // un quarto di opacita', perche' la parte non illuminata
+                    // della Luna vera si intravede appena. Ma su carta chiara
+                    // un quarto di ardesia e' ancora troppo poco per dire
+                    // **dove finisce la sfera**, e senza il bordo una falce
+                    // sottile galleggia senza corpo. Un filo sottile chiude la
+                    // sagoma senza riempirla, e costa un tratto.
+                    drawCircle(
+                        color = SalaTokens.lunaOmbra.copy(alpha = 0.55f),
+                        radius = raggio,
+                        center = centerOffset,
+                        style = Stroke(width = 1.dp.toPx()),
                     )
 
                     // **Il bordo che scurisce: e' questo che fa una sfera.**
@@ -122,7 +144,7 @@ fun SalaLunaScreen(
                         brush = Brush.radialGradient(
                             0.00f to Color.Transparent,
                             0.58f to Color.Transparent,
-                            1.00f to palette.ink.copy(alpha = 0.30f),
+                            1.00f to SalaTokens.lunaOmbra.copy(alpha = 0.34f),
                             center = centerOffset + versoLaLuce,
                             radius = raggio * 1.45f,
                         ),
