@@ -288,7 +288,7 @@ fun scenaBersaglio(
         // Una pioviggine non e' un rovescio, e finora si dipingevano uguali. Il
         // minimo non e' zero: se il codice WMO dice che piove **deve piovere**,
         // e i millimetri decidono quanto forte, non se (trappola #14).
-        bagnato = if (!cade) 0f else ((pioggiaMm?.toFloat() ?: 1f) / 2.5f).coerceIn(0.35f, 1f),
+        bagnato = if (!cade) 0f else ((pioggiaMm?.toFloat() ?: 1f) / 1.8f).coerceIn(0.55f, 1f),
         ghiaccio = if (grandina) 1f else 0f,
         neve = if (nevica) 1f else 0f,
     )
@@ -320,7 +320,7 @@ private fun coperturaMinima(condition: SalaCondition): Float = when (condition) 
  */
 private fun presenzaMassa(i: Int, copertura: Float, tempesta: Float): Float {
     if (i >= MasseNuvola.size - MASSE_TEMPORALE) return tempesta
-    return ((copertura - i * 0.16f) / 0.30f).coerceIn(0f, 1f)
+    return ((copertura - i * 0.11f) / 0.26f).coerceIn(0f, 1f)
 }
 
 /**
@@ -348,15 +348,18 @@ fun DrawScope.scultura(
     /** I secondi da quando la sala e' in vista. Zero quando niente si muove. */
     tempo: Float = 0f,
 ) {
-    // L'unita' si misura sulla **larghezza**, non sul lato corto: la scultura
-    // deve occupare la cassa come nel concept, e prendendo il minimo restava un
-    // francobollo in mezzo a una pagina vuota.
-    val unita = size.width * 0.80f
+    // **L'unita' si misura sul lato corto, e non e' un ritorno indietro.** Sulla
+    // sola larghezza la scultura riempiva la cassa come nel concept ma ne usciva
+    // dal bordo alto: negli scatti il gruppo sole-nuvole toccava l'intestazione
+    // e il disco veniva tagliato. Il concept e' un foglio, la cassa qui e' un
+    // rettangolo basso, e un oggetto tarato su una sola misura non puo' stare
+    // dentro l'altra.
+    val unita = minOf(size.width, size.height) * 0.82f
     val camera = Camera(
         yawDeg = giroDeg,
         pitchDeg = 0f,
         distance = unita * 2.6f,
-        origin = Offset(size.width * 0.52f, size.height * 0.46f),
+        origin = Offset(size.width * 0.52f, size.height * 0.48f),
     )
     val c = scena.copertura
     val n = scena.notte
@@ -373,10 +376,13 @@ fun DrawScope.scultura(
     )
 
     // ── Il disco: si sposta e rimpicciolisce mentre il cielo si chiude ───────
-    val discoRaggio = lerp(0.66f, 0.46f, c) * unita
+    // Raggio e scostamento **si tarano insieme**: sono i due numeri che decidono
+    // l'inquadratura, e cambiarne uno per volta sposta soltanto il punto in cui
+    // la scultura esce dalla cassa. Sommati devono stare dentro la meta' alta.
+    val discoRaggio = lerp(0.46f, 0.34f, c) * unita
     camera.place(
         lerp(0f, -0.30f, c) * unita,
-        lerp(-0.04f, -0.32f, c) * unita,
+        lerp(-0.02f, -0.22f, c) * unita,
         0.30f * unita,
     )
     val centroDisco = Offset(camera.sx, camera.sy)
