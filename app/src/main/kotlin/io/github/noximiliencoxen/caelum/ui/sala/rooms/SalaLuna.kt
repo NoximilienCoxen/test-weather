@@ -30,6 +30,7 @@ import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
 import io.github.noximiliencoxen.caelum.ui.render3d.Camera
 import io.github.noximiliencoxen.caelum.ui.render3d.MOON_SEAS
 import io.github.noximiliencoxen.caelum.ui.render3d.moon
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
@@ -199,14 +200,13 @@ fun SalaLunaScreen(
                     style = SalaType.sectionLabel,
                     color = palette.inkAccent,
                 )
-                Text(
-                    text = if (offsetDays == 0) {
+                Didascalia(
+                    testo = if (offsetDays == 0) {
                         "Il disco qui sopra è la luna di questa notte, calcolata sulla data di oggi. Trascinala per girarla; i due passi qui sopra attraversano il mese."
                     } else {
                         "Stai guardando la luna del ${shownDate.format(DayMonth)}, a ${kotlin.math.abs(offsetDays)} giorni da oggi. Torna a stasera per rimetterla in pari con il cielo."
                     },
-                    style = SalaType.body,
-                    color = palette.ink,
+                    palette = palette,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.padding(top = 8.dp)) {
                     Stat("Fase", segment.label.lowercase().replaceFirstChar { it.uppercase() }, palette)

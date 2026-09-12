@@ -30,6 +30,7 @@ import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.BarraDelleOre
 import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.Scena
@@ -193,7 +194,7 @@ fun SalaOggiScreen(
                     style = SalaType.sectionLabel,
                     color = palette.inkAccent,
                 )
-                Text(text = salaBody(condition), style = SalaType.body, color = palette.ink)
+                Didascalia(salaBody(condition), palette)
             }
 
             // Il ritorno al presente compare **solo quando serve**: se si sta

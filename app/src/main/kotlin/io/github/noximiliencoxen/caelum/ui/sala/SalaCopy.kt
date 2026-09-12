@@ -1,5 +1,11 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Modifier
+import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
+
 /**
  * Le didascalie di Sala I: titolo e corpo per ognuna delle ventiquattro
  * combinazioni fase x tempo, portate dal prototipo. Sono testo, non dati —
@@ -77,4 +83,39 @@ fun SalaPhase.label(): String = when (this) {
     SalaPhase.GIORNO -> "giorno"
     SalaPhase.TRAMONTO -> "tramonto"
     SalaPhase.NOTTE -> "notte"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Le didascalie, e l'interruttore che finalmente le comanda
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Quanto lunghe le vuole chi guarda.
+ *
+ * **La preferenza c'era da sempre e non la leggeva nessuno.** Nelle impostazioni
+ * si sceglieva fra "Brevi" e "Complete", la scelta sopravviveva alla chiusura
+ * dell'app, e nelle sette sale non cambiava una parola. Un comando che non
+ * comanda niente non e' neutro: insegna a non fidarsi anche degli altri, e in
+ * una schermata di impostazioni gli altri sono tutti li' accanto.
+ *
+ * Passa da un local e non da sei parametri: il corpo del testo lo scrivono sei
+ * sale diverse, e infilare la preferenza in sei firme avrebbe voluto dire
+ * toccarle tutte ogni volta che cambia. `compositionLocalOf` e non
+ * `staticCompositionLocalOf` perche' questo valore **cambia** mentre l'app e'
+ * aperta, ed e' esattamente il caso per cui i due si distinguono.
+ */
+val LocalDidascalie = compositionLocalOf { CaptionStyle.COMPLETE }
+
+/**
+ * Il corpo di una didascalia: sparisce quando si sono chieste brevi.
+ *
+ * Sparisce **il corpo e non il titolo**: chi chiede didascalie brevi vuole meno
+ * parole, non meno informazione. Titolo e riga dei dati restano, e sono loro a
+ * dire che tempo fa; il paragrafo e' quello che spiega, e lo si puo' togliere
+ * senza perdere un fatto.
+ */
+@Composable
+fun Didascalia(testo: String, palette: SalaPalette, modifier: Modifier = Modifier) {
+    if (LocalDidascalie.current == CaptionStyle.BREVI) return
+    Text(text = testo, style = SalaType.body, color = palette.ink, modifier = modifier)
 }

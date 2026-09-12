@@ -108,6 +108,10 @@ enum class AlertKind(val label: String) {
     NEVE_GHIACCIO("NEVE E GHIACCIO"),
     CALDO("CALDO"),
     FREDDO("FREDDO"),
+    /** Nessun ente la emette: e' solo calcolata. Esiste perche' nelle
+     *  impostazioni c'era da sempre un interruttore "Raggi UV sopra 6" che non
+     *  accendeva e non spegneva niente - dietro non c'era nessun avviso. */
+    UV("RAGGI UV"),
     NEBBIA("NEBBIA"),
     COSTIERO("MAREGGIATE"),
     INCENDI("INCENDI"),

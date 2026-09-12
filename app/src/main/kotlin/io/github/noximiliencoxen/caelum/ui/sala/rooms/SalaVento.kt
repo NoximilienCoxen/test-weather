@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
@@ -123,10 +124,9 @@ fun SalaVentoScreen(
                     style = SalaType.sectionLabel,
                     color = palette.inkAccent,
                 )
-                Text(
-                    text = "La lancetta indica la direzione reale del vento all'ora scelta e si allunga verso la testa quando soffia più forte.",
-                    style = SalaType.body,
-                    color = palette.ink,
+                Didascalia(
+                    testo = "La lancetta indica la direzione reale del vento all'ora scelta e si allunga verso la testa quando soffia più forte.",
+                    palette = palette,
                 )
             }
         }

@@ -21,6 +21,7 @@ import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.asMillimetres
 import io.github.noximiliencoxen.caelum.ui.asPercent
 import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
@@ -124,14 +125,13 @@ fun SalaPioggiaScreen(
                     else -> "Otto giorni senza una goccia"
                 }
                 Text(text = meta, style = SalaType.sectionLabel, color = palette.inkAccent)
-                Text(
-                    text = if (total > 0.0) {
+                Didascalia(
+                    testo = if (total > 0.0) {
                         "Le colonne piene sono i millimetri, la linea sottile la probabilità ora per ora."
                     } else {
                         "Le colonne restano vuote finché non arriva niente: è la stessa scala di quando piove, non una schermata diversa."
                     },
-                    style = SalaType.body,
-                    color = palette.ink,
+                    palette = palette,
                 )
             }
         }

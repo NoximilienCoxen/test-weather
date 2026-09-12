@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -136,6 +137,10 @@ fun SalaShell(
     val w2 by animateColorAsState(bersagli[2], molla, label = "macchia3")
     val palette = remember(dk, w0, w1, w2) { salaPalette(dk, listOf(w0, w1, w2)) }
 
+    // La preferenza sulle didascalie scende da qui a tutte e sette le sale:
+    // sono sei file a scrivere il corpo del testo, e infilarla in sei firme
+    // avrebbe voluto dire toccarle tutte a ogni ripensamento.
+    CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
     Box(modifier = modifier.fillMaxSize()) {
         VerticalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             when (rooms.getOrNull(page)) {
@@ -262,5 +267,6 @@ fun SalaShell(
                 )
             }
         }
+    }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AirQuality
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.asIndex
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
@@ -78,14 +79,13 @@ fun SalaAriaScreen(
                     style = SalaType.sectionLabel,
                     color = palette.inkAccent,
                 )
-                Text(
-                    text = if (state.airUnavailable) {
+                Didascalia(
+                    testo = if (state.airUnavailable) {
                         "La qualità dell'aria non è arrivata da questa richiesta."
                     } else {
                         "Ogni riga è rapportata alla propria soglia di riferimento, non a una scala comune."
                     },
-                    style = SalaType.body,
-                    color = palette.ink,
+                    palette = palette,
                 )
             }
         }
