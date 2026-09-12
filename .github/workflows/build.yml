@@ -435,6 +435,13 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    # **Mancava, e non si vedeva.** Gli altri tre job che pubblicano su
+    # `ci-artifacts` lo dichiarano; questo no, quindi il suo `GITHUB_TOKEN` era
+    # in sola lettura e la `git push` di `publish.sh` veniva respinta. Il passo
+    # che doveva pubblicare gli errori di compilazione moriva percio' in
+    # silenzio, proprio nel giro in cui serviva.
+    permissions:
+      contents: write
     steps:
       # `fetch-depth: 0`, cioe' la storia intera, e non e' un vezzo: il
       # `versionCode` adesso e' il numero di commit del ramo, e il checkout
@@ -480,6 +487,17 @@ jobs:
             echo "================= ERRORI DI COMPILAZIONE ================="
             grep -E "^e: |^w: .*(error|Error)" /tmp/build.log | head -40
             echo "=========================================================="
+
+            # **Le stesse righe, anche come annotazioni.** E' la via che non
+            # chiede niente a nessuno: un `::error::` finisce nella check-run, e
+            # le annotazioni si leggono dall'API di GitHub, che passa - mentre il
+            # log grezzo sta su un host che la politica di uscita del container
+            # di sviluppo blocca al CONNECT. Otto righe: la prima e' quasi
+            # sempre quella vera, e il tetto per passo e' dieci.
+            grep -E "^e: " /tmp/build.log | head -8 | while IFS= read -r riga; do
+              echo "::error::$riga"
+            done
+
             exit 1
           }
 
@@ -508,7 +526,12 @@ jobs:
             echo "=== ultime 120 righe del log ==="
             tail -120 /tmp/build.log 2>/dev/null || echo "(nessun /tmp/build.log)"
           } > /tmp/ciout/errori.txt
-          bash scripts/publish.sh compilazione
+          # `|| true`: un guasto nel **raccontare** il guasto non deve
+          # sostituirsi a lui. E' l'inciampo del giro scorso - questo passo e'
+          # fallito per il permesso mancante, e da fuori sembrava che fosse
+          # fallito lui e non la compilazione.
+          bash scripts/publish.sh compilazione || echo "pubblicazione fallita: resta l'annotazione"
+          true
 
       # La release adesso passa da R8, e un flag che non compila nessuno non e'
       # acceso: e' solo scritto. Qui ci passa a ogni giro, cosi' una regola di
