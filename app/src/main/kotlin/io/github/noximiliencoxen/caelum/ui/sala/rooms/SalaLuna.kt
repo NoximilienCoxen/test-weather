@@ -103,6 +103,20 @@ fun SalaLunaScreen(
                     // tema chiaro dava una parte illuminata quasi nera e un
                     // disco in ombra invisibile sulla carta. Vedi
                     // `SalaTokens.lunaLuce` per il perche' per esteso.
+                    // **Il corpo scuro, sotto.** `moon` disegna la faccia non
+                    // illuminata a un quarto di opacita', perche' la parte in
+                    // ombra della Luna vera si intravede appena - ed e' giusto
+                    // su un cielo notturno. Qui pero' il fondo e' carta, e un
+                    // quarto di ardesia su carta chiara diventa un grigino che
+                    // non si distingue dall'avorio della parte illuminata: al
+                    // novilunio lo scatto mostrava ancora un **disco pieno**
+                    // sotto la scritta "1 % illuminata". La sfera parte scura, e
+                    // la luce la morde da sopra.
+                    drawCircle(
+                        color = SalaTokens.lunaOmbra.copy(alpha = 0.62f),
+                        radius = raggio,
+                        center = centerOffset,
+                    )
                     moon(
                         camera = camera,
                         x = 0f, y = 0f, z = 0f,
