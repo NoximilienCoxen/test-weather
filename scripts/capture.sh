@@ -548,13 +548,19 @@ session() {
     # ritraeva l'Ingresso dappertutto: il banco di prova che mente non fallisce,
     # dice di si'. Da adesso il giro lo legge `rememberGiro(state.forcedYawDeg)`
     # e questi scatti cambiano per la prima volta: non e' una regressione.
-    restart_with "--ei giro 90"
+    # **Col cielo coperto, e non e' un dettaglio.** I primi scatti del giro
+    # riparato sono usciti a cielo sereno, cioe' su un **disco**: una sfera
+    # girata di novanta gradi e' identica a una sfera ferma, quindi lo scatto
+    # non poteva dimostrare niente - ne' che il giro funzioni ne' che non
+    # funzioni. Le masse della nuvola stanno a profondita' diverse: sono loro a
+    # scavalcarsi girando, ed e' li' che si vede.
+    restart_with "--ei meteo 3 --ei giro 90"
     shoot "${slug}-7-di-taglio"
 
-    restart_with "--ei giro 135"
+    restart_with "--ei meteo 3 --ei giro 135"
     shoot "${slug}-8-tre-ottavi"
 
-    restart_with "--ei giro 180"
+    restart_with "--ei meteo 3 --ei giro 180"
     shoot "${slug}-9-da-dietro"
 
     # La luna deve poter passare davanti alla nuvola: e' tutto il punto
@@ -665,11 +671,24 @@ session() {
     # attorno al quindicesimo riavvio** (trappola #38), e questo pezzo sta in
     # coda a tutto: un riavvio risparmiato qui e' la differenza fra una misura
     # in piu' e una galleria in meno.
+    # **La guardia misurava la sala sbagliata, e per questo diceva zero e zero.**
+    # Era scritta per la scheda della pioggia del vecchio feed; sotto Sala lo
+    # scatto che la precede e' la **terza** sala, che non ha nulla di permanente
+    # da muovere. Il conto a sinistra usciva quindi zero, la soglia protestava, e
+    # protestava giustamente: non stava guardando l'eccezione.
+    #
+    # L'eccezione dichiarata adesso e' **Sala I**, che si muove sempre mentre la
+    # si guarda - stelle di notte, uccelli e pulviscolo di giorno, cio' che cade
+    # quando cade. Quindi si misura lei, con la pioggia imposta perche' il giorno
+    # dello scatto e' quasi sempre asciutto.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
-    # La sala accanto alla pioggia adesso e' la quarta, la luna: in Sala la
-    # pioggia e' la terza, e la 2 di prima era l'aria del feed.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 3 --ei meteo 63"
+    # E il confronto: la **quinta** sala, l'aria. Il carosello tiene composta
+    # anche la pagina accanto, quindi Sala I resta viva nella composizione ma
+    # fuori vista - che e' esattamente il caso per cui la guardia esiste. Se
+    # leggesse fotogrammi anche li', il cielo si muoverebbe per nessuno.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
     accanto=$(conta_fotogrammi)
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
     echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"

@@ -17,7 +17,11 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
         SalaPhase.ALBA to "Luce filtrata dalle nubi alte",
         SalaPhase.GIORNO to "Nuvole di passaggio",
         SalaPhase.TRAMONTO to "Cielo coperto verso sera",
-        SalaPhase.NOTTE to "Notte chiusa, niente stelle",
+        // Diceva "niente stelle", e da questo giro le stelle si vedono
+        // **attraverso** le nuvole - le nubi non le spengono, le coprono. Una
+        // didascalia che smentisce cio' che si ha sotto gli occhi toglie
+        // credito anche alle altre sei.
+        SalaPhase.NOTTE to "Notte coperta, poche stelle",
     ),
     SalaCondition.PIOGGIA to mapOf(
         SalaPhase.ALBA to "Piove dalle prime luci",

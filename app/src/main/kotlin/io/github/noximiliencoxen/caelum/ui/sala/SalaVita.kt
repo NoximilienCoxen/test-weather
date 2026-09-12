@@ -162,6 +162,10 @@ fun DrawScope.pulviscolo(tempo: Float, inchiostro: Color, velo: Float) {
 /** Quante stelle ha il cielo di Sala I. */
 private const val STELLE = 72
 
+/** Fin dove scende il cielo, in frazione di schermo. Sotto c'e' la scultura,
+ *  poi il numero, poi la didascalia: non e' cielo, e' pagina scritta. */
+private const val SOFFITTO = 0.52f
+
 /**
  * Il cielo stellato, **a tutta pagina e dietro ogni cosa**.
  *
@@ -183,14 +187,20 @@ fun DrawScope.cieloStellato(tempo: Float, inchiostro: Color, velo: Float) {
     if (velo <= 0.01f) return
     for (i in 0 until STELLE) {
         val x = sparso(i, 1) * size.width
-        // Piu' fitte in alto: verso il basso c'e' il testo, e una stella dietro
-        // una didascalia e' sporco sulla pagina, non un astro.
+        // **Si fermano dove comincia il testo.** Erano fitte in alto e rade in
+        // basso, il che non bastava: qualcuna finiva comunque dietro la
+        // didascalia e accanto al numero dei gradi, e una stella dietro una
+        // parola non e' un astro, e' sporco sulla pagina. Adesso il cielo
+        // occupa la meta' alta e sfuma a zero prima di arrivarci.
         val alto = sparso(i, 2)
-        val y = alto * alto * size.height * 0.72f
+        val y = alto * alto * size.height * SOFFITTO
         val luce = 0.35f + sparso(i, 7) * 0.65f
         val tremolio = 0.62f + 0.38f * sin(tempo * 1.6f + (x * 0.031f + y * 0.017f))
+        // L'ultimo quarto del cielo sfuma: un bordo netto si leggerebbe come
+        // una riga, e una riga nel cielo e' peggio di una stella di troppo.
+        val sfumo = ((SOFFITTO * size.height - y) / (size.height * 0.18f)).coerceIn(0f, 1f)
         drawCircle(
-            color = inchiostro.copy(alpha = (velo * luce * tremolio * 0.85f).coerceIn(0f, 1f)),
+            color = inchiostro.copy(alpha = (velo * luce * tremolio * sfumo * 0.9f).coerceIn(0f, 1f)),
             radius = size.width * (0.0016f + luce * 0.0026f),
             center = Offset(x, y),
         )

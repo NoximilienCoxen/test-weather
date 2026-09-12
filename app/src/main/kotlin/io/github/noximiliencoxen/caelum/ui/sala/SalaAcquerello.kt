@@ -271,8 +271,19 @@ fun scenaBersaglio(
     return Scena(
         sole = sky.sunPresence,
         notte = sky.moonPresence,
-        copertura = coperturaOraria?.let { (it / 100f).coerceIn(0f, 1f) }
-            ?: if (condition == SalaCondition.SERENO) 0f else 1f,
+        // **Il dato vero non puo' smentire il codice.** Prendere la nuvolosita'
+        // oraria e basta sembrava piu' preciso, e ha prodotto uno scatto in cui
+        // la sala diceva "Rovescio di meta' pomeriggio" sotto un sole pieno
+        // **senza una nuvola**: l'ora forzata era piovosa per codice ma serena
+        // per nuvolosita', e vinceva la seconda. E' la trappola #14 per la
+        // stessa strada di sempre - se il codice WMO dice che piove **deve
+        // piovere**, e una pioggia senza nuvole e' lo stesso errore delle gocce
+        // che non cadevano. Il dato vero decide **quanto** dentro il possibile;
+        // il codice decide il minimo.
+        copertura = maxOf(
+            coperturaOraria?.let { (it / 100f).coerceIn(0f, 1f) } ?: 0f,
+            coperturaMinima(condition),
+        ),
         tempesta = if (temporale) 1f else 0f,
         // Una pioviggine non e' un rovescio, e finora si dipingevano uguali. Il
         // minimo non e' zero: se il codice WMO dice che piove **deve piovere**,
@@ -281,6 +292,21 @@ fun scenaBersaglio(
         ghiaccio = if (grandina) 1f else 0f,
         neve = if (nevica) 1f else 0f,
     )
+}
+
+/**
+ * Il cielo **almeno** cosi' chiuso, secondo il codice del tempo.
+ *
+ * Non e' un ripiego per quando il dato manca: e' un pavimento. Un temporale con
+ * il venti per cento di nuvolosita' non esiste, e se i due numeri litigano ha
+ * ragione quello che ha dato il nome alla giornata.
+ */
+private fun coperturaMinima(condition: SalaCondition): Float = when (condition) {
+    SalaCondition.SERENO -> 0f
+    SalaCondition.NUVOLOSO -> 0.45f
+    SalaCondition.PIOGGIA -> 0.80f
+    SalaCondition.GRANDINE -> 0.85f
+    SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 0.95f
 }
 
 /**
@@ -456,5 +482,7 @@ fun DrawScope.scultura(
     // perche' misurano la sua distanza. Sfumano col chiudersi del cielo e col
     // calare della notte, non spariscono a una soglia: al crepuscolo si vedono
     // per qualche secondo uccelli tenui **e** stelle tenui insieme, che e' vero.
-    uccelli(unita, origine, tempo, palette.ink, velo = (1f - c) * (1f - n))
+    // Asciutto anche qui: sotto un rovescio gli uccelli si riparano, e vederli
+    // attraversare la pioggia era la stessa smentita del sole senza nuvole.
+    uccelli(unita, origine, tempo, palette.ink, velo = (1f - c) * (1f - n) * (1f - scena.bagnato))
 }
