@@ -1422,7 +1422,23 @@ motivo per cui questa sta scritta.
 
 ## 8. Stato: fatto / non fatto
 
-**Verificato sul telefono**: schermata principale, rotazione libera con
+> ### ⚠ Questa sezione descrive il **feed**, che non esiste piu'
+>
+> Tutto cio' che segue - la rotazione libera della cifra, il sole giallo e
+> rosso, la nuvola bianca e quella grigia, la via con la gente sotto la
+> finestra, le schede del carosello - e' stato **cancellato** quando Sala ha
+> preso il posto del feed (sezioni 12, 12-bis e 12-ter).
+>
+> Resta qui perche' e' la sola traccia di cio' che e' stato provato **in mano su
+> un telefono vero**, e quelle prove non si rifanno da un container senza SDK:
+> le misure di fotogrammi, i giri su Pixel, la cronologia del vibratore. Chi
+> cerca com'e' fatta l'app **oggi** legge la sezione 12 e seguenti.
+>
+> Il pezzo che vale ancora per intero e' la parte sui **widget**, che Sala non
+> ha toccato, e le **trappole** della sezione 7, che sono lezioni e non
+> descrizioni.
+
+**Verificato sul telefono** (sul feed, non su Sala): schermata principale, rotazione libera con
 prospettiva vera anche oltre il mezzo giro, ritorno alla posa a riposo, sole
 giallo e rosso, luna con fase e mari, nuvola bianca e nuvola grigia, **pioggia
 che parte davvero** su temporale a zero millimetri, gocce che ruotano con la
@@ -3186,3 +3202,52 @@ ritmo delle vibrazioni e il costo per fotogramma vanno presi in mano - e
 l'emulatore della CI rende via software, quindi di li' non esce nessun giudizio
 sul costo per fotogramma. Cio' che la CI puo' dire resta binario e resta utile:
 se compila, se i fotogrammi si fermano, e cosa si vede negli scatti.
+
+### 12-quater. I comandi che non comandavano niente
+
+Passata di igiene dopo il merge in `main`. Il filo comune: **cinque comandi
+nelle impostazioni che si accendevano, si spegnevano, si ricordavano fra un
+avvio e l'altro, e non erano letti da nessuno.**
+
+Non e' una svista da poco. Un interruttore che non comanda niente e' peggio di
+un interruttore assente: chi lo prova e non vede cambiare nulla impara che i
+comandi di quella schermata non contano, e da li' in poi non si fida nemmeno di
+quelli veri, che stanno tutti nella stessa lista.
+
+**Le quattro allerte.** «Pioggia intensa», «Temporali», «Raggi UV sopra 6» e
+«Vento forte» adesso filtrano davvero — in `WeatherViewModel.permessa`, sulle
+allerte **calcolate** e non su quelle ufficiali: un avviso della Protezione
+Civile non lo si nasconde perche' un interruttore e' giu'.
+
+Per farlo ho dovuto aggiungere l'avviso che mancava: `AlertKind.UV` non
+esisteva, quindi l'interruttore dei raggi UV non aveva niente dietro da
+accendere. La soglia e' quella scritta sull'interruttore, sei, che e' il punto
+in cui la scala mondiale passa da moderato ad alto; `uvMax` era gia' fra i dati
+chiesti a Open-Meteo.
+
+**Le didascalie.** «Brevi» e «Complete» adesso decidono qualcosa: il **corpo**
+del testo sparisce, titolo e riga dei dati restano. Chi chiede didascalie brevi
+vuole meno parole, non meno informazione.
+
+Passa da `LocalDidascalie` e non da sei parametri: il corpo lo scrivono sei sale
+diverse, e infilare la preferenza in sei firme avrebbe voluto dire toccarle
+tutte a ogni ripensamento. `compositionLocalOf` e **non**
+`staticCompositionLocalOf` come per `LocalAcquerello`, perche' questo valore
+cambia mentre l'app e' aperta, ed e' esattamente il caso per cui i due si
+distinguono.
+
+**Una nota su come non farlo.** La sostituzione delle sei didascalie l'ho
+tentata con una espressione regolare su piu' righe, e ha agganciato un `Text(`
+che stava **prima** di quello giusto, inghiottendo il blocco in mezzo. Quattro
+file corrotti in silenzio, visti solo rileggendo. E' la seconda volta in questo
+progetto che una sostituzione automatica su codice fa danni (la prima fu uno
+script di rientro su `MeteoApp.kt`): su blocchi multilinea si risale
+dall'ancora **verso l'alto** fino all'apertura, oppure si fa a mano.
+
+**Codice morto tolto**: `fioccoDiNeve`, che nessuno chiamava dal giorno in cui e'
+nato, e `Scena.Ferma`.
+
+**`scripts/import_audit_baseline.txt` ritarato** su `main` verde: la taratura
+vale solo finche' l'albero di riferimento compila, e va rifatta dopo ogni merge.
+Nel giro di oggi lo script ha preso sei import mancanti di `Didascalia` prima
+che partisse la CI — che e' precisamente il lavoro per cui esiste.

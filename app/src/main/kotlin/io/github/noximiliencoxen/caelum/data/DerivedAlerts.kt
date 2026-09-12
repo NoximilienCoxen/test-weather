@@ -128,6 +128,25 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             }
         }
 
+        // I raggi UV, che sono l'unico fenomeno per cui esisteva gia' un
+        // interruttore nelle impostazioni **senza niente dietro**. La soglia e'
+        // quella scritta sull'interruttore, sei, e non l'ho scelta io: e' il
+        // punto in cui la scala mondiale passa da "moderato" ad "alto".
+        day.uvMax?.let { uv ->
+            val level = when {
+                uv >= 8.0 -> AlertLevel.ARANCIONE
+                uv >= 6.0 -> AlertLevel.GIALLA
+                else -> null
+            }
+            if (level != null) {
+                add(
+                    AlertKind.UV, level,
+                    "Raggi UV alti $quando",
+                    "Indice UV fino a ${uv.toInt()} nelle ore centrali.",
+                )
+            }
+        }
+
         // I temporali non hanno una soglia numerica nel blocco giornaliero: il
         // codice meteo del giorno e' l'unica cosa che li dichiara, e conta
         // quante ore ne sono toccate per non gridare al temporale per una

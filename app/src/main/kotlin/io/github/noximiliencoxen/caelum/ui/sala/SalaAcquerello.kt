@@ -233,10 +233,6 @@ data class Scena(
     val inTransito: Boolean
         get() = inMezzo(copertura) || inMezzo(notte) || inMezzo(tempesta) ||
             inMezzo(sole) || bagnato > 0.01f
-
-    companion object {
-        val Ferma = Scena(0f, 0f, 0f, 0f, 0f, 0f, 0f)
-    }
 }
 
 /**

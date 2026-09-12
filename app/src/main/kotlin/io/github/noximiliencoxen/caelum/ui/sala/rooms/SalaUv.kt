@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
@@ -119,7 +120,7 @@ fun SalaUvScreen(
                     current < 8 -> "Fra mezzogiorno e le due conviene stare all'ombra."
                     else -> "Radiazione molto forte: protezione alta, occhiali e maniche lunghe."
                 }
-                Text(text = body, style = SalaType.body, color = palette.ink)
+                Didascalia(body, palette)
             }
         }
     }

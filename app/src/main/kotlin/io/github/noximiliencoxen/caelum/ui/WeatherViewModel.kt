@@ -615,7 +615,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // aspettare una risposta di rete. Quando
                         // l'ufficiale arriva, rimpiazza le derivate dello
                         // stesso fenomeno.
-                        val derived = derivedAlerts(forecast)
+                        // **Gli interruttori filtrano qui, e prima non filtravano
+                        // niente.** Le quattro voci "Pioggia intensa",
+                        // "Temporali", "Raggi UV sopra 6" e "Vento forte"
+                        // stavano nelle impostazioni, si accendevano e si
+                        // spegnevano, si ricordavano fra un avvio e l'altro - e
+                        // non le leggeva nessuno. Un interruttore che non
+                        // comanda niente e' peggio di un interruttore assente:
+                        // insegna a non fidarsi anche degli altri.
+                        //
+                        // Filtrano le **calcolate** e non le ufficiali, ed e'
+                        // una scelta: un avviso della Protezione Civile non lo
+                        // si nasconde perche' un interruttore e' giu'.
+                        val derived = derivedAlerts(forecast).filter { permessa(it) }
                         _state.update { it.copy(alerts = derived) }
                         // `launch` figlio, non `viewModelScope`: vedi la nota
                         // sulla qualita' dell'aria poco sopra. Qui il danno
@@ -1130,6 +1142,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /** Aggancio per la cattura automatica: blocca la scena a un angolo. */
+    /** Se questo avviso calcolato lo si vuole vedere, secondo le impostazioni. */
+    private fun permessa(alert: WeatherAlert): Boolean {
+        val t = _state.value.alertToggles
+        return when (alert.kind) {
+            AlertKind.PIOGGIA -> t.pioggiaIntensa
+            AlertKind.TEMPORALI -> t.temporali
+            AlertKind.UV -> t.uvAlto
+            AlertKind.VENTO -> t.ventoForte
+            // Gli altri fenomeni calcolati - neve, caldo, freddo - non hanno un
+            // interruttore, e passano. Aggiungerne uno vorrebbe dire aggiungere
+            // anche la voce nelle impostazioni, non nasconderli in silenzio.
+            else -> true
+        }
+    }
+
     fun forceYaw(degrees: Float?) {
         _state.update { it.copy(forcedYawDeg = degrees) }
     }

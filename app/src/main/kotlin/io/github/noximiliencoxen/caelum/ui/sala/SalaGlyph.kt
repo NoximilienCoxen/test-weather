@@ -123,25 +123,6 @@ fun DrawScope.weatherGlyph(condition: SalaCondition, buio: Float) {
     }
 }
 
-/**
- * Il fiocco di neve: tre assi incrociati.
- *
- * E' il minimo per cui si legge "neve" e non "grandine"; a questa dimensione
- * sei braccia con le loro ramificazioni diventano una macchia.
- */
-fun DrawScope.fioccoDiNeve(centro: Offset, raggio: Float, ink: Color, alfa: Float = 1f) {
-    for (i in 0 until 3) {
-        val a = (i * PI / 3.0).toFloat()
-        drawLine(
-            color = ink.copy(alpha = alfa),
-            start = Offset(centro.x - cos(a) * raggio, centro.y - sin(a) * raggio),
-            end = Offset(centro.x + cos(a) * raggio, centro.y + sin(a) * raggio),
-            strokeWidth = raggio * 0.34f,
-            cap = StrokeCap.Round,
-        )
-    }
-}
-
 /** Un cerchietto vuoto: il segno del giorno scelto sul grafico. */
 fun DrawScope.anello(centro: Offset, raggio: Float, colore: Color, spessore: Float) {
     drawCircle(color = colore, radius = raggio, center = centro, style = Stroke(width = spessore))
