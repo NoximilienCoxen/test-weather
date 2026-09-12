@@ -126,7 +126,7 @@ fun WelcomeScreen(
                         color = SalaTokens.text,
                     )
                     Text(
-                        text = citazione.autore,
+                        text = citazione.firma,
                         style = SalaType.body.copy(fontStyle = FontStyle.Italic),
                         color = SalaTokens.accent700,
                         modifier = Modifier.padding(top = 16.dp),
