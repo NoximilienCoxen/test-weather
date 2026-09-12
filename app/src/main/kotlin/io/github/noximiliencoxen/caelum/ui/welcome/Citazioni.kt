@@ -27,7 +27,27 @@ data class Citazione(
     val autore: String,
     val originale: String,
     val fonte: String,
-)
+) {
+    /** Vero quando si e' potuto aprire l'originale. */
+    val verificata: Boolean get() = fonte != FORNITA
+
+    /**
+     * Come firmarla sotto la frase.
+     *
+     * **Le tre verificate portano il nome e basta; le altre un "attribuito a".**
+     * Il campo `fonte` diceva gia' la verita' - ma la diceva **al codice**, e
+     * chi apre l'app legge una frase con sotto un nome, non un campo di una
+     * `data class`. Fra le due, quella che conta e' la seconda: mettere in bocca
+     * a una persona vera parole che non si e' riusciti a rintracciare e' la
+     * stessa cosa di un'allerta finta, e anzi piu' difficile da smentire.
+     *
+     * «Attribuito a» non e' una scusa ne' una diminuzione: e' la formula con cui
+     * qualunque museo scrive un cartellino quando l'attribuzione e' probabile e
+     * non provata. Le frasi restano tutte - sono state scelte da chi
+     * commissiona l'app - e nessuna viene spacciata per cio' che non e'.
+     */
+    val firma: String get() = if (verificata) autore else "attribuito a $autore"
+}
 
 internal val Citazioni = listOf(
     Citazione(
