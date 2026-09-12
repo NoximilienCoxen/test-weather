@@ -105,7 +105,12 @@ fun SalaSettimanaScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        Canvas(modifier = Modifier.size(28.dp)) { weatherGlyph(cond, palette.inkAccent) }
+                        // Piu' grandi, e il giorno scelto piu' degli altri: in
+                        // una striscia di otto la prima cosa che si cerca e'
+                        // "che tempo fa", e il glifo e' l'unico a poterlo dire.
+                        Canvas(modifier = Modifier.size(if (index == selected) 38.dp else 33.dp)) {
+                            weatherGlyph(cond, palette.buio)
+                        }
                         Text(
                             text = d.label,
                             style = SalaType.hourLabel,

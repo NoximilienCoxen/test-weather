@@ -224,7 +224,7 @@ internal fun PlaceRow(
     ) {
         val condition = current?.weatherCode?.let { salaConditionOf(it) }
         Canvas(modifier = Modifier.padding(top = 4.dp).size(30.dp)) {
-            if (condition != null) weatherGlyph(condition, if (isCurrent) palette.inkAccent else palette.ink.copy(alpha = 0.7f))
+            if (condition != null) weatherGlyph(condition, palette.buio)
         }
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
             // Il segno sta **accanto al nome**, non altrove: chi scorre la

@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,27 +29,41 @@ import kotlin.math.sin
  * Disegnato e non importato, come le tre linee del menu: un'app che si disegna
  * le lune a mano non apre una libreria di icone per sei simboli.
  */
-fun DrawScope.weatherGlyph(condition: SalaCondition, ink: Color) {
+fun DrawScope.weatherGlyph(condition: SalaCondition, buio: Float) {
     val w = size.width
     val h = size.height
     val coperto = condition != SalaCondition.SERENO
     val temporale = condition == SalaCondition.TEMPORALE ||
         condition == SalaCondition.TEMPORALE_GRANDINE
 
+    // **A colori, e non piu' in un inchiostro solo.** Erano sei sagome tutte del
+    // medesimo turchese, e in una striscia di otto giorni si distinguevano solo
+    // guardandole una per una: il sole e la nuvola avevano la stessa voce. Il
+    // colore fa il lavoro che la forma da sola faceva a fatica - il giallo si
+    // legge come sole prima ancora che l'occhio riconosca i raggi.
+    //
+    // Le tinte si interpolano sul buio della carta, come tutto il resto della
+    // galleria: su carta scura le stesse valgono un passo piu' chiare, se no
+    // affogano.
+    val giallo = SalaTokens.processYellow
+    val nube = lerp(SalaTokens.accent, SalaTokens.accent400, buio)
+    val acqua = lerp(SalaTokens.accent700, SalaTokens.accent300, buio)
+    val ghiaccio = lerp(SalaTokens.accent400, SalaTokens.accent200, buio)
+
     // ── Il sole ──────────────────────────────────────────────────────────────
     // Con la nuvola il sole si ritira in alto a sinistra e perde i raggi:
     // spunta da dietro, non illumina la scena.
     val cx = if (coperto) w * 0.34f else w * 0.50f
     val cy = if (coperto) h * 0.30f else h * 0.46f
-    val r = if (coperto) w * 0.16f else w * 0.20f
-    drawCircle(color = ink.copy(alpha = if (coperto) 0.50f else 0.95f), radius = r, center = Offset(cx, cy))
+    val r = if (coperto) w * 0.17f else w * 0.22f
+    drawCircle(color = giallo.copy(alpha = if (coperto) 0.85f else 1f), radius = r, center = Offset(cx, cy))
     if (!coperto) {
-        val lungo = w * 0.085f
+        val lungo = w * 0.095f
         for (i in 0 until 8) {
             val a = (i * 2.0 * PI / 8.0).toFloat()
             val da = Offset(cx + cos(a) * r * 1.45f, cy + sin(a) * r * 1.45f)
             val a2 = Offset(cx + cos(a) * (r * 1.45f + lungo), cy + sin(a) * (r * 1.45f + lungo))
-            drawLine(ink.copy(alpha = 0.9f), da, a2, strokeWidth = w * 0.035f, cap = StrokeCap.Round)
+            drawLine(giallo, da, a2, strokeWidth = w * 0.042f, cap = StrokeCap.Round)
         }
         return
     }
@@ -68,14 +83,14 @@ fun DrawScope.weatherGlyph(condition: SalaCondition, ink: Color) {
         addOval(Rect(w * 0.56f, baseY - w * 0.28f, w * 0.92f, baseY + w * 0.06f))
         addRect(Rect(w * 0.18f, baseY - w * 0.12f, w * 0.84f, baseY))
     }
-    drawPath(nuvola, color = ink.copy(alpha = if (temporale) 0.85f else 0.60f))
+    drawPath(nuvola, color = if (temporale) SalaTokens.accent900.copy(alpha = 0.92f) else nube)
 
     // ── Cio' che cade ────────────────────────────────────────────────────────
     val cima = baseY + h * 0.05f
     when (condition) {
         SalaCondition.PIOGGIA -> listOf(0.32f, 0.52f, 0.72f).forEach { fx ->
             drawLine(
-                color = ink.copy(alpha = 0.9f),
+                color = acqua,
                 start = Offset(w * fx, cima),
                 end = Offset(w * (fx - 0.07f), cima + h * 0.24f),
                 strokeWidth = w * 0.045f,
@@ -85,8 +100,8 @@ fun DrawScope.weatherGlyph(condition: SalaCondition, ink: Color) {
         SalaCondition.GRANDINE, SalaCondition.TEMPORALE_GRANDINE ->
             listOf(0.30f to 0.07f, 0.74f to 0.07f).forEach { (fx, dy) ->
                 drawCircle(
-                    color = ink.copy(alpha = 0.9f),
-                    radius = w * 0.05f,
+                    color = ghiaccio,
+                    radius = w * 0.055f,
                     center = Offset(w * fx, cima + h * dy),
                 )
             }

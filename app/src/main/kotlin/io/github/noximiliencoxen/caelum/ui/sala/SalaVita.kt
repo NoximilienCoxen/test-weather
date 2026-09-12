@@ -139,17 +139,22 @@ fun DrawScope.uccelli(unita: Float, origine: Offset, tempo: Float, inchiostro: C
  */
 fun DrawScope.pulviscolo(tempo: Float, inchiostro: Color, velo: Float) {
     if (velo <= 0.01f) return
-    val quanti = 14
+    // **Meno, piu' in alto e piu' tenue.** Erano quattordici sparsi su due terzi
+    // di schermo, e nello scatto finivano accanto al numero dei gradi: a quella
+    // taglia e a quel contrasto non si leggevano come aria, si leggevano come
+    // pixel morti. Un elemento decorativo che si puo' scambiare per un guasto
+    // e' un elemento che toglie, non che aggiunge. Stanno dove sta il cielo.
+    val quanti = 9
     for (i in 0 until quanti) {
         val passo = 0.014f + sparso(i, 3) * 0.020f
         val attraverso = (tempo * passo + sparso(i, 4)) % 1f
-        val y = size.height * (0.10f + sparso(i, 5) * 0.62f) +
+        val y = size.height * (0.08f + sparso(i, 5) * (SOFFITTO - 0.10f)) +
             sin(tempo * 0.5f + i) * size.height * 0.012f
         val x = attraverso * (size.width * 1.2f) - size.width * 0.1f
         val bordo = (attraverso / 0.15f).coerceAtMost(1f) * ((1f - attraverso) / 0.15f).coerceAtMost(1f)
         drawCircle(
-            color = inchiostro.copy(alpha = (0.10f * bordo * velo).coerceIn(0f, 1f)),
-            radius = size.width * (0.0035f + sparso(i, 6) * 0.0040f),
+            color = inchiostro.copy(alpha = (0.065f * bordo * velo).coerceIn(0f, 1f)),
+            radius = size.width * (0.0028f + sparso(i, 6) * 0.0030f),
             center = Offset(x, y),
         )
     }
@@ -354,6 +359,19 @@ fun DrawScope.caduta(
     val cima = origine.y - unita * 0.55f
     val corsa = (suolo - cima).coerceAtLeast(1f)
 
+    // **La riga bagnata.** Le fioriture atterravano alla quota giusta ma senza
+    // niente sotto, e da fuori si leggevano come bolle sospese a mezz'aria:
+    // l'occhio ha bisogno di vedere **su cosa** una goccia si posa. Un velo
+    // lungo quanto l'ombra della scultura, alla stessa quota, basta a dire che
+    // li' c'e' una superficie - e non aggiunge un oggetto nuovo alla scena.
+    if (tipo != Caduta.NEVE) {
+        drawRect(
+            color = tinta.copy(alpha = (0.10f * presenza * peso).coerceIn(0f, 1f)),
+            topLeft = Offset(origine.x - unita * 0.80f, suolo - unita * 0.012f),
+            size = Size(unita * 1.60f, unita * 0.024f),
+        )
+    }
+
     for (i in 0 until Corsie.QUANTE) {
         val quota = Corsie.accesa(i, presenza)
         if (quota <= 0.01f) continue
@@ -432,7 +450,7 @@ fun DrawScope.caduta(
                 // Un cerchio vuoto e non pieno - l'acqua spinge il colore
                 // **verso il bordo** della macchia, ed e' quello che rende un
                 // acquerello riconoscibile a colpo d'occhio.
-                val raggio = unita * (0.02f + 0.10f * maturo) * (0.5f + prof)
+                val raggio = unita * (0.012f + 0.062f * maturo) * (0.5f + prof)
                 drawCircle(
                     color = tinta.copy(alpha = (0.34f * svanire * quota * peso).coerceIn(0f, 1f)),
                     radius = raggio,
