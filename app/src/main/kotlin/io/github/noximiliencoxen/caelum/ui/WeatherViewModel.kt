@@ -174,6 +174,32 @@ data class UiState(
      * pareti si scavalcano - non era fotografabile.
      */
     val forcedYawDeg: Float? = null,
+    /**
+     * Vero quando un aggancio di cattura e' stato applicato: le transizioni si
+     * compiono **all'istante** invece di passare per le loro molle.
+     *
+     * Non e' un capriccio di velocita', e' cio' che rende gli scatti
+     * riproducibili. Gli extra `--ei` si applicano in `onCreate`, prima della
+     * composizione, quindi non animano; ma la previsione arriva **dopo** il
+     * primo fotogramma, e muove altezza del sole, nuvolosita' e condizione.
+     * Con le molle, allo scatto sarebbero ancora in volo, e la galleria
+     * dipenderebbe da un `sleep` di un secondo che e' a qualche decimo
+     * dall'essere sbagliato. La galleria di questo progetto ha gia' mentito due
+     * volte, e le due volte nessuno se n'e' accorto per due giri interi.
+     *
+     * Vero solo sotto `BuildConfig.AGGANCI_CATTURA`, come tutti gli agganci.
+     */
+    val animazioniIstantanee: Boolean = false,
+    /**
+     * Lo chiede chi guarda, dalle impostazioni: Sala I smette di muoversi in
+     * permanenza e le vibrazioni tacciono.
+     *
+     * Esiste perche' le stelle, gli uccelli e la pioggia sono **un'eccezione
+     * dichiarata** alla regola dei zero fotogrammi a schermo fermo: finche' la
+     * prima sala e' in vista, un orologio gira. Dichiararla senza lasciare una
+     * via d'uscita sarebbe stato dichiararla a meta'.
+     */
+    val animazioniRidotte: Boolean = false,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Motore numerico scelto per la previsione. */
@@ -451,6 +477,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         windUnit = settings.windUnit,
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
+                        animazioniRidotte = settings.animazioniRidotte,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -789,15 +816,35 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     private var favoritesJob: Job? = null
 
+    /** Quando l'ultima richiesta per una salvata e' stata fatta. */
+    private val favoritesFetchedAt = mutableMapOf<String, Long>()
+
     private fun loadFavoritesWeather() {
         favoritesJob?.cancel()
-        val places = _state.value.favorites
-        if (places.isEmpty()) return
+        val stato = _state.value
+        val adesso = System.currentTimeMillis()
+
+        // La localita' che si sta gia' guardando ce l'abbiamo **gia'**: la sua
+        // previsione e' in `forecast`. Richiederla era una chiamata di rete
+        // ogni volta che si apriva un pannello, per un dato che stava un campo
+        // piu' in la'.
+        stato.forecast?.current?.let { corrente ->
+            _state.update { it.copy(favoritesWeather = it.favoritesWeather + (stato.place.key to corrente)) }
+            favoritesFetchedAt[stato.place.key] = adesso
+        }
+
+        val daChiedere = stato.favorites.filter { place ->
+            val quando = favoritesFetchedAt[place.key]
+            quando == null || adesso - quando > FAVORITES_MAX_AGE_MS
+        }
+        if (daChiedere.isEmpty()) return
+
         favoritesJob = viewModelScope.launch {
-            places.forEach { place ->
+            daChiedere.forEach { place ->
                 launch {
-                    WeatherRepository(place, WeatherModel.AUTO).load()
+                    WeatherRepository(place, stato.model).load()
                         .onSuccess { forecast ->
+                            favoritesFetchedAt[place.key] = System.currentTimeMillis()
                             _state.update {
                                 it.copy(favoritesWeather = it.favoritesWeather + (place.key to forecast.current))
                             }
@@ -898,7 +945,14 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     // Da non confondere con `feelsIt`, che e' vivo e vuol dire un'altra cosa:
     // se la schermata e' davanti, e quindi se le vibrazioni si sentono.
 
-    fun openSettings() = _state.update { it.copy(settingsOpen = true) }
+    fun openSettings() {
+        _state.update { it.copy(settingsOpen = true) }
+        // Anche le impostazioni mostrano le localita' salvate col loro tempo, e
+        // partiva solo da "Le localita'": era per questo che li' l'iconcina
+        // restava vuota. Una riga, e le due schermate smettono di raccontare
+        // due cose diverse sulla stessa lista.
+        loadFavoritesWeather()
+    }
 
     fun closeSettings() =
         _state.update { it.copy(settingsOpen = false, query = "", results = emptyList()) }
@@ -913,6 +967,28 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
     fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    /**
+     * Salva una localita'. **Aggiunge e basta.**
+     *
+     * Esiste perche' `onAdd` e `onRemove` puntavano tutti e due a
+     * [toggleFavorite], che aggiunge se manca e **toglie se c'e'**: toccare una
+     * citta' gia' salvata nei risultati della ricerca la cancellava in
+     * silenzio, e chi guardava aveva appena chiesto il contrario. Un
+     * interruttore va bene dove si vede lo stato che inverte; sotto un comando
+     * che dice "aggiungi" e' una trappola.
+     */
+    fun addFavorite(place: Place) {
+        if (_state.value.favorites.any { it.key == place.key }) return
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+        loadFavoritesWeather()
+    }
+
+    /** Toglie una localita' salvata. Toglie e basta. */
+    fun removeFavorite(place: Place) {
+        if (_state.value.favorites.none { it.key == place.key }) return
         viewModelScope.launch { prefs.toggleFavorite(place) }
     }
 
@@ -1058,6 +1134,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
+    /**
+     * Dichiara che questa esecuzione e' una cattura automatica.
+     *
+     * La chiama `MainActivity` quando **un qualsiasi** aggancio `--ei` e' stato
+     * applicato, quindi solo sotto `BuildConfig.AGGANCI_CATTURA`. Da qui in poi
+     * i passaggi si compiono all'istante: vedi [UiState.animazioniIstantanee].
+     */
+    fun scattoFermo() {
+        _state.update { it.copy(animazioniIstantanee = true) }
+    }
+
+    fun setAnimazioniRidotte(ridotte: Boolean) {
+        viewModelScope.launch { prefs.setAnimazioniRidotte(ridotte) }
+    }
+
     private companion object {
         /**
          * Oltre questa eta' il dato si ricarica da solo tornando in primo
@@ -1065,6 +1156,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
          * ma la barra deve almeno riguardare il giorno giusto.
          */
         val STALE_AFTER: Duration = Duration.ofMinutes(20)
+
+        /**
+         * Quanto vale il tempo di una localita' salvata prima di richiederlo.
+         *
+         * Prima non c'era scadenza e non c'era memoria: **ogni** apertura del
+         * pannello rifaceva N previsioni complete, anche riaprendolo un secondo
+         * dopo averlo chiuso. Un quarto d'ora e' abbondante per un'iconcina e
+         * un numero tondo di gradi.
+         */
+        const val FAVORITES_MAX_AGE_MS = 15L * 60L * 1000L
 
         /**
          * L'etichetta del log. Il filtro di `capture.sh` cerca gia' "meteo"

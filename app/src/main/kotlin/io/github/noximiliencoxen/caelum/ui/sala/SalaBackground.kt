@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.util.lerp
 
 /**
  * Una macchia d'acquerello: centro e raggio nel sistema di riferimento in cui
@@ -89,7 +90,7 @@ fun SalaBackground(
         modifier = modifier
             .fillMaxSize()
             .background(palette.ground)
-            .drawBehind { granaDiCarta(acquerello, forza = if (palette.dark) 0.14f else 0.09f) }
+            .drawBehind { granaDiCarta(acquerello, forza = lerp(0.09f, 0.14f, palette.buio)) }
             .drawBehind {
                 val sx = size.width / SalaBlobs.REF_W
                 val sy = size.height / SalaBlobs.REF_H

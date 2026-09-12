@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaAriaScreen
@@ -89,17 +91,57 @@ fun SalaShell(
         scope.launch { pagerState.animateScrollToPage(0) }
     }
 
-    val phase = salaPhaseOf(sky)
     val condition = salaConditionOf(state.forcedWeatherCode ?: state.hour?.weatherCode)
-    val palette = remember(sky, phase, condition, state.cardTheme) {
-        salaPalette(sky, phase, condition, state.cardTheme)
+
+    // ── La carta, e il solo salto che resta ──────────────────────────────────
+    //
+    // **`paperDarkness` non si tocca, e il suo scalino non e' un difetto.** Non
+    // e' una scelta di resa: e' una **garanzia su quali stati sono
+    // raggiungibili**. Nessun valore di `dayness` porta la carta nella fascia
+    // di mezzo in cui ne' il nero del testo ne' il bianco reggono il fondo.
+    // Toglierlo per renderlo continuo butterebbe via la garanzia - e con una
+    // barra delle ore che permette di **parcheggiare** alle cinque e mezza,
+    // "brevemente illeggibile" diventerebbe "illeggibile finche' non ci si
+    // sposta".
+    //
+    // La cura non e' appianare lo scalino, e' **attraversarlo nel tempo**: il
+    // bersaglio della molla sta sempre fuori dalla fascia, quindi la fascia si
+    // attraversa e non si abita mai.
+    val dkBersaglio = when (state.cardTheme) {
+        CardTheme.CHIARO -> 0f
+        CardTheme.SCURO -> 1f
+        CardTheme.AUTO -> paperDarkness(sky.dayness)
     }
+    val dk by animateFloatAsState(
+        targetValue = dkBersaglio,
+        // Criticamente smorzata: un rimbalzo oltre 1 porterebbe la carta piu'
+        // scura di `paperDark`, che non e' un colore che esiste.
+        animationSpec = mollaCarta(state.animazioniIstantanee, state.animazioniRidotte),
+        label = "carta",
+    )
+
+    // ── Le tre macchie ───────────────────────────────────────────────────────
+    //
+    // **Due interpolazioni diverse, ed e' voluto.** La fase si mescola in
+    // `faseContinua` perche' e' un continuo vero: alle cinque e mezza *e'* mezza
+    // alba, e deve sembrarlo anche stando fermi li'. Il tempo non ha un
+    // continuo - non esiste un codice WMO "sessanta per cento piovoso" - quindi
+    // l'unica cosa che deve essere morbida e' il **cambio**, ed e' esattamente
+    // cio' che fa una molla sul risultato.
+    val fase = remember(sky) { faseContinua(sky) }
+    val bersagli = remember(fase, condition) { washColors(fase, condition) }
+    val molla = mollaColore(state.animazioniIstantanee, state.animazioniRidotte)
+    val w0 by animateColorAsState(bersagli[0], molla, label = "macchia1")
+    val w1 by animateColorAsState(bersagli[1], molla, label = "macchia2")
+    val w2 by animateColorAsState(bersagli[2], molla, label = "macchia3")
+    val palette = remember(dk, w0, w1, w2) { salaPalette(dk, listOf(w0, w1, w2)) }
 
     Box(modifier = modifier.fillMaxSize()) {
         VerticalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
             when (rooms.getOrNull(page)) {
                 SalaRoom.OGGI -> SalaOggiScreen(
                     state = state,
+                    sky = sky,
                     palette = palette,
                     position = position,
                     viewModel = viewModel,
@@ -176,8 +218,12 @@ fun SalaShell(
                     state = state,
                     palette = palette,
                     onPick = viewModel::choosePlace,
-                    onAdd = viewModel::toggleFavorite,
-                    onRemove = viewModel::toggleFavorite,
+                    // Due funzioni distinte, e non due nomi per lo stesso
+                    // interruttore: toccare nei risultati una citta' gia'
+                    // salvata la **cancellava**, in silenzio, mentre chi
+                    // guardava aveva appena chiesto di aggiungerla.
+                    onAdd = viewModel::addFavorite,
+                    onRemove = viewModel::removeFavorite,
                     onSearch = viewModel::search,
                     onClose = viewModel::closeLocations,
                 )
@@ -200,6 +246,10 @@ fun SalaShell(
                 SalaImpostazioniScreen(
                     state = state,
                     palette = palette,
+                    onPickSaved = viewModel::choosePlace,
+                    onSaveCurrent = { viewModel.addFavorite(state.place) },
+                    onRemoveSaved = viewModel::removeFavorite,
+                    onToggleAnimazioni = viewModel::setAnimazioniRidotte,
                     onChooseTheme = viewModel::setCardTheme,
                     onChooseUnit = viewModel::setUnit,
                     onChooseWindUnit = viewModel::setWindUnit,

@@ -129,12 +129,14 @@ fun SalaPathIndicator(
     modifier: Modifier = Modifier,
     count: Int = SalaRoom.entries.size,
 ) {
-    val activeOn = if (palette.dark) SalaTokens.accent400 else SalaTokens.accent
-    val muted = if (palette.dark) {
-        Color.White.copy(alpha = 0.26f)
-    } else {
-        SalaTokens.text.copy(alpha = 0.20f)
-    }
+    // Interpolati sul buio della carta e non scelti da un booleano: attraversando
+    // il crepuscolo l'indicatore si ribaltava insieme a tutto il resto.
+    val activeOn = lerpColor(SalaTokens.accent, SalaTokens.accent400, palette.buio)
+    val muted = lerpColor(
+        SalaTokens.text.copy(alpha = 0.20f),
+        Color.White.copy(alpha = 0.26f),
+        palette.buio,
+    )
     Canvas(modifier = modifier.fillMaxWidth().height(2.dp)) {
         val gap = 6.dp.toPx()
         val slot = (size.width - gap * (count - 1)) / count

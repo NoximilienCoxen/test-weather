@@ -104,6 +104,13 @@ class MainActivity : ComponentActivity() {
                 "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
                 "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)}",
         )
+        // **Da qui in poi i passaggi non si animano.** Non e' una scorciatoia:
+        // gli extra si applicano prima della composizione e quindi non
+        // animerebbero, ma la previsione arriva **dopo** il primo fotogramma e
+        // muove altezza del sole, nuvolosita' e condizione. Con le molle, allo
+        // scatto sarebbero ancora in volo e la galleria dipenderebbe dal
+        // secondo di attesa dello script. Vedi `UiState.animazioniIstantanee`.
+        viewModel.scattoFermo()
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il
