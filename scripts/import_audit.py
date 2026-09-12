@@ -10,7 +10,7 @@ Due domande, e basta quelle:
   - un simbolo con l'aria del tipo compare e non e' ne' importato, ne'
     dichiarato nel file, ne' dichiarato altrove nello stesso pacchetto? -> manca
 """
-import re, sys, os, collections
+import re, sys, os, io, collections
 
 RADICE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
                       "app/src/main/kotlin")
@@ -111,6 +111,7 @@ def pacchetto(testo):
 # tutto cio' che ogni file del pacchetto mette a disposizione degli altri
 def indice_pacchetti(radice):
     per_pacchetto = collections.defaultdict(set)
+    estensioni = collections.defaultdict(set)
     for base, _, files in os.walk(radice):
         for f in files:
             if not f.endswith(".kt"):
@@ -123,11 +124,43 @@ def indice_pacchetti(radice):
                 r"(?:class|interface|object|enum class|annotation class|fun|val|var|typealias)\s+"
                 r"(?:<[^>]*>\s*)?(?:[\w.]+\.)?([A-Za-z_]\w*)", t, re.M):
                 per_pacchetto[pkg].add(m.group(1))
+            # **Le estensioni di primo livello, a parte.** Si scrivono col punto
+            # davanti - `posto.key` - quindi passavano per membri e nessuno
+            # chiedeva da dove venissero. E' cosi' che un `Unresolved reference
+            # 'key'` ha fermato la CI mentre questo script diceva zero.
+            for m in re.finditer(
+                r"^(?:public |internal |private )?(?:inline |suspend )*(?:fun|val|var)\s+"
+                r"(?:<[^>]*>\s*)?[A-Z]\w*(?:<[^>]*>)?\??(?:\.\w+)*?\.(\w+)\s*[(:<=]", t, re.M):
+                estensioni[m.group(1)].add(pkg)
             # anche i membri di enum e i nomi di companion contano poco: bastano i tipi
-    return per_pacchetto
+    return per_pacchetto, estensioni
+
+BASELINE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "import_audit_baseline.txt")
+
+def carica_baseline():
+    """Cio' che questo controllo segnala su codice che **ha gia' compilato**.
+
+    Non e' un compilatore e non pretende di esserlo: su un albero verde stampa
+    una novantina di righe, quasi tutte per costrutti che non sa leggere -
+    membri ereditati, tipi annidati, eccezioni di `java.lang`. Un controllo che
+    stampa novanta righe innocue e' un controllo che nessuno rilegge, cioe' un
+    controllo spento.
+
+    Quindi si tara: il riferimento e' un commit di cui **la CI ha detto che
+    compila**, e conta solo cio' che compare in piu'. Si rigenera con
+    `--baseline` dopo ogni giro verde.
+    """
+    if not os.path.exists(BASELINE):
+        return set()
+    return {r.rstrip("\n") for r in io.open(BASELINE, encoding="utf-8") if r.strip()}
 
 def main(argv):
-    per_pacchetto = indice_pacchetti(RADICE)
+    scrivi_baseline = "--baseline" in argv
+    argv = [a for a in argv if a != "--baseline"]
+    noti = set() if scrivi_baseline else carica_baseline()
+    trovati = []
+
+    per_pacchetto, estensioni = indice_pacchetti(RADICE)
     guasti = 0
     for p in argv:
         if not p.endswith(".kt"):
@@ -148,8 +181,7 @@ def main(argv):
             if nome in BUILTIN:
                 continue
             if nome not in usati:
-                print(f"{p}: import morto -> {riga.strip()}")
-                guasti += 1
+                trovati.append(f"{p}: import morto -> {riga.strip()}")
 
         # 2. simboli che hanno l'aria del tipo e non si sa da dove vengano
         importati = set()
@@ -169,8 +201,14 @@ def main(argv):
         for f in sorted(chiamate - membri - dichiarati):
             if f in importati or f in locali or f in BUILTIN or f in PAROLE or f in PAROLE_AMBITO:
                 continue
-            print(f"{p}: funzione non risolta -> {f}()")
-            guasti += 1
+            trovati.append(f"{p}: funzione non risolta -> {f}()")
+
+        # ── Le estensioni chiamate col punto ────────────────────────────────
+        for e in sorted(set(re.findall(r"\.\s*(\w+)", corpo))):
+            case = estensioni.get(e)
+            if not case: continue
+            if e in importati or pkg in case: continue
+            trovati.append(f"{p}: estensione non importata -> .{e}")
 
         for s in sorted(usati):
             # Parametri di tipo (T, R), costanti ed etichette di enum usate
@@ -185,10 +223,18 @@ def main(argv):
             # membro di qualcosa (Foo.Bar) o etichetta: si ignora
             if re.search(r"[\w)\]]\s*\.\s*" + s + r"\b", t):
                 continue
-            print(f"{p}: simbolo non risolto -> {s}")
-            guasti += 1
-    print(f"--- {guasti} da guardare")
-    return 1 if guasti else 0
+            trovati.append(f"{p}: simbolo non risolto -> {s}")
+    if scrivi_baseline:
+        io.open(BASELINE, "w", encoding="utf-8").write("\n".join(sorted(set(trovati))) + "\n")
+        print(f"--- taratura scritta: {len(set(trovati))} righe note in {BASELINE}")
+        return 0
+
+    nuovi = [r for r in trovati if r not in noti]
+    for r in nuovi:
+        print(r)
+    zittiti = len(trovati) - len(nuovi)
+    print(f"--- {len(nuovi)} da guardare ({zittiti} gia' noti sull'albero di riferimento)")
+    return 1 if nuovi else 0
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
