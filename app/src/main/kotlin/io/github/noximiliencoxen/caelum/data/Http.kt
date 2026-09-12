@@ -11,7 +11,7 @@ import java.net.URL
  * `WeatherRepository.httpGet`, di nuovo **in linea** dentro `search()`, in
  * `simpleHttpGet` accanto alla Norma, in `AirQualityRepository` e in
  * `WeatherAlertsRepository`. Un commento su una delle copie dichiarava la
- * ripetizione intenzionale - "il companion non puo' chiamare metodi di
+ * ripetizione intenzionale - "il companion non può chiamare metodi di
  * istanza" - e la spiegazione era vera per quella copia sola: non diceva
  * niente delle altre quattro, e la strada che le toglie tutte era questa, una
  * funzione di primo livello che non appartiene a nessuna classe.

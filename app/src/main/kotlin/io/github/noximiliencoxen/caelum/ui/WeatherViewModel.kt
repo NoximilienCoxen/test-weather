@@ -22,10 +22,14 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.derivedAlerts
 import io.github.noximiliencoxen.caelum.data.mergeAlerts
 import io.github.noximiliencoxen.caelum.data.key
+import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
+import io.github.noximiliencoxen.caelum.prefs.AlertToggles
+import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
+import io.github.noximiliencoxen.caelum.prefs.CardTheme
+import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.prefs.TempUnit
-import io.github.noximiliencoxen.caelum.ui.home.nearestHourIndex
-import io.github.noximiliencoxen.caelum.ui.feed.FeedSection
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -124,7 +128,7 @@ data class UiState(
      *
      * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
      * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
-     * localita' non risultano avvisi in corso", che e' un'affermazione che
+     * località non risultano avvisi in corso", che e' un'affermazione che
      * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
      * ha guardato da nessuna parte. **Un silenzio non e' una risposta
      * rassicurante: e' un silenzio**, e va detto quale dei due e'.
@@ -151,27 +155,6 @@ data class UiState(
     val forcedAlert: WeatherAlert? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
     val selectedDay: Int = 0,
-    /** false = GIORNO (valori correnti), true = SETTIMANA (valori del giorno). */
-    val weekMode: Boolean = false,
-    /**
-     * Quale sezione del feed e' in scena.
-     *
-     * **La sorgente di verita' e' il carosello, non questo campo.** Qui ci
-     * finisce la sezione che il carosello ha **posato**, e serve a due cose
-     * sole: sapere da quale scheda ripartire, e dire alla colonna di icone chi
-     * accendere quando il dito non sta trascinando. Chi vuole sapere dove si e'
-     * durante un gesto legge il carosello.
-     */
-    val section: FeedSection = FeedSection.TEMPERATURA,
-    /**
-     * Quante volte una sezione e' stata chiesta **da fuori**: l'aggancio di
-     * cattura `--ei sezione`.
-     *
-     * E' un contatore e non un booleano perche' la CI chiede due volte di fila
-     * la stessa sezione, e un valore che non cambia non fa ripartire l'effetto
-     * che porta il carosello dove le si e' detto.
-     */
-    val sectionRequest: Int = 0,
     /** Indice dell'ora mostrata dalla schermata principale. */
     val selectedHour: Int = 0,
     /**
@@ -191,6 +174,32 @@ data class UiState(
      * pareti si scavalcano - non era fotografabile.
      */
     val forcedYawDeg: Float? = null,
+    /**
+     * Vero quando un aggancio di cattura e' stato applicato: le transizioni si
+     * compiono **all'istante** invece di passare per le loro molle.
+     *
+     * Non e' un capriccio di velocita', e' cio' che rende gli scatti
+     * riproducibili. Gli extra `--ei` si applicano in `onCreate`, prima della
+     * composizione, quindi non animano; ma la previsione arriva **dopo** il
+     * primo fotogramma, e muove altezza del sole, nuvolosita' e condizione.
+     * Con le molle, allo scatto sarebbero ancora in volo, e la galleria
+     * dipenderebbe da un `sleep` di un secondo che e' a qualche decimo
+     * dall'essere sbagliato. La galleria di questo progetto ha gia' mentito due
+     * volte, e le due volte nessuno se n'e' accorto per due giri interi.
+     *
+     * Vero solo sotto `BuildConfig.AGGANCI_CATTURA`, come tutti gli agganci.
+     */
+    val animazioniIstantanee: Boolean = false,
+    /**
+     * Lo chiede chi guarda, dalle impostazioni: Sala I smette di muoversi in
+     * permanenza e le vibrazioni tacciono.
+     *
+     * Esiste perche' le stelle, gli uccelli e la pioggia sono **un'eccezione
+     * dichiarata** alla regola dei zero fotogrammi a schermo fermo: finche' la
+     * prima sala e' in vista, un orologio gira. Dichiararla senza lasciare una
+     * via d'uscita sarebbe stato dichiararla a meta'.
+     */
+    val animazioniRidotte: Boolean = false,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Motore numerico scelto per la previsione. */
@@ -219,6 +228,37 @@ data class UiState(
     val searching: Boolean = false,
     val results: List<Place> = emptyList(),
     val searchError: String? = null,
+
+    // ── Sala ─────────────────────────────────────────────────────────────
+    /** In quale sala si e', per il carosello verticale di Sala. */
+    val room: SalaRoom = SalaRoom.OGGI,
+    /**
+     * La sala chiesta **da fuori** - l'aggancio `--ei sezione` - finche' il
+     * carosello non ci e' arrivato. Nulla quando non c'e' niente in sospeso.
+     *
+     * **Sta in un campo suo e non dentro [room], dov'era prima.** `room` e' il
+     * campo che il carosello riscrive da se' a ogni pagina posata: tenendoci
+     * dentro anche la richiesta, la prima emissione del carosello - pagina
+     * zero, prima ancora che la richiesta fosse letta - la cancellava, e con
+     * lei l'unica traccia di dove si voleva andare. L'effetto che doveva
+     * portarcelo chiedeva "dove devo andare?" a un campo che nel frattempo gli
+     * rispondeva "dove sei già", e non si muoveva. In CI si vedeva cosi': sei
+     * scatti di sale diverse, tutti e sei della prima sala.
+     */
+    val roomRequest: SalaRoom? = null,
+    /** L'interruttore Carta di Sala: Auto segue l'ora, gli altri due forzano. */
+    val cardTheme: CardTheme = CardTheme.AUTO,
+    val windUnit: SalaWindUnit = SalaWindUnit.KMH,
+    val captionStyle: CaptionStyle = CaptionStyle.COMPLETE,
+    val alertToggles: AlertToggles = AlertToggles(),
+    /** Vero mentre e' aperta la schermata "Le località". */
+    val locationsOpen: Boolean = false,
+    /**
+     * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
+     * località". Manca finche' non e' stato chiesto: quella riga resta
+     * muta invece di mostrare un simbolo inventato.
+     */
+    val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
 ) {
     /**
      * Le allerte da mettere in scena: quella imposta se c'e', se no le vere.
@@ -433,6 +473,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         dismissedAlertWeight = settings.dismissedAlertWeight,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
+                        cardTheme = settings.cardTheme,
+                        windUnit = settings.windUnit,
+                        captionStyle = settings.captionStyle,
+                        alertToggles = settings.alertToggles,
+                        animazioniRidotte = settings.animazioniRidotte,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -612,7 +657,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // occorrenze in tutto il progetto, la dichiarazione e
                         // questa scrittura. Il grafico che la mostrava - citato
                         // al presente dal commento che stava qui, "il grafico
-                        // la mostra solo quando c'e'" - era gia' stato tolto
+                        // la mostra solo quando c'è" - era gia' stato tolto
                         // dalla schermata, e il percorso dati e' rimasto
                         // acceso da solo.
                         //
@@ -720,23 +765,93 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun setWeekMode(week: Boolean) = _state.update { it.copy(weekMode = week) }
+    /** Il carosello di Sala ha posato una stanza: da li' si riparte alla prossima apertura. */
+    fun showRoom(room: SalaRoom) = _state.update { it.copy(room = room) }
 
-    /** Il carosello ha posato una scheda: da li' si riparte alla prossima apertura. */
-    fun showSection(section: FeedSection) = _state.update { it.copy(section = section) }
+    /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
+    fun requestRoom(index: Int) {
+        val picked = SalaRoom.entries.getOrNull(index) ?: return
+        _state.update { it.copy(room = picked, roomRequest = picked) }
+    }
 
     /**
-     * Aggancio per la cattura automatica: porta il feed su una sezione.
-     *
-     * Esiste per la stessa ragione di [requestDay]: col dito ci si arriva solo
-     * scorrendo, e cinque trascinate verticali di fila fanno morire l'emulatore
-     * della CI (vedi CONTESTO, la trappola sull'emulatore). Con questo un solo
-     * `am start` mette in scena la scheda da fotografare, senza un gesto.
+     * Il carosello e' arrivato dove gli era stato chiesto: la richiesta si
+     * spegne, cosi' la stessa sala chiesta due volte di fila riparte davvero.
      */
-    fun requestSection(index: Int) {
-        val sections = FeedSection.entries
-        val picked = sections.getOrNull(index) ?: return
-        _state.update { it.copy(section = picked, sectionRequest = it.sectionRequest + 1) }
+    fun roomRequestHonoured() = _state.update { it.copy(roomRequest = null) }
+
+    fun setCardTheme(theme: CardTheme) {
+        viewModelScope.launch { prefs.setCardTheme(theme) }
+    }
+
+    fun setWindUnit(unit: SalaWindUnit) {
+        viewModelScope.launch { prefs.setWindUnit(unit) }
+    }
+
+    fun setCaptionStyle(style: CaptionStyle) {
+        viewModelScope.launch { prefs.setCaptionStyle(style) }
+    }
+
+    fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
+        viewModelScope.launch { prefs.setAlertToggle(kind, value) }
+    }
+
+    fun openLocations() {
+        _state.update { it.copy(locationsOpen = true) }
+        loadFavoritesWeather()
+    }
+
+    fun closeLocations() = _state.update { it.copy(locationsOpen = false) }
+
+    /**
+     * Il meteo attuale di ogni localita' salvata, per la sua iconcina in "Le
+     * località".
+     *
+     * Una richiesta per localita', in parallelo: e' la stessa chiamata della
+     * previsione principale, presa per intero e tenuto solo `current` -
+     * ripetere qui un endpoint a parte non aggiungerebbe niente che
+     * `WeatherRepository` non sappia gia' fare, e la risposta e' piccola.
+     * Fallisce in silenzio localita' per localita': una non raggiungibile non
+     * deve svuotare le altre.
+     */
+    private var favoritesJob: Job? = null
+
+    /** Quando l'ultima richiesta per una salvata e' stata fatta. */
+    private val favoritesFetchedAt = mutableMapOf<String, Long>()
+
+    private fun loadFavoritesWeather() {
+        favoritesJob?.cancel()
+        val stato = _state.value
+        val adesso = System.currentTimeMillis()
+
+        // La localita' che si sta gia' guardando ce l'abbiamo **gia'**: la sua
+        // previsione e' in `forecast`. Richiederla era una chiamata di rete
+        // ogni volta che si apriva un pannello, per un dato che stava un campo
+        // piu' in la'.
+        stato.forecast?.current?.let { corrente ->
+            _state.update { it.copy(favoritesWeather = it.favoritesWeather + (stato.place.key to corrente)) }
+            favoritesFetchedAt[stato.place.key] = adesso
+        }
+
+        val daChiedere = stato.favorites.filter { place ->
+            val quando = favoritesFetchedAt[place.key]
+            quando == null || adesso - quando > FAVORITES_MAX_AGE_MS
+        }
+        if (daChiedere.isEmpty()) return
+
+        favoritesJob = viewModelScope.launch {
+            daChiedere.forEach { place ->
+                launch {
+                    WeatherRepository(place, stato.model).load()
+                        .onSuccess { forecast ->
+                            favoritesFetchedAt[place.key] = System.currentTimeMillis()
+                            _state.update {
+                                it.copy(favoritesWeather = it.favoritesWeather + (place.key to forecast.current))
+                            }
+                        }
+                }
+            }
+        }
     }
 
     /**
@@ -830,7 +945,14 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     // Da non confondere con `feelsIt`, che e' vivo e vuol dire un'altra cosa:
     // se la schermata e' davanti, e quindi se le vibrazioni si sentono.
 
-    fun openSettings() = _state.update { it.copy(settingsOpen = true) }
+    fun openSettings() {
+        _state.update { it.copy(settingsOpen = true) }
+        // Anche le impostazioni mostrano le localita' salvate col loro tempo, e
+        // partiva solo da "Le localita'": era per questo che li' l'iconcina
+        // restava vuota. Una riga, e le due schermate smettono di raccontare
+        // due cose diverse sulla stessa lista.
+        loadFavoritesWeather()
+    }
 
     fun closeSettings() =
         _state.update { it.copy(settingsOpen = false, query = "", results = emptyList()) }
@@ -845,6 +967,28 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
     fun toggleFavorite(place: Place) {
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+    }
+
+    /**
+     * Salva una localita'. **Aggiunge e basta.**
+     *
+     * Esiste perche' `onAdd` e `onRemove` puntavano tutti e due a
+     * [toggleFavorite], che aggiunge se manca e **toglie se c'e'**: toccare una
+     * citta' gia' salvata nei risultati della ricerca la cancellava in
+     * silenzio, e chi guardava aveva appena chiesto il contrario. Un
+     * interruttore va bene dove si vede lo stato che inverte; sotto un comando
+     * che dice "aggiungi" e' una trappola.
+     */
+    fun addFavorite(place: Place) {
+        if (_state.value.favorites.any { it.key == place.key }) return
+        viewModelScope.launch { prefs.toggleFavorite(place) }
+        loadFavoritesWeather()
+    }
+
+    /** Toglie una localita' salvata. Toglie e basta. */
+    fun removeFavorite(place: Place) {
+        if (_state.value.favorites.none { it.key == place.key }) return
         viewModelScope.launch { prefs.toggleFavorite(place) }
     }
 
@@ -953,7 +1097,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             // DataStore. Nessuno di questi e' garantito: un file delle
             // preferenze corrotto, per dire, fa fallire `prefs.setPlace` con
             // un'eccezione che altrimenti risalirebbe non presa fino a far
-            // cadere l'app. E' la stessa filosofia di "permesso negato non e'
+            // cadere l'app. E' la stessa filosofia di "permesso negato non è
             // un errore" applicata a tutta la catena, non solo al permesso.
             try {
                 val found = DeviceLocation.current(getApplication<Application>())
@@ -990,6 +1134,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
+    /**
+     * Dichiara che questa esecuzione e' una cattura automatica.
+     *
+     * La chiama `MainActivity` quando **un qualsiasi** aggancio `--ei` e' stato
+     * applicato, quindi solo sotto `BuildConfig.AGGANCI_CATTURA`. Da qui in poi
+     * i passaggi si compiono all'istante: vedi [UiState.animazioniIstantanee].
+     */
+    fun scattoFermo() {
+        _state.update { it.copy(animazioniIstantanee = true) }
+    }
+
+    fun setAnimazioniRidotte(ridotte: Boolean) {
+        viewModelScope.launch { prefs.setAnimazioniRidotte(ridotte) }
+    }
+
     private companion object {
         /**
          * Oltre questa eta' il dato si ricarica da solo tornando in primo
@@ -997,6 +1156,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
          * ma la barra deve almeno riguardare il giorno giusto.
          */
         val STALE_AFTER: Duration = Duration.ofMinutes(20)
+
+        /**
+         * Quanto vale il tempo di una localita' salvata prima di richiederlo.
+         *
+         * Prima non c'era scadenza e non c'era memoria: **ogni** apertura del
+         * pannello rifaceva N previsioni complete, anche riaprendolo un secondo
+         * dopo averlo chiuso. Un quarto d'ora e' abbondante per un'iconcina e
+         * un numero tondo di gradi.
+         */
+        const val FAVORITES_MAX_AGE_MS = 15L * 60L * 1000L
 
         /**
          * L'etichetta del log. Il filtro di `capture.sh` cerca gia' "meteo"
@@ -1009,4 +1178,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         const val FIRST_RETRY_MS = 1_200L
         const val SEARCH_DEBOUNCE_MS = 320L
     }
+}
+
+/** L'ora della previsione piu' vicina a un istante dato. */
+private fun nearestHourIndex(hours: List<HourForecast>, target: LocalDateTime): Int {
+    if (hours.isEmpty()) return 0
+    var best = 0
+    var bestDistance = Long.MAX_VALUE
+    hours.forEachIndexed { index, hour ->
+        val distance = kotlin.math.abs(Duration.between(target, hour.time).toMinutes())
+        if (distance < bestDistance) {
+            bestDistance = distance
+            best = index
+        }
+    }
+    return best
 }
