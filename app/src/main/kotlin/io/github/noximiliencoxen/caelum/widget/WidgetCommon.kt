@@ -249,7 +249,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
                 WidgetImage(
                     bitmap = bitmap,
                     description = "Widget ${kind.label.lowercase()} da configurare. " +
-                        "Tocca per scegliere la citta'.",
+                        "Tocca per scegliere la città.",
                     onClick = actionStartActivity(configureIntent(context, appWidgetId)),
                 )
             }
@@ -288,7 +288,7 @@ class RefreshWidgetAction : ActionCallback {
  * era un numero tarato male, era una premessa sbagliata.
  *
  * Il commento che se n'e' andato diceva che dopo la chiusura della sessione
- * Glance le chiamate a `update()` non hanno effetto, "perche' non c'e' nessun
+ * Glance le chiamate a `update()` non hanno effetto, "perché non c'è nessun
  * Flow attivo che le osservi". Da li' veniva tutto il resto: se `update()` non
  * serve serve un broadcast, e se serve un broadcast bisogna aspettare che la
  * sessione si chiuda, e per aspettare serve un numero. Tre commit di fila

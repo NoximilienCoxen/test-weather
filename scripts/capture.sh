@@ -130,13 +130,26 @@ welcome() {
   shoot "00-benvenuto-guarda"
   adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
 
-  # "SCELGO IO" chiude il benvenuto per sempre e apre le impostazioni: due cose
-  # con un tocco solo, e le impostazioni non avevano ancora nessuno scatto.
-  adbt shell input tap "$(( W / 2 ))" "$(( H * 71 / 100 ))" >/dev/null 2>&1 || true
+  # "Scelgo io la citta'" chiude l'Ingresso e apre le impostazioni: due cose con
+  # un tocco solo, e le impostazioni non avevano altrimenti nessuno scatto.
+  #
+  # **L'altezza e' l'89% e non piu' il 71%, e il numero va tenuto d'occhio.**
+  # Col rimando spostato dal redisegno, il tocco al 71% e' caduto nel vuoto:
+  # l'Ingresso non si e' chiuso, e **ogni scatto del giro lo ha ritratto** -
+  # sette sale e due schermate di servizio, tutte uguali, su un giro verde.
+  # Una galleria che mente e' peggio di una che manca.
+  adbt shell input tap "$(( W / 2 ))" "$(( H * 89 / 100 ))" >/dev/null 2>&1 || true
   sleep 3
   shoot "00-impostazioni"
   # E si richiudono dal loro pulsante, in alto a sinistra.
   adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+
+  # **La rete di sicurezza.** Qualunque cosa abbiano combinato i due tocchi qui
+  # sopra, da adesso l'Ingresso e' chiuso per sempre: `--ez saltabenvenuto`
+  # scrive la preferenza senza passare da un dito. Il resto della galleria non
+  # deve dipendere da una coordinata che il prossimo redisegno spostera'.
+  adbt shell am start -n "$ACT" --ez saltabenvenuto true >/dev/null 2>&1 || true
   sleep 2
 }
 
@@ -267,10 +280,13 @@ session() {
   sleep 1
   shoot "${slug}-d1-allerta-principale"
 
-  # La seconda scheda si raggiunge senza un gesto: `--ei sezione` la mette in
-  # scena all'avvio. Il tocco sulla cifra non apre piu' niente - il foglio non
-  # esiste - e una trascinata verticale qui costerebbe un rischio che non serve
-  # correre.
+  # La seconda sala si raggiunge senza un gesto: `--ei sezione` la mette in
+  # scena all'avvio. Una trascinata verticale qui costerebbe un rischio che non
+  # serve correre.
+  #
+  # **Cosa prova questo scatto, adesso che c'e' Sala**: gli avvisi li mostra la
+  # prima sala e basta, quindi qui la fascia non deve esserci. E' il controllo
+  # che l'allerta non segua chi sfoglia di stanza in stanza.
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -278,7 +294,7 @@ session() {
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
-  shoot "${slug}-d2-allerta-seconda-scheda"
+  shoot "${slug}-d2-allerta-seconda-sala"
 
   # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
   #
@@ -351,12 +367,16 @@ session() {
   # La luna chiude la fila: il suo eroe non e' una cifra ma la sfera, quindi e'
   # l'unico scatto del giro in cui si vede se il corpo e' arrivato al posto
   # della cifra invece che accanto.
-  echo "  -- feed (ora $ora_dettaglio) --"
+  echo "  -- sale (ora $ora_dettaglio) --"
 
+  # Le sale sono sette e non sei, e in un ordine loro: `--ei sezione` conta
+  # sull'ordine di `SalaRoom`, non su quello che aveva il feed. Tenere i vecchi
+  # nomi avrebbe dato scatti con l'etichetta di una scheda e il contenuto di
+  # un'altra - un referto che mente e' peggio di uno che manca.
   local n=5
   local i=0
-  for scheda in temperatura pioggia aria vento sole luna; do
-    alive || { echo "dispositivo caduto alla scheda $scheda"; return; }
+  for sala in oggi settimana pioggia luna aria vento uv; do
+    alive || { echo "dispositivo caduto alla sala $sala"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
     # **Il buffer va svuotato a ogni giro**, come in `restart_with`, e qui era
@@ -371,7 +391,7 @@ session() {
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
     sleep 1
-    shoot "${slug}-d${n}-${scheda}"
+    shoot "${slug}-d${n}-${sala}"
     n=$(( n + 1 ))
     i=$(( i + 1 ))
   done
@@ -382,7 +402,7 @@ session() {
   # non lo sia sulla prima, dove non deve fare niente.
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
-  shoot "${slug}-d11-tornato-alla-prima"
+  shoot "${slug}-d12-tornato-alla-prima"
 
   # ── Una scheda letta su un altro giorno ─────────────────────────────────────
   #
@@ -412,7 +432,7 @@ session() {
   attendi_previsione
   alive || { echo "dispositivo caduto prima dello scatto del giorno"; return; }
   sleep 1
-  shoot "${slug}-d12-giorno"
+  shoot "${slug}-d13-giorno"
 
   # ── Le ore in cui il contrasto era peggiore ─────────────────────────────────
   #
@@ -518,13 +538,29 @@ session() {
     # col dito non si arriva: per portare la cifra di taglio servono quattrocento
     # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
     # schermo e' largo mille.
-    restart_with "--ei giro 90"
+    #
+    # **Questi sei scatti hanno mentito per mesi.** `--ei giro` arrivava fino a
+    # `UiState.forcedYawDeg` e li' si fermava: nessuna schermata di Sala lo
+    # leggeva, perche' il lettore era `SceneRotation.pin()` ed e' uscito col
+    # vecchio feed. Ritraevano quindi la scena **ferma** nella posa di riposo,
+    # e nessuno se n'e' accorto perche' una scultura girata di novanta gradi
+    # somiglia comunque a una scultura. E' lo stesso guasto della galleria che
+    # ritraeva l'Ingresso dappertutto: il banco di prova che mente non fallisce,
+    # dice di si'. Da adesso il giro lo legge `rememberGiro(state.forcedYawDeg)`
+    # e questi scatti cambiano per la prima volta: non e' una regressione.
+    # **Col cielo coperto, e non e' un dettaglio.** I primi scatti del giro
+    # riparato sono usciti a cielo sereno, cioe' su un **disco**: una sfera
+    # girata di novanta gradi e' identica a una sfera ferma, quindi lo scatto
+    # non poteva dimostrare niente - ne' che il giro funzioni ne' che non
+    # funzioni. Le masse della nuvola stanno a profondita' diverse: sono loro a
+    # scavalcarsi girando, ed e' li' che si vede.
+    restart_with "--ei meteo 3 --ei giro 90"
     shoot "${slug}-7-di-taglio"
 
-    restart_with "--ei giro 135"
+    restart_with "--ei meteo 3 --ei giro 135"
     shoot "${slug}-8-tre-ottavi"
 
-    restart_with "--ei giro 180"
+    restart_with "--ei meteo 3 --ei giro 180"
     shoot "${slug}-9-da-dietro"
 
     # La luna deve poter passare davanti alla nuvola: e' tutto il punto
@@ -534,6 +570,35 @@ session() {
 
     restart_with "--ei meteo 63 --ei giro 45"
     shoot "${slug}-11-pioggia-girata"
+
+    # ── Cio' che questo giro ha cambiato, e che va guardato ──────────────────
+    #
+    # Quattro scatti nuovi, uno per difetto corretto. Senza di loro le quattro
+    # correzioni resterebbero **dedotte dal codice**, e in questo progetto tre
+    # volte su tre il difetto vero l'ha mostrato una misura e mai una rilettura.
+
+    # La luna in tema chiaro: prima la parte illuminata era dipinta col nero del
+    # testo e il disco in ombra spariva nella carta. Al novilunio non doveva
+    # restare un disco pieno.
+    restart_with "--ei ora 12 --ei sezione 3"
+    shoot "${slug}-14-luna-chiara"
+
+    # Notte coperta: le stelle si devono vedere **attraverso**. Prima c'erano
+    # solo a cielo sereno, cioe' dove contano meno.
+    restart_with "--ei ora 23 --ei meteo 3"
+    shoot "${slug}-15-notte-coperta-stelle"
+
+    # La pioggia che arriva a terra, con le fioriture sulla riga di caduta. Le
+    # gocce di prima erano alte un quarto di schermo e svanivano a mezz'aria
+    # sopra il numero dei gradi.
+    restart_with "--ei ora 15 --ei meteo 65"
+    shoot "${slug}-16-pioggia-a-terra"
+
+    # La barra delle ore: maniglia visibile, ora scritta sopra di lei, binario
+    # colorato ora per ora. Presa a meta' giornata, se no la maniglia sta su un
+    # capo e non si vede che viaggia.
+    restart_with "--ei ora 15"
+    shoot "${slug}-17-barra-ore"
 
     # ── La finestra della scheda della pioggia ───────────────────────────────
     #
@@ -557,11 +622,22 @@ session() {
     # riavvio: la neve, che cambia due rami - i fiocchi che ondeggiano dietro e
     # il vetro che resta pulito - ma li cambia in un modo che una foto ferma
     # racconta male.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei giro 60"
-    shoot "${slug}-12-finestra-girata"
+    # **La lastra di vetro non c'e' piu'**: gocce, rivoli e passanti sono usciti
+    # con `ui/feed/RainWindow.kt` e `WindowGlass.kt`. Qui resta la sala della
+    # pioggia - `--ei sezione 2`, che in Sala e' lei e non piu' la prima scheda -
+    # e i nomi degli scatti lo dicono, invece di continuare a promettere una
+    # finestra che nessuno disegna piu'.
+    # **Il `--ei giro` se n'e' andato da qui, e non per svista.** Sala III non ha
+    # un oggetto che gira: la scultura sta nella prima sala, la luna nella
+    # quarta. Chiedere un angolo a questa schermata era un comando che non fa
+    # niente, ed e' rimasto nello script perche' nessuno lo rileggeva - lo stesso
+    # motivo per cui il giro e' restato scollegato per mesi. Uno scatto che
+    # promette qualcosa che non puo' mostrare e' peggio di uno scatto in meno.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2"
+    shoot "${slug}-12-pioggia"
 
-    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
-    shoot "${slug}-13-finestra-pioggia"
+    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    shoot "${slug}-13-pioggia-imposta"
 
     # ── La guardia della scheda che si muove sempre ──────────────────────────
     #
@@ -595,9 +671,24 @@ session() {
     # attorno al quindicesimo riavvio** (trappola #38), e questo pezzo sta in
     # coda a tutto: un riavvio risparmiato qui e' la differenza fra una misura
     # in piu' e una galleria in meno.
+    # **La guardia misurava la sala sbagliata, e per questo diceva zero e zero.**
+    # Era scritta per la scheda della pioggia del vecchio feed; sotto Sala lo
+    # scatto che la precede e' la **terza** sala, che non ha nulla di permanente
+    # da muovere. Il conto a sinistra usciva quindi zero, la soglia protestava, e
+    # protestava giustamente: non stava guardando l'eccezione.
+    #
+    # L'eccezione dichiarata adesso e' **Sala I**, che si muove sempre mentre la
+    # si guarda - stelle di notte, uccelli e pulviscolo di giorno, cio' che cade
+    # quando cade. Quindi si misura lei, con la pioggia imposta perche' il giorno
+    # dello scatto e' quasi sempre asciutto.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
-    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    # E il confronto: la **quinta** sala, l'aria. Il carosello tiene composta
+    # anche la pagina accanto, quindi Sala I resta viva nella composizione ma
+    # fuori vista - che e' esattamente il caso per cui la guardia esiste. Se
+    # leggesse fotogrammi anche li', il cielo si muoverebbe per nessuno.
+    restart_with "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
     accanto=$(conta_fotogrammi)
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
     echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"

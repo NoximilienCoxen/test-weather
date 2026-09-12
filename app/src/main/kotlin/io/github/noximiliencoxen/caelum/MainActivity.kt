@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -69,17 +70,47 @@ class MainActivity : ComponentActivity() {
      * che non viene da dove sembra. Li' la regola vale per il codice
      * dell'app, qui per chi sta fuori.
      *
-     * **`BuildConfig.DEBUG` e non un flag nuovo**, perche' `capture.sh` in CI
-     * pilota con questi extra l'APK di debug, ed e' l'unico modo che il giro ha
-     * di mettere in scena pioggia, allerte e ore notturne senza un dito. Un
-     * interruttore inventato apposta li spegnerebbe anche li'. Attenzione a non
-     * confonderlo con `isDebuggable`, che in questo progetto e' **falso** anche
-     * in debug (si misura la fluidita' della build vera): `BuildConfig.DEBUG`
-     * resta comunque vero, e resta quello giusto.
+     * **La guardia e' `AGGANCI_CATTURA`, e non piu' `BuildConfig.DEBUG`, e il
+     * perche' e' una lezione pagata.** Qui c'era scritto che `DEBUG` non va
+     * confuso con `isDebuggable` - falso in questo progetto anche in debug,
+     * perche' la fluidita' si misura sulla build vera - e che `DEBUG` "resta
+     * comunque vero". **Non e' cosi'**: AGP genera `BuildConfig.DEBUG`
+     * proprio da `isDebuggable`, non dal nome del tipo di build. Spegnendo
+     * `isDebuggable` si era spento anche `DEBUG`, e questa funzione usciva
+     * alla seconda riga **in ogni build**: `--ei ora`, `--ei sezione`,
+     * `--ei allerta` e `--ei meteo` non hanno mai fatto niente.
+     *
+     * Nessuno se n'era accorto perche' la prima scheda del feed era animata:
+     * sei scatti della stessa scheda uscivano diversi fra loro e passavano per
+     * sei schede. Sala da ferma disegna zero fotogrammi, e sei scatti identici
+     * hanno fatto vedere il guasto. A dirlo con certezza, pero', non sono stati
+     * i pixel - due deduzioni di fila da quelli erano sbagliate - ma la riga di
+     * log qui sotto, che non e' mai comparsa nel logcat della cattura.
+     *
+     * Il flag nuovo fa quello che si credeva facesse `DEBUG`: acceso sulla
+     * build di debug che `capture.sh` pilota, spento sulla release.
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
-        if (!BuildConfig.DEBUG) return
+        if (!BuildConfig.AGGANCI_CATTURA) return
+        // Stessa ragione dell'unico log del modello (vedi `previsione pronta`):
+        // serve alla cattura in CI. Senza, che un aggancio sia arrivato si puo'
+        // solo **dedurre dai pixel**, e dedurlo e' gia' costato due giri interi
+        // su `--ei sezione` muto - per due volte la deduzione era sbagliata.
+        Log.i(
+            TAG,
+            "agganci: ora=${intent.getIntExtra(EXTRA_HOUR, -1)} " +
+                "sezione=${intent.getIntExtra(EXTRA_SECTION, -1)} " +
+                "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
+                "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)}",
+        )
+        // **Da qui in poi i passaggi non si animano.** Non e' una scorciatoia:
+        // gli extra si applicano prima della composizione e quindi non
+        // animerebbero, ma la previsione arriva **dopo** il primo fotogramma e
+        // muove altezza del sole, nuvolosita' e condizione. Con le molle, allo
+        // scatto sarebbero ancora in volo e la galleria dipenderebbe dal
+        // secondo di attesa dello script. Vedi `UiState.animazioniIstantanee`.
+        viewModel.scattoFermo()
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il
@@ -89,8 +120,12 @@ class MainActivity : ComponentActivity() {
             .takeIf { it != Int.MIN_VALUE }
             ?.let { viewModel.forceYaw(it.toFloat()) }
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
-        intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestSection)
+        intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
+        // Va letto **dopo** EXTRA_WELCOME: chi chiede l'uno non chiede l'altro,
+        // ma se arrivassero insieme vince chiudere, che e' la richiesta piu'
+        // specifica.
+        if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
         // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
         // identificativi di cio' che c'e' in scena, e se l'allerta imposta non
@@ -99,6 +134,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
+        /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
+        const val TAG = "meteo"
+
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
         const val EXTRA_YAW = "giro"
@@ -111,16 +149,31 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_DAY = "giorno"
 
         /**
-         * Apre il feed su una sezione: 0 temperatura, 1 pioggia, 2 aria,
-         * 3 vento, 4 sole, 5 luna.
+         * Apre Sala su una stanza: 0 oggi, 1 settimana, 2 pioggia, 3 luna,
+         * 4 aria, 5 vento, 6 UV.
          *
          * Serve per la stessa ragione di [EXTRA_DAY]: col dito ci si arriva
-         * solo scorrendo, e cinque trascinate verticali di fila fanno morire
+         * solo scorrendo, e sei trascinate verticali di fila fanno morire
          * l'emulatore della CI. Con questo un solo avvio mette in scena la
-         * scheda da fotografare, senza un gesto.
+         * sala da fotografare, senza un gesto.
          */
         const val EXTRA_SECTION = "sezione"
         const val EXTRA_WELCOME = "benvenuto"
+
+        /**
+         * Chiude l'Ingresso per sempre, scrivendo la preferenza.
+         *
+         * **Esiste per un guasto vero, non per comodita'.** La cattura lo
+         * chiudeva toccando il rimando in fondo a un'altezza fissa - il 71%
+         * dello schermo - e quel numero era tarato sul benvenuto vecchio.
+         * Ridisegnato l'Ingresso, il rimando e' finito all'89%, il tocco e'
+         * caduto nel vuoto e **ogni scatto del giro ha ritratto l'Ingresso**:
+         * sette sale, due schermate di servizio, tutte uguali. Il giro era
+         * verde e la galleria diceva il falso.
+         *
+         * Un aggancio non si sposta quando qualcuno cambia un margine.
+         */
+        const val EXTRA_SKIP_WELCOME = "saltabenvenuto"
 
         /**
          * Mette in scena un'allerta finta, per gradino: 1 gialla, 2 arancione,

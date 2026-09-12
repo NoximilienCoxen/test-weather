@@ -107,7 +107,7 @@ class WidgetConfigActivity : ComponentActivity() {
         // ancora vuote. E' un miglioramento dell'esperienza, non parte del
         // contratto: se fallisce si perde un ridisegno, non la scelta.
         runCatching { refreshWidget(this, appWidgetId, kind) }
-            .onFailure { Log.w(TAG, "il widget $appWidgetId non si e' ridisegnato", it) }
+            .onFailure { Log.w(TAG, "il widget $appWidgetId non si è ridisegnato", it) }
 
         finish()
     }
