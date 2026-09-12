@@ -17,8 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -219,12 +219,14 @@ private fun DrawScope.disegnaBarra(hours: List<HourForecast>, selected: Int, pal
     //
     // Ritagliato dentro la pista arrotondata: cosi' le ventiquattro tessere
     // formano **una** barra con i capi tondi, e non ventiquattro mattoncini.
+    // La forma si costruisce come in `widget/paint/WidgetParts.kt`: quattro lati
+    // e un raggio d'angolo. E' la sola forma di `RoundRect` che questo progetto
+    // ha gia' compilato, e da qui non si compila.
     val pista = Path().apply {
         addRoundRect(
             androidx.compose.ui.geometry.RoundRect(
-                rect = Rect(0f, cimaBinario, w, cimaBinario + altoBinario),
-                radiusX = raggio,
-                radiusY = raggio,
+                left = 0f, top = cimaBinario, right = w, bottom = cimaBinario + altoBinario,
+                cornerRadius = CornerRadius(raggio),
             ),
         )
     }
