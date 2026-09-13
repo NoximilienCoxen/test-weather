@@ -6,10 +6,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,10 +45,10 @@ import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaPioggiaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaSettimanaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaUvScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaVentoScreen
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 /**
  * Caelum: sette sale in un carosello verticale, **davanti a un cielo solo**.
@@ -224,6 +227,10 @@ fun SalaShell(
                 faseLunare = faseLunare,
                 tempo = tempo,
                 modifier = Modifier.fillMaxSize(),
+                // Il cielo si prende lo schermo intero, ma sole, luna e nuvole
+                // scendono sotto la barra di stato: nel prototipo sono misurati
+                // dentro la cornice dell'app, che li' comincia a zero.
+                insetAlto = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
