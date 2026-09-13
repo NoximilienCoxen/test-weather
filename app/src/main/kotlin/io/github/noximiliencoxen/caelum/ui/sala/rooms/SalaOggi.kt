@@ -1,8 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,301 +10,294 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
-import io.github.noximiliencoxen.caelum.data.WeatherAlert
-import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.UiState
-import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
-import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
-import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
-import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
-import io.github.noximiliencoxen.caelum.ui.sala.BarraDelleOre
-import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
-import io.github.noximiliencoxen.caelum.ui.sala.Scena
+import io.github.noximiliencoxen.caelum.ui.sala.GiornoSettimana
+import io.github.noximiliencoxen.caelum.ui.sala.IconaMeteo
+import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
+import io.github.noximiliencoxen.caelum.ui.sala.PastigliaAccento
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
-import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
-import io.github.noximiliencoxen.caelum.ui.sala.label
-import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
-import io.github.noximiliencoxen.caelum.ui.sala.rememberTempoScena
-import io.github.noximiliencoxen.caelum.ui.sala.cieloStellato
-import io.github.noximiliencoxen.caelum.ui.sala.mollaScena
-import io.github.noximiliencoxen.caelum.ui.sala.pulviscolo
-import io.github.noximiliencoxen.caelum.ui.sala.riverbero
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
-import io.github.noximiliencoxen.caelum.ui.sala.scenaBersaglio
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
-import io.github.noximiliencoxen.caelum.ui.sala.scultura
+import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
 import java.time.LocalDate
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
- * Sala I — Oggi: la stanza di sempre, sotto una carta nuova.
+ * Sala I — Oggi.
  *
- * La scultura del meteo (sole o luna, nuvole, pioggia o grandine) resta
- * girabile in orizzontale, come tutto il resto dell'app; la barra delle
- * ventiquattro ore sceglie l'ora — e con lei tutte le altre sale, perche' il
- * giorno e' un asse che attraversa la galleria intera.
+ * Il numero dei gradi sta **fuori** dal pannello, sul cielo: e' la cosa che si
+ * guarda, e metterla dentro un riquadro la farebbe diventare una delle tante.
+ * Sotto, il pannello racconta l'ora con parole e tre valori, e in fondo la
+ * striscia dei sette giorni.
+ *
+ * **Toccando un giorno tutto il resto lo segue.** Non e' una scorciatoia verso
+ * Sala II: il giorno e' un asse che attraversa la galleria intera, quindi cielo,
+ * temperatura, titolo, vento, umidita' e avvisi passano a quel giorno - e una
+ * pastiglia dice quale si sta guardando, con la via del ritorno accanto.
+ * La scena la ricalcola la Shell, che e' l'unico posto in cui il cielo vive.
  */
 @Composable
 fun SalaOggiScreen(
     state: UiState,
-    /** Il cielo **gia' smorzato** da `MeteoApp`, lo stesso che tinge la carta.
-     *  Prima questa sala se lo ricostruiva dai valori grezzi, e leggeva quindi
-     *  un cielo mezzo passo avanti a quello che aveva sotto. */
+    /** Il cielo **gia' smorzato**, lo stesso che dipinge il fondo. */
     sky: SkyState,
     palette: SalaPalette,
-    position: () -> Float,
     viewModel: WeatherViewModel,
-    onPlaceClick: () -> Unit,
-    onMenuClick: () -> Unit,
-    /** Vero solo quando questa e' la sala che si sta guardando. */
-    inVista: Boolean,
+    onApriSettimana: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val phase = salaPhaseOf(sky)
-    val condition = salaConditionOf(state.forcedWeatherCode ?: state.hour?.weatherCode)
-    val hours = state.hours
-    val hour = state.hour
-    val activeAlerts = remember(state.shownAlerts, hour?.time) { state.shownAlerts.activeAt(hour?.time) }
+    val fase = salaPhaseOf(sky)
+    val ora = state.detailHour ?: state.hour
+    val condizione = salaConditionOf(state.forcedWeatherCode ?: ora?.weatherCode)
+    val settimana = remember(state.forecast) { settimanaDi(state.forecast) }
+    val giornoScelto = settimana.getOrNull(state.selectedDay)
+    val futuro = state.selectedDay > 0
+    val giorno = state.detailDay
 
-    // ── La scena, in numeri che scorrono ─────────────────────────────────────
-    val bersaglio = remember(sky, condition, hour) {
-        scenaBersaglio(
-            sky = sky,
-            condition = condition,
-            nevica = Wmo.family(state.forcedWeatherCode ?: hour?.weatherCode) == Wmo.Family.NEVE,
-            coperturaOraria = hour?.cloudCover,
-            pioggiaMm = hour?.precipitation,
-        )
-    }
-    val m = mollaScena(state.animazioniIstantanee, state.animazioniRidotte)
-    val scena = Scena(
-        sole = animateFloatAsState(bersaglio.sole, m, label = "sole").value,
-        copertura = animateFloatAsState(bersaglio.copertura, m, label = "copertura").value,
-        tempesta = animateFloatAsState(bersaglio.tempesta, m, label = "tempesta").value,
-        bagnato = animateFloatAsState(bersaglio.bagnato, m, label = "bagnato").value,
-        ghiaccio = animateFloatAsState(bersaglio.ghiaccio, m, label = "ghiaccio").value,
-        neve = animateFloatAsState(bersaglio.neve, m, label = "neve").value,
-        notte = animateFloatAsState(bersaglio.notte, m, label = "notte").value,
-    )
-
-    // ── L'orologio della scena ───────────────────────────────────────────────
-    //
-    // **I valori animati possono solo allungarlo, mai accorciarlo**, ed e' una
-    // regola precisa, non una cautela. Se la condizione di accensione si
-    // ricalcolasse dai soli valori animati, si ribalterebbe a meta' transizione:
-    // gli uccelli si congelerebbero a mezz'aria prima di svanire, e la pioggia
-    // ripartirebbe da capo mentre sfuma. Quindi: il **bersaglio** dice se ci
-    // sara' qualcosa da muovere, e i valori animati tengono acceso finche' un
-    // passaggio e' ancora in volo.
-    val siMuoveBersaglio = !state.animazioniRidotte &&
-        (bersaglio.bagnato > 0.01f || bersaglio.tempesta > 0.01f ||
-            bersaglio.notte > 0.01f || bersaglio.copertura < 0.99f)
-    val tempo = rememberTempoScena(attivo = inVista && (siMuoveBersaglio || scena.inTransito))
-
-    // Il telefono sente cio' che cade. Tace se la sala non e' in vista, se
-    // l'orologio e' fermo, o se l'interruttore delle animazioni e' giu'.
-    VibrazioniDellaScena(
-        scena = scena,
-        tempo = tempo,
-        attiva = inVista && !state.animazioniRidotte && !state.animazioniIstantanee,
-    )
-
-    SalaRoomScaffold(
-        palette = palette,
-        room = SalaRoom.OGGI,
-        placeName = state.place.name,
-        position = position,
-        onPlaceClick = onPlaceClick,
-        onMenuClick = onMenuClick,
-    ) { modifier ->
-        Column(
-            modifier = modifier.drawBehind {
-                // **Il cielo sta dietro tutto e occupa tutta la pagina.**
-                // Prima le stelle erano dieci, misurate in unita' della
-                // scultura e disegnate dentro la sua cassa: erano un ornamento
-                // attorno a un oggetto. E c'erano solo a cielo sereno, cioe'
-                // proprio dove contano meno - le nuvole non spengono le
-                // stelle, le coprono, e da sotto una notte coperta qualcuna si
-                // vede lo stesso. Qui il velo **cala** con la copertura invece
-                // di azzerarsi.
-                cieloStellato(
-                    tempo = tempo(),
-                    inchiostro = SalaTokens.neutral100,
-                    velo = scena.notte * (1f - scena.copertura * 0.72f),
-                )
-                pulviscolo(
-                    tempo = tempo(),
-                    inchiostro = palette.ink,
-                    velo = (1f - scena.notte) * (1f - scena.copertura) * (1f - scena.bagnato),
-                )
-                // Il riverbero del lampo si prende la pagina intera: un
-                // temporale non illumina solo la nuvola che lo fa.
-                riverbero(tempo(), SalaTokens.neutral100, forza = scena.tempesta)
-            },
+    Column(modifier = modifier.fillMaxWidth()) {
+        // ── Il numero, sul cielo ─────────────────────────────────────────────
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            AlertsBlock(activeAlerts, palette)
-
-            Column(
-                modifier = Modifier.weight(1f, fill = true).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Sculpture(
-                    scena = scena,
-                    palette = palette,
-                    tempo = tempo,
-                    giroImposto = state.forcedYawDeg,
+            Row(verticalAlignment = Alignment.Top) {
+                Text(
+                    text = ora?.temperature?.let { state.unit.from(it).roundToInt().toString() } ?: "--",
+                    style = SalaType.giant(104),
+                    color = palette.ink,
                 )
-                Row(verticalAlignment = Alignment.Top) {
+                Text(
+                    text = "°",
+                    style = SalaType.giant(38),
+                    color = palette.accent,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+            Column(
+                modifier = Modifier.padding(bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                val percepiti = ora?.apparent?.let { state.unit.from(it).roundToInt() }
+                Text(
+                    text = percepiti?.let { "percepiti $it°" } ?: "percepiti --",
+                    style = SalaType.rowTitle,
+                    color = palette.ink,
+                )
+                val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
+                val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
+                Text(
+                    text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                )
+            }
+        }
+
+        PannelloSala(palette = palette) {
+            if (futuro && giornoScelto != null) {
+                Row(
+                    modifier = Modifier.padding(bottom = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(9.dp),
+                ) {
+                    PastigliaAccento("${giornoScelto.esteso} ${giornoScelto.data}", palette)
+                    // Il ritorno al presente compare **solo quando serve**: un
+                    // comando che non fa niente insegna a non fidarsi degli altri.
                     Text(
-                        text = hour?.temperature?.let { state.unit.from(it).roundToInt().toString() } ?: "--",
-                        style = SalaType.giant(96),
-                        color = palette.ink,
+                        text = "torna a oggi",
+                        style = SalaType.pill,
+                        color = palette.accent,
+                        modifier = Modifier.clickable(onClick = viewModel::backToNow),
                     )
-                    Text(text = "°", style = SalaType.giant(32), color = palette.ink)
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(text = salaTitle(condition, phase), style = SalaType.cardTitle, color = palette.ink)
-                val timeLabel = hour?.time?.hour?.let { "%02d:00".format(it) } ?: "--:--"
-                val apparent = hour?.apparent?.roundToInt()
-                Text(
-                    text = "$timeLabel · ${condition.label()} · ${phase.label()}" +
-                        (apparent?.let { " · percepiti $it°" } ?: ""),
-                    style = SalaType.sectionLabel,
-                    color = palette.inkAccent,
+            Text(
+                text = salaTitle(condizione, fase),
+                style = SalaType.cardTitle,
+                color = palette.ink,
+            )
+            Didascalia(
+                salaBody(condizione),
+                palette,
+                modifier = Modifier.padding(top = 7.dp),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+            ) {
+                CellaValore(
+                    etichetta = "VENTO",
+                    valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
+                    palette = palette,
                 )
-                Didascalia(salaBody(condition), palette)
+                CellaValore(
+                    etichetta = "UMIDITÀ",
+                    valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
+                    palette = palette,
+                )
+                // Di notte l'indice UV vale zero a ogni latitudine, e una cella
+                // che dice sempre la stessa cosa e' una cella sprecata: li' va
+                // la luna, che di notte e' l'unica cosa che cambia.
+                if (sky.moonPresence > 0.5f) {
+                    CellaValore(
+                        etichetta = "LUNA",
+                        valore = "${(MoonPhase.illumination(MoonPhase.at(LocalDate.now())) * 100f).roundToInt()} %",
+                        palette = palette,
+                    )
+                } else {
+                    CellaValore(
+                        etichetta = "UV",
+                        valore = ora?.uvIndex?.let { String.format(Locale.ITALY, "%.1f", it) } ?: "--",
+                        palette = palette,
+                    )
+                }
             }
 
-            // Il ritorno al presente compare **solo quando serve**: se si sta
-            // gia' guardando adesso, un tasto che riporta ad adesso e' un
-            // comando che non fa niente, e un comando che non fa niente insegna
-            // a non fidarsi degli altri. `backToNow` rimette a posto tutti e
-            // due gli assi, ora e giorno.
-            val lontanoDalPresente = state.selectedHour != state.nowIndex || state.selectedDay != 0
-            if (lontanoDalPresente) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 13.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(text = "TOCCA UN GIORNO", style = SalaType.sectionLabel, color = palette.inkFaint)
+                // **Non dice "apri la sala II".** Chi guarda non chiama queste
+                // schermate "sale" - e' un nome nostro, buono per il codice e
+                // non per chi legge: qui si nomina la cosa, la settimana.
                 Text(
-                    text = "Torna ad adesso",
-                    style = SalaType.sectionLabel,
-                    color = palette.inkAccent,
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(MinTouchTarget)
-                        .clickable(onClick = viewModel::backToNow)
-                        .padding(top = 10.dp),
+                    text = "apri la settimana",
+                    style = SalaType.pill,
+                    color = palette.accent,
+                    modifier = Modifier.clickable(onClick = onApriSettimana),
                 )
             }
 
-            val vibrazioni = rememberVibrazioniMeteo()
-            BarraDelleOre(
-                hours = hours,
-                selected = state.selectedHour,
+            StrisciaGiorni(
+                settimana = settimana,
+                scelto = state.selectedDay,
+                state = state,
                 palette = palette,
-                onSelect = viewModel::selectHour,
-                onTick = { if (!state.animazioniRidotte) vibrazioni.scatto() },
-                modifier = Modifier.padding(top = 12.dp),
+                onScegli = viewModel::selectDay,
             )
         }
     }
 }
 
-/** Le allerte in corso all'ora mostrata, la piu' grave per prima. */
-private fun List<WeatherAlert>.activeAt(moment: java.time.LocalDateTime?): List<WeatherAlert> {
-    if (moment == null) return this
-    return filter { alert ->
-        val afterOnset = alert.onset?.let { !moment.isBefore(it) } ?: true
-        val beforeExpiry = alert.expires?.let { !moment.isAfter(it) } ?: true
-        afterOnset && beforeExpiry
-    }.sortedByDescending { it.level.weight }
-}
-
+/**
+ * La striscia dei sette giorni: sigla, figuretta, massima, minima.
+ *
+ * E' la **stessa** striscia che Sala II mette in fondo alla propria schermata,
+ * con una riga in meno: li' c'e' spazio per i millimetri, qui no. Che sia la
+ * stessa non e' una ripetizione: e' il modo in cui il giorno scelto resta
+ * riconoscibile passando da una sala all'altra.
+ */
 @Composable
-private fun AlertsBlock(alerts: List<WeatherAlert>, palette: SalaPalette) {
-    Column(
-        modifier = Modifier.padding(top = 20.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+fun StrisciaGiorni(
+    settimana: List<GiornoSettimana>,
+    scelto: Int,
+    state: UiState,
+    palette: SalaPalette,
+    onScegli: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    conMillimetri: Boolean = false,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
     ) {
-        if (alerts.isEmpty()) {
-            Text(text = "Nessun avviso in corso", style = SalaType.sectionLabel, color = palette.inkSoft)
-        } else {
-            alerts.take(3).forEach { alert ->
-                val tint = if (alert.level.weight >= 2) SalaTokens.accent2_700 else palette.inkAccent
-                Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                            .size(if (alert.level.weight >= 2) 9.dp else 5.dp, 9.dp)
-                            .background(tint),
+        settimana.forEach { giorno ->
+            val attivo = giorno.indice == scelto
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
+                    .background(if (attivo) palette.chip else Color.Transparent)
+                    .border(
+                        width = 1.5.dp,
+                        color = if (attivo) palette.accent else Color.Transparent,
+                        shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
-                    Column {
-                        Text(text = alert.badgeLabel, style = SalaType.sectionLabel, color = tint)
+                    .clickable { onScegli(giorno.indice) }
+                    .padding(top = 9.dp, bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
+            ) {
+                Text(
+                    text = giorno.breve,
+                    style = SalaType.sectionLabel,
+                    color = palette.inkSoft,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                )
+                IconaMeteo(giorno.glifo, palette)
+                Text(
+                    text = giorno.max?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
+                    style = SalaType.giornoMax,
+                    color = palette.ink,
+                    maxLines = 1,
+                )
+                Text(
+                    text = giorno.min?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
+                    style = SalaType.giornoMin,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                )
+                if (conMillimetri) {
+                    // **La gocciolina dice di che numero si tratta.** Un numero
+                    // nudo sotto una temperatura si legge come un'altra
+                    // temperatura; smorzata quando il giorno e' asciutto,
+                    // perche' "0,0" con una goccia piena accanto e' una
+                    // contraddizione.
+                    val mm = giorno.mm ?: 0.0
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(5.dp)
+                                .width(5.dp)
+                                .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp, bottomEnd = 3.dp, bottomStart = 0.dp))
+                                .background(palette.accent.copy(alpha = if (mm > 0.05) 1f else 0.3f)),
+                        )
                         Text(
-                            text = alert.headline,
-                            style = SalaType.body,
-                            color = palette.inkSoft,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
+                            text = String.format(Locale.ITALY, "%.1f", mm),
+                            style = SalaType.microLabel,
+                            color = palette.accent,
+                            maxLines = 1,
                         )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun Sculpture(
-    scena: Scena,
-    palette: SalaPalette,
-    tempo: () -> Float,
-    giroImposto: Float?,
-) {
-    // La fase e' quella vera di stanotte, la stessa che calcola Sala IV: le due
-    // stanze non possono raccontare due lune diverse nella stessa notte.
-    val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
-    val acquerello = LocalAcquerello.current
-    val giroAnim = rememberGiro(giroImposto)
-
-    // Il giro si legge **dentro il disegno**, non in composizione: e' un gesto
-    // continuo che produce centinaia di gradi, e letto fuori ricomporrebbe
-    // l'albero a ogni fotogramma del dito invece di ridipingere e basta.
-    val giro = { giroAnim.gradi }
-
-    Canvas(
-        // Solo orizzontale: il verticale e' del carosello fra le sale.
-        // Il gesto - verso, inerzia, ritorno - sta in `giroConLancio`, che lo
-        // condivide con la luna di Sala IV.
-        modifier = Modifier
-            .size(280.dp, 240.dp)
-            .giroConLancio(giroAnim),
-    ) {
-        scultura(
-            acquerello = acquerello,
-            scena = scena,
-            palette = palette,
-            giroDeg = giro(),
-            fase = faseLunare,
-            tempo = tempo(),
-        )
     }
 }

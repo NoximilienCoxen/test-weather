@@ -1,238 +1,229 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.ui.UiState
-import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
-import io.github.noximiliencoxen.caelum.ui.render3d.Camera
-import io.github.noximiliencoxen.caelum.ui.render3d.MOON_SEAS
-import io.github.noximiliencoxen.caelum.ui.render3d.moon
+import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
+import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-import io.github.noximiliencoxen.caelum.ui.sala.giroConLancio
-import io.github.noximiliencoxen.caelum.ui.sala.rememberGiro
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.roundToInt
 
-private val DayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
-
 /**
- * Sala IV — La luna: la sfera vera dei widget e della scultura, non una
- * sagoma piatta. Trascinala in orizzontale per attraversare il mese; la fase
- * e' calcolata sulla data reale, non su un disegno fisso.
+ * Sala IV — La luna.
+ *
+ * La fase e' **quella vera di stanotte**, la stessa che il cielo mostra sopra il
+ * pannello: un unico valore le governa tutte e due, quindi le due immagini non
+ * possono divergere.
+ *
+ * **Sorge e cala non ci sono.** Il prototipo li scriveva ("17:12", "04:38") ma
+ * Open-Meteo, nei dati che questa applicazione chiede, non li porta: al loro
+ * posto ci sono tre numeri veri - quanto e' illuminata, quanti giorni ha, quando
+ * torna piena. Un orario inventato sarebbe stato piu' simile al disegno e falso.
  */
 @Composable
 fun SalaLunaScreen(
-    state: UiState,
     palette: SalaPalette,
-    position: () -> Float,
-    onPlaceClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    fase: Float,
+    modifier: Modifier = Modifier,
 ) {
-    var offsetDays by remember { mutableIntStateOf(0) }
-    val giroAnim = rememberGiro(state.forcedYawDeg)
-    val today = LocalDate.now()
-    val shownDate = today.plusDays(offsetDays.toLong())
-    val phase = MoonPhase.at(shownDate)
-    val illum = MoonPhase.illumination(phase)
-    val segment = MoonSegment.of(phase)
-    val age = MoonPhase.ageDays(phase)
-    val nextFull = MoonPhase.nextDate(today, 0.5f)
+    val oggi = LocalDate.now()
+    val illuminata = MoonPhase.illumination(fase)
+    val segmento = MoonSegment.of(fase)
+    val eta = MoonPhase.ageDays(fase)
+    val prossimaPiena = MoonPhase.nextDate(oggi, 0.5f)
 
-    SalaRoomScaffold(
-        palette = palette,
-        room = SalaRoom.LUNA,
-        placeName = state.place.name,
-        position = position,
-        onPlaceClick = onPlaceClick,
-        onMenuClick = onMenuClick,
-    ) { modifier ->
-        Column(modifier = modifier) {
-            // **Il dito adesso gira la luna, non sfoglia il mese.**
-            // Erano due gesti sullo stesso asse e ne restava uno solo: il mese
-            // e' passato ai due passi qui sotto, che lo dicono anche a chi non
-            // prova a trascinare. Astronomicamente la Luna mostra sempre la
-            // stessa faccia - i mari infatti stanno fermi rispetto a lei - e
-            // farla girare e' una liberta': qui e' un oggetto in una sala, e
-            // in una sala gli oggetti si guardano da tutti i lati.
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-                    .size(280.dp)
-                    .giroConLancio(giroAnim),
-                contentAlignment = Alignment.Center,
-            ) {
-                Canvas(modifier = Modifier.size(240.dp)) {
-                    val minDim = minOf(size.width, size.height)
-                    val centerOffset = Offset(size.width / 2f, size.height / 2f)
-                    val camera = Camera(yawDeg = giroAnim.gradi, pitchDeg = 0f, distance = minDim * 1.35f, origin = centerOffset)
-                    val raggio = minDim * 0.42f
-
-                    // **I colori sono della luna, non della pagina.** Prima
-                    // qui passavano `palette.ink` come luce e una sua
-                    // schiaritura come ombra: in tema scuro funzionava per
-                    // combinazione - l'inchiostro **e'** quasi bianco li' - e in
-                    // tema chiaro dava una parte illuminata quasi nera e un
-                    // disco in ombra invisibile sulla carta. Vedi
-                    // `SalaTokens.lunaLuce` per il perche' per esteso.
-                    // **Il corpo scuro, sotto.** `moon` disegna la faccia non
-                    // illuminata a un quarto di opacita', perche' la parte in
-                    // ombra della Luna vera si intravede appena - ed e' giusto
-                    // su un cielo notturno. Qui pero' il fondo e' carta, e un
-                    // quarto di ardesia su carta chiara diventa un grigino che
-                    // non si distingue dall'avorio della parte illuminata: al
-                    // novilunio lo scatto mostrava ancora un **disco pieno**
-                    // sotto la scritta "1 % illuminata". La sfera parte scura, e
-                    // la luce la morde da sopra.
-                    drawCircle(
-                        color = SalaTokens.lunaOmbra.copy(alpha = 0.62f),
-                        radius = raggio,
-                        center = centerOffset,
-                    )
-                    moon(
-                        camera = camera,
-                        x = 0f, y = 0f, z = 0f,
-                        radius = raggio,
-                        phase = phase,
-                        light = SalaTokens.lunaLuce,
-                        dark = SalaTokens.lunaOmbra,
-                        alpha = 1f,
-                        marks = MOON_SEAS,
-                    )
-
-                    // **Il filo di contorno.** Il disco in ombra si disegna a
-                    // un quarto di opacita', perche' la parte non illuminata
-                    // della Luna vera si intravede appena. Ma su carta chiara
-                    // un quarto di ardesia e' ancora troppo poco per dire
-                    // **dove finisce la sfera**, e senza il bordo una falce
-                    // sottile galleggia senza corpo. Un filo sottile chiude la
-                    // sagoma senza riempirla, e costa un tratto.
-                    drawCircle(
-                        color = SalaTokens.lunaOmbra.copy(alpha = 0.55f),
-                        radius = raggio,
-                        center = centerOffset,
-                        style = Stroke(width = 1.dp.toPx()),
-                    )
-
-                    // **Il bordo che scurisce: e' questo che fa una sfera.**
-                    // `moon` da' la fase giusta e i mari al posto giusto, ma
-                    // riempie di tinta piatta, e una tinta piatta dentro un
-                    // cerchio resta un cerchio - al novilunio si vedeva un
-                    // disco grigio, non un corpo. Qui il pigmento si addensa
-                    // verso il lembo, che e' come si legge la curvatura: piu'
-                    // superficie per unita' di schermo dove la sfera fugge via.
-                    //
-                    // Il centro del degrade' e' spostato verso la luce, cosi'
-                    // il lembo lontano e' piu' scuro del vicino invece che
-                    // uniforme: e' l'ombreggiatura, non una vignettatura.
-                    val versoLaLuce = Offset(-raggio * 0.30f, -raggio * 0.30f)
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            0.00f to Color.Transparent,
-                            0.58f to Color.Transparent,
-                            1.00f to SalaTokens.lunaOmbra.copy(alpha = 0.34f),
-                            center = centerOffset + versoLaLuce,
-                            radius = raggio * 1.45f,
-                        ),
-                        radius = raggio,
-                        center = centerOffset,
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    PassoDelMese("‹", palette) { offsetDays = (offsetDays - 1).coerceAtLeast(-15) }
-                    Text(
-                        text = if (offsetDays == 0) "Stasera" else shownDate.format(DayMonth),
-                        style = SalaType.sectionLabel,
-                        color = palette.inkAccent,
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                    )
-                    PassoDelMese("›", palette) { offsetDays = (offsetDays + 1).coerceAtMost(15) }
-                }
-                if (offsetDays != 0) {
-                    TextButton(onClick = { offsetDays = 0 }) {
-                        Text(text = "Torna a stasera", style = SalaType.sectionLabel, color = palette.inkAccent)
-                    }
-                }
-            }
-
-            Box(modifier = Modifier.weight(1f))
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 20.dp)) {
-                Text(text = segment.label.lowercase().replaceFirstChar { it.uppercase() }, style = SalaType.cardTitle, color = palette.ink)
+    PannelloSala(palette = palette, modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            Canvas(modifier = Modifier.size(96.dp)) { disegnaLuna(fase, 1f) }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "La luna", style = SalaType.cardTitle, color = palette.ink)
                 Text(
-                    text = "${if (offsetDays == 0) "Stasera" else shownDate.format(DayMonth)} · ${(illum * 100).roundToInt()} % illuminata · giorno ${age.toInt() + 1} del ciclo",
-                    style = SalaType.sectionLabel,
-                    color = palette.inkAccent,
+                    text = "${segmento.label.lowercase().replaceFirstChar { it.uppercase() }} · " +
+                        "${(illuminata * 100f).roundToInt()} %",
+                    style = SalaType.rowTitle,
+                    color = palette.accent,
+                    modifier = Modifier.padding(top = 6.dp),
                 )
                 Didascalia(
-                    testo = if (offsetDays == 0) {
-                        "Il disco qui sopra è la luna di questa notte, calcolata sulla data di oggi. Trascinala per girarla; i due passi qui sopra attraversano il mese."
-                    } else {
-                        "Stai guardando la luna del ${shownDate.format(DayMonth)}, a ${kotlin.math.abs(offsetDays)} giorni da oggi. Torna a stasera per rimetterla in pari con il cielo."
-                    },
-                    palette = palette,
+                    descrizione(segmento),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.padding(top = 8.dp)) {
-                    Stat("Fase", segment.label.lowercase().replaceFirstChar { it.uppercase() }, palette)
-                    Stat("Illuminazione", "${(illum * 100).roundToInt()} %", palette)
-                    Stat("Prossima piena", nextFull.format(DayMonth), palette)
-                }
             }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            CellaValore("ILLUMINATA", "${(illuminata * 100f).roundToInt()} %", palette)
+            CellaValore("ETÀ", "${eta.roundToInt()} giorni", palette)
+            CellaValore("PIENA", "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
+        }
+
+        Text(
+            text = "LE PROSSIME FASI",
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 16.dp, bottom = 10.dp),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Le quattro tappe del ciclo, ognuna alla sua prossima data. Sono
+            // quattro **calcoli**, non quattro date scritte a mano.
+            listOf(
+                0.25f to "Primo q.",
+                0.5f to "Piena",
+                0.75f to "Ultimo q.",
+                0f to "Nuova",
+            ).sortedBy { (obiettivo, _) -> MoonPhase.daysUntil(oggi, obiettivo) }
+                .forEach { (obiettivo, nome) ->
+                    val quando = MoonPhase.nextDate(oggi, obiettivo)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(palette.chip)
+                            .padding(top = 12.dp, bottom = 10.dp, start = 4.dp, end = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(7.dp),
+                    ) {
+                        Canvas(modifier = Modifier.size(26.dp)) { disegnaLuna(obiettivo, 1f) }
+                        Text(
+                            text = nome,
+                            style = SalaType.giornoMax,
+                            color = palette.ink,
+                            maxLines = 1,
+                        )
+                        Text(
+                            text = "${quando.dayOfMonth} ${quando.monthValue.mese()}",
+                            style = SalaType.giornoMin,
+                            color = palette.inkFaint,
+                            maxLines = 1,
+                        )
+                    }
+                }
         }
     }
 }
 
-@Composable
-private fun Stat(label: String, value: String, palette: SalaPalette) {
-    Column {
-        Text(text = label, style = SalaType.hourLabel, color = palette.inkSoft)
-        Text(text = value, style = SalaType.value, color = palette.ink)
+/**
+ * Il disco lunare alla fase data.
+ *
+ * **Le tinte sono sue e fisse nei due temi**: un corpo celeste non ha il colore
+ * dell'inchiostro della pagina che lo mostra. E' la lezione pagata quando la
+ * parte illuminata veniva dipinta col nero del testo e al novilunio non restava
+ * niente sullo schermo.
+ */
+private fun DrawScope.disegnaLuna(fase: Float, alpha: Float) {
+    val r = size.minDimension / 2f
+    val centro = Offset(size.width / 2f, size.height / 2f)
+
+    drawCircle(color = SalaTokens.lunaOmbra.copy(alpha = 0.55f * alpha), radius = r, center = centro)
+
+    val crescente = fase < 0.5f
+    val terminatore = abs(cos(2.0 * PI * fase).toFloat())
+    val gibbosa = ((1f - cos(2.0 * PI * fase).toFloat()) / 2f) > 0.5f
+    val disco = Rect(centro.x - r, centro.y - r, centro.x + r, centro.y + r)
+    val mediana = Rect(centro.x - r * terminatore, centro.y - r, centro.x + r * terminatore, centro.y + r)
+    val illuminata = Path().apply {
+        arcTo(disco, if (crescente) -90f else 90f, 180f, true)
+        arcTo(mediana, if (crescente) 90f else -90f, if (gibbosa) 180f else -180f, false)
+        close()
     }
+
+    clipPath(illuminata) {
+        drawCircle(
+            brush = Brush.radialGradient(
+                0f to SalaTokens.lunaLuce,
+                0.52f to SalaTokens.lunaMezzo,
+                1f to SalaTokens.lunaBordo,
+                center = Offset(centro.x - r * 0.32f, centro.y - r * 0.40f),
+                radius = r * 1.5f,
+            ),
+            radius = r,
+            center = centro,
+            alpha = alpha,
+        )
+        listOf(
+            Triple(-0.07f, -0.06f, 0.20f),
+            Triple(0.24f, -0.23f, 0.14f),
+            Triple(0.07f, 0.27f, 0.24f),
+        ).forEach { (mx, my, md) ->
+            drawOval(
+                color = Color(0xFF463830).copy(alpha = 0.22f * alpha),
+                topLeft = Offset(centro.x + mx * r - md * r, centro.y + my * r - md * r * 0.78f),
+                size = Size(md * 2f * r, md * 1.56f * r),
+            )
+        }
+    }
+
+    drawCircle(
+        color = SalaTokens.lunaBordo.copy(alpha = 0.30f * alpha),
+        radius = r,
+        center = centro,
+        style = Stroke(width = r * 0.04f),
+    )
 }
 
-/** Un passo avanti o indietro nel mese lunare. */
-@Composable
-private fun PassoDelMese(segno: String, palette: SalaPalette, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier.size(MinTouchTarget).clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = segno, style = SalaType.cardTitle, color = palette.inkAccent)
-    }
+private fun descrizione(segmento: MoonSegment): String = when (segmento) {
+    MoonSegment.NOVILUNIO -> "Il disco e' fra noi e il sole: stanotte il cielo resta al buio, ed e' la notte giusta per le stelle deboli."
+    MoonSegment.CRESCENTE -> "Una falce sottile a occidente, bassa e breve: cala poco dopo il sole."
+    MoonSegment.PRIMO_QUARTO -> "Meta' disco illuminato, alto a sud dopo il tramonto: cala attorno a mezzanotte."
+    MoonSegment.GIBBOSA_CRESCENTE -> "Quasi piena e alta per gran parte della notte: illumina bene fino a notte fonda."
+    MoonSegment.PLENILUNIO -> "Piena: sorge col tramonto e cala con l'alba, in cielo per tutta la notte."
+    MoonSegment.GIBBOSA_CALANTE -> "Ancora larga ma in ritardo: sorge a notte gia' cominciata e resta fino al mattino."
+    MoonSegment.ULTIMO_QUARTO -> "Meta' disco, dall'altra parte: sorge a notte fonda e resta visibile di prima mattina."
+    MoonSegment.CALANTE -> "Una falce che precede l'alba, bassa a oriente: l'ultima luce prima del novilunio."
+}
+
+private fun Int.mese(): String = when (this) {
+    1 -> "gen"
+    2 -> "feb"
+    3 -> "mar"
+    4 -> "apr"
+    5 -> "mag"
+    6 -> "giu"
+    7 -> "lug"
+    8 -> "ago"
+    9 -> "set"
+    10 -> "ott"
+    11 -> "nov"
+    else -> "dic"
 }

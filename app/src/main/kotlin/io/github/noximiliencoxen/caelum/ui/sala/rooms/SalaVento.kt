@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,154 +10,189 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
+import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
+import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
+import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-import kotlin.math.PI
-import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.math.sin
-
-private val DirectionNames = listOf(
-    "nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est",
-    "sud-est", "sud-sud-est", "sud", "sud-sud-ovest", "sud-ovest", "ovest-sud-ovest",
-    "ovest", "ovest-nord-ovest", "nord-ovest", "nord-nord-ovest",
-)
-
-private fun directionName(bearing: Double): String {
-    val idx = (((bearing % 360.0) + 360.0) % 360.0 / 22.5).roundToInt() % 16
-    return DirectionNames[idx]
-}
 
 /**
- * Sala VI — Il vento, come rosa dei venti: quarantotto tacche, lettere
- * cardinali, e una lancetta che punta la direzione oraria vera e oscilla
- * piu' larga quanto piu' forte soffia.
+ * Sala VI — Il vento: da dove viene, quanto forte, e cosa fa nelle prossime sei ore.
+ *
+ * La rosa non e' un grafico ma un **verso**: la lancetta punta da dove il vento
+ * arriva, che e' il modo in cui lo si dice a voce ("viene da nord-est") e non
+ * quello in cui lo scrive il dato (i gradi di provenienza).
  */
 @Composable
 fun SalaVentoScreen(
     state: UiState,
     palette: SalaPalette,
-    position: () -> Float,
-    onPlaceClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val hours = state.hours
-    val idx = state.selectedHour
-    val speedsMs = hours.map { it.windSpeed ?: 0.0 }
-    val maxMs = (speedsMs.maxOrNull() ?: 1.0).coerceAtLeast(0.1)
-    val speedMs = speedsMs.getOrElse(idx) { 0.0 }
-    val bearing = hours.getOrNull(idx)?.windDirection ?: 0.0
-    val unit = state.windUnit
-    val speedShown = unit.from(speedMs).roundToInt()
+    val ore = state.hours
+    val scelta = state.selectedHour
+    val ora = state.hour
+    val unita = state.windUnit
+    val velocita = ora?.windSpeed
+    val raffiche = ora?.windGusts
+    val direzione = ora?.windDirection
 
-    SalaRoomScaffold(
-        palette = palette,
-        room = SalaRoom.VENTO,
-        placeName = state.place.name,
-        position = position,
-        onPlaceClick = onPlaceClick,
-        onMenuClick = onMenuClick,
-    ) { modifier ->
-        Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
-            Box(modifier = Modifier.fillMaxWidth().height(300.dp), contentAlignment = Alignment.Center) {
-                Canvas(modifier = Modifier.size(300.dp)) {
+    PannelloSala(palette = palette, modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(104.dp)
+                    .clip(CircleShape)
+                    .background(palette.chip),
+                contentAlignment = Alignment.Center,
+            ) {
+                listOf("N" to Alignment.TopCenter, "S" to Alignment.BottomCenter,
+                    "O" to Alignment.CenterStart, "E" to Alignment.CenterEnd).forEach { (lettera, dove) ->
+                    Text(
+                        text = lettera,
+                        style = SalaType.microLabel,
+                        color = palette.inkFaint,
+                        modifier = Modifier.align(dove).padding(8.dp),
+                    )
+                }
+                Canvas(
+                    modifier = Modifier
+                        .size(104.dp)
+                        .rotate((direzione?.toFloat() ?: 0f) + 180f),
+                ) {
+                    // La lancetta parte dal centro e va verso l'alto; la
+                    // rotazione la porta dove serve. Mezzo giro in piu' perche'
+                    // il dato dice **da dove viene**, non dove va.
                     val cx = size.width / 2f
                     val cy = size.height / 2f
-                    val outer = size.minDimension / 2f - 6f
-
-                    drawCircle(palette.inkFaint, radius = outer, center = Offset(cx, cy), style = Stroke(1.5f))
-                    drawCircle(palette.inkFaint, radius = outer * 0.84f, center = Offset(cx, cy), style = Stroke(1.5f), alpha = 0.55f)
-
-                    for (a in 0 until 360 step 8) {
-                        val card = a % 90 == 0
-                        val half = a % 45 == 0
-                        val r0 = outer * if (card) 0.84f else if (half) 0.89f else 0.93f
-                        val rad = Math.toRadians((a - 90).toDouble())
-                        val x0 = cx + (cos(rad) * r0).toFloat()
-                        val y0 = cy + (sin(rad) * r0).toFloat()
-                        val x1 = cx + (cos(rad) * outer).toFloat()
-                        val y1 = cy + (sin(rad) * outer).toFloat()
-                        drawLine(
-                            color = palette.inkSoft.copy(alpha = if (card) 0.7f else if (half) 0.42f else 0.24f),
-                            start = Offset(x0, y0),
-                            end = Offset(x1, y1),
-                            strokeWidth = if (card) 3f else 1.6f,
-                        )
-                    }
-
-                    val rad = Math.toRadians(bearing - 90.0)
-                    val headLen = outer * 0.80f
-                    val tailLen = outer * 0.55f
-                    val headTip = Offset(cx + (cos(rad) * headLen).toFloat(), cy + (sin(rad) * headLen).toFloat())
-                    val tailTip = Offset(cx - (cos(rad) * tailLen).toFloat(), cy - (sin(rad) * tailLen).toFloat())
-                    drawLine(palette.inkAccent, Offset(cx, cy), headTip, strokeWidth = 8f)
-                    drawLine(palette.inkSoft.copy(alpha = 0.5f), Offset(cx, cy), tailTip, strokeWidth = 6f)
-                    drawCircle(palette.ground, radius = 6f, center = Offset(cx, cy), style = Stroke(3f))
+                    drawRoundRect(
+                        color = palette.accent,
+                        topLeft = Offset(cx - 2.5.dp.toPx(), cy - 44.dp.toPx()),
+                        size = Size(5.dp.toPx(), 44.dp.toPx()),
+                        cornerRadius = CornerRadius(2.5.dp.toPx()),
+                    )
+                    drawCircle(color = palette.accent, radius = 7.dp.toPx())
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = speedShown.toString(), style = SalaType.giant(64), color = palette.ink)
-                    Text(text = unit.label.uppercase(), style = SalaType.hourLabel, color = palette.inkSoft)
-                }
-                CompassLabel("N", Alignment.TopCenter, palette)
-                CompassLabel("S", Alignment.BottomCenter, palette)
-                CompassLabel("E", Alignment.CenterEnd, palette)
-                CompassLabel("O", Alignment.CenterStart, palette)
             }
-
-            WindBars(speedsMs = speedsMs, maxMs = maxMs, selected = idx, palette = palette, modifier = Modifier.padding(top = 20.dp))
-
-            Column(modifier = Modifier.padding(top = 20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(text = "Brezza da ${directionName(bearing)},\nnessuna raffica", style = SalaType.cardTitle, color = palette.ink)
-                Text(
-                    text = "${"%02d".format(idx)}:00 · $speedShown ${unit.label} · massimo ${unit.from(maxMs).roundToInt()} ${unit.label}",
-                    style = SalaType.sectionLabel,
-                    color = palette.inkAccent,
-                )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "Il vento", style = SalaType.cardTitle, color = palette.ink)
+                Row(
+                    modifier = Modifier.padding(top = 6.dp),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Text(
+                        text = velocita?.let { unita.from(it).roundToInt().toString() } ?: "--",
+                        style = SalaType.numeroSala,
+                        color = palette.ink,
+                    )
+                    Text(
+                        text = "${unita.label} ${Wmo.windDirection(direzione)}",
+                        style = SalaType.hourLabel,
+                        color = palette.accent,
+                        modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+                    )
+                }
                 Didascalia(
-                    testo = "La lancetta indica la direzione reale del vento all'ora scelta e si allunga verso la testa quando soffia più forte.",
-                    palette = palette,
+                    // Le soglie vogliono i km/h; il display vuole l'unita'
+                    // scelta. Passarli mescolati faceva dire "burrasca" a
+                    // sessanta nodi e "brezza" a sessanta km/h.
+                    nota(
+                        kmh = velocita?.let { it * 3.6 },
+                        raffiche = raffiche?.let { unita.from(it).roundToInt() },
+                        unita = unita.label,
+                    ),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
+            }
+        }
+
+        Text(
+            text = "LE PROSSIME SEI ORE",
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 18.dp, bottom = 10.dp),
+        )
+        val finestra = (scelta + 1..scelta + 6).filter { it in ore.indices }
+        val massimo = finestra.mapNotNull { ore[it].windSpeed }.maxOrNull()?.coerceAtLeast(0.5) ?: 1.0
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            finestra.forEach { indice ->
+                val ms = ore[indice].windSpeed ?: 0.0
+                val quota = (ms / massimo).coerceIn(0.0, 1.0).toFloat()
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(palette.chip)
+                        .padding(vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(7.dp),
+                ) {
+                    Text(
+                        text = "%02d".format(ore[indice].time.hour),
+                        style = SalaType.microLabel,
+                        color = palette.inkSoft,
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(4.dp)
+                            .height((10f + quota * 36f).dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (unita.from(ms) > 24) SalaTokens.accent500 else SalaTokens.verde400,
+                            ),
+                    )
+                    Text(
+                        text = unita.from(ms).roundToInt().toString(),
+                        style = SalaType.giornoMax,
+                        color = palette.ink,
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-private fun CompassLabel(text: String, alignment: Alignment, palette: SalaPalette) {
-    Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(10.dp), contentAlignment = alignment) {
-        Text(text = text, style = SalaType.hourLabel, color = palette.inkSoft)
+/**
+ * Cosa vuol dire questa velocita', in cose che si vedono fuori.
+ *
+ * Le soglie sono quelle della scala Beaufort ridotte a tre gradini, e sono in
+ * chilometri orari **qualunque** unita' si stia mostrando: il fenomeno non
+ * cambia col modo di misurarlo.
+ */
+private fun nota(kmh: Double?, raffiche: Int?, unita: String): String {
+    val coda = raffiche?.let { " Raffiche fino a $it $unita." } ?: ""
+    val corpo = when {
+        kmh == null -> "Vento non disponibile per quest'ora."
+        kmh < 6 -> "Aria quasi ferma: il fumo sale dritto."
+        kmh < 20 -> "Brezza leggera: si muovono le foglie, non i rami."
+        kmh < 39 -> "Vento teso: i rami si piegano e l'ombrello diventa scomodo."
+        kmh < 62 -> "Vento forte: attenzione agli oggetti esposti sui balconi."
+        else -> "Burrasca: meglio non stare sotto gli alberi."
     }
-}
-
-@Composable
-private fun WindBars(speedsMs: List<Double>, maxMs: Double, selected: Int, palette: SalaPalette, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxWidth().height(56.dp)) {
-            if (speedsMs.isEmpty()) return@Canvas
-            val colWidth = size.width / speedsMs.size
-            speedsMs.forEachIndexed { i, v ->
-                val h = ((v / maxMs).toFloat() * size.height).coerceAtLeast(3f)
-                drawRect(
-                    color = if (i == selected) palette.ink else palette.inkAccent.copy(alpha = 0.45f),
-                    topLeft = Offset(i * colWidth + colWidth * 0.12f, size.height - h),
-                    size = androidx.compose.ui.geometry.Size(colWidth * 0.76f, h),
-                )
-            }
-        }
-        Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf("00", "12", "23").forEach { Text(text = it, style = SalaType.hourLabel, color = palette.inkSoft) }
-        }
-    }
+    return corpo + coda
 }

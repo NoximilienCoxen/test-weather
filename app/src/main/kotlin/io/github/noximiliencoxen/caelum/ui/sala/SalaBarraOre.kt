@@ -1,68 +1,64 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
-import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.data.Wmo
+import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 /**
  * La barra delle ventiquattro ore: **un comando, non un grafico**.
  *
- * ### Cos'era, e perche' non bastava
+ * ### Cos'e'
  *
- * Una tela alta quarantasei punti con la curva della temperatura, cinque
- * etichette fisse - `00 06 12 18 23` - e una riga verticale sull'ora scelta.
- * Tre difetti, e il primo e' quello che conta:
+ * Un binario pieno **colorato ora per ora col cielo di quell'ora** - la stessa
+ * tabella che dipinge il fondo, letta ventiquattro volte - cosi' la forma della
+ * giornata si legge senza toccare niente: si vede dove comincia l'alba, dove il
+ * pomeriggio si chiude, dove torna la notte. Sopra ci scorre una **maniglia**
+ * che dice da se' che si prende.
  *
- * **Non si capiva che si poteva toccare.** Sembrava un grafico, e un grafico non
- * si tocca. Peggio: riconosceva **solo** il trascinamento, quindi anche chi ci
- * provava, toccandola, non otteneva niente - e da un comando che non risponde
- * si impara che non e' un comando.
+ * Si tocca **e** si trascina. Riconoscere il solo trascinamento era il difetto
+ * peggiore della versione precedente: chi toccava non otteneva risposta, e da un
+ * comando che non risponde si impara che non e' un comando.
  *
- * **L'ora scelta non era scritta da nessuna parte sulla barra.** Stava nella
- * didascalia, mezzo schermo piu' su: si trascinava guardando altrove.
+ * ### Il ritorno all'ora attuale
  *
- * **Il colore non diceva niente.** Era il grigio dell'inchiostro dal primo
- * minuto all'ultimo, e intanto la giornata dentro cambiava tre volte.
- *
- * ### Cos'e' adesso
- *
- * Un binario pieno **colorato ora per ora col tempo di quell'ora**, cosi' la
- * forma della giornata - il temporale del pomeriggio, la schiarita di sera - si
- * legge senza toccare niente; una **maniglia** che dice da se' che si prende;
- * l'**ora scritta sopra la maniglia**, che viaggia con lei. Si tocca e si
- * trascina. E la curva della temperatura resta dietro, in sordina, perche' era
- * l'unica cosa buona di prima.
+ * Compare **solo quando si e' lontani dal presente**, al posto della riga che
+ * spiega il gesto: finche' si guarda adesso, un tasto che riporta ad adesso e'
+ * un comando che non fa niente, e un comando che non fa niente insegna a non
+ * fidarsi nemmeno degli altri.
  *
  * @param onTick un colpetto quando si scavalca un'ora. Il dito lo sente scattare
  *   sugli scalini invece di scivolare su un continuo, che e' anche cio' che le
@@ -72,10 +68,14 @@ import kotlin.math.roundToInt
 fun BarraDelleOre(
     hours: List<HourForecast>,
     selected: Int,
+    oraAttuale: Int,
     palette: SalaPalette,
+    alba: LocalDateTime?,
+    tramonto: LocalDateTime?,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onTick: () -> Unit = {},
+    onTornaOra: () -> Unit = {},
 ) {
     // **Ogni valore letto dentro un riconoscitore passa di qui.** La lambda di
     // `pointerInput` viene ricreata solo quando cambia la sua chiave, quindi
@@ -87,55 +87,65 @@ fun BarraDelleOre(
     val scegli by rememberUpdatedState(onSelect)
     val colpetto by rememberUpdatedState(onTick)
 
-    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val larghezza = maxWidth
-        val densita = LocalDensity.current
-        var larghezzaEtichetta by remember { mutableIntStateOf(0) }
-        val larghezzaPx = with(densita) { larghezza.toPx() }
-        val frazione = (selected.coerceIn(0, ORE - 1)).toFloat() / (ORE - 1)
+    val tinte = remember(hours, alba, tramonto) { coloriDelleOre(hours, alba, tramonto) }
+    val ora = selected.coerceIn(0, ORE - 1)
+    val spostata = ora != oraAttuale.coerceIn(0, ORE - 1)
 
-        Column {
-            // ── L'ora, sopra la maniglia ─────────────────────────────────────
-            Box(modifier = Modifier.fillMaxWidth().height(ALTEZZA_ETICHETTA)) {
-                Text(
-                    text = "%02d:00".format(selected.coerceIn(0, ORE - 1)),
-                    style = SalaType.hourLabel,
-                    color = palette.inkAccent,
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            if (spostata) {
+                Row(
                     modifier = Modifier
-                        .onSizeChanged { larghezzaEtichetta = it.width }
-                        .offset {
-                            // Centrata sulla maniglia, ma **trattenuta dentro il
-                            // binario**: agli estremi preferisce restare tutta
-                            // leggibile che stare esattamente sopra il pollice.
-                            val meta = larghezzaEtichetta / 2f
-                            val x = (frazione * larghezzaPx - meta)
-                                .coerceIn(0f, (larghezzaPx - larghezzaEtichetta).coerceAtLeast(0f))
-                            IntOffset(x.roundToInt(), 0)
-                        },
+                        .clip(CircleShape)
+                        .background(palette.accent)
+                        .clickable(onClick = onTornaOra)
+                        .padding(horizontal = 12.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Canvas(modifier = Modifier.size(11.dp)) {
+                        drawCircle(
+                            color = palette.accentInk,
+                            radius = size.width / 2f - 1.dp.toPx(),
+                            style = Stroke(width = 2.dp.toPx()),
+                        )
+                    }
+                    Text(text = "TORNA ALL'ORA ATTUALE", style = SalaType.sectionLabel, color = palette.accentInk)
+                }
+            } else {
+                Text(
+                    text = "TRASCINA PER CAMBIARE ORA",
+                    style = SalaType.sectionLabel,
+                    color = palette.inkFaint,
                 )
             }
+            Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accent)
+        }
 
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ALTEZZA_BINARIO)
-                    // Il tocco secco prima del trascinamento: chi tocca vuole
-                    // andare li', non cominciare un gesto.
-                    .pointerInput(Unit) {
-                        detectTapGestures { punto ->
-                            val i = indiceDa(punto.x, size.width.toFloat())
-                            if (i != sceltaOra) { colpetto(); scegli(i) }
-                        }
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(ALTEZZA)
+                // Il tocco secco prima del trascinamento: chi tocca vuole
+                // andare li', non cominciare un gesto.
+                .pointerInput(Unit) {
+                    detectTapGestures { punto ->
+                        val i = indiceDa(punto.x, size.width.toFloat())
+                        if (i != sceltaOra) { colpetto(); scegli(i) }
                     }
-                    .pointerInput(Unit) {
-                        detectHorizontalDragGestures { change, _ ->
-                            val i = indiceDa(change.position.x, size.width.toFloat())
-                            if (i != sceltaOra) { colpetto(); scegli(i) }
-                        }
-                    },
-            ) {
-                disegnaBarra(hours, selected, palette)
-            }
+                }
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { change, _ ->
+                        val i = indiceDa(change.position.x, size.width.toFloat())
+                        if (i != sceltaOra) { colpetto(); scegli(i) }
+                    }
+                },
+        ) {
+            disegnaBarra(tinte, ora, palette)
         }
     }
 }
@@ -144,98 +154,72 @@ fun BarraDelleOre(
  *  seconda verita' da tenere in fase con la prima. */
 private const val ORE = 24
 
-private val ALTEZZA_ETICHETTA = 18.dp
-private val ALTEZZA_BINARIO = 44.dp
+private val ALTEZZA = 34.dp
 
 private fun indiceDa(x: Float, larghezza: Float): Int =
     (x / larghezza.coerceAtLeast(1f) * (ORE - 1)).roundToInt().coerceIn(0, ORE - 1)
 
 /**
- * Il colore di un'ora.
+ * Il colore di ogni ora: la fermata di mezzo del **suo** cielo.
  *
- * Non sono i colori delle macchie di sfondo: quelli sono lavaggi larghi e
- * tenui, e a otto punti di larghezza non si distinguerebbero l'uno dall'altro.
- * Qui servono tinte che reggano una colonna sottile, e la notte deve leggersi
- * anche su carta gia' scura - per questo il sereno notturno non e' "niente", e'
- * un blu.
+ * Non e' una tavolozza a parte da tenere in fase con quella del fondo: e'
+ * letteralmente la stessa funzione, chiamata ventiquattro volte con l'ora di
+ * ogni colonna. Due tabelle divergono al primo che ne tara una; una sola non
+ * puo'.
  */
-private fun coloreOra(hour: HourForecast?, palette: SalaPalette): Color {
-    if (hour?.weatherCode == null) return palette.inkFaint
-    val giorno = hour.isDay
-    val tinta = when (salaConditionOf(hour.weatherCode)) {
-        SalaCondition.SERENO ->
-            if (giorno) SalaTokens.processYellow else SalaTokens.accent800
-        SalaCondition.NUVOLOSO ->
-            if (giorno) SalaTokens.neutral400 else SalaTokens.accent900
-        SalaCondition.PIOGGIA -> SalaTokens.accent
-        SalaCondition.GRANDINE -> SalaTokens.accent300
-        SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> SalaTokens.accent2_700
+private fun coloriDelleOre(
+    hours: List<HourForecast>,
+    alba: LocalDateTime?,
+    tramonto: LocalDateTime?,
+): List<Color> = List(ORE) { i ->
+    val ora = hours.getOrNull(i)
+    if (ora == null) {
+        Color.Transparent
+    } else {
+        val cielo = SunClock.skyAt(ora.time, alba, tramonto, ora.isDay)
+        val condizione = salaConditionOf(ora.weatherCode)
+        val tempesta = when (condizione) {
+            SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 1f
+            else -> 0f
+        }
+        val copertura = maxOf(
+            (ora.cloudCover ?: 0) / 100f,
+            when (condizione) {
+                SalaCondition.SERENO -> 0f
+                SalaCondition.NUVOLOSO -> 0.45f
+                SalaCondition.PIOGGIA -> 0.80f
+                SalaCondition.GRANDINE -> 0.85f
+                SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 0.95f
+            },
+        )
+        val neve = if (Wmo.family(ora.weatherCode) == Wmo.Family.NEVE) 1f else 0f
+        cieloStops(faseContinua(cielo), livelloCielo(copertura, tempesta), neve)[1]
     }
-    // Su carta scura le stesse tinte affogano: si schiariscono di un passo, non
-    // di un salto - e' la stessa regola del materiale che non cambia identita'
-    // girando (trappola #13), applicata al tempo invece che alla rotazione.
-    return lerp(tinta, lerp(tinta, SalaTokens.neutral100, 0.34f), palette.buio)
 }
 
-private fun DrawScope.disegnaBarra(hours: List<HourForecast>, selected: Int, palette: SalaPalette) {
+private fun DrawScope.disegnaBarra(tinte: List<Color>, selected: Int, palette: SalaPalette) {
     val w = size.width
-    val h = size.height
-    val cimaBinario = h * 0.46f
-    val altoBinario = h * 0.30f
-    val raggio = altoBinario / 2f
+    val cy = size.height / 2f
+    val altoBinario = 16.dp.toPx()
+    val cima = cy - altoBinario / 2f
 
-    // ── La temperatura, dietro e in sordina ──────────────────────────────────
-    //
-    // Resta perche' e' informazione vera, ma arretra: qui il protagonista e' il
-    // comando. Prima era il contrario, e il comando non si vedeva.
-    if (hours.size >= 2) {
-        val temps = hours.mapNotNull { it.temperature }
-        if (temps.size >= 2) {
-            val minimo = temps.min().toFloat()
-            val massimo = temps.max().toFloat()
-            val ampiezza = (massimo - minimo).coerceAtLeast(0.01f)
-            val punti = hours.take(ORE).mapIndexed { i, ora ->
-                val t = (ora.temperature?.toFloat() ?: minimo)
-                Offset(
-                    x = i.toFloat() / (ORE - 1) * w,
-                    y = cimaBinario * 0.92f - (t - minimo) / ampiezza * cimaBinario * 0.78f,
-                )
-            }
-            if (punti.size >= 2) {
-                val curva = buildLinePath(punti)
-                val area = Path().apply {
-                    addPath(curva)
-                    lineTo(w, cimaBinario)
-                    lineTo(0f, cimaBinario)
-                    close()
-                }
-                drawPath(area, color = palette.inkFaint)
-                drawPath(curva, color = palette.ink.copy(alpha = 0.34f), style = Stroke(width = 2f))
-            }
-        }
-    }
-
-    // ── Il binario, un segmento per ora ──────────────────────────────────────
-    //
     // Ritagliato dentro la pista arrotondata: cosi' le ventiquattro tessere
     // formano **una** barra con i capi tondi, e non ventiquattro mattoncini.
-    // La forma si costruisce come in `widget/paint/WidgetParts.kt`: quattro lati
-    // e un raggio d'angolo. E' la sola forma di `RoundRect` che questo progetto
-    // ha gia' compilato, e da qui non si compila.
     val pista = Path().apply {
         addRoundRect(
-            androidx.compose.ui.geometry.RoundRect(
-                left = 0f, top = cimaBinario, right = w, bottom = cimaBinario + altoBinario,
-                cornerRadius = CornerRadius(raggio),
+            RoundRect(
+                left = 0f, top = cima, right = w, bottom = cima + altoBinario,
+                cornerRadius = CornerRadius(altoBinario / 2f),
             ),
         )
     }
     clipPath(pista) {
         val passo = w / ORE
         for (i in 0 until ORE) {
+            val tinta = tinte.getOrNull(i) ?: palette.maniglia
             drawRect(
-                color = coloreOra(hours.getOrNull(i), palette),
-                topLeft = Offset(i * passo, cimaBinario),
+                color = if (tinta == Color.Transparent) palette.maniglia else tinta,
+                topLeft = Offset(i * passo, cima),
                 // Mezzo punto di sormonta: senza, fra una tessera e l'altra
                 // resta una fessura chiara dovuta all'arrotondamento dei bordi.
                 size = Size(passo + 0.5f, altoBinario),
@@ -243,20 +227,17 @@ private fun DrawScope.disegnaBarra(hours: List<HourForecast>, selected: Int, pal
         }
     }
 
-    // ── La maniglia ──────────────────────────────────────────────────────────
-    //
-    // E' l'unica cosa che dice "questo si prende". Un anello pieno con un centro
-    // chiaro - si stacca sia dalle tessere gialle sia da quelle blu scure, che
-    // un pallino di un colore solo non farebbe.
-    val x = selected.coerceIn(0, ORE - 1).toFloat() / (ORE - 1) * w
-    val cy = cimaBinario + altoBinario / 2f
-    val rManiglia = altoBinario * 0.92f
-    drawCircle(color = palette.ground, radius = rManiglia, center = Offset(x, cy))
+    // La maniglia: l'unica cosa che dice "questo si prende". Un disco pieno col
+    // colore del pannello e un anello d'accento dentro - si stacca sia dalle
+    // tessere chiare del mezzogiorno sia da quelle blu della notte, che un
+    // pallino di un colore solo non farebbe.
+    val x = (selected.toFloat() / (ORE - 1) * w).coerceIn(17.dp.toPx(), w - 17.dp.toPx())
+    val rManiglia = 17.dp.toPx()
+    drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))
     drawCircle(
-        color = palette.inkAccent,
-        radius = rManiglia,
+        color = palette.accent,
+        radius = 11.dp.toPx() - 2.5.dp.toPx(),
         center = Offset(x, cy),
-        style = Stroke(width = (rManiglia * 0.30f).coerceAtLeast(2f)),
+        style = Stroke(width = 5.dp.toPx()),
     )
-    drawCircle(color = palette.inkAccent, radius = rManiglia * 0.30f, center = Offset(x, cy))
 }
