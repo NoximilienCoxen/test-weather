@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import kotlin.math.PI
@@ -57,11 +59,23 @@ fun SalaCielo(
     faseLunare: Float,
     tempo: () -> Float,
     modifier: Modifier = Modifier,
+    /**
+     * Quanto scendere per stare sotto la barra di stato.
+     *
+     * La sfumatura e le colline no - quelle vanno da bordo a bordo e si
+     * appoggiano al fondo - ma **l'arco, il sole, la luna e le nuvole si'**: il
+     * prototipo li misura dentro la cornice dell'app, che li' comincia a zero e
+     * su un telefono vero comincia sotto la barra di stato. Senza questo la
+     * luna esce dietro la pastiglia degli avvisi, che e' esattamente dove il
+     * disegno **non** la mette.
+     */
+    insetAlto: Dp = 0.dp,
 ) {
     Canvas(modifier = modifier) {
         val t = tempo()
         val sx = size.width / RIF_L
         val sy = size.height / RIF_H
+        val dy = insetAlto.toPx()
 
         drawRect(brush = cieloBrush(stops))
 
@@ -74,9 +88,9 @@ fun SalaCielo(
             velo = scena.notte * (1f - scena.copertura * 0.72f),
         )
 
-        arcoDelCielo(sx, sy, palette, scena)
-        soleEluna(sx, sy, sky, scena, faseLunare, t)
-        nuvole(sx, sy, palette, scena, t)
+        arcoDelCielo(sx, sy, dy, palette, scena)
+        soleEluna(sx, sy, dy, sky, scena, faseLunare, t)
+        nuvole(sx, sy, dy, palette, scena, t)
         colline(sx, sy, palette)
         cioCheCade(scena, t)
 
@@ -100,14 +114,19 @@ private const val ARCO_R = 170f
  * si ridispone a ogni ricomposizione non e' un cielo, e' rumore.
  */
 private fun rnd(i: Int): Float {
-    val x = sin(i * 127.1f + 311.7f) * 43758.5453f
-    return x - floor(x)
+    // **In doppia precisione, e non e' un dettaglio.** `fract(sin(x) * 43758.5)`
+    // e' l'inganno piu' sensibile alla precisione che ci sia: con i `Float` il
+    // risultato non somiglia nemmeno da lontano a quello del prototipo, e le
+    // nuvole finiscono dove nessuno le ha viste. Il disordine deve essere lo
+    // **stesso** che il disegno mostrava, non un disordine qualsiasi.
+    val x = sin(i * 127.1 + 311.7) * 43758.5453
+    return (x - floor(x)).toFloat()
 }
 
 /** Il punto dell'arco a frazione [t], da 0 (sorge a sinistra) a 1 (cala a destra). */
-private fun arco(t: Float, sx: Float, sy: Float): Offset {
+private fun arco(t: Float, sx: Float, sy: Float, dy: Float): Offset {
     val a = PI.toFloat() * (1f - t.coerceIn(0f, 1f))
-    return Offset((ARCO_CX + ARCO_R * cos(a)) * sx, (ARCO_CY - ARCO_R * sin(a)) * sy)
+    return Offset((ARCO_CX + ARCO_R * cos(a)) * sx, (ARCO_CY - ARCO_R * sin(a)) * sy + dy)
 }
 
 /**
@@ -117,13 +136,13 @@ private fun arco(t: Float, sx: Float, sy: Float): Offset {
  * fronte non si vede da nessuna parte dove sia il sole, e disegnarne la strada
  * a piena forza sarebbe dire una cosa che il cielo non dice.
  */
-private fun DrawScope.arcoDelCielo(sx: Float, sy: Float, palette: SalaPalette, scena: Scena) {
+private fun DrawScope.arcoDelCielo(sx: Float, sy: Float, dy: Float, palette: SalaPalette, scena: Scena) {
     val forza = lerp(1f, 0.25f, scena.copertura) * (1f - scena.tempesta * 0.6f)
     if (forza <= 0.02f) return
     val strada = Path().apply {
         val passi = 48
         for (i in 0..passi) {
-            val p = arco(i / passi.toFloat(), sx, sy)
+            val p = arco(i / passi.toFloat(), sx, sy, dy)
             if (i == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y)
         }
     }
@@ -148,6 +167,7 @@ private fun DrawScope.arcoDelCielo(sx: Float, sy: Float, palette: SalaPalette, s
 private fun DrawScope.soleEluna(
     sx: Float,
     sy: Float,
+    dy: Float,
     sky: SkyState,
     scena: Scena,
     faseLunare: Float,
@@ -158,7 +178,7 @@ private fun DrawScope.soleEluna(
     val velo = (1f - scena.copertura * 0.92f).coerceIn(0f, 1f) * (1f - scena.neve * 0.8f)
     if (velo <= 0.01f) return
 
-    val posizione = arco(sky.journey, sx, sy)
+    val posizione = arco(sky.journey, sx, sy, dy)
 
     // Il respiro del prototipo (`animation:respiro`), ridotto a un soffio: una
     // pulsazione del sei per cento su otto secondi si legge come luce, non come
@@ -307,7 +327,7 @@ private val Nuvole: List<Nuvola> = List(5) { i ->
  * entrambe, con l'alfa **al quadrato** perche' la massa resti tenue finche' e'
  * piccola.
  */
-private fun DrawScope.nuvole(sx: Float, sy: Float, palette: SalaPalette, scena: Scena, tempo: Float) {
+private fun DrawScope.nuvole(sx: Float, sy: Float, dy: Float, palette: SalaPalette, scena: Scena, tempo: Float) {
     // Le cinque entrano in fila e non tutte insieme: con una soglia sola
     // comparirebbero nello stesso istante, che e' lo scatto di prima con una
     // rampa davanti.
@@ -332,13 +352,13 @@ private fun DrawScope.nuvole(sx: Float, sy: Float, palette: SalaPalette, scena: 
         val spostamento = sin(tempo * (2f * PI.toFloat() / n.deriva)) * 30f * sx
         val x = n.x * sx + spostamento
         // Il fondo della nuvola, da cui tutti i pezzi si misurano verso l'alto.
-        val fondo = n.y * sy + h
+        val fondo = n.y * sy + h + dy
 
-        fun tondo(d: Float, dx: Float, dy: Float, tinta: Color) {
+        fun tondo(d: Float, dx: Float, su: Float, tinta: Color) {
             drawCircle(
                 color = tinta,
                 radius = d / 2f,
-                center = Offset(x + dx + d / 2f, fondo - dy - d / 2f),
+                center = Offset(x + dx + d / 2f, fondo - su - d / 2f),
                 alpha = alfa,
             )
         }

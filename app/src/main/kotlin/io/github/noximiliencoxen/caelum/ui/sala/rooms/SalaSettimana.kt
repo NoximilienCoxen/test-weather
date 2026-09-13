@@ -164,7 +164,7 @@ private fun RiepilogoSettimana(
 
     val voci = listOf(
         Riquadro(
-            "PIOGGIA ATTESA",
+            "PIOGGIA",
             "${mm.virgola()} mm",
             SalaTokens.acquaChiara,
             SalaRoom.PIOGGIA,
@@ -180,14 +180,14 @@ private fun RiepilogoSettimana(
             SalaRoom.OGGI,
         ),
         Riquadro(
-            "VENTO MASSIMO",
+            "VENTO MAX",
             ventoMax?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
             SalaTokens.verde400,
             SalaRoom.VENTO,
         ),
         Riquadro(
             "PICCO UV",
-            uvMax?.let { "${it.virgola()} ${nomeUv(it)}" } ?: "--",
+            uvMax?.virgola() ?: "--",
             SalaTokens.accent500,
             SalaRoom.UV,
         ),
@@ -198,7 +198,7 @@ private fun RiepilogoSettimana(
             SalaRoom.LUNA,
         ),
         Riquadro(
-            "QUALITÀ DELL'ARIA",
+            "ARIA",
             aria?.let { "AQI $it" } ?: "--",
             SalaTokens.verde300,
             SalaRoom.ARIA,
@@ -278,56 +278,56 @@ private fun SchedaGiorno(
     palette: SalaPalette,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    // **Tutto in colonna, non in riga.** I quattro valori piu' alba e tramonto
+    // affiancati non stavano nella larghezza del pannello: l'ultimo finiva
+    // sotto il primo della colonna accanto, e un numero tagliato a meta' e'
+    // peggio di un numero assente. Alba e tramonto scendono sotto, dove non
+    // contendono spazio a niente - e sono di un'altra natura comunque: gli
+    // altri quattro sono quantita' che si confrontano fra giorni, questi due
+    // sono due istanti.
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(30.dp))
             .background(palette.chip)
             .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(text = giorno.esteso, style = SalaType.rowTitle, color = palette.ink)
-                Text(
-                    text = "${giorno.data} · ${giorno.tipo}",
-                    style = SalaType.rowNote,
-                    color = palette.inkFaint,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            Row(
-                modifier = Modifier.padding(top = 9.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                ValoreScheda(
-                    "MAX / MIN",
-                    "${giorno.max.gradi(state)} / ${giorno.min.gradi(state)}",
-                    palette,
-                )
-                ValoreScheda("PIOGGIA", "${(giorno.mm ?: 0.0).virgola()} mm", palette)
-                ValoreScheda(
-                    "VENTO",
-                    giorno.vento?.let { "${state.windUnit.from(it).roundToInt()}" } ?: "--",
-                    palette,
-                )
-                ValoreScheda("UV", giorno.uv?.virgola() ?: "--", palette)
-            }
-        }
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(text = giorno.esteso, style = SalaType.rowTitle, color = palette.ink)
             Text(
-                text = "alba ${giorno.alba?.format(OraMinuto) ?: "--:--"}",
-                style = SalaType.microLabel,
-                color = palette.inkSoft,
-            )
-            Text(
-                text = "tram. ${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
-                style = SalaType.microLabel,
-                color = palette.inkSoft,
+                text = "${giorno.data} · ${giorno.tipo.lowercase()}",
+                style = SalaType.rowNote,
+                color = palette.inkFaint,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            ValoreScheda(
+                "MAX / MIN",
+                "${giorno.max.gradi(state)} / ${giorno.min.gradi(state)}",
+                palette,
+                Modifier.weight(1.2f),
+            )
+            ValoreScheda("PIOGGIA", "${(giorno.mm ?: 0.0).virgola()} mm", palette, Modifier.weight(1f))
+            ValoreScheda(
+                "VENTO",
+                giorno.vento?.let { state.windUnit.from(it).roundToInt().toString() } ?: "--",
+                palette,
+                Modifier.weight(0.7f),
+            )
+            ValoreScheda("UV", giorno.uv?.virgola() ?: "--", palette, Modifier.weight(0.6f))
+        }
+        Text(
+            text = "alba ${giorno.alba?.format(OraMinuto) ?: "--:--"} · " +
+                "tramonto ${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
+            style = SalaType.microLabel,
+            color = palette.inkSoft,
+            modifier = Modifier.padding(top = 9.dp),
+        )
     }
 }
 
@@ -335,8 +335,13 @@ private fun Double?.gradi(state: UiState): String =
     this?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--"
 
 @Composable
-private fun ValoreScheda(etichetta: String, valore: String, palette: SalaPalette) {
-    Column {
+private fun ValoreScheda(
+    etichetta: String,
+    valore: String,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
         Text(text = etichetta, style = SalaType.microLabel, color = palette.inkFaint, maxLines = 1)
         Text(
             text = valore,

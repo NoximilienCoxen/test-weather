@@ -3462,7 +3462,21 @@ curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/actions/runs/
 curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/check-runs/<JOB_ID>/annotations"
 ```
 
-Un avvertimento sulla loro forma: **le annotazioni sono poche e sono le
+C'e' anche una via piu' corta, e la CI la scriveva gia' senza che nessuno la
+leggesse: il job salva le righe `e:` su `ci-artifacts`, in
+`compilazione/errori.txt`, **tutte** e non solo le ultime.
+
+```bash
+git fetch origin ci-artifacts
+git show FETCH_HEAD:compilazione/errori.txt
+git show FETCH_HEAD:compilazione/INFO.txt   # a quale commit e run appartengono
+```
+
+`INFO.txt` va guardato sempre: quel file resta fermo all'ultimo giro che ha
+**fallito**, quindi dopo un giro verde e' vecchio, e preso per buono manda a
+correggere errori gia' corretti.
+
+Un avvertimento sulla forma delle annotazioni: **sono poche e sono le
 ultime**. Un giro con venti errori ne mostra sei, quindi un secondo giro rosso
 subito dopo il primo non vuol dire che la correzione non e' servita - vuol dire
 che sotto ce n'erano altri. Conviene quindi **non** limitarsi a correggere cio'
