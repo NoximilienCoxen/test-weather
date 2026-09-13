@@ -1,7 +1,5 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,271 +7,343 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.data.DayForecast
-import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
-import io.github.noximiliencoxen.caelum.ui.asMillimetres
-import io.github.noximiliencoxen.caelum.ui.asPercent
-import io.github.noximiliencoxen.caelum.ui.asPlainDegrees
-import io.github.noximiliencoxen.caelum.ui.common.buildLinePath
+import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.ui.sala.GiornoSettimana
+import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-import io.github.noximiliencoxen.caelum.ui.sala.label
-import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
-import io.github.noximiliencoxen.caelum.ui.sala.weatherGlyph
+import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.roundToInt
 
-private val HourMinute: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+private val OraMinuto: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 /**
- * Sala II — La settimana: otto giorni in fila. Si tocca una colonna e il
- * cartellino sotto si apre sul posto, senza cambiare schermata — la stessa
- * regola per cui il giorno e' un asse che l'intera galleria condivide, non
- * uno schermo a parte.
+ * Sala II — La settimana.
+ *
+ * **Non ripete Sala I, la completa.** Le due si somigliavano troppo: entrambe
+ * mostravano sette colonne con massima e minima, e chi scorreva da una all'altra
+ * si chiedeva cosa fosse cambiato. Qui sopra ci sono sei riquadri che riassumono
+ * la settimana **intera** - pioggia attesa, escursione, vento, UV, luna, aria -
+ * e ognuno porta alla schermata che ne parla per esteso; in mezzo la scheda del
+ * giorno scelto con tutto cio' che la striscia non ha spazio di dire; sotto la
+ * stessa striscia di Sala I, coi millimetri in piu'.
+ *
+ * La selezione del giorno e' **condivisa**: si tocca qui e Sala I la segue, e
+ * viceversa. E' lo stesso asse, non due schermate che si assomigliano.
  */
 @Composable
 fun SalaSettimanaScreen(
     state: UiState,
     palette: SalaPalette,
-    position: () -> Float,
     viewModel: WeatherViewModel,
-    onPlaceClick: () -> Unit,
-    onMenuClick: () -> Unit,
-) {
-    val days = state.forecast?.days.orEmpty()
-    var open by rememberSaveable { mutableStateOf(false) }
-    val selected = state.selectedDay.coerceIn(0, (days.size - 1).coerceAtLeast(0))
-    val day = days.getOrNull(selected)
-
-    SalaRoomScaffold(
-        palette = palette,
-        room = SalaRoom.SETTIMANA,
-        placeName = state.place.name,
-        position = position,
-        onPlaceClick = onPlaceClick,
-        onMenuClick = onMenuClick,
-    ) { modifier ->
-        Column(modifier = modifier) {
-            Text(
-                text = "Otto giorni\nin successione",
-                style = SalaType.weekHeadline,
-                color = palette.ink,
-                modifier = Modifier.padding(top = 15.dp),
-            )
-
-            WeekChart(days = days, selected = selected, unit = state.unit, palette = palette, modifier = Modifier.padding(top = 15.dp))
-
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                days.forEachIndexed { index, d ->
-                    val cond = salaConditionOf(d.weatherCode)
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { viewModel.selectDay(index) }
-                            .background(
-                                if (index == selected) palette.ink.copy(alpha = 0.06f) else androidx.compose.ui.graphics.Color.Transparent,
-                                RoundedCornerShape(6.dp),
-                            )
-                            .padding(vertical = 6.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
-                    ) {
-                        // Piu' grandi, e il giorno scelto piu' degli altri: in
-                        // una striscia di otto la prima cosa che si cerca e'
-                        // "che tempo fa", e il glifo e' l'unico a poterlo dire.
-                        Canvas(modifier = Modifier.size(if (index == selected) 38.dp else 33.dp)) {
-                            weatherGlyph(cond, palette.buio)
-                        }
-                        Text(
-                            text = d.label,
-                            style = SalaType.hourLabel,
-                            color = if (index == selected) palette.ink else palette.inkSoft,
-                        )
-                        Text(text = d.tempMax.asPlainDegrees(state.unit), style = SalaType.value, color = palette.ink)
-                        Text(text = d.tempMin.asPlainDegrees(state.unit), style = SalaType.hourLabel, color = palette.inkSoft)
-                    }
-                }
-            }
-
-            Box(modifier = Modifier.weight(1f))
-
-            if (day != null) {
-                DayCard(day = day, open = open, palette = palette, onToggle = { open = !open })
-            }
-        }
-    }
-}
-
-@Composable
-private fun WeekChart(
-    days: List<DayForecast>,
-    selected: Int,
-    unit: TempUnit,
-    palette: SalaPalette,
+    onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val misure = SalaType.hourLabel
-    val disegnatore = rememberTextMeasurer()
-    Canvas(modifier = modifier.fillMaxWidth().height(150.dp)) {
-        if (days.isEmpty()) return@Canvas
-        val maxes = days.map { it.tempMax }
-        val mins = days.map { it.tempMin }
-        val validi = (maxes + mins).filterNotNull()
-        if (validi.isEmpty()) return@Canvas
+    val settimana = remember(state.forecast) { settimanaDi(state.forecast) }
+    val scelto = settimana.getOrNull(state.selectedDay)
 
-        // La scala si prende dai dati veri, con un margine sopra e sotto per
-        // non far toccare le etichette al bordo.
-        val lo = validi.min() - 1.5
-        val hi = validi.max() + 1.5
-        val span = (hi - lo).takeIf { it > 0.01 } ?: 1.0
+    PannelloSala(palette = palette, modifier = modifier) {
+        Text(text = "La settimana", style = SalaType.cardTitle, color = palette.ink)
+        Text(
+            text = remember(settimana, state.unit) { sommarioDella(settimana, state) },
+            style = SalaType.footnote,
+            color = palette.inkSoft,
+            modifier = Modifier.padding(top = 6.dp),
+        )
 
-        val altoTesti = 22f
-        val bassoTesti = 22f
-        val utile = size.height - altoTesti - bassoTesti
-        fun y(v: Double) = altoTesti + (1.0 - (v - lo) / span).toFloat() * utile
-        fun x(i: Int) = (i + 0.5f) / days.size * size.width
+        RiepilogoSettimana(
+            settimana = settimana,
+            state = state,
+            palette = palette,
+            onVai = onVai,
+            modifier = Modifier.padding(top = 13.dp),
+        )
 
-        // ── La banda: e' lei il dato ─────────────────────────────────────────
-        // Due linee nude dicevano soltanto "una sta sopra l'altra". Quello che
-        // conta di un giorno e' **l'escursione**: quanto si passa dal minimo al
-        // massimo. Riempita, la si legge senza doverla ricostruire con gli
-        // occhi, e il giorno piu' sbalzato salta fuori da solo.
-        days.indices.forEach { i ->
-            val ma = maxes[i] ?: return@forEach
-            val mi = mins[i] ?: return@forEach
-            val larghezza = size.width / days.size * 0.30f
-            drawRoundRect(
-                color = palette.inkAccent.copy(alpha = if (i == selected) 0.34f else 0.16f),
-                topLeft = Offset(x(i) - larghezza / 2f, y(ma)),
-                size = Size(larghezza, (y(mi) - y(ma)).coerceAtLeast(2f)),
-                cornerRadius = CornerRadius(larghezza / 2f),
+        if (scelto != null) {
+            SchedaGiorno(
+                giorno = scelto,
+                state = state,
+                palette = palette,
+                modifier = Modifier.padding(top = 12.dp),
             )
         }
 
-        // Le due linee restano, ma sopra la banda e piu' sottili: dicono
-        // l'andamento della settimana, che la banda da sola non racconta.
-        val puntiMax = days.indices.mapNotNull { i -> maxes[i]?.let { Offset(x(i), y(it)) } }
-        val puntiMin = days.indices.mapNotNull { i -> mins[i]?.let { Offset(x(i), y(it)) } }
-        if (puntiMax.size > 1) {
-            drawPath(buildLinePath(puntiMax), color = SalaTokens.accent2_500, style = Stroke(width = 2.2f))
-        }
-        if (puntiMin.size > 1) {
-            drawPath(buildLinePath(puntiMin), color = palette.inkAccent, style = Stroke(width = 2.2f))
-        }
-
-        // ── I numeri, che erano quello che mancava ───────────────────────────
-        days.indices.forEach { i ->
-            val ma = maxes[i]
-            val mi = mins[i]
-            val scelto = i == selected
-            if (ma != null) {
-                val testo = "${unit.from(ma).roundToInt()}°"
-                val m = disegnatore.measure(testo, misure)
-                drawText(
-                    textLayoutResult = m,
-                    color = if (scelto) palette.ink else palette.inkSoft,
-                    topLeft = Offset(x(i) - m.size.width / 2f, y(ma) - m.size.height - 3f),
-                )
-            }
-            if (mi != null) {
-                val testo = "${unit.from(mi).roundToInt()}°"
-                val m = disegnatore.measure(testo, misure)
-                drawText(
-                    textLayoutResult = m,
-                    color = if (scelto) palette.ink else palette.inkSoft,
-                    topLeft = Offset(x(i) - m.size.width / 2f, y(mi) + 3f),
-                )
-            }
-            if (scelto) {
-                // Il giorno scelto ha un filo verticale che lo lega alla
-                // striscia sotto: senza, la selezione si vedeva solo da un
-                // pallino piu' grosso, che non e' un legame.
-                drawLine(
-                    color = palette.inkAccent.copy(alpha = 0.45f),
-                    start = Offset(x(i), altoTesti - 6f),
-                    end = Offset(x(i), size.height - bassoTesti + 6f),
-                    strokeWidth = 1.2f,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DayCard(day: DayForecast, open: Boolean, palette: SalaPalette, onToggle: () -> Unit) {
-    val cond = salaConditionOf(day.weatherCode)
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onToggle)
-            .animateContentSize()
-            .padding(bottom = 15.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 15.dp, bottom = 9.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = day.label + " · " + Wmo.condition(day.weatherCode).lowercase(), style = SalaType.cardTitle, color = palette.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(text = if (open) "︿" else "﹀", style = SalaType.cardTitle, color = palette.inkAccent)
+            Text(text = "TOCCA UN GIORNO", style = SalaType.sectionLabel, color = palette.inkFaint)
+            Text(text = "MAX · MIN · MM", style = SalaType.sectionLabel, color = palette.inkFaint)
         }
-        Text(
-            text = "Massima ${day.tempMax?.roundToInt() ?: "--"}° · minima ${day.tempMin?.roundToInt() ?: "--"}° · ${cond.label()}",
-            style = SalaType.sectionLabel,
-            color = palette.inkAccent,
+
+        StrisciaGiorni(
+            settimana = settimana,
+            scelto = state.selectedDay,
+            state = state,
+            palette = palette,
+            onScegli = viewModel::selectDay,
+            conMillimetri = true,
         )
-        if (open) {
-            val rows = listOf(
-                "PIOGGIA" to day.precipitationSum.asMillimetres(),
-                "PROBABILITA'" to day.precipProbability.asPercent(),
-                "VENTO" to (
-                    day.windMax?.let {
-                        val kmh = io.github.noximiliencoxen.caelum.prefs.SalaWindUnit.KMH.from(it).roundToInt()
-                        "$kmh km/h ${Wmo.windDirection(day.windDirection)}"
-                    } ?: "--"
-                    ),
-                "ALBA · TRAMONTO" to (
-                    "${day.sunrise?.format(HourMinute) ?: "--"} · ${day.sunset?.format(HourMinute) ?: "--"}"
-                    ),
-                "UV MASSIMO" to (day.uvMax?.roundToInt()?.toString() ?: "--"),
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                rows.forEach { (k, v) ->
-                    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(text = k, style = SalaType.hourLabel, color = palette.inkSoft, modifier = Modifier.width(104.dp))
-                        Box(modifier = Modifier.weight(1f).height(1.dp).background(palette.inkFaint))
-                        Text(text = v, style = SalaType.value, color = palette.ink)
+    }
+}
+
+/**
+ * La settimana in una riga, **dai dati e non da una frase scritta a mano**.
+ *
+ * Il prototipo aveva una frase fissa ("un fronte da ovest da mercoledi'") che
+ * descriveva una settimana inventata. Una frase del genere in un'app vera e'
+ * una previsione senza fonte: qui si dice solo cio' che i numeri dicono.
+ */
+private fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): String {
+    if (settimana.isEmpty()) return "Previsione non ancora disponibile."
+    val bagnati = settimana.count { (it.mm ?: 0.0) > 0.05 }
+    val mm = settimana.sumOf { it.mm ?: 0.0 }
+    val minime = settimana.mapNotNull { it.min }
+    val massime = settimana.mapNotNull { it.max }
+    val escursione = if (minime.isNotEmpty() && massime.isNotEmpty()) {
+        val lo = state.unit.from(minime.min()).roundToInt()
+        val hi = state.unit.from(massime.max()).roundToInt()
+        "escursione fra $lo° e $hi°"
+    } else {
+        null
+    }
+    val pioggia = when {
+        bagnati == 0 -> "Sette giorni asciutti"
+        bagnati == 1 -> "Un giorno con precipitazioni, ${mm.virgola()} mm attesi"
+        else -> "$bagnati giorni con precipitazioni, ${mm.virgola()} mm attesi"
+    }
+    return listOfNotNull(pioggia, escursione).joinToString(", ") + "."
+}
+
+private fun Double.virgola(): String = String.format(Locale.ITALY, "%.1f", this)
+
+/**
+ * I sei riquadri di riepilogo, e dove portano.
+ *
+ * **Ognuno e' una porta.** Un numero che riassume la settimana e' utile finche'
+ * non si vuole sapere di piu', e a quel punto la domanda successiva e' sempre la
+ * stessa: "dove lo vedo per esteso?". Toccando il riquadro ci si arriva, invece
+ * di tornare indietro a cercare la schermata giusta nella colonna.
+ */
+@Composable
+private fun RiepilogoSettimana(
+    settimana: List<GiornoSettimana>,
+    state: UiState,
+    palette: SalaPalette,
+    onVai: (SalaRoom) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val mm = settimana.sumOf { it.mm ?: 0.0 }
+    val minime = settimana.mapNotNull { it.min }
+    val massime = settimana.mapNotNull { it.max }
+    val ventoMax = settimana.mapNotNull { it.vento }.maxOrNull()
+    val uvMax = settimana.mapNotNull { it.uv }.maxOrNull()
+    val luna = MoonPhase.illumination(MoonPhase.at(LocalDate.now()))
+    val aria = state.air?.index
+
+    val voci = listOf(
+        Riquadro(
+            "PIOGGIA ATTESA",
+            "${mm.virgola()} mm",
+            SalaTokens.acquaChiara,
+            SalaRoom.PIOGGIA,
+        ),
+        Riquadro(
+            "ESCURSIONE",
+            if (minime.isNotEmpty() && massime.isNotEmpty()) {
+                "${state.unit.from(minime.min()).roundToInt()}° – ${state.unit.from(massime.max()).roundToInt()}°"
+            } else {
+                "--"
+            },
+            SalaTokens.accent400,
+            SalaRoom.OGGI,
+        ),
+        Riquadro(
+            "VENTO MASSIMO",
+            ventoMax?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
+            SalaTokens.verde400,
+            SalaRoom.VENTO,
+        ),
+        Riquadro(
+            "PICCO UV",
+            uvMax?.let { "${it.virgola()} ${nomeUv(it)}" } ?: "--",
+            SalaTokens.accent500,
+            SalaRoom.UV,
+        ),
+        Riquadro(
+            "LUNA",
+            "${(luna * 100f).roundToInt()} %",
+            SalaTokens.neutral300,
+            SalaRoom.LUNA,
+        ),
+        Riquadro(
+            "QUALITÀ DELL'ARIA",
+            aria?.let { "AQI $it" } ?: "--",
+            SalaTokens.verde300,
+            SalaRoom.ARIA,
+        ),
+    )
+
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        voci.chunked(2).forEach { riga ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                riga.forEach { voce ->
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(26.dp))
+                            .background(palette.chip)
+                            .clickable { onVai(voce.sala) }
+                            .padding(horizontal = 13.dp, vertical = 11.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        Box(modifier = Modifier.size(26.dp).clip(CircleShape).background(voce.tinta))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = voce.nome,
+                                style = SalaType.microLabel,
+                                color = palette.inkFaint,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            // **Una riga sola, e l'unita' nel valore.** Su due
+                            // righe i sei riquadri uscivano di altezze diverse,
+                            // e sei cose che dicono la stessa cosa devono avere
+                            // la stessa forma.
+                            Text(
+                                text = voce.valore,
+                                style = SalaType.rowTitle,
+                                color = palette.ink,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(top = 3.dp),
+                            )
+                        }
+                        Text(text = "›", style = SalaType.rowTitle, color = palette.accent)
                     }
                 }
             }
         }
+    }
+}
+
+private data class Riquadro(
+    val nome: String,
+    val valore: String,
+    val tinta: Color,
+    val sala: SalaRoom,
+)
+
+private fun nomeUv(valore: Double): String = when {
+    valore >= 8 -> "molto alto"
+    valore >= 6 -> "alto"
+    valore >= 3 -> "moderato"
+    valore > 0 -> "basso"
+    else -> "assente"
+}
+
+/**
+ * La scheda del giorno scelto: quello che la striscia non ha spazio di dire.
+ *
+ * Alba e tramonto stanno a destra e non fra i valori perche' sono di un'altra
+ * natura: gli altri quattro sono quantita' che si confrontano fra giorni, questi
+ * due sono due istanti.
+ */
+@Composable
+private fun SchedaGiorno(
+    giorno: GiornoSettimana,
+    state: UiState,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(30.dp))
+            .background(palette.chip)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(text = giorno.esteso, style = SalaType.rowTitle, color = palette.ink)
+                Text(
+                    text = "${giorno.data} · ${giorno.tipo}",
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Row(
+                modifier = Modifier.padding(top = 9.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                ValoreScheda(
+                    "MAX / MIN",
+                    "${giorno.max.gradi(state)} / ${giorno.min.gradi(state)}",
+                    palette,
+                )
+                ValoreScheda("PIOGGIA", "${(giorno.mm ?: 0.0).virgola()} mm", palette)
+                ValoreScheda(
+                    "VENTO",
+                    giorno.vento?.let { "${state.windUnit.from(it).roundToInt()}" } ?: "--",
+                    palette,
+                )
+                ValoreScheda("UV", giorno.uv?.virgola() ?: "--", palette)
+            }
+        }
+        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            Text(
+                text = "alba ${giorno.alba?.format(OraMinuto) ?: "--:--"}",
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+            )
+            Text(
+                text = "tram. ${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+            )
+        }
+    }
+}
+
+private fun Double?.gradi(state: UiState): String =
+    this?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--"
+
+@Composable
+private fun ValoreScheda(etichetta: String, valore: String, palette: SalaPalette) {
+    Column {
+        Text(text = etichetta, style = SalaType.microLabel, color = palette.inkFaint, maxLines = 1)
+        Text(
+            text = valore,
+            style = SalaType.giornoMax,
+            color = palette.ink,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 2.dp),
+        )
     }
 }

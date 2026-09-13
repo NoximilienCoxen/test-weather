@@ -3251,3 +3251,196 @@ nato, e `Scena.Ferma`.
 vale solo finche' l'albero di riferimento compila, e va rifatta dopo ogni merge.
 Nel giro di oggi lo script ha preso sei import mancanti di `Didascalia` prima
 che partisse la CI — che e' precisamente il lavoro per cui esiste.
+
+---
+
+## 13. Organic: il cielo al posto della carta
+
+Tredicesimo giro, e il piu' largo dopo Sala. Viene da un secondo passaggio di
+Claude Design — chat *"App meteo a tema organico"*, direzione **Oggi-1c**
+scelta dall'utente — consegnato come bundle di handoff con `Caelum.dc.html`,
+i transcript e il design system **Organic** (`_ds/organic-*`).
+
+**Non e' un restyling sopra Sala: e' il suo contrario.** Sala aveva sostituito
+il cielo con una **carta** che scuriva a scatti, con tre macchie d'acquerello
+sopra: il fondo era una pagina, e una pagina appartiene a chi la scrive, quindi
+ogni sala si disegnava la propria. Qui il fondo **e' il tempo** — sfumatura del
+cielo, arco del sole, nuvole, colline, cio' che cade — ed e' uno solo per tutte
+e sette: scorrendo il carosello non ricomincia, **resta**, e i pannelli gli
+passano davanti. Da questa sola frase discende tutto il resto della passata.
+
+### Cosa e' salito nella Shell
+
+`SalaShell.kt` non e' piu' solo un carosello. Dentro ci sono adesso il cielo
+(`SalaCielo.kt`), l'intestazione con gli avvisi, la colonna delle scorciatoie,
+la barra delle ore e i sette trattini del percorso. Le sale sono diventate
+**pannelli**: ricevono una tavolozza gia' animata e disegnano il proprio
+contenuto, senza sapere che esista una molla.
+
+Ne segue la regola che vale da qui in avanti: **le animazioni vivono in un
+posto solo**. Cambiare il modo in cui un colore passa non apre sette file.
+
+### La tavolozza: `SalaTheme.kt`
+
+I token Broadsheet — ciano, magenta, giallo di quadricromia — sono usciti
+interi, sostituiti da quelli di Organic copiati dal suo `styles.css`: fondo
+sabbia, inchiostro `#2e2b25`, accento **terracotta** `#b2622d` (pesca `#ffc6a5`
+sul tema scuro), verde salvia come secondo accento. Il blu di pioggia, chicchi
+e fiocchi **non e' un token di Organic**: e' un'aggiunta dichiarata, tenuta in
+`SalaTokens` con un commento che dice che lo e', perche' non lo si scambi per
+sistema.
+
+I caratteri sono due, come nel sistema: **Caprasimo** per titoli e numeri
+grandi, **Figtree** per tutto il resto — quattro pesi statici scaricati dalla
+CSS2 API e verificati per firma SFNT (`\x00\x01\x00\x00`), non per resa. Source
+Serif 4 e' uscito con la carta.
+
+Le tabelle del cielo (`CieloNotte/Alba/Giorno/Tramonto`, cinque gradi di
+chiusura per quattro fasi, piu' `CieloNeve`) sono il **porting uno a uno** di
+`SKY` nel prototipo: tarate a mano colonna per colonna, e non vanno
+"semplificate" in una formula.
+
+**Due interpolazioni diverse, come prima e per lo stesso motivo.** La fase resta
+continua (`faseContinua`): alle cinque e mezza il cielo *e'* mezza alba, e con
+un cursore su cui ci si puo' parcheggiare deve sembrarlo anche stando fermi li'.
+La chiusura del cielo invece **e' diventata continua adesso**: il prototipo ha
+nove voci con `liv` intero, noi abbiamo la nuvolosita' oraria vera, e
+`livelloCielo` la porta sulla stessa scala 0..4 senza buttarla in cinque
+caselle. Il fronte del temporale resta uno scalino dichiarato: un temporale e'
+un fronte, non una nuvolosita' piu' alta.
+
+#### `temaScuro` ha cambiato guidatore, e **non** forma
+
+Questo e' il punto da leggere prima di toccare quel file.
+
+Lo scalino (da 0,21 a 0,62) **non si tocca**: non e' una scelta di resa, e' una
+garanzia sull'insieme degli stati raggiungibili — nessun cielo porta
+l'interfaccia nella fascia in cui ne' l'inchiostro scuro ne' quello chiaro
+reggono il fondo. La cura non e' appianarlo, e' **attraversarlo nel tempo**: il
+bersaglio della molla sta sempre fuori dalla fascia.
+
+Cio' che e' cambiato e' **cosa lo guida**. Prima era `dayness`, che si accende
+molto prima che il sole spunti: sulla carta andava bene. Il cielo dell'alba del
+prototipo pero' e' un viola scuro con una fascia arancione, e li' l'inchiostro
+scuro sparisce. Adesso guida quanto e' **giorno pieno** — lo stesso smoothstep
+che decide la fase GIORNO — cosi' alba e tramonto stanno col tema scuro, come
+dice `chiaroScuro` nel prototipo.
+
+Accanto c'e' una seconda porta allo scuro: `temaScuroPerTempesta`. Sotto un
+fronte il cielo e' plumbeo a ogni ora. **E' una soglia netta e non una rampa,
+apposta**: un bersaglio a meta' strada cadrebbe dentro la fascia illeggibile che
+lo scalino esiste per saltare.
+
+### Il cielo: `SalaCielo.kt`
+
+Tutto misurato nel sistema del prototipo, 411 x 914. Le **posizioni** si
+riscalano sui due assi separatamente; i **diametri** seguono la sola larghezza,
+perche' un disco riscalato su due assi diversi non e' piu' un disco.
+
+- **Il sole cambia colore con l'altezza**, ora per ora: arancione bruciato
+  all'orizzonte, giallo acceso allo zenit, con l'alone che passa da pesca a
+  giallo chiaro. Era la prima delle richieste, ed e' la cosa che un `if (alba)`
+  non sa dire.
+- **Le nuvole sono rifatte da zero**: corpo a pillola col fondo piatto, tre
+  gonfiori, un tocco di luce in alto, un'ombra sotto. Niente sfocatura. Le
+  cinque masse entrano **in fila** al crescere della copertura, con scala **e**
+  alfa al quadrato: con la sola opacita' compare un fantasma a grandezza piena,
+  con la sola scala un punto pienamente opaco che si gonfia.
+- **La luna e' la fase vera di stanotte**, la stessa di Sala IV e dei widget: il
+  prototipo aveva una gibbosa al 74% scritta a mano. Le sue tinte sono fisse nei
+  due temi — lezione gia' pagata: un corpo celeste non ha il colore
+  dell'inchiostro della pagina che lo mostra.
+- **Pioggia, grandine e neve non si mescolano, si sovrappongono**, e usano le
+  corsie di `Corsie` — **le stesse che decidono le vibrazioni**. Un contatore
+  suo andrebbe in fase per un po' e poi scivolerebbe.
+- Le colline e i tre alberi sono la sola cosa ferma: senza, il sole e la pioggia
+  galleggiano in un fondale.
+
+### L'eccezione dei zero fotogrammi si e' allargata, ed e' dichiarata
+
+Prima si muoveva la sola Sala I. Adesso il cielo sta dietro tutte e sette,
+quindi quando si muove si muove **sempre**. E' il prezzo della direzione scelta:
+un cielo fermo non e' un cielo, e' uno sfondo. `SettingsPrefs.animazioniRidotte`
+la spegne, e con lei le vibrazioni; `animazioniIstantanee` la congela per gli
+scatti della CI, che restano riproducibili byte per byte.
+
+### Cosa il prototipo dice e l'app non ripete
+
+Tre bugie del disegno non sono state portate, e vanno lasciate fuori:
+
+1. **Sorge e cala della luna** ("17:12", "04:38"): Open-Meteo, nei dati che
+   questa applicazione chiede, non li porta. Al loro posto tre numeri veri —
+   illuminata, eta', prossima piena.
+2. **I pollini** di Sala V: non stanno nell'endpoint base. Restano i quattro
+   inquinanti veri.
+3. **La frase che riassume la settimana** ("un fronte da ovest da mercoledi'"):
+   nel prototipo e' scritta a mano e descrive una settimana inventata. Qui e'
+   calcolata dai giorni veri — quanti bagnati, quanti millimetri, che escursione.
+
+Stessa regola delle citazioni verificate: **una cosa inventata che sembra un
+dato e' peggio di un dato mancante**, perche' e' piu' difficile da smentire.
+
+### Le parole, e i commenti di Kris
+
+"Sala" resta il nome **nel codice** e nel numero romano che serve alla galleria
+della CI. **Non si scrive piu' a schermo**: chi guarda non chiama queste
+schermate "sale", e non deve impararlo per usarle. Quindi l'intestazione non
+dice piu' "SALA I / VII", il collegamento di Sala I dice "apri la settimana", e
+il benvenuto si intitola "Il cielo, ora per ora" con il pulsante "Trovami".
+
+Al posto della fase del giorno — "GIORNO", "NOTTE", cioe' l'unica cosa che
+chiunque sa gia' guardando fuori — l'intestazione mostra gli **avvisi**, filtrati
+sull'ora scorsa sulla barra. "Allerta" resta una parola che spetta a un ente: un
+avviso calcolato sulle soglie dice "avviso".
+
+Le **localita'** sono uscite dalla colonna sul fianco e sono entrate nelle
+impostazioni: cambiare citta' non e' spostarsi fra le schermate del tempo, e una
+fila di sette icone piu' due intruse non e' piu' una fila.
+
+### Codice uscito, e dove ritrovarlo
+
+Cancellati perche' il cielo nuovo li sostituisce per intero — restano nella
+cronologia (`git show`), come il feed prima di loro:
+
+| File | Cosa era |
+| --- | --- |
+| `ui/sala/SalaScaffold.kt` | cornice, intestazione "SALA N / VII", indicatore |
+| `ui/sala/SalaBackground.kt` | carta, macchie d'acquerello, velo |
+| `ui/sala/SalaAcquerello.kt` | grana della carta, timbri, **la scultura** |
+| `ui/sala/SalaGlyph.kt` | i glifi del tempo della vecchia striscia |
+| `ui/sala/SalaGiro.kt` | la molla del giro: girava la scultura, che non c'e' piu' |
+| `ui/welcome/Citazioni.kt` | le tre frasi d'artista verificate una per una |
+
+Da `SalaVita.kt` sono usciti `caduta`, `uccelli`, `pulviscolo`, `riverbero` e
+`fulmine`: li chiamava solo la scultura. Restano — e sono il pezzo che il cielo
+nuovo riusa — `rememberTempoScena`, `cieloStellato`, `Corsie`, `Caduta`,
+`forzaLampo` e `inMezzo`. `Scena` e `scenaBersaglio` sono passati in
+`SalaScena.kt`, che e' cio' che erano gia': un modello, non un disegno.
+
+**`Citazioni.kt` merita una riga a parte.** Le tre frasi erano verificate contro
+la fonte primaria, una per una, e due attribuzioni diffuse erano state escluse
+apposta perche' non si risaliva a un originale. E' uscito lo stesso: una
+citazione in apertura chiede di **leggere** prima di guardare, e quella
+schermata esiste per il contrario. Chi volesse rimetterla altrove trova il
+lavoro gia' fatto in `git show`.
+
+### Cosa non e' stato provato, e non poteva esserlo
+
+Stessa nota di ogni passata scritta da questo container: **niente SDK Android
+qui**, quindi ne' `lintDebug` ne' `assembleDebug` sono partiti. Tutto cio' che e'
+Compose lo compila **solo** la CI. `scripts/import_audit.py` e' passato pulito
+sull'intero albero (restano quattro segnalazioni che sono il buco noto dello
+script: chiamate a membri che sembrano estensioni).
+
+Da guardare per primi, in mano, appena la CI e' verde:
+
+- che le colline e i tre alberi cadano dove devono su un telefono che non sia
+  411 x 914 — le posizioni si riscalano sui due assi, e li' e' dove si vedra';
+- il costo per fotogramma del cielo **mentre si scorre il carosello**: adesso
+  disegna sempre, sotto tutte e sette le schermate;
+- che la barra delle ore non rubi il gesto al carosello verticale (trappola #5,
+  di nuovo: e' lo stesso punto esposto che il feed aveva gia' pagato);
+- che il tema scuro col nuovo guidatore regga davvero all'alba e al tramonto,
+  che sono le due ore in cui e' cambiato;
+- se le due icone PNG dell'utente (aria, vento) si leggono a 19-20 punti una
+  volta tinte dal tema.

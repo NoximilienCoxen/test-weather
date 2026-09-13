@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,9 +27,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
-import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.SalaShell
-import io.github.noximiliencoxen.caelum.ui.sala.rememberAcquerello
 import io.github.noximiliencoxen.caelum.ui.welcome.WelcomeScreen
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
 import io.github.noximiliencoxen.caelum.ui.theme.relativeLuminance
@@ -132,31 +129,32 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             )
 
             // Al primo avvio l'app chiede dove sei, invece di dare per scontato
-            // un posto che nessuno ha scelto. Sala non entra in scena finche'
-            // il benvenuto non ha finito: non c'e' ancora niente da raccontare.
-            // I timbri dell'acquerello si caricano **qui, sopra al bivio**: li
-            // usano sia l'Ingresso sia le sette sale, e sotto ci sono sette
-            // composizioni separate che altrimenti decodificherebbero sette
-            // volte le stesse immagini.
-            CompositionLocalProvider(LocalAcquerello provides rememberAcquerello()) {
-                if (!state.welcomed) {
-                    WelcomeScreen(
-                        state = state,
-                        onFindMe = viewModel::useDeviceLocation,
-                        onChooseByHand = {
-                            viewModel.dismissWelcome()
-                            viewModel.openSettings()
-                        },
-                        onDone = viewModel::dismissWelcome,
-                    )
-                } else {
-                    SalaShell(
-                        state = state,
-                        sky = sky,
-                        viewModel = viewModel,
-                        widthPx = widthPx,
-                    )
-                }
+            // un posto che nessuno ha scelto. La galleria non entra in scena
+            // finche' il benvenuto non ha finito: non c'e' ancora niente da
+            // raccontare.
+            //
+            // **I timbri dell'acquerello non si caricano piu'.** Servivano alla
+            // carta e alla scultura del tema precedente; il cielo di Organic e'
+            // fatto di sfumature e forme piene, e decodificare sette immagini
+            // per una grana che nessuno disegna piu' era il costo di una cosa
+            // che non si vede.
+            if (!state.welcomed) {
+                WelcomeScreen(
+                    state = state,
+                    onFindMe = viewModel::useDeviceLocation,
+                    onChooseByHand = {
+                        viewModel.dismissWelcome()
+                        viewModel.openLocations()
+                    },
+                    onDone = viewModel::dismissWelcome,
+                )
+            } else {
+                SalaShell(
+                    state = state,
+                    sky = sky,
+                    viewModel = viewModel,
+                    widthPx = widthPx,
+                )
             }
         }
     }
