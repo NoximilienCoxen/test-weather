@@ -170,7 +170,7 @@ private fun RiepilogoSettimana(
             SalaRoom.PIOGGIA,
         ),
         Riquadro(
-            "ESCURSIONE",
+            "MIN-MAX",
             if (minime.isNotEmpty() && massime.isNotEmpty()) {
                 "${state.unit.from(minime.min()).roundToInt()}° – ${state.unit.from(massime.max()).roundToInt()}°"
             } else {
@@ -180,7 +180,7 @@ private fun RiepilogoSettimana(
             SalaRoom.OGGI,
         ),
         Riquadro(
-            "VENTO MAX",
+            "VENTO",
             ventoMax?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
             SalaTokens.verde400,
             SalaRoom.VENTO,
@@ -249,6 +249,15 @@ private fun RiepilogoSettimana(
     }
 }
 
+/**
+ * Un riquadro del riepilogo.
+ *
+ * **I nomi sono corti per forza, non per gusto.** La cella e' meta' pannello
+ * meno l'icona, la freccia e i margini: restano una sessantina di punti, cioe'
+ * otto caratteri a questo corpo. "ESCURSIONE" e "VENTO MASSIMO" ci uscivano
+ * troncati con i puntini, che e' il modo peggiore di dire una parola - si legge
+ * come un guasto. Il valore sotto dice comunque di cosa si tratta.
+ */
 private data class Riquadro(
     val nome: String,
     val valore: String,
