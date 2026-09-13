@@ -117,5 +117,5 @@ val LocalDidascalie = compositionLocalOf { CaptionStyle.COMPLETE }
 @Composable
 fun Didascalia(testo: String, palette: SalaPalette, modifier: Modifier = Modifier) {
     if (LocalDidascalie.current == CaptionStyle.BREVI) return
-    Text(text = testo, style = SalaType.body, color = palette.ink, modifier = modifier)
+    Text(text = testo, style = SalaType.body, color = palette.inkSoft, modifier = modifier)
 }
