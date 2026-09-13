@@ -9,55 +9,54 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.LaunchedEffect
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
-import io.github.noximiliencoxen.caelum.ui.sala.LocalAcquerello
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-import io.github.noximiliencoxen.caelum.ui.sala.granaDiCarta
 import kotlinx.coroutines.delay
 
+/** Quanto resta in scena dopo aver trovato il posto, prima di cedere il passo. */
 private const val HANDOVER_MS = 900L
 
 /**
- * L'Ingresso: la prima sala, quella che si attraversa una volta sola.
+ * Il benvenuto: un cielo, una frase, e una sola cosa da fare.
  *
- * **Il mappamondo non c'e' piu'.** Girava, si fermava sulla longitudine di
- * casa e ci piantava uno spillo: era il pezzo piu' ingegnoso della vecchia
- * schermata, ed e' uscito perche' raccontava la cosa sbagliata. Caelum adesso
- * e' una galleria, e una galleria non si apre con un globo che cerca: si apre
- * con una parete, un cartellino e una frase. Il codice resta nella cronologia
- * (`ui/render3d/Bodies.kt::globe` e' ancora li', lo usano i widget).
+ * **Non si chiama piu' "Sette sale, un cielo".** Chi guarda non chiama queste
+ * schermate "sale" - e' un nome buono per il codice, non per chi legge - e il
+ * titolo lo diceva prima ancora che l'app avesse mostrato qualcosa. Adesso dice
+ * cosa fa: il cielo, ora per ora.
  *
- * La frase e' **di un artista vero e verificata** (vedi `Citazioni.kt`), e
- * cambia a ogni primo avvio. Si sceglie una volta sola, in `remember`: pescarla
- * a ogni ricomposizione la farebbe cambiare sotto gli occhi di chi legge.
+ * **La frase dell'artista e' uscita di scena.** Era verificata e attribuita con
+ * cura, ed e' uscita lo stesso: una citazione in apertura chiede di leggere
+ * prima di guardare, e questa schermata esiste per il contrario. Il file
+ * `Citazioni.kt` e' uscito con lei; resta nella cronologia (`git show`) per chi
+ * volesse rimetterla altrove, con le fonti gia' controllate una per una.
  */
 @Composable
 fun WelcomeScreen(
@@ -67,12 +66,9 @@ fun WelcomeScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val acquerello = LocalAcquerello.current
-    val citazione = remember { citazioneACaso() }
-
-    val askPermission = rememberLauncherForActivityResult(
+    val chiediPermesso = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { granted -> if (granted) onFindMe() else onChooseByHand() }
+    ) { concesso -> if (concesso) onFindMe() else onChooseByHand() }
 
     // Trovato il posto, un attimo per farlo vedere e la schermata cede il passo.
     LaunchedEffect(state.followsLocation) {
@@ -82,145 +78,147 @@ fun WelcomeScreen(
         }
     }
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(SalaTokens.bg)
-            .drawBehind {
-                granaDiCarta(acquerello, forza = 0.09f)
-                lavaggiDIngresso()
-            },
+            .background(Color(0xFFF4ECE0))
+            .systemBarsPadding()
+            .padding(start = 30.dp, end = 30.dp, top = 26.dp, bottom = 34.dp),
     ) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(210.dp)) { cieloDIngresso() }
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .padding(start = 30.dp, end = 30.dp, top = 40.dp, bottom = 30.dp),
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Bottom,
         ) {
             Text(
-                text = "CAELUM",
-                style = SalaType.roomLabel,
-                color = SalaTokens.text,
+                text = "Il cielo,\nora per ora",
+                style = SalaType.pageTitle,
+                color = SalaTokens.neutral900,
             )
-
-            Box(modifier = Modifier.weight(1f)) {
-                Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                    // **Il corpo si adatta alla lunghezza della frase**, come
-                    // farebbe chi impagina a mano un cartellino da parete. Col
-                    // corpo fisso la citazione di Constable - centocinquanta
-                    // battute - riempiva lo schermo da cima a fondo e scacciava
-                    // tutto il resto, mentre quella di una riga ci nuotava
-                    // dentro. Sono frasi scritte da altri: la lunghezza non la
-                    // sceglie chi impagina.
-                    val corpo = when {
-                        citazione.testo.length > 140 -> 25
-                        citazione.testo.length > 85 -> 32
-                        else -> 42
-                    }
+            Text(
+                text = "Qui il tempo si guarda, non si legge.",
+                style = SalaType.body,
+                color = SalaTokens.neutral900.copy(alpha = 0.8f),
+                modifier = Modifier.padding(top = 12.dp),
+            )
+            Row(
+                modifier = Modifier.padding(top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                listOf("Nessun account", "Dati aperti", "Senza pubblicità").forEach { voce ->
                     Text(
-                        text = citazione.testo,
-                        style = SalaType.pageTitle.copy(
-                            fontSize = corpo.sp,
-                            lineHeight = (corpo * 1.12f).sp,
-                        ),
-                        color = SalaTokens.text,
-                    )
-                    Text(
-                        text = citazione.firma,
-                        style = SalaType.body.copy(fontStyle = FontStyle.Italic),
-                        color = SalaTokens.accent700,
-                        modifier = Modifier.padding(top = 16.dp),
-                    )
-                    Text(
-                        text = quandoDice(state),
-                        style = SalaType.body,
-                        color = SalaTokens.text.copy(alpha = 0.72f),
-                        modifier = Modifier.padding(top = 28.dp),
+                        text = voce,
+                        style = SalaType.rowNote,
+                        color = SalaTokens.neutral900,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(SalaTokens.neutral900.copy(alpha = 0.07f))
+                            .padding(horizontal = 15.dp, vertical = 8.dp),
                     )
                 }
             }
-
-            // Mentre cerca, il posto della riga sotto il titolo lo prende la
-            // scritta che respira: e' l'unica animazione permanente concessa,
-            // e dura solo finche' dura l'attesa.
+            // Mentre cerca, sotto le pastiglie compare la scritta che respira:
+            // e' l'unica animazione permanente concessa qui, e dura solo finche'
+            // dura l'attesa - un'attesa in cui niente si muove e' indistinguibile
+            // da un'app bloccata.
             if (state.locating) {
                 ScrittaCheRespira(
-                    testo = "Guardando il cielo…",
-                    modifier = Modifier.padding(bottom = 18.dp),
+                    testo = "GUARDANDO IL CIELO…",
+                    modifier = Modifier.padding(top = 16.dp),
+                )
+            } else {
+                Text(
+                    text = cosaDice(state),
+                    style = SalaType.rowNote,
+                    color = SalaTokens.neutral900.copy(alpha = 0.62f),
+                    modifier = Modifier.padding(top = 16.dp),
                 )
             }
+        }
 
-            PulsanteDIngresso(
+        Column(
+            modifier = Modifier.padding(top = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Pulsante(
                 testo = "Trovami",
-                onClick = { askPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION) },
+                fondo = SalaTokens.accent600,
+                inchiostro = SalaTokens.neutral100,
+                onClick = { chiediPermesso.launch(Manifest.permission.ACCESS_COARSE_LOCATION) },
             )
-
-            Text(
-                text = "Scelgo io la città",
-                style = SalaType.body,
-                color = SalaTokens.accent700,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 6.dp)
-                    .height(MinTouchTarget)
-                    .clickable(onClick = onChooseByHand)
-                    .padding(top = 12.dp),
+            Pulsante(
+                testo = "Scegli prima una località",
+                fondo = SalaTokens.neutral900.copy(alpha = 0.07f),
+                inchiostro = SalaTokens.neutral900,
+                onClick = onChooseByHand,
             )
         }
     }
 }
 
-/** Cosa dice la riga sotto la frase, secondo cosa sta succedendo. */
-private fun quandoDice(state: UiState): String = when {
-    state.followsLocation -> "Trovato. Apro il percorso."
-    state.locationUnavailable -> "Non riesco a trovarti. Puoi scegliere la città a mano."
-    else -> "Per aprire il percorso mi serve sapere da dove guardi il cielo."
+/** Cosa dice la riga in fondo, secondo cosa sta succedendo. */
+private fun cosaDice(state: UiState): String = when {
+    state.followsLocation -> "Trovato. Apro il cielo."
+    state.locationUnavailable -> "Non riesco a trovarti: puoi scegliere la città a mano."
+    else -> "Per aprire il cielo mi serve sapere da dove lo guardi."
 }
 
 /**
- * I tre lavaggi dell'Ingresso: azzurro in alto, giallo a meta', rosa in fondo.
+ * Il cielo dell'ingresso: un sole con l'alone e due nuvole basse.
  *
- * Sono fissi e non dipendono dal tempo, che qui non si conosce ancora: e' una
- * parete d'ingresso, non una previsione.
+ * **Fisso e non tratto dal tempo vero**, che qui non si conosce ancora: non c'e'
+ * una localita', quindi non c'e' una previsione, e un cielo inventato che si
+ * spaccia per quello di adesso sarebbe la prima cosa falsa che l'app dice.
+ * Questo e' dichiaratamente un'insegna.
  */
-private fun DrawScope.lavaggiDIngresso() {
-    val w = size.width
-    val h = size.height
-    fun macchia(cx: Float, cy: Float, r: Float, colore: Color) {
-        val centro = Offset(cx, cy)
-        drawCircle(
-            brush = Brush.radialGradient(
-                0f to colore,
-                0.7f to colore.copy(alpha = 0f),
-                center = centro,
-                radius = r,
-            ),
-            radius = r,
-            center = centro,
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.cieloDIngresso() {
+    val cx = size.width / 2f
+    val rAlone = size.width * 0.24f
+    val centroSole = Offset(cx, 103f / 210f * size.height)
+    drawCircle(
+        brush = Brush.radialGradient(
+            0f to SalaTokens.accent200.copy(alpha = 0.5f),
+            0.68f to SalaTokens.accent200.copy(alpha = 0f),
+            center = centroSole,
+            radius = rAlone * 1.6f,
+        ),
+        radius = rAlone * 1.6f,
+        center = centroSole,
+    )
+    drawCircle(
+        brush = Brush.radialGradient(
+            0f to Color(0xFFFFF4E8),
+            0.60f to SalaTokens.accent400,
+            1f to Color(0xFFDD8A55),
+            center = Offset(centroSole.x - rAlone * 0.24f, centroSole.y - rAlone * 0.32f),
+            radius = rAlone * 1.4f,
+        ),
+        radius = rAlone,
+        center = centroSole,
+    )
+
+    fun nuvola(x: Float, y: Float, larghezza: Float, altezza: Float) {
+        drawOval(
+            color = SalaTokens.neutral100.copy(alpha = 0.9f),
+            topLeft = Offset(x, y),
+            size = Size(larghezza, altezza),
         )
     }
-    macchia(w * 0.42f, h * 0.20f, w * 0.78f, SalaTokens.accent.copy(alpha = 0.22f))
-    macchia(w * 0.86f, h * 0.44f, w * 0.62f, SalaTokens.processYellow.copy(alpha = 0.26f))
-    macchia(w * 0.44f, h * 0.72f, w * 0.72f, SalaTokens.accent2_400.copy(alpha = 0.20f))
+    nuvola(size.width * 0.02f, size.height * 0.62f, size.width * 0.34f, size.height * 0.27f)
+    nuvola(size.width * 0.66f, size.height * 0.54f, size.width * 0.28f, size.height * 0.23f)
 }
 
 /**
- * La scritta che respira mentre i dati arrivano.
+ * La scritta che respira durante l'attesa.
  *
- * **Due trappole del progetto la riguardano, e nessuna delle due la vieta.**
- *
- * La #8 dice che da fermo l'app deve disegnare zero fotogrammi. Qui pero' fermi
- * non si e': un'attesa in cui niente si muove e' indistinguibile da un'app
- * bloccata, ed e' esattamente la domanda a cui questa scritta risponde. Esiste
- * solo mentre `locating` e' vero, e con l'attesa finisce anche lei.
- *
- * La #17 dice che `rememberInfiniteTransition` "qui non anima", e va letta per
- * intero: non animava dove il valore si leggeva **solo dentro il disegno** e mai
- * in composizione - erano le gocce di pioggia. Qui il valore finisce nel colore
- * di un `Text`, cioe' in composizione, che e' il caso in cui la comodita'
- * funziona. Ricomporre una riga di testo per un secondo di attesa e' un prezzo
- * diverso dal ricomporre la scena intera per sempre.
+ * Due trappole la riguardano e vanno lette per intero. La #8 vieta di disegnare
+ * fotogrammi da fermi: qui fermi non si e'. La #17 dice che
+ * `rememberInfiniteTransition` "qui non anima": non animava dove il valore si
+ * leggeva **solo dentro il disegno** - erano le gocce di pioggia - mentre qui
+ * finisce nel colore di un `Text`, cioe' in composizione, che e' il caso in cui
+ * la comodita' funziona. L'animazione muore con l'attesa.
  */
 @Composable
 private fun ScrittaCheRespira(testo: String, modifier: Modifier = Modifier) {
@@ -242,21 +240,18 @@ private fun ScrittaCheRespira(testo: String, modifier: Modifier = Modifier) {
     )
 }
 
-/** Il comando pieno dell'Ingresso: uno solo, e si vede che e' quello. */
+/** Un comando pieno: la forma e' la stessa, cambia solo quanto pesa. */
 @Composable
-private fun PulsanteDIngresso(testo: String, onClick: () -> Unit) {
+private fun Pulsante(testo: String, fondo: Color, inchiostro: Color, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .background(SalaTokens.accent700, RoundedCornerShape(6.dp))
+            .height(MinTouchTarget)
+            .clip(CircleShape)
+            .background(fondo)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = testo,
-            style = SalaType.value,
-            color = SalaTokens.neutral100,
-        )
+        Text(text = testo, style = SalaType.rowTitle, color = inchiostro, textAlign = TextAlign.Center)
     }
 }

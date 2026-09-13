@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,152 +9,171 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.data.AirQuality
+import io.github.noximiliencoxen.caelum.data.AirBand
 import io.github.noximiliencoxen.caelum.ui.UiState
-import io.github.noximiliencoxen.caelum.ui.asIndex
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
+import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
-import io.github.noximiliencoxen.caelum.ui.sala.SalaRoomScaffold
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
-
-private data class Pollutant(val code: String, val value: Double?, val threshold: Double)
+import kotlin.math.roundToInt
 
 /**
- * Sala V — L'aria: l'arco dell'indice con la cifra al centro, poi una riga
- * per ognuno dei pollutanti che l'endpoint sa davvero dare — ognuna una
- * barra rapportata alla propria soglia, non a una scala comune, cosi'
- * l'ozono vicino al limite si legge subito come il valore piu' critico anche
- * se in microgrammi e' un numero piu' piccolo del particolato.
+ * Sala V — L'aria: l'indice, e i quattro inquinanti che lo compongono.
+ *
+ * Quattro e non cinque come nel prototipo: i pollini non stanno nell'endpoint
+ * base di Open-Meteo, e tre pastiglie con dentro un numero inventato sarebbero
+ * state la parte piu' convincente della schermata e l'unica falsa.
  */
 @Composable
 fun SalaAriaScreen(
     state: UiState,
     palette: SalaPalette,
-    position: () -> Float,
-    onPlaceClick: () -> Unit,
-    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val air = state.air
+    val aria = state.air
+    val banda = aria?.band
+    val tinta = coloreBanda(banda)
 
-    SalaRoomScaffold(
-        palette = palette,
-        room = SalaRoom.ARIA,
-        placeName = state.place.name,
-        position = position,
-        onPlaceClick = onPlaceClick,
-        onMenuClick = onMenuClick,
-    ) { modifier ->
-        Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
-            AirArc(air = air, palette = palette)
-
-            val pollutants = listOf(
-                Pollutant("PM2,5", air?.pm25, 25.0),
-                Pollutant("PM10", air?.pm10, 50.0),
-                Pollutant("NO₂", air?.nitrogenDioxide, 40.0),
-                Pollutant("O₃", air?.ozone, 120.0),
-            )
-            Column(modifier = Modifier.padding(top = 30.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-                pollutants.forEach { p -> PollutantRow(p, palette) }
-            }
-
-            Column(modifier = Modifier.padding(top = 30.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                val title = when {
-                    air == null -> "Qualità dell'aria non disponibile"
-                    else -> "Aria ${air.band?.label?.lowercase() ?: "--"}"
+    PannelloSala(palette = palette, modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            Box(modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center) {
+                // L'anello dice **quanto** prima di dire quale: la porzione
+                // colorata cresce con l'indice, e il resto resta il grigio
+                // dell'interfaccia.
+                val quota = ((aria?.index ?: 0) / 100f).coerceIn(0f, 1f)
+                Canvas(modifier = Modifier.size(96.dp)) {
+                    val spessore = 11.dp.toPx()
+                    drawCircle(
+                        color = palette.maniglia,
+                        radius = size.minDimension / 2f - spessore / 2f,
+                        style = Stroke(width = spessore),
+                    )
+                    if (quota > 0f) {
+                        drawArc(
+                            color = tinta,
+                            startAngle = -90f,
+                            sweepAngle = 360f * quota,
+                            useCenter = false,
+                            topLeft = Offset(spessore / 2f, spessore / 2f),
+                            size = Size(size.width - spessore, size.height - spessore),
+                            style = Stroke(width = spessore),
+                        )
+                    }
                 }
-                Text(text = title, style = SalaType.cardTitle, color = palette.ink)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = aria?.index?.toString() ?: "--",
+                        style = SalaType.cardTitle,
+                        color = palette.ink,
+                    )
+                    Text(text = "AQI", style = SalaType.microLabel, color = palette.inkFaint)
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "L'aria", style = SalaType.cardTitle, color = palette.ink)
                 Text(
-                    text = "${air?.scale?.label ?: "--"} · indice ${air?.index ?: "--"} · ${air?.band?.label?.lowercase() ?: "--"}",
-                    style = SalaType.sectionLabel,
-                    color = palette.inkAccent,
+                    text = banda?.label?.lowercase()?.replaceFirstChar { it.uppercase() }
+                        ?: if (state.airUnavailable) "Non disponibile" else "In arrivo",
+                    style = SalaType.rowTitle,
+                    color = palette.accent,
+                    modifier = Modifier.padding(top = 6.dp),
                 )
                 Didascalia(
-                    testo = if (state.airUnavailable) {
-                        "La qualità dell'aria non è arrivata da questa richiesta."
-                    } else {
-                        "Ogni riga è rapportata alla propria soglia di riferimento, non a una scala comune."
-                    },
-                    palette = palette,
+                    descrizione(banda, state.airUnavailable),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
-    }
-}
 
-@Composable
-private fun AirArc(air: AirQuality?, palette: SalaPalette) {
-    Box(modifier = Modifier.fillMaxWidth().height(176.dp), contentAlignment = Alignment.TopCenter) {
-        Canvas(modifier = Modifier.fillMaxWidth().height(176.dp)) {
-            val strokeWidth = 20f
-            val radius = (size.width - strokeWidth) / 2f - 20f
-            val arcSize = Size(radius * 2f, radius * 2f)
-            val topLeft = Offset(size.width / 2f - radius, 20f)
-            drawArc(
-                color = palette.inkFaint,
-                startAngle = 180f,
-                sweepAngle = 180f,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = Stroke(width = strokeWidth, cap = androidx.compose.ui.graphics.StrokeCap.Round),
-            )
-            val fraction = ((air?.index ?: 0).coerceAtMost(200) / 200f).coerceIn(0f, 1f)
-            drawArc(
-                color = palette.inkAccent,
-                startAngle = 180f,
-                sweepAngle = 180f * fraction,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = Stroke(width = strokeWidth, cap = androidx.compose.ui.graphics.StrokeCap.Round),
-            )
-        }
         Column(
-            modifier = Modifier.padding(top = 74.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(text = air?.index?.toString() ?: "--", style = SalaType.giant(76), color = palette.ink)
-            Text(text = air?.band?.label ?: "--", style = SalaType.hourLabel, color = palette.inkSoft)
+            // I quattro che l'endpoint porta davvero. La scala di ognuno e' la
+            // propria soglia di legge, non un massimo comune: mescolarle
+            // farebbe sembrare grave un PM10 normale accanto a un ozono alto.
+            BarraInquinante("PM 2.5", aria?.pm25, 25.0, palette)
+            BarraInquinante("PM 10", aria?.pm10, 50.0, palette)
+            BarraInquinante("O₃", aria?.ozone, 120.0, palette)
+            BarraInquinante("NO₂", aria?.nitrogenDioxide, 40.0, palette)
         }
     }
 }
 
 @Composable
-private fun PollutantRow(pollutant: Pollutant, palette: SalaPalette) {
-    val fraction = pollutant.value?.let { (it / pollutant.threshold).toFloat().coerceIn(0f, 1f) } ?: 0f
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(text = pollutant.code, style = SalaType.value, color = palette.ink, modifier = Modifier.width(66.dp))
-        Box(modifier = Modifier.weight(1f).height(3.dp)) {
-            Canvas(modifier = Modifier.fillMaxWidth().height(3.dp)) {
-                drawRoundRect(color = palette.inkFaint, cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5f))
-                if (fraction > 0f) {
-                    val color = if (fraction > 0.75f) SalaTokens.accent2 else palette.inkAccent
-                    drawRoundRect(
-                        color = color,
-                        size = Size(size.width * fraction, size.height),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5f),
-                    )
-                }
-            }
+private fun BarraInquinante(nome: String, valore: Double?, soglia: Double, palette: SalaPalette) {
+    val quota = valore?.let { (it / soglia).coerceIn(0.0, 1.0).toFloat() } ?: 0f
+    val tinta = if (quota > 0.7f) SalaTokens.accent400 else SalaTokens.verde400
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = nome,
+            style = SalaType.hourLabel,
+            color = palette.ink,
+            modifier = Modifier.width(56.dp),
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(9.dp)
+                .clip(CircleShape)
+                .background(palette.maniglia),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(quota)
+                    .height(9.dp)
+                    .clip(CircleShape)
+                    .background(tinta),
+            )
         }
         Text(
-            text = pollutant.value?.let { "${it.asIndex()} µg/m³" } ?: "--",
-            style = SalaType.footnote,
+            text = valore?.let { "${it.roundToInt()} µg/m³" } ?: "--",
+            style = SalaType.rowNote,
             color = palette.inkSoft,
             textAlign = TextAlign.End,
-            modifier = Modifier.width(84.dp),
+            modifier = Modifier.width(66.dp),
         )
     }
+}
+
+private fun coloreBanda(banda: AirBand?): Color = when (banda) {
+    null -> SalaTokens.neutral400
+    AirBand.BUONA, AirBand.DISCRETA -> SalaTokens.verde400
+    AirBand.MEDIA -> SalaTokens.accent400
+    AirBand.SCARSA -> SalaTokens.accent500
+    else -> SalaTokens.accent700
+}
+
+private fun descrizione(banda: AirBand?, nonDisponibile: Boolean): String = when {
+    nonDisponibile -> "La misura dell'aria non e' arrivata: la stazione piu' vicina non ha risposto."
+    banda == null -> "La misura dell'aria sta arrivando."
+    banda == AirBand.BUONA -> "Particolato basso: nessuna precauzione necessaria, nemmeno per chi e' sensibile."
+    banda == AirBand.DISCRETA -> "Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto."
+    banda == AirBand.MEDIA -> "Chi e' sensibile faccia attenzione: meglio rimandare l'attivita' intensa all'aperto."
+    banda == AirBand.SCARSA -> "Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali."
+    else -> "Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse."
 }

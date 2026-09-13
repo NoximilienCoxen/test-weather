@@ -406,9 +406,9 @@ data class UiState(
      * deve poter smettere di essere azzurro quando non c'e' niente di azzurro
      * da mostrare.
      *
-     * **Legge [forcedWeatherCode] per primo**, come fa gia' la scultura. Senza,
+     * **Legge [forcedWeatherCode] per primo**, come fa gia' la scena. Senza,
      * lo scatto di verifica del coperto usciva con la nuvola giusta sopra un
-     * cielo azzurro: la scultura obbediva all'ora imposta e il fondo no, cioe'
+     * cielo azzurro: la scena obbediva all'ora imposta e il fondo no, cioe'
      * proprio la regola che quello scatto doveva dimostrare non si vedeva.
      */
     val skyCloudiness: Float
