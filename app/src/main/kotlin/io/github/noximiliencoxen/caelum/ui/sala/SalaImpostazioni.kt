@@ -131,8 +131,8 @@ fun SalaImpostazioniScreen(
                 nota = "il punto in cui la scala mondiale passa ad alto",
                 palette = palette,
                 coda = {
-                    InterruttoreSala(state.alertToggles.uv, palette) {
-                        onToggleAlert(AlertToggleKind.UV, !state.alertToggles.uv)
+                    InterruttoreSala(state.alertToggles.uvAlto, palette) {
+                        onToggleAlert(AlertToggleKind.UV, !state.alertToggles.uvAlto)
                     }
                 },
             )
@@ -141,8 +141,8 @@ fun SalaImpostazioniScreen(
                 nota = "avvisi calcolati sulle raffiche attese",
                 palette = palette,
                 coda = {
-                    InterruttoreSala(state.alertToggles.vento, palette) {
-                        onToggleAlert(AlertToggleKind.VENTO, !state.alertToggles.vento)
+                    InterruttoreSala(state.alertToggles.ventoForte, palette) {
+                        onToggleAlert(AlertToggleKind.VENTO, !state.alertToggles.ventoForte)
                     }
                 },
             )

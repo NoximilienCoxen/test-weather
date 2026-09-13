@@ -3444,3 +3444,30 @@ Da guardare per primi, in mano, appena la CI e' verde:
   che sono le due ore in cui e' cambiato;
 - se le due icone PNG dell'utente (aria, vento) si leggono a 19-20 punti una
   volta tinte dal tema.
+
+### Gli errori di compilazione della CI si leggono, e non dai log
+
+La sezione 12 diceva che i log grezzi dei giri di GitHub non sono raggiungibili
+da questo container, ed e' vero: li ospita `productionresultssa*.blob.core.windows.net`,
+che la policy di rete della sessione nega al CONNECT. Se ne era dedotto che da
+qui non si potesse sapere **perche'** un giro e' rosso, e per un giro intero e'
+costato aspettare senza poter fare niente.
+
+Non e' cosi'. Le **annotazioni** del check stanno sull'API di GitHub, che invece
+risponde, e contengono le righe `e:` del compilatore Kotlin per intero - file,
+riga, colonna e messaggio:
+
+```bash
+curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/actions/runs/<RUN>/jobs"
+curl -s "https://api.github.com/repos/NoximilienCoxen/test-weather/check-runs/<JOB_ID>/annotations"
+```
+
+Un avvertimento sulla loro forma: **le annotazioni sono poche e sono le
+ultime**. Un giro con venti errori ne mostra sei, quindi un secondo giro rosso
+subito dopo il primo non vuol dire che la correzione non e' servita - vuol dire
+che sotto ce n'erano altri. Conviene quindi **non** limitarsi a correggere cio'
+che l'annotazione dice: il primo giro di questa passata ha segnalato solo
+`AlertToggles.uv`/`.vento` (i campi veri sono `uvAlto` e `ventoForte`), e a
+trovare il resto ci sono voluti due controlli scritti per l'occasione - i nomi
+dei membri contro le dichiarazioni vere, e i nomi dei parametri contro le firme
+vere. Senza SDK, quella e' la compilazione che ci si puo' permettere qui.
