@@ -1,25 +1,25 @@
 === 1. NOWCAST: Open-Meteo minutely_15 ===
 --- Forli
-{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.1226663589477539,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-13T00:00","2026-09-13T00:15","2026-09-13T00:30","2026-09-13T00:45","2026-09-13T01:00","2026-09-13T01:15","2026-09-13T01:30","2026-09-13T01:45","2026-09-13T02:00","2026-09-13T02:15","2026-09-13T02:30","2026-09-13T02:45","2026-09-13T03:00","2026-09-13T03:15","2026-09-13T03:30","2026-09-13T03:45","2026-09-13T04:00","2026-09-13T04:15","2026-09-1
+{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.10085105895996094,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15","2026-09-
 --- Tokyo
-{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.18143653869628906,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15","2026-09-14
+{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.19943714141845703,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15","2026-09-14
 --- Nairobi
-{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.20933151245117188,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-13T00:00","2026-09-13T00:15","2026-09-13T00:30","2026-09-13T00:45","2026-09-13T01:00","2026-09-13T01:15","2026-09-13T01:30","2026-09-13T01:45","2026-09-13T02:00","2026-09-13T02:15","2026-09-13T02:30","2026-09-13T02:45","2026-09-13T03:00","2026-09-13T03:15","2026-09-13T03:30","2026-09-13T03:45","2026-09-13T04:00","2026-09-13T04:15
+{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.1766681671142578,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15"
 
 === 2. RADAR: l'indice dei fotogrammi di RainViewer ===
 
 HTTP 200
 byte=818
-{"version":"2.0","generated":1789320323,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789312800,"path":"/v2/radar/5c0ce14937b6"},{"time":1789313400,"path":"/v2/radar/dbfe35cb2931"},{"time":1789314000,"path":"/v2/radar/4459b5ec054b"},{"time":1789314600,"path":"/v2/radar/52a5ad3b8a75"},{"time":1789315200,"path":"/v2/radar/baac801a9272"},{"time":1789315800,"path":"/v2/radar/7dd3a0fb5ac7"},{"time":1789316400,"path":"/v2/radar/3bbe344ab503"},{"time":1789317000,"path":"/v2/radar/e5bb8e340e9a"},{"time":1789317600,"path":"/v2/radar/a19c4940299a"},{"time":1789318200,"path":"/v2/radar/a6c09c412bf8"},{"time":1789318800,"path":"/v2/radar/5e6236344bb1"},{"time":1789319400,"path":"/v2/radar/8798780cd832"},{"time":1789320000,"path":"/v2/radar/40eea6939079"}],"nowcast":[]},"satellite":{"infrared":[]}}
+{"version":"2.0","generated":1789374620,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789367400,"path":"/v2/radar/73a1b8dee0ea"},{"time":1789368000,"path":"/v2/radar/14e493d249e8"},{"time":1789368600,"path":"/v2/radar/8f643ae50a93"},{"time":1789369200,"path":"/v2/radar/ee1c2db9e599"},{"time":1789369800,"path":"/v2/radar/66932ae3cd5e"},{"time":1789370400,"path":"/v2/radar/2731537b5232"},{"time":1789371000,"path":"/v2/radar/19f173f92760"},{"time":1789371600,"path":"/v2/radar/38d66ea066fa"},{"time":1789372200,"path":"/v2/radar/73ae38fa952a"},{"time":1789372800,"path":"/v2/radar/d47677bfa553"},{"time":1789373400,"path":"/v2/radar/3080d919e2cc"},{"time":1789374000,"path":"/v2/radar/769c222caf03"},{"time":1789374600,"path":"/v2/radar/47783dff1be6"}],"nowcast":[]},"satellite":{"infrared":[]}}
 --- quanti fotogrammi:
 13
 --- l'host da cui vengono le tessere:
 "host":"https://tilecache.rainviewer.com"
 
 === 3. Una tessera vera si scarica? ===
-host=https://tilecache.rainviewer.com percorso=/v2/radar/5c0ce14937b6
---- https://tilecache.rainviewer.com/v2/radar/5c0ce14937b6/256/0/0/0/1/1_1.png
-HTTP 200 byte=2377
+host=https://tilecache.rainviewer.com percorso=/v2/radar/73a1b8dee0ea
+--- https://tilecache.rainviewer.com/v2/radar/73a1b8dee0ea/256/0/0/0/1/1_1.png
+HTTP 200 byte=2384
 tipo: image/png
 
 === 4. E il fondo cartografico? ===
