@@ -30,6 +30,17 @@ ATTESA_DATI=45
 
 adbt() { timeout 60 adb "$@"; }
 
+# **Ogni avvio dell'app passa di qui**, e non e' per accorciare le righe: e'
+# perche' `--ez cattura true` non si possa dimenticare su nessuno dei tredici
+# `am start` del giro. Quell'aggancio e' cio' che dichiara all'app che a
+# guidarla e' la cattura, e quindi spegne le animazioni: il cielo si muove
+# sempre, e uno scatto preso con le molle vive dipenderebbe dal centesimo di
+# secondo in cui e' stato preso invece che da cio' che si voleva ritrarre.
+#
+# Le opzioni proprie di `am start` (per esempio `-W`) e gli altri agganci si
+# passano come argomenti; l'attivita' e la cattura le mette la funzione.
+avvia() { adbt shell am start "$@" -n "$ACT" --ez cattura true; }
+
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
 # questo file e' l'unica testimonianza del perche'.
 adb logcat -c >/dev/null 2>&1 || true
@@ -123,7 +134,7 @@ welcome() {
   # Con le animazioni accese (trappola #28), se no il pupazzo sta sempre nella
   # stessa posa e non si vede che si guarda intorno.
   adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
-  adbt shell am start -n "$ACT" --ez benvenuto true >/dev/null 2>&1 || true
+  avvia --ez benvenuto true >/dev/null 2>&1 || true
   sleep 12
   shoot "00-benvenuto"
   sleep 1
@@ -149,7 +160,7 @@ welcome() {
   # sopra, da adesso l'Ingresso e' chiuso per sempre: `--ez saltabenvenuto`
   # scrive la preferenza senza passare da un dito. Il resto della galleria non
   # deve dipendere da una coordinata che il prossimo redisegno spostera'.
-  adbt shell am start -n "$ACT" --ez saltabenvenuto true >/dev/null 2>&1 || true
+  avvia --ez saltabenvenuto true >/dev/null 2>&1 || true
   sleep 2
 }
 
@@ -177,7 +188,7 @@ session() {
   # riga senza cambiare nulla di cio' che si vede. Il cielo di questo primo
   # scatto e' quello dell'ora vera del runner, ed e' voluto: e' l'unico scatto
   # che ritrae l'app come la si trova aprendola.
-  adbt shell am start -W -n "$ACT" 2>&1 | sed 's/^/    /' || true
+  avvia -W 2>&1 | sed 's/^/    /' || true
   # -W dice che l'attivita' e' in primo piano, non che ha qualcosa da mostrare:
   # la richiesta di rete parte dopo. Il primo scatto e' quello che si guarda
   # per primo, quindi vale l'attesa vera come per tutti gli altri.
@@ -227,7 +238,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       adbt shell logcat -c >/dev/null 2>&1 || true
-      adbt shell am start -n "$ACT" --ei ora "$1" --ei meteo "$2" >/dev/null 2>&1 || true
+      avvia --ei ora "$1" --ei meteo "$2" >/dev/null 2>&1 || true
       attendi_previsione
       # **Il cielo va aspettato anche dopo che i dati sono arrivati**, ed e' il
       # rovescio della trappola #28: quella dice che con le animazioni spente
@@ -275,7 +286,7 @@ session() {
   # ridotta a pallino; e il ritorno al bollettino toccandolo.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
   shoot "${slug}-d1-allerta-principale"
@@ -290,7 +301,7 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 2 \
+  avvia --ei ora "$ora_dettaglio" --ei allerta 2 \
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -310,7 +321,7 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto del pallino"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
+  avvia --ei ora "$ora_dettaglio" \
     --ei allerta 2 --ez allertaridotta true >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -336,7 +347,7 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto dell'avviso calcolato"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei allerta 0 >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei allerta 0 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
   shoot "${slug}-d4b-avviso-calcolato"
@@ -387,7 +398,7 @@ session() {
     # fila sulla pioggia in tema chiaro, che e' quando ho smesso di crederci
     # come sfortuna.
     adbt shell logcat -c >/dev/null 2>&1 || true
-    adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" \
+    avvia --ei ora "$ora_dettaglio" \
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
     sleep 1
@@ -427,7 +438,7 @@ session() {
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
-  adbt shell am start -n "$ACT" --ei ora "$ora_dettaglio" --ei giorno 2 \
+  avvia --ei ora "$ora_dettaglio" --ei giorno 2 \
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
   alive || { echo "dispositivo caduto prima dello scatto del giorno"; return; }
@@ -450,7 +461,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       adbt shell logcat -c >/dev/null 2>&1 || true
-      adbt shell am start -n "$ACT" --ei ora "$ora" >/dev/null 2>&1 || true
+      avvia --ei ora "$ora" >/dev/null 2>&1 || true
       attendi_previsione
       shoot "contrasto-ora-${ora}"
     done
@@ -466,7 +477,7 @@ session() {
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
     adbt shell logcat -c >/dev/null 2>&1 || true
-    adbt shell am start -n "$ACT" >/dev/null 2>&1 || true
+    avvia >/dev/null 2>&1 || true
     attendi_previsione
 
     adbt emu sensor set acceleration 3.2:9.2:0 >/dev/null 2>&1 || true
@@ -502,7 +513,7 @@ session() {
       # si perde niente.
       adbt shell logcat -c >/dev/null 2>&1 || true
       # shellcheck disable=SC2086
-      adbt shell am start -n "$ACT" --es tema SCURO $1 >/dev/null 2>&1 || true
+      avvia --es tema SCURO $1 >/dev/null 2>&1 || true
       attendi_previsione
     }
 
