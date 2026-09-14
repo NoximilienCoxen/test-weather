@@ -3485,3 +3485,83 @@ che l'annotazione dice: il primo giro di questa passata ha segnalato solo
 trovare il resto ci sono voluti due controlli scritti per l'occasione - i nomi
 dei membri contro le dichiarazioni vere, e i nomi dei parametri contro le firme
 vere. Senza SDK, quella e' la compilazione che ci si puo' permettere qui.
+
+### 13-bis. Due difetti che solo il telefono poteva mostrare
+
+Il ridisegno era verde in CI, passava i controlli offline e gli scatti erano
+belli. Provato in mano, non si muoveva niente e un comando non portava da
+nessuna parte. Vale la pena scrivere **perche'** nessuno dei tre banchi di prova
+poteva dirlo.
+
+#### `scattoFermo()` era incondizionato, e teneva ferma l'app intera
+
+`applyExtras` in `MainActivity` chiamava `viewModel.scattoFermo()` senza
+guardare se un aggancio fosse davvero arrivato. `AGGANCI_CATTURA` e' acceso su
+ogni build di **debug**, e un avvio dall'icona porta un Intent non nullo con zero
+extra: le due uscite anticipate passavano, il flag si accendeva, e non esiste il
+setter inverso. Da li' restavano fermi il cielo, le vibrazioni e - per via di
+`SalaMolle.ferma` - **ogni** molla dell'app.
+
+Il difetto c'era da quando il flag e' nato, e il commento di `scattoFermo`
+dichiarava gia' il contratto giusto: *"quando un qualsiasi aggancio e' stato
+applicato"*. **Una nota che descrive cio' che il codice dovrebbe fare non prova
+che lo faccia**, ed e' la seconda volta che questo progetto ci inciampa (la
+prima e' nella sezione 12-bis, il paragrafo sul giro che "era un `Animatable`").
+
+Non si vedeva perche' l'orologio della vecchia Sala I non era legato a quel
+flag. Col cielo nuovo dietro tutte e sette le schermate, lo stesso difetto e'
+diventato l'app intera - e **gli scatti non potevano mostrarlo**, perche' uno
+scatto e' fermo per definizione. E' il complemento della lezione della sezione
+12: li' un referto che varia da solo non prova niente; qui un referto **fermo**
+non distingue un'app ferma da un'app che sta posando.
+
+La cattura adesso **si dichiara**, con `--ez cattura true`. Dedurla dalla
+presenza di un altro aggancio non bastava: `capture.sh` avvia l'app anche senza
+alcun extra, e quello scatto sarebbe tornato a dipendere da una `sleep`. In
+`capture.sh` tutti e tredici gli avvii passano dall'helper `avvia`, che
+l'aggancio lo mette da se': **l'helper esiste perche' non si possa
+dimenticare**, non per accorciare le righe.
+
+E la riga di log degli agganci adesso stampa anche `cattura=`. E' l'unico modo
+di sapere, dal `logcat-streaming.txt` che finisce fra gli artefatti, se un avvio
+ha ricevuto il suo aggancio: uno saltato non si vedrebbe altrimenti - lo scatto
+uscirebbe soltanto *un po'* diverso, ed e' esattamente cosi' che gli ultimi due
+guasti della cattura sono rimasti invisibili per due giri interi.
+
+```bash
+git show FETCH_HEAD:screenshots/logcat-streaming.txt | grep agganci:   # tutti cattura=true
+```
+
+**Da non provare a verificare con gli scatti.** Confrontare l'impronta di uno
+scatto a ora e meteo imposti fra due giri sembra la prova che la cattura e'
+ancora congelata, e non lo e': la previsione e' vera e cambia fra un giro e
+l'altro, quindi quelle immagini differiscono comunque. La prova sta nel log.
+
+#### "Le località" si apriva sotto le impostazioni
+
+I due pannelli a tutto schermo sono fratelli nello stesso `Box` di `SalaShell`,
+e le impostazioni erano composte per ultime: stavano sopra e si prendevano i
+tocchi. Toccando la riga, la lista si apriva **sotto** un pannello opaco e non
+cambiava niente a schermo; il primo indietro chiudeva le impostazioni e scopriva
+la lista che era li' da prima.
+
+Adesso le localita' sono composte **dopo**. Con quello solo il giro diventa
+quello giusto - Impostazioni → Le località → indietro → Impostazioni → indietro →
+il cielo - senza toccare lo stato.
+
+**Va fatto con l'ordine e non con uno `zIndex`**, ed e' il punto da non perdere:
+`BackHandler` da' la precedenza all'**ultimo registrato**, cioe' all'ordine di
+composizione, non all'impilamento. Con `zIndex` l'aspetto sarebbe giusto e
+l'indietro chiuderebbe ancora le impostazioni per prime, lasciando la lista
+orfana a schermo. Chi riordina quei due blocchi per pulizia riapre il difetto:
+il commento accanto lo dice.
+
+Nello stesso giro, `choosePlace` chiude la lista - sceglierla e restarci era un
+comando che sembrava non aver fatto niente - e `closeLocations` si porta via la
+ricerca come fa gia' `closeSettings`.
+
+#### Cosa resta vero
+
+La vibrazione si sente **solo quando cade qualcosa** (`scena.bagnato`): col
+sereno il cielo si muove e non c'e' niente da sentire. E l'interruttore
+"Animazioni ridotte" spegne di proposito tutte e due.
