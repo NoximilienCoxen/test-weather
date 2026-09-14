@@ -3560,6 +3560,26 @@ Nello stesso giro, `choosePlace` chiude la lista - sceglierla e restarci era un
 comando che sembrava non aver fatto niente - e `closeLocations` si porta via la
 ricerca come fa gia' `closeSettings`.
 
+#### E una terza, che il primo giro verde ha fatto uscire
+
+Sistemato l'ordine dei pannelli, lo scatto `00-impostazioni.png` ha cominciato a
+ritrarre **le localita'**. Non era una conseguenza della correzione: lo faceva
+gia' da tre giri. Quel tocco segue il rimando in fondo al benvenuto, che quando
+la riga fu scritta apriva le impostazioni e col redisegno e' passato ad aprire
+la lista delle citta' (`MeteoApp.onChooseByHand`). Il nome del file e' rimasto
+indietro, e la galleria ha avuto due schermate di servizio fotografandone una
+sola - dicendo di averle tutte e due.
+
+E' la **terza** volta che questo progetto trova il banco di prova che dice di
+si': prima gli agganci muti sotto `BuildConfig.DEBUG`, poi la galleria che
+ritraeva l'Ingresso in ogni scatto, adesso un nome di file che prometteva una
+schermata mai presa. La lezione e' sempre la stessa e conviene riscriverla:
+**uno scatto va confrontato con cio' che dovrebbe mostrare di diverso**, e un
+nome di file non e' una prova di niente.
+
+Adesso `00-localita` si chiama come cio' che mostra, e le impostazioni hanno uno
+scatto loro, preso dal comando a due cursori in alto a sinistra.
+
 #### Cosa resta vero
 
 La vibrazione si sente **solo quando cade qualcosa** (`scena.bagnato`): col

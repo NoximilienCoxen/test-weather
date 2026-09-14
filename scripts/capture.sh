@@ -141,8 +141,16 @@ welcome() {
   shoot "00-benvenuto-guarda"
   adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
 
-  # "Scelgo io la citta'" chiude l'Ingresso e apre le impostazioni: due cose con
-  # un tocco solo, e le impostazioni non avevano altrimenti nessuno scatto.
+  # "Scegli prima una localita'" chiude l'Ingresso e apre **le localita'**.
+  #
+  # **Lo scatto si chiamava `00-impostazioni` e ritraeva le localita'.** Il
+  # rimando apriva le impostazioni quando questa riga e' stata scritta; col
+  # redisegno e' passato ad aprire la lista delle citta', e il nome del file e'
+  # rimasto indietro. Per tre giri la galleria ha avuto due schermate di
+  # servizio e ne ha fotografata una sola, dicendo di averle tutte e due - che
+  # e' la stessa bugia dell'Ingresso ritratto in ogni scatto, in tono minore.
+  # **Uno scatto va confrontato con cio' che dovrebbe mostrare di diverso**, e
+  # un nome di file non e' una prova.
   #
   # **L'altezza e' l'89% e non piu' il 71%, e il numero va tenuto d'occhio.**
   # Col rimando spostato dal redisegno, il tocco al 71% e' caduto nel vuoto:
@@ -151,8 +159,19 @@ welcome() {
   # Una galleria che mente e' peggio di una che manca.
   adbt shell input tap "$(( W / 2 ))" "$(( H * 89 / 100 ))" >/dev/null 2>&1 || true
   sleep 3
-  shoot "00-impostazioni"
+  shoot "00-localita"
   # E si richiudono dal loro pulsante, in alto a sinistra.
+  adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+
+  # **Le impostazioni, che adesso hanno uno scatto loro.** Ci si arriva dal
+  # comando a due cursori in alto a sinistra della schermata principale - lo
+  # stesso angolo da cui si chiudono le schermate di servizio, che e' il motivo
+  # per cui questo tocco viene **dopo** quello di chiusura qui sopra e non
+  # prima.
+  adbt shell input tap "$(( W * 8 / 100 ))" "$(( H * 9 / 100 ))" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "00-impostazioni"
   adbt shell input tap 65 "$(( H * 8 / 100 ))" >/dev/null 2>&1 || true
   sleep 2
 
