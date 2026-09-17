@@ -3977,3 +3977,34 @@ piu'.
 - **Niente e' stato provato con un servizio vero**, ne in CI ne qui. Quello che
   la CI prova e' che il livello compila, che la carta muta si disegna, e che
   `RadarForma` riconosce le forme che gli si danno in mano.
+
+### 14-bis. I commenti di Kotlin si annidano
+
+Il primo giro del radar e' caduto su una riga di **documentazione**. Dentro un
+KDoc c'era scritto che il corpo poteva arrivare con un tipo MIME `image` seguito
+da un asterisco. In Java quella sequenza dentro un commento non vuol dire
+niente; in Kotlin **apre un commento dentro il commento**, e da li' in poi serve
+una chiusura in piu'.
+
+Il compilatore ha detto:
+
+```
+e: RadarDpcRepository.kt:367:1 Syntax error: Unclosed comment.
+```
+
+Il file e' lungo trecentosessantasei righe. Cioe' l'errore veniva segnalato
+**alla riga dopo l'ultima**, che e' il posto in cui l'errore non e': il parser
+aveva letto fino in fondo cercando una chiusura che non arrivava mai. A
+cascata, tutto cio' che quel file dichiara e' risultato irrisolvibile altrove -
+sette `Unresolved reference` in `WeatherViewModel.kt`, che con il ViewModel non
+c'entravano niente.
+
+E' lo stesso genere di diagnosi ingannevole di 13-sexies: **il punto in cui la
+CI si lamenta non e' il punto in cui il guasto sta**. Li' era un'azione di terze
+parti accusata al posto dell'ambiente, qui una riga di codice accusata al posto
+di un commento.
+
+`scripts/commenti_kotlin.py` conta aperture e chiusure file per file, tolte
+prima le stringhe. Non dimostra che il codice compila - non compila niente - ma
+questo errore lo trova in un secondo invece che in otto minuti di runner, e
+soprattutto lo indica **dove sta**.

@@ -44,7 +44,7 @@ import java.util.Base64
  *   (secondi o millesimi di secondo) - vedi [cercaEpoca];
  * - l'immagine e' una stringa che, decodificata da base64, comincia con la
  *   firma di un PNG - vedi [cercaImmagine]; oppure e' il corpo stesso della
- *   risposta, se il server dichiara `image/*`;
+ *   risposta, se il server dichiara un tipo `image`;
  * - il riquadro geografico e' un array di quattro numeri, o di due coppie, i
  *   cui valori cadono dove devono cadere delle coordinate - vedi [cercaBbox].
  *
