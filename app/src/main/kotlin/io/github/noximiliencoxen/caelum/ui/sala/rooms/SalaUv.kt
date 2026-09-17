@@ -42,6 +42,9 @@ fun SalaUvScreen(
     palette: SalaPalette,
     onSelectHour: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    /** Falso quando chi usa l'app ha chiesto meno movimento: il riflesso non
+     *  passa, e il numero resta a dire quello che ha sempre detto. */
+    movimento: Boolean = true,
 ) {
     // Le ore del giorno mostrato: vedi la nota in Sala III.
     val ore = state.shownHours
@@ -53,7 +56,18 @@ fun SalaUvScreen(
     val picco = ore.indices.maxByOrNull { ore[it].uvIndex ?: 0.0 }
     val ozono = state.air?.ozone
 
-    PannelloSala(palette = palette, modifier = modifier) {
+    // **Il riflesso avvisa dove il numero non basta.** Cinque e' la soglia in
+    // cui la scala mondiale dell'OMS passa da "moderato" ad "alto", cioe' dove
+    // la protezione smette di essere consigliata e diventa necessaria. Sopra
+    // quel valore la scheda luccica ogni tanto: non aggiunge un dato - il
+    // numero e la parola ci sono gia' - aggiunge il fatto che uno sguardo di
+    // passaggio se ne accorga.
+    //
+    // Si accende sul valore **mostrato**, non sul picco del giorno: scorrendo
+    // la barra fino alle tre di notte il riflesso deve spegnersi, perche' li'
+    // l'indice e' zero e un avviso di sole alle tre di notte e' un avviso che
+    // insegna a ignorare gli avvisi.
+    PannelloSala(palette = palette, modifier = modifier, bagliore = corrente >= 5.0 && movimento) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,

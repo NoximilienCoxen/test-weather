@@ -4503,3 +4503,147 @@ L'ultima e' gia' pronta: `RadarProdotto` porta un campo `attribuzione`, e
 scritta dove si disegna resterebbe quella di prima il giorno in cui la fonte
 cambia, e **il nome sbagliato sopra i dati di un altro** e' esattamente cio'
 che si era rifiutato di fare. Chi porta i dati porta anche il proprio nome.
+
+## 17. Il cielo che respira, e una dipendenza che non si e' aggiunta
+
+Richiesta: traiettoria solare e cambio del gradiente (c'erano gia'), deriva
+lenta delle nuvole, evaporazione al picco di calore, un riflesso sulla scheda
+UV, un rimbalzo sull'icona toccata, e il rispetto del "meno movimento".
+
+### 17.1 Le nuvole scorrono invece di oscillare
+
+C'era gia' un movimento, ed era **sbagliato di genere**: un seno, trenta punti
+avanti e indietro con un periodo di venti-quaranta secondi. Fino a nove punti
+al secondo nel mezzo della corsa, e sempre di ritorno al punto di partenza. Un
+cielo sereno che respirava come un fondale di teatro.
+
+Adesso scorrono, e basta: **tre decimi di punto al secondo** col cielo aperto -
+trenta volte meno di prima. Una nuvola attraversa lo schermo in una ventina di
+minuti: nessuno la vede muoversi, e chi riapre l'app dopo mezz'ora la trova
+altrove. E' il modo in cui un disegno dice *non c'e' vento* senza scriverlo, e
+al contrario di una scritta non puo' contraddire i dati, perche' non afferma
+niente di preciso.
+
+Col cielo chiuso la velocita' sale a sei volte tanto: un fronte **si muove**, e
+muoverlo come un cumulo di bel tempo lo farebbe sembrare lo stesso cielo con un
+altro colore. Ogni massa ha il proprio passo fra il settanta e il centotrenta
+per cento, perche' cinque nuvole alla stessa identica velocita' sono un
+fondale, non cinque nuvole. E un `mod` riporta dentro chi esce: senza, dopo
+un'ora di app aperta il cielo sarebbe vuoto.
+
+### 17.2 L'evaporazione delle ore calde
+
+Quando il sole e' alto sopra un cielo aperto, i cumuli si sfilacciano:
+l'opacita' scende dall'intero a quattro quinti e la massa si allarga del tre
+per cento.
+
+**Non e' agganciata all'orologio.** La richiesta diceva "attorno alle 14:00 -
+15:00", ed e' vero in pianura padana a luglio; non lo e' a dicembre, ne' a
+Nairobi, ne' a Bergen - e questa app apre tutte e tre, e la sezione 12-ter porta
+gia' la cicatrice di una scala europea applicata a Tokyo. E' agganciata
+all'**altezza del sole**, che il picco ce l'ha per costruzione dovunque e in
+qualsiasi stagione, e d'inverno non arriva mai alla soglia: il cielo non
+evapora, che e' esattamente giusto.
+
+Solo a cielo aperto: sotto un fronte non evapora niente, e vederlo schiarire a
+mezzogiorno sarebbe il disegno che smentisce il dato.
+
+### 17.3 Il riflesso sulla scheda UV, e il rimbalzo dell'icona
+
+Sopra l'indice **cinque** - dove la scala dell'OMS passa da "moderato" ad
+"alto", cioe' dove la protezione smette di essere consigliata e diventa
+necessaria - una banda chiara attraversa la scheda in poco piu' di un secondo,
+poi non succede niente per cinque. **La pausa e' la parte importante**: un
+riflesso continuo diventa fondo, e un fondo non avvisa di niente.
+
+Si accende sul valore **mostrato** e non sul picco del giorno: scorrendo la
+barra fino alle tre di notte si spegne, perche' li' l'indice e' zero e un
+avviso di sole alle tre di notte insegna a ignorare gli avvisi.
+
+L'icona toccata nella colonna scatta in fuori di un quinto e torna con una
+molla poco smorzata - cioe' oltrepassando e rientrando, che e' quello che fa
+una cosa elastica - e si lascia dietro un anello caldo che si allarga oltre il
+bersaglio e svanisce. Vale per tutte e sette e non per il solo sole: un
+linguaggio di risposta al tocco o e' uno solo, o e' un'eccezione da spiegare.
+
+Il rimbalzo si legge nel **livello** (`graphicsLayer` con blocco) e il fondo
+nel **disegno** (`drawBehind`), non in composizione: sono sessanta ricomposizioni
+al secondo risparmiate per travasare due numeri, e la stessa ragione per cui i
+vecchi trattini leggevano la posizione dentro il `Canvas`.
+
+### 17.4 Due interruttori per "meno movimento" erano uno di troppo
+
+Caelum aveva il suo, nelle impostazioni, e faceva il suo mestiere. Ma leggeva
+**solo** quello. Chi spegne le animazioni nel telefono - per vertigini, per mal
+d'auto, o perche' un telefono lento va meglio cosi' - apriva Caelum e trovava
+un cielo che si muoveva comunque.
+
+Su una pagina web quell'impostazione si chiama `prefers-reduced-motion`; su
+Android e' `Settings.Global.ANIMATOR_DURATION_SCALE` a zero. Adesso i due si
+**sommano**: chi ha spento nel sistema non deve spegnere anche qui, e chi vuole
+meno movimento solo in quest'app puo' continuare a chiederlo qui.
+
+Con "meno movimento" si ferma l'orologio della scena, e con lui sole, nuvole,
+pulviscolo, uccelli, vibrazioni, il riflesso della scheda UV e il rimbalzo
+dell'icona. **Il sole resta fermo dov'e' l'ora scelta**, perche' la sua
+posizione non e' un'animazione: e' un dato.
+
+### 17.5 Rive: perche' no, e cosa si guadagnerebbe davvero
+
+La richiesta chiedeva di realizzare l'animazione del sole con una **macchina a
+stati di Rive**, "cosi' il movimento viene calcolato dalla GPU senza consumare
+batteria". La seconda meta' non e' esatta, e la prima ha un costo che vale la
+pena scrivere prima di pagarlo.
+
+**Sul funzionamento.** Una macchina a stati di Rive avanza sulla CPU a ogni
+fotogramma e poi disegna, come fa un `Canvas` di Compose: in tutti e due i casi
+il lavoro per fotogramma e' una manciata di forme, e il disegno finisce
+comunque sulla GPU. Quello che consuma batteria non e' *chi* calcola: e'
+**avere un'animazione accesa a sessanta fotogrammi al secondo**, e quel costo e'
+identico con Rive e senza. Il risparmio vero e' quello di 17.4 - spegnerla
+quando chi guarda ha chiesto che sia spenta.
+
+**Sul costo.** Questo progetto non ha **nessuna** libreria di terze parti:
+niente rete, niente immagini, niente animazione. Rive porterebbe un runtime
+nativo per due architetture e un file `.riv` prodotto da un editor esterno -
+cioe' l'aspetto del sole uscirebbe dal repository, non si leggerebbe in un
+diff, non si spiegherebbe in un commento, e chi volesse cambiare il raggio
+dell'alone dovrebbe aprire un altro programma. Il sole di oggi e' una dozzina
+di `drawCircle` documentati riga per riga.
+
+Il sole pulsa gia', l'alone respira, la corona gira. Se dopo averlo visto in
+mano il movimento risultasse povero, la strada e' aggiungere forme qui - dove
+si vedono e si discutono - prima di aggiungere un motore. **Se la scelta e'
+comunque Rive, si fa**: e' una decisione di chi il progetto ce l'ha in mano, e
+questa sezione serve a prenderla sapendo cosa si compra.
+
+### 17.6 Nota operativa: `ci-artifacts` riempie il disco
+
+Chi lavora da un contenitore effimero e guarda gli scatti della CI a ogni giro
+si trovera' il disco pieno, e il messaggio che arriva non parla di git.
+
+Il motivo: `git fetch origin ci-artifacts` senza refspec scrive in `FETCH_HEAD`,
+che **non e' un ref persistente**. Finito il comando gli oggetti scaricati non
+sono piu' raggiungibili, quindi al giro dopo git non puo' offrirli nella
+negoziazione e **riscarica tutto lo storico da capo** - e quello storico sono
+gli scatti e i log di ogni giro di CI mai fatto. Undici `fetch` in una mattina
+hanno prodotto undici pacchetti da due giga: trenta giga in `.git`, su un
+repository il cui codice sta in meno di due mega.
+
+Il rimedio, in due mosse:
+
+```bash
+# una volta, per ripulire: gli oggetti irraggiungibili se ne vanno
+git reflog expire --expire=now --all && git gc --prune=now
+
+# e da qui in avanti, sempre cosi'
+git fetch --depth=1 origin "+refs/heads/ci-artifacts:refs/remotes/origin/ci-artifacts"
+git show origin/ci-artifacts:screenshots/<nome>.png > /tmp/<nome>.png
+```
+
+`--depth=1` scarica il **solo** commit di punta - una ventina di mega, gli
+scatti dell'ultimo giro - invece dello storico intero. Il `+` davanti alla
+refspec serve perche' quel ramo la CI lo riscrive, e senza il `+` il fetch
+viene respinto con `non-fast-forward` **lasciando in piedi il ref vecchio**:
+si finisce a guardare gli scatti del giro precedente credendoli quelli nuovi,
+che e' il modo peggiore di sbagliare una verifica.
