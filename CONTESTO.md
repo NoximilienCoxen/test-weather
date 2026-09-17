@@ -3853,3 +3853,179 @@ ventiquattro stringhe di cui venti identiche. Resta la tabella per condizione,
 e accanto `SalaBodiesPerFase` elenca le poche caselle in cui la fase cambia le
 parole - oggi una sola. `salaBody` prende ora anche la fase e consulta prima
 l'eccezione.
+
+## 14. Il radar, scritto senza aver mai visto una risposta
+
+Il radar chiesto e' quello ufficiale italiano: **Dipartimento della Protezione
+Civile**, `radar-api.protezionecivile.it`, dati in **CC BY-SA 4.0**. La sonda
+gli ha chiesto nove indirizzi e ne ha avuti nove `403 Access Denied`
+(13-septies): non e' l'indirizzo sbagliato, e' il servizio che rifiuta un
+chiamante di datacentro. Anche il proxy di questa postazione lo nega a monte,
+per politica di rete, quindi la risposta non si e' potuta leggere **da nessuna
+parte**.
+
+La decisione, presa da chi il progetto ce l'ha in mano, e' stata: si scrive per
+il DPC lo stesso. Da un telefono italiano quel servizio, con ogni probabilita',
+risponde.
+
+### Quello che cambia quando non si puo' leggere la risposta
+
+`WeatherAlertsRepository` porta gia' la cicatrice di un file scritto su campi
+**dedotti** invece che letti: `awareness_level` e `awareness_type`, zero
+occorrenze su trentacinquemila byte di feed vero, e ogni allerta mostrata gialla
+generica senza che nessuno se ne accorgesse. Qui non si poteva leggere, e
+ripetere quell'errore sarebbe stato peggio - perche' stavolta si sapeva.
+
+Percio' `RadarDpcRepository` **non conosce nessun nome di campo**. Nessun
+`@SerialName`, nessuna data class del prodotto. Si scorre il JSON e si cerca per
+forma, in `RadarForma`:
+
+| cosa | come la si riconosce |
+| --- | --- |
+| l'istante | un intero nella finestra plausibile di un'epoca, in secondi o millesimi; fra piu' d'uno, il piu' recente |
+| l'immagine | una stringa che, decodificata da base64, comincia con gli otto byte di firma di un PNG |
+| il riquadro | un array di quattro numeri, o di due coppie, i cui valori **stanno dove starebbero delle coordinate** |
+
+Dedurre un nome e' tirare a indovinare; riconoscere una forma no. Un intero da
+milletrecento miliardi dentro la risposta di un radar **e'** un istante,
+comunque si chiami il campo che lo porta.
+
+Il caso che conta davvero e' il terzo, ed e' il motivo per cui il riconoscimento
+del riquadro e' severo: un array di quattro numeri e' anche un elenco di soglie,
+di componenti di un colore, di dimensioni in pixel. Prendere uno di quelli per
+riquadro sposterebbe la pioggia di centinaia di chilometri **senza che nessuno
+se ne accorga**. Quindi i quattro valori devono cadere dove cadono delle
+coordinate e coprire almeno tre gradi per lato, e `RadarFormaTest` prova proprio
+i casi che devono essere rifiutati.
+
+### Il riquadro non si inventa
+
+Se il prodotto non dichiara il proprio riquadro - ne in `getProduct`, ne in
+`findAvailableProductsByType` - **l'immagine non si disegna**. Posarla su un
+rettangolo scelto da noi vorrebbe dire mostrare la pioggia dove non e', e una
+carta che sbaglia di cinquanta chilometri e' peggio di nessuna carta: chi la
+guarda non ha modo di accorgersene.
+
+### L'indizio che finisce sullo schermo
+
+Quando il lettore non riconosce niente, `StatoRadar.NonDisponibile` porta con
+se' i primi duecento caratteri della risposta e l'elenco delle chiavi di primo
+livello, e **quella riga si scrive sotto la carta**. E' brutta da leggere e sta
+li' apposta: la sonda della CI al DPC non ci arriva, un telefono italiano si', e
+quella riga e' l'unico modo che il progetto ha di sapere com'e' fatta davvero
+una risposta di quel servizio. Chi la vede la riporti: il giorno in cui arriva,
+`RadarForma` puo' smettere di indovinare la forma e leggere i nomi veri.
+
+### Dov'e', e perche' li'
+
+Dentro **"La pioggia"**, sotto le dodici colonne, non in una sala sua. Le
+colonne dicono *quando*, la carta dice *dove*: e' la stessa domanda per due vie,
+e leggerle vicine vale piu' che separarle con uno scorrimento.
+
+La carta si disegna **sempre**, anche senza fotogramma: costa, confine, anelli
+della distanza e il puntino del posto scelto. Una schermata che sparisce quando
+il dato manca lascia chi guarda senza sapere se e' l'app a essere rotta o il
+cielo a essere sereno.
+
+Quattro stati e non tre, come gia' per le allerte: **fuori copertura non e' un
+guasto**. A Tokyo il radar italiano non e' vuoto, e' assente, e dirlo come se
+fosse un errore insegna a ignorare l'avviso quando invece e' vero.
+
+### Le coste: `RadarCoste.kt`
+
+`WORLD_COASTS` esiste ed e' fatta per un disco di duecento pixel - lo stivale ci
+sta in dodici vertici. Sotto una macchia di pioggia dodici vertici rispondono
+"forse". Da Natural Earth 1:50m, che e' di **dominio pubblico**, ridotte con
+Douglas-Peucker da `scripts/coste_italia.py` che resta nel repository: quattro
+anelli chiusi per l'Italia, che si riempiono, e trentanove tratti aperti per i
+vicini tagliati al bordo, che si disegnano solo di linea. Senza i vicini
+l'Adriatico sembrerebbe oceano aperto.
+
+### La finestra: centrata su di te, non sull'Italia
+
+Un grado e mezzo sopra e sotto il posto scelto, cioe' centosessanta chilometri
+per lato: la distanza a cui un temporale che si vede e' ancora un temporale che
+ti riguarda. Sull'Italia intera la stessa macchia sarebbe larga tre pixel, e la
+carta risponderebbe a una domanda che nessuno fa. La finestra si **trasla** per
+non uscire dal dominio del prodotto, e non si restringe: cosi' la scala resta
+quella dichiarata dai due anelli, cinquanta e cento chilometri, che sono
+misurati e per questo portano un numero. Il battito del puntino non ne porta
+nessuno, perche' non misura niente.
+
+### Il punto debole, dichiarato
+
+Latitudine e longitudine si posano sul rettangolo **in modo lineare**
+(equirettangolare), con la sola correzione del coseno della latitudine media. Se
+il prodotto del DPC fosse invece in **Mercatore** - e non si e' potuto
+verificare - la pioggia risulterebbe spostata in verticale rispetto alla costa,
+di piu' verso i bordi.
+
+Sarebbe un errore **visibile**: la macchia non seguirebbe il profilo della
+penisola, e chi guarda se ne accorgerebbe. E' voluto che lo sia. Scegliere la
+proiezione "giusta" tirando a indovinare produrrebbe lo stesso errore in
+silenzio, e questo file e' pieno di prove che gli errori silenziosi costano di
+piu'.
+
+### Cosa non e' stato fatto, e perche'
+
+- **Nessun ripiego travestito.** RainViewer risponde `200` e le sue tessere si
+  scaricano, ma e' un'altra fonte con un'altra licenza e un'altra attribuzione.
+  Scriverne una col nome dell'altra sarebbe la stessa bugia di una citazione
+  attribuita a chi non l'ha detta.
+- **Nessuna sequenza di fotogrammi**, nessun cursore del tempo: un solo
+  fotogramma, l'ultimo. Prima si vede se il servizio risponde.
+- **Niente e' stato provato con un servizio vero**, ne in CI ne qui. Quello che
+  la CI prova e' che il livello compila, che la carta muta si disegna, e che
+  `RadarForma` riconosce le forme che gli si danno in mano.
+
+### 14-bis. I commenti di Kotlin si annidano
+
+Il primo giro del radar e' caduto su una riga di **documentazione**. Dentro un
+KDoc c'era scritto che il corpo poteva arrivare con un tipo MIME `image` seguito
+da un asterisco. In Java quella sequenza dentro un commento non vuol dire
+niente; in Kotlin **apre un commento dentro il commento**, e da li' in poi serve
+una chiusura in piu'.
+
+Il compilatore ha detto:
+
+```
+e: RadarDpcRepository.kt:367:1 Syntax error: Unclosed comment.
+```
+
+Il file e' lungo trecentosessantasei righe. Cioe' l'errore veniva segnalato
+**alla riga dopo l'ultima**, che e' il posto in cui l'errore non e': il parser
+aveva letto fino in fondo cercando una chiusura che non arrivava mai. A
+cascata, tutto cio' che quel file dichiara e' risultato irrisolvibile altrove -
+sette `Unresolved reference` in `WeatherViewModel.kt`, che con il ViewModel non
+c'entravano niente.
+
+E' lo stesso genere di diagnosi ingannevole di 13-sexies: **il punto in cui la
+CI si lamenta non e' il punto in cui il guasto sta**. Li' era un'azione di terze
+parti accusata al posto dell'ambiente, qui una riga di codice accusata al posto
+di un commento.
+
+`scripts/commenti_kotlin.py` conta aperture e chiusure file per file, tolte
+prima le stringhe. Non dimostra che il codice compila - non compila niente - ma
+questo errore lo trova in un secondo invece che in otto minuti di runner, e
+soprattutto lo indica **dove sta**.
+
+### 14-ter. L'indizio occupava mezza sala
+
+Il primo scatto verde del radar ha mostrato una cosa che nessuna prova offline
+avrebbe mostrato: l'indizio del guasto, riversato sotto la carta, era la pagina
+d'errore del DPC **per intero**. Dieci righe di markup - `<HTML><HEAD>
+<TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1> You don't` -
+che spingevano le dodici colonne della pioggia fuori dalla vista, per dire due
+parole.
+
+Un indizio che non si legge non e' un indizio. `riassunto` adesso distingue tre
+forme: di un JSON tiene le **chiavi di primo livello**, che sono esattamente
+cio' che servira' per scrivere il lettore vero; di una pagina HTML tiene il
+`title` o il primo `h1`, dove le pagine d'errore mettono la loro unica frase
+utile; di tutto il resto la testa, senza a capo. Sotto la carta, tre righe al
+massimo.
+
+E' la seconda volta in questo progetto che un difetto di impaginazione lo trova
+**uno scatto e non un test** - la prima erano le etichette di Sala II che si
+troncavano (sezione 13). I test dicono se il codice fa quello che dice; gli
+scatti dicono se cio' che fa ci sta nello schermo.
