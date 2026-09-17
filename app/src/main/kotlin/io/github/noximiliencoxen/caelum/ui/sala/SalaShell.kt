@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.ui.sala
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,12 +15,15 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -275,42 +277,69 @@ fun SalaShell(
                     state = pagerState,
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
                 ) { page ->
-                    Column(
+                    // **La scheda scorre quando non ci sta, e prima si faceva
+                    // tagliare.** Il pannello e' ancorato in basso e si
+                    // dimensiona sul contenuto: finche' il contenuto ci sta,
+                    // niente cambia di un punto. Quando non ci sta - "La
+                    // settimana" su uno schermo corto, o col corpo di sistema
+                    // ingrandito - il `Column` veniva misurato all'altezza
+                    // disponibile e i figli in eccesso, margine inferiore
+                    // compreso, finivano fuori dal ritaglio. Si faceva
+                    // tagliare in fondo, ed e' successo davvero (sezione 15.4).
+                    //
+                    // Il `Box` da' l'ancora in basso, il `verticalScroll` da'
+                    // la via d'uscita. Lo stato sta dentro `key(page)` perche'
+                    // ogni sala si ricordi il proprio: condiviso, aprendo una
+                    // sala corta dopo una lunga si troverebbe scorrevole senza
+                    // niente da scorrere.
+                    //
+                    // Il prezzo, che va detto: su una scheda lunga il dito
+                    // scorre prima la scheda, e passa alla sala successiva
+                    // quando e' arrivato in fondo. E' il nested scroll di
+                    // Compose, non c'e' codice nostro, ed e' quello che fa
+                    // qualsiasi pagina lunga dentro un carosello.
+                    val scorrimento = key(page) { rememberScrollState() }
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(start = 26.dp, end = 26.dp, bottom = 14.dp),
-                        verticalArrangement = Arrangement.Bottom,
                     ) {
-                        when (rooms.getOrNull(page)) {
-                            SalaRoom.OGGI -> SalaOggiScreen(
-                                state = state,
-                                sky = sky,
-                                palette = palette,
-                                viewModel = viewModel,
-                                faseLunare = faseLunare,
-                                onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
-                            )
-                            SalaRoom.SETTIMANA -> SalaSettimanaScreen(
-                                state = state,
-                                palette = palette,
-                                viewModel = viewModel,
-                                faseLunare = faseLunare,
-                                onVai = ::vaiA,
-                            )
-                            SalaRoom.PIOGGIA -> SalaPioggiaScreen(
-                                state = state,
-                                palette = palette,
-                                onSelectHour = viewModel::selectHour,
-                            )
-                            SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
-                            SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
-                            SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
-                            SalaRoom.UV -> SalaUvScreen(
-                                state = state,
-                                palette = palette,
-                                onSelectHour = viewModel::selectHour,
-                            )
-                            null -> Unit
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .verticalScroll(scorrimento),
+                        ) {
+                            when (rooms.getOrNull(page)) {
+                                SalaRoom.OGGI -> SalaOggiScreen(
+                                    state = state,
+                                    sky = sky,
+                                    palette = palette,
+                                    viewModel = viewModel,
+                                    faseLunare = faseLunare,
+                                    onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
+                                )
+                                SalaRoom.SETTIMANA -> SalaSettimanaScreen(
+                                    state = state,
+                                    palette = palette,
+                                    viewModel = viewModel,
+                                    faseLunare = faseLunare,
+                                    onVai = ::vaiA,
+                                )
+                                SalaRoom.PIOGGIA -> SalaPioggiaScreen(
+                                    state = state,
+                                    palette = palette,
+                                    onSelectHour = viewModel::selectHour,
+                                )
+                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
+                                SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
+                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
+                                SalaRoom.UV -> SalaUvScreen(
+                                    state = state,
+                                    palette = palette,
+                                    onSelectHour = viewModel::selectHour,
+                                )
+                                null -> Unit
+                            }
                         }
                     }
                 }
@@ -334,16 +363,21 @@ fun SalaShell(
                     onTornaOra = viewModel::backToNow,
                     modifier = Modifier.padding(start = 26.dp, end = 62.dp),
                 )
-                PuntiSala(
-                    posizione = posizione,
-                    palette = palette,
-                    onVai = { i -> rooms.getOrNull(i)?.let(::vaiA) },
-                    modifier = Modifier.padding(start = 26.dp, end = 62.dp, bottom = 12.dp),
-                )
             }
 
+            // **I sette trattini qui sotto non ci sono piu'.** Facevano lo
+            // stesso mestiere di questa colonna - dire dove sei, e portartici -
+            // a due bordi diversi dello schermo, e lo facevano **in
+            // orizzontale**, promettendo che le schede si sfogliassero di lato
+            // mentre si sfogliano in su e in giu'.
+            //
+            // Costavano quarantotto punti di bersaglio piu' dodici di margine:
+            // sessanta punti che da qui in poi sono delle schede, che erano
+            // strette. La colonna ha preso la cosa che i trattini facevano
+            // meglio - seguire il dito in continuo - tramite `posizione`.
             ColonnaScorciatoie(
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
+                posizione = posizione,
                 palette = palette,
                 onVai = ::vaiA,
                 modifier = Modifier

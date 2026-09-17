@@ -162,8 +162,10 @@ fun MappaRadar(
                     "Il radar del Dipartimento della Protezione Civile copre l'Italia: " +
                         "per ${place.name} non c'è, che non è come dire che non piove."
                 StatoRadar.InCorso -> "Si sta chiedendo l'ultimo fotogramma."
-                is StatoRadar.Pronto ->
-                    "Dati radar: Dipartimento della Protezione Civile, CC BY-SA 4.0."
+                // Il nome della fonte lo porta il fotogramma, non lo sa
+                // questa schermata: scritto qui, resterebbe quello di prima il
+                // giorno in cui la fonte cambia.
+                is StatoRadar.Pronto -> stato.prodotto.attribuzione
             },
             style = SalaType.rowNote,
             color = palette.inkFaint,

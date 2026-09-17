@@ -154,16 +154,31 @@ fun BarraDelleOre(
             // Affiancati non costano niente: la riga era gia' alta quanto
             // l'ora, e a sinistra c'e' spazio perche' la pillola del ritorno
             // al presente finisce ben prima.
-            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            // **Le due scritte stanno sulla stessa linea di base, e prima
+            // no.** Erano allineate in basso con due punti di margine messi a
+            // occhio - e allineare in basso due **riquadri** di corpi diversi
+            // non allinea le lettere: allinea i fondi delle caselle, che sotto
+            // le lettere scendono di quanto vuole ciascun font. Il giorno
+            // galleggiava un paio di punti sopra l'ora, e si vedeva.
+            //
+            // `alignByBaseline` allinea quello che l'occhio guarda davvero: la
+            // riga su cui poggiano le lettere. Niente margini da tarare, e
+            // continua a valere se un domani i due corpi cambiano.
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = giorno.uppercase(),
                     style = SalaType.microLabel,
                     color = palette.inkSuCielo,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(bottom = 2.dp),
+                    modifier = Modifier.alignByBaseline(),
                 )
-                Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accentSuCielo)
+                Text(
+                    text = "%02d:00".format(ora),
+                    style = SalaType.hourLabel,
+                    color = palette.accentSuCielo,
+                    modifier = Modifier.alignByBaseline(),
+                )
             }
         }
 

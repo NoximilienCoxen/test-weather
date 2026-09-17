@@ -46,6 +46,28 @@ import java.net.URL
  * progetto finora non ha voluto. Sta scritto qui perche' il posto in cui
  * risolverlo, se si decidera' di farlo, e' questo e uno solo.
  */
+/**
+ * Chi sta chiamando.
+ *
+ * Senza questa riga parte l'agente predefinito di Android - `Dalvik/2.1.0
+ * (Linux; U; Android 14; ...)` - che e' fra i primi che una rete di
+ * distribuzione scarta, perche' e' quello che manda qualsiasi cosa non sia un
+ * browser.
+ *
+ * **Non e' un travestimento.** Dice il nome dell'app e dove sta il codice, che
+ * e' quello che un agente serve a dire: se un giorno una fonte volesse
+ * chiedere di smettere, da qui sa a chi scrivere. Non finge di essere Chrome e
+ * non manda un `Referer` del sito di qualcun altro - se un servizio pubblico
+ * risponde solo a chi si spaccia per il suo sito, quel servizio non e' aperto
+ * a terzi, e girarci attorno non e' una cosa che questo progetto fa. Chi in
+ * futuro fosse tentato di provarci, legga prima CONTESTO 16.5.
+ *
+ * Vale per tutte le fonti e non solo per il radar: e' cortesia verso ognuna, e
+ * la policy delle tessere di OpenStreetMap un agente identificabile lo
+ * **chiede**, se un giorno serviranno.
+ */
+private const val AGENTE = "Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)"
+
 internal fun httpGet(
     url: String,
     fonte: String,
@@ -104,6 +126,7 @@ private fun httpGetGrezzo(
         // veda che e' voluto, non ereditato per caso.
         instanceFollowRedirects = true
         setRequestProperty("Accept", accept)
+        setRequestProperty("User-Agent", AGENTE)
     }
     try {
         val code = connection.responseCode

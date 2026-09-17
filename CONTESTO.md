@@ -4333,3 +4333,173 @@ motivo per cui `StatoRadar.NonDisponibile` porta a schermo cio' che ha visto.
 Vale la pena aver speso un giro di CI per un risultato negativo: senza, in
 questo file sarebbe rimasta una spiegazione plausibile spacciata per accertata,
 che e' il difetto che 13-sexies ha gia' fatto pagare una volta.
+
+## 16. Quello che il telefono ha visto e la CI no
+
+Due scatti da Fontevivo, presi in mano. Tre difetti su quattro li avevo
+introdotti io nel giro precedente, e due di quei tre erano **invisibili negli
+scatti della CI** perche' dipendono dai dati: con altri numeri, la stessa
+schermata sembrava a posto.
+
+### 16.1 Il grafico UV a quote alterne
+
+Le sedici colonne dell'istogramma stavano a altezze scoordinate, alternate, e
+il grafico non diceva piu' niente sui propri valori.
+
+La causa e' la correzione della sezione 15.2-ter. Per far stare le etichette
+ne avevo dimezzate le occorrenze, con un `if` attorno al `Text`:
+
+```kotlin
+if (ora % 2 == 0 || indice == scelta) { Text(...) }
+```
+
+Solo che la `Row` che tiene le colonne le allinea **in basso**, e una colonna
+senza etichetta e' piu' corta di una con etichetta di tutta l'altezza di una
+riga di testo. Allineate in basso, le barre con l'etichetta salivano di
+quell'altezza. Un grafico che sposta le proprie barre a seconda di quale
+etichetta gli tocca.
+
+**Perche' la CI non l'ha visto e il telefono si'.** Lo ha visto, e l'ho
+guardato: nello scatto `chiaro-d11-uv.png` la scala diceva
+`06 08 10 12 13 14 16 18 20` - era quello che stavo controllando - e le barre
+erano gia' sbagliate. A Forli' alle 13:00 le colonne alte stavano tutte al
+centro, dove le etichette si alternano fitte, e l'alternanza si leggeva come la
+forma della curva. A Fontevivo con l'indice a zero il disegno era sparso, e lo
+sbaglio saltava fuori.
+
+Non e' che lo scatto non bastasse: **e' che avevo guardato la riga che avevo
+appena corretto** invece della figura sopra.
+
+La correzione e' che l'etichetta c'e' sempre, e quando non si deve leggere e'
+stringa vuota. Un `Text` vuoto occupa comunque la propria interlinea, quindi
+tutte le colonne restano alte uguale. Una casella d'altezza fissa avrebbe fatto
+lo stesso, al prezzo di scrivere l'interlinea a mano in un secondo posto, dove
+sarebbe divergata al primo che tocca il corpo.
+
+### 16.2 Il giorno galleggiava sopra l'ora
+
+`OGGI` e `13:00`, accanto sopra la barra, erano allineati **in basso** con due
+punti di margine messi a occhio. Allineare in basso due riquadri di corpi
+diversi non allinea le lettere: allinea i fondi delle caselle, che sotto le
+lettere scendono di quanto vuole ciascun font - e i due font qui sono lo stesso
+a due corpi e due pesi.
+
+`alignByBaseline` allinea quello che l'occhio guarda: la riga su cui le lettere
+poggiano. Nessun margine da tarare, e regge se un domani i corpi cambiano.
+
+### 16.3 Due navigazioni per un carosello solo, e una diceva il verso sbagliato
+
+Sotto le schede c'erano **sette trattini orizzontali**, uno per sala: dicevano
+dove sei e ci si saltava sopra. Esattamente quello che fa la colonna sul fianco
+destro. Due comandi identici a due bordi opposti dello schermo, e chi li ha
+usati l'ha notato al primo giro.
+
+Peggio della ridondanza c'e' che erano **orizzontali**. Sette tacche in fila
+orizzontale sono il segno universale di "si sfoglia di lato", e qui si sfoglia
+in su e in giu'. Un indicatore che mente sul verso del gesto e' peggio di un
+indicatore assente: chi lo legge prova il gesto sbagliato e conclude che l'app
+non risponde.
+
+Sono spariti. Sopravvive la colonna, che era gia' verticale come il carosello,
+dice quale sala e' quale, e ci porta con un tocco. Le due cose che i trattini
+facevano meglio ha preso anche quelle:
+
+- **segue il dito in continuo.** L'accento non scatta al momento
+  dell'aggancio: scorre fra un'icona e l'altra, con la stessa formula che
+  avevano i trattini - la frazione di pagina di `pagerState`, letta **dentro
+  il disegno** e non in composizione, come gia' faceva `PuntiSala`. Per questo
+  il fondo del disco si disegna con `drawBehind` e non con `background`.
+  L'inchiostro dell'icona no: quello lo deve sapere un composable, e passarglielo
+  a ogni fotogramma costerebbe la ricomposizione che si sta evitando. Scatta, con
+  una molla corta a coprirlo.
+- **c'e' un filo dietro.** Una linea verticale tenue da centro a centro del
+  primo e dell'ultimo bersaglio. Sette dischi sparsi sono sette bottoni; sette
+  dischi su una linea sono un **asse**, e un asse verticale dice da se' in che
+  verso si sfoglia. Va da centro a centro e non da bordo a bordo: un filo che
+  spunta sopra la prima icona sembrerebbe tagliato, non finito.
+
+E i sessanta punti che i trattini occupavano - quarantotto di bersaglio piu'
+dodici di margine - sono andati alle schede.
+
+### 16.4 La scheda scorre quando non ci sta
+
+I sessanta punti aiutano e non risolvono: "La settimana" e "La pioggia"
+riempiono lo schermo comunque, e su un telefono piu' corto del mio, o con il
+corpo di sistema ingrandito, il taglio in fondo torna. La sezione 15.4 aveva
+descritto il meccanismo e si era fermata li'.
+
+La pagina del carosello adesso e':
+
+```kotlin
+Box(Modifier.fillMaxSize().padding(...)) {
+    Column(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .verticalScroll(scorrimento),
+    ) { ... }
+}
+```
+
+- contenuto **piu' corto** dell'altezza: il `Column` si misura sul contenuto e
+  resta ancorato in basso. **Le schede che ci stanno non cambiano di un punto**
+  - ed e' la maggioranza;
+- contenuto **piu' alto**: il `Column` si ferma all'altezza disponibile e
+  scorre, invece di far uscire dal ritaglio i figli in eccesso.
+
+Lo stato sta dentro `key(page)` perche' ogni sala ricordi il proprio:
+condiviso, aprendo una sala corta dopo una lunga la si troverebbe scorrevole
+senza niente da scorrere.
+
+**Il prezzo va detto perche' e' un gesto che cambia**: su una scheda lunga il
+dito scorre prima la scheda, e passa alla sala successiva quando e' arrivato in
+fondo. E' il nested scroll di Compose - nessun codice nostro - ed e' quello che
+fa qualsiasi pagina lunga dentro un carosello. Se sull'uso quotidiano risultera'
+scomodo, la via d'uscita e' alleggerire le due sale dense, non togliere lo
+scorrimento: senza, il taglio torna e basta.
+
+### 16.5 Il radar: un ultimo tentativo, e cosa non si fara'
+
+Il DPC risponde 403 **anche dal telefono**. La sezione 14-quater aveva escluso
+l'ipotesi dell'agente, e va riletta con attenzione: quelle cinque prove
+partivano da un indirizzo **gia' rifiutato**, quindi non potevano distinguere
+"rifiuta questo indirizzo" da "rifiuta questo agente" - il primo filtro scatta
+prima e maschera il secondo. Dal telefono, che un indirizzo buono ce l'ha, e'
+stata provata **una combinazione sola**: l'agente predefinito di Android,
+`Dalvik/2.1.0 (...)`, che e' fra i primi che una rete di distribuzione scarta.
+
+Resta un tentativo, e costa una riga: `Http.kt` adesso manda
+`Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)`.
+
+**Non e' un travestimento**, ed e' il punto della sezione. L'agente dice il
+nome dell'app e dove sta il codice - se un giorno una fonte volesse chiedere di
+smettere, da li' sa a chi scrivere. Non finge di essere Chrome, e non manda un
+`Referer` del sito di qualcun altro.
+
+Quella seconda cosa e' la riga da non superare, e sta scritta perche' qualcuno
+sara' tentato: **se un servizio pubblico risponde solo a chi si spaccia per il
+suo sito, quel servizio non e' aperto a terzi.** Aggirarlo e' la stessa
+famiglia di gesti dello spacciare RainViewer per Radar-DPC, che questo progetto
+ha gia' rifiutato: in un caso si mente sulla fonte dei dati, nell'altro sul
+proprio nome.
+
+Vale per tutte le fonti e non solo per il radar: e' cortesia verso ognuna, e la
+policy delle tessere di OpenStreetMap un agente identificabile lo **chiede**.
+
+**Il segnale, e cosa succede dopo.** La riga sotto la carta, sul telefono. Se
+dice ancora `HTTP 403 ... Access Denied`, il DPC non serve terze parti e si
+passa a RainViewer - deciso in anticipo, cosi' non serve tornare a chiedere.
+Quel passaggio non e' uno scambio di indirizzo:
+
+- le tessere di RainViewer sono in **Mercatore**, la carta e' equirettangolare.
+  Va cambiata la proiezione in `RadarMappa.punto()` - una formula, un punto solo
+  del codice, ed e' li' che il commento sulla proiezione gia' avvisa che
+  succedera';
+- vanno scaricate e composte le tessere `z/x/y` che coprono la finestra;
+- **l'attribuzione a schermo cambia**: RainViewer e OpenStreetMap, non
+  Protezione Civile.
+
+L'ultima e' gia' pronta: `RadarProdotto` porta un campo `attribuzione`, e
+`RadarMappa` scrive quello invece di una riga scritta a mano. Un'attribuzione
+scritta dove si disegna resterebbe quella di prima il giorno in cui la fonte
+cambia, e **il nome sbagliato sopra i dati di un altro** e' esattamente cio'
+che si era rifiutato di fare. Chi porta i dati porta anche il proprio nome.
