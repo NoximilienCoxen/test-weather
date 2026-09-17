@@ -1,120 +1,120 @@
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:132)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 14:29:47.443 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 14:29:58.925 W/meteo   ( 8406): previsione non arrivata (tentativo 2 di 4): java.net.SocketTimeoutException: Read timed out
-09-17 14:29:58.925 W/meteo   ( 8406): java.net.SocketTimeoutException: Read timed out
-09-17 14:29:58.925 W/meteo   ( 8406): 	at java.net.SocketInputStream.socketRead0(Native Method)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at java.net.SocketInputStream.socketRead(SocketInputStream.java:118)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at java.net.SocketInputStream.read(SocketInputStream.java:173)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at java.net.SocketInputStream.read(SocketInputStream.java:143)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.readFromSocket(ConscryptEngineSocket.java:983)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.processDataFromSocket(ConscryptEngineSocket.java:947)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.-$$Nest$mprocessDataFromSocket(Unknown Source:0)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket.doHandshake(ConscryptEngineSocket.java:236)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket.startHandshake(ConscryptEngineSocket.java:218)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connectTls(RealConnection.java:196)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:153)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:132)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 14:29:58.925 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 14:30:11.463 W/meteo   ( 8406): previsione non arrivata (tentativo 3 di 4): java.net.SocketTimeoutException: Read timed out
-09-17 14:30:11.463 W/meteo   ( 8406): java.net.SocketTimeoutException: Read timed out
-09-17 14:30:11.463 W/meteo   ( 8406): 	at java.net.SocketInputStream.socketRead0(Native Method)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at java.net.SocketInputStream.socketRead(SocketInputStream.java:118)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at java.net.SocketInputStream.read(SocketInputStream.java:173)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at java.net.SocketInputStream.read(SocketInputStream.java:143)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.readFromSocket(ConscryptEngineSocket.java:983)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.processDataFromSocket(ConscryptEngineSocket.java:947)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.-$$Nest$mprocessDataFromSocket(Unknown Source:0)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket.doHandshake(ConscryptEngineSocket.java:236)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.org.conscrypt.ConscryptEngineSocket.startHandshake(ConscryptEngineSocket.java:218)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connectTls(RealConnection.java:196)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:153)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:132)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 14:30:11.463 W/meteo   ( 8406): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 14:30:17.083 I/meteo   ( 8406): previsione pronta: 24 ore
-09-17 14:30:19.587 W/ModernMediaScanner( 1549): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 14:30:19.623 W/ActivityTaskManager(  534): Force removing ActivityRecord{250f7c5 u0 io.github.noximiliencoxen.caelum/.MainActivity t58 f}}: app died, no saved state
-09-17 14:30:19.651 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:19.729 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:19.732 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{5278a9c u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-17 14:30:19.732 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:20.872 I/meteo   ( 8641): agganci: ora=13 sezione=5 meteo=-1 allerta=-1 cattura=true
-09-17 14:30:22.430 I/meteo   ( 8641): previsione pronta: 24 ore
-09-17 14:30:25.007 W/ModernMediaScanner( 1549): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 14:30:25.047 W/ActivityTaskManager(  534): Force removing ActivityRecord{97a58bf u0 io.github.noximiliencoxen.caelum/.MainActivity t59 f}}: app died, no saved state
-09-17 14:30:25.083 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:25.136 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{b3443e u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-17 14:30:25.136 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:26.292 I/meteo   ( 8758): agganci: ora=13 sezione=6 meteo=-1 allerta=-1 cattura=true
-09-17 14:30:27.858 I/meteo   ( 8758): previsione pronta: 24 ore
-09-17 14:30:30.434 W/ModernMediaScanner( 1549): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 14:30:32.657 W/ModernMediaScanner( 1549): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 14:30:32.699 W/ActivityTaskManager(  534): Force removing ActivityRecord{dadd975 u0 io.github.noximiliencoxen.caelum/.MainActivity t60 f}}: app died, no saved state
-09-17 14:30:32.732 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:32.786 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{d271d0c u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-17 14:30:32.786 W/WindowManager(  534): android.os.DeadObjectException
-09-17 14:30:33.932 I/meteo   ( 8916): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
-09-17 14:30:35.500 I/meteo   ( 8916): previsione pronta: 24 ore
-09-17 14:30:38.162 W/ModernMediaScanner( 1549): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:43:53.548 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:43:53.611 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:43:53.622 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{e07b14c u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:43:53.622 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:43:54.746 I/meteo   ( 8443): agganci: ora=13 sezione=2 meteo=-1 allerta=-1 cattura=true
+09-17 14:43:57.727 I/meteo   ( 8443): previsione pronta: 24 ore
+09-17 14:44:00.209 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:00.280 W/ActivityTaskManager(  530): Force removing ActivityRecord{a1640d u0 io.github.noximiliencoxen.caelum/.MainActivity t56 f}}: app died, no saved state
+09-17 14:44:00.304 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:00.304 W/WindowManager(  530): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-17 14:44:00.304 W/WindowManager(  530): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-17 14:44:00.398 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{db0af04 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:44:00.398 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:01.526 I/meteo   ( 8576): agganci: ora=13 sezione=3 meteo=-1 allerta=-1 cattura=true
+09-17 14:44:14.459 W/meteo   ( 8576): previsione non arrivata (tentativo 1 di 4): java.net.SocketTimeoutException: Read timed out
+09-17 14:44:14.459 W/meteo   ( 8576): java.net.SocketTimeoutException: Read timed out
+09-17 14:44:14.459 W/meteo   ( 8576): 	at java.net.SocketInputStream.socketRead0(Native Method)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at java.net.SocketInputStream.socketRead(SocketInputStream.java:118)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at java.net.SocketInputStream.read(SocketInputStream.java:173)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at java.net.SocketInputStream.read(SocketInputStream.java:143)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.readFromSocket(ConscryptEngineSocket.java:983)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.processDataFromSocket(ConscryptEngineSocket.java:947)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.-$$Nest$mprocessDataFromSocket(Unknown Source:0)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket.doHandshake(ConscryptEngineSocket.java:236)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket.startHandshake(ConscryptEngineSocket.java:218)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connectTls(RealConnection.java:196)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:153)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:132)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 14:44:14.459 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 14:44:25.954 W/meteo   ( 8576): previsione non arrivata (tentativo 2 di 4): java.net.SocketTimeoutException: Read timed out
+09-17 14:44:25.954 W/meteo   ( 8576): java.net.SocketTimeoutException: Read timed out
+09-17 14:44:25.954 W/meteo   ( 8576): 	at java.net.SocketInputStream.socketRead0(Native Method)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at java.net.SocketInputStream.socketRead(SocketInputStream.java:118)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at java.net.SocketInputStream.read(SocketInputStream.java:173)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at java.net.SocketInputStream.read(SocketInputStream.java:143)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.readFromSocket(ConscryptEngineSocket.java:983)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.processDataFromSocket(ConscryptEngineSocket.java:947)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.-$$Nest$mprocessDataFromSocket(Unknown Source:0)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket.doHandshake(ConscryptEngineSocket.java:236)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.org.conscrypt.ConscryptEngineSocket.startHandshake(ConscryptEngineSocket.java:218)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connectTls(RealConnection.java:196)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:153)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:132)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 14:44:25.954 W/meteo   ( 8576): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 14:44:29.203 I/meteo   ( 8576): previsione pronta: 24 ore
+09-17 14:44:32.284 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:32.336 W/ActivityTaskManager(  530): Force removing ActivityRecord{f7e5430 u0 io.github.noximiliencoxen.caelum/.MainActivity t57 f}}: app died, no saved state
+09-17 14:44:32.360 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:32.451 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{5202153 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:44:32.451 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:33.644 I/meteo   ( 8782): agganci: ora=13 sezione=4 meteo=-1 allerta=-1 cattura=true
+09-17 14:44:36.267 I/meteo   ( 8782): previsione pronta: 24 ore
+09-17 14:44:38.937 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:38.988 W/ActivityTaskManager(  530): Force removing ActivityRecord{a832126 u0 io.github.noximiliencoxen.caelum/.MainActivity t58 f}}: app died, no saved state
+09-17 14:44:39.236 I/binder  (    0): undelivered transaction 216357, process died.
+09-17 14:44:39.095 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{c796f61 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:44:39.095 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:40.266 I/meteo   ( 8900): agganci: ora=13 sezione=5 meteo=-1 allerta=-1 cattura=true
+09-17 14:44:42.809 I/meteo   ( 8900): previsione pronta: 24 ore
+09-17 14:44:45.580 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:45.629 W/ActivityTaskManager(  530): Force removing ActivityRecord{116eb07 u0 io.github.noximiliencoxen.caelum/.MainActivity t59 f}}: app died, no saved state
+09-17 14:44:45.663 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:45.736 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{a508801 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:44:45.736 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:46.986 I/meteo   ( 9018): agganci: ora=13 sezione=6 meteo=-1 allerta=-1 cattura=true
+09-17 14:44:49.425 I/meteo   ( 9018): previsione pronta: 24 ore
+09-17 14:44:52.218 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:54.568 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 14:44:54.616 W/ActivityTaskManager(  530): Force removing ActivityRecord{1f5c19f u0 io.github.noximiliencoxen.caelum/.MainActivity t60 f}}: app died, no saved state
+09-17 14:44:54.640 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:54.640 W/WindowManager(  530): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-17 14:44:54.640 W/WindowManager(  530): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-17 14:44:54.732 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:54.740 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{d0f49e u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 14:44:54.740 W/WindowManager(  530): android.os.DeadObjectException
+09-17 14:44:55.925 I/meteo   ( 9156): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
+09-17 14:44:59.680 I/meteo   ( 9156): previsione pronta: 24 ore
+09-17 14:45:02.339 W/ModernMediaScanner( 1585): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
