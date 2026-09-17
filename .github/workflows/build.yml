@@ -285,6 +285,99 @@ jobs:
             echo "tipo: $(file -b --mime-type /tmp/ciout/_osm.png 2>/dev/null)"
 
             echo
+            echo "=== 4-bis. RainViewer sa dire DOVE guarda? ==="
+            # La domanda che resta aperta da quando il radar e' passato a
+            # RainViewer: dove non c'e' un radar le tessere sono trasparenti,
+            # cioe' **identiche** a un cielo senza pioggia. Il DPC questo lo
+            # sapeva dire - copriva l'Italia e basta - e la sala aveva uno
+            # stato apposta, `FuoriCopertura`. Con RainViewer lo stato e'
+            # sparito perche' non c'e' niente che lo possa riempire.
+            #
+            # Qui si prova se qualcosa lo puo' riempire. Tre candidati, e se
+            # rispondono tutti 404 la risposta e' "no" ed e' comunque una
+            # risposta: si smette di cercare e resta la frase sotto la carta.
+            for CAND in \
+              "https://api.rainviewer.com/public/coverage.json" \
+              "https://api.rainviewer.com/public/radar-coverage.json" \
+              "https://tilecache.rainviewer.com/v2/coverage/0/256/2/2/1/0/0_0.png"; do
+              echo "--- $CAND"
+              curl -sSL --max-time 20 -o /tmp/ciout/_cov.bin -w "    HTTP %{http_code} byte=%{size_download}\n" "$CAND" || echo "    (non raggiungibile)"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_cov.bin 2>/dev/null)"
+              echo "    primi byte: $(head -c 140 /tmp/ciout/_cov.bin 2>/dev/null | tr -d '\000' | tr '\n' ' ')"
+              rm -f /tmp/ciout/_cov.bin
+            done
+
+            echo
+            echo "=== 4-quater. La copertura, al livello che l'app userebbe ==="
+            # La sezione qui sopra ha trovato che un livello di copertura
+            # **esiste**: `/v2/coverage/0/...` torna un PNG. Prima di
+            # costruirci sopra lo stato "fuori copertura" servono due risposte
+            # che quella prova non da':
+            #   - e' servito al livello 7, quello che l'app chiede? I livelli
+            #     di copertura spesso si fermano molto prima.
+            #   - una tessera dove nessun radar guarda e' davvero **diversa**
+            #     da una dove guarda? Se sono uguali, il livello non distingue
+            #     niente e non serve a niente.
+            # Forli' ha radar. Nairobi, per quanto ne sappiamo, no: se le due
+            # tessere pesano uguale, la risposta e' che non si puo' sapere.
+            #
+            # **Il codice HTTP non basta e la taglia in byte nemmeno.** Il
+            # primo giro di questa sonda ha risposto `200` a tutte e quattro
+            # le tessere, con taglie diverse - 1110 byte sopra Forli', 914
+            # sopra Nairobi - e due `200` di taglia diversa non dicono se una
+            # e' coperta e l'altra no: potrebbero essere tutte e due
+            # trasparenti con rumore diverso. L'unica risposta e' **guardare il
+            # pixel**, e per quello c'e' `scripts/alfa_png.py`.
+            #
+            # **Il primo giro col pixel ha risposto al contrario.** Forli', che
+            # il radar ce l'ha di sicuro - la tessera vera li' pesa ventisei
+            # kilobyte di pioggia - legge alfa **zero**; Nairobi legge
+            # **duecentocinquantacinque**. L'ipotesi ovvia e' che quel livello
+            # non disegni il coperto ma il **non** coperto: e' l'ombreggiatura
+            # che la mappa di RainViewer stende sulle zone dove nessuno guarda.
+            #
+            # Un'ipotesi ovvia su due campioni resta un'ipotesi, e questa
+            # sezione esiste perche' una volta ci si e' gia' fidati di due
+            # campioni. Quindi due punti su cui non si discute: il Kansas, che
+            # ha la rete radar piu' fitta del mondo, e il mezzo dell'oceano
+            # Pacifico. Se il Kansas legge zero e il Pacifico
+            # duecentocinquantacinque, il livello e' una maschera del non
+            # coperto e si puo' usare **invertita**.
+            for COV in \
+              "7/68/46  71  110  Forli-che-il-radar-ce-l-ha" \
+              "7/77/64  23  118  Nairobi-che-forse-no" \
+              "7/29/49  39   37  Kansas-la-rete-piu-fitta-del-mondo" \
+              "7/10/64 170    0  Pacifico-in-mezzo-al-niente" \
+              "7/69/55  85  151  Sahara-in-mezzo-al-niente" \
+              "6/34/23  35   55  Forli-un-livello-piu-grosso"; do
+              set -- $COV
+              echo "--- copertura $1 ($4), pixel $2,$3"
+              curl -sSL --max-time 20 -o /tmp/ciout/_c.png \
+                -w "    HTTP %{http_code} byte=%{size_download}\n" \
+                "https://tilecache.rainviewer.com/v2/coverage/0/256/$1/0/0_0.png"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_c.png 2>/dev/null)"
+              python3 "$GITHUB_WORKSPACE/scripts/alfa_png.py" /tmp/ciout/_c.png "$2" "$3" 2>&1 | sed 's/^/    /'
+              rm -f /tmp/ciout/_c.png
+            done
+
+            echo
+            echo "=== 4-ter. Una tessera vera della finestra di Forli' ==="
+            # Non la tessera 0/0/0 del mondo intero, che dice solo "il servizio
+            # risponde": la tessera che l'app chiederebbe davvero, al livello
+            # che l'app usa. Se questa non tornasse un PNG, la carta sarebbe
+            # vuota sul telefono e verde in CI.
+            PERC=$(grep -o '"path":"[^"]*"' /tmp/ciout/_rv.json | tail -1 | cut -d'"' -f4)
+            HOSTRV=$(grep -o '"host":"[^"]*"' /tmp/ciout/_rv.json | cut -d'"' -f4)
+            if [ -n "$PERC" ] && [ -n "$HOSTRV" ]; then
+              # zoom 7, colonna 68, riga 46: la tessera che contiene Forli'.
+              VERA="$HOSTRV$PERC/256/7/68/46/4/1_1.png"
+              echo "--- $VERA"
+              curl -sSL --max-time 25 -o /tmp/ciout/_vera.png -w "    HTTP %{http_code} byte=%{size_download}\n" "$VERA"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_vera.png 2>/dev/null)"
+              rm -f /tmp/ciout/_vera.png
+            fi
+
+            echo
             echo "=== 5. RADAR-DPC: la fonte ufficiale italiana ==="
             # Chiesta per nome: Dipartimento della Protezione Civile, dati
             # Radar-DPC in licenza CC BY-SA 4.0. Da qui **non si indovina un

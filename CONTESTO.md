@@ -4647,3 +4647,158 @@ refspec serve perche' quel ramo la CI lo riscrive, e senza il `+` il fetch
 viene respinto con `non-fast-forward` **lasciando in piedi il ref vecchio**:
 si finisce a guardare gli scatti del giro precedente credendoli quelli nuovi,
 che e' il modo peggiore di sbagliare una verifica.
+
+## 18. Il radar passa a RainViewer, e cosa e' costato non averlo provato prima
+
+Il Dipartimento della Protezione Civile risponde `403 Access Denied` **anche
+dal telefono**, su rete italiana, con un agente che dichiara nome e indirizzo
+del progetto. Quella e' la risposta, e l'ha data lo schermo di chi usa l'app.
+
+### 18.1 Tre prove, e le prime due spiegavano male
+
+| # | prova | risposta | conclusione |
+| --- | --- | --- | --- |
+| 1 | nove indirizzi dalla CI | nove 403 | rifiuta i datacentro |
+| 2 | cinque intestazioni dalla CI | cinque 403 identici | non e' l'agente |
+| 3 | dal telefono, agente dichiarato | **403** | non serve terze parti |
+
+La seconda riga era **inutile e sembrava utile**: quelle cinque prove partivano
+da un indirizzo gia' rifiutato, quindi il primo filtro scattava prima e
+mascherava tutti gli altri. Cinque risposte identiche non distinguevano niente.
+E' il difetto di 13-sexies in una terza forma: non "la diagnosi e' sbagliata",
+ma **"l'esperimento non poteva rispondere alla domanda"**. Costa un giro di CI
+e lascia in mano una certezza falsa, che e' peggio di un dubbio.
+
+La regola che ne esce: prima di fidarsi di un esperimento, chiedersi **cosa
+vedrei se l'ipotesi fosse falsa**. Se la risposta e' "la stessa cosa",
+l'esperimento non serve.
+
+### 18.2 Si e' scritto un lettore intero per un servizio che non ha mai risposto
+
+`RadarDpcRepository` e `RadarForma` erano codice buono: non indovinavano
+nessun nome di campo, riconoscevano l'istante dalla taglia, l'immagine dalla
+firma, il riquadro dai valori; `RadarFormaTest` li provava su tre dialetti
+inventati. Duecento righe, un test da tredici casi, tre giri di CI.
+
+Non sono serviti a niente, e adesso sono cancellati.
+
+**Nessuna eleganza compensa il non avere una risposta da leggere.** La sezione
+14 diceva "questo file e' scritto senza aver mai visto una risposta" e lo
+presentava come una difficolta' affrontata bene. Era invece il momento in cui
+fermarsi: la sonda aveva gia' detto che il servizio non rispondeva, e l'unica
+cosa ragionevole era non scrivere il lettore finche' non rispondeva.
+
+Cio' che si e' salvato dal giro precedente non e' il codice: e' **la carta**.
+Coste, anelli della distanza, puntino, ritaglio, riga di attribuzione - tutto
+scritto per il DPC, tutto valido con qualunque fonte. Quello e' il pezzo che
+andava fatto per primo.
+
+### 18.3 RainViewer: nomi veri, letti da una risposta vera
+
+Questo servizio ha risposto **subito e sempre**, e la sua risposta sta in
+`ci-artifacts/api/radar.txt` da settimane. Quindi qui non c'e' nessun
+riconoscimento per forma: ci sono i nomi dei campi.
+
+```
+{"host":"https://tilecache.rainviewer.com",
+ "radar":{"past":[{"time":1789639800,"path":"/v2/radar/057a891b2bed"}, ...]}}
+```
+
+e l'indirizzo di una tessera, anche questo **provato** dalla sonda:
+
+```
+{host}{path}/{lato}/{zoom}/{colonna}/{riga}/{colore}/{morbido}_{neve}.png
+```
+
+Si prende l'ultimo fotogramma **misurato**. Il `nowcast` - la previsione a
+brevissimo - c'e' nel formato ma nella cattura era vuoto, e mescolarlo al
+misurato senza dire quale sia quale sarebbe la bugia di un'allerta calcolata
+spacciata per ufficiale.
+
+### 18.4 La proiezione era il debito annunciato, ed e' stato pagato
+
+La carta era **equirettangolare**, con un commento che diceva: se un giorno
+arriva una fonte a tessere, il punto da cambiare e' questo. E' arrivata.
+
+Le tessere di RainViewer - come quelle di chiunque serva tessere - sono in
+**Mercatore**: la longitudine e' lineare, la latitudine no. Posarle su una
+carta lineare le stira, e di piu' ai bordi. Su tre gradi di finestra la
+differenza e' di pochi pixel e nessuno se ne accorgerebbe; si e' cambiata lo
+stesso, perche' "pochi pixel" e' una proprieta' di **questa** finestra, e il
+giorno in cui qualcuno la allarga l'errore diventa visibile senza che nessuno
+sappia da dove viene.
+
+Costa e pioggia usano adesso la stessa proiezione. Il che vuol dire che se una
+macchia non segue il profilo della penisola, non e' la proiezione: sono i dati,
+ed e' una cosa che si puo' riportare.
+
+`RadarTessere` e' aritmetica pura - griglia, Mercatore, quali tessere coprono
+una finestra - ed e' l'unica parte che si possa provare senza rete.
+`RadarTessereTest` la prova su Forli', Tokyo, Nairobi, Reykjavik, Bergen e
+Aoraki, e verifica la cosa che conta: che **i quattro angoli della finestra
+cadano dentro le tessere chieste**. Se ne mancasse una ci sarebbe un quadrante
+senza pioggia, e sembrerebbe sereno.
+
+Il tetto e' ventiquattro tessere e non sedici: le finestre vere ne chiedono
+fino a sedici - a Bergen e a Reykjavik esattamente sedici - e un tetto che il
+caso normale tocca non e' un tetto, e' un ritaglio silenzioso.
+
+### 18.5 Cosa questo radar non sa dire, e come lo si dice
+
+Il DPC copriva l'Italia: "fuori copertura" era una domanda con una risposta, e
+`StatoRadar` aveva un caso apposta. RainViewer raccoglie radar da mezzo mondo e
+**non dichiara dove arrivano**: dove non c'e' un radar le tessere sono
+trasparenti, cioe' identiche a un cielo senza pioggia.
+
+Quel caso e' stato tolto invece di essere riempito a occhio con un rettangolo
+disegnato a mano. Al suo posto c'e' una frase, sotto la carta, sempre:
+
+> Radar: RainViewer. Dove non arriva un radar la carta resta vuota: non vuol
+> dire che non piove.
+
+Non e' una soluzione, e' una dichiarazione - ed e' meglio di un rettangolo che
+finge di sapere.
+
+**E la sonda ha trovato qualcosa.** Dei tre indirizzi provati, due rispondono
+404 e il terzo no:
+
+```
+https://tilecache.rainviewer.com/v2/coverage/0/256/{z}/{x}/{y}/0/0_0.png
+  HTTP 200  byte=3012  image/png
+```
+
+Una mappa di copertura **esiste**, servita a tessere come il radar. Con quella,
+"fuori copertura" torna a essere una domanda con una risposta: si guarda il
+pixel della propria localita' nella tessera di copertura, e se e' trasparente
+li' non guarda nessuno.
+
+Non e' stata scritta subito, ed e' il punto di tutta questa sezione. Quella
+prova dice che il livello esiste **al livello 2**, che e' quello che si e'
+chiesto. Non dice se esista al livello 7, quello che l'app userebbe - i livelli
+di copertura spesso si fermano molto prima - ne' se una tessera dove nessun
+radar guarda sia davvero **diversa** da una dove guarda. Se fossero uguali, il
+livello non distinguerebbe niente.
+
+Quindi la sonda ha chiesto anche quelle due cose, e la risposta e' arrivata **al
+contrario di come la si aspettava**:
+
+| dove | alfa del pixel |
+| --- | --- |
+| Forli', che il radar ce l'ha | **0** |
+| Kansas, la rete radar piu' fitta del mondo | **0** |
+| Nairobi | 255 |
+| in mezzo al Pacifico | 255 |
+| in mezzo al Sahara | 255 |
+
+Quel livello non disegna il coperto: disegna il **non** coperto. E'
+l'ombreggiatura che la mappa di RainViewer stende sulle zone dove nessuno
+guarda, e la si usa **invertita** - trasparente vuol dire che un radar c'e'.
+
+Cinque punti su cinque, e due sono al di la' di ogni dubbio in tutte e due le
+direzioni. Il primo giro si era fermato a due campioni e li aveva letti al
+rovescio; se ci si fosse fidati, la sala avrebbe scritto "fuori copertura"
+sopra Forli' mentre disegnava la pioggia che cade su Forli'.
+
+Con questa risposta lo stato `FuoriCopertura` puo' tornare, e tornare
+**sapendo**: si scarica la tessera di copertura della propria localita', si
+guarda il pixel, e se e' opaco li' non guarda nessuno.
