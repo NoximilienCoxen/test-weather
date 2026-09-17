@@ -5055,3 +5055,15 @@ quelli con cui si parla di pioggia - pioviggine, pioggia, pioggia forte,
 rovescio, nubifragio - invece di una scala continua: una scala continua su un
 dato che ha un valore ogni quaranta chilometri promette sfumature che il dato
 non contiene.
+
+### 21.4 E il titolo diceva ancora "IL RADAR"
+
+Nella stessa schermata, sopra la carta della previsione, l'intestazione diceva
+**IL RADAR**. Un titolo che smentisce cio' che sta sotto e' l'ultima cosa che
+dovrebbe fare un titolo, e "radar" e' esattamente la parola che fa credere a
+una misura.
+
+Adesso cambia col contenuto - "IL RADAR" per il misurato, "LA PIOGGIA PREVISTA"
+per il modello - e la riga a destra porta l'**ora** invece della parola
+"previsione", che ormai la dice il titolo: quello che serve sapere li' e' quale
+ora si sta guardando.

@@ -128,12 +128,24 @@ fun MappaRadar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = "IL RADAR", style = SalaType.sectionLabel, color = palette.inkFaint)
+            // **L'intestazione cambia col contenuto.** Diceva "IL RADAR" anche
+            // quando sotto c'era una previsione del modello, e un titolo che
+            // smentisce cio' che sta sotto e' l'ultima cosa che dovrebbe fare
+            // un titolo. Chi legge "radar" crede a una misura.
+            Text(
+                text = if (stato is StatoRadar.Previsto) "LA PIOGGIA PREVISTA" else "IL RADAR",
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+            )
             Text(
                 text = when (stato) {
                     is StatoRadar.Pronto -> ORARIO.format(stato.prodotto.istante.atZone(ZoneId.systemDefault()))
                     StatoRadar.InCorso -> "in arrivo"
-                    is StatoRadar.Previsto -> "previsione"
+                    // L'ora, non la parola "previsione": quella la dice gia'
+                    // il titolo a sinistra, e qui serve sapere **quale** ora si
+                    // sta guardando.
+                    is StatoRadar.Previsto ->
+                        ORARIO.format(stato.quando.atZone(ZoneId.systemDefault()))
                     StatoRadar.FuoriCopertura -> "nessun radar"
                     is StatoRadar.FuoriOrario -> "niente per quest'ora"
                     is StatoRadar.NonDisponibile -> "non disponibile"
