@@ -25,6 +25,9 @@ data class GiornoSettimana(
     val esteso: String,
     /** "15 set". */
     val data: String,
+    /** Solo il numero: 15. Serve all'etichetta stretta sopra la barra delle
+     *  ore, dove "15 set" non ci starebbe accanto all'ora. */
+    val giornoDelMese: Int,
     val max: Double?,
     val min: Double?,
     val mm: Double?,
@@ -53,6 +56,7 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
             breve = if (i == 0) "oggi" else giorno.label.lowercase(),
             esteso = if (i == 0) "oggi" else giorno.date.dayOfWeek.italiano(),
             data = "${giorno.date.dayOfMonth} ${giorno.date.monthValue.meseBreve()}",
+            giornoDelMese = giorno.date.dayOfMonth,
             max = giorno.tempMax,
             min = giorno.tempMin,
             mm = giorno.precipitationSum,

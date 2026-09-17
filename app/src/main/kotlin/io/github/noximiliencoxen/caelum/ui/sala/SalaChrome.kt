@@ -75,14 +75,15 @@ fun PannelloSala(
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
             .background(palette.panel)
-            // **Il pannello puo' salire, e finora non lo faceva.** E'
-            // ancorato in basso e si dimensiona sul contenuto: quando il
-            // contenuto e' stretto, il cielo sopra resta inutilizzato e le sale
-            // ricche - la settimana su tutte - si stringono per stare in una
-            // meta' schermo che nessuno aveva chiesto. Quattro punti in piu'
-            // per lato non sono decorazione: sono il pannello che si prende lo
-            // spazio che c'e', invece di comprimersi sotto di esso.
-            .padding(start = 22.dp, end = 22.dp, top = 24.dp, bottom = 22.dp),
+            // **Queste misure sono state allargate e poi rimesse, e la nota
+            // resta perche' la prova conta piu' della misura.** Il ragionamento
+            // era: il pannello e' ancorato in basso, si dimensiona sul
+            // contenuto, quindi allargandolo sale nel cielo che sopra resta
+            // inutilizzato. Vero per le sale corte. Falso per "La settimana",
+            // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
+            // e ogni punto in piu' non la fa salire, le taglia una riga in
+            // fondo. Lo scatto della CI l'ha mostrato subito.
+            .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
     ) {
         // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
         Box(

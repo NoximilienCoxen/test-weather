@@ -229,10 +229,13 @@ fun SalaShell(
     // sotto ogni sala.
     val etichettaGiorno = remember(state.selectedDay, state.forecast) {
         val scelto = settimanaDi(state.forecast).getOrNull(state.selectedDay)
+        // **Corta, perche' divide una riga con l'ora e con la pillola del
+        // ritorno al presente.** "giovedì 18 set" accanto a "13:00" spingeva
+        // l'ora contro la pillola sugli schermi stretti; "gio 18" no.
         when {
             scelto == null -> "oggi"
             scelto.indice == 0 -> "oggi"
-            else -> "${scelto.esteso} ${scelto.data}"
+            else -> "${scelto.breve} ${scelto.giornoDelMese}"
         }
     }
 

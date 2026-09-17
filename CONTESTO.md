@@ -4051,9 +4051,9 @@ nessuna parte. Un dato che arriva ovunque e si legge in due posti e' mezzo
 lavoro.
 
 Adesso sta nella barra delle ore, che e' l'unico pezzo di cornice sotto ogni
-sala: giorno sopra, ora sotto, allineati a destra. Incolonnati e non affiancati
-perche' la riga li' accanto ospita gia' la pillola del ritorno al presente, che
-e' la piu' larga delle tre.
+sala: giorno e ora sulla stessa riga, in fondo a destra, "OGGI 13:00" o
+"GIO 18 13:00". Corto e non per esteso, e su una riga sola e non due: tutte e
+due le scelte sono state pagate e sono spiegate in 15.4.
 
 ### 15.2 Al sole i micro-testi sparivano
 
@@ -4106,16 +4106,50 @@ Il margine dal bordo scende da dieci a sei punti e **i dischi non si spostano**:
 il bersaglio e' cresciuto di cinque punti per lato, e quel margine glieli
 restituisce.
 
-### 15.4 Il pannello si stringeva sotto un cielo vuoto
+### 15.4 Lo spazio verticale: il ragionamento era giusto e la sala sbagliata
 
-Il pannello e' ancorato in basso e si dimensiona sul contenuto. Quando il
-contenuto e' ricco - "La settimana" su tutte - si stringeva dentro una meta'
-schermo che nessuno aveva chiesto, mentre il cielo sopra restava inutilizzato.
+L'osservazione era: la scheda occupa circa meta' schermo, le sale ricche - "La
+settimana" su tutte - si stringono, e il cielo sfocato sopra resta
+inutilizzato.
 
-Quattro punti in piu' di respiro nel pannello, e le spaziature di Sala II
-allargate dove erano piu' fitte. Non e' decorazione: e' il pannello che si
-prende lo spazio che c'e', invece di comprimersi sotto di esso. Quanto basti si
-vedra' negli scatti, che e' l'unico modo di saperlo da qui.
+Il primo tentativo l'ha presa alla lettera: quattro punti di respiro in piu' nel
+pannello, le spaziature di Sala II allargate, la striscia dei giorni piu' alta.
+Il ragionamento sembrava solido - il pannello e' ancorato in basso e si
+dimensiona sul contenuto, quindi allargandolo sale nel cielo.
+
+**Lo scatto della CI ha detto di no.** In `chiaro-d6-settimana.png` l'ultima
+riga della striscia - i millimetri di ogni giorno - era tagliata a meta' dal
+bordo inferiore del pannello.
+
+Il motivo e' che la premessa vale per le sale corte e non per quella. "La
+settimana" **cielo sopra non ne ha**: e' gia' alta quanto lo schermo glielo
+concede. Il pannello e' un `Column` ritagliato, il suo genitore gli passa
+un'altezza massima, e quando il contenuto la supera i figli in eccesso -
+insieme al margine inferiore - finiscono fuori dal ritaglio. Non sale: si fa
+tagliare in fondo.
+
+A peggiorarla c'era un difetto tutto mio, di 15.1: il giorno e l'ora **in
+colonna** sopra la barra costavano venticinque punti di altezza a **tutte e
+sette** le sale, perche' quella barra sta sotto ognuna. Affiancati non costano
+niente, e la riga era gia' alta quanto l'ora.
+
+Quindi: giorno e ora sulla stessa riga, e le spaziature tornate dov'erano.
+Restano i corpi cresciuti di un punto (15.2), che sono sei punti di altezza
+contro i ventotto di margine che Sala II aveva prima.
+
+**Cosa resta vero dell'osservazione.** Il cielo vuoto sopra il pannello nelle
+sale corte - "Oggi" quando non piove, "La luna" - non e' spazio sprecato: e' il
+cielo, che in questa app e' il dato principale e non lo sfondo. Il pannello che
+si ferma a meta' schermo li' e' la scelta, non il difetto. Dove il difetto
+c'era davvero - Sala II - lo spazio non c'era da prendere, e prenderlo lo stesso
+tagliava una riga.
+
+**La lezione, che e' la terza volta.** Sezione 13 le etichette troncate, 14-ter
+l'indizio del radar lungo dieci righe, e adesso questa: ogni volta un problema
+di **quanto ci sta** e ogni volta l'ha trovato uno scatto. I test dicono se il
+codice fa quello che dice; gli scatti dicono se cio' che fa ci sta nello
+schermo. Di una modifica alle spaziature non si scrive "fatto" prima di aver
+guardato.
 
 ### 15.5 Gli accenti scritti con l'apostrofo
 

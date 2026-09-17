@@ -143,15 +143,23 @@ fun BarraDelleOre(
                     color = palette.inkSuCielo,
                 )
             }
-            // Giorno sopra, ora sotto, allineati a destra. Incolonnati e non
-            // affiancati perche' la riga li' accanto ospita gia' la pillola
-            // del ritorno al presente, che e' la piu' larga delle tre.
-            Column(horizontalAlignment = Alignment.End) {
+            // **Giorno e ora sulla stessa riga, e la prima stesura li aveva
+            // incolonnati.** Due righe qui costano venticinque punti di
+            // altezza a tutta la galleria, perche' questa barra sta sotto ogni
+            // sala - e "La settimana", che e' la piu' alta, li ha pagati
+            // facendosi tagliare l'ultima riga della striscia. Lo si e' visto
+            // in uno scatto della CI, non a mente.
+            //
+            // Affiancati non costano niente: la riga era gia' alta quanto
+            // l'ora, e a sinistra c'e' spazio perche' la pillola del ritorno
+            // al presente finisce ben prima.
+            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = giorno.uppercase(),
                     style = SalaType.microLabel,
                     color = palette.inkSuCielo,
                     maxLines = 1,
+                    modifier = Modifier.padding(bottom = 2.dp),
                 )
                 Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accentSuCielo)
             }
