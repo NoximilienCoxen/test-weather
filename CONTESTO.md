@@ -4616,3 +4616,34 @@ mano il movimento risultasse povero, la strada e' aggiungere forme qui - dove
 si vedono e si discutono - prima di aggiungere un motore. **Se la scelta e'
 comunque Rive, si fa**: e' una decisione di chi il progetto ce l'ha in mano, e
 questa sezione serve a prenderla sapendo cosa si compra.
+
+### 17.6 Nota operativa: `ci-artifacts` riempie il disco
+
+Chi lavora da un contenitore effimero e guarda gli scatti della CI a ogni giro
+si trovera' il disco pieno, e il messaggio che arriva non parla di git.
+
+Il motivo: `git fetch origin ci-artifacts` senza refspec scrive in `FETCH_HEAD`,
+che **non e' un ref persistente**. Finito il comando gli oggetti scaricati non
+sono piu' raggiungibili, quindi al giro dopo git non puo' offrirli nella
+negoziazione e **riscarica tutto lo storico da capo** - e quello storico sono
+gli scatti e i log di ogni giro di CI mai fatto. Undici `fetch` in una mattina
+hanno prodotto undici pacchetti da due giga: trenta giga in `.git`, su un
+repository il cui codice sta in meno di due mega.
+
+Il rimedio, in due mosse:
+
+```bash
+# una volta, per ripulire: gli oggetti irraggiungibili se ne vanno
+git reflog expire --expire=now --all && git gc --prune=now
+
+# e da qui in avanti, sempre cosi'
+git fetch --depth=1 origin "+refs/heads/ci-artifacts:refs/remotes/origin/ci-artifacts"
+git show origin/ci-artifacts:screenshots/<nome>.png > /tmp/<nome>.png
+```
+
+`--depth=1` scarica il **solo** commit di punta - una ventina di mega, gli
+scatti dell'ultimo giro - invece dello storico intero. Il `+` davanti alla
+refspec serve perche' quel ramo la CI lo riscrive, e senza il `+` il fetch
+viene respinto con `non-fast-forward` **lasciando in piedi il ref vecchio**:
+si finisce a guardare gli scatti del giro precedente credendoli quelli nuovi,
+che e' il modo peggiore di sbagliare una verifica.
