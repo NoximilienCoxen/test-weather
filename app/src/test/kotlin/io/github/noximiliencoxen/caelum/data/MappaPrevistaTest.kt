@@ -34,6 +34,8 @@ class MappaPrevistaTest {
             PuntoPrevisto(44.0, 12.5, List(48) { 2f }),
             PuntoPrevisto(44.5, 12.5, List(48) { 5f }),
         ),
+        colonne = 2,
+        righe = 2,
     )
 
     @Test
@@ -41,7 +43,7 @@ class MappaPrevistaTest {
         val valori = mappa.a(mezzanotte.plus(Duration.ofHours(10)))
         assertNotNull(valori)
         assertEquals(4, valori!!.size)
-        assertEquals(1.0f, valori[0].second, 0.001f)
+        assertEquals(1.0f, valori[0], 0.001f)
     }
 
     @Test
@@ -50,7 +52,7 @@ class MappaPrevistaTest {
         // l'ora sbagliata, questo numero lo direbbe subito.
         (0 until 48 step 7).forEach { h ->
             val valori = mappa.a(mezzanotte.plus(Duration.ofHours(h.toLong())))!!
-            assertEquals("ora $h", h * 0.1f, valori[0].second, 0.001f)
+            assertEquals("ora $h", h * 0.1f, valori[0], 0.001f)
         }
     }
 
@@ -97,18 +99,29 @@ class MappaPrevistaTest {
     }
 
     @Test
-    fun `un punto con meno ore degli altri non fa cadere la carta`() {
-        // Open-Meteo risponde punto per punto, e non c'e' niente che prometta
-        // che tutti abbiano la stessa lunghezza: un punto corto deve sparire
-        // dalla carta, non portarsela dietro.
+    fun `un punto con meno ore degli altri diventa zero, non sparisce`() {
+        // **Questa prova e' stata girata dopo il primo giro, e il perche'
+        // conta.** Prima chiedeva che un punto corto venisse tolto dalla
+        // lista: ineccepibile finche' i valori erano macchie sparse, rovinoso
+        // da quando sono un campo rettangolare. Togliere un elemento in mezzo
+        // sposta di uno tutti quelli dopo, e la pioggia finirebbe in un'altra
+        // riga della griglia - un errore che in una carta sfumata non si vede,
+        // e che mette l'acqua sul paese sbagliato.
+        //
+        // Zero e' una bugia piccola e locale; lo scorrimento e' una bugia
+        // grande e diffusa.
         val zoppa = MappaPrevista(
             ore = (0 until 48).map { mezzanotte.plus(Duration.ofHours(it.toLong())) },
             punti = listOf(
                 PuntoPrevisto(44.0, 12.0, List(48) { 1f }),
                 PuntoPrevisto(44.5, 12.0, List(3) { 1f }),
             ),
+            colonne = 2,
+            righe = 1,
         )
-        assertEquals(1, zoppa.a(mezzanotte.plus(Duration.ofHours(20)))!!.size)
-        assertEquals(2, zoppa.a(mezzanotte.plus(Duration.ofHours(1)))!!.size)
+        val tardi = zoppa.a(mezzanotte.plus(Duration.ofHours(20)))!!
+        assertEquals("la griglia resta intera", 2, tardi.size)
+        assertEquals(1f, tardi[0], 0.001f)
+        assertEquals("il punto corto vale zero", 0f, tardi[1], 0.001f)
     }
 }
