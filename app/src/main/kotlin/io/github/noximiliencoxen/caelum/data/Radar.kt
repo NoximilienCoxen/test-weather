@@ -1,7 +1,9 @@
 package io.github.noximiliencoxen.caelum.data
 
+import java.time.Duration
 import java.time.Instant
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.asinh
 import kotlin.math.atan
 import kotlin.math.floor
@@ -46,20 +48,62 @@ class RadarProdotto(
     val attribuzione: String,
 )
 
+/** Un fotogramma disponibile: quando e' stato misurato, e dove prenderlo. */
+data class RadarFotogramma(val istante: Instant, val percorso: String)
+
+/** L'elenco dei fotogrammi che il servizio ha in questo momento. */
+data class RadarIndice(val host: String, val fotogrammi: List<RadarFotogramma>) {
+
+    /**
+     * Il fotogramma piu' vicino a un istante, se ce n'e' uno abbastanza vicino.
+     *
+     * **Il "se" e' tutta la funzione.** Senza, si prende sempre il piu' vicino
+     * che esiste - cioe' il piu' recente - e lo si mostra sotto qualunque ora
+     * scelta: e' quello che l'app faceva, e chi l'ha usata l'ha visto subito.
+     * La barra diceva 22:00 e la carta era delle 15:40, ferma, uguale a se
+     * stessa a ogni ora della giornata.
+     *
+     * Mostrare la pioggia di un'ora sotto l'etichetta di un'altra e' la stessa
+     * bugia della galleria che ritraeva l'Ingresso in ogni scatto, o delle ore
+     * di oggi sotto l'intestazione di giovedi': un dato vero, messo dove non e'
+     * vero.
+     */
+    fun vicinoA(istante: Instant, tolleranza: Duration = TOLLERANZA): RadarFotogramma? =
+        fotogrammi
+            .minByOrNull { abs(it.istante.epochSecond - istante.epochSecond) }
+            ?.takeIf { abs(it.istante.epochSecond - istante.epochSecond) <= tolleranza.seconds }
+
+    /** Il piu' recente, che e' quello da mostrare quando si guarda "adesso". */
+    val ultimo: RadarFotogramma? get() = fotogrammi.maxByOrNull { it.istante }
+
+    companion object {
+        /**
+         * Quanto lontano puo' stare il fotogramma dall'ora scelta.
+         *
+         * I fotogrammi distano dieci minuti l'uno dall'altro, e la barra sceglie
+         * ore intere: mezz'ora copre l'ora corrente e quella prima, e lascia
+         * fuori tutto il resto. Allargarla vorrebbe dire far passare per "le
+         * venti" una pioggia delle ventuno e mezza.
+         */
+        val TOLLERANZA: Duration = Duration.ofMinutes(30)
+    }
+}
+
 /**
  * A che punto sta il radar, per chi deve disegnarlo.
  *
- * Tre casi. Ce n'era un quarto - `FuoriCopertura` - e se n'e' andato col
- * Dipartimento della Protezione Civile: quello era **sapibile**, perche' il
- * radar italiano finisce dove finisce l'Italia e un rettangolo bastava a dirlo.
- * RainViewer raccoglie radar da mezzo mondo e non dichiara dove arrivano: fuori
- * copertura le sue tessere sono **trasparenti**, cioe' identiche a un cielo
- * senza pioggia.
+ * Cinque casi, e due sono stati aggiunti da chi l'app la usa davvero.
  *
- * Non potendo distinguerli, non si finge di saperlo: la riga sotto la carta lo
- * dice a parole, una volta, per tutti. Il giorno in cui si scoprira' un modo
- * di chiedere la copertura, questo caso torna - e torna con una risposta vera
- * invece che con un rettangolo disegnato a mano.
+ * **`FuoriCopertura` e' tornato.** Se n'era andato col Dipartimento della
+ * Protezione Civile, perche' RainViewer non sembrava dichiarare dove arrivano
+ * i suoi radar. Lo dichiara: una mappa di copertura servita a tessere, che si
+ * legge **invertita** - opaco vuol dire che li' non guarda nessuno. Cinque
+ * punti di prova, fra cui il Kansas e il mezzo del Pacifico (CONTESTO 18.5).
+ *
+ * **`FuoriOrario` e' nuovo**, ed e' il piu' importante: un radar **misura**, e
+ * quello che non ha misurato non lo sa. Due ore di storico contro una barra che
+ * sceglie ventiquattro ore: per quasi tutte le ore della giornata la risposta
+ * onesta e' "non c'e' una fotografia di quel momento".
  */
 sealed interface StatoRadar {
     /** Si sta chiedendo. */
@@ -67,6 +111,17 @@ sealed interface StatoRadar {
 
     /** C'e' un fotogramma da posare. */
     data class Pronto(val prodotto: RadarProdotto) : StatoRadar
+
+    /** Li' non guarda nessun radar. Non e' un guasto, ed e' diverso da "non piove". */
+    data object FuoriCopertura : StatoRadar
+
+    /**
+     * Un radar c'e', ma non ha una fotografia dell'ora scelta.
+     *
+     * [ultimo] e' l'istante del fotogramma piu' recente, perche' la frase da
+     * scrivere non e' "non si sa" ma "si sa fino a quest'ora".
+     */
+    data class FuoriOrario(val ultimo: Instant?) : StatoRadar
 
     /**
      * Ha risposto male, o non ha risposto.
@@ -144,6 +199,23 @@ object RadarTessere {
         val l = lat.coerceIn(-LIMITE_MERCATORE, LIMITE_MERCATORE) * PI / 180
         val y = (1.0 - asinh(tan(l)) / PI) / 2.0
         return floor(y * QUANTE).toInt().coerceIn(0, QUANTE - 1)
+    }
+
+    /**
+     * Dove cade un punto **dentro** la propria tessera, in pixel.
+     *
+     * Serve a leggere la maschera di copertura: la tessera dice se in quella
+     * zona ci sono radar, ma "quella zona" e' larga duecento chilometri - la
+     * risposta che interessa e' quella del pixel di casa propria.
+     */
+    fun pixelDentroLaTessera(lat: Double, lon: Double, lato: Int): Pair<Int, Int> {
+        val fx = (lon + 180.0) / 360.0 * QUANTE
+        val l = lat.coerceIn(-LIMITE_MERCATORE, LIMITE_MERCATORE) * PI / 180
+        val fy = (1.0 - asinh(tan(l)) / PI) / 2.0 * QUANTE
+        return Pair(
+            ((fx - floor(fx)) * lato).toInt().coerceIn(0, lato - 1),
+            ((fy - floor(fy)) * lato).toInt().coerceIn(0, lato - 1),
+        )
     }
 
     /** Gli estremi geografici di una tessera. */
