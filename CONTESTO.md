@@ -4029,3 +4029,245 @@ E' la seconda volta in questo progetto che un difetto di impaginazione lo trova
 **uno scatto e non un test** - la prima erano le etichette di Sala II che si
 troncavano (sezione 13). I test dicono se il codice fa quello che dice; gli
 scatti dicono se cio' che fa ci sta nello schermo.
+
+## 15. Quattro difetti trovati fuori, e uno di lingua
+
+Questa sezione non nasce da un test ne' da uno scatto della CI. Nasce da
+qualcuno che ha tenuto l'app in mano, in strada, con una mano sola e il sole di
+taglio. Sono le condizioni in cui questa app si usa davvero, e sono esattamente
+quelle che ne' un emulatore ne' un'immagine PNG sanno riprodurre.
+
+### 15.1 Il giorno mostrato si vedeva in due sale su sette
+
+Scorrendo a "La pioggia" o a "Il vento" non c'era modo di sapere se quei numeri
+erano di oggi o di giovedi'. Il giorno lo dicevano la striscia di Sala I e la
+scheda di Sala II, e per leggerlo bisognava **risalire di due schermate** e poi
+tornare indietro.
+
+Non e' un difetto di quelle cinque sale: e' un difetto della cornice. La
+sezione 13-ter aveva gia' fatto scendere il giorno scelto **nei dati** di tutte
+le sale - `shownHours`, `detailHour` - ma non lo aveva mai **scritto** da
+nessuna parte. Un dato che arriva ovunque e si legge in due posti e' mezzo
+lavoro.
+
+Adesso sta nella barra delle ore, che e' l'unico pezzo di cornice sotto ogni
+sala: giorno e ora sulla stessa riga, in fondo a destra, "OGGI 13:00" o
+"GIO 18 13:00". Corto e non per esteso, e su una riga sola e non due: tutte e
+due le scelte sono state pagate e sono spiegate in 15.4.
+
+### 15.2 Al sole i micro-testi sparivano
+
+Le righe minute fuori dal pannello - "TRASCINA PER CAMBIARE ORA", l'ora sopra
+la barra - non stanno su un pannello: stanno sulle **colline**, cioe' su un
+fondo che cambia con l'ora e che a volte e' quasi del loro stesso colore. Erano
+`inkFaint`, una trasparenza al sessanta per cento scelta a occhio.
+
+`Contrast.kt` esisteva da prima, con la sua formula WCAG e il suo test, e serviva
+un caso solo. Adesso serve la palette intera:
+
+| inchiostro | fondo su cui cade | soglia |
+| --- | --- | --- |
+| `inkSoft`, `inkFaint` | il pannello, senza trasparenza | AA (4.5) |
+| `inkSuCielo`, `accentSuCielo` | la collina piu' avanti | AA grande (3.0) |
+
+Due soglie e non una: le righe sulle colline sono maiuscoletti in grassetto e
+cifre grandi, cioe' proprio cio' che la norma chiama testo grande, e chiedere
+4.5 le spingerebbe al bianco pieno anche a mezzogiorno.
+
+I corpi restano smorzati, ma **fino alla soglia e non oltre**: `readableOn`
+parte dalla trasparenza di prima e schiarisce o scurisce solo quanto serve.
+
+**I corpi sono cresciuti dove potevano, e dove non potevano si e' visto.**
+`microLabel` da nove a dieci punti - e' lui che numera le ore sotto le colonne
+della pioggia, cioe' proprio la "scala delle ore" che non si leggeva - e le
+cifre della striscia dei giorni di un punto ciascuna.
+
+`sectionLabel` invece e' stato portato a undici ed e' **tornato a dieci**.
+Undici lo troncava: nello scatto "PROBABILITÀ" diventava "PROBABIL" e
+"INTENSITÀ" diventava "INTENSIT", perche' quelle etichette stanno in celle da
+un terzo di pannello. Una parola tagliata si legge peggio di una parola piccola.
+
+Guardando meglio lo scatto e' saltato fuori che **"PROBABILITÀ" non ci stava
+per intero nemmeno prima**: da sempre si leggeva "PROBABILI", e nessuno l'aveva
+notato perche' una parola troncata sembra un'abbreviazione voluta.
+
+Per farcela stare sono serviti due giri: il margine interno delle celle da
+tredici punti a dieci, e poi - perche' col solo margine restava "PROBABILIT",
+senza l'accento - la spaziatura fra le lettere da un decimo di em a
+sessantacinque millesimi. Undici caratteri in un terzo di pannello e' il caso
+limite di tutta l'app, e adesso ci sta. Chi aggiungera' una cella con
+un'etichetta piu' lunga la trovera' troncata: li' la strada sara' accorciare la
+parola, perche' da stringere non c'e' rimasto niente.
+
+Il margine era la cosa da stringere, non la parola da accorciare - ma "una
+parola tagliata sembra un'abbreviazione voluta" vale anche al contrario: per
+due giri ho creduto fosse a posto perche' **quasi** ci stava.
+
+`PaletteLeggibileTest` prova tutta la traversata dal tema chiaro a quello scuro,
+in tutti e due i crepuscoli e col cielo aperto e chiuso. **Esclude il guado in
+mezzo**, ed e' dichiarato perche': fra il quaranta e il sessanta per cento di
+`dk` inchiostro e accento si incrociano, e quella fascia `temaScuro` la
+attraversa di scatto apposta (12-ter). Chiedere la soglia anche li' vorrebbe
+dire un lampo bianco a meta' traversata per evitare un difetto che non si vede.
+
+### 15.2-bis Il 403 del radar arrivava a schermo vestito da HTML
+
+Nello stesso scatto, sotto la carta del radar: `Il radar non ha risposto come
+atteso: SRI, HTTP 403 da Radar-DPC (SRI): <HTML><HEAD> <TITLE>Access
+Denied</TITLE>...`.
+
+La sezione 14-ter aveva gia' affrontato questo, e non era bastata: aveva
+insegnato a `riassunto` a spogliare una pagina HTML, ma quel testo non passa da
+`riassunto`. Passa dal messaggio d'errore di `httpGet`, che al codice HTTP
+attacca **anche il corpo della risposta** - ed e' giusto che lo faccia, perche'
+Open-Meteo scrive li' dentro il motivo del rifiuto.
+
+`riassuntoGuasto` tiene la testa - `HTTP 403 da Radar-DPC (SRI)`, che e'
+l'informazione - e passa il resto per `riassunto`. Quaranta caratteri invece di
+duecento.
+
+E' la stessa lezione di 13-sexies in un'altra forma: si era corretto **un
+percorso** e si era creduto di aver corretto **il problema**. I percorsi erano
+due.
+
+### 15.2-ter Tre etichette tagliate, e nessuna sembrava tagliata
+
+Cercando dove finiva "PROBABILITÀ" ne sono uscite altre due, e tutte e tre per
+lo stesso motivo: `maxLines = 1` **senza** `overflow`, che in Compose vuol dire
+tagliare netto.
+
+| dove | diceva | doveva dire |
+| --- | --- | --- |
+| Sala III, prima cella | `PROBABILI` | PROBABILITÀ |
+| Sala VII, seconda cella | `ESPOSIZION` | ESPOSIZIONE |
+| Sala VII, scala delle ore | `0 0 0 0 0 10 11 12 ... 19 2` | 05 06 07 ... 19 20 |
+
+La terza e' la peggiore, ed e' quella nominata nella segnalazione. Sedici
+colonne in duecento punti fanno dieci punti a colonna, e "05" ne vuole dodici:
+le prime cinque ore erano tagliate al primo carattere e l'ultima pure. Non e'
+un problema di contrasto - e' una scala oraria che non c'era, sotto un grafico
+che si tocca per scegliere l'ora.
+
+**Il motivo per cui erano li' da mesi e' il taglio netto.** Una parola troncata
+senza puntini non sembra rotta, sembra un'abbreviazione voluta: "PROBABILI" si
+legge come una scelta di chi ha disegnato, e nessuno va a controllare le scelte
+altrui. Con i puntini sarebbe stato ovvio al primo scatto.
+
+Quindi tre cose, in ordine di durata:
+
+1. `CellaValore` mette `TextOverflow.Ellipsis` sull'etichetta. **E' questa la
+   correzione vera**: da adesso in poi un'etichetta che non ci sta si vede.
+2. Le due etichette lunghe scendono sotto gli otto caratteri della regola gia'
+   scritta nella sezione 13: `PROBABILITÀ` diventa `PROBAB.` - un'abbreviazione
+   col punto, che si legge come voluta perche' lo e' - ed `ESPOSIZIONE` diventa
+   `AL SOLE`, che accanto a "~37 min" dice la stessa cosa in meno spazio.
+3. La scala di Sala VII numera **un'ora su due**. Le colonne restano sedici,
+   perche' sono i dati; a sparire sono le tacche dispari, che una scala non ha
+   bisogno di numerare tutte. L'ora scelta fa eccezione sempre: quella non e'
+   una tacca, e' la risposta a "dove sono".
+
+**E dimezzarle non e' bastato.** Nello scatto dopo, la scala diceva
+`… … 10 12 13 14 16 18 …`: 10, 12, 14, 16, 18 c'erano, 06, 08 e 20 no. La
+colonna resta larga poco piu' di dieci punti, e li' dentro "12" ci sta mentre
+"06" no - **la cifra uno e' piu' stretta delle altre**, e basta quello perche'
+meta' di una scala si legga e meta' no.
+
+Che si sia visto e' merito dei puntini messi un commit prima: senza, sarebbero
+state altre tre "0" in fila, indistinguibili da una scelta.
+
+La correzione e' `wrapContentWidth(unbounded = true)`: l'etichetta misura la
+propria larghezza vera e sborda dalla colonna, centrata. Puo' farlo **perche'
+le colonne dispari un'etichetta non ce l'hanno**, quindi lo spazio in cui
+sborda e' vuoto per costruzione - non e' un trucco che regge da solo, regge
+insieme alla decisione di numerare un'ora su due.
+
+**E poi tutte le altre.** Trovate tre cosi', la domanda giusta non era "dove
+sono le altre due" ma "quante `Text` hanno `maxLines` senza `overflow`". La
+risposta era dodici, sparse in nove file - le temperature della striscia, i
+millimetri, le ore di Sala III, le pastiglie, il nome della fase lunare, le
+voci dell'Ingresso. Nessuna di queste si taglia **oggi**, con i dati di oggi e
+su questo schermo: si taglierebbero con un numero a tre cifre, una lingua piu'
+lunga, un corpo piu' grande nelle impostazioni di sistema. E si taglierebbero
+in silenzio, come queste tre.
+
+Adesso hanno tutte i puntini. Non e' una correzione di difetti: e' togliere di
+mezzo il modo in cui questi difetti restano nascosti.
+
+### 15.3 La colonna di destra si sbagliava col pollice
+
+Sette dischi da trentaquattro punti, sei di distanza: **quaranta punti di
+passo**, contro i quarantotto che le linee guida chiedono come minimo. E sul
+bordo destro del vetro, dove arriva il pollice di chi tiene il telefono con una
+mano sola.
+
+Il disco cresce di quattro punti, il bersaglio di quattordici, e il bersaglio
+cresce **verso l'interno** oltre che in altezza: il dito che arriva da destra
+trova l'area prima del bordo, non dopo. L'arrangiamento non aggiunge piu'
+spazio fra le voci - lo fa il bersaglio - perche' sette bersagli da quarantotto
+piu' sei di distanza non ci starebbero su uno schermo corto.
+
+Il margine dal bordo scende da dieci a sei punti e **i dischi non si spostano**:
+il bersaglio e' cresciuto di cinque punti per lato, e quel margine glieli
+restituisce.
+
+### 15.4 Lo spazio verticale: il ragionamento era giusto e la sala sbagliata
+
+L'osservazione era: la scheda occupa circa meta' schermo, le sale ricche - "La
+settimana" su tutte - si stringono, e il cielo sfocato sopra resta
+inutilizzato.
+
+Il primo tentativo l'ha presa alla lettera: quattro punti di respiro in piu' nel
+pannello, le spaziature di Sala II allargate, la striscia dei giorni piu' alta.
+Il ragionamento sembrava solido - il pannello e' ancorato in basso e si
+dimensiona sul contenuto, quindi allargandolo sale nel cielo.
+
+**Lo scatto della CI ha detto di no.** In `chiaro-d6-settimana.png` l'ultima
+riga della striscia - i millimetri di ogni giorno - era tagliata a meta' dal
+bordo inferiore del pannello.
+
+Il motivo e' che la premessa vale per le sale corte e non per quella. "La
+settimana" **cielo sopra non ne ha**: e' gia' alta quanto lo schermo glielo
+concede. Il pannello e' un `Column` ritagliato, il suo genitore gli passa
+un'altezza massima, e quando il contenuto la supera i figli in eccesso -
+insieme al margine inferiore - finiscono fuori dal ritaglio. Non sale: si fa
+tagliare in fondo.
+
+A peggiorarla c'era un difetto tutto mio, di 15.1: il giorno e l'ora **in
+colonna** sopra la barra costavano venticinque punti di altezza a **tutte e
+sette** le sale, perche' quella barra sta sotto ognuna. Affiancati non costano
+niente, e la riga era gia' alta quanto l'ora.
+
+Quindi: giorno e ora sulla stessa riga, e le spaziature tornate dov'erano.
+Restano i corpi cresciuti di un punto (15.2), che sono sei punti di altezza
+contro i ventotto di margine che Sala II aveva prima.
+
+**Cosa resta vero dell'osservazione.** Il cielo vuoto sopra il pannello nelle
+sale corte - "Oggi" quando non piove, "La luna" - non e' spazio sprecato: e' il
+cielo, che in questa app e' il dato principale e non lo sfondo. Il pannello che
+si ferma a meta' schermo li' e' la scelta, non il difetto. Dove il difetto
+c'era davvero - Sala II - lo spazio non c'era da prendere, e prenderlo lo stesso
+tagliava una riga.
+
+**La lezione, che e' la terza volta.** Sezione 13 le etichette troncate, 14-ter
+l'indizio del radar lungo dieci righe, e adesso questa: ogni volta un problema
+di **quanto ci sta** e ogni volta l'ha trovato uno scatto. I test dicono se il
+codice fa quello che dice; gli scatti dicono se cio' che fa ci sta nello
+schermo. Di una modifica alle spaziature non si scrive "fatto" prima di aver
+guardato.
+
+### 15.5 Gli accenti scritti con l'apostrofo
+
+Quattordici stringhe a schermo dicevano "L'esposizione e' sicura" e "Meta'
+disco" invece di "è" e "Metà".
+
+**Nei commenti l'apostrofo resta**, ed e' una scelta di questo progetto che non
+cambia: i commenti li legge chi scrive il codice, spesso su terminali e diff che
+con gli accenti fanno brutti scherzi. Ma cio' che va a schermo lo legge chi
+usa l'app, e li' "e'" non e' una convenzione: e' un refuso.
+
+Dove si guarda, se dovesse ricapitare: dentro una stringa, un apostrofo che
+**non e' seguito da una lettera** e' quasi sempre un accento scritto male -
+`e'`, `meta'`, `piu'` - mentre uno seguito da lettera e' un'elisione legittima:
+`l'aria`, `dell'ombra`. L'unica eccezione vera in tutto il progetto e'
+`"'wght' $weight"`, che e' la sintassi delle variazioni di un font e non
+italiano.

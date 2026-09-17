@@ -319,6 +319,7 @@ fun MeteoPill(
                 style = MaterialTheme.typography.labelMedium,
                 color = content,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

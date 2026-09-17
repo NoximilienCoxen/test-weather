@@ -360,6 +360,7 @@ private fun ValoreScheda(
             style = SalaType.giornoMax,
             color = palette.ink,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 2.dp),
         )
     }

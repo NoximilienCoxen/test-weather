@@ -160,7 +160,7 @@ fun MappaRadar(
                         ?: "Il radar non ha risposto."
                 StatoRadar.FuoriCopertura ->
                     "Il radar del Dipartimento della Protezione Civile copre l'Italia: " +
-                        "per ${place.name} non c'e', che non e' come dire che non piove."
+                        "per ${place.name} non c'è, che non è come dire che non piove."
                 StatoRadar.InCorso -> "Si sta chiedendo l'ultimo fotogramma."
                 is StatoRadar.Pronto ->
                     "Dati radar: Dipartimento della Protezione Civile, CC BY-SA 4.0."

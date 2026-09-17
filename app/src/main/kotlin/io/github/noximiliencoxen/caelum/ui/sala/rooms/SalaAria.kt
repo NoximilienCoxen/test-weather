@@ -169,11 +169,11 @@ private fun coloreBanda(banda: AirBand?): Color = when (banda) {
 }
 
 private fun descrizione(banda: AirBand?, nonDisponibile: Boolean): String = when {
-    nonDisponibile -> "La misura dell'aria non e' arrivata: la stazione piu' vicina non ha risposto."
+    nonDisponibile -> "La misura dell'aria non è arrivata: la stazione più vicina non ha risposto."
     banda == null -> "La misura dell'aria sta arrivando."
-    banda == AirBand.BUONA -> "Particolato basso: nessuna precauzione necessaria, nemmeno per chi e' sensibile."
+    banda == AirBand.BUONA -> "Particolato basso: nessuna precauzione necessaria, nemmeno per chi è sensibile."
     banda == AirBand.DISCRETA -> "Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto."
-    banda == AirBand.MEDIA -> "Chi e' sensibile faccia attenzione: meglio rimandare l'attivita' intensa all'aperto."
+    banda == AirBand.MEDIA -> "Chi è sensibile faccia attenzione: meglio rimandare l'attività intensa all'aperto."
     banda == AirBand.SCARSA -> "Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali."
     else -> "Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse."
 }
