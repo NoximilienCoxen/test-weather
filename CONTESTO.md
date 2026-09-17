@@ -4166,6 +4166,21 @@ Quindi tre cose, in ordine di durata:
    bisogno di numerare tutte. L'ora scelta fa eccezione sempre: quella non e'
    una tacca, e' la risposta a "dove sono".
 
+**E dimezzarle non e' bastato.** Nello scatto dopo, la scala diceva
+`… … 10 12 13 14 16 18 …`: 10, 12, 14, 16, 18 c'erano, 06, 08 e 20 no. La
+colonna resta larga poco piu' di dieci punti, e li' dentro "12" ci sta mentre
+"06" no - **la cifra uno e' piu' stretta delle altre**, e basta quello perche'
+meta' di una scala si legga e meta' no.
+
+Che si sia visto e' merito dei puntini messi un commit prima: senza, sarebbero
+state altre tre "0" in fila, indistinguibili da una scelta.
+
+La correzione e' `wrapContentWidth(unbounded = true)`: l'etichetta misura la
+propria larghezza vera e sborda dalla colonna, centrata. Puo' farlo **perche'
+le colonne dispari un'etichetta non ce l'hanno**, quindi lo spazio in cui
+sborda e' vuoto per costruzione - non e' un trucco che regge da solo, regge
+insieme alla decisione di numerare un'ora su due.
+
 **E poi tutte le altre.** Trovate tre cosi', la domanda giusta non era "dove
 sono le altre due" ma "quante `Text` hanno `maxLines` senza `overflow`". La
 risposta era dodici, sparse in nove file - le temperature della striscia, i
