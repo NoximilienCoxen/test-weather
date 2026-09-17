@@ -4990,3 +4990,80 @@ deve.
 Un test che verifica un comportamento impossibile non e' un test che fallisce:
 e' un test che chiede di storpiare il codice per accontentarlo. Il bordo vero -
 oltre l'ultima ora - c'e' adesso, ed e' li' che la tolleranza serve.
+
+## 21. Una scheda che dice zero sopra una carta piena di colore
+
+La 20 ha messo la previsione sulla carta, e chi usa l'app l'ha guardata:
+
+> Non va bene
+
+Due schermate, e nella prima la contraddizione era in faccia: **0,0 mm**,
+**probabilita' 0%**, "nessuna precipitazione attesa nelle prossime dodici ore" -
+e sotto una carta lavata di verde, azzurro e arancio.
+
+Due errori, tutti e due nel disegno, e tutti e due della stessa famiglia: il
+dato era giusto, la carta lo tradiva.
+
+### 21.1 Le trasparenze si sommavano
+
+Ogni punto era un cerchio sfumato largo un terzo piu' del passo della griglia,
+perche' si toccassero senza lasciare buchi. Solo che cosi' ogni cerchio copriva
+i nove o dodici vicini, e **dodici veli al ventisei per cento non fanno un
+velo: fanno una vernice**.
+
+Un decimo di millimetro sparso dappertutto - la pioggia che il modello semina e
+che nessuno sente cadere - diventava una tinta piena. La soglia era troppo
+bassa e l'opacita' troppo alta, ma il guaio vero era la somma: nessun valore di
+soglia sistema un disegno che si accumula con se' stesso.
+
+### 21.2 E la pioggia colava da quaranta chilometri
+
+Il centro della carta e' il paese di chi guarda, e il valore li' deve essere
+**il suo**. Invece ci arrivava sopra la coda sfumata dei vicini: la scheda
+leggeva lo zero del punto giusto, la carta dipingeva la media di mezza
+provincia, e le due cose non potevano che contraddirsi.
+
+E' la stessa forma dei difetti di 13-ter e 19.1 - un dato vero messo dove non e'
+vero - solo che qui il dato veniva spalmato invece che spostato.
+
+### 21.3 Un campo, non un mucchio di macchie
+
+Adesso si compone una figura piccola quanto la griglia - **tredici per nove
+pixel, uno per punto** - e la si stira sul riquadro. L'ingrandimento la sfuma da
+solo, con l'interpolazione bilineare che fa la GPU: ogni pixel dello schermo
+riceve **un** colore, quello del valore interpolato, invece di una pila di veli.
+
+Morbido come prima, e stavolta corrispondente al dato. Il pixel centrale della
+figura e' esattamente il punto di casa - tredici colonne e nove righe, dispari
+tutte e due, quindi il centro e' un punto vero e non un interstizio. **Se la
+scheda dice zero, li' la carta e' pulita.**
+
+Tre dettagli che non sono dettagli:
+
+- **La figura si capovolge.** La griglia va da sud a nord, l'immagine dall'alto
+  in basso: senza il capovolgimento la pioggia starebbe specchiata, e in una
+  carta sfumata non se ne accorgerebbe nessuno finche' non piove davvero.
+- **Mezza cella per lato.** I punti sono centri di cella, non angoli: senza,
+  il campo risulterebbe rimpicciolito di una cella intera.
+- **Un punto senza valore vale zero, non sparisce.** Toglierlo dalla lista -
+  che era la scelta di prima, e aveva pure un test che la difendeva - sposta di
+  uno tutti quelli dopo e manda la pioggia in un'altra riga della griglia. Zero
+  e' una bugia piccola e locale; lo scorrimento e' una bugia grande e diffusa.
+
+La soglia e' salita da un decimo a due decimi di millimetro, e i gradini sono
+quelli con cui si parla di pioggia - pioviggine, pioggia, pioggia forte,
+rovescio, nubifragio - invece di una scala continua: una scala continua su un
+dato che ha un valore ogni quaranta chilometri promette sfumature che il dato
+non contiene.
+
+### 21.4 E il titolo diceva ancora "IL RADAR"
+
+Nella stessa schermata, sopra la carta della previsione, l'intestazione diceva
+**IL RADAR**. Un titolo che smentisce cio' che sta sotto e' l'ultima cosa che
+dovrebbe fare un titolo, e "radar" e' esattamente la parola che fa credere a
+una misura.
+
+Adesso cambia col contenuto - "IL RADAR" per il misurato, "LA PIOGGIA PREVISTA"
+per il modello - e la riga a destra porta l'**ora** invece della parola
+"previsione", che ormai la dice il titolo: quello che serve sapere li' e' quale
+ora si sta guardando.

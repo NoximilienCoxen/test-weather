@@ -927,10 +927,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             // ventiquattro la risposta e' si', ed e' la differenza fra una
             // carta che risponde e una che dice "niente per quest'ora" e resta
             // vuota - onesta, e inutile.
-            val previsto = corrente.mappaPrevista?.a(quando)
+            val mappa = corrente.mappaPrevista
+            val previsto = mappa?.a(quando)
             _state.update {
                 it.copy(
-                    radar = if (previsto != null) StatoRadar.Previsto(quando, previsto)
+                    radar = if (mappa != null && previsto != null)
+                        StatoRadar.Previsto(quando, mappa, previsto)
                     else StatoRadar.FuoriOrario(indice.ultimo?.istante),
                 )
             }
