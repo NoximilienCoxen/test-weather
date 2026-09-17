@@ -3752,18 +3752,35 @@ curl -s ".../actions/runs/<RUN>/jobs" | python3 -c "import json,sys;
  if s['conclusion'] not in ('success','skipped')]"
 ```
 
-Il colpevole era il passo 5 in tutti e due i giri: `android-actions/setup-android@v3`.
-GitHub ha cominciato a forzare su **Node 24** le action che dichiarano Node 20,
-e quella dichiara `using: node20`; la `v4` dichiara `node24`. Ha funzionato il
-16 e non il 17, senza che nel repository cambiasse niente di rilevante.
+Cadeva il passo 5, `android-actions/setup-android`, in tutti e due i job.
 
-**La lezione e' sul metodo, non sull'azione.** Un giro rosso subito dopo il
-proprio push si legge come "ho rotto qualcosa", ed e' la lettura sbagliata piu'
-facile da fare: il riflesso giusto e' guardare **quale passo** e' caduto prima di
-guardare cosa si e' scritto. Un errore di compilazione lascia righe `e:`; qui non
-ce n'era nemmeno una, e quel vuoto era l'indizio.
+#### La prima diagnosi era plausibile ed era sbagliata
 
-Lo stesso avviso di deprecazione nomina anche `actions/checkout@v4`,
-`actions/upload-artifact@v4` e `gradle/actions/setup-gradle@v4`: oggi reggono.
-Il giorno che non reggeranno, il sintomo sara' identico a questo - rosso senza
-errori - e questa nota e' qui per far risparmiare il giro di diagnosi.
+> Questo paragrafo diceva: *"GitHub ha cominciato a forzare su Node 24 le action
+> che dichiarano Node 20, e `setup-android@v3` dichiara `using: node20`; la v4
+> dichiara `node24`"*. Il ragionamento tornava, l'avviso di deprecazione c'era
+> davvero nelle annotazioni, e la v4 e' stata spinta con quella spiegazione
+> scritta accanto. **E' caduta identica, allo stesso passo.**
+
+L'avviso su Node 20 stava li' **per caso**: compare in ogni giro, riguarda
+quattro action su cinque e non c'entrava niente. Averlo preso per la causa e' lo
+stesso errore di metodo gia' pagato due volte deducendo dai pixel - due
+correzioni che non correggevano il sintomo, e la risposta arrivata solo quando
+si e' smesso di dedurre. Qui non si e' potuto nemmeno smettere: **il motivo vero
+di quel fallimento non e' mai stato leggibile da qui**, perche' l'unico posto in
+cui e' scritto e' il log grezzo, e quell'host la politica di uscita lo blocca.
+
+#### Cosa si e' fatto invece
+
+Di fronte a una dipendenza che fallisce **e non sa dire perche'**, cambiarle
+versione una terza volta sarebbe stata la terza ipotesi non verificata di fila.
+E' uscita: l'immagine `ubuntu-latest` porta gia' l'SDK Android, e adesso il
+passo lo dichiara, lo mette nel PATH e - se non lo trovasse - lo dice con un
+`::error::`, che si legge dall'API anche quando i log non si leggono.
+
+La regola che resta, ed e' la piu' cara di questo file: **un giro rosso subito
+dopo il proprio push si legge come "ho rotto qualcosa", ed e' la lettura
+sbagliata piu' facile da fare.** Si guarda **quale passo** e' caduto prima di
+guardare cosa si e' scritto. Un errore di compilazione lascia righe `e:`; quando
+non ce n'e' nemmeno una, il guasto sta altrove - e se la causa non e' leggibile,
+si toglie di mezzo cio' che non sa spiegarsi invece di tirare a indovinare.
