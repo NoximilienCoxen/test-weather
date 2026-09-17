@@ -112,32 +112,45 @@ fun SalaUvScreen(
                     // numerare ogni passo. **L'ora scelta fa eccezione**
                     // sempre, perche' quella non e' una tacca della scala: e'
                     // la risposta alla domanda "dove sono".
+                    //
+                    // **La stringa vuota non e' pigrizia: e' la correzione.**
+                    // Scritto con un `if` attorno al `Text`, il grafico si e'
+                    // rotto sul telefono e non in nessuno scatto precedente:
+                    // la riga qui sopra allinea le colonne **in basso**, e una
+                    // colonna senza etichetta e' piu' corta di una con
+                    // etichetta. Allineate in basso, le barre con l'etichetta
+                    // salivano di tutta l'altezza dell'etichetta, e
+                    // l'istogramma diventava una fila di barre a quote
+                    // alternate - un grafico che mente sui propri valori.
+                    //
+                    // Un `Text` vuoto occupa comunque la propria interlinea,
+                    // quindi tutte e sedici le colonne restano alte uguale.
+                    // L'alternativa - una casella d'altezza fissa - sarebbe
+                    // l'interlinea copiata a mano in un secondo posto, e le
+                    // due copie divergerebbero al primo che tocca il corpo.
                     val ora = ore[indice].time.hour
-                    if (ora % 2 == 0 || indice == scelta) {
-                        // **L'etichetta esce dalla propria colonna, apposta.**
-                        // Dimezzare le etichette non e' bastato: la colonna
-                        // resta larga poco piu' di dieci punti, e li' dentro
-                        // "12" ci sta mentre "06" no - la cifra uno e' piu'
-                        // stretta delle altre, ed e' bastato quello perche'
-                        // meta' scala si leggesse e meta' no. Coi puntini
-                        // messi due commit fa la cosa si e' vista subito;
-                        // prima sarebbe stata l'ennesima "0".
-                        //
-                        // `unbounded` le lascia misurare la propria larghezza
-                        // vera e sbordare, centrata. Puo' farlo **perche' le
-                        // colonne dispari un'etichetta non ce l'hanno**: lo
-                        // spazio in cui sborda e' vuoto per costruzione.
-                        Text(
-                            text = "%02d".format(ora),
-                            style = SalaType.microLabel,
-                            color = if (indice == scelta) palette.accent else palette.inkFaint,
-                            maxLines = 1,
-                            modifier = Modifier.wrapContentWidth(
-                                align = Alignment.CenterHorizontally,
-                                unbounded = true,
-                            ),
-                        )
-                    }
+                    val mostra = ora % 2 == 0 || indice == scelta
+                    // **L'etichetta esce dalla propria colonna, apposta.**
+                    // Dimezzare le etichette non e' bastato: la colonna resta
+                    // larga poco piu' di dieci punti, e li' dentro "12" ci sta
+                    // mentre "06" no - la cifra uno e' piu' stretta delle
+                    // altre, ed e' bastato quello perche' meta' scala si
+                    // leggesse e meta' no.
+                    //
+                    // `unbounded` le lascia misurare la propria larghezza vera
+                    // e sbordare, centrata. Puo' farlo **perche' le colonne
+                    // dispari un'etichetta non ce l'hanno**: lo spazio in cui
+                    // sborda e' vuoto per costruzione.
+                    Text(
+                        text = if (mostra) "%02d".format(ora) else "",
+                        style = SalaType.microLabel,
+                        color = if (indice == scelta) palette.accent else palette.inkFaint,
+                        maxLines = 1,
+                        modifier = Modifier.wrapContentWidth(
+                            align = Alignment.CenterHorizontally,
+                            unbounded = true,
+                        ),
+                    )
                 }
             }
         }

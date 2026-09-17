@@ -4333,3 +4333,56 @@ motivo per cui `StatoRadar.NonDisponibile` porta a schermo cio' che ha visto.
 Vale la pena aver speso un giro di CI per un risultato negativo: senza, in
 questo file sarebbe rimasta una spiegazione plausibile spacciata per accertata,
 che e' il difetto che 13-sexies ha gia' fatto pagare una volta.
+
+## 16. Quello che il telefono ha visto e la CI no
+
+Due scatti da Fontevivo, presi in mano. Tre difetti su quattro li avevo
+introdotti io nel giro precedente, e due di quei tre erano **invisibili negli
+scatti della CI** perche' dipendono dai dati: con altri numeri, la stessa
+schermata sembrava a posto.
+
+### 16.1 Il grafico UV a quote alterne
+
+Le sedici colonne dell'istogramma stavano a altezze scoordinate, alternate, e
+il grafico non diceva piu' niente sui propri valori.
+
+La causa e' la correzione della sezione 15.2-ter. Per far stare le etichette
+ne avevo dimezzate le occorrenze, con un `if` attorno al `Text`:
+
+```kotlin
+if (ora % 2 == 0 || indice == scelta) { Text(...) }
+```
+
+Solo che la `Row` che tiene le colonne le allinea **in basso**, e una colonna
+senza etichetta e' piu' corta di una con etichetta di tutta l'altezza di una
+riga di testo. Allineate in basso, le barre con l'etichetta salivano di
+quell'altezza. Un grafico che sposta le proprie barre a seconda di quale
+etichetta gli tocca.
+
+**Perche' la CI non l'ha visto e il telefono si'.** Lo ha visto, e l'ho
+guardato: nello scatto `chiaro-d11-uv.png` la scala diceva
+`06 08 10 12 13 14 16 18 20` - era quello che stavo controllando - e le barre
+erano gia' sbagliate. A Forli' alle 13:00 le colonne alte stavano tutte al
+centro, dove le etichette si alternano fitte, e l'alternanza si leggeva come la
+forma della curva. A Fontevivo con l'indice a zero il disegno era sparso, e lo
+sbaglio saltava fuori.
+
+Non e' che lo scatto non bastasse: **e' che avevo guardato la riga che avevo
+appena corretto** invece della figura sopra.
+
+La correzione e' che l'etichetta c'e' sempre, e quando non si deve leggere e'
+stringa vuota. Un `Text` vuoto occupa comunque la propria interlinea, quindi
+tutte le colonne restano alte uguale. Una casella d'altezza fissa avrebbe fatto
+lo stesso, al prezzo di scrivere l'interlinea a mano in un secondo posto, dove
+sarebbe divergata al primo che tocca il corpo.
+
+### 16.2 Il giorno galleggiava sopra l'ora
+
+`OGGI` e `13:00`, accanto sopra la barra, erano allineati **in basso** con due
+punti di margine messi a occhio. Allineare in basso due riquadri di corpi
+diversi non allinea le lettere: allinea i fondi delle caselle, che sotto le
+lettere scendono di quanto vuole ciascun font - e i due font qui sono lo stesso
+a due corpi e due pesi.
+
+`alignByBaseline` allinea quello che l'occhio guarda: la riga su cui le lettere
+poggiano. Nessun margine da tarare, e regge se un domani i corpi cambiano.
