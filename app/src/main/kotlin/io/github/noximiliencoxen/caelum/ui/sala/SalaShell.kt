@@ -235,6 +235,10 @@ fun SalaShell(
                 // scendono sotto la barra di stato: nel prototipo sono misurati
                 // dentro la cornice dell'app, che li' comincia a zero.
                 insetAlto = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                // Il cielo risponde al dito e all'inclinazione, tranne dove non
+                // deve: chi ha chiesto meno movimento non si aspetta un sensore
+                // acceso, e la cattura vuole scatti ripetibili.
+                interattivo = !state.animazioniRidotte && !state.animazioniIstantanee,
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
