@@ -40,6 +40,7 @@ import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
+import io.github.noximiliencoxen.caelum.ui.motion.sistemaSenzaAnimazioni
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaAriaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaLunaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaOggiScreen
@@ -151,7 +152,16 @@ fun SalaShell(
             pioggiaMm = hour?.precipitation,
         )
     }
-    val m = mollaScena(state.animazioniIstantanee, state.animazioniRidotte)
+    // **Due interruttori, una richiesta sola.** Quello delle impostazioni di
+    // Caelum c'era gia'; quello del telefono - "rimuovi animazioni", che su una
+    // pagina web si chiamerebbe `prefers-reduced-motion` - non lo leggeva
+    // nessuno. Chi lo aveva spento nel sistema apriva quest'app e trovava un
+    // cielo che si muoveva comunque, e doveva scoprire che c'era una seconda
+    // levetta da abbassare. Si sommano, non si sostituiscono.
+    val ridotte = state.animazioniRidotte || sistemaSenzaAnimazioni()
+    val ferme = ridotte || state.animazioniIstantanee
+
+    val m = mollaScena(state.animazioniIstantanee, ridotte)
     val scena = Scena(
         sole = animateFloatAsState(bersaglio.sole, m, label = "sole").value,
         copertura = animateFloatAsState(bersaglio.copertura, m, label = "copertura").value,
@@ -181,12 +191,12 @@ fun SalaShell(
     }
     val dk by animateFloatAsState(
         targetValue = dkBersaglio,
-        animationSpec = mollaCarta(state.animazioniIstantanee, state.animazioniRidotte),
+        animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
         label = "tema",
     )
     val crepuscolo by animateFloatAsState(
         targetValue = crepuscolezza(fase),
-        animationSpec = mollaCarta(state.animazioniIstantanee, state.animazioniRidotte),
+        animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
         label = "crepuscolo",
     )
     val palette = remember(dk, crepuscolo, chiusura) { salaPalette(dk, crepuscolo, chiusura) }
@@ -201,15 +211,13 @@ fun SalaShell(
     //
     // Dichiararla senza lasciare una via d'uscita sarebbe dichiararla a meta':
     // `animazioniRidotte` la spegne, e con lei le vibrazioni.
-    val tempo = rememberTempoScena(
-        attivo = !state.animazioniRidotte && !state.animazioniIstantanee,
-    )
+    val tempo = rememberTempoScena(attivo = !ferme)
 
     // Il telefono sente cio' che cade, con lo stesso orologio che lo disegna.
     VibrazioniDellaScena(
         scena = scena,
         tempo = tempo,
-        attiva = !state.animazioniRidotte && !state.animazioniIstantanee,
+        attiva = !ferme,
     )
 
     // **La fase segue il giorno scelto**, non l'oggi del telefono: scorrendo
@@ -258,7 +266,7 @@ fun SalaShell(
                 // Il cielo risponde al dito e all'inclinazione, tranne dove non
                 // deve: chi ha chiesto meno movimento non si aspetta un sensore
                 // acceso, e la cattura vuole scatti ripetibili.
-                interattivo = !state.animazioniRidotte && !state.animazioniIstantanee,
+                interattivo = !ferme,
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
@@ -337,6 +345,7 @@ fun SalaShell(
                                     state = state,
                                     palette = palette,
                                     onSelectHour = viewModel::selectHour,
+                                    movimento = !ferme,
                                 )
                                 null -> Unit
                             }
@@ -359,7 +368,7 @@ fun SalaShell(
                     alba = giorno?.sunrise,
                     tramonto = giorno?.sunset,
                     onSelect = viewModel::selectHour,
-                    onTick = { if (!state.animazioniRidotte) vibrazioni.scatto() },
+                    onTick = { if (!ridotte) vibrazioni.scatto() },
                     onTornaOra = viewModel::backToNow,
                     modifier = Modifier.padding(start = 26.dp, end = 62.dp),
                 )
@@ -379,6 +388,7 @@ fun SalaShell(
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
                 posizione = posizione,
                 palette = palette,
+                movimento = !ferme,
                 onVai = ::vaiA,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
