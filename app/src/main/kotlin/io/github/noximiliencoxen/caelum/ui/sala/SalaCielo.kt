@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import kotlinx.coroutines.launch
@@ -187,7 +188,7 @@ fun SalaCielo(
 
         // Le nuvole sono il piano di mezzo, e si spostano piu' di tutto.
         translate(parallasse.x * 0.78f, parallasse.y * 0.78f) {
-            nuvole(sx, sy, dy, palette, scena, t)
+            nuvole(sx, sy, dy, palette, scena, sky, t)
         }
 
         // Le colline sono terra: stanno ferme, o il mondo si stacca dai piedi.
@@ -539,7 +540,7 @@ private fun DrawScope.disegnaIncrespature(
 }
 
 /** Quante masse di nuvola ci sono, e dove. Le taglie sono quelle del prototipo. */
-private data class Nuvola(val x: Float, val y: Float, val w: Float, val deriva: Float)
+private data class Nuvola(val x: Float, val y: Float, val w: Float, val passo: Float)
 
 private val Nuvole: List<Nuvola> = List(5) { i ->
     val w = 150f + rnd(i + 11) * 110f
@@ -547,9 +548,40 @@ private val Nuvole: List<Nuvola> = List(5) { i ->
         x = -50f + rnd(i + 5) * 340f,
         y = 74f + rnd(i + 33) * 210f,
         w = w,
-        deriva = 22f + rnd(i + 90) * 16f,
+        // Ognuna va per conto suo, fra il settanta e il centotrenta per cento
+        // della velocita' di base: cinque masse alla stessa identica velocita'
+        // sono un fondale che scorre, non cinque nuvole.
+        passo = 0.7f + rnd(i + 90) * 0.6f,
     )
 }
+
+/**
+ * Quanto scorre una nuvola in un secondo, col cielo aperto, in punti del
+ * disegno di riferimento.
+ *
+ * **Tre decimi di punto al secondo e' lentissimo, ed e' il punto.** Una nuvola
+ * attraversa lo schermo in una ventina di minuti: nessuno la vede muoversi, e
+ * chi torna sull'app dopo mezz'ora la trova altrove. E' il modo in cui un
+ * disegno dice *non c'e' vento* senza scriverlo - e, al contrario di una
+ * scritta, non puo' contraddire i dati perche' non afferma niente di preciso.
+ *
+ * Prima era un'**oscillazione**: trenta punti avanti e indietro con un periodo
+ * di venti-quaranta secondi, cioe' fino a nove punti al secondo nel mezzo della
+ * corsa. Trenta volte questa. Il cielo sereno respirava come un fondale di
+ * teatro, e una nuvola che torna sempre al punto di partenza non e' una nuvola
+ * che si sposta: e' una nuvola appesa.
+ */
+private const val DERIVA_SERENO = 0.3f
+
+/**
+ * Quanto va piu' veloce quando il cielo si chiude.
+ *
+ * Un fronte **si muove**, e muoverlo alla velocita' di un cumulo di bel tempo
+ * lo farebbe sembrare lo stesso cielo con un colore diverso. Sei volte tanto
+ * resta comunque lento - meno di due punti al secondo - ma la differenza fra i
+ * due si legge senza doverla cercare.
+ */
+private const val DERIVA_FRONTE = 6f
 
 /**
  * Le nuvole, rifatte da zero: corpo a pillola con fondo piatto, tre gonfiori
@@ -564,7 +596,15 @@ private val Nuvole: List<Nuvola> = List(5) { i ->
  * entrambe, con l'alfa **al quadrato** perche' la massa resti tenue finche' e'
  * piccola.
  */
-private fun DrawScope.nuvole(sx: Float, sy: Float, dy: Float, palette: SalaPalette, scena: Scena, tempo: Float) {
+private fun DrawScope.nuvole(
+    sx: Float,
+    sy: Float,
+    dy: Float,
+    palette: SalaPalette,
+    scena: Scena,
+    sky: SkyState,
+    tempo: Float,
+) {
     // Le cinque entrano in fila e non tutte insieme: con una soglia sola
     // comparirebbero nello stesso istante, che e' lo scatto di prima con una
     // rampa davanti.
@@ -581,13 +621,43 @@ private fun DrawScope.nuvole(sx: Float, sy: Float, dy: Float, palette: SalaPalet
         val luce = lerp(Color.White.copy(alpha = 0.72f), SalaTokens.neutral100.copy(alpha = 0.16f), palette.buio)
         val ombra = lerp(SalaTokens.neutral900.copy(alpha = 0.07f), Color(0xFF121824).copy(alpha = 0.18f), palette.buio)
 
-        val scala = lerp(0.55f, 1f, presenza)
-        val alfa = presenza * presenza * lerp(0.92f, 0.96f, scena.copertura)
+        // **L'evaporazione delle ore calde.** Quando il sole e' alto sopra un
+        // cielo aperto, i cumuli di bel tempo si sfilacciano: non spariscono,
+        // si fanno piu' tenui e un po' piu' larghi. Qui l'opacita' scende
+        // dall'intero a quattro quinti e la massa si allarga del tre per
+        // cento.
+        //
+        // **Non e' agganciata all'orologio ma all'altezza del sole**, e la
+        // differenza conta: "le due del pomeriggio" e' il picco d'insolazione a
+        // luglio in pianura padana e non lo e' a dicembre, ne' a Nairobi, ne'
+        // a Bergen - e questa app apre tutte e tre. L'altezza del sole il picco
+        // ce l'ha per costruzione, dove e quando che sia, e d'inverno non lo
+        // raggiunge mai: il cielo non evapora, che e' esattamente giusto.
+        //
+        // Solo a cielo aperto: sotto un fronte non evapora niente, e vederlo
+        // schiarire a mezzogiorno sarebbe il disegno che smentisce il dato.
+        val evaporazione = SunClock.smoothstep(0.62f, 0.88f, sky.altitude) *
+            (1f - scena.copertura).coerceIn(0f, 1f)
+
+        val scala = lerp(0.55f, 1f, presenza) * lerp(1f, 1.03f, evaporazione)
+        val alfa = presenza * presenza *
+            lerp(0.92f, 0.96f, scena.copertura) *
+            lerp(1f, 0.8f, evaporazione)
         val w = n.w * sx * scala
         val h = w * 0.46f
-        // La deriva del prototipo: trenta punti avanti e indietro, lenta.
-        val spostamento = sin(tempo * (2f * PI.toFloat() / n.deriva)) * 30f * sx
-        val x = n.x * sx + spostamento
+        // **La deriva scorre, e non torna indietro.** La velocita' e' quella
+        // del cielo aperto finche' il cielo e' aperto, e sale col fronte; il
+        // resto lo fa il tempo, che va avanti e basta.
+        //
+        // Il `mod` riporta dentro chi esce a destra: senza, dopo un'ora di app
+        // aperta le cinque masse sarebbero tutte fuori schermo e il cielo
+        // sarebbe vuoto. La corsa e' larga quanto lo schermo piu' la nuvola
+        // piu' larga, cosi' rientra da sinistra **dopo** essere sparita del
+        // tutto, e non a meta'.
+        val velocita = lerp(DERIVA_SERENO, DERIVA_FRONTE, scena.copertura) * n.passo
+        val corsa = RIF_L + 260f
+        val spostamento = ((n.x + tempo * velocita) % corsa + corsa) % corsa - 130f
+        val x = spostamento * sx
         // Il fondo della nuvola, da cui tutti i pezzi si misurano verso l'alto.
         val fondo = n.y * sy + h + dy
 

@@ -1,6 +1,14 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -22,6 +30,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +41,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
@@ -37,6 +49,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,7 +59,10 @@ import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.sin
+import kotlinx.coroutines.launch
 
 /**
  * I pezzi che tutte le sale hanno in comune: il pannello a cassetto, le celle
@@ -74,33 +90,91 @@ private val RaggioCella = 22.dp
 fun PannelloSala(
     palette: SalaPalette,
     modifier: Modifier = Modifier,
+    /**
+     * Un riflesso dorato che attraversa la scheda ogni tanto.
+     *
+     * Serve a **una cosa sola**: dire che il numero qui dentro e' alto senza
+     * scriverlo una seconda volta. Lo usa Sala VII quando i raggi UV superano
+     * il valore cinque, e se un giorno servisse altrove il posto e' questo -
+     * ma la regola e' che passi **di rado**, perche' un pannello che
+     * luccicasse sempre non direbbe piu' niente.
+     */
+    bagliore: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(RaggioPannello))
-            .background(palette.panel)
-            // **Queste misure sono state allargate e poi rimesse, e la nota
-            // resta perche' la prova conta piu' della misura.** Il ragionamento
-            // era: il pannello e' ancorato in basso, si dimensiona sul
-            // contenuto, quindi allargandolo sale nel cielo che sopra resta
-            // inutilizzato. Vero per le sale corte. Falso per "La settimana",
-            // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
-            // e ogni punto in piu' non la fa salire, le taglia una riga in
-            // fondo. Lo scatto della CI l'ha mostrato subito.
-            .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
-    ) {
-        // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
-        Box(
+    Box(modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(RaggioPannello))) {
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 14.dp)
-                .size(52.dp, 5.dp)
-                .clip(CircleShape)
-                .background(palette.maniglia),
+                .fillMaxWidth()
+                .background(palette.panel)
+                // **Queste misure sono state allargate e poi rimesse, e la nota
+                // resta perche' la prova conta piu' della misura.** Il ragionamento
+                // era: il pannello e' ancorato in basso, si dimensiona sul
+                // contenuto, quindi allargandolo sale nel cielo che sopra resta
+                // inutilizzato. Vero per le sale corte. Falso per "La settimana",
+                // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
+                // e ogni punto in piu' non la fa salire, le taglia una riga in
+                // fondo. Lo scatto della CI l'ha mostrato subito.
+                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
+        ) {
+            // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 14.dp)
+                    .size(52.dp, 5.dp)
+                    .clip(CircleShape)
+                    .background(palette.maniglia),
+            )
+            content()
+        }
+        // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
+        // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
+        if (bagliore) BaglioreDorato(Modifier.matchParentSize())
+    }
+}
+
+/**
+ * Il riflesso che passa, e la cadenza con cui passa.
+ *
+ * **E' un composable a parte e non un modificatore, ed e' per poterlo chiamare
+ * dentro un `if`.** Un modificatore che dentro di se' chiama `remember`
+ * cambierebbe il numero di ricordi a seconda di un booleano, nello stesso
+ * punto dell'albero; un composable ha un gruppo suo, e chiamarlo o non
+ * chiamarlo e' una cosa che Compose sa fare da sempre.
+ *
+ * Una banda chiara inclinata attraversa la scheda in poco piu' di un secondo,
+ * poi non succede niente per cinque. La pausa e' la parte importante: un
+ * riflesso continuo diventa fondo, e un fondo non avvisa di niente.
+ */
+@Composable
+private fun BaglioreDorato(modifier: Modifier = Modifier) {
+    val giro = rememberInfiniteTransition(label = "bagliore")
+    val fase by giro.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(6200, easing = LinearEasing), RepeatMode.Restart),
+        label = "fase",
+    )
+    Canvas(modifier = modifier) {
+        // Il riflesso vive nel primo quinto del giro; per il resto del tempo
+        // la banda sta fuori dal bordo e non si disegna niente.
+        val q = fase / 0.2f
+        if (q > 1f) return@Canvas
+        val larghezza = size.width * 0.34f
+        val centro = -larghezza + q * (size.width + larghezza * 2f)
+        // Piu' tenue in partenza e in chiusura, cosi' entra ed esce invece di
+        // comparire al bordo.
+        val forza = sin(q * PI.toFloat())
+        drawRect(
+            brush = Brush.horizontalGradient(
+                0f to Color.Transparent,
+                0.5f to SalaTokens.accent300.copy(alpha = 0.34f * forza),
+                1f to Color.Transparent,
+                startX = centro - larghezza,
+                endX = centro + larghezza,
+            ),
         )
-        content()
     }
 }
 
@@ -476,7 +550,24 @@ fun ColonnaScorciatoie(
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /** Falso quando chi usa l'app ha chiesto meno movimento: il tocco cambia
+     *  sala lo stesso, senza rimbalzo e senza onda. */
+    movimento: Boolean = true,
 ) {
+    // **Il rimbalzo del tocco, e l'onda che si lascia dietro.**
+    //
+    // Uno stato solo per sette icone, non sette: le animazioni non si
+    // sovrappongono mai, perche' un dito tocca un posto alla volta. Chi tocca
+    // la seconda mentre la prima sta ancora rimbalzando interrompe la prima -
+    // ed e' quello che ci si aspetta, perche' l'attenzione si e' spostata.
+    val colpita = remember { mutableStateOf<SalaRoom?>(null) }
+    // Due molle e non una: il rimbalzo e' corto ed elastico, l'onda e' lunga e
+    // in frenata. Legarle allo stesso numero vorrebbe dire che l'onda rimbalza
+    // insieme al disco, che e' il contrario di cosa fa un'onda d'urto.
+    val rimbalzo = remember { Animatable(1f) }
+    val onda = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()
+
     val spento = lerp(
         SalaTokens.neutral100.copy(alpha = 0.72f),
         SalaTokens.neutral100.copy(alpha = 0.16f),
@@ -528,16 +619,67 @@ fun ColonnaScorciatoie(
                 // quattordici, e **cresce verso l'interno** dello schermo
                 // oltre che in altezza: il dito che arriva da destra trova
                 // l'area prima del bordo, non dopo.
+                val mia = colpita.value == sala
                 Box(
                     modifier = Modifier
                         .size(BERSAGLIO)
-                        .clickable { onVai(sala) },
+                        .clickable {
+                            onVai(sala)
+                            if (movimento) {
+                                colpita.value = sala
+                                // Il disco scatta in fuori in un decimo di
+                                // secondo e torna con una molla poco smorzata,
+                                // cioe' oltrepassando e rientrando: e' quello
+                                // che fa una cosa elastica, e una molla lo fa
+                                // da se' - scriverlo a fotogrammi vorrebbe dire
+                                // decidere a mano quanto oltrepassa.
+                                scope.launch {
+                                    rimbalzo.snapTo(1f)
+                                    rimbalzo.animateTo(1.2f, tween(110))
+                                    rimbalzo.animateTo(
+                                        1f,
+                                        spring(dampingRatio = 0.34f, stiffness = 520f),
+                                    )
+                                }
+                                scope.launch {
+                                    onda.snapTo(0f)
+                                    onda.animateTo(1f, tween(520, easing = LinearOutSlowInEasing))
+                                }
+                            }
+                        },
                     contentAlignment = Alignment.Center,
                 ) {
                     Box(
                         modifier = Modifier
                             .size(DISCO)
+                            // **La forma si legge nel livello, non in
+                            // composizione.** La forma lunga di `graphicsLayer`
+                            // - quella col blocco - rilegge i suoi valori
+                            // quando il livello si aggiorna, non quando la
+                            // funzione ricompone: il rimbalzo scorre senza
+                            // rifare l'albero sessanta volte al secondo, che e'
+                            // la stessa ragione per cui il fondo sta in
+                            // `drawBehind`.
+                            .graphicsLayer {
+                                val s = if (mia) rimbalzo.value else 1f
+                                scaleX = s
+                                scaleY = s
+                            }
                             .drawBehind {
+                                // L'onda esce da sotto il disco e si allarga
+                                // oltre il bersaglio. Non e' ritagliata da
+                                // nessuno: `drawBehind` puo' disegnare fuori
+                                // dai propri confini, ed e' quello che serve -
+                                // un'onda che si ferma sul bordo del bottone
+                                // che l'ha lanciata non e' un'onda.
+                                if (mia && onda.value < 1f) {
+                                    val p = onda.value
+                                    drawCircle(
+                                        color = SalaTokens.accent400.copy(alpha = (1f - p) * 0.5f),
+                                        radius = size.minDimension / 2f + p * 24.dp.toPx(),
+                                        style = Stroke(width = 2.dp.toPx()),
+                                    )
+                                }
                                 // La stessa formula che avevano i trattini:
                                 // uno quando la pagina e' questa, zero quando
                                 // e' una qualsiasi delle altre, e in mezzo
