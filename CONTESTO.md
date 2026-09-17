@@ -4166,6 +4166,18 @@ Quindi tre cose, in ordine di durata:
    bisogno di numerare tutte. L'ora scelta fa eccezione sempre: quella non e'
    una tacca, e' la risposta a "dove sono".
 
+**E poi tutte le altre.** Trovate tre cosi', la domanda giusta non era "dove
+sono le altre due" ma "quante `Text` hanno `maxLines` senza `overflow`". La
+risposta era dodici, sparse in nove file - le temperature della striscia, i
+millimetri, le ore di Sala III, le pastiglie, il nome della fase lunare, le
+voci dell'Ingresso. Nessuna di queste si taglia **oggi**, con i dati di oggi e
+su questo schermo: si taglierebbero con un numero a tre cifre, una lingua piu'
+lunga, un corpo piu' grande nelle impostazioni di sistema. E si taglierebbero
+in silenzio, come queste tre.
+
+Adesso hanno tutte i puntini. Non e' una correzione di difetti: e' togliere di
+mezzo il modo in cui questi difetti restano nascosti.
+
 ### 15.3 La colonna di destra si sbagliava col pollice
 
 Sette dischi da trentaquattro punti, sei di distanza: **quaranta punti di
