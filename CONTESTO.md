@@ -3585,3 +3585,28 @@ scatto loro, preso dal comando a due cursori in alto a sinistra.
 La vibrazione si sente **solo quando cade qualcosa** (`scena.bagnato`): col
 sereno il cielo si muove e non c'e' niente da sentire. E l'interruttore
 "Animazioni ridotte" spegne di proposito tutte e due.
+
+
+### 13-ter. Il giorno scelto si fermava a Sala I
+
+Toccando giovedi' nella striscia, il cielo e la prima schermata passavano a
+giovedi' e **tutto il resto restava a oggi**: la pioggia, il vento, i raggi UV e
+la luna. `UiState` aveva gia' la risposta - `detailHour`, `detailDay` e
+`shownHours`, quest'ultima con scritto accanto "le ore del giorno mostrato:
+quelle vere, non quelle di oggi" - e le tre sale orarie leggevano `hours`, che
+e' oggi. Un dato vero, messo dove non e' vero.
+
+Adesso leggono `shownHours`, e la fase lunare si calcola **una volta sola nella
+Shell** dal giorno mostrato: la usano il cielo, Sala IV, la cella di Sala I e il
+riquadro di Sala II. Quattro letture della stessa data divergono al primo che ne
+aggiusta una; una sola non puo'.
+
+**Il caso vuoto si dichiara.** `shownHours` torna vuota oltre le ~72 ore: i
+modelli a corto raggio danno i totali del giorno e non le sue ore. Le tre sale
+scrivono una riga ("per questo giorno la previsione da' i totali, non le ore")
+al posto del grafico, e la barra delle ore mostra il binario spento e non si
+lascia trascinare - **non poter scorrere le ore di un giorno che non ha ore e'
+la risposta giusta**. Qui c'era un `ifEmpty { state.hours }`, scritto da me col
+ridisegno, che dipingeva oggi sotto l'intestazione di un altro giorno: e' la
+stessa bugia dello scatto chiamato `00-impostazioni` che ritraeva le localita',
+in un altro punto.
