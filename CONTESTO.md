@@ -3817,3 +3817,39 @@ il ripiego e il niente. Quello che non si fara' e' spacciare RainViewer per
 Radar-DPC: sono due fonti con due licenze e due attribuzioni diverse, e
 scriverne una col nome dell'altra e' la stessa bugia della citazione attribuita
 a chi non l'ha detta.
+
+### 13-octies. Il primo giro verde, e una didascalia smentita dal cielo
+
+Run `35188522523`: **verde in tutto** - `test`, `probe-api`, `build`,
+`screenshots` passati, `rilascio` saltato come deve su un ramo che non e'
+`main`. E' la prima volta che il ridisegno Organic compila: i tre giri
+precedenti erano caduti al passo dell'SDK, prima ancora di arrivare al
+codice, e quindi non avevano mai detto niente sul codice.
+
+Gli scatti confermano quello che gli scatti possono confermare:
+
+- `cielo-mezzogiorno-sereno.png` - il sole ha la corona a raggi visibile e i
+  tre strati di alone, l'arco tratteggiato passa dietro, colline e alberi
+  stanno al loro posto, la temperatura in Caprasimo tiene la scala.
+- `scuro-2-notte-luna.png` - la luna ha il bordo illuminato e il disco in
+  luce cinerea, le stelle luminose hanno la croce di scintillio, le nuvole
+  **coprono** la luna senza spegnerla.
+
+Quello che gli scatti **non** possono confermare resta quello gia' scritto in
+13-quater: in cattura il cielo e' fermo per costruzione, quindi corona che
+gira, increspature al tocco, parallasse e fiammata si vedono solo col telefono
+in mano.
+
+**Il difetto che invece hanno mostrato** e' di parole, non di disegno. Sotto il
+titolo *Notte coperta, poche stelle*, alle 02:00, il corpo diceva `Nubi medie
+che coprono il sole a intervalli`. I titoli erano gia' per condizione **x
+fase** - e c'e' un commento, qualche riga sopra, che spiega perche' il titolo
+notturno era stato riscritto - ma i corpi erano per sola condizione, e nessuno
+aveva riletto quello nuvoloso di notte.
+
+La correzione non ribalta la tabella: i corpi si somigliano davvero fra le
+fasi, ed elencarli tutti e quattro per sei condizioni avrebbe voluto dire
+ventiquattro stringhe di cui venti identiche. Resta la tabella per condizione,
+e accanto `SalaBodiesPerFase` elenca le poche caselle in cui la fase cambia le
+parole - oggi una sola. `salaBody` prende ora anche la fase e consulta prima
+l'eccezione.
