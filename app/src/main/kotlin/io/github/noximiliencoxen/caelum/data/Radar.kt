@@ -120,8 +120,28 @@ sealed interface StatoRadar {
      *
      * [ultimo] e' l'istante del fotogramma piu' recente, perche' la frase da
      * scrivere non e' "non si sa" ma "si sa fino a quest'ora".
+     *
+     * **Da solo questo stato non basta, e si e' visto subito.** Per ventuno ore
+     * su ventiquattro la carta diceva "niente per quest'ora" e restava vuota:
+     * onesta, e inutile. Adesso quando c'e' una previsione per quell'ora la
+     * carta mostra quella - vedi [Previsto] - e questo stato resta per le ore
+     * che nessuna delle due fonti copre.
      */
     data class FuoriOrario(val ultimo: Instant?) : StatoRadar
+
+    /**
+     * Il radar non ha quell'ora, ma il **modello** ce l'ha.
+     *
+     * E' la carta che risponde per tutte le altre ventuno ore della barra, e
+     * non e' la stessa cosa del radar: il radar dice cosa **sta cadendo**,
+     * questa dice cosa un modello **si aspetta**. Chi guarda una carta radar
+     * le crede, e crederebbe a una previsione a sedici ore come se qualcuno
+     * l'avesse vista - per questo si disegna con macchie morbide invece che a
+     * pixel, si etichetta "previsione" invece che con un'ora di scatto, e lo
+     * scrive nella riga sotto.
+     */
+    data class Previsto(val quando: Instant, val valori: List<Pair<PuntoPrevisto, Float>>) :
+        StatoRadar
 
     /**
      * Ha risposto male, o non ha risposto.

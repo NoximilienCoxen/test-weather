@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.COSTE_ITALIA
 import io.github.noximiliencoxen.caelum.data.COSTE_VICINE
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.PuntoPrevisto
 import io.github.noximiliencoxen.caelum.data.RadarRiquadro
 import io.github.noximiliencoxen.caelum.data.RadarTessere
 import io.github.noximiliencoxen.caelum.data.StatoRadar
@@ -122,11 +124,15 @@ fun MappaRadar(
                 text = when (stato) {
                     is StatoRadar.Pronto -> ORARIO.format(stato.prodotto.istante.atZone(ZoneId.systemDefault()))
                     StatoRadar.InCorso -> "in arrivo"
+                    is StatoRadar.Previsto -> "previsione"
                     StatoRadar.FuoriCopertura -> "nessun radar"
                     is StatoRadar.FuoriOrario -> "niente per quest'ora"
                     is StatoRadar.NonDisponibile -> "non disponibile"
                 },
                 style = SalaType.rowNote,
+                // L'accento solo per il misurato. La previsione resta in
+                // inchiostro tenue: il colore forte e' un'affermazione, e qui
+                // c'e' meno da affermare.
                 color = if (prodotto != null) palette.accent else palette.inkFaint,
             )
         }
@@ -144,6 +150,7 @@ fun MappaRadar(
                 // sotto il profilo della terra, cosi' il bordo della costa
                 // resta leggibile anche dove la macchia e' fitta.
                 tessere.forEach { (immagine, suo) -> posaRadar(immagine, suo, finestra) }
+                (stato as? StatoRadar.Previsto)?.let { disegnaPrevisione(it.valori, finestra) }
                 disegnaCoste(finestra, palette)
                 disegnaAnelli(place, finestra, palette)
                 segnaPosto(place, finestra, palette, fase)
@@ -176,6 +183,13 @@ fun MappaRadar(
                     "Il radar misura, non prevede: l'ultima fotografia e' delle " +
                         "${ORARIO.format(it.atZone(ZoneId.systemDefault()))}."
                 } ?: "Il radar misura, non prevede: per quest'ora non c'e' una fotografia."
+                // **La riga che tiene separate le due carte.** Il radar dice
+                // cosa sta cadendo; questa dice cosa un modello si aspetta.
+                // Chi guarda una carta radar le crede, e crederebbe a una
+                // previsione a sedici ore come se qualcuno l'avesse vista.
+                is StatoRadar.Previsto ->
+                    "Previsione del modello, non radar: la pioggia misurata c'è " +
+                        "solo per le ultime due ore."
                 // Il nome della fonte lo porta il fotogramma, non lo sa
                 // questa schermata: scritto qui, resterebbe quello di prima il
                 // giorno in cui la fonte cambia.
@@ -407,3 +421,72 @@ private fun DrawScope.disegnaAnelli(place: Place, finestra: RadarRiquadro, palet
         )
     }
 }
+
+/**
+ * La pioggia prevista: macchie morbide, non pixel.
+ *
+ * **La morbidezza e' la parte che dice la verita'.** Il radar disegna quello
+ * che ha misurato, e i suoi bordi sono bordi veri; un modello da' un numero
+ * ogni quaranta chilometri, e disegnarlo a quadretti netti gli darebbe una
+ * precisione che non ha. Macchie sfumate che si sovrappongono dicono
+ * "da queste parti, all'incirca", che e' esattamente quello che il dato dice.
+ *
+ * Sotto il decimo di millimetro non si disegna niente: e' la pioggia che il
+ * modello mette dappertutto e che nessuno sente cadere, e riempirebbe la carta
+ * di velo azzurro facendo sembrare bagnato un giorno sereno.
+ */
+private fun DrawScope.disegnaPrevisione(
+    valori: List<Pair<PuntoPrevisto, Float>>,
+    finestra: RadarRiquadro,
+) {
+    // Il raggio viene dal passo della griglia - tredici colonne sulla
+    // larghezza - allargato di un terzo perche' le macchie si tocchino invece
+    // di lasciare buchi di carta fra l'una e l'altra.
+    val raggio = size.width / 12f * 1.35f
+    valori.forEach { (nodo, mm) ->
+        if (mm < SOGLIA_MM) return@forEach
+        val centro = punto(nodo.lat, nodo.lon, finestra)
+        if (centro.x < -raggio || centro.x > size.width + raggio) return@forEach
+        if (centro.y < -raggio || centro.y > size.height + raggio) return@forEach
+        val colore = colorePioggia(mm)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(colore, colore.copy(alpha = 0f)),
+                center = centro,
+                radius = raggio,
+            ),
+            radius = raggio,
+            center = centro,
+        )
+    }
+}
+
+/**
+ * Il colore di un millimetro d'acqua, sulla scala che usano tutti.
+ *
+ * Azzurro per la pioggia leggera, verde-giallo per quella che bagna davvero,
+ * arancio e rosso per il rovescio. **Non e' la tavolozza di RainViewer**, ed e'
+ * voluto: due carte che raccontano cose diverse - una misurata e una prevista -
+ * non devono somigliarsi tanto da confondersi.
+ *
+ * L'opacita' cresce col valore ma si ferma a poco piu' di meta': sotto ci sono
+ * le coste e gli anelli della distanza, e una previsione che li copre si
+ * comporta come se contasse piu' di loro.
+ */
+private fun colorePioggia(mm: Float): Color = when {
+    mm < 0.5f -> Color(0xFF7FB4D4).copy(alpha = 0.26f)
+    mm < 1.5f -> Color(0xFF4E92C4).copy(alpha = 0.34f)
+    mm < 4f -> Color(0xFF5BA88C).copy(alpha = 0.40f)
+    mm < 8f -> Color(0xFFD9A441).copy(alpha = 0.46f)
+    mm < 16f -> Color(0xFFD1713C).copy(alpha = 0.52f)
+    else -> Color(0xFFB8453C).copy(alpha = 0.58f)
+}
+
+/**
+ * Sotto questo, niente.
+ *
+ * Un decimo di millimetro in un'ora e' la pioggia che il modello semina
+ * dappertutto e che nessuno sente cadere. Disegnarla riempirebbe la carta di
+ * velo azzurro, e un giorno sereno sembrerebbe bagnato.
+ */
+private const val SOGLIA_MM = 0.1f
