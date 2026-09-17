@@ -3610,3 +3610,82 @@ la risposta giusta**. Qui c'era un `ifEmpty { state.hours }`, scritto da me col
 ridisegno, che dipingeva oggi sotto l'intestazione di un altro giorno: e' la
 stessa bugia dello scatto chiamato `00-impostazioni` che ritraeva le localita',
 in un altro punto.
+
+
+### 13-quater. Un cielo che si muove, e che risponde
+
+"L'app sembra morta." Detto col telefono in mano, subito dopo che
+`animazioniIstantanee` ha smesso di tenerla congelata: appena il cielo ha
+cominciato a muoversi si e' visto **quanto poco** si muoveva. Sole e luna erano
+due dischi con un alone, le stelle puntini da un pixel e mezzo, una cadente ogni
+dodici secondi, e niente rispondeva al dito.
+
+**Il sole.** Tre strati di bagliore invece di uno - uno solo finisce di colpo e
+si legge come un bollo con un contorno sfocato - e una **corona di sedici raggi
+che gira**, novanta secondi per tornare al punto di partenza. E' lei a dare il
+movimento continuo: il respiro da solo e' una pulsazione, si nota per un minuto
+e poi non piu'. I raggi sono alternati lunghi e corti e ognuno palpita per conto
+suo, se no la corona si legge come un ingranaggio. Disco e alone respirano
+**sfasati**: all'unisono sembrerebbero un oggetto solo che cambia taglia.
+
+**La luna** aveva un difetto vero: la parte in ombra era quasi nera, e al
+novilunio spariva come se qualcuno l'avesse spenta. Adesso c'e' la **luce
+cinerea** - quel disco fantasma dentro la falce, che e' Terra che la illumina e a
+occhio nudo si vede eccome - piu' un alone a due strati e tre scintille lente che
+le girano attorno.
+
+**Le stelle** sono passate da 72 a 160, e una decina sono **luminose**: raggio
+doppio, un bagliore attorno e una croce di scintillio che pulsa. Un cielo di
+puntini tutti uguali e' una trama; sono le poche grandi a dare la scala a tutte
+le altre. Il tremolio adesso ha **un periodo per stella** invece di uno solo: con
+un periodo comune il cielo lampeggia, e un lampeggio sincronizzato si legge come
+un difetto dello schermo.
+
+**Le cadenti** sono due tracce con cadenze prime fra loro, 4,3 e 6,7 secondi:
+non tornano mai in fase, quindi a volte se ne vedono due insieme e a volte
+nessuna - che e' come cadono davvero. La scia sfuma invece di essere una riga
+piena, che era un graffio sul vetro.
+
+**E la vita che avevo tolto e' tornata.** `uccelli` e `pulviscolo` erano usciti
+col vecchio feed perche' li chiamava solo la scultura; il cielo nuovo aveva il
+difetto opposto - di giorno, sereno, non si muoveva niente. Ripresi da
+`git show 8fff850f^` **identici**, perche' funzionavano: riusare batte
+riscrivere, e le note che portano dietro erano gia' state pagate.
+
+#### Le tre interazioni, e perche' sono tutte tocchi
+
+Il verticale e' del carosello e l'orizzontale della barra delle ore: la
+trappola #5 nasce da due gesti che si contendono il dito, e un trascinamento sul
+cielo l'avrebbe riaperta. Quindi **solo tocchi**, che non contendono niente.
+
+1. **Inclinare** - parallasse. `rememberDeviceTilt` era in `ui/motion/` e non lo
+   chiamava piu' nessuno dal giorno in cui il mappamondo del benvenuto e'
+   uscito: torna da -1 a 1 per asse, gia' smorzato, con la linea di base che
+   insegue la posa (quindi non deriva). Ogni piano ha il suo fattore - stelle
+   0,12, sole 0,34, uccelli 0,52, nuvole 0,78, **colline zero** - perche' e' la
+   differenza fra i piani a dire che c'e' spazio in mezzo. Le colline non si
+   muovono: sono terra, e il mondo non si stacca dai piedi.
+2. **Toccare il cielo** - un'increspatura che si allarga e svanisce in poco piu'
+   di un secondo. Due anelli, uno largo e tenue e uno netto: un cerchio solo che
+   cresce si legge come un bersaglio, due come un'onda. Ne vivono al massimo
+   quattro, e le spente si potano **prima** di aggiungerne una - una lista che
+   cresce a ogni tocco e non cala e' una perdita lenta.
+3. **Toccare il disco** - divampa, e si sente (`vibrazioni.scatto()`, la stessa
+   della barra). Il bersaglio e' il cerchio del sole allargato di tre quinti:
+   stretto quanto il disegno sarebbe un tiro al bersaglio.
+
+Tutto questo vive **dentro `SalaCielo`** e non nella Shell: sono cose del cielo,
+nessun'altra schermata le usa, e tenerle li' vuol dire che la Shell non sa
+nemmeno che esistano. `interattivo` le spegne tutte - con le animazioni ridotte
+un accelerometro acceso e' un costo che chi ha chiesto meno movimento non si
+aspetta, e la cattura vuole scatti ripetibili.
+
+#### Un controllo in piu', dopo un errore che nessun controllo prendeva
+
+Rimettendo gli uccelli, `private class Uccello` e' finita **dichiarata due
+volte**: la potatura di allora aveva tolto la funzione e la lista ma non la
+classe, e il mio controllo delle graffe non se ne accorge - un doppione e'
+perfettamente bilanciato. Ai controlli offline si aggiunge quindi il conto delle
+dichiarazioni per file: se un nome compare due volte a livello di file, lo dice.
+Senza SDK questa e' la compilazione che ci si puo' permettere, e va allargata
+ogni volta che lascia passare qualcosa.

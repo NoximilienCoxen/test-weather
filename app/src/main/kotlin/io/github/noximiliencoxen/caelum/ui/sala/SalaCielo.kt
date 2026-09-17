@@ -1,8 +1,18 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -16,11 +26,15 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
+import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
+import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -70,8 +84,64 @@ fun SalaCielo(
      * disegno **non** la mette.
      */
     insetAlto: Dp = 0.dp,
+    /**
+     * Se il cielo risponde al dito e al sensore.
+     *
+     * Falso quando le animazioni sono ridotte - li' un accelerometro acceso e'
+     * un costo che chi ha chiesto meno movimento non si aspetta - e durante la
+     * cattura, dove ogni scatto deve poter uscire identico al precedente.
+     */
+    interattivo: Boolean = true,
 ) {
-    Canvas(modifier = modifier) {
+    // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
+    //
+    // Tocchi, fiammata e inclinazione vivono **qui** e non nella Shell: sono
+    // cose del cielo, nessun'altra schermata le usa, e tenerle qui vuol dire
+    // che la Shell non sa nemmeno che esistano.
+    val onde = remember { mutableStateListOf<Increspatura>() }
+    val fiamma = remember { Animatable(0f) }
+    val vibrazioni = rememberVibrazioniMeteo()
+    val scope = rememberCoroutineScope()
+
+    // **Da -1 a 1 su ogni asse**, gia' smorzato e con la linea di base che
+    // insegue la posa: restituisce al centro se si resta fermi, quindi non
+    // deriva. Era in `ui/motion/` e non lo chiamava piu' nessuno da quando il
+    // mappamondo del benvenuto e' uscito.
+    val inclinazione by rememberDeviceTilt(enabled = interattivo)
+    val ampiezza = with(LocalDensity.current) { 16.dp.toPx() }
+    val parallasse = Offset(inclinazione.x * ampiezza, inclinazione.y * ampiezza)
+
+    Canvas(
+        modifier = modifier.pointerInput(interattivo) {
+            if (!interattivo) return@pointerInput
+            detectTapGestures { punto ->
+                val ora = tempo()
+                // Il disco sta dove lo mette l'arco: stesso conto del disegno.
+                val centro = arco(
+                    t = sky.journey,
+                    sx = size.width / RIF_L,
+                    sy = size.height / RIF_H,
+                    dy = insetAlto.toPx(),
+                )
+                val raggioDisco = 38f * (size.width / RIF_L) * 1.7f
+                if ((punto - centro).getDistance() <= raggioDisco) {
+                    // Sul disco: divampa, e si sente.
+                    vibrazioni.scatto()
+                    scope.launch {
+                        fiamma.snapTo(1f)
+                        fiamma.animateTo(0f, tween(durationMillis = 1100))
+                    }
+                } else {
+                    // **Si potano le spente prima di aggiungere.** Una lista che
+                    // cresce a ogni tocco e non cala e' una perdita lenta: il
+                    // disegno le salterebbe comunque, ma resterebbero in memoria
+                    // per tutta la vita della schermata.
+                    onde.removeAll { ora - it.nata > DURATA_INCRESPATURA }
+                    if (onde.size < 4) onde.add(Increspatura(punto, ora))
+                }
+            }
+        },
+    ) {
         val t = tempo()
         val sx = size.width / RIF_L
         val sy = size.height / RIF_H
@@ -82,17 +152,49 @@ fun SalaCielo(
         // Le stelle non si spengono con le nuvole: ci passano sotto. Il velo
         // **cala** con la copertura invece di azzerarsi, perche' da sotto una
         // notte coperta qualcuna si vede lo stesso.
-        cieloStellato(
-            tempo = t,
-            inchiostro = SalaTokens.neutral100,
-            velo = scena.notte * (1f - scena.copertura * 0.72f),
-        )
+        //
+        // Le piu' lontane si spostano pochissimo: sono il fondo del cielo.
+        translate(parallasse.x * 0.12f, parallasse.y * 0.12f) {
+            cieloStellato(
+                tempo = t,
+                inchiostro = SalaTokens.neutral100,
+                velo = scena.notte * (1f - scena.copertura * 0.72f),
+            )
+        }
 
-        arcoDelCielo(sx, sy, dy, palette, scena)
-        soleEluna(sx, sy, dy, sky, scena, faseLunare, t)
-        nuvole(sx, sy, dy, palette, scena, t)
+        translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
+            arcoDelCielo(sx, sy, dy, palette, scena)
+            soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value)
+        }
+
+        // Di giorno, a cielo aperto, qualcosa attraversa: senza, un sereno e'
+        // una sfumatura ferma. Il velo cala con le nuvole invece di spegnersi.
+        val giorno = (1f - scena.notte) * (1f - scena.bagnato)
+        translate(parallasse.x * 0.52f, parallasse.y * 0.52f) {
+            pulviscolo(
+                tempo = t,
+                inchiostro = SalaTokens.neutral100,
+                velo = giorno * (1f - scena.copertura * 0.55f) * 0.9f,
+            )
+            uccelli(
+                unita = size.width * 0.55f,
+                origine = Offset(size.width * 0.5f, size.height * 0.40f + dy),
+                tempo = t,
+                inchiostro = palette.ink,
+                velo = giorno * (1f - scena.copertura * 0.62f),
+            )
+        }
+
+        // Le nuvole sono il piano di mezzo, e si spostano piu' di tutto.
+        translate(parallasse.x * 0.78f, parallasse.y * 0.78f) {
+            nuvole(sx, sy, dy, palette, scena, t)
+        }
+
+        // Le colline sono terra: stanno ferme, o il mondo si stacca dai piedi.
         colline(sx, sy, palette)
         cioCheCade(scena, t)
+
+        disegnaIncrespature(onde, t, palette)
 
         // Il riverbero del lampo si prende il cielo intero: un temporale non
         // illumina solo la nuvola che lo fa.
@@ -172,6 +274,7 @@ private fun DrawScope.soleEluna(
     scena: Scena,
     faseLunare: Float,
     tempo: Float,
+    fiamma: Float,
 ) {
     // Il cielo chiuso li nasconde tutti e due: dietro un fronte non si vede
     // ne' l'uno ne' l'altra.
@@ -180,77 +283,138 @@ private fun DrawScope.soleEluna(
 
     val posizione = arco(sky.journey, sx, sy, dy)
 
-    // Il respiro del prototipo (`animation:respiro`), ridotto a un soffio: una
-    // pulsazione del sei per cento su otto secondi si legge come luce, non come
-    // un oggetto che cambia taglia.
-    val respiro = 1f + 0.03f * sin(tempo * 0.78f)
+    // **Disco e alone respirano sfasati.** All'unisono sembrerebbero un solo
+    // oggetto che cambia taglia; sfalsati sembrano luce che varia.
+    val respiro = 1f + 0.06f * sin(tempo * 0.78f)
+    val respiroAlone = 1f + 0.11f * sin(tempo * 0.53f + 1.2f)
 
     if (scena.sole > 0.01f) {
         val elev = sin(PI.toFloat() * sky.journey.coerceIn(0f, 1f))
-        val cuore = lerp(Color(0xFFFFECCD), Color(0xFFFFFBE0), elev)
-        val mezzo = lerp(Color(0xFFEE8A45), Color(0xFFFFD42E), elev)
-        val bordo = lerp(Color(0xFFC96634), Color(0xFFF2A81B), elev)
+        // Piu' caldo e piu' acceso di prima: il cuore va quasi al bianco allo
+        // zenit, cosi' il disco brucia invece di posarsi.
+        val cuore = lerp(Color(0xFFFFF3DA), Color(0xFFFFFFF2), elev)
+        val mezzo = lerp(Color(0xFFF79A46), Color(0xFFFFDC3A), elev)
+        val bordo = lerp(Color(0xFFD86A2C), Color(0xFFFFB01C), elev)
+        val alone = lerp(Color(0xFFFFB98C), Color(0xFFFFEE9C), elev)
         val r = 38f * sx * respiro
-        val alone = lerp(SalaTokens.accent300, Color(0xFFFFE89A), elev)
-        val rAlone = 90f * sx * (1f + 0.075f * sin(tempo * 0.63f))
-        drawCircle(
-            brush = Brush.radialGradient(
-                0f to alone.copy(alpha = 0.55f * scena.sole * velo),
-                0.70f to alone.copy(alpha = 0f),
+        val forza = (scena.sole * velo).coerceIn(0f, 1f)
+
+        // ── Il bagliore, in tre strati ────────────────────────────────────
+        //
+        // Uno solo dava un alone piatto che finiva di colpo. Tre raggi diversi,
+        // ognuno piu' largo e piu' tenue, danno la caduta continua che ha la
+        // luce vera - ed e' quello che fa "bruciare" il disco sul cielo.
+        listOf(
+            5.6f to 0.20f,
+            3.1f to 0.30f,
+            1.9f to 0.42f,
+        ).forEach { (quanto, opacita) ->
+            val raggio = r * quanto * respiroAlone * (1f + 0.25f * fiamma)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    0f to alone.copy(alpha = opacita * forza * (1f + 0.6f * fiamma)),
+                    1f to alone.copy(alpha = 0f),
+                    center = posizione,
+                    radius = raggio,
+                ),
+                radius = raggio,
                 center = posizione,
-                radius = rAlone,
-            ),
-            radius = rAlone,
-            center = posizione,
-        )
+            )
+        }
+
+        // ── La corona, che gira ───────────────────────────────────────────
+        //
+        // **E' questa a dare il movimento che mancava.** Il respiro da solo e'
+        // una pulsazione: si nota dopo un minuto e poi non piu'. Un giro lento
+        // - novanta secondi per tornare al punto di partenza - non si guarda
+        // mai partire e non finisce mai, che e' come si comporta il sole.
+        val raggi = 16
+        val giro = tempo * (2f * PI.toFloat() / 90f)
+        for (k in 0 until raggi) {
+            val a = giro + k * (2f * PI.toFloat() / raggi)
+            // Due lunghezze alternate, e ognuna respira per conto suo: una
+            // corona a denti uguali si legge come un ingranaggio.
+            val lungo = if (k % 2 == 0) 1f else 0.62f
+            val palpito = 1f + 0.18f * sin(tempo * 1.6f + k * 0.8f)
+            val dentro = r * 1.12f
+            val fuori = dentro + r * 0.55f * lungo * palpito * (1f + 1.4f * fiamma)
+            drawLine(
+                brush = Brush.linearGradient(
+                    0f to alone.copy(alpha = 0.55f * forza * (1f + fiamma)),
+                    1f to alone.copy(alpha = 0f),
+                    start = Offset(posizione.x + cos(a) * dentro, posizione.y + sin(a) * dentro),
+                    end = Offset(posizione.x + cos(a) * fuori, posizione.y + sin(a) * fuori),
+                ),
+                start = Offset(posizione.x + cos(a) * dentro, posizione.y + sin(a) * dentro),
+                end = Offset(posizione.x + cos(a) * fuori, posizione.y + sin(a) * fuori),
+                strokeWidth = r * 0.085f,
+                cap = StrokeCap.Round,
+            )
+        }
+
+        // ── Il disco ──────────────────────────────────────────────────────
         drawCircle(
             brush = Brush.radialGradient(
                 0f to cuore,
-                0.58f to mezzo,
+                0.52f to mezzo,
                 1f to bordo,
-                // Il fuoco spostato in alto a sinistra, come nel prototipo: e'
-                // quello che fa sembrare il disco una sfera e non un bollo.
+                // Il fuoco spostato in alto a sinistra: e' quello che fa
+                // sembrare il disco una sfera e non un bollo.
                 center = Offset(posizione.x - r * 0.24f, posizione.y - r * 0.32f),
                 radius = r * 1.35f,
             ),
             radius = r,
             center = posizione,
-            alpha = (scena.sole * velo).coerceIn(0f, 1f),
+            alpha = forza,
         )
     }
 
     if (scena.notte > 0.01f) {
         val r = 35f * sx
         val alpha = (scena.notte * velo).coerceIn(0f, 1f)
-        val rAlone = 85f * sx
-        drawCircle(
-            brush = Brush.radialGradient(
-                0f to SalaTokens.neutral100.copy(alpha = 0.26f * alpha),
-                0.70f to SalaTokens.neutral100.copy(alpha = 0f),
+        // Anche la luna ha il suo bagliore a due strati, e cresce col tocco.
+        listOf(3.4f to 0.16f, 2.0f to 0.24f).forEach { (quanto, opacita) ->
+            val raggio = r * quanto * respiroAlone * (1f + 0.22f * fiamma)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    0f to SalaTokens.lunaLuce.copy(alpha = opacita * alpha * (1f + 0.8f * fiamma)),
+                    1f to SalaTokens.lunaLuce.copy(alpha = 0f),
+                    center = posizione,
+                    radius = raggio,
+                ),
+                radius = raggio,
                 center = posizione,
-                radius = rAlone,
-            ),
-            radius = rAlone,
-            center = posizione,
-        )
-        luna(posizione, r, faseLunare, alpha)
+            )
+        }
+        luna(posizione, r, faseLunare, alpha, tempo)
     }
 }
 
 /**
  * La luna: corpo pieno coi suoi mari, e sopra la sola parte illuminata.
  *
- * **La fase e' quella vera di stanotte**, non un disegno fisso: il prototipo
- * aveva una gibbosa al settantaquattro per cento scritta a mano, e una luna
- * che non corrisponde a quella in cielo e' un'affermazione falsa detta con
- * disinvoltura. La costruzione della sagoma e' la stessa di Sala IV e di
+ * **La fase e' quella vera del giorno mostrato**, non un disegno fisso: il
+ * prototipo aveva una gibbosa al settantaquattro per cento scritta a mano, e
+ * una luna che non corrisponde a quella in cielo e' un'affermazione falsa detta
+ * con disinvoltura. La costruzione della sagoma e' la stessa di Sala IV e di
  * `Bodies.kt`: semicerchio dal lato illuminato piu' la mediana, che rientra
  * quando e' falce e sporge quando e' gibbosa.
  */
-private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float) {
-    // Il corpo in ombra: c'e' sempre, anche al novilunio, perche' una luna
-    // nuova non e' un buco nel cielo.
-    drawCircle(color = SalaTokens.lunaOmbra.copy(alpha = 0.55f * alpha), radius = r, center = centro)
+private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float, tempo: Float) {
+    // **La luce cinerea.** La parte in ombra non e' nera: e' Terra che la
+    // illumina, e a occhio nudo si vede eccome - e' quel disco fantasma dentro
+    // la falce. Prima era quasi nera, e al novilunio la luna spariva dal cielo
+    // come se qualcuno l'avesse spenta.
+    drawCircle(
+        brush = Brush.radialGradient(
+            0f to Color(0xFF2A3446).copy(alpha = 0.92f * alpha),
+            1f to Color(0xFF141C28).copy(alpha = 0.80f * alpha),
+            center = Offset(centro.x - r * 0.2f, centro.y - r * 0.2f),
+            radius = r * 1.3f,
+        ),
+        radius = r,
+        center = centro,
+    )
 
     val crescente = fase < 0.5f
     val terminatore = abs(cos(2.0 * PI * fase).toFloat())
@@ -266,9 +430,9 @@ private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float) 
     clipPath(illuminata) {
         drawCircle(
             brush = Brush.radialGradient(
-                0f to SalaTokens.lunaLuce,
-                0.52f to SalaTokens.lunaMezzo,
-                1f to SalaTokens.lunaBordo,
+                0f to Color(0xFFFFFDF6),
+                0.48f to SalaTokens.lunaLuce,
+                1f to SalaTokens.lunaMezzo,
                 center = Offset(centro.x - r * 0.32f, centro.y - r * 0.40f),
                 radius = r * 1.5f,
             ),
@@ -285,7 +449,7 @@ private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float) 
         )
         mari.forEach { (mx, my, md) ->
             drawOval(
-                color = Color(0xFF463830).copy(alpha = 0.22f * alpha),
+                color = Color(0xFF6E6152).copy(alpha = 0.20f * alpha),
                 topLeft = Offset(centro.x + mx * r - md * r, centro.y + my * r - md * r * 0.78f),
                 size = Size(md * 2f * r, md * 1.56f * r),
             )
@@ -297,8 +461,81 @@ private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float) 
         color = SalaTokens.lunaBordo.copy(alpha = 0.30f * alpha),
         radius = r,
         center = centro,
-        style = Stroke(width = r * 0.03f),
+        style = Stroke(width = r * 0.04f),
     )
+
+    // **Tre scintille che le girano attorno**, lente e sfasate. Non e'
+    // astronomia: e' il segno con cui si disegna "brilla" da sempre, e a questa
+    // taglia fa piu' la luna di quanto farebbe un altro alone.
+    for (k in 0 until 3) {
+        val a = tempo * 0.22f + k * (2f * PI.toFloat() / 3f)
+        val d = r * (1.55f + 0.12f * sin(tempo * 0.7f + k))
+        val p = Offset(centro.x + cos(a) * d, centro.y + sin(a) * d * 0.82f)
+        val pulsa = (0.35f + 0.65f * sin(tempo * 1.3f + k * 2.1f)).coerceIn(0f, 1f)
+        val punta = r * 0.16f * pulsa
+        if (punta <= 0.4f) continue
+        listOf(Offset(punta, 0f), Offset(0f, punta)).forEach { v ->
+            drawLine(
+                color = SalaTokens.lunaLuce.copy(alpha = 0.55f * alpha * pulsa),
+                start = Offset(p.x - v.x, p.y - v.y),
+                end = Offset(p.x + v.x, p.y + v.y),
+                strokeWidth = r * 0.035f,
+                cap = StrokeCap.Round,
+            )
+        }
+    }
+}
+
+/**
+ * Un'increspatura nata da un dito sul cielo.
+ *
+ * Porta **quando** e' nata e non quanto e' vecchia: l'eta' si ricava
+ * dall'orologio della scena al momento del disegno, cosi' non c'e' un secondo
+ * contatore da tenere in fase col primo - e' la stessa ragione per cui le
+ * gocce e le vibrazioni condividono `Corsie`.
+ */
+@Immutable
+data class Increspatura(val centro: Offset, val nata: Float)
+
+/** Quanto dura un'increspatura, dal tocco allo svanire. */
+const val DURATA_INCRESPATURA = 1.15f
+
+/**
+ * Le increspature del tocco: un anello di luce che si allarga e svanisce.
+ *
+ * Due anelli e non uno - uno largo e tenue, uno stretto e netto - perche' un
+ * cerchio solo che cresce si legge come un bersaglio, due come un'onda.
+ */
+private fun DrawScope.disegnaIncrespature(
+    onde: List<Increspatura>,
+    tempo: Float,
+    palette: SalaPalette,
+) {
+    onde.forEach { onda ->
+        val eta = ((tempo - onda.nata) / DURATA_INCRESPATURA).coerceIn(0f, 1f)
+        if (eta >= 1f) return@forEach
+        // Si allarga in fretta e rallenta: e' come si apre un'onda sull'acqua.
+        val raggio = size.width * 0.52f * (1f - (1f - eta) * (1f - eta))
+        val svanire = (1f - eta) * (1f - eta)
+        val tinta = lerp(palette.accent, SalaTokens.neutral100, palette.buio)
+        drawCircle(
+            brush = Brush.radialGradient(
+                0.55f to tinta.copy(alpha = 0f),
+                0.88f to tinta.copy(alpha = 0.16f * svanire),
+                1f to tinta.copy(alpha = 0f),
+                center = onda.centro,
+                radius = raggio,
+            ),
+            radius = raggio,
+            center = onda.centro,
+        )
+        drawCircle(
+            color = tinta.copy(alpha = 0.34f * svanire),
+            radius = raggio,
+            center = onda.centro,
+            style = Stroke(width = size.width * 0.0042f * (0.4f + svanire)),
+        )
+    }
 }
 
 /** Quante masse di nuvola ci sono, e dove. Le taglie sono quelle del prototipo. */
