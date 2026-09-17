@@ -158,6 +158,20 @@ class RadarFormaTest {
     }
 
     @Test
+    fun `un guasto http tiene il codice e butta il markup`() {
+        // E' il messaggio vero che httpGet costruisce, ed e' quello che uno
+        // scatto della CI ha mostrato per intero sotto la carta.
+        val m = "HTTP 403 da Radar-DPC (SRI): <HTML><HEAD> <TITLE>Access Denied</TITLE> " +
+            "</HEAD><BODY> <H1>Access Denied</H1> You don't have permission</BODY></HTML>"
+        assertEquals("HTTP 403 da Radar-DPC (SRI): Access Denied", RadarForma.riassuntoGuasto(m))
+    }
+
+    @Test
+    fun `un guasto senza corpo resta quello che e'`() {
+        assertEquals("connessione rifiutata", RadarForma.riassuntoGuasto("connessione rifiutata"))
+    }
+
+    @Test
     fun `il riassunto non va mai a capo e non supera la riga`() {
         val r = RadarForma.riassunto("prima\n  seconda   terza " + "x".repeat(400))
         assertTrue(r, !r.contains("\n"))

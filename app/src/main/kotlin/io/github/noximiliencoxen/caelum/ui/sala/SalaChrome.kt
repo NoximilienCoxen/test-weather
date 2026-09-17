@@ -75,6 +75,14 @@ fun PannelloSala(
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
             .background(palette.panel)
+            // **Queste misure sono state allargate e poi rimesse, e la nota
+            // resta perche' la prova conta piu' della misura.** Il ragionamento
+            // era: il pannello e' ancorato in basso, si dimensiona sul
+            // contenuto, quindi allargandolo sale nel cielo che sopra resta
+            // inutilizzato. Vero per le sale corte. Falso per "La settimana",
+            // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
+            // e ogni punto in piu' non la fa salire, le taglia una riga in
+            // fondo. Lo scatto della CI l'ha mostrato subito.
             .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
     ) {
         // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
@@ -103,10 +111,29 @@ fun RowScope.CellaValore(
             .weight(1f)
             .clip(RoundedCornerShape(RaggioCella))
             .background(palette.chip)
-            .padding(horizontal = 13.dp, vertical = 11.dp),
+            // **Tre punti di margine in meno per lato, e sono sei di parola in
+            // piu'.** "PROBABILITÀ" non ci stava per intero nemmeno prima di
+            // ritoccare i corpi: negli scatti si leggeva "PROBABILI", e
+            // nessuno l'aveva notato perche' troncata sembra un'abbreviazione
+            // voluta. Tre celle per riga, undici caratteri la piu' lunga: il
+            // margine era la cosa da stringere, non la parola da accorciare.
+            .padding(horizontal = 10.dp, vertical = 11.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        Text(text = etichetta, style = SalaType.sectionLabel, color = palette.inkFaint, maxLines = 1)
+        // **I puntini sono la cosa piu' importante di questa riga.** Senza,
+        // `maxLines = 1` tagliava e basta: "PROBABILITÀ" diventava
+        // "PROBABILI", "ESPOSIZIONE" diventava "ESPOSIZION", e nessuno se ne
+        // accorgeva **perche' una parola tagliata netta sembra
+        // un'abbreviazione voluta**. Sono rimaste cosi' per mesi, in scatti
+        // che qualcuno ha guardato. Coi puntini un'etichetta che non ci sta e'
+        // visibilmente rotta, e chi la vede la accorcia.
+        Text(
+            text = etichetta,
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
         Text(
             text = valore,
             style = SalaType.value,
@@ -129,7 +156,7 @@ fun RowScope.CellaValore(
 @Composable
 fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
     Text(
-        text = "Per questo giorno la previsione da' i totali, non le ore.",
+        text = "Per questo giorno la previsione dà i totali, non le ore.",
         style = SalaType.footnote,
         color = palette.inkFaint,
         modifier = modifier,
@@ -148,6 +175,7 @@ fun PastigliaAccento(
         style = SalaType.pill,
         color = palette.accentInk,
         maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .clip(CircleShape)
             .background(palette.accent)
@@ -419,7 +447,10 @@ fun ColonnaScorciatoie(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        // Niente spazio fra le voci: lo fa il bersaglio, che e' piu' largo del
+        // disco. Con `spacedBy` **e** un bersaglio da 48 i sette non ci
+        // starebbero in altezza su un telefono corto.
+        verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SalaRoom.entries.forEach { sala ->
@@ -434,19 +465,50 @@ fun ColonnaScorciatoie(
                 )
             }
             val inchiostro = if (attiva) palette.accentInk else palette.ink
+            // **Il bersaglio e' piu' grande del disco, e non erano la stessa
+            // cosa.** Prima lo erano: trentaquattro punti di disco,
+            // trentaquattro di area sensibile, sei di distanza fra uno e
+            // l'altro. Quaranta punti di passo, contro i quarantotto che
+            // l'accessibilita' chiede come minimo - e col pollice, tenendo il
+            // telefono con una mano sola, sull'orlo destro dello schermo. Il
+            // difetto e' arrivato da chi l'app la usa cosi': si sbagliava sala.
+            //
+            // Il disco cresce di quattro punti, il bersaglio di quattordici, e
+            // **cresce verso l'interno** dello schermo oltre che in altezza:
+            // il dito che arriva da destra trova l'area prima del bordo, non
+            // dopo.
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(fondo)
+                    .size(BERSAGLIO)
                     .clickable { onVai(sala) },
                 contentAlignment = Alignment.Center,
             ) {
-                IconaSala(sala, inchiostro)
+                Box(
+                    modifier = Modifier
+                        .size(DISCO)
+                        .clip(CircleShape)
+                        .background(fondo),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    IconaSala(sala, inchiostro)
+                }
             }
         }
     }
 }
+
+/** Il disco che si vede. */
+private val DISCO = 38.dp
+
+/**
+ * L'area che risponde al dito, attorno al disco.
+ *
+ * Quarantotto punti e' il minimo che le linee guida di Android chiedono per un
+ * comando, ed e' misurato sul polpastrello e non sull'icona. Sette bersagli da
+ * quarantotto fanno 336 punti in colonna: ci stanno anche su uno schermo corto,
+ * che e' il motivo per cui l'arrangiamento qui sopra non aggiunge spazio.
+ */
+private val BERSAGLIO = 48.dp
 
 /**
  * Le sette icone della colonna, una famiglia sola: stesso peso, stessa taglia.

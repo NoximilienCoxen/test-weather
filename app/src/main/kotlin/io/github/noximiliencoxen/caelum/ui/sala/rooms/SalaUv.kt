@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -98,12 +99,45 @@ fun SalaUvScreen(
                             .clip(CircleShape)
                             .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
                     )
-                    Text(
-                        text = "%02d".format(ore[indice].time.hour),
-                        style = SalaType.microLabel,
-                        color = if (indice == scelta) palette.accent else palette.inkFaint,
-                        maxLines = 1,
-                    )
+                    // **Un'etichetta ogni due ore, e prima erano tutte e
+                    // sedici.** Sedici colonne in duecento punti fanno dieci
+                    // punti a colonna, e "05" ne vuole dodici: il risultato
+                    // era una fila di "0" - "0 0 0 0 0 10 11 12" - dove le
+                    // prime cinque ore erano tutte tagliate al primo carattere
+                    // e l'ultima, "20", pure. Una scala oraria illeggibile
+                    // sotto un grafico che si tocca per scegliere l'ora.
+                    //
+                    // Le colonne restano sedici: sono i dati. A sparire sono
+                    // le etichette dispari, che una scala non ha bisogno di
+                    // numerare ogni passo. **L'ora scelta fa eccezione**
+                    // sempre, perche' quella non e' una tacca della scala: e'
+                    // la risposta alla domanda "dove sono".
+                    val ora = ore[indice].time.hour
+                    if (ora % 2 == 0 || indice == scelta) {
+                        // **L'etichetta esce dalla propria colonna, apposta.**
+                        // Dimezzare le etichette non e' bastato: la colonna
+                        // resta larga poco piu' di dieci punti, e li' dentro
+                        // "12" ci sta mentre "06" no - la cifra uno e' piu'
+                        // stretta delle altre, ed e' bastato quello perche'
+                        // meta' scala si leggesse e meta' no. Coi puntini
+                        // messi due commit fa la cosa si e' vista subito;
+                        // prima sarebbe stata l'ennesima "0".
+                        //
+                        // `unbounded` le lascia misurare la propria larghezza
+                        // vera e sbordare, centrata. Puo' farlo **perche' le
+                        // colonne dispari un'etichetta non ce l'hanno**: lo
+                        // spazio in cui sborda e' vuoto per costruzione.
+                        Text(
+                            text = "%02d".format(ora),
+                            style = SalaType.microLabel,
+                            color = if (indice == scelta) palette.accent else palette.inkFaint,
+                            maxLines = 1,
+                            modifier = Modifier.wrapContentWidth(
+                                align = Alignment.CenterHorizontally,
+                                unbounded = true,
+                            ),
+                        )
+                    }
                 }
             }
         }
@@ -123,7 +157,7 @@ fun SalaUvScreen(
                 valore = picco?.let { "%02d:00".format(ore[it].time.hour) } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = "ESPOSIZIONE", valore = esposizione(corrente), palette = palette)
+            CellaValore(etichetta = "AL SOLE", valore = esposizione(corrente), palette = palette)
             CellaValore(
                 etichetta = "OZONO",
                 valore = ozono?.let { "${it.roundToInt()} µg/m³" } ?: "--",
@@ -164,9 +198,9 @@ private fun esposizione(valore: Double): String = when {
 }
 
 private fun consiglio(valore: Double): String = when {
-    valore >= 8 -> "Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'e'."
+    valore >= 8 -> "Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'è."
     valore >= 6 -> "Serve protezione: crema ad alto fattore e pause all'ombra nelle ore centrali."
     valore >= 3 -> "Protezione consigliata se si resta fuori a lungo, soprattutto in quota o sull'acqua."
-    valore > 0.2 -> "L'esposizione e' sicura per tempi lunghi: nessuna protezione necessaria."
+    valore > 0.2 -> "L'esposizione è sicura per tempi lunghi: nessuna protezione necessaria."
     else -> "Sole sotto l'orizzonte: nessuna radiazione ultravioletta."
 }

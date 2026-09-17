@@ -105,7 +105,7 @@ class RadarDpcRepository(private val place: Place) {
             for (tipo in listOf("SRI", "VMI")) {
                 val esito = runCatching { prodotto(tipo) }
                 esito.getOrNull()?.let { return@runCatching it }
-                errori += "$tipo, ${esito.exceptionOrNull()?.message.orEmpty().take(90)}"
+                errori += "$tipo, " + RadarForma.riassuntoGuasto(esito.exceptionOrNull()?.message.orEmpty())
             }
             throw Illeggibile(errori.joinToString(" | "))
         }
@@ -212,6 +212,26 @@ internal object RadarForma {
      *   impaginazione.
      * - nient'altro: la testa del corpo, senza a capo.
      */
+    /**
+     * Un guasto detto in una riga, corpo compreso.
+     *
+     * `httpGet` mette nel messaggio d'errore **anche il corpo della risposta**,
+     * ed e' giusto che lo faccia: Open-Meteo scrive li' dentro il motivo del
+     * rifiuto, e buttarlo via perderebbe l'unica riga che spiega. Ma quando il
+     * corpo e' una pagina HTML di errore, quel messaggio diventa
+     * `HTTP 403 da Radar-DPC (SRI): <HTML><HEAD> <TITLE>Access Denied...`, e
+     * cosi' com'e' e' finito sotto la carta in uno scatto della CI.
+     *
+     * Qui si tiene la testa - il codice e la fonte, che sono l'informazione -
+     * e si passa il resto per [riassunto]. "HTTP 403 da Radar-DPC (SRI):
+     * Access Denied" dice la stessa cosa in quaranta caratteri.
+     */
+    fun riassuntoGuasto(messaggio: String): String {
+        val taglio = messaggio.indexOf(": ")
+        if (taglio < 0) return messaggio.take(90)
+        return "${messaggio.take(taglio)}: ${riassunto(messaggio.substring(taglio + 2))}"
+    }
+
     fun riassunto(corpo: String): String {
         val chiavi = runCatching {
             (Json.parseToJsonElement(corpo) as? JsonObject)?.keys?.joinToString(",")

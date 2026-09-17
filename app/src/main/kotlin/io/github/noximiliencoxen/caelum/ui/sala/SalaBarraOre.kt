@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SunClock
@@ -69,6 +70,17 @@ fun BarraDelleOre(
     hours: List<HourForecast>,
     selected: Int,
     oraAttuale: Int,
+    /**
+     * Che giorno si sta guardando: "oggi", "giovedì 18 set".
+     *
+     * Sta qui e non in una sala perche' **lo devono vedere tutte e sette**.
+     * Finora il giorno scelto si leggeva solo in Sala I e in Sala II: da "La
+     * pioggia" o da "Il vento" non c'era modo di sapere se quei numeri erano
+     * di oggi o di giovedi', e l'unico modo di scoprirlo era tornare indietro
+     * di due schermate. Un dato senza la sua data e' un dato che chi guarda
+     * deve indovinare.
+     */
+    giorno: String,
     palette: SalaPalette,
     alba: LocalDateTime?,
     tramonto: LocalDateTime?,
@@ -124,10 +136,35 @@ fun BarraDelleOre(
                 Text(
                     text = "TRASCINA PER CAMBIARE ORA",
                     style = SalaType.sectionLabel,
-                    color = palette.inkFaint,
+                    // Questa riga **non sta su un pannello**: sta sulle
+                    // colline, cioe' su un fondo che cambia con l'ora e che a
+                    // volte e' quasi del suo stesso colore. Al sole diretto
+                    // spariva. `inkSuCielo` e' lo stesso inchiostro spinto
+                    // quanto basta per staccare da li'.
+                    color = palette.inkSuCielo,
                 )
             }
-            Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accent)
+            // **Giorno e ora sulla stessa riga, e la prima stesura li aveva
+            // incolonnati.** Due righe qui costano venticinque punti di
+            // altezza a tutta la galleria, perche' questa barra sta sotto ogni
+            // sala - e "La settimana", che e' la piu' alta, li ha pagati
+            // facendosi tagliare l'ultima riga della striscia. Lo si e' visto
+            // in uno scatto della CI, non a mente.
+            //
+            // Affiancati non costano niente: la riga era gia' alta quanto
+            // l'ora, e a sinistra c'e' spazio perche' la pillola del ritorno
+            // al presente finisce ben prima.
+            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = giorno.uppercase(),
+                    style = SalaType.microLabel,
+                    color = palette.inkSuCielo,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(bottom = 2.dp),
+                )
+                Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accentSuCielo)
+            }
         }
 
         Canvas(

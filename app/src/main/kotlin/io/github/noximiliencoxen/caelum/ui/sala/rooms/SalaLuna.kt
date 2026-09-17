@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
@@ -137,12 +138,14 @@ fun SalaLunaScreen(
                             style = SalaType.giornoMax,
                             color = palette.ink,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = "${quando.dayOfMonth} ${quando.monthValue.mese()}",
                             style = SalaType.giornoMin,
                             color = palette.inkFaint,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -210,13 +213,13 @@ private fun DrawScope.disegnaLuna(fase: Float, alpha: Float) {
 }
 
 private fun descrizione(segmento: MoonSegment): String = when (segmento) {
-    MoonSegment.NOVILUNIO -> "Il disco e' fra noi e il sole: stanotte il cielo resta al buio, ed e' la notte giusta per le stelle deboli."
+    MoonSegment.NOVILUNIO -> "Il disco è fra noi e il sole: stanotte il cielo resta al buio, ed è la notte giusta per le stelle deboli."
     MoonSegment.CRESCENTE -> "Una falce sottile a occidente, bassa e breve: cala poco dopo il sole."
-    MoonSegment.PRIMO_QUARTO -> "Meta' disco illuminato, alto a sud dopo il tramonto: cala attorno a mezzanotte."
+    MoonSegment.PRIMO_QUARTO -> "Metà disco illuminato, alto a sud dopo il tramonto: cala attorno a mezzanotte."
     MoonSegment.GIBBOSA_CRESCENTE -> "Quasi piena e alta per gran parte della notte: illumina bene fino a notte fonda."
     MoonSegment.PLENILUNIO -> "Piena: sorge col tramonto e cala con l'alba, in cielo per tutta la notte."
-    MoonSegment.GIBBOSA_CALANTE -> "Ancora larga ma in ritardo: sorge a notte gia' cominciata e resta fino al mattino."
-    MoonSegment.ULTIMO_QUARTO -> "Meta' disco, dall'altra parte: sorge a notte fonda e resta visibile di prima mattina."
+    MoonSegment.GIBBOSA_CALANTE -> "Ancora larga ma in ritardo: sorge a notte già cominciata e resta fino al mattino."
+    MoonSegment.ULTIMO_QUARTO -> "Metà disco, dall'altra parte: sorge a notte fonda e resta visibile di prima mattina."
     MoonSegment.CALANTE -> "Una falce che precede l'alba, bassa a oriente: l'ultima luce prima del novilunio."
 }
 

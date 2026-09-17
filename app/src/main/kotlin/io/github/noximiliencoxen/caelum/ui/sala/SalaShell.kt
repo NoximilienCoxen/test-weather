@@ -221,6 +221,24 @@ fun SalaShell(
     val avvisi = remember(state.shownAlerts, hour?.time) { state.shownAlerts.attiveA(hour?.time) }
     val giorno = state.detailDay ?: state.forecast?.days?.firstOrNull()
 
+    // **Il giorno mostrato, scritto una volta e letto da tutte e sette.** La
+    // striscia di Sala I e la scheda di Sala II lo dicevano gia'; le altre
+    // cinque no, e da "La pioggia" o da "Il vento" l'unico modo di sapere se
+    // quei numeri erano di oggi o di giovedi' era risalire di due schermate.
+    // Passa alla barra delle ore, che e' l'unico pezzo di cornice che sta
+    // sotto ogni sala.
+    val etichettaGiorno = remember(state.selectedDay, state.forecast) {
+        val scelto = settimanaDi(state.forecast).getOrNull(state.selectedDay)
+        // **Corta, perche' divide una riga con l'ora e con la pillola del
+        // ritorno al presente.** "giovedì 18 set" accanto a "13:00" spingeva
+        // l'ora contro la pillola sugli schermi stretti; "gio 18" no.
+        when {
+            scelto == null -> "oggi"
+            scelto.indice == 0 -> "oggi"
+            else -> "${scelto.breve} ${scelto.giornoDelMese}"
+        }
+    }
+
     CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
@@ -307,6 +325,7 @@ fun SalaShell(
                     hours = state.shownHours,
                     selected = state.selectedHour,
                     oraAttuale = state.nowIndex,
+                    giorno = etichettaGiorno,
                     palette = palette,
                     alba = giorno?.sunrise,
                     tramonto = giorno?.sunset,
@@ -329,7 +348,12 @@ fun SalaShell(
                 onVai = ::vaiA,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .padding(end = 10.dp),
+                    // Dieci punti prima, sei adesso, e i dischi non si sono
+                    // spostati: il bersaglio e' cresciuto di cinque punti per
+                    // lato attorno al disco, e questo margine li restituisce.
+                    // Cio' che cambia e' l'area sensibile, che ora comincia a
+                    // sei punti dal vetro invece che a dieci.
+                    .padding(end = 6.dp),
             )
 
             // ── L'ordine di questi due blocchi e' funzionale ─────────────────

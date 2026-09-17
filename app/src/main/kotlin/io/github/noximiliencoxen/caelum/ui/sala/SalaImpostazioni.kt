@@ -148,7 +148,7 @@ fun SalaImpostazioniScreen(
             )
             RigaServizio(
                 titolo = "Animazioni ridotte",
-                nota = "ferma il cielo e le vibrazioni di cio' che cade",
+                nota = "ferma il cielo e le vibrazioni di ciò che cade",
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.animazioniRidotte, palette) {
