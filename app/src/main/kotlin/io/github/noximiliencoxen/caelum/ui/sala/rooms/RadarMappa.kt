@@ -42,6 +42,7 @@ import io.github.noximiliencoxen.caelum.data.COSTE_ITALIA
 import io.github.noximiliencoxen.caelum.data.COSTE_VICINE
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.RadarRiquadro
+import io.github.noximiliencoxen.caelum.data.RadarTessere
 import io.github.noximiliencoxen.caelum.data.StatoRadar
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
@@ -67,21 +68,16 @@ import kotlin.math.cos
  * perche'. Una schermata che sparisce quando il dato manca lascia chi guarda
  * senza sapere se e' l'app a essere rotta o il cielo a essere sereno.
  *
- * ## La proiezione, che e' il punto debole dichiarato
+ * ## La proiezione
  *
- * Latitudine e longitudine si posano sul rettangolo **in modo lineare**
- * (equirettangolare), con la sola correzione del coseno della latitudine media
- * perche' l'Italia non venga schiacciata. E' la proiezione con cui si disegna
- * la costa, ed e' quella con cui si stira l'immagine del radar.
+ * Mercatore, come le tessere che ci si posano sopra e come ogni mappa a
+ * tessere del web. Fino a ieri era equirettangolare, con un commento proprio
+ * qui che diceva che sarebbe stato questo il punto da cambiare se fosse
+ * arrivata una fonte a tessere. E' arrivata, ed era quello il punto.
  *
- * **Se il prodotto del DPC fosse invece in Mercatore** - e non si e' potuto
- * verificare, vedi `RadarDpcRepository` - la pioggia risulterebbe spostata in
- * verticale rispetto alla costa, di piu' verso i bordi del riquadro. Sarebbe
- * un errore **visibile**: la macchia non seguirebbe il profilo della penisola.
- * E' voluto che lo sia. L'alternativa - scegliere una proiezione a caso e
- * sperare - produrrebbe lo stesso errore senza che nessuno se ne accorga, e
- * una carta che sbaglia in silenzio e' peggio di una carta che sbaglia in
- * faccia.
+ * Costa e pioggia usano **la stessa** proiezione, il che vuol dire che se una
+ * macchia non segue il profilo della penisola non e' colpa della proiezione:
+ * e' colpa dei dati, ed e' una cosa che si puo' riportare.
  */
 @Composable
 fun MappaRadar(
@@ -92,15 +88,15 @@ fun MappaRadar(
 ) {
     val prodotto = (stato as? StatoRadar.Pronto)?.prodotto
     // Due rettangoli, e non vanno confusi. Il **dominio** e' quello che il
-    // prodotto dichiara: dice dove va posata l'immagine, e senza prodotto e'
-    // l'Italia intera solo perche' la carta muta vuole un inquadramento. La
-    // **finestra** e' quello che si guarda, e si calcola nel disegno perche'
-    // dipende da quanto e' larga la carta sullo schermo.
-    val dominio = prodotto?.riquadro ?: DOMINIO_MUTO
-
-    val immagine: ImageBitmap? = remember(prodotto) {
-        prodotto?.png?.let { byte ->
-            runCatching { BitmapFactory.decodeByteArray(byte, 0, byte.size).asImageBitmap() }.getOrNull()
+    // Ogni tessera porta i propri estremi, quindi non c'e' piu' un "dominio"
+    // solo: la **finestra** e' quello che si guarda, si calcola nel disegno
+    // perche' dipende da quanto e' larga la carta sullo schermo, e ogni
+    // tessera si posa dove dicono i suoi.
+    val tessere: List<Pair<ImageBitmap, RadarRiquadro>> = remember(prodotto) {
+        prodotto?.tessere.orEmpty().mapNotNull { t ->
+            runCatching {
+                BitmapFactory.decodeByteArray(t.png, 0, t.png.size).asImageBitmap() to t.riquadro
+            }.getOrNull()
         }
     }
 
@@ -126,7 +122,6 @@ fun MappaRadar(
                 text = when (stato) {
                     is StatoRadar.Pronto -> ORARIO.format(stato.prodotto.istante.atZone(ZoneId.systemDefault()))
                     StatoRadar.InCorso -> "in arrivo"
-                    StatoRadar.FuoriCopertura -> "fuori copertura"
                     is StatoRadar.NonDisponibile -> "non disponibile"
                 },
                 style = SalaType.rowNote,
@@ -141,9 +136,12 @@ fun MappaRadar(
                 .clip(RoundedCornerShape(18.dp)),
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val finestra = finestraAttorno(place, dominio, size.width / size.height)
+                val finestra = finestraAttorno(place, size.width / size.height)
                 drawRect(mare(palette))
-                immagine?.let { posaRadar(it, dominio, finestra) }
+                // Le tessere prima delle coste: la pioggia sta sopra il mare e
+                // sotto il profilo della terra, cosi' il bordo della costa
+                // resta leggibile anche dove la macchia e' fitta.
+                tessere.forEach { (immagine, suo) -> posaRadar(immagine, suo, finestra) }
                 disegnaCoste(finestra, palette)
                 disegnaAnelli(place, finestra, palette)
                 segnaPosto(place, finestra, palette, fase)
@@ -158,9 +156,6 @@ fun MappaRadar(
                 is StatoRadar.NonDisponibile ->
                     stato.indizio?.let { "Il radar non ha risposto come atteso: $it" }
                         ?: "Il radar non ha risposto."
-                StatoRadar.FuoriCopertura ->
-                    "Il radar del Dipartimento della Protezione Civile copre l'Italia: " +
-                        "per ${place.name} non c'è, che non è come dire che non piove."
                 StatoRadar.InCorso -> "Si sta chiedendo l'ultimo fotogramma."
                 // Il nome della fonte lo porta il fotogramma, non lo sa
                 // questa schermata: scritto qui, resterebbe quello di prima il
@@ -180,9 +175,6 @@ fun MappaRadar(
         )
     }
 }
-
-/** Il dominio di ripiego della carta muta: l'Italia, con un po' di mare attorno. */
-private val DOMINIO_MUTO = RadarRiquadro(latMin = 35.2, lonMin = 5.4, latMax = 47.4, lonMax = 19.6)
 
 private val ORARIO: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -204,7 +196,7 @@ private const val RAGGIO_GRADI = 1.45
 private const val KM_PER_GRADO = 111.2
 
 /**
- * La finestra: centrata su di te, larga quanto serve, dentro il dominio.
+ * La finestra: centrata su di te, larga quanto serve.
  *
  * Si parte dal posto scelto e si apre di [RAGGIO_GRADI] sopra e sotto; la
  * larghezza esce dalle proporzioni della carta sullo schermo, **divisa** per il
@@ -212,42 +204,66 @@ private const val KM_PER_GRADO = 111.2
  * quarti di uno di latitudine, e senza quella divisione l'Italia verrebbe
  * grassa.
  *
- * Poi si **trasla** perche' non esca dal dominio del prodotto: meglio un posto
- * decentrato dentro la mappa che il posto al centro con mezza mappa vuota. Si
- * trasla e non si restringe, cosi' la scala resta quella dichiarata dagli
- * anelli.
+ * **Non c'e' piu' un dominio da cui non uscire.** Col radar italiano la carta
+ * doveva stare dentro un rettangolo, e quando il posto era vicino al bordo la
+ * finestra traslava per non mostrare mezza mappa vuota. Un radar a tessere non
+ * ha bordi: le tessere si chiedono dove serve, e se in una zona nessuno guarda
+ * si vedra' una carta senza pioggia - che e' esattamente il limite dichiarato
+ * nella riga sotto.
  */
-private fun finestraAttorno(place: Place, dominio: RadarRiquadro, proporzione: Float): RadarRiquadro {
+private fun finestraAttorno(place: Place, proporzione: Float): RadarRiquadro {
     val mezzaLat = RAGGIO_GRADI
     val mezzaLon = mezzaLat * proporzione / cos(Math.toRadians(place.latitude)).coerceAtLeast(0.2)
-    var latMin = place.latitude - mezzaLat
-    var latMax = place.latitude + mezzaLat
-    var lonMin = place.longitude - mezzaLon
-    var lonMax = place.longitude + mezzaLon
-    if (latMin < dominio.latMin) { latMax += dominio.latMin - latMin; latMin = dominio.latMin }
-    if (latMax > dominio.latMax) { latMin -= latMax - dominio.latMax; latMax = dominio.latMax }
-    if (lonMin < dominio.lonMin) { lonMax += dominio.lonMin - lonMin; lonMin = dominio.lonMin }
-    if (lonMax > dominio.lonMax) { lonMin -= lonMax - dominio.lonMax; lonMax = dominio.lonMax }
-    return RadarRiquadro(latMin = latMin, lonMin = lonMin, latMax = latMax, lonMax = lonMax)
+    return RadarRiquadro(
+        latMin = place.latitude - mezzaLat,
+        lonMin = place.longitude - mezzaLon,
+        latMax = place.latitude + mezzaLat,
+        lonMax = place.longitude + mezzaLon,
+    )
 }
 
-/** Dove cade una coordinata dentro il rettangolo disegnato. */
-private fun DrawScope.punto(lat: Double, lon: Double, f: RadarRiquadro): Offset = Offset(
-    x = ((lon - f.lonMin) / (f.lonMax - f.lonMin)).toFloat() * size.width,
-    y = (1f - ((lat - f.latMin) / (f.latMax - f.latMin)).toFloat()) * size.height,
-)
+/**
+ * Dove cade una coordinata dentro il rettangolo disegnato.
+ *
+ * **In Mercatore, e non era cosi' fino a ieri.** La longitudine e' lineare in
+ * tutte e due le proiezioni; la latitudine no, e il commento in cima a questo
+ * file avvisava che il giorno in cui fosse arrivata una fonte a tessere sarebbe
+ * stato **questo** il punto da cambiare. Le tessere di RainViewer - come quelle
+ * di chiunque serva tessere - sono disegnate in Mercatore: posarle su una carta
+ * lineare in latitudine le stirerebbe, e di piu' ai bordi.
+ *
+ * Su tre gradi di finestra la differenza e' di pochi pixel, e nessuno se ne
+ * accorgerebbe. Si fa lo stesso, perche' "pochi pixel" e' una proprieta' di
+ * **questa** finestra: il giorno in cui qualcuno la allarga o la porta a una
+ * latitudine alta, un errore che nessuno ha scritto da nessuna parte diventa
+ * visibile e non si sa piu' da dove venga.
+ */
+private fun DrawScope.punto(lat: Double, lon: Double, f: RadarRiquadro): Offset {
+    val giu = RadarTessere.mercatore(f.latMin)
+    val su = RadarTessere.mercatore(f.latMax)
+    val q = (RadarTessere.mercatore(lat) - giu) / (su - giu)
+    return Offset(
+        x = ((lon - f.lonMin) / (f.lonMax - f.lonMin)).toFloat() * size.width,
+        y = (1f - q.toFloat()) * size.height,
+    )
+}
 
 private fun mare(palette: SalaPalette): Color =
     if (palette.dark) SalaTokens.ghiaccioScuro.copy(alpha = 0.32f)
     else SalaTokens.ghiaccioChiaro.copy(alpha = 0.75f)
 
 /**
- * L'immagine del radar posata sul proprio riquadro.
+ * Una tessera posata dove dicono i **suoi** estremi.
  *
- * Il riquadro del prodotto e quello della carta oggi coincidono - la finestra
- * *e'* il riquadro - ma restano due parametri distinti perche' il giorno in cui
- * si vorra' ingrandire su una provincia la differenza sara' tutto: l'immagine
- * va posata dove dice il **suo** riquadro, non dove capita.
+ * I due riquadri adesso sono davvero due: la tessera copre un pezzo di mondo
+ * fisso, deciso dalla griglia del livello di zoom, e la finestra e' quello che
+ * si guarda. Quasi sempre la tessera sborda, e il `clipRect` la ferma al bordo
+ * della carta.
+ *
+ * Il punto in piu' sulla taglia non e' una svista: le tessere si toccano, e
+ * arrotondando ognuna per conto suo fra l'una e l'altra resterebbe una riga di
+ * mare larga un pixel. E' la stessa mezza sormonta che tiene insieme le
+ * ventiquattro tessere della barra delle ore.
  */
 private fun DrawScope.posaRadar(
     immagine: ImageBitmap,
@@ -256,9 +272,12 @@ private fun DrawScope.posaRadar(
 ) {
     val alto = punto(suo.latMax, suo.lonMin, finestra)
     val basso = punto(suo.latMin, suo.lonMax, finestra)
-    val larghezza = (basso.x - alto.x)
-    val altezza = (basso.y - alto.y)
-    if (larghezza <= 0f || altezza <= 0f) return
+    val larghezza = (basso.x - alto.x) + 1f
+    val altezza = (basso.y - alto.y) + 1f
+    if (larghezza <= 1f || altezza <= 1f) return
+    // Fuori dalla carta non si disegna: il ritaglio la butterebbe via
+    // comunque, ma non prima di aver chiesto alla GPU di scalarla.
+    if (basso.x < 0f || alto.x > size.width || basso.y < 0f || alto.y > size.height) return
     clipRect {
         drawImage(
             image = immagine,

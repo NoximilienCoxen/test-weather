@@ -285,6 +285,46 @@ jobs:
             echo "tipo: $(file -b --mime-type /tmp/ciout/_osm.png 2>/dev/null)"
 
             echo
+            echo "=== 4-bis. RainViewer sa dire DOVE guarda? ==="
+            # La domanda che resta aperta da quando il radar e' passato a
+            # RainViewer: dove non c'e' un radar le tessere sono trasparenti,
+            # cioe' **identiche** a un cielo senza pioggia. Il DPC questo lo
+            # sapeva dire - copriva l'Italia e basta - e la sala aveva uno
+            # stato apposta, `FuoriCopertura`. Con RainViewer lo stato e'
+            # sparito perche' non c'e' niente che lo possa riempire.
+            #
+            # Qui si prova se qualcosa lo puo' riempire. Tre candidati, e se
+            # rispondono tutti 404 la risposta e' "no" ed e' comunque una
+            # risposta: si smette di cercare e resta la frase sotto la carta.
+            for CAND in \
+              "https://api.rainviewer.com/public/coverage.json" \
+              "https://api.rainviewer.com/public/radar-coverage.json" \
+              "https://tilecache.rainviewer.com/v2/coverage/0/256/2/2/1/0/0_0.png"; do
+              echo "--- $CAND"
+              curl -sSL --max-time 20 -o /tmp/ciout/_cov.bin -w "    HTTP %{http_code} byte=%{size_download}\n" "$CAND" || echo "    (non raggiungibile)"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_cov.bin 2>/dev/null)"
+              echo "    primi byte: $(head -c 140 /tmp/ciout/_cov.bin 2>/dev/null | tr -d '\000' | tr '\n' ' ')"
+              rm -f /tmp/ciout/_cov.bin
+            done
+
+            echo
+            echo "=== 4-ter. Una tessera vera della finestra di Forli' ==="
+            # Non la tessera 0/0/0 del mondo intero, che dice solo "il servizio
+            # risponde": la tessera che l'app chiederebbe davvero, al livello
+            # che l'app usa. Se questa non tornasse un PNG, la carta sarebbe
+            # vuota sul telefono e verde in CI.
+            PERC=$(grep -o '"path":"[^"]*"' /tmp/ciout/_rv.json | tail -1 | cut -d'"' -f4)
+            HOSTRV=$(grep -o '"host":"[^"]*"' /tmp/ciout/_rv.json | cut -d'"' -f4)
+            if [ -n "$PERC" ] && [ -n "$HOSTRV" ]; then
+              # zoom 7, colonna 68, riga 46: la tessera che contiene Forli'.
+              VERA="$HOSTRV$PERC/256/7/68/46/4/1_1.png"
+              echo "--- $VERA"
+              curl -sSL --max-time 25 -o /tmp/ciout/_vera.png -w "    HTTP %{http_code} byte=%{size_download}\n" "$VERA"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_vera.png 2>/dev/null)"
+              rm -f /tmp/ciout/_vera.png
+            fi
+
+            echo
             echo "=== 5. RADAR-DPC: la fonte ufficiale italiana ==="
             # Chiesta per nome: Dipartimento della Protezione Civile, dati
             # Radar-DPC in licenza CC BY-SA 4.0. Da qui **non si indovina un
