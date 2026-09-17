@@ -140,8 +140,13 @@ sealed interface StatoRadar {
      * pixel, si etichetta "previsione" invece che con un'ora di scatto, e lo
      * scrive nella riga sotto.
      */
-    data class Previsto(val quando: Instant, val valori: List<Pair<PuntoPrevisto, Float>>) :
-        StatoRadar
+    data class Previsto(
+        val quando: Instant,
+        /** La griglia: serve la sua forma per ricomporre il campo. */
+        val mappa: MappaPrevista,
+        /** I millimetri di quest'ora, uno per punto, nell'ordine della griglia. */
+        val valori: List<Float>,
+    ) : StatoRadar
 
     /**
      * Ha risposto male, o non ha risposto.

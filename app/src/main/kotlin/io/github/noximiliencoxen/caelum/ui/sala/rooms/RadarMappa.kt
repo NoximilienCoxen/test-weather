@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.COSTE_ITALIA
 import io.github.noximiliencoxen.caelum.data.COSTE_VICINE
+import io.github.noximiliencoxen.caelum.data.MappaPrevista
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.data.PuntoPrevisto
 import io.github.noximiliencoxen.caelum.data.RadarRiquadro
 import io.github.noximiliencoxen.caelum.data.RadarTessere
 import io.github.noximiliencoxen.caelum.data.StatoRadar
@@ -94,6 +94,15 @@ fun MappaRadar(
     // solo: la **finestra** e' quello che si guarda, si calcola nel disegno
     // perche' dipende da quanto e' larga la carta sullo schermo, e ogni
     // tessera si posa dove dicono i suoi.
+    // La figura del campo previsto si compone una volta per stato e non a ogni
+    // fotogramma: sono centodiciassette pixel, ma il puntino batte e il
+    // `Canvas` si ridisegna sessanta volte al secondo.
+    val campo: Pair<ImageBitmap, MappaPrevista>? = remember(stato) {
+        (stato as? StatoRadar.Previsto)?.let { p ->
+            campoPrevisto(p.mappa, p.valori)?.let { it to p.mappa }
+        }
+    }
+
     val tessere: List<Pair<ImageBitmap, RadarRiquadro>> = remember(prodotto) {
         prodotto?.tessere.orEmpty().mapNotNull { t ->
             runCatching {
@@ -150,7 +159,7 @@ fun MappaRadar(
                 // sotto il profilo della terra, cosi' il bordo della costa
                 // resta leggibile anche dove la macchia e' fitta.
                 tessere.forEach { (immagine, suo) -> posaRadar(immagine, suo, finestra) }
-                (stato as? StatoRadar.Previsto)?.let { disegnaPrevisione(it.valori, finestra) }
+                campo?.let { (figura, mappa) -> posaPrevisione(figura, mappa, finestra) }
                 disegnaCoste(finestra, palette)
                 disegnaAnelli(place, finestra, palette)
                 segnaPosto(place, finestra, palette, fase)
@@ -423,70 +432,138 @@ private fun DrawScope.disegnaAnelli(place: Place, finestra: RadarRiquadro, palet
 }
 
 /**
- * La pioggia prevista: macchie morbide, non pixel.
+ * La pioggia prevista, come **campo** e non come mucchio di macchie.
  *
- * **La morbidezza e' la parte che dice la verita'.** Il radar disegna quello
- * che ha misurato, e i suoi bordi sono bordi veri; un modello da' un numero
- * ogni quaranta chilometri, e disegnarlo a quadretti netti gli darebbe una
- * precisione che non ha. Macchie sfumate che si sovrappongono dicono
- * "da queste parti, all'incirca", che e' esattamente quello che il dato dice.
+ * ## Il difetto che questa funzione ripara
  *
- * Sotto il decimo di millimetro non si disegna niente: e' la pioggia che il
- * modello mette dappertutto e che nessuno sente cadere, e riempirebbe la carta
- * di velo azzurro facendo sembrare bagnato un giorno sereno.
+ * La prima versione disegnava un cerchio sfumato per ciascuno dei
+ * centodiciassette punti, largo un terzo piu' del passo della griglia perche'
+ * si toccassero. Il risultato l'ha visto chi usa l'app: una scheda che diceva
+ * **0,0 mm** e **probabilita' 0%** sopra una carta piena di verde e arancio.
+ *
+ * Due errori, tutti e due miei.
+ *
+ * **Le trasparenze si sommavano.** Ogni macchia copriva i nove o dodici punti
+ * vicini, e dodici veli al ventisei per cento non fanno un velo: fanno una
+ * vernice. Un decimo di millimetro sparso dappertutto - la pioggia che il
+ * modello semina e che nessuno sente - diventava una tinta piena.
+ *
+ * **E la pioggia colava da quaranta chilometri.** Il centro della carta e' il
+ * paese di chi guarda, e il valore li' deve essere **il suo**; invece ci
+ * arrivava sopra la coda sfumata dei vicini. La scheda leggeva lo zero del
+ * punto giusto, la carta dipingeva la media di mezza provincia, e le due cose
+ * non potevano che contraddirsi.
+ *
+ * ## Come si disegna adesso
+ *
+ * Si compone una figura piccola quanto la griglia - tredici per nove pixel,
+ * uno per punto - e la si **stira** sul riquadro. L'ingrandimento la sfuma da
+ * solo, con l'interpolazione bilineare che fa la GPU: ogni pixel dello schermo
+ * riceve **un** colore, quello del valore interpolato, invece di una pila di
+ * veli. Morbido come prima, ma corrispondente al dato.
+ *
+ * E il pixel centrale della figura e' esattamente il punto di casa - la
+ * griglia ha tredici colonne e nove righe, dispari tutte e due, quindi il
+ * centro e' un punto vero e non un interstizio. Se la scheda dice zero, li' la
+ * carta e' pulita.
  */
-private fun DrawScope.disegnaPrevisione(
-    valori: List<Pair<PuntoPrevisto, Float>>,
+private fun campoPrevisto(mappa: MappaPrevista, valori: List<Float>): ImageBitmap? {
+    if (mappa.colonne < 2 || mappa.righe < 2) return null
+    if (valori.size < mappa.colonne * mappa.righe) return null
+    val pixel = IntArray(mappa.colonne * mappa.righe)
+    for (r in 0 until mappa.righe) {
+        for (c in 0 until mappa.colonne) {
+            // La griglia va da sud a nord, la figura dall'alto in basso:
+            // la riga zero dei dati e' l'ultima riga dell'immagine. Senza
+            // questo capovolgimento la pioggia starebbe specchiata
+            // sull'orizzontale, e in una carta sfumata non se ne accorgerebbe
+            // nessuno finche' non piove davvero.
+            val riga = mappa.righe - 1 - r
+            pixel[riga * mappa.colonne + c] = colorePioggia(valori[r * mappa.colonne + c])
+        }
+    }
+    return android.graphics.Bitmap
+        .createBitmap(pixel, mappa.colonne, mappa.righe, android.graphics.Bitmap.Config.ARGB_8888)
+        .asImageBitmap()
+}
+
+/**
+ * Il campo posato sul riquadro che copre.
+ *
+ * Gli estremi vengono dai punti **tornati** da Open-Meteo, allargati di mezza
+ * cella per lato: i punti sono centri di cella, non angoli, e senza quella
+ * mezza cella il campo risulterebbe rimpicciolito di una cella intera.
+ */
+private fun DrawScope.posaPrevisione(
+    campo: ImageBitmap,
+    mappa: MappaPrevista,
     finestra: RadarRiquadro,
 ) {
-    // Il raggio viene dal passo della griglia - tredici colonne sulla
-    // larghezza - allargato di un terzo perche' le macchie si tocchino invece
-    // di lasciare buchi di carta fra l'una e l'altra.
-    val raggio = size.width / 12f * 1.35f
-    valori.forEach { (nodo, mm) ->
-        if (mm < SOGLIA_MM) return@forEach
-        val centro = punto(nodo.lat, nodo.lon, finestra)
-        if (centro.x < -raggio || centro.x > size.width + raggio) return@forEach
-        if (centro.y < -raggio || centro.y > size.height + raggio) return@forEach
-        val colore = colorePioggia(mm)
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(colore, colore.copy(alpha = 0f)),
-                center = centro,
-                radius = raggio,
-            ),
-            radius = raggio,
-            center = centro,
+    val lat = mappa.punti.map { it.lat }
+    val lon = mappa.punti.map { it.lon }
+    val latMin = lat.min()
+    val latMax = lat.max()
+    val lonMin = lon.min()
+    val lonMax = lon.max()
+    if (latMax <= latMin || lonMax <= lonMin) return
+    val mezzaLat = (latMax - latMin) / (mappa.righe - 1) / 2
+    val mezzaLon = (lonMax - lonMin) / (mappa.colonne - 1) / 2
+
+    val alto = punto(latMax + mezzaLat, lonMin - mezzaLon, finestra)
+    val basso = punto(latMin - mezzaLat, lonMax + mezzaLon, finestra)
+    val larghezza = (basso.x - alto.x).toInt()
+    val altezza = (basso.y - alto.y).toInt()
+    if (larghezza <= 0 || altezza <= 0) return
+    clipRect {
+        drawImage(
+            image = campo,
+            dstOffset = IntOffset(alto.x.toInt(), alto.y.toInt()),
+            dstSize = IntSize(larghezza, altezza),
+            // Bilineare: e' l'interpolazione che trasforma tredici per nove
+            // pixel in un campo continuo. Con `None` si vedrebbero i quadretti,
+            // e i quadretti darebbero al modello una precisione che non ha.
+            filterQuality = FilterQuality.Low,
         )
     }
 }
 
 /**
- * Il colore di un millimetro d'acqua, sulla scala che usano tutti.
+ * Il colore di un millimetro d'acqua in un'ora.
  *
- * Azzurro per la pioggia leggera, verde-giallo per quella che bagna davvero,
- * arancio e rosso per il rovescio. **Non e' la tavolozza di RainViewer**, ed e'
- * voluto: due carte che raccontano cose diverse - una misurata e una prevista -
- * non devono somigliarsi tanto da confondersi.
+ * **La soglia e' salita da un decimo a due decimi**, e l'opacita' parte molto
+ * piu' bassa. Sotto i due decimi in un'ora c'e' la pioggia che il modello
+ * semina dappertutto e che nessuno sente cadere: disegnarla faceva sembrare
+ * bagnato un giorno che la scheda dichiarava asciutto.
  *
- * L'opacita' cresce col valore ma si ferma a poco piu' di meta': sotto ci sono
- * le coste e gli anelli della distanza, e una previsione che li copre si
- * comporta come se contasse piu' di loro.
+ * I gradini sono quelli con cui si parla di pioggia - pioviggine, pioggia,
+ * pioggia forte, rovescio, nubifragio - e non una scala continua: una scala
+ * continua su un dato che ha un valore ogni quaranta chilometri promette
+ * sfumature che il dato non contiene.
+ *
+ * **Non e' la tavolozza di RainViewer**, ed e' voluto: due carte che raccontano
+ * cose diverse - una misurata e una prevista - non devono somigliarsi tanto da
+ * confondersi.
  */
-private fun colorePioggia(mm: Float): Color = when {
-    mm < 0.5f -> Color(0xFF7FB4D4).copy(alpha = 0.26f)
-    mm < 1.5f -> Color(0xFF4E92C4).copy(alpha = 0.34f)
-    mm < 4f -> Color(0xFF5BA88C).copy(alpha = 0.40f)
-    mm < 8f -> Color(0xFFD9A441).copy(alpha = 0.46f)
-    mm < 16f -> Color(0xFFD1713C).copy(alpha = 0.52f)
-    else -> Color(0xFFB8453C).copy(alpha = 0.58f)
+private fun colorePioggia(mm: Float): Int = when {
+    mm < SOGLIA_MM -> 0
+    mm < 1f -> velo(56, 0x7F, 0xB4, 0xD4)
+    mm < 2.5f -> velo(76, 0x4E, 0x92, 0xC4)
+    mm < 6f -> velo(89, 0x4F, 0x8F, 0xA8)
+    mm < 12f -> velo(102, 0xD9, 0xA4, 0x41)
+    mm < 25f -> velo(115, 0xD1, 0x71, 0x3C)
+    else -> velo(128, 0xB8, 0x45, 0x3C)
 }
+
+/** Un colore con la sua opacita', scritto in modo che si legga. */
+private fun velo(alfa: Int, r: Int, g: Int, b: Int): Int =
+    android.graphics.Color.argb(alfa, r, g, b)
 
 /**
  * Sotto questo, niente.
  *
- * Un decimo di millimetro in un'ora e' la pioggia che il modello semina
- * dappertutto e che nessuno sente cadere. Disegnarla riempirebbe la carta di
- * velo azzurro, e un giorno sereno sembrerebbe bagnato.
+ * Due decimi di millimetro in un'ora sono la pioggia che un modello mette
+ * quasi ovunque e che nessuno sente cadere. Con un decimo - la soglia della
+ * prima versione - la carta si tingeva tutta, e sopra c'era scritto
+ * "nessuna precipitazione attesa".
  */
-private const val SOGLIA_MM = 0.1f
+private const val SOGLIA_MM = 0.2f

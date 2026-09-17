@@ -73,6 +73,8 @@ class PioggiaPrevistaRepository(private val place: Place) {
             if (ore.isEmpty()) throw IllegalStateException("previsione senza ore")
             MappaPrevista(
                 ore = ore,
+                colonne = COLONNE,
+                righe = RIGHE,
                 punti = risposte.map {
                     // Le coordinate **tornate**, non quelle chieste.
                     PuntoPrevisto(
@@ -149,18 +151,38 @@ class PuntoPrevisto(val lat: Double, val lon: Double, val mm: List<Float>)
  * risposta sola, quindi scorrere la barra non costa niente. E' il contrario
  * del radar, che ha un'immagine per ogni fotogramma e le prende una alla volta.
  */
-class MappaPrevista(val ore: List<Instant>, val punti: List<PuntoPrevisto>) {
+class MappaPrevista(
+    val ore: List<Instant>,
+    val punti: List<PuntoPrevisto>,
+    /**
+     * La forma della griglia.
+     *
+     * Viaggia col dato e non sta scritta in chi disegna, perche' chi disegna
+     * deve poter ricomporre il campo: i punti arrivano in una lista sola,
+     * riga per riga da sud a nord, e senza sapere quante sono le colonne
+     * quella lista e' un mucchio di numeri senza forma.
+     */
+    val colonne: Int = 1,
+    val righe: Int = 1,
+) {
 
     /**
-     * I valori di un'ora, se quell'ora c'e'.
+     * I valori di un'ora, **allineati alla griglia**, se quell'ora c'e'.
      *
      * La tolleranza e' mezz'ora come per il radar, e per la stessa ragione: il
      * modello da' un valore all'ora, e mostrarlo sotto un'ora diversa sarebbe
      * di nuovo un dato vero messo dove non e' vero.
+     *
+     * **Un punto senza valore diventa zero invece di sparire**, ed e' cambiato
+     * dopo il primo giro. Prima veniva tolto dalla lista: ineccepibile finche'
+     * i valori erano macchie sparse, rovinoso da quando sono un campo
+     * rettangolare - togliere un elemento in mezzo sposta di uno tutti quelli
+     * dopo, e la pioggia finirebbe in un'altra riga. Zero e' una bugia piccola
+     * e locale, lo scorrimento e' una bugia grande e diffusa.
      */
-    fun a(istante: Instant): List<Pair<PuntoPrevisto, Float>>? {
+    fun a(istante: Instant): List<Float>? {
         val i = ore.indices.minByOrNull { abs(ore[it].epochSecond - istante.epochSecond) } ?: return null
         if (abs(ore[i].epochSecond - istante.epochSecond) > 1800) return null
-        return punti.mapNotNull { p -> p.mm.getOrNull(i)?.let { p to it } }
+        return punti.map { it.mm.getOrNull(i) ?: 0f }
     }
 }
