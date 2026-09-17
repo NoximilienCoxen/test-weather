@@ -21,6 +21,7 @@ import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
+import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
@@ -41,7 +42,8 @@ fun SalaUvScreen(
     onSelectHour: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val ore = state.hours
+    // Le ore del giorno mostrato: vedi la nota in Sala III.
+    val ore = state.shownHours
     val scelta = state.selectedHour
     val corrente = ore.getOrNull(scelta)?.uvIndex ?: 0.0
     // Le ore in cui il sole c'e': fuori da quelle l'indice vale zero a ogni
@@ -72,6 +74,7 @@ fun SalaUvScreen(
             )
         }
 
+        if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 16.dp))
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             verticalAlignment = Alignment.Bottom,

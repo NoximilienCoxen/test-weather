@@ -3485,3 +3485,371 @@ che l'annotazione dice: il primo giro di questa passata ha segnalato solo
 trovare il resto ci sono voluti due controlli scritti per l'occasione - i nomi
 dei membri contro le dichiarazioni vere, e i nomi dei parametri contro le firme
 vere. Senza SDK, quella e' la compilazione che ci si puo' permettere qui.
+
+### 13-bis. Due difetti che solo il telefono poteva mostrare
+
+Il ridisegno era verde in CI, passava i controlli offline e gli scatti erano
+belli. Provato in mano, non si muoveva niente e un comando non portava da
+nessuna parte. Vale la pena scrivere **perche'** nessuno dei tre banchi di prova
+poteva dirlo.
+
+#### `scattoFermo()` era incondizionato, e teneva ferma l'app intera
+
+`applyExtras` in `MainActivity` chiamava `viewModel.scattoFermo()` senza
+guardare se un aggancio fosse davvero arrivato. `AGGANCI_CATTURA` e' acceso su
+ogni build di **debug**, e un avvio dall'icona porta un Intent non nullo con zero
+extra: le due uscite anticipate passavano, il flag si accendeva, e non esiste il
+setter inverso. Da li' restavano fermi il cielo, le vibrazioni e - per via di
+`SalaMolle.ferma` - **ogni** molla dell'app.
+
+Il difetto c'era da quando il flag e' nato, e il commento di `scattoFermo`
+dichiarava gia' il contratto giusto: *"quando un qualsiasi aggancio e' stato
+applicato"*. **Una nota che descrive cio' che il codice dovrebbe fare non prova
+che lo faccia**, ed e' la seconda volta che questo progetto ci inciampa (la
+prima e' nella sezione 12-bis, il paragrafo sul giro che "era un `Animatable`").
+
+Non si vedeva perche' l'orologio della vecchia Sala I non era legato a quel
+flag. Col cielo nuovo dietro tutte e sette le schermate, lo stesso difetto e'
+diventato l'app intera - e **gli scatti non potevano mostrarlo**, perche' uno
+scatto e' fermo per definizione. E' il complemento della lezione della sezione
+12: li' un referto che varia da solo non prova niente; qui un referto **fermo**
+non distingue un'app ferma da un'app che sta posando.
+
+La cattura adesso **si dichiara**, con `--ez cattura true`. Dedurla dalla
+presenza di un altro aggancio non bastava: `capture.sh` avvia l'app anche senza
+alcun extra, e quello scatto sarebbe tornato a dipendere da una `sleep`. In
+`capture.sh` tutti e tredici gli avvii passano dall'helper `avvia`, che
+l'aggancio lo mette da se': **l'helper esiste perche' non si possa
+dimenticare**, non per accorciare le righe.
+
+E la riga di log degli agganci adesso stampa anche `cattura=`. E' l'unico modo
+di sapere, dal `logcat-streaming.txt` che finisce fra gli artefatti, se un avvio
+ha ricevuto il suo aggancio: uno saltato non si vedrebbe altrimenti - lo scatto
+uscirebbe soltanto *un po'* diverso, ed e' esattamente cosi' che gli ultimi due
+guasti della cattura sono rimasti invisibili per due giri interi.
+
+```bash
+git show FETCH_HEAD:screenshots/logcat-streaming.txt | grep agganci:   # tutti cattura=true
+```
+
+**Da non provare a verificare con gli scatti.** Confrontare l'impronta di uno
+scatto a ora e meteo imposti fra due giri sembra la prova che la cattura e'
+ancora congelata, e non lo e': la previsione e' vera e cambia fra un giro e
+l'altro, quindi quelle immagini differiscono comunque. La prova sta nel log.
+
+#### "Le località" si apriva sotto le impostazioni
+
+I due pannelli a tutto schermo sono fratelli nello stesso `Box` di `SalaShell`,
+e le impostazioni erano composte per ultime: stavano sopra e si prendevano i
+tocchi. Toccando la riga, la lista si apriva **sotto** un pannello opaco e non
+cambiava niente a schermo; il primo indietro chiudeva le impostazioni e scopriva
+la lista che era li' da prima.
+
+Adesso le localita' sono composte **dopo**. Con quello solo il giro diventa
+quello giusto - Impostazioni → Le località → indietro → Impostazioni → indietro →
+il cielo - senza toccare lo stato.
+
+**Va fatto con l'ordine e non con uno `zIndex`**, ed e' il punto da non perdere:
+`BackHandler` da' la precedenza all'**ultimo registrato**, cioe' all'ordine di
+composizione, non all'impilamento. Con `zIndex` l'aspetto sarebbe giusto e
+l'indietro chiuderebbe ancora le impostazioni per prime, lasciando la lista
+orfana a schermo. Chi riordina quei due blocchi per pulizia riapre il difetto:
+il commento accanto lo dice.
+
+Nello stesso giro, `choosePlace` chiude la lista - sceglierla e restarci era un
+comando che sembrava non aver fatto niente - e `closeLocations` si porta via la
+ricerca come fa gia' `closeSettings`.
+
+#### E una terza, che il primo giro verde ha fatto uscire
+
+Sistemato l'ordine dei pannelli, lo scatto `00-impostazioni.png` ha cominciato a
+ritrarre **le localita'**. Non era una conseguenza della correzione: lo faceva
+gia' da tre giri. Quel tocco segue il rimando in fondo al benvenuto, che quando
+la riga fu scritta apriva le impostazioni e col redisegno e' passato ad aprire
+la lista delle citta' (`MeteoApp.onChooseByHand`). Il nome del file e' rimasto
+indietro, e la galleria ha avuto due schermate di servizio fotografandone una
+sola - dicendo di averle tutte e due.
+
+E' la **terza** volta che questo progetto trova il banco di prova che dice di
+si': prima gli agganci muti sotto `BuildConfig.DEBUG`, poi la galleria che
+ritraeva l'Ingresso in ogni scatto, adesso un nome di file che prometteva una
+schermata mai presa. La lezione e' sempre la stessa e conviene riscriverla:
+**uno scatto va confrontato con cio' che dovrebbe mostrare di diverso**, e un
+nome di file non e' una prova di niente.
+
+Adesso `00-localita` si chiama come cio' che mostra, e le impostazioni hanno uno
+scatto loro, preso dal comando a due cursori in alto a sinistra.
+
+#### Cosa resta vero
+
+La vibrazione si sente **solo quando cade qualcosa** (`scena.bagnato`): col
+sereno il cielo si muove e non c'e' niente da sentire. E l'interruttore
+"Animazioni ridotte" spegne di proposito tutte e due.
+
+
+### 13-ter. Il giorno scelto si fermava a Sala I
+
+Toccando giovedi' nella striscia, il cielo e la prima schermata passavano a
+giovedi' e **tutto il resto restava a oggi**: la pioggia, il vento, i raggi UV e
+la luna. `UiState` aveva gia' la risposta - `detailHour`, `detailDay` e
+`shownHours`, quest'ultima con scritto accanto "le ore del giorno mostrato:
+quelle vere, non quelle di oggi" - e le tre sale orarie leggevano `hours`, che
+e' oggi. Un dato vero, messo dove non e' vero.
+
+Adesso leggono `shownHours`, e la fase lunare si calcola **una volta sola nella
+Shell** dal giorno mostrato: la usano il cielo, Sala IV, la cella di Sala I e il
+riquadro di Sala II. Quattro letture della stessa data divergono al primo che ne
+aggiusta una; una sola non puo'.
+
+**Il caso vuoto si dichiara.** `shownHours` torna vuota oltre le ~72 ore: i
+modelli a corto raggio danno i totali del giorno e non le sue ore. Le tre sale
+scrivono una riga ("per questo giorno la previsione da' i totali, non le ore")
+al posto del grafico, e la barra delle ore mostra il binario spento e non si
+lascia trascinare - **non poter scorrere le ore di un giorno che non ha ore e'
+la risposta giusta**. Qui c'era un `ifEmpty { state.hours }`, scritto da me col
+ridisegno, che dipingeva oggi sotto l'intestazione di un altro giorno: e' la
+stessa bugia dello scatto chiamato `00-impostazioni` che ritraeva le localita',
+in un altro punto.
+
+
+### 13-quater. Un cielo che si muove, e che risponde
+
+"L'app sembra morta." Detto col telefono in mano, subito dopo che
+`animazioniIstantanee` ha smesso di tenerla congelata: appena il cielo ha
+cominciato a muoversi si e' visto **quanto poco** si muoveva. Sole e luna erano
+due dischi con un alone, le stelle puntini da un pixel e mezzo, una cadente ogni
+dodici secondi, e niente rispondeva al dito.
+
+**Il sole.** Tre strati di bagliore invece di uno - uno solo finisce di colpo e
+si legge come un bollo con un contorno sfocato - e una **corona di sedici raggi
+che gira**, novanta secondi per tornare al punto di partenza. E' lei a dare il
+movimento continuo: il respiro da solo e' una pulsazione, si nota per un minuto
+e poi non piu'. I raggi sono alternati lunghi e corti e ognuno palpita per conto
+suo, se no la corona si legge come un ingranaggio. Disco e alone respirano
+**sfasati**: all'unisono sembrerebbero un oggetto solo che cambia taglia.
+
+**La luna** aveva un difetto vero: la parte in ombra era quasi nera, e al
+novilunio spariva come se qualcuno l'avesse spenta. Adesso c'e' la **luce
+cinerea** - quel disco fantasma dentro la falce, che e' Terra che la illumina e a
+occhio nudo si vede eccome - piu' un alone a due strati e tre scintille lente che
+le girano attorno.
+
+**Le stelle** sono passate da 72 a 160, e una decina sono **luminose**: raggio
+doppio, un bagliore attorno e una croce di scintillio che pulsa. Un cielo di
+puntini tutti uguali e' una trama; sono le poche grandi a dare la scala a tutte
+le altre. Il tremolio adesso ha **un periodo per stella** invece di uno solo: con
+un periodo comune il cielo lampeggia, e un lampeggio sincronizzato si legge come
+un difetto dello schermo.
+
+**Le cadenti** sono due tracce con cadenze prime fra loro, 4,3 e 6,7 secondi:
+non tornano mai in fase, quindi a volte se ne vedono due insieme e a volte
+nessuna - che e' come cadono davvero. La scia sfuma invece di essere una riga
+piena, che era un graffio sul vetro.
+
+**E la vita che avevo tolto e' tornata.** `uccelli` e `pulviscolo` erano usciti
+col vecchio feed perche' li chiamava solo la scultura; il cielo nuovo aveva il
+difetto opposto - di giorno, sereno, non si muoveva niente. Ripresi da
+`git show 8fff850f^` **identici**, perche' funzionavano: riusare batte
+riscrivere, e le note che portano dietro erano gia' state pagate.
+
+#### Le tre interazioni, e perche' sono tutte tocchi
+
+Il verticale e' del carosello e l'orizzontale della barra delle ore: la
+trappola #5 nasce da due gesti che si contendono il dito, e un trascinamento sul
+cielo l'avrebbe riaperta. Quindi **solo tocchi**, che non contendono niente.
+
+1. **Inclinare** - parallasse. `rememberDeviceTilt` era in `ui/motion/` e non lo
+   chiamava piu' nessuno dal giorno in cui il mappamondo del benvenuto e'
+   uscito: torna da -1 a 1 per asse, gia' smorzato, con la linea di base che
+   insegue la posa (quindi non deriva). Ogni piano ha il suo fattore - stelle
+   0,12, sole 0,34, uccelli 0,52, nuvole 0,78, **colline zero** - perche' e' la
+   differenza fra i piani a dire che c'e' spazio in mezzo. Le colline non si
+   muovono: sono terra, e il mondo non si stacca dai piedi.
+2. **Toccare il cielo** - un'increspatura che si allarga e svanisce in poco piu'
+   di un secondo. Due anelli, uno largo e tenue e uno netto: un cerchio solo che
+   cresce si legge come un bersaglio, due come un'onda. Ne vivono al massimo
+   quattro, e le spente si potano **prima** di aggiungerne una - una lista che
+   cresce a ogni tocco e non cala e' una perdita lenta.
+3. **Toccare il disco** - divampa, e si sente (`vibrazioni.scatto()`, la stessa
+   della barra). Il bersaglio e' il cerchio del sole allargato di tre quinti:
+   stretto quanto il disegno sarebbe un tiro al bersaglio.
+
+Tutto questo vive **dentro `SalaCielo`** e non nella Shell: sono cose del cielo,
+nessun'altra schermata le usa, e tenerle li' vuol dire che la Shell non sa
+nemmeno che esistano. `interattivo` le spegne tutte - con le animazioni ridotte
+un accelerometro acceso e' un costo che chi ha chiesto meno movimento non si
+aspetta, e la cattura vuole scatti ripetibili.
+
+#### Un controllo in piu', dopo un errore che nessun controllo prendeva
+
+Rimettendo gli uccelli, `private class Uccello` e' finita **dichiarata due
+volte**: la potatura di allora aveva tolto la funzione e la lista ma non la
+classe, e il mio controllo delle graffe non se ne accorge - un doppione e'
+perfettamente bilanciato. Ai controlli offline si aggiunge quindi il conto delle
+dichiarazioni per file: se un nome compare due volte a livello di file, lo dice.
+Senza SDK questa e' la compilazione che ci si puo' permettere, e va allargata
+ogni volta che lascia passare qualcosa.
+
+
+### 13-quinquies. Il radar: per ora si chiede, non si scrive
+
+Il radar e' stato chiesto nominando la fonte: **Radar-DPC del Dipartimento
+della Protezione Civile**, dati in licenza CC BY-SA 4.0. Da questo container
+`radar-api.protezionecivile.it` non si raggiunge - il proxy della sessione nega
+il CONNECT, come per `dl.google.com` - ma la CI si', ed e' li' che si chiede.
+
+Il passo **"Si puo' avere il radar delle precipitazioni"** esisteva gia' e aveva
+gia' provato tre strade: il nowcast `minutely_15` di Open-Meteo (globale, senza
+mappa), l'indice di **RainViewer** con una tessera vera scaricata, e il fondo
+cartografico di OpenStreetMap. Le risposte stanno su `ci-artifacts` in
+`api/radar.txt`. Adesso c'e' anche la sezione DPC, che prova i candidati e
+scrive cio' che rispondono - **404 compresi**, perche' un 404 registrato e' un
+indirizzo escluso e un indirizzo escluso e' informazione.
+
+La sonda chiede due cose oltre al "risponde":
+
+- **che forma ha il prodotto** - una data? un PNG? un indirizzo di tessere?
+  quali estremi geografici? - perche' da quella dipende se il radar e' una
+  tessera su una mappa scorrevole o un'immagine sola da posare, che sono due
+  lavori di taglia molto diversa;
+- **se vuole un'intestazione** `Origin`/`Referer`: un servizio nato per il
+  proprio sito puo' rifiutare chi non si dichiara, e provare con e senza lo dice
+  in una riga.
+
+Due cose da tenere presenti quando si scrivera' il codice, e sono scritte qui
+perche' decidono la forma della schermata:
+
+1. **Il DPC copre l'Italia.** Questa app apre Tokyo e Nairobi - la sonda le
+   interroga apposta. Fuori copertura il radar non e' vuoto: e' **assente**, e
+   sono due cose diverse. L'app ha gia' questa distinzione per MeteoAlarm
+   (`alertsOutOfCoverage`), col suo commento: *"un silenzio non e' una risposta
+   rassicurante: e' un silenzio"*. Se serva un ripiego fuori Italia - RainViewer
+   e' gia' sondato - si decide coi dati in mano, non adesso.
+2. **CC BY-SA 4.0 vuole l'attribuzione a schermo**, sotto la mappa, non in un
+   elenco di licenze che nessuno apre: "Dati radar: Dipartimento della
+   Protezione Civile".
+
+Quando si fara', il radar va **dentro Sala III "La pioggia"** - mappa sopra,
+barre delle dodici ore sotto - cosi' la colonna resta di sette icone e non
+nasce una schermata per un dato che parla della stessa cosa.
+
+
+### 13-sexies. Un giro rosso che non era del codice
+
+Il 17 settembre 2026 `test` e `build` sono caduti insieme, e la diagnosi e'
+valsa piu' della correzione: **`compilazione/errori.txt` era vuoto, le
+annotazioni non avevano nessuna riga `failure`, e non esisteva nessun
+`/tmp/build.log`**. Tre assenze che insieme dicono una cosa sola - non si e'
+arrivati a compilare.
+
+L'elenco dei passi lo conferma in un colpo d'occhio, e si chiede all'API senza
+toccare i log grezzi (che restano negati da qui):
+
+```bash
+curl -s ".../actions/runs/<RUN>/jobs" | python3 -c "import json,sys;
+[print(j['name'], s['number'], s['name'], s['conclusion'])
+ for j in json.load(sys.stdin)['jobs'] for s in j['steps']
+ if s['conclusion'] not in ('success','skipped')]"
+```
+
+Cadeva il passo 5, `android-actions/setup-android`, in tutti e due i job.
+
+#### La prima diagnosi era plausibile ed era sbagliata
+
+> Questo paragrafo diceva: *"GitHub ha cominciato a forzare su Node 24 le action
+> che dichiarano Node 20, e `setup-android@v3` dichiara `using: node20`; la v4
+> dichiara `node24`"*. Il ragionamento tornava, l'avviso di deprecazione c'era
+> davvero nelle annotazioni, e la v4 e' stata spinta con quella spiegazione
+> scritta accanto. **E' caduta identica, allo stesso passo.**
+
+L'avviso su Node 20 stava li' **per caso**: compare in ogni giro, riguarda
+quattro action su cinque e non c'entrava niente. Averlo preso per la causa e' lo
+stesso errore di metodo gia' pagato due volte deducendo dai pixel - due
+correzioni che non correggevano il sintomo, e la risposta arrivata solo quando
+si e' smesso di dedurre. Qui non si e' potuto nemmeno smettere: **il motivo vero
+di quel fallimento non e' mai stato leggibile da qui**, perche' l'unico posto in
+cui e' scritto e' il log grezzo, e quell'host la politica di uscita lo blocca.
+
+#### Cosa si e' fatto invece
+
+Di fronte a una dipendenza che fallisce **e non sa dire perche'**, cambiarle
+versione una terza volta sarebbe stata la terza ipotesi non verificata di fila.
+E' uscita: l'immagine `ubuntu-latest` porta gia' l'SDK Android, e adesso il
+passo lo dichiara, lo mette nel PATH e - se non lo trovasse - lo dice con un
+`::error::`, che si legge dall'API anche quando i log non si leggono.
+
+La regola che resta, ed e' la piu' cara di questo file: **un giro rosso subito
+dopo il proprio push si legge come "ho rotto qualcosa", ed e' la lettura
+sbagliata piu' facile da fare.** Si guarda **quale passo** e' caduto prima di
+guardare cosa si e' scritto. Un errore di compilazione lascia righe `e:`; quando
+non ce n'e' nemmeno una, il guasto sta altrove - e se la causa non e' leggibile,
+si toglie di mezzo cio' che non sa spiegarsi invece di tirare a indovinare.
+
+
+### 13-septies. Il DPC risponde 403 a tutto
+
+La sonda ha chiesto, e la risposta e' netta: **nove indirizzi su nove,
+`HTTP 403 Access Denied`**, in HTML e non in JSON. Con e senza
+`Origin`/`Referer`, su tutti i tipi di prodotto (VMI, SRI, SRT1, SRT3), sulla
+radice del servizio e sulla catena `getProduct`/`existsProduct`.
+
+Non e' un indirizzo sbagliato: un indirizzo sbagliato risponde 404. Un 403 su
+tutto, radice compresa, e' un servizio che **rifiuta il chiamante**, non la
+richiesta - un runner di GitHub Actions e' un indirizzo di datacentro, e
+quel servizio e' nato per il proprio sito.
+
+Nota su come leggere quel file: la riga `data dell'ultimo prodotto: 1789624371`
+non e' un dato vero. E' il `grep` della sonda che ha pescato una cifra dentro la
+pagina d'errore: quando il corpo non e' quello che ci si aspetta, anche
+l'estrazione che ne segue non lo e'. Il `getProduct` che viene dopo infatti
+risponde 403 come tutti gli altri.
+
+**Cosa resta possibile**, e sta gia' scritto nello stesso file due sezioni piu'
+su: RainViewer risponde `HTTP 200`, pubblica un indice di tredici fotogrammi e
+una tessera vera si scarica (2424 byte, `image/png`); il nowcast `minutely_15`
+di Open-Meteo risponde per Forli', Tokyo e Nairobi. Sono due strade diverse -
+una mappa vera, oppure la pioggia dei prossimi minuti senza mappa - e nessuna
+delle due e' la fonte chiesta.
+
+La decisione non e' tecnica e non spetta a questo file: **il radar ufficiale
+italiano, da qui, non si puo' avere**. Chi lo vuole lo dica, e si scegliera' fra
+il ripiego e il niente. Quello che non si fara' e' spacciare RainViewer per
+Radar-DPC: sono due fonti con due licenze e due attribuzioni diverse, e
+scriverne una col nome dell'altra e' la stessa bugia della citazione attribuita
+a chi non l'ha detta.
+
+### 13-octies. Il primo giro verde, e una didascalia smentita dal cielo
+
+Run `35188522523`: **verde in tutto** - `test`, `probe-api`, `build`,
+`screenshots` passati, `rilascio` saltato come deve su un ramo che non e'
+`main`. E' la prima volta che il ridisegno Organic compila: i tre giri
+precedenti erano caduti al passo dell'SDK, prima ancora di arrivare al
+codice, e quindi non avevano mai detto niente sul codice.
+
+Gli scatti confermano quello che gli scatti possono confermare:
+
+- `cielo-mezzogiorno-sereno.png` - il sole ha la corona a raggi visibile e i
+  tre strati di alone, l'arco tratteggiato passa dietro, colline e alberi
+  stanno al loro posto, la temperatura in Caprasimo tiene la scala.
+- `scuro-2-notte-luna.png` - la luna ha il bordo illuminato e il disco in
+  luce cinerea, le stelle luminose hanno la croce di scintillio, le nuvole
+  **coprono** la luna senza spegnerla.
+
+Quello che gli scatti **non** possono confermare resta quello gia' scritto in
+13-quater: in cattura il cielo e' fermo per costruzione, quindi corona che
+gira, increspature al tocco, parallasse e fiammata si vedono solo col telefono
+in mano.
+
+**Il difetto che invece hanno mostrato** e' di parole, non di disegno. Sotto il
+titolo *Notte coperta, poche stelle*, alle 02:00, il corpo diceva `Nubi medie
+che coprono il sole a intervalli`. I titoli erano gia' per condizione **x
+fase** - e c'e' un commento, qualche riga sopra, che spiega perche' il titolo
+notturno era stato riscritto - ma i corpi erano per sola condizione, e nessuno
+aveva riletto quello nuvoloso di notte.
+
+La correzione non ribalta la tabella: i corpi si somigliano davvero fra le
+fasi, ed elencarli tutti e quattro per sei condizioni avrebbe voluto dire
+ventiquattro stringhe di cui venti identiche. Resta la tabella per condizione,
+e accanto `SalaBodiesPerFase` elenca le poche caselle in cui la fase cambia le
+parole - oggi una sola. `salaBody` prende ora anche la fase e consulta prima
+l'eccezione.

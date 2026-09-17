@@ -38,7 +38,6 @@ import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
 import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
-import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -63,6 +62,8 @@ fun SalaOggiScreen(
     sky: SkyState,
     palette: SalaPalette,
     viewModel: WeatherViewModel,
+    /** La fase del giorno mostrato, calcolata una volta sola dalla Shell. */
+    faseLunare: Float,
     onApriSettimana: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,7 +140,7 @@ fun SalaOggiScreen(
                 color = palette.ink,
             )
             Didascalia(
-                salaBody(condizione),
+                salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )
@@ -164,7 +165,7 @@ fun SalaOggiScreen(
                 if (sky.moonPresence > 0.5f) {
                     CellaValore(
                         etichetta = "LUNA",
-                        valore = "${(MoonPhase.illumination(MoonPhase.at(LocalDate.now())) * 100f).roundToInt()} %",
+                        valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
                         palette = palette,
                     )
                 } else {

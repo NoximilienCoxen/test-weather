@@ -30,7 +30,6 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -56,6 +55,8 @@ fun SalaSettimanaScreen(
     state: UiState,
     palette: SalaPalette,
     viewModel: WeatherViewModel,
+    /** La fase del giorno mostrato, calcolata una volta sola dalla Shell. */
+    faseLunare: Float,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,6 +75,7 @@ fun SalaSettimanaScreen(
         RiepilogoSettimana(
             settimana = settimana,
             state = state,
+            faseLunare = faseLunare,
             palette = palette,
             onVai = onVai,
             modifier = Modifier.padding(top = 13.dp),
@@ -150,6 +152,7 @@ private fun Double.virgola(): String = String.format(Locale.ITALY, "%.1f", this)
 private fun RiepilogoSettimana(
     settimana: List<GiornoSettimana>,
     state: UiState,
+    faseLunare: Float,
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
@@ -159,7 +162,7 @@ private fun RiepilogoSettimana(
     val massime = settimana.mapNotNull { it.max }
     val ventoMax = settimana.mapNotNull { it.vento }.maxOrNull()
     val uvMax = settimana.mapNotNull { it.uv }.maxOrNull()
-    val luna = MoonPhase.illumination(MoonPhase.at(LocalDate.now()))
+    val luna = MoonPhase.illumination(faseLunare)
     val aria = state.air?.index
 
     val voci = listOf(

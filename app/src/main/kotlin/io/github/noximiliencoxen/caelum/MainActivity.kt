@@ -102,15 +102,36 @@ class MainActivity : ComponentActivity() {
             "agganci: ora=${intent.getIntExtra(EXTRA_HOUR, -1)} " +
                 "sezione=${intent.getIntExtra(EXTRA_SECTION, -1)} " +
                 "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
-                "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)}",
+                "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)} " +
+                // Ci sta **apposta**: e' l'unico modo di sapere, dal logcat che
+                // la cattura salva fra gli artefatti, se un avvio ha davvero
+                // ricevuto il suo `--ez cattura true`. Un aggancio saltato da
+                // uno dei tredici avvii non si vedrebbe altrimenti - lo scatto
+                // uscirebbe solo un po' diverso, e "un po' diverso" e'
+                // esattamente come gli ultimi due guasti della cattura sono
+                // rimasti invisibili per due giri interi.
+                "cattura=${intent.getBooleanExtra(EXTRA_CAPTURE, false)}",
         )
-        // **Da qui in poi i passaggi non si animano.** Non e' una scorciatoia:
-        // gli extra si applicano prima della composizione e quindi non
+        // **Da qui in poi i passaggi non si animano - ma solo se la cattura lo
+        // chiede.** Gli extra si applicano prima della composizione e quindi non
         // animerebbero, ma la previsione arriva **dopo** il primo fotogramma e
-        // muove altezza del sole, nuvolosita' e condizione. Con le molle, allo
-        // scatto sarebbero ancora in volo e la galleria dipenderebbe dal
+        // muove altezza del sole, nuvolosita' e condizione: con le molle vive,
+        // allo scatto sarebbero ancora in volo e la galleria dipenderebbe dal
         // secondo di attesa dello script. Vedi `UiState.animazioniIstantanee`.
-        viewModel.scattoFermo()
+        //
+        // **Questa riga era incondizionata, e ha tenuto ferma l'app intera.**
+        // `AGGANCI_CATTURA` e' acceso su ogni build di debug, e un avvio
+        // dall'icona porta un Intent non nullo con zero extra: le due uscite
+        // qui sopra passavano, il flag si accendeva e non si spegneva piu'.
+        // Con esso restavano fermi il cielo, le vibrazioni e **ogni** molla
+        // dell'app (vedi `SalaMolle.ferma`). Chi provava l'app sul telefono
+        // vedeva una schermata che non si muoveva, e nessuno scatto poteva
+        // mostrarlo - gli scatti sono fermi per definizione.
+        //
+        // La cattura adesso **si dichiara**. Dedurla dalla presenza di un altro
+        // aggancio non basterebbe: `capture.sh` avvia l'app anche senza alcun
+        // extra, e quello scatto tornerebbe a dipendere da una `sleep`.
+        if (intent.getBooleanExtra(EXTRA_CAPTURE, false)) viewModel.scattoFermo()
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         // Il giro accetta anche lo zero, che e' un angolo come un altro: il
@@ -136,6 +157,17 @@ class MainActivity : ComponentActivity() {
     private companion object {
         /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
         const val TAG = "meteo"
+
+        /**
+         * Dichiara che a guidare l'app e' la cattura, non una persona.
+         *
+         * Spegne le animazioni (vedi `UiState.animazioniIstantanee`) perche' uno
+         * scatto riproducibile non puo' dipendere da dove si trovava una molla.
+         * **Va passato a ogni avvio dello script**, compresi quelli che non
+         * impongono nient'altro: senza, quel singolo scatto si muove e torna a
+         * dipendere da una `sleep`. In `capture.sh` ci pensa l'helper `avvia`.
+         */
+        const val EXTRA_CAPTURE = "cattura"
 
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"

@@ -210,9 +210,13 @@ fun SalaShell(
         attiva = !state.animazioniRidotte && !state.animazioniIstantanee,
     )
 
-    // La fase e' quella vera di stanotte, la stessa che mostra Sala IV: le due
-    // non possono raccontare due lune diverse nella stessa notte.
-    val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
+    // **La fase segue il giorno scelto**, non l'oggi del telefono: scorrendo
+    // alla notte di giovedi' la luna deve essere quella di giovedi'. Ed e' una
+    // sola per tutta l'app - il cielo, Sala IV, la cella di Sala I e il
+    // riquadro di Sala II - perche' quattro letture della stessa data
+    // divergono al primo che ne aggiusta una.
+    val giornoLuna = state.detailDay?.date ?: LocalDate.now()
+    val faseLunare = remember(giornoLuna) { MoonPhase.at(giornoLuna) }
 
     val avvisi = remember(state.shownAlerts, hour?.time) { state.shownAlerts.attiveA(hour?.time) }
     val giorno = state.detailDay ?: state.forecast?.days?.firstOrNull()
@@ -231,6 +235,10 @@ fun SalaShell(
                 // scendono sotto la barra di stato: nel prototipo sono misurati
                 // dentro la cornice dell'app, che li' comincia a zero.
                 insetAlto = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                // Il cielo risponde al dito e all'inclinazione, tranne dove non
+                // deve: chi ha chiesto meno movimento non si aspetta un sensore
+                // acceso, e la cattura vuole scatti ripetibili.
+                interattivo = !state.animazioniRidotte && !state.animazioniIstantanee,
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
@@ -261,12 +269,14 @@ fun SalaShell(
                                 sky = sky,
                                 palette = palette,
                                 viewModel = viewModel,
+                                faseLunare = faseLunare,
                                 onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
                             )
                             SalaRoom.SETTIMANA -> SalaSettimanaScreen(
                                 state = state,
                                 palette = palette,
                                 viewModel = viewModel,
+                                faseLunare = faseLunare,
                                 onVai = ::vaiA,
                             )
                             SalaRoom.PIOGGIA -> SalaPioggiaScreen(
@@ -274,7 +284,7 @@ fun SalaShell(
                                 palette = palette,
                                 onSelectHour = viewModel::selectHour,
                             )
-                            SalaRoom.LUNA -> SalaLunaScreen(palette = palette, fase = faseLunare)
+                            SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
                             SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
                             SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
                             SalaRoom.UV -> SalaUvScreen(
@@ -289,9 +299,12 @@ fun SalaShell(
 
                 val vibrazioni = rememberVibrazioniMeteo()
                 BarraDelleOre(
-                    // Le ore del giorno mostrato: con un giorno futuro scelto,
-                    // la barra dipingerebbe altrimenti la giornata di oggi.
-                    hours = state.shownHours.ifEmpty { state.hours },
+                    // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
+                    // un `ifEmpty { state.hours }`: con un giorno senza ore la
+                    // barra dipingeva **oggi** sotto l'intestazione di un altro
+                    // giorno. Un binario spento dice la verita'; quello pieno
+                    // di un giorno sbagliato no.
+                    hours = state.shownHours,
                     selected = state.selectedHour,
                     oraAttuale = state.nowIndex,
                     palette = palette,
@@ -319,6 +332,51 @@ fun SalaShell(
                     .padding(end = 10.dp),
             )
 
+            // ── L'ordine di questi due blocchi e' funzionale ─────────────────
+            //
+            // **Le localita' vanno composte dopo le impostazioni, e non e' una
+            // questione di gusto.** In un `Box` l'ultimo composto sta sopra, e
+            // da li' viene meta' del motivo: "Le localita'" si apre **dalle**
+            // impostazioni, quindi deve entrare davanti a loro. Con l'ordine
+            // opposto la lista si apriva sotto un pannello opaco e chi la
+            // chiedeva non vedeva succedere niente.
+            //
+            // L'altra meta' e' il tasto indietro, ed e' la ragione per cui non
+            // basta uno `zIndex`: `BackHandler` da' la precedenza **all'ultimo
+            // registrato**, cioe' all'ordine di composizione, non
+            // all'impilamento. Con `zIndex` si vedrebbe la cosa giusta e
+            // l'indietro chiuderebbe le impostazioni per prime, lasciando la
+            // lista orfana a schermo.
+            //
+            // Chi riordina questi due blocchi per pulizia riapre il difetto.
+            val scorrimentoImpostazioni by animateFloatAsState(
+                targetValue = if (state.settingsOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "impostazioni",
+            )
+            if (scorrimentoImpostazioni > 0.001f) {
+                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset((-(1f - scorrimentoImpostazioni) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaImpostazioniScreen(
+                        state = state,
+                        palette = palette,
+                        onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onChooseTheme = viewModel::setCardTheme,
+                        onChooseUnit = viewModel::setUnit,
+                        onChooseWindUnit = viewModel::setWindUnit,
+                        onChooseCaptionStyle = viewModel::setCaptionStyle,
+                        onToggleAlert = viewModel::setAlertToggle,
+                        onApriLocalita = viewModel::openLocations,
+                        onClose = viewModel::closeSettings,
+                    )
+                }
+            }
+
             val scorrimentoLocalita by animateFloatAsState(
                 targetValue = if (state.locationsOpen) 1f else 0f,
                 animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
@@ -345,34 +403,6 @@ fun SalaShell(
                         onSearch = viewModel::search,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeLocations,
-                    )
-                }
-            }
-
-            val scorrimentoImpostazioni by animateFloatAsState(
-                targetValue = if (state.settingsOpen) 1f else 0f,
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
-                label = "impostazioni",
-            )
-            if (scorrimentoImpostazioni > 0.001f) {
-                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset { IntOffset((-(1f - scorrimentoImpostazioni) * widthPx).roundToInt(), 0) },
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    SalaImpostazioniScreen(
-                        state = state,
-                        palette = palette,
-                        onToggleAnimazioni = viewModel::setAnimazioniRidotte,
-                        onChooseTheme = viewModel::setCardTheme,
-                        onChooseUnit = viewModel::setUnit,
-                        onChooseWindUnit = viewModel::setWindUnit,
-                        onChooseCaptionStyle = viewModel::setCaptionStyle,
-                        onToggleAlert = viewModel::setAlertToggle,
-                        onApriLocalita = viewModel::openLocations,
-                        onClose = viewModel::closeSettings,
                     )
                 }
             }

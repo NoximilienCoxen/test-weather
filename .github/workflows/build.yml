@@ -283,8 +283,75 @@ jobs:
               -o /tmp/ciout/_osm.png -w "tile.openstreetmap.org HTTP %{http_code} byte=%{size_download}\n" \
               "https://tile.openstreetmap.org/0/0/0.png"
             echo "tipo: $(file -b --mime-type /tmp/ciout/_osm.png 2>/dev/null)"
+
+            echo
+            echo "=== 5. RADAR-DPC: la fonte ufficiale italiana ==="
+            # Chiesta per nome: Dipartimento della Protezione Civile, dati
+            # Radar-DPC in licenza CC BY-SA 4.0. Da qui **non si indovina un
+            # indirizzo**: si provano i candidati e si scrive cio' che
+            # rispondono, 404 compresi. E' la lezione dei quattro indirizzi WMO
+            # indovinati a memoria che erano quattro 404.
+            #
+            # Due cose che questa sonda deve far sapere, oltre al "risponde":
+            #   - **che forma ha il prodotto** (JSON con una data? un PNG? un
+            #     indirizzo di tessere? quali estremi geografici?), perche' da
+            #     quella dipende se il radar e' una tessera su una mappa o
+            #     un'immagine sola da posare;
+            #   - **se vuole un'intestazione** (Origin/Referer): un servizio
+            #     pensato per il proprio sito puo' rifiutare chi non lo dichiara,
+            #     e la differenza fra le due prove lo dice subito.
+            DPC="https://radar-api.protezionecivile.it/wide/product"
+            ORIGINE="https://radardpc.protezionecivile.it"
+
+            prova() {
+              # $1 nome leggibile, $2 indirizzo, $3 "conorigine" per aggiungere le intestazioni
+              local nome="$1" url="$2" modo="$3"
+              local out=/tmp/ciout/_dpc.bin
+              if [ "$modo" = "conorigine" ]; then
+                code=$(curl -sSL --max-time 20 -o "$out" -w "%{http_code}" \
+                  -H "Origin: $ORIGINE" -H "Referer: $ORIGINE/" \
+                  -H "User-Agent: caelum-probe (github.com/NoximilienCoxen/test-weather)" \
+                  "$url" 2>/dev/null || echo "000")
+              else
+                code=$(curl -sSL --max-time 20 -o "$out" -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+              fi
+              echo "--- $nome [$modo]"
+              echo "    $url"
+              echo "    HTTP $code  byte=$(wc -c < "$out" 2>/dev/null || echo 0)  tipo=$(file -b --mime-type "$out" 2>/dev/null)"
+              echo "    primi byte: $(head -c 220 "$out" 2>/dev/null | tr -d '\000' | tr '\n' ' ')"
+              rm -f "$out"
+            }
+
+            # I tipi di prodotto che il DPC nomina pubblicamente: VMI (massima
+            # intensita'), SRI (intensita' istantanea), SRT (cumulate).
+            for tipo in VMI SRI SRT1 SRT3; do
+              prova "ultimo prodotto $tipo" "$DPC/findLastProductByType?type=$tipo" nudo
+            done
+            prova "ultimo prodotto VMI" "$DPC/findLastProductByType?type=VMI" conorigine
+            prova "prodotti disponibili VMI" "$DPC/findAvailableProductsByType?type=VMI" conorigine
+            prova "radice del servizio" "$DPC/" conorigine
+
+            # Se l'ultimo prodotto porta una data, si segue la catena: e' li'
+            # che si scopre se cio' che torna e' un'immagine o un indirizzo.
+            QUANDO=$(curl -sSL --max-time 20 -H "Origin: $ORIGINE" -H "Referer: $ORIGINE/" \
+              "$DPC/findLastProductByType?type=VMI" 2>/dev/null \
+              | tr -d ' "' | grep -oE '[0-9]{10,13}' | head -1)
+            if [ -n "$QUANDO" ]; then
+              echo "--- data dell'ultimo prodotto: $QUANDO"
+              prova "prodotto VMI a quella data" "$DPC/getProduct?type=VMI&productDate=$QUANDO" conorigine
+              prova "esiste il prodotto" "$DPC/existsProduct?type=VMI&productDate=$QUANDO" conorigine
+            else
+              echo "--- nessuna data nella risposta: la catena si ferma qui, e va bene cosi'"
+            fi
+
+            echo
+            echo "    NOTA: il DPC copre l'Italia. Questa app apre anche Tokyo e"
+            echo "    Nairobi (vedi la sezione 1 qui sopra). Fuori copertura il"
+            echo "    radar non e' vuoto: e' assente, ed e' una cosa diversa che"
+            echo "    va detta - come gia' fa alertsOutOfCoverage per MeteoAlarm."
+            echo "    CC BY-SA 4.0 vuole l'attribuzione a schermo, sotto la mappa."
           } > /tmp/ciout/radar.txt 2>&1
-          rm -f /tmp/ciout/_t.png /tmp/ciout/_osm.png
+          rm -f /tmp/ciout/_t.png /tmp/ciout/_osm.png /tmp/ciout/_dpc.bin
           cat /tmp/ciout/radar.txt
 
       - name: Quali modelli coprono l'Italia
@@ -324,7 +391,47 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: android-actions/setup-android@v3
+      # **Niente `setup-android`, e il perche' vale piu' della riga.**
+      #
+      # Il 17 settembre 2026 quel passo e' caduto in tutti e due i job, prima
+      # con `v3` e poi con `v4`: giri rossi senza una riga `e:`, senza
+      # annotazioni d'errore e senza `/tmp/build.log`, perche' non si arrivava a
+      # compilare. La prima diagnosi - "GitHub forza Node 24 e la v3 dichiara
+      # node20" - era **plausibile e sbagliata**: la v4 dichiara `node24` e
+      # cade identica. Era stata dedotta da un avviso che si trovava li' per
+      # caso, che e' lo stesso errore di metodo gia' pagato due volte da questo
+      # progetto deducendo dai pixel.
+      #
+      # Il motivo vero non si e' mai potuto leggere: il log grezzo sta su un
+      # host che la politica di uscita del container blocca al CONNECT. E di
+      # fronte a una dipendenza che fallisce **e non sa dire perche'**, la
+      # risposta non e' cambiarle versione una terza volta: e' toglierla.
+      #
+      # L'immagine `ubuntu-latest` porta gia' l'SDK Android. Qui si dichiara
+      # dove sta e lo si mette nel PATH; se non ci fosse, lo si dice con un
+      # `::error::`, che si legge dall'API anche quando i log non si leggono.
+      # Cosi' il prossimo guasto in questo punto arriva gia' spiegato.
+      - name: SDK Android dell'immagine
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          if [ -z "$SDK" ] || [ ! -d "$SDK" ]; then
+            echo "::error::L'immagine non espone un SDK Android: ANDROID_SDK_ROOT e ANDROID_HOME sono vuoti o non esistono."
+            exit 1
+          fi
+          echo "--- cosa c'e' dentro ---"
+          ls "$SDK" | tr '\n' ' '; echo
+          for d in "$SDK/cmdline-tools/latest/bin" "$SDK/platform-tools" "$SDK/tools/bin"; do
+            if [ -d "$d" ]; then echo "$d" >> "$GITHUB_PATH"; echo "in PATH: $d"; fi
+          done
+          {
+            echo "ANDROID_HOME=$SDK"
+            echo "ANDROID_SDK_ROOT=$SDK"
+          } >> "$GITHUB_ENV"
+          if [ ! -x "$SDK/cmdline-tools/latest/bin/sdkmanager" ]; then
+            echo "::warning::sdkmanager non c'e' nell'immagine: i componenti li scarichera' AGP."
+          fi
 
       - name: Componenti SDK
         run: |
@@ -460,7 +567,47 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: android-actions/setup-android@v3
+      # **Niente `setup-android`, e il perche' vale piu' della riga.**
+      #
+      # Il 17 settembre 2026 quel passo e' caduto in tutti e due i job, prima
+      # con `v3` e poi con `v4`: giri rossi senza una riga `e:`, senza
+      # annotazioni d'errore e senza `/tmp/build.log`, perche' non si arrivava a
+      # compilare. La prima diagnosi - "GitHub forza Node 24 e la v3 dichiara
+      # node20" - era **plausibile e sbagliata**: la v4 dichiara `node24` e
+      # cade identica. Era stata dedotta da un avviso che si trovava li' per
+      # caso, che e' lo stesso errore di metodo gia' pagato due volte da questo
+      # progetto deducendo dai pixel.
+      #
+      # Il motivo vero non si e' mai potuto leggere: il log grezzo sta su un
+      # host che la politica di uscita del container blocca al CONNECT. E di
+      # fronte a una dipendenza che fallisce **e non sa dire perche'**, la
+      # risposta non e' cambiarle versione una terza volta: e' toglierla.
+      #
+      # L'immagine `ubuntu-latest` porta gia' l'SDK Android. Qui si dichiara
+      # dove sta e lo si mette nel PATH; se non ci fosse, lo si dice con un
+      # `::error::`, che si legge dall'API anche quando i log non si leggono.
+      # Cosi' il prossimo guasto in questo punto arriva gia' spiegato.
+      - name: SDK Android dell'immagine
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          if [ -z "$SDK" ] || [ ! -d "$SDK" ]; then
+            echo "::error::L'immagine non espone un SDK Android: ANDROID_SDK_ROOT e ANDROID_HOME sono vuoti o non esistono."
+            exit 1
+          fi
+          echo "--- cosa c'e' dentro ---"
+          ls "$SDK" | tr '\n' ' '; echo
+          for d in "$SDK/cmdline-tools/latest/bin" "$SDK/platform-tools" "$SDK/tools/bin"; do
+            if [ -d "$d" ]; then echo "$d" >> "$GITHUB_PATH"; echo "in PATH: $d"; fi
+          done
+          {
+            echo "ANDROID_HOME=$SDK"
+            echo "ANDROID_SDK_ROOT=$SDK"
+          } >> "$GITHUB_ENV"
+          if [ ! -x "$SDK/cmdline-tools/latest/bin/sdkmanager" ]; then
+            echo "::warning::sdkmanager non c'e' nell'immagine: i componenti li scarichera' AGP."
+          fi
 
       - name: Componenti SDK
         run: |

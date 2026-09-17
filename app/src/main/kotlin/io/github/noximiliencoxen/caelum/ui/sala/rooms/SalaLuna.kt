@@ -53,10 +53,17 @@ import kotlin.math.roundToInt
 @Composable
 fun SalaLunaScreen(
     palette: SalaPalette,
-    fase: Float,
+    /**
+     * Il giorno mostrato, non l'oggi del telefono: scorrendo alla notte di
+     * giovedi' anche le fasi che seguono partono da li'. Da questo si ricava
+     * la fase con la stessa funzione che la ricava per il cielo, quindi le due
+     * immagini non possono divergere: un ingresso, una funzione.
+     */
+    giorno: LocalDate,
     modifier: Modifier = Modifier,
 ) {
-    val oggi = LocalDate.now()
+    val oggi = giorno
+    val fase = MoonPhase.at(giorno)
     val illuminata = MoonPhase.illumination(fase)
     val segmento = MoonSegment.of(fase)
     val eta = MoonPhase.ageDays(fase)

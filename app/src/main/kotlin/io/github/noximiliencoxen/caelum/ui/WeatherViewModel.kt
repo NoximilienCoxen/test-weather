@@ -813,7 +813,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         loadFavoritesWeather()
     }
 
-    fun closeLocations() = _state.update { it.copy(locationsOpen = false) }
+    /**
+     * Chiude la lista e **si porta via la ricerca**, come fa gia'
+     * [closeSettings]: riaprendola si riparte da vuoto invece che dall'ultima
+     * parola digitata, che era un risultato di mezz'ora prima presentato come
+     * se fosse di adesso.
+     *
+     * Chi chiude torna a cio' che sta sotto - le impostazioni se e' entrato da
+     * li', il cielo se ha toccato il nome della citta' in cima. Non serve
+     * ricordarselo: e' il pannello sotto che ricompare, e per questo i due
+     * blocchi in `SalaShell` hanno l'ordine che hanno.
+     */
+    fun closeLocations() =
+        _state.update { it.copy(locationsOpen = false, query = "", results = emptyList()) }
 
     /**
      * Il meteo attuale di ogni localita' salvata, per la sua iconcina in "Le
@@ -1013,6 +1025,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
         // aprire Singapore fermi sull'ora di Forli'.
         pendingHour = null
+        // **Scegliere una citta' chiude la lista.** Restarci era un comando che
+        // sembrava non aver fatto niente: la riga scelta si segnava e basta, e
+        // il cielo nuovo stava dietro un pannello che nessuno aveva chiesto di
+        // tenere aperto. La ricerca se ne va con lei, per la ragione scritta in
+        // [closeLocations].
+        _state.update { it.copy(locationsOpen = false, query = "", results = emptyList()) }
         viewModelScope.launch { prefs.setPlace(place) }
     }
 
