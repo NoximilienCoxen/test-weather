@@ -285,6 +285,13 @@ jobs:
             echo "tipo: $(file -b --mime-type /tmp/ciout/_osm.png 2>/dev/null)"
 
             echo
+            echo "=== 4-zero. Open-Meteo per una GRIGLIA di punti ==="
+            # La domanda che decide se la carta serva a qualcosa: il radar
+            # risponde per tre ore su ventiquattro, il modello per tutte.
+            # Il perche' per esteso sta in scripts/sonda_griglia.py.
+            python3 "$GITHUB_WORKSPACE/scripts/sonda_griglia.py" || echo "(la sonda della griglia e' caduta)"
+
+            echo
             echo "=== 4-bis. RainViewer sa dire DOVE guarda? ==="
             # La domanda che resta aperta da quando il radar e' passato a
             # RainViewer: dove non c'e' un radar le tessere sono trasparenti,

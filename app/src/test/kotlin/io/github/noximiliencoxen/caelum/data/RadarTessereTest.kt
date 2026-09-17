@@ -166,4 +166,27 @@ class RadarTessereTest {
             assertTrue(chiesta.contiene(lat, lon - 3.5))
         }
     }
+
+    // ── Il pixel dentro la tessera, che legge la copertura ────────────────────
+
+    @Test
+    fun `il pixel di un punto sta dentro la tessera di quel punto`() {
+        listOf(44.2226 to 12.0407, -1.3 to 36.82, 64.13 to -21.89).forEach { (lat, lon) ->
+            val (x, y) = RadarTessere.pixelDentroLaTessera(lat, lon, RadarTessere.LATO)
+            assertTrue("$x", x in 0 until RadarTessere.LATO)
+            assertTrue("$y", y in 0 until RadarTessere.LATO)
+        }
+    }
+
+    @Test
+    fun `andando a est il pixel si sposta a destra, e a nord verso l'alto`() {
+        // Se uno dei due assi fosse rovesciato, la copertura si leggerebbe nel
+        // posto sbagliato della tessera - e il posto sbagliato, a duecento
+        // chilometri di distanza, puo' benissimo avere la risposta opposta.
+        val centro = RadarTessere.pixelDentroLaTessera(44.0, 12.0, 256)
+        val est = RadarTessere.pixelDentroLaTessera(44.0, 12.5, 256)
+        val nord = RadarTessere.pixelDentroLaTessera(44.5, 12.0, 256)
+        assertTrue("${centro.first} -> ${est.first}", est.first > centro.first)
+        assertTrue("${centro.second} -> ${nord.second}", nord.second < centro.second)
+    }
 }
