@@ -541,9 +541,18 @@ object SalaType {
      * troncavano: "PROBABILITÀ" diventava "PROBABIL", "INTENSITÀ" diventava
      * "INTENSIT". Una parola tagliata si legge peggio di una parola piccola.
      *
-     * Il respiro se l'e' preso da un'altra parte: `CellaValore` ha ridotto il
-     * proprio margine interno, e con quello la cella piu' lunga ci sta per
-     * intero - cosa che, a dire il vero, non faceva **nemmeno prima**.
+     * Il respiro se l'e' preso da due parti, e ci sono voluti due giri di CI
+     * per trovarle tutte e due: `CellaValore` ha ridotto il proprio margine
+     * interno, e **la spaziatura fra le lettere e' scesa da un decimo di em a
+     * sessantacinque millesimi**. Con il solo margine "PROBABILITÀ" arrivava a
+     * "PROBABILIT" - mancava l'accento, e un accento mancante in una parola
+     * tutta maiuscola non si legge come un errore, si legge come una parola
+     * diversa.
+     *
+     * Undici caratteri per un terzo di pannello e' il caso limite di tutta
+     * l'app, e adesso ci sta. Chi aggiunge una cella con un'etichetta piu'
+     * lunga la trovera' troncata, e la strada e' accorciare la parola: qui non
+     * c'e' piu' niente da stringere.
      *
      * La leggibilita' di queste righe arriva percio' dal contrasto e non dalla
      * taglia: `inkSoft` e `inkFaint` passano da `readableOn`, e [microLabel] -
@@ -554,7 +563,7 @@ object SalaType {
         fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
         lineHeight = 12.sp,
-        letterSpacing = 0.1.em,
+        letterSpacing = 0.065.em,
     )
 
     /** Come [sectionLabel], ma per le etichette piu' minute dentro le celle. */
