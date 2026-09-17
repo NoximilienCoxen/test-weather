@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -138,6 +139,16 @@ fun SalaPioggiaScreen(
             CellaValore(etichetta = "INTENSITÀ", valore = intensita(oraScelta?.precipitation), palette = palette)
             CellaValore(etichetta = "SUOLO", valore = if (totale > 4.0) "saturo" else "asciutto", palette = palette)
         }
+
+        // Il radar sta **qui dentro** e non in una sala sua: risponde alla
+        // stessa domanda delle colonne qui sopra, per un'altra via. Quelle
+        // dicono quando, la mappa dice dove, e vicine valgono piu' che
+        // separate da uno scorrimento.
+        HorizontalDivider(
+            color = palette.maniglia.copy(alpha = 0.5f),
+            modifier = Modifier.padding(top = 18.dp, bottom = 16.dp),
+        )
+        MappaRadar(stato = state.radar, place = state.place, palette = palette)
     }
 }
 
