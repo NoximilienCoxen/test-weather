@@ -1,27 +1,72 @@
 === 1. NOWCAST: Open-Meteo minutely_15 ===
 --- Forli
-{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.19347667694091797,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15","2026-09-
+{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.10657310485839844,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-17T00:00","2026-09-17T00:15","2026-09-17T00:30","2026-09-17T00:45","2026-09-17T01:00","2026-09-17T01:15","2026-09-17T01:30","2026-09-17T01:45","2026-09-17T02:00","2026-09-17T02:15","2026-09-17T02:30","2026-09-17T02:45","2026-09-17T03:00","2026-09-17T03:15","2026-09-17T03:30","2026-09-17T03:45","2026-09-17T04:00","2026-09-17T04:15","2026-09-
 --- Tokyo
-{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.12981891632080078,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15","2026-09-14
+{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.09572505950927734,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-17T00:00","2026-09-17T00:15","2026-09-17T00:30","2026-09-17T00:45","2026-09-17T01:00","2026-09-17T01:15","2026-09-17T01:30","2026-09-17T01:45","2026-09-17T02:00","2026-09-17T02:15","2026-09-17T02:30","2026-09-17T02:45","2026-09-17T03:00","2026-09-17T03:15","2026-09-17T03:30","2026-09-17T03:45","2026-09-17T04:00","2026-09-17T04:15","2026-09-17
 --- Nairobi
-{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.21910667419433594,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-14T00:00","2026-09-14T00:15","2026-09-14T00:30","2026-09-14T00:45","2026-09-14T01:00","2026-09-14T01:15","2026-09-14T01:30","2026-09-14T01:45","2026-09-14T02:00","2026-09-14T02:15","2026-09-14T02:30","2026-09-14T02:45","2026-09-14T03:00","2026-09-14T03:15","2026-09-14T03:30","2026-09-14T03:45","2026-09-14T04:00","2026-09-14T04:15
+{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.10895729064941406,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-17T00:00","2026-09-17T00:15","2026-09-17T00:30","2026-09-17T00:45","2026-09-17T01:00","2026-09-17T01:15","2026-09-17T01:30","2026-09-17T01:45","2026-09-17T02:00","2026-09-17T02:15","2026-09-17T02:30","2026-09-17T02:45","2026-09-17T03:00","2026-09-17T03:15","2026-09-17T03:30","2026-09-17T03:45","2026-09-17T04:00","2026-09-17T04:15
 
 === 2. RADAR: l'indice dei fotogrammi di RainViewer ===
 
 HTTP 200
 byte=818
-{"version":"2.0","generated":1789375522,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789368000,"path":"/v2/radar/14e493d249e8"},{"time":1789368600,"path":"/v2/radar/8f643ae50a93"},{"time":1789369200,"path":"/v2/radar/ee1c2db9e599"},{"time":1789369800,"path":"/v2/radar/66932ae3cd5e"},{"time":1789370400,"path":"/v2/radar/2731537b5232"},{"time":1789371000,"path":"/v2/radar/19f173f92760"},{"time":1789371600,"path":"/v2/radar/38d66ea066fa"},{"time":1789372200,"path":"/v2/radar/73ae38fa952a"},{"time":1789372800,"path":"/v2/radar/d47677bfa553"},{"time":1789373400,"path":"/v2/radar/3080d919e2cc"},{"time":1789374000,"path":"/v2/radar/769c222caf03"},{"time":1789374600,"path":"/v2/radar/47783dff1be6"},{"time":1789375200,"path":"/v2/radar/54dbf292e0a7"}],"nowcast":[]},"satellite":{"infrared":[]}}
+{"version":"2.0","generated":1789623323,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789615800,"path":"/v2/radar/42be41b7e7f8"},{"time":1789616400,"path":"/v2/radar/69a084f5f34b"},{"time":1789617000,"path":"/v2/radar/7811b4502abb"},{"time":1789617600,"path":"/v2/radar/de3f7106f108"},{"time":1789618200,"path":"/v2/radar/235d618e6ff8"},{"time":1789618800,"path":"/v2/radar/769e87121f7e"},{"time":1789619400,"path":"/v2/radar/26909d2cccd6"},{"time":1789620000,"path":"/v2/radar/f60113ee6ec2"},{"time":1789620600,"path":"/v2/radar/e0d54c1cf08d"},{"time":1789621200,"path":"/v2/radar/31375a56c803"},{"time":1789621800,"path":"/v2/radar/46405418cbf4"},{"time":1789622400,"path":"/v2/radar/655cb972923e"},{"time":1789623000,"path":"/v2/radar/af7dfa8f6387"}],"nowcast":[]},"satellite":{"infrared":[]}}
 --- quanti fotogrammi:
 13
 --- l'host da cui vengono le tessere:
 "host":"https://tilecache.rainviewer.com"
 
 === 3. Una tessera vera si scarica? ===
-host=https://tilecache.rainviewer.com percorso=/v2/radar/14e493d249e8
---- https://tilecache.rainviewer.com/v2/radar/14e493d249e8/256/0/0/0/1/1_1.png
-HTTP 200 byte=2424
+host=https://tilecache.rainviewer.com percorso=/v2/radar/42be41b7e7f8
+--- https://tilecache.rainviewer.com/v2/radar/42be41b7e7f8/256/0/0/0/1/1_1.png
+HTTP 200 byte=2712
 tipo: image/png
 
 === 4. E il fondo cartografico? ===
 tile.openstreetmap.org HTTP 200 byte=6929
 tipo: image/png
+
+=== 5. RADAR-DPC: la fonte ufficiale italiana ===
+--- ultimo prodotto VMI [nudo]
+    https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=VMI
+    HTTP 403  byte=434  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
+--- ultimo prodotto SRI [nudo]
+    https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRI
+    HTTP 403  byte=434  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
+--- ultimo prodotto SRT1 [nudo]
+    https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRT1
+    HTTP 403  byte=434  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
+--- ultimo prodotto SRT3 [nudo]
+    https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRT3
+    HTTP 403  byte=434  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
+--- ultimo prodotto VMI [conorigine]
+    https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=VMI
+    HTTP 403  byte=434  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
+--- prodotti disponibili VMI [conorigine]
+    https://radar-api.protezionecivile.it/wide/product/findAvailableProductsByType?type=VMI
+    HTTP 403  byte=440  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findAvailablePro
+--- radice del servizio [conorigine]
+    https://radar-api.protezionecivile.it/wide/product/
+    HTTP 403  byte=408  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;" on this server
+--- data dell'ultimo prodotto: 1789623608
+--- prodotto VMI a quella data [conorigine]
+    https://radar-api.protezionecivile.it/wide/product/getProduct?type=VMI&productDate=1789623608
+    HTTP 403  byte=423  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;getProduct&#63;"
+--- esiste il prodotto [conorigine]
+    https://radar-api.protezionecivile.it/wide/product/existsProduct?type=VMI&productDate=1789623608
+    HTTP 403  byte=426  tipo=text/html
+    primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;existsProduct&#6
+
+    NOTA: il DPC copre l'Italia. Questa app apre anche Tokyo e
+    Nairobi (vedi la sezione 1 qui sopra). Fuori copertura il
+    radar non e' vuoto: e' assente, ed e' una cosa diversa che
+    va detta - come gia' fa alertsOutOfCoverage per MeteoAlarm.
+    CC BY-SA 4.0 vuole l'attribuzione a schermo, sotto la mappa.
