@@ -248,9 +248,9 @@ fun StrisciaGiorni(
                         shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
                     .clickable { onScegli(giorno.indice) }
-                    .padding(top = 9.dp, bottom = 8.dp),
+                    .padding(top = 11.dp, bottom = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
+                verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 6.dp else 7.dp),
             ) {
                 Text(
                     text = giorno.breve,

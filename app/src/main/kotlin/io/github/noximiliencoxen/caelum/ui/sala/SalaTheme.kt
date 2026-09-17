@@ -14,6 +14,8 @@ import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.ui.theme.CONTRAST_AA_LARGE
+import io.github.noximiliencoxen.caelum.ui.theme.readableOn
 
 /**
  * La tavolozza di Sala, rifatta sul sistema **Organic**.
@@ -376,6 +378,23 @@ data class SalaPalette(
     val panelSolido: Color,
     /** Il fondo delle schermate che coprono il cielo per intero. */
     val schermoPieno: Color,
+    /**
+     * L'inchiostro di cio' che sta **fuori dai pannelli**.
+     *
+     * La barra delle ore, la riga che spiega il gesto, il giorno mostrato: non
+     * hanno un pannello sotto, hanno le colline. Il difetto e' arrivato da chi
+     * l'app la usa fuori: al sole diretto quelle righe sparivano, perche' un
+     * grigio all'ottanta percento su un verde medio ha un contrasto che al
+     * chiuso basta e in pieno giorno no.
+     *
+     * Non e' un colore scelto a mano: e' [ink] passato per `readableOn` contro
+     * la collina piu' avanti, cioe' spinto fino alla soglia AA e non oltre. La
+     * palette si costruisce una volta per fotogramma del tema, che e'
+     * esattamente dove `Contrast.kt` dice di metterlo.
+     */
+    val inkSuCielo: Color,
+    /** Come [inkSuCielo], per l'accento: l'ora sopra la barra. */
+    val accentSuCielo: Color,
     val collina1: Color,
     val collina2: Color,
     val collina3: Color,
@@ -432,11 +451,25 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
         lerp(hex(0x1E2417), hex(0x2A2C21), crepuscolo),
     )
 
+    val fondoFuori = lerp(verdi[2], scure[2], buio)
+    // Il fondo su cui cade quasi tutto il testo: il pannello, nella sua
+    // versione senza trasparenza. Il pannello vero e' translucido e lascia
+    // passare il cielo, quindi il contrasto reale e' un po' peggiore di questo
+    // - ragione in piu' per non stare sul filo della soglia.
+    val fondoPannello = lerp(SalaTokens.neutral100, pieno, buio)
+
     return SalaPalette(
         buio = buio,
         ink = inkBase,
-        inkSoft = inkBase.copy(alpha = lerp(0.78f, 0.80f, buio)),
-        inkFaint = inkBase.copy(alpha = lerp(0.60f, 0.62f, buio)),
+        // **I due inchiostri smorzati non si smorzano piu' a occhio.**
+        // Erano due trasparenze scelte a mano - ottanta e sessanta per cento -
+        // e sul pannello chiaro il secondo dava poco meno di quattro a uno:
+        // abbastanza al chiuso, non abbastanza al sole, ed e' al sole che
+        // qualcuno ha provato a leggere l'ora sotto le colonne. Restano
+        // smorzati, ma **fino alla soglia e non oltre**: `readableOn` parte da
+        // quella trasparenza e schiarisce o scurisce solo quanto serve.
+        inkSoft = inkBase.copy(alpha = lerp(0.78f, 0.80f, buio)).readableOn(fondoPannello),
+        inkFaint = inkBase.copy(alpha = lerp(0.60f, 0.62f, buio)).readableOn(fondoPannello),
         accent = lerp(SalaTokens.accent600, SalaTokens.accent300, buio),
         accentInk = lerp(SalaTokens.neutral100, SalaTokens.neutral900, buio),
         chip = lerp(
@@ -450,11 +483,19 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
             buio,
         ),
         panel = lerp(SalaTokens.neutral100.copy(alpha = 0.90f), pieno.copy(alpha = 0.82f), buio),
-        panelSolido = lerp(SalaTokens.neutral100, pieno, buio),
+        panelSolido = fondoPannello,
         schermoPieno = lerp(Color(0xFFF4ECE0), pieno, buio),
+        // Il fondo su cui cadono davvero: la collina piu' avanti, che e' la
+        // piu' scura delle tre e quindi il caso peggiore per un inchiostro
+        // scuro. AA_LARGE e non AA perche' sono maiuscoletti in grassetto e
+        // cifre grandi, cioe' proprio cio' che la norma chiama testo grande;
+        // chiedere 4.5 li spingerebbe al bianco pieno anche a mezzogiorno.
+        inkSuCielo = inkBase.readableOn(fondoFuori, CONTRAST_AA_LARGE),
+        accentSuCielo = lerp(SalaTokens.accent600, SalaTokens.accent300, buio)
+            .readableOn(fondoFuori, CONTRAST_AA_LARGE),
         collina1 = lerp(verdi[0], scure[0], buio),
         collina2 = lerp(verdi[1], scure[1], buio),
-        collina3 = lerp(verdi[2], scure[2], buio),
+        collina3 = fondoFuori,
         tronco = lerp(hex(0x56633F), hex(0x151A10), buio),
         fronda = lerp(hex(0x728157), hex(0x1A2013), buio),
     )
@@ -490,12 +531,25 @@ object SalaType {
     /** Il numero grande di una sala: i millimetri, l'indice UV, il vento. */
     val numeroSala = TextStyle(fontFamily = Caprasimo, fontSize = 44.sp, lineHeight = 40.sp)
 
-    /** MAIUSCOLETTO SPAZIATO: le etichette sopra ogni valore. */
+    /**
+     * MAIUSCOLETTO SPAZIATO: le etichette sopra ogni valore.
+     *
+     * **Un punto piu' del prototipo, e non e' una svista.** Il prototipo e' una
+     * pagina che si guarda da fermi, in casa, su uno schermo che si avvicina
+     * agli occhi. L'app la si guarda in strada, col sole di taglio, tenendo il
+     * telefono con una mano sola. Dieci punti di maiuscoletto spaziato reggono
+     * il primo caso e non il secondo, e chi l'ha provata fuori l'ha detto.
+     *
+     * Undici e non dodici perche' queste etichette stanno in celle da un terzo
+     * di pannello, e sopra i dodici punti tornerebbero a troncarsi come nella
+     * sezione 13 - dove per farle stare si erano dovute accorciare a otto
+     * caratteri.
+     */
     val sectionLabel = TextStyle(
         fontFamily = Figtree,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 10.sp,
-        lineHeight = 12.sp,
+        fontSize = 11.sp,
+        lineHeight = 13.sp,
         letterSpacing = 0.1.em,
     )
 
@@ -503,8 +557,8 @@ object SalaType {
     val microLabel = TextStyle(
         fontFamily = Figtree,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 9.sp,
-        lineHeight = 11.sp,
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
         letterSpacing = 0.1.em,
     )
 
@@ -533,10 +587,10 @@ object SalaType {
     )
 
     /** La massima di un giorno nella striscia. */
-    val giornoMax = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 12.sp, lineHeight = 14.sp)
+    val giornoMax = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 13.sp, lineHeight = 15.sp)
 
     /** La minima, smorzata sotto la massima. */
-    val giornoMin = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 10.sp, lineHeight = 12.sp)
+    val giornoMin = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Medium, fontSize = 11.sp, lineHeight = 13.sp)
 
     /** Il testo di una pastiglia. */
     val pill = TextStyle(fontFamily = Figtree, fontWeight = FontWeight.Bold, fontSize = 11.sp, lineHeight = 14.sp)
