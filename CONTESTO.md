@@ -4304,3 +4304,32 @@ l'agente di okhttp - cioe' come lo manderebbe un'app Android qualsiasi.
 
 Le due risposte valgono uguale. La sonda serve a non dover scegliere a mente
 fra due spiegazioni che sembrano tutte e due ragionevoli.
+
+#### La risposta: e' l'indirizzo
+
+Cinque prove, una variabile sola, **cinque volte `HTTP 403`** - e
+quattrocentotrentaquattro byte identici tutte e cinque, cioe' la stessa identica
+pagina:
+
+| chi chiede | risposta |
+| --- | --- |
+| curl com'e' | 403 |
+| agente da browser Android | 403 |
+| agente da browser + `Referer` e `Origin` del sito vero | 403 |
+| agente da browser + `Accept: application/json` | 403 |
+| agente di okhttp, come un'app Android | 403 |
+
+L'ipotesi dell'agente e' **esclusa**, e non ignorata. Resta quella di 13-septies:
+il servizio rifiuta il chiamante per il posto da cui chiama, e un runner di
+GitHub Actions e' un indirizzo di datacentro.
+
+**Cosa cambia per l'app: niente, ed e' una buona notizia.** Nessuna intestazione
+da aggiungere, nessun codice da correggere. La conseguenza pratica e' che il
+radar **non si potra' mai provare da qui** - ne dalla CI ne da questa postazione,
+il cui proxy quel dominio lo nega a monte. L'unico posto in cui quella richiesta
+puo' riuscire e' un telefono su una rete italiana normale, ed e' esattamente il
+motivo per cui `StatoRadar.NonDisponibile` porta a schermo cio' che ha visto.
+
+Vale la pena aver speso un giro di CI per un risultato negativo: senza, in
+questo file sarebbe rimasta una spiegazione plausibile spacciata per accertata,
+che e' il difetto che 13-sexies ha gia' fatto pagare una volta.
