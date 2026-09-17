@@ -328,9 +328,27 @@ jobs:
             # e' coperta e l'altra no: potrebbero essere tutte e due
             # trasparenti con rumore diverso. L'unica risposta e' **guardare il
             # pixel**, e per quello c'e' `scripts/alfa_png.py`.
+            #
+            # **Il primo giro col pixel ha risposto al contrario.** Forli', che
+            # il radar ce l'ha di sicuro - la tessera vera li' pesa ventisei
+            # kilobyte di pioggia - legge alfa **zero**; Nairobi legge
+            # **duecentocinquantacinque**. L'ipotesi ovvia e' che quel livello
+            # non disegni il coperto ma il **non** coperto: e' l'ombreggiatura
+            # che la mappa di RainViewer stende sulle zone dove nessuno guarda.
+            #
+            # Un'ipotesi ovvia su due campioni resta un'ipotesi, e questa
+            # sezione esiste perche' una volta ci si e' gia' fidati di due
+            # campioni. Quindi due punti su cui non si discute: il Kansas, che
+            # ha la rete radar piu' fitta del mondo, e il mezzo dell'oceano
+            # Pacifico. Se il Kansas legge zero e il Pacifico
+            # duecentocinquantacinque, il livello e' una maschera del non
+            # coperto e si puo' usare **invertita**.
             for COV in \
               "7/68/46  71  110  Forli-che-il-radar-ce-l-ha" \
               "7/77/64  23  118  Nairobi-che-forse-no" \
+              "7/29/49  39   37  Kansas-la-rete-piu-fitta-del-mondo" \
+              "7/10/64 170    0  Pacifico-in-mezzo-al-niente" \
+              "7/69/55  85  151  Sahara-in-mezzo-al-niente" \
               "6/34/23  35   55  Forli-un-livello-piu-grosso"; do
               set -- $COV
               echo "--- copertura $1 ($4), pixel $2,$3"
