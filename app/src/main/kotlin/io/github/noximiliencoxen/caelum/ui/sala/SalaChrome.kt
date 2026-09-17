@@ -111,7 +111,13 @@ fun RowScope.CellaValore(
             .weight(1f)
             .clip(RoundedCornerShape(RaggioCella))
             .background(palette.chip)
-            .padding(horizontal = 13.dp, vertical = 11.dp),
+            // **Tre punti di margine in meno per lato, e sono sei di parola in
+            // piu'.** "PROBABILITÀ" non ci stava per intero nemmeno prima di
+            // ritoccare i corpi: negli scatti si leggeva "PROBABILI", e
+            // nessuno l'aveva notato perche' troncata sembra un'abbreviazione
+            // voluta. Tre celle per riga, undici caratteri la piu' lunga: il
+            // margine era la cosa da stringere, non la parola da accorciare.
+            .padding(horizontal = 10.dp, vertical = 11.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(text = etichetta, style = SalaType.sectionLabel, color = palette.inkFaint, maxLines = 1)

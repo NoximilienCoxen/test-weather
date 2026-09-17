@@ -534,22 +534,26 @@ object SalaType {
     /**
      * MAIUSCOLETTO SPAZIATO: le etichette sopra ogni valore.
      *
-     * **Un punto piu' del prototipo, e non e' una svista.** Il prototipo e' una
-     * pagina che si guarda da fermi, in casa, su uno schermo che si avvicina
-     * agli occhi. L'app la si guarda in strada, col sole di taglio, tenendo il
-     * telefono con una mano sola. Dieci punti di maiuscoletto spaziato reggono
-     * il primo caso e non il secondo, e chi l'ha provata fuori l'ha detto.
+     * **Sono stati provati undici punti e sono tornati dieci.** Il ragionamento
+     * era buono - l'app si guarda in strada, col sole di taglio, e dieci punti
+     * di maiuscoletto reggono lo schermo vicino e non la luce piena - ma queste
+     * etichette stanno in **celle da un terzo di pannello**, e undici punti le
+     * troncavano: "PROBABILITÀ" diventava "PROBABIL", "INTENSITÀ" diventava
+     * "INTENSIT". Una parola tagliata si legge peggio di una parola piccola.
      *
-     * Undici e non dodici perche' queste etichette stanno in celle da un terzo
-     * di pannello, e sopra i dodici punti tornerebbero a troncarsi come nella
-     * sezione 13 - dove per farle stare si erano dovute accorciare a otto
-     * caratteri.
+     * Il respiro se l'e' preso da un'altra parte: `CellaValore` ha ridotto il
+     * proprio margine interno, e con quello la cella piu' lunga ci sta per
+     * intero - cosa che, a dire il vero, non faceva **nemmeno prima**.
+     *
+     * La leggibilita' di queste righe arriva percio' dal contrasto e non dalla
+     * taglia: `inkSoft` e `inkFaint` passano da `readableOn`, e [microLabel] -
+     * che non sta in cella ma sotto le colonne - e' cresciuto davvero.
      */
     val sectionLabel = TextStyle(
         fontFamily = Figtree,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 11.sp,
-        lineHeight = 13.sp,
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
         letterSpacing = 0.1.em,
     )
 

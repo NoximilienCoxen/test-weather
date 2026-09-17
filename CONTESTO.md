@@ -4077,10 +4077,22 @@ cifre grandi, cioe' proprio cio' che la norma chiama testo grande, e chiedere
 I corpi restano smorzati, ma **fino alla soglia e non oltre**: `readableOn`
 parte dalla trasparenza di prima e schiarisce o scurisce solo quanto serve.
 
-Sono cresciuti anche i corpi: `sectionLabel` da dieci a undici punti,
-`microLabel` da nove a dieci, le cifre della striscia di un punto ciascuna.
-Undici e non dodici perche' queste etichette stanno in celle da un terzo di
-pannello, e sopra i dodici punti tornerebbero a troncarsi come nella sezione 13.
+**I corpi sono cresciuti dove potevano, e dove non potevano si e' visto.**
+`microLabel` da nove a dieci punti - e' lui che numera le ore sotto le colonne
+della pioggia, cioe' proprio la "scala delle ore" che non si leggeva - e le
+cifre della striscia dei giorni di un punto ciascuna.
+
+`sectionLabel` invece e' stato portato a undici ed e' **tornato a dieci**.
+Undici lo troncava: nello scatto "PROBABILITÀ" diventava "PROBABIL" e
+"INTENSITÀ" diventava "INTENSIT", perche' quelle etichette stanno in celle da
+un terzo di pannello. Una parola tagliata si legge peggio di una parola piccola.
+
+Guardando meglio lo scatto e' saltato fuori che **"PROBABILITÀ" non ci stava
+per intero nemmeno prima**: da sempre si leggeva "PROBABILI", e nessuno l'aveva
+notato perche' una parola troncata sembra un'abbreviazione voluta. Il margine
+interno delle celle scende da tredici punti a dieci - sei di parola in piu' -
+e adesso ci sta davvero. Il margine era la cosa da stringere, non la parola da
+accorciare.
 
 `PaletteLeggibileTest` prova tutta la traversata dal tema chiaro a quello scuro,
 in tutti e due i crepuscoli e col cielo aperto e chiuso. **Esclude il guado in
@@ -4088,6 +4100,26 @@ mezzo**, ed e' dichiarato perche': fra il quaranta e il sessanta per cento di
 `dk` inchiostro e accento si incrociano, e quella fascia `temaScuro` la
 attraversa di scatto apposta (12-ter). Chiedere la soglia anche li' vorrebbe
 dire un lampo bianco a meta' traversata per evitare un difetto che non si vede.
+
+### 15.2-bis Il 403 del radar arrivava a schermo vestito da HTML
+
+Nello stesso scatto, sotto la carta del radar: `Il radar non ha risposto come
+atteso: SRI, HTTP 403 da Radar-DPC (SRI): <HTML><HEAD> <TITLE>Access
+Denied</TITLE>...`.
+
+La sezione 14-ter aveva gia' affrontato questo, e non era bastata: aveva
+insegnato a `riassunto` a spogliare una pagina HTML, ma quel testo non passa da
+`riassunto`. Passa dal messaggio d'errore di `httpGet`, che al codice HTTP
+attacca **anche il corpo della risposta** - ed e' giusto che lo faccia, perche'
+Open-Meteo scrive li' dentro il motivo del rifiuto.
+
+`riassuntoGuasto` tiene la testa - `HTTP 403 da Radar-DPC (SRI)`, che e'
+l'informazione - e passa il resto per `riassunto`. Quaranta caratteri invece di
+duecento.
+
+E' la stessa lezione di 13-sexies in un'altra forma: si era corretto **un
+percorso** e si era creduto di aver corretto **il problema**. I percorsi erano
+due.
 
 ### 15.3 La colonna di destra si sbagliava col pollice
 
