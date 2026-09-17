@@ -69,7 +69,7 @@ fun SalaSettimanaScreen(
             text = remember(settimana, state.unit) { sommarioDella(settimana, state) },
             style = SalaType.footnote,
             color = palette.inkSoft,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 6.dp),
         )
 
         RiepilogoSettimana(
@@ -78,7 +78,7 @@ fun SalaSettimanaScreen(
             faseLunare = faseLunare,
             palette = palette,
             onVai = onVai,
-            modifier = Modifier.padding(top = 18.dp),
+            modifier = Modifier.padding(top = 13.dp),
         )
 
         if (scelto != null) {
@@ -86,12 +86,12 @@ fun SalaSettimanaScreen(
                 giorno = scelto,
                 state = state,
                 palette = palette,
-                modifier = Modifier.padding(top = 18.dp),
+                modifier = Modifier.padding(top = 12.dp),
             )
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 11.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 15.dp, bottom = 9.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
