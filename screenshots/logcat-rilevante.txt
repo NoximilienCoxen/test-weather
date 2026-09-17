@@ -1,0 +1,120 @@
+09-17 22:57:34.985 W/meteo   ( 8444): previsione non arrivata (tentativo 1 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:34.985 W/meteo   ( 8444): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:34.985 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:57:34.985 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:57:36.202 W/meteo   ( 8444): previsione non arrivata (tentativo 2 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:36.202 W/meteo   ( 8444): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:36.202 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:57:36.202 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:57:38.620 W/meteo   ( 8444): previsione non arrivata (tentativo 3 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:38.620 W/meteo   ( 8444): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:57:38.620 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:57:38.620 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:57:43.440 W/meteo   ( 8444): previsione non arrivata (tentativo 4 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:57:43.440 W/meteo   ( 8444): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:57:43.440 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:57:43.440 W/meteo   ( 8444): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:58:19.310 W/ModernMediaScanner( 1594): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 22:58:21.813 W/ModernMediaScanner( 1594): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-17 22:58:21.870 W/ActivityTaskManager(  530): Force removing ActivityRecord{d142f39 u0 io.github.noximiliencoxen.caelum/.MainActivity t60 f}}: app died, no saved state
+09-17 22:58:21.887 W/WindowManager(  530): android.os.DeadObjectException
+09-17 22:58:21.982 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{b804963 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-17 22:58:21.982 W/WindowManager(  530): android.os.DeadObjectException
+09-17 22:58:23.205 I/meteo   ( 8667): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
+09-17 22:58:25.930 W/meteo   ( 8667): previsione non arrivata (tentativo 1 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:25.930 W/meteo   ( 8667): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:25.930 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:58:25.930 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:58:27.149 W/meteo   ( 8667): previsione non arrivata (tentativo 2 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:27.149 W/meteo   ( 8667): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:27.149 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:58:27.149 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:58:29.567 W/meteo   ( 8667): previsione non arrivata (tentativo 3 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:58:29.567 W/meteo   ( 8667): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
+09-17 22:58:29.567 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:58:29.567 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:58:34.385 W/meteo   ( 8667): previsione non arrivata (tentativo 4 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:34.385 W/meteo   ( 8667): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
+09-17 22:58:34.385 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-17 22:58:34.385 W/meteo   ( 8667): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-17 22:59:10.296 W/ModernMediaScanner( 1594): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
