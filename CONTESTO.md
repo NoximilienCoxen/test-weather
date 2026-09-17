@@ -4973,3 +4973,20 @@ velo azzurro facendo sembrare bagnato un giorno sereno.
 
 `FuoriOrario` non e' sparito: e' sceso a fare quello per cui serviva, il caso in
 cui **nessuna** delle due fonti ha qualcosa da dire.
+
+### 20.5 Una prova scritta sbagliata, e perche' la nota resta
+
+Il primo giro di CI e' caduto su un test mio, non sul codice. Diceva:
+
+> mezz'ora di scarto passa, un'ora no
+
+copiato dal test del radar senza accorgersi che i due casi **non si
+somigliano**. I fotogrammi del radar distano dieci minuti e finiscono: dopo
+l'ultimo non c'e' piu' niente, e la tolleranza morde. Le ore del modello
+distano un'ora e si toccano: dentro la finestra qualunque istante ha un'ora a
+meno di trenta minuti, **sempre**. Li' la tolleranza non rifiuta niente, e non
+deve.
+
+Un test che verifica un comportamento impossibile non e' un test che fallisce:
+e' un test che chiede di storpiare il codice per accontentarlo. Il bordo vero -
+oltre l'ultima ora - c'e' adesso, ed e' li' che la tolleranza serve.

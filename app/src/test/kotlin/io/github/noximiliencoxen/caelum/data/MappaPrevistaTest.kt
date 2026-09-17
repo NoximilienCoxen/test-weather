@@ -55,13 +55,33 @@ class MappaPrevistaTest {
     }
 
     @Test
-    fun `mezz'ora di scarto passa, un'ora no`() {
-        // La stessa tolleranza del radar, e per la stessa ragione: il modello
-        // da' un valore all'ora, e allargare vorrebbe dire far passare per
-        // "le venti" la pioggia delle ventuno e mezza.
-        val ora = mezzanotte.plus(Duration.ofHours(5))
-        assertNotNull(mappa.a(ora.plus(Duration.ofMinutes(29))))
-        assertNull(mappa.a(ora.plus(Duration.ofMinutes(31))))
+    fun `dentro la finestra ogni istante trova la propria ora`() {
+        // **Questa prova e' stata scritta sbagliata la prima volta, e la nota
+        // resta perche' l'errore era istruttivo.** Diceva: mezz'ora di scarto
+        // passa, un'ora no - copiata dal test del radar senza accorgersi che
+        // i due casi non si somigliano. I fotogrammi del radar distano dieci
+        // minuti **e finiscono**: dopo l'ultimo non c'e' piu' niente, e la
+        // tolleranza morde. Le ore del modello distano un'ora e si toccano:
+        // dentro la finestra, qualunque istante ha un'ora a meno di trenta
+        // minuti, sempre. La tolleranza li' non rifiuta niente - e non deve.
+        //
+        // Un test che "verificava" un comportamento impossibile avrebbe
+        // continuato a fallire finche' qualcuno non avesse storpiato il codice
+        // per accontentarlo.
+        listOf(0, 17, 31, 59).forEach { minuti ->
+            val quando = mezzanotte.plus(Duration.ofHours(5)).plus(Duration.ofMinutes(minuti.toLong()))
+            assertNotNull("a $minuti minuti", mappa.a(quando))
+        }
+    }
+
+    @Test
+    fun `oltre l'ultima ora la tolleranza morde`() {
+        // Qui si', perche' dopo l'ultima ora non c'e' un'altra ora a raccogliere
+        // l'istante: e' il bordo della finestra, ed e' li' che la tolleranza
+        // serve.
+        val ultima = mezzanotte.plus(Duration.ofHours(47))
+        assertNotNull(mappa.a(ultima.plus(Duration.ofMinutes(29))))
+        assertNull(mappa.a(ultima.plus(Duration.ofMinutes(31))))
     }
 
     @Test
