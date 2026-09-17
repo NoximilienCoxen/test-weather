@@ -3689,3 +3689,46 @@ perfettamente bilanciato. Ai controlli offline si aggiunge quindi il conto delle
 dichiarazioni per file: se un nome compare due volte a livello di file, lo dice.
 Senza SDK questa e' la compilazione che ci si puo' permettere, e va allargata
 ogni volta che lascia passare qualcosa.
+
+
+### 13-quinquies. Il radar: per ora si chiede, non si scrive
+
+Il radar e' stato chiesto nominando la fonte: **Radar-DPC del Dipartimento
+della Protezione Civile**, dati in licenza CC BY-SA 4.0. Da questo container
+`radar-api.protezionecivile.it` non si raggiunge - il proxy della sessione nega
+il CONNECT, come per `dl.google.com` - ma la CI si', ed e' li' che si chiede.
+
+Il passo **"Si puo' avere il radar delle precipitazioni"** esisteva gia' e aveva
+gia' provato tre strade: il nowcast `minutely_15` di Open-Meteo (globale, senza
+mappa), l'indice di **RainViewer** con una tessera vera scaricata, e il fondo
+cartografico di OpenStreetMap. Le risposte stanno su `ci-artifacts` in
+`api/radar.txt`. Adesso c'e' anche la sezione DPC, che prova i candidati e
+scrive cio' che rispondono - **404 compresi**, perche' un 404 registrato e' un
+indirizzo escluso e un indirizzo escluso e' informazione.
+
+La sonda chiede due cose oltre al "risponde":
+
+- **che forma ha il prodotto** - una data? un PNG? un indirizzo di tessere?
+  quali estremi geografici? - perche' da quella dipende se il radar e' una
+  tessera su una mappa scorrevole o un'immagine sola da posare, che sono due
+  lavori di taglia molto diversa;
+- **se vuole un'intestazione** `Origin`/`Referer`: un servizio nato per il
+  proprio sito puo' rifiutare chi non si dichiara, e provare con e senza lo dice
+  in una riga.
+
+Due cose da tenere presenti quando si scrivera' il codice, e sono scritte qui
+perche' decidono la forma della schermata:
+
+1. **Il DPC copre l'Italia.** Questa app apre Tokyo e Nairobi - la sonda le
+   interroga apposta. Fuori copertura il radar non e' vuoto: e' **assente**, e
+   sono due cose diverse. L'app ha gia' questa distinzione per MeteoAlarm
+   (`alertsOutOfCoverage`), col suo commento: *"un silenzio non e' una risposta
+   rassicurante: e' un silenzio"*. Se serva un ripiego fuori Italia - RainViewer
+   e' gia' sondato - si decide coi dati in mano, non adesso.
+2. **CC BY-SA 4.0 vuole l'attribuzione a schermo**, sotto la mappa, non in un
+   elenco di licenze che nessuno apre: "Dati radar: Dipartimento della
+   Protezione Civile".
+
+Quando si fara', il radar va **dentro Sala III "La pioggia"** - mappa sopra,
+barre delle dodici ore sotto - cosi' la colonna resta di sette icone e non
+nasce una schermata per un dato che parla della stessa cosa.
