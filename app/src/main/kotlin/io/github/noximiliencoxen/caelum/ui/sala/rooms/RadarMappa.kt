@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -167,6 +168,12 @@ fun MappaRadar(
             style = SalaType.rowNote,
             color = palette.inkFaint,
             textAlign = TextAlign.Start,
+            // Tre righe e non una di piu'. L'indizio di un guasto e' utile a
+            // chi lo riporta, ma non vale mezza schermata: nello scatto della
+            // CI la pagina d'errore del DPC ne occupava dieci e spingeva le
+            // dodici colonne fuori dalla vista.
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         )
     }
