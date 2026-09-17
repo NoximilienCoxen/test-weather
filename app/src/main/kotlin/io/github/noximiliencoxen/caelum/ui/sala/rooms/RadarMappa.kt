@@ -122,6 +122,8 @@ fun MappaRadar(
                 text = when (stato) {
                     is StatoRadar.Pronto -> ORARIO.format(stato.prodotto.istante.atZone(ZoneId.systemDefault()))
                     StatoRadar.InCorso -> "in arrivo"
+                    StatoRadar.FuoriCopertura -> "nessun radar"
+                    is StatoRadar.FuoriOrario -> "niente per quest'ora"
                     is StatoRadar.NonDisponibile -> "non disponibile"
                 },
                 style = SalaType.rowNote,
@@ -156,7 +158,24 @@ fun MappaRadar(
                 is StatoRadar.NonDisponibile ->
                     stato.indizio?.let { "Il radar non ha risposto come atteso: $it" }
                         ?: "Il radar non ha risposto."
-                StatoRadar.InCorso -> "Si sta chiedendo l'ultimo fotogramma."
+                StatoRadar.InCorso -> "Si sta chiedendo il fotogramma di quest'ora."
+                // **Nessun radar, che non e' "non piove".** Si accende solo
+                // quando la maschera di copertura dice che li' non guarda
+                // nessuno: prima questa frase stava sempre sotto la carta, e
+                // un avviso che compare sempre non e' un avviso, e' una
+                // cornice.
+                StatoRadar.FuoriCopertura ->
+                    "Su ${place.name} non guarda nessun radar: la carta resta vuota, " +
+                        "e non vuol dire che non piove."
+                // **La frase piu' importante di questa schermata.** Un radar
+                // misura, e quello che non ha misurato non lo sa: due ore di
+                // storico contro una barra che ne offre ventiquattro. Prima
+                // qui compariva il fotogramma piu' recente sotto qualunque
+                // ora, e sembrava una fotografia appesa.
+                is StatoRadar.FuoriOrario -> stato.ultimo?.let {
+                    "Il radar misura, non prevede: l'ultima fotografia e' delle " +
+                        "${ORARIO.format(it.atZone(ZoneId.systemDefault()))}."
+                } ?: "Il radar misura, non prevede: per quest'ora non c'e' una fotografia."
                 // Il nome della fonte lo porta il fotogramma, non lo sa
                 // questa schermata: scritto qui, resterebbe quello di prima il
                 // giorno in cui la fonte cambia.

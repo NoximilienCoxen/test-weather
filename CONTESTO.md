@@ -4802,3 +4802,88 @@ sopra Forli' mentre disegnava la pioggia che cade su Forli'.
 Con questa risposta lo stato `FuoriCopertura` puo' tornare, e tornare
 **sapendo**: si scarica la tessera di copertura della propria localita', si
 guarda il pixel, e se e' opaco li' non guarda nessuno.
+
+## 19. Il radar segue l'ora, o dice che non puo'
+
+Il radar di RainViewer funziona: dal telefono si vede la pioggia vera, con le
+coste allineate e il puntino al posto giusto. E chi l'ha guardato ha visto
+subito il difetto che c'era sotto.
+
+> È piuttosto inutile questo radar in questo modo. È una fotografia fissa che
+> non cambia. L'orario è impostato sulle 22 ma l'orario fotografato è l'attuale.
+
+Aveva ragione due volte.
+
+### 19.1 Il fotogramma piu' recente sotto qualunque ora
+
+La carta mostrava **sempre** l'ultimo fotogramma. La barra diceva le ventidue e
+la carta era delle quindici e quaranta - ferma, uguale a se stessa a ogni ora
+della giornata. Da fuori sembra una fotografia appesa; da dentro e' peggio,
+perche' invita a leggere quella pioggia come se fosse delle ventidue.
+
+E' lo stesso difetto di 13-ter - il giorno scelto che si fermava a Sala I - e
+della galleria che ritraeva l'Ingresso in ogni scatto: **un dato vero, messo
+dove non e' vero**.
+
+Adesso `RadarIndice.vicinoA` cerca il fotogramma piu' vicino all'ora scelta e
+lo restituisce **solo se e' abbastanza vicino**. Il "se" e' tutta la funzione:
+senza, il piu' vicino e' sempre il piu' recente.
+
+### 19.2 Il limite che nessuna interfaccia puo' aggirare
+
+**Un radar misura, e quello che non ha misurato non lo sa.** RainViewer tiene
+circa due ore di storico - dodici fotogrammi a dieci minuti l'uno dall'altro -
+contro una barra che offre ventiquattro ore, spesso di un giorno futuro.
+
+Quindi per quasi tutte le ore della giornata la risposta onesta e' "non c'e'
+una fotografia di quel momento", e c'e' uno stato apposta, `FuoriOrario`, che
+sotto la carta scrive:
+
+> Il radar misura, non prevede: l'ultima fotografia è delle 22:30.
+
+Non "non lo so": **"si sa fino a quest'ora"**, che e' un'informazione.
+
+In pratica la carta risponde per l'ora corrente e per quella prima, e a
+scorrere si vedono due o tre fotogrammi diversi. Non e' l'animazione che un
+radar meriterebbe - per quella servirebbe una scala a dieci minuti, che questa
+barra non ha - ma e' tutto quello che i dati permettono di dire senza mentire.
+
+La tolleranza e' mezz'ora: i fotogrammi distano dieci minuti e la barra sceglie
+ore intere, quindi mezz'ora copre l'ora corrente e quella prima. Allargarla
+vorrebbe dire far passare per "le venti" una pioggia delle ventuno e mezza.
+
+### 19.3 Come si scarica, scorrendo
+
+Tre regole, e tutte e tre esistono per lo stesso motivo - chi scorre la barra
+passa per **ogni** ora in mezzo:
+
+1. **L'indice si chiede una volta per localita'.** Settecento byte che
+   descrivono le ultime due ore: rifarlo a ogni scatto del dito sarebbe una
+   richiesta per niente.
+2. **Il fotogramma in volo si annulla** quando se ne chiede un altro. Senza,
+   partirebbe una decina di scaricamenti di cui interessa solo l'ultimo, e
+   arriverebbero in ordine sparso facendo lampeggiare la carta con fotogrammi
+   gia' superati.
+3. **Quattro fotogrammi restano in tasca.** Chi scorre torna indietro di un'ora
+   o due, non di dodici; sono i byte compressi delle tessere, un centinaio di
+   kilobyte l'uno.
+
+### 19.4 "Fuori copertura" e' tornato, e adesso sa quello che dice
+
+Con la maschera di copertura letta **invertita** (18.5), la domanda "qui guarda
+qualcuno?" ha di nuovo una risposta. Si scarica la tessera di copertura della
+localita', si legge il pixel di casa, e se e' opaco li' non guarda nessun radar.
+
+Due cose che sembrano dettagli e non lo sono:
+
+- si guarda il **pixel**, non la tessera: una tessera copre duecento
+  chilometri, e la domanda che interessa e' quella del proprio paese;
+- `null` non e' `false`. "Non si e' potuto guardare" - rete giu', tessera
+  illeggibile - non e' "non c'e' copertura": col dubbio si prova a scaricare
+  lo stesso, perche' dichiarare una copertura assente per colpa di una
+  richiesta caduta e' peggio di una carta vuota.
+
+E la frase sull'attribuzione si e' accorciata. Prima portava dietro sempre
+l'avvertenza che una carta vuota non vuol dire che non piove; adesso
+quell'avvertenza si accende **solo quando e' vera**. Un avviso che compare
+sempre non e' un avviso, e' una cornice.
