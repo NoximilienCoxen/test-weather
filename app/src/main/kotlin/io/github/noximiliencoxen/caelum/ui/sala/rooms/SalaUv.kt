@@ -98,12 +98,28 @@ fun SalaUvScreen(
                             .clip(CircleShape)
                             .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
                     )
-                    Text(
-                        text = "%02d".format(ore[indice].time.hour),
-                        style = SalaType.microLabel,
-                        color = if (indice == scelta) palette.accent else palette.inkFaint,
-                        maxLines = 1,
-                    )
+                    // **Un'etichetta ogni due ore, e prima erano tutte e
+                    // sedici.** Sedici colonne in duecento punti fanno dieci
+                    // punti a colonna, e "05" ne vuole dodici: il risultato
+                    // era una fila di "0" - "0 0 0 0 0 10 11 12" - dove le
+                    // prime cinque ore erano tutte tagliate al primo carattere
+                    // e l'ultima, "20", pure. Una scala oraria illeggibile
+                    // sotto un grafico che si tocca per scegliere l'ora.
+                    //
+                    // Le colonne restano sedici: sono i dati. A sparire sono
+                    // le etichette dispari, che una scala non ha bisogno di
+                    // numerare ogni passo. **L'ora scelta fa eccezione**
+                    // sempre, perche' quella non e' una tacca della scala: e'
+                    // la risposta alla domanda "dove sono".
+                    val ora = ore[indice].time.hour
+                    if (ora % 2 == 0 || indice == scelta) {
+                        Text(
+                            text = "%02d".format(ora),
+                            style = SalaType.microLabel,
+                            color = if (indice == scelta) palette.accent else palette.inkFaint,
+                            maxLines = 1,
+                        )
+                    }
                 }
             }
         }
@@ -123,7 +139,7 @@ fun SalaUvScreen(
                 valore = picco?.let { "%02d:00".format(ore[it].time.hour) } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = "ESPOSIZIONE", valore = esposizione(corrente), palette = palette)
+            CellaValore(etichetta = "AL SOLE", valore = esposizione(corrente), palette = palette)
             CellaValore(
                 etichetta = "OZONO",
                 valore = ozono?.let { "${it.roundToInt()} µg/m³" } ?: "--",

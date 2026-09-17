@@ -4130,6 +4130,42 @@ E' la stessa lezione di 13-sexies in un'altra forma: si era corretto **un
 percorso** e si era creduto di aver corretto **il problema**. I percorsi erano
 due.
 
+### 15.2-ter Tre etichette tagliate, e nessuna sembrava tagliata
+
+Cercando dove finiva "PROBABILITÀ" ne sono uscite altre due, e tutte e tre per
+lo stesso motivo: `maxLines = 1` **senza** `overflow`, che in Compose vuol dire
+tagliare netto.
+
+| dove | diceva | doveva dire |
+| --- | --- | --- |
+| Sala III, prima cella | `PROBABILI` | PROBABILITÀ |
+| Sala VII, seconda cella | `ESPOSIZION` | ESPOSIZIONE |
+| Sala VII, scala delle ore | `0 0 0 0 0 10 11 12 ... 19 2` | 05 06 07 ... 19 20 |
+
+La terza e' la peggiore, ed e' quella nominata nella segnalazione. Sedici
+colonne in duecento punti fanno dieci punti a colonna, e "05" ne vuole dodici:
+le prime cinque ore erano tagliate al primo carattere e l'ultima pure. Non e'
+un problema di contrasto - e' una scala oraria che non c'era, sotto un grafico
+che si tocca per scegliere l'ora.
+
+**Il motivo per cui erano li' da mesi e' il taglio netto.** Una parola troncata
+senza puntini non sembra rotta, sembra un'abbreviazione voluta: "PROBABILI" si
+legge come una scelta di chi ha disegnato, e nessuno va a controllare le scelte
+altrui. Con i puntini sarebbe stato ovvio al primo scatto.
+
+Quindi tre cose, in ordine di durata:
+
+1. `CellaValore` mette `TextOverflow.Ellipsis` sull'etichetta. **E' questa la
+   correzione vera**: da adesso in poi un'etichetta che non ci sta si vede.
+2. Le due etichette lunghe scendono sotto gli otto caratteri della regola gia'
+   scritta nella sezione 13: `PROBABILITÀ` diventa `PROBAB.` - un'abbreviazione
+   col punto, che si legge come voluta perche' lo e' - ed `ESPOSIZIONE` diventa
+   `AL SOLE`, che accanto a "~37 min" dice la stessa cosa in meno spazio.
+3. La scala di Sala VII numera **un'ora su due**. Le colonne restano sedici,
+   perche' sono i dati; a sparire sono le tacche dispari, che una scala non ha
+   bisogno di numerare tutte. L'ora scelta fa eccezione sempre: quella non e'
+   una tacca, e' la risposta a "dove sono".
+
 ### 15.3 La colonna di destra si sbagliava col pollice
 
 Sette dischi da trentaquattro punti, sei di distanza: **quaranta punti di

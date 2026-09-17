@@ -132,7 +132,7 @@ fun SalaPioggiaScreen(
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(
-                etichetta = "PROBABILITÀ",
+                etichetta = "PROBAB.",
                 valore = oraScelta?.precipProbability?.let { "$it %" } ?: "--",
                 palette = palette,
             )

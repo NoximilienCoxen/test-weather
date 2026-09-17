@@ -541,18 +541,16 @@ object SalaType {
      * troncavano: "PROBABILITÀ" diventava "PROBABIL", "INTENSITÀ" diventava
      * "INTENSIT". Una parola tagliata si legge peggio di una parola piccola.
      *
-     * Il respiro se l'e' preso da due parti, e ci sono voluti due giri di CI
-     * per trovarle tutte e due: `CellaValore` ha ridotto il proprio margine
-     * interno, e **la spaziatura fra le lettere e' scesa da un decimo di em a
-     * sessantacinque millesimi**. Con il solo margine "PROBABILITÀ" arrivava a
-     * "PROBABILIT" - mancava l'accento, e un accento mancante in una parola
-     * tutta maiuscola non si legge come un errore, si legge come una parola
-     * diversa.
+     * Il respiro se l'e' preso da due parti: `CellaValore` ha ridotto il
+     * proprio margine interno, e la spaziatura fra le lettere e' scesa da un
+     * decimo di em a sessantacinque millesimi. **Non e' bastato lo stesso**, e
+     * dopo tre giri di CI "PROBABILITÀ" e' diventata "PROBAB.": nove caratteri
+     * in un terzo di pannello sono il tetto, e undici non ci stanno per quanto
+     * si stringa.
      *
-     * Undici caratteri per un terzo di pannello e' il caso limite di tutta
-     * l'app, e adesso ci sta. Chi aggiunge una cella con un'etichetta piu'
-     * lunga la trovera' troncata, e la strada e' accorciare la parola: qui non
-     * c'e' piu' niente da stringere.
+     * Chi aggiunge un'etichetta piu' lunga la vedra' finire coi puntini -
+     * `CellaValore` mette `Ellipsis` apposta - e la strada sara' accorciare la
+     * parola, non stringere ancora: qui non c'e' rimasto niente da stringere.
      *
      * La leggibilita' di queste righe arriva percio' dal contrasto e non dalla
      * taglia: `inkSoft` e `inkFaint` passano da `readableOn`, e [microLabel] -

@@ -120,7 +120,20 @@ fun RowScope.CellaValore(
             .padding(horizontal = 10.dp, vertical = 11.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        Text(text = etichetta, style = SalaType.sectionLabel, color = palette.inkFaint, maxLines = 1)
+        // **I puntini sono la cosa piu' importante di questa riga.** Senza,
+        // `maxLines = 1` tagliava e basta: "PROBABILITÀ" diventava
+        // "PROBABILI", "ESPOSIZIONE" diventava "ESPOSIZION", e nessuno se ne
+        // accorgeva **perche' una parola tagliata netta sembra
+        // un'abbreviazione voluta**. Sono rimaste cosi' per mesi, in scatti
+        // che qualcuno ha guardato. Coi puntini un'etichetta che non ci sta e'
+        // visibilmente rotta, e chi la vede la accorcia.
+        Text(
+            text = etichetta,
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
         Text(
             text = valore,
             style = SalaType.value,
