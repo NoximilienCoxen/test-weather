@@ -134,7 +134,7 @@ class RadarDpcRepository(private val place: Place) {
             val riquadro = riquadroDichiarato(tipo) ?: throw Illeggibile(
                 "immagine ${risposta.byte.size} byte senza riquadro dichiarato",
             )
-            return RadarProdotto(Instant.ofEpochMilli(istanteMs), risposta.byte, riquadro)
+            return RadarProdotto(Instant.ofEpochMilli(istanteMs), risposta.byte, riquadro, ATTRIBUZIONE)
         }
 
         val testo = risposta.testo
@@ -143,7 +143,7 @@ class RadarDpcRepository(private val place: Place) {
         val png = RadarForma.cercaImmagine(albero) ?: throw Illeggibile(RadarForma.riassunto(testo))
         val riquadro = RadarForma.cercaBbox(albero) ?: riquadroDichiarato(tipo)
             ?: throw Illeggibile("immagine trovata, riquadro no: ${RadarForma.riassunto(testo)}")
-        return RadarProdotto(Instant.ofEpochMilli(istanteMs), png, riquadro)
+        return RadarProdotto(Instant.ofEpochMilli(istanteMs), png, riquadro, ATTRIBUZIONE)
     }
 
     /**
@@ -166,6 +166,8 @@ class RadarDpcRepository(private val place: Place) {
 
     private companion object {
         const val BASE = "https://radar-api.protezionecivile.it/wide/product"
+
+        const val ATTRIBUZIONE = "Dati radar: Dipartimento della Protezione Civile, CC BY-SA 4.0."
 
         /**
          * Dove arriva il radar italiano, a spanne.
@@ -358,11 +360,25 @@ internal object RadarForma {
     }
 }
 
-/** Un fotogramma del radar: quando, cosa, e sopra quale pezzo di mondo. */
+/** Un fotogramma del radar: quando, cosa, sopra quale pezzo di mondo, e di chi e'. */
 class RadarProdotto(
     val istante: Instant,
     val png: ByteArray,
     val riquadro: RadarRiquadro,
+    /**
+     * La riga da scrivere **sotto la carta**.
+     *
+     * Viaggia col fotogramma e non sta scritta nell'interfaccia, ed e' una
+     * differenza che conta: un'attribuzione scritta a mano dove si disegna
+     * resta quella di prima il giorno in cui la fonte cambia, e il nome
+     * sbagliato sopra i dati di un altro e' esattamente la cosa che questo
+     * progetto ha rifiutato di fare quando si e' trattato di spacciare
+     * RainViewer per Radar-DPC. Chi porta i dati porta anche il proprio nome.
+     *
+     * Per il DPC la licenza e' CC BY-SA 4.0, che l'attribuzione a schermo la
+     * **chiede**: non e' cortesia, e' la condizione d'uso.
+     */
+    val attribuzione: String,
 )
 
 /** Gli estremi geografici di un'immagine, in gradi. */
