@@ -12,6 +12,8 @@ import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.RadarDpcRepository
+import io.github.noximiliencoxen.caelum.data.StatoRadar
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
@@ -134,6 +136,16 @@ data class UiState(
      * rassicurante: e' un silenzio**, e va detto quale dei due e'.
      */
     val alertsOutOfCoverage: Boolean = false,
+    /**
+     * L'ultimo fotogramma del radar, o il motivo per cui non c'e'.
+     *
+     * Terzo arricchimento dopo [air] e [alerts], e come quelli sta su un altro
+     * host e arriva dopo: se non arriva, "La pioggia" continua a mostrare le
+     * dodici colonne che aveva gia'. E' uno stato e non un paio di booleani
+     * perche' i casi si escludono davvero - un fotogramma pronto non e' anche
+     * fuori copertura - e due booleani permetterebbero di scriverne due veri.
+     */
+    val radar: StatoRadar = StatoRadar.InCorso,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -525,6 +537,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     alerts = emptyList(),
                     alertsUnavailable = false,
                     alertsOutOfCoverage = false,
+                    // Un fotogramma e' una fotografia di **un posto**, e
+                    // vale ancora meno dell'aria fuori da quello: la
+                    // pioggia sopra Forli' lasciata sotto il nome di Bergen
+                    // sarebbe una mappa della citta' sbagliata, e una mappa
+                    // sbagliata si crede piu' di un numero sbagliato.
+                    radar = StatoRadar.InCorso,
                 )
             }
         }
@@ -596,6 +614,26 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // sotto il nome di Bergen, e nessun modo di
                         // accorgersene: il dato non porta con se' il posto da
                         // cui viene. Figlio del job giusto, si annulla con lui.
+                        // Il radar: stessa regola dei due qui sotto -
+                        // `launch` figlio del job di caricamento, non di
+                        // `viewModelScope`, perche' una mappa che arriva in
+                        // ritardo dalla citta' precedente si posa sul nome
+                        // nuovo e non c'e' modo di accorgersene.
+                        launch {
+                            RadarDpcRepository(place).load()
+                                .onSuccess { prodotto ->
+                                    _state.update { it.copy(radar = StatoRadar.Pronto(prodotto)) }
+                                }
+                                .onFailure { guasto ->
+                                    val stato = when (guasto) {
+                                        is RadarDpcRepository.OutOfCoverage -> StatoRadar.FuoriCopertura
+                                        is RadarDpcRepository.Illeggibile -> StatoRadar.NonDisponibile(guasto.indizio)
+                                        else -> StatoRadar.NonDisponibile(guasto.message?.take(160))
+                                    }
+                                    _state.update { it.copy(radar = stato) }
+                                }
+                        }
+
                         launch {
                             AirQualityRepository(place).load()
                                 .onSuccess { air ->
