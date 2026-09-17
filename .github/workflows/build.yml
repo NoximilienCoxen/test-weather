@@ -308,6 +308,33 @@ jobs:
             done
 
             echo
+            echo "=== 4-quater. La copertura, al livello che l'app userebbe ==="
+            # La sezione qui sopra ha trovato che un livello di copertura
+            # **esiste**: `/v2/coverage/0/...` torna un PNG. Prima di
+            # costruirci sopra lo stato "fuori copertura" servono due risposte
+            # che quella prova non da':
+            #   - e' servito al livello 7, quello che l'app chiede? I livelli
+            #     di copertura spesso si fermano molto prima.
+            #   - una tessera dove nessun radar guarda e' davvero **diversa**
+            #     da una dove guarda? Se sono uguali, il livello non distingue
+            #     niente e non serve a niente.
+            # Forli' ha radar. Nairobi, per quanto ne sappiamo, no: se le due
+            # tessere pesano uguale, la risposta e' che non si puo' sapere.
+            for COV in \
+              "7/68/46  Forli" \
+              "6/34/23  Forli-piu-grosso" \
+              "7/77/64  Nairobi" \
+              "4/8/5    Europa-intera"; do
+              set -- $COV
+              echo "--- copertura $1 ($2)"
+              curl -sSL --max-time 20 -o /tmp/ciout/_c.png \
+                -w "    HTTP %{http_code} byte=%{size_download}\n" \
+                "https://tilecache.rainviewer.com/v2/coverage/0/256/$1/0/0_0.png"
+              echo "    tipo: $(file -b --mime-type /tmp/ciout/_c.png 2>/dev/null)"
+              rm -f /tmp/ciout/_c.png
+            done
+
+            echo
             echo "=== 4-ter. Una tessera vera della finestra di Forli' ==="
             # Non la tessera 0/0/0 del mondo intero, che dice solo "il servizio
             # risponde": la tessera che l'app chiederebbe davvero, al livello
