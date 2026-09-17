@@ -3732,3 +3732,38 @@ perche' decidono la forma della schermata:
 Quando si fara', il radar va **dentro Sala III "La pioggia"** - mappa sopra,
 barre delle dodici ore sotto - cosi' la colonna resta di sette icone e non
 nasce una schermata per un dato che parla della stessa cosa.
+
+
+### 13-sexies. Un giro rosso che non era del codice
+
+Il 17 settembre 2026 `test` e `build` sono caduti insieme, e la diagnosi e'
+valsa piu' della correzione: **`compilazione/errori.txt` era vuoto, le
+annotazioni non avevano nessuna riga `failure`, e non esisteva nessun
+`/tmp/build.log`**. Tre assenze che insieme dicono una cosa sola - non si e'
+arrivati a compilare.
+
+L'elenco dei passi lo conferma in un colpo d'occhio, e si chiede all'API senza
+toccare i log grezzi (che restano negati da qui):
+
+```bash
+curl -s ".../actions/runs/<RUN>/jobs" | python3 -c "import json,sys;
+[print(j['name'], s['number'], s['name'], s['conclusion'])
+ for j in json.load(sys.stdin)['jobs'] for s in j['steps']
+ if s['conclusion'] not in ('success','skipped')]"
+```
+
+Il colpevole era il passo 5 in tutti e due i giri: `android-actions/setup-android@v3`.
+GitHub ha cominciato a forzare su **Node 24** le action che dichiarano Node 20,
+e quella dichiara `using: node20`; la `v4` dichiara `node24`. Ha funzionato il
+16 e non il 17, senza che nel repository cambiasse niente di rilevante.
+
+**La lezione e' sul metodo, non sull'azione.** Un giro rosso subito dopo il
+proprio push si legge come "ho rotto qualcosa", ed e' la lettura sbagliata piu'
+facile da fare: il riflesso giusto e' guardare **quale passo** e' caduto prima di
+guardare cosa si e' scritto. Un errore di compilazione lascia righe `e:`; qui non
+ce n'era nemmeno una, e quel vuoto era l'indizio.
+
+Lo stesso avviso di deprecazione nomina anche `actions/checkout@v4`,
+`actions/upload-artifact@v4` e `gradle/actions/setup-gradle@v4`: oggi reggono.
+Il giorno che non reggeranno, il sintomo sara' identico a questo - rosso senza
+errori - e questa nota e' qui per far risparmiare il giro di diagnosi.

@@ -391,7 +391,16 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: android-actions/setup-android@v3
+      # **v4 e non v3, e non e' un aggiornamento di routine.** Il 17 settembre
+      # 2026 i due giri sono caduti al quinto passo, prima di compilare una
+      # riga: `errori.txt` vuoto, nessuna annotazione, nessun log di build.
+      # GitHub ha cominciato a forzare su Node 24 le action che dichiarano
+      # Node 20, e `setup-android@v3` dichiara `using: node20`; la v4 dichiara
+      # `node24`. Lo stesso avviso nomina checkout, upload-artifact e
+      # setup-gradle: quelle reggono ancora, e il giorno che non reggeranno il
+      # sintomo sara' identico - un guasto che non somiglia a un guasto del
+      # codice perche' non lo e'.
+      - uses: android-actions/setup-android@v4
 
       - name: Componenti SDK
         run: |
@@ -527,7 +536,16 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: android-actions/setup-android@v3
+      # **v4 e non v3, e non e' un aggiornamento di routine.** Il 17 settembre
+      # 2026 i due giri sono caduti al quinto passo, prima di compilare una
+      # riga: `errori.txt` vuoto, nessuna annotazione, nessun log di build.
+      # GitHub ha cominciato a forzare su Node 24 le action che dichiarano
+      # Node 20, e `setup-android@v3` dichiara `using: node20`; la v4 dichiara
+      # `node24`. Lo stesso avviso nomina checkout, upload-artifact e
+      # setup-gradle: quelle reggono ancora, e il giorno che non reggeranno il
+      # sintomo sara' identico - un guasto che non somiglia a un guasto del
+      # codice perche' non lo e'.
+      - uses: android-actions/setup-android@v4
 
       - name: Componenti SDK
         run: |
