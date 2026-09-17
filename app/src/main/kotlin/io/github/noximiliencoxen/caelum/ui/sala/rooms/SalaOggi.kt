@@ -140,7 +140,7 @@ fun SalaOggiScreen(
                 color = palette.ink,
             )
             Didascalia(
-                salaBody(condizione),
+                salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )

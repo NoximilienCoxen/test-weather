@@ -67,7 +67,23 @@ private val SalaBodies: Map<SalaCondition, String> = mapOf(
 fun salaTitle(condition: SalaCondition, phase: SalaPhase): String =
     SalaTitles.getValue(condition).getValue(phase)
 
-fun salaBody(condition: SalaCondition): String = SalaBodies.getValue(condition)
+/**
+ * I corpi che una fase sola smentirebbe.
+ *
+ * Il corpo di NUVOLOSO parlava del sole coperto "a intervalli" anche alle due
+ * di notte, sotto un titolo che diceva *Notte coperta*. Vale qui la stessa
+ * ragione gia' scritta sopra per quel titolo: una didascalia contraddetta da
+ * cio' che si ha sotto gli occhi toglie credito anche alle altre cinque. La
+ * tabella resta per condizione — e' li' che i corpi si somigliano — e questa
+ * elenca le poche caselle in cui la fase cambia le parole.
+ */
+private val SalaBodiesPerFase: Map<Pair<SalaCondition, SalaPhase>, String> = mapOf(
+    (SalaCondition.NUVOLOSO to SalaPhase.NOTTE) to
+        "Nubi medie che scoprono le stelle a tratti. Non portano pioggia, ma trattengono il calore del giorno.",
+)
+
+fun salaBody(condition: SalaCondition, phase: SalaPhase): String =
+    SalaBodiesPerFase[condition to phase] ?: SalaBodies.getValue(condition)
 
 fun SalaCondition.label(): String = when (this) {
     SalaCondition.SERENO -> "sereno"
