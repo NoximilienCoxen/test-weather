@@ -4779,6 +4779,26 @@ di copertura spesso si fermano molto prima - ne' se una tessera dove nessun
 radar guarda sia davvero **diversa** da una dove guarda. Se fossero uguali, il
 livello non distinguerebbe niente.
 
-Quindi la sonda adesso chiede anche quelle due cose, su Forli' che il radar ce
-l'ha e su Nairobi che probabilmente no. Il codice arrivera' **dopo** la
-risposta, che e' l'unica lezione che questa sezione aveva da dare.
+Quindi la sonda ha chiesto anche quelle due cose, e la risposta e' arrivata **al
+contrario di come la si aspettava**:
+
+| dove | alfa del pixel |
+| --- | --- |
+| Forli', che il radar ce l'ha | **0** |
+| Kansas, la rete radar piu' fitta del mondo | **0** |
+| Nairobi | 255 |
+| in mezzo al Pacifico | 255 |
+| in mezzo al Sahara | 255 |
+
+Quel livello non disegna il coperto: disegna il **non** coperto. E'
+l'ombreggiatura che la mappa di RainViewer stende sulle zone dove nessuno
+guarda, e la si usa **invertita** - trasparente vuol dire che un radar c'e'.
+
+Cinque punti su cinque, e due sono al di la' di ogni dubbio in tutte e due le
+direzioni. Il primo giro si era fermato a due campioni e li aveva letti al
+rovescio; se ci si fosse fidati, la sala avrebbe scritto "fuori copertura"
+sopra Forli' mentre disegnava la pioggia che cade su Forli'.
+
+Con questa risposta lo stato `FuoriCopertura` puo' tornare, e tornare
+**sapendo**: si scarica la tessera di copertura della propria localita', si
+guarda il pixel, e se e' opaco li' non guarda nessuno.
