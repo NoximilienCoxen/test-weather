@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.data
 
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -69,43 +71,98 @@ class RadarRainViewerRepository(private val place: Place) {
 
     class SenzaFotogrammi : Exception("RainViewer non ha fotogrammi recenti")
 
-    suspend fun load(): Result<RadarProdotto> = withContext(Dispatchers.IO) {
+    /**
+     * L'elenco dei fotogrammi disponibili, e da che host prenderli.
+     *
+     * **Si chiede una volta e si tiene**, invece di rifarlo a ogni ora scelta:
+     * e' un JSON da settecento byte che descrive le ultime due ore, e chi
+     * scorre la barra avanti e indietro non deve pagare una richiesta a ogni
+     * scatto del dito.
+     */
+    suspend fun indice(): Result<RadarIndice> = withContext(Dispatchers.IO) {
         runCatching {
-            val indice = Json { ignoreUnknownKeys = true }
+            val dto = Json { ignoreUnknownKeys = true }
                 .decodeFromString<IndiceDto>(httpGet(INDICE, fonte = "RainViewer", timeoutMs = 8_000))
+            val host = dto.host.orEmpty().ifEmpty { throw SenzaFotogrammi() }
+            // Si prende il **misurato** e non il `nowcast`, che e' la
+            // previsione a brevissimo: mescolarli senza dire quale sia quale
+            // sarebbe la bugia di un'allerta calcolata spacciata per ufficiale.
+            val fotogrammi = dto.radar?.past.orEmpty()
+                .map { RadarFotogramma(Instant.ofEpochSecond(it.time), it.path) }
+            if (fotogrammi.isEmpty()) throw SenzaFotogrammi()
+            RadarIndice(host, fotogrammi)
+        }
+    }
 
-            // L'ultimo dei passati, che e' il piu' recente. Il `nowcast` -
-            // la previsione a brevissimo - nella cattura era vuoto, e
-            // mostrarlo insieme al misurato senza dire quale sia quale
-            // sarebbe la stessa bugia di un'allerta calcolata spacciata per
-            // ufficiale: si prende il misurato, e basta.
-            val fotogramma = indice.radar?.past?.lastOrNull() ?: throw SenzaFotogrammi()
-            val host = indice.host.orEmpty().ifEmpty { throw SenzaFotogrammi() }
-
+    /**
+     * Le tessere di **un** fotogramma, quelle che coprono la finestra.
+     *
+     * In parallelo: sono una manciata di immagini da pochi kilobyte, e in fila
+     * costerebbero la somma dei tempi di andata e ritorno per niente.
+     * `coroutineScope` le lega a questa chiamata - se chi aspetta se ne va, se
+     * ne vanno anche loro.
+     */
+    suspend fun fotogramma(
+        indice: RadarIndice,
+        scelto: RadarFotogramma,
+    ): Result<RadarProdotto> = withContext(Dispatchers.IO) {
+        runCatching {
             val quali = RadarTessere.coprono(
                 RadarTessere.finestraDaChiedere(place.latitude, place.longitude),
             )
-            // In parallelo: sono una manciata di immagini da pochi kilobyte, e
-            // in fila costerebbero la somma dei tempi di andata e ritorno per
-            // niente. `coroutineScope` le lega a questa chiamata: se chi
-            // aspetta se ne va, se ne vanno anche loro.
             val tessere = coroutineScope {
                 quali.map { (colonna, riga) ->
                     async {
-                        val url = "$host${fotogramma.path}/${RadarTessere.LATO}" +
+                        val url = "${indice.host}${scelto.percorso}/${RadarTessere.LATO}" +
                             "/${RadarTessere.ZOOM}/$colonna/$riga/$COLORE/${MORBIDO}_$NEVE.png"
                         val risposta = httpGetBytes(url, fonte = "RainViewer", timeoutMs = 12_000)
                         RadarTessera(risposta.byte, RadarTessere.riquadroDi(colonna, riga))
                     }
                 }.awaitAll()
             }
-
             RadarProdotto(
-                istante = Instant.ofEpochSecond(fotogramma.time),
+                istante = scelto.istante,
                 tessere = tessere,
                 attribuzione = ATTRIBUZIONE,
             )
         }
+    }
+
+    /**
+     * Se in questo posto un radar ci guarda.
+     *
+     * **La maschera si legge al contrario, e non e' un dettaglio.** Quel
+     * livello non disegna dove i radar arrivano: disegna dove **non**
+     * arrivano - e' l'ombreggiatura che la mappa di RainViewer stende sulle
+     * zone cieche. Un pixel opaco vuol dire "qui non guarda nessuno".
+     *
+     * Letta al dritto, l'app scriverebbe "fuori copertura" sopra Forli' mentre
+     * disegna la pioggia che cade su Forli': il primo giro della sonda si era
+     * fermato a due campioni e li aveva letti cosi'. La conferma e' arrivata
+     * dal Kansas, che ha la rete radar piu' fitta del mondo e legge alfa zero,
+     * e dal mezzo del Pacifico, che legge duecentocinquantacinque.
+     *
+     * Torna `null` quando non si e' potuto sapere - rete giu', tessera
+     * illeggibile. `null` non e' "fuori copertura": e' "non lo so", e chi
+     * chiama non deve confonderli.
+     */
+    suspend fun copertura(indice: RadarIndice): Boolean? = withContext(Dispatchers.IO) {
+        runCatching {
+            val colonna = RadarTessere.colonna(place.longitude)
+            val riga = RadarTessere.riga(place.latitude)
+            val url = "${indice.host}/v2/coverage/0/${RadarTessere.LATO}" +
+                "/${RadarTessere.ZOOM}/$colonna/$riga/0/0_0.png"
+            val byte = httpGetBytes(url, fonte = "RainViewer", timeoutMs = 8_000).byte
+            val mappa = BitmapFactory.decodeByteArray(byte, 0, byte.size) ?: return@runCatching null
+            val (x, y) = RadarTessere.pixelDentroLaTessera(
+                place.latitude,
+                place.longitude,
+                RadarTessere.LATO,
+            )
+            val alfa = Color.alpha(mappa.getPixel(x.coerceIn(0, mappa.width - 1), y.coerceIn(0, mappa.height - 1)))
+            mappa.recycle()
+            alfa == 0
+        }.getOrNull()
     }
 
     @Serializable
@@ -125,14 +182,15 @@ class RadarRainViewerRepository(private val place: Place) {
          *
          * RainViewer per l'uso gratuito della sua API chiede di essere citato,
          * ed e' giusto a prescindere da cosa chieda: chi porta i dati porta
-         * anche il proprio nome. La seconda frase non e' cortesia ne'
-         * prudenza legale - e' l'unica cosa che impedisce a una carta bianca
-         * di essere letta come "non piove" dove invece vuol dire "qui non
-         * guarda nessuno".
+         * anche il proprio nome.
+         *
+         * Era piu' lunga: portava dietro l'avvertenza che una carta vuota non
+         * vuol dire che non piove. Adesso quell'avvertenza ha un posto
+         * migliore - `StatoRadar.FuoriCopertura`, che si accende **solo quando
+         * e' vera** invece di stare scritta sempre. Un avviso che compare
+         * sempre non e' un avviso, e' una cornice.
          */
-        const val ATTRIBUZIONE =
-            "Radar: RainViewer. Dove non arriva un radar la carta resta vuota: " +
-                "non vuol dire che non piove."
+        const val ATTRIBUZIONE = "Radar: RainViewer."
 
         /** La tavolozza delle intensita'. Zero e' quella originale di NOAA. */
         const val COLORE = 4

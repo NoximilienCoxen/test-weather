@@ -4802,3 +4802,191 @@ sopra Forli' mentre disegnava la pioggia che cade su Forli'.
 Con questa risposta lo stato `FuoriCopertura` puo' tornare, e tornare
 **sapendo**: si scarica la tessera di copertura della propria localita', si
 guarda il pixel, e se e' opaco li' non guarda nessuno.
+
+## 19. Il radar segue l'ora, o dice che non puo'
+
+Il radar di RainViewer funziona: dal telefono si vede la pioggia vera, con le
+coste allineate e il puntino al posto giusto. E chi l'ha guardato ha visto
+subito il difetto che c'era sotto.
+
+> È piuttosto inutile questo radar in questo modo. È una fotografia fissa che
+> non cambia. L'orario è impostato sulle 22 ma l'orario fotografato è l'attuale.
+
+Aveva ragione due volte.
+
+### 19.1 Il fotogramma piu' recente sotto qualunque ora
+
+La carta mostrava **sempre** l'ultimo fotogramma. La barra diceva le ventidue e
+la carta era delle quindici e quaranta - ferma, uguale a se stessa a ogni ora
+della giornata. Da fuori sembra una fotografia appesa; da dentro e' peggio,
+perche' invita a leggere quella pioggia come se fosse delle ventidue.
+
+E' lo stesso difetto di 13-ter - il giorno scelto che si fermava a Sala I - e
+della galleria che ritraeva l'Ingresso in ogni scatto: **un dato vero, messo
+dove non e' vero**.
+
+Adesso `RadarIndice.vicinoA` cerca il fotogramma piu' vicino all'ora scelta e
+lo restituisce **solo se e' abbastanza vicino**. Il "se" e' tutta la funzione:
+senza, il piu' vicino e' sempre il piu' recente.
+
+### 19.2 Il limite che nessuna interfaccia puo' aggirare
+
+**Un radar misura, e quello che non ha misurato non lo sa.** RainViewer tiene
+circa due ore di storico - dodici fotogrammi a dieci minuti l'uno dall'altro -
+contro una barra che offre ventiquattro ore, spesso di un giorno futuro.
+
+Quindi per quasi tutte le ore della giornata la risposta onesta e' "non c'e'
+una fotografia di quel momento", e c'e' uno stato apposta, `FuoriOrario`, che
+sotto la carta scrive:
+
+> Il radar misura, non prevede: l'ultima fotografia è delle 22:30.
+
+Non "non lo so": **"si sa fino a quest'ora"**, che e' un'informazione.
+
+In pratica la carta risponde per l'ora corrente e per quella prima, e a
+scorrere si vedono due o tre fotogrammi diversi. Non e' l'animazione che un
+radar meriterebbe - per quella servirebbe una scala a dieci minuti, che questa
+barra non ha - ma e' tutto quello che i dati permettono di dire senza mentire.
+
+La tolleranza e' mezz'ora: i fotogrammi distano dieci minuti e la barra sceglie
+ore intere, quindi mezz'ora copre l'ora corrente e quella prima. Allargarla
+vorrebbe dire far passare per "le venti" una pioggia delle ventuno e mezza.
+
+### 19.3 Come si scarica, scorrendo
+
+Tre regole, e tutte e tre esistono per lo stesso motivo - chi scorre la barra
+passa per **ogni** ora in mezzo:
+
+1. **L'indice si chiede una volta per localita'.** Settecento byte che
+   descrivono le ultime due ore: rifarlo a ogni scatto del dito sarebbe una
+   richiesta per niente.
+2. **Il fotogramma in volo si annulla** quando se ne chiede un altro. Senza,
+   partirebbe una decina di scaricamenti di cui interessa solo l'ultimo, e
+   arriverebbero in ordine sparso facendo lampeggiare la carta con fotogrammi
+   gia' superati.
+3. **Quattro fotogrammi restano in tasca.** Chi scorre torna indietro di un'ora
+   o due, non di dodici; sono i byte compressi delle tessere, un centinaio di
+   kilobyte l'uno.
+
+### 19.4 "Fuori copertura" e' tornato, e adesso sa quello che dice
+
+Con la maschera di copertura letta **invertita** (18.5), la domanda "qui guarda
+qualcuno?" ha di nuovo una risposta. Si scarica la tessera di copertura della
+localita', si legge il pixel di casa, e se e' opaco li' non guarda nessun radar.
+
+Due cose che sembrano dettagli e non lo sono:
+
+- si guarda il **pixel**, non la tessera: una tessera copre duecento
+  chilometri, e la domanda che interessa e' quella del proprio paese;
+- `null` non e' `false`. "Non si e' potuto guardare" - rete giu', tessera
+  illeggibile - non e' "non c'e' copertura": col dubbio si prova a scaricare
+  lo stesso, perche' dichiarare una copertura assente per colpa di una
+  richiesta caduta e' peggio di una carta vuota.
+
+E la frase sull'attribuzione si e' accorciata. Prima portava dietro sempre
+l'avvertenza che una carta vuota non vuol dire che non piove; adesso
+quell'avvertenza si accende **solo quando e' vera**. Un avviso che compare
+sempre non e' un avviso, e' una cornice.
+
+## 20. Tre ore su ventiquattro non sono una mappa
+
+La 19 aveva tolto la bugia - la carta non mostra piu' la pioggia di un'ora
+sotto l'etichetta di un'altra - e chi usa l'app l'ha riprovata:
+
+> It still doesn't work. L'unico orario che registra ed è consultabile è
+> l'orario con cui apri l'app, mentre le successive e le precedenti no.
+
+**Non era un difetto, ed e' peggio che se lo fosse stato.** Il codice faceva
+esattamente quello che doveva: RainViewer tiene due ore di storico, quindi alle
+17:06 risponde dalle 15:10 alle 17:00. Tre ore su ventiquattro. Per le altre
+ventuno la carta diceva "niente per quest'ora" e restava vuota.
+
+Onesta, e inutile. **Un limite dichiarato bene resta un limite**, e la 19 si era
+fermata a dichiararlo credendo di aver finito il lavoro.
+
+### 20.1 Il modello risponde dove il radar non puo'
+
+Un radar **misura**, e quello che non ha misurato non lo sa: quello non si
+aggira, e la sala continua a dirlo. Ma il modello una risposta per ogni ora ce
+l'ha - ed e' lo stesso Open-Meteo che riempie le dodici colonne **sopra** la
+carta. Era sempre stato li'.
+
+Chiesto su una griglia di punti invece che su uno solo, disegna la stessa cosa
+che le colonne dicono in numeri. La sonda ha verificato prima di scrivere una
+riga (e la 18 sta li' a ricordare cosa costa non farlo):
+
+| griglia | punti | risposta |
+| --- | --- | --- |
+| 2×2 | 4 | 5,7 KB |
+| 7×7 | 49 | 70 KB |
+| 10×10 | 100 | 143 KB |
+| 12×12 | 144 | 206 KB |
+
+Una lista di risposte, quarantotto ore ciascuna, **in una richiesta sola**. La
+carta ne chiede centodiciassette - tredici colonne per nove righe, la forma del
+riquadro - e le tiene: scorrere la barra non costa niente, al contrario del
+radar che ha un'immagine per fotogramma e le prende una alla volta.
+
+### 20.2 Il dettaglio che si sarebbe sbagliato in silenzio
+
+Open-Meteo non risponde sui punti che gli si chiedono: risponde su quelli della
+**sua** griglia, il piu' vicino a ciascuno. Si chiede 42.9226 e torna 42.9375.
+
+Sono venti chilometri. Usando le coordinate chieste invece di quelle tornate, la
+pioggia finirebbe spostata di quel tanto: troppo poco per accorgersene,
+abbastanza per mettere un rovescio sul paese sbagliato. La risposta le porta
+entrambe, e si usano quelle tornate.
+
+### 20.3 Come si tengono separate una misura e una previsione
+
+**Chi guarda una carta radar le crede.** Crederebbe a una previsione a sedici
+ore come se qualcuno l'avesse vista, ed e' per questo che mescolarle sarebbe
+peggio che non avere la seconda. Tre differenze, e nessuna e' decorativa:
+
+1. **Macchie morbide invece di pixel.** Il radar disegna quello che ha
+   misurato e i suoi bordi sono bordi veri; il modello da' un numero ogni
+   quaranta chilometri, e a quadretti netti avrebbe una precisione che non ha.
+   Sfumate e sovrapposte dicono "da queste parti, all'incirca" - che e'
+   esattamente quello che il dato dice.
+2. **Una tavolozza diversa**, non quella di RainViewer: due carte che
+   raccontano cose diverse non devono somigliarsi tanto da confondersi.
+   L'opacita' si ferma a poco piu' di meta', perche' sotto ci sono le coste e
+   gli anelli e una previsione che li copre si comporta come se contasse piu'
+   di loro.
+3. **L'etichetta dice "previsione"** invece di un'ora di scatto, in inchiostro
+   tenue e non nel colore d'accento - il colore forte e' un'affermazione, e qui
+   c'e' meno da affermare - e la riga sotto lo scrive: *Previsione del modello,
+   non radar: la pioggia misurata c'è solo per le ultime due ore.*
+
+Sotto il decimo di millimetro non si disegna niente: e' la pioggia che il
+modello semina dappertutto e che nessuno sente cadere, e riempirebbe la carta di
+velo azzurro facendo sembrare bagnato un giorno sereno.
+
+### 20.4 Cosa risponde adesso, ora per ora
+
+| ora scelta | cosa si vede |
+| --- | --- |
+| le ultime due ore | **radar**, con l'ora dello scatto |
+| tutte le altre ore dei tre giorni | **previsione**, dichiarata tale |
+| oltre i tre giorni | "il radar misura, non prevede: l'ultima fotografia è delle …" |
+| dove nessun radar guarda | "su <posto> non guarda nessun radar" |
+
+`FuoriOrario` non e' sparito: e' sceso a fare quello per cui serviva, il caso in
+cui **nessuna** delle due fonti ha qualcosa da dire.
+
+### 20.5 Una prova scritta sbagliata, e perche' la nota resta
+
+Il primo giro di CI e' caduto su un test mio, non sul codice. Diceva:
+
+> mezz'ora di scarto passa, un'ora no
+
+copiato dal test del radar senza accorgersi che i due casi **non si
+somigliano**. I fotogrammi del radar distano dieci minuti e finiscono: dopo
+l'ultimo non c'e' piu' niente, e la tolleranza morde. Le ore del modello
+distano un'ora e si toccano: dentro la finestra qualunque istante ha un'ora a
+meno di trenta minuti, **sempre**. Li' la tolleranza non rifiuta niente, e non
+deve.
+
+Un test che verifica un comportamento impossibile non e' un test che fallisce:
+e' un test che chiede di storpiare il codice per accontentarlo. Il bordo vero -
+oltre l'ultima ora - c'e' adesso, ed e' li' che la tolleranza serve.
