@@ -4456,3 +4456,50 @@ fondo. E' il nested scroll di Compose - nessun codice nostro - ed e' quello che
 fa qualsiasi pagina lunga dentro un carosello. Se sull'uso quotidiano risultera'
 scomodo, la via d'uscita e' alleggerire le due sale dense, non togliere lo
 scorrimento: senza, il taglio torna e basta.
+
+### 16.5 Il radar: un ultimo tentativo, e cosa non si fara'
+
+Il DPC risponde 403 **anche dal telefono**. La sezione 14-quater aveva escluso
+l'ipotesi dell'agente, e va riletta con attenzione: quelle cinque prove
+partivano da un indirizzo **gia' rifiutato**, quindi non potevano distinguere
+"rifiuta questo indirizzo" da "rifiuta questo agente" - il primo filtro scatta
+prima e maschera il secondo. Dal telefono, che un indirizzo buono ce l'ha, e'
+stata provata **una combinazione sola**: l'agente predefinito di Android,
+`Dalvik/2.1.0 (...)`, che e' fra i primi che una rete di distribuzione scarta.
+
+Resta un tentativo, e costa una riga: `Http.kt` adesso manda
+`Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)`.
+
+**Non e' un travestimento**, ed e' il punto della sezione. L'agente dice il
+nome dell'app e dove sta il codice - se un giorno una fonte volesse chiedere di
+smettere, da li' sa a chi scrivere. Non finge di essere Chrome, e non manda un
+`Referer` del sito di qualcun altro.
+
+Quella seconda cosa e' la riga da non superare, e sta scritta perche' qualcuno
+sara' tentato: **se un servizio pubblico risponde solo a chi si spaccia per il
+suo sito, quel servizio non e' aperto a terzi.** Aggirarlo e' la stessa
+famiglia di gesti dello spacciare RainViewer per Radar-DPC, che questo progetto
+ha gia' rifiutato: in un caso si mente sulla fonte dei dati, nell'altro sul
+proprio nome.
+
+Vale per tutte le fonti e non solo per il radar: e' cortesia verso ognuna, e la
+policy delle tessere di OpenStreetMap un agente identificabile lo **chiede**.
+
+**Il segnale, e cosa succede dopo.** La riga sotto la carta, sul telefono. Se
+dice ancora `HTTP 403 ... Access Denied`, il DPC non serve terze parti e si
+passa a RainViewer - deciso in anticipo, cosi' non serve tornare a chiedere.
+Quel passaggio non e' uno scambio di indirizzo:
+
+- le tessere di RainViewer sono in **Mercatore**, la carta e' equirettangolare.
+  Va cambiata la proiezione in `RadarMappa.punto()` - una formula, un punto solo
+  del codice, ed e' li' che il commento sulla proiezione gia' avvisa che
+  succedera';
+- vanno scaricate e composte le tessere `z/x/y` che coprono la finestra;
+- **l'attribuzione a schermo cambia**: RainViewer e OpenStreetMap, non
+  Protezione Civile.
+
+L'ultima e' gia' pronta: `RadarProdotto` porta un campo `attribuzione`, e
+`RadarMappa` scrive quello invece di una riga scritta a mano. Un'attribuzione
+scritta dove si disegna resterebbe quella di prima il giorno in cui la fonte
+cambia, e **il nome sbagliato sopra i dati di un altro** e' esattamente cio'
+che si era rifiutato di fare. Chi porta i dati porta anche il proprio nome.
