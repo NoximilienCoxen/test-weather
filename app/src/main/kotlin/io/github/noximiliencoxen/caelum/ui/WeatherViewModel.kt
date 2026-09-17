@@ -11,6 +11,8 @@ import io.github.noximiliencoxen.caelum.data.AlertLevel
 import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
+import io.github.noximiliencoxen.caelum.data.MappaPrevista
+import io.github.noximiliencoxen.caelum.data.PioggiaPrevistaRepository
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.RadarIndice
 import io.github.noximiliencoxen.caelum.data.RadarProdotto
@@ -158,6 +160,11 @@ data class UiState(
      * radar sa qualcosa quando l'ora scelta e' fuori portata.
      */
     val radarIndice: RadarIndice? = null,
+    /**
+     * La pioggia prevista su una griglia, per tutte le ore che il modello
+     * copre. Una richiesta sola per localita': scorrere la barra non costa.
+     */
+    val mappaPrevista: MappaPrevista? = null,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -576,6 +583,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     // stessi ovunque, ma la copertura no, e tenerlo darebbe
                     // per coperta la citta' nuova sulla fede della vecchia.
                     radarIndice = null,
+                    mappaPrevista = null,
                 )
             }
         }
@@ -653,6 +661,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // ritardo dalla citta' precedente si posa sul nome
                         // nuovo e non c'e' modo di accorgersene.
                         launch { apriIlRadar(place) }
+
+                        // La pioggia prevista sulla griglia: una richiesta
+                        // sola, tutte le ore. E' quella che fa rispondere la
+                        // carta per le ventuno ore su ventiquattro in cui il
+                        // radar non ha niente da dire.
+                        launch {
+                            PioggiaPrevistaRepository(place).load().onSuccess { mappa ->
+                                _state.update { it.copy(mappaPrevista = mappa) }
+                                mostraIlRadarDellOraScelta()
+                            }
+                        }
 
                         launch {
                             AirQualityRepository(place).load()
@@ -904,7 +923,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
         if (scelto == null) {
             radarInVolo?.cancel()
-            _state.update { it.copy(radar = StatoRadar.FuoriOrario(indice.ultimo?.istante)) }
+            // **Il radar non ce l'ha: ce l'ha il modello?** Per ventuno ore su
+            // ventiquattro la risposta e' si', ed e' la differenza fra una
+            // carta che risponde e una che dice "niente per quest'ora" e resta
+            // vuota - onesta, e inutile.
+            val previsto = corrente.mappaPrevista?.a(quando)
+            _state.update {
+                it.copy(
+                    radar = if (previsto != null) StatoRadar.Previsto(quando, previsto)
+                    else StatoRadar.FuoriOrario(indice.ultimo?.istante),
+                )
+            }
             return
         }
         tessereInMano[scelto.istante]?.let { gia ->
