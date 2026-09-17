@@ -4271,3 +4271,65 @@ Dove si guarda, se dovesse ricapitare: dentro una stringa, un apostrofo che
 `l'aria`, `dell'ombra`. L'unica eccezione vera in tutto il progetto e'
 `"'wght' $weight"`, che e' la sintassi delle variazioni di un font e non
 italiano.
+
+### 14-quater. Prima di dire "rifiuta i datacentro", si esclude l'agente
+
+La sezione 13-septies conclude che il DPC rifiuta **il chiamante**, non la
+richiesta, e che un runner di GitHub e' un indirizzo di datacentro. E'
+plausibile. Non e' dimostrato.
+
+Perche' la sonda ha chiesto con un agente solo: `caelum-probe
+(github.com/NoximilienCoxen/test-weather)`. Davanti a quel servizio c'e' una
+CDN, e **filtrare sull'agente e' la prima cosa che una CDN fa** - piu' comune,
+in rete, del filtro per intervallo di indirizzi. Nove 403 su nove indirizzi con
+un agente solo non distinguono le due ipotesi: le conferma tutte e due.
+
+E' esattamente l'errore di 13-sexies in una forma nuova. Li' si era accusata
+un'azione di terze parti al posto dell'ambiente, e la prova che smontava
+l'accusa - cambiare versione e fallire identico - era a portata di mano e non
+era stata fatta. Qui la prova a portata di mano e' cambiare intestazione.
+
+La sezione 6 della sonda chiede **lo stesso indirizzo** cinque volte, cambiando
+una variabile sola: curl com'e', un agente da browser Android, lo stesso con
+`Referer` e `Origin` del sito vero, lo stesso con `Accept: application/json`, e
+l'agente di okhttp - cioe' come lo manderebbe un'app Android qualsiasi.
+
+- Se una risponde **200**, il 403 non e' una condanna: e' un'intestazione
+  mancante, e `httpGet` gliela puo' mettere. Il radar funzionerebbe anche in
+  CI, e si potrebbe finalmente **leggere** la forma di una risposta invece di
+  riconoscerla.
+- Se rispondono **tutte 403**, l'ipotesi del filtro per indirizzo resta in
+  piedi da sola, e resta scritto che l'altra e' stata esclusa invece di essere
+  stata ignorata.
+
+Le due risposte valgono uguale. La sonda serve a non dover scegliere a mente
+fra due spiegazioni che sembrano tutte e due ragionevoli.
+
+#### La risposta: e' l'indirizzo
+
+Cinque prove, una variabile sola, **cinque volte `HTTP 403`** - e
+quattrocentotrentaquattro byte identici tutte e cinque, cioe' la stessa identica
+pagina:
+
+| chi chiede | risposta |
+| --- | --- |
+| curl com'e' | 403 |
+| agente da browser Android | 403 |
+| agente da browser + `Referer` e `Origin` del sito vero | 403 |
+| agente da browser + `Accept: application/json` | 403 |
+| agente di okhttp, come un'app Android | 403 |
+
+L'ipotesi dell'agente e' **esclusa**, e non ignorata. Resta quella di 13-septies:
+il servizio rifiuta il chiamante per il posto da cui chiama, e un runner di
+GitHub Actions e' un indirizzo di datacentro.
+
+**Cosa cambia per l'app: niente, ed e' una buona notizia.** Nessuna intestazione
+da aggiungere, nessun codice da correggere. La conseguenza pratica e' che il
+radar **non si potra' mai provare da qui** - ne dalla CI ne da questa postazione,
+il cui proxy quel dominio lo nega a monte. L'unico posto in cui quella richiesta
+puo' riuscire e' un telefono su una rete italiana normale, ed e' esattamente il
+motivo per cui `StatoRadar.NonDisponibile` porta a schermo cio' che ha visto.
+
+Vale la pena aver speso un giro di CI per un risultato negativo: senza, in
+questo file sarebbe rimasta una spiegazione plausibile spacciata per accertata,
+che e' il difetto che 13-sexies ha gia' fatto pagare una volta.
