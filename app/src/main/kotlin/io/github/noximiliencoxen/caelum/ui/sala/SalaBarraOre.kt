@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.SunClock
@@ -159,6 +160,7 @@ fun BarraDelleOre(
                     style = SalaType.microLabel,
                     color = palette.inkSuCielo,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(bottom = 2.dp),
                 )
                 Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accentSuCielo)

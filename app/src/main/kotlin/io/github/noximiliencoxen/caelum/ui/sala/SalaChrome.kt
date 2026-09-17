@@ -175,6 +175,7 @@ fun PastigliaAccento(
         style = SalaType.pill,
         color = palette.accentInk,
         maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .clip(CircleShape)
             .background(palette.accent)

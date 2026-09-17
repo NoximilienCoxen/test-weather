@@ -265,12 +265,14 @@ fun StrisciaGiorni(
                     style = SalaType.giornoMax,
                     color = palette.ink,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = giorno.min?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
                     style = SalaType.giornoMin,
                     color = palette.inkFaint,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 if (conMillimetri) {
                     // **La gocciolina dice di che numero si tratta.** Un numero
@@ -295,6 +297,7 @@ fun StrisciaGiorni(
                             style = SalaType.microLabel,
                             color = palette.accent,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
@@ -137,12 +138,14 @@ fun SalaLunaScreen(
                             style = SalaType.giornoMax,
                             color = palette.ink,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = "${quando.dayOfMonth} ${quando.monthValue.mese()}",
                             style = SalaType.giornoMin,
                             color = palette.inkFaint,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }

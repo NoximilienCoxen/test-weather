@@ -34,6 +34,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
@@ -112,6 +113,7 @@ fun WelcomeScreen(
                         style = SalaType.rowNote,
                         color = SalaTokens.neutral900,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .clip(CircleShape)
                             .background(SalaTokens.neutral900.copy(alpha = 0.07f))
