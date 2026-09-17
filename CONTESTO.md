@@ -4089,10 +4089,19 @@ un terzo di pannello. Una parola tagliata si legge peggio di una parola piccola.
 
 Guardando meglio lo scatto e' saltato fuori che **"PROBABILITÀ" non ci stava
 per intero nemmeno prima**: da sempre si leggeva "PROBABILI", e nessuno l'aveva
-notato perche' una parola troncata sembra un'abbreviazione voluta. Il margine
-interno delle celle scende da tredici punti a dieci - sei di parola in piu' -
-e adesso ci sta davvero. Il margine era la cosa da stringere, non la parola da
-accorciare.
+notato perche' una parola troncata sembra un'abbreviazione voluta.
+
+Per farcela stare sono serviti due giri: il margine interno delle celle da
+tredici punti a dieci, e poi - perche' col solo margine restava "PROBABILIT",
+senza l'accento - la spaziatura fra le lettere da un decimo di em a
+sessantacinque millesimi. Undici caratteri in un terzo di pannello e' il caso
+limite di tutta l'app, e adesso ci sta. Chi aggiungera' una cella con
+un'etichetta piu' lunga la trovera' troncata: li' la strada sara' accorciare la
+parola, perche' da stringere non c'e' rimasto niente.
+
+Il margine era la cosa da stringere, non la parola da accorciare - ma "una
+parola tagliata sembra un'abbreviazione voluta" vale anche al contrario: per
+due giri ho creduto fosse a posto perche' **quasi** ci stava.
 
 `PaletteLeggibileTest` prova tutta la traversata dal tema chiaro a quello scuro,
 in tutti e due i crepuscoli e col cielo aperto e chiuso. **Esclude il guado in
