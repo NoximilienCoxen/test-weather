@@ -320,17 +320,25 @@ jobs:
             #     niente e non serve a niente.
             # Forli' ha radar. Nairobi, per quanto ne sappiamo, no: se le due
             # tessere pesano uguale, la risposta e' che non si puo' sapere.
+            #
+            # **Il codice HTTP non basta e la taglia in byte nemmeno.** Il
+            # primo giro di questa sonda ha risposto `200` a tutte e quattro
+            # le tessere, con taglie diverse - 1110 byte sopra Forli', 914
+            # sopra Nairobi - e due `200` di taglia diversa non dicono se una
+            # e' coperta e l'altra no: potrebbero essere tutte e due
+            # trasparenti con rumore diverso. L'unica risposta e' **guardare il
+            # pixel**, e per quello c'e' `scripts/alfa_png.py`.
             for COV in \
-              "7/68/46  Forli" \
-              "6/34/23  Forli-piu-grosso" \
-              "7/77/64  Nairobi" \
-              "4/8/5    Europa-intera"; do
+              "7/68/46  71  110  Forli-che-il-radar-ce-l-ha" \
+              "7/77/64  23  118  Nairobi-che-forse-no" \
+              "6/34/23  35   55  Forli-un-livello-piu-grosso"; do
               set -- $COV
-              echo "--- copertura $1 ($2)"
+              echo "--- copertura $1 ($4), pixel $2,$3"
               curl -sSL --max-time 20 -o /tmp/ciout/_c.png \
                 -w "    HTTP %{http_code} byte=%{size_download}\n" \
                 "https://tilecache.rainviewer.com/v2/coverage/0/256/$1/0/0_0.png"
               echo "    tipo: $(file -b --mime-type /tmp/ciout/_c.png 2>/dev/null)"
+              python3 "$GITHUB_WORKSPACE/scripts/alfa_png.py" /tmp/ciout/_c.png "$2" "$3" 2>&1 | sed 's/^/    /'
               rm -f /tmp/ciout/_c.png
             done
 
