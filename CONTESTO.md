@@ -3784,3 +3784,36 @@ sbagliata piu' facile da fare.** Si guarda **quale passo** e' caduto prima di
 guardare cosa si e' scritto. Un errore di compilazione lascia righe `e:`; quando
 non ce n'e' nemmeno una, il guasto sta altrove - e se la causa non e' leggibile,
 si toglie di mezzo cio' che non sa spiegarsi invece di tirare a indovinare.
+
+
+### 13-septies. Il DPC risponde 403 a tutto
+
+La sonda ha chiesto, e la risposta e' netta: **nove indirizzi su nove,
+`HTTP 403 Access Denied`**, in HTML e non in JSON. Con e senza
+`Origin`/`Referer`, su tutti i tipi di prodotto (VMI, SRI, SRT1, SRT3), sulla
+radice del servizio e sulla catena `getProduct`/`existsProduct`.
+
+Non e' un indirizzo sbagliato: un indirizzo sbagliato risponde 404. Un 403 su
+tutto, radice compresa, e' un servizio che **rifiuta il chiamante**, non la
+richiesta - un runner di GitHub Actions e' un indirizzo di datacentro, e
+quel servizio e' nato per il proprio sito.
+
+Nota su come leggere quel file: la riga `data dell'ultimo prodotto: 1789624371`
+non e' un dato vero. E' il `grep` della sonda che ha pescato una cifra dentro la
+pagina d'errore: quando il corpo non e' quello che ci si aspetta, anche
+l'estrazione che ne segue non lo e'. Il `getProduct` che viene dopo infatti
+risponde 403 come tutti gli altri.
+
+**Cosa resta possibile**, e sta gia' scritto nello stesso file due sezioni piu'
+su: RainViewer risponde `HTTP 200`, pubblica un indice di tredici fotogrammi e
+una tessera vera si scarica (2424 byte, `image/png`); il nowcast `minutely_15`
+di Open-Meteo risponde per Forli', Tokyo e Nairobi. Sono due strade diverse -
+una mappa vera, oppure la pioggia dei prossimi minuti senza mappa - e nessuna
+delle due e' la fonte chiesta.
+
+La decisione non e' tecnica e non spetta a questo file: **il radar ufficiale
+italiano, da qui, non si puo' avere**. Chi lo vuole lo dica, e si scegliera' fra
+il ripiego e il niente. Quello che non si fara' e' spacciare RainViewer per
+Radar-DPC: sono due fonti con due licenze e due attribuzioni diverse, e
+scriverne una col nome dell'altra e' la stessa bugia della citazione attribuita
+a chi non l'ha detta.
