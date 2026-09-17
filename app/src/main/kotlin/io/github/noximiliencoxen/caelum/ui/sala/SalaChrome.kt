@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,9 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -29,6 +33,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -41,6 +46,7 @@ import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
+import kotlin.math.abs
 
 /**
  * I pezzi che tutte le sale hanno in comune: il pannello a cassetto, le celle
@@ -437,60 +443,113 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
  * Le localita' non sono in colonna: stanno nelle impostazioni, perche' cambiare
  * citta' non e' spostarsi fra le sale, e una fila di sette icone piu' due
  * intruse non e' piu' una fila.
+ *
+ * ## Da qui in poi e' anche l'unico indicatore di percorso
+ *
+ * Sotto il carosello c'erano **sette trattini orizzontali** che facevano
+ * esattamente questo mestiere: dicevano dove sei e ci si saltava sopra. Due
+ * comandi identici a due bordi diversi dello schermo, e chi li ha usati l'ha
+ * detto subito. Peggio: erano **orizzontali**, e un indicatore orizzontale
+ * promette che le schede si sfoglino di lato, mentre si sfogliano in su e in
+ * giu'. Un comando che mente sul verso del gesto e' peggio di un comando
+ * assente.
+ *
+ * Sono spariti, e questa colonna ha preso le due cose che facevano meglio:
+ *
+ * - **segue il dito in continuo.** L'accento non scatta da un'icona all'altra
+ *   al momento dell'aggancio: scorre, perche' [posizione] e' la stessa
+ *   frazione di pagina che i trattini leggevano. Si legge dove si sta andando
+ *   mentre ci si va.
+ * - **c'e' un filo dietro.** Sette dischi sparsi sono sette bottoni; sette
+ *   dischi su una linea sono un **asse**, e un asse verticale dice da se' in
+ *   che verso si sfoglia.
+ *
+ * @param posizione la pagina corrente con la sua frazione, letta **dentro il
+ *   disegno** e non in composizione: cambia a ogni fotogramma del dito, e
+ *   leggerla in composizione ricomporrebbe la colonna sessanta volte al
+ *   secondo per travasare un colore.
  */
 @Composable
 fun ColonnaScorciatoie(
     corrente: SalaRoom,
+    posizione: () -> Float,
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        // Niente spazio fra le voci: lo fa il bersaglio, che e' piu' largo del
-        // disco. Con `spacedBy` **e** un bersaglio da 48 i sette non ci
-        // starebbero in altezza su un telefono corto.
-        verticalArrangement = Arrangement.spacedBy(0.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        SalaRoom.entries.forEach { sala ->
-            val attiva = sala == corrente
-            val fondo = if (attiva) {
-                palette.accent
-            } else {
-                lerp(
-                    SalaTokens.neutral100.copy(alpha = 0.72f),
-                    SalaTokens.neutral100.copy(alpha = 0.16f),
-                    palette.buio,
+    val spento = lerp(
+        SalaTokens.neutral100.copy(alpha = 0.72f),
+        SalaTokens.neutral100.copy(alpha = 0.16f),
+        palette.buio,
+    )
+    Box(modifier = modifier) {
+        // Il filo. Va da centro a centro del primo e dell'ultimo bersaglio,
+        // non da bordo a bordo: un asse che spunta sopra la prima icona e
+        // sotto l'ultima sembrerebbe tagliato, non finito.
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val mezzo = BERSAGLIO.toPx() / 2f
+            drawLine(
+                color = palette.maniglia,
+                start = Offset(size.width / 2f, mezzo),
+                end = Offset(size.width / 2f, size.height - mezzo),
+                strokeWidth = 2.dp.toPx(),
+                cap = StrokeCap.Round,
+            )
+        }
+        Column(
+            // Niente spazio fra le voci: lo fa il bersaglio, che e' piu' largo
+            // del disco. Con `spacedBy` **e** un bersaglio da 48 i sette non ci
+            // starebbero in altezza su un telefono corto.
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            SalaRoom.entries.forEach { sala ->
+                val attiva = sala == corrente
+                // L'inchiostro scatta, il fondo no. Il fondo lo si puo'
+                // interpolare nel disegno; l'inchiostro lo deve sapere
+                // `IconaSala`, che e' un composable, e farglielo sapere a ogni
+                // fotogramma costerebbe la ricomposizione che questa colonna
+                // evita apposta. Una molla corta copre lo scatto.
+                val inchiostro by animateColorAsState(
+                    targetValue = if (attiva) palette.accentInk else palette.ink,
+                    animationSpec = tween(220),
+                    label = "inchiostro",
                 )
-            }
-            val inchiostro = if (attiva) palette.accentInk else palette.ink
-            // **Il bersaglio e' piu' grande del disco, e non erano la stessa
-            // cosa.** Prima lo erano: trentaquattro punti di disco,
-            // trentaquattro di area sensibile, sei di distanza fra uno e
-            // l'altro. Quaranta punti di passo, contro i quarantotto che
-            // l'accessibilita' chiede come minimo - e col pollice, tenendo il
-            // telefono con una mano sola, sull'orlo destro dello schermo. Il
-            // difetto e' arrivato da chi l'app la usa cosi': si sbagliava sala.
-            //
-            // Il disco cresce di quattro punti, il bersaglio di quattordici, e
-            // **cresce verso l'interno** dello schermo oltre che in altezza:
-            // il dito che arriva da destra trova l'area prima del bordo, non
-            // dopo.
-            Box(
-                modifier = Modifier
-                    .size(BERSAGLIO)
-                    .clickable { onVai(sala) },
-                contentAlignment = Alignment.Center,
-            ) {
+                // **Il bersaglio e' piu' grande del disco, e non erano la
+                // stessa cosa.** Prima lo erano: trentaquattro punti di disco,
+                // trentaquattro di area sensibile, sei di distanza fra uno e
+                // l'altro. Quaranta punti di passo, contro i quarantotto che
+                // l'accessibilita' chiede come minimo - e col pollice, tenendo
+                // il telefono con una mano sola, sull'orlo destro dello
+                // schermo. Il difetto e' arrivato da chi l'app la usa cosi':
+                // si sbagliava sala.
+                //
+                // Il disco cresce di quattro punti, il bersaglio di
+                // quattordici, e **cresce verso l'interno** dello schermo
+                // oltre che in altezza: il dito che arriva da destra trova
+                // l'area prima del bordo, non dopo.
                 Box(
                     modifier = Modifier
-                        .size(DISCO)
-                        .clip(CircleShape)
-                        .background(fondo),
+                        .size(BERSAGLIO)
+                        .clickable { onVai(sala) },
                     contentAlignment = Alignment.Center,
                 ) {
-                    IconaSala(sala, inchiostro)
+                    Box(
+                        modifier = Modifier
+                            .size(DISCO)
+                            .drawBehind {
+                                // La stessa formula che avevano i trattini:
+                                // uno quando la pagina e' questa, zero quando
+                                // e' una qualsiasi delle altre, e in mezzo
+                                // mentre il dito passa.
+                                val vicinanza =
+                                    (1f - abs(posizione() - sala.ordinal)).coerceIn(0f, 1f)
+                                drawCircle(lerp(spento, palette.accent, vicinanza))
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        IconaSala(sala, inchiostro)
+                    }
                 }
             }
         }
@@ -629,46 +688,6 @@ private fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
             )
         }
         else -> Unit
-    }
-}
-
-/**
- * L'indicatore di percorso: sette trattini, uno per sala.
- *
- * Legge la posizione del carosello **dentro il disegno**: cambia a ogni
- * fotogramma del dito, e letta in composizione ricomporrebbe l'intera schermata
- * per travasare un colore.
- */
-@Composable
-fun PuntiSala(
-    posizione: () -> Float,
-    palette: SalaPalette,
-    onVai: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val quante = SalaRoom.entries.size
-    Row(
-        modifier = modifier.fillMaxWidth().height(MinTouchTarget),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        repeat(quante) { i ->
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(MinTouchTarget)
-                    .clickable { onVai(i) },
-                contentAlignment = Alignment.Center,
-            ) {
-                Canvas(modifier = Modifier.fillMaxWidth().height(4.dp)) {
-                    val vicinanza = (1f - kotlin.math.abs(posizione() - i)).coerceIn(0f, 1f)
-                    drawRoundRect(
-                        color = lerp(palette.maniglia, palette.accent, vicinanza),
-                        cornerRadius = CornerRadius(size.height / 2f),
-                    )
-                }
-            }
-        }
     }
 }
 

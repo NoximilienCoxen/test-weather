@@ -4386,3 +4386,73 @@ a due corpi e due pesi.
 
 `alignByBaseline` allinea quello che l'occhio guarda: la riga su cui le lettere
 poggiano. Nessun margine da tarare, e regge se un domani i corpi cambiano.
+
+### 16.3 Due navigazioni per un carosello solo, e una diceva il verso sbagliato
+
+Sotto le schede c'erano **sette trattini orizzontali**, uno per sala: dicevano
+dove sei e ci si saltava sopra. Esattamente quello che fa la colonna sul fianco
+destro. Due comandi identici a due bordi opposti dello schermo, e chi li ha
+usati l'ha notato al primo giro.
+
+Peggio della ridondanza c'e' che erano **orizzontali**. Sette tacche in fila
+orizzontale sono il segno universale di "si sfoglia di lato", e qui si sfoglia
+in su e in giu'. Un indicatore che mente sul verso del gesto e' peggio di un
+indicatore assente: chi lo legge prova il gesto sbagliato e conclude che l'app
+non risponde.
+
+Sono spariti. Sopravvive la colonna, che era gia' verticale come il carosello,
+dice quale sala e' quale, e ci porta con un tocco. Le due cose che i trattini
+facevano meglio ha preso anche quelle:
+
+- **segue il dito in continuo.** L'accento non scatta al momento
+  dell'aggancio: scorre fra un'icona e l'altra, con la stessa formula che
+  avevano i trattini - la frazione di pagina di `pagerState`, letta **dentro
+  il disegno** e non in composizione, come gia' faceva `PuntiSala`. Per questo
+  il fondo del disco si disegna con `drawBehind` e non con `background`.
+  L'inchiostro dell'icona no: quello lo deve sapere un composable, e passarglielo
+  a ogni fotogramma costerebbe la ricomposizione che si sta evitando. Scatta, con
+  una molla corta a coprirlo.
+- **c'e' un filo dietro.** Una linea verticale tenue da centro a centro del
+  primo e dell'ultimo bersaglio. Sette dischi sparsi sono sette bottoni; sette
+  dischi su una linea sono un **asse**, e un asse verticale dice da se' in che
+  verso si sfoglia. Va da centro a centro e non da bordo a bordo: un filo che
+  spunta sopra la prima icona sembrerebbe tagliato, non finito.
+
+E i sessanta punti che i trattini occupavano - quarantotto di bersaglio piu'
+dodici di margine - sono andati alle schede.
+
+### 16.4 La scheda scorre quando non ci sta
+
+I sessanta punti aiutano e non risolvono: "La settimana" e "La pioggia"
+riempiono lo schermo comunque, e su un telefono piu' corto del mio, o con il
+corpo di sistema ingrandito, il taglio in fondo torna. La sezione 15.4 aveva
+descritto il meccanismo e si era fermata li'.
+
+La pagina del carosello adesso e':
+
+```kotlin
+Box(Modifier.fillMaxSize().padding(...)) {
+    Column(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .verticalScroll(scorrimento),
+    ) { ... }
+}
+```
+
+- contenuto **piu' corto** dell'altezza: il `Column` si misura sul contenuto e
+  resta ancorato in basso. **Le schede che ci stanno non cambiano di un punto**
+  - ed e' la maggioranza;
+- contenuto **piu' alto**: il `Column` si ferma all'altezza disponibile e
+  scorre, invece di far uscire dal ritaglio i figli in eccesso.
+
+Lo stato sta dentro `key(page)` perche' ogni sala ricordi il proprio:
+condiviso, aprendo una sala corta dopo una lunga la si troverebbe scorrevole
+senza niente da scorrere.
+
+**Il prezzo va detto perche' e' un gesto che cambia**: su una scheda lunga il
+dito scorre prima la scheda, e passa alla sala successiva quando e' arrivato in
+fondo. E' il nested scroll di Compose - nessun codice nostro - ed e' quello che
+fa qualsiasi pagina lunga dentro un carosello. Se sull'uso quotidiano risultera'
+scomodo, la via d'uscita e' alleggerire le due sale dense, non togliere lo
+scorrimento: senza, il taglio torna e basta.
