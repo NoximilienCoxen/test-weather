@@ -4757,6 +4757,28 @@ disegnato a mano. Al suo posto c'e' una frase, sotto la carta, sempre:
 > dire che non piove.
 
 Non e' una soluzione, e' una dichiarazione - ed e' meglio di un rettangolo che
-finge di sapere. La sonda adesso chiede a tre indirizzi se una mappa di
-copertura esista: se uno risponde, il caso torna con una risposta vera; se
-rispondono tutti 404, resta la frase e **resta scritto che si e' chiesto**.
+finge di sapere.
+
+**E la sonda ha trovato qualcosa.** Dei tre indirizzi provati, due rispondono
+404 e il terzo no:
+
+```
+https://tilecache.rainviewer.com/v2/coverage/0/256/{z}/{x}/{y}/0/0_0.png
+  HTTP 200  byte=3012  image/png
+```
+
+Una mappa di copertura **esiste**, servita a tessere come il radar. Con quella,
+"fuori copertura" torna a essere una domanda con una risposta: si guarda il
+pixel della propria localita' nella tessera di copertura, e se e' trasparente
+li' non guarda nessuno.
+
+Non e' stata scritta subito, ed e' il punto di tutta questa sezione. Quella
+prova dice che il livello esiste **al livello 2**, che e' quello che si e'
+chiesto. Non dice se esista al livello 7, quello che l'app userebbe - i livelli
+di copertura spesso si fermano molto prima - ne' se una tessera dove nessun
+radar guarda sia davvero **diversa** da una dove guarda. Se fossero uguali, il
+livello non distinguerebbe niente.
+
+Quindi la sonda adesso chiede anche quelle due cose, su Forli' che il radar ce
+l'ha e su Nairobi che probabilmente no. Il codice arrivera' **dopo** la
+risposta, che e' l'unica lezione che questa sezione aveva da dare.
