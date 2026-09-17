@@ -345,6 +345,43 @@ jobs:
             fi
 
             echo
+            echo "=== 6. Il 403 e' l'indirizzo o e' l'agente? ==="
+            # Nove indirizzi su nove hanno risposto 403 con l'agente
+            # "caelum-probe". Prima di dire "il servizio rifiuta i datacentro"
+            # va escluso il sospetto piu' banale: che rifiuti **chi non
+            # assomiglia a un browser**. Davanti a quel servizio c'e' una CDN,
+            # e filtrare sull'agente e' la prima cosa che una CDN fa.
+            #
+            # La differenza fra queste righe e' una variabile sola. Se una
+            # risponde 200, il 403 non e' una condanna: e' un'intestazione
+            # mancante, e l'app ce la puo' mettere. Se rispondono tutte 403, il
+            # sospetto e' escluso e resta scritto che lo e' stato.
+            AGENTE_BROWSER="Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Mobile Safari/537.36"
+            AGENTE_OKHTTP="okhttp/4.12.0"
+            SITO="https://mappa.protezionecivile.gov.it"
+
+            agente() {
+              # $1 nome leggibile, poi le intestazioni gia' pronte
+              local nome="$1"; shift
+              local out=/tmp/ciout/_ua.bin
+              code=$(curl -sSL --max-time 20 -o "$out" -w "%{http_code}" "$@" \
+                "$DPC/findLastProductByType?type=VMI" 2>/dev/null || echo "000")
+              echo "--- $nome"
+              echo "    HTTP $code  byte=$(wc -c < "$out" 2>/dev/null || echo 0)  tipo=$(file -b --mime-type "$out" 2>/dev/null)"
+              echo "    primi byte: $(head -c 160 "$out" 2>/dev/null | tr -d '\000' | tr '\n' ' ')"
+              rm -f "$out"
+            }
+
+            agente "senza intestazioni, curl com'e'"
+            agente "agente da browser" -H "User-Agent: $AGENTE_BROWSER"
+            agente "agente da browser + il sito vero" \
+              -H "User-Agent: $AGENTE_BROWSER" -H "Referer: $SITO/" -H "Origin: $SITO"
+            agente "agente da browser + Accept json" \
+              -H "User-Agent: $AGENTE_BROWSER" -H "Accept: application/json, text/plain, */*"
+            agente "agente di okhttp, come lo manderebbe un'app Android" \
+              -H "User-Agent: $AGENTE_OKHTTP"
+
+            echo
             echo "    NOTA: il DPC copre l'Italia. Questa app apre anche Tokyo e"
             echo "    Nairobi (vedi la sezione 1 qui sopra). Fuori copertura il"
             echo "    radar non e' vuoto: e' assente, ed e' una cosa diversa che"

@@ -4271,3 +4271,36 @@ Dove si guarda, se dovesse ricapitare: dentro una stringa, un apostrofo che
 `l'aria`, `dell'ombra`. L'unica eccezione vera in tutto il progetto e'
 `"'wght' $weight"`, che e' la sintassi delle variazioni di un font e non
 italiano.
+
+### 14-quater. Prima di dire "rifiuta i datacentro", si esclude l'agente
+
+La sezione 13-septies conclude che il DPC rifiuta **il chiamante**, non la
+richiesta, e che un runner di GitHub e' un indirizzo di datacentro. E'
+plausibile. Non e' dimostrato.
+
+Perche' la sonda ha chiesto con un agente solo: `caelum-probe
+(github.com/NoximilienCoxen/test-weather)`. Davanti a quel servizio c'e' una
+CDN, e **filtrare sull'agente e' la prima cosa che una CDN fa** - piu' comune,
+in rete, del filtro per intervallo di indirizzi. Nove 403 su nove indirizzi con
+un agente solo non distinguono le due ipotesi: le conferma tutte e due.
+
+E' esattamente l'errore di 13-sexies in una forma nuova. Li' si era accusata
+un'azione di terze parti al posto dell'ambiente, e la prova che smontava
+l'accusa - cambiare versione e fallire identico - era a portata di mano e non
+era stata fatta. Qui la prova a portata di mano e' cambiare intestazione.
+
+La sezione 6 della sonda chiede **lo stesso indirizzo** cinque volte, cambiando
+una variabile sola: curl com'e', un agente da browser Android, lo stesso con
+`Referer` e `Origin` del sito vero, lo stesso con `Accept: application/json`, e
+l'agente di okhttp - cioe' come lo manderebbe un'app Android qualsiasi.
+
+- Se una risponde **200**, il 403 non e' una condanna: e' un'intestazione
+  mancante, e `httpGet` gliela puo' mettere. Il radar funzionerebbe anche in
+  CI, e si potrebbe finalmente **leggere** la forma di una risposta invece di
+  riconoscerla.
+- Se rispondono **tutte 403**, l'ipotesi del filtro per indirizzo resta in
+  piedi da sola, e resta scritto che l'altra e' stata esclusa invece di essere
+  stata ignorata.
+
+Le due risposte valgono uguale. La sonda serve a non dover scegliere a mente
+fra due spiegazioni che sembrano tutte e due ragionevoli.
