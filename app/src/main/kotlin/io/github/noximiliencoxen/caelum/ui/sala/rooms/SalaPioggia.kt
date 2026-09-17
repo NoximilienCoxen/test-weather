@@ -21,6 +21,7 @@ import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
+import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
@@ -40,7 +41,10 @@ fun SalaPioggiaScreen(
     onSelectHour: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val ore = state.hours
+    // **Le ore del giorno mostrato, non quelle di oggi.** Toccando giovedi'
+    // nella striscia, questa sala parlava ancora di oggi: il giorno e' un asse
+    // solo per tutta la galleria, e `shownHours` esiste apposta.
+    val ore = state.shownHours
     val scelta = state.selectedHour
     // Le dodici ore **da quella scelta in avanti**: una finestra che scorre con
     // la barra, non un pezzo fisso di giornata.
@@ -48,7 +52,7 @@ fun SalaPioggiaScreen(
     val pioggia = finestra.map { ore[it].precipitation ?: 0.0 }
     val massimo = (pioggia.maxOrNull() ?: 0.0).coerceAtLeast(0.4)
     val totale = pioggia.sum()
-    val oraScelta = state.hour
+    val oraScelta = state.detailHour
     val bagnato = totale > 0.05
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -80,6 +84,7 @@ fun SalaPioggiaScreen(
             }
         }
 
+        if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 18.dp))
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
             verticalAlignment = Alignment.Bottom,

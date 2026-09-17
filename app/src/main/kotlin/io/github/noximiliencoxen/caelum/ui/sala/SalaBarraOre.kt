@@ -88,6 +88,10 @@ fun BarraDelleOre(
     val colpetto by rememberUpdatedState(onTick)
 
     val tinte = remember(hours, alba, tramonto) { coloriDelleOre(hours, alba, tramonto) }
+    // **Senza ore non c'e' niente da scegliere.** Oltre le ~72 ore la previsione
+    // da' i totali del giorno e non le sue ore: un binario che risponde al dito
+    // ma non cambia niente insegna che i comandi di questa app non contano.
+    val attiva = hours.isNotEmpty()
     val ora = selected.coerceIn(0, ORE - 1)
     val spostata = ora != oraAttuale.coerceIn(0, ORE - 1)
 
@@ -132,20 +136,22 @@ fun BarraDelleOre(
                 .height(ALTEZZA)
                 // Il tocco secco prima del trascinamento: chi tocca vuole
                 // andare li', non cominciare un gesto.
-                .pointerInput(Unit) {
+                .pointerInput(attiva) {
+                    if (!attiva) return@pointerInput
                     detectTapGestures { punto ->
                         val i = indiceDa(punto.x, size.width.toFloat())
                         if (i != sceltaOra) { colpetto(); scegli(i) }
                     }
                 }
-                .pointerInput(Unit) {
+                .pointerInput(attiva) {
+                    if (!attiva) return@pointerInput
                     detectHorizontalDragGestures { change, _ ->
                         val i = indiceDa(change.position.x, size.width.toFloat())
                         if (i != sceltaOra) { colpetto(); scegli(i) }
                     }
                 },
         ) {
-            disegnaBarra(tinte, ora, palette)
+            disegnaBarra(tinte, ora, palette, attiva)
         }
     }
 }
@@ -197,7 +203,12 @@ private fun coloriDelleOre(
     }
 }
 
-private fun DrawScope.disegnaBarra(tinte: List<Color>, selected: Int, palette: SalaPalette) {
+private fun DrawScope.disegnaBarra(
+    tinte: List<Color>,
+    selected: Int,
+    palette: SalaPalette,
+    attiva: Boolean,
+) {
     val w = size.width
     val cy = size.height / 2f
     val altoBinario = 16.dp.toPx()
@@ -231,6 +242,7 @@ private fun DrawScope.disegnaBarra(tinte: List<Color>, selected: Int, palette: S
     // colore del pannello e un anello d'accento dentro - si stacca sia dalle
     // tessere chiare del mezzogiorno sia da quelle blu della notte, che un
     // pallino di un colore solo non farebbe.
+    if (!attiva) return
     val x = (selected.toFloat() / (ORE - 1) * w).coerceIn(17.dp.toPx(), w - 17.dp.toPx())
     val rManiglia = 17.dp.toPx()
     drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))

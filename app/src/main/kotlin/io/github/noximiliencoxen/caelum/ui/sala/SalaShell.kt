@@ -210,9 +210,13 @@ fun SalaShell(
         attiva = !state.animazioniRidotte && !state.animazioniIstantanee,
     )
 
-    // La fase e' quella vera di stanotte, la stessa che mostra Sala IV: le due
-    // non possono raccontare due lune diverse nella stessa notte.
-    val faseLunare = remember { MoonPhase.at(LocalDate.now()) }
+    // **La fase segue il giorno scelto**, non l'oggi del telefono: scorrendo
+    // alla notte di giovedi' la luna deve essere quella di giovedi'. Ed e' una
+    // sola per tutta l'app - il cielo, Sala IV, la cella di Sala I e il
+    // riquadro di Sala II - perche' quattro letture della stessa data
+    // divergono al primo che ne aggiusta una.
+    val giornoLuna = state.detailDay?.date ?: LocalDate.now()
+    val faseLunare = remember(giornoLuna) { MoonPhase.at(giornoLuna) }
 
     val avvisi = remember(state.shownAlerts, hour?.time) { state.shownAlerts.attiveA(hour?.time) }
     val giorno = state.detailDay ?: state.forecast?.days?.firstOrNull()
@@ -261,12 +265,14 @@ fun SalaShell(
                                 sky = sky,
                                 palette = palette,
                                 viewModel = viewModel,
+                                faseLunare = faseLunare,
                                 onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
                             )
                             SalaRoom.SETTIMANA -> SalaSettimanaScreen(
                                 state = state,
                                 palette = palette,
                                 viewModel = viewModel,
+                                faseLunare = faseLunare,
                                 onVai = ::vaiA,
                             )
                             SalaRoom.PIOGGIA -> SalaPioggiaScreen(
@@ -274,7 +280,7 @@ fun SalaShell(
                                 palette = palette,
                                 onSelectHour = viewModel::selectHour,
                             )
-                            SalaRoom.LUNA -> SalaLunaScreen(palette = palette, fase = faseLunare)
+                            SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
                             SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
                             SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
                             SalaRoom.UV -> SalaUvScreen(
@@ -289,9 +295,12 @@ fun SalaShell(
 
                 val vibrazioni = rememberVibrazioniMeteo()
                 BarraDelleOre(
-                    // Le ore del giorno mostrato: con un giorno futuro scelto,
-                    // la barra dipingerebbe altrimenti la giornata di oggi.
-                    hours = state.shownHours.ifEmpty { state.hours },
+                    // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
+                    // un `ifEmpty { state.hours }`: con un giorno senza ore la
+                    // barra dipingeva **oggi** sotto l'intestazione di un altro
+                    // giorno. Un binario spento dice la verita'; quello pieno
+                    // di un giorno sbagliato no.
+                    hours = state.shownHours,
                     selected = state.selectedHour,
                     oraAttuale = state.nowIndex,
                     palette = palette,

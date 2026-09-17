@@ -117,6 +117,25 @@ fun RowScope.CellaValore(
     }
 }
 
+/**
+ * Quando il giorno scelto non ha le ore.
+ *
+ * **Si dichiara invece di disegnare una giornata piatta.** `shownHours` torna
+ * vuota oltre le ~72 ore: i modelli a corto raggio danno i totali del giorno e
+ * non le sue ore. Mostrare al loro posto quelle di **oggi** sotto
+ * l'intestazione di giovedi' sarebbe la stessa bugia della galleria che
+ * ritraeva l'Ingresso in ogni scatto - un dato vero, messo dove non e' vero.
+ */
+@Composable
+fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
+    Text(
+        text = "Per questo giorno la previsione da' i totali, non le ore.",
+        style = SalaType.footnote,
+        color = palette.inkFaint,
+        modifier = modifier,
+    )
+}
+
 /** Una pastiglia piena d'accento: "torna a oggi", il giorno scelto, l'ora attuale. */
 @Composable
 fun PastigliaAccento(
