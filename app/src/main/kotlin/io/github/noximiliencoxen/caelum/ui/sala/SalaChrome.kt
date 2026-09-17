@@ -75,7 +75,14 @@ fun PannelloSala(
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
             .background(palette.panel)
-            .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
+            // **Il pannello puo' salire, e finora non lo faceva.** E'
+            // ancorato in basso e si dimensiona sul contenuto: quando il
+            // contenuto e' stretto, il cielo sopra resta inutilizzato e le sale
+            // ricche - la settimana su tutte - si stringono per stare in una
+            // meta' schermo che nessuno aveva chiesto. Quattro punti in piu'
+            // per lato non sono decorazione: sono il pannello che si prende lo
+            // spazio che c'e', invece di comprimersi sotto di esso.
+            .padding(start = 22.dp, end = 22.dp, top = 24.dp, bottom = 22.dp),
     ) {
         // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
         Box(
@@ -129,7 +136,7 @@ fun RowScope.CellaValore(
 @Composable
 fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
     Text(
-        text = "Per questo giorno la previsione da' i totali, non le ore.",
+        text = "Per questo giorno la previsione dà i totali, non le ore.",
         style = SalaType.footnote,
         color = palette.inkFaint,
         modifier = modifier,
@@ -419,7 +426,10 @@ fun ColonnaScorciatoie(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        // Niente spazio fra le voci: lo fa il bersaglio, che e' piu' largo del
+        // disco. Con `spacedBy` **e** un bersaglio da 48 i sette non ci
+        // starebbero in altezza su un telefono corto.
+        verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SalaRoom.entries.forEach { sala ->
@@ -434,19 +444,50 @@ fun ColonnaScorciatoie(
                 )
             }
             val inchiostro = if (attiva) palette.accentInk else palette.ink
+            // **Il bersaglio e' piu' grande del disco, e non erano la stessa
+            // cosa.** Prima lo erano: trentaquattro punti di disco,
+            // trentaquattro di area sensibile, sei di distanza fra uno e
+            // l'altro. Quaranta punti di passo, contro i quarantotto che
+            // l'accessibilita' chiede come minimo - e col pollice, tenendo il
+            // telefono con una mano sola, sull'orlo destro dello schermo. Il
+            // difetto e' arrivato da chi l'app la usa cosi': si sbagliava sala.
+            //
+            // Il disco cresce di quattro punti, il bersaglio di quattordici, e
+            // **cresce verso l'interno** dello schermo oltre che in altezza:
+            // il dito che arriva da destra trova l'area prima del bordo, non
+            // dopo.
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(fondo)
+                    .size(BERSAGLIO)
                     .clickable { onVai(sala) },
                 contentAlignment = Alignment.Center,
             ) {
-                IconaSala(sala, inchiostro)
+                Box(
+                    modifier = Modifier
+                        .size(DISCO)
+                        .clip(CircleShape)
+                        .background(fondo),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    IconaSala(sala, inchiostro)
+                }
             }
         }
     }
 }
+
+/** Il disco che si vede. */
+private val DISCO = 38.dp
+
+/**
+ * L'area che risponde al dito, attorno al disco.
+ *
+ * Quarantotto punti e' il minimo che le linee guida di Android chiedono per un
+ * comando, ed e' misurato sul polpastrello e non sull'icona. Sette bersagli da
+ * quarantotto fanno 336 punti in colonna: ci stanno anche su uno schermo corto,
+ * che e' il motivo per cui l'arrangiamento qui sopra non aggiunge spazio.
+ */
+private val BERSAGLIO = 48.dp
 
 /**
  * Le sette icone della colonna, una famiglia sola: stesso peso, stessa taglia.

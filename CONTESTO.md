@@ -4029,3 +4029,107 @@ E' la seconda volta in questo progetto che un difetto di impaginazione lo trova
 **uno scatto e non un test** - la prima erano le etichette di Sala II che si
 troncavano (sezione 13). I test dicono se il codice fa quello che dice; gli
 scatti dicono se cio' che fa ci sta nello schermo.
+
+## 15. Quattro difetti trovati fuori, e uno di lingua
+
+Questa sezione non nasce da un test ne' da uno scatto della CI. Nasce da
+qualcuno che ha tenuto l'app in mano, in strada, con una mano sola e il sole di
+taglio. Sono le condizioni in cui questa app si usa davvero, e sono esattamente
+quelle che ne' un emulatore ne' un'immagine PNG sanno riprodurre.
+
+### 15.1 Il giorno mostrato si vedeva in due sale su sette
+
+Scorrendo a "La pioggia" o a "Il vento" non c'era modo di sapere se quei numeri
+erano di oggi o di giovedi'. Il giorno lo dicevano la striscia di Sala I e la
+scheda di Sala II, e per leggerlo bisognava **risalire di due schermate** e poi
+tornare indietro.
+
+Non e' un difetto di quelle cinque sale: e' un difetto della cornice. La
+sezione 13-ter aveva gia' fatto scendere il giorno scelto **nei dati** di tutte
+le sale - `shownHours`, `detailHour` - ma non lo aveva mai **scritto** da
+nessuna parte. Un dato che arriva ovunque e si legge in due posti e' mezzo
+lavoro.
+
+Adesso sta nella barra delle ore, che e' l'unico pezzo di cornice sotto ogni
+sala: giorno sopra, ora sotto, allineati a destra. Incolonnati e non affiancati
+perche' la riga li' accanto ospita gia' la pillola del ritorno al presente, che
+e' la piu' larga delle tre.
+
+### 15.2 Al sole i micro-testi sparivano
+
+Le righe minute fuori dal pannello - "TRASCINA PER CAMBIARE ORA", l'ora sopra
+la barra - non stanno su un pannello: stanno sulle **colline**, cioe' su un
+fondo che cambia con l'ora e che a volte e' quasi del loro stesso colore. Erano
+`inkFaint`, una trasparenza al sessanta per cento scelta a occhio.
+
+`Contrast.kt` esisteva da prima, con la sua formula WCAG e il suo test, e serviva
+un caso solo. Adesso serve la palette intera:
+
+| inchiostro | fondo su cui cade | soglia |
+| --- | --- | --- |
+| `inkSoft`, `inkFaint` | il pannello, senza trasparenza | AA (4.5) |
+| `inkSuCielo`, `accentSuCielo` | la collina piu' avanti | AA grande (3.0) |
+
+Due soglie e non una: le righe sulle colline sono maiuscoletti in grassetto e
+cifre grandi, cioe' proprio cio' che la norma chiama testo grande, e chiedere
+4.5 le spingerebbe al bianco pieno anche a mezzogiorno.
+
+I corpi restano smorzati, ma **fino alla soglia e non oltre**: `readableOn`
+parte dalla trasparenza di prima e schiarisce o scurisce solo quanto serve.
+
+Sono cresciuti anche i corpi: `sectionLabel` da dieci a undici punti,
+`microLabel` da nove a dieci, le cifre della striscia di un punto ciascuna.
+Undici e non dodici perche' queste etichette stanno in celle da un terzo di
+pannello, e sopra i dodici punti tornerebbero a troncarsi come nella sezione 13.
+
+`PaletteLeggibileTest` prova tutta la traversata dal tema chiaro a quello scuro,
+in tutti e due i crepuscoli e col cielo aperto e chiuso. **Esclude il guado in
+mezzo**, ed e' dichiarato perche': fra il quaranta e il sessanta per cento di
+`dk` inchiostro e accento si incrociano, e quella fascia `temaScuro` la
+attraversa di scatto apposta (12-ter). Chiedere la soglia anche li' vorrebbe
+dire un lampo bianco a meta' traversata per evitare un difetto che non si vede.
+
+### 15.3 La colonna di destra si sbagliava col pollice
+
+Sette dischi da trentaquattro punti, sei di distanza: **quaranta punti di
+passo**, contro i quarantotto che le linee guida chiedono come minimo. E sul
+bordo destro del vetro, dove arriva il pollice di chi tiene il telefono con una
+mano sola.
+
+Il disco cresce di quattro punti, il bersaglio di quattordici, e il bersaglio
+cresce **verso l'interno** oltre che in altezza: il dito che arriva da destra
+trova l'area prima del bordo, non dopo. L'arrangiamento non aggiunge piu'
+spazio fra le voci - lo fa il bersaglio - perche' sette bersagli da quarantotto
+piu' sei di distanza non ci starebbero su uno schermo corto.
+
+Il margine dal bordo scende da dieci a sei punti e **i dischi non si spostano**:
+il bersaglio e' cresciuto di cinque punti per lato, e quel margine glieli
+restituisce.
+
+### 15.4 Il pannello si stringeva sotto un cielo vuoto
+
+Il pannello e' ancorato in basso e si dimensiona sul contenuto. Quando il
+contenuto e' ricco - "La settimana" su tutte - si stringeva dentro una meta'
+schermo che nessuno aveva chiesto, mentre il cielo sopra restava inutilizzato.
+
+Quattro punti in piu' di respiro nel pannello, e le spaziature di Sala II
+allargate dove erano piu' fitte. Non e' decorazione: e' il pannello che si
+prende lo spazio che c'e', invece di comprimersi sotto di esso. Quanto basti si
+vedra' negli scatti, che e' l'unico modo di saperlo da qui.
+
+### 15.5 Gli accenti scritti con l'apostrofo
+
+Quattordici stringhe a schermo dicevano "L'esposizione e' sicura" e "Meta'
+disco" invece di "è" e "Metà".
+
+**Nei commenti l'apostrofo resta**, ed e' una scelta di questo progetto che non
+cambia: i commenti li legge chi scrive il codice, spesso su terminali e diff che
+con gli accenti fanno brutti scherzi. Ma cio' che va a schermo lo legge chi
+usa l'app, e li' "e'" non e' una convenzione: e' un refuso.
+
+Dove si guarda, se dovesse ricapitare: dentro una stringa, un apostrofo che
+**non e' seguito da una lettera** e' quasi sempre un accento scritto male -
+`e'`, `meta'`, `piu'` - mentre uno seguito da lettera e' un'elisione legittima:
+`l'aria`, `dell'ombra`. L'unica eccezione vera in tutto il progetto e'
+`"'wght' $weight"`, che e' la sintassi delle variazioni di un font e non
+italiano.

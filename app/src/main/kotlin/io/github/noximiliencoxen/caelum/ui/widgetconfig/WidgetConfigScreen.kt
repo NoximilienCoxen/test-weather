@@ -446,8 +446,8 @@ private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean)
     val titolo = kind?.label ?: "WIDGET"
     val dove = when {
         kind != null && !kind.needsPlace -> "Questo widget non dipende da dove ti trovi"
-        following -> "Seguira' la posizione del telefono"
-        place != null -> "Mostrera' ${place.name}"
+        following -> "Seguirà la posizione del telefono"
+        place != null -> "Mostrerà ${place.name}"
         else -> "Scegli da dove prendere i dati"
     }
     Row(

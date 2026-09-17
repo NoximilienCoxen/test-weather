@@ -69,6 +69,17 @@ fun BarraDelleOre(
     hours: List<HourForecast>,
     selected: Int,
     oraAttuale: Int,
+    /**
+     * Che giorno si sta guardando: "oggi", "giovedì 18 set".
+     *
+     * Sta qui e non in una sala perche' **lo devono vedere tutte e sette**.
+     * Finora il giorno scelto si leggeva solo in Sala I e in Sala II: da "La
+     * pioggia" o da "Il vento" non c'era modo di sapere se quei numeri erano
+     * di oggi o di giovedi', e l'unico modo di scoprirlo era tornare indietro
+     * di due schermate. Un dato senza la sua data e' un dato che chi guarda
+     * deve indovinare.
+     */
+    giorno: String,
     palette: SalaPalette,
     alba: LocalDateTime?,
     tramonto: LocalDateTime?,
@@ -124,10 +135,26 @@ fun BarraDelleOre(
                 Text(
                     text = "TRASCINA PER CAMBIARE ORA",
                     style = SalaType.sectionLabel,
-                    color = palette.inkFaint,
+                    // Questa riga **non sta su un pannello**: sta sulle
+                    // colline, cioe' su un fondo che cambia con l'ora e che a
+                    // volte e' quasi del suo stesso colore. Al sole diretto
+                    // spariva. `inkSuCielo` e' lo stesso inchiostro spinto
+                    // quanto basta per staccare da li'.
+                    color = palette.inkSuCielo,
                 )
             }
-            Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accent)
+            // Giorno sopra, ora sotto, allineati a destra. Incolonnati e non
+            // affiancati perche' la riga li' accanto ospita gia' la pillola
+            // del ritorno al presente, che e' la piu' larga delle tre.
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = giorno.uppercase(),
+                    style = SalaType.microLabel,
+                    color = palette.inkSuCielo,
+                    maxLines = 1,
+                )
+                Text(text = "%02d:00".format(ora), style = SalaType.hourLabel, color = palette.accentSuCielo)
+            }
         }
 
         Canvas(

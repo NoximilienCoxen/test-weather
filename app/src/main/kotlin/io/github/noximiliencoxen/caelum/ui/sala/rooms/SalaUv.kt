@@ -164,9 +164,9 @@ private fun esposizione(valore: Double): String = when {
 }
 
 private fun consiglio(valore: Double): String = when {
-    valore >= 8 -> "Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'e'."
+    valore >= 8 -> "Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'è."
     valore >= 6 -> "Serve protezione: crema ad alto fattore e pause all'ombra nelle ore centrali."
     valore >= 3 -> "Protezione consigliata se si resta fuori a lungo, soprattutto in quota o sull'acqua."
-    valore > 0.2 -> "L'esposizione e' sicura per tempi lunghi: nessuna protezione necessaria."
+    valore > 0.2 -> "L'esposizione è sicura per tempi lunghi: nessuna protezione necessaria."
     else -> "Sole sotto l'orizzonte: nessuna radiazione ultravioletta."
 }
