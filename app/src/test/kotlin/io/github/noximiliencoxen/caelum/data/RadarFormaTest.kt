@@ -143,14 +143,24 @@ class RadarFormaTest {
 
     @Test
     fun `il riassunto elenca le chiavi quando il corpo e' un oggetto`() {
-        val r = RadarForma.riassunto("""{"tipo":"VMI","quando":1}""")
-        assertTrue(r, r.startsWith("chiavi[tipo,quando]"))
+        assertEquals("chiavi[tipo,quando]", RadarForma.riassunto("""{"tipo":"VMI","quando":1}"""))
     }
 
     @Test
-    fun `il riassunto di una pagina d'errore resta leggibile`() {
-        val r = RadarForma.riassunto("<HTML>\n  <TITLE>Access Denied</TITLE>\n</HTML>")
-        assertTrue(r, r.contains("Access Denied"))
+    fun `di una pagina d'errore resta solo la frase che conta`() {
+        // Non e' un vezzo: riversata per intero sotto la carta, questa pagina
+        // occupava dieci righe di markup e spingeva meta' sala fuori schermo.
+        val r = RadarForma.riassunto(
+            "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD>" +
+                "<BODY> <H1>Access Denied</H1> You don't have permission</BODY></HTML>",
+        )
+        assertEquals("Access Denied", r)
+    }
+
+    @Test
+    fun `il riassunto non va mai a capo e non supera la riga`() {
+        val r = RadarForma.riassunto("prima\n  seconda   terza " + "x".repeat(400))
         assertTrue(r, !r.contains("\n"))
+        assertTrue(r, r.length <= 120)
     }
 }

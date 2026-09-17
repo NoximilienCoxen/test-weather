@@ -105,7 +105,7 @@ class RadarDpcRepository(private val place: Place) {
             for (tipo in listOf("SRI", "VMI")) {
                 val esito = runCatching { prodotto(tipo) }
                 esito.getOrNull()?.let { return@runCatching it }
-                errori += "$tipo: ${esito.exceptionOrNull()?.message.orEmpty().take(120)}"
+                errori += "$tipo, ${esito.exceptionOrNull()?.message.orEmpty().take(90)}"
             }
             throw Illeggibile(errori.joinToString(" | "))
         }
@@ -196,12 +196,34 @@ class RadarDpcRepository(private val place: Place) {
  */
 internal object RadarForma {
 
+    /**
+     * Cosa si e' visto, in una riga che si possa leggere a schermo.
+     *
+     * Tre forme e tre risposte diverse, e la terza e' stata aggiunta **dopo
+     * aver visto uno scatto della CI**: la pagina d'errore del DPC riversata
+     * per intero sotto la carta occupava dieci righe di markup, spingeva
+     * fuori schermo meta' della sala e non diceva niente di piu' di due
+     * parole. Un indizio che non si legge non e' un indizio.
+     *
+     * - JSON: l'elenco delle chiavi di primo livello, che e' esattamente cio'
+     *   che serve sapere per scrivere il lettore vero.
+     * - HTML: il titolo, o il primo `h1`. Le pagine d'errore mettono li' la
+     *   loro unica frase utile - "Access Denied" - e tutto il resto e'
+     *   impaginazione.
+     * - nient'altro: la testa del corpo, senza a capo.
+     */
     fun riassunto(corpo: String): String {
         val chiavi = runCatching {
             (Json.parseToJsonElement(corpo) as? JsonObject)?.keys?.joinToString(",")
         }.getOrNull()
-        val testa = corpo.trim().replace(Regex("\\s+"), " ").take(200)
-        return if (chiavi.isNullOrEmpty()) testa else "chiavi[$chiavi] $testa"
+        if (!chiavi.isNullOrEmpty()) return "chiavi[$chiavi]"
+        val piatto = corpo.trim().replace(Regex("\\s+"), " ")
+        if (piatto.startsWith("<")) {
+            val titolo = Regex("<(?:title|h1)[^>]*>(.*?)</(?:title|h1)>", RegexOption.IGNORE_CASE)
+                .find(piatto)?.groupValues?.get(1)?.trim()
+            if (!titolo.isNullOrEmpty()) return titolo.take(80)
+        }
+        return piatto.take(120)
     }
 
     /**

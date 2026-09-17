@@ -4008,3 +4008,24 @@ di un commento.
 prima le stringhe. Non dimostra che il codice compila - non compila niente - ma
 questo errore lo trova in un secondo invece che in otto minuti di runner, e
 soprattutto lo indica **dove sta**.
+
+### 14-ter. L'indizio occupava mezza sala
+
+Il primo scatto verde del radar ha mostrato una cosa che nessuna prova offline
+avrebbe mostrato: l'indizio del guasto, riversato sotto la carta, era la pagina
+d'errore del DPC **per intero**. Dieci righe di markup - `<HTML><HEAD>
+<TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1> You don't` -
+che spingevano le dodici colonne della pioggia fuori dalla vista, per dire due
+parole.
+
+Un indizio che non si legge non e' un indizio. `riassunto` adesso distingue tre
+forme: di un JSON tiene le **chiavi di primo livello**, che sono esattamente
+cio' che servira' per scrivere il lettore vero; di una pagina HTML tiene il
+`title` o il primo `h1`, dove le pagine d'errore mettono la loro unica frase
+utile; di tutto il resto la testa, senza a capo. Sotto la carta, tre righe al
+massimo.
+
+E' la seconda volta in questo progetto che un difetto di impaginazione lo trova
+**uno scatto e non un test** - la prima erano le etichette di Sala II che si
+troncavano (sezione 13). I test dicono se il codice fa quello che dice; gli
+scatti dicono se cio' che fa ci sta nello schermo.
