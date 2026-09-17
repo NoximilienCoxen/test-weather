@@ -27,6 +27,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
+import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
@@ -45,9 +46,10 @@ fun SalaVentoScreen(
     palette: SalaPalette,
     modifier: Modifier = Modifier,
 ) {
-    val ore = state.hours
+    // Le ore del giorno mostrato: vedi la nota in Sala III.
+    val ore = state.shownHours
     val scelta = state.selectedHour
-    val ora = state.hour
+    val ora = state.detailHour
     val unita = state.windUnit
     val velocita = ora?.windSpeed
     val raffiche = ora?.windGusts
@@ -134,6 +136,7 @@ fun SalaVentoScreen(
             modifier = Modifier.padding(top = 18.dp, bottom = 10.dp),
         )
         val finestra = (scelta + 1..scelta + 6).filter { it in ore.indices }
+        if (ore.isEmpty()) RigaSenzaOre(palette)
         val massimo = finestra.mapNotNull { ore[it].windSpeed }.maxOrNull()?.coerceAtLeast(0.5) ?: 1.0
         Row(
             modifier = Modifier.fillMaxWidth(),
