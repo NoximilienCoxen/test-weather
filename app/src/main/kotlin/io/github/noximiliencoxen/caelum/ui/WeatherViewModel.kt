@@ -12,7 +12,7 @@ import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.data.RadarDpcRepository
+import io.github.noximiliencoxen.caelum.data.RadarRainViewerRepository
 import io.github.noximiliencoxen.caelum.data.StatoRadar
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
@@ -620,17 +620,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // ritardo dalla citta' precedente si posa sul nome
                         // nuovo e non c'e' modo di accorgersene.
                         launch {
-                            RadarDpcRepository(place).load()
+                            RadarRainViewerRepository(place).load()
                                 .onSuccess { prodotto ->
                                     _state.update { it.copy(radar = StatoRadar.Pronto(prodotto)) }
                                 }
                                 .onFailure { guasto ->
-                                    val stato = when (guasto) {
-                                        is RadarDpcRepository.OutOfCoverage -> StatoRadar.FuoriCopertura
-                                        is RadarDpcRepository.Illeggibile -> StatoRadar.NonDisponibile(guasto.indizio)
-                                        else -> StatoRadar.NonDisponibile(guasto.message?.take(160))
+                                    _state.update {
+                                        it.copy(
+                                            radar = StatoRadar.NonDisponibile(
+                                                guasto.message?.take(140),
+                                            ),
+                                        )
                                     }
-                                    _state.update { it.copy(radar = stato) }
                                 }
                         }
 
