@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -162,15 +163,19 @@ fun SalaAriaScreen(
             // per il PM 10 - che sono il confine di cio' che e' punibile, non
             // di cio' che fa male: l'OMS mette quindici e quarantacinque. A chi
             // sta decidendo se andare a correre serve il secondo metro.
-            BarraInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.nome == "PM 2,5")
-            BarraInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.nome == "PM 10")
-            BarraInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.nome == "Ozono")
+            // Il confronto e' sul **valore**, non sul nome: due stringhe
+            // uguali scritte in due file diversi si scollano al primo che le
+            // ritocca, e il grassetto finirebbe sulla riga sbagliata senza che
+            // niente si rompa.
+            BarraInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25)
+            BarraInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10)
+            BarraInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone)
             BarraInquinante(
                 "NO₂",
                 aria?.nitrogenDioxide,
                 25.0,
                 palette,
-                dominante?.nome == "Biossido d'azoto",
+                dominante?.valore == aria?.nitrogenDioxide,
             )
         }
         if (dominante != null) {
@@ -178,7 +183,7 @@ fun SalaAriaScreen(
             // loro media: dire "27, discreta" senza dire chi l'ha deciso lascia
             // fuori la parte utile.
             Didascalia(
-                "Oggi l'indice lo decide " + dominante.nome.lowercase() +
+                "Oggi l'indice lo decide " + dominante.inFrase +
                     ", al " + (dominante.quota * 100).roundToInt() + "% del limite.",
                 palette,
                 modifier = Modifier.padding(top = 10.dp),
@@ -239,7 +244,20 @@ private fun AndamentoAria(
                     color = if (oraScelta != null && o.ora.hour == oraScelta) palette.accent
                     else palette.inkFaint,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    // **La casella di un'ora e' piu' stretta della sua
+                    // etichetta.** Ventiquattro colonne su seicento pixel fanno
+                    // venticinque pixel l'una, e "06" ne vuole di piu': il
+                    // primo scatto mostrava uno zero sopra e un sei sotto.
+                    // `unbounded` lascia il testo sforare nelle caselle
+                    // accanto, che sono vuote per costruzione - le etichette
+                    // stanno una ogni sei ore.
+                    //
+                    // E' lo stesso difetto del grafico UV di CONTESTO 16.2, in
+                    // un'altra forma: li' l'etichetta alzava la colonna, qui la
+                    // colonna stringe l'etichetta. Tutte e due nascono dal dare
+                    // a un'etichetta la larghezza del dato che descrive.
+                    modifier = Modifier.weight(1f).wrapContentWidth(unbounded = true),
                 )
             }
         }
