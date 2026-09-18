@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -283,17 +283,30 @@ fun SalaShell(
 
                 // Il carosello lascia libero il fianco destro: sotto la colonna
                 // delle scorciatoie non deve finirci niente da leggere.
-                VerticalPager(
+                // **Le sale si cambiano di lato, e la lettura tiene il
+                // verticale tutto per se'.**
+                //
+                // Prima erano un pager **verticale**, e dentro ogni pagina il
+                // pannello scorreva anch'esso in verticale: due cose che
+                // vogliono lo stesso dito. Chi leggeva doveva arrivare in
+                // fondo al contenuto prima che il carosello si muovesse, e da
+                // fuori si vedeva cosi': "bisogna scorrere molto per passare
+                // da un menu' all'altro". Non era la soglia - era l'asse.
+                //
+                // Separati, ognuno fa il suo mestiere senza chiedere permesso
+                // all'altro, e il pannello puo' crescere quanto gli pare
+                // perche' non ruba piu' niente a nessuno.
+                //
+                // La colonna delle scorciatoie resta verticale a destra, e non
+                // e' un'incoerenza: quella non si scorre, si **tocca**. E'
+                // un indice, e un indice sta in piedi di lato.
+                HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
-                    // **Serviva un gesto troppo lungo per cambiare sala.**
-                    // La soglia di Compose e' mezza pagina: per passare da
-                    // "L'aria" al "Vento" bisognava trascinare mezzo schermo,
-                    // e con sette sale una accanto all'altra e' un mestiere.
-                    // Un quinto basta - il gesto resta deliberato, ma non e'
-                    // piu' un trasloco - e la molla che segue e' piu' rigida
-                    // di quella predefinita perche' l'attesa dopo il dito
-                    // pesa quanto il dito.
+                    // La soglia di Compose e' mezza pagina. Un quinto basta: il
+                    // gesto resta deliberato, ma non e' piu' un trasloco - e la
+                    // molla che segue e' piu' rigida di quella predefinita,
+                    // perche' l'attesa dopo il dito pesa quanto il dito.
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
                         snapPositionalThreshold = 0.2f,
@@ -319,11 +332,14 @@ fun SalaShell(
                     // sala corta dopo una lunga si troverebbe scorrevole senza
                     // niente da scorrere.
                     //
-                    // Il prezzo, che va detto: su una scheda lunga il dito
-                    // scorre prima la scheda, e passa alla sala successiva
-                    // quando e' arrivato in fondo. E' il nested scroll di
-                    // Compose, non c'e' codice nostro, ed e' quello che fa
-                    // qualsiasi pagina lunga dentro un carosello.
+                    // **Quel prezzo non si paga piu'.** Finche' il carosello
+                    // era verticale, su una scheda lunga il dito scorreva
+                    // prima la scheda e cambiava sala solo arrivato in fondo -
+                    // nested scroll di Compose, nessun codice nostro, e la
+                    // ragione per cui cambiare sala sembrava un lavoro. Adesso
+                    // che le sale vanno di lato i due gesti non si toccano: si
+                    // legge in giu' e si cambia sala di fianco, sempre, a
+                    // qualunque altezza della scheda.
                     val scorrimento = key(page) { rememberScrollState() }
                     Box(
                         modifier = Modifier
