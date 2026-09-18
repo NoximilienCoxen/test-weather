@@ -13,6 +13,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +23,10 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -51,7 +54,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -115,17 +124,23 @@ fun PannelloSala(
                 // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
                 // e ogni punto in piu' non la fa salire, le taglia una riga in
                 // fondo. Lo scatto della CI l'ha mostrato subito.
-                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 18.dp),
+                .padding(start = 22.dp, end = 22.dp, top = 24.dp, bottom = 18.dp),
         ) {
-            // La maniglia: dice che il pannello e' una cosa che sta sopra un'altra.
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 14.dp)
-                    .size(52.dp, 5.dp)
-                    .clip(CircleShape)
-                    .background(palette.maniglia),
-            )
+            // **Qui c'era una maniglia, ed e' stata tolta.** Cinquantadue punti
+            // per cinque, in cima al pannello: voleva dire "questa cosa sta
+            // sopra un'altra". Quello che diceva davvero e' un'altra cosa - una
+            // maniglia orizzontale al centro di una scheda e' il segno con cui
+            // mezzo mondo apre un foglio a cassetto, cioe' **si trascina in
+            // verticale**. Il pannello in verticale non si trascina: scorre il
+            // suo contenuto quando non ci sta, e per cambiare sala si va di
+            // lato. Un comando che promette un gesto che non esiste costa piu'
+            // di un comando assente, e questo lo prometteva a ogni sala.
+            //
+            // I diciannove punti che occupava - cinque di maniglia, quattordici
+            // di stacco - tornano al cielo: il pannello e' ancorato in basso,
+            // quindi accorciarlo non sposta niente verso il basso, scopre in
+            // alto. Il margine superiore sale da venti a ventiquattro perche'
+            // il titolo non si appoggi al raggio dell'angolo, che qui e' largo.
             content()
         }
         // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
@@ -178,19 +193,41 @@ private fun BaglioreDorato(modifier: Modifier = Modifier) {
     }
 }
 
-/** Una cella: etichetta in maiuscoletto, valore sotto. Tre per riga, di solito. */
+/**
+ * Una cella: etichetta in maiuscoletto, valore sotto. Tre per riga, di solito.
+ *
+ * ## Quando e' anche una porta
+ *
+ * Con [onVai] la cella diventa una scorciatoia: si tocca e si va nella sala che
+ * di quel numero parla per esteso. E' lo stesso ragionamento dei sei riquadri
+ * di Sala II - *un numero che riassume e' utile finche' non se ne vuole sapere
+ * di piu', e a quel punto la domanda e' sempre "dove lo vedo per intero?"* -
+ * portato dove quella domanda nasce piu' spesso, cioe' nella prima schermata.
+ *
+ * La freccetta non e' una decorazione ed e' **l'unica** cosa che distingue una
+ * cella che porta da una che si limita a dire: senza, l'unico modo di scoprire
+ * la scorciatoia sarebbe toccare a caso tre riquadri che sembrano etichette. E'
+ * lo stesso segno di Sala II, in piccolo, perche' due segni diversi per la
+ * stessa promessa sono due cose da imparare invece di una.
+ */
 @Composable
 fun RowScope.CellaValore(
     etichetta: String,
     valore: String,
     palette: SalaPalette,
     modifier: Modifier = Modifier,
+    /** Dove porta la cella, se porta da qualche parte. */
+    onVai: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
             .weight(1f)
             .clip(RoundedCornerShape(RaggioCella))
             .background(palette.chip)
+            // `then` e non due rami di `Column`: il corpo della cella e' lo
+            // stesso, e duplicarlo per un modificatore vorrebbe dire che alla
+            // prima rifinitura una delle due copie resta indietro.
+            .then(if (onVai != null) Modifier.clickable(onClick = onVai) else Modifier)
             // **Tre punti di margine in meno per lato, e sono sei di parola in
             // piu'.** "PROBABILITÀ" non ci stava per intero nemmeno prima di
             // ritoccare i corpi: negli scatti si leggeva "PROBABILI", e
@@ -207,13 +244,27 @@ fun RowScope.CellaValore(
         // un'abbreviazione voluta**. Sono rimaste cosi' per mesi, in scatti
         // che qualcuno ha guardato. Coi puntini un'etichetta che non ci sta e'
         // visibilmente rotta, e chi la vede la accorcia.
-        Text(
-            text = etichetta,
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = etichetta,
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                // Il peso sta sull'etichetta e non sulla freccia: quando la
+                // parola non ci sta sono i puntini a comparire, non una
+                // freccetta schiacciata contro il bordo.
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (onVai != null) {
+                Text(
+                    text = " ›",
+                    style = SalaType.sectionLabel,
+                    color = palette.accent,
+                    maxLines = 1,
+                )
+            }
+        }
         Text(
             text = valore,
             style = SalaType.value,
@@ -518,15 +569,36 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
  * citta' non e' spostarsi fra le sale, e una fila di sette icone piu' due
  * intruse non e' piu' una fila.
  *
+ * ## Si tocca, e si trascina
+ *
+ * Toccare porta a una sala. **Tenere premuto e scorrere le attraversa tutte**,
+ * con la sala che sta sotto il dito, senza staccarlo: la colonna smette di
+ * essere sette bottoni e diventa un cursore, come lo e' gia' la barra delle ore
+ * in fondo allo schermo. E' il gesto che chi usa l'app ha chiesto per primo, e
+ * la ragione e' la stessa per cui esiste la barra delle ore: dalla settima sala
+ * alla seconda, a tocchi, sono due comandi e due attese; trascinando e' un
+ * gesto solo e si vede tutto quello che c'e' in mezzo mentre ci si passa.
+ *
+ * Il trascinamento non anima le pagine una per una - [onPorta] posa il
+ * carosello dov'e' il dito, subito - e a ogni sala attraversata il telefono da'
+ * un colpetto, gli stessi due della barra delle ore. Il tocco invece resta
+ * animato: li' non c'e' un dito che segue, c'e' un salto da raccontare.
+ *
+ * **Il cartellino col nome compare solo trascinando**, accanto alla sala sotto
+ * il dito. Sette glifi di sedici punti sono riconoscibili quando si sa gia' cosa
+ * sono; la prima volta no, e chi trascina sta appunto cercando. Tenerlo fisso
+ * sarebbe sette etichette perenni addosso al cielo, cioe' la cosa che questa
+ * colonna e' nata per non essere.
+ *
  * ## Da qui in poi e' anche l'unico indicatore di percorso
  *
  * Sotto il carosello c'erano **sette trattini orizzontali** che facevano
  * esattamente questo mestiere: dicevano dove sei e ci si saltava sopra. Due
  * comandi identici a due bordi diversi dello schermo, e chi li ha usati l'ha
  * detto subito. Peggio: erano **orizzontali**, e un indicatore orizzontale
- * promette che le schede si sfoglino di lato, mentre si sfogliano in su e in
- * giu'. Un comando che mente sul verso del gesto e' peggio di un comando
- * assente.
+ * promette che le schede si sfoglino di lato - il che oggi e' pure vero, ma
+ * all'epoca non lo era, e un comando che mente sul verso del gesto e' peggio di
+ * un comando assente.
  *
  * Sono spariti, e questa colonna ha preso le due cose che facevano meglio:
  *
@@ -535,13 +607,31 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
  *   frazione di pagina che i trattini leggevano. Si legge dove si sta andando
  *   mentre ci si va.
  * - **c'e' un filo dietro.** Sette dischi sparsi sono sette bottoni; sette
- *   dischi su una linea sono un **asse**, e un asse verticale dice da se' in
- *   che verso si sfoglia.
+ *   dischi su una linea sono un **asse**, e un asse verticale dice da se' che
+ *   lungo quella linea ci si muove.
+ *
+ * ## Il disco cresce dove sei
+ *
+ * I sette dischi erano tutti larghi uguale e cambiavano solo colore. Sette
+ * pastiglie piene da trentotto punti in fila sono una barra bianca addosso al
+ * cielo, e la sala in cui sei si riconosceva **solo** dalla tinta: al sole, o
+ * con un cielo terracotta dietro, quella differenza si assottiglia.
+ *
+ * Adesso il raggio scorre con la stessa [posizione] del colore - piccolo dove
+ * non sei, pieno dove sei - e la colonna a riposo e' una fila di puntini con una
+ * pastiglia sola. Pesa meno sul disegno, e dice dove sei anche in bianco e nero.
+ * **Il bersaglio non si muove di un punto**: quarantotto per quarantotto,
+ * sempre, perche' quello lo misura il polpastrello e non l'occhio (sezione
+ * 15.3).
  *
  * @param posizione la pagina corrente con la sua frazione, letta **dentro il
  *   disegno** e non in composizione: cambia a ogni fotogramma del dito, e
  *   leggerla in composizione ricomporrebbe la colonna sessanta volte al
  *   secondo per travasare un colore.
+ * @param onVai dove porta un tocco: con la molla, perche' e' un salto.
+ * @param onPorta dove porta il dito che trascina: senza molla, perche' la molla
+ *   e' il dito.
+ * @param onTick il colpetto a ogni sala attraversata trascinando.
  */
 @Composable
 fun ColonnaScorciatoie(
@@ -550,10 +640,13 @@ fun ColonnaScorciatoie(
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    onPorta: (SalaRoom) -> Unit = onVai,
+    onTick: () -> Unit = {},
     /** Falso quando chi usa l'app ha chiesto meno movimento: il tocco cambia
-     *  sala lo stesso, senza rimbalzo e senza onda. */
+     *  sala lo stesso, senza rimbalzo, senza onda e senza colpetti. */
     movimento: Boolean = true,
 ) {
+    val sale = SalaRoom.entries
     // **Il rimbalzo del tocco, e l'onda che si lascia dietro.**
     //
     // Uno stato solo per sette icone, non sette: le animazioni non si
@@ -568,12 +661,64 @@ fun ColonnaScorciatoie(
     val onda = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
 
+    // La sala sotto il dito mentre trascina, oppure niente quando il dito non
+    // c'e'. E' l'unico stato che il trascinamento tiene: dove sia posato il
+    // carosello lo sa gia' il carosello, e una seconda verita' da tenere in
+    // fase con la prima e' il difetto che si scrive da se'.
+    val sottoIlDito = remember { mutableStateOf<SalaRoom?>(null) }
+
     val spento = lerp(
         SalaTokens.neutral100.copy(alpha = 0.72f),
         SalaTokens.neutral100.copy(alpha = 0.16f),
         palette.buio,
     )
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier
+            // **Il trascinamento sta sul contenitore, i tocchi sui dischi.**
+            // Sono due gesti diversi e Compose li separa da se': il figlio
+            // riceve per primo, e finche' il dito non ha superato la soglia di
+            // slittamento resta un tocco; superata la soglia questo rilevatore
+            // consuma il movimento e il tocco del figlio si annulla. Scritti
+            // tutti e due qui, o tutti e due li', uno dei due avrebbe dovuto
+            // indovinare le intenzioni dell'altro.
+            //
+            // Il conto e' una divisione perche' la colonna **non ha spazi**:
+            // ogni bersaglio occupa esattamente [BERSAGLIO], quindi la sala e'
+            // l'altezza divisa per il passo. Se un giorno si aggiungesse una
+            // spaziatura, questa riga sarebbe la prima a mentire.
+            // La chiave porta anche [movimento]: il blocco di un
+            // `pointerInput` si ricorda com'era alla chiave, e senza di lei chi
+            // spegne le animazioni mentre l'app e' aperta continuerebbe a
+            // sentire i colpetti di un blocco scritto quando erano accese.
+            .pointerInput(sale.size, movimento) {
+                val passo = BERSAGLIO.toPx()
+                fun salaSotto(y: Float): SalaRoom =
+                    sale[(y / passo).toInt().coerceIn(0, sale.lastIndex)]
+
+                detectVerticalDragGestures(
+                    onDragStart = { punto ->
+                        val sala = salaSotto(punto.y)
+                        sottoIlDito.value = sala
+                        onPorta(sala)
+                        if (movimento) onTick()
+                    },
+                    onDragEnd = { sottoIlDito.value = null },
+                    onDragCancel = { sottoIlDito.value = null },
+                ) { cambio, _ ->
+                    // Consumare e' cio' che dice al tocco del disco sotto che
+                    // questo non e' piu' un tocco: senza, alzando il dito
+                    // partirebbe anche il salto animato della sala d'arrivo,
+                    // sopra il carosello che ci sta gia'.
+                    cambio.consume()
+                    val sala = salaSotto(cambio.position.y)
+                    if (sala != sottoIlDito.value) {
+                        sottoIlDito.value = sala
+                        onPorta(sala)
+                        if (movimento) onTick()
+                    }
+                }
+            },
+    ) {
         // Il filo. Va da centro a centro del primo e dell'ultimo bersaglio,
         // non da bordo a bordo: un asse che spunta sopra la prima icona e
         // sotto l'ultima sembrerebbe tagliato, non finito.
@@ -590,11 +735,12 @@ fun ColonnaScorciatoie(
         Column(
             // Niente spazio fra le voci: lo fa il bersaglio, che e' piu' largo
             // del disco. Con `spacedBy` **e** un bersaglio da 48 i sette non ci
-            // starebbero in altezza su un telefono corto.
+            // starebbero in altezza su un telefono corto. Ed e' anche il
+            // presupposto del conto qui sopra, che divide per il solo passo.
             verticalArrangement = Arrangement.spacedBy(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SalaRoom.entries.forEach { sala ->
+            sale.forEach { sala ->
                 val attiva = sala == corrente
                 // L'inchiostro scatta, il fondo no. Il fondo lo si puo'
                 // interpolare nel disegno; l'inchiostro lo deve sapere
@@ -623,7 +769,7 @@ fun ColonnaScorciatoie(
                 Box(
                     modifier = Modifier
                         .size(BERSAGLIO)
-                        .clickable {
+                        .clickable(onClickLabel = sala.heading) {
                             onVai(sala)
                             if (movimento) {
                                 colpita.value = sala
@@ -646,6 +792,18 @@ fun ColonnaScorciatoie(
                                     onda.animateTo(1f, tween(520, easing = LinearOutSlowInEasing))
                                 }
                             }
+                        }
+                        // **Sette dischi senza nome erano sette dischi senza
+                        // nome anche per chi non li vede.** Le icone hanno la
+                        // descrizione nulla - giusto, sono decorazioni dentro
+                        // un comando - ma il comando un nome non ce l'aveva, e
+                        // TalkBack leggeva sette "pulsante" in fila. Il nome
+                        // della sala lo sa gia' l'enum, e `Tab` e' il ruolo
+                        // giusto: sono pagine sorelle, non azioni.
+                        .semantics {
+                            contentDescription = sala.heading
+                            role = Role.Tab
+                            selected = attiva
                         },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -683,10 +841,19 @@ fun ColonnaScorciatoie(
                                 // La stessa formula che avevano i trattini:
                                 // uno quando la pagina e' questa, zero quando
                                 // e' una qualsiasi delle altre, e in mezzo
-                                // mentre il dito passa.
+                                // mentre il dito passa. Da qui in poi muove
+                                // **due** cose, la tinta e il raggio, e sono
+                                // lo stesso numero: se divergessero, il disco
+                                // finirebbe di crescere prima o dopo di quando
+                                // finisce di colorarsi, e si vedrebbe.
                                 val vicinanza =
                                     (1f - abs(posizione() - sala.ordinal)).coerceIn(0f, 1f)
-                                drawCircle(lerp(spento, palette.accent, vicinanza))
+                                val pieno = size.minDimension / 2f
+                                val riposo = RIPOSO.toPx()
+                                drawCircle(
+                                    color = lerp(spento, palette.accent, vicinanza),
+                                    radius = riposo + (pieno - riposo) * vicinanza,
+                                )
                             },
                         contentAlignment = Alignment.Center,
                     ) {
@@ -695,11 +862,80 @@ fun ColonnaScorciatoie(
                 }
             }
         }
+
+        // ── Il cartellino del trascinamento ──────────────────────────────────
+        //
+        // Sta **fuori** dalla colonna, verso il centro dello schermo, e per
+        // questo e' l'ultimo composto: in un `Box` l'ultimo sta sopra, e un
+        // nome che passasse sotto i dischi sarebbe un nome illeggibile.
+        //
+        // Sborda dai confini del riquadro, che non ritaglia niente. Puo' farlo
+        // perche' alla sua sinistra c'e' il cielo, e il carosello si ferma
+        // quaranta punti prima del bordo destro (vedi la Shell): lo spazio in
+        // cui sborda e' vuoto per costruzione.
+        sottoIlDito.value?.let { sala ->
+            // **`matchParentSize` e non un figlio qualunque**, e senza questo
+            // riquadro in mezzo il cartellino sposterebbe la colonna. Un `Box`
+            // si misura sul figlio piu' largo: il nome di una sala e' largo il
+            // triplo di un bersaglio, quindi comparendo allargherebbe il
+            // riquadro, e la colonna - che dentro sta in alto a sinistra -
+            // scivolerebbe di settanta punti verso il centro dello schermo a
+            // ogni trascinamento. I figli misurati sul genitore, invece, il
+            // genitore non lo misurano.
+            Box(modifier = Modifier.matchParentSize()) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .height(BERSAGLIO)
+                        .offset(x = -(BERSAGLIO - 3.dp), y = BERSAGLIO * sala.ordinal)
+                        // Il riquadro qui sopra e' largo quanto la colonna,
+                        // quarantotto punti, e dentro quei quarantotto "La
+                        // settimana" starebbe come ci sta un piede in una
+                        // scarpa di tre taglie in meno. `unbounded` lascia al
+                        // cartellino la sua larghezza vera; l'allineamento a
+                        // destra e' cio' che lo fa sbordare **verso il centro
+                        // dello schermo** invece che oltre il bordo.
+                        .wrapContentWidth(align = Alignment.End, unbounded = true),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = sala.heading,
+                        style = SalaType.pill,
+                        color = palette.ink,
+                        maxLines = 1,
+                        // Fondo **solido** e non il pannello translucido: qui
+                        // sotto puo' passarci il sole, una collina o una nuvola
+                        // bianca, e un cartellino che cambia leggibilita' a
+                        // seconda di cosa gli scorre dietro non e' un
+                        // cartellino.
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(palette.panelSolido)
+                            .padding(horizontal = 12.dp, vertical = 7.dp),
+                    )
+                }
+            }
+        }
     }
 }
 
-/** Il disco che si vede. */
+/** Il disco della sala in cui sei: la misura piena, quella che si vede. */
 private val DISCO = 38.dp
+
+/**
+ * Il raggio dei dischi delle **altre** sale.
+ *
+ * Tredici punti di raggio - ventisei di diametro - contro i trentotto della
+ * sala corrente. **Il limite in basso lo detta il glifo, non il gusto**: le
+ * icone sono larghe da sedici a venti punti e restano larghe uguale a
+ * qualunque raggio, perche' sono il modo in cui una sala si riconosce. Sotto i
+ * ventisei il disco smetterebbe di contenerle e diventerebbe un bollino con
+ * un'icona addosso.
+ *
+ * Fra i due estremi si scorre con la frazione di pagina, quindi questo valore
+ * non si vede mai da solo: e' la fila a riposo, quando il carosello e' posato.
+ */
+private val RIPOSO = 13.dp
 
 /**
  * L'area che risponde al dito, attorno al disco.

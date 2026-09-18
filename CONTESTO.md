@@ -5275,3 +5275,145 @@ domanda che avrebbe risparmiato tutto si poteva fare al primo giorno:
 
 Due su ventiquattro. La risposta era disponibile prima di scrivere una riga, e
 nessuno l'ha chiesta.
+
+---
+
+## 25. La colonna diventa un cursore, e tre numeri diventano tre porte
+
+Quattro rilievi arrivati guardando l'app in mano, non gli scatti: la colonna
+delle scorciatoie si tocca e basta, il pannello ha una maniglia che promette un
+gesto che non esiste, i riquadri di Sala I dicono senza portare, e la scala
+oraria dei raggi UV, a un'ora dispari, non si legge.
+
+Hanno una cosa in comune: **nessuno di questi e' un dato sbagliato.** Sono tutte
+promesse - un segno che dice di poter fare una cosa, o che non dice di poterla
+fare - e si vedono solo usando l'app, mai leggendo il codice.
+
+### 25.1 Sette bottoni erano sette bottoni
+
+La colonna sul fianco destro portava a una sala per tocco. Dalla settima alla
+seconda sono due tocchi e due animazioni, e in mezzo non si vede niente di
+quello che si sta saltando.
+
+Adesso **si tiene premuto e si scorre**: la sala e' quella sotto il dito, senza
+staccarlo, con un colpetto a ognuna che si attraversa. E' lo stesso gesto della
+barra delle ore in fondo allo schermo, e questo e' meta' del punto: una cosa che
+si trascina in meno di un'app non e' una cosa in meno da imparare, e' una cosa
+in meno che risponde come dovrebbe.
+
+Tre note di mestiere:
+
+- **Il trascinamento sta sul contenitore, i tocchi sui dischi.** Compose li
+  separa da se': il figlio riceve per primo, e finche' il dito non ha superato
+  la soglia di slittamento resta un tocco; superata la soglia il rilevatore del
+  genitore consuma il movimento e il tocco del figlio si annulla da solo.
+  Consumare non e' un dettaglio: senza, alzando il dito partirebbe anche il
+  salto animato della sala d'arrivo, sopra il carosello che ci sta gia'.
+- **Trascinando non si anima.** Un tocco e' un salto e la molla lo racconta; un
+  trascinamento il racconto ce l'ha gia' - e' il dito - e animare ogni sala
+  attraversata vorrebbe dire inseguirlo con mezzo secondo di ritardo. Da qui
+  `portaA` accanto a `vaiA` nella Shell: stessa destinazione, senza molla.
+- **La chiave del `pointerInput` porta anche `movimento`.** Il blocco si ricorda
+  com'era alla chiave; senza, chi spegne le animazioni ad app aperta
+  continuerebbe a sentire i colpetti di un blocco scritto quando erano accese.
+
+Insieme al gesto sono arrivate due cose che la colonna non aveva:
+
+**Il cartellino col nome**, accanto alla sala sotto il dito e **solo mentre si
+trascina**. Sette glifi da sedici punti sono riconoscibili quando si sa gia' cosa
+sono; la prima volta no, e chi trascina sta appunto cercando. Fisso sarebbe
+sette etichette perenni addosso al cielo, cioe' la cosa che questa colonna e'
+nata per non essere. Sta dentro un riquadro `matchParentSize`, e non e' pulizia:
+un `Box` si misura sul figlio piu' largo, quindi un nome lungo il triplo di un
+bersaglio avrebbe allargato il riquadro e fatto scivolare la colonna verso il
+centro dello schermo a ogni trascinamento.
+
+**Il nome anche per chi non vede.** Le icone hanno la descrizione nulla - giusto,
+sono decorazioni dentro un comando - ma il comando un nome non ce l'aveva, e
+TalkBack leggeva sette "pulsante" in fila. Il nome della sala lo sapeva gia'
+l'enum; il ruolo e' `Tab`, perche' sono pagine sorelle e non azioni.
+
+### 25.2 Il disco cresce dove sei
+
+I sette dischi erano larghi uguale e cambiavano solo tinta. Sette pastiglie
+piene da trentotto punti in fila sono una barra bianca addosso al cielo, e la
+sala corrente si riconosceva **solo** dal colore: al sole, o con un cielo
+terracotta dietro, quella differenza si assottiglia.
+
+Adesso il raggio scorre con la stessa frazione di pagina del colore - ventisei
+punti dove non sei, trentotto dove sei - quindi la colonna a riposo e' una fila
+di puntini con una pastiglia sola. Il limite in basso lo detta il glifo e non il
+gusto: le icone restano larghe da sedici a venti punti a qualunque raggio, e
+sotto i ventisei il disco smetterebbe di contenerle.
+
+**Il bersaglio non si muove di un punto**: quarantotto per quarantotto, sempre.
+Quello lo misura il polpastrello e non l'occhio, ed e' la correzione della
+sezione 15.3 - che non si ripaga per fare ordine nel disegno.
+
+### 25.3 La maniglia prometteva il gesto sbagliato
+
+In cima a ogni pannello c'era una maniglia: cinquantadue punti per cinque, al
+centro. Diceva "questa cosa sta sopra un'altra". Quello che **legge** chi la
+vede e' un'altra cosa: una maniglia orizzontale al centro di una scheda e' il
+segno con cui mezzo mondo apre un foglio a cassetto, cioe' si trascina in
+verticale.
+
+In verticale il pannello non si trascina. Scorre il suo contenuto quando non ci
+sta (sezione 16.4) e per cambiare sala si va di lato (sezione 23.1). Un comando
+che promette un gesto inesistente costa piu' di un comando assente, e questo lo
+prometteva sette volte su sette.
+
+E' sparita. I diciannove punti che occupava tornano al cielo: il pannello e'
+ancorato in basso, quindi accorciarlo non sposta niente verso il basso, scopre
+in alto. Il margine superiore passa da venti a ventiquattro perche' il titolo
+non si appoggi al raggio dell'angolo, che qui e' largo.
+
+### 25.4 Vento, umidita' e luna erano tre numeri muti
+
+I tre riquadri di Sala I dicevano un valore e finivano li'. Sono pero' anche le
+tre domande che quella schermata apre senza chiuderle - *undici chilometri
+all'ora da dove?*, *e nelle prossime ore?* - e la risposta sta gia' nella
+galleria, tre o quattro sale piu' in la'. L'unico modo di arrivarci era cercare
+il glifo giusto in colonna, cioe' sapere gia' quale sala risponde a quale numero.
+
+Adesso il riquadro **e'** il collegamento, esattamente come i sei di Sala II, e
+con lo stesso segno: la freccetta. Non e' decorazione - e' l'unica cosa che
+distingue una cella che porta da una che si limita a dire, e senza di lei la
+scorciatoia si scoprirebbe toccando a caso tre riquadri che sembrano etichette.
+Due segni diversi per la stessa promessa sarebbero due cose da imparare invece
+di una.
+
+Dove portano: vento a Sala VI, luna a Sala IV, e di giorno - dove al posto della
+luna c'e' l'indice UV - a Sala VII. **L'umidita' porta a "La pioggia" e non a
+"L'aria"**: l'acqua sospesa e l'acqua che cade sono la stessa storia a due
+stadi, mentre Sala V parla di polveri e biossidi, che con la percentuale di
+umidita' non c'entrano niente.
+
+### 25.5 La scala UV si rompeva a un'ora dispari
+
+> Nei raggi UV i numeri non si leggono.
+
+E' la sezione 16.1 che torna, dalla parte che allora non si era guardata. La
+correzione di 15.2-ter aveva dimezzato le etichette - le ore pari, piu' quella
+scelta - e il seguito di 16.1 aveva sistemato l'allineamento delle barre.
+Nessuno dei due ha guardato **cosa succede quando l'ora scelta e' dispari**: la
+scala diventa `... 12 13 14 ...`, tre numeri in trenta punti, uno addosso
+all'altro. Alle tredici, che e' l'ora in cui uno guarda i raggi UV. Ed e' l'ora
+con cui la CI fotografa il tema chiaro: lo scatto `chiaro-d11-uv.png` ce l'ha
+sempre avuto dentro.
+
+Adesso le tacche sono una ogni tre ore - 06, 09, 12, 15, 18 - e ognuna ha tre
+colonne per se'. L'ora scelta resta un'eccezione, perche' non e' una tacca della
+scala: e' la risposta alla domanda "dove sono". Ma quando cade **accanto** a una
+tacca, a spostarsi e' la tacca: la scala sa contare anche senza il 12, mentre
+quella risposta non ha nessun altro posto in cui stare.
+
+L'altra meta' del difetto era l'inchiostro. `inkFaint` e' il grigio delle
+etichette dentro una cella, dove sopra c'e' sempre un valore nero a fare da
+appiglio; sotto le colonne non c'e' nient'altro da leggere, e dieci punti di
+corpo in grigio chiaro su carta chiara si guardano senza vederli. Adesso e'
+`inkSoft`.
+
+Resta - e va tenuta - la stringa vuota al posto del `Text` assente: e' la
+correzione di 16.1, e un `if` attorno all'etichetta rimetterebbe le barre a
+quote alterne.

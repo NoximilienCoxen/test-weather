@@ -32,6 +32,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.IconaMeteo
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.PastigliaAccento
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
@@ -54,6 +55,20 @@ import kotlin.math.roundToInt
  * temperatura, titolo, vento, umidita' e avvisi passano a quel giorno - e una
  * pastiglia dice quale si sta guardando, con la via del ritorno accanto.
  * La scena la ricalcola la Shell, che e' l'unico posto in cui il cielo vive.
+ *
+ * ## I tre riquadri sono tre porte
+ *
+ * Vento, umidita' e luna - o raggi UV, di giorno - erano tre numeri e basta.
+ * Erano pero' anche le tre domande che questa schermata apre senza chiuderle:
+ * *undici chilometri all'ora da dove?*, *e nelle prossime ore?*. La risposta sta
+ * gia' nella galleria, tre o quattro sale piu' in la', e l'unico modo di
+ * arrivarci era cercare il glifo giusto in colonna - cioe' sapere gia' quale
+ * sala risponde a quale numero.
+ *
+ * Adesso il riquadro **e'** il collegamento, come i sei di Sala II. L'umidita'
+ * porta a "La pioggia" e non a "L'aria": l'acqua sospesa e l'acqua che cade sono
+ * la stessa storia raccontata a due stadi, mentre Sala V parla di polveri e
+ * biossidi, che con la percentuale di umidita' non hanno niente a che vedere.
  */
 @Composable
 fun SalaOggiScreen(
@@ -64,7 +79,9 @@ fun SalaOggiScreen(
     viewModel: WeatherViewModel,
     /** La fase del giorno mostrato, calcolata una volta sola dalla Shell. */
     faseLunare: Float,
-    onApriSettimana: () -> Unit,
+    /** L'unica via per cambiare sala da qui: la usano il collegamento alla
+     *  settimana e i tre riquadri dei valori. */
+    onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val fase = salaPhaseOf(sky)
@@ -153,11 +170,13 @@ fun SalaOggiScreen(
                     etichetta = "VENTO",
                     valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
                     palette = palette,
+                    onVai = { onVai(SalaRoom.VENTO) },
                 )
                 CellaValore(
                     etichetta = "UMIDITÀ",
                     valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
                     palette = palette,
+                    onVai = { onVai(SalaRoom.PIOGGIA) },
                 )
                 // Di notte l'indice UV vale zero a ogni latitudine, e una cella
                 // che dice sempre la stessa cosa e' una cella sprecata: li' va
@@ -167,12 +186,14 @@ fun SalaOggiScreen(
                         etichetta = "LUNA",
                         valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
                         palette = palette,
+                        onVai = { onVai(SalaRoom.LUNA) },
                     )
                 } else {
                     CellaValore(
                         etichetta = "UV",
                         valore = ora?.uvIndex?.let { String.format(Locale.ITALY, "%.1f", it) } ?: "--",
                         palette = palette,
+                        onVai = { onVai(SalaRoom.UV) },
                     )
                 }
             }
@@ -198,7 +219,7 @@ fun SalaOggiScreen(
                     text = "apri la settimana",
                     style = SalaType.pill,
                     color = palette.accent,
-                    modifier = Modifier.clickable(onClick = onApriSettimana),
+                    modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
                 )
             }
 

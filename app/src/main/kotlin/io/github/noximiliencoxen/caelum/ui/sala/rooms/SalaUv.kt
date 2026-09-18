@@ -27,6 +27,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -113,19 +114,27 @@ fun SalaUvScreen(
                             .clip(CircleShape)
                             .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
                     )
-                    // **Un'etichetta ogni due ore, e prima erano tutte e
-                    // sedici.** Sedici colonne in duecento punti fanno dieci
-                    // punti a colonna, e "05" ne vuole dodici: il risultato
-                    // era una fila di "0" - "0 0 0 0 0 10 11 12" - dove le
-                    // prime cinque ore erano tutte tagliate al primo carattere
-                    // e l'ultima, "20", pure. Una scala oraria illeggibile
-                    // sotto un grafico che si tocca per scegliere l'ora.
+                    // **Una tacca ogni tre ore, e l'ora scelta sempre.**
                     //
-                    // Le colonne restano sedici: sono i dati. A sparire sono
-                    // le etichette dispari, che una scala non ha bisogno di
-                    // numerare ogni passo. **L'ora scelta fa eccezione**
-                    // sempre, perche' quella non e' una tacca della scala: e'
-                    // la risposta alla domanda "dove sono".
+                    // Prima erano tutte e sedici: sedici colonne in duecento
+                    // punti fanno dieci punti a colonna, e "05" ne vuole
+                    // dodici, quindi la scala si leggeva "0 0 0 0 0 10 11 12" -
+                    // le prime cinque ore tagliate al primo carattere. Poi sono
+                    // diventate le sole ore pari **piu' quella scelta**, ed e'
+                    // li' che stava il difetto vero: con l'ora scelta dispari -
+                    // le tredici, che e' l'ora in cui uno guarda i raggi UV - la
+                    // scala diventava `... 12 13 14 ...`, tre numeri in trenta
+                    // punti, uno addosso all'altro. Chi l'ha vista ha detto
+                    // esattamente quello che si vedeva: che i numeri non si
+                    // leggevano.
+                    //
+                    // Ogni tre ore le tacche sono cinque - 06, 09, 12, 15, 18 -
+                    // e ognuna ha tre colonne per se'. L'ora scelta resta
+                    // un'eccezione perche' non e' una tacca della scala: e' la
+                    // risposta alla domanda "dove sono". Ma quando cade
+                    // **accanto** a una tacca, a spostarsi e' la tacca: la scala
+                    // sa contare da se' anche senza il 12, mentre la risposta a
+                    // "dove sono" non ha nessun altro posto in cui stare.
                     //
                     // **La stringa vuota non e' pigrizia: e' la correzione.**
                     // Scritto con un `if` attorno al `Text`, il grafico si e'
@@ -143,7 +152,11 @@ fun SalaUvScreen(
                     // l'interlinea copiata a mano in un secondo posto, e le
                     // due copie divergerebbero al primo che tocca il corpo.
                     val ora = ore[indice].time.hour
-                    val mostra = ora % 2 == 0 || indice == scelta
+                    // Due colonne di distanza e non una: a una colonna - dieci
+                    // punti - due etichette da dodici si toccano, ed e' la
+                    // sovrapposizione che si stava correggendo.
+                    val libera = abs(indice - scelta) >= 2
+                    val mostra = indice == scelta || (ora % 3 == 0 && libera)
                     // **L'etichetta esce dalla propria colonna, apposta.**
                     // Dimezzare le etichette non e' bastato: la colonna resta
                     // larga poco piu' di dieci punti, e li' dentro "12" ci sta
@@ -158,7 +171,14 @@ fun SalaUvScreen(
                     Text(
                         text = if (mostra) "%02d".format(ora) else "",
                         style = SalaType.microLabel,
-                        color = if (indice == scelta) palette.accent else palette.inkFaint,
+                        // **L'inchiostro tenue era la meta' del difetto.**
+                        // `inkFaint` e' il grigio delle etichette dentro una
+                        // cella, dove sopra c'e' sempre un valore nero a fare
+                        // da appiglio; qui sotto le colonne non c'e' nient'altro
+                        // da leggere, e dieci punti di corpo in grigio chiaro
+                        // su carta chiara si guardano senza vederli. Una scala
+                        // e' fatta per essere letta.
+                        color = if (indice == scelta) palette.accent else palette.inkSoft,
                         maxLines = 1,
                         modifier = Modifier.wrapContentWidth(
                             align = Alignment.CenterHorizontally,

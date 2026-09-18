@@ -125,6 +125,17 @@ fun SalaShell(
         scope.launch { pagerState.animateScrollToPage(rooms.indexOf(sala)) }
     }
 
+    // **Il gemello senza molla, per il dito che trascina la colonna.**
+    //
+    // Un tocco e' un salto e va raccontato: parte da dove sei, arriva dove hai
+    // chiesto, e la molla e' il racconto. Un trascinamento no - il racconto e'
+    // il dito, che sta gia' dicendo dove sta andando - e animare ogni sala
+    // attraversata vorrebbe dire che il carosello insegue il dito con mezzo
+    // secondo di ritardo e arriva dove era, non dov'e'.
+    fun portaA(sala: SalaRoom) {
+        scope.launch { pagerState.scrollToPage(rooms.indexOf(sala)) }
+    }
+
     // Il tasto indietro torna alla prima sala prima di chiudere l'app: da sei
     // stanze sotto, uscire non e' quasi mai la risposta cercata.
     BackHandler(enabled = pagerState.currentPage != 0) {
@@ -162,6 +173,11 @@ fun SalaShell(
     // levetta da abbassare. Si sommano, non si sostituiscono.
     val ridotte = state.animazioniRidotte || sistemaSenzaAnimazioni()
     val ferme = ridotte || state.animazioniIstantanee
+
+    // Il colpetto sotto il dito: uno solo per tutta la cornice. Lo chiedono la
+    // barra delle ore e la colonna delle scorciatoie, e due `remember` per lo
+    // stesso vibratore sarebbero due tarature da tenere in fase.
+    val vibrazioni = rememberVibrazioniMeteo()
 
     val m = mollaScena(state.animazioniIstantanee, ridotte)
     val scena = Scena(
@@ -358,7 +374,7 @@ fun SalaShell(
                                     palette = palette,
                                     viewModel = viewModel,
                                     faseLunare = faseLunare,
-                                    onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
+                                    onVai = ::vaiA,
                                 )
                                 SalaRoom.SETTIMANA -> SalaSettimanaScreen(
                                     state = state,
@@ -388,7 +404,6 @@ fun SalaShell(
                     }
                 }
 
-                val vibrazioni = rememberVibrazioniMeteo()
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
                     // un `ifEmpty { state.hours }`: con un giorno senza ore la
@@ -425,6 +440,8 @@ fun SalaShell(
                 palette = palette,
                 movimento = !ferme,
                 onVai = ::vaiA,
+                onPorta = ::portaA,
+                onTick = { if (!ridotte) vibrazioni.scatto() },
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     // Dieci punti prima, sei adesso, e i dischi non si sono
