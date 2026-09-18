@@ -5184,3 +5184,94 @@ quindici e quarantacinque, ed e' il confine di cio' che **fa male**.
 
 A chi sta decidendo se andare a correre serve il secondo metro. Il primo
 risponde a una domanda che non ha fatto.
+
+## 24. Il radar se n'e' andato, e al suo posto c'e' la domanda vera
+
+> Il radar non funziona, ormai è appurato […] aggiungiamo inoltre che è limitato
+> a solo l'Italia e non fa nemmeno un buon lavoro. Queste sono tot di fonti di
+> dati che rainviewer utilizza, SE NON SI POSSONO USARE eliminare completamente
+> questa cosa e facciamola finita.
+
+Tre accuse, e sono vere tutte e tre.
+
+### 24.1 "Limitato all'Italia" era letteralmente vero, ed era mio
+
+Le coste di `RadarCoste.kt` andavano da **5° a 20,6° di longitudine** e fino a
+**48,5° di latitudine**: Italia e vicini, milleun­centodue punti ritagliati da
+Natural Earth per la finestra del radar *italiano* - quello del Dipartimento
+della Protezione Civile, per cui la carta era nata.
+
+Quando la fonte e' passata a RainViewer, che e' mondiale, **il fondo e'
+rimasto quello**. A Forli' e a Noceto funzionava. A Bergen, a Tokyo, a Nairobi
+la sala mostrava un rettangolo vuoto con due cerchi, un puntino e la pioggia
+che galleggiava sul niente. Nessuno se n'e' accorto per giri e giri, perche'
+tutte le prove si facevano su localita' italiane.
+
+E' la stessa forma del difetto di 12-ter - una scala europea applicata a Tokyo -
+e stavolta non era nemmeno una scala: era il disegno del mondo.
+
+### 24.2 "Non funziona" era la conseguenza di un limite dichiarato
+
+Due ore di storico contro una barra di ventiquattro, per sette giorni. Tre ore
+su centosessantotto. La sezione 19 quel limite lo aveva dichiarato bene, la 20
+aveva provato a riempirlo col modello, la 22 aveva tolto il ripiego perche'
+quaranta chilometri non stanno accanto a un chilometro.
+
+Tre sezioni di diario per arrivare dove si poteva arrivare subito: **una fonte
+che risponde per il due per cento delle ore che l'interfaccia offre non e' una
+funzione, e' una demo.**
+
+### 24.3 Le fonti di RainViewer non si possono usare
+
+L'elenco mostrato sono i servizi meteorologici nazionali che RainViewer
+aggrega: una settantina, dal Met Office all'Agenzia giapponese, da Environment
+Canada all'ARPA Veneto. Usarli direttamente vorrebbe dire scrivere e mantenere
+settanta lettori, ognuno col proprio formato, proiezione, autenticazione e
+licenza.
+
+Ma non e' nemmeno quello il punto. Il punto e' che **in quell'elenco c'e'
+"Protezione Civile — Italian Civil Protection Department"**, cioe' esattamente
+la fonte su cui questo progetto ha gia' sbattuto tre volte: nove indirizzi
+diversi, cinque intestazioni diverse, e infine dal telefono su rete italiana con
+un agente che dichiarava nome e indirizzo del progetto. **403, sempre.**
+
+RainViewer quei dati li ha per accordi che noi non abbiamo. Il suo elenco di
+fonti non e' un elenco di porte aperte: e' l'elenco di cio' che lui puo' aprire
+e noi no. Non c'era una scorciatoia da trovare, e cercarla avrebbe ripetuto
+l'errore della sezione 18 con settanta servizi invece che con uno.
+
+Quindi: **tolto tutto.** La carta, le coste, il repository, i quattro stati,
+le due sonde di CI, i due file di test, lo script delle coste, e la seconda
+porta di `Http.kt` che esisteva solo per scaricare immagini.
+
+### 24.4 Al suo posto: quando piove
+
+La domanda che uno si fa guardando la pioggia non e' "dove sta la macchia": e'
+**devo uscire adesso, mi bagno?**. I dati quella risposta ce l'hanno sempre -
+per tutte le ore e per tutti e sette i giorni - e non la si mostrava.
+
+> Comincia fra 3 ore, verso le 14:00: circa 3 ore, 4,2 mm in tutto.
+
+Guarda **avanti** dall'ora scelta e su tutte le ore che il modello ha, non sul
+solo giorno mostrato: una pioggia che comincia a mezzanotte e mezza non e'
+"domani", e' fra novanta minuti. Se sta gia' piovendo, dice **quando smette**,
+che e' l'altra meta' della stessa domanda.
+
+Sotto, i sette giorni in colonne di millimetri, **toccabili**: la barra in
+fondo sceglie l'ora, ma il giorno si cambia solo da "La settimana" - vedere che
+giovedi' piove e non poterci andare da qui vorrebbe dire uscire, scorrere,
+tornare.
+
+### 24.5 Cosa si porta via questa sezione
+
+Tre giri di CI per il DPC, quattro per RainViewer, due per la previsione a
+griglia. Tutto per una funzione cancellata.
+
+Non e' stato inutile - la carta a tessere, la proiezione di Mercatore e la
+lettura della maschera di copertura erano codice corretto e provato - ma la
+domanda che avrebbe risparmiato tutto si poteva fare al primo giorno:
+
+**Quante delle ore che l'interfaccia offre questa fonte sa coprire?**
+
+Due su ventiquattro. La risposta era disponibile prima di scrivere una riga, e
+nessuno l'ha chiesta.

@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -19,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
@@ -41,6 +44,8 @@ fun SalaPioggiaScreen(
     state: UiState,
     palette: SalaPalette,
     onSelectHour: (Int) -> Unit,
+    /** Toccare una colonna della settimana cambia il giorno di tutta la galleria. */
+    onSelectDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // **Le ore del giorno mostrato, non quelle di oggi.** Toccando giovedi'
@@ -142,17 +147,179 @@ fun SalaPioggiaScreen(
             CellaValore(etichetta = "SUOLO", valore = if (totale > 4.0) "saturo" else "asciutto", palette = palette)
         }
 
-        // Il radar sta **qui dentro** e non in una sala sua: risponde alla
-        // stessa domanda delle colonne qui sopra, per un'altra via. Quelle
-        // dicono quando, la mappa dice dove, e vicine valgono piu' che
-        // separate da uno scorrimento.
         HorizontalDivider(
             color = palette.maniglia.copy(alpha = 0.5f),
             modifier = Modifier.padding(top = 18.dp, bottom = 16.dp),
         )
-        MappaRadar(stato = state.radar, place = state.place, palette = palette)
+
+        // ── La domanda, e la risposta ────────────────────────────────────────
+        //
+        // **Qui c'era il radar, ed e' stato tolto.** Rispondeva a "dove piove"
+        // per due ore su ventiquattro, solo dentro un rettangolo fra i cinque e
+        // i venti gradi di longitudine - le coste disegnate a mano finivano li'
+        // - e per ogni altro posto del mondo era un riquadro vuoto con la
+        // pioggia che galleggiava sul niente. Le ragioni per esteso stanno in
+        // CONTESTO 24.
+        //
+        // Al suo posto c'e' la domanda che uno si fa davvero guardando la
+        // pioggia, e che i dati sanno **sempre** - per tutte le ore e per tutti
+        // e sette i giorni: *quando comincia, quanto dura, quanta ne viene*.
+        Text(
+            text = "QUANDO",
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        Text(
+            text = finestraPioggia(state),
+            style = SalaType.rowTitle,
+            color = palette.ink,
+        )
+
+        // ── I sette giorni ───────────────────────────────────────────────────
+        val giorni = state.forecast?.days.orEmpty()
+        if (giorni.size >= 3) {
+            Text(
+                text = "LA SETTIMANA",
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+            )
+            SettimanaDellaPioggia(
+                giorni = giorni,
+                scelto = state.selectedDay,
+                palette = palette,
+                onVai = onSelectDay,
+            )
+        }
     }
 }
+
+/**
+ * Le colonne dei sette giorni, in millimetri.
+ *
+ * **Sono toccabili**, e non e' un di piu': la barra in fondo sceglie l'ora ma
+ * il giorno si cambia solo da "La settimana", che sta due sale piu' in la'.
+ * Vedere che giovedi' piove e non poterci andare da qui vorrebbe dire uscire,
+ * scorrere, tornare.
+ *
+ * L'altezza e' in scala sul giorno piu' bagnato della settimana e non su una
+ * soglia fissa: in una settimana da due millimetri l'uno una scala fissa
+ * darebbe sette colonne tutte a zero, e una settimana piatta si legge lo stesso
+ * dai numeri sotto.
+ */
+@Composable
+private fun SettimanaDellaPioggia(
+    giorni: List<DayForecast>,
+    scelto: Int,
+    palette: SalaPalette,
+    onVai: (Int) -> Unit,
+) {
+    val massimo = giorni.mapNotNull { it.precipitationSum }.maxOrNull()?.coerceAtLeast(1.0) ?: 1.0
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        giorni.forEachIndexed { indice, giorno ->
+            val mm = giorno.precipitationSum ?: 0.0
+            val mio = indice == scelto
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(CircleShape)
+                    .clickable { onVai(indice) }
+                    .padding(vertical = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    modifier = Modifier.height(46.dp).fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.52f)
+                            // Un filo di colonna anche a zero: una colonna alta
+                            // zero sparisce, e una colonna sparita si legge
+                            // come "non lo so" invece che come "non piove".
+                            .fillMaxHeight(((mm / massimo).coerceIn(0.06, 1.0)).toFloat())
+                            .clip(CircleShape)
+                            .background(
+                                if (mm > 0.05) SalaTokens.acqua.copy(alpha = if (mio) 1f else 0.55f)
+                                else palette.maniglia,
+                            ),
+                    )
+                }
+                Text(
+                    text = giorno.label,
+                    style = SalaType.microLabel,
+                    color = if (mio) palette.accent else palette.inkFaint,
+                    maxLines = 1,
+                    modifier = Modifier.padding(top = 6.dp).wrapContentWidth(unbounded = true),
+                )
+                Text(
+                    text = if (mm > 0.05) mm.virgola() else "–",
+                    style = SalaType.microLabel,
+                    color = if (mio) palette.ink else palette.inkFaint,
+                    maxLines = 1,
+                    modifier = Modifier.wrapContentWidth(unbounded = true),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * La frase che dice quando piove, a partire dall'ora scelta.
+ *
+ * **E' la domanda vera.** Non "quanta acqua fa oggi in totale" - che e' un
+ * numero da bollettino - ma *devo uscire adesso, mi bagno?*. Le colonne qui
+ * sopra ce l'hanno dentro, ma vanno lette e interpretate; questa riga la
+ * risponde.
+ *
+ * Guarda **avanti** dall'ora scelta, su tutte le ore che il modello ha - sette
+ * giorni - e non sul solo giorno mostrato: una pioggia che comincia a
+ * mezzanotte e mezza non e' "domani", e' fra novanta minuti.
+ *
+ * La soglia e' un decimo di millimetro l'ora. Sotto, il modello mette una
+ * pioggia che nessuno sente cadere, e annunciarla renderebbe la frase inutile
+ * per il novanta per cento delle giornate.
+ */
+private fun finestraPioggia(state: UiState): String {
+    val ore = state.forecast?.allHours.orEmpty()
+    val da = state.detailHour?.time ?: return "Non si sa: la previsione oraria non è arrivata."
+    val avanti = ore.filter { !it.time.isBefore(da) }
+    if (avanti.isEmpty()) return "Oltre questo momento la previsione oraria non arriva."
+
+    val soglia = 0.1
+    val bagnate = avanti.takeWhile { (it.precipitation ?: 0.0) >= soglia }
+    if (bagnate.isNotEmpty()) {
+        // Sta piovendo adesso: quello che serve sapere e' **quando smette**.
+        val fine = bagnate.last().time.plusHours(1)
+        val quanta = bagnate.sumOf { it.precipitation ?: 0.0 }
+        return "Sta piovendo: smette verso le %02d:00, ancora %s mm."
+            .format(fine.hour, quanta.virgola())
+    }
+
+    val inizio = avanti.firstOrNull { (it.precipitation ?: 0.0) >= soglia }
+        ?: return "Nelle ore che il modello copre non è prevista pioggia."
+
+    val finestra = avanti.dropWhile { it.time.isBefore(inizio.time) }
+        .takeWhile { (it.precipitation ?: 0.0) >= soglia }
+    val quanta = finestra.sumOf { it.precipitation ?: 0.0 }
+    val quando = when (val giorni = java.time.Duration.between(da, inizio.time).toHours()) {
+        in 0..1 -> "fra poco"
+        in 2..11 -> "fra ${giorni} ore"
+        else -> if (inizio.time.toLocalDate() == da.toLocalDate()) "oggi" else giornoDi(inizio.time, state)
+    }
+    val durata = if (finestra.size <= 1) "un'ora scarsa" else "circa ${finestra.size} ore"
+    return "Comincia %s, verso le %02d:00: %s, %s mm in tutto."
+        .format(quando, inizio.time.hour, durata, quanta.virgola())
+}
+
+/** L'etichetta del giorno di un istante, come la scrive la striscia in fondo. */
+private fun giornoDi(quando: java.time.LocalDateTime, state: UiState): String =
+    state.forecast?.days?.firstOrNull { it.date == quando.toLocalDate() }?.label?.lowercase()
+        ?: "più avanti"
 
 /**
  * Come si chiama questa quantita' d'acqua.

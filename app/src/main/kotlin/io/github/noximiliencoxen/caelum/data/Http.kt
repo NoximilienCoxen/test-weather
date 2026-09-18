@@ -6,11 +6,12 @@ import java.net.URL
 /**
  * La sola GET dell'app.
  *
- * **Due porte, una stanza.** Da quando c'e' il radar le firme sono due -
- * [httpGet] che torna testo e [httpGetBytes] che torna byte - ma la
- * connessione la apre, la legge e la chiude una funzione sola. La
- * duplicazione che questo file e' nato per togliere era di *comportamento*,
- * non di firma: due nomi che chiamano lo stesso corpo non la riportano.
+ * **Una porta sola, di nuovo.** Per un periodo ce n'erano due: [httpGet] che
+ * torna testo e una che tornava byte, perche' le tessere del radar erano
+ * immagini e un'immagine letta come stringa e' una stringa rovinata. Se n'e'
+ * andata col radar (CONTESTO 24). [RispostaGrezza] resta perche' e' quello che
+ * [httpGetGrezzo] produce, e la connessione la apre, la legge e la chiude una
+ * funzione sola.
  *
  * **Era scritta cinque volte.** Lo stesso identico blocco - apri, chiedi, leggi
  * il flusso giusto a seconda del codice, chiudi nel `finally` - stava in
@@ -81,29 +82,6 @@ internal fun httpGet(
 // specifica, e l'Atom di MeteoAlarm si dichiara UTF-8 - ma e' un'assunzione,
 // e sta scritta perche' una fonte futura che parlasse un'altra codifica
 // rompa qui e non a valle, dove sarebbe un accento storto senza spiegazione.
-
-/**
- * La stessa GET, quando quello che torna **non e' testo**.
- *
- * Il radar risponde con un'immagine, e un'immagine letta come stringa e' una
- * stringa rovinata: `bufferedReader()` decodifica UTF-8, e ogni byte che non
- * forma un carattere valido diventa un punto interrogativo. Non e' una perdita
- * che si recupera ricodificando dopo - i byte originali non ci sono piu'.
- *
- * Non e' una seconda GET: e' la stessa, e la connessione la apre e la chiude
- * [httpGetGrezzo] per tutte e due. Quello che cambia e' cosa si fa del flusso,
- * ed e' l'unica cosa che poteva cambiare.
- *
- * Torna anche il **tipo dichiarato** dal server, perche' chi chiama il radar
- * non sa in anticipo se ricevera' un PNG o un JSON che lo contiene, e
- * `Content-Type` e' il modo che il protocollo prevede per dirglielo.
- */
-internal fun httpGetBytes(
-    url: String,
-    fonte: String,
-    accept: String = "*/*",
-    timeoutMs: Int = 10_000,
-): RispostaGrezza = httpGetGrezzo(url, fonte, accept, timeoutMs)
 
 /** Il corpo di una risposta, coi byte intatti e il tipo che il server dichiara. */
 internal class RispostaGrezza(val byte: ByteArray, val tipo: String) {
