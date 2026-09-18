@@ -27,8 +27,16 @@ import kotlin.math.roundToInt
  * stesso nome e soglie diverse, senza etichetta, sono peggio di uno solo.
  */
 @Serializable
+private data class AirQualityHourlyDto(
+    val time: List<String>? = null,
+    @SerialName("european_aqi") val europeanAqi: List<Double?>? = null,
+    @SerialName("us_aqi") val usAqi: List<Double?>? = null,
+)
+
+@Serializable
 private data class AirQualityDto(
     val current: AirQualityCurrentDto? = null,
+    val hourly: AirQualityHourlyDto? = null,
     val error: Boolean? = null,
     val reason: String? = null,
 )
@@ -104,9 +112,70 @@ data class AirQuality(
     val pm10: Double?,
     val nitrogenDioxide: Double? = null,
     val ozone: Double? = null,
+    /**
+     * L'indice ora per ora, oggi.
+     *
+     * **C'era e non si chiedeva.** Lo stesso endpoint che da' il valore di
+     * adesso da' anche le ventiquattro ore, e la sala mostrava un numero solo:
+     * "27, discreta", vero e muto. Un indice che alle otto vale venti e alle
+     * quattordici sessanta racconta una giornata; lo stesso indice detto una
+     * volta sola non racconta niente, e soprattutto non dice **quando uscire**,
+     * che e' l'unica domanda che uno si fa guardando l'aria.
+     *
+     * Vuota quando l'API non le manda: chi legge lo dichiara invece di
+     * disegnare una riga piatta.
+     */
+    val oreOggi: List<OraAria> = emptyList(),
 ) {
     val band: AirBand? get() = scale.band(index)
+
+    /**
+     * L'inquinante che **comanda** l'indice, e quanto e' vicino al suo limite.
+     *
+     * L'indice europeo e' il peggiore dei suoi componenti, non la loro media:
+     * dire "27, discreta" senza dire chi l'ha deciso lascia fuori la parte
+     * utile. Con l'ozono al settanta per cento del limite e le polveri al
+     * dieci, la giornata si comporta in un modo solo - e non e' quello delle
+     * polveri.
+     *
+     * I limiti sono le linee guida dell'OMS del 2021 per la media di
+     * ventiquattro ore, tranne l'ozono che le ha sulle otto ore. Sono piu'
+     * severi dei limiti di legge europei, e sono quelli giusti da mostrare a
+     * qualcuno che decide se uscire a correre: la legge dice cosa e' punibile,
+     * l'OMS cosa fa male.
+     */
+    val dominante: Inquinante?
+        get() = listOfNotNull(
+            pm25?.let { Inquinante("PM 2,5", "il PM 2,5", it, 15.0) },
+            pm10?.let { Inquinante("PM 10", "il PM 10", it, 45.0) },
+            nitrogenDioxide?.let { Inquinante("Biossido d'azoto", "il biossido d'azoto", it, 25.0) },
+            ozone?.let { Inquinante("Ozono", "l'ozono", it, 100.0) },
+        ).maxByOrNull { it.quota }
 }
+
+/** Un inquinante, col suo valore e la soglia con cui va confrontato. */
+data class Inquinante(
+    /** Come si scrive da solo, in una tabella: "PM 2,5". */
+    val nome: String,
+    /**
+     * Come si scrive **dentro una frase**, articolo compreso: "il PM 2,5",
+     * "l'ozono".
+     *
+     * Serve un campo in piu' perche' l'italiano non ricava l'articolo dal
+     * nome, e perche' abbassare le maiuscole con `lowercase()` - che era la
+     * prima versione - trasforma una sigla in un rumore: *"l'indice lo decide
+     * pm 2,5"*. Le sigle non hanno un minuscolo.
+     */
+    val inFrase: String,
+    val valore: Double,
+    val limite: Double,
+) {
+    /** Quanto del limite e' occupato. Sopra uno, il limite e' superato. */
+    val quota: Double get() = if (limite > 0) valore / limite else 0.0
+}
+
+/** L'indice dell'aria a una certa ora. */
+data class OraAria(val ora: java.time.LocalDateTime, val indice: Int)
 
 class AirQualityRepository(private val place: Place = Place.FORLI) {
 
@@ -127,6 +196,8 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 append("&longitude=").append(place.longitude)
                 append("&timezone=auto")
                 append("&current=").append(CURRENT_VARS)
+                append("&hourly=").append(HOURLY_VARS)
+                append("&forecast_days=2")
             }
             val dto = json.decodeFromString<AirQualityDto>(httpGet(url, fonte = "la qualità dell'aria"))
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
@@ -146,13 +217,37 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 pm10 = dto.current?.pm10,
                 nitrogenDioxide = dto.current?.nitrogenDioxide,
                 ozone = dto.current?.ozone,
+                oreOggi = oreDi(dto, scale),
             )
         }
     }
 
 
+    /**
+     * Le ore, dalla stessa scala del valore corrente.
+     *
+     * **La scala dev'essere la stessa, o il grafico mente.** L'indice europeo e
+     * quello americano vanno da zero a cento e da zero a cinquecento: mescolarli
+     * in una curva sola - il numero grande in cima dall'uno, le colonne
+     * dall'altro - darebbe una giornata che crolla a mezzogiorno per il solo
+     * fatto di aver cambiato metro. Si sceglie una volta, in alto, e si tiene.
+     */
+    private fun oreDi(dto: AirQualityDto, scale: AirScale): List<OraAria> {
+        val orari = dto.hourly ?: return emptyList()
+        val tempi = orari.time ?: return emptyList()
+        val valori = when (scale) {
+            AirScale.EUROPEA -> orari.europeanAqi
+            AirScale.STATUNITENSE -> orari.usAqi
+        } ?: return emptyList()
+        return tempi.zip(valori).mapNotNull { (t, v) ->
+            val quando = runCatching { java.time.LocalDateTime.parse(t) }.getOrNull()
+            if (quando == null || v == null) null else OraAria(quando, v.roundToInt())
+        }
+    }
+
     companion object {
         const val ENDPOINT = "https://air-quality-api.open-meteo.com/v1/air-quality"
         const val CURRENT_VARS = "european_aqi,us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone"
+        const val HOURLY_VARS = "european_aqi,us_aqi"
     }
 }

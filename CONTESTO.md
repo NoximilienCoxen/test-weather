@@ -5067,3 +5067,120 @@ Adesso cambia col contenuto - "IL RADAR" per il misurato, "LA PIOGGIA PREVISTA"
 per il modello - e la riga a destra porta l'**ora** invece della parola
 "previsione", che ormai la dice il titolo: quello che serve sapere li' e' quale
 ora si sta guardando.
+
+## 22. La previsione sulla carta e' stata tolta, e il perche' vale piu' del codice
+
+Due schermate a confronto, dal telefono di chi usa l'app:
+
+> Nota la differenza tra le 8 e le 9. Le 8 sono definite e chiare, mentre le 9
+> sono chiazze blurrate. Se non è possibile integrare il radar lascia perdere.
+
+Alle 8 c'e' il radar: bordi netti, un temporale sul mare che si legge cella per
+cella. Alle 9 c'e' la previsione: chiazze. Affiancate nella stessa schermata,
+con lo stesso titolo e nello stesso riquadro, la seconda sembra una versione
+rotta della prima.
+
+**Non lo era, e non poteva diventare la prima.** La differenza non e' di
+disegno, e nessun rendering la colma:
+
+| | risoluzione |
+| --- | --- |
+| tessera radar di RainViewer | **~1 km** per pixel |
+| griglia del modello, 117 punti | **~40 km** fra un valore e l'altro |
+
+Quaranta volte piu' grossa. Le chiazze **erano** il dato: disegnarle nette
+avrebbe solo spostato la bugia dal "sembra sfocato" al "sembra preciso", e la
+seconda e' peggio - una carta che promette il chilometro quando ha la
+provincia. La 21 aveva gia' tolto la vernice; sotto restava questo, e questo
+non si toglie.
+
+Si sarebbe potuto infittire la griglia: Open-Meteo accetta anche
+centoquarantaquattro punti, e piu' richieste ne darebbero qualche centinaio. Ma
+il modello sotto ha celle di qualche chilometro e la carta ne mostra
+seicento per seicento: per avvicinarsi al radar servirebbero decine di migliaia
+di punti, cioe' megabyte a ogni cambio di localita' per un disegno che
+resterebbe comunque piu' grosso.
+
+Quindi e' stata **tolta**: `PioggiaPrevistaRepository`, `MappaPrevista`,
+`StatoRadar.Previsto`, il campo interpolato, la sonda della griglia e il test.
+Restano il radar per le ore che ha - nitido, e quello funziona - e la frase per
+le ore che non ha.
+
+**Cio' che resta e' il metodo, non il codice.** Due giri di CI per scoprire che
+una fonte a quaranta chilometri non puo' stare accanto a una da un chilometro:
+si sarebbe potuto calcolarlo prima, dividendo la larghezza della finestra per il
+numero di punti, in trenta secondi e senza scrivere niente. La sezione 18 diceva
+"non scrivere un lettore per un servizio che non risponde"; questa aggiunge:
+**guarda che risoluzione ha il dato prima di decidere che forma dargli.**
+
+## 23. Le sale vanno di lato, e l'aria smette di essere un numero solo
+
+Due richieste nello stesso messaggio, e la seconda spiega la prima:
+
+> Lo scorrimento è un po' difficile, bisogna scorrere molto per passare tra un
+> menù e l'altro. Dammi una soluzione per avere più spazio di lettura […]
+> perché menù come la qualità dell'aria sono un po' spogli
+
+### 23.1 Non era la soglia: era l'asse
+
+Il carosello delle sale era un pager **verticale**, e dentro ogni pagina il
+pannello scorreva **anch'esso in verticale**. Due cose che vogliono lo stesso
+dito. Il nested scroll di Compose fa quello che deve: prima finisci il
+contenuto, poi cambi pagina - e da fuori si vede come "bisogna scorrere molto".
+
+Il commento nel codice quel prezzo lo dichiarava perfino, e lo chiamava
+inevitabile: *"e' quello che fa qualsiasi pagina lunga dentro un carosello"*.
+Era vero e irrilevante, perche' la domanda giusta non era "come riduco
+l'attrito" ma **"perche' i due gesti sono sullo stesso asse"**.
+
+Adesso le sale si cambiano di **lato**. I due gesti non si toccano: si legge in
+giu' e si cambia sala di fianco, a qualunque altezza della scheda. E il pannello
+puo' crescere quanto gli pare, perche' non ruba piu' niente a nessuno - che e'
+anche la risposta alla richiesta di "piu' spazio di lettura": lo spazio non
+andava aggiunto, andava **liberato**.
+
+La colonna delle scorciatoie resta verticale a destra, e non e' un'incoerenza:
+quella non si scorre, si **tocca**. E' un indice, e un indice sta in piedi di
+lato.
+
+La soglia e' scesa lo stesso da mezza pagina a un quinto: il gesto resta
+deliberato, ma non e' piu' un trasloco.
+
+### 23.2 "Spoglie" voleva dire senza contenuto, non senza spazio
+
+Sala V mostrava un anello, una parola e quattro barrette: **27, discreta**.
+Vero, e muto.
+
+Il dato mancante **c'era gia' nell'endpoint**. Lo stesso indirizzo che da' il
+valore di adesso da' anche le ventiquattro ore: si chiedeva `current` e basta.
+E' la stessa forma del difetto della Norma - pagare una richiesta e buttarne
+via meta' - solo al contrario: qui la richiesta era pagata e il campo non si
+chiedeva nemmeno.
+
+Tre aggiunte, e ognuna risponde a una domanda che il numero da solo non
+copriva:
+
+1. **L'andamento della giornata**, in colonne, con l'ora scelta in evidenza.
+   Un indice che alle otto vale venti e alle quattordici sessanta racconta una
+   giornata; detto una volta sola non dice **quando uscire**, che e' l'unica
+   domanda che ci si fa guardando l'aria. Stessa forma del grafico dei raggi UV,
+   e non per pigrizia: e' la stessa domanda, e due disegni diversi per la stessa
+   domanda costringono a impararli tutti e due.
+2. **La distanza dal limite, e chi comanda.** L'indice europeo e' il
+   **peggiore** dei suoi componenti, non la loro media: dire "27, discreta"
+   senza dire chi l'ha deciso lascia fuori la parte utile. Con l'ozono al
+   settanta per cento del limite e le polveri al dieci, la giornata si comporta
+   in un modo solo, e non e' quello delle polveri.
+3. **Una riga che dice quando.** Fra le ore che restano, la migliore e la
+   peggiore. Guarda **avanti** dall'ora scelta e non su tutta la giornata,
+   perche' un consiglio che indica le sei del mattino alle sette di sera e' un
+   consiglio per ieri.
+
+### 23.3 I limiti sono quelli dell'OMS, non quelli di legge
+
+Le barrette usavano le soglie europee: venticinque per il PM 2,5, cinquanta per
+il PM 10. Sono il confine di cio' che e' **punibile**. L'OMS, dal 2021, mette
+quindici e quarantacinque, ed e' il confine di cio' che **fa male**.
+
+A chi sta decidendo se andare a correre serve il secondo metro. Il primo
+risponde a una domanda che non ha fatto.
