@@ -123,6 +123,20 @@ case "$SIZE" in
 esac
 echo "schermo ${W}x${H}"
 
+# **La densita' si chiede, non si deduce dalla larghezza.** Il profilo pixel_6
+# e' 1080x2400 a 420 dpi, cioe' 2,625 pixel per punto e 411 punti di larghezza -
+# e chi la ricavasse dividendo per i 393 punti del Pixel 6 "da scheda tecnica"
+# sbaglierebbe del cinque per cento, che su una colonna di sette bersagli sono
+# quaranta pixel: il dito finirebbe sul bersaglio sbagliato. Serve solo ai gesti
+# che devono cadere su un comando preciso.
+DPI=$(adbt shell wm density 2>/dev/null | tr -d '\r' | awk '{print $NF}')
+case "$DPI" in
+  ''|*[!0-9]*) DPI=420 ;;
+esac
+# Centesimi di pixel per punto: la shell non fa conti con la virgola.
+PXDP=$(( DPI * 100 / 160 ))
+echo "densita' ${DPI}dpi (${PXDP} centesimi di pixel per punto)"
+
 # Il benvenuto viene prima di tutto, e non solo perche' e' la prima cosa che si
 # vede: finche' non lo si chiude **l'app lo rimostra a ogni avvio**, e ogni altro
 # scatto di questo script ritrarrebbe lui invece della schermata che dice di
@@ -425,6 +439,36 @@ session() {
     n=$(( n + 1 ))
     i=$(( i + 1 ))
   done
+
+  # ── La colonna si trascina ──────────────────────────────────────────────────
+  #
+  # **Il gesto nuovo, fotografato mentre e' in corso.** Tenere premuta la
+  # colonna e scorrere attraversa le sale con la sala sotto il dito, e accanto
+  # al dito compare il cartellino col nome: due cose che uno scatto a dito
+  # alzato non puo' mostrare, perche' a dito alzato il cartellino non c'e' piu'.
+  #
+  # `input motionevent` tiene premuto fra un comando e l'altro - la stessa
+  # tecnica della rotazione della luna, e la ragione per cui li' non si usa una
+  # swipe: quella finisce prima dello scatto.
+  #
+  # I conti: la colonna e' centrata in verticale sullo schermo **intero** - sta
+  # fuori dal riquadro che tiene conto delle barre di sistema - ed e' fatta di
+  # sette bersagli da 48dp, quindi alta 336dp. Il suo asse sta a mezzo bersaglio
+  # piu' sei punti di margine dal bordo destro: trenta punti.
+  local passo=$(( 48 * PXDP / 100 ))
+  local asse=$(( W - 30 * PXDP / 100 ))
+  local cima=$(( H / 2 - 7 * passo / 2 ))
+  # Il centro del bersaglio numero $1, dal primo (0) al settimo (6).
+  bersaglio_y() { echo $(( cima + $1 * passo + passo / 2 )); }
+
+  echo "  -- colonna trascinata (asse $asse, passo $passo) --"
+  adbt shell input motionevent DOWN "$asse" "$(bersaglio_y 6)" >/dev/null 2>&1 || true
+  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 3)" >/dev/null 2>&1 || true
+  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
+  sleep 1
+  shoot "${slug}-d11b-colonna-trascinata"
+  adbt shell input motionevent UP "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
+  sleep 1
 
   # L'indietro da una scheda qualunque riporta alla prima, invece di chiudere
   # l'app: da sei schede sotto, uscire non e' quasi mai la risposta cercata.

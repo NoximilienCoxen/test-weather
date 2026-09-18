@@ -5317,6 +5317,17 @@ Tre note di mestiere:
   com'era alla chiave; senza, chi spegne le animazioni ad app aperta
   continuerebbe a sentire i colpetti di un blocco scritto quando erano accese.
 
+**Il gesto e' fotografato mentre e' in corso**, e non e' un vezzo: a dito
+alzato il cartellino non c'e' piu', quindi uno scatto a gesto finito
+proverebbe soltanto che si e' arrivati da qualche parte. `capture.sh` usa
+`input motionevent`, che tiene premuto fra un comando e l'altro - la stessa
+tecnica della rotazione della luna - e scatta a meta' del trascinamento:
+`chiaro-d11b-colonna-trascinata.png`. I pixel dei bersagli vengono dalla
+densita' vera, chiesta a `wm density`: dedurla dalla larghezza dello schermo e
+dai 393 punti del Pixel 6 "da scheda tecnica" sbaglia del cinque per cento - il
+profilo dell'emulatore e' 411 punti a 420 dpi - e su sette bersagli in colonna
+sono quaranta pixel, cioe' il dito sul bersaglio sbagliato.
+
 Insieme al gesto sono arrivate due cose che la colonna non aveva:
 
 **Il cartellino col nome**, accanto alla sala sotto il dito e **solo mentre si
