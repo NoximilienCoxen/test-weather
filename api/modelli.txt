@@ -21,14 +21,14 @@
     Noceto   48/48 ore  quota 74.0 m  prime [17.6, 17.3, 17.1]
     Forli    48/48 ore  quota 40.0 m  prime [17.0, 16.8, 16.9]
   ecmwf_aifs025_single
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [17.6, 17.3, 17.0]
     Forli    48/48 ore  quota 40.0 m  prime [15.6, 15.4, 15.2]
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [15.8, 16.2, 16.4]
     Forli    48/48 ore  quota 40.0 m  prime [16.7, 16.6, 16.3]
   arpae_cosmo_5m
-    Noceto    HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
-    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
+    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [17.7, 17.6, 17.6]
     Forli    48/48 ore  quota 40.0 m  prime [18.4, 18.0, 17.7]
@@ -41,33 +41,33 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0035762786865234375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0059604644775390625,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0030994415283203125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.006079673767089844,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=142  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.00286102294921875,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0045299530029296875,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.003933906555175781,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [13.6, 13.1, 12.7]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [13.7, 13.2, 12.7]
     Bergen   48/48 ore  quota 17.0 m  prime [11.5, 11.7, 12.0]
     Singapore 48/48 ore  quota 39.0 m  prime [28.2, 28.3, 28.7]
-    NewYork  48/48 ore  quota 27.0 m  prime [25.5, 24.9, 24.4]
+    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
 
 === chi risponde sotto best_match, nel mondo ===
-  Tokyo          best_match = ? (nessun candidato coincide)
+  Tokyo          best_match = jma_seamless
   NewYork        best_match = gfs_seamless
-  Oslo           best_match = ? (nessun candidato coincide)
+  Oslo           best_match = metno_seamless
   Reykjavik      best_match = ? (nessun candidato coincide)
-  Nairobi        best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  Nairobi        best_match = metno_seamless
   CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Sydney         best_match NON RISPONDE qui
+  Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Noceto         best_match = ? (nessun candidato coincide)
+  Singapore      best_match = metno_seamless
+  Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
   Tokyo          ore    168  assenti=-  tutte nulle=-
@@ -78,9 +78,9 @@
   Oslo           giorni   7  assenti=-  tutte nulle=-
   Reykjavik      ore    168  assenti=-  tutte nulle=-
   Reykjavik      giorni   7  assenti=-  tutte nulle=-
-  Nairobi        HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
-  CittaDelCapo   ore    168  assenti=-  tutte nulle=-
-  CittaDelCapo   giorni   7  assenti=-  tutte nulle=-
+  Nairobi        ore    168  assenti=-  tutte nulle=-
+  Nairobi        giorni   7  assenti=-  tutte nulle=-
+  CittaDelCapo   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   Sydney         ore    168  assenti=-  tutte nulle=-
   Sydney         giorni   7  assenti=-  tutte nulle=-
   SanPaolo       ore    168  assenti=-  tutte nulle=-
