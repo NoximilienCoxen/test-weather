@@ -92,7 +92,7 @@ data class RadarIndice(val host: String, val fotogrammi: List<RadarFotogramma>) 
 /**
  * A che punto sta il radar, per chi deve disegnarlo.
  *
- * Cinque casi, e due sono stati aggiunti da chi l'app la usa davvero.
+ * Quattro casi, e due sono stati aggiunti da chi l'app la usa davvero.
  *
  * **`FuoriCopertura` e' tornato.** Se n'era andato col Dipartimento della
  * Protezione Civile, perche' RainViewer non sembrava dichiarare dove arrivano
@@ -121,32 +121,14 @@ sealed interface StatoRadar {
      * [ultimo] e' l'istante del fotogramma piu' recente, perche' la frase da
      * scrivere non e' "non si sa" ma "si sa fino a quest'ora".
      *
-     * **Da solo questo stato non basta, e si e' visto subito.** Per ventuno ore
-     * su ventiquattro la carta diceva "niente per quest'ora" e restava vuota:
-     * onesta, e inutile. Adesso quando c'e' una previsione per quell'ora la
-     * carta mostra quella - vedi [Previsto] - e questo stato resta per le ore
-     * che nessuna delle due fonti copre.
+     * **C'e' stato un tentativo di riempire queste ore con la previsione del
+     * modello, ed e' stato tolto.** Funzionava e diceva il vero, ma un modello
+     * da' un valore ogni quaranta chilometri: accanto a una tessera radar da
+     * un chilometro per pixel sembrava - ed era - un'altra cosa. Vedi
+     * CONTESTO 22: la differenza non era di disegno, era di dato, e nessun
+     * disegno la colma senza fingere una precisione che non c'e'.
      */
     data class FuoriOrario(val ultimo: Instant?) : StatoRadar
-
-    /**
-     * Il radar non ha quell'ora, ma il **modello** ce l'ha.
-     *
-     * E' la carta che risponde per tutte le altre ventuno ore della barra, e
-     * non e' la stessa cosa del radar: il radar dice cosa **sta cadendo**,
-     * questa dice cosa un modello **si aspetta**. Chi guarda una carta radar
-     * le crede, e crederebbe a una previsione a sedici ore come se qualcuno
-     * l'avesse vista - per questo si disegna con macchie morbide invece che a
-     * pixel, si etichetta "previsione" invece che con un'ora di scatto, e lo
-     * scrive nella riga sotto.
-     */
-    data class Previsto(
-        val quando: Instant,
-        /** La griglia: serve la sua forma per ricomporre il campo. */
-        val mappa: MappaPrevista,
-        /** I millimetri di quest'ora, uno per punto, nell'ordine della griglia. */
-        val valori: List<Float>,
-    ) : StatoRadar
 
     /**
      * Ha risposto male, o non ha risposto.
