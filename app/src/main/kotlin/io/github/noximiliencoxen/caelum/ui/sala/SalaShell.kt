@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -284,6 +286,22 @@ fun SalaShell(
                 VerticalPager(
                     state = pagerState,
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
+                    // **Serviva un gesto troppo lungo per cambiare sala.**
+                    // La soglia di Compose e' mezza pagina: per passare da
+                    // "L'aria" al "Vento" bisognava trascinare mezzo schermo,
+                    // e con sette sale una accanto all'altra e' un mestiere.
+                    // Un quinto basta - il gesto resta deliberato, ma non e'
+                    // piu' un trasloco - e la molla che segue e' piu' rigida
+                    // di quella predefinita perche' l'attesa dopo il dito
+                    // pesa quanto il dito.
+                    flingBehavior = PagerDefaults.flingBehavior(
+                        state = pagerState,
+                        snapPositionalThreshold = 0.2f,
+                        snapAnimationSpec = spring(
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                            stiffness = Spring.StiffnessMediumLow,
+                        ),
+                    ),
                 ) { page ->
                     // **La scheda scorre quando non ci sta, e prima si faceva
                     // tagliare.** Il pannello e' ancorato in basso e si

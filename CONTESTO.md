@@ -5067,3 +5067,48 @@ Adesso cambia col contenuto - "IL RADAR" per il misurato, "LA PIOGGIA PREVISTA"
 per il modello - e la riga a destra porta l'**ora** invece della parola
 "previsione", che ormai la dice il titolo: quello che serve sapere li' e' quale
 ora si sta guardando.
+
+## 22. La previsione sulla carta e' stata tolta, e il perche' vale piu' del codice
+
+Due schermate a confronto, dal telefono di chi usa l'app:
+
+> Nota la differenza tra le 8 e le 9. Le 8 sono definite e chiare, mentre le 9
+> sono chiazze blurrate. Se non è possibile integrare il radar lascia perdere.
+
+Alle 8 c'e' il radar: bordi netti, un temporale sul mare che si legge cella per
+cella. Alle 9 c'e' la previsione: chiazze. Affiancate nella stessa schermata,
+con lo stesso titolo e nello stesso riquadro, la seconda sembra una versione
+rotta della prima.
+
+**Non lo era, e non poteva diventare la prima.** La differenza non e' di
+disegno, e nessun rendering la colma:
+
+| | risoluzione |
+| --- | --- |
+| tessera radar di RainViewer | **~1 km** per pixel |
+| griglia del modello, 117 punti | **~40 km** fra un valore e l'altro |
+
+Quaranta volte piu' grossa. Le chiazze **erano** il dato: disegnarle nette
+avrebbe solo spostato la bugia dal "sembra sfocato" al "sembra preciso", e la
+seconda e' peggio - una carta che promette il chilometro quando ha la
+provincia. La 21 aveva gia' tolto la vernice; sotto restava questo, e questo
+non si toglie.
+
+Si sarebbe potuto infittire la griglia: Open-Meteo accetta anche
+centoquarantaquattro punti, e piu' richieste ne darebbero qualche centinaio. Ma
+il modello sotto ha celle di qualche chilometro e la carta ne mostra
+seicento per seicento: per avvicinarsi al radar servirebbero decine di migliaia
+di punti, cioe' megabyte a ogni cambio di localita' per un disegno che
+resterebbe comunque piu' grosso.
+
+Quindi e' stata **tolta**: `PioggiaPrevistaRepository`, `MappaPrevista`,
+`StatoRadar.Previsto`, il campo interpolato, la sonda della griglia e il test.
+Restano il radar per le ore che ha - nitido, e quello funziona - e la frase per
+le ore che non ha.
+
+**Cio' che resta e' il metodo, non il codice.** Due giri di CI per scoprire che
+una fonte a quaranta chilometri non puo' stare accanto a una da un chilometro:
+si sarebbe potuto calcolarlo prima, dividendo la larghezza della finestra per il
+numero di punti, in trenta secondi e senza scrivere niente. La sezione 18 diceva
+"non scrivere un lettore per un servizio che non risponde"; questa aggiunge:
+**guarda che risoluzione ha il dato prima di decidere che forma dargli.**
