@@ -146,15 +146,30 @@ data class AirQuality(
      */
     val dominante: Inquinante?
         get() = listOfNotNull(
-            pm25?.let { Inquinante("PM 2,5", it, 15.0) },
-            pm10?.let { Inquinante("PM 10", it, 45.0) },
-            nitrogenDioxide?.let { Inquinante("Biossido d'azoto", it, 25.0) },
-            ozone?.let { Inquinante("Ozono", it, 100.0) },
+            pm25?.let { Inquinante("PM 2,5", "il PM 2,5", it, 15.0) },
+            pm10?.let { Inquinante("PM 10", "il PM 10", it, 45.0) },
+            nitrogenDioxide?.let { Inquinante("Biossido d'azoto", "il biossido d'azoto", it, 25.0) },
+            ozone?.let { Inquinante("Ozono", "l'ozono", it, 100.0) },
         ).maxByOrNull { it.quota }
 }
 
 /** Un inquinante, col suo valore e la soglia con cui va confrontato. */
-data class Inquinante(val nome: String, val valore: Double, val limite: Double) {
+data class Inquinante(
+    /** Come si scrive da solo, in una tabella: "PM 2,5". */
+    val nome: String,
+    /**
+     * Come si scrive **dentro una frase**, articolo compreso: "il PM 2,5",
+     * "l'ozono".
+     *
+     * Serve un campo in piu' perche' l'italiano non ricava l'articolo dal
+     * nome, e perche' abbassare le maiuscole con `lowercase()` - che era la
+     * prima versione - trasforma una sigla in un rumore: *"l'indice lo decide
+     * pm 2,5"*. Le sigle non hanno un minuscolo.
+     */
+    val inFrase: String,
+    val valore: Double,
+    val limite: Double,
+) {
     /** Quanto del limite e' occupato. Sopra uno, il limite e' superato. */
     val quota: Double get() = if (limite > 0) valore / limite else 0.0
 }
