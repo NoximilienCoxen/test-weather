@@ -1,120 +1,120 @@
-09-17 23:20:07.885 W/meteo   ( 8661): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:07.885 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:07.885 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:20:09.112 W/meteo   ( 8661): previsione non arrivata (tentativo 2 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:09.112 W/meteo   ( 8661): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:09.112 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:09.112 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:20:11.540 W/meteo   ( 8661): previsione non arrivata (tentativo 3 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:11.540 W/meteo   ( 8661): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:11.540 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:11.540 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:20:16.368 W/meteo   ( 8661): previsione non arrivata (tentativo 4 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:20:16.368 W/meteo   ( 8661): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:20:16.368 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:16.368 W/meteo   ( 8661): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:20:51.778 W/ModernMediaScanner( 1598): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 23:20:54.321 W/ModernMediaScanner( 1598): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-09-17 23:20:54.372 W/ActivityTaskManager(  531): Force removing ActivityRecord{62a6fc3 u0 io.github.noximiliencoxen.caelum/.MainActivity t60 f}}: app died, no saved state
-09-17 23:20:54.411 W/WindowManager(  531): android.os.DeadObjectException
-09-17 23:20:54.500 W/WindowManager(  531): android.os.DeadObjectException
-09-17 23:20:54.501 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{9b4ded2 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
-09-17 23:20:54.501 W/WindowManager(  531): android.os.DeadObjectException
-09-17 23:20:55.748 I/meteo   ( 8880): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
-09-17 23:20:57.979 W/meteo   ( 8880): previsione non arrivata (tentativo 1 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:20:57.979 W/meteo   ( 8880): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:20:57.979 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:57.979 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:20:59.209 W/meteo   ( 8880): previsione non arrivata (tentativo 2 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:59.209 W/meteo   ( 8880): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:20:59.209 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:20:59.209 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:21:01.636 W/meteo   ( 8880): previsione non arrivata (tentativo 3 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:21:01.636 W/meteo   ( 8880): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"reason":"Hourly API request limit exceeded. Please try again in the next hour.","error":true}
-09-17 23:21:01.636 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:21:01.636 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:21:06.468 W/meteo   ( 8880): previsione non arrivata (tentativo 4 di 4): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:21:06.468 W/meteo   ( 8880): java.lang.IllegalStateException: HTTP 429 da Open-Meteo: {"error":true,"reason":"Hourly API request limit exceeded. Please try again in the next hour."}
-09-17 23:21:06.468 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGetGrezzo(Http.kt:136)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet(Http.kt:76)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.HttpKt.httpGet$default(Http.kt:71)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at io.github.noximiliencoxen.caelum.data.WeatherRepository$load$2.invokeSuspend(WeatherRepository.kt:45)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
-09-17 23:21:06.468 W/meteo   ( 8880): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-09-17 23:21:42.839 W/ModernMediaScanner( 1598): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+09-18 06:53:53.907 W/meteo   ( 6484): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+09-18 06:53:57.153 I/meteo   ( 6484): previsione pronta: 24 ore
+09-18 06:54:02.630 W/ActivityTaskManager(  531): Force removing ActivityRecord{3323ec7 u0 io.github.noximiliencoxen.caelum/.MainActivity t47 f}}: app died, no saved state
+09-18 06:54:02.667 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:02.746 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{ce61166 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:02.746 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:02.747 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:04.051 I/meteo   ( 6665): agganci: ora=2 sezione=4 meteo=63 allerta=-1 cattura=true
+09-18 06:54:06.758 I/meteo   ( 6665): previsione pronta: 24 ore
+09-18 06:54:12.318 W/ActivityTaskManager(  531): Force removing ActivityRecord{15a807b u0 io.github.noximiliencoxen.caelum/.MainActivity t48 f}}: app died, no saved state
+09-18 06:54:12.337 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:12.425 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{5188b6a u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:12.425 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:13.724 I/meteo   ( 6755): agganci: ora=-1 sezione=-1 meteo=-1 allerta=-1 cattura=true
+09-18 06:54:16.301 I/meteo   ( 6755): previsione pronta: 24 ore
+09-18 06:54:18.476 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:18.532 W/ActivityTaskManager(  531): Force removing ActivityRecord{e5807c9 u0 io.github.noximiliencoxen.caelum/.MainActivity t49 f}}: app died, no saved state
+09-18 06:54:18.558 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:18.690 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{512adc4 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:18.690 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:18.698 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:19.777 I/meteo   ( 6853): agganci: ora=13 sezione=-1 meteo=-1 allerta=2 cattura=true
+09-18 06:54:22.117 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:22.202 W/ActivityTaskManager(  531): Force removing ActivityRecord{42c46ee u0 io.github.noximiliencoxen.caelum/.MainActivity t50 f}}: app died, no saved state
+09-18 06:54:22.223 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:22.223 W/WindowManager(  531): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-18 06:54:22.223 W/WindowManager(  531): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-18 06:54:22.401 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{e5a0349 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:22.401 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:23.580 I/meteo   ( 6914): agganci: ora=13 sezione=1 meteo=-1 allerta=2 cattura=true
+09-18 06:54:25.827 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:25.931 W/ActivityTaskManager(  531): Force removing ActivityRecord{7faa8d1 u0 io.github.noximiliencoxen.caelum/.MainActivity t51 f}}: app died, no saved state
+09-18 06:54:25.965 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:26.006 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{64709ed u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:26.006 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:27.162 I/meteo   ( 6974): agganci: ora=13 sezione=-1 meteo=-1 allerta=2 cattura=true
+09-18 06:54:29.480 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:30.788 I/meteo   ( 6974): previsione pronta: 24 ore
+09-18 06:54:31.889 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:31.939 W/ActivityTaskManager(  531): Force removing ActivityRecord{676482c u0 io.github.noximiliencoxen.caelum/.MainActivity t52 f}}: app died, no saved state
+09-18 06:54:31.996 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:32.056 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{1fb5dbf u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:32.056 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:33.255 I/meteo   ( 7071): agganci: ora=13 sezione=-1 meteo=-1 allerta=0 cattura=true
+09-18 06:54:35.534 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:36.797 I/meteo   ( 7071): previsione pronta: 24 ore
+09-18 06:54:37.917 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:37.977 W/ActivityTaskManager(  531): Force removing ActivityRecord{7cafa49 u0 io.github.noximiliencoxen.caelum/.MainActivity t53 f}}: app died, no saved state
+09-18 06:54:38.176 I/binder  (    0): undelivered transaction 207343, process died.
+09-18 06:54:38.197 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:38.207 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{9f44eb0 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:38.207 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:39.279 I/meteo   ( 7171): agganci: ora=13 sezione=0 meteo=-1 allerta=-1 cattura=true
+09-18 06:54:43.002 I/meteo   ( 7171): previsione pronta: 24 ore
+09-18 06:54:45.708 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:45.762 W/ActivityTaskManager(  531): Force removing ActivityRecord{6e2681e u0 io.github.noximiliencoxen.caelum/.MainActivity t54 f}}: app died, no saved state
+09-18 06:54:45.801 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:45.863 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:45.885 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{5aee339 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:45.885 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:47.076 I/meteo   ( 7268): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
+09-18 06:54:50.612 I/meteo   ( 7268): previsione pronta: 24 ore
+09-18 06:54:53.391 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:54:53.453 W/ActivityTaskManager(  531): Force removing ActivityRecord{9c863ec u0 io.github.noximiliencoxen.caelum/.MainActivity t55 f}}: app died, no saved state
+09-18 06:54:53.472 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:53.472 W/WindowManager(  531): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-18 06:54:53.472 W/WindowManager(  531): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-18 06:54:53.562 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{829f07f u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:54:53.562 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:54:54.823 I/meteo   ( 7364): agganci: ora=13 sezione=2 meteo=-1 allerta=-1 cattura=true
+09-18 06:54:57.705 I/meteo   ( 7364): previsione pronta: 24 ore
+09-18 06:55:01.033 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:01.087 W/ActivityTaskManager(  531): Force removing ActivityRecord{de90f0d u0 io.github.noximiliencoxen.caelum/.MainActivity t56 f}}: app died, no saved state
+09-18 06:55:01.119 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:01.214 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:01.222 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{ef7a604 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:55:01.222 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:02.601 I/meteo   ( 7458): agganci: ora=13 sezione=3 meteo=-1 allerta=-1 cattura=true
+09-18 06:55:06.066 I/meteo   ( 7458): previsione pronta: 24 ore
+09-18 06:55:08.772 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:08.827 W/ActivityTaskManager(  531): Force removing ActivityRecord{4fcbb30 u0 io.github.noximiliencoxen.caelum/.MainActivity t57 f}}: app died, no saved state
+09-18 06:55:08.853 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:08.950 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:08.951 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{194453 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:55:08.951 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:10.167 I/meteo   ( 7556): agganci: ora=13 sezione=4 meteo=-1 allerta=-1 cattura=true
+09-18 06:55:13.700 I/meteo   ( 7556): previsione pronta: 24 ore
+09-18 06:55:16.428 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:16.485 W/ActivityTaskManager(  531): Force removing ActivityRecord{dfe9768 u0 io.github.noximiliencoxen.caelum/.MainActivity t58 f}}: app died, no saved state
+09-18 06:55:16.516 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:16.607 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:16.623 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{f337a6b u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:55:16.623 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:17.817 I/meteo   ( 7655): agganci: ora=13 sezione=5 meteo=-1 allerta=-1 cattura=true
+09-18 06:55:21.345 I/meteo   ( 7655): previsione pronta: 24 ore
+09-18 06:55:24.031 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:24.089 W/ActivityTaskManager(  531): Force removing ActivityRecord{cecec46 u0 io.github.noximiliencoxen.caelum/.MainActivity t59 f}}: app died, no saved state
+09-18 06:55:24.114 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:24.114 W/WindowManager(  531): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+09-18 06:55:24.114 W/WindowManager(  531): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+09-18 06:55:24.203 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{e974301 u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:55:24.203 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:25.345 I/meteo   ( 7753): agganci: ora=13 sezione=6 meteo=-1 allerta=-1 cattura=true
+09-18 06:55:28.513 I/meteo   ( 7753): previsione pronta: 24 ore
+09-18 06:55:31.590 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:33.963 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+09-18 06:55:34.024 W/ActivityTaskManager(  531): Force removing ActivityRecord{444d49f u0 io.github.noximiliencoxen.caelum/.MainActivity t60 f}}: app died, no saved state
+09-18 06:55:34.069 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:34.166 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:34.180 W/WindowManager(  531): Exception thrown during dispatchAppVisibility Window{51ff39e u0 io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.MainActivity EXITING}
+09-18 06:55:34.180 W/WindowManager(  531): android.os.DeadObjectException
+09-18 06:55:35.278 I/meteo   ( 7865): agganci: ora=13 sezione=1 meteo=-1 allerta=-1 cattura=true
+09-18 06:55:38.879 I/meteo   ( 7865): previsione pronta: 24 ore
+09-18 06:55:41.703 W/ModernMediaScanner( 1569): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
