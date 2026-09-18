@@ -1,25 +1,25 @@
 === 1. NOWCAST: Open-Meteo minutely_15 ===
 --- Forli
-{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.18525123596191406,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15","2026-09-
+{"latitude":44.22,"longitude":12.039999,"generationtime_ms":0.17130374908447266,"utc_offset_seconds":7200,"timezone":"Europe/Rome","timezone_abbreviation":"GMT+2","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15","2026-09-
 --- Tokyo
-{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.18608570098876953,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15","2026-09-18
+{"latitude":35.7,"longitude":139.6875,"generationtime_ms":0.09620189666748047,"utc_offset_seconds":32400,"timezone":"Asia/Tokyo","timezone_abbreviation":"GMT+9","elevation":38.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15","2026-09-18
 --- Nairobi
-{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.32961368560791016,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15
+{"latitude":-1.3005272,"longitude":36.824646,"generationtime_ms":0.20694732666015625,"utc_offset_seconds":10800,"timezone":"Africa/Nairobi","timezone_abbreviation":"GMT+3","elevation":1668.0,"minutely_15_units":{"time":"iso8601","precipitation":"mm","rain":"mm","snowfall":"cm","weather_code":"wmo code","precipitation_probability":"%"},"minutely_15":{"time":["2026-09-18T00:00","2026-09-18T00:15","2026-09-18T00:30","2026-09-18T00:45","2026-09-18T01:00","2026-09-18T01:15","2026-09-18T01:30","2026-09-18T01:45","2026-09-18T02:00","2026-09-18T02:15","2026-09-18T02:30","2026-09-18T02:45","2026-09-18T03:00","2026-09-18T03:15","2026-09-18T03:30","2026-09-18T03:45","2026-09-18T04:00","2026-09-18T04:15
 
 === 2. RADAR: l'indice dei fotogrammi di RainViewer ===
 
 HTTP 200
 byte=818
-{"version":"2.0","generated":1789686022,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789678800,"path":"/v2/radar/04b733ff966e"},{"time":1789679400,"path":"/v2/radar/3692c5bf4e88"},{"time":1789680000,"path":"/v2/radar/d27620865305"},{"time":1789680600,"path":"/v2/radar/2d36535a6503"},{"time":1789681200,"path":"/v2/radar/7253f18c55fc"},{"time":1789681800,"path":"/v2/radar/69ae8941445d"},{"time":1789682400,"path":"/v2/radar/e325daf852a2"},{"time":1789683000,"path":"/v2/radar/60b6e9d02418"},{"time":1789683600,"path":"/v2/radar/f360a6d7b832"},{"time":1789684200,"path":"/v2/radar/51d201305b03"},{"time":1789684800,"path":"/v2/radar/aefae8e78cde"},{"time":1789685400,"path":"/v2/radar/ec74be7a2b3e"},{"time":1789686000,"path":"/v2/radar/51993f651a6e"}],"nowcast":[]},"satellite":{"infrared":[]}}
+{"version":"2.0","generated":1789713624,"host":"https://tilecache.rainviewer.com","radar":{"past":[{"time":1789706400,"path":"/v2/radar/3c38aff4b3ab"},{"time":1789707000,"path":"/v2/radar/12f5f8bf38e9"},{"time":1789707600,"path":"/v2/radar/7db46a88a5f9"},{"time":1789708200,"path":"/v2/radar/c970c852b879"},{"time":1789708800,"path":"/v2/radar/0eca2037d432"},{"time":1789709400,"path":"/v2/radar/af8128795e66"},{"time":1789710000,"path":"/v2/radar/659ee287796c"},{"time":1789710600,"path":"/v2/radar/4dbdfe5554bf"},{"time":1789711200,"path":"/v2/radar/21880fa9ea4b"},{"time":1789711800,"path":"/v2/radar/353187d878c6"},{"time":1789712400,"path":"/v2/radar/330874d6e618"},{"time":1789713000,"path":"/v2/radar/b3e3be7fa964"},{"time":1789713600,"path":"/v2/radar/7da8aed7d8e4"}],"nowcast":[]},"satellite":{"infrared":[]}}
 --- quanti fotogrammi:
 13
 --- l'host da cui vengono le tessere:
 "host":"https://tilecache.rainviewer.com"
 
 === 3. Una tessera vera si scarica? ===
-host=https://tilecache.rainviewer.com percorso=/v2/radar/04b733ff966e
---- https://tilecache.rainviewer.com/v2/radar/04b733ff966e/256/0/0/0/1/1_1.png
-HTTP 200 byte=2441
+host=https://tilecache.rainviewer.com percorso=/v2/radar/3c38aff4b3ab
+--- https://tilecache.rainviewer.com/v2/radar/3c38aff4b3ab/256/0/0/0/1/1_1.png
+HTTP 200 byte=2699
 tipo: image/png
 
 === 4. E il fondo cartografico? ===
@@ -27,34 +27,8 @@ tile.openstreetmap.org HTTP 200 byte=6929
 tipo: image/png
 
 === 4-zero. Open-Meteo per una GRIGLIA di punti ===
---- griglia 2x2 = 4 punti
-    url lungo 171 caratteri
-    HTTP 200 5703
-    LISTA di 4 risposte, 48 ore ciascuna
-    punto 0, prime tre ore: [0.0, 0.0, 0.0]
-    punto 0 sta a 43.8,11.440001
-
---- griglia 7x7 = 49 punti
-    url lungo 891 caratteri
-    HTTP 200 70007
-    LISTA di 49 risposte, 48 ore ciascuna
-    punto 0, prime tre ore: [0.0, 0.0, 0.0]
-    punto 0 sta a 42.9375,10.25
-
---- griglia 10x10 = 100 punti
-    url lungo 1687 caratteri
-    HTTP 200 142904
-    LISTA di 100 risposte, 48 ore ciascuna
-    punto 0, prime tre ore: [0.0, 0.0, 0.0]
-    punto 0 sta a 42.125,9.0625
-
---- griglia 12x12 = 144 punti
-    url lungo 2375 caratteri
-    HTTP 200 205862
-    LISTA di 144 risposte, 48 ore ciascuna
-    punto 0, prime tre ore: [0.0, 0.0, 0.0]
-    punto 0 sta a 41.6875,8.4375
-
+python3: can't open file '/home/runner/work/test-weather/test-weather/scripts/sonda_griglia.py': [Errno 2] No such file or directory
+(la sonda della griglia e' caduta)
 
 === 4-bis. RainViewer sa dire DOVE guarda? ===
 --- https://api.rainviewer.com/public/coverage.json
@@ -97,8 +71,8 @@ tipo: image/png
     alfa(35,55) = 0  ->  SCOPERTO
 
 === 4-ter. Una tessera vera della finestra di Forli' ===
---- https://tilecache.rainviewer.com/v2/radar/51993f651a6e/256/7/68/46/4/1_1.png
-    HTTP 200 byte=1000
+--- https://tilecache.rainviewer.com/v2/radar/7da8aed7d8e4/256/7/68/46/4/1_1.png
+    HTTP 200 byte=2805
     tipo: image/png
 
 === 5. RADAR-DPC: la fonte ufficiale italiana ===
@@ -108,7 +82,7 @@ tipo: image/png
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
 --- ultimo prodotto SRI [nudo]
     https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRI
-    HTTP 403  byte=434  tipo=text/html
+    HTTP 403  byte=432  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
 --- ultimo prodotto SRT1 [nudo]
     https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRT1
@@ -116,11 +90,11 @@ tipo: image/png
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
 --- ultimo prodotto SRT3 [nudo]
     https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=SRT3
-    HTTP 403  byte=434  tipo=text/html
+    HTTP 403  byte=432  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
 --- ultimo prodotto VMI [conorigine]
     https://radar-api.protezionecivile.it/wide/product/findLastProductByType?type=VMI
-    HTTP 403  byte=434  tipo=text/html
+    HTTP 403  byte=432  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findLastProductB
 --- prodotti disponibili VMI [conorigine]
     https://radar-api.protezionecivile.it/wide/product/findAvailableProductsByType?type=VMI
@@ -128,21 +102,21 @@ tipo: image/png
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;findAvailablePro
 --- radice del servizio [conorigine]
     https://radar-api.protezionecivile.it/wide/product/
-    HTTP 403  byte=408  tipo=text/html
+    HTTP 403  byte=406  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;" on this server
---- data dell'ultimo prodotto: 1789686057
+--- data dell'ultimo prodotto: 1789713691
 --- prodotto VMI a quella data [conorigine]
-    https://radar-api.protezionecivile.it/wide/product/getProduct?type=VMI&productDate=1789686057
+    https://radar-api.protezionecivile.it/wide/product/getProduct?type=VMI&productDate=1789713691
     HTTP 403  byte=423  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;getProduct&#63;"
 --- esiste il prodotto [conorigine]
-    https://radar-api.protezionecivile.it/wide/product/existsProduct?type=VMI&productDate=1789686057
+    https://radar-api.protezionecivile.it/wide/product/existsProduct?type=VMI&productDate=1789713691
     HTTP 403  byte=426  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;protezionecivile&#46;it&#47;wide&#47;product&#47;existsProduct&#6
 
 === 6. Il 403 e' l'indirizzo o e' l'agente? ===
 --- senza intestazioni, curl com'e'
-    HTTP 403  byte=434  tipo=text/html
+    HTTP 403  byte=432  tipo=text/html
     primi byte: <HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access "http&#58;&#47;&#47;radar&#45;api&#46;prote
 --- agente da browser
     HTTP 403  byte=434  tipo=text/html
