@@ -12,10 +12,6 @@ import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.data.RadarIndice
-import io.github.noximiliencoxen.caelum.data.RadarProdotto
-import io.github.noximiliencoxen.caelum.data.RadarRainViewerRepository
-import io.github.noximiliencoxen.caelum.data.StatoRadar
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
@@ -36,9 +32,7 @@ import io.github.noximiliencoxen.caelum.prefs.TempUnit
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import java.io.IOException
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -140,24 +134,6 @@ data class UiState(
      * rassicurante: e' un silenzio**, e va detto quale dei due e'.
      */
     val alertsOutOfCoverage: Boolean = false,
-    /**
-     * L'ultimo fotogramma del radar, o il motivo per cui non c'e'.
-     *
-     * Terzo arricchimento dopo [air] e [alerts], e come quelli sta su un altro
-     * host e arriva dopo: se non arriva, "La pioggia" continua a mostrare le
-     * dodici colonne che aveva gia'. E' uno stato e non un paio di booleani
-     * perche' i casi si escludono davvero - un fotogramma pronto non e' anche
-     * fuori copertura - e due booleani permetterebbero di scriverne due veri.
-     */
-    val radar: StatoRadar = StatoRadar.InCorso,
-    /**
-     * I fotogrammi che il radar ha, e da dove prenderli.
-     *
-     * Sta nello stato e non dentro il repository perche' lo leggono in due: chi
-     * sceglie quale fotogramma scaricare, e chi deve dire **fino a che ora** il
-     * radar sa qualcosa quando l'ora scelta e' fuori portata.
-     */
-    val radarIndice: RadarIndice? = null,
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -324,23 +300,6 @@ data class UiState(
             val date = current.days.getOrNull(selectedDay)?.date ?: return hour
             val clock = hour?.time?.hour ?: return null
             return current.hourOn(date, clock)
-        }
-
-    /**
-     * L'istante universale dell'ora scelta, per confrontarlo con un radar.
-     *
-     * Serve perche' gli orari della previsione sono **locali al posto** -
-     * `LocalDateTime` senza fuso - mentre i fotogrammi del radar sono istanti
-     * universali. Confrontare i due senza convertire vuol dire sbagliare di
-     * tutto il fuso: a Tokyo di otto ore, cioe' quasi mezza finestra del
-     * radar. E' la stessa ragione per cui `nowThere()` esiste invece di
-     * leggere l'orologio del telefono.
-     */
-    val selectedInstant: Instant?
-        get() {
-            val locale = detailHour?.time ?: return null
-            val scarto = forecast?.utcOffsetSeconds ?: return null
-            return locale.toInstant(ZoneOffset.ofTotalSeconds(scarto))
         }
 
     /** Il giorno aperto dal dettaglio, dentro i limiti di cio' che esiste. */
@@ -568,14 +527,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     alertsOutOfCoverage = false,
                     // Un fotogramma e' una fotografia di **un posto**, e
                     // vale ancora meno dell'aria fuori da quello: la
-                    // pioggia sopra Forli' lasciata sotto il nome di Bergen
-                    // sarebbe una mappa della citta' sbagliata, e una mappa
-                    // sbagliata si crede piu' di un numero sbagliato.
-                    radar = StatoRadar.InCorso,
-                    // E con la mappa se ne va l'indice: i fotogrammi sono gli
-                    // stessi ovunque, ma la copertura no, e tenerlo darebbe
-                    // per coperta la citta' nuova sulla fede della vecchia.
-                    radarIndice = null,
                 )
             }
         }
@@ -647,12 +598,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // sotto il nome di Bergen, e nessun modo di
                         // accorgersene: il dato non porta con se' il posto da
                         // cui viene. Figlio del job giusto, si annulla con lui.
-                        // Il radar: stessa regola dei due qui sotto -
-                        // `launch` figlio del job di caricamento, non di
-                        // `viewModelScope`, perche' una mappa che arriva in
-                        // ritardo dalla citta' precedente si posa sul nome
-                        // nuovo e non c'e' modo di accorgersene.
-                        launch { apriIlRadar(place) }
 
                         launch {
                             AirQualityRepository(place).load()
@@ -819,7 +764,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun backToNow() {
         pendingHour = null
         _state.update { it.copy(selectedDay = 0, selectedHour = it.nowIndex) }
-        mostraIlRadarDellOraScelta()
     }
 
     fun selectDay(index: Int) {
@@ -827,118 +771,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             val last = (current.forecast?.days?.size ?: 1) - 1
             current.copy(selectedDay = index.coerceIn(0, maxOf(last, 0)))
         }
-        // Il giorno sposta l'istante quanto l'ora: scegliendo giovedi' il
-        // radar deve dire che di giovedi' non ha niente, non restare fermo su
-        // quello di oggi.
-        mostraIlRadarDellOraScelta()
     }
 
     fun selectHour(index: Int) {
         _state.update { current ->
             val last = (current.forecast?.hours?.size ?: 1) - 1
             current.copy(selectedHour = index.coerceIn(0, maxOf(last, 0)))
-        }
-        mostraIlRadarDellOraScelta()
-    }
-
-    // ── Il radar, che adesso segue l'ora ─────────────────────────────────────
-
-    /** I fotogrammi gia' scaricati, per non riscaricarli scorrendo avanti e indietro. */
-    private val tessereInMano = LinkedHashMap<Instant, RadarProdotto>()
-
-    /** Il lavoro che sta scaricando un fotogramma: scorrendo in fretta, si annulla. */
-    private var radarInVolo: Job? = null
-
-    /**
-     * L'apertura del radar per una localita': l'indice e la copertura.
-     *
-     * Tutti e due si chiedono **una volta per localita'**. L'indice descrive
-     * le ultime due ore in settecento byte, e chi scorre la barra avanti e
-     * indietro non deve pagare una richiesta a ogni scatto del dito; la
-     * copertura e' una proprieta' del posto, e non cambia finche' il posto non
-     * cambia.
-     */
-    private suspend fun apriIlRadar(place: Place) {
-        tessereInMano.clear()
-        val repository = RadarRainViewerRepository(place)
-        val indice = repository.indice().getOrElse { guasto ->
-            _state.update {
-                it.copy(radar = StatoRadar.NonDisponibile(guasto.message?.take(140)))
-            }
-            return
-        }
-        // `false` vuol dire "guardato, e li' non c'e' nessun radar". `null`
-        // vuol dire "non si e' potuto guardare", e non e' la stessa cosa: con
-        // `null` si prova a scaricare lo stesso, e se non c'e' niente la carta
-        // resta vuota - che e' meno grave di dichiarare una copertura assente
-        // per colpa di una richiesta caduta.
-        if (repository.copertura(indice) == false) {
-            _state.update { it.copy(radarIndice = indice, radar = StatoRadar.FuoriCopertura) }
-            return
-        }
-        _state.update { it.copy(radarIndice = indice) }
-        mostraIlRadarDellOraScelta()
-    }
-
-    /**
-     * Il fotogramma dell'ora scelta, se il radar ce l'ha.
-     *
-     * **Questo e' il difetto che chi usa l'app ha visto per primo.** La carta
-     * mostrava sempre il fotogramma piu' recente, sotto qualunque ora: la
-     * barra diceva le ventidue e la carta era delle quindici e quaranta, ferma,
-     * uguale a se stessa tutto il giorno. Sembrava una fotografia appesa, e nel
-     * frattempo invitava a leggere quella pioggia come se fosse delle ventidue.
-     *
-     * Adesso o e' il fotogramma di quell'ora, o si dichiara che non c'e'.
-     * **Un radar misura**, e quello che non ha misurato non lo sa: due ore di
-     * storico contro una barra che ne offre ventiquattro vuol dire che per
-     * quasi tutta la giornata la risposta onesta e' "non c'e' una fotografia
-     * di quel momento".
-     */
-    private fun mostraIlRadarDellOraScelta() {
-        val corrente = _state.value
-        val indice = corrente.radarIndice ?: return
-        if (corrente.radar is StatoRadar.FuoriCopertura) return
-        val quando = corrente.selectedInstant ?: return
-        val scelto = indice.vicinoA(quando)
-
-        if (scelto == null) {
-            radarInVolo?.cancel()
-            _state.update { it.copy(radar = StatoRadar.FuoriOrario(indice.ultimo?.istante)) }
-            return
-        }
-        tessereInMano[scelto.istante]?.let { gia ->
-            radarInVolo?.cancel()
-            _state.update { it.copy(radar = StatoRadar.Pronto(gia)) }
-            return
-        }
-
-        // **Si annulla quello prima.** Scorrendo la barra si passa per ogni ora
-        // in mezzo, e senza questo partirebbe una decina di scaricamenti di cui
-        // interessa solo l'ultimo - e arriverebbero in ordine sparso, facendo
-        // lampeggiare la carta con fotogrammi gia' superati.
-        radarInVolo?.cancel()
-        radarInVolo = viewModelScope.launch {
-            _state.update { it.copy(radar = StatoRadar.InCorso) }
-            RadarRainViewerRepository(corrente.place).fotogramma(indice, scelto)
-                .onSuccess { prodotto ->
-                    // Quattro fotogrammi in tasca: sono i byte compressi delle
-                    // tessere, un centinaio di kilobyte l'uno. Piu' in la' non
-                    // servono - chi scorre torna indietro di un'ora o due, non
-                    // di dodici - e la mappa e' ordinata, quindi il primo a
-                    // uscire e' il piu' vecchio.
-                    tessereInMano[prodotto.istante] = prodotto
-                    while (tessereInMano.size > 4) {
-                        tessereInMano.remove(tessereInMano.keys.first())
-                    }
-                    _state.update { it.copy(radar = StatoRadar.Pronto(prodotto)) }
-                }
-                .onFailure { guasto ->
-                    if (guasto is CancellationException) return@onFailure
-                    _state.update {
-                        it.copy(radar = StatoRadar.NonDisponibile(guasto.message?.take(140)))
-                    }
-                }
         }
     }
 
