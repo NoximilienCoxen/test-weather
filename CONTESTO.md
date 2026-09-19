@@ -5428,3 +5428,141 @@ corpo in grigio chiaro su carta chiara si guardano senza vederli. Adesso e'
 Resta - e va tenuta - la stringa vuota al posto del `Text` assente: e' la
 correzione di 16.1, e un `if` attorno all'etichetta rimetterebbe le barre a
 quote alterne.
+
+---
+
+## 26. Pioveva e non si vedeva, nevicava e cadeva grandine
+
+Tre rilievi arrivati guardando l'app in mano: *l'animazione della pioggia non
+succede quando dovrebbe*, *controlla neve e grandine*, *il fulmine va reso piu'
+evidente*.
+
+Il primo e' quello che insegna qualcosa: **la pioggia c'era, l'orologio girava,
+le gocce scendevano - e chi guardava non le vedeva.** Un'animazione che nessuno
+vede e un'animazione che non c'e' sono, da fuori, la stessa cosa; e siccome il
+codice funzionava, nessun controllo automatico poteva accorgersene. Serviva uno
+scatto guardato con l'occhio di chi non sa cosa dovrebbe esserci.
+
+### 26.1 Sette tratti su uno schermo non sono una pioggia
+
+Le corsie di caduta sono quattordici, con **una goccia ciascuna**, e la scheda
+copre la meta' bassa dello schermo: restano sette segni visibili, sparsi su
+milleduecento pixel d'altezza. Contati sullo scatto `scuro-3-pioggia.png`, i
+pixel di colore acqua erano **millecento su un milione**: un decimo di punto
+percentuale.
+
+L'altra meta' del difetto era la tinta. `acqua` e' `#5B8AA5`, un azzurro medio
+tarato sul cielo di giorno. Il cielo di notte sta fra `#0D1420` e `#2B2F3D`:
+quell'azzurro ci finisce **dentro**, e una goccia con lo stesso valore di
+luminanza del fondo non e' una goccia tenue, e' una goccia assente.
+
+Due correzioni, nessuna delle quali tocca il battito che si sente in mano:
+
+- **Ogni corsia porta una fila.** `Corsie.ripetizioni` da' quattro gocce alla
+  pioggia, cinque alla neve, due alla grandine, sfalsate lungo la stessa
+  discesa. La **corsa** resta una per corsia - e' lei che `impatti` conta - e la
+  prima della fila ha scarto zero, quindi tocca terra esattamente quando il
+  telefono batte. Le altre le stanno dietro a distanze appena irregolari: una
+  fila spaziata a dovere si legge come una cucitura.
+- **La tinta schiarisce col buio.** Si interpola verso il bianco ghiaccio con
+  `notte` e, in parte, con la copertura. Non e' una licenza: di notte non si
+  vede l'acqua, si vede la luce che ci rimbalza sopra.
+
+Misurato sullo stesso scatto dopo: **3248** pixel d'acqua contro 1172, e a
+occhio la differenza e' fra "graffi sul vetro" e "piove".
+
+La fioritura a terra - la `FIORITURA` che stava in `Corsie` senza che la
+leggesse nessuno - **non torna**. Il pannello arriva a meta' schermo e la riga
+dove le gocce toccherebbero sta sotto di lui: una cosa dipinta dove nessuno la
+vede costa e non si nota quando si rompe.
+
+### 26.2 Lo stesso codice diceva neve a una strada e grandine all'altra
+
+Qui il difetto non era di resa, era di **due verita' sullo stesso fatto**.
+
+`salaConditionOf` metteva i codici 77, 85 e 86 - granuli e rovesci di **neve** -
+fra la `GRANDINE`. `Wmo.family` metteva gli stessi tre fra la `NEVE`. La scena
+chiedeva il ghiaccio alla prima e la neve alla seconda, e siccome tutte e due
+rispondevano di si', per quei tre codici cadevano **chicchi e fiocchi insieme**:
+due sostanze dalla stessa nuvola, nello stesso istante, per lo stesso codice.
+Negli scatti non si notava - a quella taglia un chicco e un fiocco sono due
+dischi chiari - e per mesi e' stato li'.
+
+E la neve vera, 71, 73 e 75, cadeva nel ramo `code >= 51`, cioe' fra le piogge:
+sopra una nevicata si leggeva **"Pioggia nella notte"**. Lo scatto
+`scuro-5b-neve.png` lo diceva a lettere alte quindici punti.
+
+Una strada sola, e passa da dove stanno i codici:
+
+- `salaConditionOf` chiede la neve a `Wmo.family`, che e' l'elenco vero;
+- `GRANDINE` esce dall'enum e al suo posto entra `NEVE`, con le sue quattro
+  didascalie. La grandine non sparisce: **torna dov'e' davvero**, dentro
+  `TEMPORALE_GRANDINE`, perche' i soli codici WMO che la nominano sono 96 e 99 e
+  tutti e due dicono *temporale con grandine*. Una grandine senza temporale, in
+  questi dati, non esiste;
+- la neve smette di portare il tema scuro. Ci stava perche' era etichettata
+  grandine, e una cella di grandine porta il buio del fronte che la fa; una
+  nevicata e' il contrario, ed e' la giornata piu' chiara dell'anno.
+
+`CadutaTest` prova la cosa nella forma in cui puo' rompersi di nuovo: non "il
+codice 86 fa questo", ma **nessuno dei ventotto codici fa cadere due sostanze
+insieme**, e la neve cade per tutti e soli i codici di famiglia neve. Chi
+aggiunge una famiglia domani trova quella riga.
+
+Lo scatto di conferma e' insolito: `scuro-5b-neve.png` e
+`scuro-5b2-rovesci-di-neve.png` - codici 73 e 86 - sono **byte per byte lo
+stesso file**. E' esattamente cio' che si voleva dimostrare: due codici della
+stessa famiglia, adesso, dipingono lo stesso cielo.
+
+### 26.3 Il fulmine non aveva una saetta
+
+Era un alone tondo in alto a destra, sempre nello stesso punto, acceso e spento
+da due rampe lineari. Diceva "temporale" con la coda dell'occhio, e va bene; ma
+di un fulmine non aveva **niente**: nessun canale, nessuna biforcazione, nessuno
+sfarfallio, e un centro fisso che dopo il secondo giro si legge come una macchia
+dello schermo.
+
+Adesso sono tre strati, in ordine di quanto sono larghi:
+
+1. **Il velo su tutta la tela**, colline comprese: un fulmine illumina il
+   paesaggio, non solo la nuvola che lo fa.
+2. **L'alone** attorno al punto da cui scende il canale, che tiene insieme il
+   velo e la saetta.
+3. **La saetta**: dodici nodi, zigzag laterale, deriva che cresce col quadrato
+   della discesa - un fulmine scende dritto e sbanda, non serpeggia - e due rami
+   corti che se ne staccano. Quattro passate sullo stesso `Path`, dall'alone
+   largo e tenue al nucleo bianco: e' cosi' che si dipinge una cosa che
+   **emette** luce invece di rifletterla. Un `Path` per passata e non un tratto
+   per segmento, se no a opacita' parziale ogni giunto diventa un puntino piu'
+   chiaro e il canale sembra una collana di perle.
+
+Il tempo e' cambiato quanto il disegno. Tre scariche per ciclo, ognuna che
+**sale di colpo e si spegne per esponenziale**: una scarica arriva al massimo in
+microsecondi - un fotogramma non la vede salire - e il canale caldo si raffredda
+perdendo ogni volta una frazione di quel che resta. La vecchia rampa in salita
+dava al fulmine il tempo di *arrivare*, e un fulmine che arriva non e' un
+fulmine. Il canale e' lo stesso dentro un colpo e diverso a ogni colpo, che e'
+come si comportano le riprese di una scarica vera.
+
+**Il velo e' sceso dal novantacinque al diciotto per cento**, ed e' la parte
+contro-intuitiva. Lo scatto del temporale, prima, era una macchia chiara in cui
+non si distingueva ne' una nuvola ne' un chicco: il riverbero da solo cercava di
+fare tutto il lavoro. Un fulmine vero stacca il paesaggio in controluce, non lo
+cancella - e a bucare il cielo ci pensa la saetta, che e' stretta e puo'
+permettersi il bianco pieno.
+
+### 26.4 E lo scatto della neve era stato letto male una volta
+
+Nel giro precedente `scuro-5b-neve.png` mostrava un cielo notturno di nevicata
+**con la scheda in tema chiaro**: due cose che insieme non esistono. Per un
+momento e' sembrato un difetto della tavolozza.
+
+Non lo era. `restart_with` aspettava i dati e scattava subito dopo, mentre il
+tema arriva con una molla partendo dal ripiego diurno - la stessa cosa che
+`cielo()` aveva gia' imparato e per cui ha un `sleep 3`. La fotografia era
+presa a meta' di una dissolvenza. Adesso `restart_with` aspetta come `cielo()`,
+e gli scatti dicono la verita'.
+
+**E' la lezione della sezione 16.1 in un'altra forma**: quando uno scatto mostra
+una cosa impossibile, la prima domanda non e' "quale colore ho sbagliato" ma
+"cosa stava succedendo mentre scattavo".
