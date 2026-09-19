@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -197,9 +198,10 @@ fun SalaCielo(
 
         disegnaIncrespature(onde, t, palette)
 
-        // Il riverbero del lampo si prende il cielo intero: un temporale non
-        // illumina solo la nuvola che lo fa.
-        riverberoDelLampo(t, scena.tempesta)
+        // Il fulmine si prende il cielo intero - un temporale non illumina
+        // solo la nuvola che lo fa - ed e' l'ultimo disegnato: la sua luce
+        // passa sopra le nuvole, le colline e cio' che cade, come fa la luce.
+        fulmine(t, scena.tempesta)
     }
 }
 
@@ -756,6 +758,29 @@ private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
  * un contatore suo andrebbe in fase per un po' e poi scivolerebbe, e una
  * vibrazione fuori tempo rispetto a cio' che si vede e' peggio di nessuna
  * vibrazione.
+ *
+ * ## Perche' "non pioveva" pur piovendo
+ *
+ * Il difetto e' arrivato da chi l'app la usa: *l'animazione della pioggia non
+ * succede quando dovrebbe*. Succedeva. Solo che era invisibile, per due
+ * ragioni che si sommavano:
+ *
+ * - **erano quattordici segni in tutto**, uno per corsia, e la scheda ne copre
+ *   la meta' bassa: sette tratti su uno schermo intero non sono una pioggia,
+ *   sono graffi. Adesso ogni corsia porta una fila di gocce ([Corsie.ripetizioni])
+ *   e i segni visibili diventano quattro volte tanti, senza toccare il battito
+ *   che si sente in mano.
+ * - **erano dipinti con `acqua`**, un azzurro medio tarato sul cielo di
+ *   giorno. Di notte il cielo sta fra `#0D1420` e `#2B2F3D`: quell'azzurro ci
+ *   finisce dentro, e il contrasto contro il fondo scendeva sotto il due a uno.
+ *   Adesso la tinta **schiarisce col buio** fino al bianco ghiaccio, che e' poi
+ *   cio' che si vede davvero guardando la pioggia di notte - non l'acqua, la
+ *   luce che ci rimbalza sopra.
+ *
+ * La fioritura sulla riga di caduta, che era il terzo pezzo, non torna: il
+ * pannello arriva a meta' schermo e la riga dove le gocce toccherebbero sta
+ * sotto di lui. Una cosa dipinta dove nessuno la vede e' peggio di una cosa
+ * che manca, perche' costa e non si nota se si rompe.
  */
 private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
     if (scena.bagnato <= 0.01f) return
@@ -766,95 +791,271 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
     val cima = -0.07f * size.height
     val fondo = 1.03f * size.height
     val corsa = fondo - cima
+    val larghezzaCorsia = size.width / Corsie.QUANTE
 
-    for (i in 0 until Corsie.QUANTE) {
-        val quota = Corsie.accesa(i, scena.bagnato)
-        if (quota <= 0.01f) continue
-        val prof = Corsie.profondita(i)
-        // Le corsie del modello vanno da -0,65 a 0,65: riportate su 0..1
-        // coprono la larghezza intera invece di stringersi attorno a un oggetto
-        // che non c'e' piu'.
-        val x = ((Corsie.x(i) / 1.30f) + 0.5f) * size.width
-
-        fun quotaDi(tipo: Caduta): Float {
-            val u = Corsie.corsa(tipo, i, tempo)
-            return u - floor(u)
+    /**
+     * Il giro che le tre sostanze condividono: per ogni corsia accesa, la fila
+     * di gocce che le tocca. Scritto una volta perche' le tre differenze vere -
+     * il segno, la tinta, la velocita' - stiano dentro il blocco e non in tre
+     * copie dello stesso doppio ciclo.
+     */
+    fun perOgniGoccia(
+        tipo: Caduta,
+        presenza: Float,
+        disegna: (x: Float, y: Float, prof: Float, quota: Float, avanzamento: Float) -> Unit,
+    ) {
+        if (presenza <= 0.01f) return
+        val quante = Corsie.ripetizioni(tipo)
+        for (i in 0 until Corsie.QUANTE) {
+            val quota = Corsie.accesa(i, scena.bagnato)
+            if (quota <= 0.01f) continue
+            // Le corsie del modello vanno da -0,65 a 0,65: riportate su 0..1
+            // coprono la larghezza intera invece di stringersi attorno a un
+            // oggetto che non c'e' piu'.
+            val xCorsia = ((Corsie.x(i) / 1.30f) + 0.5f) * size.width
+            for (k in 0 until quante) {
+                val u = Corsie.corsa(tipo, i, tempo) + Corsie.scarto(i, k, quante)
+                val avanzamento = u - floor(u)
+                disegna(
+                    xCorsia + Corsie.scostamento(i, k) * larghezzaCorsia * 1.7f,
+                    cima + avanzamento * corsa,
+                    Corsie.profonditaDi(i, k),
+                    quota,
+                    avanzamento,
+                )
+            }
         }
+    }
 
-        if (pioggia > 0.01f) {
-            val avanzamento = quotaDi(Caduta.PIOGGIA)
-            val y = cima + avanzamento * corsa
-            val lung = size.width * (0.055f + 0.045f * prof)
-            val a = (quota * pioggia * (0.42f + 0.58f * prof) * (avanzamento / 0.12f).coerceAtMost(1f))
-                .coerceIn(0f, 1f)
-            val tinta = SalaTokens.acqua
-            // L'inclinazione del prototipo: dodici gradi, la stessa per tutte.
-            val dx = lung * 0.21f
-            drawLine(
-                brush = Brush.linearGradient(
-                    0f to tinta.copy(alpha = 0f),
-                    1f to tinta.copy(alpha = a),
-                    start = Offset(x - dx, y - lung),
-                    end = Offset(x, y),
-                ),
-                start = Offset(x - dx, y - lung),
-                end = Offset(x, y),
-                strokeWidth = size.width * 0.0055f,
-                cap = StrokeCap.Round,
-            )
-        }
+    // **La tinta della pioggia schiarisce col buio e col fronte.** Di giorno e'
+    // l'azzurro d'acqua di sempre; di notte, o sotto un cielo chiuso, tende al
+    // bianco ghiaccio - che e' l'unico modo in cui una goccia si vede su un
+    // fondo che e' gia' quasi nero.
+    val pallore = (scena.notte * 0.88f + scena.copertura * 0.20f).coerceIn(0f, 1f)
+    val tintaPioggia = lerp(SalaTokens.acqua, SalaTokens.ghiaccioChiaro, pallore)
 
-        if (grandine > 0.01f) {
-            val avanzamento = quotaDi(Caduta.GRANDINE)
-            val y = cima + avanzamento * corsa
-            val r = size.width * (0.008f + 0.005f * prof)
+    perOgniGoccia(Caduta.PIOGGIA, pioggia) { x, y, prof, quota, avanzamento ->
+        val lung = size.width * (0.070f + 0.080f * prof)
+        // L'inclinazione del prototipo: dodici gradi, la stessa per tutte.
+        val dx = lung * 0.21f
+        val a = (
+            quota * (0.30f + 0.70f * prof) * (0.55f + 0.45f * pioggia) *
+                // L'entrata in scena, accorciata: prima la goccia restava
+                // trasparente per un ottavo della propria discesa, cioe' per
+                // tutta la fascia di cielo che si vede sopra la scheda.
+                (avanzamento / 0.05f).coerceAtMost(1f)
+            ).coerceIn(0f, 1f)
+        val testa = Offset(x, y)
+        val coda = Offset(x - dx, y - lung)
+        drawLine(
+            brush = Brush.linearGradient(
+                0f to tintaPioggia.copy(alpha = 0f),
+                0.45f to tintaPioggia.copy(alpha = a * 0.5f),
+                1f to tintaPioggia.copy(alpha = a),
+                start = coda,
+                end = testa,
+            ),
+            start = coda,
+            end = testa,
+            // Le vicine sono tratti larghi, le lontane fili: con uno spessore
+            // solo per tutte la profondita' la diceva la sola opacita', e non
+            // bastava a dare aria fra una corsia e l'altra.
+            strokeWidth = size.width * (0.0028f + 0.0040f * prof),
+            cap = StrokeCap.Round,
+        )
+    }
+
+    perOgniGoccia(Caduta.GRANDINE, grandine) { x, y, prof, quota, _ ->
+        val r = size.width * (0.0062f + 0.0078f * prof)
+        val a = (quota * grandine * (0.55f + 0.45f * prof)).coerceIn(0f, 1f)
+        // **La scia corta, che prima non c'era.** Un chicco cade a novanta
+        // chilometri l'ora: fermo e tondo si legge come una pallina, non come
+        // grandine. Basta un tratto di due diametri dietro di lui.
+        drawLine(
+            color = SalaTokens.ghiaccioScuro.copy(alpha = a * 0.38f),
+            start = Offset(x - r * 0.5f, y - r * 4.6f),
+            end = Offset(x, y),
+            strokeWidth = r * 1.15f,
+            cap = StrokeCap.Round,
+        )
+        drawCircle(color = SalaTokens.ghiaccioChiaro.copy(alpha = a), radius = r, center = Offset(x, y))
+        // Il lustro: il punto in cui il chicco riflette il cielo. E' l'unica
+        // cosa che distingue una biglia di ghiaccio da un pallino grigio.
+        drawCircle(
+            color = Color.White.copy(alpha = a * 0.85f),
+            radius = r * 0.34f,
+            center = Offset(x - r * 0.3f, y - r * 0.34f),
+        )
+    }
+
+    perOgniGoccia(Caduta.NEVE, neve) { x, y, prof, quota, _ ->
+        // La deriva: un seno lungo, diverso per fiocco - la fase la da' la
+        // posizione, non l'indice della corsia, se no i fiocchi di una stessa
+        // fila sbanderebbero tutti insieme come un tergicristallo.
+        val deriva = sin(tempo * (0.5f + prof * 0.45f) + x * 0.013f) *
+            size.width * (0.025f + 0.040f * prof)
+        val r = size.width * (0.0042f + 0.0072f * prof)
+        val a = (quota * neve * (0.42f + 0.58f * prof)).coerceIn(0f, 1f)
+        val centro = Offset(x + deriva, y)
+        // I fiocchi vicini hanno un alone: e' il modo in cui l'occhio legge
+        // "fuori fuoco", e senza, cinquanta dischi tutti nitidi si leggono come
+        // coriandoli.
+        if (prof > 0.55f) {
             drawCircle(
-                color = SalaTokens.ghiaccioChiaro.copy(
-                    alpha = (quota * grandine * (0.6f + 0.4f * prof)).coerceIn(0f, 1f),
+                brush = Brush.radialGradient(
+                    0f to SalaTokens.neutral100.copy(alpha = a * 0.40f),
+                    1f to SalaTokens.neutral100.copy(alpha = 0f),
+                    center = centro,
+                    radius = r * 3.4f,
                 ),
-                radius = r,
-                center = Offset(x, y),
+                radius = r * 3.4f,
+                center = centro,
             )
         }
-
-        if (neve > 0.01f) {
-            val avanzamento = quotaDi(Caduta.NEVE)
-            val y = cima + avanzamento * corsa
-            // La deriva: un seno lungo, diverso per fiocco. E' l'unica cosa che
-            // distingue la neve dalla pioggia bianca.
-            val deriva = sin(tempo * 0.7f + i * 1.9f) * size.width * 0.05f
-            val r = size.width * (0.006f + 0.005f * prof)
-            drawCircle(
-                color = SalaTokens.neutral100.copy(
-                    alpha = (quota * neve * (0.6f + 0.4f * prof)).coerceIn(0f, 1f),
-                ),
-                radius = r,
-                center = Offset(x + deriva, y),
-            )
-        }
+        drawCircle(color = SalaTokens.neutral100.copy(alpha = a), radius = r, center = centro)
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Il fulmine
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** La luce di una scarica: bianca appena fredda, come la si ricorda. */
+private val LuceLampo = Color(0xFFE8F1FF)
+
 /**
- * Il lampo: un alone largo in alto a destra, e brevissimo.
+ * Il fulmine: il cielo che si accende, l'alone, e **la saetta**.
  *
- * L'istante lo decide [forzaLampo], la stessa che il tuono usa per sapere
- * quando far vibrare il telefono.
+ * ### Cosa c'era prima
+ *
+ * Un alone tondo in alto a destra, sempre nello stesso punto, acceso da due
+ * rampe lineari. Faceva il suo mestiere - dire "temporale" con la coda
+ * dell'occhio - ma di un fulmine non aveva niente: nessun canale, nessuna
+ * biforcazione, nessuno sfarfallio, e un centro fisso che dopo il secondo giro
+ * si legge come una macchia dello schermo.
+ *
+ * ### Cosa c'e' adesso, in tre strati
+ *
+ * 1. **Il cielo intero si accende.** Un velo su tutta la tela, colline
+ *    comprese: un fulmine illumina il paesaggio, non solo la nuvola che lo fa.
+ * 2. **L'alone** attorno al punto da cui il canale scende, largo quanto lo
+ *    schermo, che tiene insieme il velo e la saetta.
+ * 3. **La saetta**, disegnata in quattro passate - alone largo e tenue,
+ *    poi via via piu' stretto e piu' opaco, fino al nucleo bianco. E' cosi'
+ *    che si dipinge una cosa che **emette** luce invece di rifletterla: il
+ *    bianco puro al centro, il colore attorno.
+ *
+ * Il canale cambia a ogni colpo ([indiceLampo]) e resta lo stesso dentro un
+ * colpo: le riprese di un fulmine riaccendono il canale gia' aperto, e vederne
+ * uno nuovo a ogni sfarfallio sarebbe la cosa sbagliata detta due volte in
+ * mezzo secondo.
  */
-private fun DrawScope.riverberoDelLampo(tempo: Float, forza: Float) {
-    val acceso = forzaLampo(tempo) * forza
-    if (acceso <= 0.01f) return
-    val centro = Offset(size.width * 0.62f, size.height * 0.18f)
+private fun DrawScope.fulmine(tempo: Float, tempesta: Float) {
+    if (tempesta <= 0.01f) return
+    val cielo = forzaLampo(tempo) * tempesta
+    if (cielo <= 0.006f) return
+    val n = indiceLampo(tempo)
+    val xAlto = size.width * (0.18f + rnd(n * 17 + 3) * 0.62f)
+
+    // 1. Il velo su tutto.
+    //
+    // **Ed e' meno forte di quanto verrebbe da fare.** Il riverbero di prima
+    // arrivava al novantacinque per cento di bianco: sullo scatto del temporale
+    // la schermata era una macchia chiara in cui non si distingueva piu' ne'
+    // una nuvola ne' un chicco di grandine. Un fulmine vero **stacca** il
+    // paesaggio in controluce, non lo cancella: qui il velo schiarisce, e a
+    // bucare il cielo ci pensa la saetta, che e' stretta e puo' permettersi il
+    // bianco pieno.
+    drawRect(color = LuceLampo.copy(alpha = (0.18f * cielo).coerceIn(0f, 1f)))
+
+    // 2. L'alone, appeso al canale e non a un angolo fisso.
+    val centro = Offset(xAlto, size.height * 0.16f)
     val raggio = size.width * 1.15f
     drawCircle(
         brush = Brush.radialGradient(
-            0f to Color(0xFFFFF2EB).copy(alpha = 0.95f * acceso),
-            0.34f to Color(0xFFFFF2EB).copy(alpha = 0.35f * acceso),
-            0.62f to Color(0xFFFFF2EB).copy(alpha = 0f),
+            0f to LuceLampo.copy(alpha = (0.55f * cielo).coerceIn(0f, 1f)),
+            0.30f to LuceLampo.copy(alpha = (0.24f * cielo).coerceIn(0f, 1f)),
+            0.64f to LuceLampo.copy(alpha = 0f),
             center = centro,
             radius = raggio,
         ),
         radius = raggio,
         center = centro,
     )
+
+    // 3. La saetta, solo finche' il canale e' acceso.
+    val canale = forzaSaetta(tempo) * tempesta
+    if (canale > 0.02f) saetta(n, canale, xAlto)
+}
+
+/**
+ * Il canale, e i due rami che se ne staccano.
+ *
+ * I nodi sono dodici e lo zigzag e' laterale: un fulmine scende **dritto** e
+ * sbanda, non serpeggia. La deriva cresce col quadrato della discesa, cosi' la
+ * parte alta e' quasi verticale e quella bassa si apre - che e' come si vedono.
+ */
+private fun DrawScope.saetta(n: Int, forza: Float, xAlto: Float) {
+    val cima = size.height * 0.015f
+    val fondo = size.height * (0.50f + rnd(n * 17 + 9) * 0.18f)
+    val verso = if (rnd(n * 17 + 6) > 0.5f) 1f else -1f
+    val deriva = size.width * (0.05f + rnd(n * 17 + 5) * 0.22f) * verso
+    val nodi = 12
+    val canale = List(nodi + 1) { i ->
+        val t = i / nodi.toFloat()
+        val zig = if (i == 0 || i == nodi) 0f else (rnd(n * 131 + i) - 0.5f) * size.width * 0.095f
+        Offset(xAlto + deriva * t * t + zig, cima + (fondo - cima) * t)
+    }
+    tracciaCanale(canale, forza)
+
+    // I rami: due, da due nodi diversi, corti e piu' tenui del canale. Sono la
+    // differenza fra "un fulmine" e "una riga bianca storta".
+    listOf(4, 7).forEachIndexed { quale, nodo ->
+        val da = canale[nodo]
+        val versoRamo = if (rnd(n * 53 + quale) > 0.5f) 1f else -1f
+        val lungo = size.height * (0.06f + rnd(n * 53 + quale + 7) * 0.09f)
+        val ramo = List(4) { i ->
+            val t = i / 3f
+            Offset(
+                da.x + versoRamo * lungo * t * (0.55f + rnd(n * 71 + quale * 5 + i) * 0.5f),
+                da.y + lungo * t,
+            )
+        }
+        tracciaCanale(ramo, forza * 0.72f, scala = 0.5f)
+    }
+}
+
+/**
+ * Le quattro passate che fanno una cosa che emette luce.
+ *
+ * Un `Path` solo per passata e non un tratto per segmento: disegnando segmento
+ * per segmento, i giunti si sovrappongono e a opacita' parziale ogni nodo
+ * diventa un puntino piu' chiaro - una collana di perle al posto di un canale.
+ */
+private fun DrawScope.tracciaCanale(punti: List<Offset>, forza: Float, scala: Float = 1f) {
+    if (punti.size < 2) return
+    val strada = Path().apply {
+        moveTo(punti[0].x, punti[0].y)
+        for (i in 1 until punti.size) lineTo(punti[i].x, punti[i].y)
+    }
+    listOf(
+        0.070f to 0.13f,
+        0.028f to 0.26f,
+        0.0105f to 0.58f,
+        0.0040f to 1.00f,
+    ).forEach { (larghezza, alfa) ->
+        drawPath(
+            path = strada,
+            // Il nucleo e' bianco puro e il resto e' la luce fredda: e' la
+            // sovraesposizione di una fotografia, dove il centro di cio' che
+            // brucia perde sempre il colore prima dei bordi.
+            color = (if (alfa >= 1f) Color.White else LuceLampo)
+                .copy(alpha = (alfa * forza).coerceIn(0f, 1f)),
+            style = Stroke(
+                width = size.width * larghezza * scala,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round,
+            ),
+        )
+    }
 }

@@ -578,6 +578,14 @@ session() {
       # shellcheck disable=SC2086
       avvia --es tema SCURO $1 >/dev/null 2>&1 || true
       attendi_previsione
+      # **Il cielo va aspettato anche dopo i dati**, per la stessa ragione
+      # scritta dentro `cielo()`: ad app appena avviata l'altezza del sole parte
+      # dal ripiego diurno e il tema ci arriva con una molla. Senza questa
+      # attesa lo scatto della neve e' uscito davvero cosi' - cielo notturno di
+      # nevicata e scheda in tema chiaro, due cose che insieme non esistono - e
+      # per un giro l'ho letto come un difetto della tavolozza invece che come
+      # una fotografia scattata a meta' di una dissolvenza.
+      sleep 3
     }
 
     # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
@@ -601,11 +609,27 @@ session() {
     restart_with "--ei meteo 73"
     shoot "${slug}-5b-neve"
 
+    # **I rovesci di neve: il codice che cadeva due volte.** 85 e 86 erano
+    # "grandine" per la tavolozza e "neve" per la famiglia WMO, e il cielo
+    # chiedeva tutte e due le sostanze insieme - chicchi **e** fiocchi dalla
+    # stessa nuvola. Questo scatto e' li' per vedere che ne cada una sola, e che
+    # il titolo dica neve invece di pioggia.
+    restart_with "--ei meteo 86"
+    shoot "${slug}-5b2-rovesci-di-neve"
+
     restart_with "--ei ora 12 --ei meteo 0"
     shoot "${slug}-5c-sereno-uccelli"
 
     restart_with "--ei meteo 96"
     shoot "${slug}-5d-grandine"
+
+    # Il temporale senza grandine: e' lo scatto del **fulmine**. L'orologio
+    # della scena, in cattura, resta fermo a zero, e a zero la prima scarica e'
+    # al massimo - scelto apposta, cosi' il colpo finisce in fotografia invece
+    # del buio che ci sta in mezzo. Qui si guarda il canale: che scenda, che si
+    # biforchi, e che il velo sul cielo non cancelli il paesaggio.
+    restart_with "--ei meteo 95"
+    shoot "${slug}-5e-fulmine"
 
     # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
     # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che

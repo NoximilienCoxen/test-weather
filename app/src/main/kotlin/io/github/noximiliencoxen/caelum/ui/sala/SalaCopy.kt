@@ -35,11 +35,16 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
         SalaPhase.TRAMONTO to "Pioggia fino a notte",
         SalaPhase.NOTTE to "Pioggia nella notte",
     ),
-    SalaCondition.GRANDINE to mapOf(
-        SalaPhase.ALBA to "Grandine all'alba",
-        SalaPhase.GIORNO to "Rovescio di grandine",
-        SalaPhase.TRAMONTO to "Grandine sul tardi",
-        SalaPhase.NOTTE to "Grandine notturna",
+    // **Qui c'era la grandine, e sopra una nevicata si leggeva "Pioggia".** I
+    // codici della neve - 71, 73, 75 - cadevano in PIOGGIA, e quelli dei
+    // rovesci di neve - 77, 85, 86 - in una "grandine" che i codici WMO di
+    // questa app non hanno mai contenuto. Adesso la neve ha le sue parole, e la
+    // grandine resta dov'e' davvero: dentro il temporale che la fa.
+    SalaCondition.NEVE to mapOf(
+        SalaPhase.ALBA to "Neve dalle prime luci",
+        SalaPhase.GIORNO to "Nevica",
+        SalaPhase.TRAMONTO to "Neve fino a sera",
+        SalaPhase.NOTTE to "Neve nella notte",
     ),
     SalaCondition.TEMPORALE to mapOf(
         SalaPhase.ALBA to "Temporale all'alba",
@@ -59,7 +64,7 @@ private val SalaBodies: Map<SalaCondition, String> = mapOf(
     SalaCondition.SERENO to "Cielo aperto e visibilità ottima.",
     SalaCondition.NUVOLOSO to "Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.",
     SalaCondition.PIOGGIA to "Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.",
-    SalaCondition.GRANDINE to "Chicchi in caduta: copri le piante in vaso e sposta l'auto se puoi.",
+    SalaCondition.NEVE to "Neve in caduta: fondo scivoloso e visibilità ridotta, soprattutto dove non passa nessuno.",
     SalaCondition.TEMPORALE to "Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.",
     SalaCondition.TEMPORALE_GRANDINE to "Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.",
 )
@@ -89,7 +94,7 @@ fun SalaCondition.label(): String = when (this) {
     SalaCondition.SERENO -> "sereno"
     SalaCondition.NUVOLOSO -> "nuvoloso"
     SalaCondition.PIOGGIA -> "pioggia"
-    SalaCondition.GRANDINE -> "grandine"
+    SalaCondition.NEVE -> "neve"
     SalaCondition.TEMPORALE -> "temporale"
     SalaCondition.TEMPORALE_GRANDINE -> "temporale con grandine"
 }
