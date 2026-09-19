@@ -239,9 +239,13 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_UNIT] = unit.name }
     }
 
-    suspend fun setModel(model: WeatherModel) {
-        context.settingsDataStore.edit { it[KEY_MODEL] = model.name }
-    }
+    // **`setModel` non c'e' piu', e `KEY_MODEL` si', apposta.** Sceglieva il
+    // modello numerico - il migliore disponibile, oppure ICON-2I - e il posto
+    // da cui si sceglieva e' uscito col redisegno delle impostazioni: da mesi
+    // il valore si poteva solo **leggere**. La lettura resta perche' chi aveva
+    // scelto ICON-2I prima che il comando sparisse lo ha ancora scritto nelle
+    // preferenze, e togliergliela di mano vorrebbe dire cambiargli la
+    // previsione senza dirglielo.
 
     suspend fun setCardTheme(theme: CardTheme) {
         context.settingsDataStore.edit { it[KEY_CARD_THEME] = theme.name }

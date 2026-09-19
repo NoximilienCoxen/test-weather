@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.ui.sala
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
-import androidx.compose.ui.graphics.Color
 
 /**
  * Le molle di Sala, in un posto solo.
@@ -45,12 +44,11 @@ fun mollaCarta(istantanee: Boolean, ridotte: Boolean = false): AnimationSpec<Flo
     spring(dampingRatio = 1f, stiffness = 60f, visibilityThreshold = 0.002f),
 )
 
-/** Le macchie che cambiano tinta col tempo. Piu' pronte della carta: sono un
- *  colore, non una soglia di leggibilita'. */
-fun mollaColore(istantanee: Boolean, ridotte: Boolean = false): AnimationSpec<Color> = ferma(
-    istantanee, ridotte,
-    spring(stiffness = 120f),
-)
+// **`mollaColore` e `mollaLettura` se ne sono andate.** La prima smorzava le
+// macchie dell'acquerello, la seconda il numero dei gradi mentre si scorrono le
+// ore: due andature tarate per due cose che oggi si animano altrove - le tinte
+// dentro `SalaPalette`, il numero senza molla perche' cambia di scatto con
+// l'ora. Restano le due vive, la carta e la scena.
 
 /**
  * I sette numeri della scena: sole, copertura, tempesta, bagnato, ghiaccio,
@@ -63,10 +61,4 @@ fun mollaColore(istantanee: Boolean, ridotte: Boolean = false): AnimationSpec<Co
 fun mollaScena(istantanee: Boolean, ridotte: Boolean = false): AnimationSpec<Float> = ferma(
     istantanee, ridotte,
     spring(dampingRatio = 1f, stiffness = 90f, visibilityThreshold = 0.002f),
-)
-
-/** Il numero dei gradi e le didascalie che cambiano scorrendo le ore. */
-fun mollaLettura(istantanee: Boolean, ridotte: Boolean = false): AnimationSpec<Float> = ferma(
-    istantanee, ridotte,
-    spring(dampingRatio = 1f, stiffness = 220f, visibilityThreshold = 0.01f),
 )
