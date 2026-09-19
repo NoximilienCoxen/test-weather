@@ -3,58 +3,58 @@
 
 === copertura reale sui due punti ===
   best_match
-    Noceto   48/48 ore  quota 74.0 m  prime [18.6, 17.8, 17.2]
-    Forli    48/48 ore  quota 40.0 m  prime [17.4, 16.4, 15.8]
+    Noceto   48/48 ore  quota 74.0 m  prime [16.8, 16.0, 15.6]
+    Forli    48/48 ore  quota 40.0 m  prime [17.5, 17.2, 17.3]
   italia_meteo_arpae_icon_2i
-    Noceto   48/48 ore  quota 74.0 m  prime [17.3, 17.1, 16.7]
-    Forli    48/48 ore  quota 40.0 m  prime [15.6, 15.6, 15.6]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.8, 17.7, 17.6]
+    Forli    48/48 ore  quota 40.0 m  prime [18.1, 17.7, 18.0]
   icon_d2
-    Noceto   48/48 ore  quota 74.0 m  prime [18.6, 17.8, 17.2]
-    Forli    48/48 ore  quota 40.0 m  prime [17.4, 16.4, 15.8]
+    Noceto   46/48 ore  quota 74.0 m  prime [16.8, 16.0, 15.6]
+    Forli    46/48 ore  quota 40.0 m  prime [17.5, 17.2, 17.3]
   icon_eu
-    Noceto   48/48 ore  quota 74.0 m  prime [18.3, 18.0, 17.8]
-    Forli    48/48 ore  quota 40.0 m  prime [16.7, 16.8, 17.1]
+    Noceto   48/48 ore  quota 74.0 m  prime [16.1, 16.0, 16.1]
+    Forli    48/48 ore  quota 40.0 m  prime [17.7, 17.8, 17.9]
   icon_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [18.6, 17.8, 17.2]
-    Forli    48/48 ore  quota 40.0 m  prime [17.4, 16.4, 15.8]
+    Noceto   48/48 ore  quota 74.0 m  prime [16.8, 16.0, 15.6]
+    Forli    48/48 ore  quota 40.0 m  prime [17.5, 17.2, 17.3]
   ecmwf_ifs025
-    Noceto   48/48 ore  quota 74.0 m  prime [17.6, 17.3, 17.1]
-    Forli    48/48 ore  quota 40.0 m  prime [17.0, 16.8, 16.9]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.6, 17.5, 17.4]
+    Forli    48/48 ore  quota 40.0 m  prime [17.4, 17.0, 16.5]
   ecmwf_aifs025_single
-    Noceto   48/48 ore  quota 74.0 m  prime [17.6, 17.3, 17.0]
-    Forli    48/48 ore  quota 40.0 m  prime [15.6, 15.4, 15.2]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.1, 16.8, 16.4]
+    Forli    48/48 ore  quota 40.0 m  prime [18.1, 17.8, 17.4]
   meteofrance_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [15.8, 16.2, 16.4]
-    Forli    48/48 ore  quota 40.0 m  prime [16.7, 16.6, 16.3]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.1, 16.9, 17.1]
+    Forli     HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   arpae_cosmo_5m
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Noceto    HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
     Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [17.7, 17.6, 17.6]
-    Forli    48/48 ore  quota 40.0 m  prime [18.4, 18.0, 17.7]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.8, 17.5, 16.9]
+    Forli    48/48 ore  quota 40.0 m  prime [18.6, 18.5, 18.2]
   knmi_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [16.4, 16.9, 15.7]
-    Forli    48/48 ore  quota 40.0 m  prime [17.8, 16.4, 16.2]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.7, 17.0, 17.0]
+    Forli    48/48 ore  quota 40.0 m  prime [19.0, 18.3, 18.6]
   ukmo_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [18.4, 18.4, 18.5]
-    Forli    48/48 ore  quota 40.0 m  prime [16.1, 16.3, 16.0]
+    Noceto   48/48 ore  quota 74.0 m  prime [17.8, 17.1, 17.1]
+    Forli    48/48 ore  quota 40.0 m  prime [17.6, 17.4, 17.1]
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.006079673767089844,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=142  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.00286102294921875,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0045299530029296875,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=143  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.003933906555175781,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0035762786865234375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0030994415283203125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0050067901611328125,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    NewYork   HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0032186508178710938,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
   icon_d2
-    Londra   48/48 ore  quota 29.0 m  prime [13.6, 13.1, 12.7]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Londra   46/48 ore  quota 29.0 m  prime [16.5, 16.5, 16.5]
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
-    Londra   48/48 ore  quota 29.0 m  prime [13.7, 13.2, 12.7]
-    Bergen   48/48 ore  quota 17.0 m  prime [11.5, 11.7, 12.0]
-    Singapore 48/48 ore  quota 39.0 m  prime [28.2, 28.3, 28.7]
-    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Londra   48/48 ore  quota 29.0 m  prime [16.6, 16.8, 16.7]
+    Bergen    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    Singapore 48/48 ore  quota 39.0 m  prime [28.4, 28.6, 29.0]
+    NewYork  48/48 ore  quota 27.0 m  prime [24.4, 23.8, 23.4]
 
 === chi risponde sotto best_match, nel mondo ===
   Tokyo          best_match = jma_seamless
@@ -63,10 +63,10 @@
   Reykjavik      best_match = ? (nessun candidato coincide)
   Nairobi        best_match = metno_seamless
   CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  Sydney         best_match = knmi_seamless
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Singapore      best_match = metno_seamless
+  Delhi          best_match NON RISPONDE qui
+  Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
@@ -80,7 +80,8 @@
   Reykjavik      giorni   7  assenti=-  tutte nulle=-
   Nairobi        ore    168  assenti=-  tutte nulle=-
   Nairobi        giorni   7  assenti=-  tutte nulle=-
-  CittaDelCapo   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+  CittaDelCapo   ore    168  assenti=-  tutte nulle=-
+  CittaDelCapo   giorni   7  assenti=-  tutte nulle=-
   Sydney         ore    168  assenti=-  tutte nulle=-
   Sydney         giorni   7  assenti=-  tutte nulle=-
   SanPaolo       ore    168  assenti=-  tutte nulle=-
