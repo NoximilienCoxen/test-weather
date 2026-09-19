@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
-import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
+import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import kotlinx.coroutines.delay

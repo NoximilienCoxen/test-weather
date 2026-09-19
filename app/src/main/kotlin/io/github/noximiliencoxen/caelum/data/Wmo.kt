@@ -1,13 +1,10 @@
 package io.github.noximiliencoxen.caelum.data
 
-/** Tipologia di precipitazione mostrata nella tabella della pagina Precip. */
-enum class PrecipKind(val label: String) {
-    NONE("--"),
-    RAIN("PIOGGIA"),
-    SNOW("NEVE"),
-    MIXED("MISTA"),
-    HAIL("GRANDINE"),
-}
+// **`PrecipKind` non c'e' piu'.** Era la tipologia di precipitazione mostrata
+// "nella tabella della pagina Precip", e quella pagina e' stata cancellata col
+// feed: l'enum e la funzione che lo produceva - `precipKind` - sono rimaste a
+// tradurre codici per nessuno. Chi oggi vuole sapere cosa cade chiede
+// `family`, che e' la stessa domanda fatta dove stanno i codici.
 
 /** Traduzione dei codici WMO usati da Open-Meteo. */
 object Wmo {
@@ -30,15 +27,6 @@ object Wmo {
         95 -> "TEMPORALE"
         96, 99 -> "TEMPORALE E GRANDINE"
         else -> "--"
-    }
-
-    fun precipKind(code: Int?): PrecipKind = when (code) {
-        null -> PrecipKind.NONE
-        51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 -> PrecipKind.RAIN
-        71, 73, 75, 77, 85, 86 -> PrecipKind.SNOW
-        95 -> PrecipKind.RAIN
-        96, 99 -> PrecipKind.HAIL
-        else -> PrecipKind.NONE
     }
 
     /** Rosa dei venti in italiano a 8 settori. */
