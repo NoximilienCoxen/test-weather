@@ -160,7 +160,7 @@ fun SalaShell(
         scenaBersaglio(
             sky = sky,
             condition = condition,
-            nevica = Wmo.family(codice) == Wmo.Family.NEVE,
+            nevicaWmo = Wmo.family(codice) == Wmo.Family.NEVE,
             coperturaOraria = hour?.cloudCover,
             pioggiaMm = hour?.precipitation,
         )
