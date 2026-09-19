@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.exp
 import kotlin.math.floor
 import kotlin.math.sin
 
@@ -314,8 +315,58 @@ object Corsie {
      *  dell'intensita': una soglia sola le farebbe comparire tutte insieme. */
     const val QUANTE = 14
 
-    /** Quanto dura la fioritura sulla carta dopo che una goccia ha toccato. */
-    const val FIORITURA = 0.5f
+    /**
+     * Quante gocce si disegnano su ogni corsia.
+     *
+     * **Le corsie sono quattordici e non bastavano agli occhi.** Quattordici
+     * segni su tutto lo schermo, con la scheda che ne copre la meta' bassa,
+     * vuol dire **sette** tratti visibili: chi guardava non vedeva una pioggia
+     * rada, vedeva graffi sul vetro, e da fuori il difetto si racconta come
+     * "quando piove non succede niente".
+     *
+     * Aumentare le corsie non era la strada: quelle sono anche il battito che
+     * si sente in mano, e quattordici e' il numero su cui e' tarato. Ogni
+     * corsia porta invece una **fila** di gocce sfalsate lungo la stessa
+     * discesa: la corsa resta una, quindi il tocco che fa vibrare il telefono
+     * resta quello di prima, e a schermo i segni diventano quattro volte tanti.
+     *
+     * La neve ne vuole di piu' - fiocchi radi non fanno una nevicata, e
+     * scendono cosi' piano che se ne vedono tanti insieme - e la grandine di
+     * meno: i chicchi sono grossi, svelti e distanti.
+     */
+    fun ripetizioni(tipo: Caduta): Int = when (tipo) {
+        Caduta.PIOGGIA -> 4
+        Caduta.NEVE -> 5
+        Caduta.GRANDINE -> 2
+    }
+
+    /** Il seme di una goccia: la sua corsia e il posto che occupa nella fila. */
+    private fun seme(i: Int, k: Int): Int = i * 37 + k * 101
+
+    /**
+     * Di quanto la goccia [k] segue quella di testa, in frazioni di discesa.
+     *
+     * **La prima della fila ha scarto zero, e non e' un caso**: e' lei la
+     * corsa che [impatti] conta, quindi e' lei a toccare terra nell'istante in
+     * cui il telefono batte. Le altre le stanno dietro a distanze appena
+     * irregolari - una fila perfettamente spaziata si legge come una
+     * cucitura, non come pioggia.
+     */
+    fun scarto(i: Int, k: Int, quante: Int): Float =
+        if (k == 0) 0f else k.toFloat() / quante + (sparso(seme(i, k), 24) - 0.5f) * 0.5f / quante
+
+    /** Di quanto la goccia [k] sta a lato della propria corsia, da -0,5 a 0,5. */
+    fun scostamento(i: Int, k: Int): Float = sparso(seme(i, k), 25) - 0.5f
+
+    /**
+     * Quanto e' vicina questa goccia, da 0 a 1.
+     *
+     * Parte dalla profondita' della corsia e la sposta un po': senza, le
+     * quattro gocce di una fila sarebbero grandi uguali e andrebbero alla
+     * stessa velocita', cioe' sarebbero la stessa goccia ripetuta.
+     */
+    fun profonditaDi(i: Int, k: Int): Float =
+        (profondita(i) * 0.55f + sparso(seme(i, k), 26) * 0.45f).coerceIn(0f, 1f)
 
     /** In che ordine le corsie si accendono. Sparso, se no la pioggia
      *  comincerebbe da un lato e si allargherebbe come una tenda. */
@@ -385,23 +436,75 @@ object Corsie {
 const val CICLO_LAMPO = 7f
 
 /**
+ * Una scarica: quando comincia dentro il ciclo, quanto dura, quanto forte.
+ *
+ * Un fulmine non e' un lampo solo. E' un canale che si accende e si riaccende
+ * piu' volte in mezzo secondo - i **colpi di ritorno** - e ogni ripresa e' piu'
+ * debole della precedente. E' la ragione per cui un temporale vero *sfarfalla*
+ * invece di lampeggiare, ed e' quello che mancava: due rampe lineari lunghe
+ * sessanta e sessanta millesimi davano un pulsare regolare, da insegna al neon.
+ */
+private class Scarica(val a: Float, val durata: Float, val forza: Float)
+
+private val Scariche = listOf(
+    Scarica(a = 0.00f, durata = 0.26f, forza = 1.00f),
+    Scarica(a = 0.19f, durata = 0.20f, forza = 0.78f),
+    Scarica(a = 0.40f, durata = 0.44f, forza = 0.42f),
+)
+
+/**
  * Quanto e' acceso il lampo in questo istante, da 0 a 1.
  *
- * Due lampi ravvicinati per ciclo: un temporale non lampeggia a ritmo, e due
- * vicini si leggono come uno vero meglio di uno regolare.
+ * **Sale di colpo e si spegne per esponenziale**, e nessuna delle due cose e'
+ * un vezzo: una scarica raggiunge il massimo in microsecondi - un fotogramma
+ * non la vede salire - mentre il canale caldo si raffredda nel modo in cui si
+ * raffredda tutto, cioe' perdendo ogni volta una frazione di quello che resta.
+ * La vecchia rampa in salita dava al fulmine il tempo di *arrivare*, e un
+ * fulmine che arriva non e' un fulmine.
+ *
+ * Al tempo zero vale **uno**, ed e' voluto: la cattura della CI ferma
+ * l'orologio li', quindi lo scatto del temporale ritrae il colpo e non il buio
+ * fra un colpo e l'altro.
  *
  * Sta fuori dal disegno per la stessa ragione delle corsie: **il tuono si
  * sente**, e chi fa vibrare il telefono deve poter chiedere "adesso?" senza
  * passare da una tela.
  */
-fun forzaLampo(tempo: Float): Float {
+fun forzaLampo(tempo: Float): Float = forzaDelle(Scariche, tempo)
+
+/**
+ * Quanto e' accesa la **saetta**, che non e' quanto e' acceso il cielo.
+ *
+ * Il canale si vede solo nelle due scariche brevi; il terzo battito e' il
+ * riverbero che resta nelle nuvole dopo che il canale si e' spento, e una
+ * saetta disegnata li' sopra sarebbe un fulmine fermo in aria per mezzo
+ * secondo.
+ */
+fun forzaSaetta(tempo: Float): Float = forzaDelle(Scariche.take(2), tempo)
+
+private fun forzaDelle(quali: List<Scarica>, tempo: Float): Float {
     val dentro = tempo % CICLO_LAMPO
-    return when {
-        dentro < 0.10f -> 1f - dentro / 0.10f
-        dentro > 0.22f && dentro < 0.28f -> 1f - (dentro - 0.22f) / 0.06f
-        else -> 0f
+    var massimo = 0f
+    quali.forEach { s ->
+        val t = (dentro - s.a) / s.durata
+        if (t >= 0f && t <= 1f) {
+            val forma = exp(-t * 5.4f)
+            if (s.forza * forma > massimo) massimo = s.forza * forma
+        }
     }
+    return massimo.coerceIn(0f, 1f)
 }
+
+/**
+ * Quale fulmine e' questo, contato dall'inizio.
+ *
+ * Serve al disegno per dare a ogni colpo un canale suo: un temporale che
+ * scarica sempre nello stesso punto dello schermo si legge come un difetto
+ * della grafica, non come un temporale. Le tre scariche di uno stesso ciclo
+ * hanno lo stesso numero, quindi **riaccendono lo stesso canale** - che e'
+ * esattamente cio' che fa un colpo di ritorno.
+ */
+fun indiceLampo(tempo: Float): Int = floor(tempo / CICLO_LAMPO).toInt()
 
 /** Quanto e' lontano dallo zero e dall'uno: serve a sapere se una transizione
  *  e' in volo, e quindi se l'orologio deve restare acceso. */
