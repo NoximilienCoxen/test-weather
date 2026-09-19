@@ -133,11 +133,12 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // finche' il benvenuto non ha finito: non c'e' ancora niente da
             // raccontare.
             //
-            // **I timbri dell'acquerello non si caricano piu'.** Servivano alla
-            // carta e alla scultura del tema precedente; il cielo di Organic e'
-            // fatto di sfumature e forme piene, e decodificare sette immagini
-            // per una grana che nessuno disegna piu' era il costo di una cosa
-            // che non si vede.
+            // **I timbri dell'acquerello non si caricano piu', e da questo giro
+            // non ci sono nemmeno piu'.** Servivano alla carta e alla scultura
+            // del tema precedente; il cielo di Organic e' fatto di sfumature e
+            // forme piene. Restavano tredici PNG per duecentonovantatre
+            // kilobyte dentro ogni APK, decodificati da nessuno: adesso sono
+            // usciti anche da `res/`, insieme allo script che li generava.
             if (!state.welcomed) {
                 WelcomeScreen(
                     state = state,

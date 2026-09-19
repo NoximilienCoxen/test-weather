@@ -78,42 +78,11 @@ class Camera(
         sy = origin.y + vy * scale
     }
 
-    /**
-     * Proietta un punto **gia' in coordinate di vista**, senza ruotarlo.
-     *
-     * Serve a chi il punto se lo e' calcolato da se' nello spazio della vista -
-     * l'ombra portata, che prende un vertice dell'oggetto e lo spinge lungo la
-     * luce fino al piano su cui cade. Quel punto non appartiene piu' al modello,
-     * quindi ruotarlo di nuovo lo manderebbe altrove.
-     */
-    fun project(x: Float, y: Float, z: Float) {
-        vx = x
-        vy = y
-        vz = z
-        scale = distance / (distance + z).coerceAtLeast(distance * 0.2f)
-        sx = origin.x + x * scale
-        sy = origin.y + y * scale
-    }
-
-    /**
-     * Vero se la superficie con l'ultima normale, nell'ultimo punto sistemato,
-     * e' rivolta verso l'occhio. Con la prospettiva non basta guardare il segno
-     * di z: la direzione di vista cambia da punto a punto.
-     */
-    fun facesViewer(): Boolean =
-        nvx * vx + nvy * vy + nvz * (vz + distance) < 0f
-
-    /**
-     * Lambert dimezzato invece che troncato a zero.
-     *
-     * Il troncamento classico manda a zero tutto l'emisfero in ombra: le facce
-     * di spalle diventano tutte esattamente dello stesso tono e il volume si
-     * legge come una massa unica. Rimappando l'intero intervallo restano
-     * distinguibili fra loro per quanto sono girate, che e' l'informazione che
-     * racconta la forma.
-     */
-    fun lambert(light: Light): Float =
-        (0.5f + 0.5f * (nvx * light.x + nvy * light.y + nvz * light.z)).coerceIn(0f, 1f)
+    // **Qui stavano `project`, `facesViewer` e `lambert`.** Le chiamava il
+    // mappamondo del benvenuto - `project` per l'ombra portata, le altre due
+    // per decidere quali facce guardassero l'occhio e quanto fossero
+    // illuminate - e il mappamondo e' uscito col redisegno dell'Ingresso. Di
+    // questa camera, nei widget, vivono `place` e `normal`.
 
     private companion object {
         const val DEG = (Math.PI / 180.0).toFloat()

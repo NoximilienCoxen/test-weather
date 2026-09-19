@@ -74,16 +74,11 @@ internal fun failureMessage(failure: Throwable): String = when (failure) {
 }
 
 data class UiState(
-    val loading: Boolean = true,
-    /**
-     * Vero mentre si ricarica **avendo gia' qualcosa in mano**.
-     *
-     * Distinto da [loading] perche' le due situazioni non si somigliano: un
-     * primo carico non ha niente da mostrare e lo deve dire, una ricarica ha
-     * una schermata intera di dati validi e non deve toglierli di mezzo per
-     * annunciare che ne sta cercando di piu' freschi.
-     */
-    val refreshing: Boolean = false,
+    // **Qui stavano `loading` e `refreshing`.** Distinguevano il primo carico
+    // dalla ricarica con dati gia' in mano, e li leggeva il segno in cima al
+    // feed. Sala non ha quel segno: dice di stare aspettando quando non ha una
+    // previsione, cioe' guardando `forecast`, che e' la stessa domanda fatta al
+    // dato invece che a una bandierina da tenere in fase con lui.
     /**
      * Perche' non c'e' una previsione, **detto a chi guarda**.
      *
@@ -114,26 +109,13 @@ data class UiState(
      * proprio `official`, perche' il peso delle due affermazioni e' diverso.
      */
     val alerts: List<WeatherAlert> = emptyList(),
-    /**
-     * Vero quando il feed ufficiale non ha risposto **e la localita' sarebbe
-     * coperta**.
-     *
-     * Distinto dal caso "fuori copertura", che non e' un guasto: in Nuova
-     * Zelanda MeteoAlarm non deve rispondere, e dirlo come se fosse un errore
-     * insegnerebbe a ignorare l'avviso quando invece e' vero.
-     */
-    val alertsUnavailable: Boolean = false,
-    /**
-     * Vero dove **non esiste una fonte ufficiale**, non dove non ci sono avvisi.
-     *
-     * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
-     * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
-     * località non risultano avvisi in corso", che e' un'affermazione che
-     * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
-     * ha guardato da nessuna parte. **Un silenzio non e' una risposta
-     * rassicurante: e' un silenzio**, e va detto quale dei due e'.
-     */
-    val alertsOutOfCoverage: Boolean = false,
+    // **`alertsUnavailable` e `alertsOutOfCoverage` se ne sono andati con la
+    // fascia che li mostrava, e l'idea che portavano vale piu' dei due
+    // booleani: un guasto e una zona senza fonte ufficiale non sono la stessa
+    // cosa. A Tokyo MeteoAlarm non deve rispondere, e scrivere "nessun avviso"
+    // li' e' un'affermazione che l'app non ha modo di fare - un silenzio non e'
+    // una risposta rassicurante, e' un silenzio. Quando la fascia tornera', la
+    // distinzione va rifatta: sta scritta in CONTESTO, sezione 27.
     /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
     val alertsOpen: Boolean = false,
     /**
@@ -503,10 +485,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * o uscendo da una galleria.
      */
     fun refresh() {
-        // Un primo carico non ha niente da mostrare e lo dichiara; una ricarica
-        // lascia la schermata dov'e' e cambia solo il segno in alto.
-        val hasData = _state.value.forecast != null
-        _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
+        _state.update { it.copy(error = null) }
         loading?.cancel()
         val place = _state.value.place
         val model = _state.value.model
@@ -523,8 +502,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     alerts = emptyList(),
-                    alertsUnavailable = false,
-                    alertsOutOfCoverage = false,
                     // Un fotogramma e' una fotografia di **un posto**, e
                     // vale ancora meno dell'aria fuori da quello: la
                 )
@@ -573,8 +550,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                             val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
                             val wantedDay = pendingDay?.coerceIn(0, lastDay)
                             current.copy(
-                                loading = false,
-                                refreshing = false,
                                 forecast = forecast,
                                 error = null,
                                 selectedHour = hour,
@@ -642,25 +617,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     _state.update {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
-                                            alertsUnavailable = false,
-                                            alertsOutOfCoverage = false,
                                         )
                                     }
                                 }
-                                .onFailure { failure ->
-                                    // Fuori copertura non e' un guasto: si
-                                    // resta sulle derivate senza dire che
-                                    // qualcosa e' andato storto, perche'
-                                    // non e' andato storto niente.
-                                    val uncovered =
-                                        failure is WeatherAlertsRepository.OutOfCoverage
-                                    _state.update {
-                                        it.copy(
-                                            alerts = derived,
-                                            alertsUnavailable = !uncovered,
-                                            alertsOutOfCoverage = uncovered,
-                                        )
-                                    }
+                                .onFailure {
+                                    // Il feed ufficiale non ha risposto: si
+                                    // resta sulle allerte derivate dai dati
+                                    // gia' scaricati. **Che sia un guasto o
+                                    // una zona che MeteoAlarm non copre, qui
+                                    // non si distingue piu'**: i due campi che
+                                    // lo dicevano sono usciti con la fascia
+                                    // che li mostrava (vedi UiState).
+                                    _state.update { it.copy(alerts = derived) }
                                 }
                         }
 
@@ -721,8 +689,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                             // dire quanto e' vecchio. E' l'unica risposta utile
                             // a chi e' senza rete.
                             it.copy(
-                                loading = !lastAttempt && it.forecast == null,
-                                refreshing = !lastAttempt && it.forecast != null,
                                 error = if (lastAttempt) {
                                     failureMessage(failure)
                                 } else {
@@ -986,10 +952,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setUnit(unit: TempUnit) {
         viewModelScope.launch { prefs.setUnit(unit) }
-    }
-
-    fun setModel(model: WeatherModel) {
-        viewModelScope.launch { prefs.setModel(model) }
     }
 
     /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */

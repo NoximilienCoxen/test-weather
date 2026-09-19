@@ -67,7 +67,7 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.ui.common.MinTouchTarget
+import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
@@ -324,7 +324,7 @@ fun PastigliaAccento(
  * poco coperto tingono la stessa carta e hanno due icone diverse; una pioggia e
  * una pioviggine hanno la stessa icona e non lo stesso cielo.
  */
-enum class GlifoMeteo { SOLE, POCO, NUVOLE, PIOGGIA, TEMPORALE, GRANDINE, NEVE }
+enum class GlifoMeteo { SOLE, POCO, NUVOLE, PIOGGIA, TEMPORALE, NEVE }
 
 /**
  * Quale figuretta per questo codice WMO e questa nuvolosita'.
@@ -337,7 +337,9 @@ fun glifoDi(weatherCode: Int?, cloudCover: Int?): GlifoMeteo {
     return when {
         famiglia == Wmo.Family.TEMPORALE -> GlifoMeteo.TEMPORALE
         famiglia == Wmo.Family.NEVE -> GlifoMeteo.NEVE
-        weatherCode == 77 || weatherCode == 85 || weatherCode == 86 -> GlifoMeteo.GRANDINE
+        // Qui c'era una riga per la grandine, e non la raggiungeva nessun
+        // codice: 77, 85 e 86 sono di famiglia NEVE, quindi li consuma gia' la
+        // riga sopra. Era irraggiungibile, non inutilizzata.
         weatherCode == 96 || weatherCode == 99 -> GlifoMeteo.TEMPORALE
         famiglia == Wmo.Family.PIOGGIA -> GlifoMeteo.PIOGGIA
         famiglia == Wmo.Family.NEBBIA -> GlifoMeteo.NUVOLE
@@ -367,7 +369,6 @@ fun IconaMeteo(glifo: GlifoMeteo, palette: SalaPalette, modifier: Modifier = Mod
         else -> lerp(Color(0xFFA7A49C), SalaTokens.neutral100.copy(alpha = 0.60f), buio)
     }
     val fiocco = lerp(Color(0xFF9FB3BD), SalaTokens.neutral100, buio)
-    val chicco = lerp(SalaTokens.ghiaccioScuro, Color(0xFF7FB6D4), buio)
     Canvas(modifier = modifier.size(20.dp, 18.dp)) {
         val u = size.width / 20f
         fun x(v: Float) = v * u
@@ -424,16 +425,6 @@ fun IconaMeteo(glifo: GlifoMeteo, palette: SalaPalette, modifier: Modifier = Mod
                     6f to 5f, 12f to 5f,
                 ).forEach { (fx, fy) ->
                     drawCircle(color = fiocco, radius = x(1.5f), center = Offset(x(fx), yDalBasso(fy, 3f)))
-                }
-            }
-            GlifoMeteo.GRANDINE -> {
-                // Due chicchi ovali: piu' pesanti e piu' pochi dei fiocchi.
-                listOf(5f, 12f).forEach { cx ->
-                    drawOval(
-                        color = chicco,
-                        topLeft = Offset(x(cx), yDalBasso(0f, 6f)),
-                        size = Size(x(4f), x(6f)),
-                    )
                 }
             }
             else -> Unit

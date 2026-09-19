@@ -2,7 +2,6 @@ package io.github.noximiliencoxen.caelum.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 
@@ -58,31 +57,15 @@ internal val AlertTint = Color(0xFFFF8A6B)
  */
 internal val MoonTint = Color(0xFFDDE3EE)
 
-/**
- * I colori che l'app usa **oltre** a quelli che Material 3 nomina.
- *
- * Material non ha un token per "il colore della pioggia" ne' per "la linea di
- * riferimento di un grafico", e inventarne uno storcendo `tertiary` renderebbe
- * illeggibile il codice che lo legge. Stanno qui, gia' resi leggibili sul
- * proprio fondo, e si prendono da [LocalMeteoAccents].
- */
-@Immutable
-data class MeteoAccents(
-    val sun: Color,
-    val rain: Color,
-    val wind: Color,
-    val air: Color,
-    val moon: Color,
-    val alert: Color,
-    /** La curva di riferimento dietro quella colorata: l'effettiva sotto la percepita. */
-    val ghost: Color,
-    /** La media storica mensile: si distingue dalla griglia senza rubare la scena. */
-    val norm: Color,
-    /** Le tacche della griglia dei grafici. */
-    val grid: Color,
-    /** Il fondo su cui poggiano le etichette disegnate a mano dentro le tele. */
-    val chartLabelBackground: Color,
-)
+// **Qui stava `MeteoAccents`, e con lei se ne vanno `skyAccents` e
+// `toAccents`.** Erano le tinte delle grandezze - sole, pioggia, vento, aria,
+// luna, allerta - piu' quattro colori dei grafici, calcolate contro il fondo su
+// cui sarebbero finite e messe a disposizione con un `CompositionLocal`. Le
+// leggeva il feed. Da quando c'e' Sala, che le sue tinte se le prende da
+// `SalaPalette`, `LocalMeteoAccents.current` non compare piu' in nessun file:
+// si calcolavano a ogni fotogramma d'animazione - una decina di ricerche di
+// contrasto, ognuna a passi di elevamento a potenza - per essere fornite a
+// nessuno.
 
 /**
  * Lo schema Material dell'app.
@@ -154,52 +137,4 @@ fun MeteoColors.toColorScheme(): ColorScheme {
     )
 }
 
-/**
- * Le stesse tinte, ma leggibili **sul cielo**.
- *
- * [toAccents] le tara su `PanelContainer`, che e' un antracite fermo: e' il
- * fondo dei pannelli, dove queste tinte passano quasi tutta la loro vita. La
- * schermata principale pero' non ha un fondo, ha una sfumatura che gira con
- * l'ora, e a meta' mattina arriva a un grigio chiaro: il giallo del sole tarato
- * sull'antracite li' sparisce. E' lo stesso difetto della sezione 8-bis di
- * CONTESTO, con un'altra faccia.
- *
- * Si chiede la soglia **ai due capi** della sfumatura e non al tono medio,
- * perche' sotto un segno solo ci sono due colori diversi. Soglia da segno
- * grande, come in [toAccents] e per la stessa ragione: portarle a 4,5:1 le
- * sbiadirebbe tutte verso lo stesso bianco sporco, e sei pallini identici non
- * direbbero piu' quale grandezza sono.
- *
- * Restano fuori i colori che sul cielo non ci vanno mai - griglia, fondo delle
- * etichette, curve di riferimento: quelli vivono dentro le tele dei pannelli, e
- * li' il fondo e' quello di [toAccents].
- */
-fun MeteoColors.skyAccents(): MeteoAccents = toAccents().copy(
-    sun = SunTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    rain = RainTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    wind = WindTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    air = AirTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    moon = MoonTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    alert = AlertTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-)
 
-/** Le tinte delle grandezze, gia' rese leggibili sulla superficie che le ospita. */
-fun MeteoColors.toAccents(): MeteoAccents {
-    val on = PanelContainer
-    return MeteoAccents(
-        // Soglia da testo grande: queste tinte colorano curve spesse e cifre
-        // alte mezzo schermo, non didascalie. Portarle a 4.5:1 le sbiadirebbe
-        // tutte verso lo stesso bianco sporco, e a quel punto non direbbero
-        // piu' quale grandezza si sta guardando.
-        sun = SunTint.readableOn(on, CONTRAST_AA_LARGE),
-        rain = RainTint.readableOn(on, CONTRAST_AA_LARGE),
-        wind = WindTint.readableOn(on, CONTRAST_AA_LARGE),
-        air = AirTint.readableOn(on, CONTRAST_AA_LARGE),
-        moon = MoonTint.readableOn(on, CONTRAST_AA_LARGE),
-        alert = AlertTint.readableOn(on, CONTRAST_AA_LARGE),
-        ghost = Color(0xFFB4B4BE).readableOn(on, CONTRAST_AA_LARGE),
-        norm = Color(0xFFCFCFD8).readableOn(on, CONTRAST_AA_LARGE),
-        grid = PanelOutlineVariant,
-        chartLabelBackground = PanelContainerLowest,
-    )
-}

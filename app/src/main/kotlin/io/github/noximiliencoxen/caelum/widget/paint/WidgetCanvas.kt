@@ -31,8 +31,8 @@ internal class Frame(
     val cut: Cut,
     val cornerDp: Float,
 ) {
-    val widthDp: Float get() = widthPx / scale
-    val heightDp: Float get() = heightPx / scale
+    // `widthDp` e `heightDp` stavano qui e non li chiedeva nessuno: chi
+    // disegna prende le misure dal blocco che gli viene passato.
 }
 
 /** Quanto sta in un widget: cambia cosa si disegna, non solo quanto grande. */

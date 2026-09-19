@@ -31,12 +31,13 @@ data class Scena(
     /** Luna invece di sole, stelle invece di uccelli. */
     val notte: Float,
 ) {
-    /** Vero finche' qualcosa si sta ancora spostando: serve a tenere acceso
-     *  l'orologio per tutta la durata di un passaggio, e non un istante di
-     *  piu'. */
-    val inTransito: Boolean
-        get() = inMezzo(copertura) || inMezzo(notte) || inMezzo(tempesta) ||
-            inMezzo(sole) || bagnato > 0.01f
+    // **Qui stava `inTransito`**, che diceva se una transizione era ancora in
+    // volo e serviva a tenere acceso l'orologio della scena "per tutta la
+    // durata di un passaggio, e non un istante di piu'". Non l'ha mai chiamato
+    // nessuno: l'orologio e' sempre acceso. Non e' una svista da correggere
+    // spegnendolo - stelle, nuvole e corona si muovono anche a scena ferma, e
+    // un cielo fermo non e' un cielo - quindi se ne va la promessa, non il
+    // cielo.
 }
 
 /**
