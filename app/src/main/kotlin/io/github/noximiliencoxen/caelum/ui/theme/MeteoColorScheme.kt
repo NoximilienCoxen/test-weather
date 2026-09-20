@@ -67,6 +67,56 @@ internal val MoonTint = Color(0xFFDDE3EE)
 // contrasto, ognuna a passi di elevamento a potenza - per essere fornite a
 // nessuno.
 
+// ── Le venti tinte che non si muovono mai ───────────────────────────────────
+//
+// **`toColorScheme` ricalcolava tutto, e solo due voci dipendono dall'ora.**
+// Il commento qui sotto lo dice gia' da sempre - *e' l'unica coppia dello
+// schema che si muove durante il giorno* - ma le altre venti stavano dentro la
+// funzione, quindi si rifacevano con lei: e la funzione gira **a ogni
+// fotogramma in cui il cielo si muove**, perche' `MeteoTheme` la ricorda sulla
+// tavolozza intera e la tavolozza intera cambia col fondo.
+//
+// Ognuna e' una ricerca di contrasto - [readableOn] e [mutedOn] scandiscono la
+// luminanza a passi, e ogni passo e' un elevamento a potenza per canale - su
+// colori che sono **costanti scritte in questo file**. Portarle qui fuori non
+// cambia un numero: le espressioni sono le stesse, parola per parola, e i
+// valori dipendono solo da token che non si muovono.
+//
+// L'ordine conta: `OnPanelVariant` legge `OnPanel`, e i tre `On...Container`
+// leggono il proprio container. Una proprieta' di file che ne legge una
+// dichiarata piu' in basso si prende il valore di prima dell'inizializzazione.
+
+private val OnPanel = Color.White.readableOn(PanelContainer)
+
+// Il grigio secondario si ricava contro la superficie **piu' chiara** su cui
+// puo' finire, non contro quella media: le pillole spente stanno su
+// `surfaceContainerHighest`, ed e' li' che il contrasto e' piu' magro.
+// Tarandolo sul container si otteneva 4,49:1 su quelle pillole - meglio del
+// 4,17:1 di prima, ma pur sempre sotto la soglia, cioe' lo stesso difetto
+// spostato di un decimo. Contro la piu' chiara passa ovunque.
+private val OnPanelVariant = OnPanel.mutedOn(PanelContainerHighest)
+
+private val PrimaryOnPanel = SunTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val PrimaryContainer = lerp(PanelContainerHigh, SunTint, 0.14f)
+private val OnPrimaryContainer = SunTint.readableOn(PrimaryContainer)
+
+private val SecondaryOnPanel = RainTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val SecondaryContainer = lerp(PanelContainerHigh, RainTint, 0.14f)
+private val OnSecondaryContainer = RainTint.readableOn(SecondaryContainer)
+
+private val TertiaryOnPanel = AirTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val TertiaryContainer = lerp(PanelContainerHigh, AirTint, 0.14f)
+private val OnTertiaryContainer = AirTint.readableOn(TertiaryContainer)
+
+private val ErrorOnPanel = AlertTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val ErrorContainer = lerp(PanelContainerHigh, AlertTint, 0.16f)
+private val OnErrorContainer = AlertTint.readableOn(ErrorContainer)
+
+/** L'inverso serve alle pillole selezionate, che sono chiare su scuro. */
+private val InverseSurface = Color(0xFFF1F2F5)
+private val InverseOnSurface = Color.Black.readableOn(InverseSurface)
+private val InversePrimary = SunTint.readableOn(InverseSurface)
+
 /**
  * Lo schema Material dell'app.
  *
@@ -74,38 +124,33 @@ internal val MoonTint = Color(0xFFDDE3EE)
  * ha una trentina di parametri posizionali che cambiano fra una versione e
  * l'altra della libreria, e un token aggiunto a monte diventerebbe qui uno
  * spostamento silenzioso di tutti quelli che seguono.
+ *
+ * Di calcolato resta **solo la coppia del fondo**: tutto il resto sono le
+ * costanti qui sopra.
  */
 fun MeteoColors.toColorScheme(): ColorScheme {
-    val onPanel = Color.White.readableOn(PanelContainer)
-    // Il grigio secondario si ricava contro la superficie **piu' chiara** su cui
-    // puo' finire, non contro quella media: le pillole spente stanno su
-    // `surfaceContainerHighest`, ed e' li' che il contrasto e' piu' magro.
-    // Tarandolo sul container si otteneva 4,49:1 su quelle pillole - meglio del
-    // 4,17:1 di prima, ma pur sempre sotto la soglia, cioe' lo stesso difetto
-    // spostato di un decimo. Contro la piu' chiara passa ovunque.
-    val onPanelVariant = onPanel.mutedOn(PanelContainerHighest)
     val onBackground = text.readableOn(background)
 
     return darkColorScheme(
-        primary = SunTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        primary = PrimaryOnPanel,
         onPrimary = SunTint.onColor(),
-        primaryContainer = lerp(PanelContainerHigh, SunTint, 0.14f),
-        onPrimaryContainer = SunTint.readableOn(lerp(PanelContainerHigh, SunTint, 0.14f)),
+        primaryContainer = PrimaryContainer,
+        onPrimaryContainer = OnPrimaryContainer,
 
-        secondary = RainTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        secondary = SecondaryOnPanel,
         onSecondary = RainTint.onColor(),
-        secondaryContainer = lerp(PanelContainerHigh, RainTint, 0.14f),
-        onSecondaryContainer = RainTint.readableOn(lerp(PanelContainerHigh, RainTint, 0.14f)),
+        secondaryContainer = SecondaryContainer,
+        onSecondaryContainer = OnSecondaryContainer,
 
-        tertiary = AirTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        tertiary = TertiaryOnPanel,
         onTertiary = AirTint.onColor(),
-        tertiaryContainer = lerp(PanelContainerHigh, AirTint, 0.14f),
-        onTertiaryContainer = AirTint.readableOn(lerp(PanelContainerHigh, AirTint, 0.14f)),
+        tertiaryContainer = TertiaryContainer,
+        onTertiaryContainer = OnTertiaryContainer,
 
-        error = AlertTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        error = ErrorOnPanel,
         onError = AlertTint.onColor(),
-        errorContainer = lerp(PanelContainerHigh, AlertTint, 0.16f),
-        onErrorContainer = AlertTint.readableOn(lerp(PanelContainerHigh, AlertTint, 0.16f)),
+        errorContainer = ErrorContainer,
+        onErrorContainer = OnErrorContainer,
 
         // Il fondo segue l'ora; il testo che ci sta sopra viene calcolato, non
         // scelto. E' l'unica coppia dello schema che si muove durante il giorno.
@@ -113,9 +158,9 @@ fun MeteoColors.toColorScheme(): ColorScheme {
         onBackground = onBackground,
 
         surface = PanelSurface,
-        onSurface = onPanel,
+        onSurface = OnPanel,
         surfaceVariant = PanelContainerHigh,
-        onSurfaceVariant = onPanelVariant,
+        onSurfaceVariant = OnPanelVariant,
         surfaceDim = PanelSurfaceDim,
         surfaceBright = PanelSurfaceBright,
         surfaceContainerLowest = PanelContainerLowest,
@@ -124,12 +169,11 @@ fun MeteoColors.toColorScheme(): ColorScheme {
         surfaceContainerHigh = PanelContainerHigh,
         surfaceContainerHighest = PanelContainerHighest,
 
-        // L'inverso serve alle pillole selezionate, che sono chiare su scuro:
-        // il testo dentro esce da `inverseOnSurface`, quindi non c'e' modo di
-        // scrivere bianco su bianco senza accorgersene.
-        inverseSurface = Color(0xFFF1F2F5),
-        inverseOnSurface = Color.Black.readableOn(Color(0xFFF1F2F5)),
-        inversePrimary = SunTint.readableOn(Color(0xFFF1F2F5)),
+        // Il testo dentro le pillole selezionate esce da `inverseOnSurface`,
+        // quindi non c'e' modo di scrivere bianco su bianco senza accorgersene.
+        inverseSurface = InverseSurface,
+        inverseOnSurface = InverseOnSurface,
+        inversePrimary = InversePrimary,
 
         outline = PanelOutline,
         outlineVariant = PanelOutlineVariant,
