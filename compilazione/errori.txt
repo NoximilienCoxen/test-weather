@@ -1,181 +1,187 @@
 === righe e: / w: ===
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/RadarDpcRepository.kt:367:1 Syntax error: Unclosed comment.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:15:46 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:16:46 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:148:16 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:148:29 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:545:29 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:623:29 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:624:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:624:46 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:625:69 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:627:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:629:44 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:629:80 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:44 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:78 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:111 Unresolved reference 'indizio'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:631:49 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:43:46 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:44:46 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:87:12 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:92:31 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:92:51 Unresolved reference 'prodotto'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:24 Cannot infer type for type parameter 'R'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:30 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:102:71 Unresolved reference 'size'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:125:24 'when' expression must be exhaustive. Add an 'else' branch.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:126:24 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:126:65 Unresolved reference 'prodotto'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:127:21 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:128:21 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:129:24 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:156:20 'when' expression must be exhaustive. Add an 'else' branch.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:157:20 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:27 Unresolved reference 'indizio'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:36 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:36 Cannot infer type for type parameter 'R'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:40 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:160:17 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:163:17 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:164:20 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:176:28 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:211:52 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:211:88 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:26 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:54 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:88 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:26 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:63 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:88 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:26 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:54 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:88 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:26 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:63 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:88 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:222:12 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:226:58 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:19 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:32 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:43 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:25 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:38 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:49 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:245:10 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:246:15 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:248:26 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:248:38 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:249:27 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:249:39 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:272:46 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:315:15 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:319:19 Unresolved reference 'contiene'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:345:61 Unresolved reference 'RadarRiquadro'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:17 Unresolved reference 'forcedAlert'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:30 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:30 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:36 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:188:52 Unresolved reference 'alerts'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:190:43 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:190:43 Return type mismatch: expected 'List<HourForecast>', actual 'String'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:192:53 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:205:27 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:206:17 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:207:47 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:207:61 Unresolved reference 'date'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:214:17 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:214:43 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:233:20 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:233:20 Return type mismatch: expected 'List<HourForecast>', actual 'String'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:239:27 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:247:58 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:258:43 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:270:23 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:290:23 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:304:23 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:322:32 Unresolved reference 'forcedWeatherCode'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:391:54 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:418:26 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:425:21 No parameter with name 'air' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:426:21 No parameter with name 'airUnavailable' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:427:21 No parameter with name 'alerts' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:427:30 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:465:41 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:465:69 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:476:33 No parameter with name 'forecast' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:478:33 No parameter with name 'selectedHour' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:479:33 No parameter with name 'selectedDay' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:479:68 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:503:61 No parameter with name 'air' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:503:72 No parameter with name 'airUnavailable' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:506:61 No parameter with name 'airUnavailable' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:532:49 No parameter with name 'alerts' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:542:45 No parameter with name 'alerts' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:554:61 No parameter with name 'alerts' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:655:33 No parameter with name 'selectedDay' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:655:50 No parameter with name 'selectedHour' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:660:33 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:661:26 No parameter with name 'selectedDay' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:667:33 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:668:26 No parameter with name 'selectedHour' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:15 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:34 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:40 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:799:17 No parameter with name 'forcedAlert' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:931:26 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:951:26 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:956:33 No parameter with name 'forcedWeatherCode' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:150:24 Unresolved reference 'forcedWeatherCode'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:250:43 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:258:42 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:258:61 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:259:40 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:259:66 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:414:38 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:53:22 Unresolved reference 'air'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:100:38 Unresolved reference 'airUnavailable'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:106:46 Unresolved reference 'airUnavailable'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:121:40 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:123:67 Unresolved reference 'ora'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:125:17 None of the following candidates is applicable:
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:125:22 'operator' modifier is required on 'fun <T> Comparable<T>.compareTo(other: T): Int'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:133:23 Argument type mismatch: actual type is 'String', but 'List<OraAria>' was expected.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:138:30 Unresolved reference 'scale'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:143:33 Argument type mismatch: actual type is 'String', but 'List<OraAria>' was expected.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:186:56 Unresolved reference 'inFrase'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:187:42 Unresolved reference 'quota'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:89:44 Unresolved reference 'forcedWeatherCode'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:90:36 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:90:66 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:91:50 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:92:24 Unresolved reference 'selectedDay'.
 
 === ultime 120 righe del log ===
-> Task :app:mapDebugSourceSetPaths
-> Task :app:compileDebugNavigationResources FROM-CACHE
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugStartupProfile
-> Task :app:mergeDebugResources FROM-CACHE
-> Task :app:parseDebugLocalResources FROM-CACHE
-> Task :app:generateDebugRFile FROM-CACHE
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets FROM-CACHE
-> Task :app:processDebugMainManifest
-> Task :app:extractDebugVersionControlInfo
-> Task :app:extractProguardFiles
-> Task :app:collectDebugDependencies
-> Task :app:sdkDebugDependencyData
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:mergeExtDexDebug FROM-CACHE
-> Task :app:processDebugManifest
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:processDebugManifestForPackage
-> Task :app:processDebugResources
-> Task :app:optimizeDebugResources
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:655:33 No parameter with name 'selectedDay' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:655:50 No parameter with name 'selectedHour' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:660:33 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:661:26 No parameter with name 'selectedDay' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:667:33 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:668:26 No parameter with name 'selectedHour' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:15 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:34 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:747:40 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:799:17 No parameter with name 'forcedAlert' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:931:26 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:951:26 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:956:33 No parameter with name 'forcedWeatherCode' found.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:150:24 Unresolved reference 'forcedWeatherCode'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:250:43 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:258:42 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:258:61 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:259:40 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:259:66 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/SalaShell.kt:414:38 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:53:22 Unresolved reference 'air'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:100:38 Unresolved reference 'airUnavailable'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:106:46 Unresolved reference 'airUnavailable'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:121:40 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:123:67 Unresolved reference 'ora'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:125:17 None of the following candidates is applicable:
 
-> Task :app:compileDebugKotlin
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/RadarDpcRepository.kt:367:1 Syntax error: Unclosed comment.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:15:46 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:16:46 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:148:16 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:148:29 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:545:29 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:623:29 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:624:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:624:46 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:625:69 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:627:34 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:629:44 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:629:80 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:44 Unresolved reference 'RadarDpcRepository'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:78 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:630:111 Unresolved reference 'indizio'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/WeatherViewModel.kt:631:49 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:43:46 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:44:46 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:87:12 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:92:31 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:92:51 Unresolved reference 'prodotto'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:24 Cannot infer type for type parameter 'R'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:101:30 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:102:71 Unresolved reference 'size'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:125:24 'when' expression must be exhaustive. Add an 'else' branch.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:126:24 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:126:65 Unresolved reference 'prodotto'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:127:21 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:128:21 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:129:24 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:156:20 'when' expression must be exhaustive. Add an 'else' branch.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:157:20 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:27 Unresolved reference 'indizio'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:36 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:36 Cannot infer type for type parameter 'R'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:158:40 Cannot infer type for type parameter 'T'. Specify it explicitly.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:160:17 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:163:17 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:164:20 Unresolved reference 'StatoRadar'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:176:28 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:211:52 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:211:88 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:26 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:54 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:218:88 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:26 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:63 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:219:88 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:26 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:54 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:220:88 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:26 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:63 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:221:88 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:222:12 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:226:58 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:19 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:32 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:227:43 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:25 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:38 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:228:49 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:245:10 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:246:15 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:248:26 Unresolved reference 'latMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:248:38 Unresolved reference 'lonMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:249:27 Unresolved reference 'latMin'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:249:39 Unresolved reference 'lonMax'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:272:46 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:315:15 Unresolved reference 'RadarRiquadro'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:319:19 Unresolved reference 'contiene'.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/RadarMappa.kt:345:61 Unresolved reference 'RadarRiquadro'.
+fun Modifier.size(size: Dp): Modifier:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun Modifier.size(size: Dp): Modifier
+
+fun Modifier.size(width: Dp, height: Dp): Modifier:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun Modifier.size(width: Dp, height: Dp): Modifier
+
+fun Modifier.size(size: DpSize): Modifier:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun Modifier.size(size: DpSize): Modifier
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:125:22 'operator' modifier is required on 'fun <T> Comparable<T>.compareTo(other: T): Int'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:133:23 Argument type mismatch: actual type is 'String', but 'List<OraAria>' was expected.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:138:30 Unresolved reference 'scale'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:143:33 Argument type mismatch: actual type is 'String', but 'List<OraAria>' was expected.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:186:56 Unresolved reference 'inFrase'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaAria.kt:187:42 Unresolved reference 'quota'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:89:44 Unresolved reference 'forcedWeatherCode'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:90:36 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:90:66 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:91:50 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:92:24 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaOggi.kt:228:32 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:55:24 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:180:28 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:181:20 Unresolved reference 'size'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:189:26 Argument type mismatch: actual type is 'String', but 'List<DayForecast>' was expected.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:190:32 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:288:21 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:290:35 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:294:42 Unresolved reference 'precipitation'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:297:35 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:298:41 Unresolved reference 'precipitation'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:303:43 Unresolved reference 'precipitation'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:306:42 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:306:63 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:307:26 Unresolved reference 'precipitation'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:308:38 Unresolved reference 'precipitation'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:309:75 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:312:28 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:312:96 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:314:31 Unresolved reference 'size'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:314:81 Unresolved reference 'size'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:316:32 Unresolved reference 'time'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:321:11 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:321:41 Unresolved reference 'it'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaPioggia.kt:321:76 Unresolved reference 'label'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:63:36 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:63:66 Unresolved reference 'forecast'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:64:44 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:104:28 Unresolved reference 'selectedDay'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:166:22 Unresolved reference 'air'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:203:9 Inapplicable candidate(s): constructor(nome: String, valore: String, tinta: Color, sala: SalaRoom): Riquadro
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:205:19 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:205:19 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaSettimana.kt:205:23 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:52:24 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:58:23 Unresolved reference 'air'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:158:55 'operator' modifier is required on 'fun <T> Comparable<T>.compareTo(other: T): Int'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:208:13 Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun RowScope.CellaValore(etichetta: String, valore: String, palette: SalaPalette, modifier: Modifier = ..., onVai: (() -> Unit)? = ...): Unit
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:210:33 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:210:33 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaUv.kt:210:37 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:51:24 Unresolved reference 'selectedHour'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:138:49 Unresolved reference 'filter'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:138:58 Unresolved reference 'it'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:140:49 Unresolved reference 'it'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:146:32 Cannot infer type for value parameter 'indice'. Specify it explicitly.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/SalaVento.kt:149:17 @Composable invocations can only happen from the context of a @Composable function
 
 > Task :app:compileDebugKotlin FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1789628124325.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1789946928409.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/test-weather/test-weather/build/reports/problems/problems-report.html
 
@@ -192,6 +198,6 @@ Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.a
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 31s
-38 actionable tasks: 25 executed, 13 from cache
+BUILD FAILED in 34s
+38 actionable tasks: 31 executed, 7 from cache
 Configuration cache entry stored.
