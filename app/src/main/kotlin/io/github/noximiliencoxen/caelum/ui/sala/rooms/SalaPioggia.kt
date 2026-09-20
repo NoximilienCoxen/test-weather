@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +31,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
 import java.util.Locale
 
 /**
@@ -55,10 +57,19 @@ fun SalaPioggiaScreen(
     val scelta = state.selectedHour
     // Le dodici ore **da quella scelta in avanti**: una finestra che scorre con
     // la barra, non un pezzo fisso di giornata.
-    val finestra = (scelta until minOf(scelta + 12, ore.size)).toList()
-    val pioggia = finestra.map { ore[it].precipitation ?: 0.0 }
-    val massimo = (pioggia.maxOrNull() ?: 0.0).coerceAtLeast(0.4)
-    val totale = pioggia.sum()
+    //
+    // **Sotto `remember`, e non perche' il conto sia caro.** Questa sala e'
+    // dentro il carosello, quindi resta composta mentre il cielo si muove: a
+    // ogni fotogramma rifaceva una lista di dodici indici, una di dodici
+    // numeri, e ne rileggeva il massimo e la somma. Adesso la chiave e' stabile
+    // per riferimento - `shownHours` e' sempre la stessa lista - e il conto si
+    // rifa' solo cambiando ora o giorno.
+    val finestra = remember(ore, scelta) {
+        (scelta until minOf(scelta + 12, ore.size)).toList()
+    }
+    val pioggia = remember(ore, finestra) { finestra.map { ore[it].precipitation ?: 0.0 } }
+    val massimo = remember(pioggia) { (pioggia.maxOrNull() ?: 0.0).coerceAtLeast(0.4) }
+    val totale = remember(pioggia) { pioggia.sum() }
     val oraScelta = state.detailHour
     val bagnato = totale > 0.05
 
@@ -124,7 +135,7 @@ fun SalaPioggiaScreen(
                             ),
                     )
                     Text(
-                        text = "%02d".format(ore[indice].time.hour),
+                        text = oraDueCifre(ore[indice].time.hour),
                         style = SalaType.microLabel,
                         color = if (indice == scelta) palette.accent else palette.inkFaint,
                         maxLines = 1,
@@ -170,8 +181,12 @@ fun SalaPioggiaScreen(
             color = palette.inkFaint,
             modifier = Modifier.padding(bottom = 8.dp),
         )
+        // Tre o quattro filtri su tutte le ore della settimana e quattro
+        // `String.format`: a ogni fotogramma, finche' questa sala e' composta.
+        // La chiave e' la coppia da cui dipende davvero la frase.
+        val quando = remember(state.forecast, state.detailHour?.time) { finestraPioggia(state) }
         Text(
-            text = finestraPioggia(state),
+            text = quando,
             style = SalaType.rowTitle,
             color = palette.ink,
         )

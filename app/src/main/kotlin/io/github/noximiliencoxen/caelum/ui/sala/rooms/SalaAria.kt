@@ -35,6 +35,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
 import kotlin.math.roundToInt
 
 /**
@@ -239,7 +240,7 @@ private fun AndamentoAria(
         ) {
             ore.forEach { o ->
                 Text(
-                    text = if (o.ora.hour % 6 == 0) "%02d".format(o.ora.hour) else "",
+                    text = if (o.ora.hour % 6 == 0) oraDueCifre(o.ora.hour) else "",
                     style = SalaType.microLabel,
                     color = if (oraScelta != null && o.ora.hour == oraScelta) palette.accent
                     else palette.inkFaint,

@@ -101,6 +101,16 @@ fun SalaCielo(
     // cose del cielo, nessun'altra schermata le usa, e tenerle qui vuol dire
     // che la Shell non sa nemmeno che esistano.
     val onde = remember { mutableStateListOf<Increspatura>() }
+    // La curva del sole non dipende dal tempo: si rifa' solo quando cambia la
+    // taglia. Vedi [StradaDelSole].
+    val stradaDelSole = remember { StradaDelSole() }
+
+    // **La sfumatura verticale risolve le sue coordinate al disegno**, quindi
+    // una sola per terna di fermate basta a qualunque taglia - e con lei si
+    // riusa anche lo shader che ci sta dietro. Mentre il cielo si muove le
+    // fermate cambiano a ogni fotogramma e questo non guadagna niente: serve a
+    // cielo **fermo**, che e' come sta quasi sempre.
+    val fondo = remember(stops) { cieloBrush(stops) }
     val fiamma = remember { Animatable(0f) }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
@@ -149,7 +159,7 @@ fun SalaCielo(
         val sy = size.height / RIF_H
         val dy = insetAlto.toPx()
 
-        drawRect(brush = cieloBrush(stops))
+        drawRect(brush = fondo)
 
         // Le stelle non si spengono con le nuvole: ci passano sotto. Il velo
         // **cala** con la copertura invece di azzerarsi, perche' da sotto una
@@ -165,7 +175,7 @@ fun SalaCielo(
         }
 
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
-            arcoDelCielo(sx, sy, dy, palette, scena)
+            arcoDelCielo(sx, sy, dy, palette, scena, stradaDelSole)
             soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value)
         }
 
@@ -228,6 +238,51 @@ private fun rnd(i: Int): Float {
     return (x - floor(x)).toFloat()
 }
 
+/**
+ * La strada del sole, ricostruita solo quando cambia la taglia dello schermo.
+ *
+ * Il tracciato e' un `Path` di quarantanove punti e la tratteggiatura un
+ * `PathEffect` con dentro un `FloatArray`: si rifacevano **a ogni fotogramma**,
+ * cioe' sessanta volte al secondo, per ottenere sempre la stessa curva. Non
+ * dipendono dal tempo - solo dalla larghezza, dall'altezza e da quanto si
+ * scende sotto la barra di stato.
+ *
+ * **Non e' una costante di file**, ed e' il motivo per cui questa classe
+ * esiste invece di due `val` in cima: la tratteggiatura scala con la
+ * larghezza, quindi girando lo schermo il tratto cambierebbe lunghezza senza
+ * che nessuno lo ricalcolasse. Qui la taglia e' la chiave, come in un
+ * `remember`.
+ */
+private class StradaDelSole {
+
+    private var sx = Float.NaN
+    private var sy = Float.NaN
+    private var dy = Float.NaN
+
+    /** Il tracciato per l'ultima taglia passata ad [aggiornaA]. */
+    var strada: Path = Path()
+        private set
+
+    /** La tratteggiatura per l'ultima taglia passata ad [aggiornaA]. */
+    var tratto: PathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 7f))
+        private set
+
+    fun aggiornaA(sx: Float, sy: Float, dy: Float) {
+        if (sx == this.sx && sy == this.sy && dy == this.dy) return
+        this.sx = sx
+        this.sy = sy
+        this.dy = dy
+        strada = Path().apply {
+            val passi = 48
+            for (i in 0..passi) {
+                val p = arco(i / passi.toFloat(), sx, sy, dy)
+                if (i == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y)
+            }
+        }
+        tratto = PathEffect.dashPathEffect(floatArrayOf(6f * sx, 7f * sx))
+    }
+}
+
 /** Il punto dell'arco a frazione [t], da 0 (sorge a sinistra) a 1 (cala a destra). */
 private fun arco(t: Float, sx: Float, sy: Float, dy: Float): Offset {
     val a = PI.toFloat() * (1f - t.coerceIn(0f, 1f))
@@ -241,25 +296,39 @@ private fun arco(t: Float, sx: Float, sy: Float, dy: Float): Offset {
  * fronte non si vede da nessuna parte dove sia il sole, e disegnarne la strada
  * a piena forza sarebbe dire una cosa che il cielo non dice.
  */
-private fun DrawScope.arcoDelCielo(sx: Float, sy: Float, dy: Float, palette: SalaPalette, scena: Scena) {
+private fun DrawScope.arcoDelCielo(
+    sx: Float,
+    sy: Float,
+    dy: Float,
+    palette: SalaPalette,
+    scena: Scena,
+    strada: StradaDelSole,
+) {
     val forza = lerp(1f, 0.25f, scena.copertura) * (1f - scena.tempesta * 0.6f)
     if (forza <= 0.02f) return
-    val strada = Path().apply {
-        val passi = 48
-        for (i in 0..passi) {
-            val p = arco(i / passi.toFloat(), sx, sy, dy)
-            if (i == 0) moveTo(p.x, p.y) else lineTo(p.x, p.y)
-        }
-    }
+    strada.aggiornaA(sx, sy, dy)
     drawPath(
-        path = strada,
+        path = strada.strada,
         color = palette.ink.copy(alpha = 0.26f * forza),
-        style = Stroke(
-            width = 1.6f * sx,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f * sx, 7f * sx)),
-        ),
+        style = Stroke(width = 1.6f * sx, pathEffect = strada.tratto),
     )
 }
+
+/**
+ * Il bagliore del sole, in tre strati: quanto largo e quanto opaco.
+ *
+ * Uno solo dava un alone piatto che finiva di colpo. Tre raggi diversi, ognuno
+ * piu' largo e piu' tenue, danno la caduta continua che ha la luce vera - ed e'
+ * quello che fa "bruciare" il disco sul cielo.
+ */
+private val AloniSole = listOf(
+    5.6f to 0.20f,
+    3.1f to 0.30f,
+    1.9f to 0.42f,
+)
+
+/** Il bagliore della luna, a due strati. Stessa idea, meta' forza. */
+private val AloniLuna = listOf(3.4f to 0.16f, 2.0f to 0.24f)
 
 /**
  * Il sole e la luna, sullo stesso arco e con pesi complementari.
@@ -307,11 +376,7 @@ private fun DrawScope.soleEluna(
         // Uno solo dava un alone piatto che finiva di colpo. Tre raggi diversi,
         // ognuno piu' largo e piu' tenue, danno la caduta continua che ha la
         // luce vera - ed e' quello che fa "bruciare" il disco sul cielo.
-        listOf(
-            5.6f to 0.20f,
-            3.1f to 0.30f,
-            1.9f to 0.42f,
-        ).forEach { (quanto, opacita) ->
+        AloniSole.forEach { (quanto, opacita) ->
             val raggio = r * quanto * respiroAlone * (1f + 0.25f * fiamma)
             drawCircle(
                 brush = Brush.radialGradient(
@@ -341,15 +406,20 @@ private fun DrawScope.soleEluna(
             val palpito = 1f + 0.18f * sin(tempo * 1.6f + k * 0.8f)
             val dentro = r * 1.12f
             val fuori = dentro + r * 0.55f * lungo * palpito * (1f + 1.4f * fiamma)
+            // Gli stessi due punti servono al gradiente e al tratto: erano
+            // scritti due volte, cioe' quattro `Offset` e quattro fra seno e
+            // coseno per ognuno dei sedici raggi, a ogni fotogramma.
+            val dal = Offset(posizione.x + cos(a) * dentro, posizione.y + sin(a) * dentro)
+            val al = Offset(posizione.x + cos(a) * fuori, posizione.y + sin(a) * fuori)
             drawLine(
                 brush = Brush.linearGradient(
                     0f to alone.copy(alpha = 0.55f * forza * (1f + fiamma)),
                     1f to alone.copy(alpha = 0f),
-                    start = Offset(posizione.x + cos(a) * dentro, posizione.y + sin(a) * dentro),
-                    end = Offset(posizione.x + cos(a) * fuori, posizione.y + sin(a) * fuori),
+                    start = dal,
+                    end = al,
                 ),
-                start = Offset(posizione.x + cos(a) * dentro, posizione.y + sin(a) * dentro),
-                end = Offset(posizione.x + cos(a) * fuori, posizione.y + sin(a) * fuori),
+                start = dal,
+                end = al,
                 strokeWidth = r * 0.085f,
                 cap = StrokeCap.Round,
             )
@@ -376,7 +446,7 @@ private fun DrawScope.soleEluna(
         val r = 35f * sx
         val alpha = (scena.notte * velo).coerceIn(0f, 1f)
         // Anche la luna ha il suo bagliore a due strati, e cresce col tocco.
-        listOf(3.4f to 0.16f, 2.0f to 0.24f).forEach { (quanto, opacita) ->
+        AloniLuna.forEach { (quanto, opacita) ->
             val raggio = r * quanto * respiroAlone * (1f + 0.22f * fiamma)
             drawCircle(
                 brush = Brush.radialGradient(
@@ -392,6 +462,18 @@ private fun DrawScope.soleEluna(
         luna(posizione, r, faseLunare, alpha, tempo)
     }
 }
+
+/**
+ * I mari della luna: scostamento in x, in y e diametro, in frazioni di raggio.
+ *
+ * Alle stesse quote del prototipo. Restano dentro la parte illuminata: un mare
+ * che si vedesse sull'ombra sarebbe una macchia.
+ */
+private val MariDellaLuna = listOf(
+    Triple(-0.07f, -0.06f, 0.20f),
+    Triple(0.24f, -0.23f, 0.14f),
+    Triple(0.07f, 0.27f, 0.24f),
+)
 
 /**
  * La luna: corpo pieno coi suoi mari, e sopra la sola parte illuminata.
@@ -445,12 +527,7 @@ private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float, 
         )
         // I mari, alle stesse quote del prototipo. Restano dentro la parte
         // illuminata: un mare che si vedesse sull'ombra sarebbe una macchia.
-        val mari = listOf(
-            Triple(-0.07f, -0.06f, 0.20f),
-            Triple(0.24f, -0.23f, 0.14f),
-            Triple(0.07f, 0.27f, 0.24f),
-        )
-        mari.forEach { (mx, my, md) ->
+        MariDellaLuna.forEach { (mx, my, md) ->
             drawOval(
                 color = Color(0xFF6E6152).copy(alpha = 0.20f * alpha),
                 topLeft = Offset(centro.x + mx * r - md * r, centro.y + my * r - md * r * 0.78f),
@@ -477,15 +554,27 @@ private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float, 
         val pulsa = (0.35f + 0.65f * sin(tempo * 1.3f + k * 2.1f)).coerceIn(0f, 1f)
         val punta = r * 0.16f * pulsa
         if (punta <= 0.4f) continue
-        listOf(Offset(punta, 0f), Offset(0f, punta)).forEach { v ->
-            drawLine(
-                color = SalaTokens.lunaLuce.copy(alpha = 0.55f * alpha * pulsa),
-                start = Offset(p.x - v.x, p.y - v.y),
-                end = Offset(p.x + v.x, p.y + v.y),
-                strokeWidth = r * 0.035f,
-                cap = StrokeCap.Round,
-            )
-        }
+        // **Srotolate, e non una lista di due come le altre.** La mezza
+        // lunghezza dipende dal palpito, cioe' dal fotogramma: una costante di
+        // file non potrebbe tenerla, e una lista qui dentro sarebbe tre liste e
+        // sei `Offset` nuovi per ogni fotogramma di luna. L'ordine e' quello di
+        // prima - prima l'orizzontale, poi la verticale - perche' a opacita'
+        // parziale i due tratti si sovrappongono al centro.
+        val luccichio = SalaTokens.lunaLuce.copy(alpha = 0.55f * alpha * pulsa)
+        drawLine(
+            color = luccichio,
+            start = Offset(p.x - punta, p.y),
+            end = Offset(p.x + punta, p.y),
+            strokeWidth = r * 0.035f,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = luccichio,
+            start = Offset(p.x, p.y - punta),
+            end = Offset(p.x, p.y + punta),
+            strokeWidth = r * 0.035f,
+            cap = StrokeCap.Round,
+        )
     }
 }
 
@@ -989,6 +1078,14 @@ private fun DrawScope.fulmine(tempo: Float, tempesta: Float) {
 }
 
 /**
+ * Da quali nodi del canale partono i rami.
+ *
+ * Due, non uno e non quattro: uno da' un fulmine storto, quattro un albero -
+ * e a questa taglia un albero si legge come una crepa nel vetro.
+ */
+private val NodiRamo = intArrayOf(4, 7)
+
+/**
  * Il canale, e i due rami che se ne staccano.
  *
  * I nodi sono dodici e lo zigzag e' laterale: un fulmine scende **dritto** e
@@ -1010,7 +1107,7 @@ private fun DrawScope.saetta(n: Int, forza: Float, xAlto: Float) {
 
     // I rami: due, da due nodi diversi, corti e piu' tenui del canale. Sono la
     // differenza fra "un fulmine" e "una riga bianca storta".
-    listOf(4, 7).forEachIndexed { quale, nodo ->
+    NodiRamo.forEachIndexed { quale, nodo ->
         val da = canale[nodo]
         val versoRamo = if (rnd(n * 53 + quale) > 0.5f) 1f else -1f
         val lungo = size.height * (0.06f + rnd(n * 53 + quale + 7) * 0.09f)
@@ -1026,6 +1123,19 @@ private fun DrawScope.saetta(n: Int, forza: Float, xAlto: Float) {
 }
 
 /**
+ * Le quattro passate che fanno una cosa che emette luce: larghezza e opacita'.
+ *
+ * Costante di file e non una lista dentro il disegno: era quattro coppie
+ * nuove per ogni ramo di ogni saetta, **due volte per ciclo di lampo**.
+ */
+private val PassateLampo = listOf(
+    0.070f to 0.13f,
+    0.028f to 0.26f,
+    0.0105f to 0.58f,
+    0.0040f to 1.00f,
+)
+
+/**
  * Le quattro passate che fanno una cosa che emette luce.
  *
  * Un `Path` solo per passata e non un tratto per segmento: disegnando segmento
@@ -1038,12 +1148,7 @@ private fun DrawScope.tracciaCanale(punti: List<Offset>, forza: Float, scala: Fl
         moveTo(punti[0].x, punti[0].y)
         for (i in 1 until punti.size) lineTo(punti[i].x, punti[i].y)
     }
-    listOf(
-        0.070f to 0.13f,
-        0.028f to 0.26f,
-        0.0105f to 0.58f,
-        0.0040f to 1.00f,
-    ).forEach { (larghezza, alfa) ->
+    PassateLampo.forEach { (larghezza, alfa) ->
         drawPath(
             path = strada,
             // Il nucleo e' bianco puro e il resto e' la luce fredda: e' la

@@ -174,7 +174,7 @@ fun BarraDelleOre(
                     modifier = Modifier.alignByBaseline(),
                 )
                 Text(
-                    text = "%02d:00".format(ora),
+                    text = oraPiena(ora),
                     style = SalaType.hourLabel,
                     color = palette.accentSuCielo,
                     modifier = Modifier.alignByBaseline(),
