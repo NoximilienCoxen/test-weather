@@ -55,11 +55,10 @@ data class WeatherAlert(
  * contrario**: chi non vede nessuna "gialla" da' per buono che nessuno l'abbia
  * diramata.
  *
- * Sta nei dati e non nelle schermate per la stessa ragione di
- * [alertsAreDismissed]: e' una regola sul dominio - come questo avviso ha
- * diritto di presentarsi - e da qui si prova senza far partire niente di
- * Android. Le tre superfici che lo mostrano (fascia, pallino, bollettino)
- * leggono questo, quindi non possono divergere.
+ * Sta nei dati e non nelle schermate: e' una regola sul dominio - come questo
+ * avviso ha diritto di presentarsi - e da qui si prova senza far partire niente
+ * di Android. Tutte le superfici che lo mostrano leggono questo, quindi non
+ * possono divergere.
  */
 val WeatherAlert.badgeLabel: String
     get() = if (official) level.label else SOGLIA_LABEL
@@ -119,38 +118,17 @@ enum class AlertKind(val label: String) {
     ALTRO("AVVISO"),
 }
 
-/**
- * Se la fascia dell'allerta vada disegnata ridotta a pallino.
- *
- * Sta qui e non dentro lo stato dell'interfaccia perche' e' una regola sul
- * dominio, non sulla schermata: dice quando un avviso gia' visto e archiviato
- * torna a essere una notizia. Da qui si prova senza far partire niente di
- * Android.
- *
- * La fascia resta ridotta **se e solo se** ogni allerta in scena era gia' fra
- * quelle chiuse e la peggiore di adesso non e' piu' grave della peggiore di
- * allora. Quindi:
- *
- * - un'allerta **nuova** riapre la fascia, anche se le vecchie erano state
- *   chiuse: nascondere un avviso appena arrivato perche' ieri se n'e' chiuso un
- *   altro sarebbe il modo esatto di smettere di avvisare quando conta;
- * - un **peggioramento** la riapre pur senza allerte nuove - la gialla che
- *   diventa arancione ha lo stesso identificativo e non e' la stessa notizia;
- * - una che **scade** non la riapre: la condizione e' per inclusione, non per
- *   uguaglianza degli insiemi. Se ne restano due su tre gia' viste, non e'
- *   successo niente di nuovo.
- *
- * @param shown le allerte in scena adesso.
- * @param dismissedIds gli identificativi di quelle per cui si e' gia' chiuso.
- * @param dismissedWeight il peso del livello peggiore fra quelle.
- */
-fun alertsAreDismissed(
-    shown: List<WeatherAlert>,
-    dismissedIds: Set<String>,
-    dismissedWeight: Int,
-): Boolean {
-    // Nessuna allerta: non c'e' niente da ridurre, e nemmeno da mostrare.
-    if (shown.isEmpty()) return false
-    val worst = shown.maxOf { it.level.weight }
-    return worst <= dismissedWeight && shown.all { it.id in dismissedIds }
-}
+// **`alertsAreDismissed` non c'e' piu', e la regola che portava merita di
+// restare scritta.** Diceva quando un avviso gia' visto e archiviato torna a
+// essere una notizia: la fascia resta ridotta se e solo se ogni allerta in
+// scena era gia' fra quelle chiuse **e** la peggiore di adesso non e' piu'
+// grave della peggiore di allora. Un'allerta nuova la riapre; un peggioramento
+// la riapre pur senza allerte nuove - la gialla che diventa arancione ha lo
+// stesso identificativo e non e' la stessa notizia; una che scade no.
+//
+// Se n'e' andata perche' la fascia che si riduceva a pallino e' uscita col
+// feed: la regola non la chiedeva piu' nessuno, e l'unica cosa che la teneva in
+// vita era la cattura della CI, che fotografava uno stato irraggiungibile col
+// dito. Quando la fascia tornera', questa e' la regola da rimettere - non un
+// booleano "gia' vista".
+

@@ -18,7 +18,6 @@ import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.data.alertsAreDismissed
 import io.github.noximiliencoxen.caelum.data.derivedAlerts
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.data.mergeAlerts
@@ -87,75 +86,12 @@ data class UiState(
      * com'e', maiuscolo compreso.
      */
     val error: String? = null,
-    val forecast: Forecast? = null,
-    /**
-     * La qualita' dell'aria adesso, o nulla se non e' (ancora) arrivata.
-     *
-     * Sta su un altro host e arriva per conto suo, dopo la previsione: e' un
-     * arricchimento, non un dato senza il quale la schermata non ha senso.
-     * `AirQualityRepository` esisteva gia' e finora lo interrogava soltanto un
-     * widget - in app quei numeri non si vedevano da nessuna parte.
-     */
-    val air: AirQuality? = null,
-    /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
-    val airUnavailable: Boolean = false,
-    /**
-     * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
-     *
-     * Come [air], sono un arricchimento che arriva dopo la previsione e per
-     * conto suo. A differenza di [air] hanno **due sorgenti**: i bollettini
-     * ufficiali di MeteoAlarm dove ci sono, e le soglie calcolate sui dati gia'
-     * scaricati dove non ci sono. Quale delle due lo dice ogni allerta con il
-     * proprio `official`, perche' il peso delle due affermazioni e' diverso.
-     */
-    val alerts: List<WeatherAlert> = emptyList(),
-    // **`alertsUnavailable` e `alertsOutOfCoverage` se ne sono andati con la
-    // fascia che li mostrava, e l'idea che portavano vale piu' dei due
-    // booleani: un guasto e una zona senza fonte ufficiale non sono la stessa
-    // cosa. A Tokyo MeteoAlarm non deve rispondere, e scrivere "nessun avviso"
-    // li' e' un'affermazione che l'app non ha modo di fare - un silenzio non e'
-    // una risposta rassicurante, e' un silenzio. Quando la fascia tornera', la
-    // distinzione va rifatta: sta scritta in CONTESTO, sezione 27.
-    /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
-    val alertsOpen: Boolean = false,
-    /**
-     * Le allerte per cui la fascia e' gia' stata ridotta a pallino, e il peso
-     * del livello peggiore fra quelle. Arrivano dalle impostazioni come le
-     * altre scelte, e insieme decidono [alertsCollapsed].
-     */
-    val dismissedAlertIds: Set<String> = emptySet(),
-    val dismissedAlertWeight: Int = 0,
-    /**
-     * Allerta imposta dall'esterno, solo per la verifica automatica.
-     *
-     * Sta accanto a [forcedWeatherCode] e [forcedYawDeg] e si applica **in
-     * lettura**, come loro: scriverla dentro [alerts] non sarebbe bastato,
-     * perche' il primo caricamento che arriva sovrascrive quella lista con le
-     * allerte vere e lo scatto uscirebbe senza fascia. Al lettore serve che
-     * resti finche' l'app e' viva.
-     */
-    val forcedAlert: WeatherAlert? = null,
-    /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
-    val selectedDay: Int = 0,
-    /** Indice dell'ora mostrata dalla schermata principale. */
-    val selectedHour: Int = 0,
-    /**
-     * Codice meteo imposto dall'esterno, solo per la verifica automatica.
-     * Nullo in uso normale: la schermata usa quello dell'ora scelta.
-     */
-    val forcedWeatherCode: Int? = null,
-    /**
-     * Angolo della scena imposto dall'esterno, in gradi, solo per la verifica
-     * automatica. Nullo in uso normale: comanda il dito.
-     *
-     * Serve perche' i difetti che si vedono girando si vedono **girando**, e un
-     * gesto simulato non arriva dove serve: per portare la cifra di taglio
-     * servono quattrocento pixel di trascinamento, per vederla da dietro piu'
-     * di ottocento, e uno schermo e' largo mille. Senza questo aggancio il
-     * quarto di giro - che e' esattamente dove le matrici degenerano e le
-     * pareti si scavalcano - non era fotografabile.
-     */
-    val forcedYawDeg: Float? = null,
+    // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
+    // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
+    // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
+    // scatti della galleria continuavano a chiedere un angolo e a ritrarre la
+    // scena ferma - lo stesso guasto che il commento di `capture.sh` racconta
+    // gia' al passato per la volta precedente.
     /**
      * Vero quando un aggancio di cattura e' stato applicato: le transizioni si
      * compiono **all'istante** invece di passare per le loro molle.
@@ -250,17 +186,6 @@ data class UiState(
      */
     val shownAlerts: List<WeatherAlert>
         get() = forcedAlert?.let { listOf(it) } ?: alerts
-
-    /**
-     * Vero quando la fascia dell'allerta va disegnata ridotta a pallino.
-     *
-     * La regola sta in `data/WeatherAlert.kt` con la sua spiegazione: e' una
-     * regola sul dominio - quando un avviso archiviato torna a essere una
-     * notizia - non sulla schermata, e da li' si prova senza far partire
-     * niente di Android.
-     */
-    val alertsCollapsed: Boolean
-        get() = alertsAreDismissed(shownAlerts, dismissedAlertIds, dismissedAlertWeight)
 
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -451,8 +376,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         unit = settings.unit,
                         model = settings.model,
                         favorites = settings.favorites,
-                        dismissedAlertIds = settings.dismissedAlertIds,
-                        dismissedAlertWeight = settings.dismissedAlertWeight,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
                         cardTheme = settings.cardTheme,
@@ -902,34 +825,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun openAlerts() = _state.update { it.copy(alertsOpen = true) }
-
-    fun closeAlerts() = _state.update { it.copy(alertsOpen = false) }
-
-    /**
-     * Riduce la fascia dell'allerta al pallino.
-     *
-     * Si salvano gli identificativi di **cio' che c'e' adesso**, non un
-     * booleano: la regola che decide se la fascia torna intera e'
-     * [UiState.alertsCollapsed], e ha bisogno di sapere cosa e' stato chiuso.
-     */
-    fun collapseAlerts() {
-        val shown = _state.value.shownAlerts
-        if (shown.isEmpty()) return
-        val ids = shown.map { it.id }.toSet()
-        val weight = shown.maxOf { it.level.weight }
-        viewModelScope.launch { prefs.dismissAlerts(ids, weight) }
-    }
-
-    /**
-     * Rimette la fascia intera. E' cio' che fa toccare il pallino, insieme ad
-     * aprire il bollettino: un gesto solo, e chi torna indietro ritrova la riga
-     * dov'era invece di dover cercare come farla riapparire.
-     */
-    fun expandAlerts() {
-        viewModelScope.launch { prefs.restoreAlertBar() }
-    }
-
     // `setFeelsLike` stava qui, e scriveva `UiState.feelsLike`. Erano due
     // meta' della stessa cosa morta: il campo lo scriveva solo questo setter,
     // e questo setter non lo chiamava nessuno. Sceglievano fra EFFETTIVA e
@@ -1138,10 +1033,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             // anche la voce nelle impostazioni, non nasconderli in silenzio.
             else -> true
         }
-    }
-
-    fun forceYaw(degrees: Float?) {
-        _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
     /**
