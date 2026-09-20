@@ -39,7 +39,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
-import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.data.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import io.github.noximiliencoxen.caelum.ui.motion.sistemaSenzaAnimazioni

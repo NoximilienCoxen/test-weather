@@ -7,12 +7,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.ui.render3d.Camera
-import io.github.noximiliencoxen.caelum.ui.render3d.MOON_SEAS
-import io.github.noximiliencoxen.caelum.ui.render3d.glow
-import io.github.noximiliencoxen.caelum.ui.render3d.moon
-import io.github.noximiliencoxen.caelum.ui.render3d.sphere
-import io.github.noximiliencoxen.caelum.ui.render3d.sunRays
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.Camera
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.MOON_SEAS
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.glow
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.moon
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.sphere
+import io.github.noximiliencoxen.caelum.widget.paint.render3d.sunRays
 import kotlin.math.cos
 import kotlin.math.sin
 

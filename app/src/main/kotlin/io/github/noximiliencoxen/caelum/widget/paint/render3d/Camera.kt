@@ -1,4 +1,4 @@
-package io.github.noximiliencoxen.caelum.ui.render3d
+package io.github.noximiliencoxen.caelum.widget.paint.render3d
 
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.cos
