@@ -5566,3 +5566,202 @@ e gli scatti dicono la verita'.
 **E' la lezione della sezione 16.1 in un'altra forma**: quando uno scatto mostra
 una cosa impossibile, la prima domanda non e' "quale colore ho sbagliato" ma
 "cosa stava succedendo mentre scattavo".
+
+## 27. Snellire: cio' che si e' tolto, cio' che si e' scoperto, cio' che resta
+
+Richiesta: *impieghiamo del tempo per snellire l'app per renderla piu'
+ottimizzata a livello di scorrimento e utilizzo & pulizia delle cartelle,
+sottocartelle e pulizia codice*.
+
+Tre risposte hanno governato tutto il giro, e vale la pena tenerle scritte
+perche' sono loro ad aver deciso cosa non fare: **l'unico scatto che si sente
+davvero e' la barra delle ore** (il resto e' preventivo), **il cielo deve
+restare identico** - non "quasi" - e **riorganizzare le cartelle e' permesso**,
+non solo cancellare.
+
+Risultato in numeri: `res/` da 1,95 MB a 956 KB, il Kotlin di `main` da 17.545
+righe su 69 file a 16.452 su 65, le prove da 13 classi a 16 (87 in tutto), gli
+scatti della galleria da 41 a 34 - sette di meno perche' sette non ritraevano
+piu' niente.
+
+### 27.1 Il guasto vero di questo giro non e' nel codice: e' nel come l'ho letto
+
+Il commit che toglieva `forcedYawDeg` dal costruttore di `UiState` si e'
+portato via, insieme a lui, **tutto il blocco che lo precedeva**: `forecast`,
+`air`, `airUnavailable`, `alerts`, `forcedAlert`, `selectedDay`,
+`selectedHour`, `forcedWeatherCode`. Cioe' il dato. L'app non compilava piu'.
+
+Ed e' rimasta cosi' per **tre commit**.
+
+Non perche' la CI non l'abbia detto: la CI non ha mai avuto occasione di dirlo.
+I due giri in mezzo sono stati **annullati** dal push successivo - il workflow
+ha una concorrenza che ferma il giro in corso quando ne arriva uno nuovo - e io
+ho letto `cancelled` come "non ancora finito" invece di andare a vedere. Ho
+continuato a spingere commit sopra un albero rotto, e ogni push cancellava il
+giro che me l'avrebbe detto.
+
+**La regola che ne esce e' secca: un giro annullato non e' un giro passato.**
+Se si spinge piu' in fretta di quanto la CI compili, la CI non sta piu'
+verificando niente, sta solo consumando minuti. Qui l'SDK Android non c'e' - la
+rete non lo lascia scaricare - quindi la CI e' **l'unico compilatore**, e
+aspettarla non e' pazienza, e' l'unico modo di sapere.
+
+### 27.2 Il metodo di verifica che avevo proposto non reggeva, e l'ho scoperto misurandolo
+
+L'idea era pulita: la cattura congela l'orologio della scena a `t = 0`, quindi
+un rifacimento che non cambia i pixel deve produrre gli stessi PNG. Misurato
+contro la base salvata prima di cominciare: **il 100% dei pixel diverso su
+quasi tutti gli scatti**.
+
+Non era una regressione. I due giri erano andati a **dodici ore di distanza**,
+uno di notte e uno a mezzogiorno. E scavando, il difetto del metodo e' piu'
+profondo del fuso orario:
+
+- gli scatti che non impongono l'ora prendono quella vera del runner;
+- **anche quelli che la impongono si muovono**, perche' la previsione e'
+  **viva**: temperature, nuvolosita', UV e qualita' dell'aria cambiano fra un
+  giro e l'altro. E la nuvolosita' oraria entra nel cielo anche con `--ei meteo`
+  imposto: e' la trappola #14 che funziona come deve, il dato vero decide
+  *quanto* dentro il possibile;
+- restano stabili solo gli scatti che impongono **ora e codice insieme**:
+  misurato, `cielo-mezzogiorno-sereno` 2,4% sul cielo e 0,3% sulle schede,
+  `scuro-15-notte-coperta-stelle` 0,0% e 0,3%.
+
+Quindi **la prova forte non e' il PNG, e' il test**. Dove si puo' affermare
+l'identita' si afferma nel codice, e in questo giro si e' fatto quattro volte:
+`MoonPhaseTest` confronta i bit del terminatore su mille fasi, `SparsoTest` i
+bit di ogni tabella contro la funzione che rimpiazza, `OrePerGiornoTest` le ore
+raccolte contro il setaccio che sostituiscono, `SchemaMaterialeTest` le venti
+tinte ferme contro le loro formule. Un test copre anche `t > 0`, che la cattura
+non vede. Gli scatti restano per cio' per cui sono nati: che l'app parta, che
+nessuna sala sia vuota, che non manchi un pezzo.
+
+Se un giorno servisse davvero un confronto a pixel, la strada e' una previsione
+finta caricata da un aggancio di cattura - `--ez fixture` - cosi' i numeri
+smettono di muoversi sotto gli scatti. E' una funzione a se', non parte di una
+pulizia.
+
+### 27.3 Un controllo che a mani vuote rispondeva "tutto bene"
+
+Stessa famiglia del giro annullato, e scoperto per caso mentre rigeneravo la
+taratura. `scripts/import_audit.py` guarda **i file che gli si passano**, e
+chiamato senza argomenti non ne guarda nessuno: stampava `0 da guardare`, che
+e' parola per parola la riga di un albero pulito. L'ho chiamato cosi' per tutto
+il giro, e ogni volta mi sono detto che era a posto.
+
+Peggio: `--baseline` senza file scriveva una taratura **vuota**, cancellando le
+ottantanove righe note - cioe' i falsi allarmi gia' esaminati - e al giro dopo
+sarebbero tornate fuori tutte come se fossero nuove.
+
+C'e' anche un secondo inciampo, piu' piccolo: la taratura tiene i percorsi come
+li scrive `git`, quindi `find . -name "*.kt"` (con il `./` davanti) non fa
+combaciare **nessuna** riga nota. L'invocazione buona e'
+`find app -name "*.kt" | xargs python3 scripts/import_audit.py`.
+
+Adesso lo script rifiuta di partire a mani vuote e lo dice. Chiamato come si
+deve, sull'albero di questo giro segnala quattro righe nuove rispetto a prima
+della pulizia, tutte e quattro falsi allarmi noti al copione - due
+`LazyThreadSafetyMode`, che sta nel pacchetto `kotlin` ed e' importato d'ufficio,
+un parametro di lambda destrutturato chiamato come funzione, e una funzione di
+file chiamata dal suo stesso pacchetto.
+
+**La lezione e' la stessa del giro annullato**: un controllo va letto per cio'
+che ha guardato, non per cio' che ha stampato.
+
+### 27.4 Lo scatto della barra aveva una causa a catena, e il rimedio non era dove sembrava
+
+Ogni scalino della barra emette uno stato nuovo che ri-punta **undici molle**
+con circa due secondi di assestamento. Trascinando si ri-puntano piu' in fretta
+di quanto si assestino: per tutta la durata del gesto piu' due secondi
+**l'albero si ricompone a ogni fotogramma**. E ogni ricomposizione pagava una
+dozzina di riscansioni delle centosessantotto ore, per i valori derivati di
+`UiState` che erano `get()` senza memoria.
+
+La correzione ovvia era memorizzarli, e si e' fatta. Ma **il guadagno piu'
+grosso non e' il conto risparmiato: e' la stabilita' del riferimento.**
+`hoursOf` rispondeva con una lista **nuova a ogni chiamata**, e questo rendeva
+inutile il `remember` della barra: la chiave cambiava per riferimento anche a
+contenuto identico, quindi il confronto ne scorreva ventiquattro elemento per
+elemento solo per concludere di non dover ricalcolare niente. Un `remember` che
+funziona e non serve a niente e' piu' difficile da vedere di un `remember` che
+manca.
+
+**`nowIndex` non si memoizza, ed e' l'unico.** E' il candidato piu' ovvio -
+chiama `Instant.now()` a ogni lettura - e congelarlo per stato vuol dire che
+scavalcando l'ora l'ora corrente non si sposta piu', e la pastiglia "torna a
+ora" continua a offrire un'ora che e' gia' adesso. E' la famiglia della
+trappola #7, gia' pagata **su questa stessa barra** (sezione 25).
+
+### 27.5 La tabella e' un memo davanti alla funzione, non un rimpiazzo
+
+`sparso(i, sale)` e' un seno e una parte frazionaria, dipende dal solo indice, e
+girava circa millesettecento volte per fotogramma. Adesso le stelle, il
+pulviscolo e le corsie leggono tabelle calcolate all'avvio.
+
+Ma le stelle cadenti chiamano `sparso(quale, ...)` dove `quale` **cresce col
+tempo e non ha un limite**. Una riscrittura a sola tabella sarebbe passata tutti
+gli scatti della CI - che congelano l'orologio a zero, dove `quale` vale 0 o 101
+- e sarebbe andata fuori indice sul telefono dopo pochi secondi. La cattura non
+avrebbe potuto dirlo: e' esattamente il caso che non fotografa.
+
+Due altri vincoli tenuti apposta: in tabella va il **risultato nudo** di
+`sparso`, non il valore composto, cosi' l'aritmetica che lo usa resta la stessa
+parola per parola; e le tabelle delle corsie stanno **dentro `Corsie`**, non nei
+punti di disegno, perche' le stesse funzioni le legge chi fa vibrare il telefono
+e due strade parallele mandano il colpetto fuori tempo rispetto alla goccia.
+
+### 27.6 Un commento che diceva la verita' e che nessuno aveva letto fino in fondo
+
+Dentro `toColorScheme` c'era scritto da sempre: *e' l'unica coppia dello schema
+che si muove durante il giorno*. Vero. E intanto le altre venti tinte si
+rifacevano insieme a lei, a ogni fotogramma in cui il cielo si muove, ognuna con
+una ricerca di contrasto su colori che sono **costanti scritte tre schermate
+piu' su, nello stesso file**.
+
+Il piano prevedeva di spostare le due `Surface` a schermo pieno su
+`palette.schermoPieno` per far uscire `MeteoTheme` dal sottoalbero animato.
+Guardando il codice, la premessa non reggeva: `surface` nello schema **e' gia'
+una costante**, quindi quei due lettori non erano loro a tenere in vita il
+calcolo. Spostarli sarebbe stato un colore cambiato - invisibile, perche' i due
+pannelli si dipingono gia' il proprio fondo da bordo a bordo - in cambio di
+niente. Portare fuori le venti costanti costa meno e ottiene di piu'.
+
+### 27.7 Le cartelle adesso dicono cosa contengono
+
+| Da | A | Perche' |
+|---|---|---|
+| `ui/common/` | cancellata, `MinTouchTarget` in `ui/theme/Misure.kt` | Settecentosessanta righe, **una sola viva**. |
+| `ui/render3d/` | `widget/paint/render3d/` | Stava sotto `ui/` e nessuna schermata la usava. |
+| `ui/home/MoonPhase.kt` | `data/MoonPhase.kt` | Non esiste nessuna schermata "home": e' astronomia. |
+| `docs/` | cancellata | Conteneva solo la guida all'acquerello, insieme ai timbri. |
+
+Dopo: `ui/` e' solo l'interfaccia del telefono, `widget/` tutto cio' che disegna
+i widget, `data/` i dati e i conti che non sanno di Compose.
+
+E la CI adesso **stampa quanto pesa l'APK** a ogni giro, risorse e dex separati.
+Il megabyte tolto in questo giro si e' dovuto dedurre scaricando due file e
+confrontandoli a mano: la prossima crescita si vedra' il giorno in cui succede.
+
+### 27.8 I difetti noti che restano, scritti perche' non si riscoprano da zero
+
+- **Le icone delle barre di sistema si decidono sul cielo sbagliato.**
+  `MeteoApp` chiama `SystemBarIcons` con `colors.skyZenith` e
+  `colors.skyHorizon` - la sfumatura del **benvenuto** - mentre dietro le barre,
+  da quando c'e' Sala, c'e' la carta di `SalaPalette`, che si dipinge da bordo a
+  bordo con tinte sue. Il commento sopra quella chiamata lo dice gia' a meta':
+  *qui restano solo i colori del benvenuto*. Ma la chiamata copre tutta l'app,
+  non solo il benvenuto, quindi con la carta chiara sopra un cielo notturno le
+  icone possono uscire chiare su chiaro.
+
+  La scelta e' stata di **segnalarlo e non toccarlo**: correggerlo cambierebbe i
+  pixel delle barre in molti scatti, cioe' proprio il segnale su cui questo giro
+  si verifica. E non e' la riga sola che sembra: le fermate vere sono quelle di
+  `SalaShell` (`cieloStops`), che a `MeteoApp` non arrivano. O si porta la
+  chiamata dentro Sala - dove la tavolozza c'e' gia' - o si fa salire la
+  tavolozza fin qui. La prima e' la strada breve, e lascia a `MeteoApp` solo il
+  benvenuto, che e' quello che il commento diceva di gia'.
+- **Le tre lune.** Tre disegni per tre usi - il cielo di Sala, la sala della
+  luna, il widget - circa duecentotrenta righe. Unificarle cambia dei pixel.
+- **Le due tavolozze del cielo.** Stessa ragione.
+- **Il baseline profile** (avvio e primo scorrimento) vuole un modulo di
+  benchmark e un giro di CI dedicato. Vale, ma e' un lavoro a se'.
