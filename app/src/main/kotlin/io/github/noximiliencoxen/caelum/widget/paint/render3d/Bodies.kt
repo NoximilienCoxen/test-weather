@@ -1,5 +1,4 @@
-package io.github.noximiliencoxen.caelum.ui.render3d
-
+package io.github.noximiliencoxen.caelum.widget.paint.render3d
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
@@ -9,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
+import io.github.noximiliencoxen.caelum.data.MoonPhase
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -181,9 +181,15 @@ fun DrawScope.moon(
     if (r <= 1f) return
     val centre = Offset(camera.sx, camera.sy)
 
-    val waxing = phase < 0.5f
-    val terminator = abs(cos(2.0 * PI * phase).toFloat())
-    val gibbous = ((1f - cos(2.0 * PI * phase).toFloat()) / 2f) > 0.5f
+    // **Le tre righe che stavano qui erano `MoonPhase` ricopiata.** Carattere
+    // per carattere: stessa mediana, stessa crescenza, stessa frazione
+    // illuminata confrontata con mezzo. Due copie della stessa formula sono una
+    // formula che un giorno diverge, e infatti `MoonPhase.terminator` e
+    // `MoonPhase.waxing` risultavano "non chiamate da nessuno" a ogni giro di
+    // pulizia - erano chiamate, solo che erano ricopiate qui.
+    val waxing = MoonPhase.waxing(phase)
+    val terminator = MoonPhase.terminator(phase)
+    val gibbous = MoonPhase.illumination(phase) > 0.5f
 
     val disc = Rect(centre.x - r, centre.y - r, centre.x + r, centre.y + r)
     val inner = Rect(centre.x - r * terminator, centre.y - r, centre.x + r * terminator, centre.y + r)

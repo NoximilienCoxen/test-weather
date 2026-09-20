@@ -1,4 +1,4 @@
-package io.github.noximiliencoxen.caelum.ui.home
+package io.github.noximiliencoxen.caelum.data
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
