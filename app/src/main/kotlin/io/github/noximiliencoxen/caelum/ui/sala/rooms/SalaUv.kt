@@ -26,6 +26,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
+import io.github.noximiliencoxen.caelum.ui.sala.oraPiena
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -169,7 +171,7 @@ fun SalaUvScreen(
                     // dispari un'etichetta non ce l'hanno**: lo spazio in cui
                     // sborda e' vuoto per costruzione.
                     Text(
-                        text = if (mostra) "%02d".format(ora) else "",
+                        text = if (mostra) oraDueCifre(ora) else "",
                         style = SalaType.microLabel,
                         // **L'inchiostro tenue era la meta' del difetto.**
                         // `inkFaint` e' il grigio delle etichette dentro una
@@ -201,7 +203,7 @@ fun SalaUvScreen(
         ) {
             CellaValore(
                 etichetta = "PICCO",
-                valore = picco?.let { "%02d:00".format(ore[it].time.hour) } ?: "--",
+                valore = picco?.let { oraPiena(ore[it].time.hour) } ?: "--",
                 palette = palette,
             )
             CellaValore(etichetta = "AL SOLE", valore = esposizione(corrente), palette = palette)

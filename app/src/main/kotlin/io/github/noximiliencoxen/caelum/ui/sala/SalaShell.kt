@@ -194,7 +194,13 @@ fun SalaShell(
     // le colline e l'arco. Viene da valori gia' animati, quindi non ha bisogno
     // di una molla sua.
     val chiusura = livelloCielo(scena.copertura, scena.tempesta)
-    val stops = cieloStops(fase, chiusura, scena.neve)
+    // **`remember` anche se la chiave e' animata**, e vale la pena dire
+    // perche': mentre il cielo si muove i tre numeri cambiano a ogni
+    // fotogramma e questo non guadagna niente. Serve a cielo **fermo**, che e'
+    // come sta quasi sempre: li' una `List<Color>` nuova a ogni ricomposizione
+    // bastava a impedire a `SalaCielo` di essere saltata, perche' un parametro
+    // diverso per riferimento e' un parametro cambiato.
+    val stops = remember(fase, chiusura, scena.neve) { cieloStops(fase, chiusura, scena.neve) }
 
     // ── Il tema, e il solo salto che resta ───────────────────────────────────
     //

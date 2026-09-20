@@ -140,3 +140,38 @@ fun Didascalia(testo: String, palette: SalaPalette, modifier: Modifier = Modifie
     if (LocalDidascalie.current == CaptionStyle.BREVI) return
     Text(text = testo, style = SalaType.body, color = palette.inkSoft, modifier = modifier)
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Le ore, gia' scritte
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// **Un giorno ha ventiquattro ore e le loro etichette sono sempre le stesse.**
+// Erano un `String.format` ciascuna, e le colonne sono tante: sedici nella sala
+// dei raggi, dodici nella pioggia, dodici nel vento, quattro nell'aria, una
+// nella barra. `format` non e' una sostituzione di caratteri - compila il
+// modello, cerca la posizione decimale della lingua in uso e costruisce due
+// oggetti intermedi - e qui lo faceva a ogni ricomposizione, cioe' a ogni
+// fotogramma mentre il cielo si muove.
+//
+// Un effetto collaterale che vale la pena dire: `%d` scrive le cifre **della
+// lingua del telefono**, quindi su un telefono in arabo la barra delle ore
+// usciva in cifre indo-arabe sotto un testo italiano. Qui escono sempre le
+// stesse, come gia' fanno i decimali, che passano apposta da `Locale.ITALY`.
+
+/** Le ventiquattro ore a due cifre: `00`, `01`, ... `23`. */
+private val OreDueCifre: Array<String> = Array(24) { if (it < 10) "0$it" else "$it" }
+
+/** Le stesse con i minuti: `00:00`, `01:00`, ... `23:00`. */
+private val OrePiene: Array<String> = Array(24) { "${OreDueCifre[it]}:00" }
+
+/**
+ * L'ora a due cifre, senza minuti: l'etichetta sotto una colonna.
+ *
+ * Stringe fra 0 e 23 invece di lasciar passare un indice fuori posto: chi la
+ * chiama passa sempre un `LocalDateTime.hour`, ma un'etichetta sbagliata e'
+ * meno grave di una schermata che si chiude.
+ */
+fun oraDueCifre(ora: Int): String = OreDueCifre[ora.coerceIn(0, 23)]
+
+/** L'ora piena, `HH:00`: l'etichetta grande della barra e le celle "PICCO". */
+fun oraPiena(ora: Int): String = OrePiene[ora.coerceIn(0, 23)]
