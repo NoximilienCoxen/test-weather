@@ -178,6 +178,42 @@ data class UiState(
      */
     val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
 ) {
+    // ── Lo stato derivato ────────────────────────────────────────────────
+    //
+    // **Erano `get()` senza memoria, e costavano un fotogramma alla volta.**
+    // `shownHours`, `detailHour`, `detailDay` e i tre valori del sole
+    // riscandiscono le centosessantotto ore della previsione, e le schermate
+    // li leggono **una dozzina di volte per fotogramma**: la prima sala, la
+    // barra delle ore, il cielo, il dettaglio. Fin quando lo stato sta fermo
+    // non si nota; trascinando la barra delle ore ogni scalino emette uno
+    // stato nuovo, undici molle si ri-puntano, e per tutta la durata del gesto
+    // piu' i due secondi di assestamento **l'albero si ricompone a ogni
+    // fotogramma**, pagando ogni volta quelle dodici scansioni.
+    //
+    // Qui diventano valori calcolati **una volta per stato**. `UiState` e'
+    // immutabile e se ne costruisce uno nuovo a ogni emissione, quindi la
+    // memoria non puo' invecchiare: e' esattamente lunga quanto il dato che
+    // descrive.
+    //
+    // `LazyThreadSafetyMode.NONE` e non il `lazy` normale: i lettori di questi
+    // sei valori sono **tutti la composizione**, cioe' un filo solo, e la
+    // versione sincronizzata si porterebbe dietro un campo volatile e un ramo
+    // di doppio controllo per una sicurezza che qui non serve a nessuno. La
+    // previsione, che invece vive nel pacchetto dei dati e non ha promesso un
+    // filo solo, usa apposta un modo piu' prudente.
+    //
+    // Stando nel corpo della classe
+    // e non nel costruttore, queste proprieta' restano fuori da `equals`,
+    // `hashCode` e `copy`: due stati uguali restano uguali, e chi usa lo stato
+    // come chiave di un `remember` non si trova una memoria da confrontare.
+    //
+    // Il guadagno piu' grosso non e' il conto risparmiato ma la **stabilita'
+    // del riferimento**: `shownHours` adesso e' sempre la stessa lista, quindi
+    // `remember(hours, ...)` nella barra delle ore smette di confrontarne
+    // ventiquattro elemento per elemento solo per decidere di non fare niente.
+    //
+    // **`nowIndex` non e' in questo elenco, ed e' voluto.** Vedi la sua nota.
+
     /**
      * Le allerte da mettere in scena: quella imposta se c'e', se no le vere.
      *
@@ -200,18 +236,26 @@ data class UiState(
      * prendere la stessa ora sul giorno giusto; nulla se quel giorno non ha
      * quell'ora, che e' meglio di un numero preso altrove.
      */
-    val detailHour: HourForecast?
-        get() {
-            val current = forecast ?: return null
-            if (selectedDay == 0) return hour
-            val date = current.days.getOrNull(selectedDay)?.date ?: return hour
-            val clock = hour?.time?.hour ?: return null
-            return current.hourOn(date, clock)
+    val detailHour: HourForecast? by lazy(LazyThreadSafetyMode.NONE) {
+        val current = forecast
+        when {
+            current == null -> null
+            selectedDay == 0 -> hour
+            else -> {
+                val date = current.days.getOrNull(selectedDay)?.date
+                val clock = hour?.time?.hour
+                when {
+                    date == null -> hour
+                    clock == null -> null
+                    else -> current.hourOn(date, clock)
+                }
+            }
         }
+    }
 
     /** Il giorno aperto dal dettaglio, dentro i limiti di cio' che esiste. */
     val detailDay: io.github.noximiliencoxen.caelum.data.DayForecast?
-        get() = forecast?.days?.getOrNull(selectedDay)
+        by lazy(LazyThreadSafetyMode.NONE) { forecast?.days?.getOrNull(selectedDay) }
 
     /**
      * Le ore del giorno mostrato: quelle vere, non quelle di oggi.
@@ -228,12 +272,24 @@ data class UiState(
      * giornata piatta.
      */
     val shownHours: List<io.github.noximiliencoxen.caelum.data.HourForecast>
-        get() {
-            val date = detailDay?.date ?: return emptyList()
-            return forecast?.hoursOf(date).orEmpty()
+        by lazy(LazyThreadSafetyMode.NONE) {
+            detailDay?.date?.let { forecast?.hoursOf(it) }.orEmpty()
         }
 
-    /** L'ora vera nella localita' mostrata, come indice nella barra. */
+    /**
+     * L'ora vera nella localita' mostrata, come indice nella barra.
+     *
+     * **Resta un `get()`, e non si memoizza.** E' il candidato piu' ovvio di
+     * tutti - chiama `Instant.now()` a ogni lettura - ed e' l'unico da non
+     * toccare: congelarlo per stato vuol dire che scavalcando l'ora **l'ora
+     * corrente non si sposta piu'**, e la pastiglia "torna a ora" continua a
+     * offrire un'ora che e' gia' adesso. E' la famiglia della trappola #7,
+     * gia' pagata **su questa stessa barra** (`SalaBarraOre`: *l'ora corrente
+     * era l'unica irraggiungibile*).
+     *
+     * Se un giorno dara' fastidio, la strada e' un campo scritto dal
+     * ViewModel a ogni emissione, non una memoria per istanza.
+     */
     val nowIndex: Int
         get() {
             val current = forecast ?: return 0
@@ -264,17 +320,20 @@ data class UiState(
      * rosso del sole, comparsa della luna. Uno solo, cosi' si puo' animare fra
      * un'ora e l'altra senza che le tre cose si contraddicano a meta' strada.
      */
-    val skyAltitude: Float
-        get() {
-            val moment = hour?.time ?: return 0.62f
+    val skyAltitude: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.62f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.altitude(
+            SunClock.altitude(
                 moment = moment,
                 sunrise = day?.sunrise,
                 sunset = day?.sunset,
                 fallbackIsDay = hour?.isDay ?: true,
             )
         }
+    }
 
     /**
      * A che punto del viaggio sta l'astro, da quando sorge a quando tramonta.
@@ -284,12 +343,15 @@ data class UiState(
      * salirebbe e ridiscenderebbe dallo stesso lato, perche' alle otto e alle
      * sedici vale lo stesso numero.
      */
-    val skyJourney: Float
-        get() {
-            val moment = hour?.time ?: return 0.5f
+    val skyJourney: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.5f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.journey(moment, day?.sunrise, day?.sunset)
+            SunClock.journey(moment, day?.sunrise, day?.sunset)
         }
+    }
 
     /**
      * Se l'ora scelta guarda verso il mattino o verso la sera.
@@ -298,12 +360,15 @@ data class UiState(
      * rosa e freddo, l'altro arancio e caldo. Senza questo valore il cielo non
      * ha modo di sapere quale dei due sta dipingendo.
      */
-    val skyEvening: Float
-        get() {
-            val moment = hour?.time ?: return 0.5f
+    val skyEvening: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.5f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.eveningness(moment, day?.sunrise, day?.sunset)
+            SunClock.eveningness(moment, day?.sunrise, day?.sunset)
         }
+    }
 
     /**
      * Quanto e' coperto il cielo all'ora scelta.

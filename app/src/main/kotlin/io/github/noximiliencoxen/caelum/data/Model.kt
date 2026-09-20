@@ -120,6 +120,35 @@ data class Forecast(
     /** Quando e' stata ricevuta: la schermata delle impostazioni lo dichiara. */
     val fetchedAt: LocalDateTime = LocalDateTime.now(),
 ) {
+    /**
+     * Le ore raccolte per giornata, una volta sola.
+     *
+     * [hoursOf] e [hourOn] setacciavano tutte e centosessantotto le ore a ogni
+     * chiamata, e le chiama la schermata: **dodici volte per fotogramma**
+     * mentre si trascina la barra delle ore. Peggio del conto era il risultato,
+     * una lista **nuova ogni volta**, che rendeva inutile il `remember` della
+     * barra - la chiave cambiava per riferimento anche quando il contenuto era
+     * identico, quindi il confronto la scorreva elemento per elemento solo per
+     * concludere di non dover ricalcolare niente.
+     *
+     * `groupBy` tiene l'ordine di incontro dentro ogni gruppo, quindi le liste
+     * sono le stesse di prima nello stesso ordine; e adesso sono **sempre la
+     * stessa lista**, che e' cio' che serve a chi la usa come chiave.
+     *
+     * Sta fuori dal costruttore, quindi fuori da `equals`: due previsioni
+     * uguali restano uguali, e una copia non si porta dietro una mappa da
+     * confrontare.
+     *
+     * `PUBLICATION` e non `NONE`: oggi la previsione la leggono tutti dal filo
+     * della composizione, ma questo e' il pacchetto dei dati, dove nessuno ha
+     * promesso un filo solo - la richiesta si monta fuori, e chi domani
+     * spostasse `derivedAlerts` su un altro dispatcher non avrebbe modo di
+     * accorgersi di aver rotto niente. Al massimo la mappa si costruisce due
+     * volte; quel che non puo' succedere e' che qualcuno ne veda una a meta'.
+     */
+    private val perGiorno: Map<LocalDate, List<HourForecast>> by
+        lazy(LazyThreadSafetyMode.PUBLICATION) { allHours.groupBy { it.time.toLocalDate() } }
+
     /** Il giorno in cui cade un certo istante, per alba e tramonto. */
     fun dayOf(moment: LocalDateTime): DayForecast? =
         days.firstOrNull { it.date == moment.toLocalDate() } ?: days.firstOrNull()
@@ -130,8 +159,7 @@ data class Forecast(
      * Torna vuota se quel giorno non c'e': l'API ne da' sette, e il grafico
      * deve saper dire "non lo so" invece di mostrare le ore di un altro.
      */
-    fun hoursOf(date: LocalDate): List<HourForecast> =
-        allHours.filter { it.time.toLocalDate() == date }
+    fun hoursOf(date: LocalDate): List<HourForecast> = perGiorno[date].orEmpty()
 
     /**
      * L'ora corrispondente su un altro giorno.
@@ -147,7 +175,7 @@ data class Forecast(
      * valore preso da un altro giorno.
      */
     fun hourOn(date: LocalDate, hourOfDay: Int): HourForecast? =
-        allHours.firstOrNull { it.time.toLocalDate() == date && it.time.hour == hourOfDay }
+        perGiorno[date]?.firstOrNull { it.time.hour == hourOfDay }
 
     /**
      * Che ore sono nella localita' mostrata.
