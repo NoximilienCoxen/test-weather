@@ -157,6 +157,23 @@ def carica_baseline():
 def main(argv):
     scrivi_baseline = "--baseline" in argv
     argv = [a for a in argv if a != "--baseline"]
+
+    # **Senza file da guardare non guardava niente, e lo diceva come se fosse
+    # tutto a posto.** `python3 scripts/import_audit.py` stampava
+    # "0 da guardare" - che e' la stessa riga di un albero pulito - e
+    # `--baseline` scriveva una taratura **vuota**, cancellando le ottantanove
+    # righe note. Un controllo che a mani vuote risponde "tutto bene" e' peggio
+    # di nessun controllo: ci si fida.
+    #
+    # I percorsi vanno passati **senza `./` davanti**, perche' la taratura li
+    # tiene come li scrive `git`: con `find . -name "*.kt"` nessuna riga nota
+    # combacia e vengono fuori tutte e ottantanove come se fossero nuove.
+    if not [a for a in argv if a.endswith(".kt")]:
+        print("uso: import_audit.py [--baseline] file.kt ...", file=sys.stderr)
+        print('  di solito: find app -name "*.kt" | xargs python3 scripts/import_audit.py',
+              file=sys.stderr)
+        return 2
+
     noti = set() if scrivi_baseline else carica_baseline()
     trovati = []
 

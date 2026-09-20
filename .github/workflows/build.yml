@@ -535,6 +535,28 @@ jobs:
             exit 1
           }
 
+      # **Quanto pesa, detto e non dedotto.** Questo giro di pulizia ha tolto un
+      # megabyte di risorse senza un solo riferimento, e per saperlo bisognava
+      # scaricare due APK e confrontarli a mano. Un numero stampato a ogni giro
+      # costa una riga e fa vedere la prossima crescita il giorno in cui
+      # succede, non sei mesi dopo. Risorse e codice si contano separati perche'
+      # crescono per ragioni diverse: le prime senza che nessuno scriva niente.
+      #
+      # Il totale e' quello vero dell'APK, compresso; le due voci sotto sono
+      # **scompattate**, perche' e' cio' che `unzip -l` sa dire. Servono a
+      # confrontare un giro con l'altro, non a sommare al totale.
+      - name: Quanto pesa
+        if: always()
+        run: |
+          for apk in app/build/outputs/apk/*/*.apk; do
+            [ -f "$apk" ] || continue
+            echo "$(basename "$apk"): $(du -h "$apk" | cut -f1)"
+            unzip -l "$apk" 2>/dev/null | awk '
+              $4 ~ /^res\// || $4 == "resources.arsc" { risorse += $1 }
+              $4 ~ /^classes[0-9]*\.dex$/            { codice  += $1 }
+              END { printf "  scompattati: risorse %.0f KB, dex %.0f KB\n", risorse/1024, codice/1024 }'
+          done
+
       - uses: actions/upload-artifact@v4
         if: success()
         with:
