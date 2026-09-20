@@ -86,6 +86,47 @@ data class UiState(
      * com'e', maiuscolo compreso.
      */
     val error: String? = null,
+    val forecast: Forecast? = null,
+    /**
+     * La qualita' dell'aria adesso, o nulla se non e' (ancora) arrivata.
+     *
+     * Sta su un altro host e arriva per conto suo, dopo la previsione: e' un
+     * arricchimento, non un dato senza il quale la schermata non ha senso.
+     * `AirQualityRepository` esisteva gia' e finora lo interrogava soltanto un
+     * widget - in app quei numeri non si vedevano da nessuna parte.
+     */
+    val air: AirQuality? = null,
+    /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
+    val airUnavailable: Boolean = false,
+    /**
+     * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
+     *
+     * Come [air], sono un arricchimento che arriva dopo la previsione e per
+     * conto suo. A differenza di [air] hanno **due sorgenti**: i bollettini
+     * ufficiali di MeteoAlarm dove ci sono, e le soglie calcolate sui dati gia'
+     * scaricati dove non ci sono. Quale delle due lo dice ogni allerta con il
+     * proprio `official`, perche' il peso delle due affermazioni e' diverso.
+     */
+    val alerts: List<WeatherAlert> = emptyList(),
+    /**
+     * Allerta imposta dall'esterno, solo per la verifica automatica.
+     *
+     * Sta accanto a [forcedWeatherCode] e si applica **in lettura**, come lui:
+     * scriverla dentro [alerts] non sarebbe bastato, perche' il primo
+     * caricamento che arriva sovrascrive quella lista con le allerte vere e lo
+     * scatto uscirebbe senza fascia. Al lettore serve che resti finche' l'app
+     * e' viva.
+     */
+    val forcedAlert: WeatherAlert? = null,
+    /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
+    val selectedDay: Int = 0,
+    /** Indice dell'ora mostrata dalla schermata principale. */
+    val selectedHour: Int = 0,
+    /**
+     * Codice meteo imposto dall'esterno, solo per la verifica automatica.
+     * Nullo in uso normale: la schermata usa quello dell'ora scelta.
+     */
+    val forcedWeatherCode: Int? = null,
     // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
     // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
     // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
