@@ -61,10 +61,41 @@ private const val PI_F = PI.toFloat()
  * cambia quando si riapre l'app non e' un cielo. Questo e' deterministico,
  * dipende solo dall'indice, e basta a togliere l'aria di griglia.
  */
-private fun sparso(i: Int, sale: Int): Float {
+internal fun sparso(i: Int, sale: Int): Float {
     val x = sin(i * 12.9898f + sale * 78.233f) * 43758.547f
     return x - floor(x)
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Le tabelle davanti a `sparso`
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// **Millesettecento seni per fotogramma calcolavano numeri che non cambiano
+// mai.** Cinque per ognuna delle centosessanta stelle, sei per ognuna delle
+// centocinquanta gocce, quattro per ogni granello di pulviscolo: tutti funzione
+// del **solo indice**. A sessanta fotogrammi al secondo erano centomila `sin()`
+// al secondo per riottenere sempre gli stessi valori.
+//
+// Si calcolano una volta all'avvio, come fa gia' `Nuvole` in `SalaCielo`. Tre
+// cose da sapere prima di toccare queste righe:
+//
+// - **e' un memo davanti a `sparso`, non un rimpiazzo.** Le stelle cadenti
+//   chiamano `sparso(quale, ...)` dove `quale` cresce **col tempo** e non ha un
+//   limite: una tabella al posto della funzione passerebbe tutti gli scatti
+//   della CI - che congelano l'orologio a zero - e andrebbe fuori indice sul
+//   telefono dopo pochi secondi;
+// - **l'aritmetica resta dov'era.** In tabella va il risultato nudo di
+//   `sparso`, non il valore composto: cosi' l'espressione che lo usa e' la
+//   stessa di prima, carattere per carattere, e il disegno non puo' spostarsi
+//   di un pixel;
+// - **le tabelle delle corsie stanno dentro `Corsie`**, non nei punti di
+//   disegno. Le stesse funzioni le legge chi fa vibrare il telefono
+//   (`VibrazioniMeteo`): due strade - una che calcola e una che guarda in
+//   tabella - sono due strade che un giorno danno due numeri diversi, e il
+//   colpetto andrebbe fuori tempo rispetto alla goccia.
+//
+// `SparsoTest` tiene ferme le uguaglianze **a livello di bit**: e' l'unico
+// controllo che copre anche `t > 0`, che gli scatti non vedono.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Il cielo di notte
@@ -72,6 +103,26 @@ private fun sparso(i: Int, sale: Int): Float {
 
 /** Quante stelle ha il cielo di Sala I. */
 private const val STELLE = 160
+
+/**
+ * Le cinque grandezze di ogni stella che dipendono solo dal suo indice.
+ *
+ * Erano cinque `sparso()` per stella **per fotogramma**: ottocento seni al
+ * fotogramma per posizioni, luminosita' e passi che non cambiano mai. Qui
+ * dentro c'e' il risultato nudo di `sparso`; l'aritmetica che lo usa e' rimasta
+ * dov'era, parola per parola.
+ */
+internal object TavolaStelle {
+    val x = FloatArray(STELLE) { sparso(it, 1) }
+    val alto = FloatArray(STELLE) { sparso(it, 2) }
+    val luce = FloatArray(STELLE) { sparso(it, 7) }
+    val luminosa = FloatArray(STELLE) { sparso(it, 11) }
+    val passo = FloatArray(STELLE) { sparso(it, 12) }
+
+    /** Tabella e sale di provenienza, per la prova di identita'. */
+    val tutte: List<Pair<FloatArray, Int>>
+        get() = listOf(x to 1, alto to 2, luce to 7, luminosa to 11, passo to 12)
+}
 
 /** Fin dove scende il cielo, in frazione di schermo. Sotto c'e' la scultura,
  *  poi il numero, poi la didascalia: non e' cielo, e' pagina scritta. */
@@ -97,18 +148,18 @@ private const val SOFFITTO = 0.52f
 fun DrawScope.cieloStellato(tempo: Float, inchiostro: Color, velo: Float) {
     if (velo <= 0.01f) return
     for (i in 0 until STELLE) {
-        val x = sparso(i, 1) * size.width
+        val x = TavolaStelle.x[i] * size.width
         // **Si fermano dove comincia il testo.** Erano fitte in alto e rade in
         // basso, il che non bastava: qualcuna finiva comunque dietro la
         // didascalia e accanto al numero dei gradi, e una stella dietro una
         // parola non e' un astro, e' sporco sulla pagina.
-        val alto = sparso(i, 2)
+        val alto = TavolaStelle.alto[i]
         val y = alto * alto * size.height * SOFFITTO
-        val luce = 0.30f + sparso(i, 7) * 0.70f
+        val luce = 0.30f + TavolaStelle.luce[i] * 0.70f
         // **Ogni stella ha il suo passo.** Con un periodo solo per tutte, il
         // cielo lampeggia invece di respirare - si legge come un difetto dello
         // schermo. Qui il periodo va da poco piu' di un secondo a quasi tre.
-        val passo = 1.1f + sparso(i, 12) * 1.7f
+        val passo = 1.1f + TavolaStelle.passo[i] * 1.7f
         val tremolio = 0.58f + 0.42f * sin(tempo * passo + (x * 0.031f + y * 0.017f))
         val sfumo = ((SOFFITTO * size.height - y) / (size.height * 0.18f)).coerceIn(0f, 1f)
         val alfa = (velo * luce * tremolio * sfumo).coerceIn(0f, 1f)
@@ -117,7 +168,7 @@ fun DrawScope.cieloStellato(tempo: Float, inchiostro: Color, velo: Float) {
         // **Una decina sono grosse, e sono quelle che si guardano.** Un cielo
         // di puntini tutti uguali e' una trama, non un cielo: le poche
         // luminose danno la scala a tutte le altre.
-        val luminosa = sparso(i, 11) > 0.93f
+        val luminosa = TavolaStelle.luminosa[i] > 0.93f
         val r = size.width * (0.0016f + luce * 0.0030f) * (if (luminosa) 2.3f else 1f)
         drawCircle(color = inchiostro.copy(alpha = alfa), radius = r, center = Offset(x, y))
 
@@ -263,6 +314,19 @@ fun DrawScope.uccelli(unita: Float, origine: Offset, tempo: Float, inchiostro: C
     }
 }
 
+/** Le quattro grandezze di ogni granello che dipendono solo dal suo indice. */
+internal object TavolaPulviscolo {
+    const val QUANTI = 9
+    val passo = FloatArray(QUANTI) { sparso(it, 3) }
+    val fase = FloatArray(QUANTI) { sparso(it, 4) }
+    val alto = FloatArray(QUANTI) { sparso(it, 5) }
+    val raggio = FloatArray(QUANTI) { sparso(it, 6) }
+
+    /** Tabella e sale di provenienza, per la prova di identita'. */
+    val tutte: List<Pair<FloatArray, Int>>
+        get() = listOf(passo to 3, fase to 4, alto to 5, raggio to 6)
+}
+
 /**
  * Il pulviscolo delle belle giornate: pochi semi che attraversano piano.
  *
@@ -278,17 +342,16 @@ fun DrawScope.pulviscolo(tempo: Float, inchiostro: Color, velo: Float) {
     // taglia e a quel contrasto non si leggevano come aria, si leggevano come
     // pixel morti. Un elemento decorativo che si puo' scambiare per un guasto
     // e' un elemento che toglie, non che aggiunge.
-    val quanti = 9
-    for (i in 0 until quanti) {
-        val passo = 0.014f + sparso(i, 3) * 0.020f
-        val attraverso = (tempo * passo + sparso(i, 4)) % 1f
-        val y = size.height * (0.08f + sparso(i, 5) * (SOFFITTO - 0.10f)) +
+    for (i in 0 until TavolaPulviscolo.QUANTI) {
+        val passo = 0.014f + TavolaPulviscolo.passo[i] * 0.020f
+        val attraverso = (tempo * passo + TavolaPulviscolo.fase[i]) % 1f
+        val y = size.height * (0.08f + TavolaPulviscolo.alto[i] * (SOFFITTO - 0.10f)) +
             sin(tempo * 0.5f + i) * size.height * 0.012f
         val x = attraverso * (size.width * 1.2f) - size.width * 0.1f
         val bordo = (attraverso / 0.15f).coerceAtMost(1f) * ((1f - attraverso) / 0.15f).coerceAtMost(1f)
         drawCircle(
             color = inchiostro.copy(alpha = (0.075f * bordo * velo).coerceIn(0f, 1f)),
-            radius = size.width * (0.0028f + sparso(i, 6) * 0.0030f),
+            radius = size.width * (0.0028f + TavolaPulviscolo.raggio[i] * 0.0030f),
             center = Offset(x, y),
         )
     }
@@ -353,10 +416,10 @@ object Corsie {
      * cucitura, non come pioggia.
      */
     fun scarto(i: Int, k: Int, quante: Int): Float =
-        if (k == 0) 0f else k.toFloat() / quante + (sparso(seme(i, k), 24) - 0.5f) * 0.5f / quante
+        if (k == 0) 0f else k.toFloat() / quante + (tavolaScarto[i][k] - 0.5f) * 0.5f / quante
 
     /** Di quanto la goccia [k] sta a lato della propria corsia, da -0,5 a 0,5. */
-    fun scostamento(i: Int, k: Int): Float = sparso(seme(i, k), 25) - 0.5f
+    fun scostamento(i: Int, k: Int): Float = tavolaScostamento[i][k] - 0.5f
 
     /**
      * Quanto e' vicina questa goccia, da 0 a 1.
@@ -366,14 +429,52 @@ object Corsie {
      * stessa velocita', cioe' sarebbero la stessa goccia ripetuta.
      */
     fun profonditaDi(i: Int, k: Int): Float =
-        (profondita(i) * 0.55f + sparso(seme(i, k), 26) * 0.45f).coerceIn(0f, 1f)
+        (profondita(i) * 0.55f + tavolaProfonditaDi[i][k] * 0.45f).coerceIn(0f, 1f)
 
     /** In che ordine le corsie si accendono. Sparso, se no la pioggia
      *  comincerebbe da un lato e si allargherebbe come una tenda. */
     private val Ordine = intArrayOf(7, 1, 11, 4, 13, 0, 9, 5, 2, 12, 8, 3, 10, 6)
 
+    /**
+     * L'inverso di [Ordine]: dato il numero di corsia, il suo posto in fila.
+     *
+     * [accesa] lo chiedeva con `Ordine.indexOf(i)`, cioe' scorrendo l'elenco
+     * fino a trovarlo, quarantadue volte per fotogramma. Una permutazione ha
+     * sempre un'inversa, e calcolarla una volta costa quattordici passi.
+     */
+    private val Posto = IntArray(QUANTE).also { posti ->
+        Ordine.forEachIndexed { posto, corsia -> posti[corsia] = posto }
+    }
+
+    /** Il massimo che [ripetizioni] puo' restituire: la larghezza delle
+     *  tabelle per goccia. */
+    private const val FILA_MAX = 5
+
+    // Le tabelle. Stanno **qui dentro** e non nei punti di disegno perche' le
+    // stesse funzioni le legge chi fa vibrare il telefono: una strada sola.
+    internal val tavolaX = FloatArray(QUANTE) { sparso(it, 21) }
+    internal val tavolaProfondita = FloatArray(QUANTE) { sparso(it, 22) }
+    internal val tavolaSfasatura = FloatArray(QUANTE) { sparso(it, 23) }
+    internal val tavolaScarto =
+        Array(QUANTE) { i -> FloatArray(FILA_MAX) { k -> sparso(seme(i, k), 24) } }
+    internal val tavolaScostamento =
+        Array(QUANTE) { i -> FloatArray(FILA_MAX) { k -> sparso(seme(i, k), 25) } }
+    internal val tavolaProfonditaDi =
+        Array(QUANTE) { i -> FloatArray(FILA_MAX) { k -> sparso(seme(i, k), 26) } }
+
+    /** Le tabelle per corsia e il loro sale, per la prova di identita'. */
+    internal val perCorsia: List<Pair<FloatArray, Int>>
+        get() = listOf(tavolaX to 21, tavolaProfondita to 22, tavolaSfasatura to 23)
+
+    /** Le tabelle per goccia e il loro sale, per la prova di identita'. */
+    internal val perGoccia: List<Pair<Array<FloatArray>, Int>>
+        get() = listOf(tavolaScarto to 24, tavolaScostamento to 25, tavolaProfonditaDi to 26)
+
+    /** Il seme di una goccia, esposto alla sola prova. */
+    internal fun semeDi(i: Int, k: Int): Int = seme(i, k)
+
     /** Da quale lato dello spazio-modello scende. */
-    fun x(i: Int): Float = (sparso(i, 21) - 0.5f) * 1.30f
+    fun x(i: Int): Float = (tavolaX[i] - 0.5f) * 1.30f
 
     /**
      * Quanto e' vicina, da 0 (in fondo) a 1 (davanti).
@@ -383,9 +484,9 @@ object Corsie {
      * velocita' e' una grata, non un temporale. Le vicine sono piu' grandi,
      * piu' svelte e piu' opache; le lontane quasi un'ombra.
      */
-    fun profondita(i: Int): Float = sparso(i, 22)
+    fun profondita(i: Int): Float = tavolaProfondita[i]
 
-    fun sfasatura(i: Int): Float = sparso(i, 23)
+    fun sfasatura(i: Int): Float = tavolaSfasatura[i]
 
     fun velocita(tipo: Caduta, i: Int): Float {
         val base = when (tipo) {
@@ -398,7 +499,7 @@ object Corsie {
 
     /** Quanto e' accesa questa corsia, data l'intensita' 0..1. */
     fun accesa(i: Int, presenza: Float): Float {
-        val posto = Ordine.indexOf(i).coerceAtLeast(0)
+        val posto = Posto[i]
         return (presenza * QUANTE - posto).coerceIn(0f, 1f)
     }
 
