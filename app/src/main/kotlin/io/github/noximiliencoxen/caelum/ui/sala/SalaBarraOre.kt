@@ -240,14 +240,13 @@ private fun coloriDelleOre(
             SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 1f
             else -> 0f
         }
-        // **La stessa tabella della scena, chiamata e non ricopiata.** Qui
-        // c'era la sua copia riga per riga: due elenchi da tenere in fase, e
-        // alla prima famiglia aggiunta - la neve - uno dei due sarebbe rimasto
-        // indietro tingendo le colonne di un cielo che la sala non mostra.
-        val copertura = maxOf(
-            (ora.cloudCover ?: 0) / 100f,
-            coperturaMinima(condizione),
-        )
+        // **La stessa regola della scena, chiamata e non ricopiata.** Qui
+        // c'era la copia riga per riga della tabella dei minimi, e poi - una
+        // volta unificata quella - restava ricopiata la formula intorno: due
+        // strade da tenere in fase, e alla prima che fosse cambiata da una
+        // parte sola le colonne avrebbero tinto un cielo che la sala non
+        // mostra piu'. Adesso passano tutte e due da [coperturaDi].
+        val copertura = coperturaDi(condizione, ora.cloudCover)
         val neve = if (Wmo.family(ora.weatherCode) == Wmo.Family.NEVE) 1f else 0f
         cieloStops(faseContinua(cielo), livelloCielo(copertura, tempesta), neve)[1]
     }
