@@ -5765,3 +5765,166 @@ confrontandoli a mano: la prossima crescita si vedra' il giorno in cui succede.
 - **Le due tavolozze del cielo.** Stessa ragione.
 - **Il baseline profile** (avvio e primo scorrimento) vuole un modulo di
   benchmark e un giro di CI dedicato. Vale, ma e' un lavoro a se'.
+
+## 28. Diceva nuvoloso, e fuori il cielo era aperto
+
+Tre rilievi, arrivati guardando l'app in mano: *mancano delle info nelle
+impostazioni essenziali*; *da calcolare meglio quanto coperto il cielo deve
+essere, anche quando e' leggermente coperto il sole*; *vorrei che il sole e la
+luna siano sempre illuminati - capita spesso che segna nuvoloso e nell'app il
+sole non si vede quasi per niente, e nell'effettivo il cielo non e' cosi'
+coperto come dice l'app*.
+
+Il secondo e il terzo sono **lo stesso difetto visto da due lati**, e la causa
+era una sola.
+
+### 28.1 Un numero gonfiato, e tre sintomi
+
+`scenaBersaglio` calcolava `copertura = maxOf(nuvolosita' vera, pavimento del
+codice)`, e il pavimento del nuvoloso vale 0,45. Sopra, `salaConditionOf`
+mandava in NUVOLOSO tutto quello che aveva `code >= 1` - e **il codice WMO 1
+significa "prevalentemente sereno"**, una o due ottavi di cielo. Quindi con il
+cinque per cento di nuvole vere la sala lavorava sul quarantacinque.
+
+Da li' scendeva tutto il resto:
+
+| Sintomo | Dove | Con copertura 0,45 |
+|---|---|---|
+| Il cielo troppo grigio | `livelloCielo = copertura * 3` | livello 1,35 su 4 |
+| Le nuvole troppe e troppo piene | `presenza = (copertura - i*0,13)/0,24` | **tre masse su cinque**, alfa fino a 0,94 |
+| Il sole che sparisce | `velo = 1 - copertura*0,92` | disco al **59 %** |
+
+**Una causa, tre manopole, e nessuna delle tre era rotta.** E' la ragione per
+cui non si e' toccata nessuna delle tre: corretto il numero in ingresso, il
+cielo e le nuvole sono rientrate da sole. Se si fosse messo mano anche a quelle
+sarebbe stato impossibile dire quale avesse fatto cosa.
+
+### 28.2 La doppia verita' sul codice 1, che era gia' scritta
+
+`Wmo.family` classifica lo zero **e l'uno** come `ASCIUTTO` da sempre.
+`salaConditionOf` diceva il contrario, nello stesso progetto, sullo stesso
+numero - e il KDoc di quella funzione, due righe sopra, racconta gia' al passato
+la stessa storia a proposito della neve: *"Da due verita' sullo stesso codice
+nasceva un cielo in cui cadevano chicchi e fiocchi insieme... Una sola verita',
+e sta dove stanno i codici."*
+
+Il disaccordo non era teorico: `glifoDi` - che legge la famiglia e la
+nuvolosita' vera - disegnava il **sole** mentre la sala dietro dipingeva il
+coperto. Lo stesso numero, due risposte, sulla stessa schermata.
+
+### 28.3 Il pavimento difendeva qualcosa che li' non c'era
+
+`coperturaMinima` esiste per la **trappola #14**: se il codice WMO dice che
+piove deve piovere, e una pioggia che cade da un cielo vuoto e' lo stesso
+errore delle gocce che non cadevano. Giusto - e si applicava anche alle due
+condizioni **asciutte**, dove non c'e' nessuna precipitazione da difendere.
+
+Adesso la regola ha due meta', e a separarle e' `cade`: dove cade qualcosa il
+minimo resta un pavimento e il conto e' identico a prima, `null` compreso; dove
+non cade niente il dato vero comanda da solo, e il minimo resta come **ripiego**
+per quando la nuvolosita' oraria manca - dal quarto giorno in poi i modelli a
+corto raggio danno i totali e non le ore.
+
+La regola sta in un posto solo, `coperturaDi`, e si chiama da due. La barra
+delle ore aveva gia' smesso di ricopiarsi la **tabella** dei minimi; la
+**formula** intorno era rimasta ricopiata, e sarebbe stata la prossima a
+divergere.
+
+### 28.4 Il velo piu' severo dell'app stava sugli astri
+
+`velo = 1 - copertura * 0,92`. Il confronto dice tutto: le stelle perdono al
+massimo il 72 per cento, gli uccelli il 62, il pulviscolo il 55, **il sole e la
+luna il 92**. Il disco finiva all'otto per cento sotto un cielo chiuso, e al
+quattro sotto una nevicata - perche' li' si moltiplicava anche per il fattore
+della neve, che era contarla due volte: la neve chiude gia' il cielo per la sua
+strada, con un minimo di copertura a 0,85 e con la tavolozza `CieloNeve`.
+
+Il commento che accompagnava quella riga - *dietro un fronte non si vede ne'
+l'uno ne' l'altra* - **e' vero del fronte**, dove la copertura sta sopra 0,9.
+Veniva applicato linearmente anche al poco nuvoloso, dove non lo e' per niente.
+In CONTESTO non c'era nessuna sezione che motivasse quel numero: era stato
+scritto una volta e non piu' guardato.
+
+Adesso il coefficiente e' 0,45 con un minimo di 0,55. La curva tocca il minimo
+**esattamente a copertura piena**, quindi non c'e' nessun gomito.
+
+    copertura   0,00   0,20   0,45   0,60   0,80   1,00
+    prima       100 %   82 %   59 %   45 %   26 %    8 %
+    adesso      100 %   91 %   80 %   73 %   64 %   55 %
+
+Sotto un temporale il sole resta un chiarore dietro le nuvole, che e' quello che
+si vede davvero; a coprirlo ci pensano le masse, che gli passano davanti - si
+disegnano dopo di lui, con alfa fino a 0,96.
+
+E' sparito anche `if (velo <= 0.01f) return`: con un minimo a 0,55 non puo' piu'
+scattare, e **un ramo irraggiungibile e' un ramo che mente**.
+
+### 28.5 La prova ha corretto me
+
+`cade solo dalle famiglie che nominano qualcosa che cade` era scritta, la prima
+volta, come *"da un codice asciutto non cade niente, da tutti gli altri si'"*.
+La CI l'ha bocciata: cosi' formulata pretendeva che cadesse roba anche dal
+**nuvoloso**, che e' asciutto quanto il sereno.
+
+E' la stessa confusione che aveva prodotto il difetto di tutto questo giro -
+trattare *ci sono delle nuvole* come *sta succedendo qualcosa* - ed e' andata
+bene che a scriverla in una prova l'abbia detta a voce alta, dove qualcuno la
+controlla.
+
+### 28.6 Le impostazioni avevano solo comandi
+
+Quattro selettori, cinque interruttori, una riga di navigazione: **zero
+informazione**. La regola che governa quella schermata - *ogni interruttore qui
+dentro comanda qualcosa* - e' giusta e non c'entra: vale per i comandi, e a
+furia di applicarla era rimasta una pagina che sa solo ricevere ordini e non
+risponde a una domanda.
+
+Tutto quello che e' entrato **esisteva gia' nel codice** e non lo leggeva
+nessuna schermata:
+
+- la **versione**, motivata per iscritto in cima a `build.gradle.kts` e mai
+  letta da una riga di Kotlin;
+- l'**ultimo scarico**, che aveva accanto un commento il quale dichiarava *"la
+  schermata delle impostazioni lo dichiara"*. Non lo dichiarava: era un residuo
+  del vecchio `ui/settings/SettingsScreen.kt`. Adesso il commento e' vero;
+- il **modello meteo attivo**, che cambia i numeri della previsione e di cui non
+  si poteva sapere niente;
+- le **fonti**, che erano la decisione lasciata in sospeso da 8-ter;
+- la **localita' per esteso**, e soprattutto **chi l'ha scelta**;
+- **Aggiorna adesso**, perche' `refresh()` era pubblico senza chiamanti
+  d'interfaccia e `state.error` - un messaggio gia' scritto per chi guarda - non
+  aveva **un solo lettore in tutta l'app**.
+
+### 28.7 Le note legali, e il limite dichiarato
+
+Una schermata a parte, aperta dalle impostazioni, che contiene **solo fatti
+verificabili nel codice**: i quattro indirizzi interrogati, la differenza fra
+ALLERTA e AVVISO, cosa esce dal telefono, cosa resta, i tre permessi uno per
+uno.
+
+**Non sono condizioni d'uso**, ed e' scritto dentro. Un contratto lo scrive chi
+pubblica l'app e se ne assume la responsabilita'.
+
+Il pannello va registrato **dopo** le impostazioni: `BackHandler` da' la
+precedenza all'ultimo registrato, ed e' la stessa trappola gia' pagata con "Le
+localita'".
+
+**Resta un blocco da riempire alle fonti**: la frase di attribuzione che
+Open-Meteo richiede e i termini di MeteoAlarm per il riuso dei feed vanno
+copiati verbatim dalle loro pagine di licenza. Da questo ambiente la rete non ci
+arriva, e scriverli a memoria in una pagina legale sarebbe esattamente il tipo
+di errore che quella pagina esiste per evitare.
+
+### 28.8 Cosa resta fuori
+
+- **Le condizioni d'uso vere**, come sopra.
+- **`skyCloudiness`** legge ancora **solo** il codice WMO e non `cloudCover`:
+  e' la seconda verita' sulla nuvolosita' che resta in piedi. Alimenta pero'
+  soltanto lo sfondo del benvenuto e le icone delle barre di sistema, cioe' il
+  difetto gia' registrato in 27.8 - e si corregge insieme a quello.
+- **Le soglie e l'opacita' delle nuvole.** Se dopo la prova in mano fossero
+  ancora troppe, la riga e' quella di `presenza` in `SalaCielo`. Non si e'
+  toccata apposta: vedi 28.1.
+- **Il selettore del modello meteo.** Adesso si vede quale e' attivo; sceglierlo
+  vuol dire rimettere `setModel`, una riga di scelta e la ricarica, ed e' una
+  funzione, non un'informazione.
