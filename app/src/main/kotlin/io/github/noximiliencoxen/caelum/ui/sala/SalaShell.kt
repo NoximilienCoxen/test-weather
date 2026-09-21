@@ -499,6 +499,7 @@ fun SalaShell(
                         onToggleAlert = viewModel::setAlertToggle,
                         onApriLocalita = viewModel::openLocations,
                         onAggiorna = viewModel::refresh,
+                        onApriLegali = viewModel::openLegali,
                         onClose = viewModel::closeSettings,
                     )
                 }
@@ -531,6 +532,33 @@ fun SalaShell(
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeLocations,
                     )
+                }
+            }
+
+            // **E le note legali vanno per ultime, per la stessa ragione delle
+            // localita'.** Si aprono dalle impostazioni, quindi devono entrare
+            // davanti a loro; e siccome `BackHandler` da' la precedenza
+            // all'ultimo registrato, l'indietro deve trovare prima questa e poi
+            // il pannello da cui e' stata chiesta. Vale la nota tre blocchi piu'
+            // su: chi riordina per pulizia riapre il difetto.
+            //
+            // Con le localita' non si sovrappongono mai - si aprono da due
+            // righe diverse della stessa schermata - quindi fra loro l'ordine
+            // non conta: conta che stiano tutte e due dopo le impostazioni.
+            val scorrimentoLegali by animateFloatAsState(
+                targetValue = if (state.legaliOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "legali",
+            )
+            if (scorrimentoLegali > 0.001f) {
+                BackHandler(enabled = state.legaliOpen, onBack = viewModel::closeLegali)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - scorrimentoLegali) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaLegaliScreen(palette = palette, onClose = viewModel::closeLegali)
                 }
             }
         }
