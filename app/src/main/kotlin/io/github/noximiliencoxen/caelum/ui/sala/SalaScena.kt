@@ -77,28 +77,16 @@ fun scenaBersaglio(
     // cadono dalla stessa nuvola per lo stesso codice. Adesso la strada e' una.
     val grandina = condition == SalaCondition.TEMPORALE_GRANDINE
     val nevica = nevicaWmo || condition == SalaCondition.NEVE
-    val cade = condition != SalaCondition.SERENO && condition != SalaCondition.NUVOLOSO
     return Scena(
         sole = sky.sunPresence,
         notte = sky.moonPresence,
-        // **Il dato vero non puo' smentire il codice.** Prendere la nuvolosita'
-        // oraria e basta sembrava piu' preciso, e ha prodotto uno scatto in cui
-        // la sala diceva "Rovescio di meta' pomeriggio" sotto un sole pieno
-        // **senza una nuvola**: l'ora forzata era piovosa per codice ma serena
-        // per nuvolosita', e vinceva la seconda. E' la trappola #14 per la
-        // stessa strada di sempre - se il codice WMO dice che piove **deve
-        // piovere**, e una pioggia senza nuvole e' lo stesso errore delle gocce
-        // che non cadevano. Il dato vero decide **quanto** dentro il possibile;
-        // il codice decide il minimo.
-        copertura = maxOf(
-            coperturaOraria?.let { (it / 100f).coerceIn(0f, 1f) } ?: 0f,
-            coperturaMinima(condition),
-        ),
+        // Il dato vero e il codice, messi d'accordo: vedi [coperturaDi].
+        copertura = coperturaDi(condition, coperturaOraria),
         tempesta = if (temporale) 1f else 0f,
         // Una pioviggine non e' un rovescio, e finora si dipingevano uguali. Il
         // minimo non e' zero: se il codice WMO dice che piove **deve piovere**,
         // e i millimetri decidono quanto forte, non se (trappola #14).
-        bagnato = if (!cade) 0f else ((pioggiaMm?.toFloat() ?: 1f) / 1.8f).coerceIn(0.55f, 1f),
+        bagnato = if (!cade(condition)) 0f else ((pioggiaMm?.toFloat() ?: 1f) / 1.8f).coerceIn(0.55f, 1f),
         ghiaccio = if (grandina) 1f else 0f,
         neve = if (nevica) 1f else 0f,
         // Nota per chi tocca queste due righe: **non possono valere uno
@@ -109,11 +97,54 @@ fun scenaBersaglio(
 }
 
 /**
+ * Vero quando dalla condizione **cade qualcosa**: pioggia, neve, grandine.
+ *
+ * E' la riga che separa le due meta' di [coperturaDi], e vale la pena che abbia
+ * un nome: da una parte i cieli asciutti, dove la nuvolosita' vera comanda da
+ * sola; dall'altra quelli da cui viene giu' roba, dove il codice impone un
+ * minimo perche' una precipitazione senza nuvole e' una precipitazione falsa.
+ */
+internal fun cade(condition: SalaCondition): Boolean =
+    condition != SalaCondition.SERENO && condition != SalaCondition.NUVOLOSO
+
+/**
+ * Quanto e' chiuso il cielo: il dato vero e il codice, messi d'accordo.
+ *
+ * **Sta qui e si chiama da due posti**, la scena e le ventiquattro colonne
+ * della barra delle ore. La tabella dei minimi era gia' stata unificata per
+ * questo motivo - il commento in `SalaBarraOre` lo racconta - ma la formula
+ * intorno era ancora ricopiata, e sarebbe stata la prossima a divergere: la
+ * barra avrebbe tinto le colonne con un cielo che la sala non mostra piu'.
+ *
+ * Due meta', e la differenza e' [cade]:
+ *
+ * - **dove cade qualcosa**, il minimo del codice e' un pavimento. E' la
+ *   trappola #14: se il codice WMO dice che piove **deve piovere**, e una
+ *   pioggia senza nuvole e' lo stesso errore delle gocce che non cadevano. Il
+ *   dato vero decide *quanto* dentro il possibile;
+ * - **dove non cade niente**, non c'e' niente da difendere, e il dato vero
+ *   comanda da solo. E' li' che il pavimento faceva danni: quello del nuvoloso
+ *   vale 0,45 e si applicava anche a giornate che di nuvole ne avevano il
+ *   cinque per cento, imponendo tre masse in cielo e un grigio che fuori non
+ *   c'era. Li' il minimo resta come **ripiego** per quando la nuvolosita'
+ *   oraria manca del tutto - i modelli a corto raggio si fermano attorno alle
+ *   settantadue ore.
+ */
+internal fun coperturaDi(condition: SalaCondition, coperturaOraria: Int?): Float {
+    val vera = coperturaOraria?.let { (it / 100f).coerceIn(0f, 1f) }
+    val minima = coperturaMinima(condition)
+    return if (cade(condition)) maxOf(vera ?: 0f, minima) else vera ?: minima
+}
+
+/**
  * Il cielo **almeno** cosi' chiuso, secondo il codice del tempo.
  *
- * Non e' un ripiego per quando il dato manca: e' un pavimento. Un temporale con
- * il venti per cento di nuvolosita' non esiste, e se i due numeri litigano ha
- * ragione quello che ha dato il nome alla giornata.
+ * **E' un pavimento dove cade qualcosa, e un ripiego dove non cade niente.**
+ * Un temporale con il venti per cento di nuvolosita' non esiste, e se i due
+ * numeri litigano ha ragione quello che ha dato il nome alla giornata; ma un
+ * "nuvoloso" con il cinque per cento di nuvolosita' esiste eccome, e li' il
+ * numero e' l'unico dei due che sia stato misurato. Chi decide quale dei due
+ * casi e' e' [coperturaDi]: questa tabella da' solo il numero.
  *
  * **Non e' piu' privata, e la copia che c'era in giro e' sparita.** La barra
  * delle ore tingeva le sue ventiquattro colonne con questa identica tabella
