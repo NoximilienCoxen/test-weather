@@ -213,6 +213,14 @@ data class UiState(
     /** Vero mentre e' aperta la schermata "Le località". */
     val locationsOpen: Boolean = false,
     /**
+     * Vero mentre sono aperte le note legali.
+     *
+     * Come [locationsOpen] si apre **dalle impostazioni**, e come lei vive in
+     * un campo suo: due pannelli a schermo pieno che non si sovrappongono mai,
+     * ma che l'indietro deve chiudere nell'ordine giusto.
+     */
+    val legaliOpen: Boolean = false,
+    /**
      * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
      * località". Manca finche' non e' stato chiesto: quella riga resta
      * muta invece di mostrare un simbolo inventato.
@@ -822,6 +830,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * ricordarselo: e' il pannello sotto che ricompare, e per questo i due
      * blocchi in `SalaShell` hanno l'ordine che hanno.
      */
+    /** Apre le note legali, dalle impostazioni. */
+    fun openLegali() = _state.update { it.copy(legaliOpen = true) }
+
+    /** Le richiude, e lascia le impostazioni dov'erano. */
+    fun closeLegali() = _state.update { it.copy(legaliOpen = false) }
+
     fun closeLocations() =
         _state.update { it.copy(locationsOpen = false, query = "", results = emptyList()) }
 

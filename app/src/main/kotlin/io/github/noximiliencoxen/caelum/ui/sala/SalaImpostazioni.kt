@@ -52,6 +52,7 @@ fun SalaImpostazioniScreen(
     onToggleAlert: (AlertToggleKind, Boolean) -> Unit,
     onApriLocalita: () -> Unit,
     onAggiorna: () -> Unit,
+    onApriLegali: () -> Unit,
     onClose: () -> Unit,
 ) {
     Column(
@@ -198,6 +199,16 @@ fun SalaImpostazioniScreen(
                 nota = state.error ?: "riprova a scaricare la previsione",
                 palette = palette,
                 onClick = onAggiorna,
+            )
+
+            RigaServizio(
+                titolo = "Note legali e privacy",
+                nota = "fonti dei dati, cosa esce dal telefono, permessi",
+                palette = palette,
+                onClick = onApriLegali,
+                coda = {
+                    Text(text = "›", style = SalaType.value, color = palette.accent)
+                },
             )
         }
 
