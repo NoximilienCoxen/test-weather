@@ -498,6 +498,7 @@ fun SalaShell(
                         onChooseCaptionStyle = viewModel::setCaptionStyle,
                         onToggleAlert = viewModel::setAlertToggle,
                         onApriLocalita = viewModel::openLocations,
+                        onAggiorna = viewModel::refresh,
                         onClose = viewModel::closeSettings,
                     )
                 }
