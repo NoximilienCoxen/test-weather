@@ -331,6 +331,20 @@ private val AloniSole = listOf(
 private val AloniLuna = listOf(3.4f to 0.16f, 2.0f to 0.24f)
 
 /**
+ * Sotto questo il velo degli astri non scende, a nessun tempo.
+ *
+ * E' la riga che risponde a *"vorrei che il sole e la luna siano sempre
+ * illuminati"*. Cinquantacinque per cento: abbastanza perche' il disco resti
+ * una cosa riconoscibile dietro un fronte, abbastanza poco perche' non sembri
+ * una lampada accesa su un cielo plumbeo.
+ *
+ * La curva ci arriva **esattamente a copertura piena** - `1 - 0,45` fa 0,55 -
+ * cosi' non c'e' nessun gomito: il velo scende liscio da 1 a 0,55 e si ferma
+ * dove la scala finisce, invece di sbattere contro il minimo a meta' strada.
+ */
+private const val VELO_MINIMO = 0.55f
+
+/**
  * Il sole e la luna, sullo stesso arco e con pesi complementari.
  *
  * **Il colore del sole segue l'altezza, e non e' un vezzo.** All'orizzonte e'
@@ -348,10 +362,29 @@ private fun DrawScope.soleEluna(
     tempo: Float,
     fiamma: Float,
 ) {
-    // Il cielo chiuso li nasconde tutti e due: dietro un fronte non si vede
-    // ne' l'uno ne' l'altra.
-    val velo = (1f - scena.copertura * 0.92f).coerceIn(0f, 1f) * (1f - scena.neve * 0.8f)
-    if (velo <= 0.01f) return
+    // **Il cielo chiuso li vela, non li cancella.**
+    //
+    // Il coefficiente era 0,92, ed era il piu' severo dell'app: le stelle
+    // perdono al massimo il 72 per cento (`cieloStellato`, poco sopra), gli
+    // uccelli il 62, il pulviscolo il 55. Il disco finiva all'otto per cento
+    // sotto un cielo chiuso e al cinquantanove sotto un "nuvoloso" che fuori si
+    // guarda a occhio nudo: non un sole velato, un sole assente.
+    //
+    // Il commento che c'era - *dietro un fronte non si vede ne' l'uno ne'
+    // l'altra* - e' vero del **fronte**, dove la copertura sta sopra 0,9, e
+    // veniva applicato linearmente anche al poco nuvoloso.
+    //
+    // Adesso il velo arriva a [VELO_MINIMO] e li' si ferma: sotto un temporale
+    // il sole e' un chiarore dietro le nuvole, che e' quello che si vede
+    // davvero. **A coprirlo ci pensano le masse**, che gli passano davanti - si
+    // disegnano dopo di lui, e con alfa fino a 0,96.
+    //
+    // Il fattore della neve se n'e' andato: la neve chiude gia' il cielo per la
+    // sua strada - `coperturaMinima(NEVE)` vale 0,85, e la tavolozza `CieloNeve`
+    // ci mette il suo - e moltiplicarlo di nuovo qui era contarla due volte. Con
+    // quel fattore il disco sotto una nevicata scendeva al **quattro per
+    // cento**, il caso peggiore di tutta l'app.
+    val velo = (1f - scena.copertura * 0.45f).coerceAtLeast(VELO_MINIMO)
 
     val posizione = arco(sky.journey, sx, sy, dy)
 
