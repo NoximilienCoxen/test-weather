@@ -209,6 +209,12 @@ fun crepuscolezza(fase: FaseContinua): Float {
  * fiocchi insieme, e una didascalia che chiamava pioggia una nevicata.
  *
  * Una sola verita', e sta dove stanno i codici.
+ *
+ * **E la stessa cosa e' ricapitata col codice 1.** `code >= 1` lo mandava fra
+ * i nuvolosi mentre [Wmo.family] lo dice `ASCIUTTO`, e il disaccordo non era
+ * teorico: [glifoDi] - che legge la famiglia e la nuvolosita' vera - disegnava
+ * il **sole**, e la sala dietro dipingeva un cielo chiuso al quarantacinque per
+ * cento. Lo stesso numero, due risposte, sulla stessa schermata.
  */
 fun salaConditionOf(code: Int?): SalaCondition = when {
     code == null -> SalaCondition.SERENO
@@ -216,8 +222,19 @@ fun salaConditionOf(code: Int?): SalaCondition = when {
     code == 95 -> SalaCondition.TEMPORALE
     Wmo.family(code) == Wmo.Family.NEVE -> SalaCondition.NEVE
     code >= 51 -> SalaCondition.PIOGGIA
-    code >= 1 -> SalaCondition.NUVOLOSO
-    else -> SalaCondition.SERENO
+    // **Il codice 1 e' "prevalentemente sereno", e finiva fra i nuvolosi.**
+    // Una o due ottavi di cielo: chi guardava fuori vedeva una giornata aperta
+    // e leggeva "Nuvole di passaggio" sopra un cielo grigio. E il pavimento
+    // della condizione gli imponeva il quarantacinque per cento di copertura,
+    // che e' la ragione per cui il sole spariva.
+    //
+    // La doppia verita' era gia' scritta due file piu' in la': [Wmo.family]
+    // classifica lo zero **e l'uno** come `ASCIUTTO` da sempre. Questa riga
+    // diceva il contrario, nello stesso progetto, sullo stesso numero.
+    Wmo.family(code) == Wmo.Family.ASCIUTTO -> SalaCondition.SERENO
+    // Restano qui il 2 e il 3 - famiglia NUVOLOSO - e la nebbia, 45 e 48, che
+    // di cielo aperto non ne ha.
+    else -> SalaCondition.NUVOLOSO
 }
 
 // -- Il cielo ---------------------------------------------------------------
