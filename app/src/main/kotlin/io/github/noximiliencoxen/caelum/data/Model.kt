@@ -117,7 +117,15 @@ data class Forecast(
     val place: Place = Place.FORLI,
     /** Scarto dall'ora universale della localita', in secondi. */
     val utcOffsetSeconds: Int = 0,
-    /** Quando e' stata ricevuta: la schermata delle impostazioni lo dichiara. */
+    /**
+     * Quando e' stata ricevuta: la schermata delle impostazioni lo dichiara.
+     *
+     * **E adesso e' vero.** Questa riga lo affermava da mesi mentre nessuna
+     * schermata leggeva il campo: era rimasta indietro rispetto al vecchio
+     * `ui/settings/SettingsScreen.kt`, cancellato col redisegno. Un commento
+     * che descrive una cosa che non succede e' peggio di nessun commento,
+     * perche' chi lo legge smette di andare a controllare.
+     */
     val fetchedAt: LocalDateTime = LocalDateTime.now(),
 ) {
     /**
