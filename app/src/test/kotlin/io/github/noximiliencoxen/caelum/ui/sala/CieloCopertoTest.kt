@@ -71,14 +71,23 @@ class CieloCopertoTest {
         }
     }
 
+    /**
+     * **Cade solo dalle tre famiglie che nominano qualcosa che cade.**
+     *
+     * La prima stesura di questa riga diceva *"da un codice asciutto non cade
+     * niente, da tutti gli altri si'"*, e la CI l'ha bocciata: cosi' scritta
+     * pretendeva che cadesse qualcosa anche dal **nuvoloso**, che e' asciutto
+     * quanto il sereno. E' la stessa confusione che ha prodotto il difetto di
+     * questo giro - trattare "ci sono nuvole" come "sta succedendo qualcosa" -
+     * ed e' andata bene che a scriverla in un test l'abbia detta a voce alta.
+     */
     @Test
-    fun `da un codice asciutto non cade niente, da tutti gli altri si'`() {
+    fun `cade solo dalle famiglie che nominano qualcosa che cade`() {
+        val bagnate = setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
         codici.forEach { code ->
-            val asciutto = Wmo.family(code) == Wmo.Family.ASCIUTTO
-            val nebbia = Wmo.family(code) == Wmo.Family.NEBBIA
             assertEquals(
-                "codice $code",
-                !asciutto && !nebbia,
+                "codice $code, famiglia ${Wmo.family(code)}",
+                Wmo.family(code) in bagnate,
                 cade(salaConditionOf(code)),
             )
         }
