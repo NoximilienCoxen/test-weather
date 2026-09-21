@@ -292,6 +292,19 @@ session() {
     cielo 12 0 mezzogiorno-sereno
     cielo 20 0 tramonto
     cielo 12 3 mezzogiorno-coperto
+    # **I due che mancavano, e sono quelli di cui si discuteva.** Fra il sereno
+    # e il coperto pieno non c'era niente: la scala aveva i due estremi e nessun
+    # punto in mezzo, ed e' proprio in mezzo che l'app sbagliava - dipingeva il
+    # codice 1 come un coperto. Adesso i quattro scatti di mezzogiorno si
+    # guardano in fila e devono raccontare quattro cieli diversi e **in scala**,
+    # dal piu' aperto al piu' chiuso, con il disco del sole riconoscibile in
+    # tutti e quattro.
+    #
+    # Impongono ora **e** codice insieme, che secondo CONTESTO 27.2 e' l'unica
+    # combinazione che resta confrontabile fra un giro e l'altro: la previsione
+    # e' viva, e tutto il resto si muove da solo.
+    cielo 12 1 mezzogiorno-quasi-sereno
+    cielo 12 2 mezzogiorno-poco-nuvoloso
     alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
   fi
 
