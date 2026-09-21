@@ -156,12 +156,15 @@ fun SalaShell(
     // Sette scalari al posto di `condition`, `nevica` e `notte`: fra sereno e
     // coperto ci sono tutte le nuvolosita' del mondo, e con l'enum comparivano
     // tutte insieme, in un fotogramma, ogni volta che il cielo cambiava idea.
-    val bersaglio = remember(sky, condition, hour) {
+    val bersaglio = remember(sky, condition, hour, state.forcedCloudCover) {
         scenaBersaglio(
             sky = sky,
             condition = condition,
             nevicaWmo = Wmo.family(codice) == Wmo.Family.NEVE,
-            coperturaOraria = hour?.cloudCover,
+            // Imposta prima, vera poi: la stessa regola del codice una riga
+            // sopra. Senza, con la copertura che viene dal dato vero gli scatti
+            // a codice imposto ritraevano tutti lo stesso cielo.
+            coperturaOraria = state.forcedCloudCover ?: hour?.cloudCover,
             pioggiaMm = hour?.precipitation,
         )
     }

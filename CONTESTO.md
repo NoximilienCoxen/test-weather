@@ -5871,7 +5871,40 @@ trattare *ci sono delle nuvole* come *sta succedendo qualcosa* - ed e' andata
 bene che a scriverla in una prova l'abbia detta a voce alta, dove qualcuno la
 controlla.
 
-### 28.6 Le impostazioni avevano solo comandi
+### 28.6 Gli scatti nuovi ritraevano lo stesso cielo quattro volte
+
+Aggiunti i due scatti che mancavano - `mezzogiorno-quasi-sereno` e
+`mezzogiorno-poco-nuvoloso` - li ho scaricati dal giro di CI per guardarli in
+fila. Due dei quattro avevano **lo stesso md5**:
+
+    ea3a76aa...  cielo-mezzogiorno-coperto.png
+    ea3a76aa...  cielo-mezzogiorno-poco-nuvoloso.png
+
+E gli altri due, misurata la luminanza della fascia di cielo, stavano a 159,5
+contro 159,5.
+
+**Non era un guasto del cielo: era una conseguenza diretta della correzione.**
+Da quando la copertura, dove non cade niente, viene dalla nuvolosita' vera e
+non piu' da un pavimento per condizione, imporre il **codice** non cambia piu'
+quanto il cielo appare chiuso - decide le parole, non il grigio. E gli scatti
+imponevano solo il codice: `--ei meteo 2` e `--ei meteo 3` alla stessa ora
+fotografano la stessa nuvolosita' vera, quindi la stessa scena.
+
+Era la galleria che ricominciava a mentire, **vista mentre succedeva** - la
+stessa famiglia dei sette scatti tolti nella sezione 27, con la differenza che
+questa volta li ho beccati prima di lasciarli li' per mesi.
+
+La cura e' un aggancio in piu', simmetrico a quello del codice:
+`--ei nuvolosita` impone la percentuale, `SalaShell` la legge prima del dato
+vero come gia' fa col codice, e i quattro scatti di mezzogiorno impongono
+adesso **ora, codice e nuvolosita'**: 5, 20, 55 e 95 per cento.
+
+La lezione e' la stessa della sezione 2 di questo giro, letta al contrario:
+**quando si toglie a un aggancio il potere di cambiare la scena, gli scatti che
+lo usavano smettono di ritrarre qualcosa** - e non lo dicono, perche' un PNG
+identico a un altro ha la stessa faccia di un PNG giusto.
+
+### 28.7 Le impostazioni avevano solo comandi
 
 Quattro selettori, cinque interruttori, una riga di navigazione: **zero
 informazione**. La regola che governa quella schermata - *ogni interruttore qui
@@ -5895,7 +5928,7 @@ nessuna schermata:
   d'interfaccia e `state.error` - un messaggio gia' scritto per chi guarda - non
   aveva **un solo lettore in tutta l'app**.
 
-### 28.7 Le note legali, e il limite dichiarato
+### 28.8 Le note legali, e il limite dichiarato
 
 Una schermata a parte, aperta dalle impostazioni, che contiene **solo fatti
 verificabili nel codice**: i quattro indirizzi interrogati, la differenza fra
@@ -5915,7 +5948,7 @@ copiati verbatim dalle loro pagine di licenza. Da questo ambiente la rete non ci
 arriva, e scriverli a memoria in una pagina legale sarebbe esattamente il tipo
 di errore che quella pagina esiste per evitare.
 
-### 28.8 Cosa resta fuori
+### 28.9 Cosa resta fuori
 
 - **Le condizioni d'uso vere**, come sopra.
 - **`skyCloudiness`** legge ancora **solo** il codice WMO e non `cloudCover`:

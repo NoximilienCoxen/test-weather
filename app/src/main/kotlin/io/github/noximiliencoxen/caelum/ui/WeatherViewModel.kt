@@ -127,6 +127,23 @@ data class UiState(
      * Nullo in uso normale: la schermata usa quello dell'ora scelta.
      */
     val forcedWeatherCode: Int? = null,
+    /**
+     * Nuvolosita' oraria imposta dall'esterno, in percentuale, solo per la
+     * verifica automatica. Nulla in uso normale: comanda il dato vero.
+     *
+     * **Senza di lei quattro scatti su quattro ritraevano lo stesso cielo.**
+     * Da quando la copertura, dove non cade niente, viene dalla nuvolosita'
+     * vera e non piu' da un pavimento per condizione, imporre il **codice** non
+     * cambia piu' quanto il cielo appare chiuso: `--ei meteo 2` e
+     * `--ei meteo 3` alla stessa ora danno due PNG identici byte per byte, e
+     * infatti li hanno dati. Il codice decide le parole, la nuvolosita' decide
+     * il cielo, e per fotografare il cielo bisogna poter imporre quella.
+     *
+     * E' esattamente il difetto che la sezione 2 di questo giro ha tolto dalla
+     * galleria - scatti che avevano smesso di ritrarre qualcosa - visto
+     * arrivare mentre nasceva.
+     */
+    val forcedCloudCover: Int? = null,
     // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
     // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
     // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
@@ -1074,6 +1091,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /** Impone la nuvolosita' oraria: vedi [UiState.forcedCloudCover]. */
+    fun forceCloudCover(percento: Int) {
+        _state.update { it.copy(forcedCloudCover = percento.coerceIn(0, 100)) }
     }
 
     /** Il benvenuto ha finito: da qui in poi si apre sulla schermata vera. */

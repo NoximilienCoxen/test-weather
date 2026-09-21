@@ -271,7 +271,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       adbt shell logcat -c >/dev/null 2>&1 || true
-      avvia --ei ora "$1" --ei meteo "$2" >/dev/null 2>&1 || true
+      avvia --ei ora "$1" --ei meteo "$2" --ei nuvolosita "${4:--1}" >/dev/null 2>&1 || true
       attendi_previsione
       # **Il cielo va aspettato anche dopo che i dati sono arrivati**, ed e' il
       # rovescio della trappola #28: quella dice che con le animazioni spente
@@ -289,22 +289,26 @@ session() {
       shoot "cielo-$3"
     }
     cielo  6 0 alba
-    cielo 12 0 mezzogiorno-sereno
+    cielo 12 0 mezzogiorno-sereno    5
     cielo 20 0 tramonto
-    cielo 12 3 mezzogiorno-coperto
+    cielo 12 3 mezzogiorno-coperto  95
     # **I due che mancavano, e sono quelli di cui si discuteva.** Fra il sereno
     # e il coperto pieno non c'era niente: la scala aveva i due estremi e nessun
-    # punto in mezzo, ed e' proprio in mezzo che l'app sbagliava - dipingeva il
-    # codice 1 come un coperto. Adesso i quattro scatti di mezzogiorno si
-    # guardano in fila e devono raccontare quattro cieli diversi e **in scala**,
-    # dal piu' aperto al piu' chiuso, con il disco del sole riconoscibile in
-    # tutti e quattro.
+    # punto in mezzo, ed e' proprio in mezzo che l'app sbagliava.
     #
-    # Impongono ora **e** codice insieme, che secondo CONTESTO 27.2 e' l'unica
-    # combinazione che resta confrontabile fra un giro e l'altro: la previsione
-    # e' viva, e tutto il resto si muove da solo.
-    cielo 12 1 mezzogiorno-quasi-sereno
-    cielo 12 2 mezzogiorno-poco-nuvoloso
+    # **E il quarto argomento non e' un vezzo: senza, questi quattro scatti
+    # sarebbero lo stesso cielo quattro volte.** Da quando la copertura viene
+    # dalla nuvolosita' vera e non da un pavimento per condizione, imporre il
+    # **codice** non cambia piu' quanto il cielo appare chiuso - decide le
+    # parole, non il grigio. Misurato: `--ei meteo 2` e `--ei meteo 3` alla
+    # stessa ora davano due PNG **identici byte per byte**. Era la galleria che
+    # ricominciava a mentire, vista mentre succedeva.
+    #
+    # Adesso i quattro impongono ora, codice **e** nuvolosita', e si guardano in
+    # fila: devono raccontare quattro cieli in scala, dal piu' aperto al piu'
+    # chiuso, col disco del sole riconoscibile in tutti e quattro.
+    cielo 12 1 mezzogiorno-quasi-sereno  20
+    cielo 12 2 mezzogiorno-poco-nuvoloso 55
     alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
   fi
 
