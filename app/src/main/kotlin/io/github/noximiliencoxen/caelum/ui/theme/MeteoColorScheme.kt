@@ -2,7 +2,6 @@ package io.github.noximiliencoxen.caelum.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 
@@ -58,31 +57,65 @@ internal val AlertTint = Color(0xFFFF8A6B)
  */
 internal val MoonTint = Color(0xFFDDE3EE)
 
-/**
- * I colori che l'app usa **oltre** a quelli che Material 3 nomina.
- *
- * Material non ha un token per "il colore della pioggia" ne' per "la linea di
- * riferimento di un grafico", e inventarne uno storcendo `tertiary` renderebbe
- * illeggibile il codice che lo legge. Stanno qui, gia' resi leggibili sul
- * proprio fondo, e si prendono da [LocalMeteoAccents].
- */
-@Immutable
-data class MeteoAccents(
-    val sun: Color,
-    val rain: Color,
-    val wind: Color,
-    val air: Color,
-    val moon: Color,
-    val alert: Color,
-    /** La curva di riferimento dietro quella colorata: l'effettiva sotto la percepita. */
-    val ghost: Color,
-    /** La media storica mensile: si distingue dalla griglia senza rubare la scena. */
-    val norm: Color,
-    /** Le tacche della griglia dei grafici. */
-    val grid: Color,
-    /** Il fondo su cui poggiano le etichette disegnate a mano dentro le tele. */
-    val chartLabelBackground: Color,
-)
+// **Qui stava `MeteoAccents`, e con lei se ne vanno `skyAccents` e
+// `toAccents`.** Erano le tinte delle grandezze - sole, pioggia, vento, aria,
+// luna, allerta - piu' quattro colori dei grafici, calcolate contro il fondo su
+// cui sarebbero finite e messe a disposizione con un `CompositionLocal`. Le
+// leggeva il feed. Da quando c'e' Sala, che le sue tinte se le prende da
+// `SalaPalette`, `LocalMeteoAccents.current` non compare piu' in nessun file:
+// si calcolavano a ogni fotogramma d'animazione - una decina di ricerche di
+// contrasto, ognuna a passi di elevamento a potenza - per essere fornite a
+// nessuno.
+
+// ── Le venti tinte che non si muovono mai ───────────────────────────────────
+//
+// **`toColorScheme` ricalcolava tutto, e solo due voci dipendono dall'ora.**
+// Il commento qui sotto lo dice gia' da sempre - *e' l'unica coppia dello
+// schema che si muove durante il giorno* - ma le altre venti stavano dentro la
+// funzione, quindi si rifacevano con lei: e la funzione gira **a ogni
+// fotogramma in cui il cielo si muove**, perche' `MeteoTheme` la ricorda sulla
+// tavolozza intera e la tavolozza intera cambia col fondo.
+//
+// Ognuna e' una ricerca di contrasto - [readableOn] e [mutedOn] scandiscono la
+// luminanza a passi, e ogni passo e' un elevamento a potenza per canale - su
+// colori che sono **costanti scritte in questo file**. Portarle qui fuori non
+// cambia un numero: le espressioni sono le stesse, parola per parola, e i
+// valori dipendono solo da token che non si muovono.
+//
+// L'ordine conta: `OnPanelVariant` legge `OnPanel`, e i tre `On...Container`
+// leggono il proprio container. Una proprieta' di file che ne legge una
+// dichiarata piu' in basso si prende il valore di prima dell'inizializzazione.
+
+private val OnPanel = Color.White.readableOn(PanelContainer)
+
+// Il grigio secondario si ricava contro la superficie **piu' chiara** su cui
+// puo' finire, non contro quella media: le pillole spente stanno su
+// `surfaceContainerHighest`, ed e' li' che il contrasto e' piu' magro.
+// Tarandolo sul container si otteneva 4,49:1 su quelle pillole - meglio del
+// 4,17:1 di prima, ma pur sempre sotto la soglia, cioe' lo stesso difetto
+// spostato di un decimo. Contro la piu' chiara passa ovunque.
+private val OnPanelVariant = OnPanel.mutedOn(PanelContainerHighest)
+
+private val PrimaryOnPanel = SunTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val PrimaryContainer = lerp(PanelContainerHigh, SunTint, 0.14f)
+private val OnPrimaryContainer = SunTint.readableOn(PrimaryContainer)
+
+private val SecondaryOnPanel = RainTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val SecondaryContainer = lerp(PanelContainerHigh, RainTint, 0.14f)
+private val OnSecondaryContainer = RainTint.readableOn(SecondaryContainer)
+
+private val TertiaryOnPanel = AirTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val TertiaryContainer = lerp(PanelContainerHigh, AirTint, 0.14f)
+private val OnTertiaryContainer = AirTint.readableOn(TertiaryContainer)
+
+private val ErrorOnPanel = AlertTint.readableOn(PanelContainer, CONTRAST_AA_LARGE)
+private val ErrorContainer = lerp(PanelContainerHigh, AlertTint, 0.16f)
+private val OnErrorContainer = AlertTint.readableOn(ErrorContainer)
+
+/** L'inverso serve alle pillole selezionate, che sono chiare su scuro. */
+private val InverseSurface = Color(0xFFF1F2F5)
+private val InverseOnSurface = Color.Black.readableOn(InverseSurface)
+private val InversePrimary = SunTint.readableOn(InverseSurface)
 
 /**
  * Lo schema Material dell'app.
@@ -91,38 +124,33 @@ data class MeteoAccents(
  * ha una trentina di parametri posizionali che cambiano fra una versione e
  * l'altra della libreria, e un token aggiunto a monte diventerebbe qui uno
  * spostamento silenzioso di tutti quelli che seguono.
+ *
+ * Di calcolato resta **solo la coppia del fondo**: tutto il resto sono le
+ * costanti qui sopra.
  */
 fun MeteoColors.toColorScheme(): ColorScheme {
-    val onPanel = Color.White.readableOn(PanelContainer)
-    // Il grigio secondario si ricava contro la superficie **piu' chiara** su cui
-    // puo' finire, non contro quella media: le pillole spente stanno su
-    // `surfaceContainerHighest`, ed e' li' che il contrasto e' piu' magro.
-    // Tarandolo sul container si otteneva 4,49:1 su quelle pillole - meglio del
-    // 4,17:1 di prima, ma pur sempre sotto la soglia, cioe' lo stesso difetto
-    // spostato di un decimo. Contro la piu' chiara passa ovunque.
-    val onPanelVariant = onPanel.mutedOn(PanelContainerHighest)
     val onBackground = text.readableOn(background)
 
     return darkColorScheme(
-        primary = SunTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        primary = PrimaryOnPanel,
         onPrimary = SunTint.onColor(),
-        primaryContainer = lerp(PanelContainerHigh, SunTint, 0.14f),
-        onPrimaryContainer = SunTint.readableOn(lerp(PanelContainerHigh, SunTint, 0.14f)),
+        primaryContainer = PrimaryContainer,
+        onPrimaryContainer = OnPrimaryContainer,
 
-        secondary = RainTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        secondary = SecondaryOnPanel,
         onSecondary = RainTint.onColor(),
-        secondaryContainer = lerp(PanelContainerHigh, RainTint, 0.14f),
-        onSecondaryContainer = RainTint.readableOn(lerp(PanelContainerHigh, RainTint, 0.14f)),
+        secondaryContainer = SecondaryContainer,
+        onSecondaryContainer = OnSecondaryContainer,
 
-        tertiary = AirTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        tertiary = TertiaryOnPanel,
         onTertiary = AirTint.onColor(),
-        tertiaryContainer = lerp(PanelContainerHigh, AirTint, 0.14f),
-        onTertiaryContainer = AirTint.readableOn(lerp(PanelContainerHigh, AirTint, 0.14f)),
+        tertiaryContainer = TertiaryContainer,
+        onTertiaryContainer = OnTertiaryContainer,
 
-        error = AlertTint.readableOn(PanelContainer, CONTRAST_AA_LARGE),
+        error = ErrorOnPanel,
         onError = AlertTint.onColor(),
-        errorContainer = lerp(PanelContainerHigh, AlertTint, 0.16f),
-        onErrorContainer = AlertTint.readableOn(lerp(PanelContainerHigh, AlertTint, 0.16f)),
+        errorContainer = ErrorContainer,
+        onErrorContainer = OnErrorContainer,
 
         // Il fondo segue l'ora; il testo che ci sta sopra viene calcolato, non
         // scelto. E' l'unica coppia dello schema che si muove durante il giorno.
@@ -130,9 +158,9 @@ fun MeteoColors.toColorScheme(): ColorScheme {
         onBackground = onBackground,
 
         surface = PanelSurface,
-        onSurface = onPanel,
+        onSurface = OnPanel,
         surfaceVariant = PanelContainerHigh,
-        onSurfaceVariant = onPanelVariant,
+        onSurfaceVariant = OnPanelVariant,
         surfaceDim = PanelSurfaceDim,
         surfaceBright = PanelSurfaceBright,
         surfaceContainerLowest = PanelContainerLowest,
@@ -141,12 +169,11 @@ fun MeteoColors.toColorScheme(): ColorScheme {
         surfaceContainerHigh = PanelContainerHigh,
         surfaceContainerHighest = PanelContainerHighest,
 
-        // L'inverso serve alle pillole selezionate, che sono chiare su scuro:
-        // il testo dentro esce da `inverseOnSurface`, quindi non c'e' modo di
-        // scrivere bianco su bianco senza accorgersene.
-        inverseSurface = Color(0xFFF1F2F5),
-        inverseOnSurface = Color.Black.readableOn(Color(0xFFF1F2F5)),
-        inversePrimary = SunTint.readableOn(Color(0xFFF1F2F5)),
+        // Il testo dentro le pillole selezionate esce da `inverseOnSurface`,
+        // quindi non c'e' modo di scrivere bianco su bianco senza accorgersene.
+        inverseSurface = InverseSurface,
+        inverseOnSurface = InverseOnSurface,
+        inversePrimary = InversePrimary,
 
         outline = PanelOutline,
         outlineVariant = PanelOutlineVariant,
@@ -154,52 +181,4 @@ fun MeteoColors.toColorScheme(): ColorScheme {
     )
 }
 
-/**
- * Le stesse tinte, ma leggibili **sul cielo**.
- *
- * [toAccents] le tara su `PanelContainer`, che e' un antracite fermo: e' il
- * fondo dei pannelli, dove queste tinte passano quasi tutta la loro vita. La
- * schermata principale pero' non ha un fondo, ha una sfumatura che gira con
- * l'ora, e a meta' mattina arriva a un grigio chiaro: il giallo del sole tarato
- * sull'antracite li' sparisce. E' lo stesso difetto della sezione 8-bis di
- * CONTESTO, con un'altra faccia.
- *
- * Si chiede la soglia **ai due capi** della sfumatura e non al tono medio,
- * perche' sotto un segno solo ci sono due colori diversi. Soglia da segno
- * grande, come in [toAccents] e per la stessa ragione: portarle a 4,5:1 le
- * sbiadirebbe tutte verso lo stesso bianco sporco, e sei pallini identici non
- * direbbero piu' quale grandezza sono.
- *
- * Restano fuori i colori che sul cielo non ci vanno mai - griglia, fondo delle
- * etichette, curve di riferimento: quelli vivono dentro le tele dei pannelli, e
- * li' il fondo e' quello di [toAccents].
- */
-fun MeteoColors.skyAccents(): MeteoAccents = toAccents().copy(
-    sun = SunTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    rain = RainTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    wind = WindTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    air = AirTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    moon = MoonTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-    alert = AlertTint.readableOnBoth(skyZenith, skyHorizon, CONTRAST_AA_LARGE),
-)
 
-/** Le tinte delle grandezze, gia' rese leggibili sulla superficie che le ospita. */
-fun MeteoColors.toAccents(): MeteoAccents {
-    val on = PanelContainer
-    return MeteoAccents(
-        // Soglia da testo grande: queste tinte colorano curve spesse e cifre
-        // alte mezzo schermo, non didascalie. Portarle a 4.5:1 le sbiadirebbe
-        // tutte verso lo stesso bianco sporco, e a quel punto non direbbero
-        // piu' quale grandezza si sta guardando.
-        sun = SunTint.readableOn(on, CONTRAST_AA_LARGE),
-        rain = RainTint.readableOn(on, CONTRAST_AA_LARGE),
-        wind = WindTint.readableOn(on, CONTRAST_AA_LARGE),
-        air = AirTint.readableOn(on, CONTRAST_AA_LARGE),
-        moon = MoonTint.readableOn(on, CONTRAST_AA_LARGE),
-        alert = AlertTint.readableOn(on, CONTRAST_AA_LARGE),
-        ghost = Color(0xFFB4B4BE).readableOn(on, CONTRAST_AA_LARGE),
-        norm = Color(0xFFCFCFD8).readableOn(on, CONTRAST_AA_LARGE),
-        grid = PanelOutlineVariant,
-        chartLabelBackground = PanelContainerLowest,
-    )
-}

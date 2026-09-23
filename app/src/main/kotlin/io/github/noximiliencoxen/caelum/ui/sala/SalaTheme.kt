@@ -14,6 +14,7 @@ import androidx.compose.ui.util.lerp
 import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.theme.CONTRAST_AA_LARGE
 import io.github.noximiliencoxen.caelum.ui.theme.readableOn
 
@@ -105,8 +106,22 @@ object SalaTokens {
 /** Le quattro ore della giornata su cui e' costruita la tavolozza di Sala. */
 enum class SalaPhase { ALBA, GIORNO, TRAMONTO, NOTTE }
 
-/** Il tempo, ridotto alle sei famiglie che la tavolozza distingue. */
-enum class SalaCondition { SERENO, NUVOLOSO, PIOGGIA, GRANDINE, TEMPORALE, TEMPORALE_GRANDINE }
+/**
+ * Il tempo, ridotto alle sei famiglie che la tavolozza distingue.
+ *
+ * **C'era `GRANDINE` e adesso c'e' `NEVE`, e non e' un rinominare.** La
+ * grandine da sola non esiste nei codici WMO che questa app riceve: gli unici
+ * due che la nominano sono 96 e 99, e tutti e due dicono *temporale con
+ * grandine*, cioe' [TEMPORALE_GRANDINE]. Quello che finiva in `GRANDINE` erano
+ * i granuli di neve (77) e i rovesci di neve (85, 86) - neve, non ghiaccio -
+ * mentre la neve vera e propria (71, 73, 75) finiva in [PIOGGIA] e sopra il
+ * primo fiocco si leggeva **"Pioggia nella notte"**.
+ *
+ * Il difetto non era solo di parole: la scena chiedeva il ghiaccio all'enum e
+ * la neve alla famiglia WMO, quindi su 85 e 86 cadevano **tutte e due insieme**
+ * - chicchi e fiocchi nello stesso cielo, dallo stesso codice.
+ */
+enum class SalaCondition { SERENO, NUVOLOSO, PIOGGIA, NEVE, TEMPORALE, TEMPORALE_GRANDINE }
 
 /**
  * La fase del giorno da cui parte la tavolozza, ricavata dal cielo vero.
@@ -184,15 +199,42 @@ fun crepuscolezza(fase: FaseContinua): Float {
     return lerp(peso(fase.da), peso(fase.a), fase.avanzamento)
 }
 
-/** Il codice WMO ridotto alle sei famiglie della tavolozza. */
+/**
+ * Il codice WMO ridotto alle sei famiglie della tavolozza.
+ *
+ * **La neve la riconosce [Wmo.family] e non un elenco di numeri scritto qui.**
+ * I due elenchi c'erano davvero, ed erano diversi: questo metteva 77, 85 e 86
+ * fra la grandine, quello metteva 71, 73, 75, 77, 85 e 86 fra la neve. Da due
+ * verita' sullo stesso codice nasceva un cielo in cui cadevano chicchi e
+ * fiocchi insieme, e una didascalia che chiamava pioggia una nevicata.
+ *
+ * Una sola verita', e sta dove stanno i codici.
+ *
+ * **E la stessa cosa e' ricapitata col codice 1.** `code >= 1` lo mandava fra
+ * i nuvolosi mentre [Wmo.family] lo dice `ASCIUTTO`, e il disaccordo non era
+ * teorico: [glifoDi] - che legge la famiglia e la nuvolosita' vera - disegnava
+ * il **sole**, e la sala dietro dipingeva un cielo chiuso al quarantacinque per
+ * cento. Lo stesso numero, due risposte, sulla stessa schermata.
+ */
 fun salaConditionOf(code: Int?): SalaCondition = when {
     code == null -> SalaCondition.SERENO
     code == 96 || code == 99 -> SalaCondition.TEMPORALE_GRANDINE
     code == 95 -> SalaCondition.TEMPORALE
-    code == 77 || code == 85 || code == 86 -> SalaCondition.GRANDINE
+    Wmo.family(code) == Wmo.Family.NEVE -> SalaCondition.NEVE
     code >= 51 -> SalaCondition.PIOGGIA
-    code >= 1 -> SalaCondition.NUVOLOSO
-    else -> SalaCondition.SERENO
+    // **Il codice 1 e' "prevalentemente sereno", e finiva fra i nuvolosi.**
+    // Una o due ottavi di cielo: chi guardava fuori vedeva una giornata aperta
+    // e leggeva "Nuvole di passaggio" sopra un cielo grigio. E il pavimento
+    // della condizione gli imponeva il quarantacinque per cento di copertura,
+    // che e' la ragione per cui il sole spariva.
+    //
+    // La doppia verita' era gia' scritta due file piu' in la': [Wmo.family]
+    // classifica lo zero **e l'uno** come `ASCIUTTO` da sempre. Questa riga
+    // diceva il contrario, nello stesso progetto, sullo stesso numero.
+    Wmo.family(code) == Wmo.Family.ASCIUTTO -> SalaCondition.SERENO
+    // Restano qui il 2 e il 3 - famiglia NUVOLOSO - e la nebbia, 45 e 48, che
+    // di cielo aperto non ne ha.
+    else -> SalaCondition.NUVOLOSO
 }
 
 // -- Il cielo ---------------------------------------------------------------
@@ -344,7 +386,13 @@ fun temaScuro(sky: SkyState): Float {
  * per saltare. Da soglia, la molla la attraversa nel tempo come tutte le altre.
  */
 fun temaScuroPerTempesta(condition: SalaCondition): Boolean = when (condition) {
-    SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE, SalaCondition.GRANDINE -> true
+    SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> true
+    // **La neve non e' piu' qui dentro, e ci stava per sbaglio.** Ci stava
+    // perche' era etichettata "grandine", e una cella di grandine porta con se'
+    // il buio del fronte che la fa. Una nevicata e' il contrario: e' la
+    // giornata piu' **chiara** dell'anno, perche' il bianco che sta per terra
+    // rimanda su tutta la luce che riceve. Il cielo della neve, in tavola, e'
+    // infatti quello piu' chiaro di tutti.
     else -> false
 }
 

@@ -123,6 +123,20 @@ case "$SIZE" in
 esac
 echo "schermo ${W}x${H}"
 
+# **La densita' si chiede, non si deduce dalla larghezza.** Il profilo pixel_6
+# e' 1080x2400 a 420 dpi, cioe' 2,625 pixel per punto e 411 punti di larghezza -
+# e chi la ricavasse dividendo per i 393 punti del Pixel 6 "da scheda tecnica"
+# sbaglierebbe del cinque per cento, che su una colonna di sette bersagli sono
+# quaranta pixel: il dito finirebbe sul bersaglio sbagliato. Serve solo ai gesti
+# che devono cadere su un comando preciso.
+DPI=$(adbt shell wm density 2>/dev/null | tr -d '\r' | awk '{print $NF}')
+case "$DPI" in
+  ''|*[!0-9]*) DPI=420 ;;
+esac
+# Centesimi di pixel per punto: la shell non fa conti con la virgola.
+PXDP=$(( DPI * 100 / 160 ))
+echo "densita' ${DPI}dpi (${PXDP} centesimi di pixel per punto)"
+
 # Il benvenuto viene prima di tutto, e non solo perche' e' la prima cosa che si
 # vede: finche' non lo si chiude **l'app lo rimostra a ogni avvio**, e ogni altro
 # scatto di questo script ritrarrebbe lui invece della schermata che dice di
@@ -257,7 +271,7 @@ session() {
       adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
       sleep 1
       adbt shell logcat -c >/dev/null 2>&1 || true
-      avvia --ei ora "$1" --ei meteo "$2" >/dev/null 2>&1 || true
+      avvia --ei ora "$1" --ei meteo "$2" --ei nuvolosita "${4:--1}" >/dev/null 2>&1 || true
       attendi_previsione
       # **Il cielo va aspettato anche dopo che i dati sono arrivati**, ed e' il
       # rovescio della trappola #28: quella dice che con le animazioni spente
@@ -275,9 +289,26 @@ session() {
       shoot "cielo-$3"
     }
     cielo  6 0 alba
-    cielo 12 0 mezzogiorno-sereno
+    cielo 12 0 mezzogiorno-sereno    5
     cielo 20 0 tramonto
-    cielo 12 3 mezzogiorno-coperto
+    cielo 12 3 mezzogiorno-coperto  95
+    # **I due che mancavano, e sono quelli di cui si discuteva.** Fra il sereno
+    # e il coperto pieno non c'era niente: la scala aveva i due estremi e nessun
+    # punto in mezzo, ed e' proprio in mezzo che l'app sbagliava.
+    #
+    # **E il quarto argomento non e' un vezzo: senza, questi quattro scatti
+    # sarebbero lo stesso cielo quattro volte.** Da quando la copertura viene
+    # dalla nuvolosita' vera e non da un pavimento per condizione, imporre il
+    # **codice** non cambia piu' quanto il cielo appare chiuso - decide le
+    # parole, non il grigio. Misurato: `--ei meteo 2` e `--ei meteo 3` alla
+    # stessa ora davano due PNG **identici byte per byte**. Era la galleria che
+    # ricominciava a mentire, vista mentre succedeva.
+    #
+    # Adesso i quattro impongono ora, codice **e** nuvolosita', e si guardano in
+    # fila: devono raccontare quattro cieli in scala, dal piu' aperto al piu'
+    # chiuso, col disco del sole riconoscibile in tutti e quattro.
+    cielo 12 1 mezzogiorno-quasi-sereno  20
+    cielo 12 2 mezzogiorno-poco-nuvoloso 55
     alive || { echo "dispositivo caduto dopo gli scatti del cielo"; return; }
   fi
 
@@ -326,32 +357,18 @@ session() {
   sleep 1
   shoot "${slug}-d2-allerta-seconda-sala"
 
-  # ── L'allerta ridotta a pallino ─────────────────────────────────────────────
+  # ── Qui stavano il pallino e la riapertura, e non ritraevano piu' niente ────
   #
-  # Lo stato ridotto si raggiunge con un tocco sulla croce, e qui non c'e' un
-  # dito: l'aggancio `--ez allertaridotta` lo impone. E' l'unico modo di
-  # fotografarlo, e senza scatto sarebbe l'unico pezzo dell'interfaccia che
-  # nessuno ha mai verificato.
+  # `--ez allertaridotta` imponeva lo stato ridotto, che col dito non si
+  # raggiunge; il tocco dopo lo riapriva. Sono usciti tutti e due **insieme alla
+  # fascia che li disegnava**, che se n'e' andata col feed: la pastiglia
+  # dell'avviso, oggi, non si tocca nemmeno.
   #
-  # Due cose da guardare in questo scatto, e sono le due che possono rompersi:
-  # il nome della localita' deve restare **nella stessa identica posizione**
-  # dello scatto d8 - il pallino sta nei 48dp che erano gia' riservati - e il
-  # triangolo deve leggersi sul fondo del contenitore d'errore.
-  alive || { echo "dispositivo caduto prima dello scatto del pallino"; return; }
-  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  sleep 1
-  avvia --ei ora "$ora_dettaglio" \
-    --ei allerta 2 --ez allertaridotta true >/dev/null 2>&1 || true
-  attendi_previsione
-  sleep 1
-  shoot "${slug}-d3-allerta-pallino"
+  # Che non ritraessero piu' niente lo dicono i file, non un ragionamento: nel
+  # giro 333 `chiaro-d1`, `chiaro-d3` e `chiaro-d4` hanno lo **stesso md5**.
+  # Tre scatti identici con tre nomi diversi sono peggio di uno scatto in meno -
+  # e' la stessa regola con cui `--ei giro` e' uscito da Sala III.
 
-  # Il pallino deve riportare alle allerte per esteso: e' tutto il suo mestiere.
-  # Sta in alto a destra, nei 48dp simmetrici al pulsante delle impostazioni.
-  alive || { echo "dispositivo caduto prima dello scatto del bollettino"; return; }
-  adbt shell input tap "$(( W - 44 ))" "$(( H * 7 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d4-allerta-riaperta"
 
   # ── L'avviso calcolato, che non e' un bollettino ────────────────────────────
   #
@@ -371,9 +388,10 @@ session() {
   sleep 1
   shoot "${slug}-d4b-avviso-calcolato"
 
-  adbt shell input tap "$cx" "$(( H * 13 / 100 ))" >/dev/null 2>&1 || true
-  sleep 2
-  shoot "${slug}-d4c-avviso-calcolato-bollettino"
+  # Il bollettino per esteso non si apre piu' - il foglio che lo mostrava e'
+  # uscito col feed - quindi lo scatto che lo ritraeva e' uscito con lui: il
+  # tocco cadeva sul cielo e ci lasciava un'increspatura, che e' tutto cio' che
+  # la differenza fra i due file raccontava.
 
   # ── Le sei schede del feed ──────────────────────────────────────────────────
   #
@@ -425,6 +443,36 @@ session() {
     n=$(( n + 1 ))
     i=$(( i + 1 ))
   done
+
+  # ── La colonna si trascina ──────────────────────────────────────────────────
+  #
+  # **Il gesto nuovo, fotografato mentre e' in corso.** Tenere premuta la
+  # colonna e scorrere attraversa le sale con la sala sotto il dito, e accanto
+  # al dito compare il cartellino col nome: due cose che uno scatto a dito
+  # alzato non puo' mostrare, perche' a dito alzato il cartellino non c'e' piu'.
+  #
+  # `input motionevent` tiene premuto fra un comando e l'altro - la stessa
+  # tecnica della rotazione della luna, e la ragione per cui li' non si usa una
+  # swipe: quella finisce prima dello scatto.
+  #
+  # I conti: la colonna e' centrata in verticale sullo schermo **intero** - sta
+  # fuori dal riquadro che tiene conto delle barre di sistema - ed e' fatta di
+  # sette bersagli da 48dp, quindi alta 336dp. Il suo asse sta a mezzo bersaglio
+  # piu' sei punti di margine dal bordo destro: trenta punti.
+  local passo=$(( 48 * PXDP / 100 ))
+  local asse=$(( W - 30 * PXDP / 100 ))
+  local cima=$(( H / 2 - 7 * passo / 2 ))
+  # Il centro del bersaglio numero $1, dal primo (0) al settimo (6).
+  bersaglio_y() { echo $(( cima + $1 * passo + passo / 2 )); }
+
+  echo "  -- colonna trascinata (asse $asse, passo $passo) --"
+  adbt shell input motionevent DOWN "$asse" "$(bersaglio_y 6)" >/dev/null 2>&1 || true
+  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 3)" >/dev/null 2>&1 || true
+  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
+  sleep 1
+  shoot "${slug}-d11b-colonna-trascinata"
+  adbt shell input motionevent UP "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
+  sleep 1
 
   # L'indietro da una scheda qualunque riporta alla prima, invece di chiudere
   # l'app: da sei schede sotto, uscire non e' quasi mai la risposta cercata.
@@ -534,6 +582,14 @@ session() {
       # shellcheck disable=SC2086
       avvia --es tema SCURO $1 >/dev/null 2>&1 || true
       attendi_previsione
+      # **Il cielo va aspettato anche dopo i dati**, per la stessa ragione
+      # scritta dentro `cielo()`: ad app appena avviata l'altezza del sole parte
+      # dal ripiego diurno e il tema ci arriva con una molla. Senza questa
+      # attesa lo scatto della neve e' uscito davvero cosi' - cielo notturno di
+      # nevicata e scheda in tema chiaro, due cose che insieme non esistono - e
+      # per un giro l'ho letto come un difetto della tavolozza invece che come
+      # una fotografia scattata a meta' di una dissolvenza.
+      sleep 3
     }
 
     # Di notte serve anche un cielo poco nuvoloso: col coperto vero di
@@ -557,49 +613,47 @@ session() {
     restart_with "--ei meteo 73"
     shoot "${slug}-5b-neve"
 
+    # **I rovesci di neve: il codice che cadeva due volte.** 85 e 86 erano
+    # "grandine" per la tavolozza e "neve" per la famiglia WMO, e il cielo
+    # chiedeva tutte e due le sostanze insieme - chicchi **e** fiocchi dalla
+    # stessa nuvola. Questo scatto e' li' per vedere che ne cada una sola, e che
+    # il titolo dica neve invece di pioggia.
+    restart_with "--ei meteo 86"
+    shoot "${slug}-5b2-rovesci-di-neve"
+
     restart_with "--ei ora 12 --ei meteo 0"
     shoot "${slug}-5c-sereno-uccelli"
 
     restart_with "--ei meteo 96"
     shoot "${slug}-5d-grandine"
 
+    # Il temporale senza grandine: e' lo scatto del **fulmine**. L'orologio
+    # della scena, in cattura, resta fermo a zero, e a zero la prima scarica e'
+    # al massimo - scelto apposta, cosi' il colpo finisce in fotografia invece
+    # del buio che ci sta in mezzo. Qui si guarda il canale: che scenda, che si
+    # biforchi, e che il velo sul cielo non cancelli il paesaggio.
+    restart_with "--ei meteo 95"
+    shoot "${slug}-5e-fulmine"
+
     # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
     # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
-    # col dito non si arriva: per portare la cifra di taglio servono quattrocento
-    # pixel di trascinamento, per vederla da dietro piu' di ottocento, e lo
-    # schermo e' largo mille.
+    # ── Qui stavano cinque scatti col giro, e il giro non lo legge piu' nessuno ─
     #
-    # **Questi sei scatti hanno mentito per mesi.** `--ei giro` arrivava fino a
-    # `UiState.forcedYawDeg` e li' si fermava: nessuna schermata di Sala lo
-    # leggeva, perche' il lettore era `SceneRotation.pin()` ed e' uscito col
-    # vecchio feed. Ritraevano quindi la scena **ferma** nella posa di riposo,
-    # e nessuno se n'e' accorto perche' una scultura girata di novanta gradi
-    # somiglia comunque a una scultura. E' lo stesso guasto della galleria che
-    # ritraeva l'Ingresso dappertutto: il banco di prova che mente non fallisce,
-    # dice di si'. Da adesso il giro lo legge `rememberGiro(state.forcedYawDeg)`
-    # e questi scatti cambiano per la prima volta: non e' una regressione.
-    # **Col cielo coperto, e non e' un dettaglio.** I primi scatti del giro
-    # riparato sono usciti a cielo sereno, cioe' su un **disco**: una sfera
-    # girata di novanta gradi e' identica a una sfera ferma, quindi lo scatto
-    # non poteva dimostrare niente - ne' che il giro funzioni ne' che non
-    # funzioni. Le masse della nuvola stanno a profondita' diverse: sono loro a
-    # scavalcarsi girando, ed e' li' che si vede.
-    restart_with "--ei meteo 3 --ei giro 90"
-    shoot "${slug}-7-di-taglio"
-
-    restart_with "--ei meteo 3 --ei giro 135"
-    shoot "${slug}-8-tre-ottavi"
-
-    restart_with "--ei meteo 3 --ei giro 180"
-    shoot "${slug}-9-da-dietro"
-
-    # La luna deve poter passare davanti alla nuvola: e' tutto il punto
-    # dell'ordinamento in profondita' dei corpi tondi.
-    restart_with "--ei ora 2 --ei meteo 1 --ei giro 155"
-    shoot "${slug}-10-luna-girata"
-
-    restart_with "--ei meteo 63 --ei giro 45"
-    shoot "${slug}-11-pioggia-girata"
+    # `--ei giro` portava un angolo fino a `UiState.forcedYawDeg` e li' si
+    # fermava. Il commento che stava qui lo raccontava gia' **al passato** - "sei
+    # scatti hanno mentito per mesi", riparati collegando `rememberGiro` - e
+    # `rememberGiro` e' uscito col cielo di Organic, quindi il difetto e' tornato
+    # e nessuno se n'e' accorto: una scena ferma fotografata quattro volte
+    # somiglia a una scena ferma.
+    #
+    # Questa volta esce la catena intera invece del solo scatto, cosi' non puo'
+    # tornare una terza volta. Di taglio, tre ottavi e da dietro ritraevano il
+    # coperto, che ha gia' il suo scatto; la pioggia girata ritraeva la pioggia,
+    # che ha il suo. Resta la luna fra le nuvole, perche' quella una cosa da
+    # guardare ce l'ha - l'ordine in profondita' dei corpi tondi - e non aveva
+    # bisogno di nessun angolo per mostrarla.
+    restart_with "--ei ora 2 --ei meteo 1"
+    shoot "${slug}-10-luna-fra-le-nuvole"
 
     # ── Cio' che questo giro ha cambiato, e che va guardato ──────────────────
     #
@@ -636,33 +690,20 @@ session() {
     # quindicesimo riavvio, e la coda e' cio' che ci si puo' permettere di
     # perdere. Sono i due casi che nessuno degli altri copre.
     #
-    # Girata, perche' e' l'unico modo di fotografare **cio' per cui il gesto
-    # esiste**: girando si scopre lo strombo, cioe' la parete di dentro del
-    # foro, e il cielo scivola rispetto all'apertura. Da fermo la finestra e' un
-    # rettangolo bianco e quella profondita' non si vede. Fino a poco fa
-    # `--ei giro` arrivava alla sola prima schermata, quindi questo scatto non
-    # era nemmeno possibile.
+    # **Il commento che stava qui parlava di una finestra e di un angolo, e non
+    # c'e' piu' ne' l'una ne' l'altro.** Erano tre strati di sedimento: la
+    # lastra di vetro con le gocce e i passanti, uscita con `ui/feed/`; il
+    # `--ei giro` chiesto a una schermata che non ha niente da girare, tolto un
+    # giro fa; e la spiegazione di perche' la rotazione servisse. Restano i due
+    # casi veri, ed e' di quelli che parla il commento adesso.
     #
-    # E con la pioggia, perche' e' l'unico modo di vedere le gocce **sul vetro**:
-    # la previsione vera del giorno dello scatto e' quasi sempre asciutta, e
-    # senza il codice imposto la lastra resterebbe pulita in ogni scatto della
-    # galleria.
+    # Sono **in coda apposta**: l'emulatore muore attorno al quindicesimo
+    # riavvio, e la coda e' cio' che ci si puo' permettere di perdere.
     #
-    # Cosa **non** si fotografa, e va detto invece di comprarlo con un terzo
-    # riavvio: la neve, che cambia due rami - i fiocchi che ondeggiano dietro e
-    # il vetro che resta pulito - ma li cambia in un modo che una foto ferma
-    # racconta male.
-    # **La lastra di vetro non c'e' piu'**: gocce, rivoli e passanti sono usciti
-    # con `ui/feed/RainWindow.kt` e `WindowGlass.kt`. Qui resta la sala della
-    # pioggia - `--ei sezione 2`, che in Sala e' lei e non piu' la prima scheda -
-    # e i nomi degli scatti lo dicono, invece di continuare a promettere una
-    # finestra che nessuno disegna piu'.
-    # **Il `--ei giro` se n'e' andato da qui, e non per svista.** Sala III non ha
-    # un oggetto che gira: la scultura sta nella prima sala, la luna nella
-    # quarta. Chiedere un angolo a questa schermata era un comando che non fa
-    # niente, ed e' rimasto nello script perche' nessuno lo rileggeva - lo stesso
-    # motivo per cui il giro e' restato scollegato per mesi. Uno scatto che
-    # promette qualcosa che non puo' mostrare e' peggio di uno scatto in meno.
+    # Il codice imposto serve perche' la previsione vera del giorno dello scatto
+    # e' quasi sempre asciutta: senza, la sala della pioggia resterebbe vuota in
+    # ogni scatto della galleria.
+
     restart_with "--ei ora $ora_dettaglio --ei sezione 2"
     shoot "${slug}-12-pioggia"
 

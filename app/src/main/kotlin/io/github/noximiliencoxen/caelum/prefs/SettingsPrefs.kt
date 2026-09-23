@@ -7,9 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.WeatherModel
@@ -95,24 +93,11 @@ data class Settings(
     val model: WeatherModel = WeatherModel.AUTO,
     /** Localita' salvate a parte dalla scelta corrente. */
     val favorites: List<Place> = emptyList(),
-    /**
-     * Gli identificativi delle allerte per cui la fascia e' stata ridotta.
-     *
-     * Non basta ricordare **che** e' stata chiusa: va ricordato **cosa** e'
-     * stato chiuso. Chiudere l'avviso di oggi non puo' nascondere quello che
-     * arriva domani, se no la fascia smetterebbe di avvisare esattamente
-     * quando serve.
-     */
-    val dismissedAlertIds: Set<String> = emptySet(),
-    /**
-     * Il peso del livello peggiore fra quelle chiuse (1 gialla, 2 arancione,
-     * 3 rossa).
-     *
-     * Sta accanto agli identificativi perche' un'allerta puo' **peggiorare**
-     * restando la stessa: la gialla di stamattina che diventa arancione ha lo
-     * stesso id e non e' piu' la stessa notizia.
-     */
-    val dismissedAlertWeight: Int = 0,
+    // Le due preferenze della fascia ridotta a pallino - cosa era stato
+    // chiuso e quanto era grave - se ne sono andate con la fascia. Le chiavi
+    // restano scritte nel DataStore di chi ce le aveva: nessuno le legge piu',
+    // e cancellarle vorrebbe dire scrivere sul disco di qualcuno per togliere
+    // due valori che non danno fastidio a nessuno.
     /** La carta: automatica seguendo l'ora, o forzata chiara/scura. */
     val cardTheme: CardTheme = CardTheme.AUTO,
     val windUnit: SalaWindUnit = SalaWindUnit.KMH,
@@ -193,8 +178,6 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> WeatherModel.entries.firstOrNull { it.name == saved } }
                 ?: WeatherModel.AUTO,
             favorites = decodeFavorites(prefs[KEY_FAVORITES]),
-            dismissedAlertIds = prefs[KEY_ALERTS_DISMISSED].orEmpty(),
-            dismissedAlertWeight = prefs[KEY_ALERTS_WEIGHT] ?: 0,
             cardTheme = prefs[KEY_CARD_THEME]
                 ?.let { saved -> CardTheme.entries.firstOrNull { it.name == saved } }
                 ?: CardTheme.AUTO,
@@ -239,9 +222,13 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_UNIT] = unit.name }
     }
 
-    suspend fun setModel(model: WeatherModel) {
-        context.settingsDataStore.edit { it[KEY_MODEL] = model.name }
-    }
+    // **`setModel` non c'e' piu', e `KEY_MODEL` si', apposta.** Sceglieva il
+    // modello numerico - il migliore disponibile, oppure ICON-2I - e il posto
+    // da cui si sceglieva e' uscito col redisegno delle impostazioni: da mesi
+    // il valore si poteva solo **leggere**. La lettura resta perche' chi aveva
+    // scelto ICON-2I prima che il comando sparisse lo ha ancora scritto nelle
+    // preferenze, e togliergliela di mano vorrebbe dire cambiargli la
+    // previsione senza dirglielo.
 
     suspend fun setCardTheme(theme: CardTheme) {
         context.settingsDataStore.edit { it[KEY_CARD_THEME] = theme.name }
@@ -282,33 +269,6 @@ class SettingsPrefs(private val context: Context) {
         }
     }
 
-    /**
-     * Riduce la fascia dell'allerta a un pallino, ricordando per cosa.
-     *
-     * @param ids gli identificativi delle allerte in scena in questo momento.
-     * @param weight il peso del livello peggiore fra quelle.
-     */
-    suspend fun dismissAlerts(ids: Set<String>, weight: Int) {
-        context.settingsDataStore.edit { prefs ->
-            prefs[KEY_ALERTS_DISMISSED] = ids
-            prefs[KEY_ALERTS_WEIGHT] = weight
-        }
-    }
-
-    /**
-     * Rimette la fascia intera.
-     *
-     * Si svuota tutto invece di togliere un identificativo per volta: chi
-     * riapre la fascia sta dicendo che la vuole vedere, e ricordarsi di
-     * un'allerta chiusa la settimana scorsa servirebbe solo a nasconderne una
-     * di nuovo.
-     */
-    suspend fun restoreAlertBar() {
-        context.settingsDataStore.edit { prefs ->
-            prefs.remove(KEY_ALERTS_DISMISSED)
-            prefs.remove(KEY_ALERTS_WEIGHT)
-        }
-    }
 
     private fun decodeFavorites(raw: String?): List<Place> {
         if (raw.isNullOrBlank()) return emptyList()
@@ -326,8 +286,6 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
         val KEY_MODEL = stringPreferencesKey("modello")
         val KEY_FAVORITES = stringPreferencesKey("preferiti")
-        val KEY_ALERTS_DISMISSED = stringSetPreferencesKey("allerte_chiuse")
-        val KEY_ALERTS_WEIGHT = intPreferencesKey("allerte_chiuse_peso")
         val KEY_CARD_THEME = stringPreferencesKey("sala_carta")
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")

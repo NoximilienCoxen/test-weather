@@ -35,11 +35,16 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
         SalaPhase.TRAMONTO to "Pioggia fino a notte",
         SalaPhase.NOTTE to "Pioggia nella notte",
     ),
-    SalaCondition.GRANDINE to mapOf(
-        SalaPhase.ALBA to "Grandine all'alba",
-        SalaPhase.GIORNO to "Rovescio di grandine",
-        SalaPhase.TRAMONTO to "Grandine sul tardi",
-        SalaPhase.NOTTE to "Grandine notturna",
+    // **Qui c'era la grandine, e sopra una nevicata si leggeva "Pioggia".** I
+    // codici della neve - 71, 73, 75 - cadevano in PIOGGIA, e quelli dei
+    // rovesci di neve - 77, 85, 86 - in una "grandine" che i codici WMO di
+    // questa app non hanno mai contenuto. Adesso la neve ha le sue parole, e la
+    // grandine resta dov'e' davvero: dentro il temporale che la fa.
+    SalaCondition.NEVE to mapOf(
+        SalaPhase.ALBA to "Neve dalle prime luci",
+        SalaPhase.GIORNO to "Nevica",
+        SalaPhase.TRAMONTO to "Neve fino a sera",
+        SalaPhase.NOTTE to "Neve nella notte",
     ),
     SalaCondition.TEMPORALE to mapOf(
         SalaPhase.ALBA to "Temporale all'alba",
@@ -59,7 +64,7 @@ private val SalaBodies: Map<SalaCondition, String> = mapOf(
     SalaCondition.SERENO to "Cielo aperto e visibilità ottima.",
     SalaCondition.NUVOLOSO to "Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.",
     SalaCondition.PIOGGIA to "Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.",
-    SalaCondition.GRANDINE to "Chicchi in caduta: copri le piante in vaso e sposta l'auto se puoi.",
+    SalaCondition.NEVE to "Neve in caduta: fondo scivoloso e visibilità ridotta, soprattutto dove non passa nessuno.",
     SalaCondition.TEMPORALE to "Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.",
     SalaCondition.TEMPORALE_GRANDINE to "Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.",
 )
@@ -89,7 +94,7 @@ fun SalaCondition.label(): String = when (this) {
     SalaCondition.SERENO -> "sereno"
     SalaCondition.NUVOLOSO -> "nuvoloso"
     SalaCondition.PIOGGIA -> "pioggia"
-    SalaCondition.GRANDINE -> "grandine"
+    SalaCondition.NEVE -> "neve"
     SalaCondition.TEMPORALE -> "temporale"
     SalaCondition.TEMPORALE_GRANDINE -> "temporale con grandine"
 }
@@ -135,3 +140,38 @@ fun Didascalia(testo: String, palette: SalaPalette, modifier: Modifier = Modifie
     if (LocalDidascalie.current == CaptionStyle.BREVI) return
     Text(text = testo, style = SalaType.body, color = palette.inkSoft, modifier = modifier)
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Le ore, gia' scritte
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// **Un giorno ha ventiquattro ore e le loro etichette sono sempre le stesse.**
+// Erano un `String.format` ciascuna, e le colonne sono tante: sedici nella sala
+// dei raggi, dodici nella pioggia, dodici nel vento, quattro nell'aria, una
+// nella barra. `format` non e' una sostituzione di caratteri - compila il
+// modello, cerca la posizione decimale della lingua in uso e costruisce due
+// oggetti intermedi - e qui lo faceva a ogni ricomposizione, cioe' a ogni
+// fotogramma mentre il cielo si muove.
+//
+// Un effetto collaterale che vale la pena dire: `%d` scrive le cifre **della
+// lingua del telefono**, quindi su un telefono in arabo la barra delle ore
+// usciva in cifre indo-arabe sotto un testo italiano. Qui escono sempre le
+// stesse, come gia' fanno i decimali, che passano apposta da `Locale.ITALY`.
+
+/** Le ventiquattro ore a due cifre: `00`, `01`, ... `23`. */
+private val OreDueCifre: Array<String> = Array(24) { if (it < 10) "0$it" else "$it" }
+
+/** Le stesse con i minuti: `00:00`, `01:00`, ... `23:00`. */
+private val OrePiene: Array<String> = Array(24) { "${OreDueCifre[it]}:00" }
+
+/**
+ * L'ora a due cifre, senza minuti: l'etichetta sotto una colonna.
+ *
+ * Stringe fra 0 e 23 invece di lasciar passare un indice fuori posto: chi la
+ * chiama passa sempre un `LocalDateTime.hour`, ma un'etichetta sbagliata e'
+ * meno grave di una schermata che si chiude.
+ */
+fun oraDueCifre(ora: Int): String = OreDueCifre[ora.coerceIn(0, 23)]
+
+/** L'ora piena, `HH:00`: l'etichetta grande della barra e le celle "PICCO". */
+fun oraPiena(ora: Int): String = OrePiene[ora.coerceIn(0, 23)]

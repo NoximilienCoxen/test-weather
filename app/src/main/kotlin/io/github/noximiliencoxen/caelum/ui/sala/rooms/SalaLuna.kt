@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
-import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
+import io.github.noximiliencoxen.caelum.data.MoonPhase
+import io.github.noximiliencoxen.caelum.data.MoonSegment
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala

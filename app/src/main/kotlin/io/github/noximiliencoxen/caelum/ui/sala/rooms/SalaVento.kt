@@ -31,6 +31,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
 import kotlin.math.roundToInt
 
 /**
@@ -156,7 +157,7 @@ fun SalaVentoScreen(
                     verticalArrangement = Arrangement.spacedBy(7.dp),
                 ) {
                     Text(
-                        text = "%02d".format(ore[indice].time.hour),
+                        text = oraDueCifre(ore[indice].time.hour),
                         style = SalaType.microLabel,
                         color = palette.inkSoft,
                     )
