@@ -102,6 +102,7 @@ class MainActivity : ComponentActivity() {
             "agganci: ora=${intent.getIntExtra(EXTRA_HOUR, -1)} " +
                 "sezione=${intent.getIntExtra(EXTRA_SECTION, -1)} " +
                 "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
+                "nuvolosita=${intent.getIntExtra(EXTRA_CLOUDS, -1)} " +
                 "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)} " +
                 // Ci sta **apposta**: e' l'unico modo di sapere, dal logcat che
                 // la cattura salva fra gli artefatti, se un avvio ha davvero
@@ -134,12 +135,7 @@ class MainActivity : ComponentActivity() {
         if (intent.getBooleanExtra(EXTRA_CAPTURE, false)) viewModel.scattoFermo()
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
-        // Il giro accetta anche lo zero, che e' un angolo come un altro: il
-        // valore che vuol dire "non imposto" e' il minimo dell'intero, non un
-        // numero che qualcuno potrebbe voler chiedere davvero.
-        intent.getIntExtra(EXTRA_YAW, Int.MIN_VALUE)
-            .takeIf { it != Int.MIN_VALUE }
-            ?.let { viewModel.forceYaw(it.toFloat()) }
+        intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
@@ -148,10 +144,6 @@ class MainActivity : ComponentActivity() {
         // specifica.
         if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
-        // Va letto **dopo** EXTRA_ALERT: ridurre la fascia salva gli
-        // identificativi di cio' che c'e' in scena, e se l'allerta imposta non
-        // ci fosse ancora non ci sarebbe niente da ridurre.
-        if (intent.getBooleanExtra(EXTRA_ALERT_SMALL, false)) viewModel.collapseAlerts()
     }
 
     private companion object {
@@ -171,7 +163,9 @@ class MainActivity : ComponentActivity() {
 
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"
-        const val EXTRA_YAW = "giro"
+
+        /** La nuvolosita' oraria in percentuale: e' lei a decidere il cielo. */
+        const val EXTRA_CLOUDS = "nuvolosita"
 
         /**
          * Apre il dettaglio di un giorno. Serve perche' col dito si arriva
@@ -219,14 +213,5 @@ class MainActivity : ComponentActivity() {
          */
         const val EXTRA_ALERT = "allerta"
 
-        /**
-         * Riduce subito la fascia al pallino, per fotografare quello stato.
-         *
-         * Con il solo `--ei allerta` si vede sempre e solo la fascia intera: lo
-         * stato ridotto si raggiunge con un tocco sulla croce, e la CI non ha
-         * un dito. Senza questo aggancio il pallino sarebbe l'unica cosa
-         * dell'app che nessuno scatto puo' mostrare.
-         */
-        const val EXTRA_ALERT_SMALL = "allertaridotta"
     }
 }

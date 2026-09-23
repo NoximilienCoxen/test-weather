@@ -5,9 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -18,8 +16,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.R
 
-/** Le tinte delle grandezze, che Material 3 non nomina. Vedi [MeteoAccents]. */
-val LocalMeteoAccents = staticCompositionLocalOf { skyColors(io.github.noximiliencoxen.caelum.data.SkyState.Giorno).toAccents() }
 
 /**
  * Un carattere solo per tutta l'app: Archivo, lo stesso della cifra gigante.
@@ -155,19 +151,20 @@ fun MeteoTheme(
     colors: MeteoColors,
     content: @Composable () -> Unit,
 ) {
-    // Lo schema e le tinte costano una manciata di conversioni di gamma per
-    // colore: si ricalcolano al cambio d'ora, non a ogni ricomposizione.
+    // Lo schema costa una manciata di conversioni di gamma per colore: si
+    // ricalcola al cambio d'ora, non a ogni ricomposizione.
+    //
+    // **I due `CompositionLocal` che stavano qui non ci sono piu'.**
+    // `LocalMeteoColors` e `LocalMeteoAccents` fornivano la tavolozza e le
+    // tinte delle grandezze a chiunque le chiedesse; da quando il feed e'
+    // uscito, `.current` non lo scrive piu' nessuno. Un valore fornito e mai
+    // letto non e' neutro: costringe a calcolarlo, e a ogni fotogramma in cui
+    // il cielo si muove costringeva a **ricalcolarlo**.
     val scheme = remember(colors) { colors.toColorScheme() }
-    val accents = remember(colors) { colors.toAccents() }
-    CompositionLocalProvider(
-        LocalMeteoColors provides colors,
-        LocalMeteoAccents provides accents,
-    ) {
-        MaterialTheme(
-            colorScheme = scheme,
-            typography = MeteoTypography,
-            shapes = MeteoShapes,
-            content = content,
-        )
-    }
+    MaterialTheme(
+        colorScheme = scheme,
+        typography = MeteoTypography,
+        shapes = MeteoShapes,
+        content = content,
+    )
 }

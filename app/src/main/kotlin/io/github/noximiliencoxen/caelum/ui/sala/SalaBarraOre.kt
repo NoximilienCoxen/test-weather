@@ -174,7 +174,7 @@ fun BarraDelleOre(
                     modifier = Modifier.alignByBaseline(),
                 )
                 Text(
-                    text = "%02d:00".format(ora),
+                    text = oraPiena(ora),
                     style = SalaType.hourLabel,
                     color = palette.accentSuCielo,
                     modifier = Modifier.alignByBaseline(),
@@ -240,16 +240,13 @@ private fun coloriDelleOre(
             SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 1f
             else -> 0f
         }
-        val copertura = maxOf(
-            (ora.cloudCover ?: 0) / 100f,
-            when (condizione) {
-                SalaCondition.SERENO -> 0f
-                SalaCondition.NUVOLOSO -> 0.45f
-                SalaCondition.PIOGGIA -> 0.80f
-                SalaCondition.GRANDINE -> 0.85f
-                SalaCondition.TEMPORALE, SalaCondition.TEMPORALE_GRANDINE -> 0.95f
-            },
-        )
+        // **La stessa regola della scena, chiamata e non ricopiata.** Qui
+        // c'era la copia riga per riga della tabella dei minimi, e poi - una
+        // volta unificata quella - restava ricopiata la formula intorno: due
+        // strade da tenere in fase, e alla prima che fosse cambiata da una
+        // parte sola le colonne avrebbero tinto un cielo che la sala non
+        // mostra piu'. Adesso passano tutte e due da [coperturaDi].
+        val copertura = coperturaDi(condizione, ora.cloudCover)
         val neve = if (Wmo.family(ora.weatherCode) == Wmo.Family.NEVE) 1f else 0f
         cieloStops(faseContinua(cielo), livelloCielo(copertura, tempesta), neve)[1]
     }

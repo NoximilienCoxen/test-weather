@@ -39,7 +39,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
-import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
+import io.github.noximiliencoxen.caelum.data.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.motion.VibrazioniDellaScena
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import io.github.noximiliencoxen.caelum.ui.motion.sistemaSenzaAnimazioni
@@ -125,6 +125,17 @@ fun SalaShell(
         scope.launch { pagerState.animateScrollToPage(rooms.indexOf(sala)) }
     }
 
+    // **Il gemello senza molla, per il dito che trascina la colonna.**
+    //
+    // Un tocco e' un salto e va raccontato: parte da dove sei, arriva dove hai
+    // chiesto, e la molla e' il racconto. Un trascinamento no - il racconto e'
+    // il dito, che sta gia' dicendo dove sta andando - e animare ogni sala
+    // attraversata vorrebbe dire che il carosello insegue il dito con mezzo
+    // secondo di ritardo e arriva dove era, non dov'e'.
+    fun portaA(sala: SalaRoom) {
+        scope.launch { pagerState.scrollToPage(rooms.indexOf(sala)) }
+    }
+
     // Il tasto indietro torna alla prima sala prima di chiudere l'app: da sei
     // stanze sotto, uscire non e' quasi mai la risposta cercata.
     BackHandler(enabled = pagerState.currentPage != 0) {
@@ -145,12 +156,15 @@ fun SalaShell(
     // Sette scalari al posto di `condition`, `nevica` e `notte`: fra sereno e
     // coperto ci sono tutte le nuvolosita' del mondo, e con l'enum comparivano
     // tutte insieme, in un fotogramma, ogni volta che il cielo cambiava idea.
-    val bersaglio = remember(sky, condition, hour) {
+    val bersaglio = remember(sky, condition, hour, state.forcedCloudCover) {
         scenaBersaglio(
             sky = sky,
             condition = condition,
-            nevica = Wmo.family(codice) == Wmo.Family.NEVE,
-            coperturaOraria = hour?.cloudCover,
+            nevicaWmo = Wmo.family(codice) == Wmo.Family.NEVE,
+            // Imposta prima, vera poi: la stessa regola del codice una riga
+            // sopra. Senza, con la copertura che viene dal dato vero gli scatti
+            // a codice imposto ritraevano tutti lo stesso cielo.
+            coperturaOraria = state.forcedCloudCover ?: hour?.cloudCover,
             pioggiaMm = hour?.precipitation,
         )
     }
@@ -162,6 +176,11 @@ fun SalaShell(
     // levetta da abbassare. Si sommano, non si sostituiscono.
     val ridotte = state.animazioniRidotte || sistemaSenzaAnimazioni()
     val ferme = ridotte || state.animazioniIstantanee
+
+    // Il colpetto sotto il dito: uno solo per tutta la cornice. Lo chiedono la
+    // barra delle ore e la colonna delle scorciatoie, e due `remember` per lo
+    // stesso vibratore sarebbero due tarature da tenere in fase.
+    val vibrazioni = rememberVibrazioniMeteo()
 
     val m = mollaScena(state.animazioniIstantanee, ridotte)
     val scena = Scena(
@@ -178,7 +197,13 @@ fun SalaShell(
     // le colline e l'arco. Viene da valori gia' animati, quindi non ha bisogno
     // di una molla sua.
     val chiusura = livelloCielo(scena.copertura, scena.tempesta)
-    val stops = cieloStops(fase, chiusura, scena.neve)
+    // **`remember` anche se la chiave e' animata**, e vale la pena dire
+    // perche': mentre il cielo si muove i tre numeri cambiano a ogni
+    // fotogramma e questo non guadagna niente. Serve a cielo **fermo**, che e'
+    // come sta quasi sempre: li' una `List<Color>` nuova a ogni ricomposizione
+    // bastava a impedire a `SalaCielo` di essere saltata, perche' un parametro
+    // diverso per riferimento e' un parametro cambiato.
+    val stops = remember(fase, chiusura, scena.neve) { cieloStops(fase, chiusura, scena.neve) }
 
     // ── Il tema, e il solo salto che resta ───────────────────────────────────
     //
@@ -358,7 +383,7 @@ fun SalaShell(
                                     palette = palette,
                                     viewModel = viewModel,
                                     faseLunare = faseLunare,
-                                    onApriSettimana = { vaiA(SalaRoom.SETTIMANA) },
+                                    onVai = ::vaiA,
                                 )
                                 SalaRoom.SETTIMANA -> SalaSettimanaScreen(
                                     state = state,
@@ -388,7 +413,6 @@ fun SalaShell(
                     }
                 }
 
-                val vibrazioni = rememberVibrazioniMeteo()
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
                     // un `ifEmpty { state.hours }`: con un giorno senza ore la
@@ -425,6 +449,8 @@ fun SalaShell(
                 palette = palette,
                 movimento = !ferme,
                 onVai = ::vaiA,
+                onPorta = ::portaA,
+                onTick = { if (!ridotte) vibrazioni.scatto() },
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     // Dieci punti prima, sei adesso, e i dischi non si sono
@@ -475,6 +501,8 @@ fun SalaShell(
                         onChooseCaptionStyle = viewModel::setCaptionStyle,
                         onToggleAlert = viewModel::setAlertToggle,
                         onApriLocalita = viewModel::openLocations,
+                        onAggiorna = viewModel::refresh,
+                        onApriLegali = viewModel::openLegali,
                         onClose = viewModel::closeSettings,
                     )
                 }
@@ -507,6 +535,33 @@ fun SalaShell(
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeLocations,
                     )
+                }
+            }
+
+            // **E le note legali vanno per ultime, per la stessa ragione delle
+            // localita'.** Si aprono dalle impostazioni, quindi devono entrare
+            // davanti a loro; e siccome `BackHandler` da' la precedenza
+            // all'ultimo registrato, l'indietro deve trovare prima questa e poi
+            // il pannello da cui e' stata chiesta. Vale la nota tre blocchi piu'
+            // su: chi riordina per pulizia riapre il difetto.
+            //
+            // Con le localita' non si sovrappongono mai - si aprono da due
+            // righe diverse della stessa schermata - quindi fra loro l'ordine
+            // non conta: conta che stiano tutte e due dopo le impostazioni.
+            val scorrimentoLegali by animateFloatAsState(
+                targetValue = if (state.legaliOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "legali",
+            )
+            if (scorrimentoLegali > 0.001f) {
+                BackHandler(enabled = state.legaliOpen, onBack = viewModel::closeLegali)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - scorrimentoLegali) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaLegaliScreen(palette = palette, onClose = viewModel::closeLegali)
                 }
             }
         }

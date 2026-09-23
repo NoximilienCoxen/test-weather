@@ -83,8 +83,9 @@ class DerivedAlertsTest {
 
     @Test
     fun `l'identificativo e' stabile fra due letture`() {
-        // Se cambiasse a ogni caricamento, chiudere la fascia non funzionerebbe
-        // mai: alertsAreDismissed confronta gli identificativi.
+        // Se cambiasse a ogni caricamento, niente potrebbe riconoscere due
+        // letture dello stesso avviso: l'identificativo e' cio' con cui un
+        // avviso si dice uguale a se' stesso fra un carico e l'altro.
         val f = forecastWith(day(gust = 30.0))
         assertEquals(derivedAlerts(f).map { it.id }, derivedAlerts(f).map { it.id })
     }

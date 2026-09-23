@@ -18,7 +18,6 @@ import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
-import io.github.noximiliencoxen.caelum.data.alertsAreDismissed
 import io.github.noximiliencoxen.caelum.data.derivedAlerts
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.data.mergeAlerts
@@ -74,16 +73,11 @@ internal fun failureMessage(failure: Throwable): String = when (failure) {
 }
 
 data class UiState(
-    val loading: Boolean = true,
-    /**
-     * Vero mentre si ricarica **avendo gia' qualcosa in mano**.
-     *
-     * Distinto da [loading] perche' le due situazioni non si somigliano: un
-     * primo carico non ha niente da mostrare e lo deve dire, una ricarica ha
-     * una schermata intera di dati validi e non deve toglierli di mezzo per
-     * annunciare che ne sta cercando di piu' freschi.
-     */
-    val refreshing: Boolean = false,
+    // **Qui stavano `loading` e `refreshing`.** Distinguevano il primo carico
+    // dalla ricarica con dati gia' in mano, e li leggeva il segno in cima al
+    // feed. Sala non ha quel segno: dice di stare aspettando quando non ha una
+    // previsione, cioe' guardando `forecast`, che e' la stessa domanda fatta al
+    // dato invece che a una bandierina da tenere in fase con lui.
     /**
      * Perche' non c'e' una previsione, **detto a chi guarda**.
      *
@@ -115,42 +109,13 @@ data class UiState(
      */
     val alerts: List<WeatherAlert> = emptyList(),
     /**
-     * Vero quando il feed ufficiale non ha risposto **e la localita' sarebbe
-     * coperta**.
-     *
-     * Distinto dal caso "fuori copertura", che non e' un guasto: in Nuova
-     * Zelanda MeteoAlarm non deve rispondere, e dirlo come se fosse un errore
-     * insegnerebbe a ignorare l'avviso quando invece e' vero.
-     */
-    val alertsUnavailable: Boolean = false,
-    /**
-     * Vero dove **non esiste una fonte ufficiale**, non dove non ci sono avvisi.
-     *
-     * Sono due cose diverse e finora si dicevano allo stesso modo: a Tokyo,
-     * New York o Sydney la schermata scriveva "NESSUNA ALLERTA - per questa
-     * località non risultano avvisi in corso", che e' un'affermazione che
-     * l'app non ha modo di fare. MeteoAlarm copre l'Europa, e fuori l'app non
-     * ha guardato da nessuna parte. **Un silenzio non e' una risposta
-     * rassicurante: e' un silenzio**, e va detto quale dei due e'.
-     */
-    val alertsOutOfCoverage: Boolean = false,
-    /** Vero mentre e' aperto il foglio con i bollettini per esteso. */
-    val alertsOpen: Boolean = false,
-    /**
-     * Le allerte per cui la fascia e' gia' stata ridotta a pallino, e il peso
-     * del livello peggiore fra quelle. Arrivano dalle impostazioni come le
-     * altre scelte, e insieme decidono [alertsCollapsed].
-     */
-    val dismissedAlertIds: Set<String> = emptySet(),
-    val dismissedAlertWeight: Int = 0,
-    /**
      * Allerta imposta dall'esterno, solo per la verifica automatica.
      *
-     * Sta accanto a [forcedWeatherCode] e [forcedYawDeg] e si applica **in
-     * lettura**, come loro: scriverla dentro [alerts] non sarebbe bastato,
-     * perche' il primo caricamento che arriva sovrascrive quella lista con le
-     * allerte vere e lo scatto uscirebbe senza fascia. Al lettore serve che
-     * resti finche' l'app e' viva.
+     * Sta accanto a [forcedWeatherCode] e si applica **in lettura**, come lui:
+     * scriverla dentro [alerts] non sarebbe bastato, perche' il primo
+     * caricamento che arriva sovrascrive quella lista con le allerte vere e lo
+     * scatto uscirebbe senza fascia. Al lettore serve che resti finche' l'app
+     * e' viva.
      */
     val forcedAlert: WeatherAlert? = null,
     /** Indice del giorno selezionato nella striscia in fondo. 0 = oggi. */
@@ -163,17 +128,28 @@ data class UiState(
      */
     val forcedWeatherCode: Int? = null,
     /**
-     * Angolo della scena imposto dall'esterno, in gradi, solo per la verifica
-     * automatica. Nullo in uso normale: comanda il dito.
+     * Nuvolosita' oraria imposta dall'esterno, in percentuale, solo per la
+     * verifica automatica. Nulla in uso normale: comanda il dato vero.
      *
-     * Serve perche' i difetti che si vedono girando si vedono **girando**, e un
-     * gesto simulato non arriva dove serve: per portare la cifra di taglio
-     * servono quattrocento pixel di trascinamento, per vederla da dietro piu'
-     * di ottocento, e uno schermo e' largo mille. Senza questo aggancio il
-     * quarto di giro - che e' esattamente dove le matrici degenerano e le
-     * pareti si scavalcano - non era fotografabile.
+     * **Senza di lei quattro scatti su quattro ritraevano lo stesso cielo.**
+     * Da quando la copertura, dove non cade niente, viene dalla nuvolosita'
+     * vera e non piu' da un pavimento per condizione, imporre il **codice** non
+     * cambia piu' quanto il cielo appare chiuso: `--ei meteo 2` e
+     * `--ei meteo 3` alla stessa ora danno due PNG identici byte per byte, e
+     * infatti li hanno dati. Il codice decide le parole, la nuvolosita' decide
+     * il cielo, e per fotografare il cielo bisogna poter imporre quella.
+     *
+     * E' esattamente il difetto che la sezione 2 di questo giro ha tolto dalla
+     * galleria - scatti che avevano smesso di ritrarre qualcosa - visto
+     * arrivare mentre nasceva.
      */
-    val forcedYawDeg: Float? = null,
+    val forcedCloudCover: Int? = null,
+    // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
+    // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
+    // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
+    // scatti della galleria continuavano a chiedere un angolo e a ritrarre la
+    // scena ferma - lo stesso guasto che il commento di `capture.sh` racconta
+    // gia' al passato per la volta precedente.
     /**
      * Vero quando un aggancio di cattura e' stato applicato: le transizioni si
      * compiono **all'istante** invece di passare per le loro molle.
@@ -254,12 +230,56 @@ data class UiState(
     /** Vero mentre e' aperta la schermata "Le località". */
     val locationsOpen: Boolean = false,
     /**
+     * Vero mentre sono aperte le note legali.
+     *
+     * Come [locationsOpen] si apre **dalle impostazioni**, e come lei vive in
+     * un campo suo: due pannelli a schermo pieno che non si sovrappongono mai,
+     * ma che l'indietro deve chiudere nell'ordine giusto.
+     */
+    val legaliOpen: Boolean = false,
+    /**
      * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
      * località". Manca finche' non e' stato chiesto: quella riga resta
      * muta invece di mostrare un simbolo inventato.
      */
     val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
 ) {
+    // ── Lo stato derivato ────────────────────────────────────────────────
+    //
+    // **Erano `get()` senza memoria, e costavano un fotogramma alla volta.**
+    // `shownHours`, `detailHour`, `detailDay` e i tre valori del sole
+    // riscandiscono le centosessantotto ore della previsione, e le schermate
+    // li leggono **una dozzina di volte per fotogramma**: la prima sala, la
+    // barra delle ore, il cielo, il dettaglio. Fin quando lo stato sta fermo
+    // non si nota; trascinando la barra delle ore ogni scalino emette uno
+    // stato nuovo, undici molle si ri-puntano, e per tutta la durata del gesto
+    // piu' i due secondi di assestamento **l'albero si ricompone a ogni
+    // fotogramma**, pagando ogni volta quelle dodici scansioni.
+    //
+    // Qui diventano valori calcolati **una volta per stato**. `UiState` e'
+    // immutabile e se ne costruisce uno nuovo a ogni emissione, quindi la
+    // memoria non puo' invecchiare: e' esattamente lunga quanto il dato che
+    // descrive.
+    //
+    // `LazyThreadSafetyMode.NONE` e non il `lazy` normale: i lettori di questi
+    // sei valori sono **tutti la composizione**, cioe' un filo solo, e la
+    // versione sincronizzata si porterebbe dietro un campo volatile e un ramo
+    // di doppio controllo per una sicurezza che qui non serve a nessuno. La
+    // previsione, che invece vive nel pacchetto dei dati e non ha promesso un
+    // filo solo, usa apposta un modo piu' prudente.
+    //
+    // Stando nel corpo della classe
+    // e non nel costruttore, queste proprieta' restano fuori da `equals`,
+    // `hashCode` e `copy`: due stati uguali restano uguali, e chi usa lo stato
+    // come chiave di un `remember` non si trova una memoria da confrontare.
+    //
+    // Il guadagno piu' grosso non e' il conto risparmiato ma la **stabilita'
+    // del riferimento**: `shownHours` adesso e' sempre la stessa lista, quindi
+    // `remember(hours, ...)` nella barra delle ore smette di confrontarne
+    // ventiquattro elemento per elemento solo per decidere di non fare niente.
+    //
+    // **`nowIndex` non e' in questo elenco, ed e' voluto.** Vedi la sua nota.
+
     /**
      * Le allerte da mettere in scena: quella imposta se c'e', se no le vere.
      *
@@ -268,17 +288,6 @@ data class UiState(
      */
     val shownAlerts: List<WeatherAlert>
         get() = forcedAlert?.let { listOf(it) } ?: alerts
-
-    /**
-     * Vero quando la fascia dell'allerta va disegnata ridotta a pallino.
-     *
-     * La regola sta in `data/WeatherAlert.kt` con la sua spiegazione: e' una
-     * regola sul dominio - quando un avviso archiviato torna a essere una
-     * notizia - non sulla schermata, e da li' si prova senza far partire
-     * niente di Android.
-     */
-    val alertsCollapsed: Boolean
-        get() = alertsAreDismissed(shownAlerts, dismissedAlertIds, dismissedAlertWeight)
 
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -293,18 +302,26 @@ data class UiState(
      * prendere la stessa ora sul giorno giusto; nulla se quel giorno non ha
      * quell'ora, che e' meglio di un numero preso altrove.
      */
-    val detailHour: HourForecast?
-        get() {
-            val current = forecast ?: return null
-            if (selectedDay == 0) return hour
-            val date = current.days.getOrNull(selectedDay)?.date ?: return hour
-            val clock = hour?.time?.hour ?: return null
-            return current.hourOn(date, clock)
+    val detailHour: HourForecast? by lazy(LazyThreadSafetyMode.NONE) {
+        val current = forecast
+        when {
+            current == null -> null
+            selectedDay == 0 -> hour
+            else -> {
+                val date = current.days.getOrNull(selectedDay)?.date
+                val clock = hour?.time?.hour
+                when {
+                    date == null -> hour
+                    clock == null -> null
+                    else -> current.hourOn(date, clock)
+                }
+            }
         }
+    }
 
     /** Il giorno aperto dal dettaglio, dentro i limiti di cio' che esiste. */
     val detailDay: io.github.noximiliencoxen.caelum.data.DayForecast?
-        get() = forecast?.days?.getOrNull(selectedDay)
+        by lazy(LazyThreadSafetyMode.NONE) { forecast?.days?.getOrNull(selectedDay) }
 
     /**
      * Le ore del giorno mostrato: quelle vere, non quelle di oggi.
@@ -321,12 +338,24 @@ data class UiState(
      * giornata piatta.
      */
     val shownHours: List<io.github.noximiliencoxen.caelum.data.HourForecast>
-        get() {
-            val date = detailDay?.date ?: return emptyList()
-            return forecast?.hoursOf(date).orEmpty()
+        by lazy(LazyThreadSafetyMode.NONE) {
+            detailDay?.date?.let { forecast?.hoursOf(it) }.orEmpty()
         }
 
-    /** L'ora vera nella localita' mostrata, come indice nella barra. */
+    /**
+     * L'ora vera nella localita' mostrata, come indice nella barra.
+     *
+     * **Resta un `get()`, e non si memoizza.** E' il candidato piu' ovvio di
+     * tutti - chiama `Instant.now()` a ogni lettura - ed e' l'unico da non
+     * toccare: congelarlo per stato vuol dire che scavalcando l'ora **l'ora
+     * corrente non si sposta piu'**, e la pastiglia "torna a ora" continua a
+     * offrire un'ora che e' gia' adesso. E' la famiglia della trappola #7,
+     * gia' pagata **su questa stessa barra** (`SalaBarraOre`: *l'ora corrente
+     * era l'unica irraggiungibile*).
+     *
+     * Se un giorno dara' fastidio, la strada e' un campo scritto dal
+     * ViewModel a ogni emissione, non una memoria per istanza.
+     */
     val nowIndex: Int
         get() {
             val current = forecast ?: return 0
@@ -357,17 +386,20 @@ data class UiState(
      * rosso del sole, comparsa della luna. Uno solo, cosi' si puo' animare fra
      * un'ora e l'altra senza che le tre cose si contraddicano a meta' strada.
      */
-    val skyAltitude: Float
-        get() {
-            val moment = hour?.time ?: return 0.62f
+    val skyAltitude: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.62f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.altitude(
+            SunClock.altitude(
                 moment = moment,
                 sunrise = day?.sunrise,
                 sunset = day?.sunset,
                 fallbackIsDay = hour?.isDay ?: true,
             )
         }
+    }
 
     /**
      * A che punto del viaggio sta l'astro, da quando sorge a quando tramonta.
@@ -377,12 +409,15 @@ data class UiState(
      * salirebbe e ridiscenderebbe dallo stesso lato, perche' alle otto e alle
      * sedici vale lo stesso numero.
      */
-    val skyJourney: Float
-        get() {
-            val moment = hour?.time ?: return 0.5f
+    val skyJourney: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.5f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.journey(moment, day?.sunrise, day?.sunset)
+            SunClock.journey(moment, day?.sunrise, day?.sunset)
         }
+    }
 
     /**
      * Se l'ora scelta guarda verso il mattino o verso la sera.
@@ -391,12 +426,15 @@ data class UiState(
      * rosa e freddo, l'altro arancio e caldo. Senza questo valore il cielo non
      * ha modo di sapere quale dei due sta dipingendo.
      */
-    val skyEvening: Float
-        get() {
-            val moment = hour?.time ?: return 0.5f
+    val skyEvening: Float by lazy(LazyThreadSafetyMode.NONE) {
+        val moment = hour?.time
+        if (moment == null) {
+            0.5f
+        } else {
             val day = forecast?.dayOf(moment)
-            return SunClock.eveningness(moment, day?.sunrise, day?.sunset)
+            SunClock.eveningness(moment, day?.sunrise, day?.sunset)
         }
+    }
 
     /**
      * Quanto e' coperto il cielo all'ora scelta.
@@ -469,8 +507,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         unit = settings.unit,
                         model = settings.model,
                         favorites = settings.favorites,
-                        dismissedAlertIds = settings.dismissedAlertIds,
-                        dismissedAlertWeight = settings.dismissedAlertWeight,
                         followsLocation = settings.followsLocation,
                         welcomed = settings.welcomed && !welcomeForced,
                         cardTheme = settings.cardTheme,
@@ -503,10 +539,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * o uscendo da una galleria.
      */
     fun refresh() {
-        // Un primo carico non ha niente da mostrare e lo dichiara; una ricarica
-        // lascia la schermata dov'e' e cambia solo il segno in alto.
-        val hasData = _state.value.forecast != null
-        _state.update { it.copy(loading = !hasData, refreshing = hasData, error = null) }
+        _state.update { it.copy(error = null) }
         loading?.cancel()
         val place = _state.value.place
         val model = _state.value.model
@@ -523,8 +556,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     alerts = emptyList(),
-                    alertsUnavailable = false,
-                    alertsOutOfCoverage = false,
                     // Un fotogramma e' una fotografia di **un posto**, e
                     // vale ancora meno dell'aria fuori da quello: la
                 )
@@ -573,8 +604,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                             val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
                             val wantedDay = pendingDay?.coerceIn(0, lastDay)
                             current.copy(
-                                loading = false,
-                                refreshing = false,
                                 forecast = forecast,
                                 error = null,
                                 selectedHour = hour,
@@ -642,25 +671,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     _state.update {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
-                                            alertsUnavailable = false,
-                                            alertsOutOfCoverage = false,
                                         )
                                     }
                                 }
-                                .onFailure { failure ->
-                                    // Fuori copertura non e' un guasto: si
-                                    // resta sulle derivate senza dire che
-                                    // qualcosa e' andato storto, perche'
-                                    // non e' andato storto niente.
-                                    val uncovered =
-                                        failure is WeatherAlertsRepository.OutOfCoverage
-                                    _state.update {
-                                        it.copy(
-                                            alerts = derived,
-                                            alertsUnavailable = !uncovered,
-                                            alertsOutOfCoverage = uncovered,
-                                        )
-                                    }
+                                .onFailure {
+                                    // Il feed ufficiale non ha risposto: si
+                                    // resta sulle allerte derivate dai dati
+                                    // gia' scaricati. **Che sia un guasto o
+                                    // una zona che MeteoAlarm non copre, qui
+                                    // non si distingue piu'**: i due campi che
+                                    // lo dicevano sono usciti con la fascia
+                                    // che li mostrava (vedi UiState).
+                                    _state.update { it.copy(alerts = derived) }
                                 }
                         }
 
@@ -721,8 +743,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                             // dire quanto e' vecchio. E' l'unica risposta utile
                             // a chi e' senza rete.
                             it.copy(
-                                loading = !lastAttempt && it.forecast == null,
-                                refreshing = !lastAttempt && it.forecast != null,
                                 error = if (lastAttempt) {
                                     failureMessage(failure)
                                 } else {
@@ -827,6 +847,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * ricordarselo: e' il pannello sotto che ricompare, e per questo i due
      * blocchi in `SalaShell` hanno l'ordine che hanno.
      */
+    /** Apre le note legali, dalle impostazioni. */
+    fun openLegali() = _state.update { it.copy(legaliOpen = true) }
+
+    /** Le richiude, e lascia le impostazioni dov'erano. */
+    fun closeLegali() = _state.update { it.copy(legaliOpen = false) }
+
     fun closeLocations() =
         _state.update { it.copy(locationsOpen = false, query = "", results = emptyList()) }
 
@@ -936,34 +962,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun openAlerts() = _state.update { it.copy(alertsOpen = true) }
-
-    fun closeAlerts() = _state.update { it.copy(alertsOpen = false) }
-
-    /**
-     * Riduce la fascia dell'allerta al pallino.
-     *
-     * Si salvano gli identificativi di **cio' che c'e' adesso**, non un
-     * booleano: la regola che decide se la fascia torna intera e'
-     * [UiState.alertsCollapsed], e ha bisogno di sapere cosa e' stato chiuso.
-     */
-    fun collapseAlerts() {
-        val shown = _state.value.shownAlerts
-        if (shown.isEmpty()) return
-        val ids = shown.map { it.id }.toSet()
-        val weight = shown.maxOf { it.level.weight }
-        viewModelScope.launch { prefs.dismissAlerts(ids, weight) }
-    }
-
-    /**
-     * Rimette la fascia intera. E' cio' che fa toccare il pallino, insieme ad
-     * aprire il bollettino: un gesto solo, e chi torna indietro ritrova la riga
-     * dov'era invece di dover cercare come farla riapparire.
-     */
-    fun expandAlerts() {
-        viewModelScope.launch { prefs.restoreAlertBar() }
-    }
-
     // `setFeelsLike` stava qui, e scriveva `UiState.feelsLike`. Erano due
     // meta' della stessa cosa morta: il campo lo scriveva solo questo setter,
     // e questo setter non lo chiamava nessuno. Sceglievano fra EFFETTIVA e
@@ -986,10 +984,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setUnit(unit: TempUnit) {
         viewModelScope.launch { prefs.setUnit(unit) }
-    }
-
-    fun setModel(model: WeatherModel) {
-        viewModelScope.launch { prefs.setModel(model) }
     }
 
     /** Aggiunge o toglie la localita' dai preferiti, a seconda che ci sia gia'. */
@@ -1099,6 +1093,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(forcedWeatherCode = code) }
     }
 
+    /** Impone la nuvolosita' oraria: vedi [UiState.forcedCloudCover]. */
+    fun forceCloudCover(percento: Int) {
+        _state.update { it.copy(forcedCloudCover = percento.coerceIn(0, 100)) }
+    }
+
     /** Il benvenuto ha finito: da qui in poi si apre sulla schermata vera. */
     fun dismissWelcome() {
         welcomeForced = false
@@ -1176,10 +1175,6 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             // anche la voce nelle impostazioni, non nasconderli in silenzio.
             else -> true
         }
-    }
-
-    fun forceYaw(degrees: Float?) {
-        _state.update { it.copy(forcedYawDeg = degrees) }
     }
 
     /**

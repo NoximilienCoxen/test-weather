@@ -3,8 +3,8 @@ package io.github.noximiliencoxen.caelum.widget
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.ui.home.MoonPhase
-import io.github.noximiliencoxen.caelum.ui.home.MoonSegment
+import io.github.noximiliencoxen.caelum.data.MoonPhase
+import io.github.noximiliencoxen.caelum.data.MoonSegment
 import io.github.noximiliencoxen.caelum.widget.paint.Frame
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetCanvas
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetInk

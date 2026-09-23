@@ -5275,3 +5275,689 @@ domanda che avrebbe risparmiato tutto si poteva fare al primo giorno:
 
 Due su ventiquattro. La risposta era disponibile prima di scrivere una riga, e
 nessuno l'ha chiesta.
+
+---
+
+## 25. La colonna diventa un cursore, e tre numeri diventano tre porte
+
+Quattro rilievi arrivati guardando l'app in mano, non gli scatti: la colonna
+delle scorciatoie si tocca e basta, il pannello ha una maniglia che promette un
+gesto che non esiste, i riquadri di Sala I dicono senza portare, e la scala
+oraria dei raggi UV, a un'ora dispari, non si legge.
+
+Hanno una cosa in comune: **nessuno di questi e' un dato sbagliato.** Sono tutte
+promesse - un segno che dice di poter fare una cosa, o che non dice di poterla
+fare - e si vedono solo usando l'app, mai leggendo il codice.
+
+### 25.1 Sette bottoni erano sette bottoni
+
+La colonna sul fianco destro portava a una sala per tocco. Dalla settima alla
+seconda sono due tocchi e due animazioni, e in mezzo non si vede niente di
+quello che si sta saltando.
+
+Adesso **si tiene premuto e si scorre**: la sala e' quella sotto il dito, senza
+staccarlo, con un colpetto a ognuna che si attraversa. E' lo stesso gesto della
+barra delle ore in fondo allo schermo, e questo e' meta' del punto: una cosa che
+si trascina in meno di un'app non e' una cosa in meno da imparare, e' una cosa
+in meno che risponde come dovrebbe.
+
+Tre note di mestiere:
+
+- **Il trascinamento sta sul contenitore, i tocchi sui dischi.** Compose li
+  separa da se': il figlio riceve per primo, e finche' il dito non ha superato
+  la soglia di slittamento resta un tocco; superata la soglia il rilevatore del
+  genitore consuma il movimento e il tocco del figlio si annulla da solo.
+  Consumare non e' un dettaglio: senza, alzando il dito partirebbe anche il
+  salto animato della sala d'arrivo, sopra il carosello che ci sta gia'.
+- **Trascinando non si anima.** Un tocco e' un salto e la molla lo racconta; un
+  trascinamento il racconto ce l'ha gia' - e' il dito - e animare ogni sala
+  attraversata vorrebbe dire inseguirlo con mezzo secondo di ritardo. Da qui
+  `portaA` accanto a `vaiA` nella Shell: stessa destinazione, senza molla.
+- **La chiave del `pointerInput` porta anche `movimento`.** Il blocco si ricorda
+  com'era alla chiave; senza, chi spegne le animazioni ad app aperta
+  continuerebbe a sentire i colpetti di un blocco scritto quando erano accese.
+
+**Il gesto e' fotografato mentre e' in corso**, e non e' un vezzo: a dito
+alzato il cartellino non c'e' piu', quindi uno scatto a gesto finito
+proverebbe soltanto che si e' arrivati da qualche parte. `capture.sh` usa
+`input motionevent`, che tiene premuto fra un comando e l'altro - la stessa
+tecnica della rotazione della luna - e scatta a meta' del trascinamento:
+`chiaro-d11b-colonna-trascinata.png`. I pixel dei bersagli vengono dalla
+densita' vera, chiesta a `wm density`: dedurla dalla larghezza dello schermo e
+dai 393 punti del Pixel 6 "da scheda tecnica" sbaglia del cinque per cento - il
+profilo dell'emulatore e' 411 punti a 420 dpi - e su sette bersagli in colonna
+sono quaranta pixel, cioe' il dito sul bersaglio sbagliato.
+
+Insieme al gesto sono arrivate due cose che la colonna non aveva:
+
+**Il cartellino col nome**, accanto alla sala sotto il dito e **solo mentre si
+trascina**. Sette glifi da sedici punti sono riconoscibili quando si sa gia' cosa
+sono; la prima volta no, e chi trascina sta appunto cercando. Fisso sarebbe
+sette etichette perenni addosso al cielo, cioe' la cosa che questa colonna e'
+nata per non essere. Sta dentro un riquadro `matchParentSize`, e non e' pulizia:
+un `Box` si misura sul figlio piu' largo, quindi un nome lungo il triplo di un
+bersaglio avrebbe allargato il riquadro e fatto scivolare la colonna verso il
+centro dello schermo a ogni trascinamento.
+
+**Il nome anche per chi non vede.** Le icone hanno la descrizione nulla - giusto,
+sono decorazioni dentro un comando - ma il comando un nome non ce l'aveva, e
+TalkBack leggeva sette "pulsante" in fila. Il nome della sala lo sapeva gia'
+l'enum; il ruolo e' `Tab`, perche' sono pagine sorelle e non azioni.
+
+### 25.2 Il disco cresce dove sei
+
+I sette dischi erano larghi uguale e cambiavano solo tinta. Sette pastiglie
+piene da trentotto punti in fila sono una barra bianca addosso al cielo, e la
+sala corrente si riconosceva **solo** dal colore: al sole, o con un cielo
+terracotta dietro, quella differenza si assottiglia.
+
+Adesso il raggio scorre con la stessa frazione di pagina del colore - ventisei
+punti dove non sei, trentotto dove sei - quindi la colonna a riposo e' una fila
+di puntini con una pastiglia sola. Il limite in basso lo detta il glifo e non il
+gusto: le icone restano larghe da sedici a venti punti a qualunque raggio, e
+sotto i ventisei il disco smetterebbe di contenerle.
+
+**Il bersaglio non si muove di un punto**: quarantotto per quarantotto, sempre.
+Quello lo misura il polpastrello e non l'occhio, ed e' la correzione della
+sezione 15.3 - che non si ripaga per fare ordine nel disegno.
+
+### 25.3 La maniglia prometteva il gesto sbagliato
+
+In cima a ogni pannello c'era una maniglia: cinquantadue punti per cinque, al
+centro. Diceva "questa cosa sta sopra un'altra". Quello che **legge** chi la
+vede e' un'altra cosa: una maniglia orizzontale al centro di una scheda e' il
+segno con cui mezzo mondo apre un foglio a cassetto, cioe' si trascina in
+verticale.
+
+In verticale il pannello non si trascina. Scorre il suo contenuto quando non ci
+sta (sezione 16.4) e per cambiare sala si va di lato (sezione 23.1). Un comando
+che promette un gesto inesistente costa piu' di un comando assente, e questo lo
+prometteva sette volte su sette.
+
+E' sparita. I diciannove punti che occupava tornano al cielo: il pannello e'
+ancorato in basso, quindi accorciarlo non sposta niente verso il basso, scopre
+in alto. Il margine superiore passa da venti a ventiquattro perche' il titolo
+non si appoggi al raggio dell'angolo, che qui e' largo.
+
+### 25.4 Vento, umidita' e luna erano tre numeri muti
+
+I tre riquadri di Sala I dicevano un valore e finivano li'. Sono pero' anche le
+tre domande che quella schermata apre senza chiuderle - *undici chilometri
+all'ora da dove?*, *e nelle prossime ore?* - e la risposta sta gia' nella
+galleria, tre o quattro sale piu' in la'. L'unico modo di arrivarci era cercare
+il glifo giusto in colonna, cioe' sapere gia' quale sala risponde a quale numero.
+
+Adesso il riquadro **e'** il collegamento, esattamente come i sei di Sala II, e
+con lo stesso segno: la freccetta. Non e' decorazione - e' l'unica cosa che
+distingue una cella che porta da una che si limita a dire, e senza di lei la
+scorciatoia si scoprirebbe toccando a caso tre riquadri che sembrano etichette.
+Due segni diversi per la stessa promessa sarebbero due cose da imparare invece
+di una.
+
+Dove portano: vento a Sala VI, luna a Sala IV, e di giorno - dove al posto della
+luna c'e' l'indice UV - a Sala VII. **L'umidita' porta a "La pioggia" e non a
+"L'aria"**: l'acqua sospesa e l'acqua che cade sono la stessa storia a due
+stadi, mentre Sala V parla di polveri e biossidi, che con la percentuale di
+umidita' non c'entrano niente.
+
+### 25.5 La scala UV si rompeva a un'ora dispari
+
+> Nei raggi UV i numeri non si leggono.
+
+E' la sezione 16.1 che torna, dalla parte che allora non si era guardata. La
+correzione di 15.2-ter aveva dimezzato le etichette - le ore pari, piu' quella
+scelta - e il seguito di 16.1 aveva sistemato l'allineamento delle barre.
+Nessuno dei due ha guardato **cosa succede quando l'ora scelta e' dispari**: la
+scala diventa `... 12 13 14 ...`, tre numeri in trenta punti, uno addosso
+all'altro. Alle tredici, che e' l'ora in cui uno guarda i raggi UV. Ed e' l'ora
+con cui la CI fotografa il tema chiaro: lo scatto `chiaro-d11-uv.png` ce l'ha
+sempre avuto dentro.
+
+Adesso le tacche sono una ogni tre ore - 06, 09, 12, 15, 18 - e ognuna ha tre
+colonne per se'. L'ora scelta resta un'eccezione, perche' non e' una tacca della
+scala: e' la risposta alla domanda "dove sono". Ma quando cade **accanto** a una
+tacca, a spostarsi e' la tacca: la scala sa contare anche senza il 12, mentre
+quella risposta non ha nessun altro posto in cui stare.
+
+L'altra meta' del difetto era l'inchiostro. `inkFaint` e' il grigio delle
+etichette dentro una cella, dove sopra c'e' sempre un valore nero a fare da
+appiglio; sotto le colonne non c'e' nient'altro da leggere, e dieci punti di
+corpo in grigio chiaro su carta chiara si guardano senza vederli. Adesso e'
+`inkSoft`.
+
+Resta - e va tenuta - la stringa vuota al posto del `Text` assente: e' la
+correzione di 16.1, e un `if` attorno all'etichetta rimetterebbe le barre a
+quote alterne.
+
+---
+
+## 26. Pioveva e non si vedeva, nevicava e cadeva grandine
+
+Tre rilievi arrivati guardando l'app in mano: *l'animazione della pioggia non
+succede quando dovrebbe*, *controlla neve e grandine*, *il fulmine va reso piu'
+evidente*.
+
+Il primo e' quello che insegna qualcosa: **la pioggia c'era, l'orologio girava,
+le gocce scendevano - e chi guardava non le vedeva.** Un'animazione che nessuno
+vede e un'animazione che non c'e' sono, da fuori, la stessa cosa; e siccome il
+codice funzionava, nessun controllo automatico poteva accorgersene. Serviva uno
+scatto guardato con l'occhio di chi non sa cosa dovrebbe esserci.
+
+### 26.1 Sette tratti su uno schermo non sono una pioggia
+
+Le corsie di caduta sono quattordici, con **una goccia ciascuna**, e la scheda
+copre la meta' bassa dello schermo: restano sette segni visibili, sparsi su
+milleduecento pixel d'altezza. Contati sullo scatto `scuro-3-pioggia.png`, i
+pixel di colore acqua erano **millecento su un milione**: un decimo di punto
+percentuale.
+
+L'altra meta' del difetto era la tinta. `acqua` e' `#5B8AA5`, un azzurro medio
+tarato sul cielo di giorno. Il cielo di notte sta fra `#0D1420` e `#2B2F3D`:
+quell'azzurro ci finisce **dentro**, e una goccia con lo stesso valore di
+luminanza del fondo non e' una goccia tenue, e' una goccia assente.
+
+Due correzioni, nessuna delle quali tocca il battito che si sente in mano:
+
+- **Ogni corsia porta una fila.** `Corsie.ripetizioni` da' quattro gocce alla
+  pioggia, cinque alla neve, due alla grandine, sfalsate lungo la stessa
+  discesa. La **corsa** resta una per corsia - e' lei che `impatti` conta - e la
+  prima della fila ha scarto zero, quindi tocca terra esattamente quando il
+  telefono batte. Le altre le stanno dietro a distanze appena irregolari: una
+  fila spaziata a dovere si legge come una cucitura.
+- **La tinta schiarisce col buio.** Si interpola verso il bianco ghiaccio con
+  `notte` e, in parte, con la copertura. Non e' una licenza: di notte non si
+  vede l'acqua, si vede la luce che ci rimbalza sopra.
+
+Misurato sullo stesso scatto dopo: **3248** pixel d'acqua contro 1172, e a
+occhio la differenza e' fra "graffi sul vetro" e "piove".
+
+La fioritura a terra - la `FIORITURA` che stava in `Corsie` senza che la
+leggesse nessuno - **non torna**. Il pannello arriva a meta' schermo e la riga
+dove le gocce toccherebbero sta sotto di lui: una cosa dipinta dove nessuno la
+vede costa e non si nota quando si rompe.
+
+### 26.2 Lo stesso codice diceva neve a una strada e grandine all'altra
+
+Qui il difetto non era di resa, era di **due verita' sullo stesso fatto**.
+
+`salaConditionOf` metteva i codici 77, 85 e 86 - granuli e rovesci di **neve** -
+fra la `GRANDINE`. `Wmo.family` metteva gli stessi tre fra la `NEVE`. La scena
+chiedeva il ghiaccio alla prima e la neve alla seconda, e siccome tutte e due
+rispondevano di si', per quei tre codici cadevano **chicchi e fiocchi insieme**:
+due sostanze dalla stessa nuvola, nello stesso istante, per lo stesso codice.
+Negli scatti non si notava - a quella taglia un chicco e un fiocco sono due
+dischi chiari - e per mesi e' stato li'.
+
+E la neve vera, 71, 73 e 75, cadeva nel ramo `code >= 51`, cioe' fra le piogge:
+sopra una nevicata si leggeva **"Pioggia nella notte"**. Lo scatto
+`scuro-5b-neve.png` lo diceva a lettere alte quindici punti.
+
+Una strada sola, e passa da dove stanno i codici:
+
+- `salaConditionOf` chiede la neve a `Wmo.family`, che e' l'elenco vero;
+- `GRANDINE` esce dall'enum e al suo posto entra `NEVE`, con le sue quattro
+  didascalie. La grandine non sparisce: **torna dov'e' davvero**, dentro
+  `TEMPORALE_GRANDINE`, perche' i soli codici WMO che la nominano sono 96 e 99 e
+  tutti e due dicono *temporale con grandine*. Una grandine senza temporale, in
+  questi dati, non esiste;
+- la neve smette di portare il tema scuro. Ci stava perche' era etichettata
+  grandine, e una cella di grandine porta il buio del fronte che la fa; una
+  nevicata e' il contrario, ed e' la giornata piu' chiara dell'anno.
+
+`CadutaTest` prova la cosa nella forma in cui puo' rompersi di nuovo: non "il
+codice 86 fa questo", ma **nessuno dei ventotto codici fa cadere due sostanze
+insieme**, e la neve cade per tutti e soli i codici di famiglia neve. Chi
+aggiunge una famiglia domani trova quella riga.
+
+Lo scatto di conferma e' insolito: `scuro-5b-neve.png` e
+`scuro-5b2-rovesci-di-neve.png` - codici 73 e 86 - sono **byte per byte lo
+stesso file**. E' esattamente cio' che si voleva dimostrare: due codici della
+stessa famiglia, adesso, dipingono lo stesso cielo.
+
+### 26.3 Il fulmine non aveva una saetta
+
+Era un alone tondo in alto a destra, sempre nello stesso punto, acceso e spento
+da due rampe lineari. Diceva "temporale" con la coda dell'occhio, e va bene; ma
+di un fulmine non aveva **niente**: nessun canale, nessuna biforcazione, nessuno
+sfarfallio, e un centro fisso che dopo il secondo giro si legge come una macchia
+dello schermo.
+
+Adesso sono tre strati, in ordine di quanto sono larghi:
+
+1. **Il velo su tutta la tela**, colline comprese: un fulmine illumina il
+   paesaggio, non solo la nuvola che lo fa.
+2. **L'alone** attorno al punto da cui scende il canale, che tiene insieme il
+   velo e la saetta.
+3. **La saetta**: dodici nodi, zigzag laterale, deriva che cresce col quadrato
+   della discesa - un fulmine scende dritto e sbanda, non serpeggia - e due rami
+   corti che se ne staccano. Quattro passate sullo stesso `Path`, dall'alone
+   largo e tenue al nucleo bianco: e' cosi' che si dipinge una cosa che
+   **emette** luce invece di rifletterla. Un `Path` per passata e non un tratto
+   per segmento, se no a opacita' parziale ogni giunto diventa un puntino piu'
+   chiaro e il canale sembra una collana di perle.
+
+Il tempo e' cambiato quanto il disegno. Tre scariche per ciclo, ognuna che
+**sale di colpo e si spegne per esponenziale**: una scarica arriva al massimo in
+microsecondi - un fotogramma non la vede salire - e il canale caldo si raffredda
+perdendo ogni volta una frazione di quel che resta. La vecchia rampa in salita
+dava al fulmine il tempo di *arrivare*, e un fulmine che arriva non e' un
+fulmine. Il canale e' lo stesso dentro un colpo e diverso a ogni colpo, che e'
+come si comportano le riprese di una scarica vera.
+
+**Il velo e' sceso dal novantacinque al diciotto per cento**, ed e' la parte
+contro-intuitiva. Lo scatto del temporale, prima, era una macchia chiara in cui
+non si distingueva ne' una nuvola ne' un chicco: il riverbero da solo cercava di
+fare tutto il lavoro. Un fulmine vero stacca il paesaggio in controluce, non lo
+cancella - e a bucare il cielo ci pensa la saetta, che e' stretta e puo'
+permettersi il bianco pieno.
+
+### 26.4 E lo scatto della neve era stato letto male una volta
+
+Nel giro precedente `scuro-5b-neve.png` mostrava un cielo notturno di nevicata
+**con la scheda in tema chiaro**: due cose che insieme non esistono. Per un
+momento e' sembrato un difetto della tavolozza.
+
+Non lo era. `restart_with` aspettava i dati e scattava subito dopo, mentre il
+tema arriva con una molla partendo dal ripiego diurno - la stessa cosa che
+`cielo()` aveva gia' imparato e per cui ha un `sleep 3`. La fotografia era
+presa a meta' di una dissolvenza. Adesso `restart_with` aspetta come `cielo()`,
+e gli scatti dicono la verita'.
+
+**E' la lezione della sezione 16.1 in un'altra forma**: quando uno scatto mostra
+una cosa impossibile, la prima domanda non e' "quale colore ho sbagliato" ma
+"cosa stava succedendo mentre scattavo".
+
+## 27. Snellire: cio' che si e' tolto, cio' che si e' scoperto, cio' che resta
+
+Richiesta: *impieghiamo del tempo per snellire l'app per renderla piu'
+ottimizzata a livello di scorrimento e utilizzo & pulizia delle cartelle,
+sottocartelle e pulizia codice*.
+
+Tre risposte hanno governato tutto il giro, e vale la pena tenerle scritte
+perche' sono loro ad aver deciso cosa non fare: **l'unico scatto che si sente
+davvero e' la barra delle ore** (il resto e' preventivo), **il cielo deve
+restare identico** - non "quasi" - e **riorganizzare le cartelle e' permesso**,
+non solo cancellare.
+
+Risultato in numeri: `res/` da 1,95 MB a 956 KB, il Kotlin di `main` da 17.545
+righe su 69 file a 16.452 su 65, le prove da 13 classi a 16 (87 in tutto), gli
+scatti della galleria da 41 a 34 - sette di meno perche' sette non ritraevano
+piu' niente.
+
+### 27.1 Il guasto vero di questo giro non e' nel codice: e' nel come l'ho letto
+
+Il commit che toglieva `forcedYawDeg` dal costruttore di `UiState` si e'
+portato via, insieme a lui, **tutto il blocco che lo precedeva**: `forecast`,
+`air`, `airUnavailable`, `alerts`, `forcedAlert`, `selectedDay`,
+`selectedHour`, `forcedWeatherCode`. Cioe' il dato. L'app non compilava piu'.
+
+Ed e' rimasta cosi' per **tre commit**.
+
+Non perche' la CI non l'abbia detto: la CI non ha mai avuto occasione di dirlo.
+I due giri in mezzo sono stati **annullati** dal push successivo - il workflow
+ha una concorrenza che ferma il giro in corso quando ne arriva uno nuovo - e io
+ho letto `cancelled` come "non ancora finito" invece di andare a vedere. Ho
+continuato a spingere commit sopra un albero rotto, e ogni push cancellava il
+giro che me l'avrebbe detto.
+
+**La regola che ne esce e' secca: un giro annullato non e' un giro passato.**
+Se si spinge piu' in fretta di quanto la CI compili, la CI non sta piu'
+verificando niente, sta solo consumando minuti. Qui l'SDK Android non c'e' - la
+rete non lo lascia scaricare - quindi la CI e' **l'unico compilatore**, e
+aspettarla non e' pazienza, e' l'unico modo di sapere.
+
+### 27.2 Il metodo di verifica che avevo proposto non reggeva, e l'ho scoperto misurandolo
+
+L'idea era pulita: la cattura congela l'orologio della scena a `t = 0`, quindi
+un rifacimento che non cambia i pixel deve produrre gli stessi PNG. Misurato
+contro la base salvata prima di cominciare: **il 100% dei pixel diverso su
+quasi tutti gli scatti**.
+
+Non era una regressione. I due giri erano andati a **dodici ore di distanza**,
+uno di notte e uno a mezzogiorno. E scavando, il difetto del metodo e' piu'
+profondo del fuso orario:
+
+- gli scatti che non impongono l'ora prendono quella vera del runner;
+- **anche quelli che la impongono si muovono**, perche' la previsione e'
+  **viva**: temperature, nuvolosita', UV e qualita' dell'aria cambiano fra un
+  giro e l'altro. E la nuvolosita' oraria entra nel cielo anche con `--ei meteo`
+  imposto: e' la trappola #14 che funziona come deve, il dato vero decide
+  *quanto* dentro il possibile;
+- restano stabili solo gli scatti che impongono **ora e codice insieme**:
+  misurato, `cielo-mezzogiorno-sereno` 2,4% sul cielo e 0,3% sulle schede,
+  `scuro-15-notte-coperta-stelle` 0,0% e 0,3%.
+
+Quindi **la prova forte non e' il PNG, e' il test**. Dove si puo' affermare
+l'identita' si afferma nel codice, e in questo giro si e' fatto quattro volte:
+`MoonPhaseTest` confronta i bit del terminatore su mille fasi, `SparsoTest` i
+bit di ogni tabella contro la funzione che rimpiazza, `OrePerGiornoTest` le ore
+raccolte contro il setaccio che sostituiscono, `SchemaMaterialeTest` le venti
+tinte ferme contro le loro formule. Un test copre anche `t > 0`, che la cattura
+non vede. Gli scatti restano per cio' per cui sono nati: che l'app parta, che
+nessuna sala sia vuota, che non manchi un pezzo.
+
+Se un giorno servisse davvero un confronto a pixel, la strada e' una previsione
+finta caricata da un aggancio di cattura - `--ez fixture` - cosi' i numeri
+smettono di muoversi sotto gli scatti. E' una funzione a se', non parte di una
+pulizia.
+
+### 27.3 Un controllo che a mani vuote rispondeva "tutto bene"
+
+Stessa famiglia del giro annullato, e scoperto per caso mentre rigeneravo la
+taratura. `scripts/import_audit.py` guarda **i file che gli si passano**, e
+chiamato senza argomenti non ne guarda nessuno: stampava `0 da guardare`, che
+e' parola per parola la riga di un albero pulito. L'ho chiamato cosi' per tutto
+il giro, e ogni volta mi sono detto che era a posto.
+
+Peggio: `--baseline` senza file scriveva una taratura **vuota**, cancellando le
+ottantanove righe note - cioe' i falsi allarmi gia' esaminati - e al giro dopo
+sarebbero tornate fuori tutte come se fossero nuove.
+
+C'e' anche un secondo inciampo, piu' piccolo: la taratura tiene i percorsi come
+li scrive `git`, quindi `find . -name "*.kt"` (con il `./` davanti) non fa
+combaciare **nessuna** riga nota. L'invocazione buona e'
+`find app -name "*.kt" | xargs python3 scripts/import_audit.py`.
+
+Adesso lo script rifiuta di partire a mani vuote e lo dice. Chiamato come si
+deve, sull'albero di questo giro segnala quattro righe nuove rispetto a prima
+della pulizia, tutte e quattro falsi allarmi noti al copione - due
+`LazyThreadSafetyMode`, che sta nel pacchetto `kotlin` ed e' importato d'ufficio,
+un parametro di lambda destrutturato chiamato come funzione, e una funzione di
+file chiamata dal suo stesso pacchetto.
+
+**La lezione e' la stessa del giro annullato**: un controllo va letto per cio'
+che ha guardato, non per cio' che ha stampato.
+
+### 27.4 Lo scatto della barra aveva una causa a catena, e il rimedio non era dove sembrava
+
+Ogni scalino della barra emette uno stato nuovo che ri-punta **undici molle**
+con circa due secondi di assestamento. Trascinando si ri-puntano piu' in fretta
+di quanto si assestino: per tutta la durata del gesto piu' due secondi
+**l'albero si ricompone a ogni fotogramma**. E ogni ricomposizione pagava una
+dozzina di riscansioni delle centosessantotto ore, per i valori derivati di
+`UiState` che erano `get()` senza memoria.
+
+La correzione ovvia era memorizzarli, e si e' fatta. Ma **il guadagno piu'
+grosso non e' il conto risparmiato: e' la stabilita' del riferimento.**
+`hoursOf` rispondeva con una lista **nuova a ogni chiamata**, e questo rendeva
+inutile il `remember` della barra: la chiave cambiava per riferimento anche a
+contenuto identico, quindi il confronto ne scorreva ventiquattro elemento per
+elemento solo per concludere di non dover ricalcolare niente. Un `remember` che
+funziona e non serve a niente e' piu' difficile da vedere di un `remember` che
+manca.
+
+**`nowIndex` non si memoizza, ed e' l'unico.** E' il candidato piu' ovvio -
+chiama `Instant.now()` a ogni lettura - e congelarlo per stato vuol dire che
+scavalcando l'ora l'ora corrente non si sposta piu', e la pastiglia "torna a
+ora" continua a offrire un'ora che e' gia' adesso. E' la famiglia della
+trappola #7, gia' pagata **su questa stessa barra** (sezione 25).
+
+### 27.5 La tabella e' un memo davanti alla funzione, non un rimpiazzo
+
+`sparso(i, sale)` e' un seno e una parte frazionaria, dipende dal solo indice, e
+girava circa millesettecento volte per fotogramma. Adesso le stelle, il
+pulviscolo e le corsie leggono tabelle calcolate all'avvio.
+
+Ma le stelle cadenti chiamano `sparso(quale, ...)` dove `quale` **cresce col
+tempo e non ha un limite**. Una riscrittura a sola tabella sarebbe passata tutti
+gli scatti della CI - che congelano l'orologio a zero, dove `quale` vale 0 o 101
+- e sarebbe andata fuori indice sul telefono dopo pochi secondi. La cattura non
+avrebbe potuto dirlo: e' esattamente il caso che non fotografa.
+
+Due altri vincoli tenuti apposta: in tabella va il **risultato nudo** di
+`sparso`, non il valore composto, cosi' l'aritmetica che lo usa resta la stessa
+parola per parola; e le tabelle delle corsie stanno **dentro `Corsie`**, non nei
+punti di disegno, perche' le stesse funzioni le legge chi fa vibrare il telefono
+e due strade parallele mandano il colpetto fuori tempo rispetto alla goccia.
+
+### 27.6 Un commento che diceva la verita' e che nessuno aveva letto fino in fondo
+
+Dentro `toColorScheme` c'era scritto da sempre: *e' l'unica coppia dello schema
+che si muove durante il giorno*. Vero. E intanto le altre venti tinte si
+rifacevano insieme a lei, a ogni fotogramma in cui il cielo si muove, ognuna con
+una ricerca di contrasto su colori che sono **costanti scritte tre schermate
+piu' su, nello stesso file**.
+
+Il piano prevedeva di spostare le due `Surface` a schermo pieno su
+`palette.schermoPieno` per far uscire `MeteoTheme` dal sottoalbero animato.
+Guardando il codice, la premessa non reggeva: `surface` nello schema **e' gia'
+una costante**, quindi quei due lettori non erano loro a tenere in vita il
+calcolo. Spostarli sarebbe stato un colore cambiato - invisibile, perche' i due
+pannelli si dipingono gia' il proprio fondo da bordo a bordo - in cambio di
+niente. Portare fuori le venti costanti costa meno e ottiene di piu'.
+
+### 27.7 Le cartelle adesso dicono cosa contengono
+
+| Da | A | Perche' |
+|---|---|---|
+| `ui/common/` | cancellata, `MinTouchTarget` in `ui/theme/Misure.kt` | Settecentosessanta righe, **una sola viva**. |
+| `ui/render3d/` | `widget/paint/render3d/` | Stava sotto `ui/` e nessuna schermata la usava. |
+| `ui/home/MoonPhase.kt` | `data/MoonPhase.kt` | Non esiste nessuna schermata "home": e' astronomia. |
+| `docs/` | cancellata | Conteneva solo la guida all'acquerello, insieme ai timbri. |
+
+Dopo: `ui/` e' solo l'interfaccia del telefono, `widget/` tutto cio' che disegna
+i widget, `data/` i dati e i conti che non sanno di Compose.
+
+E la CI adesso **stampa quanto pesa l'APK** a ogni giro, risorse e dex separati.
+Il megabyte tolto in questo giro si e' dovuto dedurre scaricando due file e
+confrontandoli a mano: la prossima crescita si vedra' il giorno in cui succede.
+
+### 27.8 I difetti noti che restano, scritti perche' non si riscoprano da zero
+
+- **Le icone delle barre di sistema si decidono sul cielo sbagliato.**
+  `MeteoApp` chiama `SystemBarIcons` con `colors.skyZenith` e
+  `colors.skyHorizon` - la sfumatura del **benvenuto** - mentre dietro le barre,
+  da quando c'e' Sala, c'e' la carta di `SalaPalette`, che si dipinge da bordo a
+  bordo con tinte sue. Il commento sopra quella chiamata lo dice gia' a meta':
+  *qui restano solo i colori del benvenuto*. Ma la chiamata copre tutta l'app,
+  non solo il benvenuto, quindi con la carta chiara sopra un cielo notturno le
+  icone possono uscire chiare su chiaro.
+
+  La scelta e' stata di **segnalarlo e non toccarlo**: correggerlo cambierebbe i
+  pixel delle barre in molti scatti, cioe' proprio il segnale su cui questo giro
+  si verifica. E non e' la riga sola che sembra: le fermate vere sono quelle di
+  `SalaShell` (`cieloStops`), che a `MeteoApp` non arrivano. O si porta la
+  chiamata dentro Sala - dove la tavolozza c'e' gia' - o si fa salire la
+  tavolozza fin qui. La prima e' la strada breve, e lascia a `MeteoApp` solo il
+  benvenuto, che e' quello che il commento diceva di gia'.
+- **Le tre lune.** Tre disegni per tre usi - il cielo di Sala, la sala della
+  luna, il widget - circa duecentotrenta righe. Unificarle cambia dei pixel.
+- **Le due tavolozze del cielo.** Stessa ragione.
+- **Il baseline profile** (avvio e primo scorrimento) vuole un modulo di
+  benchmark e un giro di CI dedicato. Vale, ma e' un lavoro a se'.
+
+## 28. Diceva nuvoloso, e fuori il cielo era aperto
+
+Tre rilievi, arrivati guardando l'app in mano: *mancano delle info nelle
+impostazioni essenziali*; *da calcolare meglio quanto coperto il cielo deve
+essere, anche quando e' leggermente coperto il sole*; *vorrei che il sole e la
+luna siano sempre illuminati - capita spesso che segna nuvoloso e nell'app il
+sole non si vede quasi per niente, e nell'effettivo il cielo non e' cosi'
+coperto come dice l'app*.
+
+Il secondo e il terzo sono **lo stesso difetto visto da due lati**, e la causa
+era una sola.
+
+### 28.1 Un numero gonfiato, e tre sintomi
+
+`scenaBersaglio` calcolava `copertura = maxOf(nuvolosita' vera, pavimento del
+codice)`, e il pavimento del nuvoloso vale 0,45. Sopra, `salaConditionOf`
+mandava in NUVOLOSO tutto quello che aveva `code >= 1` - e **il codice WMO 1
+significa "prevalentemente sereno"**, una o due ottavi di cielo. Quindi con il
+cinque per cento di nuvole vere la sala lavorava sul quarantacinque.
+
+Da li' scendeva tutto il resto:
+
+| Sintomo | Dove | Con copertura 0,45 |
+|---|---|---|
+| Il cielo troppo grigio | `livelloCielo = copertura * 3` | livello 1,35 su 4 |
+| Le nuvole troppe e troppo piene | `presenza = (copertura - i*0,13)/0,24` | **tre masse su cinque**, alfa fino a 0,94 |
+| Il sole che sparisce | `velo = 1 - copertura*0,92` | disco al **59 %** |
+
+**Una causa, tre manopole, e nessuna delle tre era rotta.** E' la ragione per
+cui non si e' toccata nessuna delle tre: corretto il numero in ingresso, il
+cielo e le nuvole sono rientrate da sole. Se si fosse messo mano anche a quelle
+sarebbe stato impossibile dire quale avesse fatto cosa.
+
+### 28.2 La doppia verita' sul codice 1, che era gia' scritta
+
+`Wmo.family` classifica lo zero **e l'uno** come `ASCIUTTO` da sempre.
+`salaConditionOf` diceva il contrario, nello stesso progetto, sullo stesso
+numero - e il KDoc di quella funzione, due righe sopra, racconta gia' al passato
+la stessa storia a proposito della neve: *"Da due verita' sullo stesso codice
+nasceva un cielo in cui cadevano chicchi e fiocchi insieme... Una sola verita',
+e sta dove stanno i codici."*
+
+Il disaccordo non era teorico: `glifoDi` - che legge la famiglia e la
+nuvolosita' vera - disegnava il **sole** mentre la sala dietro dipingeva il
+coperto. Lo stesso numero, due risposte, sulla stessa schermata.
+
+### 28.3 Il pavimento difendeva qualcosa che li' non c'era
+
+`coperturaMinima` esiste per la **trappola #14**: se il codice WMO dice che
+piove deve piovere, e una pioggia che cade da un cielo vuoto e' lo stesso
+errore delle gocce che non cadevano. Giusto - e si applicava anche alle due
+condizioni **asciutte**, dove non c'e' nessuna precipitazione da difendere.
+
+Adesso la regola ha due meta', e a separarle e' `cade`: dove cade qualcosa il
+minimo resta un pavimento e il conto e' identico a prima, `null` compreso; dove
+non cade niente il dato vero comanda da solo, e il minimo resta come **ripiego**
+per quando la nuvolosita' oraria manca - dal quarto giorno in poi i modelli a
+corto raggio danno i totali e non le ore.
+
+La regola sta in un posto solo, `coperturaDi`, e si chiama da due. La barra
+delle ore aveva gia' smesso di ricopiarsi la **tabella** dei minimi; la
+**formula** intorno era rimasta ricopiata, e sarebbe stata la prossima a
+divergere.
+
+### 28.4 Il velo piu' severo dell'app stava sugli astri
+
+`velo = 1 - copertura * 0,92`. Il confronto dice tutto: le stelle perdono al
+massimo il 72 per cento, gli uccelli il 62, il pulviscolo il 55, **il sole e la
+luna il 92**. Il disco finiva all'otto per cento sotto un cielo chiuso, e al
+quattro sotto una nevicata - perche' li' si moltiplicava anche per il fattore
+della neve, che era contarla due volte: la neve chiude gia' il cielo per la sua
+strada, con un minimo di copertura a 0,85 e con la tavolozza `CieloNeve`.
+
+Il commento che accompagnava quella riga - *dietro un fronte non si vede ne'
+l'uno ne' l'altra* - **e' vero del fronte**, dove la copertura sta sopra 0,9.
+Veniva applicato linearmente anche al poco nuvoloso, dove non lo e' per niente.
+In CONTESTO non c'era nessuna sezione che motivasse quel numero: era stato
+scritto una volta e non piu' guardato.
+
+Adesso il coefficiente e' 0,45 con un minimo di 0,55. La curva tocca il minimo
+**esattamente a copertura piena**, quindi non c'e' nessun gomito.
+
+    copertura   0,00   0,20   0,45   0,60   0,80   1,00
+    prima       100 %   82 %   59 %   45 %   26 %    8 %
+    adesso      100 %   91 %   80 %   73 %   64 %   55 %
+
+Sotto un temporale il sole resta un chiarore dietro le nuvole, che e' quello che
+si vede davvero; a coprirlo ci pensano le masse, che gli passano davanti - si
+disegnano dopo di lui, con alfa fino a 0,96.
+
+E' sparito anche `if (velo <= 0.01f) return`: con un minimo a 0,55 non puo' piu'
+scattare, e **un ramo irraggiungibile e' un ramo che mente**.
+
+### 28.5 La prova ha corretto me
+
+`cade solo dalle famiglie che nominano qualcosa che cade` era scritta, la prima
+volta, come *"da un codice asciutto non cade niente, da tutti gli altri si'"*.
+La CI l'ha bocciata: cosi' formulata pretendeva che cadesse roba anche dal
+**nuvoloso**, che e' asciutto quanto il sereno.
+
+E' la stessa confusione che aveva prodotto il difetto di tutto questo giro -
+trattare *ci sono delle nuvole* come *sta succedendo qualcosa* - ed e' andata
+bene che a scriverla in una prova l'abbia detta a voce alta, dove qualcuno la
+controlla.
+
+### 28.6 Gli scatti nuovi ritraevano lo stesso cielo quattro volte
+
+Aggiunti i due scatti che mancavano - `mezzogiorno-quasi-sereno` e
+`mezzogiorno-poco-nuvoloso` - li ho scaricati dal giro di CI per guardarli in
+fila. Due dei quattro avevano **lo stesso md5**:
+
+    ea3a76aa...  cielo-mezzogiorno-coperto.png
+    ea3a76aa...  cielo-mezzogiorno-poco-nuvoloso.png
+
+E gli altri due, misurata la luminanza della fascia di cielo, stavano a 159,5
+contro 159,5.
+
+**Non era un guasto del cielo: era una conseguenza diretta della correzione.**
+Da quando la copertura, dove non cade niente, viene dalla nuvolosita' vera e
+non piu' da un pavimento per condizione, imporre il **codice** non cambia piu'
+quanto il cielo appare chiuso - decide le parole, non il grigio. E gli scatti
+imponevano solo il codice: `--ei meteo 2` e `--ei meteo 3` alla stessa ora
+fotografano la stessa nuvolosita' vera, quindi la stessa scena.
+
+Era la galleria che ricominciava a mentire, **vista mentre succedeva** - la
+stessa famiglia dei sette scatti tolti nella sezione 27, con la differenza che
+questa volta li ho beccati prima di lasciarli li' per mesi.
+
+La cura e' un aggancio in piu', simmetrico a quello del codice:
+`--ei nuvolosita` impone la percentuale, `SalaShell` la legge prima del dato
+vero come gia' fa col codice, e i quattro scatti di mezzogiorno impongono
+adesso **ora, codice e nuvolosita'**: 5, 20, 55 e 95 per cento.
+
+La lezione e' la stessa della sezione 2 di questo giro, letta al contrario:
+**quando si toglie a un aggancio il potere di cambiare la scena, gli scatti che
+lo usavano smettono di ritrarre qualcosa** - e non lo dicono, perche' un PNG
+identico a un altro ha la stessa faccia di un PNG giusto.
+
+### 28.7 Le impostazioni avevano solo comandi
+
+Quattro selettori, cinque interruttori, una riga di navigazione: **zero
+informazione**. La regola che governa quella schermata - *ogni interruttore qui
+dentro comanda qualcosa* - e' giusta e non c'entra: vale per i comandi, e a
+furia di applicarla era rimasta una pagina che sa solo ricevere ordini e non
+risponde a una domanda.
+
+Tutto quello che e' entrato **esisteva gia' nel codice** e non lo leggeva
+nessuna schermata:
+
+- la **versione**, motivata per iscritto in cima a `build.gradle.kts` e mai
+  letta da una riga di Kotlin;
+- l'**ultimo scarico**, che aveva accanto un commento il quale dichiarava *"la
+  schermata delle impostazioni lo dichiara"*. Non lo dichiarava: era un residuo
+  del vecchio `ui/settings/SettingsScreen.kt`. Adesso il commento e' vero;
+- il **modello meteo attivo**, che cambia i numeri della previsione e di cui non
+  si poteva sapere niente;
+- le **fonti**, che erano la decisione lasciata in sospeso da 8-ter;
+- la **localita' per esteso**, e soprattutto **chi l'ha scelta**;
+- **Aggiorna adesso**, perche' `refresh()` era pubblico senza chiamanti
+  d'interfaccia e `state.error` - un messaggio gia' scritto per chi guarda - non
+  aveva **un solo lettore in tutta l'app**.
+
+### 28.8 Le note legali, e il limite dichiarato
+
+Una schermata a parte, aperta dalle impostazioni, che contiene **solo fatti
+verificabili nel codice**: i quattro indirizzi interrogati, la differenza fra
+ALLERTA e AVVISO, cosa esce dal telefono, cosa resta, i tre permessi uno per
+uno.
+
+**Non sono condizioni d'uso**, ed e' scritto dentro. Un contratto lo scrive chi
+pubblica l'app e se ne assume la responsabilita'.
+
+Il pannello va registrato **dopo** le impostazioni: `BackHandler` da' la
+precedenza all'ultimo registrato, ed e' la stessa trappola gia' pagata con "Le
+localita'".
+
+**Resta un blocco da riempire alle fonti**: la frase di attribuzione che
+Open-Meteo richiede e i termini di MeteoAlarm per il riuso dei feed vanno
+copiati verbatim dalle loro pagine di licenza. Da questo ambiente la rete non ci
+arriva, e scriverli a memoria in una pagina legale sarebbe esattamente il tipo
+di errore che quella pagina esiste per evitare.
+
+### 28.9 Cosa resta fuori
+
+- **Le condizioni d'uso vere**, come sopra.
+- **`skyCloudiness`** legge ancora **solo** il codice WMO e non `cloudCover`:
+  e' la seconda verita' sulla nuvolosita' che resta in piedi. Alimenta pero'
+  soltanto lo sfondo del benvenuto e le icone delle barre di sistema, cioe' il
+  difetto gia' registrato in 27.8 - e si corregge insieme a quello.
+- **Le soglie e l'opacita' delle nuvole.** Se dopo la prova in mano fossero
+  ancora troppe, la riga e' quella di `presenza` in `SalaCielo`. Non si e'
+  toccata apposta: vedi 28.1.
+- **Il selettore del modello meteo.** Adesso si vede quale e' attivo; sceglierlo
+  vuol dire rimettere `setModel`, una riga di scelta e la ricarica, ed e' una
+  funzione, non un'informazione.

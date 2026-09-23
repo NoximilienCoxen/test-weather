@@ -2,7 +2,6 @@ package io.github.noximiliencoxen.caelum.widget.paint
 
 import android.content.Context
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.Typeface
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -29,7 +28,6 @@ internal class WidgetType(context: Context) {
     // decine di volte per disegno, tenerli da parte e' la sola cosa che conta.
     private val brushes = HashMap<Int, Paint>()
 
-    private val bounds = Rect()
 
     fun brush(
         sizePx: Float,
@@ -51,12 +49,6 @@ internal class WidgetType(context: Context) {
     }
 
     fun widthOf(text: String, paint: Paint): Float = paint.measureText(text)
-
-    /** Quanto e' alta una maiuscola: serve a centrare, che la base non basta. */
-    fun capHeight(paint: Paint): Float {
-        paint.getTextBounds("H", 0, 1, bounds)
-        return bounds.height().toFloat()
-    }
 }
 
 /**

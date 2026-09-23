@@ -1,7 +1,6 @@
 ﻿package io.github.noximiliencoxen.caelum.ui.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import io.github.noximiliencoxen.caelum.data.SkyState
@@ -53,19 +52,12 @@ data class MeteoColors(
     val skyHorizon: Color,
     val text: Color,
     val label: Color,
-    val line: Color,
-    /** Faccia frontale della cifra: satinata, piatta, senza gradiente colorato. */
-    val numberFace: Color,
-    /** Parete piu' vicina alla faccia frontale. */
-    val numberSideNear: Color,
-    /** Parete piu' lontana, in fondo allo spessore. */
-    val numberSideFar: Color,
-    /** Smusso rivolto verso la luce. */
-    val numberChamfer: Color,
-    /** Quanto stacca l'ombra portata: piu' il fondo e' chiaro, piu' serve. */
-    val numberShadowAlpha: Float,
-    val pillBackground: Color,
-    val pillText: Color,
+    // **Qui stavano nove campi che nessuno leggeva.** `line` era il tratto dei
+    // grafici del feed; i cinque `number*` le facce, gli smussi e l'ombra della
+    // cifra estrusa; `pillBackground` e `pillText` le pastiglie del feed. Le
+    // schermate che li chiedevano sono state cancellate una per una, e i campi
+    // sono rimasti: calcolati a ogni ora del giorno, portati in giro dentro
+    // ogni `MeteoColors`, letti da nessuno.
     /** Sole: nucleo e ombra, gia' mescolati fra il giallo del giorno e il rosso radente. */
     val sunCore: Color,
     val sunShade: Color,
@@ -78,21 +70,7 @@ data class MeteoColors(
     val rainCloudCore: Color,
     val rainCloudShade: Color,
     val rain: Color,
-    /**
-     * Il mappamondo del benvenuto: mare e terre emerse.
-     *
-     * **Fissi, e non mescolati all'ora del giorno come tutto il resto.** Il
-     * mappamondo si vede una volta sola, prima ancora di sapere che tempo fa e
-     * dove: non ha un'ora a cui appartenere. E soprattutto e' l'unica cosa
-     * dell'app che deve **somigliare a qualcosa di vero** - una sfera bianca con
-     * macchie grigie era la luna, non la Terra, e infatti si leggeva cosi'.
-     *
-     * Il blu e l'ocra non sono tinte nuove: sono gli stessi della pioggia e del
-     * sole, smorzati. Un mappamondo da libro di scuola.
-     */
-    val globeSea: Color,
-    val globeSeaShade: Color,
-    val globeLand: Color,
+    // Il mare e le terre del mappamondo se ne sono andati con lui.
 )
 
 /** Una fascia di cielo: quello che si vede in alto e quello che si vede in basso. */
@@ -313,28 +291,12 @@ fun skyColors(sky: SkyState, cloudiness: Float = 0f): MeteoColors {
     // L'etichetta resta un gradino sotto il testo principale, ma non scende
     // mai sotto la soglia, a nessuna delle due altezze.
     val label = text.mutedOnBoth(band.zenith, band.horizon)
-    // La linea e' un segno, non una scritta: le basta la soglia del testo
-    // grande, se no diventerebbe indistinguibile dall'etichetta.
-    val line = lerp(text, background, 0.55f)
-        .readableOnBoth(band.zenith, band.horizon, CONTRAST_AA_LARGE)
-
     return MeteoColors(
         background = background,
         skyZenith = band.zenith,
         skyHorizon = band.horizon,
         text = text,
         label = label,
-        line = line,
-        numberFace = Color(0xFFFFFFFF),
-        numberSideNear = Color(0xFFE9EAEE),
-        // Costante e scura: e' il lato in ombra, e deve staccare dal fondo a
-        // qualunque ora, altrimenti a mezzogiorno il volume si perde.
-        numberSideFar = Color(0xFF43464C),
-        numberChamfer = Color(0xFFDFE1E5),
-        numberShadowAlpha = 0.12f * day,
-        
-        pillBackground = text,
-        pillText = background,
         sunCore = lerp(SunYellowCore, SunRedCore, sky.redness),
         sunShade = lerp(SunYellowShade, SunRedShade, sky.redness),
         moonCore = Color(0xFFF6F7F9),
@@ -344,29 +306,9 @@ fun skyColors(sky: SkyState, cloudiness: Float = 0f): MeteoColors {
         rainCloudCore = Color(0xFF9BA1AB),
         rainCloudShade = Color(0xFF474C56),
         rain = Color(0xFF3C8DF5),
-        globeSea = Color(0xFF8CBCE8),
-        globeSeaShade = Color(0xFF2E5C92),
-        globeLand = Color(0xFFCFA255),
     )
 }
 
-/**
- * Iridescenza: azzurro, rosa e giallo tenui, mai saturi. Le fasce trasparenti
- * interposte servono a spezzare il bordo, cosi' la rifrazione non gira uniforme
- * attorno a tutta la sagoma e resta entro il dieci-quindici per cento di
- * superficie.
- */
-val IridescenceStops: List<Color> = listOf(
-    Color(0x00FFFFFF),
-    Color(0xFF9FD2E8),
-    Color(0x00FFFFFF),
-    Color(0xFFE3B9CE),
-    Color(0x00FFFFFF),
-    Color(0xFFEDE3B4),
-    Color(0x00FFFFFF),
-)
-
-val LocalMeteoColors = staticCompositionLocalOf { skyColors(SkyState.Giorno) }
 
 
 
