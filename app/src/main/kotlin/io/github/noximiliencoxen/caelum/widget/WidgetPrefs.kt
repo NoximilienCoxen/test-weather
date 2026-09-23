@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.widget
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
@@ -11,8 +12,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 /**
@@ -30,6 +34,9 @@ import java.io.IOException
  *   nome_$id       (String)   — nome visualizzato della citta'
  *   admin_$id      (String?)  — regione/provincia (opzionale, per disambiguare omonimi)
  *   paese_$id      (String?)  — paese (opzionale)
+ *   gps_lat_$id, gps_lon_$id, gps_nome_$id, gps_admin_$id, gps_paese_$id
+ *                            — l'ultima posizione rilevata, per i widget
+ *                              che seguono il GPS (vedi [WidgetPrefs.lastFix])
  *
  * Chiavi legacy rimosse alla prima forget() (non vengono piu' scritte):
  *   localita_$id, sfondo_$id, accento_$id
@@ -50,12 +57,7 @@ data class WidgetConfig(
 class WidgetPrefs(private val context: Context) {
 
     /**
-     * Legge la configurazione dell'istanza dal DataStore.
-     *
-     * La ricostruzione del Place dai campi primitivi e' diretta e non puo'
-     * fallire: se lat e nome sono presenti, il Place viene costruito senza
-     * eccezioni. Nessun parsing JSON, nessun runCatching, nessun fallback
-     * silenzioso.
+     * Il file, con il ripiego su vuoto se non si legge.
      *
      * **Il file, pero', puo' non leggersi affatto**, e quello e' un caso
      * diverso dal contenuto sbagliato. Un `IOException` qui - disco pieno,
@@ -68,28 +70,52 @@ class WidgetPrefs(private val context: Context) {
      * Solo `IOException`: un difetto di programmazione deve continuare a farsi
      * sentire, non a travestirsi da widget da configurare.
      */
-    suspend fun load(appWidgetId: Int): WidgetConfig {
-        val prefs = context.widgetDataStore.data
+    private val stored: Flow<Preferences>
+        get() = context.widgetDataStore.data
             .catch { cause -> if (cause is IOException) emit(emptyPreferences()) else throw cause }
-            .first()
-        val useLocation = prefs[useLocationKey(appWidgetId)] ?: false
-        val lat = prefs[latKey(appWidgetId)]
-        val lon = prefs[lonKey(appWidgetId)]
-        val nome = prefs[nomeKey(appWidgetId)]
 
-        val place = if (nome != null && lat != null && lon != null) {
-            Place(
-                name = nome,
-                admin = prefs[adminKey(appWidgetId)],
-                country = prefs[paeseKey(appWidgetId)],
-                latitude = lat,
-                longitude = lon,
-            )
-        } else {
-            null
-        }
+    /**
+     * La configurazione dell'istanza, **e ogni sua modifica successiva**.
+     *
+     * E' quel che il widget osserva mentre e' vivo: una scelta salvata dalla
+     * configurazione arriva qui da sola, senza dipendere da chi si ricorda di
+     * chiedere un ridisegno. Vedi `CaelumWidget.provideGlance`.
+     *
+     * `distinctUntilChanged` perche' il file e' uno solo per tutte le istanze:
+     * senza, il salvataggio di un widget farebbe ridisegnare - e riscaricare -
+     * tutti gli altri. Lo stesso vale per [rememberFix], che scrive chiavi
+     * che qui non compaiono.
+     */
+    fun watch(appWidgetId: Int): Flow<WidgetConfig> = stored
+        .map { it.configOf(appWidgetId) }
+        .distinctUntilChanged()
 
-        return WidgetConfig(useLocation = useLocation, place = place)
+    /**
+     * Legge la configurazione dell'istanza dal DataStore.
+     *
+     * La ricostruzione del Place dai campi primitivi e' diretta e non puo'
+     * fallire: se lat e nome sono presenti, il Place viene costruito senza
+     * eccezioni. Nessun parsing JSON, nessun runCatching, nessun fallback
+     * silenzioso.
+     */
+    suspend fun load(appWidgetId: Int): WidgetConfig = watch(appWidgetId).first()
+
+    /**
+     * L'ultima posizione del telefono che questa istanza e' riuscita a sapere.
+     *
+     * Serve ai widget che seguono il GPS. **Da dietro le quinte il GPS non
+     * risponde quasi mai**: da Android 10 un'app che non e' in primo piano non
+     * riceve la posizione senza il permesso "sempre", che qui non si chiede.
+     * Prima, in quel caso, il widget ripiegava sulla citta' aperta nell'app -
+     * e chi aveva chiesto "la mia posizione" vedeva un'altra citta'. Adesso
+     * ripiega sull'ultimo punto in cui il telefono e' davvero stato.
+     */
+    suspend fun lastFix(appWidgetId: Int): Place? =
+        stored.first().placeOf(FIX_PREFIX, appWidgetId)
+
+    /** Annota [place] come l'ultima posizione nota di questa istanza. */
+    suspend fun rememberFix(appWidgetId: Int, place: Place) {
+        context.widgetDataStore.edit { it.putPlace(FIX_PREFIX, appWidgetId, place) }
     }
 
     /**
@@ -110,28 +136,14 @@ class WidgetPrefs(private val context: Context) {
 
             val place = config.place
             if (place != null) {
-                prefs[latKey(appWidgetId)] = place.latitude
-                prefs[lonKey(appWidgetId)] = place.longitude
-                prefs[nomeKey(appWidgetId)] = place.name
-                // I campi nullable vengono rimossi se assenti per non lasciare
-                // valori vecchi da una configurazione precedente.
-                if (place.admin != null) {
-                    prefs[adminKey(appWidgetId)] = place.admin
-                } else {
-                    prefs.remove(adminKey(appWidgetId))
-                }
-                if (place.country != null) {
-                    prefs[paeseKey(appWidgetId)] = place.country
-                } else {
-                    prefs.remove(paeseKey(appWidgetId))
-                }
+                prefs.putPlace(PLACE_PREFIX, appWidgetId, place)
             } else {
-                prefs.remove(latKey(appWidgetId))
-                prefs.remove(lonKey(appWidgetId))
-                prefs.remove(nomeKey(appWidgetId))
-                prefs.remove(adminKey(appWidgetId))
-                prefs.remove(paeseKey(appWidgetId))
+                prefs.removePlace(PLACE_PREFIX, appWidgetId)
             }
+            // Una citta' scelta a mano non ha niente da ricordare del GPS; una
+            // posizione seguita riparte da quella appena rilevata, se c'e'.
+            prefs.removePlace(FIX_PREFIX, appWidgetId)
+            if (config.useLocation && place != null) prefs.putPlace(FIX_PREFIX, appWidgetId, place)
         }
     }
 
@@ -144,11 +156,8 @@ class WidgetPrefs(private val context: Context) {
     suspend fun forget(appWidgetId: Int) {
         context.widgetDataStore.edit { prefs ->
             prefs.remove(useLocationKey(appWidgetId))
-            prefs.remove(latKey(appWidgetId))
-            prefs.remove(lonKey(appWidgetId))
-            prefs.remove(nomeKey(appWidgetId))
-            prefs.remove(adminKey(appWidgetId))
-            prefs.remove(paeseKey(appWidgetId))
+            prefs.removePlace(PLACE_PREFIX, appWidgetId)
+            prefs.removePlace(FIX_PREFIX, appWidgetId)
             // Chiavi legacy: non vengono piu' scritte ma vanno rimosse per
             // chi aggiorna dalla versione precedente.
             prefs.remove(stringPreferencesKey("localita_$appWidgetId"))
@@ -158,11 +167,53 @@ class WidgetPrefs(private val context: Context) {
     }
 
     private companion object {
+        /** La citta' scelta: nessun prefisso, per restare compatibili con le chiavi gia' scritte. */
+        const val PLACE_PREFIX = ""
+
+        /** L'ultima posizione rilevata dal GPS. */
+        const val FIX_PREFIX = "gps_"
+
         fun useLocationKey(id: Int) = booleanPreferencesKey("posizione_$id")
-        fun latKey(id: Int) = doublePreferencesKey("lat_$id")
-        fun lonKey(id: Int) = doublePreferencesKey("lon_$id")
-        fun nomeKey(id: Int) = stringPreferencesKey("nome_$id")
-        fun adminKey(id: Int) = stringPreferencesKey("admin_$id")
-        fun paeseKey(id: Int) = stringPreferencesKey("paese_$id")
+        fun latKey(prefix: String, id: Int) = doublePreferencesKey("${prefix}lat_$id")
+        fun lonKey(prefix: String, id: Int) = doublePreferencesKey("${prefix}lon_$id")
+        fun nomeKey(prefix: String, id: Int) = stringPreferencesKey("${prefix}nome_$id")
+        fun adminKey(prefix: String, id: Int) = stringPreferencesKey("${prefix}admin_$id")
+        fun paeseKey(prefix: String, id: Int) = stringPreferencesKey("${prefix}paese_$id")
+
+        fun Preferences.configOf(id: Int) = WidgetConfig(
+            useLocation = this[useLocationKey(id)] ?: false,
+            place = placeOf(PLACE_PREFIX, id),
+        )
+
+        fun Preferences.placeOf(prefix: String, id: Int): Place? {
+            val nome = this[nomeKey(prefix, id)] ?: return null
+            val lat = this[latKey(prefix, id)] ?: return null
+            val lon = this[lonKey(prefix, id)] ?: return null
+            return Place(
+                name = nome,
+                admin = this[adminKey(prefix, id)],
+                country = this[paeseKey(prefix, id)],
+                latitude = lat,
+                longitude = lon,
+            )
+        }
+
+        fun MutablePreferences.putPlace(prefix: String, id: Int, place: Place) {
+            this[latKey(prefix, id)] = place.latitude
+            this[lonKey(prefix, id)] = place.longitude
+            this[nomeKey(prefix, id)] = place.name
+            // I campi nullable vengono rimossi se assenti per non lasciare
+            // valori vecchi da una configurazione precedente.
+            if (place.admin != null) this[adminKey(prefix, id)] = place.admin else remove(adminKey(prefix, id))
+            if (place.country != null) this[paeseKey(prefix, id)] = place.country else remove(paeseKey(prefix, id))
+        }
+
+        fun MutablePreferences.removePlace(prefix: String, id: Int) {
+            remove(latKey(prefix, id))
+            remove(lonKey(prefix, id))
+            remove(nomeKey(prefix, id))
+            remove(adminKey(prefix, id))
+            remove(paeseKey(prefix, id))
+        }
     }
 }
