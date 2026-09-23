@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
@@ -16,6 +17,7 @@ import io.github.noximiliencoxen.caelum.ui.widgetconfig.WidgetConfigScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Aperta dal sistema subito dopo che un widget e' stato trascinato sulla Home
@@ -79,7 +81,19 @@ class WidgetConfigActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun saveAndFinish(place: Place?, useLocation: Boolean) {
+    private suspend fun saveAndFinish(chosen: Place?, useLocation: Boolean) {
+        // **Chi segue la posizione la rileva adesso, finche' e' in primo
+        // piano.** Da dietro le quinte il widget non la ottiene quasi mai (vedi
+        // WidgetPrefs.lastFix), e senza un punto di partenza ripiegava su
+        // quel che trovava: una citta' scelta mesi prima in un'altra scheda, o
+        // quella aperta nell'app. Con un tempo massimo: e' un tocco su SALVA,
+        // non un'attesa. Se non arriva niente resta la scelta di prima.
+        val place = if (useLocation) {
+            withTimeoutOrNull(FIX_TIMEOUT_MS) { DeviceLocation.current(this) } ?: chosen
+        } else {
+            chosen
+        }
+
         // Salvataggio su Dispatchers.IO: DataStore usa gia' IO internamente,
         // ma forzare il dispatcher garantisce che la scrittura sia completata
         // e visibile a qualsiasi lettura successiva prima di procedere.
@@ -114,5 +128,6 @@ class WidgetConfigActivity : ComponentActivity() {
 
     private companion object {
         const val TAG = "WidgetConfig"
+        const val FIX_TIMEOUT_MS = 3_000L
     }
 }
