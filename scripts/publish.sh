@@ -27,33 +27,46 @@ else
   git checkout --quiet --orphan ci-artifacts
 fi
 
-rm -rf "${SUBDIR:?}"
-mkdir -p "$SUBDIR"
-cp -r "$SRC"/. "$SUBDIR"/
+# Copia, INFO e commit stanno in una funzione perche' si rifanno a ogni
+# tentativo: vedi il ciclo sotto.
+prepara() {
+  rm -rf "${SUBDIR:?}"
+  mkdir -p "$SUBDIR"
+  cp -r "$SRC"/. "$SUBDIR"/
 
-{
-  echo "commit:  ${GITHUB_SHA}"
-  echo "run:     ${GITHUB_RUN_ID}"
-  echo "job:     ${SUBDIR}"
-  echo "quando:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-} > "$SUBDIR/INFO.txt"
+  {
+    echo "commit:  ${GITHUB_SHA}"
+    echo "run:     ${GITHUB_RUN_ID}"
+    echo "job:     ${SUBDIR}"
+    echo "quando:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  } > "$SUBDIR/INFO.txt"
 
-git add -A
-if git diff --cached --quiet; then
-  echo "nessuna modifica da pubblicare"
-  exit 0
-fi
-git commit --quiet -m "ci($SUBDIR): output run ${GITHUB_RUN_ID}"
+  git add -A
+  if git diff --cached --quiet; then
+    return 1
+  fi
+  git commit --quiet -m "ci($SUBDIR): output run ${GITHUB_RUN_ID}"
+}
 
+prepara || { echo "nessuna modifica da pubblicare"; exit 0; }
+
+# **Si riparte dalla cima nuova, non si fa il rebase.** Piu' job pubblicano
+# nello stesso momento, ciascuno nella sua sottocartella. Il rebase che stava
+# qui girava su un clone `--depth 1`: senza la base comune git ripeteva anche
+# i commit altrui gia' presenti, andava in conflitto su file che questo job non
+# tocca (api/*.json) e dopo quattro tentativi rinunciava. Il contenuto di
+# questo job e' tutto in /tmp/ciout: basta rimettersi sulla cima aggiornata e
+# ricopiarlo.
 for attempt in 1 2 3 4; do
   if git push --quiet origin ci-artifacts 2>/dev/null; then
     echo "pubblicato in ci-artifacts/$SUBDIR"
     exit 0
   fi
-  echo "push respinta, tentativo $attempt: riallineo e riprovo"
+  echo "push respinta, tentativo $attempt: riparto dalla cima aggiornata"
   sleep $((attempt * 3))
-  git fetch --quiet --depth 1 origin ci-artifacts || true
-  git rebase --quiet FETCH_HEAD || { git rebase --abort || true; }
+  git fetch --quiet --depth 1 origin ci-artifacts || continue
+  git checkout --quiet -B ci-artifacts FETCH_HEAD
+  prepara || { echo "nessuna modifica da pubblicare"; exit 0; }
 done
 echo "impossibile pubblicare dopo 4 tentativi" >&2
 exit 1
