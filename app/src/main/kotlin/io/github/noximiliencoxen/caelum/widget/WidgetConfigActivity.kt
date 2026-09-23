@@ -89,7 +89,7 @@ class WidgetConfigActivity : ComponentActivity() {
         // quella aperta nell'app. Con un tempo massimo: e' un tocco su SALVA,
         // non un'attesa. Se non arriva niente resta la scelta di prima.
         val place = if (useLocation) {
-            withTimeoutOrNull(FIX_TIMEOUT_MS) { DeviceLocation.current(this) } ?: chosen
+            withTimeoutOrNull(FIX_TIMEOUT_MS) { DeviceLocation.current(this@WidgetConfigActivity) } ?: chosen
         } else {
             chosen
         }
