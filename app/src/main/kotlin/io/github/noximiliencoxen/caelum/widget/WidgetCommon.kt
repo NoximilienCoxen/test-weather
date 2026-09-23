@@ -184,6 +184,8 @@ enum class WidgetKind(
     LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget),
 
     ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget),
+
+    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget),
     ;
 
     fun widget(): GlanceAppWidget = make()

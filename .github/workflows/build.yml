@@ -222,6 +222,9 @@ jobs:
   # si legge lo stesso.
   test:
     runs-on: ubuntu-latest
+    # Scrittura solo per pubblicare i disegni dei widget su `ci-artifacts`.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -353,6 +356,19 @@ jobs:
             echo "ZERO PROVE ESEGUITE: il job e' verde ma non ha controllato niente."
             exit 1
           fi
+
+      # I widget disegnati dai test (WeekArtTest), pubblicati su ci-artifacts:
+      # un widget e' un'immagine, e si controlla guardandola. Come i referti
+      # sotto, non puo' far fallire niente.
+      - name: Disegni dei widget
+        if: always()
+        continue-on-error: true
+        run: |
+          rm -rf /tmp/ciout && mkdir -p /tmp/ciout
+          cp app/build/widget-renders/*.png /tmp/ciout/ 2>/dev/null || { echo "nessun disegno"; exit 0; }
+          bash scripts/publish.sh widget-renders || echo "pubblicazione fallita"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # I due referti, in coda e senza potere di nuocere.
       #
