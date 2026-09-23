@@ -1,5 +1,5 @@
 === la pagina degli indirizzi, e quali indirizzi porta ===
---- https://severeweather.wmo.int/feeds.html  byte=25806
+--- https://severeweather.wmo.int/feeds.html  byte=25524
 --- indirizzi che sembrano feed, presi dalla pagina:
 --- ogni altro indirizzo assoluto della pagina:
 https://alertingauthority.wmo.int
@@ -100,9 +100,9 @@ HTTP 404  tipo=text/html  byte=18984
     
 
 --- https://api.weather.gov/alerts/active?limit=1
-HTTP 400  tipo=application/json  byte=390
+HTTP 400  tipo=application/json  byte=392
 {
-    "correlationId": "4dad13c",
+    "correlationId": "6d3324eb",
     "parameterErrors": [
         {
             "parameter": "query.limit",
@@ -113,6 +113,6 @@ HTTP 400  tipo=application/json  byte=390
     "type": "https://api.weather.gov/problems/BadRequest",
     "status": 400,
     "detail": "Bad Request",
-    "instance": "https://api.weather.gov/requests/4dad13c"
+    "instance": "https://api.weather.gov/requests/6d3324eb"
 }
 
