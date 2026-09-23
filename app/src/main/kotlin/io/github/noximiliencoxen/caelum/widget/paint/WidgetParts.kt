@@ -148,7 +148,7 @@ internal fun DrawScope.dayStrip(
 }
 
 /** Il segno del tempo in miniatura: pieno, leggibile, senza pretese di volume. */
-private fun DrawScope.dayGlyph(box: Rect, family: Wmo.Family, ink: WidgetInk) {
+internal fun DrawScope.dayGlyph(box: Rect, family: Wmo.Family, ink: WidgetInk) {
     val r = minOf(box.width, box.height) / 2f
     val c = box.center
     when (family) {
