@@ -45,6 +45,8 @@ fun SalaImpostazioniScreen(
     state: UiState,
     palette: SalaPalette,
     onToggleAnimazioni: (Boolean) -> Unit,
+    onToggleSchedeLarghe: (Boolean) -> Unit,
+    onApriGuida: () -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -163,6 +165,25 @@ fun SalaImpostazioniScreen(
                     InterruttoreSala(state.animazioniRidotte, palette) {
                         onToggleAnimazioni(!state.animazioniRidotte)
                     }
+                },
+            )
+            RigaServizio(
+                titolo = "Schede larghe",
+                nota = "nasconde la colonna delle sale: si sfogliano col dito",
+                palette = palette,
+                coda = {
+                    InterruttoreSala(state.schedeLarghe, palette) {
+                        onToggleSchedeLarghe(!state.schedeLarghe)
+                    }
+                },
+            )
+            RigaServizio(
+                titolo = "Guida all'uso",
+                nota = "rivedi come si sfogliano le sale e si cambia ora",
+                palette = palette,
+                onClick = onApriGuida,
+                coda = {
+                    Text(text = "›", style = SalaType.value, color = palette.accent)
                 },
             )
 

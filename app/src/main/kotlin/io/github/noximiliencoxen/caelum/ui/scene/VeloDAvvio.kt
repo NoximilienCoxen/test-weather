@@ -55,7 +55,7 @@ fun VeloDAvvio(
         }
         visibile = false
     }
-    AnimatedVisibility(visible = visibile, exit = fadeOut(tween(450)), modifier = modifier) {
+    AnimatedVisibility(visible = visibile, exit = fadeOut(tween(600)), modifier = modifier) {
         Box(modifier = Modifier.fillMaxSize()) {
             ScenaAnimata(scena = scena, notte = notte, movimento = movimento, modifier = Modifier.fillMaxSize())
             Box(
@@ -68,17 +68,16 @@ fun VeloDAvvio(
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                // Solo il nome. Sotto c'era scritto cosa rappresentava la scena,
+                // e un quadro con la didascalia si legge invece di guardarlo.
                 Text(text = "Caelum", style = SalaType.pageTitle, color = SalaTokens.neutral100)
-                Text(
-                    text = scena.nome,
-                    style = SalaType.sectionLabel,
-                    color = SalaTokens.neutral100.copy(alpha = 0.8f),
-                    modifier = Modifier.padding(top = 6.dp),
-                )
             }
         }
     }
 }
 
-private const val MINIMO_MS = 900L
-private const val MASSIMO_MS = 2600L
+// Meno di un secondo e mezzo, sul telefono, non si faceva in tempo a
+// vederla: dopo lo splash di sistema restavano pochi fotogrammi e poi la
+// dissolvenza, e sembrava un difetto invece di un saluto.
+private const val MINIMO_MS = 1600L
+private const val MASSIMO_MS = 3200L

@@ -30,6 +30,12 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -287,6 +293,38 @@ fun SalaShell(
         }
     }
 
+    // ── Larghezze ────────────────────────────────────────────────────────────
+    //
+    // Con la colonna, la scheda si ferma dove comincia il disco piu' grande
+    // della colonna, con un filo d'aria: cinquantasei punti dal bordo destro,
+    // quattordici dal sinistro. Erano sessantasei e ventisei, e le schede
+    // erano strette. Con le schede larghe la colonna non c'e' e i margini
+    // sono dodici per parte.
+    val larghe = state.schedeLarghe
+    val riservaColonna = if (larghe) 0.dp else 40.dp
+    val margineSinistro = if (larghe) 12.dp else 14.dp
+    val margineDestro = if (larghe) 12.dp else 16.dp
+
+    // ── La guida all'uso ─────────────────────────────────────────────────────
+    //
+    // Si ricordano i riquadri dei pezzi che la guida illumina. Da sola parte
+    // una volta, dopo il velo d'apertura e quando ci sono i dati; a mano,
+    // dalle impostazioni. La cattura non la vede mai da sola: la chiede.
+    var rCielo by remember { mutableStateOf<Rect?>(null) }
+    var rIntestazione by remember { mutableStateOf<Rect?>(null) }
+    var rScheda by remember { mutableStateOf<Rect?>(null) }
+    var rColonna by remember { mutableStateOf<Rect?>(null) }
+    var rBarra by remember { mutableStateOf<Rect?>(null) }
+    var attesaFinita by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(ATTESA_GUIDA_MS)
+        attesaFinita = true
+    }
+    val guidaDaSola = !state.guidaVista && attesaFinita && state.welcomed &&
+        !state.animazioniIstantanee && state.forecast != null &&
+        !state.settingsOpen && !state.locationsOpen && !state.legaliOpen
+    val guida = state.guidaAperta || guidaDaSola
+
     CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
@@ -314,7 +352,9 @@ fun SalaShell(
                     palette = palette,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
-                    modifier = Modifier.padding(start = 22.dp, end = 26.dp, top = 12.dp),
+                    modifier = Modifier
+                        .padding(start = 22.dp, end = 26.dp, top = 12.dp)
+                        .onGloballyPositioned { rIntestazione = it.boundsInRoot() },
                 )
 
                 // Il carosello lascia libero il fianco destro: sotto la colonna
@@ -338,7 +378,7 @@ fun SalaShell(
                 // (scorrimento annidato di Compose) e poi passa alla sala.
                 VerticalPager(
                     state = pagerState,
-                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = riservaColonna),
                     // Un dodicesimo di pagina: il gesto resta deliberato - un
                     // tocco che trema non cambia sala - ma basta un colpetto,
                     // non una corsa per tutto lo schermo. La molla e' rigida e
@@ -376,12 +416,15 @@ fun SalaShell(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(start = 26.dp, end = 26.dp, bottom = 14.dp),
+                            .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
                     ) {
                         Column(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .verticalScroll(scorrimento),
+                                .verticalScroll(scorrimento)
+                                .onGloballyPositioned {
+                                    if (page == pagerState.currentPage) rScheda = it.boundsInRoot()
+                                },
                         ) {
                             when (rooms.getOrNull(page)) {
                                 SalaRoom.OGGI -> SalaOggiScreen(
@@ -426,7 +469,7 @@ fun SalaShell(
                     prossima = rooms.getOrNull(1)?.heading ?: "",
                     palette = palette,
                     movimento = !ferme,
-                    modifier = Modifier.fillMaxWidth().padding(end = 40.dp, bottom = 6.dp),
+                    modifier = Modifier.fillMaxWidth().padding(end = riservaColonna, bottom = 6.dp),
                 )
 
                 BarraDelleOre(
@@ -445,7 +488,9 @@ fun SalaShell(
                     onSelect = viewModel::selectHour,
                     onTick = { if (!ridotte) vibrazioni.scatto() },
                     onTornaOra = viewModel::backToNow,
-                    modifier = Modifier.padding(start = 26.dp, end = 62.dp),
+                    modifier = Modifier
+                        .padding(start = 26.dp, end = if (larghe) 26.dp else 62.dp)
+                        .onGloballyPositioned { rBarra = it.boundsInRoot() },
                 )
             }
 
@@ -459,7 +504,7 @@ fun SalaShell(
             // sessanta punti che da qui in poi sono delle schede, che erano
             // strette. La colonna ha preso la cosa che i trattini facevano
             // meglio - seguire il dito in continuo - tramite `posizione`.
-            ColonnaScorciatoie(
+            if (!larghe) ColonnaScorciatoie(
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
                 posizione = posizione,
                 palette = palette,
@@ -474,7 +519,8 @@ fun SalaShell(
                     // lato attorno al disco, e questo margine li restituisce.
                     // Cio' che cambia e' l'area sensibile, che ora comincia a
                     // sei punti dal vetro invece che a dieci.
-                    .padding(end = 6.dp),
+                    .padding(end = 6.dp)
+                    .onGloballyPositioned { rColonna = it.boundsInRoot() },
             )
 
             // ── L'ordine di questi due blocchi e' funzionale ─────────────────
@@ -511,6 +557,8 @@ fun SalaShell(
                         state = state,
                         palette = palette,
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onToggleSchedeLarghe = viewModel::setSchedeLarghe,
+                        onApriGuida = viewModel::apriGuida,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,
@@ -580,9 +628,35 @@ fun SalaShell(
                     SalaLegaliScreen(palette = palette, onClose = viewModel::closeLegali)
                 }
             }
+
+            // Ultima, sopra tutto e ultima a registrare l'indietro.
+            if (guida) {
+                // Il cielo non e' un pezzo misurabile: e' lo spazio fra
+                // l'intestazione e la scheda.
+                val cieloGuida = rIntestazione?.let { alto ->
+                    val basso = rScheda?.top ?: (alto.bottom + 260f)
+                    val destra = rColonna?.left ?: (widthPx - alto.left)
+                    Rect(alto.left, alto.bottom + 8f, destra - 8f, maxOf(alto.bottom + 60f, basso - 16f))
+                }
+                GuidaSala(
+                    passi = passiGuida(
+                        cielo = cieloGuida,
+                        intestazione = rIntestazione,
+                        scheda = rScheda,
+                        colonna = if (larghe) null else rColonna,
+                        barra = rBarra,
+                    ),
+                    palette = palette,
+                    movimento = !ferme,
+                    onFine = viewModel::chiudiGuida,
+                )
+            }
         }
     }
 }
+
+/** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
+private const val ATTESA_GUIDA_MS = 3800L
 
 /**
  * Gli avvisi in corso **all'ora mostrata**, il piu' grave per primo.

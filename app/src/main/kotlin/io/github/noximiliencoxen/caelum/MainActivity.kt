@@ -149,6 +149,7 @@ class MainActivity : ComponentActivity() {
         // specifica.
         if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
+        if (intent.getBooleanExtra(EXTRA_GUIDE, false)) viewModel.apriGuida()
     }
 
     private companion object {
@@ -217,6 +218,9 @@ class MainActivity : ComponentActivity() {
          * pubblicarlo.
          */
         const val EXTRA_ALERT = "allerta"
+
+        /** Apre la guida all'uso: la cattura la fotografa, perche' da sola non compare. */
+        const val EXTRA_GUIDE = "guida"
 
     }
 }

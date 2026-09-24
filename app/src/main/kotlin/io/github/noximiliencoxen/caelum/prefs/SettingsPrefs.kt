@@ -120,6 +120,13 @@ data class Settings(
      * chi apre l'app per la prima volta non ha modo di indovinarlo.
      */
     val saleSfogliate: Boolean = false,
+    /**
+     * Schede larghe: la colonna delle sale sparisce e le schede prendono
+     * tutta la larghezza. Le sale si sfogliano comunque col dito.
+     */
+    val schedeLarghe: Boolean = false,
+    /** Vero da quando la guida all'uso e' stata vista fino in fondo o saltata. */
+    val guidaVista: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -195,6 +202,8 @@ class SettingsPrefs(private val context: Context) {
                 ?: CaptionStyle.COMPLETE,
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
             saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
+            schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
+            guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -253,6 +262,14 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_SALE_SFOGLIATE] = true }
     }
 
+    suspend fun setSchedeLarghe(larghe: Boolean) {
+        context.settingsDataStore.edit { it[KEY_SCHEDE_LARGHE] = larghe }
+    }
+
+    suspend fun setGuidaVista() {
+        context.settingsDataStore.edit { it[KEY_GUIDA_VISTA] = true }
+    }
+
     suspend fun setAnimazioniRidotte(ridotte: Boolean) {
         context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
     }
@@ -302,6 +319,8 @@ class SettingsPrefs(private val context: Context) {
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
         val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
+        val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
+        val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")
