@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.scene
 
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -11,7 +12,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 
 /** Una casa: muro, tetto a capanna, finestre. Restituisce la cima del camino. */
-private fun DrawScope.casa(x: Float, base: Float, larga: Float, alta: Float, muro: Color, tetto: Color, finestra: Color, neve: Boolean): Offset {
+internal fun DrawScope.casa(x: Float, base: Float, larga: Float, alta: Float, muro: Color, tetto: Color, finestra: Color, neve: Boolean): Offset {
     drawRect(muro, Offset(x, base - alta), Size(larga, alta))
     val colmo = base - alta - larga * 0.45f
     val p = Path().apply {
@@ -151,19 +152,36 @@ internal fun DrawScope.scenaFermata(t: Float, notte: Boolean) {
     drawLine(Colori.inchiostro, Offset(sx, marciapiede), Offset(sx, marciapiede - alta), strokeWidth = 4f)
     drawLine(Colori.inchiostro, Offset(sx + larga, marciapiede), Offset(sx + larga, marciapiede - alta), strokeWidth = 4f)
     drawRect(Colori.inchiostro, Offset(sx + larga * 0.1f, marciapiede - alta * 0.3f), Size(larga * 0.5f, H * 0.012f))
+    // Il cartello della fermata: un rettangolo giallo con un autobus.
     val cartello = Offset(sx + larga + W * 0.06f, marciapiede - alta * 1.05f)
     drawLine(Colori.inchiostro, Offset(cartello.x, marciapiede), cartello, strokeWidth = 3f)
-    drawCircle(Color(0xFF3E6A85), W * 0.035f, cartello)
-    drawRect(Color.White, cartello - Offset(W * 0.02f, W * 0.006f), Size(W * 0.04f, W * 0.012f))
+    drawRoundRect(Color(0xFFF0C51F), cartello - Offset(W * 0.045f, W * 0.035f), Size(W * 0.09f, W * 0.07f), CornerRadius(W * 0.01f))
+    drawRoundRect(Colori.inchiostro, cartello - Offset(W * 0.03f, W * 0.018f), Size(W * 0.06f, W * 0.03f), CornerRadius(W * 0.006f))
+    drawCircle(Colori.inchiostro, W * 0.007f, cartello + Offset(-W * 0.017f, W * 0.016f))
+    drawCircle(Colori.inchiostro, W * 0.007f, cartello + Offset(W * 0.017f, W * 0.016f))
 
-    // Una persona con l'ombrello rosso.
+    // Una persona con l'ombrello rosso: gambe, cappotto, testa, e il manico
+    // che dalla mano sale all'ombrello.
     val persona = Offset(sx + larga * 0.72f, marciapiede)
-    drawLine(Colori.inchiostro, persona, persona - Offset(0f, H * 0.12f), strokeWidth = 9f, cap = StrokeCap.Round)
-    drawCircle(Colori.inchiostro, W * 0.018f, persona - Offset(0f, H * 0.135f))
+    val cappotto = Color(0xFF3E4A5C)
+    drawLine(Colori.inchiostro, persona + Offset(-W * 0.008f, 0f), persona + Offset(-W * 0.006f, -H * 0.045f), strokeWidth = 5f, cap = StrokeCap.Round)
+    drawLine(Colori.inchiostro, persona + Offset(W * 0.008f, 0f), persona + Offset(W * 0.006f, -H * 0.045f), strokeWidth = 5f, cap = StrokeCap.Round)
+    val corpo = Path().apply {
+        moveTo(persona.x - W * 0.028f, persona.y - H * 0.04f)
+        lineTo(persona.x - W * 0.018f, persona.y - H * 0.115f)
+        lineTo(persona.x + W * 0.018f, persona.y - H * 0.115f)
+        lineTo(persona.x + W * 0.028f, persona.y - H * 0.04f)
+        close()
+    }
+    drawPath(corpo, cappotto)
+    val testa = persona - Offset(0f, H * 0.13f)
+    drawCircle(Color(0xFFD9A77E), W * 0.016f, testa)
+    val mano = persona + Offset(W * 0.02f, -H * 0.09f)
+    val cima = persona - Offset(-W * 0.01f, H * 0.19f)
+    drawLine(Colori.inchiostro, mano, cima, strokeWidth = 2.5f, cap = StrokeCap.Round)
     val ombrello = Path().apply {
-        val c = persona - Offset(0f, H * 0.16f)
-        moveTo(c.x - W * 0.08f, c.y)
-        quadraticBezierTo(c.x, c.y - H * 0.07f, c.x + W * 0.08f, c.y)
+        moveTo(cima.x - W * 0.085f, cima.y + H * 0.018f)
+        quadraticBezierTo(cima.x, cima.y - H * 0.05f, cima.x + W * 0.085f, cima.y + H * 0.018f)
         close()
     }
     drawPath(ombrello, Color(0xFFD8503F))
@@ -203,21 +221,25 @@ internal fun DrawScope.scenaArcobaleno(t: Float, notte: Boolean) {
         nuvola(Offset((W * 0.15f + t * W * 0.01f) % (W * 1.3f), H * 0.2f), W * 0.3f, Color.White.copy(alpha = 0.85f))
         nuvola(Offset(W * 1.1f - (W * 0.25f + t * W * 0.008f) % (W * 1.3f), H * 0.14f), W * 0.24f, Color.White.copy(alpha = 0.75f))
     }
-    // I tetti in fila, bagnati: una linea di luce sul colmo.
-    for (i in 0 until 7) {
-        val larga = W * 0.18f
-        val x = i * W * 0.15f - W * 0.05f
-        val alta = H * (0.05f + caso(i, 60) * 0.05f)
-        val p = Path().apply {
-            moveTo(x, tetti + H * 0.04f)
-            lineTo(x + larga / 2f, tetti - alta)
-            lineTo(x + larga, tetti + H * 0.04f)
-            close()
-        }
-        drawPath(p, if (notte) lerp(Colori.terracotta, Color(0xFF151B2B), 0.6f) else lerp(Colori.terracotta, Color(0xFF6E3A1E), caso(i, 61) * 0.4f))
-        drawLine(Color.White.copy(alpha = 0.45f), Offset(x + larga * 0.2f, tetti - alta * 0.4f), Offset(x + larga / 2f, tetti - alta), strokeWidth = 2f)
+    // Le case in fila, bagnate: una linea di luce sul tetto.
+    val muri = listOf(Color(0xFFE2C9A0), Color(0xFFC98E62), Color(0xFFD9B98A), Color(0xFFB36A48), Color(0xFFE9DCC4), Color(0xFFC9A27A))
+    var x = -W * 0.04f
+    var i = 0
+    while (x < W) {
+        val larga = W * (0.17f + caso(i, 60) * 0.05f)
+        val alta = H * (0.09f + caso(i, 61) * 0.06f)
+        val muro = muri[i % muri.size]
+        casa(
+            x, tetti + H * 0.04f, larga, alta,
+            if (notte) lerp(muro, Color(0xFF151B2B), 0.55f) else muro,
+            if (notte) lerp(Colori.terracotta, Color(0xFF151B2B), 0.5f) else Colori.terracotta,
+            if (notte) (if (caso(i, 62) > 0.4f) Colori.luceCalda else Color(0xFF2A3350)) else Color(0xFF8FA6B8),
+            neve = false,
+        )
+        drawLine(Color.White.copy(alpha = 0.5f), Offset(x + larga * 0.1f, tetti + H * 0.04f - alta - larga * 0.05f), Offset(x + larga / 2f, tetti + H * 0.04f - alta - larga * 0.4f), strokeWidth = 2f)
+        x += larga + W * 0.012f
+        i++
     }
-    drawRect(if (notte) Color(0xFF1B2130) else Color(0xFFC9B79C), Offset(0f, tetti + H * 0.04f), Size(W, H))
     // Le pozzanghere che riflettono il cielo, e l'ultima goccia che le increspa.
     listOf(0.25f, 0.7f).forEachIndexed { i, fx ->
         val c = Offset(W * fx, H * (0.84f + i * 0.06f))

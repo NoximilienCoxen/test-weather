@@ -7,6 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.lerp
 
@@ -148,12 +150,21 @@ internal fun DrawScope.scenaNebbia(t: Float, notte: Boolean) {
     val strati = listOf(0.42f, 0.52f, 0.63f, 0.76f)
     strati.forEachIndexed { i, y ->
         val base = if (notte) lerp(Color(0xFF3C4658), Color(0xFF1E2530), i / 3f) else lerp(Color(0xFFB9C3B0), Colori.verdeScuro, i / 3f)
-        collina(H * y, H * (y - 0.06f), W * (0.3f + caso(i, 90) * 0.5f), H * (y + 0.02f), base)
-        // I filari: righe che seguono la collina.
+        val xCima = W * (0.3f + caso(i, 90) * 0.5f)
+        val profilo = profiloCollina(H * y, H * (y - 0.06f), xCima, H * (y + 0.02f))
+        drawPath(profilo, base)
+        // I filari seguono la collina: lo stesso profilo, piu' in basso a ogni
+        // riga, e ritagliato dentro la collina, cosi' non escono nel cielo.
         if (i >= 2) {
-            for (k in 0 until 7) {
-                val yy = H * (y + 0.02f + k * 0.022f)
-                drawLine(lerp(base, Colori.inchiostro, 0.25f), Offset(0f, yy), Offset(W, yy + H * 0.01f), strokeWidth = 2f)
+            clipPath(profilo) {
+                for (k in 1..8) {
+                    val d = H * 0.022f * k
+                    drawPath(
+                        crinale(H * y + d, H * (y - 0.06f) + d, xCima, H * (y + 0.02f) + d),
+                        lerp(base, Colori.inchiostro, 0.22f),
+                        style = Stroke(1.8f),
+                    )
+                }
             }
         }
         // La nebbia fra uno strato e l'altro, che scorre lenta.
