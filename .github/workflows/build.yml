@@ -366,6 +366,7 @@ jobs:
         run: |
           rm -rf /tmp/ciout && mkdir -p /tmp/ciout
           cp app/build/widget-renders/*.png /tmp/ciout/ 2>/dev/null || { echo "nessun disegno"; exit 0; }
+          cp app/build/widget-renders/*.txt /tmp/ciout/ 2>/dev/null || true
           bash scripts/publish.sh widget-renders || echo "pubblicazione fallita"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
