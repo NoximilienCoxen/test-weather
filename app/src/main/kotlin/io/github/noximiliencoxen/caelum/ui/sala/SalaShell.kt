@@ -36,6 +36,9 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -356,6 +359,24 @@ fun SalaShell(
                         .padding(start = 22.dp, end = 26.dp, top = 12.dp)
                         .onGloballyPositioned { rIntestazione = it.boundsInRoot() },
                 )
+
+                // **La citta' di un widget, in visita.** Si dice da dove viene
+                // e come si torna, perche' l'intestazione da sola mostrerebbe
+                // Fontevivo a chi l'app l'ha impostata su Noceto, senza
+                // spiegare perche'. L'indietro torna a casa anche lui; le
+                // impostazioni e le localita', composte dopo, lo precedono.
+                val casa = state.casa
+                if (casa != null) {
+                    BackHandler(onBack = viewModel::lasciaVisita)
+                    PastigliaAccento(
+                        testo = "DAL WIDGET · TORNA A ${casa.name.uppercase()}",
+                        palette = palette,
+                        modifier = Modifier
+                            .padding(start = 22.dp, top = 8.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = viewModel::lasciaVisita),
+                    )
+                }
 
                 // Il carosello lascia libero il fianco destro: sotto la colonna
                 // delle scorciatoie non deve finirci niente da leggere.

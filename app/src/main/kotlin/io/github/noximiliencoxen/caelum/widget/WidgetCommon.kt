@@ -147,10 +147,20 @@ internal fun configureIntent(context: Context, appWidgetId: Int): Intent =
  * [configureIntent]; `SINGLE_TOP` fa arrivare la richiesta anche all'app gia'
  * aperta, tramite `onNewIntent`.
  */
-internal fun apriSalaIntent(context: Context, appWidgetId: Int, kind: WidgetKind): Intent =
+internal fun apriSalaIntent(context: Context, appWidgetId: Int, kind: WidgetKind, place: Place?): Intent =
     Intent(context, MainActivity::class.java)
         .setAction(Intent.ACTION_VIEW)
         .putExtra(MainActivity.EXTRA_SALA_WIDGET, kind.sala.name)
+        .apply {
+            // La citta' del widget, che l'app mostra senza farla sua.
+            if (place != null) {
+                putExtra(MainActivity.EXTRA_WIDGET_NOME, place.name)
+                putExtra(MainActivity.EXTRA_WIDGET_REGIONE, place.admin)
+                putExtra(MainActivity.EXTRA_WIDGET_PAESE, place.country)
+                putExtra(MainActivity.EXTRA_WIDGET_LAT, place.latitude)
+                putExtra(MainActivity.EXTRA_WIDGET_LON, place.longitude)
+            }
+        }
         .setData("caelum://sala/${kind.sala.name.lowercase()}/$appWidgetId".toUri())
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
@@ -333,7 +343,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
         // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
         // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
         // saperne di piu', non lo stesso numero ridisegnato.
-        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind)))
+        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
     }
 }
 
