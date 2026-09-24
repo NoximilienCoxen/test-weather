@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.welcome
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -114,12 +115,12 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.Bottom,
         ) {
             Text(
-                text = "Il cielo,\nora per ora",
+                text = tr("Il cielo,\nora per ora", "The sky,\nhour by hour"),
                 style = SalaType.pageTitle,
                 color = inchiostro,
             )
             Text(
-                text = "Qui il tempo si guarda, non si legge.",
+                text = tr("Qui il tempo si guarda, non si legge.", "Here the weather is seen, not read."),
                 style = SalaType.body,
                 color = inchiostro.copy(alpha = 0.8f),
                 modifier = Modifier.padding(top = 12.dp),
@@ -128,7 +129,7 @@ fun WelcomeScreen(
                 modifier = Modifier.padding(top = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                listOf("Nessun account", "Dati aperti", "Senza pubblicità").forEach { voce ->
+                listOf(tr("Nessun account", "No account"), tr("Dati aperti", "Open data"), tr("Senza pubblicità", "No ads")).forEach { voce ->
                     Text(
                         text = voce,
                         style = SalaType.rowNote,
@@ -148,7 +149,7 @@ fun WelcomeScreen(
             // da un'app bloccata.
             if (state.locating) {
                 ScrittaCheRespira(
-                    testo = "GUARDANDO IL CIELO…",
+                    testo = tr("GUARDANDO IL CIELO…", "LOOKING AT THE SKY…"),
                     modifier = Modifier.padding(top = 16.dp),
                 )
             } else {
@@ -166,13 +167,13 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Pulsante(
-                testo = "Trovami",
+                testo = tr("Trovami", "Find me"),
                 fondo = SalaTokens.accent600,
                 inchiostro = SalaTokens.neutral100,
                 onClick = { chiediPermesso.launch(Manifest.permission.ACCESS_COARSE_LOCATION) },
             )
             Pulsante(
-                testo = "Scegli prima una località",
+                testo = tr("Scegli prima una località", "Choose a place first"),
                 fondo = inchiostro.copy(alpha = if (notte) 0.14f else 0.07f),
                 inchiostro = inchiostro,
                 onClick = onChooseByHand,
@@ -184,9 +185,9 @@ fun WelcomeScreen(
 
 /** Cosa dice la riga in fondo, secondo cosa sta succedendo. */
 private fun cosaDice(state: UiState): String = when {
-    state.followsLocation -> "Trovato. Apro il cielo."
-    state.locationUnavailable -> "Non riesco a trovarti: puoi scegliere la città a mano."
-    else -> "Per aprire il cielo mi serve sapere da dove lo guardi."
+    state.followsLocation -> tr("Trovato. Apro il cielo.", "Found. Opening the sky.")
+    state.locationUnavailable -> tr("Non riesco a trovarti: puoi scegliere la città a mano.", "I can't find you: you can pick the city by hand.")
+    else -> tr("Per aprire il cielo mi serve sapere da dove lo guardi.", "To open the sky I need to know where you're looking from.")
 }
 
 /**

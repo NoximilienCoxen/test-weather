@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
@@ -74,16 +75,18 @@ object MoonPhase {
  * widget e la pagina della luna nel dettaglio - e la domanda "come si chiama
  * questa fase" e' della luna, non di chi la disegna.
  */
-enum class MoonSegment(val label: String) {
-    NOVILUNIO("NOVILUNIO"),
-    CRESCENTE("LUNA CRESCENTE"),
-    PRIMO_QUARTO("PRIMO QUARTO"),
-    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE"),
-    PLENILUNIO("PLENILUNIO"),
-    GIBBOSA_CALANTE("GIBBOSA CALANTE"),
-    ULTIMO_QUARTO("ULTIMO QUARTO"),
-    CALANTE("LUNA CALANTE"),
+enum class MoonSegment(private val italiano: String, private val inglese: String) {
+    NOVILUNIO("NOVILUNIO", "NEW MOON"),
+    CRESCENTE("LUNA CRESCENTE", "WAXING CRESCENT"),
+    PRIMO_QUARTO("PRIMO QUARTO", "FIRST QUARTER"),
+    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE", "WAXING GIBBOUS"),
+    PLENILUNIO("PLENILUNIO", "FULL MOON"),
+    GIBBOSA_CALANTE("GIBBOSA CALANTE", "WANING GIBBOUS"),
+    ULTIMO_QUARTO("ULTIMO QUARTO", "LAST QUARTER"),
+    CALANTE("LUNA CALANTE", "WANING CRESCENT"),
     ;
+
+    val label: String get() = tr(italiano, inglese)
 
     companion object {
         /** Il ciclo diviso in otto, con i nomi centrati sul loro istante esatto. */

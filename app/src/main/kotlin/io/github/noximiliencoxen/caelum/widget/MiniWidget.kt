@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
@@ -31,7 +32,7 @@ internal class MiniWidget : CaelumWidget(WidgetKind.MINI) {
         val current = forecast?.current
         val spoken = buildString {
             append(where.name)
-            current?.temperature?.roundToInt()?.let { append(", $it gradi") }
+            current?.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees")) }
             append(", ${Wmo.condition(current?.weatherCode).lowercase()}")
         }
         return Drawn(bitmap, spoken)

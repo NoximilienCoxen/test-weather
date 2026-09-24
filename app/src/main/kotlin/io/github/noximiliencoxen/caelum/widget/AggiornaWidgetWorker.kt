@@ -11,6 +11,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import io.github.noximiliencoxen.caelum.lingua.Lingua
 import java.util.concurrent.TimeUnit
 
 /**
@@ -32,6 +33,7 @@ class AggiornaWidgetWorker(contesto: Context, parametri: WorkerParameters) : Cor
 
     override suspend fun doWork(): Result {
         val contesto = applicationContext
+        Lingua.carica(contesto)
         val manager = GlanceAppWidgetManager(contesto)
         val prefs = WidgetPrefs(contesto)
         var tentati = 0

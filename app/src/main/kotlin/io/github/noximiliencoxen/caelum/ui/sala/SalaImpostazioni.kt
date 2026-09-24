@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.SceltaLingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.result.contract.ActivityResultContracts
@@ -54,6 +56,7 @@ fun SalaImpostazioniScreen(
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
     onToggleNotifichePioggia: (Boolean) -> Unit,
+    onChooseLingua: (SceltaLingua) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -71,7 +74,7 @@ fun SalaImpostazioniScreen(
             .systemBarsPadding()
             .padding(start = 26.dp, end = 26.dp, top = 12.dp, bottom = 30.dp),
     ) {
-        IntestazioneServizio(titolo = "Impostazioni", palette = palette, onIndietro = onClose)
+        IntestazioneServizio(titolo = tr("Impostazioni", "Settings"), palette = palette, onIndietro = onClose)
 
         Column(
             modifier = Modifier
@@ -80,12 +83,25 @@ fun SalaImpostazioniScreen(
                 .padding(top = 18.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            BloccoImpostazioni(etichetta = "TEMA", palette = palette) {
+            BloccoImpostazioni(etichetta = tr("LINGUA", "LANGUAGE"), palette = palette) {
                 SceltaPastiglie(
                     voci = listOf(
-                        CardTheme.AUTO to "Segui il cielo",
-                        CardTheme.CHIARO to "Chiaro",
-                        CardTheme.SCURO to "Scuro",
+                        SceltaLingua.AUTO to tr("Come il telefono", "Like the phone"),
+                        SceltaLingua.ITALIANO to "Italiano",
+                        SceltaLingua.INGLESE to "English",
+                    ),
+                    scelta = state.lingua,
+                    palette = palette,
+                    onScegli = onChooseLingua,
+                )
+            }
+
+            BloccoImpostazioni(etichetta = tr("TEMA", "THEME"), palette = palette) {
+                SceltaPastiglie(
+                    voci = listOf(
+                        CardTheme.AUTO to tr("Segui il cielo", "Follow the sky"),
+                        CardTheme.CHIARO to tr("Chiaro", "Light"),
+                        CardTheme.SCURO to tr("Scuro", "Dark"),
                     ),
                     scelta = state.cardTheme,
                     palette = palette,
@@ -93,7 +109,7 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            BloccoImpostazioni(etichetta = "TEMPERATURA", palette = palette) {
+            BloccoImpostazioni(etichetta = tr("TEMPERATURA", "TEMPERATURE"), palette = palette) {
                 SceltaPastiglie(
                     voci = listOf(TempUnit.CELSIUS to "°C", TempUnit.FAHRENHEIT to "°F"),
                     scelta = state.unit,
@@ -102,7 +118,7 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            BloccoImpostazioni(etichetta = "VENTO", palette = palette) {
+            BloccoImpostazioni(etichetta = tr("VENTO", "WIND"), palette = palette) {
                 SceltaPastiglie(
                     voci = SalaWindUnit.entries.map { it to it.label },
                     scelta = state.windUnit,
@@ -111,9 +127,9 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            BloccoImpostazioni(etichetta = "DIDASCALIE", palette = palette) {
+            BloccoImpostazioni(etichetta = tr("DIDASCALIE", "CAPTIONS"), palette = palette) {
                 SceltaPastiglie(
-                    voci = listOf(CaptionStyle.COMPLETE to "Complete", CaptionStyle.BREVI to "Brevi"),
+                    voci = listOf(CaptionStyle.COMPLETE to tr("Complete", "Full"), CaptionStyle.BREVI to tr("Brevi", "Short")),
                     scelta = state.captionStyle,
                     palette = palette,
                     onScegli = onChooseCaptionStyle,
@@ -125,8 +141,8 @@ fun SalaImpostazioniScreen(
             // giu': la scelta e' su cio' che questa applicazione deduce dalle
             // soglie, non su cio' che un ente dichiara.
             RigaServizio(
-                titolo = "Pioggia intensa",
-                nota = "avvisi calcolati sui millimetri attesi",
+                titolo = tr("Pioggia intensa", "Heavy rain"),
+                nota = tr("avvisi calcolati sui millimetri attesi", "alerts based on expected millimetres"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.alertToggles.pioggiaIntensa, palette) {
@@ -135,8 +151,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Temporali",
-                nota = "avvisi calcolati sul codice del tempo",
+                titolo = tr("Temporali", "Thunderstorms"),
+                nota = tr("avvisi calcolati sul codice del tempo", "alerts based on the weather code"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.alertToggles.temporali, palette) {
@@ -145,8 +161,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Raggi UV sopra 6",
-                nota = "il punto in cui la scala mondiale passa ad alto",
+                titolo = tr("Raggi UV sopra 6", "UV above 6"),
+                nota = tr("il punto in cui la scala mondiale passa ad alto", "where the world scale turns high"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.alertToggles.uvAlto, palette) {
@@ -155,8 +171,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Vento forte",
-                nota = "avvisi calcolati sulle raffiche attese",
+                titolo = tr("Vento forte", "Strong wind"),
+                nota = tr("avvisi calcolati sulle raffiche attese", "alerts based on expected gusts"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.alertToggles.ventoForte, palette) {
@@ -173,8 +189,8 @@ fun SalaImpostazioniScreen(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotifichePioggia(concesso) }
             RigaServizio(
-                titolo = "Pioggia e grandine in arrivo",
-                nota = "una notifica quando sta per cominciare, sulla città dell'app",
+                titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way"),
+                nota = tr("una notifica quando sta per cominciare, sulla città dell'app", "a notification when it's about to start, for the app's city"),
                 palette = palette,
                 coda = {
                     val accese = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto)
@@ -190,8 +206,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Animazioni ridotte",
-                nota = "ferma il cielo e le vibrazioni di ciò che cade",
+                titolo = tr("Animazioni ridotte", "Reduced motion"),
+                nota = tr("ferma il cielo e le vibrazioni di ciò che cade", "stops the sky and the vibrations of what falls"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.animazioniRidotte, palette) {
@@ -200,8 +216,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Schede larghe",
-                nota = "nasconde la colonna delle sale: si sfogliano col dito",
+                titolo = tr("Schede larghe", "Wide cards"),
+                nota = tr("nasconde la colonna delle sale: si sfogliano col dito", "hides the room column: swipe to browse"),
                 palette = palette,
                 coda = {
                     InterruttoreSala(state.schedeLarghe, palette) {
@@ -210,8 +226,8 @@ fun SalaImpostazioniScreen(
                 },
             )
             RigaServizio(
-                titolo = "Guida all'uso",
-                nota = "rivedi come si sfogliano le sale e si cambia ora",
+                titolo = tr("Guida all'uso", "How to use"),
+                nota = tr("rivedi come si sfogliano le sale e si cambia ora", "see again how to browse rooms and change the hour"),
                 palette = palette,
                 onClick = onApriGuida,
                 coda = {
@@ -234,13 +250,13 @@ fun SalaImpostazioniScreen(
             // schermata delle impostazioni lo dichiara"*, e non era vero; il
             // modello cambia i numeri della previsione e nessuno poteva sapere
             // quale fosse attivo.
-            BloccoImpostazioni(etichetta = "DA DOVE VENGONO I NUMERI", palette = palette) {
-                VoceInformativa("Ultimo aggiornamento", quandoScaricata(state.fetchedAt), palette)
-                VoceInformativa("Previsione", "Open-Meteo · modello ${state.model.label}", palette)
-                VoceInformativa("Qualità dell'aria", "Open-Meteo", palette)
-                VoceInformativa("Allerte", "MeteoAlarm, più avvisi calcolati sui dati", palette)
-                VoceInformativa("Località mostrata", dettaglioLocalita(state), palette)
-                VoceInformativa("Versione", "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
+            BloccoImpostazioni(etichetta = tr("DA DOVE VENGONO I NUMERI", "WHERE THE NUMBERS COME FROM"), palette = palette) {
+                VoceInformativa(tr("Ultimo aggiornamento", "Last update"), quandoScaricata(state.fetchedAt), palette)
+                VoceInformativa(tr("Previsione", "Forecast"), tr("Open-Meteo · modello ${state.model.label}", "Open-Meteo · model ${state.model.label}"), palette)
+                VoceInformativa(tr("Qualità dell'aria", "Air quality"), "Open-Meteo", palette)
+                VoceInformativa(tr("Allerte", "Alerts"), tr("MeteoAlarm, più avvisi calcolati sui dati", "MeteoAlarm, plus alerts calculated from the data"), palette)
+                VoceInformativa(tr("Località mostrata", "Location shown"), dettaglioLocalita(state), palette)
+                VoceInformativa(tr("Versione", "Version"), "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
             }
 
             // **`refresh()` era pubblico e non lo chiamava nessuna schermata**,
@@ -248,15 +264,15 @@ fun SalaImpostazioniScreen(
             // aveva un solo lettore in tutta l'app. Qui trovano tutti e due il
             // loro posto: si riprova a mano, e se va storto lo si legge.
             RigaServizio(
-                titolo = "Aggiorna adesso",
-                nota = state.error ?: "riprova a scaricare la previsione",
+                titolo = tr("Aggiorna adesso", "Refresh now"),
+                nota = state.error ?: tr("riprova a scaricare la previsione", "try downloading the forecast again"),
                 palette = palette,
                 onClick = onAggiorna,
             )
 
             RigaServizio(
-                titolo = "Note legali e privacy",
-                nota = "fonti dei dati, cosa esce dal telefono, permessi",
+                titolo = tr("Note legali e privacy", "Legal and privacy"),
+                nota = tr("fonti dei dati, cosa esce dal telefono, permessi", "data sources, what leaves the phone, permissions"),
                 palette = palette,
                 onClick = onApriLegali,
                 coda = {
@@ -270,8 +286,8 @@ fun SalaImpostazioniScreen(
             verticalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             RigaServizio(
-                titolo = "Le località",
-                nota = "${state.favorites.size} salvate · ${state.place.name} attiva",
+                titolo = tr("Le località", "Locations"),
+                nota = tr("${state.favorites.size} salvate · ${state.place.name} attiva", "${state.favorites.size} saved · ${state.place.name} active"),
                 palette = palette,
                 onClick = onApriLocalita,
                 coda = {
@@ -316,12 +332,12 @@ private fun VoceInformativa(etichetta: String, valore: String, palette: SalaPale
  * partita la richiesta.
  */
 private fun quandoScaricata(quando: LocalDateTime?): String {
-    if (quando == null) return "non ancora"
+    if (quando == null) return tr("non ancora", "not yet")
     val ora = String.format(Locale.ITALY, "%02d:%02d", quando.hour, quando.minute)
     return when (quando.toLocalDate()) {
-        LocalDate.now() -> "oggi alle $ora"
-        LocalDate.now().minusDays(1) -> "ieri alle $ora"
-        else -> "il ${quando.dayOfMonth}/${quando.monthValue} alle $ora"
+        LocalDate.now() -> tr("oggi alle $ora", "today at $ora")
+        LocalDate.now().minusDays(1) -> tr("ieri alle $ora", "yesterday at $ora")
+        else -> tr("il ${quando.dayOfMonth}/${quando.monthValue} alle $ora", "on ${quando.dayOfMonth}/${quando.monthValue} at $ora")
     }
 }
 
@@ -344,7 +360,7 @@ private fun dettaglioLocalita(state: UiState): String {
         state.place.latitude,
         state.place.longitude,
     )
-    val chi = if (state.followsLocation) "dal telefono" else "scelta a mano"
+    val chi = if (state.followsLocation) tr("dal telefono", "from the phone") else tr("scelta a mano", "chosen by hand")
     val fuso = state.forecast?.utcOffsetSeconds?.let { fusoOrario(it) }
     return listOfNotNull(dove, punto, fuso, chi).joinToString(" · ")
 }

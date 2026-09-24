@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -152,7 +154,7 @@ class WeatherRepository(
                 val url = buildString {
                     append(GEOCODING_ENDPOINT)
                     append("?name=").append(URLEncoder.encode(trimmed, "UTF-8"))
-                    append("&count=8&language=it&format=json")
+                    append("&count=8&language=").append(if (Lingua.inglese) "en" else "it").append("&format=json")
                 }
                 // Otto secondi e non dieci: qui si sta scrivendo in una
                 // casella, e chi scrive aspetta meno volentieri di chi ha
@@ -221,7 +223,7 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
         val date = runCatching { LocalDate.parse(iso) }.getOrDefault(today.plusDays(i.toLong()))
         DayForecast(
             date = date,
-            label = if (date == today) "OGGI" else date.dayOfWeek.italianShort(),
+            label = if (date == today) tr("OGGI", "TODAY") else date.dayOfWeek.italianShort(),
             weatherCode = d.weatherCode.at(i),
             tempMax = d.tempMax.at(i),
             tempMin = d.tempMin.at(i),
@@ -295,13 +297,13 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
 }
 
 private fun DayOfWeek.italianShort(): String = when (this) {
-    DayOfWeek.MONDAY -> "LUN"
-    DayOfWeek.TUESDAY -> "MAR"
-    DayOfWeek.WEDNESDAY -> "MER"
-    DayOfWeek.THURSDAY -> "GIO"
-    DayOfWeek.FRIDAY -> "VEN"
-    DayOfWeek.SATURDAY -> "SAB"
-    DayOfWeek.SUNDAY -> "DOM"
+    DayOfWeek.MONDAY -> tr("LUN", "MON")
+    DayOfWeek.TUESDAY -> tr("MAR", "TUE")
+    DayOfWeek.WEDNESDAY -> tr("MER", "WED")
+    DayOfWeek.THURSDAY -> tr("GIO", "THU")
+    DayOfWeek.FRIDAY -> tr("VEN", "FRI")
+    DayOfWeek.SATURDAY -> tr("SAB", "SAT")
+    DayOfWeek.SUNDAY -> tr("DOM", "SUN")
 }
 
 /**

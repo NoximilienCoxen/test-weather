@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -103,7 +104,7 @@ class WeatherAlertsRepository(private val place: Place) {
 
     /** Il posto non e' fra quelli che MeteoAlarm serve. */
     class OutOfCoverage(val country: String?) :
-        Exception("MeteoAlarm non copre " + (country ?: "questa località"))
+        Exception(tr("MeteoAlarm non copre ", "MeteoAlarm does not cover ") + (country ?: tr("questa località", "this location")))
 
     companion object {
         /**

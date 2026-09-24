@@ -1,5 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui
 
+import io.github.noximiliencoxen.caelum.widget.repaintWidgets
+import io.github.noximiliencoxen.caelum.lingua.tr
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.SceltaLingua
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import android.app.Application
 import android.util.Log
@@ -65,12 +69,12 @@ import kotlinx.serialization.SerializationException
 internal fun failureMessage(failure: Throwable): String = when (failure) {
     // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
     // dichiara di essere. Non c'e' niente che chi guarda possa fare.
-    is SerializationException -> "Il servizio meteo ha risposto male"
+    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service gave a bad answer")
     // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
     // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
     // stessa cosa.
-    is IOException -> "Rete non raggiungibile"
-    else -> "Previsione non disponibile"
+    is IOException -> tr("Rete non raggiungibile", "Network unreachable")
+    else -> tr("Previsione non disponibile", "Forecast not available")
 }
 
 data class UiState(
@@ -189,6 +193,7 @@ data class UiState(
     val guidaAperta: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. */
     val notifichePioggia: Boolean = true,
+    val lingua: SceltaLingua = SceltaLingua.AUTO,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /**
@@ -531,6 +536,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             prefs.settings.collect { settings ->
                 val current = _state.value
+                Lingua.applica(settings.lingua)
                 salvata = settings.place
                 val mostrata = visitata ?: settings.place
                 val moved = current.place != mostrata
@@ -554,6 +560,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
+                        lingua = settings.lingua,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                     )
                 }
@@ -1154,7 +1161,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(
                             searching = false,
                             results = emptyList(),
-                            searchError = failure.message ?: "Ricerca non riuscita",
+                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed"),
                         )
                     }
                 }
@@ -1288,6 +1295,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun scattoFermo() {
         _state.update { it.copy(animazioniIstantanee = true) }
+    }
+
+    fun setLingua(scelta: SceltaLingua) {
+        Lingua.applica(scelta)
+        _state.update { it.copy(lingua = scelta) }
+        viewModelScope.launch { prefs.setLingua(scelta) }
+        // I giorni della previsione hanno le sigle nella lingua di quando e'
+        // arrivata ("GIO" / "THU"): si riscarica per rifarle. E i widget,
+        // che sono immagini, si ridipingono nella lingua nuova.
+        refresh()
+        viewModelScope.launch { repaintWidgets(getApplication()) }
     }
 
     fun setNotifichePioggia(accese: Boolean) {

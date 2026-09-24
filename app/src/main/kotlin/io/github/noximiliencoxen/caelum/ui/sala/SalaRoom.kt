@@ -1,4 +1,5 @@
 package io.github.noximiliencoxen.caelum.ui.sala
+import io.github.noximiliencoxen.caelum.lingua.tr
 
 /**
  * Le sette schermate del tempo, nell'ordine in cui si sfogliano.
@@ -13,12 +14,15 @@ package io.github.noximiliencoxen.caelum.ui.sala
  * dire quale scatto e' quale. **Non si scrive piu' a schermo**: chi guarda non
  * chiama queste schermate "sale", e non deve impararlo per usarle.
  */
-enum class SalaRoom(val roman: String, val heading: String) {
-    OGGI("I", "Oggi"),
-    SETTIMANA("II", "La settimana"),
-    PIOGGIA("III", "La pioggia"),
-    LUNA("IV", "La luna"),
-    ARIA("V", "L'aria"),
-    VENTO("VI", "Il vento"),
-    UV("VII", "I raggi UV"),
+enum class SalaRoom(val roman: String, private val italiano: String, private val inglese: String) {
+    OGGI("I", "Oggi", "Today"),
+    SETTIMANA("II", "La settimana", "The week"),
+    PIOGGIA("III", "La pioggia", "Rain"),
+    LUNA("IV", "La luna", "The moon"),
+    ARIA("V", "L'aria", "Air"),
+    VENTO("VI", "Il vento", "Wind"),
+    UV("VII", "I raggi UV", "UV rays"),
+    ;
+
+    val heading: String get() = tr(italiano, inglese)
 }

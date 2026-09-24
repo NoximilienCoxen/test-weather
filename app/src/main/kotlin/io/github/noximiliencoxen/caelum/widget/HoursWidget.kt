@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
@@ -32,11 +33,11 @@ internal class HoursWidget : CaelumWidget(WidgetKind.ORE) {
             }
         }
         val spoken = buildString {
-            append("Prossime ore a ${where.name}")
+            append(tr("Prossime ore a ${where.name}", "Next hours in ${where.name}"))
             hours.take(6).forEach { h ->
-                append(". Alle ${h.time.hour}, ${Wmo.condition(h.weatherCode).lowercase()}")
-                h.temperature?.roundToInt()?.let { append(", $it gradi") }
-                h.precipProbability?.takeIf { it >= 10 }?.let { append(", pioggia al $it per cento") }
+                append(tr(". Alle ${h.time.hour}, ", ". At ${h.time.hour}, ") + Wmo.condition(h.weatherCode).lowercase())
+                h.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees")) }
+                h.precipProbability?.takeIf { it >= 10 }?.let { append(tr(", pioggia al $it per cento", ", $it percent chance of rain")) }
             }
         }
         return Drawn(bitmap, spoken)

@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -30,7 +32,6 @@ import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.ui.UiState
-import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -63,14 +64,14 @@ fun SalaConfrontoScreen(
             .padding(top = 12.dp, bottom = 24.dp),
     ) {
         IntestazioneServizio(
-            titolo = "Confronto",
+            titolo = tr("Confronto", "Compare"),
             palette = palette,
             onIndietro = onClose,
             modifier = Modifier.padding(horizontal = 26.dp),
         )
         if (posti.size < 2) {
             Text(
-                text = "Salva almeno due località in «Le località» per confrontarle qui.",
+                text = tr("Salva almeno due località in «Le località» per confrontarle qui.", "Save at least two places in «Locations» to compare them here."),
                 style = SalaType.body,
                 color = palette.inkSoft,
                 modifier = Modifier.padding(horizontal = 26.dp, vertical = 24.dp),
@@ -78,7 +79,7 @@ fun SalaConfrontoScreen(
             return@Column
         }
         Text(
-            text = "Oggi, fianco a fianco. Tocca una città per aprirla.",
+            text = tr("Oggi, fianco a fianco. Tocca una città per aprirla.", "Today, side by side. Tap a city to open it."),
             style = SalaType.footnote,
             color = palette.inkFaint,
             modifier = Modifier.padding(start = 26.dp, end = 26.dp, top = 6.dp, bottom = 14.dp),
@@ -133,23 +134,23 @@ internal enum class Meglio { ALTO, BASSO }
 private fun righeConfronto(state: UiState): List<RigaConfronto> {
     fun gradi(v: Double) = "${state.unit.from(v).roundToInt()}°"
     return listOf(
-        RigaConfronto("ADESSO", { it.current.temperature }, ::gradi, null),
-        RigaConfronto("MASSIMA", { it.days.firstOrNull()?.tempMax }, ::gradi, Meglio.ALTO),
-        RigaConfronto("MINIMA", { it.days.firstOrNull()?.tempMin }, ::gradi, null),
+        RigaConfronto(tr("ADESSO", "NOW"), { it.current.temperature }, ::gradi, null),
+        RigaConfronto(tr("MASSIMA", "HIGH"), { it.days.firstOrNull()?.tempMax }, ::gradi, Meglio.ALTO),
+        RigaConfronto(tr("MINIMA", "LOW"), { it.days.firstOrNull()?.tempMin }, ::gradi, null),
         RigaConfronto(
-            "PIOGGIA",
+            tr("PIOGGIA", "RAIN"),
             { it.days.firstOrNull()?.precipitationSum },
-            { String.format(Locale.ITALIAN, "%.1f mm", it) },
+            { String.format(Lingua.locale, "%.1f mm", it) },
             Meglio.BASSO,
         ),
         RigaConfronto(
-            "PROBABILITÀ",
+            tr("PROBABILITÀ", "CHANCE"),
             { it.days.firstOrNull()?.precipProbability?.toDouble() },
             { "${it.roundToInt()}%" },
             Meglio.BASSO,
         ),
         RigaConfronto(
-            "VENTO",
+            tr("VENTO", "WIND"),
             { it.days.firstOrNull()?.windMax },
             { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" },
             Meglio.BASSO,
@@ -157,7 +158,7 @@ private fun righeConfronto(state: UiState): List<RigaConfronto> {
         RigaConfronto(
             "UV",
             { it.days.firstOrNull()?.uvMax },
-            { String.format(Locale.ITALIAN, "%.1f", it) },
+            { String.format(Lingua.locale, "%.1f", it) },
             null,
         ),
     )

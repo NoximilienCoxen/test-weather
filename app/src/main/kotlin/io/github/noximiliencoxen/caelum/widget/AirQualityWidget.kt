@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.AirQualityRepository
@@ -32,8 +33,8 @@ internal class AirQualityWidget : CaelumWidget(WidgetKind.ARIA) {
         }
 
         val spoken = buildString {
-            append("Qualità dell'aria a ${where.name}")
-            air?.index?.let { append(", indice $it") }
+            append(tr("Qualità dell'aria a ${where.name}", "Air quality in ${where.name}"))
+            air?.index?.let { append(tr(", indice $it", ", index $it")) }
             air?.band?.let { append(", ${it.label.lowercase()}") }
         }
 

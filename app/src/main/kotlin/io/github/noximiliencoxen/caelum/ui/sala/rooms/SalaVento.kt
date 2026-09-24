@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -130,14 +131,14 @@ fun SalaVentoScreen(
                     .clip(CircleShape)
                     .background(palette.chip)
                     .semantics {
-                        contentDescription = "Rosa dei venti. " + (
-                            if (bussolaAccesa) "Segue la bussola del telefono." else "Trascina per girarla."
+                        contentDescription = tr("Rosa dei venti. ", "Compass rose. ") + (
+                            if (bussolaAccesa) tr("Segue la bussola del telefono.", "Follows the phone's compass.") else tr("Trascina per girarla.", "Drag to turn it.")
                             )
                     },
                 contentAlignment = Alignment.Center,
             ) {
                 listOf("N" to Alignment.TopCenter, "S" to Alignment.BottomCenter,
-                    "O" to Alignment.CenterStart, "E" to Alignment.CenterEnd).forEach { (lettera, dove) ->
+                    tr("O", "W") to Alignment.CenterStart, "E" to Alignment.CenterEnd).forEach { (lettera, dove) ->
                     Text(
                         text = lettera,
                         style = SalaType.microLabel,
@@ -165,7 +166,7 @@ fun SalaVentoScreen(
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Il vento", style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("Il vento", "Wind"), style = SalaType.cardTitle, color = palette.ink)
                 Row(
                     modifier = Modifier.padding(top = 6.dp),
                     verticalAlignment = Alignment.Top,
@@ -208,7 +209,7 @@ fun SalaVentoScreen(
         )
 
         Text(
-            text = "LE PROSSIME SEI ORE",
+            text = tr("LE PROSSIME SEI ORE", "THE NEXT SIX HOURS"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 18.dp, bottom = 10.dp),
@@ -278,7 +279,7 @@ private fun RigaBussola(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (bussolaAccesa) "GUARDI VERSO ${Wmo.windDirection(sguardo.toDouble())}" else "GIRA LA ROSA COL DITO",
+                text = if (bussolaAccesa) tr("GUARDI VERSO ${Wmo.windDirection(sguardo.toDouble())}", "FACING ${Wmo.windDirection(sguardo.toDouble())}") else tr("GIRA LA ROSA COL DITO", "TURN THE ROSE WITH YOUR FINGER"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
             )
@@ -288,7 +289,7 @@ private fun RigaBussola(
                     text = if (bussolaAccesa) {
                         lato.replaceFirstChar { it.uppercase() }
                     } else {
-                        "Guardando verso ${Wmo.windDirection(sguardo.toDouble())}, $lato"
+                        tr("Guardando verso ${Wmo.windDirection(sguardo.toDouble())}, $lato", "Facing ${Wmo.windDirection(sguardo.toDouble())}, $lato")
                     },
                     style = SalaType.rowTitle,
                     color = palette.ink,
@@ -298,7 +299,7 @@ private fun RigaBussola(
         }
         if (conBussola) {
             Text(
-                text = if (bussolaAccesa) "BUSSOLA ACCESA" else "USA LA BUSSOLA",
+                text = if (bussolaAccesa) tr("BUSSOLA ACCESA", "COMPASS ON") else tr("USA LA BUSSOLA", "USE THE COMPASS"),
                 style = SalaType.sectionLabel,
                 color = if (bussolaAccesa) palette.accentInk else palette.accent,
                 modifier = Modifier
@@ -321,14 +322,14 @@ private val ROSA = 120.dp
  * cambia col modo di misurarlo.
  */
 private fun nota(kmh: Double?, raffiche: Int?, unita: String): String {
-    val coda = raffiche?.let { " Raffiche fino a $it $unita." } ?: ""
+    val coda = raffiche?.let { tr(" Raffiche fino a $it $unita.", " Gusts up to $it $unita.") } ?: ""
     val corpo = when {
-        kmh == null -> "Vento non disponibile per quest'ora."
-        kmh < 6 -> "Aria quasi ferma: il fumo sale dritto."
-        kmh < 20 -> "Brezza leggera: si muovono le foglie, non i rami."
-        kmh < 39 -> "Vento teso: i rami si piegano e l'ombrello diventa scomodo."
-        kmh < 62 -> "Vento forte: attenzione agli oggetti esposti sui balconi."
-        else -> "Burrasca: meglio non stare sotto gli alberi."
+        kmh == null -> tr("Vento non disponibile per quest'ora.", "Wind not available for this hour.")
+        kmh < 6 -> tr("Aria quasi ferma: il fumo sale dritto.", "Almost still air: smoke rises straight up.")
+        kmh < 20 -> tr("Brezza leggera: si muovono le foglie, non i rami.", "Light breeze: leaves move, branches don't.")
+        kmh < 39 -> tr("Vento teso: i rami si piegano e l'ombrello diventa scomodo.", "Brisk wind: branches bend and umbrellas get awkward.")
+        kmh < 62 -> tr("Vento forte: attenzione agli oggetti esposti sui balconi.", "Strong wind: watch out for loose things on balconies.")
+        else -> tr("Burrasca: meglio non stare sotto gli alberi.", "Gale: better not stand under trees.")
     }
     return corpo + coda
 }

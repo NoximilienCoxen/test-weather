@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -290,8 +291,8 @@ fun SalaShell(
         // ritorno al presente.** "giovedì 18 set" accanto a "13:00" spingeva
         // l'ora contro la pillola sugli schermi stretti; "gio 18" no.
         when {
-            scelto == null -> "oggi"
-            scelto.indice == 0 -> "oggi"
+            scelto == null -> tr("oggi", "today")
+            scelto.indice == 0 -> tr("oggi", "today")
             else -> "${scelto.breve} ${scelto.giornoDelMese}"
         }
     }
@@ -369,7 +370,7 @@ fun SalaShell(
                 if (casa != null) {
                     BackHandler(onBack = viewModel::lasciaVisita)
                     PastigliaAccento(
-                        testo = "DAL WIDGET · TORNA A ${casa.name.uppercase()}",
+                        testo = tr("DAL WIDGET · TORNA A ${casa.name.uppercase()}", "FROM WIDGET · BACK TO ${casa.name.uppercase()}"),
                         palette = palette,
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
@@ -581,6 +582,7 @@ fun SalaShell(
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
                         onToggleNotifichePioggia = viewModel::setNotifichePioggia,
+                        onChooseLingua = viewModel::setLingua,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,

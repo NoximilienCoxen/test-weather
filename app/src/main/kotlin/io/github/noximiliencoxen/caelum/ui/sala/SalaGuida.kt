@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -163,7 +164,7 @@ internal fun GuidaSala(
                 .semantics { liveRegion = LiveRegionMode.Polite },
         ) {
             Text(
-                text = "${indice + 1} DI ${validi.size}",
+                text = tr("${indice + 1} DI ${validi.size}", "${indice + 1} OF ${validi.size}"),
                 style = SalaType.sectionLabel,
                 color = palette.accent,
             )
@@ -188,7 +189,7 @@ internal fun GuidaSala(
                 Spacer(modifier = Modifier.weight(1f))
                 if (!ultimo) {
                     Text(
-                        text = "Salta",
+                        text = tr("Salta", "Skip"),
                         style = SalaType.rowTitle,
                         color = palette.inkSoft,
                         modifier = Modifier
@@ -198,7 +199,7 @@ internal fun GuidaSala(
                     )
                 }
                 Text(
-                    text = if (ultimo) "Ho capito" else "Avanti",
+                    text = if (ultimo) tr("Ho capito", "Got it") else tr("Avanti", "Next"),
                     style = SalaType.rowTitle,
                     color = palette.accentInk,
                     modifier = Modifier
@@ -236,41 +237,51 @@ internal fun passiGuida(
     barra: Rect?,
 ): List<PassoGuida> = listOf(
     PassoGuida(
-        titolo = "Le sale",
-        testo = "Scorri in su o in giù sulla scheda per passare da una sala all'altra: " +
-            "oggi, la settimana, la pioggia, la luna, l'aria, il vento e i raggi UV. " +
-            "Basta un colpetto.",
+        titolo = tr("Le sale", "The rooms"),
+        testo = tr(
+            "Scorri in su o in giù sulla scheda per passare da una sala all'altra: oggi, la settimana, la pioggia, la luna, l'aria, il vento e i raggi UV. Basta un colpetto.",
+            "Swipe up or down on the card to move from one room to the next: today, the week, rain, the moon, air, wind and UV rays. A light flick is enough.",
+        ),
         dove = scheda,
     ),
     PassoGuida(
-        titolo = "Dentro le schede",
-        testo = "Le voci con › si aprono e portano alla loro sala. " +
-            "Tocca un giorno per vedere quel giorno in tutte le sale.",
+        titolo = tr("Dentro le schede", "Inside the cards"),
+        testo = tr(
+            "Le voci con › si aprono e portano alla loro sala. Tocca un giorno per vedere quel giorno in tutte le sale.",
+            "Items marked › open their own room. Tap a day to see that day in every room.",
+        ),
         dove = scheda,
     ),
     PassoGuida(
-        titolo = "La colonna delle sale",
-        testo = "Tocca un'icona per andare dritto a quella sala, o fai scorrere il dito " +
-            "lungo la colonna. Dalle impostazioni puoi nasconderla e avere schede più larghe.",
+        titolo = tr("La colonna delle sale", "The room column"),
+        testo = tr(
+            "Tocca un'icona per andare dritto a quella sala, o fai scorrere il dito lungo la colonna. Dalle impostazioni puoi nasconderla e avere schede più larghe.",
+            "Tap an icon to jump straight to that room, or slide your finger along the column. In the settings you can hide it and get wider cards.",
+        ),
         dove = colonna,
     ),
     PassoGuida(
-        titolo = "Cambia ora",
-        testo = "Trascina il cerchio lungo la barra: cielo, temperatura e numeri " +
-            "seguono l'ora scelta. Ogni tratto ha il colore del cielo di quell'ora. " +
-            "Per tornare ad adesso tocca «Torna all'ora attuale».",
+        titolo = tr("Cambia ora", "Change the hour"),
+        testo = tr(
+            "Trascina il cerchio lungo la barra: cielo, temperatura e numeri seguono l'ora scelta. Ogni tratto ha il colore del cielo di quell'ora. Per tornare ad adesso tocca «Torna all'ora attuale».",
+            "Drag the circle along the bar: sky, temperature and numbers follow the chosen hour. Each stretch has the colour of that hour's sky. To come back to now, tap «Back to now».",
+        ),
         dove = barra,
     ),
     PassoGuida(
-        titolo = "Il cielo",
-        testo = "Il disegno è il tempo dell'ora scelta: sole, nuvole, pioggia e luna " +
-            "seguono la previsione. Inclina il telefono o toccalo, e si muove.",
+        titolo = tr("Il cielo", "The sky"),
+        testo = tr(
+            "Il disegno è il tempo dell'ora scelta: sole, nuvole, pioggia e luna seguono la previsione. Inclina il telefono o toccalo, e si muove.",
+            "The drawing is the weather of the chosen hour: sun, clouds, rain and moon follow the forecast. Tilt the phone or touch it, and it moves.",
+        ),
         dove = cielo,
     ),
     PassoGuida(
-        titolo = "Città e impostazioni",
-        testo = "Tocca il nome della città per cambiarla o aggiungerne altre. " +
-            "L'icona a sinistra apre le impostazioni; a destra, gli avvisi del giorno.",
+        titolo = tr("Città e impostazioni", "City and settings"),
+        testo = tr(
+            "Tocca il nome della città per cambiarla o aggiungerne altre. L'icona a sinistra apre le impostazioni; a destra, gli avvisi del giorno.",
+            "Tap the city name to change it or add others. The icon on the left opens the settings; on the right, the day's alerts.",
+        ),
         dove = intestazione,
     ),
 )

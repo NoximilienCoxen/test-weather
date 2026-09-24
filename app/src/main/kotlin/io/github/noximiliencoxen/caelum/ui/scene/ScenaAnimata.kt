@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.scene
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +47,7 @@ fun ScenaAnimata(scena: Scena, notte: Boolean, movimento: Boolean, modifier: Mod
             }
         }
     }
-    Canvas(modifier = modifier.semantics { contentDescription = "${scena.nome}, ${if (notte) "di notte" else "di giorno"}" }) {
+    Canvas(modifier = modifier.semantics { contentDescription = "${scena.nome}, ${if (notte) tr("di notte", "at night") else tr("di giorno", "by day")}" }) {
         disegnaScena(scena, t, notte)
     }
 }

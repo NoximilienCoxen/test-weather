@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
@@ -112,5 +113,5 @@ internal fun prossimeOre(
     return tutte.filter { !it.time.isBefore(da) }
 }
 
-private const val TITOLO_ORE = "PROSSIME ORE"
-private const val ADESSO = "ORA"
+private val TITOLO_ORE: String get() = tr("PROSSIME ORE", "NEXT HOURS")
+private val ADESSO: String get() = tr("ORA", "NOW")

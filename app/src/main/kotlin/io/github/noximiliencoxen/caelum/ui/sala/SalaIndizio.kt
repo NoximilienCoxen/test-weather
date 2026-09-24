@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -67,7 +68,7 @@ internal fun IndizioSfoglio(
                 modifier = Modifier.offset(y = onda.dp),
             )
             Text(
-                text = "  Scorri in su · $prossima",
+                text = tr("  Scorri in su · $prossima", "  Swipe up · $prossima"),
                 style = SalaType.sectionLabel,
                 color = palette.inkSoft,
             )

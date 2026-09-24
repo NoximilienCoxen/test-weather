@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver.PendingResult
 import android.content.ComponentName
@@ -189,10 +191,10 @@ internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
  * distinguere tanti widget sarebbero tante volte lo stesso codice.
  */
 enum class WidgetKind(
-    /** Come si chiama per esteso, nella schermata di configurazione. */
-    val label: String,
+    /** Come si chiama per esteso, nella schermata di configurazione: italiano e inglese. */
+    private val nome: Pair<String, String>,
     /** Come si chiama sul suo riquadro, dove lo spazio e' due celle. */
-    val shortLabel: String,
+    private val nomeBreve: Pair<String, String>,
     /** Se ha bisogno di sapere dove si trova chi lo guarda. */
     val needsPlace: Boolean,
     /** Il ricevitore che il sistema sveglia per questo widget. */
@@ -201,21 +203,25 @@ enum class WidgetKind(
     /** La sala che il tocco apre. */
     val sala: SalaRoom,
 ) {
-    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
+    METEO("METEO" to "WEATHER", "METEO" to "WEATHER", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
 
     // La luna e' la stessa da qualunque parte la si guardi: chiederle una
     // citta' sarebbe una domanda senza conseguenze.
-    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
+    LUNA("LUNA" to "MOON", "LUNA" to "MOON", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
 
-    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
+    ARIA("QUALITÀ DELL'ARIA" to "AIR QUALITY", "ARIA" to "AIR", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
-    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+    SETTIMANA("SETTIMANA" to "WEEK", "SETTIMANA" to "WEEK", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
 
     // Una cella: niente nome, solo tempo e temperatura.
-    MINI("TEMPERATURA", "MINI", true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
+    MINI("TEMPERATURA" to "TEMPERATURE", "MINI" to "MINI", true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
 
-    ORE("PROSSIME ORE", "ORE", true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
+    ORE("PROSSIME ORE" to "NEXT HOURS", "ORE" to "HOURS", true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
     ;
+
+    val label: String get() = tr(nome.first, nome.second)
+
+    val shortLabel: String get() = tr(nomeBreve.first, nomeBreve.second)
 
     fun widget(): GlanceAppWidget = make()
 
@@ -300,6 +306,8 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
      * sessione aperta o chiusa, allo stesso modo.
      */
     final override suspend fun provideGlance(context: Context, id: GlanceId) {
+        // Il widget scrive nella lingua dell'app anche quando l'app e' chiusa.
+        Lingua.carica(context)
         val appWidgetId = appWidgetIdOf(context, id)
         val prefs = WidgetPrefs(context)
 
@@ -340,8 +348,10 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
             val bitmap = withContext(Dispatchers.Default) {
                 WidgetCanvas.paint(frame, ink.background) { setupArt(kind.shortLabel, type, ink) }
             }
-            val spoken = "Widget ${kind.label.lowercase()} da configurare. " +
-                "Tocca per scegliere la città."
+            val spoken = tr(
+                "Widget ${kind.label.lowercase()} da configurare. Tocca per scegliere la città.",
+                "${kind.label.lowercase()} widget to set up. Tap to choose the city.",
+            )
             return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
         }
 

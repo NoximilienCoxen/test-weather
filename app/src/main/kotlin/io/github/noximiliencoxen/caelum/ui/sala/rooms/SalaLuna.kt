@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -88,7 +89,7 @@ fun SalaLunaScreen(
     PannelloSala(palette = palette, modifier = modifier) {
         LunaInterattiva(
             fase = fase,
-            descrizione = "${segmento.label.lowercase()}, ${(illuminata * 100f).roundToInt()} per cento illuminata",
+            descrizione = tr("${segmento.label.lowercase()}, ${(illuminata * 100f).roundToInt()} per cento illuminata", "${segmento.label.lowercase()}, ${(illuminata * 100f).roundToInt()} percent illuminated"),
             palette = palette,
             movimento = movimento,
             modifier = Modifier.fillMaxWidth(),
@@ -107,7 +108,7 @@ fun SalaLunaScreen(
             horizontalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "La luna", style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("La luna", "The moon"), style = SalaType.cardTitle, color = palette.ink)
                 Text(
                     text = "${segmento.label.lowercase().replaceFirstChar { it.uppercase() }} · " +
                         "${(illuminata * 100f).roundToInt()} %",
@@ -127,13 +128,13 @@ fun SalaLunaScreen(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
-            CellaValore("ILLUMINATA", "${(illuminata * 100f).roundToInt()} %", palette)
-            CellaValore("ETÀ", "${eta.roundToInt()} giorni", palette)
-            CellaValore("PIENA", "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
+            CellaValore(tr("ILLUMINATA", "ILLUMINATED"), "${(illuminata * 100f).roundToInt()} %", palette)
+            CellaValore(tr("ETÀ", "AGE"), tr("${eta.roundToInt()} giorni", "${eta.roundToInt()} days"), palette)
+            CellaValore(tr("PIENA", "FULL"), "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
         }
 
         Text(
-            text = "LE PROSSIME FASI",
+            text = tr("LE PROSSIME FASI", "NEXT PHASES"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 16.dp, bottom = 10.dp),
@@ -145,10 +146,10 @@ fun SalaLunaScreen(
             // Le quattro tappe del ciclo, ognuna alla sua prossima data. Sono
             // quattro **calcoli**, non quattro date scritte a mano.
             listOf(
-                0.25f to "Primo q.",
-                0.5f to "Piena",
-                0.75f to "Ultimo q.",
-                0f to "Nuova",
+                0.25f to tr("Primo q.", "First q."),
+                0.5f to tr("Piena", "Full"),
+                0.75f to tr("Ultimo q.", "Last q."),
+                0f to tr("Nuova", "New"),
             ).sortedBy { (obiettivo, _) -> MoonPhase.daysUntil(oggi, obiettivo) }
                 .forEach { (obiettivo, nome) ->
                     val quando = MoonPhase.nextDate(oggi, obiettivo)
@@ -203,11 +204,11 @@ private fun CursoreGiorni(
         ) {
             Text(
                 text = when {
-                    spostamento == 0 -> "Oggi"
-                    spostamento == 1 -> "Domani"
-                    spostamento == -1 -> "Ieri"
-                    spostamento > 0 -> "Fra $spostamento giorni"
-                    else -> "${-spostamento} giorni fa"
+                    spostamento == 0 -> tr("Oggi", "Today")
+                    spostamento == 1 -> tr("Domani", "Tomorrow")
+                    spostamento == -1 -> tr("Ieri", "Yesterday")
+                    spostamento > 0 -> tr("Fra $spostamento giorni", "In $spostamento days")
+                    else -> tr("${-spostamento} giorni fa", "${-spostamento} days ago")
                 },
                 style = SalaType.rowTitle,
                 color = palette.ink,
@@ -215,7 +216,7 @@ private fun CursoreGiorni(
             )
             if (spostamento != 0) {
                 Text(
-                    text = "TORNA A OGGI",
+                    text = tr("TORNA A OGGI", "BACK TO TODAY"),
                     style = SalaType.sectionLabel,
                     color = palette.accent,
                     modifier = Modifier
@@ -237,7 +238,7 @@ private fun CursoreGiorni(
                 activeTickColor = Color.Transparent,
                 inactiveTickColor = Color.Transparent,
             ),
-            modifier = Modifier.semantics { contentDescription = "Giorno della luna" },
+            modifier = Modifier.semantics { contentDescription = tr("Giorno della luna", "Moon day") },
         )
     }
 }
@@ -304,27 +305,27 @@ private fun DrawScope.disegnaLuna(fase: Float, alpha: Float) {
 }
 
 private fun descrizione(segmento: MoonSegment): String = when (segmento) {
-    MoonSegment.NOVILUNIO -> "Il disco è fra noi e il sole: stanotte il cielo resta al buio, ed è la notte giusta per le stelle deboli."
-    MoonSegment.CRESCENTE -> "Una falce sottile a occidente, bassa e breve: cala poco dopo il sole."
-    MoonSegment.PRIMO_QUARTO -> "Metà disco illuminato, alto a sud dopo il tramonto: cala attorno a mezzanotte."
-    MoonSegment.GIBBOSA_CRESCENTE -> "Quasi piena e alta per gran parte della notte: illumina bene fino a notte fonda."
-    MoonSegment.PLENILUNIO -> "Piena: sorge col tramonto e cala con l'alba, in cielo per tutta la notte."
-    MoonSegment.GIBBOSA_CALANTE -> "Ancora larga ma in ritardo: sorge a notte già cominciata e resta fino al mattino."
-    MoonSegment.ULTIMO_QUARTO -> "Metà disco, dall'altra parte: sorge a notte fonda e resta visibile di prima mattina."
-    MoonSegment.CALANTE -> "Una falce che precede l'alba, bassa a oriente: l'ultima luce prima del novilunio."
+    MoonSegment.NOVILUNIO -> tr("Il disco è fra noi e il sole: stanotte il cielo resta al buio, ed è la notte giusta per le stelle deboli.", "The disc is between us and the sun: tonight the sky stays dark, the right night for faint stars.")
+    MoonSegment.CRESCENTE -> tr("Una falce sottile a occidente, bassa e breve: cala poco dopo il sole.", "A thin sliver in the west, low and brief: it sets soon after the sun.")
+    MoonSegment.PRIMO_QUARTO -> tr("Metà disco illuminato, alto a sud dopo il tramonto: cala attorno a mezzanotte.", "Half the disc lit, high in the south after sunset: it sets around midnight.")
+    MoonSegment.GIBBOSA_CRESCENTE -> tr("Quasi piena e alta per gran parte della notte: illumina bene fino a notte fonda.", "Nearly full and high for most of the night: it lights things well until late.")
+    MoonSegment.PLENILUNIO -> tr("Piena: sorge col tramonto e cala con l'alba, in cielo per tutta la notte.", "Full: it rises at sunset and sets at dawn, in the sky all night.")
+    MoonSegment.GIBBOSA_CALANTE -> tr("Ancora larga ma in ritardo: sorge a notte già cominciata e resta fino al mattino.", "Still broad but late: it rises well into the night and stays until morning.")
+    MoonSegment.ULTIMO_QUARTO -> tr("Metà disco, dall'altra parte: sorge a notte fonda e resta visibile di prima mattina.", "Half the disc, the other side: it rises late at night and stays visible in the early morning.")
+    MoonSegment.CALANTE -> tr("Una falce che precede l'alba, bassa a oriente: l'ultima luce prima del novilunio.", "A sliver ahead of dawn, low in the east: the last light before the new moon.")
 }
 
 private fun Int.mese(): String = when (this) {
-    1 -> "gen"
-    2 -> "feb"
-    3 -> "mar"
-    4 -> "apr"
-    5 -> "mag"
-    6 -> "giu"
-    7 -> "lug"
-    8 -> "ago"
-    9 -> "set"
-    10 -> "ott"
-    11 -> "nov"
-    else -> "dic"
+    1 -> tr("gen", "Jan")
+    2 -> tr("feb", "Feb")
+    3 -> tr("mar", "Mar")
+    4 -> tr("apr", "Apr")
+    5 -> tr("mag", "May")
+    6 -> tr("giu", "Jun")
+    7 -> tr("lug", "Jul")
+    8 -> tr("ago", "Aug")
+    9 -> tr("set", "Sep")
+    10 -> tr("ott", "Oct")
+    11 -> tr("nov", "Nov")
+    else -> tr("dic", "Dec")
 }

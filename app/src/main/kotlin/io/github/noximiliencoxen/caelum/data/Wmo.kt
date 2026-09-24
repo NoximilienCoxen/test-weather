@@ -1,5 +1,8 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
+
 // **`PrecipKind` non c'e' piu'.** Era la tipologia di precipitazione mostrata
 // "nella tabella della pagina Precip", e quella pagina e' stata cancellata col
 // feed: l'enum e la funzione che lo produceva - `precipKind` - sono rimaste a
@@ -11,28 +14,32 @@ object Wmo {
 
     fun condition(code: Int?): String = when (code) {
         null -> "--"
-        0 -> "SERENO"
-        1 -> "POCO NUVOLOSO"
-        2 -> "PARZ. NUVOLOSO"
-        3 -> "COPERTO"
-        45, 48 -> "NEBBIA"
-        51, 53, 55 -> "PIOVIGGINE"
-        56, 57 -> "PIOVIGGINE GELATA"
-        61, 63, 65 -> "PIOGGIA"
-        66, 67 -> "PIOGGIA GELATA"
-        71, 73, 75 -> "NEVE"
-        77 -> "GRANULI DI NEVE"
-        80, 81, 82 -> "ROVESCI"
-        85, 86 -> "ROVESCI DI NEVE"
-        95 -> "TEMPORALE"
-        96, 99 -> "TEMPORALE E GRANDINE"
+        0 -> tr("SERENO", "CLEAR")
+        1 -> tr("POCO NUVOLOSO", "MOSTLY CLEAR")
+        2 -> tr("PARZ. NUVOLOSO", "PARTLY CLOUDY")
+        3 -> tr("COPERTO", "OVERCAST")
+        45, 48 -> tr("NEBBIA", "FOG")
+        51, 53, 55 -> tr("PIOVIGGINE", "DRIZZLE")
+        56, 57 -> tr("PIOVIGGINE GELATA", "FREEZING DRIZZLE")
+        61, 63, 65 -> tr("PIOGGIA", "RAIN")
+        66, 67 -> tr("PIOGGIA GELATA", "FREEZING RAIN")
+        71, 73, 75 -> tr("NEVE", "SNOW")
+        77 -> tr("GRANULI DI NEVE", "SNOW GRAINS")
+        80, 81, 82 -> tr("ROVESCI", "SHOWERS")
+        85, 86 -> tr("ROVESCI DI NEVE", "SNOW SHOWERS")
+        95 -> tr("TEMPORALE", "THUNDERSTORM")
+        96, 99 -> tr("TEMPORALE E GRANDINE", "THUNDERSTORM WITH HAIL")
         else -> "--"
     }
 
     /** Rosa dei venti in italiano a 8 settori. */
     fun windDirection(degrees: Double?): String {
         if (degrees == null) return "--"
-        val sectors = listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
+        val sectors = if (Lingua.inglese) {
+            listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+        } else {
+            listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
+        }
         val idx = (((degrees % 360.0) + 360.0) % 360.0 / 45.0).toInt() % 8
         return sectors[idx]
     }

@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.notifiche
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -47,6 +49,7 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
 
     override suspend fun doWork(): Result {
         val contesto = applicationContext
+        Lingua.carica(contesto)
         val impostazioni = SettingsPrefs(contesto).settings.first()
         if (!impostazioni.notifichePioggia) return Result.success()
         if (!puoNotificare(contesto)) return Result.success()
@@ -104,9 +107,12 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
-                "Pioggia e grandine in arrivo",
+                tr("Pioggia e grandine in arrivo", "Rain and hail on the way"),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { description = "Avvisa quando sta per cominciare a piovere, grandinare o nevicare" }
+            ).apply { description = tr(
+                    "Avvisa quando sta per cominciare a piovere, grandinare o nevicare",
+                    "Warns when rain, hail or snow is about to start",
+                ) }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -147,20 +153,29 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
 internal fun testiNotifica(citta: String, evento: PrecipitazioneInArrivo, adesso: LocalDateTime): Pair<String, String> {
     val minuti = Duration.between(adesso, evento.inizio).toMinutes().coerceAtLeast(0)
     val quando = when {
-        minuti < 10 -> "a momenti"
-        else -> "fra circa ${((minuti + 2) / 5) * 5} minuti"
+        minuti < 10 -> tr("a momenti", "any minute now")
+        else -> tr("fra circa ${((minuti + 2) / 5) * 5} minuti", "in about ${((minuti + 2) / 5) * 5} minutes")
     }
-    val ora = String.format(Locale.ITALIAN, "%02d:%02d", evento.inizio.hour, evento.inizio.minute)
-    val mm = String.format(Locale.ITALIAN, "%.1f", evento.millimetri)
+    val ora = String.format(Locale.ROOT, "%02d:%02d", evento.inizio.hour, evento.inizio.minute)
+    val mm = String.format(Lingua.locale, "%.1f", evento.millimetri)
     return when (evento.tipo) {
         TipoPrecipitazione.GRANDINE ->
-            "Grandine in arrivo a $citta" to
-                "Temporale con grandine $quando (verso le $ora). Metti al riparo l'auto e ciò che sta fuori."
+            tr("Grandine in arrivo a $citta", "Hail on the way in $citta") to tr(
+                "Temporale con grandine $quando (verso le $ora). Metti al riparo l'auto e ciò che sta fuori.",
+                "Thunderstorm with hail $quando (around $ora). Get the car and anything outside under cover.",
+            )
         TipoPrecipitazione.TEMPORALE ->
-            "Temporale in arrivo a $citta" to "Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora."
+            tr("Temporale in arrivo a $citta", "Thunderstorm on the way in $citta") to tr(
+                "Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.",
+                "Starts $quando (around $ora), with about $mm mm in the first half hour.",
+            )
         TipoPrecipitazione.NEVE ->
-            "Neve in arrivo a $citta" to "Comincia a nevicare $quando (verso le $ora)."
+            tr("Neve in arrivo a $citta", "Snow on the way in $citta") to
+                tr("Comincia a nevicare $quando (verso le $ora).", "Snow starts $quando (around $ora).")
         TipoPrecipitazione.PIOGGIA ->
-            "Pioggia in arrivo a $citta" to "Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora."
+            tr("Pioggia in arrivo a $citta", "Rain on the way in $citta") to tr(
+                "Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.",
+                "Starts $quando (around $ora), with about $mm mm in the first half hour.",
+            )
     }
 }

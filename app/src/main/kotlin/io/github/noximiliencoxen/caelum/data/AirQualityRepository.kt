@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
@@ -59,13 +60,15 @@ private data class AirQualityCurrentDto(
  * questo [label] non e' un'etichetta di contorno - e' la sola cosa che rende
  * leggibile il numero accanto.
  */
-enum class AirScale(val label: String, internal val cuts: IntArray) {
+enum class AirScale(private val italiano: String, private val inglese: String, internal val cuts: IntArray) {
     /** Agenzia europea dell'ambiente: sei bande da venti in venti. */
-    EUROPEA("INDICE EUROPEO", intArrayOf(20, 40, 60, 80, 100)),
+    EUROPEA("INDICE EUROPEO", "EUROPEAN INDEX", intArrayOf(20, 40, 60, 80, 100)),
 
     /** EPA: sei bande, e la prima da sola vale due e mezzo di quelle europee. */
-    STATUNITENSE("INDICE STATUNITENSE", intArrayOf(50, 100, 150, 200, 300)),
+    STATUNITENSE("INDICE STATUNITENSE", "US INDEX", intArrayOf(50, 100, 150, 200, 300)),
     ;
+
+    val label: String get() = tr(italiano, inglese)
 
     fun band(index: Int?): AirBand? {
         if (index == null) return null
@@ -82,14 +85,16 @@ enum class AirScale(val label: String, internal val cuts: IntArray) {
  * americane. A dire con quale metro si e' arrivati a quel giudizio ci pensa
  * [AirScale.label], scritto accanto al numero.
  */
-enum class AirBand(val label: String) {
-    BUONA("BUONA"),
-    DISCRETA("DISCRETA"),
-    MEDIA("MEDIA"),
-    SCARSA("SCARSA"),
-    MOLTO_SCARSA("MOLTO SCARSA"),
-    ESTREMAMENTE_SCARSA("PESSIMA"),
+enum class AirBand(private val italiano: String, private val inglese: String) {
+    BUONA("BUONA", "GOOD"),
+    DISCRETA("DISCRETA", "FAIR"),
+    MEDIA("MEDIA", "MODERATE"),
+    SCARSA("SCARSA", "POOR"),
+    MOLTO_SCARSA("MOLTO SCARSA", "VERY POOR"),
+    ESTREMAMENTE_SCARSA("PESSIMA", "EXTREMELY POOR"),
     ;
+
+    val label: String get() = tr(italiano, inglese)
 
     companion object {
         /**
@@ -146,10 +151,12 @@ data class AirQuality(
      */
     val dominante: Inquinante?
         get() = listOfNotNull(
-            pm25?.let { Inquinante("PM 2,5", "il PM 2,5", it, 15.0) },
-            pm10?.let { Inquinante("PM 10", "il PM 10", it, 45.0) },
-            nitrogenDioxide?.let { Inquinante("Biossido d'azoto", "il biossido d'azoto", it, 25.0) },
-            ozone?.let { Inquinante("Ozono", "l'ozono", it, 100.0) },
+            pm25?.let { Inquinante(tr("PM 2,5", "PM 2.5"), tr("il PM 2,5", "PM 2.5"), it, 15.0) },
+            pm10?.let { Inquinante("PM 10", tr("il PM 10", "PM 10"), it, 45.0) },
+            nitrogenDioxide?.let {
+                Inquinante(tr("Biossido d'azoto", "Nitrogen dioxide"), tr("il biossido d'azoto", "nitrogen dioxide"), it, 25.0)
+            },
+            ozone?.let { Inquinante(tr("Ozono", "Ozone"), tr("l'ozono", "ozone"), it, 100.0) },
         ).maxByOrNull { it.quota }
 }
 

@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
@@ -12,28 +13,28 @@ import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
  * i numeri che le accompagnano (temperatura, ora, percepiti) restano quelli
  * veri della previsione.
  */
-private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
+private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> get() = mapOf(
     SalaCondition.SERENO to mapOf(
-        SalaPhase.ALBA to "Alba limpida sopra la pianura",
-        SalaPhase.GIORNO to "Pieno sole, aria calda",
-        SalaPhase.TRAMONTO to "Tramonto senza una nuvola",
-        SalaPhase.NOTTE to "Notte serena, aria ferma",
+        SalaPhase.ALBA to tr("Alba limpida sopra la pianura", "Clear dawn over the plain"),
+        SalaPhase.GIORNO to tr("Pieno sole, aria calda", "Full sun, warm air"),
+        SalaPhase.TRAMONTO to tr("Tramonto senza una nuvola", "Sunset without a cloud"),
+        SalaPhase.NOTTE to tr("Notte serena, aria ferma", "Clear night, still air"),
     ),
     SalaCondition.NUVOLOSO to mapOf(
-        SalaPhase.ALBA to "Luce filtrata dalle nubi alte",
-        SalaPhase.GIORNO to "Nuvole di passaggio",
-        SalaPhase.TRAMONTO to "Cielo coperto verso sera",
+        SalaPhase.ALBA to tr("Luce filtrata dalle nubi alte", "Light filtered by high clouds"),
+        SalaPhase.GIORNO to tr("Nuvole di passaggio", "Passing clouds"),
+        SalaPhase.TRAMONTO to tr("Cielo coperto verso sera", "Overcast towards evening"),
         // Diceva "niente stelle", e da questo giro le stelle si vedono
         // **attraverso** le nuvole - le nubi non le spengono, le coprono. Una
         // didascalia che smentisce cio' che si ha sotto gli occhi toglie
         // credito anche alle altre sei.
-        SalaPhase.NOTTE to "Notte coperta, poche stelle",
+        SalaPhase.NOTTE to tr("Notte coperta, poche stelle", "Cloudy night, few stars"),
     ),
     SalaCondition.PIOGGIA to mapOf(
-        SalaPhase.ALBA to "Piove dalle prime luci",
-        SalaPhase.GIORNO to "Rovescio di metà pomeriggio",
-        SalaPhase.TRAMONTO to "Pioggia fino a notte",
-        SalaPhase.NOTTE to "Pioggia nella notte",
+        SalaPhase.ALBA to tr("Piove dalle prime luci", "Raining since first light"),
+        SalaPhase.GIORNO to tr("Rovescio di metà pomeriggio", "Mid-afternoon shower"),
+        SalaPhase.TRAMONTO to tr("Pioggia fino a notte", "Rain until night"),
+        SalaPhase.NOTTE to tr("Pioggia nella notte", "Rain in the night"),
     ),
     // **Qui c'era la grandine, e sopra una nevicata si leggeva "Pioggia".** I
     // codici della neve - 71, 73, 75 - cadevano in PIOGGIA, e quelli dei
@@ -41,32 +42,32 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> = mapOf(
     // questa app non hanno mai contenuto. Adesso la neve ha le sue parole, e la
     // grandine resta dov'e' davvero: dentro il temporale che la fa.
     SalaCondition.NEVE to mapOf(
-        SalaPhase.ALBA to "Neve dalle prime luci",
-        SalaPhase.GIORNO to "Nevica",
-        SalaPhase.TRAMONTO to "Neve fino a sera",
-        SalaPhase.NOTTE to "Neve nella notte",
+        SalaPhase.ALBA to tr("Neve dalle prime luci", "Snow since first light"),
+        SalaPhase.GIORNO to tr("Nevica", "Snowing"),
+        SalaPhase.TRAMONTO to tr("Neve fino a sera", "Snow until evening"),
+        SalaPhase.NOTTE to tr("Neve nella notte", "Snow in the night"),
     ),
     SalaCondition.TEMPORALE to mapOf(
-        SalaPhase.ALBA to "Temporale all'alba",
-        SalaPhase.GIORNO to "Temporale sul pomeriggio",
-        SalaPhase.TRAMONTO to "Temporale al tramonto",
-        SalaPhase.NOTTE to "Temporale notturno",
+        SalaPhase.ALBA to tr("Temporale all'alba", "Thunderstorm at dawn"),
+        SalaPhase.GIORNO to tr("Temporale sul pomeriggio", "Afternoon thunderstorm"),
+        SalaPhase.TRAMONTO to tr("Temporale al tramonto", "Thunderstorm at sunset"),
+        SalaPhase.NOTTE to tr("Temporale notturno", "Night thunderstorm"),
     ),
     SalaCondition.TEMPORALE_GRANDINE to mapOf(
-        SalaPhase.ALBA to "Temporale e grandine all'alba",
-        SalaPhase.GIORNO to "Temporale con grandine",
-        SalaPhase.TRAMONTO to "Temporale e grandine a sera",
-        SalaPhase.NOTTE to "Temporale e grandine di notte",
+        SalaPhase.ALBA to tr("Temporale e grandine all'alba", "Thunderstorm and hail at dawn"),
+        SalaPhase.GIORNO to tr("Temporale con grandine", "Thunderstorm with hail"),
+        SalaPhase.TRAMONTO to tr("Temporale e grandine a sera", "Thunderstorm and hail in the evening"),
+        SalaPhase.NOTTE to tr("Temporale e grandine di notte", "Thunderstorm and hail at night"),
     ),
 )
 
-private val SalaBodies: Map<SalaCondition, String> = mapOf(
-    SalaCondition.SERENO to "Cielo aperto e visibilità ottima.",
-    SalaCondition.NUVOLOSO to "Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.",
-    SalaCondition.PIOGGIA to "Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.",
-    SalaCondition.NEVE to "Neve in caduta: fondo scivoloso e visibilità ridotta, soprattutto dove non passa nessuno.",
-    SalaCondition.TEMPORALE to "Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.",
-    SalaCondition.TEMPORALE_GRANDINE to "Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.",
+private val SalaBodies: Map<SalaCondition, String> get() = mapOf(
+    SalaCondition.SERENO to tr("Cielo aperto e visibilità ottima.", "Open sky and excellent visibility."),
+    SalaCondition.NUVOLOSO to tr("Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.", "Mid-level clouds covering the sun at times. No rain, but they keep the temperature steady."),
+    SalaCondition.PIOGGIA to tr("Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.", "Rain falling: millimetres and probability hour by hour are in Room III."),
+    SalaCondition.NEVE to tr("Neve in caduta: fondo scivoloso e visibilità ridotta, soprattutto dove non passa nessuno.", "Snow falling: slippery ground and poor visibility, especially where nobody passes."),
+    SalaCondition.TEMPORALE to tr("Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.", "Active lightning. Better stay indoors until half an hour after the last thunder."),
+    SalaCondition.TEMPORALE_GRANDINE to tr("Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.", "Storm cell with hail: sudden gusts and poor visibility."),
 )
 
 fun salaTitle(condition: SalaCondition, phase: SalaPhase): String =
@@ -82,28 +83,28 @@ fun salaTitle(condition: SalaCondition, phase: SalaPhase): String =
  * tabella resta per condizione — e' li' che i corpi si somigliano — e questa
  * elenca le poche caselle in cui la fase cambia le parole.
  */
-private val SalaBodiesPerFase: Map<Pair<SalaCondition, SalaPhase>, String> = mapOf(
+private val SalaBodiesPerFase: Map<Pair<SalaCondition, SalaPhase>, String> get() = mapOf(
     (SalaCondition.NUVOLOSO to SalaPhase.NOTTE) to
-        "Nubi medie che scoprono le stelle a tratti. Non portano pioggia, ma trattengono il calore del giorno.",
+        tr("Nubi medie che scoprono le stelle a tratti. Non portano pioggia, ma trattengono il calore del giorno.", "Mid-level clouds revealing the stars at times. No rain, but they hold in the day's warmth."),
 )
 
 fun salaBody(condition: SalaCondition, phase: SalaPhase): String =
     SalaBodiesPerFase[condition to phase] ?: SalaBodies.getValue(condition)
 
 fun SalaCondition.label(): String = when (this) {
-    SalaCondition.SERENO -> "sereno"
-    SalaCondition.NUVOLOSO -> "nuvoloso"
-    SalaCondition.PIOGGIA -> "pioggia"
-    SalaCondition.NEVE -> "neve"
-    SalaCondition.TEMPORALE -> "temporale"
-    SalaCondition.TEMPORALE_GRANDINE -> "temporale con grandine"
+    SalaCondition.SERENO -> tr("sereno", "clear")
+    SalaCondition.NUVOLOSO -> tr("nuvoloso", "cloudy")
+    SalaCondition.PIOGGIA -> tr("pioggia", "rain")
+    SalaCondition.NEVE -> tr("neve", "snow")
+    SalaCondition.TEMPORALE -> tr("temporale", "thunderstorm")
+    SalaCondition.TEMPORALE_GRANDINE -> tr("temporale con grandine", "thunderstorm with hail")
 }
 
 fun SalaPhase.label(): String = when (this) {
-    SalaPhase.ALBA -> "alba"
-    SalaPhase.GIORNO -> "giorno"
-    SalaPhase.TRAMONTO -> "tramonto"
-    SalaPhase.NOTTE -> "notte"
+    SalaPhase.ALBA -> tr("alba", "dawn")
+    SalaPhase.GIORNO -> tr("giorno", "day")
+    SalaPhase.TRAMONTO -> tr("tramonto", "sunset")
+    SalaPhase.NOTTE -> tr("notte", "night")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

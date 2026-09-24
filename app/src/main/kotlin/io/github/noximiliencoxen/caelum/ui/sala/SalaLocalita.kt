@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +35,7 @@ import io.github.noximiliencoxen.caelum.ui.UiState
 import kotlin.math.roundToInt
 
 /**
- * "Le località": dove si e' adesso, cosa si e' salvato, e come aggiungere.
+ * tr("Le località", "Locations"): dove si e' adesso, cosa si e' salvato, e come aggiungere.
  *
  * **Le citta' consigliate non ci sono.** Il prototipo ne elencava cinque decise
  * a tavolino - Torino, Bardonecchia, Genova - che non hanno niente a che fare
@@ -61,7 +62,7 @@ fun SalaLocalitaScreen(
             .systemBarsPadding()
             .padding(start = 26.dp, end = 26.dp, top = 12.dp, bottom = 30.dp),
     ) {
-        IntestazioneServizio(titolo = "Le località", palette = palette, onIndietro = onClose)
+        IntestazioneServizio(titolo = tr("Le località", "Locations"), palette = palette, onIndietro = onClose)
 
         CampoDiRicerca(
             valore = state.query,
@@ -79,9 +80,9 @@ fun SalaLocalitaScreen(
             val esito = state.searchError
             when {
                 esito != null -> item { Nota(esito, palette) }
-                state.searching -> item { Nota("Sto cercando…", palette) }
+                state.searching -> item { Nota(tr("Sto cercando…", "Searching…"), palette) }
                 state.query.trim().length >= 2 && state.results.isEmpty() ->
-                    item { Nota("Nessuna località con questo nome", palette) }
+                    item { Nota(tr("Nessuna località con questo nome", "No place with this name"), palette) }
             }
             items(state.results, key = { "trovata-" + it.key }) { trovata ->
                 RigaLocalita(
@@ -119,7 +120,7 @@ fun SalaLocalitaScreen(
         // una colonna che si confronta con se stessa.
         if (postiDaConfrontare(state).size >= 2) {
             Text(
-                text = "Confronta fianco a fianco",
+                text = tr("Confronta fianco a fianco", "Compare side by side"),
                 style = SalaType.rowTitle,
                 color = palette.accent,
                 textAlign = TextAlign.Center,
@@ -133,7 +134,7 @@ fun SalaLocalitaScreen(
             )
         }
         Text(
-            text = "Aggiungi la posizione attuale",
+            text = tr("Aggiungi la posizione attuale", "Add current location"),
             style = SalaType.rowTitle,
             color = palette.accentInk,
             textAlign = TextAlign.Center,
@@ -253,7 +254,7 @@ private fun CampoDiRicerca(
         Box(modifier = Modifier.weight(1f)) {
             if (valore.isEmpty()) {
                 Text(
-                    text = "Cerca una città o un comune",
+                    text = tr("Cerca una città o un comune", "Search for a city or town"),
                     style = SalaType.rowTitle,
                     color = palette.inkFaint,
                 )

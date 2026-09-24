@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +41,6 @@ import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
 import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
-import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -118,14 +119,14 @@ fun SalaOggiScreen(
             ) {
                 val percepiti = ora?.apparent?.let { state.unit.from(it).roundToInt() }
                 Text(
-                    text = percepiti?.let { "percepiti $it°" } ?: "percepiti --",
+                    text = percepiti?.let { tr("percepiti $it°", "feels like $it°") } ?: tr("percepiti --", "feels like --"),
                     style = SalaType.rowTitle,
                     color = palette.ink,
                 )
                 val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
                 val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
                 Text(
-                    text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
+                    text = tr("min ${min ?: "--"}° · max ${max ?: "--"}°", "low ${min ?: "--"}° · high ${max ?: "--"}°"),
                     style = SalaType.rowNote,
                     color = palette.inkFaint,
                 )
@@ -143,7 +144,7 @@ fun SalaOggiScreen(
                     // Il ritorno al presente compare **solo quando serve**: un
                     // comando che non fa niente insegna a non fidarsi degli altri.
                     Text(
-                        text = "torna a oggi",
+                        text = tr("torna a oggi", "back to today"),
                         style = SalaType.pill,
                         color = palette.accent,
                         modifier = Modifier.clickable(onClick = viewModel::backToNow),
@@ -167,13 +168,13 @@ fun SalaOggiScreen(
                 horizontalArrangement = Arrangement.spacedBy(9.dp),
             ) {
                 CellaValore(
-                    etichetta = "VENTO",
+                    etichetta = tr("VENTO", "WIND"),
                     valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.VENTO) },
                 )
                 CellaValore(
-                    etichetta = "UMIDITÀ",
+                    etichetta = tr("UMIDITÀ", "HUMIDITY"),
                     valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.PIOGGIA) },
@@ -183,7 +184,7 @@ fun SalaOggiScreen(
                 // la luna, che di notte e' l'unica cosa che cambia.
                 if (sky.moonPresence > 0.5f) {
                     CellaValore(
-                        etichetta = "LUNA",
+                        etichetta = tr("LUNA", "MOON"),
                         valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
                         palette = palette,
                         onVai = { onVai(SalaRoom.LUNA) },
@@ -191,7 +192,7 @@ fun SalaOggiScreen(
                 } else {
                     CellaValore(
                         etichetta = "UV",
-                        valore = ora?.uvIndex?.let { String.format(Locale.ITALY, "%.1f", it) } ?: "--",
+                        valore = ora?.uvIndex?.let { String.format(Lingua.locale, "%.1f", it) } ?: "--",
                         palette = palette,
                         onVai = { onVai(SalaRoom.UV) },
                     )
@@ -211,12 +212,12 @@ fun SalaOggiScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(text = "TOCCA UN GIORNO", style = SalaType.sectionLabel, color = palette.inkFaint)
+                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY"), style = SalaType.sectionLabel, color = palette.inkFaint)
                 // **Non dice "apri la sala II".** Chi guarda non chiama queste
                 // schermate "sale" - e' un nome nostro, buono per il codice e
                 // non per chi legge: qui si nomina la cosa, la settimana.
                 Text(
-                    text = "apri la settimana",
+                    text = tr("apri la settimana", "open the week"),
                     style = SalaType.pill,
                     color = palette.accent,
                     modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
@@ -314,7 +315,7 @@ fun StrisciaGiorni(
                                 .background(palette.accent.copy(alpha = if (mm > 0.05) 1f else 0.3f)),
                         )
                         Text(
-                            text = String.format(Locale.ITALY, "%.1f", mm),
+                            text = String.format(Lingua.locale, "%.1f", mm),
                             style = SalaType.microLabel,
                             color = palette.accent,
                             maxLines = 1,

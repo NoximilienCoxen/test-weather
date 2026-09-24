@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.runtime.Immutable
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.Forecast
@@ -19,9 +20,9 @@ import java.time.LocalDateTime
 @Immutable
 data class GiornoSettimana(
     val indice: Int,
-    /** "oggi", "lun": la colonna stretta della striscia. */
+    /** tr("oggi", "today"), "lun": la colonna stretta della striscia. */
     val breve: String,
-    /** "oggi", "martedì": la scheda del giorno scelto, dove c'e' spazio. */
+    /** tr("oggi", "today"), tr("martedì", "Tuesday"): la scheda del giorno scelto, dove c'e' spazio. */
     val esteso: String,
     /** "15 set". */
     val data: String,
@@ -53,8 +54,8 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
     return giorni.mapIndexed { i, giorno ->
         GiornoSettimana(
             indice = i,
-            breve = if (i == 0) "oggi" else giorno.label.lowercase(),
-            esteso = if (i == 0) "oggi" else giorno.date.dayOfWeek.italiano(),
+            breve = if (i == 0) tr("oggi", "today") else giorno.label.lowercase(),
+            esteso = if (i == 0) tr("oggi", "today") else giorno.date.dayOfWeek.italiano(),
             data = "${giorno.date.dayOfMonth} ${giorno.date.monthValue.meseBreve()}",
             giornoDelMese = giorno.date.dayOfMonth,
             max = giorno.tempMax,
@@ -81,26 +82,26 @@ private fun DayForecast.nuvolositaStimata(): Int =
     (Wmo.cloudiness(weatherCode) * 100f).toInt()
 
 private fun DayOfWeek.italiano(): String = when (this) {
-    DayOfWeek.MONDAY -> "lunedì"
-    DayOfWeek.TUESDAY -> "martedì"
-    DayOfWeek.WEDNESDAY -> "mercoledì"
-    DayOfWeek.THURSDAY -> "giovedì"
-    DayOfWeek.FRIDAY -> "venerdì"
-    DayOfWeek.SATURDAY -> "sabato"
-    DayOfWeek.SUNDAY -> "domenica"
+    DayOfWeek.MONDAY -> tr("lunedì", "Monday")
+    DayOfWeek.TUESDAY -> tr("martedì", "Tuesday")
+    DayOfWeek.WEDNESDAY -> tr("mercoledì", "Wednesday")
+    DayOfWeek.THURSDAY -> tr("giovedì", "Thursday")
+    DayOfWeek.FRIDAY -> tr("venerdì", "Friday")
+    DayOfWeek.SATURDAY -> tr("sabato", "Saturday")
+    DayOfWeek.SUNDAY -> tr("domenica", "Sunday")
 }
 
 private fun Int.meseBreve(): String = when (this) {
-    1 -> "gen"
-    2 -> "feb"
-    3 -> "mar"
-    4 -> "apr"
-    5 -> "mag"
-    6 -> "giu"
-    7 -> "lug"
-    8 -> "ago"
-    9 -> "set"
-    10 -> "ott"
-    11 -> "nov"
-    else -> "dic"
+    1 -> tr("gen", "Jan")
+    2 -> tr("feb", "Feb")
+    3 -> tr("mar", "Mar")
+    4 -> tr("apr", "Apr")
+    5 -> tr("mag", "May")
+    6 -> tr("giu", "Jun")
+    7 -> tr("lug", "Jul")
+    8 -> tr("ago", "Aug")
+    9 -> tr("set", "Sep")
+    10 -> tr("ott", "Oct")
+    11 -> tr("nov", "Nov")
+    else -> tr("dic", "Dec")
 }

@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +66,7 @@ fun SalaSettimanaScreen(
     val scelto = settimana.getOrNull(state.selectedDay)
 
     PannelloSala(palette = palette, modifier = modifier) {
-        Text(text = "La settimana", style = SalaType.cardTitle, color = palette.ink)
+        Text(text = tr("La settimana", "The week"), style = SalaType.cardTitle, color = palette.ink)
         Text(
             text = remember(settimana, state.unit) { sommarioDella(settimana, state) },
             style = SalaType.footnote,
@@ -95,8 +97,8 @@ fun SalaSettimanaScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "TOCCA UN GIORNO", style = SalaType.sectionLabel, color = palette.inkFaint)
-            Text(text = "MAX · MIN · MM", style = SalaType.sectionLabel, color = palette.inkFaint)
+            Text(text = tr("TOCCA UN GIORNO", "TAP A DAY"), style = SalaType.sectionLabel, color = palette.inkFaint)
+            Text(text = tr("MAX · MIN · MM", "HIGH · LOW · MM"), style = SalaType.sectionLabel, color = palette.inkFaint)
         }
 
         StrisciaGiorni(
@@ -118,7 +120,7 @@ fun SalaSettimanaScreen(
  * una previsione senza fonte: qui si dice solo cio' che i numeri dicono.
  */
 private fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): String {
-    if (settimana.isEmpty()) return "Previsione non ancora disponibile."
+    if (settimana.isEmpty()) return tr("Previsione non ancora disponibile.", "Forecast not available yet.")
     val bagnati = settimana.count { (it.mm ?: 0.0) > 0.05 }
     val mm = settimana.sumOf { it.mm ?: 0.0 }
     val minime = settimana.mapNotNull { it.min }
@@ -126,19 +128,19 @@ private fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): Str
     val escursione = if (minime.isNotEmpty() && massime.isNotEmpty()) {
         val lo = state.unit.from(minime.min()).roundToInt()
         val hi = state.unit.from(massime.max()).roundToInt()
-        "escursione fra $lo° e $hi°"
+        tr("escursione fra $lo° e $hi°", "ranging from $lo° to $hi°")
     } else {
         null
     }
     val pioggia = when {
-        bagnati == 0 -> "Sette giorni asciutti"
-        bagnati == 1 -> "Un giorno con precipitazioni, ${mm.virgola()} mm attesi"
-        else -> "$bagnati giorni con precipitazioni, ${mm.virgola()} mm attesi"
+        bagnati == 0 -> tr("Sette giorni asciutti", "Seven dry days")
+        bagnati == 1 -> tr("Un giorno con precipitazioni, ${mm.virgola()} mm attesi", "One day with precipitation, ${mm.virgola()} mm expected")
+        else -> tr("$bagnati giorni con precipitazioni, ${mm.virgola()} mm attesi", "$bagnati days with precipitation, ${mm.virgola()} mm expected")
     }
     return listOfNotNull(pioggia, escursione).joinToString(", ") + "."
 }
 
-private fun Double.virgola(): String = String.format(Locale.ITALY, "%.1f", this)
+private fun Double.virgola(): String = String.format(Lingua.locale, "%.1f", this)
 
 /**
  * I sei riquadri di riepilogo, e dove portano.
@@ -167,7 +169,7 @@ private fun RiepilogoSettimana(
 
     val voci = listOf(
         Riquadro(
-            "PIOGGIA",
+            tr("PIOGGIA", "RAIN"),
             "${mm.virgola()} mm",
             SalaTokens.acquaChiara,
             SalaRoom.PIOGGIA,
@@ -183,25 +185,25 @@ private fun RiepilogoSettimana(
             SalaRoom.OGGI,
         ),
         Riquadro(
-            "VENTO",
+            tr("VENTO", "WIND"),
             ventoMax?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
             SalaTokens.verde400,
             SalaRoom.VENTO,
         ),
         Riquadro(
-            "PICCO UV",
+            tr("PICCO UV", "UV PEAK"),
             uvMax?.virgola() ?: "--",
             SalaTokens.accent500,
             SalaRoom.UV,
         ),
         Riquadro(
-            "LUNA",
+            tr("LUNA", "MOON"),
             "${(luna * 100f).roundToInt()} %",
             SalaTokens.neutral300,
             SalaRoom.LUNA,
         ),
         Riquadro(
-            "ARIA",
+            tr("ARIA", "AIR"),
             aria?.let { "AQI $it" } ?: "--",
             SalaTokens.verde300,
             SalaRoom.ARIA,
@@ -269,11 +271,11 @@ private data class Riquadro(
 )
 
 private fun nomeUv(valore: Double): String = when {
-    valore >= 8 -> "molto alto"
-    valore >= 6 -> "alto"
-    valore >= 3 -> "moderato"
-    valore > 0 -> "basso"
-    else -> "assente"
+    valore >= 8 -> tr("molto alto", "very high")
+    valore >= 6 -> tr("alto", "high")
+    valore >= 3 -> tr("moderato", "moderate")
+    valore > 0 -> tr("basso", "low")
+    else -> tr("assente", "none")
 }
 
 /**
@@ -319,14 +321,14 @@ private fun SchedaGiorno(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ValoreScheda(
-                "MAX / MIN",
+                tr("MAX / MIN", "HIGH / LOW"),
                 "${giorno.max.gradi(state)} / ${giorno.min.gradi(state)}",
                 palette,
                 Modifier.weight(1.2f),
             )
-            ValoreScheda("PIOGGIA", "${(giorno.mm ?: 0.0).virgola()} mm", palette, Modifier.weight(1f))
+            ValoreScheda(tr("PIOGGIA", "RAIN"), "${(giorno.mm ?: 0.0).virgola()} mm", palette, Modifier.weight(1f))
             ValoreScheda(
-                "VENTO",
+                tr("VENTO", "WIND"),
                 giorno.vento?.let { state.windUnit.from(it).roundToInt().toString() } ?: "--",
                 palette,
                 Modifier.weight(0.7f),
@@ -334,8 +336,8 @@ private fun SchedaGiorno(
             ValoreScheda("UV", giorno.uv?.virgola() ?: "--", palette, Modifier.weight(0.6f))
         }
         Text(
-            text = "alba ${giorno.alba?.format(OraMinuto) ?: "--:--"} · " +
-                "tramonto ${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
+            text = tr("alba ", "sunrise ") + "${giorno.alba?.format(OraMinuto) ?: "--:--"} · " +
+                tr("tramonto ", "sunset ") + "${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
             style = SalaType.microLabel,
             color = palette.inkSoft,
             modifier = Modifier.padding(top = 9.dp),

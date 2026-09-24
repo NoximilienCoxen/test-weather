@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.scene
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import java.time.LocalDateTime
 import java.time.Month
 import kotlin.random.Random
@@ -12,15 +13,18 @@ import kotlin.random.Random
  * benvenuto al primo avvio e, per un attimo, a ogni apertura mentre arrivano
  * i dati - li' si vedono davvero, perche' il benvenuto si vede una volta sola.
  */
-enum class Scena(val nome: String) {
-    MARE("Sole e mare"),
-    CITTA_NATALE("Città innevata"),
-    TEMPESTA("Nave in tempesta"),
-    FERMATA("Fermata sotto la pioggia"),
-    GRANO("Campo di grano"),
-    ARCOBALENO("Dopo la pioggia"),
-    MONTAGNA("Montagna"),
-    NEBBIA("Colline nella nebbia"),
+enum class Scena(private val italiano: String, private val inglese: String) {
+    MARE("Sole e mare", "Sun and sea"),
+    CITTA_NATALE("Città innevata", "Snowy town"),
+    TEMPESTA("Nave in tempesta", "Ship in a storm"),
+    FERMATA("Fermata sotto la pioggia", "Bus stop in the rain"),
+    GRANO("Campo di grano", "Wheat field"),
+    ARCOBALENO("Dopo la pioggia", "After the rain"),
+    MONTAGNA("Montagna", "Mountain"),
+    NEBBIA("Colline nella nebbia", "Hills in the fog"),
+    ;
+
+    val nome: String get() = tr(italiano, inglese)
 }
 
 /**

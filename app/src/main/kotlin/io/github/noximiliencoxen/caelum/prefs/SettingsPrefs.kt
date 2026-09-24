@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.prefs
 
+import io.github.noximiliencoxen.caelum.lingua.SceltaLingua
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -129,6 +130,8 @@ data class Settings(
     val guidaVista: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. Accese di norma. */
     val notifichePioggia: Boolean = true,
+    /** In che lingua parla l'app. */
+    val lingua: SceltaLingua = SceltaLingua.AUTO,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
 )
@@ -209,6 +212,9 @@ class SettingsPrefs(private val context: Context) {
             schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
             guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
             notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
+            lingua = prefs[KEY_LINGUA]
+                ?.let { saved -> SceltaLingua.entries.firstOrNull { it.name == saved } }
+                ?: SceltaLingua.AUTO,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
@@ -270,6 +276,10 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setSchedeLarghe(larghe: Boolean) {
         context.settingsDataStore.edit { it[KEY_SCHEDE_LARGHE] = larghe }
+    }
+
+    suspend fun setLingua(scelta: SceltaLingua) {
+        context.settingsDataStore.edit { it[KEY_LINGUA] = scelta.name }
     }
 
     suspend fun setNotifichePioggia(accese: Boolean) {
@@ -336,6 +346,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
         val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
         val KEY_NOTIFICHE_PIOGGIA = booleanPreferencesKey("notifiche_pioggia")
+        val KEY_LINGUA = stringPreferencesKey("lingua")
         val KEY_PERMESSO_NOTIFICHE = booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")

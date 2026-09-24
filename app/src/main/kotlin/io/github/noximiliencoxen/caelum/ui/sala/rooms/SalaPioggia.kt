@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -93,12 +95,12 @@ fun SalaPioggiaScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "La pioggia", style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("La pioggia", "Rain"), style = SalaType.cardTitle, color = palette.ink)
                 Didascalia(
                     if (bagnato) {
-                        "Precipitazioni nelle prossime dodici ore, per un totale di ${totale.virgola()} millimetri."
+                        tr("Precipitazioni nelle prossime dodici ore, per un totale di ${totale.virgola()} millimetri.", "Precipitation in the next twelve hours, ${totale.virgola()} millimetres in total.")
                     } else {
-                        "Nessuna precipitazione attesa nelle prossime dodici ore."
+                        tr("Nessuna precipitazione attesa nelle prossime dodici ore.", "No precipitation expected in the next twelve hours.")
                     },
                     palette,
                     modifier = Modifier.padding(top = 6.dp),
@@ -195,12 +197,12 @@ fun SalaPioggiaScreen(
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(
-                etichetta = "PROBAB.",
+                etichetta = tr("PROBAB.", "CHANCE"),
                 valore = oraScelta?.precipProbability?.let { "$it %" } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = "INTENSITÀ", valore = intensita(oraScelta?.precipitation), palette = palette)
-            CellaValore(etichetta = "SUOLO", valore = if (totale > 4.0) "saturo" else "asciutto", palette = palette)
+            CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY"), valore = intensita(oraScelta?.precipitation), palette = palette)
+            CellaValore(etichetta = tr("SUOLO", "GROUND"), valore = if (totale > 4.0) tr("saturo", "soaked") else tr("asciutto", "dry"), palette = palette)
         }
 
         HorizontalDivider(
@@ -221,7 +223,7 @@ fun SalaPioggiaScreen(
         // pioggia, e che i dati sanno **sempre** - per tutte le ore e per tutti
         // e sette i giorni: *quando comincia, quanto dura, quanta ne viene*.
         Text(
-            text = "QUANDO",
+            text = tr("QUANDO", "WHEN"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(bottom = 8.dp),
@@ -240,7 +242,7 @@ fun SalaPioggiaScreen(
         val giorni = state.forecast?.days.orEmpty()
         if (giorni.size >= 3) {
             Text(
-                text = "LA SETTIMANA",
+                text = tr("LA SETTIMANA", "THE WEEK"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
@@ -346,9 +348,9 @@ private fun SettimanaDellaPioggia(
  */
 private fun finestraPioggia(state: UiState): String {
     val ore = state.forecast?.allHours.orEmpty()
-    val da = state.detailHour?.time ?: return "Non si sa: la previsione oraria non è arrivata."
+    val da = state.detailHour?.time ?: return tr("Non si sa: la previsione oraria non è arrivata.", "Unknown: the hourly forecast hasn't arrived.")
     val avanti = ore.filter { !it.time.isBefore(da) }
-    if (avanti.isEmpty()) return "Oltre questo momento la previsione oraria non arriva."
+    if (avanti.isEmpty()) return tr("Oltre questo momento la previsione oraria non arriva.", "The hourly forecast doesn't reach beyond this point.")
 
     val soglia = 0.1
     val bagnate = avanti.takeWhile { (it.precipitation ?: 0.0) >= soglia }
@@ -356,30 +358,30 @@ private fun finestraPioggia(state: UiState): String {
         // Sta piovendo adesso: quello che serve sapere e' **quando smette**.
         val fine = bagnate.last().time.plusHours(1)
         val quanta = bagnate.sumOf { it.precipitation ?: 0.0 }
-        return "Sta piovendo: smette verso le %02d:00, ancora %s mm."
+        return tr("Sta piovendo: smette verso le %02d:00, ancora %s mm.", "It's raining: stops around %02d:00, %s mm more.")
             .format(fine.hour, quanta.virgola())
     }
 
     val inizio = avanti.firstOrNull { (it.precipitation ?: 0.0) >= soglia }
-        ?: return "Nelle ore che il modello copre non è prevista pioggia."
+        ?: return tr("Nelle ore che il modello copre non è prevista pioggia.", "No rain expected in the hours the model covers.")
 
     val finestra = avanti.dropWhile { it.time.isBefore(inizio.time) }
         .takeWhile { (it.precipitation ?: 0.0) >= soglia }
     val quanta = finestra.sumOf { it.precipitation ?: 0.0 }
     val quando = when (val giorni = java.time.Duration.between(da, inizio.time).toHours()) {
-        in 0..1 -> "fra poco"
-        in 2..11 -> "fra ${giorni} ore"
-        else -> if (inizio.time.toLocalDate() == da.toLocalDate()) "oggi" else giornoDi(inizio.time, state)
+        in 0..1 -> tr("fra poco", "shortly")
+        in 2..11 -> tr("fra ${giorni} ore", "in ${giorni} hours")
+        else -> if (inizio.time.toLocalDate() == da.toLocalDate()) tr("oggi", "today") else giornoDi(inizio.time, state)
     }
-    val durata = if (finestra.size <= 1) "un'ora scarsa" else "circa ${finestra.size} ore"
-    return "Comincia %s, verso le %02d:00: %s, %s mm in tutto."
+    val durata = if (finestra.size <= 1) tr("un'ora scarsa", "under an hour") else tr("circa ${finestra.size} ore", "about ${finestra.size} hours")
+    return tr("Comincia %s, verso le %02d:00: %s, %s mm in tutto.", "Starts %s, around %02d:00: %s, %s mm in all.")
         .format(quando, inizio.time.hour, durata, quanta.virgola())
 }
 
 /** L'etichetta del giorno di un istante, come la scrive la striscia in fondo. */
 private fun giornoDi(quando: java.time.LocalDateTime, state: UiState): String =
     state.forecast?.days?.firstOrNull { it.date == quando.toLocalDate() }?.label?.lowercase()
-        ?: "più avanti"
+        ?: tr("più avanti", "later on")
 
 /**
  * Come si chiama questa quantita' d'acqua.
@@ -388,11 +390,11 @@ private fun giornoDi(quando: java.time.LocalDateTime, state: UiState): String =
  * millimetro e' pioviggine, sopra i quattro e' un rovescio.
  */
 private fun intensita(mm: Double?): String = when {
-    mm == null || mm <= 0.01 -> "assente"
-    mm < 0.5 -> "debole"
-    mm < 2.0 -> "moderata"
-    mm < 4.0 -> "forte"
-    else -> "rovescio"
+    mm == null || mm <= 0.01 -> tr("assente", "none")
+    mm < 0.5 -> tr("debole", "light")
+    mm < 2.0 -> tr("moderata", "moderate")
+    mm < 4.0 -> tr("forte", "heavy")
+    else -> tr("rovescio", "downpour")
 }
 
-private fun Double.virgola(): String = String.format(Locale.ITALY, "%.1f", this)
+private fun Double.virgola(): String = String.format(Lingua.locale, "%.1f", this)

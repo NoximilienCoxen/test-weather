@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms.luna3d
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.graphics.Canvas as AndroidCanvas
 import android.graphics.Paint
 import androidx.compose.animation.core.Animatable
@@ -110,7 +111,7 @@ internal fun LunaInterattiva(
         Canvas(
             modifier = Modifier
                 .size(220.dp)
-                .semantics { contentDescription = "Luna, $descrizione. Trascina per girarle intorno." }
+                .semantics { contentDescription = tr("Luna, $descrizione. Trascina per girarle intorno.", "Moon, $descrizione. Drag to orbit around it.") }
                 .pointerInput(movimento) {
                     // Il gesto si consuma: con il dito sulla luna ne' le sale
                     // ne' lo scorrimento del pannello lo devono prendere.
@@ -140,9 +141,9 @@ internal fun LunaInterattiva(
 
         Text(
             text = if (daCasa) {
-                "Vista dalla Terra · trascina per girarle intorno"
+                tr("Vista dalla Terra · trascina per girarle intorno", "Seen from Earth · drag to orbit around it")
             } else {
-                "Da qui è illuminato il ${(frazione * 100f).roundToInt()} % del disco"
+                tr("Da qui è illuminato il ${(frazione * 100f).roundToInt()} % del disco", "From here ${(frazione * 100f).roundToInt()} % of the disc is lit")
             },
             style = SalaType.body,
             color = palette.inkSoft,

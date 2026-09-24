@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.widgetconfig
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -168,7 +169,7 @@ fun WidgetConfigScreen(
         ) {
             Spacer(Modifier.width(10.dp))
             Text(
-                text = "CONFIGURA WIDGET",
+                text = tr("CONFIGURA WIDGET", "SET UP WIDGET"),
                 style = MaterialTheme.typography.titleMedium,
                 color = Primary,
             )
@@ -186,7 +187,7 @@ fun WidgetConfigScreen(
             item { Spacer(Modifier.height(14.dp)) }
 
             if (showLocation) {
-                item { SectionTitle("LOCALITÀ") }
+                item { SectionTitle(tr("LOCALITÀ", "LOCATION")) }
                 item {
                     SourceTabs(
                         current = source,
@@ -213,8 +214,10 @@ fun WidgetConfigScreen(
                         if (favorites.isEmpty()) {
                             item {
                                 Text(
-                                    text = "NESSUNA CITTÀ NEI PREFERITI. SALVANE UNA DALLE " +
-                                        "IMPOSTAZIONI DELL'APP TOCCANDO LA STELLA.",
+                                    text = tr(
+                                        "NESSUNA CITTÀ NEI PREFERITI. SALVANE UNA DALLE IMPOSTAZIONI DELL'APP TOCCANDO LA STELLA.",
+                                        "NO CITIES IN FAVOURITES. SAVE ONE FROM THE APP'S SETTINGS BY TAPPING THE STAR.",
+                                    ),
                                     style = MeteoType.caption,
                                     color = Secondary,
                                     modifier = Modifier.padding(vertical = 8.dp),
@@ -241,14 +244,14 @@ fun WidgetConfigScreen(
                             SearchField(
                                 value = query,
                                 onValueChange = { query = it },
-                                placeholder = "CERCA UNA CITTÀ",
+                                placeholder = tr("CERCA UNA CITTÀ", "SEARCH FOR A CITY"),
                             )
                         }
                         item {
                             val message = when {
-                                searching -> "RICERCA IN CORSO…"
-                                query.trim().length >= 2 && results.isEmpty() -> "NESSUN RISULTATO"
-                                query.isBlank() -> "OPPURE SCEGLI FRA QUESTE"
+                                searching -> tr("RICERCA IN CORSO…", "SEARCHING…")
+                                query.trim().length >= 2 && results.isEmpty() -> tr("NESSUN RISULTATO", "NO RESULTS")
+                                query.isBlank() -> tr("OPPURE SCEGLI FRA QUESTE", "OR PICK ONE OF THESE")
                                 else -> null
                             }
                             if (message != null) {
@@ -310,9 +313,9 @@ private fun SectionTitle(text: String) {
 @Composable
 private fun SourceTabs(current: LocationSource, onChoose: (LocationSource) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        SourceTab("POSIZIONE", current == LocationSource.GPS) { onChoose(LocationSource.GPS) }
-        SourceTab("PREFERITI", current == LocationSource.FAVORITES) { onChoose(LocationSource.FAVORITES) }
-        SourceTab("CERCA", current == LocationSource.SEARCH) { onChoose(LocationSource.SEARCH) }
+        SourceTab(tr("POSIZIONE", "LOCATION"), current == LocationSource.GPS) { onChoose(LocationSource.GPS) }
+        SourceTab(tr("PREFERITI", "FAVOURITES"), current == LocationSource.FAVORITES) { onChoose(LocationSource.FAVORITES) }
+        SourceTab(tr("CERCA", "SEARCH"), current == LocationSource.SEARCH) { onChoose(LocationSource.SEARCH) }
     }
 }
 
@@ -334,9 +337,9 @@ private fun GpsSection(granted: Boolean, onRequest: () -> Unit) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
             text = if (granted) {
-                "IL WIDGET USERÀ LA POSIZIONE DEL TELEFONO AD OGNI AGGIORNAMENTO."
+                tr("IL WIDGET USERÀ LA POSIZIONE DEL TELEFONO AD OGNI AGGIORNAMENTO.", "THE WIDGET WILL USE THE PHONE'S LOCATION ON EVERY UPDATE.")
             } else {
-                "SERVE IL PERMESSO DI POSIZIONE APPROSSIMATA."
+                tr("SERVE IL PERMESSO DI POSIZIONE APPROSSIMATA.", "APPROXIMATE LOCATION PERMISSION IS NEEDED.")
             },
             style = MeteoType.value,
             color = Primary,
@@ -350,7 +353,7 @@ private fun GpsSection(granted: Boolean, onRequest: () -> Unit) {
                     .pointerInput(Unit) { detectTapGestures { onRequest() } }
                     .padding(horizontal = 18.dp, vertical = 10.dp),
             ) {
-                Text(text = "CONCEDI IL PERMESSO", style = MeteoType.value, color = Color.Black)
+                Text(text = tr("CONCEDI IL PERMESSO", "GRANT PERMISSION"), style = MeteoType.value, color = Color.Black)
             }
         }
     }
@@ -421,7 +424,7 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
             .padding(vertical = 16.dp),
     ) {
         Text(
-            text = "SALVA",
+            text = tr("SALVA", "SAVE"),
             style = MeteoType.title,
             color = Color.Black,
             modifier = Modifier.align(Alignment.Center),
@@ -445,10 +448,10 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
 private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean) {
     val titolo = kind?.label ?: "WIDGET"
     val dove = when {
-        kind != null && !kind.needsPlace -> "Questo widget non dipende da dove ti trovi"
-        following -> "Seguirà la posizione del telefono"
-        place != null -> "Mostrerà ${place.name}"
-        else -> "Scegli da dove prendere i dati"
+        kind != null && !kind.needsPlace -> tr("Questo widget non dipende da dove ti trovi", "This widget doesn't depend on where you are")
+        following -> tr("Seguirà la posizione del telefono", "It will follow the phone's location")
+        place != null -> tr("Mostrerà ${place.name}", "It will show ${place.name}")
+        else -> tr("Scegli da dove prendere i dati", "Choose where to take the data from")
     }
     Row(
         modifier = Modifier

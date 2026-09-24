@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -287,7 +288,7 @@ fun RowScope.CellaValore(
 @Composable
 fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
     Text(
-        text = "Per questo giorno la previsione dà i totali, non le ore.",
+        text = tr("Per questo giorno la previsione dà i totali, non le ore.", "For this day the forecast gives totals, not hours."),
         style = SalaType.footnote,
         color = palette.inkFaint,
         modifier = modifier,
@@ -513,9 +514,9 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
     // sulle soglie dei dati dice "avviso": e' la stessa regola per cui
     // `badgeLabel` non scrive mai "allerta gialla" su una soglia nostra.
     val testo = when {
-        peggiore == null -> "NESSUN AVVISO"
-        peggiore.official -> "ALLERTA ${peggiore.kind.label}"
-        else -> "AVVISO ${peggiore.kind.label}"
+        peggiore == null -> tr("NESSUN AVVISO", "NO ALERTS")
+        peggiore.official -> tr("ALLERTA ${peggiore.kind.label}", "${peggiore.kind.label} WARNING")
+        else -> tr("AVVISO ${peggiore.kind.label}", "${peggiore.kind.label} ALERT")
     }
     val acceso = peggiore != null
     val fondo = if (acceso) {
