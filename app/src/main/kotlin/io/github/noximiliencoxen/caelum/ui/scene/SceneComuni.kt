@@ -1,10 +1,12 @@
 package io.github.noximiliencoxen.caelum.ui.scene
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlin.math.PI
@@ -34,6 +36,10 @@ internal fun caso(i: Int, k: Int = 0): Float {
 /** Il cielo dall'alto all'orizzonte. */
 internal fun DrawScope.cielo(alto: Color, basso: Color, fino: Float = H) {
     drawRect(Brush.verticalGradient(listOf(alto, basso), startY = 0f, endY = fino), size = Size(W, fino))
+    // Sotto l'orizzonte il colore dell'orizzonte, non il vuoto: le onde e le
+    // colline salgono e scendono, e nel vuoto fra loro e il cielo restava una
+    // riga bianca.
+    if (fino < H) drawRect(basso, Offset(0f, fino - 1f), Size(W, H - fino + 1f))
 }
 
 internal fun DrawScope.sole(centro: Offset, r: Float, colore: Color = Colori.sole, alone: Color = Colori.alone) {
@@ -42,13 +48,23 @@ internal fun DrawScope.sole(centro: Offset, r: Float, colore: Color = Colori.sol
     drawCircle(colore, r, centro)
 }
 
-/** Luna piena o falce: la falce e' un disco coperto da un altro del colore del cielo. */
-internal fun DrawScope.luna(centro: Offset, r: Float, cielo: Color, falce: Boolean = false) {
-    drawCircle(Colori.lunaAlone.copy(alpha = 0.18f), r * 2.1f, centro)
-    drawCircle(Colori.luna, r, centro)
+/**
+ * Luna piena o falce. La falce e' una differenza fra due dischi, non un disco
+ * coperto da un altro del colore del cielo: coprendo, l'alone restava visibile
+ * sotto il disco "invisibile" come un buco grigio.
+ */
+internal fun DrawScope.luna(centro: Offset, r: Float, @Suppress("UNUSED_PARAMETER") cielo: Color, falce: Boolean = false) {
+    drawCircle(
+        Brush.radialGradient(listOf(Colori.lunaAlone.copy(alpha = 0.22f), Colori.lunaAlone.copy(alpha = 0f)), centro, r * 2.4f),
+        r * 2.4f,
+        centro,
+    )
     if (falce) {
-        drawCircle(cielo, r * 0.92f, centro + Offset(r * 0.42f, -r * 0.18f))
+        val disco = Path().apply { addOval(Rect(centro, r)) }
+        val ombra = Path().apply { addOval(Rect(centro + Offset(r * 0.45f, -r * 0.2f), r * 0.95f)) }
+        drawPath(Path.combine(PathOperation.Difference, disco, ombra), Colori.luna)
     } else {
+        drawCircle(Colori.luna, r, centro)
         drawCircle(Colori.lunaMare, r * 0.22f, centro + Offset(-r * 0.25f, -r * 0.2f))
         drawCircle(Colori.lunaMare, r * 0.15f, centro + Offset(r * 0.28f, r * 0.12f))
     }
@@ -122,17 +138,26 @@ internal fun DrawScope.onda(base: Float, ampiezza: Float, lunghezza: Float, fase
     drawPath(p, colore)
 }
 
+/** Il profilo di una collina morbida, chiuso fino in fondo. */
+internal fun DrawScope.profiloCollina(sinistra: Float, cima: Float, xCima: Float, destra: Float): Path = Path().apply {
+    moveTo(0f, H)
+    lineTo(0f, sinistra)
+    quadraticBezierTo(xCima * 0.5f, cima, xCima, cima)
+    quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
+    lineTo(W, H)
+    close()
+}
+
+/** Solo il crinale, aperto: per le righe che seguono la collina. */
+internal fun DrawScope.crinale(sinistra: Float, cima: Float, xCima: Float, destra: Float): Path = Path().apply {
+    moveTo(0f, sinistra)
+    quadraticBezierTo(xCima * 0.5f, cima, xCima, cima)
+    quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
+}
+
 /** Una collina morbida fra due quote, piena fino in fondo. */
 internal fun DrawScope.collina(sinistra: Float, cima: Float, xCima: Float, destra: Float, colore: Color) {
-    val p = Path().apply {
-        moveTo(0f, H)
-        lineTo(0f, sinistra)
-        quadraticBezierTo(xCima * 0.5f, cima, xCima, cima)
-        quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
-        lineTo(W, H)
-        close()
-    }
-    drawPath(p, colore)
+    drawPath(profiloCollina(sinistra, cima, xCima, destra), colore)
 }
 
 /**
