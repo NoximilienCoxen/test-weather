@@ -150,6 +150,12 @@ class WidgetOverflowTest {
 
     @After
     fun nessunaScrittaFuori() {
+        // Anche su file, accanto alle immagini: il log della CI mostra solo la
+        // riga dell'asserzione, non il messaggio.
+        if (failures.isNotEmpty()) {
+            File("build/widget-renders").apply { mkdirs() }
+                .resolve("overflow-${System.nanoTime()}.txt").writeText(failures.joinToString("\n"))
+        }
         assertTrue(failures.joinToString("\n", prefix = "Scritte oltre il bordo:\n"), failures.isEmpty())
     }
 

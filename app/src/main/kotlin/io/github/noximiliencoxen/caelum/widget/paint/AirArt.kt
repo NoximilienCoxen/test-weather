@@ -49,22 +49,29 @@ internal fun DrawScope.airArt(
 
     // La parola prende tutta la larghezza che resta: si sceglie il corpo piu'
     // grande che ci sta, invece di tagliarla o di rimpicciolirla sempre.
+    //
+    // **E se non ci sta su una riga va a capo.** Prima il corpo scendeva fino
+    // a un minimo e li' si fermava, ci stesse o no: in un widget piu' alto che
+    // largo "MOLTO SCARSA" arrivava al minimo ancora piu' larga del riquadro e
+    // usciva dal bordo. Due righe grandi si leggono meglio di una minuscola.
     val word = band?.label ?: "ARIA"
-    val available = box.width
-    var size = box.height * 0.42f
-    var brush = type.brush(size, weight = 700, width = 70)
-    while (type.widthOf(word, brush) > available && size > box.height * 0.14f) {
-        size *= 0.92f
-        brush = type.brush(size, weight = 700, width = 70)
-    }
-
     val wordTop = indexTop + lineHeight(index) * 0.85f
     val room = box.bottom - wordTop
-    text(
-        word,
-        box.left,
-        wordTop + (room - lineHeight(brush)) / 2f,
-        brush,
-        ink.primary,
-    )
+    var size = box.height * 0.42f
+    var brush = type.brush(size, weight = 700, width = 70)
+    var lines = listOf(word)
+    while (size > box.height * 0.06f) {
+        brush = type.brush(size, weight = 700, width = 70)
+        lines = if (type.widthOf(word, brush) <= box.width) listOf(word) else wrap(word, box.width, brush, type)
+        val fits = lines.all { type.widthOf(it, brush) <= box.width } &&
+            lines.size * lineHeight(brush) <= room
+        if (fits) break
+        size *= 0.92f
+    }
+
+    var y = wordTop + (room - lines.size * lineHeight(brush)) / 2f
+    lines.forEach { line ->
+        text(line, box.left, y, brush, ink.primary)
+        y += lineHeight(brush)
+    }
 }

@@ -52,33 +52,4 @@ internal fun DrawScope.setupArt(title: String, type: WidgetType, ink: WidgetInk)
     }
 }
 
-/**
- * Spezza sulle parole, mai dentro una parola.
- *
- * Una parola piu' larga del riquadro finisce da sola sulla sua riga e sborda:
- * a quel punto e' il ciclo del chiamante a rimpicciolire il corpo, che e' il
- * rimedio giusto. Tagliarla qui vorrebbe dire consegnare una riga monca senza
- * che nessuno se ne accorga.
- */
-private fun wrap(
-    text: String,
-    width: Float,
-    brush: android.graphics.Paint,
-    type: WidgetType,
-): List<String> {
-    val lines = mutableListOf<String>()
-    var current = StringBuilder()
-    text.split(' ').forEach { word ->
-        val candidate = if (current.isEmpty()) word else "$current $word"
-        if (type.widthOf(candidate, brush) <= width || current.isEmpty()) {
-            current = StringBuilder(candidate)
-        } else {
-            lines += current.toString()
-            current = StringBuilder(word)
-        }
-    }
-    if (current.isNotEmpty()) lines += current.toString()
-    return lines
-}
-
 private const val INVITO = "TOCCA PER SCEGLIERE LA CITTÀ"
