@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui
 
+import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -186,6 +187,10 @@ data class UiState(
     val guidaVista: Boolean = true,
     /** La guida richiesta a mano, dalle impostazioni o dalla cattura. */
     val guidaAperta: Boolean = false,
+    /** Le notifiche di pioggia e grandine in arrivo. */
+    val notifichePioggia: Boolean = true,
+    /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
+    val permessoNotificheChiesto: Boolean = true,
     /**
      * La citta' salvata nell'app, quando se ne sta guardando un'altra da un
      * widget; nulla altrimenti. Vedi [WeatherViewModel.visita].
@@ -544,6 +549,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         animazioniRidotte = settings.animazioniRidotte,
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
+                        notifichePioggia = settings.notifichePioggia,
+                        permessoNotificheChiesto = settings.permessoNotificheChiesto,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -1255,6 +1262,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun scattoFermo() {
         _state.update { it.copy(animazioniIstantanee = true) }
+    }
+
+    fun setNotifichePioggia(accese: Boolean) {
+        val app = getApplication<Application>()
+        if (accese) PioggiaInArrivoWorker.pianifica(app) else PioggiaInArrivoWorker.annulla(app)
+        viewModelScope.launch { prefs.setNotifichePioggia(accese) }
+    }
+
+    fun permessoNotificheChiesto() {
+        _state.update { it.copy(permessoNotificheChiesto = true) }
+        viewModelScope.launch { prefs.setPermessoNotificheChiesto() }
     }
 
     fun setSchedeLarghe(larghe: Boolean) {

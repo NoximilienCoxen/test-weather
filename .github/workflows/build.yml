@@ -38,6 +38,11 @@ jobs:
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/extra.json
           echo "--- orario ---"
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}&${HOURLY}" -o /tmp/ciout/hourly.json
+          # La previsione a quarti d'ora che usano le notifiche di pioggia e
+          # grandine in arrivo (PrecipitazioneInArrivo.kt).
+          echo "--- quarti d'ora ---"
+          curl -sS -w "\nHTTP %{http_code}\n" "https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&minutely_15=precipitation,weather_code&forecast_minutely_15=10" -o /tmp/ciout/quarti.json
+          head -c 600 /tmp/ciout/quarti.json; echo
           head -c 400 /tmp/ciout/safe.json; echo
           head -c 400 /tmp/ciout/extra.json; echo
 
