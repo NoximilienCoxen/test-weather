@@ -8,27 +8,36 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.core.net.toUri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
-import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.updateAll
+import androidx.glance.appwidget.state.getAppWidgetState
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.currentState
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import io.github.noximiliencoxen.caelum.MainActivity
 import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.widget.paint.Frame
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetCanvas
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetInk
@@ -67,10 +76,11 @@ internal fun WidgetImage(bitmap: Bitmap, description: String, onClick: Action) {
  * Gerarchia di risoluzione:
  *
  * REGOLA 1 — useLocation=true:
- *   Tenta il GPS. Se disponibile, usa quello.
- *   Se il GPS e' null (permessi revocati, antenna spenta), usa [place]
- *   dell'istanza come fallback immediato — NON la citta' globale dell'app.
- *   Solo se anche [place] e' null si usa il fallback globale.
+ *   Tenta il GPS. Se disponibile, usa quello e lo annota come ultima
+ *   posizione nota dell'istanza.
+ *   Se il GPS e' null - e da dietro le quinte lo e' quasi sempre, vedi
+ *   [WidgetPrefs.lastFix] - usa l'ultima posizione nota, poi [place]
+ *   dell'istanza, e solo se non c'e' nessuno dei due la citta' dell'app.
  *
  * REGOLA 2 — useLocation=false e place!=null:
  *   Usa tassativamente la citta' scelta per questa istanza.
@@ -93,12 +103,15 @@ internal fun WidgetImage(bitmap: Bitmap, description: String, onClick: Action) {
  * rete per il GPS che non risponde a un widget configurato apposta per
  * seguirlo, non il mascheramento di una configurazione che non c'e'.
  */
-internal suspend fun WidgetConfig.resolvePlace(context: Context): Place? {
+internal suspend fun WidgetConfig.resolvePlace(context: Context, appWidgetId: Int): Place? {
+    val prefs = WidgetPrefs(context)
     suspend fun fromApp(): Place = SettingsPrefs(context).settings.first().place
+    suspend fun fromGps(): Place? =
+        DeviceLocation.current(context)?.also { prefs.rememberFix(appWidgetId, it) }
 
     return when {
         // REGOLA 1: GPS richiesto
-        useLocation -> DeviceLocation.current(context) ?: place ?: fromApp()
+        useLocation -> fromGps() ?: prefs.lastFix(appWidgetId) ?: place ?: fromApp()
         // REGOLA 2: citta' manuale impostata per questa istanza
         place != null -> place
         // REGOLA 3: widget mai configurato — nessuna localita' da mostrare
@@ -127,6 +140,29 @@ internal fun configureIntent(context: Context, appWidgetId: Int): Intent =
         // il pareggio.
         .setData("caelum://widget/$appWidgetId".toUri())
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+/**
+ * Apre l'app sulla sala che corrisponde al widget: la luna sulla luna, la
+ * settimana sulla settimana. Il `data` distingue i widget come in
+ * [configureIntent]; `SINGLE_TOP` fa arrivare la richiesta anche all'app gia'
+ * aperta, tramite `onNewIntent`.
+ */
+internal fun apriSalaIntent(context: Context, appWidgetId: Int, kind: WidgetKind, place: Place?): Intent =
+    Intent(context, MainActivity::class.java)
+        .setAction(Intent.ACTION_VIEW)
+        .putExtra(MainActivity.EXTRA_SALA_WIDGET, kind.sala.name)
+        .apply {
+            // La citta' del widget, che l'app mostra senza farla sua.
+            if (place != null) {
+                putExtra(MainActivity.EXTRA_WIDGET_NOME, place.name)
+                putExtra(MainActivity.EXTRA_WIDGET_REGIONE, place.admin)
+                putExtra(MainActivity.EXTRA_WIDGET_PAESE, place.country)
+                putExtra(MainActivity.EXTRA_WIDGET_LAT, place.latitude)
+                putExtra(MainActivity.EXTRA_WIDGET_LON, place.longitude)
+            }
+        }
+        .setData("caelum://sala/${kind.sala.name.lowercase()}/$appWidgetId".toUri())
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
 internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
     GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
@@ -162,14 +198,18 @@ enum class WidgetKind(
     /** Il ricevitore che il sistema sveglia per questo widget. */
     val receiver: Class<out ConfigurableWidgetReceiver>,
     private val make: () -> GlanceAppWidget,
+    /** La sala che il tocco apre. */
+    val sala: SalaRoom,
 ) {
-    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget),
+    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
 
     // La luna e' la stessa da qualunque parte la si guardi: chiederle una
     // citta' sarebbe una domanda senza conseguenze.
-    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget),
+    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
 
-    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget),
+    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
+
+    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
     ;
 
     fun widget(): GlanceAppWidget = make()
@@ -211,6 +251,9 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
     /** Un'immagine gia' dipinta e cosa dirne a chi non la vede. */
     data class Drawn(val bitmap: Bitmap, val spoken: String)
 
+    /** Quel che finisce sulla Home: il disegno e dove porta toccarlo. */
+    private class Face(val drawn: Drawn, val onClick: Action)
+
     /**
      * Il disegno di questo widget.
      *
@@ -226,17 +269,64 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
         ink: WidgetInk,
     ): Drawn
 
+    /**
+     * **Il disegno si rifa' dentro la composizione, non solo prima.**
+     *
+     * Prima la configurazione si leggeva una volta, qui sopra, e l'immagine
+     * che ne usciva restava fissa per tutta la vita della sessione Glance. E
+     * la sessione vive: 45 secondi dopo ogni disegno, di piu' se arrivano
+     * altri eventi. Mentre vive, `update()` **non** rilancia `provideGlance` -
+     * ricarica solo lo stato Glance e ricompone (`GlanceAppWidget.update` →
+     * `session.updateGlance()`, glance-appwidget 1.2.0). Ricomporre un'immagine
+     * gia' fatta ridà la stessa immagine.
+     *
+     * Il caso che si vedeva sempre: il lanciatore disegna il widget appena
+     * posato - senza citta', quindi "TOCCA PER SCEGLIERE LA CITTÀ" - e subito
+     * dopo apre la configurazione. Chi sceglie in meno di 45 secondi salva, il
+     * ridisegno trova la sessione ancora aperta, e l'invito resta li'. Chi ci
+     * mette di piu' trova la sessione chiusa e vede la citta'. Da qui il "a
+     * volte". Lo stesso valeva per il tocco che aggiorna e per il cambio di
+     * tema.
+     *
+     * Adesso la composizione osserva le due cose da cui dipende il disegno: la
+     * configurazione dell'istanza ([WidgetPrefs.watch]) e un contatore di
+     * ridisegni nello stato Glance ([RedrawKey]), che il tocco e il cambio di
+     * tema fanno avanzare. Cambia una delle due, e l'immagine si rifa' - con la
+     * sessione aperta o chiusa, allo stesso modo.
+     */
     final override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = appWidgetIdOf(context, id)
+        val prefs = WidgetPrefs(context)
+
+        // Il primo disegno prima di provideContent, come prima: la Home non
+        // deve vedere un fotogramma vuoto mentre si scarica.
+        val firstConfig = prefs.load(appWidgetId)
+        val firstRedraw = getAppWidgetState(context, PreferencesGlanceStateDefinition, id)[RedrawKey] ?: 0L
+        val first = draw(context, appWidgetId, firstConfig)
+
+        provideContent {
+            val config by remember { prefs.watch(appWidgetId) }.collectAsState(firstConfig)
+            val redraw = currentState(RedrawKey) ?: 0L
+
+            var face by remember { mutableStateOf(first) }
+            var faceOf by remember { mutableStateOf(firstConfig to firstRedraw) }
+            LaunchedEffect(config, redraw) {
+                val wanted = config to redraw
+                if (wanted == faceOf) return@LaunchedEffect
+                face = draw(context, appWidgetId, config)
+                faceOf = wanted
+            }
+
+            WidgetImage(face.drawn.bitmap, face.drawn.spoken, face.onClick)
+        }
+    }
+
+    private suspend fun draw(context: Context, appWidgetId: Int, config: WidgetConfig): Face {
         val frame = WidgetCanvas.plan(context, appWidgetId)
         val ink = WidgetInk.of(context)
         val type = WidgetType(context)
 
-        val place = if (kind.needsPlace) {
-            WidgetPrefs(context).load(appWidgetId).resolvePlace(context)
-        } else {
-            null
-        }
+        val place = if (kind.needsPlace) config.resolvePlace(context, appWidgetId) else null
 
         // Nullo con `needsPlace` acceso vuol dire che questa istanza non e' mai
         // stata configurata. Non si ripiega sulla citta' dell'app: si dice che
@@ -245,62 +335,52 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
             val bitmap = withContext(Dispatchers.Default) {
                 WidgetCanvas.paint(frame, ink.background) { setupArt(kind.shortLabel, type, ink) }
             }
-            provideContent {
-                WidgetImage(
-                    bitmap = bitmap,
-                    description = "Widget ${kind.label.lowercase()} da configurare. " +
-                        "Tocca per scegliere la città.",
-                    onClick = actionStartActivity(configureIntent(context, appWidgetId)),
-                )
-            }
-            return
+            val spoken = "Widget ${kind.label.lowercase()} da configurare. " +
+                "Tocca per scegliere la città."
+            return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
         }
 
-        val drawn = paint(context, frame, place, type, ink)
-        provideContent {
-            WidgetImage(drawn.bitmap, drawn.spoken, actionRunCallback<RefreshWidgetAction>())
-        }
+        // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
+        // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
+        // saperne di piu', non lo stesso numero ridisegnato.
+        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
     }
 }
 
 /**
- * Un tocco sul widget forza un nuovo scaricamento.
+ * Il contatore di ridisegni, nello stato Glance di ogni istanza.
  *
- * Una sola per tutti: quale widget ridisegnare lo dice l'identificativo, non la
- * classe della callback. Prima ce n'erano tre identiche, e un widget nuovo ne
- * voleva una quarta.
+ * Il valore non dice niente: conta che cambi. Lo stato Glance e' l'unica cosa
+ * che `update()` fa arrivare a una sessione gia' aperta, quindi e' l'unico modo
+ * di dirle "rifai il disegno" invece di "ricomponi quello che hai".
  */
-class RefreshWidgetAction : ActionCallback {
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters,
-    ) {
-        val appWidgetId = appWidgetIdOf(context, glanceId)
-        WidgetKind.of(context, appWidgetId)?.widget()?.update(context, glanceId)
-    }
+private val RedrawKey = longPreferencesKey("caelum_ridisegno")
+
+/**
+ * Ridisegna davvero, riscaricando: fa avanzare [RedrawKey] e poi aggiorna.
+ *
+ * Con la sessione chiusa `update()` la riapre e `provideGlance` riparte da capo;
+ * con la sessione aperta il contatore cambiato fa ripartire il disegno dentro
+ * la composizione. In entrambi i casi il risultato e' lo stesso.
+ */
+internal suspend fun WidgetKind.redraw(context: Context, glanceId: GlanceId) {
+    updateAppWidgetState(context, glanceId) { it[RedrawKey] = (it[RedrawKey] ?: 0L) + 1 }
+    widget().update(context, glanceId)
 }
 
 /**
  * Ridisegna il widget appena configurato.
  *
- * **Qui c'era un `delay(800)`, e la sua storia vale il commento** - perche' non
- * era un numero tarato male, era una premessa sbagliata.
+ * **Qui c'era un `delay(800)`**, e prima ancora un commento che diceva che
+ * dopo la chiusura della sessione Glance `update()` non ha effetto. Era al
+ * rovescio: con la sessione **chiusa** `update()` la riapre e `provideGlance`
+ * rilegge tutto; e' con la sessione **aperta** che si limitava a ricomporre
+ * l'immagine vecchia. Nessun numero poteva sistemarlo, perche' il difetto non
+ * era di tempo.
  *
- * Il commento che se n'e' andato diceva che dopo la chiusura della sessione
- * Glance le chiamate a `update()` non hanno effetto, "perché non c'è nessun
- * Flow attivo che le osservi". Da li' veniva tutto il resto: se `update()` non
- * serve serve un broadcast, e se serve un broadcast bisogna aspettare che la
- * sessione si chiuda, e per aspettare serve un numero. Tre commit di fila
- * hanno spostato quel numero.
- *
- * **La premessa non regge.** `GlanceAppWidget.update()` passa per
- * `getOrCreateAppWidgetSession`: se una sessione non c'e', la **crea**, e
- * `provideGlance` riparte da capo rileggendo il DataStore (verificato nel
- * bytecode di glance-appwidget 1.2.0). Non c'era niente da attendere, e gli
- * ottocento millisecondi erano per giunta una scommessa persa in partenza -
- * quella sessione dentro `provideGlance` fa una richiesta **di rete**, che su
- * rete lenta dura molto di piu'.
+ * Adesso la sessione aperta si accorge da sola della configurazione nuova -
+ * la osserva, vedi `CaelumWidget.provideGlance` - e [redraw] copre anche il
+ * caso in cui la scelta salvata sia la stessa di prima.
  *
  * Resta `getGlanceIdBy` per tradurre l'identificativo di sistema in quello di
  * Glance, e il broadcast solo come ripiego se quella traduzione fallisce -
@@ -310,15 +390,9 @@ class RefreshWidgetAction : ActionCallback {
 internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: WidgetKind?) {
     val resolved = kind ?: WidgetKind.of(context, appWidgetId) ?: return
 
-    // Rilegge le preferenze prima di procedere, e il valore non serve a
-    // nessuno: serve la **lettura**, che sospende finche' il DataStore non
-    // consegna, cioe' finche' la scrittura appena fatta non e' visibile. Da
-    // qui in poi il nuovo provideGlance trovera' i dati aggiornati.
-    withContext(Dispatchers.IO) { WidgetPrefs(context).load(appWidgetId) }
-
     val redrawn = runCatching {
         val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
-        resolved.widget().update(context, glanceId)
+        resolved.redraw(context, glanceId)
     }.isSuccess
     if (redrawn) return
 
@@ -334,11 +408,17 @@ internal suspend fun refreshWidget(context: Context, appWidgetId: Int, kind: Wid
  * Ridisegna tutti i widget piazzati, di qualunque tipo.
  *
  * Serve al cambio di tema: le immagini gia' dipinte non si ricolorano da sole.
- * Se un tipo non ha widget in giro, `updateAll` non fa niente e non costa.
+ * Se un tipo non ha widget in giro, l'elenco e' vuoto e non costa.
+ *
+ * [redraw] e non `updateAll`: `updateAll` su una sessione ancora aperta
+ * ricomponeva l'immagine vecchia, con i colori vecchi.
  */
 suspend fun repaintWidgets(context: Context) {
+    val manager = GlanceAppWidgetManager(context)
     WidgetKind.entries.forEach { kind ->
-        runCatching { kind.widget().updateAll(context) }
+        runCatching {
+            manager.getGlanceIds(kind.widget().javaClass).forEach { kind.redraw(context, it) }
+        }
     }
 }
 
@@ -350,6 +430,31 @@ suspend fun repaintWidgets(context: Context) {
  * riassegnato a un widget nuovo si porterebbe dietro i colori del precedente.
  */
 abstract class ConfigurableWidgetReceiver : GlanceAppWidgetReceiver() {
+
+    // L'aggiornamento con la rete garantita parte col primo widget e si
+    // ferma quando non ce n'e' piu' nessuno: vedi `AggiornaWidgetWorker`.
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        AggiornaWidgetWorker.pianifica(context)
+    }
+
+    // Anche a ogni aggiornamento di sistema: chi aveva gia' i widget prima di
+    // questa versione non ricevera' piu' `onEnabled`. `KEEP` la rende innocua.
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        AggiornaWidgetWorker.pianifica(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        // Solo se non resta nessun widget di nessun tipo: `onDisabled` arriva
+        // per tipo, e togliere l'ultimo meteo non deve fermare la settimana.
+        val manager = AppWidgetManager.getInstance(context)
+        val restano = WidgetKind.entries.any { kind ->
+            manager.getAppWidgetIds(ComponentName(context, kind.receiver)).isNotEmpty()
+        }
+        if (!restano) AggiornaWidgetWorker.annulla(context)
+    }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         // **`goAsync()` si consegna una volta sola, e qui lo chiedono in due.**

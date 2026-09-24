@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 /**
  * La fase lunare.
  *
- * L'unico dei tre widget che non tocca la rete: la fase si calcola dalla data
+ * L'unico widget che non tocca la rete: la fase si calcola dalla data
  * (vedi [MoonPhase]), quindi qui non c'e' niente da scaricare e niente da
  * aspettare. E l'unico che non vuole una citta': [WidgetKind.LUNA] lo dichiara
  * con `needsPlace = false`, quindi [place] arriva nullo e va bene cosi'.

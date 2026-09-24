@@ -114,6 +114,23 @@ data class Settings(
      * meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /**
+     * Vero da quando si e' sfogliata una sala almeno una volta. Fino ad allora
+     * sotto la prima compare l'indizio "scorri in su": il gesto non si vede, e
+     * chi apre l'app per la prima volta non ha modo di indovinarlo.
+     */
+    val saleSfogliate: Boolean = false,
+    /**
+     * Schede larghe: la colonna delle sale sparisce e le schede prendono
+     * tutta la larghezza. Le sale si sfogliano comunque col dito.
+     */
+    val schedeLarghe: Boolean = false,
+    /** Vero da quando la guida all'uso e' stata vista fino in fondo o saltata. */
+    val guidaVista: Boolean = false,
+    /** Le notifiche di pioggia e grandine in arrivo. Accese di norma. */
+    val notifichePioggia: Boolean = true,
+    /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
+    val permessoNotificheChiesto: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -188,6 +205,11 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
                 ?: CaptionStyle.COMPLETE,
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
+            saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
+            schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
+            guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
+            notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
+            permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -242,6 +264,26 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_CAPTION_STYLE] = style.name }
     }
 
+    suspend fun setSaleSfogliate() {
+        context.settingsDataStore.edit { it[KEY_SALE_SFOGLIATE] = true }
+    }
+
+    suspend fun setSchedeLarghe(larghe: Boolean) {
+        context.settingsDataStore.edit { it[KEY_SCHEDE_LARGHE] = larghe }
+    }
+
+    suspend fun setNotifichePioggia(accese: Boolean) {
+        context.settingsDataStore.edit { it[KEY_NOTIFICHE_PIOGGIA] = accese }
+    }
+
+    suspend fun setPermessoNotificheChiesto() {
+        context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
+    }
+
+    suspend fun setGuidaVista() {
+        context.settingsDataStore.edit { it[KEY_GUIDA_VISTA] = true }
+    }
+
     suspend fun setAnimazioniRidotte(ridotte: Boolean) {
         context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
     }
@@ -290,6 +332,11 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
+        val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
+        val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
+        val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
+        val KEY_NOTIFICHE_PIOGGIA = booleanPreferencesKey("notifiche_pioggia")
+        val KEY_PERMESSO_NOTIFICHE = booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
@@ -16,6 +17,7 @@ import io.github.noximiliencoxen.caelum.ui.widgetconfig.WidgetConfigScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Aperta dal sistema subito dopo che un widget e' stato trascinato sulla Home
@@ -79,7 +81,19 @@ class WidgetConfigActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun saveAndFinish(place: Place?, useLocation: Boolean) {
+    private suspend fun saveAndFinish(chosen: Place?, useLocation: Boolean) {
+        // **Chi segue la posizione la rileva adesso, finche' e' in primo
+        // piano.** Da dietro le quinte il widget non la ottiene quasi mai (vedi
+        // WidgetPrefs.lastFix), e senza un punto di partenza ripiegava su
+        // quel che trovava: una citta' scelta mesi prima in un'altra scheda, o
+        // quella aperta nell'app. Con un tempo massimo: e' un tocco su SALVA,
+        // non un'attesa. Se non arriva niente resta la scelta di prima.
+        val place = if (useLocation) {
+            withTimeoutOrNull(FIX_TIMEOUT_MS) { DeviceLocation.current(this@WidgetConfigActivity) } ?: chosen
+        } else {
+            chosen
+        }
+
         // Salvataggio su Dispatchers.IO: DataStore usa gia' IO internamente,
         // ma forzare il dispatcher garantisce che la scrittura sia completata
         // e visibile a qualsiasi lettura successiva prima di procedere.
@@ -106,6 +120,22 @@ class WidgetConfigActivity : ComponentActivity() {
         // una volta, prima che questa schermata si aprisse, con le preferenze
         // ancora vuote. E' un miglioramento dell'esperienza, non parte del
         // contratto: se fallisce si perde un ridisegno, non la scelta.
+        // **La previsione si scarica adesso, finche' questa schermata e' in
+        // primo piano.** Il ridisegno gira dopo, quando l'app e' gia' dietro le
+        // quinte, e li' Android la rete spesso non la da': con una citta' mai
+        // aperta prima non c'era nemmeno una previsione salvata, e il widget
+        // restava vuoto finche' non si apriva l'app. Con un tempo massimo,
+        // perche' e' un tocco su SALVA; se non basta, ci pensa il lavoro in
+        // background appena c'e' rete.
+        val tipo = kind
+        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA) {
+            val scaricata = withTimeoutOrNull(DOWNLOAD_TIMEOUT_MS) {
+                WidgetForecast.scarica(this@WidgetConfigActivity, place)
+            } ?: false
+            if (!scaricata) runCatching { AggiornaWidgetWorker.appenaPossibile(this) }
+        }
+        runCatching { AggiornaWidgetWorker.pianifica(this) }
+
         runCatching { refreshWidget(this, appWidgetId, kind) }
             .onFailure { Log.w(TAG, "il widget $appWidgetId non si è ridisegnato", it) }
 
@@ -114,5 +144,7 @@ class WidgetConfigActivity : ComponentActivity() {
 
     private companion object {
         const val TAG = "WidgetConfig"
+        const val DOWNLOAD_TIMEOUT_MS = 6_000L
+        const val FIX_TIMEOUT_MS = 3_000L
     }
 }

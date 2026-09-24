@@ -1,6 +1,14 @@
 package io.github.noximiliencoxen.caelum
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
+import kotlinx.coroutines.flow.first
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -8,8 +16,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.ui.MeteoApp
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
+import io.github.noximiliencoxen.caelum.widget.AggiornaWidgetWorker
 import io.github.noximiliencoxen.caelum.widget.repaintWidgets
 import kotlinx.coroutines.launch
 
@@ -17,18 +28,88 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: WeatherViewModel by viewModels()
 
+    /** Il permesso delle notifiche (Android 13+): chiesto una volta sola. */
+    private val chiediNotifiche = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Il tocco sul widget si applica solo al primo avvio dell'intento: la
+        // stessa attivita' ricreata (rotazione, ritorno dai recenti) lo
+        // riceverebbe di nuovo e riaprirebbe una visita gia' finita.
+        if (savedInstanceState == null) applyWidgetTap(intent)
         applyExtras(intent)
         setContent {
             MeteoApp(viewModel)
+        }
+        chiediNotificheAlMomentoGiusto()
+    }
+
+    /**
+     * Il permesso delle notifiche si chiede **dopo** il benvenuto e la guida,
+     * non all'apertura: una finestra di sistema sopra la prima schermata non
+     * spiega a cosa serve. Chiusa la guida, chi ha le notifiche della pioggia
+     * accese (lo sono di norma) se lo vede chiedere una volta; se dice di no,
+     * resta l'interruttore nelle impostazioni. Mai durante la cattura.
+     */
+    private fun chiediNotificheAlMomentoGiusto() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.first { s ->
+                    s.welcomed && s.guidaVista && !s.guidaAperta && s.notifichePioggia &&
+                        !s.permessoNotificheChiesto && !s.animazioniIstantanee
+                }
+                if (!PioggiaInArrivoWorker.puoNotificare(this@MainActivity)) {
+                    chiediNotifiche.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                viewModel.permessoNotificheChiesto()
+            }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        applyWidgetTap(intent)
         applyExtras(intent)
+    }
+
+    /**
+     * Andando in sottofondo finisce la visita alla citta' di un widget:
+     * riaprendo l'app dall'icona si ritrova la propria.
+     */
+    override fun onStop() {
+        super.onStop()
+        if (!isChangingConfigurations) viewModel.lasciaVisita()
+    }
+
+    /**
+     * Il tocco su un widget: la sua sala e, se ne ha una, la sua citta', che
+     * si mostra senza sostituire quella dell'app (vedi
+     * `WeatherViewModel.visita`). Vale anche nella release, a differenza degli
+     * agganci di [applyExtras]: da fuori si puo' al piu' far vedere una
+     * citta', non salvarla ne' inventare un avviso.
+     */
+    private fun applyWidgetTap(intent: Intent?) {
+        if (intent == null) return
+        val sala = intent.getStringExtra(EXTRA_SALA_WIDGET)
+            ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
+            ?: return
+        val nome = intent.getStringExtra(EXTRA_WIDGET_NOME)
+        val lat = intent.getDoubleExtra(EXTRA_WIDGET_LAT, Double.NaN)
+        val lon = intent.getDoubleExtra(EXTRA_WIDGET_LON, Double.NaN)
+        if (nome != null && lat.isFinite() && lon.isFinite()) {
+            viewModel.visita(
+                Place(
+                    name = nome,
+                    admin = intent.getStringExtra(EXTRA_WIDGET_REGIONE),
+                    country = intent.getStringExtra(EXTRA_WIDGET_PAESE),
+                    latitude = lat,
+                    longitude = lon,
+                ),
+            )
+        }
+        viewModel.requestRoom(sala.ordinal)
     }
 
     /**
@@ -42,6 +123,18 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch { repaintWidgets(applicationContext) }
+        // Per chi aveva gia' i widget prima che esistesse l'aggiornamento in
+        // background: `onEnabled` per loro non arrivera' piu'. `KEEP` rende
+        // la chiamata innocua quando il turno c'e' gia'.
+        AggiornaWidgetWorker.pianifica(applicationContext)
+        // Il controllo della pioggia in arrivo: acceso di norma, e `KEEP` non
+        // sposta il turno se c'e' gia'. Se le notifiche sono spente il lavoro
+        // gira a vuoto e se ne va al primo giro: lo annulla l'interruttore.
+        lifecycleScope.launch {
+            if (SettingsPrefs(applicationContext).settings.first().notifichePioggia) {
+                PioggiaInArrivoWorker.pianifica(applicationContext)
+            }
+        }
     }
 
     /**
@@ -144,9 +237,20 @@ class MainActivity : ComponentActivity() {
         // specifica.
         if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
+        if (intent.getBooleanExtra(EXTRA_GUIDE, false)) viewModel.apriGuida()
     }
 
-    private companion object {
+    companion object {
+        /** La sala da aprire, dal tocco su un widget (`WidgetKind.sala`). */
+        const val EXTRA_SALA_WIDGET = "sala_widget"
+
+        /** La citta' del widget toccato, da mostrare senza salvarla. */
+        const val EXTRA_WIDGET_NOME = "widget_nome"
+        const val EXTRA_WIDGET_REGIONE = "widget_regione"
+        const val EXTRA_WIDGET_PAESE = "widget_paese"
+        const val EXTRA_WIDGET_LAT = "widget_lat"
+        const val EXTRA_WIDGET_LON = "widget_lon"
+
         /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
         const val TAG = "meteo"
 
@@ -212,6 +316,9 @@ class MainActivity : ComponentActivity() {
          * pubblicarlo.
          */
         const val EXTRA_ALERT = "allerta"
+
+        /** Apre la guida all'uso: la cattura la fotografa, perche' da sola non compare. */
+        const val EXTRA_GUIDE = "guida"
 
     }
 }

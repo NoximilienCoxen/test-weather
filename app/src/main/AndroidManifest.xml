@@ -19,6 +19,8 @@
         senza, l'app funziona con la localita' scelta a mano.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Pioggia e grandine in arrivo (notifiche/PioggiaInArrivoWorker). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -84,6 +86,18 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/air_quality_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.WeekWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_week_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/week_widget_info" />
         </receiver>
 
     </application>

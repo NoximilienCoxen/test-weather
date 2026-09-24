@@ -739,10 +739,18 @@ private fun DrawScope.nuvole(
 
         // Il corpo si schiarisce o si incupisce col cielo: bianco panna su un
         // cielo aperto, ardesia sotto un fronte.
-        val chiara = lerp(Color(0xFFFDFAF4), Color(0xFF9A9994), ((scena.copertura - 0.35f) / 0.65f).coerceIn(0f, 1f))
+        //
+        // Il grigio comincia a meta' cielo e non a un terzo: sopra un cielo
+        // ancora azzurro una nuvola grigia e' una nuvola che porta pioggia, e
+        // "nuvole di passaggio" non ne porta.
+        val chiara = lerp(Color(0xFFFDFAF4), Color(0xFF9A9994), ((scena.copertura - 0.55f) / 0.45f).coerceIn(0f, 1f))
         val scura = lerp(Color(0xFF3F4653), Color(0xFF2A2F37), ((scena.copertura - 0.35f) / 0.65f).coerceIn(0f, 1f))
         val corpo = lerp(chiara, scura, palette.buio)
-        val luce = lerp(Color.White.copy(alpha = 0.72f), SalaTokens.neutral100.copy(alpha = 0.16f), palette.buio)
+        // **Il tocco di luce e' il corpo schiarito, non il bianco.** Era un
+        // bianco fisso al settantadue per cento: sulla nuvola panna non si
+        // vedeva, su quella grigia diventava un pallino bianco appiccicato,
+        // uno per nuvola, che sembrava un difetto (e lo era).
+        val luce = lerp(corpo, Color.White, lerp(0.35f, 0.08f, palette.buio)).copy(alpha = 0.9f)
         val ombra = lerp(SalaTokens.neutral900.copy(alpha = 0.07f), Color(0xFF121824).copy(alpha = 0.18f), palette.buio)
 
         // **L'evaporazione delle ore calde.** Quando il sole e' alto sopra un

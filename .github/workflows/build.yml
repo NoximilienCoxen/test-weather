@@ -38,6 +38,11 @@ jobs:
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${EXTRA}" -o /tmp/ciout/extra.json
           echo "--- orario ---"
           curl -sS -w "\nHTTP %{http_code}\n" "${BASE}&${CUR}&${SAFE}&${HOURLY}" -o /tmp/ciout/hourly.json
+          # La previsione a quarti d'ora che usano le notifiche di pioggia e
+          # grandine in arrivo (PrecipitazioneInArrivo.kt).
+          echo "--- quarti d'ora ---"
+          curl -sS -w "\nHTTP %{http_code}\n" "https://api.open-meteo.com/v1/forecast?latitude=44.2226&longitude=12.0407&timezone=auto&minutely_15=precipitation,weather_code&forecast_minutely_15=10" -o /tmp/ciout/quarti.json
+          head -c 600 /tmp/ciout/quarti.json; echo
           head -c 400 /tmp/ciout/safe.json; echo
           head -c 400 /tmp/ciout/extra.json; echo
 
@@ -222,6 +227,9 @@ jobs:
   # si legge lo stesso.
   test:
     runs-on: ubuntu-latest
+    # Scrittura solo per pubblicare i disegni dei widget su `ci-artifacts`.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -353,6 +361,20 @@ jobs:
             echo "ZERO PROVE ESEGUITE: il job e' verde ma non ha controllato niente."
             exit 1
           fi
+
+      # I widget disegnati dai test (WeekArtTest), pubblicati su ci-artifacts:
+      # un widget e' un'immagine, e si controlla guardandola. Come i referti
+      # sotto, non puo' far fallire niente.
+      - name: Disegni dei widget
+        if: always()
+        continue-on-error: true
+        run: |
+          rm -rf /tmp/ciout && mkdir -p /tmp/ciout
+          cp app/build/widget-renders/*.png /tmp/ciout/ 2>/dev/null || { echo "nessun disegno"; exit 0; }
+          cp app/build/widget-renders/*.txt /tmp/ciout/ 2>/dev/null || true
+          bash scripts/publish.sh widget-renders || echo "pubblicazione fallita"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # I due referti, in coda e senza potere di nuocere.
       #

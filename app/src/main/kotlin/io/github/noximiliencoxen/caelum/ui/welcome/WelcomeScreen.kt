@@ -9,7 +9,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,14 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
+import io.github.noximiliencoxen.caelum.ui.scene.Scena
+import io.github.noximiliencoxen.caelum.ui.scene.ScenaAnimata
 import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
@@ -66,7 +66,16 @@ fun WelcomeScreen(
     onChooseByHand: () -> Unit,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Il quadretto in cima: a caso, di giorno o di notte (vedi `ui/scene`). */
+    scena: Scena = Scena.MARE,
+    notte: Boolean = false,
+    movimento: Boolean = true,
 ) {
+    // Di notte la pagina si fa scura sotto la scena, e le scritte chiare: un
+    // crema sotto un cielo stellato sarebbe una finestra accesa di colpo.
+    val fondo = if (notte) Color(0xFF121826) else Color(0xFFF4ECE0)
+    val inchiostro = if (notte) SalaTokens.neutral100 else SalaTokens.neutral900
+
     val chiediPermesso = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { concesso -> if (concesso) onFindMe() else onChooseByHand() }
@@ -79,15 +88,27 @@ fun WelcomeScreen(
         }
     }
 
+    Box(modifier = modifier.fillMaxSize().background(fondo)) {
+    // La scena occupa la meta' alta e sfuma nel fondo della pagina: le
+    // scritte restano sul pieno, dove si leggono.
+    ScenaAnimata(
+        scena = scena,
+        notte = notte,
+        movimento = movimento,
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.58f),
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.58f)
+            .background(Brush.verticalGradient(0.55f to Color.Transparent, 1f to fondo)),
+    )
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF4ECE0))
             .systemBarsPadding()
             .padding(start = 30.dp, end = 30.dp, top = 26.dp, bottom = 34.dp),
     ) {
-        Canvas(modifier = Modifier.fillMaxWidth().height(210.dp)) { cieloDIngresso() }
-
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Bottom,
@@ -95,12 +116,12 @@ fun WelcomeScreen(
             Text(
                 text = "Il cielo,\nora per ora",
                 style = SalaType.pageTitle,
-                color = SalaTokens.neutral900,
+                color = inchiostro,
             )
             Text(
                 text = "Qui il tempo si guarda, non si legge.",
                 style = SalaType.body,
-                color = SalaTokens.neutral900.copy(alpha = 0.8f),
+                color = inchiostro.copy(alpha = 0.8f),
                 modifier = Modifier.padding(top = 12.dp),
             )
             Row(
@@ -111,12 +132,12 @@ fun WelcomeScreen(
                     Text(
                         text = voce,
                         style = SalaType.rowNote,
-                        color = SalaTokens.neutral900,
+                        color = inchiostro,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(SalaTokens.neutral900.copy(alpha = 0.07f))
+                            .background(inchiostro.copy(alpha = if (notte) 0.12f else 0.07f))
                             .padding(horizontal = 15.dp, vertical = 8.dp),
                     )
                 }
@@ -134,7 +155,7 @@ fun WelcomeScreen(
                 Text(
                     text = cosaDice(state),
                     style = SalaType.rowNote,
-                    color = SalaTokens.neutral900.copy(alpha = 0.62f),
+                    color = inchiostro.copy(alpha = 0.62f),
                     modifier = Modifier.padding(top = 16.dp),
                 )
             }
@@ -152,12 +173,13 @@ fun WelcomeScreen(
             )
             Pulsante(
                 testo = "Scegli prima una località",
-                fondo = SalaTokens.neutral900.copy(alpha = 0.07f),
-                inchiostro = SalaTokens.neutral900,
+                fondo = inchiostro.copy(alpha = if (notte) 0.14f else 0.07f),
+                inchiostro = inchiostro,
                 onClick = onChooseByHand,
             )
         }
     }
+}
 }
 
 /** Cosa dice la riga in fondo, secondo cosa sta succedendo. */
@@ -165,51 +187,6 @@ private fun cosaDice(state: UiState): String = when {
     state.followsLocation -> "Trovato. Apro il cielo."
     state.locationUnavailable -> "Non riesco a trovarti: puoi scegliere la città a mano."
     else -> "Per aprire il cielo mi serve sapere da dove lo guardi."
-}
-
-/**
- * Il cielo dell'ingresso: un sole con l'alone e due nuvole basse.
- *
- * **Fisso e non tratto dal tempo vero**, che qui non si conosce ancora: non c'e'
- * una localita', quindi non c'e' una previsione, e un cielo inventato che si
- * spaccia per quello di adesso sarebbe la prima cosa falsa che l'app dice.
- * Questo e' dichiaratamente un'insegna.
- */
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.cieloDIngresso() {
-    val cx = size.width / 2f
-    val rAlone = size.width * 0.24f
-    val centroSole = Offset(cx, 103f / 210f * size.height)
-    drawCircle(
-        brush = Brush.radialGradient(
-            0f to SalaTokens.accent200.copy(alpha = 0.5f),
-            0.68f to SalaTokens.accent200.copy(alpha = 0f),
-            center = centroSole,
-            radius = rAlone * 1.6f,
-        ),
-        radius = rAlone * 1.6f,
-        center = centroSole,
-    )
-    drawCircle(
-        brush = Brush.radialGradient(
-            0f to Color(0xFFFFF4E8),
-            0.60f to SalaTokens.accent400,
-            1f to Color(0xFFDD8A55),
-            center = Offset(centroSole.x - rAlone * 0.24f, centroSole.y - rAlone * 0.32f),
-            radius = rAlone * 1.4f,
-        ),
-        radius = rAlone,
-        center = centroSole,
-    )
-
-    fun nuvola(x: Float, y: Float, larghezza: Float, altezza: Float) {
-        drawOval(
-            color = SalaTokens.neutral100.copy(alpha = 0.9f),
-            topLeft = Offset(x, y),
-            size = Size(larghezza, altezza),
-        )
-    }
-    nuvola(size.width * 0.02f, size.height * 0.62f, size.width * 0.34f, size.height * 0.27f)
-    nuvola(size.width * 0.66f, size.height * 0.54f, size.width * 0.28f, size.height * 0.23f)
 }
 
 /**
