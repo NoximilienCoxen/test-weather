@@ -263,6 +263,10 @@ data class UiState(
      * muta invece di mostrare un simbolo inventato.
      */
     val favoritesWeather: Map<String, io.github.noximiliencoxen.caelum.data.CurrentWeather> = emptyMap(),
+    /** Le previsioni intere delle salvate, per il confronto fianco a fianco. */
+    val favoritesForecast: Map<String, Forecast> = emptyMap(),
+    /** Il confronto fra le salvate, aperto da "Le località". */
+    val confrontoOpen: Boolean = false,
 ) {
     // ── Lo stato derivato ────────────────────────────────────────────────
     //
@@ -890,6 +894,20 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Le richiude, e lascia le impostazioni dov'erano. */
     fun closeLegali() = _state.update { it.copy(legaliOpen = false) }
 
+    /** Il confronto fianco a fianco delle salvate. */
+    fun openConfronto() {
+        _state.update { it.copy(confrontoOpen = true) }
+        loadFavoritesWeather()
+    }
+
+    fun closeConfronto() = _state.update { it.copy(confrontoOpen = false) }
+
+    /** Dal confronto: quella citta' diventa quella dell'app, e si torna al cielo. */
+    fun scegliDalConfronto(place: Place) {
+        choosePlace(place)
+        _state.update { it.copy(confrontoOpen = false) }
+    }
+
     fun closeLocations() =
         _state.update { it.copy(locationsOpen = false, query = "", results = emptyList()) }
 
@@ -918,8 +936,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         // previsione e' in `forecast`. Richiederla era una chiamata di rete
         // ogni volta che si apriva un pannello, per un dato che stava un campo
         // piu' in la'.
-        stato.forecast?.current?.let { corrente ->
-            _state.update { it.copy(favoritesWeather = it.favoritesWeather + (stato.place.key to corrente)) }
+        stato.forecast?.let { previsione ->
+            _state.update {
+                it.copy(
+                    favoritesWeather = it.favoritesWeather + (stato.place.key to previsione.current),
+                    favoritesForecast = it.favoritesForecast + (stato.place.key to previsione),
+                )
+            }
             favoritesFetchedAt[stato.place.key] = adesso
         }
 
@@ -936,7 +959,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         .onSuccess { forecast ->
                             favoritesFetchedAt[place.key] = System.currentTimeMillis()
                             _state.update {
-                                it.copy(favoritesWeather = it.favoritesWeather + (place.key to forecast.current))
+                                it.copy(
+                                    favoritesWeather = it.favoritesWeather + (place.key to forecast.current),
+                                    favoritesForecast = it.favoritesForecast + (place.key to forecast),
+                                )
                             }
                         }
                 }

@@ -52,6 +52,7 @@ fun SalaLocalitaScreen(
     onSearch: (String) -> Unit,
     onUseLocation: () -> Unit,
     onClose: () -> Unit,
+    onConfronta: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -114,6 +115,23 @@ fun SalaLocalitaScreen(
             }
         }
 
+        // Il confronto ha senso da due citta' in su: con una sola sarebbe
+        // una colonna che si confronta con se stessa.
+        if (postiDaConfrontare(state).size >= 2) {
+            Text(
+                text = "Confronta fianco a fianco",
+                style = SalaType.rowTitle,
+                color = palette.accent,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
+                    .clip(CircleShape)
+                    .background(palette.chip)
+                    .clickable(onClick = onConfronta)
+                    .padding(horizontal = 20.dp, vertical = 15.dp),
+            )
+        }
         Text(
             text = "Aggiungi la posizione attuale",
             style = SalaType.rowTitle,

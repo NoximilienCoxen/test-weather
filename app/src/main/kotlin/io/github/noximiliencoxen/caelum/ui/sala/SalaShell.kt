@@ -620,6 +620,31 @@ fun SalaShell(
                         onSearch = viewModel::search,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeLocations,
+                        onConfronta = viewModel::openConfronto,
+                    )
+                }
+            }
+
+            // Il confronto si apre dalle localita', quindi entra davanti a
+            // loro e registra l'indietro dopo: stessa regola dei blocchi sopra.
+            val scorrimentoConfronto by animateFloatAsState(
+                targetValue = if (state.confrontoOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "confronto",
+            )
+            if (scorrimentoConfronto > 0.001f) {
+                BackHandler(enabled = state.confrontoOpen, onBack = viewModel::closeConfronto)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - scorrimentoConfronto) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaConfrontoScreen(
+                        state = state,
+                        palette = palette,
+                        onPick = viewModel::scegliDalConfronto,
+                        onClose = viewModel::closeConfronto,
                     )
                 }
             }
