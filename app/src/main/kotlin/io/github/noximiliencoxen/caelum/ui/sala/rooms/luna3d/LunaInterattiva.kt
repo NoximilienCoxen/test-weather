@@ -165,14 +165,21 @@ internal fun coloriPer(globo: Globo, fase: Float): ColoriGlobo {
     val luce = FloatArray(globo.vertici)
     globo.luce(fase, luce)
     val ombra = Color(0xFF151A24)
+    // I mari non sono solo piu' scuri: sono di un grigio piu' freddo degli
+    // altipiani, e la differenza di tinta si legge anche dove quella di
+    // chiarezza si perde - su uno schermo luminoso, sotto il sole.
+    val mare = Color(0xFF5E5F63)
     val out = IntArray(globo.vertici) { v ->
         val b = luce[v]
-        val c = when {
+        val tono = when {
             b < 0.40f -> lerp(ombra, SalaTokens.lunaBordo, b / 0.40f)
             b < 0.78f -> lerp(SalaTokens.lunaBordo, SalaTokens.lunaMezzo, (b - 0.40f) / 0.38f)
             else -> lerp(SalaTokens.lunaMezzo, SalaTokens.lunaLuce, ((b - 0.78f) / 0.25f).coerceAtMost(1f))
         }
-        c.toArgb()
+        // Quanto questo punto e' mare, da 0 a 1, e quanto e' illuminato.
+        val quantoMare = ((0.85f - globo.albedo[v]) / 0.45f).coerceIn(0f, 1f)
+        val acceso = (b / globo.albedo[v].coerceAtLeast(0.01f)).coerceIn(0f, 1f)
+        lerp(tono, lerp(ombra, mare, acceso), quantoMare * 0.55f).toArgb()
     }
     return ColoriGlobo(out, SalaTokens.lunaLuce.toArgb())
 }
@@ -182,7 +189,12 @@ internal class BufferGlobo(globo: Globo) {
     val posizioni = FloatArray(globo.vertici * 2)
     val profondita = FloatArray(globo.vertici)
     val visibili = ShortArray(globo.triangoli.size)
-    val pennello = Paint(Paint.ANTI_ALIAS_FLAG)
+    // **Bianco, e detto.** Il pennello nasce nero, e su alcune versioni del
+    // disegno accelerato i colori dei vertici vengono moltiplicati per il suo:
+    // sull'emulatore la luna usciva giusta, su un telefono vero i mari
+    // sparivano. Col bianco la moltiplicazione lascia i colori come sono,
+    // ovunque.
+    val pennello = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.WHITE }
 }
 
 /**
