@@ -398,7 +398,6 @@ fun SalaShell(
                                     viewModel = viewModel,
                                     faseLunare = faseLunare,
                                     onVai = ::vaiA,
-                                    movimento = !ferme,
                                 )
                                 SalaRoom.PIOGGIA -> SalaPioggiaScreen(
                                     state = state,
