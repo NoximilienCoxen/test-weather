@@ -30,6 +30,7 @@ internal fun DrawScope.moonArt(
         sizePx = box.height * 0.095f,
         type = type,
         color = ink.secondary,
+        minScale = 0.6f,
     )
 
     val digits = type.brush(box.height * 0.20f, weight = 700, width = 74)

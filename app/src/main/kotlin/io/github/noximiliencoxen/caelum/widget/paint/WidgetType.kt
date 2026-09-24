@@ -142,12 +142,24 @@ internal fun DrawScope.fitText(
     color: Color,
     weight: Int = 600,
     letterSpacingEm: Float = 0.10f,
+    /**
+     * Fin dove si puo' rimpicciolire il corpo, dopo aver stretto e prima di
+     * troncare. 1 = mai: un nome di citta' troncato si riconosce lo stesso, e
+     * il corpo fisso tiene ferma l'impaginazione. Una fase della luna no -
+     * "GIBBOSA CRES…" non dice quale delle due - e li' conviene scendere.
+     */
+    minScale: Float = 1f,
 ): Paint {
     var brush = type.brush(sizePx, weight, WIDTH_WIDEST, letterSpacingEm)
     var axis = WIDTH_WIDEST
     while (type.widthOf(value, brush) > maxWidth && axis > WIDTH_NARROWEST) {
         axis -= WIDTH_STEP
         brush = type.brush(sizePx, weight, axis, letterSpacingEm)
+    }
+    var size = sizePx
+    while (type.widthOf(value, brush) > maxWidth && size * 0.95f >= sizePx * minScale) {
+        size *= 0.95f
+        brush = type.brush(size, weight, axis, letterSpacingEm)
     }
 
     if (type.widthOf(value, brush) <= maxWidth) {

@@ -155,7 +155,11 @@ private fun DrawScope.header(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    val digits = type.brush(box.height * 0.72f, weight = 700, width = 72)
+    // Al massimo quattro decimi della larghezza: nel taglio alto la testata
+    // e' alta, e la cifra in proporzione all'altezza - "-12°" soprattutto -
+    // si prendeva tutto, lasciando al posto e al tempo tre lettere e i
+    // puntini.
+    val digits = fittingBrush(listOf(degrees), box.width * 0.40f, box.height * 0.72f, type, weight = 700, width = 72)
     val digitsHeight = lineHeight(digits)
     val digitsTop = box.top + (box.height - digitsHeight) * 0.35f
     text(degrees, box.left, digitsTop, digits, ink.primary)
@@ -193,6 +197,7 @@ private fun DrawScope.header(
         color = ink.primary,
         weight = 700,
         letterSpacingEm = 0.02f,
+        minScale = 0.7f,
     )
 
     weatherBody(
