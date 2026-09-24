@@ -398,7 +398,7 @@ fun SalaShell(
                                     onSelectHour = viewModel::selectHour,
                                     onSelectDay = viewModel::selectDay,
                                 )
-                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
+                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
                                 SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
                                 SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
                                 SalaRoom.UV -> SalaUvScreen(
