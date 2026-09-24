@@ -26,7 +26,7 @@ internal fun DrawScope.airArt(
     // La larghezza per il nome finisce dove comincia il pallino, con un
     // respiro in mezzo: il pallino sta in alto a destra sulla stessa riga, e
     // prima il nome ci finiva sotto.
-    val name = placeName(
+    val name = fitText(
         value = place,
         x = box.left,
         y = box.top,

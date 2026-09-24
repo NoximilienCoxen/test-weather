@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.widget
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.widget.paint.Frame
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetCanvas
@@ -26,7 +25,7 @@ internal class WeekWidget : CaelumWidget(WidgetKind.SETTIMANA) {
     ): Drawn {
         // Non-null per costruzione: SETTIMANA dichiara `needsPlace`.
         val where = requireNotNull(place)
-        val days = WeatherRepository(where).load().getOrNull()?.days.orEmpty()
+        val days = WidgetForecast.load(context, where)?.days.orEmpty()
 
         val bitmap = withContext(Dispatchers.Default) {
             WidgetCanvas.paint(frame, ink.background) {

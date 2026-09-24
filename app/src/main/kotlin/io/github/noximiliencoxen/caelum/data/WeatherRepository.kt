@@ -29,7 +29,19 @@ class WeatherRepository(
         coerceInputValues = true
     }
 
-    suspend fun load(): Result<Forecast> = withContext(Dispatchers.IO) {
+    suspend fun load(): Result<Forecast> = loadWithBody().map { it.first }
+
+    /**
+     * La previsione insieme alla risposta grezza da cui e' stata letta.
+     *
+     * Per chi deve conservarla: i widget tengono l'ultima risposta buona su
+     * disco e la rileggono con [parse] quando la rete non c'e' (vedi
+     * `widget/WidgetForecast.kt`). Conservare il testo e non la [Forecast]
+     * evita di dover serializzare il modello, e riletto passa dallo stesso
+     * parser di una risposta fresca. Il testo si restituisce solo dopo averlo
+     * letto: una risposta d'errore non diventa mai "l'ultima buona".
+     */
+    suspend fun loadWithBody(): Result<Pair<Forecast, String>> = withContext(Dispatchers.IO) {
         runCatching {
             // Una coordinata non finita non si concatena in un URL: `NaN` ci
             // finisce come testo, Open-Meteo lo rimanda indietro dentro il JSON
@@ -43,10 +55,15 @@ class WeatherRepository(
                     "${place.latitude}, ${place.longitude}"
             }
             val body = httpGet(buildUrl(), fonte = "Open-Meteo")
-            val dto = json.decodeFromString<OpenMeteoResponse>(body)
-            if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
-            dto.toForecast(place)
+            parse(body) to body
         }
+    }
+
+    /** Legge una risposta di Open-Meteo, fresca o conservata. */
+    fun parse(body: String): Forecast {
+        val dto = json.decodeFromString<OpenMeteoResponse>(body)
+        if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
+        return dto.toForecast(place)
     }
 
     private fun buildUrl(): String = buildString {

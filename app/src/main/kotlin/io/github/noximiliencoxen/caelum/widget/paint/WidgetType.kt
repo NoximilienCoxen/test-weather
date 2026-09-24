@@ -88,7 +88,13 @@ internal fun lineHeight(paint: Paint): Float =
     paint.fontMetrics.descent - paint.fontMetrics.ascent
 
 /**
- * Scrive il nome di una localita' dentro la larghezza che ha davvero.
+ * Scrive una riga dentro la larghezza che ha davvero: il nome di una localita',
+ * la fase della luna, la condizione del tempo.
+ *
+ * Si chiamava `placeName`, e il nome era il difetto: sembrava roba da nomi di
+ * citta', e le altre scritte in alto - "GIBBOSA CRESCENTE" sulla luna,
+ * "TEMPORALE E GRANDINE" accanto alla temperatura - venivano scritte con un
+ * `text()` nudo e uscivano dal bordo come prima uscivano i nomi lunghi.
  *
  * **Serve perche' prima nessuno lo faceva.** Il nome veniva scritto con un
  * `text()` nudo, senza sapere quanto spazio c'era: con NOCETO e MILANO non si
@@ -115,7 +121,7 @@ internal fun lineHeight(paint: Paint): Float =
  * Restituisce il pennello davvero usato, perche' chi impagina ha bisogno del
  * suo [lineHeight].
  */
-internal fun DrawScope.placeName(
+internal fun DrawScope.fitText(
     value: String,
     x: Float,
     y: Float,
