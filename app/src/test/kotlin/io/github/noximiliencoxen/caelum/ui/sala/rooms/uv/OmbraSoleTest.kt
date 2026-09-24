@@ -41,7 +41,7 @@ class OmbraSoleTest {
             OmbraSole.altezza(giorno.atStartOfDay().plusMinutes(m.toLong()), lat, lon, 7200)
         }
         // Ora legale (+2) e Forli' a ovest del meridiano dei 30 gradi: circa 13:14.
-        assertEquals(13 * 60 + 14, minuto, 6)
+        assertTrue("mezzogiorno solare al minuto $minuto", kotlin.math.abs(minuto - (13 * 60 + 14)) <= 6)
     }
 
     @Test
