@@ -155,11 +155,11 @@ private fun DrawScope.header(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    // Al massimo quattro decimi della larghezza: nel taglio alto la testata
+    // Al massimo poco piu' di un terzo della larghezza: nel taglio alto la testata
     // e' alta, e la cifra in proporzione all'altezza - "-12°" soprattutto -
     // si prendeva tutto, lasciando al posto e al tempo tre lettere e i
     // puntini.
-    val digits = fittingBrush(listOf(degrees), box.width * 0.40f, box.height * 0.72f, type, weight = 700, width = 72)
+    val digits = fittingBrush(listOf(degrees), box.width * 0.36f, box.height * 0.72f, type, weight = 700, width = 72)
     val digitsHeight = lineHeight(digits)
     val digitsTop = box.top + (box.height - digitsHeight) * 0.35f
     text(degrees, box.left, digitsTop, digits, ink.primary)
@@ -167,7 +167,10 @@ private fun DrawScope.header(
     val nameSize = box.height * 0.15f
     val what = type.brush(box.height * 0.21f, weight = 700, width = 76, letterSpacingEm = 0.02f)
     val textLeft = box.left + type.widthOf(degrees, digits) + box.height * 0.10f
-    val side = box.height * 0.92f
+    // Anche il disegno del cielo ha un tetto sulla larghezza, per la stessa
+    // ragione della cifra: nel taglio alto sarebbe un quadrato largo quanto la
+    // testata e' alta, e fra i due il testo restava senza posto.
+    val side = minOf(box.height * 0.92f, box.width * 0.26f)
     // Il testo si ferma dove comincia il disegno del cielo, non al bordo: a
     // destra c'e' il sole o la nuvola, e il nome ci finiva sopra.
     val textWidth = (box.right - side) - textLeft - box.height * 0.06f
@@ -201,7 +204,11 @@ private fun DrawScope.header(
     )
 
     weatherBody(
-        Rect(box.right - side, box.top, box.right, box.top + side),
+        // Accanto alla cifra, alla sua altezza: col tetto sulla larghezza il
+        // disegno puo' essere piu' basso della testata, e in cima restava appeso.
+        (digitsTop + (digitsHeight - side) / 2f).coerceAtLeast(box.top).let { top ->
+            Rect(box.right - side, top, box.right, top + side)
+        },
         family,
         isDay,
         ink,
