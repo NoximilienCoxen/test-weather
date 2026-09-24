@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.github.noximiliencoxen.caelum.ui.MeteoApp
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.widget.AggiornaWidgetWorker
 import io.github.noximiliencoxen.caelum.widget.repaintWidgets
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,10 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch { repaintWidgets(applicationContext) }
+        // Per chi aveva gia' i widget prima che esistesse l'aggiornamento in
+        // background: `onEnabled` per loro non arrivera' piu'. `KEEP` rende
+        // la chiamata innocua quando il turno c'e' gia'.
+        AggiornaWidgetWorker.pianifica(applicationContext)
     }
 
     /**

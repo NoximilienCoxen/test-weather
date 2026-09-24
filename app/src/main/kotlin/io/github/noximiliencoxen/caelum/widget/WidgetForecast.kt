@@ -34,9 +34,18 @@ internal object WidgetForecast {
     /** Oltre questa eta' una previsione conservata non dice piu' niente di utile. */
     private const val MAX_AGE_DAYS = 7L
 
+    /** Sotto questa eta' la scorta vale come una risposta appena arrivata. */
+    private const val FRESCA_MINUTI = 25L
+
     suspend fun load(context: Context, place: Place): Forecast? {
         val repository = WeatherRepository(place)
         val file = fileFor(context, place)
+
+        // **Una scorta fresca basta, e non si chiede alla rete.** La riempie
+        // `AggiornaWidgetWorker`, che ha la rete garantita; chiederla di nuovo
+        // qui, da un ridisegno senza rete, vorrebbe dire aspettare un
+        // fallimento per poi usare la stessa scorta.
+        leggi(file, repository, maxMinuti = FRESCA_MINUTI)?.let { return it }
 
         val fresh = repository.loadWithBody().getOrNull()
         if (fresh != null) {
@@ -45,19 +54,33 @@ internal object WidgetForecast {
             return forecast
         }
 
-        return withContext(Dispatchers.IO) {
+        // La rete non c'era: si chiede un aggiornamento appena torna, e
+        // intanto si usa la scorta, anche se non e' fresca.
+        runCatching { AggiornaWidgetWorker.appenaPossibile(context) }
+        return leggi(file, repository, maxMinuti = MAX_AGE_DAYS * 24 * 60)
+    }
+
+    /** Scarica e conserva, senza leggere: lo usa il lavoro in background. */
+    suspend fun scarica(context: Context, place: Place): Boolean {
+        val (_, body) = WeatherRepository(place).loadWithBody().getOrNull() ?: return false
+        withContext(Dispatchers.IO) { runCatching { keep(fileFor(context, place), body) } }
+        return true
+    }
+
+    /** La scorta, se c'e' e non ha piu' di [maxMinuti], portata all'ora di adesso. */
+    private suspend fun leggi(file: File, repository: WeatherRepository, maxMinuti: Long): Forecast? =
+        withContext(Dispatchers.IO) {
             runCatching {
                 if (!file.exists()) return@runCatching null
                 val savedAt = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(file.lastModified()),
                     ZoneId.systemDefault(),
                 )
-                if (savedAt.isBefore(LocalDateTime.now().minusDays(MAX_AGE_DAYS))) return@runCatching null
+                if (savedAt.isBefore(LocalDateTime.now().minusMinutes(maxMinuti))) return@runCatching null
                 val saved = repository.parse(file.readText()).copy(fetchedAt = savedAt)
                 saved.agedTo(LocalDateTime.now(ZoneOffset.ofTotalSeconds(saved.utcOffsetSeconds)))
             }.getOrNull()
         }
-    }
 
     /**
      * Scrive su un file accanto e poi lo rinomina: un widget interrotto a meta'
