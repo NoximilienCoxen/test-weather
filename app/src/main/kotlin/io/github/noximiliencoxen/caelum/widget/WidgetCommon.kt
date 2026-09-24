@@ -422,6 +422,31 @@ suspend fun repaintWidgets(context: Context) {
  */
 abstract class ConfigurableWidgetReceiver : GlanceAppWidgetReceiver() {
 
+    // L'aggiornamento con la rete garantita parte col primo widget e si
+    // ferma quando non ce n'e' piu' nessuno: vedi `AggiornaWidgetWorker`.
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        AggiornaWidgetWorker.pianifica(context)
+    }
+
+    // Anche a ogni aggiornamento di sistema: chi aveva gia' i widget prima di
+    // questa versione non ricevera' piu' `onEnabled`. `KEEP` la rende innocua.
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        AggiornaWidgetWorker.pianifica(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        // Solo se non resta nessun widget di nessun tipo: `onDisabled` arriva
+        // per tipo, e togliere l'ultimo meteo non deve fermare la settimana.
+        val manager = AppWidgetManager.getInstance(context)
+        val restano = WidgetKind.entries.any { kind ->
+            manager.getAppWidgetIds(ComponentName(context, kind.receiver)).isNotEmpty()
+        }
+        if (!restano) AggiornaWidgetWorker.annulla(context)
+    }
+
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         // **`goAsync()` si consegna una volta sola, e qui lo chiedono in due.**
         // Azzera il proprio campo interno subito dopo averlo dato: il secondo
