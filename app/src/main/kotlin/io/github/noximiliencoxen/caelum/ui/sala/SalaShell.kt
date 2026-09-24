@@ -398,16 +398,18 @@ fun SalaShell(
                                     viewModel = viewModel,
                                     faseLunare = faseLunare,
                                     onVai = ::vaiA,
+                                    movimento = !ferme,
                                 )
                                 SalaRoom.PIOGGIA -> SalaPioggiaScreen(
                                     state = state,
                                     palette = palette,
                                     onSelectHour = viewModel::selectHour,
                                     onSelectDay = viewModel::selectDay,
+                                    movimento = !ferme,
                                 )
                                 SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
                                 SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
-                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
+                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette, movimento = !ferme)
                                 SalaRoom.UV -> SalaUvScreen(
                                     state = state,
                                     palette = palette,

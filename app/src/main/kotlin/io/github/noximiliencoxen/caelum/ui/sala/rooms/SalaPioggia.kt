@@ -1,5 +1,19 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
+import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +63,8 @@ fun SalaPioggiaScreen(
     /** Toccare una colonna della settimana cambia il giorno di tutta la galleria. */
     onSelectDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    /** Falso con le animazioni ridotte: le gocce stanno ferme. */
+    movimento: Boolean = true,
 ) {
     // **Le ore del giorno mostrato, non quelle di oggi.** Toccando giovedi'
     // nella striscia, questa sala parlava ancora di oggi: il giorno e' un asse
@@ -70,7 +86,12 @@ fun SalaPioggiaScreen(
     val pioggia = remember(ore, finestra) { finestra.map { ore[it].precipitation ?: 0.0 } }
     val massimo = remember(pioggia) { (pioggia.maxOrNull() ?: 0.0).coerceAtLeast(0.4) }
     val totale = remember(pioggia) { pioggia.sum() }
-    val oraScelta = state.detailHour
+    // L'ora sotto il dito, dentro la finestra: trascinando sulle colonne si
+    // legge ora per ora senza spostare la finestra - spostarla mentre il dito
+    // ci passa sopra farebbe scappare la colonna da sotto il dito.
+    var sottoIlDito by remember(ore, scelta) { mutableIntStateOf(-1) }
+    val vibrazioni = rememberVibrazioniMeteo()
+    val oraScelta = finestra.getOrNull(sottoIlDito)?.let { ore[it] } ?: state.detailHour
     val bagnato = totale > 0.05
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -103,8 +124,39 @@ fun SalaPioggiaScreen(
         }
 
         if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 18.dp))
+        if (finestra.isNotEmpty()) {
+            val fuoco = ore[finestra.getOrNull(sottoIlDito) ?: finestra.first()]
+            Text(
+                text = "${oraDueCifre(fuoco.time.hour)}:00 · " +
+                    "${(fuoco.precipitation ?: 0.0).virgola()} mm · " +
+                    "${fuoco.precipProbability ?: 0} %",
+                style = SalaType.sectionLabel,
+                color = if (sottoIlDito >= 0) palette.accent else palette.inkFaint,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+        }
+        Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                // **Si trascina il dito sulle colonne** e si legge l'ora sotto:
+                // millimetri e probabilita' qui sopra, e sotto le celle. Un
+                // colpetto a ogni colonna nuova, perche' la mano senta il
+                // passo delle ore anche senza guardare.
+                .pointerInput(finestra) {
+                    fun indiceIn(x: Float): Int =
+                        (x / size.width * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
+                    detectHorizontalDragGestures(
+                        onDragStart = { punto -> sottoIlDito = indiceIn(punto.x) },
+                    ) { cambio, _ ->
+                        cambio.consume()
+                        val nuovo = indiceIn(cambio.position.x)
+                        if (nuovo != sottoIlDito) {
+                            sottoIlDito = nuovo
+                            if (movimento) vibrazioni.scatto()
+                        }
+                    }
+                },
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
@@ -137,12 +189,22 @@ fun SalaPioggiaScreen(
                     Text(
                         text = oraDueCifre(ore[indice].time.hour),
                         style = SalaType.microLabel,
-                        color = if (indice == scelta) palette.accent else palette.inkFaint,
+                        color = if (i == sottoIlDito || (sottoIlDito < 0 && indice == scelta)) palette.accent else palette.inkFaint,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
+        }
+        // Le gocce sopra la colonna in fuoco: tante quanti sono i millimetri.
+        val colonna = if (sottoIlDito >= 0) sottoIlDito else 0
+        GoccePioggia(
+            colonna = colonna,
+            colonne = finestra.size,
+            millimetri = pioggia.getOrNull(colonna) ?: 0.0,
+            movimento = movimento,
+            modifier = Modifier.matchParentSize(),
+        )
         }
 
         Row(
@@ -205,6 +267,52 @@ fun SalaPioggiaScreen(
                 scelto = state.selectedDay,
                 palette = palette,
                 onVai = onSelectDay,
+            )
+        }
+    }
+}
+
+/**
+ * Gocce che cadono sopra una colonna, piu' fitte quanta piu' pioggia c'e'.
+ *
+ * Disegnate e non animate a oggetti: il tempo e' uno solo, ogni goccia e' una
+ * fase sfalsata dello stesso ciclo, e cosi' non c'e' niente da creare o
+ * buttare via mentre il dito si sposta. Senza pioggia non se ne disegna
+ * nessuna; con le animazioni ridotte stanno ferme a mezz'aria.
+ */
+@Composable
+private fun GoccePioggia(
+    colonna: Int,
+    colonne: Int,
+    millimetri: Double,
+    movimento: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (colonne <= 0 || millimetri <= 0.01) return
+    val quante = (2 + millimetri * 4).toInt().coerceAtMost(14)
+    val ciclo = if (movimento) {
+        val t = rememberInfiniteTransition(label = "gocce")
+        val v by t.animateFloat(0f, 1f, infiniteRepeatable(tween(900, easing = LinearEasing)), label = "caduta")
+        v
+    } else {
+        0.5f
+    }
+    Canvas(modifier = modifier) {
+        val passo = size.width / colonne
+        val x0 = passo * colonna
+        val alto = size.height * 0.9f
+        for (k in 0 until quante) {
+            // Posizioni e ritardi fissi per goccia, da una formula e non dal
+            // caso: la stessa pioggia a ogni fotogramma.
+            val fx = ((k * 0.618f) % 1f) * 0.8f + 0.1f
+            val fase = (ciclo + k * 0.37f) % 1f
+            val y = fase * alto
+            drawLine(
+                color = SalaTokens.acquaChiara.copy(alpha = 0.85f * (1f - fase * 0.6f)),
+                start = Offset(x0 + passo * fx, y),
+                end = Offset(x0 + passo * fx, y + 7.dp.toPx()),
+                strokeWidth = 2.dp.toPx(),
+                cap = StrokeCap.Round,
             )
         }
     }
