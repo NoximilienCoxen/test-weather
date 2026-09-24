@@ -74,7 +74,10 @@ private fun DrawScope.columns(
     val step = area.width / days.size
     val scale = WeekScale.of(days)
 
-    val label = type.brush(area.height * 0.105f, weight = 600, width = 78, letterSpacingEm = 0.08f)
+    val label = fittingBrush(
+        days.map { it.label }, step * 0.92f, area.height * 0.105f, type,
+        weight = 600, width = 78, letterSpacingEm = 0.08f,
+    )
     val high = type.brush(area.height * 0.125f, weight = 700, width = 82)
     val low = type.brush(area.height * 0.115f, weight = 500, width = 82)
 

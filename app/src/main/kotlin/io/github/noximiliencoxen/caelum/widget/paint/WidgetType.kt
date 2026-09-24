@@ -195,6 +195,29 @@ internal fun wrap(
     return lines
 }
 
+/**
+ * Il pennello piu' grande, fino a [sizePx], con cui tutte [values] stanno in
+ * [maxWidth]. Per le colonne: "OGGI" e' piu' larga di una colonna stretta, e
+ * centrata ne usciva da entrambi i lati - la prima dal bordo del widget.
+ */
+internal fun fittingBrush(
+    values: List<String>,
+    maxWidth: Float,
+    sizePx: Float,
+    type: WidgetType,
+    weight: Int,
+    width: Int,
+    letterSpacingEm: Float = 0f,
+): Paint {
+    var size = sizePx
+    var brush = type.brush(size, weight, width, letterSpacingEm)
+    while (values.any { type.widthOf(it, brush) > maxWidth } && size > 4f) {
+        size *= 0.92f
+        brush = type.brush(size, weight, width, letterSpacingEm)
+    }
+    return brush
+}
+
 private const val WIDTH_WIDEST = 78
 private const val WIDTH_NARROWEST = 58
 private const val WIDTH_STEP = 4
