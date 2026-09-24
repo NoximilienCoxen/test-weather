@@ -44,6 +44,29 @@ class LunaRenderTest {
         assertTrue("primo quarto sbagliato: ${chiarezza[0.25f]}", chiarezza[0.25f]!! in 0.1f..0.35f)
     }
 
+    /**
+     * I mari si devono vedere: al plenilunio il centro dell'Imbrium e' almeno
+     * 0,15 piu' scuro di un altipiano. Sul telefono i mari erano spariti mentre
+     * qui si vedevano: questa soglia e' la parte che si puo' misurare.
+     */
+    @Test
+    fun `al plenilunio i mari si vedono`() {
+        val lato = 440
+        val bitmap = disegna(lato, 0.5f, 0f, 0f)
+        val r = lato * 0.40f
+        fun luminosita(dx: Float, dy: Float): Double {
+            val dz = -kotlin.math.sqrt(1f - dx * dx - dy * dy)
+            val d = r * 5f
+            val s = d / (d + dz * r)
+            val p = bitmap.getPixel((lato / 2f + dx * r * s).toInt(), (lato / 2f + dy * r * s).toInt())
+            return ((p shr 16 and 0xFF) + (p shr 8 and 0xFF) + (p and 0xFF)) / (3.0 * 255.0)
+        }
+        val imbrium = Globo.IMBRIUM
+        val mare = luminosita(imbrium[0], imbrium[1])
+        val altipiano = luminosita(0.15f, 0.75f)
+        assertTrue("mare $mare, altipiano $altipiano", altipiano - mare >= 0.15)
+    }
+
     @Test
     fun `girandole intorno`() {
         listOf(0f to 0f, 60f to 0f, 120f to 0f, 180f to 0f, 0f to 60f, -90f to -30f).forEach { (yaw, pitch) ->
@@ -55,6 +78,13 @@ class LunaRenderTest {
     /** Disegna e restituisce la quota di pixel accesi (luminosita' oltre meta'). */
     private fun render(nome: String, fase: Float, yaw: Float, pitch: Float): Float {
         val lato = 440
+        val bitmap = disegna(lato, fase, yaw, pitch)
+        File("build/widget-renders").apply { mkdirs() }
+            .resolve("$nome.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        return accesi(bitmap, lato)
+    }
+
+    private fun disegna(lato: Int, fase: Float, yaw: Float, pitch: Float): Bitmap {
         val bitmap = Bitmap.createBitmap(lato, lato, Bitmap.Config.ARGB_8888)
         val colori = coloriPer(globo, fase)
         CanvasDrawScope().draw(
@@ -69,9 +99,10 @@ class LunaRenderTest {
                 alone = Color(colori.alone).copy(alpha = 0.22f * Globo.frazioneIlluminataVista(fase, yaw, pitch, 40)),
             )
         }
-        File("build/widget-renders").apply { mkdirs() }
-            .resolve("$nome.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        return bitmap
+    }
 
+    private fun accesi(bitmap: Bitmap, lato: Int): Float {
         var accesi = 0
         var conti = 0
         for (x in 0 until lato step 4) for (y in 0 until lato step 4) {

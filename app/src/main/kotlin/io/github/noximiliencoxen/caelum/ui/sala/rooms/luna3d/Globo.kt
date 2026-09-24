@@ -23,8 +23,8 @@ import kotlin.math.sqrt
  * quindi i mari stanno scritti li' una volta per tutte.
  */
 internal class Globo(
-    private val paralleli: Int = 40,
-    private val meridiani: Int = 80,
+    private val paralleli: Int = 60,
+    private val meridiani: Int = 120,
 ) {
     /** Quanti vertici. Ognuno e' anche la sua normale: la sfera ha raggio 1. */
     val vertici: Int = (paralleli + 1) * (meridiani + 1)
@@ -160,13 +160,13 @@ internal class Globo(
          * l'Oceanus Procellarum largo sul bordo sinistro.
          */
         private val MARI: List<FloatArray> = listOf(
-            mare(-0.30f, -0.45f, 0.30f, 0.62f), // Imbrium
-            mare(0.22f, -0.40f, 0.20f, 0.55f), // Serenitatis
-            mare(0.40f, -0.08f, 0.24f, 0.55f), // Tranquillitatis
-            mare(-0.62f, -0.05f, 0.40f, 0.50f), // Procellarum
-            mare(0.62f, -0.30f, 0.12f, 0.50f), // Crisium
-            mare(0.28f, 0.30f, 0.18f, 0.45f), // Nectaris / Fecunditatis
-            mare(-0.28f, 0.28f, 0.20f, 0.45f), // Nubium
+            mare(-0.30f, -0.45f, 0.30f, 0.70f), // Imbrium
+            mare(0.22f, -0.40f, 0.20f, 0.65f), // Serenitatis
+            mare(0.40f, -0.08f, 0.24f, 0.65f), // Tranquillitatis
+            mare(-0.62f, -0.05f, 0.40f, 0.60f), // Procellarum
+            mare(0.62f, -0.30f, 0.12f, 0.60f), // Crisium
+            mare(0.28f, 0.30f, 0.18f, 0.55f), // Nectaris / Fecunditatis
+            mare(-0.28f, 0.28f, 0.20f, 0.55f), // Nubium
         )
 
         /** Qualche cratere chiaro, per i punti di luce: Tycho e Copernicus i piu' noti. */
@@ -175,6 +175,9 @@ internal class Globo(
             mare(-0.32f, -0.20f, 0.05f, -0.25f), // Copernicus
             mare(-0.55f, -0.30f, 0.04f, -0.20f), // Aristarchus
         )
+
+        /** La direzione del centro dell'Imbrium, il mare piu' grande: serve alle prove. */
+        internal val IMBRIUM: FloatArray get() = MARI[0]
 
         private fun mare(dx: Float, dy: Float, raggio: Float, profondita: Float): FloatArray {
             val dz = -sqrt((1f - dx * dx - dy * dy).coerceAtLeast(0f))
@@ -194,7 +197,7 @@ internal class Globo(
             // Una grana leggera e deterministica, perche' gli altipiani non
             // sembrino plastica: nessun caso, stessa luna a ogni avvio.
             val grana = sin(px * 23f + py * 17f) * sin(py * 19f - pz * 29f) * sin(pz * 31f + px * 13f)
-            return (a + grana * 0.035f).coerceIn(0.35f, 1.1f)
+            return (a + grana * 0.035f).coerceIn(0.25f, 1.1f)
         }
     }
 }
