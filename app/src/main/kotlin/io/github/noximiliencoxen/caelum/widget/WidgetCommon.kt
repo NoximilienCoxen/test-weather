@@ -210,6 +210,11 @@ enum class WidgetKind(
     ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
     SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+
+    // Una cella: niente nome, solo tempo e temperatura.
+    MINI("TEMPERATURA", "MINI", true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
+
+    ORE("PROSSIME ORE", "ORE", true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
     ;
 
     fun widget(): GlanceAppWidget = make()

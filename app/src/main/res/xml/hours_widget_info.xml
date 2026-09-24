@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Le prossime ore, quattro celle per due come la settimana: sei colonne
+    in due celle sarebbero stecchini. Dimensione fissa come gli altri: il
+    disegno e' costruito sulla forma del riquadro.
+
+    `reconfigurable` come il meteo e l'aria: vedi la nota in
+    weather_widget_info.xml.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:resizeMode="none"
+    android:widgetCategory="home_screen"
+    android:configure="io.github.noximiliencoxen.caelum.widget.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable"
+    android:initialLayout="@layout/widget_loading" />
