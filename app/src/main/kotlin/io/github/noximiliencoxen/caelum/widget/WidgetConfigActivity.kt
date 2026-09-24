@@ -120,6 +120,22 @@ class WidgetConfigActivity : ComponentActivity() {
         // una volta, prima che questa schermata si aprisse, con le preferenze
         // ancora vuote. E' un miglioramento dell'esperienza, non parte del
         // contratto: se fallisce si perde un ridisegno, non la scelta.
+        // **La previsione si scarica adesso, finche' questa schermata e' in
+        // primo piano.** Il ridisegno gira dopo, quando l'app e' gia' dietro le
+        // quinte, e li' Android la rete spesso non la da': con una citta' mai
+        // aperta prima non c'era nemmeno una previsione salvata, e il widget
+        // restava vuoto finche' non si apriva l'app. Con un tempo massimo,
+        // perche' e' un tocco su SALVA; se non basta, ci pensa il lavoro in
+        // background appena c'e' rete.
+        val tipo = kind
+        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA) {
+            val scaricata = withTimeoutOrNull(DOWNLOAD_TIMEOUT_MS) {
+                WidgetForecast.scarica(this@WidgetConfigActivity, place)
+            } ?: false
+            if (!scaricata) runCatching { AggiornaWidgetWorker.appenaPossibile(this) }
+        }
+        runCatching { AggiornaWidgetWorker.pianifica(this) }
+
         runCatching { refreshWidget(this, appWidgetId, kind) }
             .onFailure { Log.w(TAG, "il widget $appWidgetId non si è ridisegnato", it) }
 
@@ -128,6 +144,7 @@ class WidgetConfigActivity : ComponentActivity() {
 
     private companion object {
         const val TAG = "WidgetConfig"
+        const val DOWNLOAD_TIMEOUT_MS = 6_000L
         const val FIX_TIMEOUT_MS = 3_000L
     }
 }

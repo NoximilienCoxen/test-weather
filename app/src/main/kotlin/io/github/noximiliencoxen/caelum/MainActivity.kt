@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.github.noximiliencoxen.caelum.ui.MeteoApp
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.widget.AggiornaWidgetWorker
 import io.github.noximiliencoxen.caelum.widget.repaintWidgets
 import kotlinx.coroutines.launch
@@ -97,6 +98,11 @@ class MainActivity : ComponentActivity() {
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
+        // Il tocco su un widget: vale anche nella release, a differenza degli
+        // agganci qui sotto.
+        intent.getStringExtra(EXTRA_SALA_WIDGET)
+            ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
+            ?.let { viewModel.requestRoom(it.ordinal) }
         if (!BuildConfig.AGGANCI_CATTURA) return
         // Stessa ragione dell'unico log del modello (vedi `previsione pronta`):
         // serve alla cattura in CI. Senza, che un aggancio sia arrivato si puo'
@@ -152,7 +158,10 @@ class MainActivity : ComponentActivity() {
         if (intent.getBooleanExtra(EXTRA_GUIDE, false)) viewModel.apriGuida()
     }
 
-    private companion object {
+    companion object {
+        /** La sala da aprire, dal tocco su un widget (`WidgetKind.sala`). */
+        const val EXTRA_SALA_WIDGET = "sala_widget"
+
         /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
         const val TAG = "meteo"
 
