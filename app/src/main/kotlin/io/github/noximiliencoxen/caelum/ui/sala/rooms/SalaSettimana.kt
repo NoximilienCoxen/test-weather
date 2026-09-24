@@ -1,11 +1,5 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import io.github.noximiliencoxen.caelum.ui.sala.rooms.rilievo.Rilievo
-import io.github.noximiliencoxen.caelum.ui.sala.rooms.rilievo.RilievoSettimana
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,12 +59,8 @@ fun SalaSettimanaScreen(
     faseLunare: Float,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
-    /** Falso con le animazioni ridotte: il rilievo torna a posto senza molla. */
-    movimento: Boolean = true,
 ) {
     val settimana = remember(state.forecast) { settimanaDi(state.forecast) }
-    val rilievo = remember(state.forecast) { Rilievo.da(state.forecast?.allHours.orEmpty()) }
-    var inRilievo by rememberSaveable { mutableStateOf(false) }
     val scelto = settimana.getOrNull(state.selectedDay)
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -82,57 +72,22 @@ fun SalaSettimanaScreen(
             modifier = Modifier.padding(top = 6.dp),
         )
 
-        // **Elenco o rilievo, al posto l'uno dell'altro.** Il rilievo prende
-        // lo spazio del riepilogo e della scheda invece di aggiungersi: le sale
-        // si sfogliano in verticale, e un pannello piu' lungo dello schermo
-        // costringerebbe a scorrerlo tutto prima di cambiare sala.
-        if (rilievo != null) {
-            Row(
-                modifier = Modifier.padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                listOf(false to "ELENCO", true to "IN RILIEVO").forEach { (valore, nome) ->
-                    val attivo = inRilievo == valore
-                    Text(
-                        text = nome,
-                        style = SalaType.sectionLabel,
-                        color = if (attivo) palette.accentInk else palette.inkSoft,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (attivo) palette.accent else palette.chip)
-                            .clickable { inRilievo = valore }
-                            .padding(horizontal = 12.dp, vertical = 7.dp),
-                    )
-                }
-            }
-        }
+        RiepilogoSettimana(
+            settimana = settimana,
+            state = state,
+            faseLunare = faseLunare,
+            palette = palette,
+            onVai = onVai,
+            modifier = Modifier.padding(top = 13.dp),
+        )
 
-        if (inRilievo && rilievo != null) {
-            RilievoSettimana(
-                rilievo = rilievo,
-                gradi = { t -> "${state.unit.from(t.toDouble()).roundToInt()}°" },
-                palette = palette,
-                movimento = movimento,
-                modifier = Modifier.padding(top = 10.dp),
-            )
-        } else {
-            RiepilogoSettimana(
-                settimana = settimana,
+        if (scelto != null) {
+            SchedaGiorno(
+                giorno = scelto,
                 state = state,
-                faseLunare = faseLunare,
                 palette = palette,
-                onVai = onVai,
-                modifier = Modifier.padding(top = 13.dp),
+                modifier = Modifier.padding(top = 12.dp),
             )
-
-            if (scelto != null) {
-                SchedaGiorno(
-                    giorno = scelto,
-                    state = state,
-                    palette = palette,
-                    modifier = Modifier.padding(top = 12.dp),
-                )
-            }
         }
 
         Row(
