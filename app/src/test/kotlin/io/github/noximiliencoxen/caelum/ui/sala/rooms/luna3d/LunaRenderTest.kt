@@ -37,7 +37,11 @@ class LunaRenderTest {
         listOf(0f, 0.07f, 0.25f, 0.4f, 0.5f, 0.6f, 0.75f, 0.93f).forEach { fase ->
             chiarezza[fase] = render("luna3d-fase-${(fase * 100).toInt()}", fase, 0f, 0f)
         }
-        assertTrue("il plenilunio non e' piu' chiaro del novilunio", chiarezza[0.5f]!! > chiarezza[0f]!! * 5f)
+        // Quota di pixel davvero accesi: al plenilunio il disco e' circa meta'
+        // della tela, al novilunio non ce n'e' nessuno.
+        assertTrue("plenilunio spento: ${chiarezza[0.5f]}", chiarezza[0.5f]!! > 0.3f)
+        assertTrue("novilunio acceso: ${chiarezza[0f]}", chiarezza[0f]!! < 0.01f)
+        assertTrue("primo quarto sbagliato: ${chiarezza[0.25f]}", chiarezza[0.25f]!! in 0.1f..0.35f)
     }
 
     @Test
@@ -48,7 +52,7 @@ class LunaRenderTest {
         render("luna3d-giro-nuova-180", 0f, 180f, 0f)
     }
 
-    /** Disegna e restituisce la luminosita' media, 0..1. */
+    /** Disegna e restituisce la quota di pixel accesi (luminosita' oltre meta'). */
     private fun render(nome: String, fase: Float, yaw: Float, pitch: Float): Float {
         val lato = 440
         val bitmap = Bitmap.createBitmap(lato, lato, Bitmap.Config.ARGB_8888)
@@ -68,13 +72,14 @@ class LunaRenderTest {
         File("build/widget-renders").apply { mkdirs() }
             .resolve("$nome.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
 
-        var somma = 0.0
+        var accesi = 0
         var conti = 0
         for (x in 0 until lato step 4) for (y in 0 until lato step 4) {
             val p = bitmap.getPixel(x, y)
-            somma += ((p shr 16 and 0xFF) + (p shr 8 and 0xFF) + (p and 0xFF)) / (3.0 * 255.0)
+            val l = ((p shr 16 and 0xFF) + (p shr 8 and 0xFF) + (p and 0xFF)) / (3.0 * 255.0)
+            if (l > 0.5) accesi++
             conti++
         }
-        return (somma / conti).toFloat()
+        return accesi.toFloat() / conti
     }
 }
