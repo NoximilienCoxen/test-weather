@@ -230,6 +230,30 @@ session() {
 
   shoot "${slug}-1-temp"
 
+  # La guida all'uso: da sola non compare mai sotto la cattura, la si chiede.
+  # Primo passo (la scheda) e quarto (la barra delle ore), poi indietro la
+  # chiude e l'app torna com'era.
+  #
+  # Si riparte da capo: con l'attivita' gia' in cima, `am start` senza flag non
+  # consegna l'intento (niente `onNewIntent`) e l'aggancio andrebbe perso -
+  # e' successo, la guida non compariva. Poi si aspetta la previsione e il
+  # velo d'apertura, che le starebbe sopra.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  avvia --ez guida true >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 4
+  shoot "${slug}-guida-1"
+  for _ in 1 2 3; do
+    adbt shell input tap "$(( W / 2 ))" "$(( H / 3 ))" >/dev/null 2>&1 || true
+    sleep 1
+  done
+  sleep 1
+  shoot "${slug}-guida-4"
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 1
+
   # ── Prima il nuovo, poi il gia' verificato ──────────────────────────────────
   #
   # Il cielo, il dettaglio e le ore di contrasto vengono **prima** delle prove
@@ -443,6 +467,22 @@ session() {
     n=$(( n + 1 ))
     i=$(( i + 1 ))
   done
+
+  # ── Un colpetto in verticale cambia sala ─────────────────────────────────
+  #
+  # Le sale si sfogliano in su e in giu', e deve bastare poco: un decimo di
+  # schermo, veloce. Si parte da Oggi; se lo scatto mostra ancora Oggi, la
+  # soglia e' troppo alta per un dito vero.
+  alive || return
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei sezione 0 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  adbt shell input swipe $(( W * 2 / 5 )) $(( H * 60 / 100 )) $(( W * 2 / 5 )) $(( H * 50 / 100 )) 120 >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-sfoglio-breve-dopo-oggi"
 
   # ── La colonna si trascina ──────────────────────────────────────────────────
   #

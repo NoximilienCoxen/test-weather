@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.widget
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
-import io.github.noximiliencoxen.caelum.data.WeatherRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.widget.paint.Frame
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetCanvas
@@ -27,7 +26,7 @@ internal class WeatherWidget : CaelumWidget(WidgetKind.METEO) {
         // Non-null per costruzione: METEO dichiara `needsPlace`, e il caso
         // senza citta' non arriva fin qui.
         val where = requireNotNull(place)
-        val forecast = WeatherRepository(where).load().getOrNull()
+        val forecast = WidgetForecast.load(context, where)
 
         val bitmap = withContext(Dispatchers.Default) {
             WidgetCanvas.paint(frame, ink.background) {

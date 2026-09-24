@@ -22,8 +22,16 @@ internal fun DrawScope.moonArt(
     val pad = 16.dp.toPx()
     val box = Rect(pad, pad, size.width - pad, size.height - pad)
 
-    val name = type.brush(box.height * 0.095f, weight = 600, width = 78, letterSpacingEm = 0.10f)
-    text(label, box.left, box.top, name, ink.secondary)
+    val name = fitText(
+        value = label,
+        x = box.left,
+        y = box.top,
+        maxWidth = box.width,
+        sizePx = box.height * 0.095f,
+        type = type,
+        color = ink.secondary,
+        minScale = 0.6f,
+    )
 
     val digits = type.brush(box.height * 0.20f, weight = 700, width = 74)
     val digitsTop = box.top + lineHeight(name) * 0.95f

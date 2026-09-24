@@ -83,7 +83,7 @@ private val SelectedBackground: Color
 fun WidgetConfigScreen(
     onSave: (place: Place?, useLocation: Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    /** Quale dei tre widget si sta configurando, per l'anteprima e la localita'. */
+    /** Quale widget si sta configurando, per l'anteprima e la localita'. */
     kind: WidgetKind? = null,
     /**
      * Cosa aveva gia' scelto questo widget.
@@ -438,7 +438,7 @@ private fun SaveButton(enabled: Boolean, onClick: () -> Unit) {
  * sapere che sono finti, e i widget di questa app sono immagini dipinte, quindi
  * un'anteprima falsa sembrerebbe quella vera.
  *
- * Quel che si puo' dire con onesta' e' l'identita': quale dei tre widget, con
+ * Quel che si puo' dire con onesta' e' l'identita': quale widget e', con
  * il suo disegno, e quale localita' andra' a leggere.
  */
 @Composable

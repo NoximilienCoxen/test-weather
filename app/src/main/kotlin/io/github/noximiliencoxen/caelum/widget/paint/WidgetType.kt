@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.res.ResourcesCompat
 import io.github.noximiliencoxen.caelum.R
 
@@ -66,10 +67,20 @@ internal fun DrawScope.text(
     color: Color,
     alpha: Float = 1f,
 ) {
+    writtenText?.invoke(value, x, x + paint.measureText(value))
     paint.color = color.toArgb()
     paint.alpha = (alpha.coerceIn(0f, 1f) * 255).toInt()
     drawContext.canvas.nativeCanvas.drawText(value, x, y - paint.fontMetrics.ascent, paint)
 }
+
+/**
+ * Chi vuole sapere dove finisce ogni scritta: la usa solo `WidgetOverflowTest`,
+ * per controllare che nessuna passi il bordo. Guardare i pixel non basta - il
+ * bagliore della luna e gli angoli sfumati sono inchiostro anche loro - mentre
+ * qui arriva l'estensione esatta di ogni riga. In produzione e' nulla.
+ */
+@VisibleForTesting
+internal var writtenText: ((value: String, left: Float, right: Float) -> Unit)? = null
 
 /** Scrive centrato su `cx`, sempre a partire dall'alto. */
 internal fun DrawScope.textCentered(
@@ -88,7 +99,13 @@ internal fun lineHeight(paint: Paint): Float =
     paint.fontMetrics.descent - paint.fontMetrics.ascent
 
 /**
- * Scrive il nome di una localita' dentro la larghezza che ha davvero.
+ * Scrive una riga dentro la larghezza che ha davvero: il nome di una localita',
+ * la fase della luna, la condizione del tempo.
+ *
+ * Si chiamava `placeName`, e il nome era il difetto: sembrava roba da nomi di
+ * citta', e le altre scritte in alto - "GIBBOSA CRESCENTE" sulla luna,
+ * "TEMPORALE E GRANDINE" accanto alla temperatura - venivano scritte con un
+ * `text()` nudo e uscivano dal bordo come prima uscivano i nomi lunghi.
  *
  * **Serve perche' prima nessuno lo faceva.** Il nome veniva scritto con un
  * `text()` nudo, senza sapere quanto spazio c'era: con NOCETO e MILANO non si
@@ -115,7 +132,7 @@ internal fun lineHeight(paint: Paint): Float =
  * Restituisce il pennello davvero usato, perche' chi impagina ha bisogno del
  * suo [lineHeight].
  */
-internal fun DrawScope.placeName(
+internal fun DrawScope.fitText(
     value: String,
     x: Float,
     y: Float,
@@ -125,12 +142,24 @@ internal fun DrawScope.placeName(
     color: Color,
     weight: Int = 600,
     letterSpacingEm: Float = 0.10f,
+    /**
+     * Fin dove si puo' rimpicciolire il corpo, dopo aver stretto e prima di
+     * troncare. 1 = mai: un nome di citta' troncato si riconosce lo stesso, e
+     * il corpo fisso tiene ferma l'impaginazione. Una fase della luna no -
+     * "GIBBOSA CRES…" non dice quale delle due - e li' conviene scendere.
+     */
+    minScale: Float = 1f,
 ): Paint {
     var brush = type.brush(sizePx, weight, WIDTH_WIDEST, letterSpacingEm)
     var axis = WIDTH_WIDEST
     while (type.widthOf(value, brush) > maxWidth && axis > WIDTH_NARROWEST) {
         axis -= WIDTH_STEP
         brush = type.brush(sizePx, weight, axis, letterSpacingEm)
+    }
+    var size = sizePx
+    while (type.widthOf(value, brush) > maxWidth && size * 0.95f >= sizePx * minScale) {
+        size *= 0.95f
+        brush = type.brush(size, weight, axis, letterSpacingEm)
     }
 
     if (type.widthOf(value, brush) <= maxWidth) {
@@ -146,6 +175,58 @@ internal fun DrawScope.placeName(
         cut--
     }
     text(value.take(cut).trimEnd() + "…", x, y, brush, color)
+    return brush
+}
+
+/**
+ * Spezza sulle parole, mai dentro una parola.
+ *
+ * Una parola piu' larga del riquadro finisce da sola sulla sua riga e sborda:
+ * a quel punto e' il ciclo del chiamante a rimpicciolire il corpo, che e' il
+ * rimedio giusto. Tagliarla qui vorrebbe dire consegnare una riga monca senza
+ * che nessuno se ne accorga.
+ */
+internal fun wrap(
+    text: String,
+    width: Float,
+    brush: android.graphics.Paint,
+    type: WidgetType,
+): List<String> {
+    val lines = mutableListOf<String>()
+    var current = StringBuilder()
+    text.split(' ').forEach { word ->
+        val candidate = if (current.isEmpty()) word else "$current $word"
+        if (type.widthOf(candidate, brush) <= width || current.isEmpty()) {
+            current = StringBuilder(candidate)
+        } else {
+            lines += current.toString()
+            current = StringBuilder(word)
+        }
+    }
+    if (current.isNotEmpty()) lines += current.toString()
+    return lines
+}
+
+/**
+ * Il pennello piu' grande, fino a [sizePx], con cui tutte [values] stanno in
+ * [maxWidth]. Per le colonne: "OGGI" e' piu' larga di una colonna stretta, e
+ * centrata ne usciva da entrambi i lati - la prima dal bordo del widget.
+ */
+internal fun fittingBrush(
+    values: List<String>,
+    maxWidth: Float,
+    sizePx: Float,
+    type: WidgetType,
+    weight: Int,
+    width: Int,
+    letterSpacingEm: Float = 0f,
+): Paint {
+    var size = sizePx
+    var brush = type.brush(size, weight, width, letterSpacingEm)
+    while (values.any { type.widthOf(it, brush) > maxWidth } && size > 4f) {
+        size *= 0.92f
+        brush = type.brush(size, weight, width, letterSpacingEm)
+    }
     return brush
 }
 

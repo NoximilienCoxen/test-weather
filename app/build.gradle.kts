@@ -200,6 +200,10 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.glance.appwidget)
+    // WorkManager era gia' nell'APK, portato da Glance. Si dichiara perche' ora
+    // lo usiamo anche noi: e' l'unico modo di avere la rete garantita quando
+    // l'app non e' aperta (vedi `widget/AggiornaWidgetWorker.kt`).
+    implementation(libs.androidx.work.runtime.ktx)
     // `glance-material3` non c'e' piu': zero import, nessun `GlanceTheme`. I
     // widget non usano i componenti di Glance, dipingono una bitmap sola su un
     // Canvas loro (vedi `widget/paint/`), e i colori se li prendono da

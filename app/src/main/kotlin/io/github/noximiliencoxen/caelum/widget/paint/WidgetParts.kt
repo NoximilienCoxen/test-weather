@@ -119,7 +119,10 @@ internal fun DrawScope.dayStrip(
     val shown = days.take(7)
     val step = box.width / shown.size
 
-    val label = type.brush(box.height * 0.155f, weight = 600, width = 78, letterSpacingEm = 0.08f)
+    val label = fittingBrush(
+        shown.map { it.label }, step * 0.92f, box.height * 0.155f, type,
+        weight = 600, width = 78, letterSpacingEm = 0.08f,
+    )
     val high = type.brush(box.height * 0.215f, weight = 700, width = 82)
     val low = type.brush(box.height * 0.195f, weight = 500, width = 82)
 
@@ -148,7 +151,7 @@ internal fun DrawScope.dayStrip(
 }
 
 /** Il segno del tempo in miniatura: pieno, leggibile, senza pretese di volume. */
-private fun DrawScope.dayGlyph(box: Rect, family: Wmo.Family, ink: WidgetInk) {
+internal fun DrawScope.dayGlyph(box: Rect, family: Wmo.Family, ink: WidgetInk) {
     val r = minOf(box.width, box.height) / 2f
     val c = box.center
     when (family) {

@@ -28,6 +28,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.sala.SalaShell
+import io.github.noximiliencoxen.caelum.ui.motion.sistemaSenzaAnimazioni
+import io.github.noximiliencoxen.caelum.ui.scene.VeloDAvvio
+import io.github.noximiliencoxen.caelum.ui.scene.notteA
+import io.github.noximiliencoxen.caelum.ui.scene.scegliScena
+import java.time.LocalDateTime
 import io.github.noximiliencoxen.caelum.ui.welcome.WelcomeScreen
 import io.github.noximiliencoxen.caelum.ui.theme.MeteoTheme
 import io.github.noximiliencoxen.caelum.ui.theme.relativeLuminance
@@ -92,6 +97,12 @@ fun MeteoApp(viewModel: WeatherViewModel) {
         )
     }
 
+    // Una scena a caso per tutta la sessione, di giorno o di notte secondo
+    // l'ora: la stessa nel velo d'apertura e nel benvenuto.
+    val scenaDAvvio = remember { scegliScena(LocalDateTime.now()) }
+    val notteDAvvio = remember { notteA(LocalDateTime.now()) }
+    val movimentoScene = !(state.animazioniRidotte || sistemaSenzaAnimazioni())
+
     MeteoTheme(colors = colors) {
         // L'ascoltatore dell'accelerometro non c'e' piu': serviva a inclinare
         // il mappamondo dell'Ingresso, e il mappamondo e' uscito col redisegno.
@@ -141,6 +152,9 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             // usciti anche da `res/`, insieme allo script che li generava.
             if (!state.welcomed) {
                 WelcomeScreen(
+                    scena = scenaDAvvio,
+                    notte = notteDAvvio,
+                    movimento = movimentoScene,
                     state = state,
                     onFindMe = viewModel::useDeviceLocation,
                     onChooseByHand = {
@@ -157,6 +171,14 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     widthPx = widthPx,
                 )
             }
+
+            // Il quadretto d'apertura, sopra tutto: vedi `VeloDAvvio`.
+            VeloDAvvio(
+                scena = scenaDAvvio,
+                notte = notteDAvvio,
+                movimento = movimentoScene,
+                pronto = !state.welcomed || state.forecast != null,
+            )
         }
     }
 }

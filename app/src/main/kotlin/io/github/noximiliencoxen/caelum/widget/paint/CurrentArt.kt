@@ -52,7 +52,7 @@ private fun DrawScope.small(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    val name = placeName(
+    val name = fitText(
         value = place.name.uppercase(),
         x = box.left,
         y = box.top,
@@ -155,7 +155,11 @@ private fun DrawScope.header(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    val digits = type.brush(box.height * 0.72f, weight = 700, width = 72)
+    // Al massimo poco piu' di un terzo della larghezza: nel taglio alto la testata
+    // e' alta, e la cifra in proporzione all'altezza - "-12°" soprattutto -
+    // si prendeva tutto, lasciando al posto e al tempo tre lettere e i
+    // puntini.
+    val digits = fittingBrush(listOf(degrees), box.width * 0.36f, box.height * 0.72f, type, weight = 700, width = 72)
     val digitsHeight = lineHeight(digits)
     val digitsTop = box.top + (box.height - digitsHeight) * 0.35f
     text(degrees, box.left, digitsTop, digits, ink.primary)
@@ -163,18 +167,21 @@ private fun DrawScope.header(
     val nameSize = box.height * 0.15f
     val what = type.brush(box.height * 0.21f, weight = 700, width = 76, letterSpacingEm = 0.02f)
     val textLeft = box.left + type.widthOf(degrees, digits) + box.height * 0.10f
-    val side = box.height * 0.92f
+    // Anche il disegno del cielo ha un tetto sulla larghezza, per la stessa
+    // ragione della cifra: nel taglio alto sarebbe un quadrato largo quanto la
+    // testata e' alta, e fra i due il testo restava senza posto.
+    val side = minOf(box.height * 0.92f, box.width * 0.26f)
     // Il testo si ferma dove comincia il disegno del cielo, non al bordo: a
     // destra c'e' il sole o la nuvola, e il nome ci finiva sopra.
     val textWidth = (box.right - side) - textLeft - box.height * 0.06f
 
     // Il corpo non cambia stringendo, quindi il blocco si puo' misurare prima
-    // di scrivere: `placeName` restituisce lo stesso `lineHeight` che avrebbe
+    // di scrivere: `fitText` restituisce lo stesso `lineHeight` che avrebbe
     // avuto il pennello largo.
     val block = lineHeight(type.brush(nameSize, 600, 78, 0.10f)) + lineHeight(what)
     val blockTop = digitsTop + (digitsHeight - block) / 2f
 
-    val name = placeName(
+    val name = fitText(
         value = place.name.uppercase(),
         x = textLeft,
         y = blockTop,
@@ -183,10 +190,25 @@ private fun DrawScope.header(
         type = type,
         color = ink.secondary,
     )
-    text(condition, textLeft, blockTop + lineHeight(name), what, ink.primary)
+    fitText(
+        value = condition,
+        x = textLeft,
+        y = blockTop + lineHeight(name),
+        maxWidth = textWidth,
+        sizePx = what.textSize,
+        type = type,
+        color = ink.primary,
+        weight = 700,
+        letterSpacingEm = 0.02f,
+        minScale = 0.7f,
+    )
 
     weatherBody(
-        Rect(box.right - side, box.top, box.right, box.top + side),
+        // Accanto alla cifra, alla sua altezza: col tetto sulla larghezza il
+        // disegno puo' essere piu' basso della testata, e in cima restava appeso.
+        (digitsTop + (digitsHeight - side) / 2f).coerceAtLeast(box.top).let { top ->
+            Rect(box.right - side, top, box.right, top + side)
+        },
         family,
         isDay,
         ink,

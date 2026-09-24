@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,19 +24,31 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import kotlinx.coroutines.delay
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
+import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.data.MoonPhase
@@ -53,6 +65,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaVentoScreen
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -89,6 +102,12 @@ fun SalaShell(
     val rooms = SalaRoom.entries
     val scope = rememberCoroutineScope()
 
+    // Se l'indizio "scorri in su" serve ancora: vedi `IndizioSfoglio`.
+    val contesto = LocalContext.current
+    val impostazioni = remember(contesto) { SettingsPrefs(contesto) }
+    val sfogliate by remember(impostazioni) { impostazioni.settings.map { it.saleSfogliate } }
+        .collectAsState(initial = true)
+
     val pagerState = rememberPagerState(
         initialPage = rooms.indexOf(state.room).coerceAtLeast(0),
         pageCount = { rooms.size },
@@ -99,6 +118,7 @@ fun SalaShell(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.settledPage }.collect { page ->
             rooms.getOrNull(page)?.let(viewModel::showRoom)
+            if (page > 0) impostazioni.setSaleSfogliate()
         }
     }
 
@@ -276,6 +296,38 @@ fun SalaShell(
         }
     }
 
+    // ── Larghezze ────────────────────────────────────────────────────────────
+    //
+    // Con la colonna, la scheda si ferma dove comincia il disco piu' grande
+    // della colonna, con un filo d'aria: cinquantasei punti dal bordo destro,
+    // quattordici dal sinistro. Erano sessantasei e ventisei, e le schede
+    // erano strette. Con le schede larghe la colonna non c'e' e i margini
+    // sono dodici per parte.
+    val larghe = state.schedeLarghe
+    val riservaColonna = if (larghe) 0.dp else 40.dp
+    val margineSinistro = if (larghe) 12.dp else 14.dp
+    val margineDestro = if (larghe) 12.dp else 16.dp
+
+    // ── La guida all'uso ─────────────────────────────────────────────────────
+    //
+    // Si ricordano i riquadri dei pezzi che la guida illumina. Da sola parte
+    // una volta, dopo il velo d'apertura e quando ci sono i dati; a mano,
+    // dalle impostazioni. La cattura non la vede mai da sola: la chiede.
+    var rCielo by remember { mutableStateOf<Rect?>(null) }
+    var rIntestazione by remember { mutableStateOf<Rect?>(null) }
+    var rScheda by remember { mutableStateOf<Rect?>(null) }
+    var rColonna by remember { mutableStateOf<Rect?>(null) }
+    var rBarra by remember { mutableStateOf<Rect?>(null) }
+    var attesaFinita by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(ATTESA_GUIDA_MS)
+        attesaFinita = true
+    }
+    val guidaDaSola = !state.guidaVista && attesaFinita && state.welcomed &&
+        !state.animazioniIstantanee && state.forecast != null &&
+        !state.settingsOpen && !state.locationsOpen && !state.legaliOpen
+    val guida = state.guidaAperta || guidaDaSola
+
     CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
@@ -303,38 +355,59 @@ fun SalaShell(
                     palette = palette,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
-                    modifier = Modifier.padding(start = 22.dp, end = 26.dp, top = 12.dp),
+                    modifier = Modifier
+                        .padding(start = 22.dp, end = 26.dp, top = 12.dp)
+                        .onGloballyPositioned { rIntestazione = it.boundsInRoot() },
                 )
+
+                // **La citta' di un widget, in visita.** Si dice da dove viene
+                // e come si torna, perche' l'intestazione da sola mostrerebbe
+                // Fontevivo a chi l'app l'ha impostata su Noceto, senza
+                // spiegare perche'. L'indietro torna a casa anche lui; le
+                // impostazioni e le localita', composte dopo, lo precedono.
+                val casa = state.casa
+                if (casa != null) {
+                    BackHandler(onBack = viewModel::lasciaVisita)
+                    PastigliaAccento(
+                        testo = "DAL WIDGET · TORNA A ${casa.name.uppercase()}",
+                        palette = palette,
+                        modifier = Modifier
+                            .padding(start = 22.dp, top = 8.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = viewModel::lasciaVisita),
+                    )
+                }
 
                 // Il carosello lascia libero il fianco destro: sotto la colonna
                 // delle scorciatoie non deve finirci niente da leggere.
-                // **Le sale si cambiano di lato, e la lettura tiene il
-                // verticale tutto per se'.**
                 //
-                // Prima erano un pager **verticale**, e dentro ogni pagina il
-                // pannello scorreva anch'esso in verticale: due cose che
-                // vogliono lo stesso dito. Chi leggeva doveva arrivare in
-                // fondo al contenuto prima che il carosello si muovesse, e da
-                // fuori si vedeva cosi': "bisogna scorrere molto per passare
-                // da un menu' all'altro". Non era la soglia - era l'asse.
+                // **Le sale si sfogliano in su e in giu', come dice la
+                // colonna.** Per un periodo sono andate di lato, per non
+                // contendere il dito allo scorrimento dei pannelli: ma la
+                // colonna di destra e' verticale, e chi apriva l'app provava
+                // per prima cosa a scorrere in verticale - era la colonna a
+                // suggerirlo, e il gesto non faceva niente. Un indice e un
+                // gesto che dicono due cose diverse sono un'interfaccia da
+                // imparare; adesso dicono la stessa.
                 //
-                // Separati, ognuno fa il suo mestiere senza chiedere permesso
-                // all'altro, e il pannello puo' crescere quanto gli pare
-                // perche' non ruba piu' niente a nessuno.
-                //
-                // La colonna delle scorciatoie resta verticale a destra, e non
-                // e' un'incoerenza: quella non si scorre, si **tocca**. E'
-                // un indice, e un indice sta in piedi di lato.
-                HorizontalPager(
+                // Il vecchio difetto del verticale era la fatica: "bisogna
+                // scorrere molto per passare da un menu' all'altro". Qui la
+                // soglia e' bassa - un colpetto basta - e i pannelli sono
+                // stati accorciati nel frattempo, quindi quasi sempre stanno
+                // in uno schermo e il gesto va dritto alla sala dopo. Quando un
+                // pannello non ci sta, il dito lo scorre prima fino in fondo
+                // (scorrimento annidato di Compose) e poi passa alla sala.
+                VerticalPager(
                     state = pagerState,
-                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
-                    // La soglia di Compose e' mezza pagina. Un quinto basta: il
-                    // gesto resta deliberato, ma non e' piu' un trasloco - e la
-                    // molla che segue e' piu' rigida di quella predefinita,
-                    // perche' l'attesa dopo il dito pesa quanto il dito.
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = riservaColonna),
+                    // Un dodicesimo di pagina: il gesto resta deliberato - un
+                    // tocco che trema non cambia sala - ma basta un colpetto,
+                    // non una corsa per tutto lo schermo. La molla e' rigida e
+                    // senza rimbalzo, perche' l'attesa dopo il dito pesa
+                    // quanto il dito.
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
-                        snapPositionalThreshold = 0.2f,
+                        snapPositionalThreshold = 0.08f,
                         snapAnimationSpec = spring(
                             dampingRatio = Spring.DampingRatioNoBouncy,
                             stiffness = Spring.StiffnessMediumLow,
@@ -357,24 +430,22 @@ fun SalaShell(
                     // sala corta dopo una lunga si troverebbe scorrevole senza
                     // niente da scorrere.
                     //
-                    // **Quel prezzo non si paga piu'.** Finche' il carosello
-                    // era verticale, su una scheda lunga il dito scorreva
-                    // prima la scheda e cambiava sala solo arrivato in fondo -
-                    // nested scroll di Compose, nessun codice nostro, e la
-                    // ragione per cui cambiare sala sembrava un lavoro. Adesso
-                    // che le sale vanno di lato i due gesti non si toccano: si
-                    // legge in giu' e si cambia sala di fianco, sempre, a
-                    // qualunque altezza della scheda.
+                    // Col carosello verticale questo scorrimento viene prima
+                    // di lui: su una scheda lunga il dito la porta in fondo, e
+                    // solo li' cambia sala. Vedi la nota sul carosello.
                     val scorrimento = key(page) { rememberScrollState() }
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(start = 26.dp, end = 26.dp, bottom = 14.dp),
+                            .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
                     ) {
                         Column(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .verticalScroll(scorrimento),
+                                .verticalScroll(scorrimento)
+                                .onGloballyPositioned {
+                                    if (page == pagerState.currentPage) rScheda = it.boundsInRoot()
+                                },
                         ) {
                             when (rooms.getOrNull(page)) {
                                 SalaRoom.OGGI -> SalaOggiScreen(
@@ -397,10 +468,11 @@ fun SalaShell(
                                     palette = palette,
                                     onSelectHour = viewModel::selectHour,
                                     onSelectDay = viewModel::selectDay,
+                                    movimento = !ferme,
                                 )
-                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna)
+                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
                                 SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
-                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette)
+                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette, movimento = !ferme)
                                 SalaRoom.UV -> SalaUvScreen(
                                     state = state,
                                     palette = palette,
@@ -412,6 +484,14 @@ fun SalaShell(
                         }
                     }
                 }
+
+                IndizioSfoglio(
+                    visibile = !sfogliate && pagerState.currentPage == 0,
+                    prossima = rooms.getOrNull(1)?.heading ?: "",
+                    palette = palette,
+                    movimento = !ferme,
+                    modifier = Modifier.fillMaxWidth().padding(end = riservaColonna, bottom = 6.dp),
+                )
 
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
@@ -429,7 +509,9 @@ fun SalaShell(
                     onSelect = viewModel::selectHour,
                     onTick = { if (!ridotte) vibrazioni.scatto() },
                     onTornaOra = viewModel::backToNow,
-                    modifier = Modifier.padding(start = 26.dp, end = 62.dp),
+                    modifier = Modifier
+                        .padding(start = 26.dp, end = if (larghe) 26.dp else 62.dp)
+                        .onGloballyPositioned { rBarra = it.boundsInRoot() },
                 )
             }
 
@@ -443,7 +525,7 @@ fun SalaShell(
             // sessanta punti che da qui in poi sono delle schede, che erano
             // strette. La colonna ha preso la cosa che i trattini facevano
             // meglio - seguire il dito in continuo - tramite `posizione`.
-            ColonnaScorciatoie(
+            if (!larghe) ColonnaScorciatoie(
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
                 posizione = posizione,
                 palette = palette,
@@ -458,7 +540,8 @@ fun SalaShell(
                     // lato attorno al disco, e questo margine li restituisce.
                     // Cio' che cambia e' l'area sensibile, che ora comincia a
                     // sei punti dal vetro invece che a dieci.
-                    .padding(end = 6.dp),
+                    .padding(end = 6.dp)
+                    .onGloballyPositioned { rColonna = it.boundsInRoot() },
             )
 
             // ── L'ordine di questi due blocchi e' funzionale ─────────────────
@@ -495,6 +578,9 @@ fun SalaShell(
                         state = state,
                         palette = palette,
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onToggleSchedeLarghe = viewModel::setSchedeLarghe,
+                        onApriGuida = viewModel::apriGuida,
+                        onToggleNotifichePioggia = viewModel::setNotifichePioggia,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,
@@ -564,9 +650,35 @@ fun SalaShell(
                     SalaLegaliScreen(palette = palette, onClose = viewModel::closeLegali)
                 }
             }
+
+            // Ultima, sopra tutto e ultima a registrare l'indietro.
+            if (guida) {
+                // Il cielo non e' un pezzo misurabile: e' lo spazio fra
+                // l'intestazione e la scheda.
+                val cieloGuida = rIntestazione?.let { alto ->
+                    val basso = rScheda?.top ?: (alto.bottom + 260f)
+                    val destra = rColonna?.left ?: (widthPx - alto.left)
+                    Rect(alto.left, alto.bottom + 8f, destra - 8f, maxOf(alto.bottom + 60f, basso - 16f))
+                }
+                GuidaSala(
+                    passi = passiGuida(
+                        cielo = cieloGuida,
+                        intestazione = rIntestazione,
+                        scheda = rScheda,
+                        colonna = if (larghe) null else rColonna,
+                        barra = rBarra,
+                    ),
+                    palette = palette,
+                    movimento = !ferme,
+                    onFine = viewModel::chiudiGuida,
+                )
+            }
         }
     }
 }
+
+/** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
+private const val ATTESA_GUIDA_MS = 3800L
 
 /**
  * Gli avvisi in corso **all'ora mostrata**, il piu' grave per primo.
