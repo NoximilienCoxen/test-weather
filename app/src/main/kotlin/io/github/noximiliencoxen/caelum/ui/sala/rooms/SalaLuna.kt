@@ -9,8 +9,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.luna3d.LunaInterattiva
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,21 +72,40 @@ fun SalaLunaScreen(
      */
     giorno: LocalDate,
     modifier: Modifier = Modifier,
+    /** Falso con le animazioni ridotte: niente molle ne' sensore sulla sfera. */
+    movimento: Boolean = true,
 ) {
-    val oggi = giorno
-    val fase = MoonPhase.at(giorno)
+    // Quanti giorni avanti o indietro rispetto a quello mostrato, scelti col
+    // cursore. Si riparte da zero quando cambia il giorno della shell.
+    var spostamento by remember(giorno) { mutableIntStateOf(0) }
+    val oggi = giorno.plusDays(spostamento.toLong())
+    val fase = MoonPhase.at(oggi)
     val illuminata = MoonPhase.illumination(fase)
     val segmento = MoonSegment.of(fase)
     val eta = MoonPhase.ageDays(fase)
     val prossimaPiena = MoonPhase.nextDate(oggi, 0.5f)
 
     PannelloSala(palette = palette, modifier = modifier) {
+        LunaInterattiva(
+            fase = fase,
+            descrizione = "${segmento.label.lowercase()}, ${(illuminata * 100f).roundToInt()} per cento illuminata",
+            palette = palette,
+            movimento = movimento,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        CursoreGiorni(
+            spostamento = spostamento,
+            onCambia = { spostamento = it },
+            palette = palette,
+            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Canvas(modifier = Modifier.size(96.dp)) { disegnaLuna(fase, 1f) }
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "La luna", style = SalaType.cardTitle, color = palette.ink)
                 Text(
@@ -152,6 +181,68 @@ fun SalaLunaScreen(
         }
     }
 }
+
+/**
+ * Il cursore dei giorni: un mese intorno al giorno mostrato.
+ *
+ * Trascinandolo la sfera qui sopra cresce e cala mentre si muove il dito, che e'
+ * il modo piu' diretto di vedere un ciclo che dal vero dura un mese. I numeri
+ * del pannello seguono, perche' vengono tutti dallo stesso giorno.
+ */
+@Composable
+private fun CursoreGiorni(
+    spostamento: Int,
+    onCambia: (Int) -> Unit,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = when {
+                    spostamento == 0 -> "Oggi"
+                    spostamento == 1 -> "Domani"
+                    spostamento == -1 -> "Ieri"
+                    spostamento > 0 -> "Fra $spostamento giorni"
+                    else -> "${-spostamento} giorni fa"
+                },
+                style = SalaType.rowTitle,
+                color = palette.ink,
+                modifier = Modifier.weight(1f),
+            )
+            if (spostamento != 0) {
+                Text(
+                    text = "TORNA A OGGI",
+                    style = SalaType.sectionLabel,
+                    color = palette.accent,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onCambia(0) }
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                )
+            }
+        }
+        Slider(
+            value = spostamento.toFloat(),
+            onValueChange = { onCambia(it.roundToInt()) },
+            valueRange = -GIORNI_CURSORE.toFloat()..GIORNI_CURSORE.toFloat(),
+            steps = GIORNI_CURSORE * 2 - 1,
+            colors = SliderDefaults.colors(
+                thumbColor = palette.accent,
+                activeTrackColor = palette.accent,
+                inactiveTrackColor = palette.chip,
+                activeTickColor = Color.Transparent,
+                inactiveTickColor = Color.Transparent,
+            ),
+            modifier = Modifier.semantics { contentDescription = "Giorno della luna" },
+        )
+    }
+}
+
+private const val GIORNI_CURSORE = 15
 
 /**
  * Il disco lunare alla fase data.
