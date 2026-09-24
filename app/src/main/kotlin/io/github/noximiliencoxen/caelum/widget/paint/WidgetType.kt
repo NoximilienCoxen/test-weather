@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.res.ResourcesCompat
 import io.github.noximiliencoxen.caelum.R
 
@@ -66,10 +67,20 @@ internal fun DrawScope.text(
     color: Color,
     alpha: Float = 1f,
 ) {
+    writtenText?.invoke(value, x, x + paint.measureText(value))
     paint.color = color.toArgb()
     paint.alpha = (alpha.coerceIn(0f, 1f) * 255).toInt()
     drawContext.canvas.nativeCanvas.drawText(value, x, y - paint.fontMetrics.ascent, paint)
 }
+
+/**
+ * Chi vuole sapere dove finisce ogni scritta: la usa solo `WidgetOverflowTest`,
+ * per controllare che nessuna passi il bordo. Guardare i pixel non basta - il
+ * bagliore della luna e gli angoli sfumati sono inchiostro anche loro - mentre
+ * qui arriva l'estensione esatta di ogni riga. In produzione e' nulla.
+ */
+@VisibleForTesting
+internal var writtenText: ((value: String, left: Float, right: Float) -> Unit)? = null
 
 /** Scrive centrato su `cx`, sempre a partire dall'alto. */
 internal fun DrawScope.textCentered(
