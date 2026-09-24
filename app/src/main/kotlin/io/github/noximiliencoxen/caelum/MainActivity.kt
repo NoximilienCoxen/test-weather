@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.ui.MeteoApp
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
@@ -22,6 +23,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Il tocco sul widget si applica solo al primo avvio dell'intento: la
+        // stessa attivita' ricreata (rotazione, ritorno dai recenti) lo
+        // riceverebbe di nuovo e riaprirebbe una visita gia' finita.
+        if (savedInstanceState == null) applyWidgetTap(intent)
         applyExtras(intent)
         setContent {
             MeteoApp(viewModel)
@@ -30,7 +35,46 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        applyWidgetTap(intent)
         applyExtras(intent)
+    }
+
+    /**
+     * Andando in sottofondo finisce la visita alla citta' di un widget:
+     * riaprendo l'app dall'icona si ritrova la propria.
+     */
+    override fun onStop() {
+        super.onStop()
+        if (!isChangingConfigurations) viewModel.lasciaVisita()
+    }
+
+    /**
+     * Il tocco su un widget: la sua sala e, se ne ha una, la sua citta', che
+     * si mostra senza sostituire quella dell'app (vedi
+     * `WeatherViewModel.visita`). Vale anche nella release, a differenza degli
+     * agganci di [applyExtras]: da fuori si puo' al piu' far vedere una
+     * citta', non salvarla ne' inventare un avviso.
+     */
+    private fun applyWidgetTap(intent: Intent?) {
+        if (intent == null) return
+        val sala = intent.getStringExtra(EXTRA_SALA_WIDGET)
+            ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
+            ?: return
+        val nome = intent.getStringExtra(EXTRA_WIDGET_NOME)
+        val lat = intent.getDoubleExtra(EXTRA_WIDGET_LAT, Double.NaN)
+        val lon = intent.getDoubleExtra(EXTRA_WIDGET_LON, Double.NaN)
+        if (nome != null && lat.isFinite() && lon.isFinite()) {
+            viewModel.visita(
+                Place(
+                    name = nome,
+                    admin = intent.getStringExtra(EXTRA_WIDGET_REGIONE),
+                    country = intent.getStringExtra(EXTRA_WIDGET_PAESE),
+                    latitude = lat,
+                    longitude = lon,
+                ),
+            )
+        }
+        viewModel.requestRoom(sala.ordinal)
     }
 
     /**
@@ -98,11 +142,6 @@ class MainActivity : ComponentActivity() {
      */
     private fun applyExtras(intent: Intent?) {
         if (intent == null) return
-        // Il tocco su un widget: vale anche nella release, a differenza degli
-        // agganci qui sotto.
-        intent.getStringExtra(EXTRA_SALA_WIDGET)
-            ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
-            ?.let { viewModel.requestRoom(it.ordinal) }
         if (!BuildConfig.AGGANCI_CATTURA) return
         // Stessa ragione dell'unico log del modello (vedi `previsione pronta`):
         // serve alla cattura in CI. Senza, che un aggancio sia arrivato si puo'
@@ -161,6 +200,13 @@ class MainActivity : ComponentActivity() {
     companion object {
         /** La sala da aprire, dal tocco su un widget (`WidgetKind.sala`). */
         const val EXTRA_SALA_WIDGET = "sala_widget"
+
+        /** La citta' del widget toccato, da mostrare senza salvarla. */
+        const val EXTRA_WIDGET_NOME = "widget_nome"
+        const val EXTRA_WIDGET_REGIONE = "widget_regione"
+        const val EXTRA_WIDGET_PAESE = "widget_paese"
+        const val EXTRA_WIDGET_LAT = "widget_lat"
+        const val EXTRA_WIDGET_LON = "widget_lon"
 
         /** Lo stesso di `WeatherViewModel`: la cattura in CI filtra su questo. */
         const val TAG = "meteo"

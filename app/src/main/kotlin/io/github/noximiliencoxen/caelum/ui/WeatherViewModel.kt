@@ -186,6 +186,11 @@ data class UiState(
     val guidaVista: Boolean = true,
     /** La guida richiesta a mano, dalle impostazioni o dalla cattura. */
     val guidaAperta: Boolean = false,
+    /**
+     * La citta' salvata nell'app, quando se ne sta guardando un'altra da un
+     * widget; nulla altrimenti. Vedi [WeatherViewModel.visita].
+     */
+    val casa: Place? = null,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Motore numerico scelto per la previsione. */
@@ -500,6 +505,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     private var welcomeForced = false
 
+    /**
+     * La citta' di un widget toccato, mostrata senza salvarla. Le preferenze
+     * continuano a emettere la citta' dell'app, e finche' questa e' piena
+     * vince lei: vedi [visita].
+     */
+    private var visitata: Place? = null
+
+    /** L'ultima citta' letta dalle preferenze: dove si torna dopo una visita. */
+    private var salvata: Place? = null
+
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -507,13 +522,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             prefs.settings.collect { settings ->
                 val current = _state.value
-                val moved = current.place != settings.place
+                salvata = settings.place
+                val mostrata = visitata ?: settings.place
+                val moved = current.place != mostrata
                 val modelChanged = current.model != settings.model
                 val firstRead = !started
                 started = true
                 _state.update {
                     it.copy(
-                        place = settings.place,
+                        place = mostrata,
+                        casa = if (visitata != null) settings.place else null,
                         unit = settings.unit,
                         model = settings.model,
                         favorites = settings.favorites,
@@ -1030,7 +1048,43 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     // se' lo stesso confronto su `favorites`. Una terza copia della stessa
     // riga, in un posto in cui nessuno andava a cercarla.
 
+    /**
+     * Mostra la citta' di un widget **senza cambiare quella dell'app**.
+     *
+     * Toccando il widget di Fontevivo con Noceto nell'app ci si aspetta
+     * Fontevivo; salvarla, pero', vorrebbe dire trovarsi Fontevivo anche
+     * aprendo l'app dall'icona. La visita finisce quando l'app va in
+     * sottofondo, con l'indietro, o scegliendo un'altra citta'.
+     */
+    fun visita(place: Place) {
+        val casa = salvata
+        if (casa != null && casa.key == place.key) {
+            lasciaVisita()
+            return
+        }
+        visitata = place
+        pendingHour = null
+        _state.update { it.copy(place = place, casa = casa ?: it.place) }
+        refresh()
+    }
+
+    /** Torna alla citta' dell'app, se se ne stava visitando un'altra. */
+    fun lasciaVisita() {
+        if (visitata == null) return
+        visitata = null
+        val casa = salvata ?: _state.value.casa ?: return
+        _state.update { it.copy(place = casa, casa = null) }
+        refresh()
+    }
+
     fun choosePlace(place: Place) {
+        // Una scelta esplicita chiude la visita: la citta' scelta deve valere
+        // anche quando coincide con quella gia' salvata, che non emetterebbe.
+        if (visitata != null) {
+            visitata = null
+            _state.update { it.copy(place = place, casa = null) }
+            refresh()
+        }
         // L'ora ricordata apparteneva al posto di prima. Tenerla significherebbe
         // aprire Singapore fermi sull'ora di Forli'.
         pendingHour = null
@@ -1130,7 +1184,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * ottenuto il permesso: un ViewModel non puo' chiederlo, e non deve
      * provarci.
      */
-    fun useDeviceLocation() = locate(explicit = true)
+    fun useDeviceLocation() {
+        lasciaVisita()
+        locate(explicit = true)
+    }
 
     private fun locate(explicit: Boolean) {
         locating?.cancel()
