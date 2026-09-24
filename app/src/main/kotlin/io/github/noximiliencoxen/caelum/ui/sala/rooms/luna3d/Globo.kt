@@ -4,6 +4,7 @@ import kotlin.math.PI
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.exp
+import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -70,7 +71,7 @@ internal class Globo(
     /**
      * Quanto e' chiaro ogni vertice con il sole della fase [fase].
      *
-     * Lambert netto e non dimezzato come nel resto del motore: il terminatore
+     * Luce netta e non Lambert dimezzato come nel resto del motore: il terminatore
      * della luna e' una linea, non una sfumatura, perche' li' non c'e' aria a
      * diffondere la luce. Sulla parte in ombra resta la **luce cinerea** - il
      * chiaro di Terra - appena sopra il nero: si vede davvero, a occhio nudo,
@@ -79,7 +80,12 @@ internal class Globo(
     fun luce(fase: Float, out: FloatArray) {
         val (sx, sy, sz) = direzioneSole(fase)
         for (v in 0 until vertici) {
-            val diretta = (x[v] * sx + y[v] * sy + z[v] * sz).coerceAtLeast(0f)
+            // Radice e non coseno puro: la luna non e' una palla opaca, e' una
+            // superficie di polvere che rimanda la luce quasi uguale fino al
+            // bordo - per questo la luna piena sembra un disco piatto e non una
+            // sfera che si scurisce ai lati. Col coseno la meta' accesa si
+            // spegneva gradualmente verso il terminatore, che invece e' netto.
+            val diretta = (x[v] * sx + y[v] * sy + z[v] * sz).coerceAtLeast(0f).pow(ESPONENTE_REGOLITE)
             out[v] = albedo[v] * (LUCE_CINEREA + (1f - LUCE_CINEREA) * diretta)
         }
     }
@@ -87,6 +93,9 @@ internal class Globo(
     companion object {
         /** Il chiaro di Terra sulla parte in ombra. */
         const val LUCE_CINEREA = 0.05f
+
+        /** Quanto e' piatta la luce sulla meta' accesa: 1 sarebbe Lambert puro. */
+        private const val ESPONENTE_REGOLITE = 0.3f
 
         /**
          * Da dove viene il sole, per una fase da 0 (novilunio) a 1.
@@ -177,7 +186,10 @@ internal class Globo(
             for (m in MARI + CRATERI) {
                 val coseno = (px * m[0] + py * m[1] + pz * m[2]).coerceIn(-1f, 1f)
                 val angolo = acos(coseno)
-                a -= m[4] * exp(-(angolo / m[3]) * (angolo / m[3]))
+                // Alla quarta e non al quadrato: un mare ha una riva, non e' una
+                // nebbia. Col quadrato le macchie sfumavano per mezza luna.
+                val q = (angolo / m[3]) * (angolo / m[3])
+                a -= m[4] * exp(-q * q)
             }
             // Una grana leggera e deterministica, perche' gli altipiani non
             // sembrino plastica: nessun caso, stessa luna a ogni avvio.
