@@ -230,6 +230,21 @@ session() {
 
   shoot "${slug}-1-temp"
 
+  # La guida all'uso: da sola non compare mai sotto la cattura, la si chiede.
+  # Primo passo (la scheda) e quarto (la barra delle ore), poi indietro la
+  # chiude e l'app torna com'era.
+  avvia --ez guida true >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-guida-1"
+  for _ in 1 2 3; do
+    adbt shell input tap "$(( W / 2 ))" "$(( H / 3 ))" >/dev/null 2>&1 || true
+    sleep 1
+  done
+  sleep 1
+  shoot "${slug}-guida-4"
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 1
+
   # ── Prima il nuovo, poi il gia' verificato ──────────────────────────────────
   #
   # Il cielo, il dettaglio e le ore di contrasto vengono **prima** delle prove

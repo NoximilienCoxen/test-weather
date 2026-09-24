@@ -7,6 +7,7 @@ import java.net.URLEncoder
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.roundToInt
 
 /**
  * Accesso a Open-Meteo con la sola HttpURLConnection della piattaforma.
@@ -120,7 +121,8 @@ class WeatherRepository(
             "temperature_2m,apparent_temperature,weather_code,precipitation," +
                 "precipitation_probability,is_day," +
                 "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m," +
-                "wind_direction_10m,uv_index,cloud_cover,surface_pressure,visibility," +
+                "wind_direction_10m,uv_index,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high," +
+                "surface_pressure,visibility," +
                 "rain,snowfall"
 
         const val DAILY_VARS =
@@ -187,6 +189,27 @@ private const val HOURS_IN_DAY = 24
 
 private fun <T> List<T>.at(index: Int): T? = getOrNull(index)
 
+/**
+ * Quanta parte del cielo si vede coperta, non quanta ne conta il modello.
+ *
+ * **La nuvolosita' totale mette sullo stesso piano un velo di cirri e un
+ * banco di strati.** Una giornata con cirri all'ottanta per cento e' una
+ * giornata di sole, e la sala la dipingeva grigia sotto "Nuvole di passaggio"
+ * mentre fuori splendeva: e' successo davvero. Le nubi basse e medie
+ * contano per intero; le alte per un quarto, perche' il sole le attraversa.
+ * Le quote si sommano come coperture indipendenti, che e' come le combina
+ * il modello stesso: la probabilita' che un punto del cielo sia libero e' il
+ * prodotto di quelle delle tre quote.
+ *
+ * Senza le quote - un modello che non le da' - resta il totale.
+ */
+internal fun nuvolositaVisibile(totale: Int?, bassa: Int?, media: Int?, alta: Int?): Int? {
+    if (bassa == null && media == null && alta == null) return totale
+    fun libero(p: Int?, peso: Float) = 1f - (p ?: 0).coerceIn(0, 100) / 100f * peso
+    val coperto = 1f - libero(bassa, 1f) * libero(media, 1f) * libero(alta, 0.25f)
+    return (coperto * 100f).roundToInt()
+}
+
 private fun String?.asDateTime(): LocalDateTime? =
     this?.let { runCatching { LocalDateTime.parse(it) }.getOrNull() }
 
@@ -237,7 +260,12 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             windGusts = hourly.windGusts.at(i),
             windDirection = hourly.windDirection.at(i),
             uvIndex = hourly.uvIndex.at(i),
-            cloudCover = hourly.cloudCover.at(i),
+            cloudCover = nuvolositaVisibile(
+                totale = hourly.cloudCover.at(i),
+                bassa = hourly.cloudCoverLow.at(i),
+                media = hourly.cloudCoverMid.at(i),
+                alta = hourly.cloudCoverHigh.at(i),
+            ),
             pressure = hourly.pressure.at(i),
             visibility = hourly.visibility.at(i),
             rain = hourly.rain.at(i),

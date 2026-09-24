@@ -176,6 +176,16 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** Le schede a tutta larghezza, senza la colonna delle sale. */
+    val schedeLarghe: Boolean = false,
+    /**
+     * Se la guida all'uso e' gia' stata vista. Vero finche' le impostazioni
+     * non sono lette: meglio non mostrarla un fotogramma che mostrarla a chi
+     * l'ha gia' chiusa.
+     */
+    val guidaVista: Boolean = true,
+    /** La guida richiesta a mano, dalle impostazioni o dalla cattura. */
+    val guidaAperta: Boolean = false,
     val place: Place = Place.FORLI,
     val unit: TempUnit = TempUnit.CELSIUS,
     /** Motore numerico scelto per la previsione. */
@@ -514,6 +524,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
                         animazioniRidotte = settings.animazioniRidotte,
+                        schedeLarghe = settings.schedeLarghe,
+                        guidaVista = settings.guidaVista,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -1186,6 +1198,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun scattoFermo() {
         _state.update { it.copy(animazioniIstantanee = true) }
+    }
+
+    fun setSchedeLarghe(larghe: Boolean) {
+        viewModelScope.launch { prefs.setSchedeLarghe(larghe) }
+    }
+
+    /** Riapre la guida all'uso, chiudendo cio' che le starebbe davanti. */
+    fun apriGuida() {
+        _state.update { it.copy(settingsOpen = false, locationsOpen = false, guidaAperta = true) }
+    }
+
+    /** Chiusa - finita o saltata - la guida non si ripresenta da sola. */
+    fun chiudiGuida() {
+        _state.update { it.copy(guidaAperta = false, guidaVista = true) }
+        viewModelScope.launch { prefs.setGuidaVista() }
     }
 
     fun setAnimazioniRidotte(ridotte: Boolean) {
