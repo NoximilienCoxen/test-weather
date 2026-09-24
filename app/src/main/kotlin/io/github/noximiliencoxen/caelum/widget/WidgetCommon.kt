@@ -20,14 +20,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
-import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.getAppWidgetState
@@ -36,9 +33,11 @@ import androidx.glance.currentState
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import io.github.noximiliencoxen.caelum.MainActivity
 import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
+import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import io.github.noximiliencoxen.caelum.widget.paint.Frame
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetCanvas
 import io.github.noximiliencoxen.caelum.widget.paint.WidgetInk
@@ -142,6 +141,19 @@ internal fun configureIntent(context: Context, appWidgetId: Int): Intent =
         .setData("caelum://widget/$appWidgetId".toUri())
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
+/**
+ * Apre l'app sulla sala che corrisponde al widget: la luna sulla luna, la
+ * settimana sulla settimana. Il `data` distingue i widget come in
+ * [configureIntent]; `SINGLE_TOP` fa arrivare la richiesta anche all'app gia'
+ * aperta, tramite `onNewIntent`.
+ */
+internal fun apriSalaIntent(context: Context, appWidgetId: Int, kind: WidgetKind): Intent =
+    Intent(context, MainActivity::class.java)
+        .setAction(Intent.ACTION_VIEW)
+        .putExtra(MainActivity.EXTRA_SALA_WIDGET, kind.sala.name)
+        .setData("caelum://sala/${kind.sala.name.lowercase()}/$appWidgetId".toUri())
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
 internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
     GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
@@ -176,16 +188,18 @@ enum class WidgetKind(
     /** Il ricevitore che il sistema sveglia per questo widget. */
     val receiver: Class<out ConfigurableWidgetReceiver>,
     private val make: () -> GlanceAppWidget,
+    /** La sala che il tocco apre. */
+    val sala: SalaRoom,
 ) {
-    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget),
+    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
 
     // La luna e' la stessa da qualunque parte la si guardi: chiederle una
     // citta' sarebbe una domanda senza conseguenze.
-    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget),
+    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
 
-    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget),
+    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
-    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget),
+    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
     ;
 
     fun widget(): GlanceAppWidget = make()
@@ -316,7 +330,10 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
             return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
         }
 
-        return Face(paint(context, frame, place, type, ink), actionRunCallback<RefreshWidgetAction>())
+        // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
+        // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
+        // saperne di piu', non lo stesso numero ridisegnato.
+        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind)))
     }
 }
 
@@ -339,24 +356,6 @@ private val RedrawKey = longPreferencesKey("caelum_ridisegno")
 internal suspend fun WidgetKind.redraw(context: Context, glanceId: GlanceId) {
     updateAppWidgetState(context, glanceId) { it[RedrawKey] = (it[RedrawKey] ?: 0L) + 1 }
     widget().update(context, glanceId)
-}
-
-/**
- * Un tocco sul widget forza un nuovo scaricamento.
- *
- * Una sola per tutti: quale widget ridisegnare lo dice l'identificativo, non la
- * classe della callback. Prima ce n'erano tre identiche, e un widget nuovo ne
- * voleva una quarta.
- */
-class RefreshWidgetAction : ActionCallback {
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters,
-    ) {
-        val appWidgetId = appWidgetIdOf(context, glanceId)
-        WidgetKind.of(context, appWidgetId)?.redraw(context, glanceId)
-    }
 }
 
 /**
