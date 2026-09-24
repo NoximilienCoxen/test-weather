@@ -233,8 +233,17 @@ session() {
   # La guida all'uso: da sola non compare mai sotto la cattura, la si chiede.
   # Primo passo (la scheda) e quarto (la barra delle ore), poi indietro la
   # chiude e l'app torna com'era.
+  #
+  # Si riparte da capo: con l'attivita' gia' in cima, `am start` senza flag non
+  # consegna l'intento (niente `onNewIntent`) e l'aggancio andrebbe perso -
+  # e' successo, la guida non compariva. Poi si aspetta la previsione e il
+  # velo d'apertura, che le starebbe sopra.
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ez guida true >/dev/null 2>&1 || true
-  sleep 2
+  attendi_previsione
+  sleep 4
   shoot "${slug}-guida-1"
   for _ in 1 2 3; do
     adbt shell input tap "$(( W / 2 ))" "$(( H / 3 ))" >/dev/null 2>&1 || true
