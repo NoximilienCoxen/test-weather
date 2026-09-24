@@ -1,5 +1,17 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.OmbraSole
+import kotlin.math.cos
+import kotlin.math.sin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -191,6 +203,38 @@ fun SalaUvScreen(
             }
         }
 
+        ore.getOrNull(scelta)?.let { oraMostrata ->
+            val altezzaSole = remember(oraMostrata.time, state.place, state.forecast?.utcOffsetSeconds) {
+                OmbraSole.altezza(
+                    oraMostrata.time,
+                    state.place.latitude,
+                    state.place.longitude,
+                    state.forecast?.utcOffsetSeconds ?: 0,
+                )
+            }
+            ScenaOmbra(
+                altezzaSole = altezzaSole,
+                mattina = oraMostrata.time.hour < 13,
+                palette = palette,
+                onTrascina = { frazione ->
+                    // Il dito sulla scena scorre le stesse ore del grafico:
+                    // la barra in fondo e questa scena restano allineate
+                    // perche' scelgono la stessa cosa.
+                    if (finestra.isNotEmpty()) {
+                        val i = (frazione * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
+                        if (finestra[i] != scelta) onSelectHour(finestra[i])
+                    }
+                },
+                modifier = Modifier.padding(top = 16.dp),
+            )
+            Text(
+                text = frase(oraMostrata.time.hour, altezzaSole),
+                style = SalaType.rowTitle,
+                color = palette.ink,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+
         Didascalia(
             consiglio(corrente),
             palette,
@@ -214,6 +258,107 @@ fun SalaUvScreen(
             )
         }
     }
+}
+
+/**
+ * Una persona e la sua ombra, con il sole all'altezza vera di quell'ora.
+ *
+ * L'indice UV e' un numero astratto; l'ombra no. **La regola dell'ombra** -
+ * quando l'ombra e' piu' corta di chi la fa, il sole scotta - e' la stessa che
+ * insegnano i dermatologi, e qui la si vede allungarsi e accorciarsi
+ * trascinando il dito sulla scena da mattina a sera.
+ *
+ * Il sole sta a sinistra la mattina e a destra il pomeriggio - guardando a sud,
+ * come si guarda il sole dall'Italia - e l'ombra va dalla parte opposta.
+ */
+@Composable
+private fun ScenaOmbra(
+    altezzaSole: Double,
+    mattina: Boolean,
+    palette: SalaPalette,
+    onTrascina: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val lunghezza = OmbraSole.lunghezzaRelativa(altezzaSole)
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(96.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(palette.chip)
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { onTrascina(it.x / size.width) },
+                ) { cambio, _ ->
+                    cambio.consume()
+                    onTrascina(cambio.position.x / size.width)
+                }
+            }
+            .semantics {
+                contentDescription = if (lunghezza == null) {
+                    "Il sole è sotto l'orizzonte."
+                } else {
+                    "Sole a ${altezzaSole.roundToInt()} gradi, ombra lunga ${"%.1f".format(Locale.ITALY, lunghezza)} volte la persona. Trascina per cambiare ora."
+                }
+            },
+    ) {
+        val terra = size.height * 0.80f
+        val altezzaPersona = size.height * 0.52f
+        val xPersona = size.width * 0.5f
+        drawLine(
+            color = palette.maniglia,
+            start = Offset(16.dp.toPx(), terra),
+            end = Offset(size.width - 16.dp.toPx(), terra),
+            strokeWidth = 2.dp.toPx(),
+        )
+
+        // Il sole, su un quarto di cerchio: alto col sole alto.
+        if (lunghezza != null) {
+            val angolo = Math.toRadians(altezzaSole.coerceIn(0.0, 90.0))
+            val raggio = size.width * 0.42f
+            val lato = if (mattina) -1f else 1f
+            val sole = Offset(
+                xPersona + lato * (raggio * cos(angolo)).toFloat(),
+                terra - (size.height * 0.72f * sin(angolo)).toFloat(),
+            )
+            drawCircle(SalaTokens.accent400, radius = 9.dp.toPx(), center = sole)
+
+            // L'ombra, dalla parte opposta, lunga quanto dice il conto e
+            // tagliata al bordo della scena.
+            val fine = (xPersona - lato * (altezzaPersona * lunghezza).toFloat())
+                .coerceIn(16.dp.toPx(), size.width - 16.dp.toPx())
+            drawLine(
+                color = palette.ink.copy(alpha = 0.28f),
+                start = Offset(xPersona, terra),
+                end = Offset(fine, terra),
+                strokeWidth = 7.dp.toPx(),
+                cap = StrokeCap.Round,
+            )
+        }
+
+        // La persona: corpo e testa, due tratti pieni.
+        drawLine(
+            color = palette.ink,
+            start = Offset(xPersona, terra),
+            end = Offset(xPersona, terra - altezzaPersona * 0.78f),
+            strokeWidth = 6.dp.toPx(),
+            cap = StrokeCap.Round,
+        )
+        drawCircle(palette.ink, radius = altezzaPersona * 0.11f, center = Offset(xPersona, terra - altezzaPersona * 0.92f))
+    }
+}
+
+/** Quello che la scena dice, in una frase. */
+private fun frase(ora: Int, altezzaSole: Double): String {
+    val lunghezza = OmbraSole.lunghezzaRelativa(altezzaSole)
+        ?: return "Alle ${oraDueCifre(ora)} il sole è sotto l'orizzonte."
+    val quanto = when {
+        lunghezza < 1.0 -> "più corta di te: il sole scotta"
+        lunghezza < 1.3 -> "lunga circa quanto te"
+        lunghezza >= OmbraSole.MASSIMA -> "lunghissima"
+        else -> "${"%.1f".format(Locale.ITALY, lunghezza)} volte te"
+    }
+    return "Alle ${oraDueCifre(ora)} sole a ${altezzaSole.roundToInt()}°, l'ombra è $quanto."
 }
 
 /** I nomi della scala mondiale: gli stessi cinque gradini di ogni bollettino. */
