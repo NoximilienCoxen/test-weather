@@ -444,6 +444,22 @@ session() {
     i=$(( i + 1 ))
   done
 
+  # ── Un colpetto in verticale cambia sala ─────────────────────────────────
+  #
+  # Le sale si sfogliano in su e in giu', e deve bastare poco: un decimo di
+  # schermo, veloce. Si parte da Oggi; se lo scatto mostra ancora Oggi, la
+  # soglia e' troppo alta per un dito vero.
+  alive || return
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei sezione 0 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  adbt shell input swipe $(( W * 2 / 5 )) $(( H * 60 / 100 )) $(( W * 2 / 5 )) $(( H * 50 / 100 )) 120 >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-sfoglio-breve-dopo-oggi"
+
   # ── La colonna si trascina ──────────────────────────────────────────────────
   #
   # **Il gesto nuovo, fotografato mentre e' in corso.** Tenere premuta la

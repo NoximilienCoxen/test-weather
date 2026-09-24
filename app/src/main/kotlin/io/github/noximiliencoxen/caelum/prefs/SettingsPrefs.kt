@@ -114,6 +114,12 @@ data class Settings(
      * meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /**
+     * Vero da quando si e' sfogliata una sala almeno una volta. Fino ad allora
+     * sotto la prima compare l'indizio "scorri in su": il gesto non si vede, e
+     * chi apre l'app per la prima volta non ha modo di indovinarlo.
+     */
+    val saleSfogliate: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -188,6 +194,7 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
                 ?: CaptionStyle.COMPLETE,
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
+            saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -242,6 +249,10 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_CAPTION_STYLE] = style.name }
     }
 
+    suspend fun setSaleSfogliate() {
+        context.settingsDataStore.edit { it[KEY_SALE_SFOGLIATE] = true }
+    }
+
     suspend fun setAnimazioniRidotte(ridotte: Boolean) {
         context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
     }
@@ -290,6 +301,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
+        val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

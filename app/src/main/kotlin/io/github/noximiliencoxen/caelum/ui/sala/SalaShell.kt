@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -31,12 +32,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
+import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.data.MoonPhase
@@ -53,6 +56,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaVentoScreen
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -89,6 +93,12 @@ fun SalaShell(
     val rooms = SalaRoom.entries
     val scope = rememberCoroutineScope()
 
+    // Se l'indizio "scorri in su" serve ancora: vedi `IndizioSfoglio`.
+    val contesto = LocalContext.current
+    val impostazioni = remember(contesto) { SettingsPrefs(contesto) }
+    val sfogliate by remember(impostazioni) { impostazioni.settings.map { it.saleSfogliate } }
+        .collectAsState(initial = true)
+
     val pagerState = rememberPagerState(
         initialPage = rooms.indexOf(state.room).coerceAtLeast(0),
         pageCount = { rooms.size },
@@ -99,6 +109,7 @@ fun SalaShell(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.settledPage }.collect { page ->
             rooms.getOrNull(page)?.let(viewModel::showRoom)
+            if (page > 0) impostazioni.setSaleSfogliate()
         }
     }
 
@@ -308,33 +319,34 @@ fun SalaShell(
 
                 // Il carosello lascia libero il fianco destro: sotto la colonna
                 // delle scorciatoie non deve finirci niente da leggere.
-                // **Le sale si cambiano di lato, e la lettura tiene il
-                // verticale tutto per se'.**
                 //
-                // Prima erano un pager **verticale**, e dentro ogni pagina il
-                // pannello scorreva anch'esso in verticale: due cose che
-                // vogliono lo stesso dito. Chi leggeva doveva arrivare in
-                // fondo al contenuto prima che il carosello si muovesse, e da
-                // fuori si vedeva cosi': "bisogna scorrere molto per passare
-                // da un menu' all'altro". Non era la soglia - era l'asse.
+                // **Le sale si sfogliano in su e in giu', come dice la
+                // colonna.** Per un periodo sono andate di lato, per non
+                // contendere il dito allo scorrimento dei pannelli: ma la
+                // colonna di destra e' verticale, e chi apriva l'app provava
+                // per prima cosa a scorrere in verticale - era la colonna a
+                // suggerirlo, e il gesto non faceva niente. Un indice e un
+                // gesto che dicono due cose diverse sono un'interfaccia da
+                // imparare; adesso dicono la stessa.
                 //
-                // Separati, ognuno fa il suo mestiere senza chiedere permesso
-                // all'altro, e il pannello puo' crescere quanto gli pare
-                // perche' non ruba piu' niente a nessuno.
-                //
-                // La colonna delle scorciatoie resta verticale a destra, e non
-                // e' un'incoerenza: quella non si scorre, si **tocca**. E'
-                // un indice, e un indice sta in piedi di lato.
-                HorizontalPager(
+                // Il vecchio difetto del verticale era la fatica: "bisogna
+                // scorrere molto per passare da un menu' all'altro". Qui la
+                // soglia e' bassa - un colpetto basta - e i pannelli sono
+                // stati accorciati nel frattempo, quindi quasi sempre stanno
+                // in uno schermo e il gesto va dritto alla sala dopo. Quando un
+                // pannello non ci sta, il dito lo scorre prima fino in fondo
+                // (scorrimento annidato di Compose) e poi passa alla sala.
+                VerticalPager(
                     state = pagerState,
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 40.dp),
-                    // La soglia di Compose e' mezza pagina. Un quinto basta: il
-                    // gesto resta deliberato, ma non e' piu' un trasloco - e la
-                    // molla che segue e' piu' rigida di quella predefinita,
-                    // perche' l'attesa dopo il dito pesa quanto il dito.
+                    // Un dodicesimo di pagina: il gesto resta deliberato - un
+                    // tocco che trema non cambia sala - ma basta un colpetto,
+                    // non una corsa per tutto lo schermo. La molla e' rigida e
+                    // senza rimbalzo, perche' l'attesa dopo il dito pesa
+                    // quanto il dito.
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
-                        snapPositionalThreshold = 0.2f,
+                        snapPositionalThreshold = 0.08f,
                         snapAnimationSpec = spring(
                             dampingRatio = Spring.DampingRatioNoBouncy,
                             stiffness = Spring.StiffnessMediumLow,
@@ -357,14 +369,9 @@ fun SalaShell(
                     // sala corta dopo una lunga si troverebbe scorrevole senza
                     // niente da scorrere.
                     //
-                    // **Quel prezzo non si paga piu'.** Finche' il carosello
-                    // era verticale, su una scheda lunga il dito scorreva
-                    // prima la scheda e cambiava sala solo arrivato in fondo -
-                    // nested scroll di Compose, nessun codice nostro, e la
-                    // ragione per cui cambiare sala sembrava un lavoro. Adesso
-                    // che le sale vanno di lato i due gesti non si toccano: si
-                    // legge in giu' e si cambia sala di fianco, sempre, a
-                    // qualunque altezza della scheda.
+                    // Col carosello verticale questo scorrimento viene prima
+                    // di lui: su una scheda lunga il dito la porta in fondo, e
+                    // solo li' cambia sala. Vedi la nota sul carosello.
                     val scorrimento = key(page) { rememberScrollState() }
                     Box(
                         modifier = Modifier
@@ -412,6 +419,14 @@ fun SalaShell(
                         }
                     }
                 }
+
+                IndizioSfoglio(
+                    visibile = !sfogliate && pagerState.currentPage == 0,
+                    prossima = rooms.getOrNull(1)?.heading ?: "",
+                    palette = palette,
+                    movimento = !ferme,
+                    modifier = Modifier.fillMaxWidth().padding(end = 40.dp, bottom = 6.dp),
+                )
 
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
