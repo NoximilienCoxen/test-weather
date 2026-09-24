@@ -12,6 +12,7 @@ import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.MoonSegment
 import io.github.noximiliencoxen.caelum.data.Place
+import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -118,27 +119,38 @@ class WidgetOverflowTest {
     private fun check(name: String, wDp: Float, hDp: Float, cut: Cut, body: DrawScope.(Frame) -> Unit) {
         val scale = 2f
         val frame = Frame((wDp * scale).toInt(), (hDp * scale).toInt(), scale, cut, 20f)
-        val bitmap = WidgetCanvas.paint(frame, ink.background) { body(frame) }
+
+        // Il margine del disegno e' di 16dp: una scritta puo' avvicinarsi al
+        // bordo, non attraversarlo. Mezzo pixel di tolleranza per gli
+        // arrotondamenti della misura.
+        val edge = 16f * scale
+        val offenders = mutableListOf<String>()
+        writtenText = { value, left, right ->
+            if (left < edge - 0.5f || right > frame.widthPx - edge + 0.5f) {
+                offenders += "\"$value\" da ${left.toInt()} a ${right.toInt()} (larghezza ${frame.widthPx})"
+            }
+        }
+        val bitmap = try {
+            WidgetCanvas.paint(frame, ink.background) { body(frame) }
+        } finally {
+            writtenText = null
+        }
 
         val out = File("build/widget-renders").apply { mkdirs() }
         File(out, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
 
-        // La fascia esterna del margine di 16dp: meta' a sinistra e meta' a
-        // destra. Qui c'e' solo fondo, o trasparenza fuori dagli angoli tondi.
-        val band = (16f * scale / 2f).toInt()
-        val offenders = mutableListOf<String>()
-        for (y in 0 until bitmap.height) {
-            for (x in (0 until band) + (bitmap.width - band until bitmap.width)) {
-                val p = bitmap.getPixel(x, y)
-                val transparent = (p ushr 24) == 0
-                if (!transparent && p != ink.background) {
-                    offenders += "($x,$y)"
-                    if (offenders.size > 3) break
-                }
-            }
-            if (offenders.size > 3) break
-        }
-        assertTrue("$name: inchiostro oltre il margine in ${offenders.joinToString()}", offenders.isEmpty())
+        failures += offenders.map { "$name: $it" }
+    }
+
+    /**
+     * Si raccolgono tutte e si fallisce alla fine: fermarsi alla prima
+     * lascerebbe senza immagine - e senza diagnosi - tutte le altre.
+     */
+    private val failures = mutableListOf<String>()
+
+    @After
+    fun nessunaScrittaFuori() {
+        assertTrue(failures.joinToString("\n", prefix = "Scritte oltre il bordo:\n"), failures.isEmpty())
     }
 
     private fun place(name: String) = Place(name = name, latitude = 44.22, longitude = 12.04)
