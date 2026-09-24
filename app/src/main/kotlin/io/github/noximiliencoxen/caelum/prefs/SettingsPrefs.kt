@@ -127,6 +127,10 @@ data class Settings(
     val schedeLarghe: Boolean = false,
     /** Vero da quando la guida all'uso e' stata vista fino in fondo o saltata. */
     val guidaVista: Boolean = false,
+    /** Le notifiche di pioggia e grandine in arrivo. Accese di norma. */
+    val notifichePioggia: Boolean = true,
+    /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
+    val permessoNotificheChiesto: Boolean = false,
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -204,6 +208,8 @@ class SettingsPrefs(private val context: Context) {
             saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
             schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
             guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
+            notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
+            permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -266,6 +272,14 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_SCHEDE_LARGHE] = larghe }
     }
 
+    suspend fun setNotifichePioggia(accese: Boolean) {
+        context.settingsDataStore.edit { it[KEY_NOTIFICHE_PIOGGIA] = accese }
+    }
+
+    suspend fun setPermessoNotificheChiesto() {
+        context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
+    }
+
     suspend fun setGuidaVista() {
         context.settingsDataStore.edit { it[KEY_GUIDA_VISTA] = true }
     }
@@ -321,6 +335,8 @@ class SettingsPrefs(private val context: Context) {
         val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
         val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
         val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
+        val KEY_NOTIFICHE_PIOGGIA = booleanPreferencesKey("notifiche_pioggia")
+        val KEY_PERMESSO_NOTIFICHE = booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

@@ -1,5 +1,11 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
+import android.os.Build
+import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,6 +53,7 @@ fun SalaImpostazioniScreen(
     onToggleAnimazioni: (Boolean) -> Unit,
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
+    onToggleNotifichePioggia: (Boolean) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -154,6 +161,31 @@ fun SalaImpostazioniScreen(
                 coda = {
                     InterruttoreSala(state.alertToggles.ventoForte, palette) {
                         onToggleAlert(AlertToggleKind.VENTO, !state.alertToggles.ventoForte)
+                    }
+                },
+            )
+            // Accenderle senza il permesso non accenderebbe niente: su Android
+            // 13 e oltre l'interruttore lo chiede, e se viene negato le
+            // notifiche restano spente, perche' un interruttore acceso che non
+            // fa niente e' peggio di uno spento.
+            val contesto = LocalContext.current
+            val chiediPermesso = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleNotifichePioggia(concesso) }
+            RigaServizio(
+                titolo = "Pioggia e grandine in arrivo",
+                nota = "una notifica quando sta per cominciare, sulla città dell'app",
+                palette = palette,
+                coda = {
+                    val accese = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto)
+                    InterruttoreSala(accese, palette) {
+                        when {
+                            accese -> onToggleNotifichePioggia(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleNotifichePioggia(true)
+                        }
                     }
                 },
             )

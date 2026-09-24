@@ -580,6 +580,7 @@ fun SalaShell(
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
+                        onToggleNotifichePioggia = viewModel::setNotifichePioggia,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,

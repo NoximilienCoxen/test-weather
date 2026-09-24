@@ -1,6 +1,14 @@
 package io.github.noximiliencoxen.caelum
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
+import kotlinx.coroutines.flow.first
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -20,6 +28,9 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: WeatherViewModel by viewModels()
 
+    /** Il permesso delle notifiche (Android 13+): chiesto una volta sola. */
+    private val chiediNotifiche = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,6 +41,30 @@ class MainActivity : ComponentActivity() {
         applyExtras(intent)
         setContent {
             MeteoApp(viewModel)
+        }
+        chiediNotificheAlMomentoGiusto()
+    }
+
+    /**
+     * Il permesso delle notifiche si chiede **dopo** il benvenuto e la guida,
+     * non all'apertura: una finestra di sistema sopra la prima schermata non
+     * spiega a cosa serve. Chiusa la guida, chi ha le notifiche della pioggia
+     * accese (lo sono di norma) se lo vede chiedere una volta; se dice di no,
+     * resta l'interruttore nelle impostazioni. Mai durante la cattura.
+     */
+    private fun chiediNotificheAlMomentoGiusto() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.first { s ->
+                    s.welcomed && s.guidaVista && !s.guidaAperta && s.notifichePioggia &&
+                        !s.permessoNotificheChiesto && !s.animazioniIstantanee
+                }
+                if (!PioggiaInArrivoWorker.puoNotificare(this@MainActivity)) {
+                    chiediNotifiche.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                viewModel.permessoNotificheChiesto()
+            }
         }
     }
 
@@ -92,6 +127,14 @@ class MainActivity : ComponentActivity() {
         // background: `onEnabled` per loro non arrivera' piu'. `KEEP` rende
         // la chiamata innocua quando il turno c'e' gia'.
         AggiornaWidgetWorker.pianifica(applicationContext)
+        // Il controllo della pioggia in arrivo: acceso di norma, e `KEEP` non
+        // sposta il turno se c'e' gia'. Se le notifiche sono spente il lavoro
+        // gira a vuoto e se ne va al primo giro: lo annulla l'interruttore.
+        lifecycleScope.launch {
+            if (SettingsPrefs(applicationContext).settings.first().notifichePioggia) {
+                PioggiaInArrivoWorker.pianifica(applicationContext)
+            }
+        }
     }
 
     /**

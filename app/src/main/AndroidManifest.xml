@@ -19,6 +19,8 @@
         senza, l'app funziona con la localita' scelta a mano.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Pioggia e grandine in arrivo (notifiche/PioggiaInArrivoWorker). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
