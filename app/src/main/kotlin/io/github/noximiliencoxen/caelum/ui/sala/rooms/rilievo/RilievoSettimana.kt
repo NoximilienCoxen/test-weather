@@ -191,8 +191,10 @@ internal fun DrawScope.disegnaRilievo(
     scelto: Int,
     inchiostro: Color,
 ) {
-    val scala = size.width * 0.40f
-    val centro = Offset(size.width / 2f, size.height * 0.56f)
+    // Tre decimi della larghezza, non quattro: ruotato, il rettangolo dei
+    // sette giorni si allunga in diagonale e a quattro usciva dalla tela.
+    val scala = minOf(size.width * 0.30f, size.height * 0.62f)
+    val centro = Offset(size.width / 2f, size.height * 0.54f)
     val camera = Camera(yawDeg = yawDeg, pitchDeg = pitchDeg, distance = scala * 4f, origin = centro)
 
     for (i in 0 until buffer.nodi) {
@@ -229,6 +231,19 @@ internal fun DrawScope.disegnaRilievo(
         j,
         buffer.pennello,
     )
+
+    // Una riga sottile all'inizio di ogni giorno: senza, la superficie e' una
+    // collina sola e non si capisce dove finisce lunedi' e comincia martedi'.
+    for (r in 0 until rilievo.righe) {
+        var prima: Offset? = null
+        for (c in 0 until Rilievo.ORE) {
+            val i = r * Rilievo.ORE + c
+            if (!buffer.visibile[i]) { prima = null; continue }
+            val p = Offset(buffer.posizioni[i * 2], buffer.posizioni[i * 2 + 1])
+            prima?.let { drawLine(inchiostro.copy(alpha = 0.22f), it, p, strokeWidth = 1.2f) }
+            prima = p
+        }
+    }
 
     if (scelto in 0 until buffer.nodi) {
         val p = Offset(buffer.posizioni[scelto * 2], buffer.posizioni[scelto * 2 + 1])
