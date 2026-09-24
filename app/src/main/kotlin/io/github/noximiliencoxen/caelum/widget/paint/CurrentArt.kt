@@ -52,7 +52,7 @@ private fun DrawScope.small(
     type: WidgetType,
     ink: WidgetInk,
 ) {
-    val name = placeName(
+    val name = fitText(
         value = place.name.uppercase(),
         x = box.left,
         y = box.top,
@@ -169,12 +169,12 @@ private fun DrawScope.header(
     val textWidth = (box.right - side) - textLeft - box.height * 0.06f
 
     // Il corpo non cambia stringendo, quindi il blocco si puo' misurare prima
-    // di scrivere: `placeName` restituisce lo stesso `lineHeight` che avrebbe
+    // di scrivere: `fitText` restituisce lo stesso `lineHeight` che avrebbe
     // avuto il pennello largo.
     val block = lineHeight(type.brush(nameSize, 600, 78, 0.10f)) + lineHeight(what)
     val blockTop = digitsTop + (digitsHeight - block) / 2f
 
-    val name = placeName(
+    val name = fitText(
         value = place.name.uppercase(),
         x = textLeft,
         y = blockTop,
@@ -183,7 +183,17 @@ private fun DrawScope.header(
         type = type,
         color = ink.secondary,
     )
-    text(condition, textLeft, blockTop + lineHeight(name), what, ink.primary)
+    fitText(
+        value = condition,
+        x = textLeft,
+        y = blockTop + lineHeight(name),
+        maxWidth = textWidth,
+        sizePx = what.textSize,
+        type = type,
+        color = ink.primary,
+        weight = 700,
+        letterSpacingEm = 0.02f,
+    )
 
     weatherBody(
         Rect(box.right - side, box.top, box.right, box.top + side),

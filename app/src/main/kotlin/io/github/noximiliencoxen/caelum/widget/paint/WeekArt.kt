@@ -42,7 +42,7 @@ internal fun DrawScope.weekArt(
     val nameSize = box.height * 0.095f
     val tag = type.brush(nameSize, weight = 600, width = 78, letterSpacingEm = 0.10f)
     val tagWidth = type.widthOf(TITOLO, tag)
-    val name = placeName(
+    val name = fitText(
         value = place,
         x = box.left,
         y = box.top,
