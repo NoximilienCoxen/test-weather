@@ -148,13 +148,6 @@ internal fun DrawScope.profiloCollina(sinistra: Float, cima: Float, xCima: Float
     close()
 }
 
-/** Solo il crinale, aperto: per le righe che seguono la collina. */
-internal fun DrawScope.crinale(sinistra: Float, cima: Float, xCima: Float, destra: Float): Path = Path().apply {
-    moveTo(0f, sinistra)
-    quadraticBezierTo(xCima * 0.5f, cima, xCima, cima)
-    quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
-}
-
 /** Una collina morbida fra due quote, piena fino in fondo. */
 internal fun DrawScope.collina(sinistra: Float, cima: Float, xCima: Float, destra: Float, colore: Color) {
     drawPath(profiloCollina(sinistra, cima, xCima, destra), colore)

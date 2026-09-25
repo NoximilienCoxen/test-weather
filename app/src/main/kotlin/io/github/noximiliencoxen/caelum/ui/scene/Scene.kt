@@ -20,7 +20,6 @@ enum class Scena(val nome: String) {
     GRANO("Campo di grano"),
     ARCOBALENO("Dopo la pioggia"),
     MONTAGNA("Montagna"),
-    NEBBIA("Colline nella nebbia"),
 }
 
 /**

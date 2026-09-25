@@ -7,8 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.lerp
 
@@ -142,48 +140,4 @@ internal fun DrawScope.scenaMontagna(t: Float, notte: Boolean) {
             drawLine(Colori.inchiostro, c, c + Offset(W * 0.025f, -H * 0.01f + ali), strokeWidth = 2f, cap = StrokeCap.Round)
         }
     }
-}
-
-/** Le colline nella nebbia, coi filari; di notte i lampioni lontani. */
-internal fun DrawScope.scenaNebbia(t: Float, notte: Boolean) {
-    if (notte) cielo(Color(0xFF1A2130), Color(0xFF4A5366)) else cielo(Color(0xFFCBD2D6), Color(0xFFF1ECE3))
-    val strati = listOf(0.42f, 0.52f, 0.63f, 0.76f)
-    strati.forEachIndexed { i, y ->
-        val base = if (notte) lerp(Color(0xFF3C4658), Color(0xFF1E2530), i / 3f) else lerp(Color(0xFFB9C3B0), Colori.verdeScuro, i / 3f)
-        val xCima = W * (0.3f + caso(i, 90) * 0.5f)
-        val profilo = profiloCollina(H * y, H * (y - 0.06f), xCima, H * (y + 0.02f))
-        drawPath(profilo, base)
-        // I filari seguono la collina: lo stesso profilo, piu' in basso a ogni
-        // riga, e ritagliato dentro la collina, cosi' non escono nel cielo.
-        if (i >= 2) {
-            clipPath(profilo) {
-                for (k in 1..8) {
-                    val d = H * 0.022f * k
-                    drawPath(
-                        crinale(H * y + d, H * (y - 0.06f) + d, xCima, H * (y + 0.02f) + d),
-                        lerp(base, Colori.inchiostro, 0.22f),
-                        style = Stroke(1.8f),
-                    )
-                }
-            }
-        }
-        // La nebbia fra uno strato e l'altro, che scorre lenta.
-        val scorre = (t * W * 0.015f * (1 + i * 0.4f)) % (W * 2f)
-        drawRect(
-            Brush.verticalGradient(
-                listOf(Color.Transparent, (if (notte) Color(0xFF8D96A6) else Color.White).copy(alpha = 0.55f), Color.Transparent),
-                startY = H * (y - 0.05f), endY = H * (y + 0.05f),
-            ),
-            Offset(-W + scorre - W * 0.2f * i, H * (y - 0.05f)), Size(W * 3f, H * 0.1f),
-        )
-        if (notte && i == 1) {
-            for (k in 0 until 8) {
-                val x = W * (0.08f + k * 0.12f + caso(k, 91) * 0.04f)
-                val l = 0.6f + 0.4f * oscilla(t, 2.5f + caso(k, 92), k.toFloat())
-                drawCircle(Colori.luceCalda.copy(alpha = 0.18f * l), 12f, Offset(x, H * (y - 0.02f)))
-                drawCircle(Colori.luceCalda.copy(alpha = l), 2.5f, Offset(x, H * (y - 0.02f)))
-            }
-        }
-    }
-    if (!notte) sole(Offset(W * 0.7f, H * 0.2f), W * 0.06f, Color(0xFFF3D9B8), Color.White)
 }
