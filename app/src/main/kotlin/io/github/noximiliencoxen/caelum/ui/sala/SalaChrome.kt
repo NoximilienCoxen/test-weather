@@ -43,15 +43,16 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
@@ -70,6 +71,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.launch
 
@@ -349,85 +351,145 @@ fun glifoDi(weatherCode: Int?, cloudCover: Int?): GlifoMeteo {
 }
 
 /**
- * La figuretta del tempo di un giorno: sole, sole con nuvola, nuvola, gocce,
- * fulmine, chicchi, fiocchi.
+ * La figuretta del tempo: sole, sole con nuvola, nuvole, pioggia, temporale,
+ * neve, e di notte la luna al posto del sole.
  *
- * **Era un pallino colorato**, e sette pallini di sette tinte non dicono che
- * tempo fa: dicono che i giorni sono diversi fra loro. Neve e grandine si
- * distinguono **per forma** oltre che per tinta - cinque fiocchi tondi su due
- * file contro due chicchi ovali - perche' a questa taglia il colore da solo non
- * basta.
+ * **A colori, e non piu' a macchie piatte.** Erano un disco arancione e due
+ * ovali grigi, tinti col tema: si capiva che i giorni erano diversi, non che
+ * tempo facevano. Adesso sono disegnate sul modello delle icone di Google Meteo
+ * - il sole giallo, le nuvole bianche col bordo, le gocce blu, il fulmine
+ * giallo, la luna azzurra - **ma sono nostre**: quelle di Google sono sue e non
+ * hanno una licenza che ne permetta il riuso. Forme e colori sono stati scelti
+ * qui, provati prima in uno schizzo su fondo chiaro e scuro.
+ *
+ * **Non seguono il tema**, come la luna di Sala IV: un sole e' giallo su
+ * qualunque pagina. Il bordo delle nuvole c'e' per questo - senza, una nuvola
+ * bianca su un pannello chiaro sparirebbe.
+ *
+ * Tutto e' misurato su un quadrato di ventiquattro unita', riscalato alla tela.
  */
 @Composable
-fun IconaMeteo(glifo: GlifoMeteo, palette: SalaPalette, modifier: Modifier = Modifier) {
-    val buio = palette.buio
-    // Le nuvole si scuriscono col tema chiaro: erano bianche, e su un pannello
-    // chiaro "poco coperto" e "sereno" erano la stessa figura.
-    val nuvola = when (glifo) {
-        GlifoMeteo.TEMPORALE -> Color(0xFF8F8F8C)
-        GlifoMeteo.POCO -> lerp(Color(0xFFC2BEB4), SalaTokens.neutral100.copy(alpha = 0.75f), buio)
-        else -> lerp(Color(0xFFA7A49C), SalaTokens.neutral100.copy(alpha = 0.60f), buio)
-    }
-    val fiocco = lerp(Color(0xFF9FB3BD), SalaTokens.neutral100, buio)
-    Canvas(modifier = modifier.size(20.dp, 18.dp)) {
-        val u = size.width / 20f
-        fun x(v: Float) = v * u
-        // Il prototipo misura dal basso: qui si converte una volta sola.
-        fun yDalBasso(v: Float, altezza: Float) = size.height - (v + altezza) * u
+fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean = false) {
+    Canvas(modifier = modifier.size(22.dp)) { disegnaGlifo(glifo, notte) }
+}
 
-        if (glifo == GlifoMeteo.SOLE || glifo == GlifoMeteo.POCO) {
-            val d = if (glifo == GlifoMeteo.SOLE) 15f else 10f
-            val l = if (glifo == GlifoMeteo.SOLE) 2f else 0f
-            drawCircle(
-                color = SalaTokens.accent400,
-                radius = x(d) / 2f,
-                center = Offset(x(l) + x(d) / 2f, x(d) / 2f),
+/** I colori delle figurette: fissi, in tutti e due i temi. */
+private object ColoriGlifo {
+    val sole = Color(0xFFFFC83D)
+    val bordoSole = Color(0xFFF2A516)
+    val nuvola = Color(0xFFF6F7FA)
+    val bordoNuvola = Color(0xFF8C96A5)
+    val nuvolaCarica = Color(0xFFC3CAD4)
+    val bordoCarica = Color(0xFF737D8C)
+    val goccia = Color(0xFF4A93E0)
+    val luna = Color(0xFFA9BDF5)
+    val fiocco = Color(0xFF7FBDEB)
+}
+
+internal fun DrawScope.disegnaGlifo(glifo: GlifoMeteo, notte: Boolean) {
+    val u = size.minDimension / 24f
+    fun p(x: Float, y: Float) = Offset(x * u, y * u)
+
+    // Il sole a petali: otto tondi attorno a un disco col bordo appena piu' caldo.
+    fun sole(cx: Float, cy: Float, r: Float) {
+        for (k in 0 until 8) {
+            val a = k * PI.toFloat() / 4f
+            drawCircle(ColoriGlifo.sole, r * 0.36f * u, p(cx + cos(a) * r * 1.32f, cy + sin(a) * r * 1.32f))
+        }
+        drawCircle(ColoriGlifo.bordoSole, (r + 0.6f) * u, p(cx, cy))
+        drawCircle(ColoriGlifo.sole, r * u, p(cx, cy))
+    }
+
+    // La falce: un disco meno un disco spostato, come il terminatore.
+    fun luna(cx: Float, cy: Float, r: Float) {
+        val disco = Path().apply { addOval(Rect(p(cx - r, cy - r), p(cx + r, cy + r))) }
+        val morso = Path().apply {
+            addOval(Rect(p(cx - r + r * 0.62f, cy - r - r * 0.18f), p(cx + r + r * 0.62f, cy + r - r * 0.18f)))
+        }
+        drawPath(Path().apply { op(disco, morso, PathOperation.Difference) }, ColoriGlifo.luna)
+    }
+
+    // La nuvola: una base arrotondata e due gobbe, unite in una sagoma sola
+    // perche' il bordo giri attorno a tutto e non dentro.
+    fun nuvola(ox: Float, oy: Float, scala: Float, carica: Boolean) {
+        fun q(x: Float, y: Float) = p(ox + x * scala, oy + y * scala)
+        val base = Path().apply {
+            addRoundRect(RoundRect(Rect(q(3f, 11f), q(21f, 19f)), CornerRadius(4f * scala * u)))
+        }
+        val sinistra = Path().apply { addOval(Rect(q(4.5f, 7f), q(13.5f, 16f))) }
+        val destra = Path().apply { addOval(Rect(q(9f, 4f), q(20f, 15f))) }
+        val sagoma = Path().apply {
+            op(base, sinistra, PathOperation.Union)
+            op(this, destra, PathOperation.Union)
+        }
+        drawPath(
+            sagoma,
+            if (carica) ColoriGlifo.bordoCarica else ColoriGlifo.bordoNuvola,
+            style = Stroke(width = 2.2f * u, join = StrokeJoin.Round),
+        )
+        drawPath(sagoma, if (carica) ColoriGlifo.nuvolaCarica else ColoriGlifo.nuvola)
+    }
+
+    // La goccia: un tondo con la punta in alto, che e' da dove viene.
+    fun goccia(x: Float, y: Float) {
+        drawCircle(ColoriGlifo.goccia, 1.3f * u, p(x, y))
+        drawPath(
+            Path().apply {
+                moveTo(x * u - 1.2f * u, y * u - 0.5f * u)
+                lineTo(x * u + 1.2f * u, y * u - 0.5f * u)
+                lineTo(x * u + 1.0f * u, y * u - 3.2f * u)
+                close()
+            },
+            ColoriGlifo.goccia,
+        )
+    }
+
+    // Il fiocco: tre stanghette incrociate, sei punte.
+    fun fiocco(x: Float, y: Float, r: Float) {
+        for (k in 0 until 3) {
+            val a = k * PI.toFloat() / 3f
+            drawLine(
+                ColoriGlifo.fiocco,
+                p(x - cos(a) * r, y - sin(a) * r),
+                p(x + cos(a) * r, y + sin(a) * r),
+                strokeWidth = 0.9f * u,
+                cap = StrokeCap.Round,
             )
         }
-        if (glifo != GlifoMeteo.SOLE) {
-            drawRoundRect(
-                color = nuvola,
-                topLeft = Offset(x(1f), yDalBasso(4f, 9f)),
-                size = Size(x(18f), x(9f)),
-                cornerRadius = CornerRadius(x(4.5f)),
-            )
-            drawOval(
-                color = nuvola,
-                topLeft = Offset(x(7f), yDalBasso(7f, 8f)),
-                size = Size(x(11f), x(8f)),
-            )
+    }
+
+    when (glifo) {
+        GlifoMeteo.SOLE -> if (notte) luna(12f, 12f, 8f) else sole(12f, 12f, 6f)
+        GlifoMeteo.POCO -> {
+            if (notte) luna(9f, 8f, 5.5f) else sole(9f, 8f, 4.6f)
+            nuvola(3.5f, 4f, 0.85f, carica = false)
         }
-        when (glifo) {
-            GlifoMeteo.PIOGGIA, GlifoMeteo.TEMPORALE -> {
-                listOf(4f, 12f).forEach { gx ->
-                    drawRoundRect(
-                        color = SalaTokens.acqua,
-                        topLeft = Offset(x(gx), yDalBasso(0f, 5f)),
-                        size = Size(x(2.5f), x(5f)),
-                        cornerRadius = CornerRadius(x(1.25f)),
-                    )
-                }
-                if (glifo == GlifoMeteo.TEMPORALE) {
-                    rotate(degrees = 18f, pivot = Offset(x(9.5f), yDalBasso(0f, 8f) + x(4f))) {
-                        drawRoundRect(
-                            color = SalaTokens.accent400,
-                            topLeft = Offset(x(8f), yDalBasso(0f, 8f)),
-                            size = Size(x(3f), x(8f)),
-                            cornerRadius = CornerRadius(x(1f)),
-                        )
-                    }
-                }
+        GlifoMeteo.NUVOLE -> {
+            nuvola(-1f, -1.5f, 0.7f, carica = true)
+            nuvola(2f, 3.5f, 0.9f, carica = false)
+        }
+        GlifoMeteo.PIOGGIA -> {
+            nuvola(0f, -3.5f, 1f, carica = true)
+            goccia(7f, 20f); goccia(12f, 21.5f); goccia(17f, 20f)
+        }
+        GlifoMeteo.TEMPORALE -> {
+            nuvola(0f, -4f, 1f, carica = true)
+            val fulmine = Path().apply {
+                moveTo(11f * u, 12f * u)
+                lineTo(8f * u, 18f * u)
+                lineTo(11f * u, 18f * u)
+                lineTo(9.5f * u, 23f * u)
+                lineTo(15f * u, 16f * u)
+                lineTo(12f * u, 16f * u)
+                lineTo(13.5f * u, 12f * u)
+                close()
             }
-            GlifoMeteo.NEVE -> {
-                // Cinque fiocchi tondi su due file: la forma, prima della tinta.
-                listOf(
-                    3f to 0f, 9f to 0f, 15f to 0f,
-                    6f to 5f, 12f to 5f,
-                ).forEach { (fx, fy) ->
-                    drawCircle(color = fiocco, radius = x(1.5f), center = Offset(x(fx), yDalBasso(fy, 3f)))
-                }
-            }
-            else -> Unit
+            drawPath(fulmine, ColoriGlifo.sole)
+            drawPath(fulmine, ColoriGlifo.bordoSole, style = Stroke(width = 0.7f * u, join = StrokeJoin.Round))
+        }
+        GlifoMeteo.NEVE -> {
+            nuvola(0f, -3.5f, 1f, carica = false)
+            fiocco(7f, 20f, 1.8f); fiocco(12f, 21.8f, 1.8f); fiocco(17f, 20f, 1.8f)
         }
     }
 }

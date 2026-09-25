@@ -6138,3 +6138,22 @@ scorrimento annidato.
 lo scrive l'OMS: la forma della giornata la dice la barra, "a che ora scende
 sotto il 3" solo i numeri.
 
+
+---
+
+## 35. Le figurette del tempo, a colori
+
+Il sole era un disco arancione, le nuvole due ovali grigi tinti col tema: si
+capiva che i giorni erano diversi, non che tempo facevano. `IconaMeteo` (in
+`SalaChrome.kt`, usata dalla striscia dei giorni di Sala I e dall'elenco delle
+localita') ora disegna **a colori**: sole giallo a petali, nuvole bianche col
+bordo ardesia, nuvole cariche grigie, gocce blu, fulmine giallo, fiocchi
+azzurri, e **di notte la luna** al posto del sole (le localita' la chiedono con
+`isDay` del dato corrente).
+
+Il modello e' lo stile di Google Meteo, ma **le icone sono nostre**: quelle di
+Google sono sue e senza una licenza che ne permetta il riuso. Non seguono il
+tema, come la luna di Sala IV; il bordo delle nuvole e' li' perche' una nuvola
+bianca su un pannello chiaro non sparisca. `GlifoRenderTest` le disegna tutte,
+di giorno e di notte, su un fondo chiaro e uno scuro (`glifi-meteo.png` nella
+CI). Le icone dei widget sono un disegno a parte e non sono cambiate.
