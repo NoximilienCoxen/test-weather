@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.prefs
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -15,7 +16,8 @@ import io.github.noximiliencoxen.caelum.data.hasFiniteCoordinates
 import io.github.noximiliencoxen.caelum.data.key
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.IOException
@@ -136,6 +138,70 @@ data class Settings(
 private val Context.settingsDataStore: DataStore<Preferences> by
     preferencesDataStore(name = "impostazioni")
 
+/**
+ * Le impostazioni che **restano sul telefono**: fuori dal backup di Android.
+ *
+ * `backup_rules.xml` e `data_extraction_rules.xml` includono solo
+ * `impostazioni.preferences_pb`, e con un `<include>` esplicito tutto il resto
+ * e' escluso da se': questo file non viaggia senza bisogno di dirlo.
+ *
+ * **Ci sta il tema, e perche'.** Stava con le altre, e il backup lo riportava
+ * indietro: reinstallando l'app da zero Android rimetteva il file prima del
+ * primo avvio, e chi una volta aveva scelto "Scuro" ritrovava "Scuro" su
+ * un'installazione nuova, invece di "Segui il cielo". Citta', unita' e
+ * preferiti su un telefono nuovo si vogliono ritrovare; il tema e' una scelta
+ * di quel telefono.
+ */
+private val Context.localDataStore: DataStore<Preferences> by
+    preferencesDataStore(
+        name = "impostazioni_locali",
+        produceMigrations = { context -> listOf(TemaDalleImpostazioni(context)) },
+    )
+
+/**
+ * Porta il tema dal file delle impostazioni a quello locale, **una volta**.
+ *
+ * Solo su un aggiornamento: li' il tema scritto nel vecchio file e' la scelta
+ * di chi usa l'app, e perderla senza motivo sarebbe un difetto nuovo. Su
+ * un'installazione nuova invece quel valore puo' venire solo dal backup - ed e'
+ * esattamente il valore da non riportare. Le due si distinguono dalle date del
+ * pacchetto: su un'installazione nuova, ripristino compreso, la prima
+ * installazione e l'ultimo aggiornamento coincidono.
+ *
+ * In tutti e due i casi la chiave vecchia si toglie, cosi' dal prossimo backup
+ * il tema non viaggia piu'.
+ */
+private class TemaDalleImpostazioni(private val context: Context) : DataMigration<Preferences> {
+    override suspend fun shouldMigrate(currentData: Preferences): Boolean =
+        currentData[KEY_TEMA_MIGRATO] != true
+
+    override suspend fun migrate(currentData: Preferences): Preferences {
+        val vecchio = runCatching { context.settingsDataStore.data.first()[KEY_CARD_THEME_VECCHIO] }.getOrNull()
+        return currentData.toMutablePreferences().apply {
+            if (vecchio != null && aggiornamento(context)) this[KEY_CARD_THEME] = vecchio
+            this[KEY_TEMA_MIGRATO] = true
+        }
+    }
+
+    override suspend fun cleanUp() {
+        runCatching { context.settingsDataStore.edit { it.remove(KEY_CARD_THEME_VECCHIO) } }
+    }
+}
+
+/** Vero se questa installazione e' l'aggiornamento di una precedente. */
+private fun aggiornamento(context: Context): Boolean = runCatching {
+    @Suppress("DEPRECATION")
+    val info = context.packageManager.getPackageInfo(context.packageName, 0)
+    info.lastUpdateTime != info.firstInstallTime
+}.getOrDefault(false)
+
+/** Nel file delle impostazioni, dove stava prima: ormai si legge solo per portarlo via. */
+private val KEY_CARD_THEME_VECCHIO = stringPreferencesKey("sala_carta")
+
+/** Nel file locale: lo stesso nome, in un altro file. */
+private val KEY_CARD_THEME = stringPreferencesKey("sala_carta")
+private val KEY_TEMA_MIGRATO = booleanPreferencesKey("tema_migrato")
+
 private val favoritesJson = Json { ignoreUnknownKeys = true }
 
 class SettingsPrefs(private val context: Context) {
@@ -158,9 +224,15 @@ class SettingsPrefs(private val context: Context) {
      * programmazione - viene rilanciato: quello non e' un file rovinato, e'
      * un difetto, e coprirlo con i valori predefiniti lo renderebbe invisibile.
      */
-    val settings: Flow<Settings> = context.settingsDataStore.data.catch { cause ->
-        if (cause is IOException) emit(emptyPreferences()) else throw cause
-    }.map { prefs ->
+    val settings: Flow<Settings> = combine(
+        context.settingsDataStore.data.catch { cause ->
+            if (cause is IOException) emit(emptyPreferences()) else throw cause
+        },
+        // Lo stesso ripiego, per lo stesso motivo: vedi sopra.
+        context.localDataStore.data.catch { cause ->
+            if (cause is IOException) emit(emptyPreferences()) else throw cause
+        },
+    ) { prefs, locali ->
         val latitude = prefs[KEY_LAT]
         val longitude = prefs[KEY_LON]
         val name = prefs[KEY_NAME]
@@ -195,7 +267,7 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> WeatherModel.entries.firstOrNull { it.name == saved } }
                 ?: WeatherModel.AUTO,
             favorites = decodeFavorites(prefs[KEY_FAVORITES]),
-            cardTheme = prefs[KEY_CARD_THEME]
+            cardTheme = locali[KEY_CARD_THEME]
                 ?.let { saved -> CardTheme.entries.firstOrNull { it.name == saved } }
                 ?: CardTheme.AUTO,
             windUnit = prefs[KEY_WIND_UNIT]
@@ -253,7 +325,7 @@ class SettingsPrefs(private val context: Context) {
     // previsione senza dirglielo.
 
     suspend fun setCardTheme(theme: CardTheme) {
-        context.settingsDataStore.edit { it[KEY_CARD_THEME] = theme.name }
+        context.localDataStore.edit { it[KEY_CARD_THEME] = theme.name }
     }
 
     suspend fun setWindUnit(unit: SalaWindUnit) {
@@ -328,7 +400,6 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WELCOMED = booleanPreferencesKey("benvenuto_fatto")
         val KEY_MODEL = stringPreferencesKey("modello")
         val KEY_FAVORITES = stringPreferencesKey("preferiti")
-        val KEY_CARD_THEME = stringPreferencesKey("sala_carta")
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")

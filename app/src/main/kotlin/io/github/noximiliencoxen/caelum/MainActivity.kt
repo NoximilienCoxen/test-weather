@@ -196,6 +196,7 @@ class MainActivity : ComponentActivity() {
                 "sezione=${intent.getIntExtra(EXTRA_SECTION, -1)} " +
                 "meteo=${intent.getIntExtra(EXTRA_WEATHER, -1)} " +
                 "nuvolosita=${intent.getIntExtra(EXTRA_CLOUDS, -1)} " +
+                "polline=${intent.getIntExtra(EXTRA_POLLINE, -1)} " +
                 "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)} " +
                 // Ci sta **apposta**: e' l'unico modo di sapere, dal logcat che
                 // la cattura salva fra gli artefatti, se un avvio ha davvero
@@ -229,6 +230,7 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
+        intent.getIntExtra(EXTRA_POLLINE, -1).takeIf { it >= 0 }?.let(viewModel::forcePolline)
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
@@ -270,6 +272,9 @@ class MainActivity : ComponentActivity() {
 
         /** La nuvolosita' oraria in percentuale: e' lei a decidere il cielo. */
         const val EXTRA_CLOUDS = "nuvolosita"
+
+        /** Il livello del polline, da 0 a 4, per tre giorni e tutte le famiglie. */
+        const val EXTRA_POLLINE = "polline"
 
         /**
          * Apre il dettaglio di un giorno. Serve perche' col dito si arriva

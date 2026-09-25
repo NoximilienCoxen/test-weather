@@ -29,6 +29,7 @@ import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.ui.motion.findLifecycleOwner
 import io.github.noximiliencoxen.caelum.ui.sala.SalaShell
 import io.github.noximiliencoxen.caelum.ui.motion.sistemaSenzaAnimazioni
+import io.github.noximiliencoxen.caelum.ui.scene.Scena
 import io.github.noximiliencoxen.caelum.ui.scene.VeloDAvvio
 import io.github.noximiliencoxen.caelum.ui.scene.notteA
 import io.github.noximiliencoxen.caelum.ui.scene.scegliScena
@@ -98,7 +99,8 @@ fun MeteoApp(viewModel: WeatherViewModel) {
     }
 
     // Una scena a caso per tutta la sessione, di giorno o di notte secondo
-    // l'ora: la stessa nel velo d'apertura e nel benvenuto.
+    // l'ora: la stessa nel velo d'apertura, nel benvenuto e nella tinta del
+    // cielo di Sala.
     val scenaDAvvio = remember { scegliScena(LocalDateTime.now()) }
     val notteDAvvio = remember { notteA(LocalDateTime.now()) }
     val movimentoScene = !(state.animazioniRidotte || sistemaSenzaAnimazioni())
@@ -169,6 +171,9 @@ fun MeteoApp(viewModel: WeatherViewModel) {
                     sky = sky,
                     viewModel = viewModel,
                     widthPx = widthPx,
+                    // Durante la cattura sempre la stessa, o gli scatti di due
+                    // giri non si confronterebbero piu'.
+                    scenaDAvvio = if (state.animazioniIstantanee) Scena.MARE else scenaDAvvio,
                 )
             }
 

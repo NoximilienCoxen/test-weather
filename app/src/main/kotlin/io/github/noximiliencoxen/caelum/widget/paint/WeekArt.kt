@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.DayForecast
-import io.github.noximiliencoxen.caelum.data.Wmo
 import kotlin.math.roundToInt
 
 /**
@@ -100,11 +99,7 @@ private fun DrawScope.columns(
         val today = i == 0
         textCentered(day.label, cx, area.top, label, if (today) ink.primary else ink.secondary)
 
-        dayGlyph(
-            Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize),
-            Wmo.family(day.weatherCode),
-            ink,
-        )
+        dayGlyph(Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize), day)
 
         textCentered(day.tempMax?.roundToInt()?.let { "$it°" } ?: "--", cx, highTop, high, ink.primary)
         textCentered(day.tempMin?.roundToInt()?.let { "$it°" } ?: "--", cx, lowTop, low, ink.secondary)

@@ -77,10 +77,10 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
  * riusa invece di inventare una seconda scala, cosi' la figuretta di un giorno
  * e il fondo di quell'ora non possono raccontare due nuvolosita' diverse.
  */
-private fun DayForecast.nuvolositaStimata(): Int =
+internal fun DayForecast.nuvolositaStimata(): Int =
     (Wmo.cloudiness(weatherCode) * 100f).toInt()
 
-private fun DayOfWeek.italiano(): String = when (this) {
+internal fun DayOfWeek.italiano(): String = when (this) {
     DayOfWeek.MONDAY -> "lunedì"
     DayOfWeek.TUESDAY -> "martedì"
     DayOfWeek.WEDNESDAY -> "mercoledì"

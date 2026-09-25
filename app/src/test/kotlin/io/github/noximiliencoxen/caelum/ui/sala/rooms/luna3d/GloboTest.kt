@@ -62,4 +62,29 @@ class GloboTest {
         assertTrue("mancano i mari", scuri > globo.vertici / 50)
         assertTrue("manca il resto", chiari > scuri)
     }
+
+    @Test
+    fun `i crateri piccoli si vedono sulla carta`() {
+        val globo = Globo()
+        val larga = 1024
+        val alta = 512
+        val albedo = globo.albedoCarta(larga, alta).albedo
+        // Lungo una riga all'equatore, fra un punto e il successivo l'albedo
+        // deve cambiare di colpo da qualche parte: un orlo, una conca. Una
+        // luna tutta sfumature non lo farebbe mai.
+        val riga = alta / 2
+        val salti = (1 until larga).count { j -> kotlin.math.abs(albedo[riga * larga + j] - albedo[riga * larga + j - 1]) > 0.02f }
+        assertTrue("nessun dettaglio fine: $salti", salti > 10)
+        assertTrue("la carta si rifa'", globo.albedoCarta(larga, alta) === globo.albedoCarta(larga, alta))
+    }
+
+    /** Una carta per ogni misura chiesta, e i valori dentro i limiti dell'albedo. */
+    @Test
+    fun `la carta ha la misura chiesta`() {
+        val globo = Globo(paralleli = 20, meridiani = 40)
+        val albedo = globo.albedoCarta(320, 160).albedo
+        assertEquals(320 * 160, albedo.size)
+        assertTrue(albedo.all { it in 0.25f..1.05f })
+        assertEquals(64 * 32, globo.albedoCarta(64, 32).albedo.size)
+    }
 }

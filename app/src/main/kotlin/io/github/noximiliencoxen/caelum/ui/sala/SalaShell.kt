@@ -62,11 +62,19 @@ import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaPioggiaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaSettimanaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaUvScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaVentoScreen
+import io.github.noximiliencoxen.caelum.ui.scene.Scena as ScenaDAvvio
+import io.github.noximiliencoxen.caelum.ui.scene.tingiCielo
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.flow.collectLatest
+import kotlin.math.abs
 
 /**
  * Caelum: sette sale in un carosello verticale, **davanti a un cielo solo**.
@@ -98,6 +106,8 @@ fun SalaShell(
     viewModel: WeatherViewModel,
     widthPx: Float,
     modifier: Modifier = Modifier,
+    /** La scena del velo d'apertura: il cielo ne prende la tinta. Vedi [tingiCielo]. */
+    scenaDAvvio: ScenaDAvvio? = null,
 ) {
     val rooms = SalaRoom.entries
     val scope = rememberCoroutineScope()
@@ -136,6 +146,34 @@ fun SalaShell(
     }
 
     val posizione = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
+
+    // **Il carosello non resta mai a meta' fra due sale.**
+    //
+    // Succedeva, ogni tanto: una scheda sopra e l'altra sotto, ferme. Il
+    // pannello scorre dentro il carosello, e quando il dito lo porta in fondo
+    // il resto del gesto passa al carosello con lo scorrimento annidato -
+    // che lo sposta **senza** un gesto suo. Se il dito si alza in quel momento
+    // nel modo sbagliato - senza velocita', o con la velocita' presa tutta dal
+    // pannello - nessuno chiede al carosello di posarsi.
+    //
+    // La rete e' semplice: dito alzato, carosello fermo, pagina non posata,
+    // per piu' di un istante -> si va alla sala piu' vicina. Il dito si segue
+    // a parte (`ditoSulCarosello`, sotto) perche' `isScrollInProgress` non si
+    // accende per lo scorrimento annidato: senza, la rete tirerebbe via la
+    // pagina da sotto un dito ancora appoggiato.
+    var ditoSulCarosello by remember { mutableStateOf(false) }
+    LaunchedEffect(pagerState) {
+        snapshotFlow {
+            !ditoSulCarosello && !pagerState.isScrollInProgress &&
+                abs(pagerState.currentPageOffsetFraction) > 0.001f
+        }.collectLatest { sospeso ->
+            if (!sospeso) return@collectLatest
+            delay(160)
+            // Fuori da `collectLatest`: l'animazione stessa accende
+            // `isScrollInProgress`, e quel cambio la cancellerebbe al primo passo.
+            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage) }
+        }
+    }
 
     // Andare a una sala si scrive una volta sola: lo chiedono la colonna sul
     // fianco, i sette trattini, il collegamento di Sala I e i sei riquadri di
@@ -223,7 +261,16 @@ fun SalaShell(
     // come sta quasi sempre: li' una `List<Color>` nuova a ogni ricomposizione
     // bastava a impedire a `SalaCielo` di essere saltata, perche' un parametro
     // diverso per riferimento e' un parametro cambiato.
-    val stops = remember(fase, chiusura, scena.neve) { cieloStops(fase, chiusura, scena.neve) }
+    //
+    // **La tinta della scena d'apertura** passa sopra, e sposta solo il colore:
+    // la luce di ogni fermata resta quella della tabella, e con lei i conti del
+    // contrasto (vedi `tingiCielo`). Sotto un fronte cala fino a sparire: un
+    // cielo di temporale e' plumbeo qualunque quadretto si sia visto aprendo.
+    val stops = remember(fase, chiusura, scena.neve, scena.notte, scena.tempesta, scenaDAvvio) {
+        val base = cieloStops(fase, chiusura, scena.neve)
+        if (scenaDAvvio == null) base
+        else tingiCielo(base, scenaDAvvio, scena.notte, forza = FORZA_TINTA * (1f - scena.tempesta))
+    }
 
     // ── Il tema, e il solo salto che resta ───────────────────────────────────
     //
@@ -346,6 +393,7 @@ fun SalaShell(
                 // deve: chi ha chiesto meno movimento non si aspetta un sensore
                 // acceso, e la cattura vuole scatti ripetibili.
                 interattivo = !ferme,
+                pollineOggi = state.pollineMostrato.firstOrNull()?.massimo ?: 0,
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
@@ -399,7 +447,26 @@ fun SalaShell(
                 // (scorrimento annidato di Compose) e poi passa alla sala.
                 VerticalPager(
                     state = pagerState,
-                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = riservaColonna),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(end = riservaColonna)
+                        // Solo guarda, nel primo passaggio e senza consumare
+                        // niente: serve alla rete qui sopra per sapere se c'e'
+                        // un dito appoggiato.
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                                ditoSulCarosello = true
+                                try {
+                                    do {
+                                        val evento = awaitPointerEvent(PointerEventPass.Initial)
+                                    } while (evento.changes.any { it.pressed })
+                                } finally {
+                                    ditoSulCarosello = false
+                                }
+                            }
+                        },
                     // Un dodicesimo di pagina: il gesto resta deliberato - un
                     // tocco che trema non cambia sala - ma basta un colpetto,
                     // non una corsa per tutto lo schermo. La molla e' rigida e
@@ -696,3 +763,10 @@ private fun List<WeatherAlert>.attiveA(momento: LocalDateTime?): List<WeatherAle
         dopoInizio && primaDellaFine
     }.sortedByDescending { it.level.weight }
 }
+
+/**
+ * Quanto del colore della scena d'apertura entra nel cielo: meta', su una
+ * fermata neutra. Su una gia' colorata - l'azzurro del sereno, l'arancione del
+ * tramonto - `tingiCielo` ne mette di meno da se'.
+ */
+private const val FORZA_TINTA = 0.5f

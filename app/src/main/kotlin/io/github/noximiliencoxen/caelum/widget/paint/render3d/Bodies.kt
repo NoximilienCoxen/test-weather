@@ -12,26 +12,15 @@ import io.github.noximiliencoxen.caelum.data.MoonPhase
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.hypot
-import kotlin.math.sin
 
 /**
- * I corpi tondi della scultura - sole, luna, masse della nuvola - visti dalla
- * stessa camera della cifra e illuminati dalla stessa luce.
+ * La luna del widget Luna, e il bagliore che le sta dietro.
  *
- * Una sfera resta identica a se stessa da qualunque angolo la si guardi: se
- * ruotando cambiasse solo lei, non si vedrebbe muovere nulla. Quello che si
- * muove sono la sua posizione nello spazio, i raggi che le stanno attorno e i
- * segni sulla superficie. Sono questi a raccontare la rotazione, non il disco.
+ * **Qui c'erano anche il sole a sfera, la sua corona di raggi e le masse della
+ * nuvola**, con la luce di scena che li illuminava: erano la scultura del
+ * widget del tempo, sostituita dalle figurette a colori dell'app
+ * (`disegnaGlifo`). La luna resta un corpo: e' la fase, non un'icona.
  */
-
-/** Dove sta la luce sullo schermo, per spostare il centro del gradiente. */
-private val LightOnScreen: Offset = run {
-    val l = Light.Standard
-    val len = hypot(l.x, l.y).takeIf { it > 1e-4f } ?: 1f
-    Offset(l.x / len, l.y / len)
-}
 
 /**
  * Un bagliore proprio: un alone che sfuma a trasparente, dietro al corpo.
@@ -66,50 +55,6 @@ fun DrawScope.glow(
         radius = r * spread,
         center = centre,
     )
-}
-
-/**
- * Una sfera opaca: un gradiente radiale col centro spostato verso la luce.
- *
- * @param wide e [tall] schiacciano il disco attorno al proprio centro, sulla
- *   tela. Servono a poche cose molto piatte - la tesa di un cappello - e non
- *   pretendono di essere un ellissoide: schiacciano l'immagine, non il corpo.
- *   A uno e uno non costano niente e non cambiano nulla.
- */
-fun DrawScope.sphere(
-    camera: Camera,
-    x: Float,
-    y: Float,
-    z: Float,
-    radius: Float,
-    light: Color,
-    dark: Color,
-    alpha: Float = 1f,
-    wide: Float = 1f,
-    tall: Float = 1f,
-) {
-    if (alpha <= 0.003f) return
-    camera.place(x, y, z)
-    val r = radius * camera.scale
-    if (r <= 0.5f) return
-    val centre = Offset(camera.sx, camera.sy)
-
-    fun disc() = drawCircle(
-        brush = Brush.radialGradient(
-            colors = listOf(light, dark),
-            center = centre + LightOnScreen * (r * 0.44f),
-            radius = r * 1.75f,
-        ),
-        radius = r,
-        center = centre,
-        alpha = alpha,
-    )
-
-    if (wide == 1f && tall == 1f) {
-        disc()
-    } else {
-        withTransform({ scale(wide, tall, centre) }) { disc() }
-    }
 }
 
 /**
@@ -328,68 +273,3 @@ private const val UNLIT_DISC = 0.24f
  */
 private const val TERMINATOR_CONTRAST = 0.45f
 
-private const val DEG = (PI / 180.0).toFloat()
-
-/**
- * La corona di raggi del sole, in un piano solidale col corpo.
- *
- * E' il pezzo che rende visibile la rotazione: ferma la corona e' un cerchio,
- * girata diventa un'ellisse sempre piu' stretta, e i raggi laterali si
- * accorciano fino a sparire. Senza, il sole sarebbe una palla immobile.
- *
- * Va disegnata in due passate, [far] prima e dopo la sfera: girata di parecchio
- * la corona rientra nella sagoma del disco, e i raggi che stanno dietro devono
- * sparirci sotto invece di attraversarlo.
- *
- * Ogni raggio e' un triangolo sottile, base larga vicino al disco e punta
- * stretta in fondo alla corsa - una lama, non un trattino: e' quello che lo
- * fa leggere come un raggio disegnato apposta invece che come una riga.
- */
-fun DrawScope.sunRays(
-    camera: Camera,
-    x: Float,
-    y: Float,
-    z: Float,
-    radius: Float,
-    color: Color,
-    alpha: Float,
-    far: Boolean,
-    count: Int = 12,
-    /** Di quanto e' girata la corona attorno al proprio centro, in gradi. */
-    turnDeg: Float = 0f,
-    /** Da 0 a 1: quanto i raggi sono allungati rispetto al minimo. */
-    reach: Float = 1f,
-) {
-    if (alpha <= 0.003f) return
-    val turn = turnDeg * DEG
-    val tip = 1.52f + 0.20f * reach
-    for (i in 0 until count) {
-        val angle = turn + i * (PI.toFloat() * 2f / count)
-        val dx = cos(angle)
-        val dy = sin(angle)
-
-        camera.place(x + dx * radius * 1.30f, y + dy * radius * 1.30f, z)
-        if ((camera.vz > 0f) != far) continue
-        val from = Offset(camera.sx, camera.sy)
-        val nearScale = camera.scale
-        camera.place(x + dx * radius * tip, y + dy * radius * tip, z)
-        val to = Offset(camera.sx, camera.sy)
-
-        // La larghezza sta di traverso alla corsa del raggio, non allo
-        // schermo: senza ruoterebbe la lama invece del raggio.
-        val runX = to.x - from.x
-        val runY = to.y - from.y
-        val run = hypot(runX, runY).takeIf { it > 1e-3f } ?: 1f
-        val perpX = -runY / run
-        val perpY = runX / run
-        val halfWidth = (radius * 0.11f * nearScale).coerceAtLeast(1.2f)
-
-        val blade = Path().apply {
-            moveTo(from.x + perpX * halfWidth, from.y + perpY * halfWidth)
-            lineTo(from.x - perpX * halfWidth, from.y - perpY * halfWidth)
-            lineTo(to.x, to.y)
-            close()
-        }
-        drawPath(path = blade, color = color, alpha = alpha)
-    }
-}

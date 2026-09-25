@@ -31,6 +31,12 @@ private data class AirQualityHourlyDto(
     val time: List<String>? = null,
     @SerialName("european_aqi") val europeanAqi: List<Double?>? = null,
     @SerialName("us_aqi") val usAqi: List<Double?>? = null,
+    @SerialName("alder_pollen") val ontano: List<Double?>? = null,
+    @SerialName("birch_pollen") val betulla: List<Double?>? = null,
+    @SerialName("olive_pollen") val olivo: List<Double?>? = null,
+    @SerialName("grass_pollen") val graminacee: List<Double?>? = null,
+    @SerialName("mugwort_pollen") val artemisia: List<Double?>? = null,
+    @SerialName("ragweed_pollen") val ambrosia: List<Double?>? = null,
 )
 
 @Serializable
@@ -126,6 +132,12 @@ data class AirQuality(
      * disegnare una riga piatta.
      */
     val oreOggi: List<OraAria> = emptyList(),
+    /**
+     * Il polline di oggi e dei due giorni dopo. Vuota fuori dall'Europa, dove
+     * il modello non arriva, e quando l'API non lo manda: la sala allora la
+     * sezione non la mostra, invece di mostrare tre "assente" che non sono veri.
+     */
+    val polline: List<GiornoPolline> = emptyList(),
 ) {
     val band: AirBand? get() = scale.band(index)
 
@@ -197,7 +209,9 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 append("&timezone=auto")
                 append("&current=").append(CURRENT_VARS)
                 append("&hourly=").append(HOURLY_VARS)
-                append("&forecast_days=2")
+                // Tre giorni e non due: il polline si guarda anche per
+                // dopodomani. Le ore dell'aria la sala le filtra gia' per giorno.
+                append("&forecast_days=3")
             }
             val dto = json.decodeFromString<AirQualityDto>(httpGet(url, fonte = "la qualità dell'aria"))
             if (dto.error == true) error(dto.reason ?: "Open-Meteo ha risposto con un errore")
@@ -218,6 +232,7 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
                 nitrogenDioxide = dto.current?.nitrogenDioxide,
                 ozone = dto.current?.ozone,
                 oreOggi = oreDi(dto, scale),
+                polline = pollineDi(dto),
             )
         }
     }
@@ -245,9 +260,24 @@ class AirQualityRepository(private val place: Place = Place.FORLI) {
         }
     }
 
+    /** Il polline dalle stesse ore: nessuna richiesta in piu'. */
+    private fun pollineDi(dto: AirQualityDto): List<GiornoPolline> {
+        val orari = dto.hourly ?: return emptyList()
+        val tempi = orari.time ?: return emptyList()
+        val valori = mapOf(
+            SpeciePolline.ONTANO to orari.ontano,
+            SpeciePolline.BETULLA to orari.betulla,
+            SpeciePolline.OLIVO to orari.olivo,
+            SpeciePolline.GRAMINACEE to orari.graminacee,
+            SpeciePolline.ARTEMISIA to orari.artemisia,
+            SpeciePolline.AMBROSIA to orari.ambrosia,
+        ).mapNotNull { (specie, serie) -> serie?.let { specie to it } }.toMap()
+        return Polline.giorni(tempi, valori)
+    }
+
     companion object {
         const val ENDPOINT = "https://air-quality-api.open-meteo.com/v1/air-quality"
         const val CURRENT_VARS = "european_aqi,us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone"
-        const val HOURLY_VARS = "european_aqi,us_aqi"
+        val HOURLY_VARS = "european_aqi,us_aqi," + SpeciePolline.CAMPI
     }
 }

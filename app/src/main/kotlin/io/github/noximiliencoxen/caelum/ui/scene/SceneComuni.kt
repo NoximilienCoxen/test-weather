@@ -42,6 +42,12 @@ internal fun DrawScope.cielo(alto: Color, basso: Color, fino: Float = H) {
     if (fino < H) drawRect(basso, Offset(0f, fino - 1f), Size(W, H - fino + 1f))
 }
 
+/** Il cielo di una scena, con i colori di [cieloDi]. */
+internal fun DrawScope.cielo(scena: Scena, notte: Boolean, fino: Float = H) {
+    val (alto, basso) = cieloDi(scena, notte)
+    cielo(alto, basso, fino)
+}
+
 internal fun DrawScope.sole(centro: Offset, r: Float, colore: Color = Colori.sole, alone: Color = Colori.alone) {
     drawCircle(alone.copy(alpha = 0.35f), r * 1.7f, centro)
     drawCircle(alone.copy(alpha = 0.55f), r * 1.3f, centro)
@@ -146,13 +152,6 @@ internal fun DrawScope.profiloCollina(sinistra: Float, cima: Float, xCima: Float
     quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
     lineTo(W, H)
     close()
-}
-
-/** Solo il crinale, aperto: per le righe che seguono la collina. */
-internal fun DrawScope.crinale(sinistra: Float, cima: Float, xCima: Float, destra: Float): Path = Path().apply {
-    moveTo(0f, sinistra)
-    quadraticBezierTo(xCima * 0.5f, cima, xCima, cima)
-    quadraticBezierTo(xCima + (W - xCima) * 0.5f, cima, W, destra)
 }
 
 /** Una collina morbida fra due quote, piena fino in fondo. */

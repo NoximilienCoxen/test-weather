@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,19 +42,19 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -64,12 +63,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.noximiliencoxen.caelum.R
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.launch
 
@@ -324,7 +323,7 @@ fun PastigliaAccento(
  * poco coperto tingono la stessa carta e hanno due icone diverse; una pioggia e
  * una pioviggine hanno la stessa icona e non lo stesso cielo.
  */
-enum class GlifoMeteo { SOLE, POCO, NUVOLE, PIOGGIA, TEMPORALE, NEVE }
+enum class GlifoMeteo { SOLE, POCO, NUVOLE, NEBBIA, PIOGGIA, TEMPORALE, NEVE }
 
 /**
  * Quale figuretta per questo codice WMO e questa nuvolosita'.
@@ -342,92 +341,164 @@ fun glifoDi(weatherCode: Int?, cloudCover: Int?): GlifoMeteo {
         // riga sopra. Era irraggiungibile, non inutilizzata.
         weatherCode == 96 || weatherCode == 99 -> GlifoMeteo.TEMPORALE
         famiglia == Wmo.Family.PIOGGIA -> GlifoMeteo.PIOGGIA
-        famiglia == Wmo.Family.NEBBIA -> GlifoMeteo.NUVOLE
-        famiglia == Wmo.Family.NUVOLOSO -> if ((cloudCover ?: 60) < 62) GlifoMeteo.POCO else GlifoMeteo.NUVOLE
+        famiglia == Wmo.Family.NEBBIA -> GlifoMeteo.NEBBIA
+        // Senza nuvolosita' decide il codice: il 3 e' "coperto", e un sole che
+        // spunta da dietro la nuvola lo racconterebbe meglio di com'e'.
+        famiglia == Wmo.Family.NUVOLOSO ->
+            if ((cloudCover ?: if (weatherCode == 3) 100 else 60) < 62) GlifoMeteo.POCO else GlifoMeteo.NUVOLE
         else -> if ((cloudCover ?: 0) < 25) GlifoMeteo.SOLE else GlifoMeteo.POCO
     }
 }
 
 /**
- * La figuretta del tempo di un giorno: sole, sole con nuvola, nuvola, gocce,
- * fulmine, chicchi, fiocchi.
+ * La figuretta del tempo: sole, sole con nuvola, nuvole, pioggia, temporale,
+ * neve, e di notte la luna al posto del sole.
  *
- * **Era un pallino colorato**, e sette pallini di sette tinte non dicono che
- * tempo fa: dicono che i giorni sono diversi fra loro. Neve e grandine si
- * distinguono **per forma** oltre che per tinta - cinque fiocchi tondi su due
- * file contro due chicchi ovali - perche' a questa taglia il colore da solo non
- * basta.
+ * **A colori, e non piu' a macchie piatte.** Erano un disco arancione e due
+ * ovali grigi, tinti col tema: si capiva che i giorni erano diversi, non che
+ * tempo facevano. Adesso sono disegnate sul modello delle icone di Google Meteo
+ * - il sole giallo, le nuvole bianche col bordo, le gocce blu, il fulmine
+ * giallo, la luna azzurra - **ma sono nostre**: quelle di Google sono sue e non
+ * hanno una licenza che ne permetta il riuso. Forme e colori sono stati scelti
+ * qui, provati prima in uno schizzo su fondo chiaro e scuro.
+ *
+ * **Non seguono il tema**, come la luna di Sala IV: un sole e' giallo su
+ * qualunque pagina. Il bordo delle nuvole c'e' per questo - senza, una nuvola
+ * bianca su un pannello chiaro sparirebbe.
+ *
+ * Tutto e' misurato su un quadrato di ventiquattro unita', riscalato alla tela.
  */
 @Composable
-fun IconaMeteo(glifo: GlifoMeteo, palette: SalaPalette, modifier: Modifier = Modifier) {
-    val buio = palette.buio
-    // Le nuvole si scuriscono col tema chiaro: erano bianche, e su un pannello
-    // chiaro "poco coperto" e "sereno" erano la stessa figura.
-    val nuvola = when (glifo) {
-        GlifoMeteo.TEMPORALE -> Color(0xFF8F8F8C)
-        GlifoMeteo.POCO -> lerp(Color(0xFFC2BEB4), SalaTokens.neutral100.copy(alpha = 0.75f), buio)
-        else -> lerp(Color(0xFFA7A49C), SalaTokens.neutral100.copy(alpha = 0.60f), buio)
-    }
-    val fiocco = lerp(Color(0xFF9FB3BD), SalaTokens.neutral100, buio)
-    Canvas(modifier = modifier.size(20.dp, 18.dp)) {
-        val u = size.width / 20f
-        fun x(v: Float) = v * u
-        // Il prototipo misura dal basso: qui si converte una volta sola.
-        fun yDalBasso(v: Float, altezza: Float) = size.height - (v + altezza) * u
+fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean = false) {
+    Canvas(modifier = modifier.size(22.dp)) { disegnaGlifo(glifo, notte) }
+}
 
-        if (glifo == GlifoMeteo.SOLE || glifo == GlifoMeteo.POCO) {
-            val d = if (glifo == GlifoMeteo.SOLE) 15f else 10f
-            val l = if (glifo == GlifoMeteo.SOLE) 2f else 0f
-            drawCircle(
-                color = SalaTokens.accent400,
-                radius = x(d) / 2f,
-                center = Offset(x(l) + x(d) / 2f, x(d) / 2f),
+/** I colori delle figurette: fissi, in tutti e due i temi. */
+private object ColoriGlifo {
+    val sole = Color(0xFFFFC83D)
+    val bordoSole = Color(0xFFF2A516)
+    val nuvola = Color(0xFFF6F7FA)
+    val bordoNuvola = Color(0xFF8C96A5)
+    val nuvolaCarica = Color(0xFFC3CAD4)
+    val bordoCarica = Color(0xFF737D8C)
+    val goccia = Color(0xFF4A93E0)
+    val luna = Color(0xFFA9BDF5)
+    val fiocco = Color(0xFF7FBDEB)
+}
+
+internal fun DrawScope.disegnaGlifo(glifo: GlifoMeteo, notte: Boolean) {
+    val u = size.minDimension / 24f
+    // Centrata anche su una tela non quadrata: i widget ne danno di ogni forma.
+    val ox = (size.width - 24f * u) / 2f
+    val oy = (size.height - 24f * u) / 2f
+    fun p(x: Float, y: Float) = Offset(ox + x * u, oy + y * u)
+
+    // Il sole a petali: otto tondi attorno a un disco col bordo appena piu' caldo.
+    fun sole(cx: Float, cy: Float, r: Float) {
+        for (k in 0 until 8) {
+            val a = k * PI.toFloat() / 4f
+            drawCircle(ColoriGlifo.sole, r * 0.36f * u, p(cx + cos(a) * r * 1.32f, cy + sin(a) * r * 1.32f))
+        }
+        drawCircle(ColoriGlifo.bordoSole, (r + 0.6f) * u, p(cx, cy))
+        drawCircle(ColoriGlifo.sole, r * u, p(cx, cy))
+    }
+
+    // La falce: un disco meno un disco spostato, come il terminatore.
+    fun luna(cx: Float, cy: Float, r: Float) {
+        val disco = Path().apply { addOval(Rect(p(cx - r, cy - r), p(cx + r, cy + r))) }
+        val morso = Path().apply {
+            addOval(Rect(p(cx - r + r * 0.62f, cy - r - r * 0.18f), p(cx + r + r * 0.62f, cy + r - r * 0.18f)))
+        }
+        drawPath(Path().apply { op(disco, morso, PathOperation.Difference) }, ColoriGlifo.luna)
+    }
+
+    // La nuvola: una base arrotondata e due gobbe, unite in una sagoma sola
+    // perche' il bordo giri attorno a tutto e non dentro.
+    fun nuvola(ox: Float, oy: Float, scala: Float, carica: Boolean) {
+        fun q(x: Float, y: Float) = p(ox + x * scala, oy + y * scala)
+        val base = Path().apply {
+            addRoundRect(RoundRect(Rect(q(3f, 11f), q(21f, 19f)), CornerRadius(4f * scala * u)))
+        }
+        val sinistra = Path().apply { addOval(Rect(q(4.5f, 7f), q(13.5f, 16f))) }
+        val destra = Path().apply { addOval(Rect(q(9f, 4f), q(20f, 15f))) }
+        val sagoma = Path().apply {
+            op(base, sinistra, PathOperation.Union)
+            op(this, destra, PathOperation.Union)
+        }
+        drawPath(
+            sagoma,
+            if (carica) ColoriGlifo.bordoCarica else ColoriGlifo.bordoNuvola,
+            style = Stroke(width = 2.2f * u, join = StrokeJoin.Round),
+        )
+        drawPath(sagoma, if (carica) ColoriGlifo.nuvolaCarica else ColoriGlifo.nuvola)
+    }
+
+    // La goccia: un tondo con la punta in alto, che e' da dove viene.
+    fun goccia(x: Float, y: Float) {
+        drawCircle(ColoriGlifo.goccia, 1.3f * u, p(x, y))
+        drawPath(
+            Path().apply {
+                p(x - 1.2f, y - 0.5f).let { moveTo(it.x, it.y) }
+                p(x + 1.2f, y - 0.5f).let { lineTo(it.x, it.y) }
+                p(x + 1.0f, y - 3.2f).let { lineTo(it.x, it.y) }
+                close()
+            },
+            ColoriGlifo.goccia,
+        )
+    }
+
+    // Il fiocco: tre stanghette incrociate, sei punte.
+    fun fiocco(x: Float, y: Float, r: Float) {
+        for (k in 0 until 3) {
+            val a = k * PI.toFloat() / 3f
+            drawLine(
+                ColoriGlifo.fiocco,
+                p(x - cos(a) * r, y - sin(a) * r),
+                p(x + cos(a) * r, y + sin(a) * r),
+                strokeWidth = 0.9f * u,
+                cap = StrokeCap.Round,
             )
         }
-        if (glifo != GlifoMeteo.SOLE) {
-            drawRoundRect(
-                color = nuvola,
-                topLeft = Offset(x(1f), yDalBasso(4f, 9f)),
-                size = Size(x(18f), x(9f)),
-                cornerRadius = CornerRadius(x(4.5f)),
-            )
-            drawOval(
-                color = nuvola,
-                topLeft = Offset(x(7f), yDalBasso(7f, 8f)),
-                size = Size(x(11f), x(8f)),
-            )
+    }
+
+    when (glifo) {
+        GlifoMeteo.SOLE -> if (notte) luna(12f, 12f, 8f) else sole(12f, 12f, 6f)
+        GlifoMeteo.POCO -> {
+            if (notte) luna(9f, 8f, 5.5f) else sole(9f, 8f, 4.6f)
+            nuvola(3.5f, 4f, 0.85f, carica = false)
         }
-        when (glifo) {
-            GlifoMeteo.PIOGGIA, GlifoMeteo.TEMPORALE -> {
-                listOf(4f, 12f).forEach { gx ->
-                    drawRoundRect(
-                        color = SalaTokens.acqua,
-                        topLeft = Offset(x(gx), yDalBasso(0f, 5f)),
-                        size = Size(x(2.5f), x(5f)),
-                        cornerRadius = CornerRadius(x(1.25f)),
-                    )
-                }
-                if (glifo == GlifoMeteo.TEMPORALE) {
-                    rotate(degrees = 18f, pivot = Offset(x(9.5f), yDalBasso(0f, 8f) + x(4f))) {
-                        drawRoundRect(
-                            color = SalaTokens.accent400,
-                            topLeft = Offset(x(8f), yDalBasso(0f, 8f)),
-                            size = Size(x(3f), x(8f)),
-                            cornerRadius = CornerRadius(x(1f)),
-                        )
-                    }
-                }
+        GlifoMeteo.NUVOLE -> {
+            nuvola(-1f, -1.5f, 0.7f, carica = true)
+            nuvola(2f, 3.5f, 0.9f, carica = false)
+        }
+        // La nebbia: una nuvola chiara che si sfalda in tre strisce.
+        GlifoMeteo.NEBBIA -> {
+            nuvola(0f, -4.5f, 1f, carica = false)
+            // Da sinistra a destra, sfalsate: (inizio, riga, fine).
+            listOf(Triple(4f, 17.5f, 16f), Triple(7f, 20f, 20f), Triple(5f, 22.5f, 14f)).forEach { (da, y, a) ->
+                drawLine(ColoriGlifo.bordoNuvola, p(da, y), p(a, y), strokeWidth = 1.6f * u, cap = StrokeCap.Round)
             }
-            GlifoMeteo.NEVE -> {
-                // Cinque fiocchi tondi su due file: la forma, prima della tinta.
-                listOf(
-                    3f to 0f, 9f to 0f, 15f to 0f,
-                    6f to 5f, 12f to 5f,
-                ).forEach { (fx, fy) ->
-                    drawCircle(color = fiocco, radius = x(1.5f), center = Offset(x(fx), yDalBasso(fy, 3f)))
+        }
+        GlifoMeteo.PIOGGIA -> {
+            nuvola(0f, -3.5f, 1f, carica = true)
+            goccia(7f, 20f); goccia(12f, 21.5f); goccia(17f, 20f)
+        }
+        GlifoMeteo.TEMPORALE -> {
+            nuvola(0f, -4f, 1f, carica = true)
+            val punte = listOf(11f to 12f, 8f to 18f, 11f to 18f, 9.5f to 23f, 15f to 16f, 12f to 16f, 13.5f to 12f)
+            val fulmine = Path().apply {
+                punte.forEachIndexed { i, (x, y) ->
+                    val q = p(x, y)
+                    if (i == 0) moveTo(q.x, q.y) else lineTo(q.x, q.y)
                 }
+                close()
             }
-            else -> Unit
+            drawPath(fulmine, ColoriGlifo.sole)
+            drawPath(fulmine, ColoriGlifo.bordoSole, style = Stroke(width = 0.7f * u, join = StrokeJoin.Round))
+        }
+        GlifoMeteo.NEVE -> {
+            nuvola(0f, -3.5f, 1f, carica = false)
+            fiocco(7f, 20f, 1.8f); fiocco(12f, 21.8f, 1.8f); fiocco(17f, 20f, 1.8f)
         }
     }
 }
@@ -939,124 +1010,106 @@ private val RIPOSO = 13.dp
 private val BERSAGLIO = 48.dp
 
 /**
- * Le sette icone della colonna, una famiglia sola: stesso peso, stessa taglia.
+ * Le sette icone della colonna, una famiglia sola: stesso tratto, stessa taglia.
  *
- * Cinque sono disegnate qui; due - l'aria e il vento - sono le immagini che
- * l'utente ha dato, usate come maschera e tinte dal tema, cosi' seguono
- * l'inchiostro invece di restare nere su fondo scuro.
+ * **Tutte disegnate qui, a tratto**, sul modello delle icone di sezione di
+ * Google Meteo - linee di due unita' su ventiquattro, punte arrotondate - ma
+ * nostre. Prima erano cinque sagome piene e due immagini (aria e vento) date a
+ * parte: tre stili diversi in sette bottoni. Seguono l'inchiostro, come prima.
  */
 @Composable
 private fun IconaSala(sala: SalaRoom, ink: Color) {
-    when (sala) {
-        SalaRoom.ARIA -> Icon(
-            painter = painterResource(R.drawable.ic_aria),
-            contentDescription = null,
-            tint = ink,
-            modifier = Modifier.size(19.dp),
-        )
-        SalaRoom.VENTO -> Icon(
-            painter = painterResource(R.drawable.ic_vento),
-            contentDescription = null,
-            tint = ink,
-            modifier = Modifier.size(20.dp),
-        )
-        else -> Canvas(modifier = Modifier.size(16.dp)) { disegnaIcona(sala, ink) }
-    }
+    Canvas(modifier = Modifier.size(20.dp)) { disegnaIcona(sala, ink) }
 }
 
-private fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
-    val w = size.width
-    val spessore = w * 0.155f
+internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
+    val u = size.minDimension / 24f
+    fun p(x: Float, y: Float) = Offset(x * u, y * u)
+    val tratto = Stroke(width = 2f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
+    fun linea(x0: Float, y0: Float, x1: Float, y1: Float) =
+        drawLine(ink, p(x0, y0), p(x1, y1), strokeWidth = 2f * u, cap = StrokeCap.Round)
+
     when (sala) {
+        // Il sole: un disco e otto raggi staccati.
         SalaRoom.OGGI -> {
-            drawCircle(color = ink, radius = w * 0.28f, center = Offset(w / 2f, w / 2f))
-            val lungo = w * 0.22f
-            val corto = w * 0.155f
-            // Quattro raggi ai poli: con otto, a sedici punti, diventa una macchia.
-            drawRoundRect(
-                color = ink,
-                topLeft = Offset(w / 2f - corto / 2f, 0f),
-                size = Size(corto, lungo),
-                cornerRadius = CornerRadius(corto / 2f),
-            )
-            drawRoundRect(
-                color = ink,
-                topLeft = Offset(w / 2f - corto / 2f, w - lungo),
-                size = Size(corto, lungo),
-                cornerRadius = CornerRadius(corto / 2f),
-            )
-            drawRoundRect(
-                color = ink,
-                topLeft = Offset(0f, w / 2f - corto / 2f),
-                size = Size(lungo, corto),
-                cornerRadius = CornerRadius(corto / 2f),
-            )
-            drawRoundRect(
-                color = ink,
-                topLeft = Offset(w - lungo, w / 2f - corto / 2f),
-                size = Size(lungo, corto),
-                cornerRadius = CornerRadius(corto / 2f),
-            )
+            drawCircle(ink, 4.2f * u, p(12f, 12f))
+            for (k in 0 until 8) {
+                val a = k * PI.toFloat() / 4f
+                linea(12f + cos(a) * 7f, 12f + sin(a) * 7f, 12f + cos(a) * 9.6f, 12f + sin(a) * 9.6f)
+            }
         }
+        // Il calendario: la cornice, la testata, gli anelli, sei giorni.
         SalaRoom.SETTIMANA -> {
-            drawRoundRect(
-                color = ink,
-                topLeft = Offset(0f, w * 0.06f),
-                size = Size(w, w * 0.88f),
-                cornerRadius = CornerRadius(w * 0.20f),
-                style = Stroke(width = spessore),
-            )
-            drawRect(
-                color = ink,
-                topLeft = Offset(0f, w * 0.06f),
-                size = Size(w, w * 0.20f),
-            )
+            drawRoundRect(ink, p(3.5f, 5f), Size(17f * u, 15.5f * u), CornerRadius(3f * u), style = tratto)
+            linea(3.5f, 10f, 20.5f, 10f)
+            linea(8f, 3f, 8f, 6.5f)
+            linea(16f, 3f, 16f, 6.5f)
+            for (x in listOf(8f, 12f, 16f)) for (y in listOf(14f, 17.3f)) drawCircle(ink, 1.1f * u, p(x, y))
         }
+        // La nuvola a tratto, e tre righe di pioggia oblique.
         SalaRoom.PIOGGIA -> {
-            // La goccia: un tondo con una punta in alto, non un cerchio ruotato
-            // - a sedici punti la differenza fra i due si vede.
-            val goccia = Path().apply {
-                moveTo(w / 2f, w * 0.08f)
-                cubicTo(w * 0.86f, w * 0.44f, w * 0.84f, w * 0.92f, w / 2f, w * 0.92f)
-                cubicTo(w * 0.16f, w * 0.92f, w * 0.14f, w * 0.44f, w / 2f, w * 0.08f)
+            val nuvola = Path().apply {
+                arcTo(Rect(p(4f, 8.5f), p(11f, 15.5f)), 90f, 180f, true)
+                arcTo(Rect(p(7.5f, 3f), p(17.5f, 13f)), 198f, 153f, false)
+                arcTo(Rect(p(13.5f, 8.5f), p(20.5f, 15.5f)), -72.8f, 162.8f, false)
                 close()
             }
-            drawPath(path = goccia, color = ink)
+            drawPath(nuvola, ink, style = tratto)
+            for (x in listOf(8f, 12.5f, 17f)) linea(x, 17f, x - 1.2f, 20.5f)
         }
+        // La falce, e una stellina accanto.
         SalaRoom.LUNA -> {
-            // Una falce, ottenuta togliendo un disco spostato: la stessa idea
-            // del terminatore, alla taglia di un'icona.
-            val falce = Path().apply {
-                addOval(Rect(0f, 0f, w, w))
+            val disco = Path().apply { addOval(Rect(p(3f, 5f), p(19f, 21f))) }
+            val morso = Path().apply { addOval(Rect(p(8.6f, 2.4f), p(23f, 16.8f))) }
+            drawPath(Path().apply { op(disco, morso, PathOperation.Difference) }, ink)
+            val stella = Path().apply {
+                moveTo(18.5f * u, 2.4f * u)
+                for (k in 1..8) {
+                    val a = -PI.toFloat() / 2f + k * PI.toFloat() / 4f
+                    val r = if (k % 2 == 0) 2.6f else 2.6f * 0.38f
+                    lineTo((18.5f + cos(a) * r) * u, (5f + sin(a) * r) * u)
+                }
+                close()
             }
-            val morso = Path().apply {
-                addOval(Rect(w * 0.32f, -w * 0.10f, w * 1.22f, w * 1.02f))
-            }
-            drawPath(
-                path = Path().apply {
-                    op(falce, morso, PathOperation.Difference)
-                },
-                color = ink,
-            )
+            drawPath(stella, ink)
         }
+        // L'aria: tre correnti, due col ricciolo, e due granelli sospesi.
+        SalaRoom.ARIA -> {
+            val correnti = Path().apply {
+                moveTo(3f * u, 8f * u); lineTo(14f * u, 8f * u)
+                cubicTo(17.5f * u, 8f * u, 17.5f * u, 3.5f * u, 14.5f * u, 3.8f * u)
+                moveTo(3f * u, 12.5f * u); lineTo(19f * u, 12.5f * u)
+                cubicTo(22.5f * u, 12.5f * u, 22.5f * u, 17f * u, 19.5f * u, 17f * u)
+                moveTo(3f * u, 17f * u); lineTo(10f * u, 17f * u)
+            }
+            drawPath(correnti, ink, style = tratto)
+            drawCircle(ink, 1.2f * u, p(14.5f, 17.2f))
+            drawCircle(ink, 1.2f * u, p(7f, 21f))
+        }
+        // La manica a vento: il palo, il cono, due bande.
+        SalaRoom.VENTO -> {
+            linea(4f, 21f, 4f, 3.5f)
+            val manica = Path().apply {
+                moveTo(4f * u, 5f * u); lineTo(19f * u, 7.2f * u); lineTo(19f * u, 11.8f * u); lineTo(4f * u, 14f * u); close()
+            }
+            drawPath(manica, ink, style = tratto)
+            linea(9f, 5.8f, 9f, 13.2f)
+            linea(14f, 6.5f, 14f, 12.5f)
+        }
+        // I raggi UV: il sole che sale sull'orizzonte.
         SalaRoom.UV -> {
-            // L'indice: un anello con il fondo pieno, cioe' "quanto ne arriva".
-            drawCircle(
-                color = ink,
-                radius = w / 2f - spessore / 2f,
-                center = Offset(w / 2f, w / 2f),
-                style = Stroke(width = spessore),
-            )
-            drawArc(
-                color = ink,
-                startAngle = 0f,
-                sweepAngle = 180f,
-                useCenter = true,
-                topLeft = Offset(spessore, spessore),
-                size = Size(w - spessore * 2f, w - spessore * 2f),
-            )
+            linea(3f, 18f, 21f, 18f)
+            val mezzo = Path().apply {
+                moveTo(7f * u, 18f * u)
+                arcTo(Rect(p(7f, 13f), p(17f, 23f)), 180f, 180f, false)
+                close()
+            }
+            drawPath(mezzo, ink)
+            for (k in 0 until 5) {
+                val a = PI.toFloat() + (k + 0.5f) * PI.toFloat() / 5f
+                linea(12f + cos(a) * 7.5f, 18f + sin(a) * 7.5f, 12f + cos(a) * 10f, 18f + sin(a) * 10f)
+            }
         }
-        else -> Unit
     }
 }
 

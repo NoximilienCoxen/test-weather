@@ -94,6 +94,11 @@ fun SalaCielo(
      * cattura, dove ogni scatto deve poter uscire identico al precedente.
      */
     interattivo: Boolean = true,
+    /**
+     * Il polline peggiore di oggi, da 0 a 4. Da "alto" in su nel cielo vagano
+     * i granelli (vedi `polline`); sotto, niente.
+     */
+    pollineOggi: Int = 0,
 ) {
     // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
     //
@@ -187,6 +192,12 @@ fun SalaCielo(
                 tempo = t,
                 inchiostro = SalaTokens.neutral100,
                 velo = giorno * (1f - scena.copertura * 0.55f) * 0.9f,
+            )
+            // Il polline sta nello stesso piano del pulviscolo: e' aria anche
+            // lui. Di notte e sotto la pioggia cala come tutto cio' che vola.
+            polline(
+                tempo = t,
+                velo = giorno * ((pollineOggi - 2) / 2f).coerceIn(0f, 1f),
             )
             uccelli(
                 unita = size.width * 0.55f,
