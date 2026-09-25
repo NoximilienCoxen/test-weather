@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +30,29 @@ class LunaRenderTest {
 
     private val globo = Globo()
     private val buffer = BufferGlobo(globo)
+    private val carta by lazy { TessituraGlobo(globo) }
+
+    /**
+     * La luce per vertice, moltiplicata sulla carta in piena luce, deve ridare
+     * sul vertice il colore vero: e' la promessa di [ColoriGlobo.modulatori].
+     * Si tollera un passo o due di arrotondamento per canale.
+     */
+    @Test
+    fun `luce per carta ridà il colore vero sul vertice`() {
+        listOf(0.1f, 0.25f, 0.5f, 0.8f).forEach { fase ->
+            val colori = coloriPer(globo, fase)
+            for (v in 0 until globo.vertici step 37) {
+                val pieno = TintaLuna.pieno(globo.albedo[v])
+                val m = colori.modulatori[v]
+                val vero = colori.vertici[v]
+                for (s in intArrayOf(16, 8, 0)) {
+                    val atteso = vero shr s and 0xFF
+                    val ottenuto = (pieno shr s and 0xFF) * (m shr s and 0xFF) / 255
+                    assertTrue("fase $fase vertice $v: $ottenuto invece di $atteso", kotlin.math.abs(ottenuto - atteso) <= 3)
+                }
+            }
+        }
+    }
 
     @Test
     fun `le fasi dalla Terra`() {
@@ -107,7 +129,7 @@ class LunaRenderTest {
     private fun disegna(lato: Int, fase: Float, yaw: Float, pitch: Float, conCarta: Boolean = false): Bitmap {
         val bitmap = Bitmap.createBitmap(lato, lato, Bitmap.Config.ARGB_8888)
         val colori = coloriPer(globo, fase)
-        val tessitura = if (conCarta) runBlocking { TessituraGlobo.per(globo, fase) } else null
+        val tessitura = if (conCarta) carta else null
         CanvasDrawScope().draw(
             Density(2f),
             LayoutDirection.Ltr,

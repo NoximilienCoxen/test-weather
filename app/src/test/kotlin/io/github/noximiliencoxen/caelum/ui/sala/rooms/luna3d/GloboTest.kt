@@ -4,9 +4,6 @@ import io.github.noximiliencoxen.caelum.data.MoonPhase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * La luce della sfera e la fase dell'app devono dire la stessa cosa.
@@ -66,72 +63,28 @@ class GloboTest {
         assertTrue("manca il resto", chiari > scuri)
     }
 
-    /**
-     * La carta e' la stessa luce dei vertici, piu' fitta: al primo quarto la
-     * meta' destra della faccia verso di noi e' accesa e la sinistra no.
-     */
-    @Test
-    fun `sulla carta il primo quarto e' acceso a destra`() {
-        val globo = Globo()
-        val larga = 240
-        val alta = 120
-        val luce = FloatArray(larga * alta)
-        val albedo = FloatArray(larga * alta)
-        globo.carta(0.25f, larga, alta, luce, albedo)
-        var destra = 0
-        var sinistra = 0
-        for (i in 0 until alta) for (j in 0 until larga) {
-            val theta = PI * (i + 0.5) / alta
-            val phi = 2.0 * PI * (j + 0.5) / larga
-            val px = sin(theta) * sin(phi)
-            val pz = -sin(theta) * cos(phi)
-            if (pz > -0.3) continue
-            val l = luce[i * larga + j]
-            // Rispetto all'albedo e non in assoluto: a destra ci sono la
-            // Tranquillitatis e il Crisium, scuri anche in piena luce. Col sole
-            // a piu' di 0,3 dalla normale arriva almeno il 71 % della luce.
-            val quota = l / albedo[i * larga + j]
-            if (px > 0.3) { destra++; assertTrue("buio a destra: $quota", quota > 0.6f) }
-            if (px < -0.3) { sinistra++; assertTrue("acceso a sinistra: $l", l < Globo.LUCE_CINEREA * 1.2f) }
-        }
-        assertTrue(destra > 100 && sinistra > 100)
-    }
-
     @Test
     fun `i crateri piccoli si vedono sulla carta`() {
         val globo = Globo()
         val larga = 1024
         val alta = 512
-        val luce = FloatArray(larga * alta)
-        val albedo = FloatArray(larga * alta)
-        globo.carta(0.5f, larga, alta, luce, albedo)
+        val albedo = globo.albedoCarta(larga, alta).albedo
         // Lungo una riga all'equatore, fra un punto e il successivo l'albedo
         // deve cambiare di colpo da qualche parte: un orlo, una conca. Una
         // luna tutta sfumature non lo farebbe mai.
         val riga = alta / 2
         val salti = (1 until larga).count { j -> kotlin.math.abs(albedo[riga * larga + j] - albedo[riga * larga + j - 1]) > 0.02f }
         assertTrue("nessun dettaglio fine: $salti", salti > 10)
+        assertTrue("la carta si rifa'", globo.albedoCarta(larga, alta) === globo.albedoCarta(larga, alta))
     }
 
-    /**
-     * Il cursore che corre rinuncia alla carta a meta': la luce deve
-     * fermarsi alla prima riga, e l'albedo - fatta una volta sola - non deve
-     * cambiare da una fase all'altra.
-     */
+    /** Una carta per ogni misura chiesta, e i valori dentro i limiti dell'albedo. */
     @Test
-    fun `la carta si ferma quando le si chiede, e l'albedo resta la stessa`() {
-        val globo = Globo()
-        val luce = FloatArray(64 * 32)
-        var righe = 0
-        val finita = globo.carta(0.3f, 64, 32, luce, continua = { righe++ < 3 })
-        assertTrue("non si e' fermata", !finita)
-        assertEquals(4, righe)
-
-        val prima = FloatArray(64 * 32)
-        val dopo = FloatArray(64 * 32)
-        globo.carta(0.1f, 64, 32, luce, prima)
-        globo.carta(0.6f, 64, 32, luce, dopo)
-        assertTrue(prima.contentEquals(dopo))
-        assertTrue(globo.albedoCarta(64, 32) === globo.albedoCarta(64, 32))
+    fun `la carta ha la misura chiesta`() {
+        val globo = Globo(paralleli = 20, meridiani = 40)
+        val albedo = globo.albedoCarta(320, 160).albedo
+        assertEquals(320 * 160, albedo.size)
+        assertTrue(albedo.all { it in 0.25f..1.05f })
+        assertEquals(64 * 32, globo.albedoCarta(64, 32).albedo.size)
     }
 }

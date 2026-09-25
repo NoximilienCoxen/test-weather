@@ -3,16 +3,13 @@ package io.github.noximiliencoxen.caelum.ui.sala.rooms
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -46,115 +41,114 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.ui.sala.italiano
 
 /**
- * Il polline, in fondo alla sala dell'aria: tre famiglie, tre giorni.
+ * Il polline, in fondo alla sala dell'aria: tre famiglie per tre giorni, in una
+ * tabella.
+ *
+ * **Una riga per famiglia, non una scheda.** La prima versione copiava Google -
+ * tre pastiglie per scegliere la famiglia e tre colonne alte coi giorni - e da
+ * sola occupava mezzo schermo per dire tre numeri. Qui le tre famiglie si
+ * leggono insieme, che e' anche la domanda vera: "c'e' qualcosa che mi fa
+ * male?", non "com'e' l'erba?".
  *
  * Si mostra **solo se ci sono dati**. Il modello e' europeo: altrove l'API
  * lascia i campi nulli, e tre "assente" disegnati su un dato che non c'e'
  * sarebbero la stessa bugia per cui questa sezione non esisteva prima.
  *
- * La famiglia che si apre e' **la peggiore di oggi**: chi guarda il polline
- * vuole sapere prima di tutto quale lo riguarda, e con tutto a zero l'erba,
- * che e' la piu' comune.
+ * Sotto, una riga sola che dice quali piante sono: di norma quelle della
+ * famiglia peggiore di oggi, oppure quelle della riga toccata.
  */
 @Composable
 internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, modifier: Modifier = Modifier) {
     if (giorni.isEmpty()) return
-    val peggiore = giorni.first().livelli.maxByOrNull { it.value }?.takeIf { it.value > 0 }?.key ?: TipoPolline.ERBA
+    val oggi = giorni.first().livelli
+    val peggiore = oggi.maxByOrNull { it.value }?.takeIf { it.value > 0 }?.key
     var scelto by rememberSaveable(giorni.first().giorno) { mutableStateOf(peggiore) }
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = "IL POLLINE",
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
-        )
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-            TipoPolline.entries.forEach { tipo ->
-                val attivo = tipo == scelto
-                val colore = if (attivo) palette.accentInk else palette.ink
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(CircleShape)
-                        .background(if (attivo) palette.accent else palette.maniglia)
-                        .clickable { scelto = tipo }
-                        .padding(vertical = 9.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Canvas(modifier = Modifier.size(16.dp)) { iconaPolline(tipo, colore) }
-                    Text(
-                        text = tipo.nome,
-                        style = SalaType.rowNote,
-                        color = colore,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(start = 5.dp),
-                    )
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+    Column(modifier = modifier.fillMaxWidth().padding(top = 14.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "IL POLLINE",
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.weight(1f),
+            )
             giorni.forEachIndexed { i, giorno ->
-                ColonnaPolline(
-                    etichetta = if (i == 0) "oggi" else giorno.giorno.dayOfWeek.italiano().take(3),
-                    livello = giorno.livelli[scelto],
-                    palette = palette,
-                    modifier = Modifier.weight(1f),
+                Text(
+                    text = if (i == 0) "oggi" else giorno.giorno.dayOfWeek.italiano().take(3),
+                    style = SalaType.microLabel,
+                    color = palette.inkSoft,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(start = SPAZIO_PASTIGLIE).width(LARGA_PASTIGLIA),
                 )
             }
         }
-
-        Didascalia(scelto.cosa, palette, modifier = Modifier.padding(top = 10.dp))
-    }
-}
-
-/** Un giorno: il livello in cifre e in parole, e una barra che si riempie dal basso. */
-@Composable
-private fun ColonnaPolline(etichetta: String, livello: Int?, palette: SalaPalette, modifier: Modifier = Modifier) {
-    val parola = livello?.let(::nomeLivelloPolline) ?: "Nessun dato"
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(26.dp))
-            .background(palette.chip)
-            .padding(vertical = 12.dp)
-            .semantics { contentDescription = "$etichetta: polline $parola".lowercase() },
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = livello?.let { "$it/4" } ?: "—", style = SalaType.value, color = palette.ink)
-        Text(
-            text = parola,
-            style = SalaType.rowNote,
-            color = palette.inkSoft,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
+        TipoPolline.entries.forEach { tipo ->
+            val attivo = tipo == scelto
+            val colore = if (attivo) palette.accent else palette.ink
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp)
+                    .clip(CircleShape)
+                    .clickable { scelto = if (attivo) peggiore else tipo }
+                    .semantics {
+                        contentDescription = tipo.nome + ": " + giorni.joinToString(", ") { g ->
+                            g.livelli[tipo]?.let(::nomeLivelloPolline) ?: "nessun dato"
+                        }.lowercase()
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Canvas(modifier = Modifier.size(16.dp)) { iconaPolline(tipo, colore) }
+                Text(
+                    text = tipo.nome,
+                    style = if (attivo) SalaType.rowTitle else SalaType.hourLabel,
+                    color = colore,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).padding(start = 8.dp),
+                )
+                giorni.forEach { giorno -> PastigliaLivello(giorno.livelli[tipo], palette) }
+            }
+        }
+        val spiegato = scelto
+        Didascalia(
+            when {
+                spiegato != null && spiegato == peggiore ->
+                    "Oggi il più alto: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. " +
+                        spiegato.cosa
+                spiegato != null -> spiegato.cosa
+                else -> "Oggi nell'aria non c'è polline che dia fastidio."
+            },
+            palette,
+            modifier = Modifier.padding(top = 8.dp),
         )
-        val tinta = coloreLivello(livello)
-        val traccia = palette.maniglia
-        Canvas(modifier = Modifier.padding(vertical = 10.dp).width(26.dp).height(58.dp)) {
-            val raggio = CornerRadius(size.width / 2f)
-            drawRoundRect(color = traccia, cornerRadius = raggio)
-            val quota = ((livello ?: 0) / 4f).coerceIn(0f, 1f)
-            if (quota > 0f) {
-                // Mai piu' basso di un disco pieno: un "ridotto" deve vedersi.
-                val alto = (size.height * quota).coerceAtLeast(size.width)
-                drawRoundRect(
-                    color = tinta,
-                    topLeft = Offset(0f, size.height - alto),
-                    size = Size(size.width, alto),
-                    cornerRadius = raggio,
-                )
-            }
-        }
-        Text(text = etichetta, style = SalaType.rowNote, color = palette.ink)
     }
 }
+
+/** Il livello di un giorno: il numero dentro una pastiglia del suo colore. */
+@Composable
+private fun PastigliaLivello(livello: Int?, palette: SalaPalette) {
+    val pieno = livello != null && livello > 0
+    Text(
+        text = livello?.toString() ?: "–",
+        style = SalaType.pill,
+        color = when {
+            !pieno -> palette.inkSoft
+            livello!! >= 4 -> SalaTokens.neutral100
+            else -> SalaTokens.neutral900
+        },
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .padding(start = SPAZIO_PASTIGLIE)
+            .width(LARGA_PASTIGLIA)
+            .clip(CircleShape)
+            .background(if (pieno) coloreLivello(livello) else palette.maniglia)
+            .padding(vertical = 4.dp),
+    )
+}
+
+private val LARGA_PASTIGLIA = 38.dp
+private val SPAZIO_PASTIGLIE = 6.dp
 
 /** Dal verde al rosso bruciato: la stessa tavolozza dell'indice dell'aria. */
 internal fun coloreLivello(livello: Int?): Color = when (livello) {
