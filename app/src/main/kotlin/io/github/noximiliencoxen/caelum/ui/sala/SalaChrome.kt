@@ -5,7 +5,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
@@ -16,17 +18,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -60,9 +68,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
@@ -1167,29 +1177,144 @@ fun IntestazioneServizio(
     }
 }
 
-/** Una riga di servizio: nome, nota sotto, e un segno a destra. */
+// ── Le schermate di servizio ────────────────────────────────────────────────
+//
+// **Un riquadro per argomento, non uno per comando.** Le impostazioni erano
+// quindici pastiglie tutte uguali, una sotto l'altra: il tema pesava quanto
+// "Vento forte", e l'unico modo di capire dove finiva un argomento e ne
+// cominciava un altro era leggerle tutte. Adesso l'etichetta sta **fuori** dal
+// riquadro, come il titolo di un paragrafo, e dentro le voci sono righe
+// separate da un filo: l'occhio trova prima il gruppo, poi la voce.
+
+/** Il raggio dei riquadri di servizio. Meno del pannello: sono piu' fitti. */
+private val RaggioGruppo = 26.dp
+
+/**
+ * Un gruppo di voci: titolo sopra, riquadro con le voci, e una nota sotto se
+ * serve a dire **cosa non fa** il gruppo (gli avvisi calcolati non spengono le
+ * allerte ufficiali, per esempio).
+ */
 @Composable
-fun RigaServizio(
+fun GruppoImpostazioni(
     titolo: String,
-    nota: String,
     palette: SalaPalette,
     modifier: Modifier = Modifier,
+    nota: String? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = titolo,
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(start = 20.dp, bottom = 8.dp),
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(RaggioGruppo))
+                .background(palette.chip),
+            content = content,
+        )
+        if (nota != null) {
+            Text(
+                text = nota,
+                style = SalaType.rowNote,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 8.dp),
+            )
+        }
+    }
+}
+
+/** Il filo fra due voci dello stesso gruppo: rientrato, cosi' non taglia il riquadro. */
+@Composable
+fun FiloGruppo(palette: SalaPalette) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.55f)),
+    )
+}
+
+/**
+ * Una voce dentro un gruppo: nome, nota sotto, un segno a destra ([coda]) e,
+ * se serve, un comando a tutta larghezza sotto il nome ([sotto]).
+ *
+ * Non ha un fondo suo: il fondo e' quello del gruppo. Tutta la riga e' il
+ * bersaglio del tocco, non solo il segno a destra.
+ */
+@Composable
+fun VoceImpostazione(
+    titolo: String,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+    nota: String? = null,
+    /** Una nota che segnala un problema: si scrive in accento. */
+    notaInRisalto: Boolean = false,
     onClick: (() -> Unit)? = null,
-    coda: @Composable (() -> Unit)? = null,
+    coda: @Composable (RowScope.() -> Unit)? = null,
+    sotto: @Composable (ColumnScope.() -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .padding(horizontal = 20.dp, vertical = 14.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = titolo, style = SalaType.rowTitle, color = palette.ink)
+                if (!nota.isNullOrEmpty()) {
+                    Text(
+                        text = nota,
+                        style = SalaType.rowNote,
+                        color = if (notaInRisalto) palette.accent else palette.inkFaint,
+                        modifier = Modifier.padding(top = 3.dp),
+                    )
+                }
+            }
+            coda?.invoke(this)
+        }
+        if (sotto != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            sotto()
+        }
+    }
+}
+
+/**
+ * Una voce che si accende e si spegne: **tutta la riga** e' l'interruttore.
+ *
+ * Prima si poteva toccare solo il binario, cinquanta punti per trenta in fondo
+ * a destra, mentre la riga intera - che sembrava un bottone - non faceva
+ * niente.
+ */
+@Composable
+fun VoceInterruttore(
+    titolo: String,
+    nota: String?,
+    acceso: Boolean,
+    palette: SalaPalette,
+    onCambia: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(palette.chip)
-            .let { if (onClick != null) it.clickable(onClick = onClick) else it }
-            .padding(horizontal = 22.dp, vertical = 16.dp),
+            .toggleable(value = acceso, role = Role.Switch, onValueChange = onCambia)
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = titolo, style = SalaType.rowTitle, color = palette.ink)
-            if (nota.isNotEmpty()) {
+            if (!nota.isNullOrEmpty()) {
                 Text(
                     text = nota,
                     style = SalaType.rowNote,
@@ -1198,56 +1323,130 @@ fun RigaServizio(
                 )
             }
         }
-        coda?.invoke()
+        InterruttoreSala(acceso = acceso, palette = palette)
     }
 }
 
-/** L'interruttore delle impostazioni: binario e pallino, nelle tinte del tema. */
+/** La freccetta di una voce che porta altrove. */
 @Composable
-fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, onCambia: () -> Unit) {
+fun FrecciaAvanti(palette: SalaPalette, testo: String? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (testo != null) {
+            Text(
+                text = testo,
+                style = SalaType.rowNote,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(end = 6.dp),
+            )
+        }
+        Text(text = "›", style = SalaType.value, color = palette.accent)
+    }
+}
+
+/**
+ * L'interruttore: binario e pallino, nelle tinte del tema.
+ *
+ * **Solo disegno**: il tocco lo prende la riga che lo contiene
+ * ([VoceInterruttore]). Il pallino scorre invece di saltare, cosi' si vede
+ * che cosa e' cambiato; e' un'animazione che parte al tocco e finisce, non
+ * una che resta accesa.
+ */
+@Composable
+fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier = Modifier) {
+    val corsa by animateDpAsState(
+        targetValue = if (acceso) 20.dp else 0.dp,
+        animationSpec = spring(dampingRatio = 0.8f, stiffness = 700f),
+        label = "interruttore",
+    )
+    val binario by animateColorAsState(
+        targetValue = if (acceso) palette.accent else palette.maniglia,
+        label = "binario",
+    )
     Box(
-        modifier = Modifier
-            .size(52.dp, 30.dp)
+        modifier = modifier
+            .size(48.dp, 28.dp)
             .clip(CircleShape)
-            .background(if (acceso) palette.accent else palette.maniglia)
-            .clickable(onClick = onCambia),
+            .background(binario),
     ) {
         Box(
             modifier = Modifier
-                .padding(start = if (acceso) 25.dp else 3.dp, top = 3.dp)
-                .size(24.dp)
+                .padding(start = 3.dp + corsa, top = 3.dp)
+                .size(22.dp)
                 .clip(CircleShape)
                 .background(if (acceso) palette.accentInk else SalaTokens.neutral100),
         )
     }
 }
 
-/** Un gruppo di pastiglie fra cui se ne sceglie una: tema, unita', didascalie. */
+/** Il corpo delle voci di un selettore: piu' grande della nota, piu' piccolo del nome. */
+private val StileSegmento = SalaType.rowNote.copy(fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+
+/**
+ * Un selettore a segmenti: un binario solo, e dentro un cursore d'accento che
+ * scivola sulla voce scelta.
+ *
+ * Erano pastiglie staccate, ognuna col suo fondo grigio: tre bottoni che
+ * sembravano tre comandi diversi invece di tre risposte alla stessa domanda.
+ * Un binario unico dice "se ne sceglie una", e il cursore che scorre dice
+ * quale e' cambiata.
+ */
 @Composable
-fun <T> SceltaPastiglie(
+fun <T> SceltaSegmentata(
     voci: List<Pair<T, String>>,
     scelta: T,
     palette: SalaPalette,
     onScegli: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-        voci.forEach { (valore, nome) ->
-            val attiva = valore == scelta
-            Text(
-                text = nome,
-                style = SalaType.rowNote,
-                color = if (attiva) palette.accentInk else palette.ink,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(CircleShape)
-                    .background(if (attiva) palette.accent else palette.maniglia)
-                    .clickable { onScegli(valore) }
-                    .padding(vertical = 10.dp),
-                textAlign = TextAlign.Center,
-            )
+    val indice = voci.indexOfFirst { it.first == scelta }.coerceAtLeast(0)
+    val posizione by animateFloatAsState(
+        targetValue = indice.toFloat(),
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f),
+        label = "segmento",
+    )
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .clip(CircleShape)
+            .background(palette.maniglia)
+            .padding(3.dp),
+    ) {
+        val larga = maxWidth / voci.size
+        Box(
+            modifier = Modifier
+                .offset(x = larga * posizione)
+                .width(larga)
+                .fillMaxHeight()
+                .clip(CircleShape)
+                .background(palette.accent),
+        )
+        Row(modifier = Modifier.fillMaxSize()) {
+            voci.forEachIndexed { i, (valore, nome) ->
+                val attiva = i == indice
+                val colore by animateColorAsState(
+                    targetValue = if (attiva) palette.accentInk else palette.ink,
+                    label = "segmento-testo",
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(CircleShape)
+                        .selectable(selected = attiva, role = Role.RadioButton) { onScegli(valore) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = nome,
+                        style = StileSegmento,
+                        color = colore,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                    )
+                }
+            }
         }
     }
 }

@@ -66,12 +66,15 @@ class WidgetConfigActivity : ComponentActivity() {
         lifecycleScope.launch {
             val initial = withContext(Dispatchers.IO) { WidgetPrefs(this@WidgetConfigActivity).load(appWidgetId) }
             setContent {
-                // Palette neutra, non quella dell'ora del giorno: e' una
-                // schermata di sistema, non una schermata dell'app.
+                // La tavolozza la sceglie la schermata, dal tema dell'app;
+                // questo resta per cio' che di Material c'e' ancora sotto.
                 MeteoTheme(colors = skyColors(SkyState.Giorno)) {
                     WidgetConfigScreen(
                         kind = kind,
                         initial = initial,
+                        // Il tondo per tornare chiude senza salvare: resta il
+                        // RESULT_CANCELED di onCreate, come col tasto indietro.
+                        onCancel = { finish() },
                         onSave = { place, useLocation ->
                             lifecycleScope.launch { saveAndFinish(place, useLocation) }
                         },

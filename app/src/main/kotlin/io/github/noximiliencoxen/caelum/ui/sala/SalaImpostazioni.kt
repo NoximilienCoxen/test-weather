@@ -1,11 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
-import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
-import androidx.compose.ui.platform.LocalContext
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.compose.rememberLauncherForActivityResult
-import android.os.Build
 import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,14 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.BuildConfig
+import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
 import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
@@ -35,10 +38,17 @@ import java.util.Locale
 /**
  * Le impostazioni.
  *
- * **Le localita' sono entrate qui**, e sono uscite dalla colonna sul fianco:
- * cambiare citta' non e' spostarsi fra le schermate del tempo, e una fila di
- * sette icone piu' due intruse non e' piu' una fila. La riga dice anche quale
- * citta' e' attiva, cosi' si sa cosa si sta per cambiare prima di entrare.
+ * ## Per argomento, non per comando
+ *
+ * Erano quindici pastiglie identiche in fila, con "Le località" inchiodata in
+ * fondo sopra la lista che le scorreva dietro: il tema pesava quanto "Vento
+ * forte", e per capire cosa facesse cosa bisognava leggerle tutte. Adesso sono
+ * sette gruppi col titolo fuori dal riquadro - località, aspetto, unità,
+ * avvisi, notifiche, aiuto, dati - e ogni scelta ha sotto una nota che **cambia
+ * con la scelta** e dice cosa succede, invece di ripetere il nome della voce.
+ *
+ * **Le località stanno in cima**, dentro la lista: sono la cosa che si cambia
+ * piu' spesso, e inchiodate in fondo coprivano la voce che scorreva sotto.
  *
  * **Ogni interruttore qui dentro comanda qualcosa.** E' una regola e non una
  * constatazione: un comando che si accende, si spegne, si ricorda fra un avvio
@@ -69,7 +79,7 @@ fun SalaImpostazioniScreen(
             .fillMaxSize()
             .background(palette.schermoPieno)
             .systemBarsPadding()
-            .padding(start = 26.dp, end = 26.dp, top = 12.dp, bottom = 30.dp),
+            .padding(start = 22.dp, end = 22.dp, top = 12.dp),
     ) {
         IntestazioneServizio(titolo = "Impostazioni", palette = palette, onIndietro = onClose)
 
@@ -77,93 +87,156 @@ fun SalaImpostazioniScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(top = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(top = 18.dp, bottom = 30.dp),
+            verticalArrangement = Arrangement.spacedBy(22.dp),
         ) {
-            BloccoImpostazioni(etichetta = "TEMA", palette = palette) {
-                SceltaPastiglie(
-                    voci = listOf(
-                        CardTheme.AUTO to "Segui il cielo",
-                        CardTheme.CHIARO to "Chiaro",
-                        CardTheme.SCURO to "Scuro",
-                    ),
-                    scelta = state.cardTheme,
+            GruppoImpostazioni(titolo = "LOCALITÀ", palette = palette) {
+                val salvate = state.favorites.size
+                VoceImpostazione(
+                    titolo = state.place.name,
+                    nota = listOf(
+                        if (state.followsLocation) "dalla posizione del telefono" else "scelta a mano",
+                        if (salvate == 1) "1 salvata" else "$salvate salvate",
+                    ).joinToString(" · "),
                     palette = palette,
-                    onScegli = onChooseTheme,
+                    onClick = onApriLocalita,
+                    coda = { FrecciaAvanti(palette, testo = "Cambia") },
                 )
             }
 
-            BloccoImpostazioni(etichetta = "TEMPERATURA", palette = palette) {
-                SceltaPastiglie(
-                    voci = listOf(TempUnit.CELSIUS to "°C", TempUnit.FAHRENHEIT to "°F"),
-                    scelta = state.unit,
+            GruppoImpostazioni(titolo = "ASPETTO", palette = palette) {
+                VoceImpostazione(
+                    titolo = "Tema",
+                    nota = when (state.cardTheme) {
+                        CardTheme.AUTO -> "chiaro col sole, scuro quando tramonta sulla località"
+                        CardTheme.CHIARO -> "sempre chiaro, a qualunque ora"
+                        CardTheme.SCURO -> "sempre scuro, a qualunque ora"
+                    },
                     palette = palette,
-                    onScegli = onChooseUnit,
+                    sotto = {
+                        SceltaSegmentata(
+                            voci = listOf(
+                                CardTheme.AUTO to "Segui il cielo",
+                                CardTheme.CHIARO to "Chiaro",
+                                CardTheme.SCURO to "Scuro",
+                            ),
+                            scelta = state.cardTheme,
+                            palette = palette,
+                            onScegli = onChooseTheme,
+                        )
+                    },
+                )
+                FiloGruppo(palette)
+                VoceImpostazione(
+                    titolo = "Testi delle sale",
+                    nota = when (state.captionStyle) {
+                        CaptionStyle.COMPLETE -> "titolo, numeri e il paragrafo che li spiega"
+                        CaptionStyle.BREVI -> "solo titolo e numeri, senza il paragrafo"
+                    },
+                    palette = palette,
+                    sotto = {
+                        SceltaSegmentata(
+                            voci = listOf(CaptionStyle.COMPLETE to "Completi", CaptionStyle.BREVI to "Brevi"),
+                            scelta = state.captionStyle,
+                            palette = palette,
+                            onScegli = onChooseCaptionStyle,
+                        )
+                    },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Animazioni ridotte",
+                    nota = "il cielo sta fermo e il telefono non vibra con pioggia e neve",
+                    acceso = state.animazioniRidotte,
+                    palette = palette,
+                    onCambia = onToggleAnimazioni,
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Schede larghe",
+                    nota = "toglie la colonna delle sale: si passa dall'una all'altra col dito",
+                    acceso = state.schedeLarghe,
+                    palette = palette,
+                    onCambia = onToggleSchedeLarghe,
                 )
             }
 
-            BloccoImpostazioni(etichetta = "VENTO", palette = palette) {
-                SceltaPastiglie(
-                    voci = SalaWindUnit.entries.map { it to it.label },
-                    scelta = state.windUnit,
+            // Le unita' stanno sulla riga del loro nome: due o tre voci corte
+            // non hanno bisogno di una riga intera, e il gruppo resta basso.
+            GruppoImpostazioni(titolo = "UNITÀ DI MISURA", palette = palette) {
+                VoceImpostazione(
+                    titolo = "Temperatura",
                     palette = palette,
-                    onScegli = onChooseWindUnit,
+                    coda = {
+                        SceltaSegmentata(
+                            voci = listOf(TempUnit.CELSIUS to "°C", TempUnit.FAHRENHEIT to "°F"),
+                            scelta = state.unit,
+                            palette = palette,
+                            onScegli = onChooseUnit,
+                            modifier = Modifier.width(LarghezzaUnita),
+                        )
+                    },
                 )
-            }
-
-            BloccoImpostazioni(etichetta = "DIDASCALIE", palette = palette) {
-                SceltaPastiglie(
-                    voci = listOf(CaptionStyle.COMPLETE to "Complete", CaptionStyle.BREVI to "Brevi"),
-                    scelta = state.captionStyle,
+                FiloGruppo(palette)
+                VoceImpostazione(
+                    titolo = "Vento",
                     palette = palette,
-                    onScegli = onChooseCaptionStyle,
+                    coda = {
+                        SceltaSegmentata(
+                            voci = SalaWindUnit.entries.map { it to it.label },
+                            scelta = state.windUnit,
+                            palette = palette,
+                            onScegli = onChooseWindUnit,
+                            modifier = Modifier.width(LarghezzaUnita),
+                        )
+                    },
                 )
             }
 
             // **Gli avvisi filtrano solo quelli calcolati.** Un bollettino della
             // Protezione Civile non lo si nasconde perche' un interruttore e'
             // giu': la scelta e' su cio' che questa applicazione deduce dalle
-            // soglie, non su cio' che un ente dichiara.
-            RigaServizio(
-                titolo = "Pioggia intensa",
-                nota = "avvisi calcolati sui millimetri attesi",
+            // soglie, non su cio' che un ente dichiara. La nota sotto il gruppo
+            // lo dice, perche' prima lo sapeva solo questo commento.
+            GruppoImpostazioni(
+                titolo = "AVVISI NELLE SALE",
                 palette = palette,
-                coda = {
-                    InterruttoreSala(state.alertToggles.pioggiaIntensa, palette) {
-                        onToggleAlert(AlertToggleKind.PIOGGIA, !state.alertToggles.pioggiaIntensa)
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Temporali",
-                nota = "avvisi calcolati sul codice del tempo",
-                palette = palette,
-                coda = {
-                    InterruttoreSala(state.alertToggles.temporali, palette) {
-                        onToggleAlert(AlertToggleKind.TEMPORALE, !state.alertToggles.temporali)
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Raggi UV sopra 6",
-                nota = "il punto in cui la scala mondiale passa ad alto",
-                palette = palette,
-                coda = {
-                    InterruttoreSala(state.alertToggles.uvAlto, palette) {
-                        onToggleAlert(AlertToggleKind.UV, !state.alertToggles.uvAlto)
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Vento forte",
-                nota = "avvisi calcolati sulle raffiche attese",
-                palette = palette,
-                coda = {
-                    InterruttoreSala(state.alertToggles.ventoForte, palette) {
-                        onToggleAlert(AlertToggleKind.VENTO, !state.alertToggles.ventoForte)
-                    }
-                },
-            )
+                nota = "Le allerte ufficiali di MeteoAlarm si vedono sempre: qui scegli solo " +
+                    "gli avvisi che l'app ricava dalla previsione.",
+            ) {
+                VoceInterruttore(
+                    titolo = "Pioggia intensa",
+                    nota = "quando sono attesi molti millimetri",
+                    acceso = state.alertToggles.pioggiaIntensa,
+                    palette = palette,
+                    onCambia = { onToggleAlert(AlertToggleKind.PIOGGIA, it) },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Temporali",
+                    nota = "quando la previsione dà temporale",
+                    acceso = state.alertToggles.temporali,
+                    palette = palette,
+                    onCambia = { onToggleAlert(AlertToggleKind.TEMPORALE, it) },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Raggi UV alti",
+                    nota = "indice sopra 6, dove la scala mondiale passa ad alto",
+                    acceso = state.alertToggles.uvAlto,
+                    palette = palette,
+                    onCambia = { onToggleAlert(AlertToggleKind.UV, it) },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Vento forte",
+                    nota = "quando sono attese raffiche forti",
+                    acceso = state.alertToggles.ventoForte,
+                    palette = palette,
+                    onCambia = { onToggleAlert(AlertToggleKind.VENTO, it) },
+                )
+            }
+
             // Accenderle senza il permesso non accenderebbe niente: su Android
             // 13 e oltre l'interruttore lo chiede, e se viene negato le
             // notifiche restano spente, perche' un interruttore acceso che non
@@ -172,128 +245,104 @@ fun SalaImpostazioniScreen(
             val chiediPermesso = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotifichePioggia(concesso) }
-            RigaServizio(
-                titolo = "Pioggia e grandine in arrivo",
-                nota = "una notifica quando sta per cominciare, sulla città dell'app",
-                palette = palette,
-                coda = {
-                    val accese = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto)
-                    InterruttoreSala(accese, palette) {
+            GruppoImpostazioni(titolo = "NOTIFICHE", palette = palette) {
+                VoceInterruttore(
+                    titolo = "Pioggia e grandine in arrivo",
+                    nota = "un avviso poco prima che cominci, sulla località dell'app",
+                    acceso = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    palette = palette,
+                    onCambia = { vuole ->
                         when {
-                            accese -> onToggleNotifichePioggia(false)
+                            !vuole -> onToggleNotifichePioggia(false)
                             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                                 !PioggiaInArrivoWorker.puoNotificare(contesto) ->
                                 chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS)
                             else -> onToggleNotifichePioggia(true)
                         }
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Animazioni ridotte",
-                nota = "ferma il cielo e le vibrazioni di ciò che cade",
-                palette = palette,
-                coda = {
-                    InterruttoreSala(state.animazioniRidotte, palette) {
-                        onToggleAnimazioni(!state.animazioniRidotte)
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Schede larghe",
-                nota = "nasconde la colonna delle sale: si sfogliano col dito",
-                palette = palette,
-                coda = {
-                    InterruttoreSala(state.schedeLarghe, palette) {
-                        onToggleSchedeLarghe(!state.schedeLarghe)
-                    }
-                },
-            )
-            RigaServizio(
-                titolo = "Guida all'uso",
-                nota = "rivedi come si sfogliano le sale e si cambia ora",
-                palette = palette,
-                onClick = onApriGuida,
-                coda = {
-                    Text(text = "›", style = SalaType.value, color = palette.accent)
-                },
-            )
+                    },
+                )
+            }
+
+            GruppoImpostazioni(titolo = "AIUTO", palette = palette) {
+                VoceImpostazione(
+                    titolo = "Guida all'uso",
+                    nota = "come si sfogliano le sale e si cambia ora",
+                    palette = palette,
+                    onClick = onApriGuida,
+                    coda = { FrecciaAvanti(palette) },
+                )
+                FiloGruppo(palette)
+                VoceImpostazione(
+                    titolo = "Note legali e privacy",
+                    nota = "fonti dei dati, cosa esce dal telefono, permessi",
+                    palette = palette,
+                    onClick = onApriLegali,
+                    coda = { FrecciaAvanti(palette) },
+                )
+            }
 
             // ── Le informazioni ──────────────────────────────────────────
             //
-            // **La schermata aveva quattro selettori, cinque interruttori e
-            // zero informazione.** La regola scritta qui sopra - *ogni
-            // interruttore comanda qualcosa* - e' giusta e non c'entra: vale
-            // per i comandi, e a furia di applicarla era rimasta una pagina che
-            // sa solo ricevere ordini e non risponde a una domanda.
-            //
             // Tutto quello che c'e' qui dentro **esisteva gia' nel codice** e
-            // non lo leggeva nessuna schermata: la versione era motivata per
-            // iscritto in `build.gradle.kts` e mai letta da una riga di Kotlin;
-            // `fetchedAt` aveva accanto un commento che dichiarava *"la
-            // schermata delle impostazioni lo dichiara"*, e non era vero; il
-            // modello cambia i numeri della previsione e nessuno poteva sapere
-            // quale fosse attivo.
-            BloccoImpostazioni(etichetta = "DA DOVE VENGONO I NUMERI", palette = palette) {
-                VoceInformativa("Ultimo aggiornamento", quandoScaricata(state.fetchedAt), palette)
-                VoceInformativa("Previsione", "Open-Meteo · modello ${state.model.label}", palette)
-                VoceInformativa("Qualità dell'aria", "Open-Meteo", palette)
-                VoceInformativa("Allerte", "MeteoAlarm, più avvisi calcolati sui dati", palette)
-                VoceInformativa("Località mostrata", dettaglioLocalita(state), palette)
-                VoceInformativa("Versione", "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
-            }
-
+            // non lo leggeva nessuna schermata (vedi CONTESTO 28.7). L'ultimo
+            // aggiornamento sta sulla riga che lo rifa': "quando" e "rifallo"
+            // sono la stessa domanda, e in due righe diverse sembravano due.
+            //
             // **`refresh()` era pubblico e non lo chiamava nessuna schermata**,
             // e `state.error` - un messaggio gia' scritto per chi guarda - non
             // aveva un solo lettore in tutta l'app. Qui trovano tutti e due il
             // loro posto: si riprova a mano, e se va storto lo si legge.
-            RigaServizio(
-                titolo = "Aggiorna adesso",
-                nota = state.error ?: "riprova a scaricare la previsione",
-                palette = palette,
-                onClick = onAggiorna,
-            )
-
-            RigaServizio(
-                titolo = "Note legali e privacy",
-                nota = "fonti dei dati, cosa esce dal telefono, permessi",
-                palette = palette,
-                onClick = onApriLegali,
-                coda = {
-                    Text(text = "›", style = SalaType.value, color = palette.accent)
-                },
-            )
-        }
-
-        Column(
-            modifier = Modifier.padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(9.dp),
-        ) {
-            RigaServizio(
-                titolo = "Le località",
-                nota = "${state.favorites.size} salvate · ${state.place.name} attiva",
-                palette = palette,
-                onClick = onApriLocalita,
-                coda = {
-                    Text(text = "›", style = SalaType.value, color = palette.accent)
-                },
-            )
+            GruppoImpostazioni(titolo = "DA DOVE VENGONO I NUMERI", palette = palette) {
+                VoceImpostazione(
+                    titolo = "Aggiorna adesso",
+                    nota = state.error ?: "ultimo aggiornamento ${quandoScaricata(state.fetchedAt)}",
+                    notaInRisalto = state.error != null,
+                    palette = palette,
+                    onClick = onAggiorna,
+                    coda = { PastigliaAggiorna(palette) },
+                )
+                FiloGruppo(palette)
+                Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
+                    VoceInformativa("Previsione", "Open-Meteo · modello ${state.model.label}", palette)
+                    VoceInformativa("Qualità dell'aria", "Open-Meteo", palette)
+                    VoceInformativa("Allerte", "MeteoAlarm, più avvisi calcolati sui dati", palette)
+                    VoceInformativa("Località", dettaglioLocalita(state), palette)
+                    VoceInformativa("Versione", "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
+                }
+            }
         }
     }
+}
+
+/** Larga abbastanza per "km/h", "m/s" e "nodi" senza puntini, e uguale per le due righe. */
+private val LarghezzaUnita = 176.dp
+
+/** Il segno di "Aggiorna adesso": una pastiglia d'accento, perche' e' un'azione e non una porta. */
+@Composable
+private fun PastigliaAggiorna(palette: SalaPalette) {
+    Text(
+        text = "Aggiorna",
+        style = SalaType.pill,
+        color = palette.accentInk,
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(palette.accent)
+            .padding(horizontal = 14.dp, vertical = 7.dp),
+    )
 }
 
 /**
  * Una voce che **dice** invece di comandare: etichetta a sinistra, valore a
  * destra, sulla stessa riga.
  *
- * Non usa [RigaServizio] perche' quella si porta dietro la sua pastiglia, e
- * sei pastiglie dentro una pastiglia sono un riquadro che non si legge piu'.
- * Qui il riquadro e' uno solo, quello del blocco, e dentro ci sono righe.
+ * Non e' una [VoceImpostazione]: quella e' alta quanto un bersaglio del
+ * pollice, e cinque fatti di una riga ciascuno non si toccano, si leggono.
+ * Stanno fitti, sotto un filo, nello stesso riquadro della riga che li rifa'.
  */
 @Composable
 private fun VoceInformativa(etichetta: String, valore: String, palette: SalaPalette) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Text(text = etichetta, style = SalaType.rowNote, color = palette.inkFaint)
