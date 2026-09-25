@@ -359,6 +359,7 @@ fun SalaShell(
                 // deve: chi ha chiesto meno movimento non si aspetta un sensore
                 // acceso, e la cattura vuole scatti ripetibili.
                 interattivo = !ferme,
+                pollineOggi = state.pollineMostrato.firstOrNull()?.massimo ?: 0,
             )
 
             Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {

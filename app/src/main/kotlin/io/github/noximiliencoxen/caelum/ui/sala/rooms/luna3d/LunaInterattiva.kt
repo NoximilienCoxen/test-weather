@@ -43,6 +43,10 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.widget.paint.render3d.Camera
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,8 +82,20 @@ internal fun LunaInterattiva(
     // La carta si fa lontano dal filo principale, e intanto la sfera usa i
     // colori dei vertici: una luna un po' piu' morbida per un istante, invece
     // di un fotogramma saltato a ogni cambio di fase.
+    //
+    // **Col cursore che corre si aspetta.** Ogni giorno trascinato cambia la
+    // fase e annulla l'attesa di quello prima: la carta si fa solo quando il
+    // dito si ferma, e intanto i vertici bastano. Senza, ogni giorno ne
+    // avviava una, e le vecchie - che non si fermavano - tenevano occupato il
+    // telefono finche' non si lasciava il cursore.
     val tessitura by produceState<TessituraGlobo?>(initialValue = null, globo, fase) {
-        value = withContext(Dispatchers.Default) { TessituraGlobo(globo, fase) }
+        delay(ATTESA_CARTA_MS)
+        value = withContext(Dispatchers.Default) { TessituraGlobo.per(globo, fase) }
+    }
+    // L'albedo della carta si prepara appena la sala compare, una volta sola:
+    // al primo arresto del cursore resta da fare solo la luce.
+    LaunchedEffect(globo) {
+        withContext(Dispatchers.Default) { globo.albedoCarta(LARGHEZZA_CARTA, LARGHEZZA_CARTA / 2) }
     }
 
     val yaw = remember { Animatable(0f) }
@@ -238,17 +254,29 @@ internal object TintaLuna {
 /**
  * La luna per una fase, dipinta su una carta e pronta da stendere sulla sfera.
  *
- * Si costruisce **fuori dal filo principale** (vedi [LunaInterattiva]): sono
- * mezzo milione di punti, ognuno con i suoi crateri da provare.
+ * Si costruisce **fuori dal filo principale** (vedi [LunaInterattiva]): la
+ * prima volta ci sono da fare mezzo milione di punti con i loro crateri
+ * ([Globo.albedoCarta]), dalle volte dopo solo la luce.
  */
-internal class TessituraGlobo(globo: Globo, fase: Float, larghezza: Int = 1024) {
-    private val altezza = larghezza / 2
-    private val immagine: Bitmap = run {
-        val luce = FloatArray(larghezza * altezza)
-        val albedo = FloatArray(larghezza * altezza)
-        globo.carta(fase, larghezza, altezza, luce, albedo)
-        val pixel = IntArray(luce.size) { TintaLuna.di(luce[it], albedo[it]) }
-        Bitmap.createBitmap(pixel, larghezza, altezza, Bitmap.Config.ARGB_8888)
+internal class TessituraGlobo private constructor(globo: Globo, private val immagine: Bitmap) {
+    private val larghezza = immagine.width
+    private val altezza = immagine.height
+
+    companion object {
+        /**
+         * La carta per una fase, o niente se chi la chiedeva ha rinunciato a
+         * meta': la luce si ferma a ogni riga, appena la coroutine e' annullata.
+         */
+        suspend fun per(globo: Globo, fase: Float, larghezza: Int = LARGHEZZA_CARTA): TessituraGlobo? {
+            val altezza = larghezza / 2
+            val luce = FloatArray(larghezza * altezza)
+            val contesto = currentCoroutineContext()
+            if (!globo.carta(fase, larghezza, altezza, luce, continua = { contesto.isActive })) return null
+            val albedo = globo.albedoCarta(larghezza, altezza).albedo
+            val pixel = IntArray(luce.size) { TintaLuna.di(luce[it], albedo[it]) }
+            contesto.ensureActive()
+            return TessituraGlobo(globo, Bitmap.createBitmap(pixel, larghezza, altezza, Bitmap.Config.ARGB_8888))
+        }
     }
 
     /** Dove cade ogni vertice sulla carta, in pixel: le `texs` di `drawVertices`. */
@@ -358,3 +386,9 @@ internal fun DrawScope.disegnaGlobo(
         tessitura?.pennello ?: buffer.pennello,
     )
 }
+
+/** Quanto aspettare che il cursore si fermi prima di fare la carta. */
+private const val ATTESA_CARTA_MS = 120L
+
+/** La carta e' larga il doppio di quanto e' alta: 360 gradi per 180. */
+internal const val LARGHEZZA_CARTA = 1024

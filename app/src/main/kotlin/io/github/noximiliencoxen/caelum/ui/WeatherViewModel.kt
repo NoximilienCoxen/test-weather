@@ -11,9 +11,11 @@ import io.github.noximiliencoxen.caelum.data.AlertKind
 import io.github.noximiliencoxen.caelum.data.AlertLevel
 import io.github.noximiliencoxen.caelum.data.DeviceLocation
 import io.github.noximiliencoxen.caelum.data.Forecast
+import io.github.noximiliencoxen.caelum.data.GiornoPolline
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.SunClock
+import io.github.noximiliencoxen.caelum.data.TipoPolline
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelum.data.WeatherModel
@@ -145,6 +147,13 @@ data class UiState(
      * arrivare mentre nasceva.
      */
     val forcedCloudCover: Int? = null,
+    /**
+     * Il livello del polline imposto dalla cattura (`--ei polline`), da 0 a 4:
+     * vale per oggi e per i due giorni dopo, e per tutte e tre le famiglie.
+     * Serve a fotografare la sezione e le particelle nel cielo anche fuori
+     * stagione, quando il dato vero e' tutto zero.
+     */
+    val forcedPolline: Int? = null,
     // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
     // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
     // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
@@ -308,6 +317,13 @@ data class UiState(
      */
     val shownAlerts: List<WeatherAlert>
         get() = forcedAlert?.let { listOf(it) } ?: alerts
+
+    /** Il polline da mostrare: quello vero, o quello imposto da [forcedPolline]. */
+    val pollineMostrato: List<GiornoPolline>
+        get() = forcedPolline?.let { livello ->
+            val oggi = java.time.LocalDate.now()
+            List(3) { d -> GiornoPolline(oggi.plusDays(d.toLong()), TipoPolline.entries.associateWith { livello }) }
+        } ?: air?.polline.orEmpty()
 
     val hours: List<HourForecast> get() = forecast?.hours.orEmpty()
 
@@ -1164,6 +1180,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Aggancio per la cattura automatica: impone la condizione mostrata. */
     fun forceWeatherCode(code: Int?) {
         _state.update { it.copy(forcedWeatherCode = code) }
+    }
+
+    /** Impone il livello del polline: vedi [UiState.forcedPolline]. */
+    fun forcePolline(livello: Int) {
+        _state.update { it.copy(forcedPolline = livello.coerceIn(0, 4)) }
     }
 
     /** Impone la nuvolosita' oraria: vedi [UiState.forcedCloudCover]. */

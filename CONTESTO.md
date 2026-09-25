@@ -618,6 +618,7 @@ adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 
 | `--ei sezione` | apre il feed su una scheda: 0 temperatura, 1 pioggia, 2 aria, 3 vento, 4 sole, 5 luna |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
+| `--ei polline` | impone il polline da 0 a 4, per tre giorni e tutte le famiglie: granelli nel cielo da 3 in su, e la sezione in fondo all'aria |
 | `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -6050,3 +6051,56 @@ La tinta passa per due tabelle precalcolate (`TintaLuna`): il `lerp` di Compose
 va in Oklab, e mezzo milione di chiamate a ogni fase erano troppe.
 `LunaRenderTest` disegna ora ogni fase con e senza carta (`luna3d-carta-*`) e
 tiene la stessa soglia sui mari.
+
+---
+
+## 32. Il cursore della luna rallentava: la carta si rifaceva a ogni giorno
+
+**Il difetto:** dopo la sezione 31, trascinando il cursore dei giorni in
+Sala IV la luna si aggiornava solo lasciando il dito. Ogni giorno trascinato
+cambiava la fase e faceva partire una carta nuova da mezzo milione di punti con
+260 crateri ciascuno. `produceState` annullava la coroutine vecchia, ma il ciclo
+non guardava mai se era stato annullato: i conti vecchi continuavano, si
+accumulavano sui fili di `Dispatchers.Default` e tenevano occupato il telefono.
+
+**La cura, in tre pezzi:**
+
+- **L'albedo si fa una volta sola** (`Globo.albedoCarta`, sincronizzata e
+  tenuta): mari e crateri non dipendono dalla fase. Per ogni fase resta la sola
+  luce, un prodotto scalare per punto. Si prepara appena la sala compare.
+- **La luce si ferma quando le si chiede** (`carta(..., continua)`, a ogni
+  riga): `TessituraGlobo.per` le passa `isActive`, e rinuncia restituendo `null`.
+- **Si aspetta che il cursore si fermi** (120 ms): ogni giorno trascinato annulla
+  l'attesa del precedente, e intanto la sfera usa i colori dei vertici, che
+  costano poco. La carta arriva quando il dito si ferma.
+
+---
+
+## 33. Il polline, in fondo alla sala dell'aria
+
+**Da dove viene.** Dallo stesso endpoint e dalla stessa richiesta dell'aria
+(`air-quality-api.open-meteo.com`), sei campi orari in granuli al metro cubo:
+ontano, betulla, olivo, graminacee, artemisia, ambrosia. E' il modello CAMS,
+**solo Europa**: altrove i campi arrivano nulli, e la sezione non compare. La CI
+salva le risposte vere per Forli' e Tokyo (`polline-*.json`).
+
+**Le famiglie** (`TipoPolline`), come le chiamano le app: *Erba* = graminacee;
+*Alberi* = betulla, ontano, olivo; *Erbacce* = ambrosia e artemisia. Ogni
+famiglia dice in una riga quali piante sono, perche' "Alberi" ed "Erbacce" da
+soli non si capiscono.
+
+**I livelli**, da 0 a 4 (`SpeciePolline.livello`): soglie diverse per specie,
+dalle classi della rete italiana POLLnet per famiglia botanica (assente, bassa,
+media, alta). "Molto alto" e' nostro: quattro volte la soglia dell'alta. Per un
+giorno si prende il **picco** orario, e per una famiglia la **specie
+peggiore**. Sono indicative: non coincideranno con Google, che usa un'altra fonte
+e un altro indice. Mancano il cipresso e le urticacee, che in Italia contano: il
+modello non li ha.
+
+**Nel cielo:** da "alto" in su, granelli gialli che girano piano scendendo
+(`polline` in `SalaVita.kt`), nello stesso piano del pulviscolo, attenuati di
+notte e sotto la pioggia.
+
+**Le icone sono disegnate qui** (`iconaPolline`), non prese dall'app Meteo di
+Google: quelle sono di Google e senza una licenza che ne permetta il riuso.
+

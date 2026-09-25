@@ -105,23 +105,93 @@ internal class Globo(
      * Le righe vanno dal polo nord al polo sud e le colonne seguono i
      * meridiani, con gli stessi angoli dei vertici: il vertice (i, j) cade nel
      * punto (j / meridiani, i / paralleli) della carta.
+     *
+     * **Solo la luce si rifa' a ogni fase.** L'albedo - mari, crateri, grana -
+     * e' la parte cara e non dipende dalla fase: si calcola una volta sola, in
+     * [albedoCarta], e qui resta un prodotto scalare per punto. Quando la carta
+     * si rifaceva intera a ogni giorno del cursore, trascinandolo i conti si
+     * accumulavano e la luna si aggiornava solo lasciando il dito.
+     *
+     * @param continua chiesto a ogni riga: falso, e si smette. Serve a chi
+     *   rinuncia a meta' - un cursore che e' gia' al giorno dopo.
+     * @return falso se si e' smesso prima della fine.
      */
-    fun carta(fase: Float, larghezza: Int, altezza: Int, luce: FloatArray, albedoOut: FloatArray) {
+    fun carta(
+        fase: Float,
+        larghezza: Int,
+        altezza: Int,
+        luce: FloatArray,
+        albedoOut: FloatArray? = null,
+        continua: () -> Boolean = { true },
+    ): Boolean {
+        val base = albedoCarta(larghezza, altezza)
+        albedoOut?.let { base.albedo.copyInto(it) }
         val (sx, sy, sz) = direzioneSole(fase)
         var p = 0
         for (i in 0 until altezza) {
-            val theta = PI * (i + 0.5) / altezza
-            val st = sin(theta).toFloat()
-            val py = (-cos(theta)).toFloat()
+            if (!continua()) return false
+            val st = base.senoRiga[i]
+            val py = base.yRiga[i]
             for (j in 0 until larghezza) {
-                val phi = 2.0 * PI * (j + 0.5) / larghezza
-                val px = st * sin(phi).toFloat()
-                val pz = -st * cos(phi).toFloat()
-                val a = albedoIn(px, py, pz)
-                albedoOut[p] = a
-                luce[p] = luceIn(a, px * sx + py * sy + pz * sz)
+                val px = st * base.senoColonna[j]
+                val pz = -st * base.cosenoColonna[j]
+                luce[p] = luceIn(base.albedo[p], px * sx + py * sy + pz * sz)
                 p++
             }
+        }
+        return true
+    }
+
+    /** L'albedo della carta e le tabelle degli angoli: tutto cio' che non cambia con la fase. */
+    internal class BaseCarta(
+        val albedo: FloatArray,
+        val senoRiga: FloatArray,
+        val yRiga: FloatArray,
+        val senoColonna: FloatArray,
+        val cosenoColonna: FloatArray,
+    )
+
+    private var base: BaseCarta? = null
+    private var baseLarga = 0
+    private var baseAlta = 0
+
+    /**
+     * L'albedo della carta, calcolata la prima volta e poi tenuta.
+     *
+     * **Sincronizzata, e non annullabile**, apposta: sono mezzo milione di
+     * punti con i loro crateri, e servono comunque. Chi arriva mentre un altro
+     * la sta facendo aspetta il suo risultato invece di rifarla accanto a lui;
+     * annullarla a meta' vorrebbe dire ricominciarla da capo al giro dopo.
+     */
+    @Synchronized
+    internal fun albedoCarta(larghezza: Int, altezza: Int): BaseCarta {
+        base?.let { if (baseLarga == larghezza && baseAlta == altezza) return it }
+        val senoRiga = FloatArray(altezza)
+        val yRiga = FloatArray(altezza)
+        for (i in 0 until altezza) {
+            val theta = PI * (i + 0.5) / altezza
+            senoRiga[i] = sin(theta).toFloat()
+            yRiga[i] = (-cos(theta)).toFloat()
+        }
+        val senoColonna = FloatArray(larghezza)
+        val cosenoColonna = FloatArray(larghezza)
+        for (j in 0 until larghezza) {
+            val phi = 2.0 * PI * (j + 0.5) / larghezza
+            senoColonna[j] = sin(phi).toFloat()
+            cosenoColonna[j] = cos(phi).toFloat()
+        }
+        val albedo = FloatArray(larghezza * altezza)
+        var p = 0
+        for (i in 0 until altezza) {
+            for (j in 0 until larghezza) {
+                val st = senoRiga[i]
+                albedo[p++] = albedoIn(st * senoColonna[j], yRiga[i], -st * cosenoColonna[j])
+            }
+        }
+        return BaseCarta(albedo, senoRiga, yRiga, senoColonna, cosenoColonna).also {
+            base = it
+            baseLarga = larghezza
+            baseAlta = altezza
         }
     }
 

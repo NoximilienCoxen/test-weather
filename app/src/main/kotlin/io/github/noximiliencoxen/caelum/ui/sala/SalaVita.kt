@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.floor
 import kotlin.math.sin
@@ -354,6 +355,46 @@ fun DrawScope.pulviscolo(tempo: Float, inchiostro: Color, velo: Float) {
             radius = size.width * (0.0028f + TavolaPulviscolo.raggio[i] * 0.0030f),
             center = Offset(x, y),
         )
+    }
+}
+
+/** Le posizioni dei granelli di polline: come il pulviscolo, con sali loro. */
+internal object TavolaPolline {
+    const val QUANTI = 22
+    val passo = FloatArray(QUANTI) { sparso(it, 31) }
+    val fase = FloatArray(QUANTI) { sparso(it, 32) }
+    val alto = FloatArray(QUANTI) { sparso(it, 33) }
+    val raggio = FloatArray(QUANTI) { sparso(it, 34) }
+}
+
+/**
+ * Il polline, quando ce n'e' tanto: granelli caldi che vagano nel cielo.
+ *
+ * **Solo da "alto" in su** (vedi `SalaShell`): con poco polline il cielo resta
+ * quello di sempre, e i granelli dicono qualcosa proprio perche' di solito non
+ * ci sono. Diversi dal pulviscolo apposta: piu' numerosi, piu' grandi, gialli,
+ * e invece di attraversare il cielo in linea retta girano piano su se stessi
+ * mentre scendono, come fanno davvero. Un bordo piu' scuro li tiene visibili
+ * anche su un cielo chiaro.
+ *
+ * @param velo da 0 a 1: il livello del polline, gia' ridotto da notte e pioggia.
+ */
+fun DrawScope.polline(tempo: Float, velo: Float) {
+    if (velo <= 0.01f) return
+    val granello = SalaTokens.accent300
+    val bordo = SalaTokens.accent600
+    for (i in 0 until TavolaPolline.QUANTI) {
+        val passo = 0.010f + TavolaPolline.passo[i] * 0.016f
+        val attraverso = (tempo * passo + TavolaPolline.fase[i]) % 1f
+        val giro = tempo * (0.6f + TavolaPolline.passo[i]) + i * 1.7f
+        val x = attraverso * (size.width * 1.2f) - size.width * 0.1f + sin(giro) * size.width * 0.02f
+        val y = size.height * (0.06f + TavolaPolline.alto[i] * (SOFFITTO - 0.06f)) +
+            cos(giro) * size.height * 0.012f + attraverso * size.height * 0.04f
+        val dentro = (attraverso / 0.12f).coerceAtMost(1f) * ((1f - attraverso) / 0.12f).coerceAtMost(1f)
+        val alpha = (0.55f * dentro * velo).coerceIn(0f, 1f)
+        val r = size.width * (0.0040f + TavolaPolline.raggio[i] * 0.0045f)
+        drawCircle(color = bordo.copy(alpha = alpha * 0.5f), radius = r * 1.35f, center = Offset(x, y))
+        drawCircle(color = granello.copy(alpha = alpha), radius = r, center = Offset(x, y))
     }
 }
 

@@ -41,9 +41,11 @@ import kotlin.math.roundToInt
 /**
  * Sala V — L'aria: l'indice, e i quattro inquinanti che lo compongono.
  *
- * Quattro e non cinque come nel prototipo: i pollini non stanno nell'endpoint
- * base di Open-Meteo, e tre pastiglie con dentro un numero inventato sarebbero
- * state la parte piu' convincente della schermata e l'unica falsa.
+ * Il polline, che il prototipo aveva e qui mancava, e' arrivato quando si e'
+ * scoperto che lo stesso endpoint dell'aria lo serve, per l'Europa: prima tre
+ * pastiglie con dentro un numero inventato sarebbero state la parte piu'
+ * convincente della schermata e l'unica falsa. Adesso c'e', col dato vero, e
+ * dove il dato non c'e' la sezione non compare.
  */
 @Composable
 fun SalaAriaScreen(
@@ -190,6 +192,10 @@ fun SalaAriaScreen(
                 modifier = Modifier.padding(top = 10.dp),
             )
         }
+
+        // ── Il polline ───────────────────────────────────────────────────────
+        // Dallo stesso endpoint e dalla stessa richiesta: vedi `Polline.kt`.
+        SezionePolline(giorni = state.pollineMostrato, palette = palette)
     }
 }
 
