@@ -75,4 +75,43 @@ class GlifoRenderTest {
             assertTrue("${glifi[i]} riga $riga vuota", colori.size > 3)
         }
     }
+
+    /** Le sette icone della colonna, nell'inchiostro chiaro e in quello scuro. */
+    @Test
+    fun `le icone della colonna`() {
+        val lato = 72
+        val sale = SalaRoom.entries
+        val inchiostri = listOf(Color(0xFF2E2B25) to Color(0xFFE2DDD2), Color.White to Color(0xFFB2622D))
+        val bitmap = Bitmap.createBitmap(lato * sale.size, lato * inchiostri.size, Bitmap.Config.ARGB_8888)
+        CanvasDrawScope().draw(
+            Density(1f),
+            LayoutDirection.Ltr,
+            Canvas(bitmap.asImageBitmap()),
+            Size(bitmap.width.toFloat(), bitmap.height.toFloat()),
+        ) {
+            inchiostri.forEachIndexed { riga, (inchiostro, fondo) ->
+                drawRect(fondo, topLeft = Offset(0f, riga * lato.toFloat()), size = Size(size.width, lato.toFloat()))
+                sale.forEachIndexed { i, sala ->
+                    val margine = lato * 0.2f
+                    inset(
+                        left = i * lato + margine,
+                        top = riga * lato + margine,
+                        right = size.width - (i + 1) * lato + margine,
+                        bottom = size.height - (riga + 1) * lato + margine,
+                    ) { disegnaIcona(sala, inchiostro) }
+                }
+            }
+        }
+        File("build/widget-renders").apply { mkdirs() }.resolve("icone-colonna.png").outputStream()
+            .use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        for (riga in inchiostri.indices) for (i in sale.indices) {
+            // L'angolo del riquadro e' fondo per costruzione: si conta cio' che non lo e'.
+            val fondo = bitmap.getPixel(i * lato + 1, riga * lato + 1)
+            var inchiostrati = 0
+            for (x in 0 until lato step 2) for (y in 0 until lato step 2) {
+                if (bitmap.getPixel(i * lato + x, riga * lato + y) != fondo) inchiostrati++
+            }
+            assertTrue("${sale[i]} riga $riga vuota", inchiostrati > 20)
+        }
+    }
 }
