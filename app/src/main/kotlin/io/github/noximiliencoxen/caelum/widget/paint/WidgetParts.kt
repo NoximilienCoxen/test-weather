@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Path
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.ui.sala.glifoDi
+import io.github.noximiliencoxen.caelum.ui.sala.nuvolositaStimata
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -132,11 +134,7 @@ internal fun DrawScope.dayStrip(
 
         val glyphTop = box.top + box.height * 0.24f
         val glyphSize = minOf(step * 0.62f, box.height * 0.30f)
-        dayGlyph(
-            Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize),
-            Wmo.family(day.weatherCode),
-            ink,
-        )
+        dayGlyph(Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize), day)
 
         val numbersTop = glyphTop + glyphSize + box.height * 0.06f
         textCentered(
@@ -150,51 +148,11 @@ internal fun DrawScope.dayStrip(
     }
 }
 
-/** Il segno del tempo in miniatura: pieno, leggibile, senza pretese di volume. */
-internal fun DrawScope.dayGlyph(box: Rect, family: Wmo.Family, ink: WidgetInk) {
-    val r = minOf(box.width, box.height) / 2f
-    val c = box.center
-    when (family) {
-        Wmo.Family.ASCIUTTO -> drawCircle(ink.sunCore, r * 0.72f, c)
-
-        Wmo.Family.NUVOLOSO -> {
-            drawCircle(ink.sunCore, r * 0.52f, Offset(c.x - r * 0.34f, c.y - r * 0.34f))
-            puff(c, r, ink.cloudCore)
-        }
-
-        Wmo.Family.NEBBIA -> puff(c, r, ink.cloudCore.copy(alpha = 0.7f))
-
-        Wmo.Family.PIOGGIA -> {
-            puff(Offset(c.x, c.y - r * 0.16f), r, ink.rainCloudCore)
-            drops(c, r, ink.rain)
-        }
-
-        Wmo.Family.NEVE -> {
-            puff(Offset(c.x, c.y - r * 0.16f), r, ink.rainCloudCore)
-            drops(c, r, ink.snow)
-        }
-
-        Wmo.Family.TEMPORALE -> {
-            puff(Offset(c.x, c.y - r * 0.16f), r, ink.rainCloudShade)
-            drawCircle(ink.bolt, r * 0.20f, Offset(c.x, c.y + r * 0.62f))
-        }
-    }
-}
-
-private fun DrawScope.puff(c: Offset, r: Float, colour: Color) {
-    drawCircle(colour, r * 0.46f, Offset(c.x - r * 0.42f, c.y + r * 0.16f))
-    drawCircle(colour, r * 0.40f, Offset(c.x + r * 0.44f, c.y + r * 0.18f))
-    drawCircle(colour, r * 0.58f, Offset(c.x, c.y - r * 0.06f))
-    drawRoundRect(
-        color = colour,
-        topLeft = Offset(c.x - r * 0.86f, c.y + r * 0.02f),
-        size = Size(r * 1.72f, r * 0.52f),
-        cornerRadius = CornerRadius(r * 0.26f),
-    )
-}
-
-private fun DrawScope.drops(c: Offset, r: Float, colour: Color) {
-    listOf(-0.42f, 0.06f, 0.54f).forEach { dx ->
-        drawCircle(colour, r * 0.13f, Offset(c.x + dx * r, c.y + r * 0.78f))
-    }
+/**
+ * Il segno del tempo in miniatura: la stessa figuretta a colori dell'app, dallo
+ * stesso codice e dalla stessa nuvolosita' stimata, cosi' widget e app dicono
+ * lo stesso giorno con lo stesso segno.
+ */
+internal fun DrawScope.dayGlyph(box: Rect, day: DayForecast) {
+    glifoNelRiquadro(box, glifoDi(day.weatherCode, day.nuvolositaStimata()))
 }

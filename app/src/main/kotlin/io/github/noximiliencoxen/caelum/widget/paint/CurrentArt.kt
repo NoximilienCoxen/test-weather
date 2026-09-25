@@ -72,7 +72,6 @@ private fun DrawScope.small(
         Rect(box.right - side, box.bottom - side, box.right, box.bottom),
         family,
         isDay,
-        ink,
     )
 }
 
@@ -211,6 +210,5 @@ private fun DrawScope.header(
         },
         family,
         isDay,
-        ink,
     )
 }

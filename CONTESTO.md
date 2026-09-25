@@ -6157,3 +6157,32 @@ tema, come la luna di Sala IV; il bordo delle nuvole e' li' perche' una nuvola
 bianca su un pannello chiaro non sparisca. `GlifoRenderTest` le disegna tutte,
 di giorno e di notte, su un fondo chiaro e uno scuro (`glifi-meteo.png` nella
 CI). Le icone dei widget sono un disegno a parte e non sono cambiate.
+
+---
+
+## 36. Le icone della colonna e dei widget
+
+**La colonna delle sale** (`IconaSala`/`disegnaIcona` in `SalaChrome.kt`) era
+tre stili in sette bottoni: cinque sagome piene disegnate qui e due immagini
+(`ic_aria.png`, `ic_vento.png`, 50 e 1024 pixel). Ora sono **tutte a tratto**,
+disegnate qui su un quadrato di ventiquattro unita', due di spessore, punte
+tonde: sole, calendario, nuvola con pioggia, falce con stellina, correnti
+d'aria, manica a vento, sole sull'orizzonte. Seguono l'inchiostro come prima.
+I due PNG sono usciti da `res/`.
+
+**I widget** disegnavano il tempo con una scultura a sfere illuminate (sole con
+la corona, cinque masse di nuvola) e i giorni con pallini e ovali. Ora usano le
+**stesse figurette a colori dell'app** (`disegnaGlifo`, sezione 35):
+`weatherBody` le stende nel riquadro con `glifoNelRiquadro`, `dayGlyph` passa
+per `glifoDi` con la stessa nuvolosita' stimata della striscia di Sala I, cosi'
+widget e app dicono lo stesso giorno con lo stesso segno. La luna del widget
+Luna resta un corpo: e' la fase, non un'icona. Con la scultura sono usciti
+`sphere`, `sunRays`, `Light` e le masse della nuvola, che non usava piu'
+nessuno.
+
+Le figurette hanno guadagnato la **nebbia** (una nuvola che si sfalda in tre
+strisce), che prima diventava "nuvoloso"; e senza nuvolosita' il codice 3,
+"coperto", da' le nuvole invece del sole dietro la nuvola.
+
+`GlifoRenderTest` disegna figurette e icone della colonna (`glifi-meteo.png`,
+`icone-colonna.png`).

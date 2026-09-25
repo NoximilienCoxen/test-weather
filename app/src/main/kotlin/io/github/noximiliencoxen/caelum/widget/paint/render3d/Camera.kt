@@ -3,7 +3,6 @@ package io.github.noximiliencoxen.caelum.widget.paint.render3d
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.sqrt
 
 /**
  * Camera prospettica: porta un punto dal sistema dell'oggetto a quello dello
@@ -86,34 +85,5 @@ class Camera(
 
     private companion object {
         const val DEG = (Math.PI / 180.0).toFloat()
-    }
-}
-
-/**
- * Luce direzionale fissa rispetto allo schermo: da sinistra in alto e davanti.
- *
- * Fissa e non solidale all'oggetto: e' questo che la rende utile. Ruotando, una
- * faccia entra nella luce e l'altra ne esce, e lo scambio si legge come
- * rotazione ancora prima che la sagoma cambi.
- */
-class Light(x: Float, y: Float, z: Float) {
-    val x: Float
-    val y: Float
-    val z: Float
-
-    init {
-        val len = sqrt(x * x + y * y + z * z).takeIf { it > 1e-4f } ?: 1f
-        this.x = x / len
-        this.y = y / len
-        this.z = z / len
-    }
-
-    companion object {
-        /**
-         * Marcatamente laterale. Con una luce quasi frontale la faccia della
-         * cifra cambia tono di pochi punti percentuali fra un estremo e l'altro
-         * della rotazione, cioe' non cambia affatto per chi guarda.
-         */
-        val Standard = Light(-0.58f, -0.55f, -0.60f)
     }
 }
