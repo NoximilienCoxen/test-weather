@@ -90,78 +90,36 @@ internal class Globo(
         }
     }
 
-    /**
-     * La stessa luce di [luce], ma su una carta equirettangolare di
-     * [larghezza] per [altezza] punti invece che sui vertici: e' cio' che
-     * diventa la tessitura della sfera (vedi `TessituraGlobo`).
-     *
-     * **Perche' una carta.** Sui vertici la luna ha un tono ogni tre gradi, e
-     * fra un vertice e l'altro il colore si interpola: a 220 dp sono una decina
-     * di pixel di sfumatura, e i mari e i crateri uscivano sfocati. La luce
-     * dipende solo dal punto della luna e dalla fase - il sole sta fermo, e chi
-     * gira intorno e' chi guarda - quindi si calcola una volta per fase, qui, a
-     * un tono ogni due decimi di grado.
-     *
-     * Le righe vanno dal polo nord al polo sud e le colonne seguono i
-     * meridiani, con gli stessi angoli dei vertici: il vertice (i, j) cade nel
-     * punto (j / meridiani, i / paralleli) della carta.
-     *
-     * **Solo la luce si rifa' a ogni fase.** L'albedo - mari, crateri, grana -
-     * e' la parte cara e non dipende dalla fase: si calcola una volta sola, in
-     * [albedoCarta], e qui resta un prodotto scalare per punto. Quando la carta
-     * si rifaceva intera a ogni giorno del cursore, trascinandolo i conti si
-     * accumulavano e la luna si aggiornava solo lasciando il dito.
-     *
-     * @param continua chiesto a ogni riga: falso, e si smette. Serve a chi
-     *   rinuncia a meta' - un cursore che e' gia' al giorno dopo.
-     * @return falso se si e' smesso prima della fine.
-     */
-    fun carta(
-        fase: Float,
-        larghezza: Int,
-        altezza: Int,
-        luce: FloatArray,
-        albedoOut: FloatArray? = null,
-        continua: () -> Boolean = { true },
-    ): Boolean {
-        val base = albedoCarta(larghezza, altezza)
-        albedoOut?.let { base.albedo.copyInto(it) }
-        val (sx, sy, sz) = direzioneSole(fase)
-        var p = 0
-        for (i in 0 until altezza) {
-            if (!continua()) return false
-            val st = base.senoRiga[i]
-            val py = base.yRiga[i]
-            for (j in 0 until larghezza) {
-                val px = st * base.senoColonna[j]
-                val pz = -st * base.cosenoColonna[j]
-                luce[p] = luceIn(base.albedo[p], px * sx + py * sy + pz * sz)
-                p++
-            }
-        }
-        return true
-    }
-
-    /** L'albedo della carta e le tabelle degli angoli: tutto cio' che non cambia con la fase. */
-    internal class BaseCarta(
-        val albedo: FloatArray,
-        val senoRiga: FloatArray,
-        val yRiga: FloatArray,
-        val senoColonna: FloatArray,
-        val cosenoColonna: FloatArray,
-    )
+    /** L'albedo della carta, riga per riga dal polo nord. */
+    internal class BaseCarta(val albedo: FloatArray)
 
     private var base: BaseCarta? = null
     private var baseLarga = 0
     private var baseAlta = 0
 
     /**
-     * L'albedo della carta, calcolata la prima volta e poi tenuta.
+     * **La carta**: la luna su una mappa equirettangolare di [larghezza] per
+     * [altezza] punti, stesa poi sulla sfera come tessitura (vedi
+     * `TessituraGlobo`).
      *
-     * **Sincronizzata, e non annullabile**, apposta: sono mezzo milione di
-     * punti con i loro crateri, e servono comunque. Chi arriva mentre un altro
-     * la sta facendo aspetta il suo risultato invece di rifarla accanto a lui;
-     * annullarla a meta' vorrebbe dire ricominciarla da capo al giro dopo.
+     * Sui vertici la luna ha un tono ogni tre gradi, e fra un vertice e l'altro
+     * il colore si interpola: a 220 dp sono una decina di pixel di sfumatura, e
+     * mari e crateri uscivano sfocati. Sulla carta c'e' un punto ogni due
+     * decimi di grado.
+     *
+     * **Sulla carta c'e' solo l'albedo, non la luce.** La prima versione ci
+     * dipingeva anche la luce della fase, e a ogni giorno del cursore la
+     * rifaceva: trascinando, la luna restava indietro finche' non si lasciava
+     * il dito. Adesso la luce arriva per vertice, moltiplicata sopra, e la
+     * carta non cambia mai.
+     *
+     * Le righe vanno dal polo nord al polo sud e le colonne seguono i
+     * meridiani, con gli stessi angoli dei vertici: il vertice (i, j) cade nel
+     * punto (j / meridiani, i / paralleli) della carta.
+     *
+     * Si calcola la prima volta e poi si tiene. **Sincronizzata**: sono mezzo
+     * milione di punti con i loro crateri, e chi arriva mentre un altro la sta
+     * facendo aspetta il suo risultato invece di rifarla accanto a lui.
      */
     @Synchronized
     internal fun albedoCarta(larghezza: Int, altezza: Int): BaseCarta {
@@ -188,7 +146,7 @@ internal class Globo(
                 albedo[p++] = albedoIn(st * senoColonna[j], yRiga[i], -st * cosenoColonna[j])
             }
         }
-        return BaseCarta(albedo, senoRiga, yRiga, senoColonna, cosenoColonna).also {
+        return BaseCarta(albedo).also {
             base = it
             baseLarga = larghezza
             baseAlta = altezza

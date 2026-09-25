@@ -121,6 +121,21 @@ fun SalaUvScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    // **Il valore sopra ogni colonna**, arrotondato all'intero
+                    // come lo scrive l'OMS: la barra dice la forma della
+                    // giornata, ma "a che ora scende sotto il 3" si legge solo
+                    // coi numeri. Una cifra sta in una colonna; le due cifre
+                    // del 10 e dell'11 sbordano centrate, come le ore sotto.
+                    Text(
+                        text = ore[indice].uvIndex?.roundToInt()?.toString() ?: "",
+                        style = SalaType.microLabel,
+                        color = if (indice == scelta) palette.accent else palette.inkSoft,
+                        maxLines = 1,
+                        modifier = Modifier.wrapContentWidth(
+                            align = Alignment.CenterHorizontally,
+                            unbounded = true,
+                        ),
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

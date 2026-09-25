@@ -43,10 +43,6 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import io.github.noximiliencoxen.caelum.widget.paint.render3d.Camera
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -76,26 +72,17 @@ internal fun LunaInterattiva(
     movimento: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val globo = remember { Globo() }
+    val globo = GLOBO
     val colori = remember(fase) { coloriPer(globo, fase) }
     val buffer = remember { BufferGlobo(globo) }
-    // La carta si fa lontano dal filo principale, e intanto la sfera usa i
-    // colori dei vertici: una luna un po' piu' morbida per un istante, invece
-    // di un fotogramma saltato a ogni cambio di fase.
-    //
-    // **Col cursore che corre si aspetta.** Ogni giorno trascinato cambia la
-    // fase e annulla l'attesa di quello prima: la carta si fa solo quando il
-    // dito si ferma, e intanto i vertici bastano. Senza, ogni giorno ne
-    // avviava una, e le vecchie - che non si fermavano - tenevano occupato il
-    // telefono finche' non si lasciava il cursore.
-    val tessitura by produceState<TessituraGlobo?>(initialValue = null, globo, fase) {
-        delay(ATTESA_CARTA_MS)
-        value = withContext(Dispatchers.Default) { TessituraGlobo.per(globo, fase) }
-    }
-    // L'albedo della carta si prepara appena la sala compare, una volta sola:
-    // al primo arresto del cursore resta da fare solo la luce.
-    LaunchedEffect(globo) {
-        withContext(Dispatchers.Default) { globo.albedoCarta(LARGHEZZA_CARTA, LARGHEZZA_CARTA / 2) }
+    // **La carta non dipende dalla fase, e si fa una volta sola.** Mari e
+    // crateri stanno li', e la luce arriva sopra per vertice (vedi
+    // [ColoriGlobo.modulatori]): trascinando il cursore la fase cambia a ogni
+    // giorno **mentre** il dito si muove, senza rifare niente di pesante.
+    // Finche' la carta non e' pronta - il primo mezzo secondo della sala - la
+    // sfera usa i colori dei vertici.
+    val tessitura by produceState(initialValue = tessituraPronta, globo) {
+        if (value == null) value = withContext(Dispatchers.Default) { TessituraGlobo(globo) }.also { tessituraPronta = it }
     }
 
     val yaw = remember { Animatable(0f) }
@@ -181,8 +168,17 @@ internal fun LunaInterattiva(
     }
 }
 
-/** I colori dei vertici per una fase, e il tono dell'alone. */
-internal class ColoriGlobo(val vertici: IntArray, val alone: Int)
+/**
+ * I colori dei vertici per una fase, e il tono dell'alone.
+ *
+ * [vertici] e' la luna intera a colori per vertice, per quando la carta non
+ * c'e'. [modulatori] e' **solo la luce**, da moltiplicare sulla carta: per ogni
+ * vertice, il suo colore vero diviso il colore che avrebbe in piena luce, canale
+ * per canale. Moltiplicato per la carta ridà esattamente il colore vero sul
+ * vertice, e in mezzo ai vertici porta i mari e i crateri della carta con la
+ * luce interpolata - che e' cio' che la luce e': liscia.
+ */
+internal class ColoriGlobo(val vertici: IntArray, val modulatori: IntArray, val alone: Int)
 
 /**
  * La tinta di ogni vertice: dal nero dello spazio al bianco caldo della luna
@@ -190,14 +186,21 @@ internal class ColoriGlobo(val vertici: IntArray, val alone: Int)
  * [SalaTokens], fisse nei due temi: un corpo celeste non cambia colore con la
  * pagina che lo mostra.
  *
- * I vertici si usano ancora, ma solo per il primo fotogramma: finche' la
- * carta di [TessituraGlobo] non e' pronta, e nelle prove che disegnano senza.
+ * Sono settemila vertici: si rifa' a ogni giorno del cursore, nel filo
+ * principale, e non si sente.
  */
 internal fun coloriPer(globo: Globo, fase: Float): ColoriGlobo {
     val luce = FloatArray(globo.vertici)
     globo.luce(fase, luce)
-    val out = IntArray(globo.vertici) { v -> TintaLuna.di(luce[v], globo.albedo[v]) }
-    return ColoriGlobo(out, SalaTokens.lunaLuce.toArgb())
+    val vertici = IntArray(globo.vertici)
+    val modulatori = IntArray(globo.vertici)
+    for (v in 0 until globo.vertici) {
+        val a = globo.albedo[v]
+        val vero = TintaLuna.di(luce[v], a)
+        vertici[v] = vero
+        modulatori[v] = TintaLuna.rapporto(vero, TintaLuna.pieno(a))
+    }
+    return ColoriGlobo(vertici, modulatori, SalaTokens.lunaLuce.toArgb())
 }
 
 /**
@@ -241,6 +244,19 @@ internal object TintaLuna {
         return misto(tono, mari[(acceso * (PASSI - 1)).toInt()], quantoMare)
     }
 
+    /** Il colore di un punto d'albedo [albedo] in piena luce: e' cio' che sta sulla carta. */
+    fun pieno(albedo: Float): Int = di(albedo, albedo)
+
+    /** [vero] diviso [pieno], canale per canale, fra 0 e 1: la luce da moltiplicare. */
+    fun rapporto(vero: Int, pieno: Int): Int {
+        fun canale(s: Int): Int {
+            val v = vero shr s and 0xFF
+            val p = pieno shr s and 0xFF
+            return if (p == 0) 0 else (v * 255 / p).coerceIn(0, 255)
+        }
+        return (0xFF shl 24) or (canale(16) shl 16) or (canale(8) shl 8) or canale(0)
+    }
+
     private fun misto(a: Int, b: Int, t: Float): Int {
         fun canale(s: Int): Int {
             val x = a shr s and 0xFF
@@ -252,31 +268,18 @@ internal object TintaLuna {
 }
 
 /**
- * La luna per una fase, dipinta su una carta e pronta da stendere sulla sfera.
+ * La luna in piena luce, dipinta su una carta e pronta da stendere sulla sfera.
  *
- * Si costruisce **fuori dal filo principale** (vedi [LunaInterattiva]): la
- * prima volta ci sono da fare mezzo milione di punti con i loro crateri
- * ([Globo.albedoCarta]), dalle volte dopo solo la luce.
+ * **Non dipende dalla fase**: la luce arriva sopra, per vertice
+ * ([ColoriGlobo.modulatori]). Si fa una volta sola, fuori dal filo principale
+ * (vedi [LunaInterattiva]): sono mezzo milione di punti coi loro crateri.
  */
-internal class TessituraGlobo private constructor(globo: Globo, private val immagine: Bitmap) {
-    private val larghezza = immagine.width
-    private val altezza = immagine.height
-
-    companion object {
-        /**
-         * La carta per una fase, o niente se chi la chiedeva ha rinunciato a
-         * meta': la luce si ferma a ogni riga, appena la coroutine e' annullata.
-         */
-        suspend fun per(globo: Globo, fase: Float, larghezza: Int = LARGHEZZA_CARTA): TessituraGlobo? {
-            val altezza = larghezza / 2
-            val luce = FloatArray(larghezza * altezza)
-            val contesto = currentCoroutineContext()
-            if (!globo.carta(fase, larghezza, altezza, luce, continua = { contesto.isActive })) return null
-            val albedo = globo.albedoCarta(larghezza, altezza).albedo
-            val pixel = IntArray(luce.size) { TintaLuna.di(luce[it], albedo[it]) }
-            contesto.ensureActive()
-            return TessituraGlobo(globo, Bitmap.createBitmap(pixel, larghezza, altezza, Bitmap.Config.ARGB_8888))
-        }
+internal class TessituraGlobo(globo: Globo, larghezza: Int = LARGHEZZA_CARTA) {
+    private val altezza = larghezza / 2
+    private val immagine: Bitmap = run {
+        val albedo = globo.albedoCarta(larghezza, altezza).albedo
+        val pixel = IntArray(albedo.size) { TintaLuna.pieno(albedo[it]) }
+        Bitmap.createBitmap(pixel, larghezza, altezza, Bitmap.Config.ARGB_8888)
     }
 
     /** Dove cade ogni vertice sulla carta, in pixel: le `texs` di `drawVertices`. */
@@ -289,9 +292,14 @@ internal class TessituraGlobo private constructor(globo: Globo, private val imma
 
     /**
      * Col filtro: fra un punto della carta e l'altro si interpola, e la luna
-     * ingrandita non si sgrana. Nessun colore di vertice insieme alla carta:
-     * e' la moltiplicazione che su alcuni telefoni faceva sparire i mari (vedi
-     * [BufferGlobo.pennello]), e cosi' non c'e' niente da moltiplicare.
+     * ingrandita non si sgrana.
+     *
+     * **Carta e colori dei vertici si moltiplicano, ed e' voluto.** Con uno
+     * shader `drawVertices` combina i due in `MODULATE` - e' cosi' in Android da
+     * sempre, disegno accelerato compreso - e i colori dei vertici qui sono i
+     * [ColoriGlobo.modulatori], cioe' la sola luce. Il vecchio guaio dei mari
+     * spariti era un'altra moltiplicazione, col colore del pennello (vedi
+     * [BufferGlobo.pennello]): con uno shader il colore del pennello non conta.
      */
     val pennello = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply {
         shader = BitmapShader(immagine, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
@@ -378,7 +386,7 @@ internal fun DrawScope.disegnaGlobo(
         0,
         tessitura?.coordinate,
         0,
-        if (tessitura == null) colori.vertici else null,
+        if (tessitura == null) colori.vertici else colori.modulatori,
         0,
         buffer.visibili,
         0,
@@ -387,8 +395,17 @@ internal fun DrawScope.disegnaGlobo(
     )
 }
 
-/** Quanto aspettare che il cursore si fermi prima di fare la carta. */
-private const val ATTESA_CARTA_MS = 120L
-
 /** La carta e' larga il doppio di quanto e' alta: 360 gradi per 180. */
 internal const val LARGHEZZA_CARTA = 1024
+
+/**
+ * La sfera e la sua carta, una volta per tutta la vita dell'app: non cambiano
+ * mai, e rifarle a ogni ritorno sulla sala voleva dire rivedere la luna morbida
+ * per mezzo secondo ogni volta. `Globo` e' immutabile a parte la carta, che si
+ * fa sotto chiave; `TessituraGlobo` non cambia dopo la nascita.
+ */
+private val GLOBO by lazy { Globo() }
+
+@Volatile
+private var tessituraPronta: TessituraGlobo? = null
+

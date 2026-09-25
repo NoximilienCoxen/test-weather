@@ -6058,21 +6058,29 @@ tiene la stessa soglia sui mari.
 
 **Il difetto:** dopo la sezione 31, trascinando il cursore dei giorni in
 Sala IV la luna si aggiornava solo lasciando il dito. Ogni giorno trascinato
-cambiava la fase e faceva partire una carta nuova da mezzo milione di punti con
-260 crateri ciascuno. `produceState` annullava la coroutine vecchia, ma il ciclo
-non guardava mai se era stato annullato: i conti vecchi continuavano, si
-accumulavano sui fili di `Dispatchers.Default` e tenevano occupato il telefono.
+cambiava la fase e faceva partire una carta nuova da mezzo milione di punti.
 
-**La cura, in tre pezzi:**
+**Primo tentativo, non bastato:** albedo tenuta, luce annullabile, e la carta
+rifatta solo quando il cursore si fermava da 120 ms. Il dito non restava piu'
+bloccato, ma la luna cambiava **dopo** il dito, a scatti: finche' si trascinava
+si vedeva la sfera morbida dei vertici, e quella nitida solo da fermi.
 
-- **L'albedo si fa una volta sola** (`Globo.albedoCarta`, sincronizzata e
-  tenuta): mari e crateri non dipendono dalla fase. Per ogni fase resta la sola
-  luce, un prodotto scalare per punto. Si prepara appena la sala compare.
-- **La luce si ferma quando le si chiede** (`carta(..., continua)`, a ogni
-  riga): `TessituraGlobo.per` le passa `isActive`, e rinuncia restituendo `null`.
-- **Si aspetta che il cursore si fermi** (120 ms): ogni giorno trascinato annulla
-  l'attesa del precedente, e intanto la sfera usa i colori dei vertici, che
-  costano poco. La carta arriva quando il dito si ferma.
+**La cura vera: sulla carta c'e' solo l'albedo, e la luce si moltiplica sopra.**
+
+- `TessituraGlobo` e' la luna **in piena luce** (`TintaLuna.pieno`), fatta una
+  volta sola fuori dal filo principale, e non dipende dalla fase.
+- Per ogni fase si calcolano i `modulatori` dei vertici: il colore vero del
+  vertice diviso il suo colore in piena luce, canale per canale. Sono settemila
+  vertici, si rifanno nel filo principale a ogni giorno del cursore e non si
+  sentono.
+- `drawVertices` con uno shader moltiplica shader e colori dei vertici
+  (`MODULATE`, da sempre in Android): sul vertice ridà esattamente il colore
+  vero (`LunaRenderTest` lo verifica), in mezzo porta i crateri della carta con
+  la luce interpolata. Il terminatore torna quello dei vertici - tre gradi - che
+  per una linea di luce e' abbastanza.
+
+Provato in una simulazione prima di scriverlo: accanto alla versione esatta per
+punto, le due lune si distinguono solo per un terminatore appena piu' morbido.
 
 ---
 
@@ -6103,4 +6111,30 @@ notte e sotto la pioggia.
 
 **Le icone sono disegnate qui** (`iconaPolline`), non prese dall'app Meteo di
 Google: quelle sono di Google e senza una licenza che ne permetta il riuso.
+
+---
+
+## 34. L'aria piu' corta, il carosello che si posa, i numeri UV
+
+**La sala dell'aria occupava tre schermi.** Anello da 72 punti invece di 96; la
+frase sotto la parola solo quando l'aria e' media o peggio (con aria buona
+ripeteva la parola in tre righe); gli inquinanti in una griglia due per due, e
+la cella di chi comanda l'indice dice la **percentuale** del limite al posto
+della frase "oggi l'indice lo decide..."; il polline in una **tabella** - una
+riga per famiglia, tre pastiglie colorate per tre giorni - invece di pastiglie
+di scelta e tre colonne alte. Toccando una riga, sotto si legge quali piante
+sono; di norma quelle della famiglia peggiore di oggi.
+
+**Il carosello restava a meta' fra due sale**, ogni tanto. Il pannello scorre
+dentro il carosello; arrivato in fondo, il resto del gesto passa al carosello
+con lo scorrimento annidato, che lo sposta senza un gesto suo, e se il dito si
+alza nel modo sbagliato nessuno chiede al carosello di posarsi. La rete in
+`SalaShell`: dito alzato, carosello fermo, pagina non posata per 160 ms -> si va
+alla sala piu' vicina. Il dito si segue a parte, nel primo passaggio e senza
+consumare niente, perche' `isScrollInProgress` non si accende per lo
+scorrimento annidato.
+
+**I raggi UV hanno il valore sopra ogni colonna**, arrotondato all'intero come
+lo scrive l'OMS: la forma della giornata la dice la barra, "a che ora scende
+sotto il 3" solo i numeri.
 
