@@ -14,11 +14,11 @@ import androidx.compose.ui.graphics.lerp
 internal fun DrawScope.scenaGrano(t: Float, notte: Boolean) {
     val orizzonte = H * 0.55f
     if (notte) {
-        cielo(Colori.cieloNotteAlto, Colori.cieloNotteBasso, orizzonte)
+        cielo(Scena.GRANO, notte, orizzonte)
         stelle(t, orizzonte)
         luna(Offset(W * 0.22f, orizzonte * 0.35f), W * 0.055f, Colori.cieloNotteAlto, falce = true)
     } else {
-        cielo(Color(0xFF9CC3D8), Color(0xFFF7E3C4), orizzonte)
+        cielo(Scena.GRANO, notte, orizzonte)
         sole(Offset(W * 0.24f, orizzonte * 0.4f), W * 0.08f)
     }
     collina(orizzonte, orizzonte - H * 0.05f, W * 0.7f, orizzonte + H * 0.01f, if (notte) Colori.verdeNotte else Colori.verde)
@@ -73,11 +73,11 @@ internal fun DrawScope.scenaGrano(t: Float, notte: Boolean) {
 internal fun DrawScope.scenaMontagna(t: Float, notte: Boolean) {
     val lago = H * 0.66f
     if (notte) {
-        cielo(Color(0xFF0B1224), Color(0xFF263252), lago)
+        cielo(Scena.MONTAGNA, notte, lago)
         stelle(t, lago * 0.8f, quante = 110)
         luna(Offset(W * 0.72f, lago * 0.22f), W * 0.06f, Color(0xFF0B1224))
     } else {
-        cielo(Color(0xFF8DBAD6), Color(0xFFEFE6D6), lago)
+        cielo(Scena.MONTAGNA, notte, lago)
         sole(Offset(W * 0.2f, lago * 0.22f), W * 0.06f)
     }
     fun monte(sx: Float, cima: Offset, dx: Float, colore: Color, conNeve: Boolean) {

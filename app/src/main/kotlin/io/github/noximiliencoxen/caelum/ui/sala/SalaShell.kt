@@ -62,6 +62,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaPioggiaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaSettimanaScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaUvScreen
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.SalaVentoScreen
+import io.github.noximiliencoxen.caelum.ui.scene.Scena as ScenaDAvvio
+import io.github.noximiliencoxen.caelum.ui.scene.tingiCielo
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -98,6 +100,8 @@ fun SalaShell(
     viewModel: WeatherViewModel,
     widthPx: Float,
     modifier: Modifier = Modifier,
+    /** La scena del velo d'apertura: il cielo ne prende la tinta. Vedi [tingiCielo]. */
+    scenaDAvvio: ScenaDAvvio? = null,
 ) {
     val rooms = SalaRoom.entries
     val scope = rememberCoroutineScope()
@@ -223,7 +227,16 @@ fun SalaShell(
     // come sta quasi sempre: li' una `List<Color>` nuova a ogni ricomposizione
     // bastava a impedire a `SalaCielo` di essere saltata, perche' un parametro
     // diverso per riferimento e' un parametro cambiato.
-    val stops = remember(fase, chiusura, scena.neve) { cieloStops(fase, chiusura, scena.neve) }
+    //
+    // **La tinta della scena d'apertura** passa sopra, e sposta solo il colore:
+    // la luce di ogni fermata resta quella della tabella, e con lei i conti del
+    // contrasto (vedi `tingiCielo`). Sotto un fronte cala fino a sparire: un
+    // cielo di temporale e' plumbeo qualunque quadretto si sia visto aprendo.
+    val stops = remember(fase, chiusura, scena.neve, scena.notte, scena.tempesta, scenaDAvvio) {
+        val base = cieloStops(fase, chiusura, scena.neve)
+        if (scenaDAvvio == null) base
+        else tingiCielo(base, scenaDAvvio, scena.notte, forza = FORZA_TINTA * (1f - scena.tempesta))
+    }
 
     // ── Il tema, e il solo salto che resta ───────────────────────────────────
     //
@@ -696,3 +709,10 @@ private fun List<WeatherAlert>.attiveA(momento: LocalDateTime?): List<WeatherAle
         dopoInizio && primaDellaFine
     }.sortedByDescending { it.level.weight }
 }
+
+/**
+ * Quanto del colore della scena d'apertura entra nel cielo: meta', su una
+ * fermata neutra. Su una gia' colorata - l'azzurro del sereno, l'arancione del
+ * tramonto - `tingiCielo` ne mette di meno da se'.
+ */
+private const val FORZA_TINTA = 0.5f
