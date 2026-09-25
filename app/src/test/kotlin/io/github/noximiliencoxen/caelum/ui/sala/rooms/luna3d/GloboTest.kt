@@ -87,7 +87,11 @@ class GloboTest {
             val pz = -sin(theta) * cos(phi)
             if (pz > -0.3) continue
             val l = luce[i * larga + j]
-            if (px > 0.3) { destra++; assertTrue("buio a destra: $l", l > 0.3f) }
+            // Rispetto all'albedo e non in assoluto: a destra ci sono la
+            // Tranquillitatis e il Crisium, scuri anche in piena luce. Col sole
+            // a piu' di 0,3 dalla normale arriva almeno il 71 % della luce.
+            val quota = l / albedo[i * larga + j]
+            if (px > 0.3) { destra++; assertTrue("buio a destra: $quota", quota > 0.6f) }
             if (px < -0.3) { sinistra++; assertTrue("acceso a sinistra: $l", l < Globo.LUCE_CINEREA * 1.2f) }
         }
         assertTrue(destra > 100 && sinistra > 100)
