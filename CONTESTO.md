@@ -5996,3 +5996,57 @@ Due freni, tutti e due voluti:
 I colori del cielo di ogni scena stanno ora in `cieloDi`, usati sia dal disegno
 sia dalla tinta: cambiarne uno cambia tutti e due. Durante la cattura la tinta
 e' sempre quella del mare, perche' gli scatti restino confrontabili.
+
+---
+
+## 30. Il tema non viaggia piu' col backup
+
+**Il difetto:** reinstallando l'app da zero il tema era "Scuro" invece di
+"Segui il cielo". Il valore predefinito nel codice e' sempre stato `AUTO`: era
+il backup di Android, che rimette `impostazioni.preferences_pb` prima del primo
+avvio, e con lui la scelta fatta su un'installazione precedente.
+
+**La cura:** il tema sta adesso in un secondo DataStore,
+`impostazioni_locali`, che le regole del backup lasciano fuori da sole (includono
+solo `impostazioni`). Citta', unita' e preferiti continuano a viaggiare.
+
+**Il passaggio, una volta sola** (`TemaDalleImpostazioni`, una `DataMigration`):
+su un **aggiornamento** il tema scritto nel vecchio file e' la scelta di chi usa
+l'app, e si porta nel file nuovo; su un'**installazione nuova** quel valore puo'
+venire solo dal backup, e si butta. Le due si distinguono da `firstInstallTime`
+e `lastUpdateTime` del pacchetto, che coincidono su un'installazione nuova,
+ripristino compreso. In tutti e due i casi la chiave vecchia (`sala_carta`) si
+toglie da `impostazioni`, cosi' dal backup successivo non parte piu'.
+
+Chi ha gia' ritrovato "Scuro" per via del backup e poi aggiorna se lo tiene: per
+l'app e' indistinguibile da una scelta. Basta rimetterlo a mano una volta.
+
+---
+
+## 31. La luna dipinta su una carta, non sui vertici
+
+**Il difetto:** mari e crateri sfocati. La sfera ha un colore per vertice su una
+griglia di tre gradi (60 x 120), e fra un vertice e l'altro il colore si
+interpola: a 220 dp sono una decina di pixel di sfumatura. I crateri piccoli
+erano piu' piccoli della distanza fra due vertici e non si vedevano proprio.
+
+**La cura:** la luce della luna dipende solo dal punto e dalla fase - il sole
+sta fermo, chi si muove e' chi guarda - quindi si calcola **una volta per fase**
+su una carta equirettangolare 1024 x 512 (`Globo.carta`), fuori dal filo
+principale, e si stende sulla sfera con `drawVertices` e un `BitmapShader`
+(`TessituraGlobo`). Finche' la carta non e' pronta la sfera usa ancora i colori
+dei vertici. **Carta e colori dei vertici non si usano mai insieme**: la
+moltiplicazione fra i due e' quella che su alcuni telefoni faceva sparire i mari.
+
+Sulla carta c'e' posto per dettagli che la griglia non reggeva:
+
+- rive dei mari nette (esponente alla sesta) e irregolari (`riva`);
+- 260 crateri piccoli con conca scura e orlo appena piu' chiaro, a caso con seme
+  fisso (1969): la stessa luna a ogni avvio. Il coseno limite di ognuno fa
+  saltare il conto dove il cratere non arriva;
+- niente grana fine fatta di seni: sulla carta disegnava un reticolo di puntini.
+
+La tinta passa per due tabelle precalcolate (`TintaLuna`): il `lerp` di Compose
+va in Oklab, e mezzo milione di chiamate a ogni fase erano troppe.
+`LunaRenderTest` disegna ora ogni fase con e senza carta (`luna3d-carta-*`) e
+tiene la stessa soglia sui mari.

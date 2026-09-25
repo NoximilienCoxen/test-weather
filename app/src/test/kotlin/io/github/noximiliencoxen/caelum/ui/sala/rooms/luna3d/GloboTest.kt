@@ -4,6 +4,9 @@ import io.github.noximiliencoxen.caelum.data.MoonPhase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * La luce della sfera e la fase dell'app devono dire la stessa cosa.
@@ -61,5 +64,48 @@ class GloboTest {
         val scuri = (0 until globo.vertici).count { globo.albedo[it] < 0.7f }
         assertTrue("mancano i mari", scuri > globo.vertici / 50)
         assertTrue("manca il resto", chiari > scuri)
+    }
+
+    /**
+     * La carta e' la stessa luce dei vertici, piu' fitta: al primo quarto la
+     * meta' destra della faccia verso di noi e' accesa e la sinistra no.
+     */
+    @Test
+    fun `sulla carta il primo quarto e' acceso a destra`() {
+        val globo = Globo()
+        val larga = 240
+        val alta = 120
+        val luce = FloatArray(larga * alta)
+        val albedo = FloatArray(larga * alta)
+        globo.carta(0.25f, larga, alta, luce, albedo)
+        var destra = 0
+        var sinistra = 0
+        for (i in 0 until alta) for (j in 0 until larga) {
+            val theta = PI * (i + 0.5) / alta
+            val phi = 2.0 * PI * (j + 0.5) / larga
+            val px = sin(theta) * sin(phi)
+            val pz = -sin(theta) * cos(phi)
+            if (pz > -0.3) continue
+            val l = luce[i * larga + j]
+            if (px > 0.3) { destra++; assertTrue("buio a destra: $l", l > 0.3f) }
+            if (px < -0.3) { sinistra++; assertTrue("acceso a sinistra: $l", l < Globo.LUCE_CINEREA * 1.2f) }
+        }
+        assertTrue(destra > 100 && sinistra > 100)
+    }
+
+    @Test
+    fun `i crateri piccoli si vedono sulla carta`() {
+        val globo = Globo()
+        val larga = 1024
+        val alta = 512
+        val luce = FloatArray(larga * alta)
+        val albedo = FloatArray(larga * alta)
+        globo.carta(0.5f, larga, alta, luce, albedo)
+        // Lungo una riga all'equatore, fra un punto e il successivo l'albedo
+        // deve cambiare di colpo da qualche parte: un orlo, una conca. Una
+        // luna tutta sfumature non lo farebbe mai.
+        val riga = alta / 2
+        val salti = (1 until larga).count { j -> kotlin.math.abs(albedo[riga * larga + j] - albedo[riga * larga + j - 1]) > 0.02f }
+        assertTrue("nessun dettaglio fine: $salti", salti > 10)
     }
 }

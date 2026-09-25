@@ -7,6 +7,7 @@ import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 /**
  * La luna come sfera vera: vertici, normali, quanto e' chiara ogni zona, e
@@ -85,10 +86,48 @@ internal class Globo(
             // bordo - per questo la luna piena sembra un disco piatto e non una
             // sfera che si scurisce ai lati. Col coseno la meta' accesa si
             // spegneva gradualmente verso il terminatore, che invece e' netto.
-            val diretta = (x[v] * sx + y[v] * sy + z[v] * sz).coerceAtLeast(0f).pow(ESPONENTE_REGOLITE)
-            out[v] = albedo[v] * (LUCE_CINEREA + (1f - LUCE_CINEREA) * diretta)
+            out[v] = luceIn(albedo[v], x[v] * sx + y[v] * sy + z[v] * sz)
         }
     }
+
+    /**
+     * La stessa luce di [luce], ma su una carta equirettangolare di
+     * [larghezza] per [altezza] punti invece che sui vertici: e' cio' che
+     * diventa la tessitura della sfera (vedi `TessituraGlobo`).
+     *
+     * **Perche' una carta.** Sui vertici la luna ha un tono ogni tre gradi, e
+     * fra un vertice e l'altro il colore si interpola: a 220 dp sono una decina
+     * di pixel di sfumatura, e i mari e i crateri uscivano sfocati. La luce
+     * dipende solo dal punto della luna e dalla fase - il sole sta fermo, e chi
+     * gira intorno e' chi guarda - quindi si calcola una volta per fase, qui, a
+     * un tono ogni due decimi di grado.
+     *
+     * Le righe vanno dal polo nord al polo sud e le colonne seguono i
+     * meridiani, con gli stessi angoli dei vertici: il vertice (i, j) cade nel
+     * punto (j / meridiani, i / paralleli) della carta.
+     */
+    fun carta(fase: Float, larghezza: Int, altezza: Int, luce: FloatArray, albedoOut: FloatArray) {
+        val (sx, sy, sz) = direzioneSole(fase)
+        var p = 0
+        for (i in 0 until altezza) {
+            val theta = PI * (i + 0.5) / altezza
+            val st = sin(theta).toFloat()
+            val py = (-cos(theta)).toFloat()
+            for (j in 0 until larghezza) {
+                val phi = 2.0 * PI * (j + 0.5) / larghezza
+                val px = st * sin(phi).toFloat()
+                val pz = -st * cos(phi).toFloat()
+                val a = albedoIn(px, py, pz)
+                albedoOut[p] = a
+                luce[p] = luceIn(a, px * sx + py * sy + pz * sz)
+                p++
+            }
+        }
+    }
+
+    /** Dove cade il vertice [v] sulla carta, da 0 a 1 sui due assi. */
+    fun uCarta(v: Int): Float = (v % (meridiani + 1)).toFloat() / meridiani
+    fun vCarta(v: Int): Float = (v / (meridiani + 1)).toFloat() / paralleli
 
     companion object {
         /** Il chiaro di Terra sulla parte in ombra. */
@@ -96,6 +135,10 @@ internal class Globo(
 
         /** Quanto e' piatta la luce sulla meta' accesa: 1 sarebbe Lambert puro. */
         private const val ESPONENTE_REGOLITE = 0.3f
+
+        /** La luce di un punto di albedo [albedo], col sole a [coseno] dalla normale. */
+        private fun luceIn(albedo: Float, coseno: Float): Float =
+            albedo * (LUCE_CINEREA + (1f - LUCE_CINEREA) * coseno.coerceAtLeast(0f).pow(ESPONENTE_REGOLITE))
 
         /**
          * Da dove viene il sole, per una fase da 0 (novilunio) a 1.
@@ -176,6 +219,29 @@ internal class Globo(
             mare(-0.55f, -0.30f, 0.04f, -0.20f), // Aristarchus
         )
 
+        /**
+         * I crateri piccoli, quelli che fanno la grana della luna vista da
+         * vicino: una conca scura con un orlo chiaro. Sulla sfera a vertici
+         * non si vedevano - erano piu' piccoli della distanza fra due vertici -
+         * e sulla carta si'.
+         *
+         * A caso ma con un seme fisso: la stessa luna a ogni avvio. Molti
+         * piccoli e pochi grandi, come sulla luna vera. Per ognuno: direzione,
+         * raggio angolare, e il coseno oltre il quale il punto e' troppo lontano
+         * per risentirne - il conto si salta, ed e' cio' che rende la carta
+         * abbastanza veloce da farsi a ogni cambio di fase.
+         */
+        private val CRATERINI: Array<FloatArray> = run {
+            val caso = Random(1969)
+            Array(260) {
+                val zz = caso.nextFloat() * 2f - 1f
+                val lon = caso.nextFloat() * 2f * PI.toFloat()
+                val rr = sqrt(1f - zz * zz)
+                val raggio = 0.008f + 0.05f * caso.nextFloat().pow(3)
+                floatArrayOf(rr * cos(lon), rr * sin(lon), zz, raggio, cos(raggio * 1.8f))
+            }
+        }
+
         /** La direzione del centro dell'Imbrium, il mare piu' grande: serve alle prove. */
         internal val IMBRIUM: FloatArray get() = MARI[0]
 
@@ -184,20 +250,48 @@ internal class Globo(
             return floatArrayOf(dx, dy, dz, raggio, profondita)
         }
 
-        private fun albedoIn(px: Float, py: Float, pz: Float): Float {
+        internal fun albedoIn(px: Float, py: Float, pz: Float): Float {
             var a = 1f
-            for (m in MARI + CRATERI) {
+            // La riva dei mari non e' un cerchio: ondeggia, piano, con due
+            // frequenze che non si ripetono a vista.
+            val riva = sin(px * 9f + py * 5f) * sin(py * 7f - pz * 11f) +
+                0.5f * sin(pz * 13f + px * 17f) * sin(py * 15f + pz * 6f)
+            for (m in MARI) {
                 val coseno = (px * m[0] + py * m[1] + pz * m[2]).coerceIn(-1f, 1f)
-                val angolo = acos(coseno)
-                // Alla quarta e non al quadrato: un mare ha una riva, non e' una
-                // nebbia. Col quadrato le macchie sfumavano per mezza luna.
-                val q = (angolo / m[3]) * (angolo / m[3])
+                // Alla sesta e non piu' alla quarta: sulla carta c'e' posto per
+                // una riva vera, e alla quarta il mare sfumava per un quinto del
+                // suo raggio. Sui vertici non si vedeva: lo sfocava la griglia.
+                val q = acos(coseno) / (m[3] * (1f + 0.14f * riva))
+                val q2 = q * q
+                a -= m[4] * exp(-q2 * q2 * q2)
+            }
+            for (m in CRATERI) {
+                val coseno = (px * m[0] + py * m[1] + pz * m[2]).coerceIn(-1f, 1f)
+                val d = acos(coseno) / m[3]
+                val q = d * d
                 a -= m[4] * exp(-q * q)
             }
+            for (c in CRATERINI) {
+                val coseno = px * c[0] + py * c[1] + pz * c[2]
+                if (coseno < c[4]) continue
+                val d = acos(coseno.coerceAtMost(1f)) / c[3]
+                // Dentro la conca scura, sull'orlo chiara: i due pezzi valgono
+                // uguale a d = 1, quindi l'orlo non ha uno scalino.
+                // Discreti: un orlo piu' chiaro di cosi' diventava un anello
+                // bianco su un altipiano gia' al massimo.
+                a += if (d < 1f) {
+                    -0.13f * (1f - d * d) + 0.06f * d.pow(6)
+                } else {
+                    val fuori = (d - 1f) / 0.2f
+                    0.06f * exp(-fuori * fuori)
+                }
+            }
             // Una grana leggera e deterministica, perche' gli altipiani non
-            // sembrino plastica: nessun caso, stessa luna a ogni avvio.
+            // sembrino plastica: nessun caso, stessa luna a ogni avvio. Una
+            // seconda grana piu' fine, fatta di seni, sulla carta disegnava un
+            // reticolo regolare di puntini: la grana fine la fanno i crateri.
             val grana = sin(px * 23f + py * 17f) * sin(py * 19f - pz * 29f) * sin(pz * 31f + px * 13f)
-            return (a + grana * 0.035f).coerceIn(0.25f, 1.1f)
+            return (a + grana * 0.035f).coerceIn(0.25f, 1.05f)
         }
     }
 }
