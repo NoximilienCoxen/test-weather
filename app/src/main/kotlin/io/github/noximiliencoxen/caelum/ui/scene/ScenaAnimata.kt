@@ -25,7 +25,6 @@ fun DrawScope.disegnaScena(scena: Scena, t: Float, notte: Boolean) {
             Scena.GRANO -> scenaGrano(t, notte)
             Scena.ARCOBALENO -> scenaArcobaleno(t, notte)
             Scena.MONTAGNA -> scenaMontagna(t, notte)
-            Scena.NEBBIA -> scenaNebbia(t, notte)
         }
     }
 }
