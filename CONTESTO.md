@@ -6186,3 +6186,48 @@ strisce), che prima diventava "nuvoloso"; e senza nuvolosita' il codice 3,
 
 `GlifoRenderTest` disegna figurette e icone della colonna (`glifi-meteo.png`,
 `icone-colonna.png`).
+
+## 37. Impostazioni per argomento, e la configurazione dei widget con la faccia dell'app
+
+**Le impostazioni** erano quindici pastiglie identiche in fila, con "Le
+località" inchiodata in fondo sopra la lista che le scorreva dietro (negli
+scatti tagliava a meta' "Vento forte"). Ora sono **sette gruppi** col titolo
+fuori dal riquadro - Località, Aspetto, Unità di misura, Avvisi nelle sale,
+Notifiche, Aiuto, Da dove vengono i numeri - e dentro ogni gruppo le voci sono
+righe separate da un filo (`GruppoImpostazioni`, `FiloGruppo`,
+`VoceImpostazione`, `VoceInterruttore` in `SalaChrome.kt`).
+
+- **Le note dicono cosa succede, e cambiano con la scelta**: il tema dice
+  "chiaro col sole, scuro quando tramonta" o "sempre scuro"; i testi delle sale
+  dicono se c'e' o no il paragrafo. "Didascalie complete/brevi" non lo capiva
+  nessuno: e' diventato "Testi delle sale", completi o brevi.
+- **Il gruppo degli avvisi dice sotto cosa non fa**: le allerte di MeteoAlarm
+  si vedono sempre, gli interruttori scelgono solo quelle calcolate. Prima lo
+  sapeva solo un commento nel codice.
+- **Tutta la riga e' l'interruttore** (`toggleable`, ruolo Switch), non solo il
+  binario; il pallino scorre invece di saltare.
+- **Le pastiglie staccate sono diventate un selettore a segmenti**
+  (`SceltaSegmentata`): un binario solo, un cursore d'accento che scivola. Le
+  unita' stanno sulla riga del loro nome.
+- **L'ultimo aggiornamento sta sulla riga "Aggiorna adesso"**, con l'errore al
+  suo posto in accento quando c'e'.
+
+`RigaServizio` e `SceltaPastiglie` sono usciti: non li usava piu' nessuno.
+`BloccoImpostazioni` resta per le note legali.
+
+**La configurazione dei widget** era l'ultima schermata sui token Material:
+tutto in maiuscolo, un SALVA nero su grigio, e il titolo **sotto l'orologio**
+della barra di stato (l'Activity e' `enableEdgeToEdge` e nessuno lasciava il
+posto alle barre). Adesso usa gli stessi pezzi delle impostazioni:
+intestazione col tondo per tornare (chiude senza salvare, come l'indietro), il
+widget con la sua figuretta e la frase "Mostrerà Forlì", il selettore
+Posizione/Salvate/Cerca, `CampoDiRicerca` di "Le località" (reso pubblico),
+righe con la spunta, e il bottone d'accento in fondo che sale sopra la
+tastiera. Prende il **tema scelto nell'app**; "Segui il cielo" qui ripiega sul
+tema del telefono, perche' la previsione non e' ancora stata letta.
+
+**Non provato in mano**: da questo container non si compila. Da guardare sul
+telefono: la larghezza dei segmenti delle unita' (176 punti, "km/h" deve starci
+senza puntini) e il colore delle icone della barra di stato nella
+configurazione quando il tema dell'app e quello del telefono non coincidono -
+`enableEdgeToEdge` le sceglie dal telefono.
