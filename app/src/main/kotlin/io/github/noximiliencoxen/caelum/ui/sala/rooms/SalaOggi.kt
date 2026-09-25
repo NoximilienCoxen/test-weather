@@ -280,7 +280,7 @@ fun StrisciaGiorni(
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                 )
-                IconaMeteo(giorno.glifo, palette)
+                IconaMeteo(giorno.glifo)
                 Text(
                     text = giorno.max?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
                     style = SalaType.giornoMax,
