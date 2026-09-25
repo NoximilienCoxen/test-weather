@@ -80,7 +80,7 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
 private fun DayForecast.nuvolositaStimata(): Int =
     (Wmo.cloudiness(weatherCode) * 100f).toInt()
 
-private fun DayOfWeek.italiano(): String = when (this) {
+internal fun DayOfWeek.italiano(): String = when (this) {
     DayOfWeek.MONDAY -> "lunedì"
     DayOfWeek.TUESDAY -> "martedì"
     DayOfWeek.WEDNESDAY -> "mercoledì"

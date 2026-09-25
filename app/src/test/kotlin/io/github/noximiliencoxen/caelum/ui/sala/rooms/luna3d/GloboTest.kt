@@ -108,4 +108,26 @@ class GloboTest {
         val salti = (1 until larga).count { j -> kotlin.math.abs(albedo[riga * larga + j] - albedo[riga * larga + j - 1]) > 0.02f }
         assertTrue("nessun dettaglio fine: $salti", salti > 10)
     }
+
+    /**
+     * Il cursore che corre rinuncia alla carta a meta': la luce deve
+     * fermarsi alla prima riga, e l'albedo - fatta una volta sola - non deve
+     * cambiare da una fase all'altra.
+     */
+    @Test
+    fun `la carta si ferma quando le si chiede, e l'albedo resta la stessa`() {
+        val globo = Globo()
+        val luce = FloatArray(64 * 32)
+        var righe = 0
+        val finita = globo.carta(0.3f, 64, 32, luce, continua = { righe++ < 3 })
+        assertTrue("non si e' fermata", !finita)
+        assertEquals(4, righe)
+
+        val prima = FloatArray(64 * 32)
+        val dopo = FloatArray(64 * 32)
+        globo.carta(0.1f, 64, 32, luce, prima)
+        globo.carta(0.6f, 64, 32, luce, dopo)
+        assertTrue(prima.contentEquals(dopo))
+        assertTrue(globo.albedoCarta(64, 32) === globo.albedoCarta(64, 32))
+    }
 }

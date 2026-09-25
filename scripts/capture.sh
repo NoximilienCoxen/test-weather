@@ -468,6 +468,23 @@ session() {
     i=$(( i + 1 ))
   done
 
+  # ── Il polline alto ──────────────────────────────────────────────────────
+  #
+  # `--ei polline 4` lo impone a "molto alto" per tre giorni e tutte le
+  # famiglie: fuori stagione il dato vero e' zero, e ne' i granelli nel cielo
+  # di Oggi ne' la sezione in fondo all'aria si vedrebbero mai.
+  for coppia in "0:oggi" "4:aria"; do
+    alive || { echo "dispositivo caduto al polline"; return; }
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell logcat -c >/dev/null 2>&1 || true
+    avvia --ei ora "$ora_dettaglio" --ei polline 4 \
+      --ei sezione "${coppia%%:*}" >/dev/null 2>&1 || true
+    attendi_previsione
+    sleep 1
+    shoot "${slug}-polline-${coppia#*:}"
+  done
+
   # ── Un colpetto in verticale cambia sala ─────────────────────────────────
   #
   # Le sale si sfogliano in su e in giu', e deve bastare poco: un decimo di

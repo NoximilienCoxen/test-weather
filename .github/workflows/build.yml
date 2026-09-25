@@ -63,6 +63,14 @@ jobs:
           AIR="$BASE?latitude=44.2226&longitude=12.0407&timezone=auto&current=$VARS"
           curl -sS -w "\nHTTP %{http_code}\n" "$AIR" -o /tmp/ciout/aria.json
           cat /tmp/ciout/aria.json; echo
+          # Il polline, con le stesse ore che chiede l'app: a Forli' e a
+          # Tokyo, dove il modello europeo non arriva e i campi devono essere nulli.
+          POLLINE="alder_pollen,birch_pollen,olive_pollen,grass_pollen,mugwort_pollen,ragweed_pollen"
+          for punto in "forli:44.2226:12.0407" "tokyo:35.68:139.69"; do
+            nome="${punto%%:*}"; resto="${punto#*:}"
+            curl -sS "$BASE?latitude=${resto%%:*}&longitude=${resto#*:}&timezone=auto&forecast_days=3&hourly=$POLLINE" \
+              -o "/tmp/ciout/polline-$nome.json" || true
+          done
           {
             echo "=== l'indice europeo, dentro e fuori il suo dominio ==="
             for punto in "Forli:44.2226:12.0407" "Tokyo:35.68:139.69" \

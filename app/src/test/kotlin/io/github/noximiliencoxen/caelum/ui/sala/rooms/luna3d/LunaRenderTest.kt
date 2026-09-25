@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -106,7 +107,7 @@ class LunaRenderTest {
     private fun disegna(lato: Int, fase: Float, yaw: Float, pitch: Float, conCarta: Boolean = false): Bitmap {
         val bitmap = Bitmap.createBitmap(lato, lato, Bitmap.Config.ARGB_8888)
         val colori = coloriPer(globo, fase)
-        val tessitura = if (conCarta) TessituraGlobo(globo, fase) else null
+        val tessitura = if (conCarta) runBlocking { TessituraGlobo.per(globo, fase) } else null
         CanvasDrawScope().draw(
             Density(2f),
             LayoutDirection.Ltr,
