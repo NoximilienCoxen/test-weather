@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
@@ -28,7 +28,7 @@
     Forli    48/48 ore  quota 40.0 m  prime [20.1, 20.1, 19.9]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
-    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
+    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [15.5, 15.2, 14.8]
     Forli    48/48 ore  quota 40.0 m  prime [17.1, 17.4, 17.2]
@@ -41,15 +41,15 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [14.0, 13.7, 13.5]
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [15.6, 15.5, 15.5]
     Bergen   48/48 ore  quota 17.0 m  prime [10.6, 11.0, 11.4]
@@ -57,7 +57,7 @@
     NewYork  48/48 ore  quota 27.0 m  prime [17.6, 17.1, 16.6]
 
 === chi risponde sotto best_match, nel mondo ===
-  Tokyo          best_match = ? (nessun candidato coincide)
+  Tokyo          best_match = jma_seamless
   NewYork        best_match = gfs_seamless
   Oslo           best_match = metno_seamless
   Reykjavik      best_match = ? (nessun candidato coincide)
@@ -65,9 +65,9 @@
   CittaDelCapo   best_match NON RISPONDE qui
   Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Singapore      best_match = knmi_seamless
-  Noceto         best_match = icon_seamless
+  Delhi          best_match = knmi_seamless
+  Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  Noceto         best_match NON RISPONDE qui
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
   Tokyo          ore    168  assenti=-  tutte nulle=-
@@ -86,7 +86,8 @@
   Sydney         giorni   7  assenti=-  tutte nulle=-
   SanPaolo       ore    168  assenti=-  tutte nulle=-
   SanPaolo       giorni   7  assenti=-  tutte nulle=-
-  Delhi          HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+  Delhi          ore    168  assenti=-  tutte nulle=-
+  Delhi          giorni   7  assenti=-  tutte nulle=-
   Singapore      ore    168  assenti=-  tutte nulle=-
   Singapore      giorni   7  assenti=-  tutte nulle=-
   Noceto         ore    168  assenti=-  tutte nulle=-
