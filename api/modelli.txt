@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
+{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
 
 === copertura reale sui due punti ===
   best_match
@@ -43,12 +43,12 @@
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"reason":"No data is available for this location","error":true}
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [14.0, 13.7, 13.5]
     Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [15.6, 15.5, 15.5]
@@ -59,29 +59,27 @@
 === chi risponde sotto best_match, nel mondo ===
   Tokyo          best_match = jma_seamless
   NewYork        best_match = gfs_seamless
-  Oslo           best_match = metno_seamless
+  Oslo           best_match NON RISPONDE qui
   Reykjavik      best_match = ? (nessun candidato coincide)
   Nairobi        best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  CittaDelCapo   best_match NON RISPONDE qui
+  CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Delhi          best_match = knmi_seamless
-  Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  Singapore      best_match = metno_seamless
   Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
   Tokyo          ore    168  assenti=-  tutte nulle=-
   Tokyo          giorni   7  assenti=-  tutte nulle=-
-  NewYork        ore    168  assenti=-  tutte nulle=-
-  NewYork        giorni   7  assenti=-  tutte nulle=-
+  NewYork        HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   Oslo           ore    168  assenti=-  tutte nulle=-
   Oslo           giorni   7  assenti=-  tutte nulle=-
   Reykjavik      ore    168  assenti=-  tutte nulle=-
   Reykjavik      giorni   7  assenti=-  tutte nulle=-
   Nairobi        ore    168  assenti=-  tutte nulle=-
   Nairobi        giorni   7  assenti=-  tutte nulle=-
-  CittaDelCapo   ore    168  assenti=-  tutte nulle=-
-  CittaDelCapo   giorni   7  assenti=-  tutte nulle=-
+  CittaDelCapo   HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
   Sydney         ore    168  assenti=-  tutte nulle=-
   Sydney         giorni   7  assenti=-  tutte nulle=-
   SanPaolo       ore    168  assenti=-  tutte nulle=-
@@ -90,5 +88,6 @@
   Delhi          giorni   7  assenti=-  tutte nulle=-
   Singapore      ore    168  assenti=-  tutte nulle=-
   Singapore      giorni   7  assenti=-  tutte nulle=-
-  Noceto         HTTP 0  URLError: <urlopen error _ssl.c:983: The handshake operation timed out>
+  Noceto         ore    168  assenti=-  tutte nulle=-
+  Noceto         giorni   7  assenti=-  tutte nulle=-
 
