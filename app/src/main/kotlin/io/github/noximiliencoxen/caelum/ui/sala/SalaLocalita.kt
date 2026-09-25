@@ -217,13 +217,20 @@ private fun RigaLocalita(
     }
 }
 
-/** Il campo di ricerca: una pastiglia larga, come ogni altra cosa qui dentro. */
+/**
+ * Il campo di ricerca: una pastiglia larga, come ogni altra cosa qui dentro.
+ *
+ * Pubblico perche' lo usa anche la configurazione dei widget: una ricerca di
+ * citta' che nell'app ha una faccia e nel widget un'altra sono due cose da
+ * imparare invece di una.
+ */
 @Composable
-private fun CampoDiRicerca(
+fun CampoDiRicerca(
     valore: String,
     palette: SalaPalette,
     onValore: (String) -> Unit,
     modifier: Modifier = Modifier,
+    segnaposto: String = "Cerca una città o un comune",
 ) {
     Row(
         modifier = modifier
@@ -238,7 +245,7 @@ private fun CampoDiRicerca(
         Box(modifier = Modifier.weight(1f)) {
             if (valore.isEmpty()) {
                 Text(
-                    text = "Cerca una città o un comune",
+                    text = segnaposto,
                     style = SalaType.rowTitle,
                     color = palette.inkFaint,
                 )
