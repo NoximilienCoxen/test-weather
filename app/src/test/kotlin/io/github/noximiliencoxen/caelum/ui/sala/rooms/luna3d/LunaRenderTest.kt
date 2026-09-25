@@ -30,6 +30,29 @@ class LunaRenderTest {
 
     private val globo = Globo()
     private val buffer = BufferGlobo(globo)
+    private val carta by lazy { TessituraGlobo(globo) }
+
+    /**
+     * La luce per vertice, moltiplicata sulla carta in piena luce, deve ridare
+     * sul vertice il colore vero: e' la promessa di [ColoriGlobo.modulatori].
+     * Si tollera un passo o due di arrotondamento per canale.
+     */
+    @Test
+    fun `luce per carta ridà il colore vero sul vertice`() {
+        listOf(0.1f, 0.25f, 0.5f, 0.8f).forEach { fase ->
+            val colori = coloriPer(globo, fase)
+            for (v in 0 until globo.vertici step 37) {
+                val pieno = TintaLuna.pieno(globo.albedo[v])
+                val m = colori.modulatori[v]
+                val vero = colori.vertici[v]
+                for (s in intArrayOf(16, 8, 0)) {
+                    val atteso = vero shr s and 0xFF
+                    val ottenuto = (pieno shr s and 0xFF) * (m shr s and 0xFF) / 255
+                    assertTrue("fase $fase vertice $v: $ottenuto invece di $atteso", kotlin.math.abs(ottenuto - atteso) <= 3)
+                }
+            }
+        }
+    }
 
     @Test
     fun `le fasi dalla Terra`() {
@@ -51,8 +74,27 @@ class LunaRenderTest {
      */
     @Test
     fun `al plenilunio i mari si vedono`() {
+        mariVisibili(conCarta = false)
+        mariVisibili(conCarta = true)
+    }
+
+    /**
+     * Con la carta, com'e' sul telefono: stessa sfera, stessa fase, stessa
+     * soglia sui mari - e la luna deve restare accesa quanto senza.
+     */
+    @Test
+    fun `con la carta`() {
+        listOf(0.07f, 0.25f, 0.5f, 0.75f).forEach { fase ->
+            val senza = render("luna3d-fase-${(fase * 100).toInt()}", fase, 0f, 0f)
+            val con = render("luna3d-carta-${(fase * 100).toInt()}", fase, 0f, 0f, conCarta = true)
+            assertTrue("fase $fase: $con con la carta, $senza senza", kotlin.math.abs(con - senza) < 0.05f)
+        }
+        render("luna3d-carta-giro-quarto-120-0", 0.25f, 120f, 0f, conCarta = true)
+    }
+
+    private fun mariVisibili(conCarta: Boolean) {
         val lato = 440
-        val bitmap = disegna(lato, 0.5f, 0f, 0f)
+        val bitmap = disegna(lato, 0.5f, 0f, 0f, conCarta)
         val r = lato * 0.40f
         fun luminosita(dx: Float, dy: Float): Double {
             val dz = -kotlin.math.sqrt(1f - dx * dx - dy * dy)
@@ -64,7 +106,7 @@ class LunaRenderTest {
         val imbrium = Globo.IMBRIUM
         val mare = luminosita(imbrium[0], imbrium[1])
         val altipiano = luminosita(0.15f, 0.75f)
-        assertTrue("mare $mare, altipiano $altipiano", altipiano - mare >= 0.15)
+        assertTrue("carta=$conCarta: mare $mare, altipiano $altipiano", altipiano - mare >= 0.15)
     }
 
     @Test
@@ -76,17 +118,18 @@ class LunaRenderTest {
     }
 
     /** Disegna e restituisce la quota di pixel accesi (luminosita' oltre meta'). */
-    private fun render(nome: String, fase: Float, yaw: Float, pitch: Float): Float {
+    private fun render(nome: String, fase: Float, yaw: Float, pitch: Float, conCarta: Boolean = false): Float {
         val lato = 440
-        val bitmap = disegna(lato, fase, yaw, pitch)
+        val bitmap = disegna(lato, fase, yaw, pitch, conCarta)
         File("build/widget-renders").apply { mkdirs() }
             .resolve("$nome.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         return accesi(bitmap, lato)
     }
 
-    private fun disegna(lato: Int, fase: Float, yaw: Float, pitch: Float): Bitmap {
+    private fun disegna(lato: Int, fase: Float, yaw: Float, pitch: Float, conCarta: Boolean = false): Bitmap {
         val bitmap = Bitmap.createBitmap(lato, lato, Bitmap.Config.ARGB_8888)
         val colori = coloriPer(globo, fase)
+        val tessitura = if (conCarta) carta else null
         CanvasDrawScope().draw(
             Density(2f),
             LayoutDirection.Ltr,
@@ -97,6 +140,7 @@ class LunaRenderTest {
             disegnaGlobo(
                 globo, colori, buffer, yaw, pitch,
                 alone = Color(colori.alone).copy(alpha = 0.22f * Globo.frazioneIlluminataVista(fase, yaw, pitch, 40)),
+                tessitura = tessitura,
             )
         }
         return bitmap

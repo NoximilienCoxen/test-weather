@@ -108,6 +108,7 @@ fun SalaLocalitaScreen(
                     corrente = posto.key == state.place.key,
                     palette = palette,
                     glifo = meteo?.let { glifoDi(it.weatherCode, null) },
+                    notte = meteo?.isDay == false,
                     onClick = { onPick(posto) },
                     onTogli = { onRemove(posto) },
                 )
@@ -155,6 +156,8 @@ private fun RigaLocalita(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     glifo: GlifoMeteo? = null,
+    /** Di notte la figuretta mette la luna al posto del sole. */
+    notte: Boolean = false,
     onTogli: (() -> Unit)? = null,
 ) {
     Row(
@@ -171,7 +174,7 @@ private fun RigaLocalita(
             modifier = Modifier.size(34.dp).clip(CircleShape).background(palette.maniglia),
             contentAlignment = Alignment.Center,
         ) {
-            if (glifo != null) IconaMeteo(glifo, palette)
+            if (glifo != null) IconaMeteo(glifo, notte = notte)
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(

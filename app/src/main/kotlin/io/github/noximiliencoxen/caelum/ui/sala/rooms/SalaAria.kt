@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -41,9 +42,11 @@ import kotlin.math.roundToInt
 /**
  * Sala V — L'aria: l'indice, e i quattro inquinanti che lo compongono.
  *
- * Quattro e non cinque come nel prototipo: i pollini non stanno nell'endpoint
- * base di Open-Meteo, e tre pastiglie con dentro un numero inventato sarebbero
- * state la parte piu' convincente della schermata e l'unica falsa.
+ * Il polline, che il prototipo aveva e qui mancava, e' arrivato quando si e'
+ * scoperto che lo stesso endpoint dell'aria lo serve, per l'Europa: prima tre
+ * pastiglie con dentro un numero inventato sarebbero state la parte piu'
+ * convincente della schermata e l'unica falsa. Adesso c'e', col dato vero, e
+ * dove il dato non c'e' la sezione non compare.
  */
 @Composable
 fun SalaAriaScreen(
@@ -61,13 +64,16 @@ fun SalaAriaScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Box(modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center) {
+            // **Settantadue punti e non novantasei**: la sala e' cresciuta del
+            // polline, e l'anello era la cosa piu' grande della scheda per il
+            // dato piu' breve.
+            Box(modifier = Modifier.size(72.dp), contentAlignment = Alignment.Center) {
                 // L'anello dice **quanto** prima di dire quale: la porzione
                 // colorata cresce con l'indice, e il resto resta il grigio
                 // dell'interfaccia.
                 val quota = ((aria?.index ?: 0) / 100f).coerceIn(0f, 1f)
-                Canvas(modifier = Modifier.size(96.dp)) {
-                    val spessore = 11.dp.toPx()
+                Canvas(modifier = Modifier.size(72.dp)) {
+                    val spessore = 8.dp.toPx()
                     drawCircle(
                         color = palette.maniglia,
                         radius = size.minDimension / 2f - spessore / 2f,
@@ -103,12 +109,17 @@ fun SalaAriaScreen(
                     color = palette.accent,
                     modifier = Modifier.padding(top = 6.dp),
                 )
-                Didascalia(
-                    descrizione(banda, state.airUnavailable),
-                    palette,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
             }
+        }
+        // La frase sotto il numero solo quando c'e' qualcosa da fare: con
+        // l'aria buona o discreta ripeteva la parola accanto all'anello in tre
+        // righe, e tre righe erano un quinto della scheda.
+        if (banda == null || banda.ordinal > AirBand.DISCRETA.ordinal || state.airUnavailable) {
+            Didascalia(
+                descrizione(banda, state.airUnavailable),
+                palette,
+                modifier = Modifier.padding(top = 8.dp),
+            )
         }
 
         // ── L'andamento della giornata ───────────────────────────────────────
@@ -128,7 +139,7 @@ fun SalaAriaScreen(
                 text = "NELLA GIORNATA",
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+                modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
             )
             AndamentoAria(
                 ore = ore,
@@ -143,53 +154,54 @@ fun SalaAriaScreen(
             Didascalia(
                 consiglioOrario(ore, state.detailHour?.time?.hour),
                 palette,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
 
         // ── Gli inquinanti, col loro limite ──────────────────────────────────
+        //
+        // **In una griglia due per due, e senza la frase sotto.** Erano quattro
+        // righe a tutta larghezza piu' "oggi l'indice lo decide l'ozono, al
+        // novantacinque per cento": la stessa informazione ora la dice la
+        // cella in grassetto, con la sua percentuale.
+        //
+        // **I limiti sono quelli dell'OMS del 2021, non quelli di legge.**
+        // Erano le soglie europee - venticinque per il PM 2,5, cinquanta per il
+        // PM 10 - che sono il confine di cio' che e' punibile, non di cio' che
+        // fa male: l'OMS mette quindici e quarantacinque. A chi sta decidendo
+        // se andare a correre serve il secondo metro.
+        //
+        // Il confronto col dominante e' sul **valore**, non sul nome: due
+        // stringhe uguali scritte in due file diversi si scollano al primo che
+        // le ritocca.
         val dominante = aria?.dominante
         Text(
             text = "RISPETTO AL LIMITE OMS",
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+            modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
         )
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            // **I limiti sono quelli dell'OMS del 2021, non quelli di legge.**
-            // Erano le soglie europee - venticinque per il PM 2,5, cinquanta
-            // per il PM 10 - che sono il confine di cio' che e' punibile, non
-            // di cio' che fa male: l'OMS mette quindici e quarantacinque. A chi
-            // sta decidendo se andare a correre serve il secondo metro.
-            // Il confronto e' sul **valore**, non sul nome: due stringhe
-            // uguali scritte in due file diversi si scollano al primo che le
-            // ritocca, e il grassetto finirebbe sulla riga sbagliata senza che
-            // niente si rompa.
-            BarraInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25)
-            BarraInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10)
-            BarraInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone)
-            BarraInquinante(
-                "NO₂",
-                aria?.nitrogenDioxide,
-                25.0,
-                palette,
-                dominante?.valore == aria?.nitrogenDioxide,
-            )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CellaInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25, Modifier.weight(1f))
+                CellaInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CellaInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone, Modifier.weight(1f))
+                CellaInquinante(
+                    "NO₂",
+                    aria?.nitrogenDioxide,
+                    25.0,
+                    palette,
+                    dominante?.valore == aria?.nitrogenDioxide,
+                    Modifier.weight(1f),
+                )
+            }
         }
-        if (dominante != null) {
-            // L'indice europeo e' il **peggiore** dei suoi componenti, non la
-            // loro media: dire "27, discreta" senza dire chi l'ha deciso lascia
-            // fuori la parte utile.
-            Didascalia(
-                "Oggi l'indice lo decide " + dominante.inFrase +
-                    ", al " + (dominante.quota * 100).roundToInt() + "% del limite.",
-                palette,
-                modifier = Modifier.padding(top = 10.dp),
-            )
-        }
+
+        // ── Il polline ───────────────────────────────────────────────────────
+        // Dallo stesso endpoint e dalla stessa richiesta: vedi `Polline.kt`.
+        SezionePolline(giorni = state.pollineMostrato, palette = palette)
     }
 }
 
@@ -287,52 +299,65 @@ private fun consiglioOrario(ore: List<OraAria>, oraScelta: Int?): String {
         .format(migliore.ora.hour, peggiore.ora.hour)
 }
 
+/**
+ * Un inquinante in una cella: il nome, il valore, e una barra sottile che dice
+ * quanto del limite occupa.
+ *
+ * Quello che comanda l'indice ha il nome in grassetto e la **percentuale** al
+ * posto dei microgrammi: e' l'unico per cui la domanda "quanto manca al
+ * limite" ha una risposta che cambia qualcosa.
+ */
 @Composable
-private fun BarraInquinante(
+private fun CellaInquinante(
     nome: String,
     valore: Double?,
     soglia: Double,
     palette: SalaPalette,
-    /** Quello che comanda l'indice: il nome va in grassetto, non in un colore
-     *  in piu'. La barra ha gia' un colore che dice quanto, e un secondo
-     *  colore che dice quale si leggerebbe come un terzo valore. */
-    dominante: Boolean = false,
+    dominante: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     val quota = valore?.let { (it / soglia).coerceIn(0.0, 1.0).toFloat() } ?: 0f
     val tinta = if (quota > 0.7f) SalaTokens.accent400 else SalaTokens.verde400
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(palette.chip)
+            .padding(horizontal = 12.dp, vertical = 9.dp),
     ) {
-        Text(
-            text = nome,
-            style = if (dominante) SalaType.rowTitle else SalaType.hourLabel,
-            color = palette.ink,
-            modifier = Modifier.width(56.dp),
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = nome,
+                style = if (dominante) SalaType.rowTitle else SalaType.hourLabel,
+                color = palette.ink,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = when {
+                    valore == null -> "--"
+                    dominante -> "${(valore / soglia * 100).roundToInt()}%"
+                    else -> "${valore.roundToInt()} µg/m³"
+                },
+                style = SalaType.rowNote,
+                color = if (dominante) palette.ink else palette.inkSoft,
+                maxLines = 1,
+            )
+        }
         Box(
             modifier = Modifier
-                .weight(1f)
-                .height(9.dp)
+                .padding(top = 6.dp)
+                .fillMaxWidth()
+                .height(5.dp)
                 .clip(CircleShape)
                 .background(palette.maniglia),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(quota)
-                    .height(9.dp)
+                    .height(5.dp)
                     .clip(CircleShape)
                     .background(tinta),
             )
         }
-        Text(
-            text = valore?.let { "${it.roundToInt()} µg/m³" } ?: "--",
-            style = SalaType.rowNote,
-            color = palette.inkSoft,
-            textAlign = TextAlign.End,
-            modifier = Modifier.width(66.dp),
-        )
     }
 }
 

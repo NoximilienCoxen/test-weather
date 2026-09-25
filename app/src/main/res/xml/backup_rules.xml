@@ -15,6 +15,10 @@
     sopravvivono al trasloco, e ripristinarli vorrebbe dire riferirsi a widget
     che sul telefono nuovo non ci sono.
 
+    Il tema no: sta in `impostazioni_locali.preferences_pb`, fuori per la
+    stessa regola qui sotto. Ripristinato, faceva ritrovare "Scuro" su
+    un'installazione nuova invece di "Segui il cielo" (vedi SettingsPrefs).
+
     Che `widget_config.preferences_pb` resti fuori non ha bisogno di una riga
     sua: appena si scrive un <include>, l'incluso e' l'unica cosa che parte e
     tutto il resto e' gia' escluso. Un <exclude> per un percorso che non sta

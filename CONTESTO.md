@@ -618,6 +618,7 @@ adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 
 | `--ei sezione` | apre il feed su una scheda: 0 temperatura, 1 pioggia, 2 aria, 3 vento, 4 sole, 5 luna |
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
+| `--ei polline` | impone il polline da 0 a 4, per tre giorni e tutte le famiglie: granelli nel cielo da 3 in su, e la sezione in fondo all'aria |
 | `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -5961,3 +5962,227 @@ di errore che quella pagina esiste per evitare.
 - **Il selettore del modello meteo.** Adesso si vede quale e' attivo; sceglierlo
   vuol dire rimettere `setModel`, una riga di scelta e la ricarica, ed e' una
   funzione, non un'informazione.
+
+---
+
+## 29. Il cielo prende la tinta della scena d'apertura
+
+**Le colline nella nebbia sono uscite** dalle scene d'apertura: non piacevano.
+Ne restano sette (sei fuori dal periodo natalizio).
+
+**La domanda era: la scena d'apertura come sfondo fisso dell'app?** No, per tre
+motivi: i testi sopra un quadretto pieno di chiari e scuri non hanno un fondo su
+cui tarare il contrasto; la scena e' a caso e non segue il tempo, quindi
+racconterebbe il sole mentre piove; e un disegno animato a tutto schermo sotto
+ogni pannello e' esattamente il costo della trappola #18.
+
+**Cosa si e' fatto invece: il cielo di Sala prende i colori della scena**
+(`ui/scene/TintaCielo.kt`, `tingiCielo`). Le tre fermate della sfumatura si
+avvicinano in CIELAB alla tinta del cielo della scena - cima con cima,
+orizzonte con orizzonte - e **la luce non si muove**: la chiarezza si ritocca
+finche' la luminanza relativa torna quella della tabella, entro l'1 %. Il
+contrasto dipende solo dalla luminanza, quindi `temaScuro` e i test di
+contrasto restano veri. `TintaCieloTest` lo verifica su tutte le tabelle, per
+ogni scena, di giorno, di notte e a meta'.
+
+Due freni, tutti e due voluti:
+
+- **tinge cio' che il tempo lascia neutro.** La forza cala con la croma della
+  fermata: un grigio coperto ne prende la meta', l'arancione del tramonto un
+  ottavo. Senza, al tramonto il cielo diventava rosa pallido e non diceva piu'
+  che ora fosse;
+- **sotto un fronte sparisce** (`1 - tempesta`): un temporale e' plumbeo
+  qualunque quadretto si sia visto aprendo.
+
+I colori del cielo di ogni scena stanno ora in `cieloDi`, usati sia dal disegno
+sia dalla tinta: cambiarne uno cambia tutti e due. Durante la cattura la tinta
+e' sempre quella del mare, perche' gli scatti restino confrontabili.
+
+---
+
+## 30. Il tema non viaggia piu' col backup
+
+**Il difetto:** reinstallando l'app da zero il tema era "Scuro" invece di
+"Segui il cielo". Il valore predefinito nel codice e' sempre stato `AUTO`: era
+il backup di Android, che rimette `impostazioni.preferences_pb` prima del primo
+avvio, e con lui la scelta fatta su un'installazione precedente.
+
+**La cura:** il tema sta adesso in un secondo DataStore,
+`impostazioni_locali`, che le regole del backup lasciano fuori da sole (includono
+solo `impostazioni`). Citta', unita' e preferiti continuano a viaggiare.
+
+**Il passaggio, una volta sola** (`TemaDalleImpostazioni`, una `DataMigration`):
+su un **aggiornamento** il tema scritto nel vecchio file e' la scelta di chi usa
+l'app, e si porta nel file nuovo; su un'**installazione nuova** quel valore puo'
+venire solo dal backup, e si butta. Le due si distinguono da `firstInstallTime`
+e `lastUpdateTime` del pacchetto, che coincidono su un'installazione nuova,
+ripristino compreso. In tutti e due i casi la chiave vecchia (`sala_carta`) si
+toglie da `impostazioni`, cosi' dal backup successivo non parte piu'.
+
+Chi ha gia' ritrovato "Scuro" per via del backup e poi aggiorna se lo tiene: per
+l'app e' indistinguibile da una scelta. Basta rimetterlo a mano una volta.
+
+---
+
+## 31. La luna dipinta su una carta, non sui vertici
+
+**Il difetto:** mari e crateri sfocati. La sfera ha un colore per vertice su una
+griglia di tre gradi (60 x 120), e fra un vertice e l'altro il colore si
+interpola: a 220 dp sono una decina di pixel di sfumatura. I crateri piccoli
+erano piu' piccoli della distanza fra due vertici e non si vedevano proprio.
+
+**La cura:** la luce della luna dipende solo dal punto e dalla fase - il sole
+sta fermo, chi si muove e' chi guarda - quindi si calcola **una volta per fase**
+su una carta equirettangolare 1024 x 512 (`Globo.carta`), fuori dal filo
+principale, e si stende sulla sfera con `drawVertices` e un `BitmapShader`
+(`TessituraGlobo`). Finche' la carta non e' pronta la sfera usa ancora i colori
+dei vertici. **Carta e colori dei vertici non si usano mai insieme**: la
+moltiplicazione fra i due e' quella che su alcuni telefoni faceva sparire i mari.
+
+Sulla carta c'e' posto per dettagli che la griglia non reggeva:
+
+- rive dei mari nette (esponente alla sesta) e irregolari (`riva`);
+- 260 crateri piccoli con conca scura e orlo appena piu' chiaro, a caso con seme
+  fisso (1969): la stessa luna a ogni avvio. Il coseno limite di ognuno fa
+  saltare il conto dove il cratere non arriva;
+- niente grana fine fatta di seni: sulla carta disegnava un reticolo di puntini.
+
+La tinta passa per due tabelle precalcolate (`TintaLuna`): il `lerp` di Compose
+va in Oklab, e mezzo milione di chiamate a ogni fase erano troppe.
+`LunaRenderTest` disegna ora ogni fase con e senza carta (`luna3d-carta-*`) e
+tiene la stessa soglia sui mari.
+
+---
+
+## 32. Il cursore della luna rallentava: la carta si rifaceva a ogni giorno
+
+**Il difetto:** dopo la sezione 31, trascinando il cursore dei giorni in
+Sala IV la luna si aggiornava solo lasciando il dito. Ogni giorno trascinato
+cambiava la fase e faceva partire una carta nuova da mezzo milione di punti.
+
+**Primo tentativo, non bastato:** albedo tenuta, luce annullabile, e la carta
+rifatta solo quando il cursore si fermava da 120 ms. Il dito non restava piu'
+bloccato, ma la luna cambiava **dopo** il dito, a scatti: finche' si trascinava
+si vedeva la sfera morbida dei vertici, e quella nitida solo da fermi.
+
+**La cura vera: sulla carta c'e' solo l'albedo, e la luce si moltiplica sopra.**
+
+- `TessituraGlobo` e' la luna **in piena luce** (`TintaLuna.pieno`), fatta una
+  volta sola fuori dal filo principale, e non dipende dalla fase.
+- Per ogni fase si calcolano i `modulatori` dei vertici: il colore vero del
+  vertice diviso il suo colore in piena luce, canale per canale. Sono settemila
+  vertici, si rifanno nel filo principale a ogni giorno del cursore e non si
+  sentono.
+- `drawVertices` con uno shader moltiplica shader e colori dei vertici
+  (`MODULATE`, da sempre in Android): sul vertice ridà esattamente il colore
+  vero (`LunaRenderTest` lo verifica), in mezzo porta i crateri della carta con
+  la luce interpolata. Il terminatore torna quello dei vertici - tre gradi - che
+  per una linea di luce e' abbastanza.
+
+Provato in una simulazione prima di scriverlo: accanto alla versione esatta per
+punto, le due lune si distinguono solo per un terminatore appena piu' morbido.
+
+---
+
+## 33. Il polline, in fondo alla sala dell'aria
+
+**Da dove viene.** Dallo stesso endpoint e dalla stessa richiesta dell'aria
+(`air-quality-api.open-meteo.com`), sei campi orari in granuli al metro cubo:
+ontano, betulla, olivo, graminacee, artemisia, ambrosia. E' il modello CAMS,
+**solo Europa**: altrove i campi arrivano nulli, e la sezione non compare. La CI
+salva le risposte vere per Forli' e Tokyo (`polline-*.json`).
+
+**Le famiglie** (`TipoPolline`), come le chiamano le app: *Erba* = graminacee;
+*Alberi* = betulla, ontano, olivo; *Erbacce* = ambrosia e artemisia. Ogni
+famiglia dice in una riga quali piante sono, perche' "Alberi" ed "Erbacce" da
+soli non si capiscono.
+
+**I livelli**, da 0 a 4 (`SpeciePolline.livello`): soglie diverse per specie,
+dalle classi della rete italiana POLLnet per famiglia botanica (assente, bassa,
+media, alta). "Molto alto" e' nostro: quattro volte la soglia dell'alta. Per un
+giorno si prende il **picco** orario, e per una famiglia la **specie
+peggiore**. Sono indicative: non coincideranno con Google, che usa un'altra fonte
+e un altro indice. Mancano il cipresso e le urticacee, che in Italia contano: il
+modello non li ha.
+
+**Nel cielo:** da "alto" in su, granelli gialli che girano piano scendendo
+(`polline` in `SalaVita.kt`), nello stesso piano del pulviscolo, attenuati di
+notte e sotto la pioggia.
+
+**Le icone sono disegnate qui** (`iconaPolline`), non prese dall'app Meteo di
+Google: quelle sono di Google e senza una licenza che ne permetta il riuso.
+
+---
+
+## 34. L'aria piu' corta, il carosello che si posa, i numeri UV
+
+**La sala dell'aria occupava tre schermi.** Anello da 72 punti invece di 96; la
+frase sotto la parola solo quando l'aria e' media o peggio (con aria buona
+ripeteva la parola in tre righe); gli inquinanti in una griglia due per due, e
+la cella di chi comanda l'indice dice la **percentuale** del limite al posto
+della frase "oggi l'indice lo decide..."; il polline in una **tabella** - una
+riga per famiglia, tre pastiglie colorate per tre giorni - invece di pastiglie
+di scelta e tre colonne alte. Toccando una riga, sotto si legge quali piante
+sono; di norma quelle della famiglia peggiore di oggi.
+
+**Il carosello restava a meta' fra due sale**, ogni tanto. Il pannello scorre
+dentro il carosello; arrivato in fondo, il resto del gesto passa al carosello
+con lo scorrimento annidato, che lo sposta senza un gesto suo, e se il dito si
+alza nel modo sbagliato nessuno chiede al carosello di posarsi. La rete in
+`SalaShell`: dito alzato, carosello fermo, pagina non posata per 160 ms -> si va
+alla sala piu' vicina. Il dito si segue a parte, nel primo passaggio e senza
+consumare niente, perche' `isScrollInProgress` non si accende per lo
+scorrimento annidato.
+
+**I raggi UV hanno il valore sopra ogni colonna**, arrotondato all'intero come
+lo scrive l'OMS: la forma della giornata la dice la barra, "a che ora scende
+sotto il 3" solo i numeri.
+
+
+---
+
+## 35. Le figurette del tempo, a colori
+
+Il sole era un disco arancione, le nuvole due ovali grigi tinti col tema: si
+capiva che i giorni erano diversi, non che tempo facevano. `IconaMeteo` (in
+`SalaChrome.kt`, usata dalla striscia dei giorni di Sala I e dall'elenco delle
+localita') ora disegna **a colori**: sole giallo a petali, nuvole bianche col
+bordo ardesia, nuvole cariche grigie, gocce blu, fulmine giallo, fiocchi
+azzurri, e **di notte la luna** al posto del sole (le localita' la chiedono con
+`isDay` del dato corrente).
+
+Il modello e' lo stile di Google Meteo, ma **le icone sono nostre**: quelle di
+Google sono sue e senza una licenza che ne permetta il riuso. Non seguono il
+tema, come la luna di Sala IV; il bordo delle nuvole e' li' perche' una nuvola
+bianca su un pannello chiaro non sparisca. `GlifoRenderTest` le disegna tutte,
+di giorno e di notte, su un fondo chiaro e uno scuro (`glifi-meteo.png` nella
+CI). Le icone dei widget sono un disegno a parte e non sono cambiate.
+
+---
+
+## 36. Le icone della colonna e dei widget
+
+**La colonna delle sale** (`IconaSala`/`disegnaIcona` in `SalaChrome.kt`) era
+tre stili in sette bottoni: cinque sagome piene disegnate qui e due immagini
+(`ic_aria.png`, `ic_vento.png`, 50 e 1024 pixel). Ora sono **tutte a tratto**,
+disegnate qui su un quadrato di ventiquattro unita', due di spessore, punte
+tonde: sole, calendario, nuvola con pioggia, falce con stellina, correnti
+d'aria, manica a vento, sole sull'orizzonte. Seguono l'inchiostro come prima.
+I due PNG sono usciti da `res/`.
+
+**I widget** disegnavano il tempo con una scultura a sfere illuminate (sole con
+la corona, cinque masse di nuvola) e i giorni con pallini e ovali. Ora usano le
+**stesse figurette a colori dell'app** (`disegnaGlifo`, sezione 35):
+`weatherBody` le stende nel riquadro con `glifoNelRiquadro`, `dayGlyph` passa
+per `glifoDi` con la stessa nuvolosita' stimata della striscia di Sala I, cosi'
+widget e app dicono lo stesso giorno con lo stesso segno. La luna del widget
+Luna resta un corpo: e' la fase, non un'icona. Con la scultura sono usciti
+`sphere`, `sunRays`, `Light` e le masse della nuvola, che non usava piu'
+nessuno.
+
+Le figurette hanno guadagnato la **nebbia** (una nuvola che si sfalda in tre
+strisce), che prima diventava "nuvoloso"; e senza nuvolosita' il codice 3,
+"coperto", da' le nuvole invece del sole dietro la nuvola.
+
+`GlifoRenderTest` disegna figurette e icone della colonna (`glifi-meteo.png`,
+`icone-colonna.png`).
