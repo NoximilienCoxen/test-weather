@@ -13,12 +13,12 @@ import androidx.compose.ui.graphics.lerp
 internal fun DrawScope.scenaMare(t: Float, notte: Boolean) {
     val orizzonte = H * 0.58f
     if (notte) {
-        cielo(Colori.cieloNotteAlto, Colori.cieloNotteBasso, orizzonte)
+        cielo(Scena.MARE, notte, orizzonte)
         stelle(t, orizzonte * 0.9f)
         val c = Offset(W * 0.68f, orizzonte * 0.42f)
         luna(c, W * 0.07f, Colori.cieloNotteAlto)
     } else {
-        cielo(Colori.cieloGiornoAlto, Colori.cieloGiornoBasso, orizzonte)
+        cielo(Scena.MARE, notte, orizzonte)
         sole(Offset(W * 0.62f, orizzonte * 0.62f), W * 0.11f)
         nuvola(Offset(W * 0.2f + oscilla(t, 40f) * W * 0.04f, orizzonte * 0.32f), W * 0.26f, Colori.crema.copy(alpha = 0.9f))
     }
@@ -56,8 +56,7 @@ internal fun DrawScope.scenaMare(t: Float, notte: Boolean) {
 internal fun DrawScope.scenaTempesta(t: Float, notte: Boolean) {
     val orizzonte = H * 0.52f
     val flash = lampo(t)
-    val alto = if (notte) Color(0xFF0B0F18) else Colori.cieloTempestaAlto
-    val basso = if (notte) Color(0xFF1D2430) else Colori.cieloTempestaBasso
+    val (alto, basso) = cieloDi(Scena.TEMPESTA, notte)
     cielo(lerp(alto, Color(0xFFDDE4EE), flash * 0.55f), lerp(basso, Color(0xFFDDE4EE), flash * 0.4f), orizzonte)
     // Le nuvole basse e cariche, che corrono.
     for (i in 0 until 5) {

@@ -59,11 +59,11 @@ private fun DrawScope.fumo(da: Offset, t: Float, colore: Color) {
 internal fun DrawScope.scenaCittaNatale(t: Float, notte: Boolean) {
     val suolo = H * 0.74f
     if (notte) {
-        cielo(Color(0xFF101A30), Color(0xFF34406A))
+        cielo(Scena.CITTA_NATALE, notte)
         stelle(t, H * 0.35f)
         luna(Offset(W * 0.8f, H * 0.14f), W * 0.05f, Color(0xFF101A30), falce = true)
     } else {
-        cielo(Color(0xFFB9CCDB), Color(0xFFE9EEF2))
+        cielo(Scena.CITTA_NATALE, notte)
     }
     val finestra = if (notte) Colori.luceCalda else Color(0xFF8FA6B8)
     val muri = listOf(Color(0xFFC98E62), Color(0xFFE2C9A0), Color(0xFFB36A48), Color(0xFFD9B98A), Color(0xFFA85C3C))
@@ -110,7 +110,7 @@ internal fun DrawScope.scenaCittaNatale(t: Float, notte: Boolean) {
 /** La fermata dell'autobus sotto la pioggia: pensilina, panchina, un ombrello, le pozzanghere. */
 internal fun DrawScope.scenaFermata(t: Float, notte: Boolean) {
     val marciapiede = H * 0.72f
-    if (notte) cielo(Color(0xFF151B27), Color(0xFF2E3747)) else cielo(Colori.cieloGrigioAlto, Colori.cieloGrigioBasso)
+    cielo(Scena.FERMATA, notte)
     // I palazzi dietro, in silhouette.
     for (i in 0 until 6) {
         val larga = W * (0.13f + caso(i, 50) * 0.08f)
@@ -202,7 +202,7 @@ internal fun DrawScope.scenaFermata(t: Float, notte: Boolean) {
 internal fun DrawScope.scenaArcobaleno(t: Float, notte: Boolean) {
     val tetti = H * 0.7f
     if (notte) {
-        cielo(Colori.cieloNotteAlto, Colori.cieloNotteBasso)
+        cielo(Scena.ARCOBALENO, notte)
         stelle(t, H * 0.55f)
         luna(Offset(W * 0.5f, H * 0.26f), W * 0.075f, Colori.cieloNotteAlto)
         // Le nuvole si scostano, lente, da una parte e dall'altra.
@@ -210,7 +210,7 @@ internal fun DrawScope.scenaArcobaleno(t: Float, notte: Boolean) {
         nuvola(Offset(W * (0.28f - apre * 0.12f), H * 0.32f), W * 0.4f, Color(0xFF3A4462))
         nuvola(Offset(W * (0.74f + apre * 0.12f), H * 0.28f), W * 0.42f, Color(0xFF444F70))
     } else {
-        cielo(Color(0xFF8FB9D2), Color(0xFFF3E4CF))
+        cielo(Scena.ARCOBALENO, notte)
         val c = Offset(W * 0.5f, tetti + H * 0.06f)
         val colori = listOf(Color(0xFFE05252), Color(0xFFF08A3C), Color(0xFFF0C51F), Color(0xFF7DB85A), Color(0xFF4F8CC9), Color(0xFF7C5BB5))
         val presenza = 0.55f + 0.1f * oscilla(t, 6f)

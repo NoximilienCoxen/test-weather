@@ -5961,3 +5961,38 @@ di errore che quella pagina esiste per evitare.
 - **Il selettore del modello meteo.** Adesso si vede quale e' attivo; sceglierlo
   vuol dire rimettere `setModel`, una riga di scelta e la ricarica, ed e' una
   funzione, non un'informazione.
+
+---
+
+## 29. Il cielo prende la tinta della scena d'apertura
+
+**Le colline nella nebbia sono uscite** dalle scene d'apertura: non piacevano.
+Ne restano sette (sei fuori dal periodo natalizio).
+
+**La domanda era: la scena d'apertura come sfondo fisso dell'app?** No, per tre
+motivi: i testi sopra un quadretto pieno di chiari e scuri non hanno un fondo su
+cui tarare il contrasto; la scena e' a caso e non segue il tempo, quindi
+racconterebbe il sole mentre piove; e un disegno animato a tutto schermo sotto
+ogni pannello e' esattamente il costo della trappola #18.
+
+**Cosa si e' fatto invece: il cielo di Sala prende i colori della scena**
+(`ui/scene/TintaCielo.kt`, `tingiCielo`). Le tre fermate della sfumatura si
+avvicinano in CIELAB alla tinta del cielo della scena - cima con cima,
+orizzonte con orizzonte - e **la luce non si muove**: la chiarezza si ritocca
+finche' la luminanza relativa torna quella della tabella, entro l'1 %. Il
+contrasto dipende solo dalla luminanza, quindi `temaScuro` e i test di
+contrasto restano veri. `TintaCieloTest` lo verifica su tutte le tabelle, per
+ogni scena, di giorno, di notte e a meta'.
+
+Due freni, tutti e due voluti:
+
+- **tinge cio' che il tempo lascia neutro.** La forza cala con la croma della
+  fermata: un grigio coperto ne prende la meta', l'arancione del tramonto un
+  ottavo. Senza, al tramonto il cielo diventava rosa pallido e non diceva piu'
+  che ora fosse;
+- **sotto un fronte sparisce** (`1 - tempesta`): un temporale e' plumbeo
+  qualunque quadretto si sia visto aprendo.
+
+I colori del cielo di ogni scena stanno ora in `cieloDi`, usati sia dal disegno
+sia dalla tinta: cambiarne uno cambia tutti e due. Durante la cattura la tinta
+e' sempre quella del mare, perche' gli scatti restino confrontabili.
