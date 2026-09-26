@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.Wmo
+import io.github.noximiliencoxen.caelum.ui.UiState
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 
@@ -79,6 +80,22 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
  */
 internal fun DayForecast.nuvolositaStimata(): Int =
     (Wmo.cloudiness(weatherCode) * 100f).toInt()
+
+/**
+ * "di oggi", "di domani", "di venerdì": il giorno scritto accanto a un'ora,
+ * contato dall'oggi **del posto** e non del telefono.
+ *
+ * Serve alle sale che, lontano da adesso, devono dire di quale momento stanno
+ * parlando invece di "fra poco" o "le prossime ore".
+ */
+internal fun UiState.diGiorno(data: java.time.LocalDate): String {
+    val oggi = forecast?.nowThere()?.toLocalDate() ?: java.time.LocalDate.now()
+    return when (data) {
+        oggi -> "di oggi"
+        oggi.plusDays(1) -> "di domani"
+        else -> "di ${data.dayOfWeek.italiano()}"
+    }
+}
 
 internal fun DayOfWeek.italiano(): String = when (this) {
     DayOfWeek.MONDAY -> "lunedì"

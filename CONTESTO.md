@@ -6374,3 +6374,52 @@ rete **e** senza scorta.
 (bollettino, note legali, impostazioni) escono chiare su fondo chiaro: e' il
 difetto noto di §27.8, qui solo piu' visibile.
 
+## 40. Aria e pioggia lontano da adesso
+
+Lo stesso difetto della Settimana (§38) in altre due sale: numeri e frasi che
+parlavano di adesso sotto un giorno o un'ora diversi. Provato sul Pixel.
+
+**L'anello dell'aria segue il momento mostrato.** Diceva sempre l'indice di
+adesso, mentre il grafico sotto seguiva il giorno scelto. Adesso: guardando
+adesso, la misura di adesso; altrimenti la previsione oraria di quell'ora, con
+sotto la parola "previsione di domani alle 16:00". Oltre i tre giorni del
+modello l'anello resta vuoto e dice "Non prevista". Gli inquinanti arrivano solo
+come misura di adesso: lontano da adesso la loro etichetta diventa
+`RISPETTO AL LIMITE OMS · ADESSO`, invece di passare per quelli dell'ora
+mostrata.
+
+**Il grafico dell'aria ha un'ora ogni due**, non ogni sei: stessa misura del
+grafico UV (§38), con la scala `1, 2, 3, 4, 6` e l'ora scelta sempre scritta.
+`EtichettaGrafico` e' passata da privata a `internal` in `SalaUv.kt`.
+
+**La pioggia dice da dove parte.** "Nelle prossime dodici ore", "sta piovendo"
+e "fra tre ore" valgono solo guardando adesso. Altrimenti: "nelle dodici ore
+dalle 06:00 di venerdì", "Alle 06:00 di venerdì piove: smette verso le 09:00",
+"Comincia verso le 14:00 di domani". Il giorno lo scrive `UiState.diGiorno`
+in `SalaGiorni.kt`, contato dall'oggi del posto.
+
+### 40.1 Gli agganci `--ei`, e perche' non arrivavano
+
+Due guasti diversi, trovati provando questa sezione.
+
+**Con l'app gia' aperta non arrivava niente.** `MainActivity` aveva il
+`launchMode` normale, e un `am start` con lo stesso componente di chi ha aperto
+il task - gli extra non contano nel confronto fra intent - riporta il task in
+primo piano **senza chiamare `onNewIntent`**. `am` stampa lo stesso "intent has
+been delivered", che e' falso: nessuna riga `agganci:` nel log lo dimostra.
+Adesso l'attivita' e' `singleTop` e `onNewIntent` fa anche `setIntent`.
+`capture.sh` fa `force-stop` prima di ogni avvio, e aggirava il difetto senza
+saperlo: per lui non cambia niente.
+
+**`--ei ora` si perdeva anche a freddo.** `requestHour` tiene l'ora in
+`pendingHour` finche' la previsione non arriva; ma all'avvio, se il posto lo
+decide il telefono, parte `locate`, che finisce prima della previsione e
+**azzerava `pendingHour`**. Adesso lo azzera solo la scelta a mano di una
+localita' (`choosePlace`, `visita`) e `backToNow`. In CI probabilmente non si
+vedeva - l'emulatore non segue la posizione - ma sul telefono si'.
+
+Provato: a freddo `--ei ora 9 --ei sezione 4` apre l'aria alle 09:00 (prima
+restava sulle 16:00, l'ora vera); a caldo `--ei sezione 2 --ei giorno 6
+--ei ora 5` porta alla pioggia di venerdi' alle 05:00, con la riga `agganci:`
+nel log che prima non compariva.
+
