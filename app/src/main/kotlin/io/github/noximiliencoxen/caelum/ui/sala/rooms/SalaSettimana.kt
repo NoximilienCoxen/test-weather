@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.MoonPhase
 import io.github.noximiliencoxen.caelum.ui.sala.GiornoSettimana
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
@@ -41,11 +42,15 @@ private val OraMinuto: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
  *
  * **Non ripete Sala I, la completa.** Le due si somigliavano troppo: entrambe
  * mostravano sette colonne con massima e minima, e chi scorreva da una all'altra
- * si chiedeva cosa fosse cambiato. Qui sopra ci sono sei riquadri che riassumono
- * la settimana **intera** - pioggia attesa, escursione, vento, UV, luna, aria -
- * e ognuno porta alla schermata che ne parla per esteso; in mezzo la scheda del
- * giorno scelto con tutto cio' che la striscia non ha spazio di dire; sotto la
- * stessa striscia di Sala I, coi millimetri in piu'.
+ * si chiedeva cosa fosse cambiato. In cima la settimana intera in una frase;
+ * sotto, sei riquadri **del giorno scelto** - pioggia, minima e massima, vento,
+ * UV, luna, aria - e ognuno porta alla schermata che ne parla per esteso; in
+ * fondo la stessa striscia di Sala I, coi millimetri in piu'.
+ *
+ * **I riquadri dicono il giorno scelto, non la settimana**, perche' la sala in
+ * cui portano mostra il giorno scelto. Riassumevano i sette giorni: "Pioggia
+ * 0,9 mm" portava a una sala che per oggi diceva zero, e i due numeri non
+ * coincidevano. La settimana resta nella frase sotto il titolo.
  *
  * La selezione del giorno e' **condivisa**: si tocca qui e Sala I la segue, e
  * viceversa. E' lo stesso asse, non due schermate che si assomigliano.
@@ -72,21 +77,43 @@ fun SalaSettimanaScreen(
             modifier = Modifier.padding(top = 6.dp),
         )
 
-        RiepilogoSettimana(
-            settimana = settimana,
+        if (scelto != null) {
+            // Di quale giorno parlano i riquadri, detto sopra di loro.
+            Row(
+                modifier = Modifier.padding(top = 14.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(text = scelto.esteso, style = SalaType.rowTitle, color = palette.ink)
+                Text(
+                    text = "${scelto.data} · ${scelto.tipo.lowercase()}",
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+
+        RiepilogoGiorno(
+            giorno = scelto,
             state = state,
             faseLunare = faseLunare,
             palette = palette,
             onVai = onVai,
-            modifier = Modifier.padding(top = 13.dp),
+            onOra = viewModel::selectHour,
+            modifier = Modifier.padding(top = 9.dp),
         )
 
         if (scelto != null) {
-            SchedaGiorno(
-                giorno = scelto,
-                state = state,
-                palette = palette,
-                modifier = Modifier.padding(top = 12.dp),
+            // Alba e tramonto non sono riquadri: sono due istanti, non quantita'
+            // da confrontare fra giorni, e non portano a nessuna sala.
+            Text(
+                text = "alba ${scelto.alba?.format(OraMinuto) ?: "--:--"} · " +
+                    "tramonto ${scelto.tramonto?.format(OraMinuto) ?: "--:--"}",
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+                modifier = Modifier.padding(top = 10.dp),
             )
         }
 
@@ -141,41 +168,63 @@ private fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): Str
 private fun Double.virgola(): String = String.format(Locale.ITALY, "%.1f", this)
 
 /**
- * I sei riquadri di riepilogo, e dove portano.
+ * I sei riquadri del giorno scelto, e dove portano.
  *
- * **Ognuno e' una porta.** Un numero che riassume la settimana e' utile finche'
- * non si vuole sapere di piu', e a quel punto la domanda successiva e' sempre la
- * stessa: "dove lo vedo per esteso?". Toccando il riquadro ci si arriva, invece
- * di tornare indietro a cercare la schermata giusta nella colonna.
+ * **Ognuno e' una porta.** Un numero riassuntivo e' utile finche' non si vuole
+ * sapere di piu', e a quel punto la domanda successiva e' sempre la stessa:
+ * "dove lo vedo per esteso?". Toccando il riquadro ci si arriva, invece di
+ * tornare indietro a cercare la schermata giusta nella colonna - e ci si trova
+ * lo stesso giorno, quindi lo stesso numero.
+ *
+ * **Pioggia, vento e UV portano anche all'ora giusta.** Le loro sale dicono il
+ * valore di un'ora, e i riquadri quello di un giorno: aprendo la pioggia di
+ * venerdi' alle tre del pomeriggio, "0,9 mm" diventava "0,0". Si arriva
+ * all'ora che il numero del riquadro racconta: quella in cui tira piu' vento o
+ * il sole e' piu' forte, e per la pioggia quella in cui **comincia**, perche'
+ * la sala somma le dodici ore successive e da li' il conto copre la giornata.
+ * Se il giorno non ha ore, o non piove affatto, l'ora resta quella che era.
  */
 @Composable
-private fun RiepilogoSettimana(
-    settimana: List<GiornoSettimana>,
+private fun RiepilogoGiorno(
+    giorno: GiornoSettimana?,
     state: UiState,
     faseLunare: Float,
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
+    onOra: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val mm = settimana.sumOf { it.mm ?: 0.0 }
-    val minime = settimana.mapNotNull { it.min }
-    val massime = settimana.mapNotNull { it.max }
-    val ventoMax = settimana.mapNotNull { it.vento }.maxOrNull()
-    val uvMax = settimana.mapNotNull { it.uv }.maxOrNull()
+    val ore = state.shownHours
+    fun oraDelMassimo(valore: (HourForecast) -> Double?): Int? =
+        ore.indices
+            .filter { (valore(ore[it]) ?: 0.0) > 0.0 }
+            .maxByOrNull { valore(ore[it]) ?: 0.0 }
+    // La fase arriva gia' del giorno mostrato: vedi la Shell.
     val luna = MoonPhase.illumination(faseLunare)
-    val aria = state.air?.index
+    val oggi = state.selectedDay == 0
+    // **L'aria di oggi e' quella di adesso**, lo stesso numero dell'anello in
+    // Sala V; per i due giorni dopo, che l'API copre ora per ora, il picco del
+    // giorno. Oltre, il modello non arriva e il riquadro lo dice.
+    val aria = if (oggi) {
+        state.air?.index
+    } else {
+        state.detailDay?.date?.let { data ->
+            state.air?.oreOggi.orEmpty().filter { it.ora.toLocalDate() == data }.maxOfOrNull { it.indice }
+        }
+    }
 
     val voci = listOf(
         Riquadro(
             "PIOGGIA",
-            "${mm.virgola()} mm",
+            giorno?.let { "${(it.mm ?: 0.0).virgola()} mm" } ?: "--",
             SalaTokens.acquaChiara,
             SalaRoom.PIOGGIA,
+            ora = ore.indexOfFirst { (it.precipitation ?: 0.0) > 0.0 }.takeIf { it >= 0 },
         ),
         Riquadro(
             "MIN-MAX",
-            if (minime.isNotEmpty() && massime.isNotEmpty()) {
-                "${state.unit.from(minime.min()).roundToInt()}° – ${state.unit.from(massime.max()).roundToInt()}°"
+            if (giorno?.min != null && giorno.max != null) {
+                "${giorno.min.gradi(state)} – ${giorno.max.gradi(state)}"
             } else {
                 "--"
             },
@@ -184,15 +233,17 @@ private fun RiepilogoSettimana(
         ),
         Riquadro(
             "VENTO",
-            ventoMax?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
+            giorno?.vento?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
             SalaTokens.verde400,
             SalaRoom.VENTO,
+            ora = oraDelMassimo { it.windSpeed },
         ),
         Riquadro(
             "PICCO UV",
-            uvMax?.virgola() ?: "--",
+            giorno?.uv?.virgola() ?: "--",
             SalaTokens.accent500,
             SalaRoom.UV,
+            ora = oraDelMassimo { it.uvIndex },
         ),
         Riquadro(
             "LUNA",
@@ -201,7 +252,7 @@ private fun RiepilogoSettimana(
             SalaRoom.LUNA,
         ),
         Riquadro(
-            "ARIA",
+            if (oggi) "ARIA" else "ARIA MAX",
             aria?.let { "AQI $it" } ?: "--",
             SalaTokens.verde300,
             SalaRoom.ARIA,
@@ -217,7 +268,10 @@ private fun RiepilogoSettimana(
                             .weight(1f)
                             .clip(RoundedCornerShape(26.dp))
                             .background(palette.chip)
-                            .clickable { onVai(voce.sala) }
+                            .clickable {
+                                voce.ora?.let(onOra)
+                                onVai(voce.sala)
+                            }
                             .padding(horizontal = 13.dp, vertical = 11.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -266,6 +320,8 @@ private data class Riquadro(
     val valore: String,
     val tinta: Color,
     val sala: SalaRoom,
+    /** L'ora del giorno mostrato che il valore racconta, se ce n'e' una. */
+    val ora: Int? = null,
 )
 
 private fun nomeUv(valore: Double): String = when {
@@ -276,92 +332,6 @@ private fun nomeUv(valore: Double): String = when {
     else -> "assente"
 }
 
-/**
- * La scheda del giorno scelto: quello che la striscia non ha spazio di dire.
- *
- * Alba e tramonto stanno a destra e non fra i valori perche' sono di un'altra
- * natura: gli altri quattro sono quantita' che si confrontano fra giorni, questi
- * due sono due istanti.
- */
-@Composable
-private fun SchedaGiorno(
-    giorno: GiornoSettimana,
-    state: UiState,
-    palette: SalaPalette,
-    modifier: Modifier = Modifier,
-) {
-    // **Tutto in colonna, non in riga.** I quattro valori piu' alba e tramonto
-    // affiancati non stavano nella larghezza del pannello: l'ultimo finiva
-    // sotto il primo della colonna accanto, e un numero tagliato a meta' e'
-    // peggio di un numero assente. Alba e tramonto scendono sotto, dove non
-    // contendono spazio a niente - e sono di un'altra natura comunque: gli
-    // altri quattro sono quantita' che si confrontano fra giorni, questi due
-    // sono due istanti.
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(30.dp))
-            .background(palette.chip)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-    ) {
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = giorno.esteso, style = SalaType.rowTitle, color = palette.ink)
-            Text(
-                text = "${giorno.data} · ${giorno.tipo.lowercase()}",
-                style = SalaType.rowNote,
-                color = palette.inkFaint,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 9.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ValoreScheda(
-                "MAX / MIN",
-                "${giorno.max.gradi(state)} / ${giorno.min.gradi(state)}",
-                palette,
-                Modifier.weight(1.2f),
-            )
-            ValoreScheda("PIOGGIA", "${(giorno.mm ?: 0.0).virgola()} mm", palette, Modifier.weight(1f))
-            ValoreScheda(
-                "VENTO",
-                giorno.vento?.let { state.windUnit.from(it).roundToInt().toString() } ?: "--",
-                palette,
-                Modifier.weight(0.7f),
-            )
-            ValoreScheda("UV", giorno.uv?.virgola() ?: "--", palette, Modifier.weight(0.6f))
-        }
-        Text(
-            text = "alba ${giorno.alba?.format(OraMinuto) ?: "--:--"} · " +
-                "tramonto ${giorno.tramonto?.format(OraMinuto) ?: "--:--"}",
-            style = SalaType.microLabel,
-            color = palette.inkSoft,
-            modifier = Modifier.padding(top = 9.dp),
-        )
-    }
-}
-
 private fun Double?.gradi(state: UiState): String =
     this?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--"
 
-@Composable
-private fun ValoreScheda(
-    etichetta: String,
-    valore: String,
-    palette: SalaPalette,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        Text(text = etichetta, style = SalaType.microLabel, color = palette.inkFaint, maxLines = 1)
-        Text(
-            text = valore,
-            style = SalaType.giornoMax,
-            color = palette.ink,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 2.dp),
-        )
-    }
-}

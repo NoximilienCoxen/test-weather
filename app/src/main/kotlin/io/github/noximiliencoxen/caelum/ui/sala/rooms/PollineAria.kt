@@ -90,7 +90,11 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
                     .fillMaxWidth()
                     .padding(top = 6.dp)
                     .clip(CircleShape)
-                    .clickable { scelto = if (attivo) peggiore else tipo }
+                    // **Un tocco sceglie, e basta.** Toccare di nuovo la riga
+                    // gia' scelta tornava alla famiglia peggiore: da fuori,
+                    // "Erba" toccata due volte saltava a "Erbacce" senza un
+                    // perche' visibile.
+                    .clickable { scelto = tipo }
                     .semantics {
                         contentDescription = tipo.nome + ": " + giorni.joinToString(", ") { g ->
                             g.livelli[tipo]?.let(::nomeLivelloPolline) ?: "nessun dato"

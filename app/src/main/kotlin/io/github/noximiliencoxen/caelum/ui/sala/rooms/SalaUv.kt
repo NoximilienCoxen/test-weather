@@ -7,7 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.OmbraSole
 import kotlin.math.cos
@@ -16,6 +18,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
@@ -105,115 +109,117 @@ fun SalaUvScreen(
         }
 
         if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            finestra.forEach { indice ->
-                val valore = ore[indice].uvIndex ?: 0.0
-                // La scala e' l'indice stesso, non il massimo di giornata: un
-                // 2 che tocca il soffitto perche' oggi non si va oltre
-                // racconterebbe un sole che non c'e'.
-                val quota = (valore / 11.0).coerceIn(0.0, 1.0).toFloat()
-                Column(
-                    modifier = Modifier.weight(1f).clickable { onSelectHour(indice) },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    // **Il valore sopra ogni colonna**, arrotondato all'intero
-                    // come lo scrive l'OMS: la barra dice la forma della
-                    // giornata, ma "a che ora scende sotto il 3" si legge solo
-                    // coi numeri. Una cifra sta in una colonna; le due cifre
-                    // del 10 e dell'11 sbordano centrate, come le ore sotto.
-                    Text(
-                        text = ore[indice].uvIndex?.roundToInt()?.toString() ?: "",
-                        style = SalaType.microLabel,
-                        color = if (indice == scelta) palette.accent else palette.inkSoft,
-                        maxLines = 1,
-                        modifier = Modifier.wrapContentWidth(
-                            align = Alignment.CenterHorizontally,
-                            unbounded = true,
-                        ),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((3f + quota * 80f).dp)
-                            .clip(CircleShape)
-                            .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
-                    )
-                    // **Una tacca ogni tre ore, e l'ora scelta sempre.**
-                    //
-                    // Prima erano tutte e sedici: sedici colonne in duecento
-                    // punti fanno dieci punti a colonna, e "05" ne vuole
-                    // dodici, quindi la scala si leggeva "0 0 0 0 0 10 11 12" -
-                    // le prime cinque ore tagliate al primo carattere. Poi sono
-                    // diventate le sole ore pari **piu' quella scelta**, ed e'
-                    // li' che stava il difetto vero: con l'ora scelta dispari -
-                    // le tredici, che e' l'ora in cui uno guarda i raggi UV - la
-                    // scala diventava `... 12 13 14 ...`, tre numeri in trenta
-                    // punti, uno addosso all'altro. Chi l'ha vista ha detto
-                    // esattamente quello che si vedeva: che i numeri non si
-                    // leggevano.
-                    //
-                    // Ogni tre ore le tacche sono cinque - 06, 09, 12, 15, 18 -
-                    // e ognuna ha tre colonne per se'. L'ora scelta resta
-                    // un'eccezione perche' non e' una tacca della scala: e' la
-                    // risposta alla domanda "dove sono". Ma quando cade
-                    // **accanto** a una tacca, a spostarsi e' la tacca: la scala
-                    // sa contare da se' anche senza il 12, mentre la risposta a
-                    // "dove sono" non ha nessun altro posto in cui stare.
-                    //
-                    // **La stringa vuota non e' pigrizia: e' la correzione.**
-                    // Scritto con un `if` attorno al `Text`, il grafico si e'
-                    // rotto sul telefono e non in nessuno scatto precedente:
-                    // la riga qui sopra allinea le colonne **in basso**, e una
-                    // colonna senza etichetta e' piu' corta di una con
-                    // etichetta. Allineate in basso, le barre con l'etichetta
-                    // salivano di tutta l'altezza dell'etichetta, e
-                    // l'istogramma diventava una fila di barre a quote
-                    // alternate - un grafico che mente sui propri valori.
-                    //
-                    // Un `Text` vuoto occupa comunque la propria interlinea,
-                    // quindi tutte e sedici le colonne restano alte uguale.
-                    // L'alternativa - una casella d'altezza fissa - sarebbe
-                    // l'interlinea copiata a mano in un secondo posto, e le
-                    // due copie divergerebbero al primo che tocca il corpo.
-                    val ora = ore[indice].time.hour
-                    // Due colonne di distanza e non una: a una colonna - dieci
-                    // punti - due etichette da dodici si toccano, ed e' la
-                    // sovrapposizione che si stava correggendo.
-                    val libera = abs(indice - scelta) >= 2
-                    val mostra = indice == scelta || (ora % 3 == 0 && libera)
-                    // **L'etichetta esce dalla propria colonna, apposta.**
-                    // Dimezzare le etichette non e' bastato: la colonna resta
-                    // larga poco piu' di dieci punti, e li' dentro "12" ci sta
-                    // mentre "06" no - la cifra uno e' piu' stretta delle
-                    // altre, ed e' bastato quello perche' meta' scala si
-                    // leggesse e meta' no.
-                    //
-                    // `unbounded` le lascia misurare la propria larghezza vera
-                    // e sbordare, centrata. Puo' farlo **perche' le colonne
-                    // dispari un'etichetta non ce l'hanno**: lo spazio in cui
-                    // sborda e' vuoto per costruzione.
-                    Text(
-                        text = if (mostra) oraDueCifre(ora) else "",
-                        style = SalaType.microLabel,
-                        // **L'inchiostro tenue era la meta' del difetto.**
-                        // `inkFaint` e' il grigio delle etichette dentro una
-                        // cella, dove sopra c'e' sempre un valore nero a fare
-                        // da appiglio; qui sotto le colonne non c'e' nient'altro
-                        // da leggere, e dieci punti di corpo in grigio chiaro
-                        // su carta chiara si guardano senza vederli. Una scala
-                        // e' fatta per essere letta.
-                        color = if (indice == scelta) palette.accent else palette.inkSoft,
-                        maxLines = 1,
-                        modifier = Modifier.wrapContentWidth(
-                            align = Alignment.CenterHorizontally,
-                            unbounded = true,
-                        ),
-                    )
+        val misura = rememberTextMeasurer()
+        val densita = LocalDensity.current
+        val largaEtichetta = remember(misura, densita) {
+            with(densita) { misura.measure("00", EtichettaGrafico).size.width.toDp() }
+        }
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+            // **Ogni ora ha la sua etichetta, quando ci sta.** Con sedici colonne
+            // su un telefono largo ogni colonna fa sedici punti e "00" ne vuole
+            // tredici: la scala a una tacca ogni tre ore lasciava dei buchi che si
+            // leggevano come numeri mancanti. Se lo schermo e' stretto e le
+            // etichette si toccherebbero, si ripiega su una ogni due.
+            val colonna = if (finestra.isEmpty()) {
+                maxWidth
+            } else {
+                (maxWidth - SPAZIO_COLONNE * (finestra.size - 1)) / finestra.size
+            }
+            val ogni = if (colonna >= largaEtichetta + 2.dp) 1 else 2
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(SPAZIO_COLONNE),
+            ) {
+                finestra.forEach { indice ->
+                    val valore = ore[indice].uvIndex ?: 0.0
+                    // La scala e' l'indice stesso, non il massimo di giornata: un
+                    // 2 che tocca il soffitto perche' oggi non si va oltre
+                    // racconterebbe un sole che non c'e'.
+                    val quota = (valore / 11.0).coerceIn(0.0, 1.0).toFloat()
+                    Column(
+                        modifier = Modifier.weight(1f).clickable { onSelectHour(indice) },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        // **Il valore sopra ogni colonna**, arrotondato all'intero
+                        // come lo scrive l'OMS: la barra dice la forma della
+                        // giornata, ma "a che ora scende sotto il 3" si legge solo
+                        // coi numeri. Una cifra sta in una colonna; le due cifre
+                        // del 10 e dell'11 sbordano centrate, come le ore sotto.
+                        Text(
+                            text = ore[indice].uvIndex?.roundToInt()?.toString() ?: "",
+                            style = EtichettaGrafico,
+                            color = if (indice == scelta) palette.accent else palette.inkSoft,
+                            maxLines = 1,
+                            modifier = Modifier.wrapContentWidth(
+                                align = Alignment.CenterHorizontally,
+                                unbounded = true,
+                            ),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height((3f + quota * 80f).dp)
+                                .clip(CircleShape)
+                                .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
+                        )
+                        // **Tutte le ore quando c'e' posto, se no una ogni due.**
+                        //
+                        // La larghezza delle colonne si misura (sopra) invece di
+                        // supporla: la prima versione mostrava tutte e sedici le
+                        // ore su una scheda da duecento punti, dove "05" non ci
+                        // stava e la scala si leggeva "0 0 0 0 0 10 11 12"; la
+                        // seconda, una tacca ogni tre ore, lasciava buchi che
+                        // sembravano numeri mancanti su un telefono dove ci
+                        // stavano tutte.
+                        //
+                        // Nel ripiego a una ogni due l'ora scelta resta sempre,
+                        // perche' risponde a "dove sono"; quando cade **accanto**
+                        // a una tacca, a spostarsi e' la tacca, se no due numeri
+                        // finirebbero uno addosso all'altro.
+                        //
+                        // **La stringa vuota non e' pigrizia: e' la correzione.**
+                        // Scritto con un `if` attorno al `Text`, il grafico si e'
+                        // rotto sul telefono e non in nessuno scatto precedente:
+                        // la riga qui sopra allinea le colonne **in basso**, e una
+                        // colonna senza etichetta e' piu' corta di una con
+                        // etichetta. Allineate in basso, le barre con l'etichetta
+                        // salivano di tutta l'altezza dell'etichetta, e
+                        // l'istogramma diventava una fila di barre a quote
+                        // alternate - un grafico che mente sui propri valori.
+                        //
+                        // Un `Text` vuoto occupa comunque la propria interlinea,
+                        // quindi tutte e sedici le colonne restano alte uguale.
+                        // L'alternativa - una casella d'altezza fissa - sarebbe
+                        // l'interlinea copiata a mano in un secondo posto, e le
+                        // due copie divergerebbero al primo che tocca il corpo.
+                        val ora = ore[indice].time.hour
+                        val mostra = ogni == 1 || indice == scelta ||
+                            (ora % ogni == 0 && abs(indice - scelta) >= 2)
+                        // **L'etichetta puo' uscire dalla propria colonna.** Nel
+                        // ripiego la colonna e' piu' stretta di "00": `unbounded`
+                        // le lascia misurare la propria larghezza vera e sbordare,
+                        // centrata, nello spazio della colonna accanto - che
+                        // un'etichetta non ce l'ha.
+                        Text(
+                            text = if (mostra) oraDueCifre(ora) else "",
+                            style = EtichettaGrafico,
+                            // **L'inchiostro tenue era la meta' del difetto.**
+                            // `inkFaint` e' il grigio delle etichette dentro una
+                            // cella, dove sopra c'e' sempre un valore nero a fare
+                            // da appiglio; qui sotto le colonne non c'e' nient'altro
+                            // da leggere, e dieci punti di corpo in grigio chiaro
+                            // su carta chiara si guardano senza vederli. Una scala
+                            // e' fatta per essere letta.
+                            color = if (indice == scelta) palette.accent else palette.inkSoft,
+                            maxLines = 1,
+                            modifier = Modifier.wrapContentWidth(
+                                align = Alignment.CenterHorizontally,
+                                unbounded = true,
+                            ),
+                        )
+                    }
                 }
             }
         }
@@ -375,6 +381,17 @@ private fun frase(ora: Int, altezzaSole: Double): String {
     }
     return "Alle ${oraDueCifre(ora)} sole a ${altezzaSole.roundToInt()}°, l'ombra è $quanto."
 }
+
+/**
+ * Le cifre sopra e sotto le colonne: il corpo delle etichette, senza la loro
+ * spaziatura. Lo 0,1 em fra le lettere e' fatto per le parole in maiuscolo; su
+ * due cifre allargava "00" di un punto e mezzo, quanto bastava a non farle
+ * stare in sedici colonne su un telefono largo.
+ */
+private val EtichettaGrafico = SalaType.microLabel.copy(letterSpacing = 0.sp)
+
+/** L'aria fra una colonna e l'altra del grafico. */
+private val SPAZIO_COLONNE = 4.dp
 
 /** I nomi della scala mondiale: gli stessi cinque gradini di ogni bollettino. */
 private fun nomeUv(valore: Double): String = when {
