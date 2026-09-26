@@ -126,6 +126,23 @@ class ParseFeedTest {
     }
 
     @Test
+    fun `inizio e fine si scrivono nell'ora del posto`() {
+        // I centri funzionali italiani scrivono in UTC. Prima si toglieva il
+        // fuso e basta: d'estate un'allerta dalle 10 all'1 di notte risultava
+        // dalle 8 a mezzanotte, e finiva due ore prima.
+        val voce = FeedEntry(
+            id = "t", event = "Orange Thunderstorm Warning", severity = "Severe",
+            areaDesc = "Calabria",
+            onset = OffsetDateTime.parse("2026-09-26T08:00:00+00:00"),
+            expires = OffsetDateTime.parse("2026-09-26T23:59:00+00:00"),
+            capUrl = null,
+        )
+        val alert = voce.toAlert(null, fuso = java.time.ZoneOffset.ofHours(2))
+        assertEquals(java.time.LocalDateTime.of(2026, 9, 26, 10, 0), alert.onset)
+        assertEquals(java.time.LocalDateTime.of(2026, 9, 27, 1, 59), alert.expires)
+    }
+
+    @Test
     fun `il verde non diventa un'allerta`() {
         // Il verde vuol dire "nessun avviso": una fascia che comparisse per dire
         // che non succede niente insegnerebbe a ignorare la fascia.

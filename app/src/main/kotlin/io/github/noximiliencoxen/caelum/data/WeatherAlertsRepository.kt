@@ -8,6 +8,7 @@ import java.io.StringReader
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 /**
  * Le allerte ufficiali, da MeteoAlarm.
@@ -63,7 +64,16 @@ import java.time.ZoneId
  * Come `AirQualityRepository`, questo e' un **arricchimento**: sta su un altro
  * host, arriva dopo, e se non arriva la schermata funziona lo stesso.
  */
-class WeatherAlertsRepository(private val place: Place) {
+class WeatherAlertsRepository(
+    private val place: Place,
+    /**
+     * Il fuso del posto, dalla previsione (`Forecast.utcOffsetSeconds`).
+     *
+     * Serve a scrivere inizio e fine nell'ora **del posto**, che e' l'ora di
+     * tutto il resto della schermata: vedi [FeedEntry.toAlert].
+     */
+    private val fuso: ZoneOffset? = null,
+) {
 
     suspend fun load(): Result<List<WeatherAlert>> = withContext(Dispatchers.IO) {
         runCatching {
@@ -82,7 +92,7 @@ class WeatherAlertsRepository(private val place: Place) {
                 // sono mai visti, e il tetto e' li' per non trasformare una
                 // giornata storta in una raffica di richieste.
                 .take(MAX_DETAILS)
-            mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl)) }
+            mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl), fuso = fuso) }
         }
     }
 
@@ -269,8 +279,26 @@ internal data class FeedEntry(
         return name != null && area.containsAll(name)
     }
 
-    fun toAlert(detail: CapDetail?): WeatherAlert {
+    /**
+     * L'allerta, con inizio e fine portati nell'ora del posto ([fuso]).
+     *
+     * **Prima si toglieva il fuso e basta**, tenendo i numeri dell'orologio
+     * della fonte. Ma i centri funzionali italiani scrivono in UTC
+     * (`2026-09-26T08:00:00+00:00`, verificato su `ci-artifacts/api/allerte.xml`),
+     * e la schermata ragiona nell'ora del posto: d'estate un'allerta dalle 10
+     * all'1 di notte risultava dalle 8 a mezzanotte, e la pastiglia la dava per
+     * finita due ore prima. Senza fuso si ripiega su quello del telefono, che
+     * in Europa - dove MeteoAlarm arriva - e' quasi sempre lo stesso.
+     */
+    fun toAlert(detail: CapDetail?, fuso: ZoneOffset? = null): WeatherAlert {
         val chosen = level ?: AlertLevel.GIALLA
+        fun locale(istante: OffsetDateTime?): LocalDateTime? = istante?.let {
+            if (fuso != null) {
+                it.withOffsetSameInstant(fuso).toLocalDateTime()
+            } else {
+                it.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+            }
+        }
         return WeatherAlert(
             id = id,
             level = chosen,
@@ -283,8 +311,8 @@ internal data class FeedEntry(
             headline = "${chosen.label}: ${kind.label.lowercase()}",
             description = detail?.description,
             instruction = detail?.instruction,
-            onset = onset?.toLocalDateTime(),
-            expires = expires?.toLocalDateTime(),
+            onset = locale(onset),
+            expires = locale(expires),
             areaDesc = areaDesc,
             source = detail?.sender?.takeIf { it.isNotBlank() }?.let { "MeteoAlarm - $it" }
                 ?: "MeteoAlarm",
