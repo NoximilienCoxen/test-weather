@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,6 +26,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AirBand
@@ -36,7 +39,9 @@ import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.diGiorno
 import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
+import java.time.LocalDate
 import kotlin.math.roundToInt
 
 /**
@@ -55,7 +60,26 @@ fun SalaAriaScreen(
     modifier: Modifier = Modifier,
 ) {
     val aria = state.air
-    val banda = aria?.band
+    // Le ore del giorno mostrato: le legge il grafico, e da qui anche l'anello.
+    val ore = remember(aria, state.selectedDay, state.detailDay?.date) {
+        val giorno = state.detailDay?.date
+        aria?.oreOggi.orEmpty().filter { giorno == null || it.ora.toLocalDate() == giorno }
+    }
+    val oraScelta = state.detailHour?.time?.hour
+    // **L'anello segue il momento mostrato, come ogni altra sala.** Diceva
+    // sempre l'aria di adesso: scelto venerdi', il grafico sotto parlava di
+    // venerdi' e il numero grande di oggi. Adesso e' il valore misurato solo
+    // quando si guarda adesso; altrimenti e' la previsione oraria di quell'ora,
+    // e sotto la parola si dice di quale ora si tratta.
+    val adesso = state.selectedDay == 0 && state.selectedHour == state.nowIndex
+    val indice: Int? = if (adesso) {
+        aria?.index
+    } else {
+        ore.firstOrNull { it.ora.hour == oraScelta }?.indice
+    }
+    val banda = if (adesso) aria?.band else indice?.let { aria?.scale?.band(it) }
+    // Oltre i tre giorni che l'API copre, per quel giorno l'aria non c'e'.
+    val fuoriModello = !adesso && aria != null && indice == null
     val tinta = coloreBanda(banda)
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -71,7 +95,7 @@ fun SalaAriaScreen(
                 // L'anello dice **quanto** prima di dire quale: la porzione
                 // colorata cresce con l'indice, e il resto resta il grigio
                 // dell'interfaccia.
-                val quota = ((aria?.index ?: 0) / 100f).coerceIn(0f, 1f)
+                val quota = ((indice ?: 0) / 100f).coerceIn(0f, 1f)
                 Canvas(modifier = Modifier.size(72.dp)) {
                     val spessore = 8.dp.toPx()
                     drawCircle(
@@ -93,7 +117,7 @@ fun SalaAriaScreen(
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = aria?.index?.toString() ?: "--",
+                        text = indice?.toString() ?: "--",
                         style = SalaType.cardTitle,
                         color = palette.ink,
                     )
@@ -104,17 +128,36 @@ fun SalaAriaScreen(
                 Text(text = "L'aria", style = SalaType.cardTitle, color = palette.ink)
                 Text(
                     text = banda?.label?.lowercase()?.replaceFirstChar { it.uppercase() }
-                        ?: if (state.airUnavailable) "Non disponibile" else "In arrivo",
+                        ?: when {
+                            fuoriModello -> "Non prevista"
+                            state.airUnavailable -> "Non disponibile"
+                            else -> "In arrivo"
+                        },
                     style = SalaType.rowTitle,
                     color = palette.accent,
                     modifier = Modifier.padding(top = 6.dp),
                 )
+                if (!adesso && oraScelta != null) {
+                    Text(
+                        text = "previsione ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} " +
+                            "alle ${oraDueCifre(oraScelta)}:00",
+                        style = SalaType.rowNote,
+                        color = palette.inkSoft,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
             }
         }
         // La frase sotto il numero solo quando c'e' qualcosa da fare: con
         // l'aria buona o discreta ripeteva la parola accanto all'anello in tre
         // righe, e tre righe erano un quinto della scheda.
-        if (banda == null || banda.ordinal > AirBand.DISCRETA.ordinal || state.airUnavailable) {
+        if (fuoriModello) {
+            Didascalia(
+                "Il modello dell'aria arriva a oggi e ai due giorni dopo: per questo giorno non c'è.",
+                palette,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        } else if (banda == null || banda.ordinal > AirBand.DISCRETA.ordinal || state.airUnavailable) {
             Didascalia(
                 descrizione(banda, state.airUnavailable),
                 palette,
@@ -130,10 +173,6 @@ fun SalaAriaScreen(
         // alle otto vale venti e alle quattordici sessanta racconta una
         // giornata; detto una volta sola non dice **quando uscire**, che e'
         // l'unica domanda che ci si fa guardando l'aria.
-        val ore = remember(aria, state.selectedDay, state.detailDay?.date) {
-            val giorno = state.detailDay?.date
-            aria?.oreOggi.orEmpty().filter { giorno == null || it.ora.toLocalDate() == giorno }
-        }
         if (ore.size >= 6 && aria != null) {
             Text(
                 text = "NELLA GIORNATA",
@@ -175,8 +214,10 @@ fun SalaAriaScreen(
         // stringhe uguali scritte in due file diversi si scollano al primo che
         // le ritocca.
         val dominante = aria?.dominante
+        // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
+        // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
         Text(
-            text = "RISPETTO AL LIMITE OMS",
+            text = if (adesso) "RISPETTO AL LIMITE OMS" else "RISPETTO AL LIMITE OMS · ADESSO",
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
@@ -225,53 +266,70 @@ private fun AndamentoAria(
     palette: SalaPalette,
 ) {
     val massimo = (ore.maxOfOrNull { it.indice } ?: 1).coerceAtLeast(20)
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().height(58.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
-        ) {
-            ore.forEach { o ->
-                val quota = (o.indice.toFloat() / massimo).coerceIn(0.08f, 1f)
-                val mia = oraScelta != null && o.ora.hour == oraScelta
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(quota)
-                        .clip(CircleShape)
-                        .background(
-                            coloreBanda(scala.band(o.indice))
-                                .copy(alpha = if (mia) 1f else 0.55f),
-                        ),
-                )
+    val misura = rememberTextMeasurer()
+    val densita = LocalDensity.current
+    val largaEtichetta = remember(misura, densita) {
+        with(densita) { misura.measure("00", EtichettaGrafico).size.width.toDp() }
+    }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        // **Un'ora ogni sei non era una scala, erano quattro numeri.** Come nel
+        // grafico dei raggi UV (CONTESTO 38) si misura quante colonne servono a
+        // "00" e si scrive un'ora ogni tante - una ogni due su un telefono largo -
+        // piu' sempre l'ora scelta, che sposta le tacche che le starebbero addosso.
+        val colonna = if (ore.isEmpty()) maxWidth else (maxWidth - 3.dp * (ore.size - 1)) / ore.size
+        val ogni = listOf(1, 2, 3, 4, 6)
+            .firstOrNull { n -> colonna * n + 3.dp * (n - 1) >= largaEtichetta + 3.dp } ?: 6
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(58.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                ore.forEach { o ->
+                    val quota = (o.indice.toFloat() / massimo).coerceIn(0.08f, 1f)
+                    val mia = oraScelta != null && o.ora.hour == oraScelta
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(quota)
+                            .clip(CircleShape)
+                            .background(
+                                coloreBanda(scala.band(o.indice))
+                                    .copy(alpha = if (mia) 1f else 0.55f),
+                            ),
+                    )
+                }
             }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
-        ) {
-            ore.forEach { o ->
-                Text(
-                    text = if (o.ora.hour % 6 == 0) oraDueCifre(o.ora.hour) else "",
-                    style = SalaType.microLabel,
-                    color = if (oraScelta != null && o.ora.hour == oraScelta) palette.accent
-                    else palette.inkFaint,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    // **La casella di un'ora e' piu' stretta della sua
-                    // etichetta.** Ventiquattro colonne su seicento pixel fanno
-                    // venticinque pixel l'una, e "06" ne vuole di piu': il
-                    // primo scatto mostrava uno zero sopra e un sei sotto.
-                    // `unbounded` lascia il testo sforare nelle caselle
-                    // accanto, che sono vuote per costruzione - le etichette
-                    // stanno una ogni sei ore.
-                    //
-                    // E' lo stesso difetto del grafico UV di CONTESTO 16.2, in
-                    // un'altra forma: li' l'etichetta alzava la colonna, qui la
-                    // colonna stringe l'etichetta. Tutte e due nascono dal dare
-                    // a un'etichetta la larghezza del dato che descrive.
-                    modifier = Modifier.weight(1f).wrapContentWidth(unbounded = true),
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                ore.forEach { o ->
+                    val ora = o.ora.hour
+                    val scelta = oraScelta != null && ora == oraScelta
+                    val libera = oraScelta == null || kotlin.math.abs(ora - oraScelta) >= ogni
+                    Text(
+                        text = if (scelta || (ora % ogni == 0 && libera)) oraDueCifre(ora) else "",
+                        style = EtichettaGrafico,
+                        color = if (oraScelta != null && o.ora.hour == oraScelta) palette.accent
+                        else palette.inkFaint,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        // **La casella di un'ora e' piu' stretta della sua
+                        // etichetta.** Ventiquattro colonne su seicento pixel fanno
+                        // venticinque pixel l'una, e "06" ne vuole di piu': il
+                        // primo scatto mostrava uno zero sopra e un sei sotto.
+                        // `unbounded` lascia il testo sforare nelle caselle
+                        // accanto, che sono vuote per costruzione - le etichette
+                        // hanno sempre almeno una colonna vuota accanto.
+                        //
+                        // E' lo stesso difetto del grafico UV di CONTESTO 16.2, in
+                        // un'altra forma: li' l'etichetta alzava la colonna, qui la
+                        // colonna stringe l'etichetta. Tutte e due nascono dal dare
+                        // a un'etichetta la larghezza del dato che descrive.
+                        modifier = Modifier.weight(1f).wrapContentWidth(unbounded = true),
+                    )
+                }
             }
         }
     }
