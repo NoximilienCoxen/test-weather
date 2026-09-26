@@ -6423,3 +6423,50 @@ restava sulle 16:00, l'ora vera); a caldo `--ei sezione 2 --ei giorno 6
 --ei ora 5` porta alla pioggia di venerdi' alle 05:00, con la riga `agganci:`
 nel log che prima non compariva.
 
+## 41. Un colpetto cambia sala
+
+*"Dovrebbe bastare un colpettino leggero, non devo scorrere molto."* Misurato
+sul telefono prima di toccare: un colpetto di 150 pixel **sul pannello** non
+cambiava sala, 300 si'; sul cielo 150 bastavano.
+
+La differenza era nella rete di `SalaShell` (§34): col gesto che parte dal
+pannello il carosello si sposta per scorrimento annidato, e al rilascio la rete
+lo posava sulla sala **piu' vicina** - che per un colpetto e' sempre quella di
+partenza. Adesso si posa **nel verso del gesto** appena lo spostamento supera
+`SOGLIA_COLPETTO` (tre centesimi di pagina, una settantina di pixel), contato
+dalla sala su cui il dito si e' appoggiato (`paginaAlTocco`). La stessa soglia
+e' passata al `flingBehavior` del carosello (era un dodicesimo), e la rete
+aspetta 90 ms invece di 160.
+
+Provato: colpetti di 120 pixel sul pannello, su e giu', e sul cielo cambiano
+sala; un tremolio di 40 no; un trascinamento lento di 160 si'. I pannelli che
+non ci stanno scorrono ancora prima di cedere il gesto (su questo telefono
+nessuna sala eccede lo schermo, quindi non si e' potuto vedere).
+
+### 41.1 "Si blocca a meta' fra due schede"
+
+Non si riproduceva con ottanta gesti di `adb`, lenti, veloci, fermi a meta',
+avanti e indietro. Si e' riprodotto **registrando chi usa l'app** (60 secondi di
+`screenrecord` e un log temporaneo sul tocco): colpetti rapidi, uno ogni tre
+decimi di secondo, quasi tutti arrivati **mentre il carosello si stava ancora
+posando** dal precedente. In certi tratti dieci tocchi di fila restavano sulla
+stessa sala.
+
+Il meccanismo: la molla d'aggancio impiegava piu' di mezzo secondo, il colpetto
+dopo la interrompeva, e la sala di destinazione si calcolava da quella visibile
+in cima - a 5,9 in viaggio verso la 6, di nuovo la 6. Tre correzioni:
+
+- `metaDelGesto`, usata sia dall'aggancio del carosello (un `PagerSnapDistance`
+  su misura) sia dalla rete: la sala di partenza e' quella verso cui il
+  carosello **stava andando** (`metaInCorso`, perche' `targetPage` di Compose
+  durante un aggancio la dice solo dopo meta' strada), e il verso lo da' il
+  **dito** - oltre `SOGLIA_COLPETTO` di pagina, e solo se il carosello si e'
+  mosso davvero in quel verso;
+- la molla d'aggancio da medio-bassa a media: si posa in un quarto di secondo;
+- il resto di 41 resta.
+
+Misurato con lo stesso script, sei colpetti rapidi (ogni 300 ms) da Oggi:
+**controprova** con la build di prima 2, 2, 3, 4 sale; adesso 6 su 6, cinque
+giri su cinque, e tre all'indietro sempre 3. **Limite**: a sei-sette colpetti al
+secondo qualcuno si perde ancora (quattro colpetti fitti = 1-3 sale).
+
