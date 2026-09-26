@@ -388,7 +388,7 @@ private fun frase(ora: Int, altezzaSole: Double): String {
  * due cifre allargava "00" di un punto e mezzo, quanto bastava a non farle
  * stare in sedici colonne su un telefono largo.
  */
-private val EtichettaGrafico = SalaType.microLabel.copy(letterSpacing = 0.sp)
+internal val EtichettaGrafico = SalaType.microLabel.copy(letterSpacing = 0.sp)
 
 /** L'aria fra una colonna e l'altra del grafico. */
 private val SPAZIO_COLONNE = 4.dp
