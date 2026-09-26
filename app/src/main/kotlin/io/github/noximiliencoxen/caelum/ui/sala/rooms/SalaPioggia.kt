@@ -37,6 +37,7 @@ import io.github.noximiliencoxen.caelum.ui.sala.RigaSenzaOre
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
 import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
+import io.github.noximiliencoxen.caelum.ui.sala.diGiorno
 import io.github.noximiliencoxen.caelum.ui.sala.oraDueCifre
 import java.util.Locale
 
@@ -85,6 +86,17 @@ fun SalaPioggiaScreen(
     val vibrazioni = rememberVibrazioniMeteo()
     val oraScelta = finestra.getOrNull(sottoIlDito)?.let { ore[it] } ?: state.detailHour
     val bagnato = totale > 0.05
+    // **"Le prossime dodici ore" vale solo per adesso.** Su venerdi' alle sei,
+    // o su oggi alle nove di sera, "prossime" rispetto a cosa? Lontano da
+    // adesso la frase dice da dove parte la finestra.
+    val daQuando = remember(state.selectedDay, scelta, state.nowIndex, ore) {
+        val inizio = ore.getOrNull(scelta)?.time
+        if (inizio == null || (state.selectedDay == 0 && scelta == state.nowIndex)) {
+            "nelle prossime dodici ore"
+        } else {
+            "nelle dodici ore dalle ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}"
+        }
+    }
 
     PannelloSala(palette = palette, modifier = modifier) {
         Row(
@@ -96,9 +108,9 @@ fun SalaPioggiaScreen(
                 Text(text = "La pioggia", style = SalaType.cardTitle, color = palette.ink)
                 Didascalia(
                     if (bagnato) {
-                        "Precipitazioni nelle prossime dodici ore, per un totale di ${totale.virgola()} millimetri."
+                        "Precipitazioni $daQuando, per un totale di ${totale.virgola()} millimetri."
                     } else {
-                        "Nessuna precipitazione attesa nelle prossime dodici ore."
+                        "Nessuna precipitazione attesa $daQuando."
                     },
                     palette,
                     modifier = Modifier.padding(top = 6.dp),
@@ -229,7 +241,9 @@ fun SalaPioggiaScreen(
         // Tre o quattro filtri su tutte le ore della settimana e quattro
         // `String.format`: a ogni fotogramma, finche' questa sala e' composta.
         // La chiave e' la coppia da cui dipende davvero la frase.
-        val quando = remember(state.forecast, state.detailHour?.time) { finestraPioggia(state) }
+        val quando = remember(state.forecast, state.detailHour?.time, state.selectedDay, state.nowIndex) {
+            finestraPioggia(state)
+        }
         Text(
             text = quando,
             style = SalaType.rowTitle,
@@ -350,14 +364,24 @@ private fun finestraPioggia(state: UiState): String {
     val avanti = ore.filter { !it.time.isBefore(da) }
     if (avanti.isEmpty()) return "Oltre questo momento la previsione oraria non arriva."
 
+    // **"Sta piovendo" e "fra tre ore" valgono solo per adesso.** Con la barra
+    // su venerdi' alle sei la sala diceva "sta piovendo" di giovedi'
+    // pomeriggio; lontano da adesso le frasi dicono l'ora e il giorno.
+    val adesso = state.selectedDay == 0 && state.selectedHour == state.nowIndex
+
     val soglia = 0.1
     val bagnate = avanti.takeWhile { (it.precipitation ?: 0.0) >= soglia }
     if (bagnate.isNotEmpty()) {
-        // Sta piovendo adesso: quello che serve sapere e' **quando smette**.
+        // Piove all'ora mostrata: quello che serve sapere e' **quando smette**.
         val fine = bagnate.last().time.plusHours(1)
         val quanta = bagnate.sumOf { it.precipitation ?: 0.0 }
-        return "Sta piovendo: smette verso le %02d:00, ancora %s mm."
-            .format(fine.hour, quanta.virgola())
+        return if (adesso) {
+            "Sta piovendo: smette verso le %02d:00, ancora %s mm."
+                .format(fine.hour, quanta.virgola())
+        } else {
+            "Alle %02d:00 %s piove: smette verso le %02d:00, %s mm fino ad allora."
+                .format(da.hour, state.diGiorno(da.toLocalDate()), fine.hour, quanta.virgola())
+        }
     }
 
     val inizio = avanti.firstOrNull { (it.precipitation ?: 0.0) >= soglia }
@@ -366,12 +390,16 @@ private fun finestraPioggia(state: UiState): String {
     val finestra = avanti.dropWhile { it.time.isBefore(inizio.time) }
         .takeWhile { (it.precipitation ?: 0.0) >= soglia }
     val quanta = finestra.sumOf { it.precipitation ?: 0.0 }
+    val durata = if (finestra.size <= 1) "un'ora scarsa" else "circa ${finestra.size} ore"
+    if (!adesso) {
+        return "Comincia verso le %02d:00 %s: %s, %s mm in tutto."
+            .format(inizio.time.hour, state.diGiorno(inizio.time.toLocalDate()), durata, quanta.virgola())
+    }
     val quando = when (val giorni = java.time.Duration.between(da, inizio.time).toHours()) {
         in 0..1 -> "fra poco"
         in 2..11 -> "fra ${giorni} ore"
         else -> if (inizio.time.toLocalDate() == da.toLocalDate()) "oggi" else giornoDi(inizio.time, state)
     }
-    val durata = if (finestra.size <= 1) "un'ora scarsa" else "circa ${finestra.size} ore"
     return "Comincia %s, verso le %02d:00: %s, %s mm in tutto."
         .format(quando, inizio.time.hour, durata, quanta.virgola())
 }

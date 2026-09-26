@@ -70,6 +70,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        // Arriva davvero solo da quando l'attivita' e' `singleTop` (vedi il
+        // manifesto). `setIntent` perche' chi rilegge `intent` dopo trovi
+        // l'ultimo, non quello dell'avvio.
+        setIntent(intent)
         applyWidgetTap(intent)
         applyExtras(intent)
     }
