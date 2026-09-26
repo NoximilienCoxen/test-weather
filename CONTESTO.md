@@ -2764,12 +2764,12 @@ stesse soglie che governa `SkyState.of` per il cielo del feed.
 
 ### Cosa e' rimasto fuori, in ordine di probabile utilita'
 
-1. **Il tiro per ricaricare.** Il feed lo aveva (`PullToRefresh` in
+1. **Il tiro per ricaricare.** *(Fatto: sezione 39.)* Il feed lo aveva (`PullToRefresh` in
    `FeedScreen.kt`, cancellata insieme al resto); Sala per ora ricarica solo
    all'avvio, al cambio di localita' o tornando in primo piano dopo venti
    minuti (`refreshIfStale`). La classe andrebbe estratta in un file suo
    invece di essere ricopiata.
-2. **Il bollettino allerta per esteso.** `ui/alerts/AlertsSheet.kt` e'
+2. **Il bollettino allerta per esteso.** *(Fatto: sezione 39.)* `ui/alerts/AlertsSheet.kt` e'
    cancellato: Sala I mostra titolo e riga breve di ogni avviso attivo, ma non
    c'e' piu' un posto dove leggere descrizione e istruzioni per intero.
    `WeatherViewModel.openAlerts/closeAlerts` esistono ancora (senza
@@ -6295,3 +6295,82 @@ di AGP (`android.injected.version.code`) e' stata provata e viene ignorata.
 (non si cambiano le impostazioni di rotazione da adb); la resa su uno schermo
 stretto, dove il grafico UV deve ripiegare su un'ora ogni due; la fluidita'
 misurata dei fasci (a occhio nessuno scatto).
+
+## 39. Il bollettino, il tiro per aggiornare, e l'app che apre senza rete
+
+Tre cose che un'app meteo deve avere e che qui mancavano. Tutte provate sul
+Pixel 9 Pro.
+
+### 39.1 Il bollettino
+
+`ui/sala/SalaBollettino.kt`. **Si apre toccando la pastiglia degli avvisi**
+in alto (anche con "nessun avviso": li' dice cosa e' stato controllato, e se
+manca la rete dice che le ufficiali non si possono controllare). Per ogni
+avviso: segno e livello, "IN CORSO", titolo, da quando a quando (`finestra`,
+"Dalle 10:00 di oggi alle 01:59 di domani"), zona, descrizione, "cosa fare",
+fonte. Mostra **tutti** gli avvisi in scena, non solo quelli dell'ora mostrata
+come la pastiglia; prima quelli in corso, poi i piu' gravi.
+
+Le regole di §8-ter valgono per intero: triangolo e colore di livello solo per
+gli enti; per le soglie cerchio vuoto, pastiglia neutra, `SOGLIA SUPERATA`, e
+"non e' un'allerta ufficiale" in fondo. Il titolo della pagina e' "Le
+allerte", "Allerte e avvisi" o "Gli avvisi" a seconda di cosa c'e' in scena:
+risponde alla domanda che §8-ter lasciava aperta.
+
+Provato con gli agganci: `--ei allerta 2` (arancione finta) e `--ei allerta 0`
+(soglia finta). Un'allerta ufficiale vera non c'era: **descrizione e istruzioni
+di MeteoAlarm sono nella lingua del primo `info` del documento CAP**
+(`parseDetail`), e per l'Italia non e' stato verificato che sia l'italiano.
+
+**Trovato per strada, e corretto: gli orari delle allerte erano in UTC.** I
+centri funzionali italiani scrivono `2026-09-26T08:00:00+00:00`, e
+`toAlert` toglieva il fuso tenendo i numeri: un'allerta dalle 10 all'1 di notte
+risultava dalle 8 a mezzanotte, e la pastiglia (che filtra sull'ora mostrata)
+la dava per finita due ore prima. Adesso `WeatherAlertsRepository` riceve il
+fuso del posto dalla previsione e `toAlert` converte l'istante. Verificato sul
+feed vero (`gh api .../contents/api/allerte.xml?ref=ci-artifacts`, **non** con
+`git fetch origin ci-artifacts`: il ramo pesa centinaia di mega, §17.6) e
+provato in `ParseFeedTest`.
+
+### 39.2 Tirare per aggiornare
+
+`PullToRefreshBox` di Material 3 attorno al carosello, in `SalaShell`, con
+l'indicatore nei colori della scheda (`panelSolido` e `accent`). **Funziona
+dalla prima sala**: e' lo scorrimento annidato che il carosello non consuma
+quando non ha niente sopra. Dalle altre sale lo stesso gesto torna alla sala
+prima, come sempre - provato: nessuna richiesta nel log. L'indicatore resta
+acceso finche' la risposta arriva o l'ultimo tentativo fallisce
+(`UiState.aggiornandoAMano`); le ricariche automatiche non lo accendono.
+
+### 39.3 Senza rete
+
+**La scorta del widget e' diventata di tutti e due** (`data/ScortaPrevisioni.kt`,
+stessa cartella `widget-previsioni` e stesso nome file per il modello
+automatico, cosi' le scorte gia' scritte restano buone). L'app la scrive a ogni
+previsione arrivata; il widget la trova fresca e non chiede niente.
+
+All'apertura, se di quel posto non c'e' niente in scena, l'app mostra subito la
+scorta (fino a sette giorni) **riportata a oggi** da `riportataAOggi`: e' la
+gemella di `agedTo` del widget, ma le ore ripartono dalla mezzanotte di oggi e
+non da adesso, perche' l'app conta l'ora scelta come posizione in `hours`.
+Dalla scorta si calcolano le soglie; le allerte ufficiali no - un bollettino di
+ieri mostrato come in corso e' un avviso dove non c'e'.
+
+Quanto e' vecchia lo dice una pastiglia sotto l'intestazione,
+`SENZA RETE · DATI DELLE 15:38` (o `DATI DI IERI 18:40`), accesa da
+`UiState.previsioneVecchia`: errore sull'ultimo tentativo, **o** dati piu'
+vecchi di un'ora (`VECCHIA_DOPO`) - l'errore arriva solo dopo quattro tentativi,
+e fino ad allora la previsione di ieri sera passerebbe per quella di adesso.
+Toccata, riprova.
+
+Provato in modalita' aereo, a freddo: dopo 2 s la previsione salvata e' gia' in
+scena, dopo i quattro tentativi compare la pastiglia; riaccesa la rete, un
+tocco sulla pastiglia la fa sparire. **Controprova**, stessa prova con la build
+di prima: solo trattini, barra delle ore vuota - e il titolo "Pieno sole, aria
+calda" scritto sopra nessun dato, che resta da sistemare per il caso senza
+rete **e** senza scorta.
+
+**Resta**: le icone della barra di stato sulle pagine a schermo pieno
+(bollettino, note legali, impostazioni) escono chiare su fondo chiaro: e' il
+difetto noto di §27.8, qui solo piu' visibile.
+

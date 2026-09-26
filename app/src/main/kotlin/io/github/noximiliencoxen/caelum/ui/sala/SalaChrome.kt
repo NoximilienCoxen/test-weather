@@ -38,6 +38,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -534,6 +535,8 @@ fun IntestazioneCaelum(
     onImpostazioni: () -> Unit,
     onCitta: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Apre il bollettino: ogni avviso per intero. */
+    onAvvisi: () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(MinTouchTarget),
@@ -556,7 +559,7 @@ fun IntestazioneCaelum(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).clickable(onClick = onCitta),
         )
-        PastigliaAvviso(avvisi, palette)
+        PastigliaAvviso(avvisi, palette, onAvvisi)
     }
 }
 
@@ -586,9 +589,16 @@ private fun DueCursori(ink: Color) {
     }
 }
 
-/** La pastiglia degli avvisi: pallino piu' una riga sola, tutta maiuscola. */
+/**
+ * La pastiglia degli avvisi: pallino piu' una riga sola, tutta maiuscola.
+ *
+ * **Si tocca, e apre il bollettino** (`SalaBollettinoScreen`): e' l'unico posto
+ * in cui descrizione, zona, orari e istruzioni si leggono per intero. Anche con
+ * "nessun avviso", perche' li' il bollettino dice cosa e' stato controllato.
+ * Il bersaglio e' allargato ai quarantotto punti senza cambiare il disegno.
+ */
 @Composable
-private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
+private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, onClick: () -> Unit) {
     val peggiore = avvisi.maxByOrNull { it.level.weight }
     // **"Allerta" e' una parola che la spetta a un ente.** Un avviso calcolato
     // sulle soglie dei dati dice "avviso": e' la stessa regola per cui
@@ -616,8 +626,10 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette) {
     }
     Row(
         modifier = Modifier
+            .minimumInteractiveComponentSize()
             .clip(CircleShape)
             .background(fondo)
+            .clickable(onClickLabel = "apri il bollettino degli avvisi", onClick = onClick)
             .padding(horizontal = 13.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),
