@@ -6423,3 +6423,23 @@ restava sulle 16:00, l'ora vera); a caldo `--ei sezione 2 --ei giorno 6
 --ei ora 5` porta alla pioggia di venerdi' alle 05:00, con la riga `agganci:`
 nel log che prima non compariva.
 
+## 41. Un colpetto cambia sala
+
+*"Dovrebbe bastare un colpettino leggero, non devo scorrere molto."* Misurato
+sul telefono prima di toccare: un colpetto di 150 pixel **sul pannello** non
+cambiava sala, 300 si'; sul cielo 150 bastavano.
+
+La differenza era nella rete di `SalaShell` (§34): col gesto che parte dal
+pannello il carosello si sposta per scorrimento annidato, e al rilascio la rete
+lo posava sulla sala **piu' vicina** - che per un colpetto e' sempre quella di
+partenza. Adesso si posa **nel verso del gesto** appena lo spostamento supera
+`SOGLIA_COLPETTO` (tre centesimi di pagina, una settantina di pixel), contato
+dalla sala su cui il dito si e' appoggiato (`paginaAlTocco`). La stessa soglia
+e' passata al `flingBehavior` del carosello (era un dodicesimo), e la rete
+aspetta 90 ms invece di 160.
+
+Provato: colpetti di 120 pixel sul pannello, su e giu', e sul cielo cambiano
+sala; un tremolio di 40 no; un trascinamento lento di 160 si'. I pannelli che
+non ci stanno scorrono ancora prima di cedere il gesto (su questo telefono
+nessuna sala eccede lo schermo, quindi non si e' potuto vedere).
+
