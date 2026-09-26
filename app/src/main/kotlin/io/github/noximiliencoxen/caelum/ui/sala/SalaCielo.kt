@@ -109,6 +109,9 @@ fun SalaCielo(
     // La curva del sole non dipende dal tempo: si rifa' solo quando cambia la
     // taglia. Vedi [StradaDelSole].
     val stradaDelSole = remember { StradaDelSole() }
+    // Un solo tracciato per tutti i fasci di luce, svuotato e riempito a ogni
+    // fascio: sette `Path` nuovi a fotogramma per sette triangoli sono spreco.
+    val fascio = remember { Path() }
 
     // **La sfumatura verticale risolve le sue coordinate al disegno**, quindi
     // una sola per terna di fermate basta a qualunque taglia - e con lei si
@@ -179,14 +182,26 @@ fun SalaCielo(
             )
         }
 
+        // Di giorno, a cielo aperto, qualcosa attraversa: senza, un sereno e'
+        // una sfumatura ferma. Il velo cala con le nuvole invece di spegnersi.
+        val giorno = (1f - scena.notte) * (1f - scena.bagnato)
+
+        // L'aereo e' la cosa piu' lontana dopo le stelle: e' il loro doppio di
+        // giorno, come la stella cadente e' l'unica cosa che passa di notte.
+        translate(parallasse.x * 0.2f, parallasse.y * 0.2f) {
+            aereo(
+                tempo = t,
+                inchiostro = SalaTokens.neutral100,
+                velo = giorno * (1f - scena.copertura * 0.85f),
+            )
+        }
+
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
+            fasciDiLuce(sx, sy, dy, sky, scena, t, fiamma.value, fascio)
             arcoDelCielo(sx, sy, dy, palette, scena, stradaDelSole)
             soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value)
         }
 
-        // Di giorno, a cielo aperto, qualcosa attraversa: senza, un sereno e'
-        // una sfumatura ferma. Il velo cala con le nuvole invece di spegnersi.
-        val giorno = (1f - scena.notte) * (1f - scena.bagnato)
         translate(parallasse.x * 0.52f, parallasse.y * 0.52f) {
             pulviscolo(
                 tempo = t,
@@ -212,6 +227,18 @@ fun SalaCielo(
         translate(parallasse.x * 0.78f, parallasse.y * 0.78f) {
             nuvole(sx, sy, dy, palette, scena, sky, t)
         }
+
+        // I riflessi stanno **sopra** le nuvole e non si traslano col loro
+        // piano: sono nell'obiettivo, non nel cielo. Partono dal sole spostato
+        // quanto il suo piano, e inclinando il telefono scivolano dalla parte
+        // opposta, come fanno in una fotografia.
+        riflessi(
+            sole = arco(sky.journey, sx, sy, dy) + parallasse * 0.34f,
+            r = 38f * sx,
+            dy = dy,
+            scena = scena,
+            tempo = t,
+        )
 
         // Le colline sono terra: stanno ferme, o il mondo si stacca dai piedi.
         colline(sx, sy, palette)
@@ -504,6 +531,173 @@ private fun DrawScope.soleEluna(
             )
         }
         luna(posizione, r, faseLunare, alpha, tempo)
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// La luce del giorno
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// **La notte era piu' bella del giorno, e aveva ragione chi l'ha detto.** Di
+// notte il cielo ha centosessanta stelle che tremolano, le cadenti, la luna col
+// suo bagliore e le sue scintille; di giorno aveva una sfumatura, il sole e due
+// uccelli. Quello che segue da' al giorno la stessa ricchezza, con segni del
+// giorno: la luce che attraversa l'aria, i riflessi che il sole lascia
+// nell'obiettivo. Tutti si spengono con le nuvole e con la pioggia - un fascio
+// di luce sotto un cielo chiuso sarebbe il disegno che smentisce il dato.
+
+/** Quanti fasci di luce partono dal sole. Dispari, e sfalsati: sette raggi
+ *  regolari si leggono come una ruota, non come luce. */
+private const val FASCI = 7
+
+/** Di quanto ogni fascio si scosta dalla sua posizione regolare, quanto e'
+ *  largo e con che passo respira. Calcolati una volta, come `TavolaStelle`. */
+private val FasciScarto = FloatArray(FASCI) { sparso(it, 61) }
+private val FasciLargo = FloatArray(FASCI) { sparso(it, 62) }
+private val FasciPasso = FloatArray(FASCI) { sparso(it, 63) }
+
+/**
+ * Le due passate di ogni fascio: larghezza relativa e opacita' relativa.
+ *
+ * Una sola dava un triangolo col bordo netto, cioe' una fetta di torta. Una
+ * larga e tenue sotto una stretta e piena danno il bordo che sfuma.
+ */
+private val PassateFascio = listOf(1f to 0.45f, 0.42f to 1f)
+
+/**
+ * I fasci di luce: raggi larghi e tenui che partono dal sole e attraversano il
+ * cielo, girando piano all'opposto della corona.
+ *
+ * **Piu' forti e piu' dorati col sole basso**, che e' quando si vedono davvero:
+ * a mezzogiorno la luce e' ovunque e un fascio si distingue appena, all'alba e
+ * al tramonto il cielo si riga. Toccando il sole si accendono insieme alla
+ * fiammata.
+ */
+private fun DrawScope.fasciDiLuce(
+    sx: Float,
+    sy: Float,
+    dy: Float,
+    sky: SkyState,
+    scena: Scena,
+    tempo: Float,
+    fiamma: Float,
+    fascio: Path,
+) {
+    val sereno = (1f - scena.copertura).coerceIn(0f, 1f)
+    val forza = scena.sole * sereno * (1f - scena.bagnato)
+    if (forza <= 0.02f) return
+    val centro = arco(sky.journey, sx, sy, dy)
+    val elev = sin(PI.toFloat() * sky.journey.coerceIn(0f, 1f))
+    val tinta = lerp(Color(0xFFFFD49A), Color(0xFFFFF7E2), elev)
+    val intensita = forza * lerp(1.25f, 0.85f, elev) * (1f + 0.9f * fiamma)
+    val lungo = size.maxDimension * 1.2f
+    // Un giro ogni quattro minuti, al contrario della corona: due rotazioni
+    // nello stesso verso si leggerebbero come un oggetto solo che gira.
+    val giro = -tempo * (2f * PI.toFloat() / 240f)
+    for (k in 0 until FASCI) {
+        val asse = giro + (k + FasciScarto[k] * 0.6f) * (2f * PI.toFloat() / FASCI)
+        val meta = 0.045f + FasciLargo[k] * 0.07f
+        // Ognuno respira col suo passo, fra dieci e trenta secondi: un fascio
+        // che si affievolisce mentre l'altro si accende e' la luce che passa
+        // fra le cose, non una lampada.
+        val respiro = 0.5f + 0.5f * sin(tempo * (0.2f + FasciPasso[k] * 0.4f) + k * 1.9f)
+        val alfa = (0.17f * intensita * (0.3f + 0.7f * respiro)).coerceIn(0f, 1f)
+        if (alfa <= 0.004f) continue
+        val pennello = Brush.linearGradient(
+            0f to tinta.copy(alpha = alfa),
+            0.35f to tinta.copy(alpha = alfa * 0.55f),
+            1f to tinta.copy(alpha = 0f),
+            start = centro,
+            end = Offset(centro.x + cos(asse) * lungo * 0.8f, centro.y + sin(asse) * lungo * 0.8f),
+        )
+        PassateFascio.forEach { (quanto, opacita) ->
+            val m = meta * quanto
+            fascio.reset()
+            fascio.moveTo(centro.x, centro.y)
+            fascio.lineTo(centro.x + cos(asse - m) * lungo, centro.y + sin(asse - m) * lungo)
+            fascio.lineTo(centro.x + cos(asse + m) * lungo, centro.y + sin(asse + m) * lungo)
+            fascio.close()
+            drawPath(fascio, pennello, alpha = opacita)
+        }
+    }
+}
+
+/**
+ * Un riflesso dell'obiettivo: dove sta sulla linea che parte dal sole (in
+ * frazioni del passo), quanto e' grande (in raggi del sole), la tinta,
+ * l'opacita', e se e' un anello invece di un disco.
+ */
+private class Riflesso(
+    val dove: Float,
+    val raggio: Float,
+    val tinta: Color,
+    val alfa: Float,
+    val anello: Boolean = false,
+)
+
+/**
+ * I riflessi, in tinte pastello e a opacita' bassa.
+ *
+ * **Non sono un alone neon**, e non devono diventarlo: sono la traccia che il
+ * sole lascia nel vetro di una macchina fotografica, e bastano pochi punti di
+ * colore per dire "controluce". Un anello solo fra i dischi: tutti anelli si
+ * leggerebbero come un bersaglio.
+ */
+private val Riflessi = listOf(
+    Riflesso(0.30f, 0.22f, Color(0xFFFFF1C9), 0.26f),
+    Riflesso(0.55f, 0.55f, Color(0xFFFFD9B8), 0.12f),
+    Riflesso(0.78f, 0.14f, Color(0xFFD9F2E6), 0.30f),
+    Riflesso(1.00f, 0.95f, Color(0xFFE9DEF7), 0.12f, anello = true),
+    Riflesso(1.18f, 0.34f, Color(0xFFFFE3C8), 0.16f),
+)
+
+/**
+ * I riflessi dell'obiettivo, lungo la linea che va dal sole verso il centro del
+ * cielo.
+ *
+ * Il punto d'arrivo e' il centro del **cielo** e non dello schermo: il centro
+ * dello schermo sta dietro al numero dei gradi, e un disco colorato dietro una
+ * cifra e' sporco, non luce. Quando il sole ci passa sopra la linea si accorcia
+ * a niente, e i riflessi svaniscono invece di ammucchiarsi - come in un
+ * obiettivo puntato dritto sul sole.
+ */
+private fun DrawScope.riflessi(sole: Offset, r: Float, dy: Float, scena: Scena, tempo: Float) {
+    val sereno = (1f - scena.copertura).coerceIn(0f, 1f)
+    val forza = scena.sole * sereno * sereno * (1f - scena.bagnato)
+    if (forza <= 0.02f) return
+    val verso = Offset(size.width * 0.5f, size.height * 0.30f + dy) - sole
+    val distanza = verso.getDistance()
+    val presenza = (distanza / (size.width * 0.12f)).coerceIn(0f, 1f)
+    if (presenza <= 0.01f) return
+    val direzione = verso / distanza
+    val passo = size.width * 0.45f
+    Riflessi.forEachIndexed { i, riflesso ->
+        val centro = sole + direzione * (passo * riflesso.dove)
+        val raggio = r * riflesso.raggio
+        val a = (riflesso.alfa * forza * presenza * (0.8f + 0.2f * sin(tempo * 0.6f + i * 1.3f)))
+            .coerceIn(0f, 1f)
+        if (riflesso.anello) {
+            drawCircle(
+                color = riflesso.tinta.copy(alpha = a),
+                radius = raggio,
+                center = centro,
+                style = Stroke(width = raggio * 0.07f),
+            )
+        } else {
+            // Piu' pieno sul bordo che al centro: e' la forma di un riflesso
+            // vero, e distingue un riflesso da una macchia di luce.
+            drawCircle(
+                brush = Brush.radialGradient(
+                    0f to riflesso.tinta.copy(alpha = a * 0.5f),
+                    0.78f to riflesso.tinta.copy(alpha = a),
+                    1f to riflesso.tinta.copy(alpha = 0f),
+                    center = centro,
+                    radius = raggio,
+                ),
+                radius = raggio,
+                center = centro,
+            )
+        }
     }
 }
 
