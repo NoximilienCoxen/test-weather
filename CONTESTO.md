@@ -6231,3 +6231,67 @@ telefono: la larghezza dei segmenti delle unita' (176 punti, "km/h" deve starci
 senza puntini) e il colore delle icone della barra di stato nella
 configurazione quando il tema dell'app e quello del telefono non coincidono -
 `enableEdgeToEdge` le sceglie dal telefono.
+
+## 38. Solo in verticale, i numeri che mancavano, e un giorno bello quanto la notte
+
+Tutto provato sul telefono (Pixel 9 Pro, 427 x 952 punti, scala caratteri 1).
+
+**Solo in verticale.** `screenOrientation="portrait"` su `MainActivity` e
+`WidgetConfigActivity`. Verificato da `dumpsys window`:
+`mCurrentAppOrientation=SCREEN_ORIENTATION_PORTRAIT`. **Il limite da sapere**:
+con targetSdk 36, Android 16 ignora il blocco sugli schermi larghi (dai 600
+punti di lato corto: tablet, pieghevoli aperti). Sui telefoni vale.
+
+**UV: tutte le ore sotto le colonne.** Erano una ogni tre, e l'ora scelta
+nascondeva le vicine: da fuori si leggeva "mancano dei numeri". Adesso
+`SalaUvScreen` misura la colonna (`BoxWithConstraints`) e "00"
+(`rememberTextMeasurer`): se ci sta, tutte e sedici; se no, una ogni due. Il
+primo giro e' caduto nel ripiego anche sul Pixel: lo 0,1 em di spaziatura di
+`microLabel` portava "00" a 14,4 punti su colonne da 15,8. Le cifre del grafico
+usano `EtichettaGrafico`, cioe' `microLabel` senza spaziatura.
+
+**Polline: un tocco sceglie, e basta.** Toccare la riga gia' scelta tornava alla
+famiglia peggiore di oggi: "Erba" toccata due volte saltava a "Erbacce".
+Provato: quattro tocchi su Erba, resta Erba.
+
+**La settimana: i riquadri sono del giorno scelto.** Riassumevano i sette
+giorni, e portavano a sale che mostrano il giorno scelto: "Pioggia 0,9 mm"
+apriva una sala che diceva zero. Adesso l'intestazione del giorno sta sopra i
+riquadri, i riquadri dicono quel giorno (l'aria: oggi il valore di adesso, come
+l'anello di Sala V; domani e dopodomani il picco orario, "ARIA MAX"; oltre, il
+modello non arriva e scrive "--"), sotto c'e' alba e tramonto. La scheda del
+giorno che ripeteva gli stessi quattro valori e' uscita. La settimana intera
+resta nella frase sotto il titolo.
+
+Pioggia, vento e UV **portano anche all'ora giusta**, perche' le loro sale
+dicono il valore di un'ora: la pioggia all'ora in cui comincia (la sala somma
+le dodici ore dopo), vento e UV all'ora del massimo. Provato su venerdi' 2:
+riquadro 0,9 mm, sala aperta alle 06:00 con "sta piovendo".
+
+**Il giorno.** Di notte c'erano stelle che tremolano, cadenti, la luna col suo
+bagliore; di giorno una sfumatura, il sole e due uccelli. Tre cose nuove, tutte
+spente da nuvole, pioggia e notte:
+
+- `fasciDiLuce` (`SalaCielo`): sette raggi larghi dal sole, due passate per il
+  bordo morbido, un giro ogni quattro minuti al contrario della corona, ognuno
+  che respira col suo passo. Piu' forti e dorati col sole basso; si accendono
+  con la fiammata del tocco. Un solo `Path` riusato.
+- `riflessi` (`SalaCielo`): cinque riflessi pastello lungo la linea che va dal
+  sole al centro del **cielo** (non dello schermo: li' c'e' il numero). Non sono
+  traslati col piano del sole, quindi inclinando il telefono scivolano dalla
+  parte opposta, come in un obiettivo.
+- `aereo` (`SalaVita`): il doppio diurno della stella cadente. Uno ogni 38
+  secondi, 16 per attraversare, scia di due fili che si fondono e svaniscono in
+  sette. Tratti a punta piatta (la lezione della collana di perle del fulmine).
+  All'avvio dell'app l'orologio parte da zero, quindi il primo aereo entra
+  subito; negli scatti a orologio fermo sta fuori schermo a sinistra.
+
+**Senza git si installa lo stesso.** Da uno zip `versionCode` valeva 1 e
+Android rifiutava di installare sopra `apk-latest`. Ora si passa a mano:
+`./gradlew :app:assembleDebug -Pcaelum.versionCode=410`. La proprieta' iniettata
+di AGP (`android.injected.version.code`) e' stata provata e viene ignorata.
+
+**Non provato**: il blocco dell'orientamento girando fisicamente il telefono
+(non si cambiano le impostazioni di rotazione da adb); la resa su uno schermo
+stretto, dove il grafico UV deve ripiegare su un'ora ogni due; la fluidita'
+misurata dei fasci (a occhio nessuno scatto).

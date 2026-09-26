@@ -50,7 +50,12 @@ fun comando(vararg argomenti: String): String? = runCatching {
     }.standardOutput.asText.get().trim().ifEmpty { null }
 }.getOrNull()
 
-val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
+// Senza git (lo zip) il numero si puo' dare a mano, `-Pcaelum.versionCode=410`:
+// con 1 Android rifiuta di installare sopra la build di `apk-latest`, che e'
+// piu' alta, e l'unica via resterebbe disinstallare e perdere le localita'.
+val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNull()
+    ?: providers.gradleProperty("caelum.versionCode").orNull?.toIntOrNull()
+    ?: 1
 val commitSha: String = comando("git", "rev-parse", "--short", "HEAD") ?: "ignoto"
 
 android {

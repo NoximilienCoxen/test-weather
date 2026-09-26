@@ -18,6 +18,7 @@ import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.floor
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Quello che si muove in Sala I: precipitazioni, uccelli, stelle.
@@ -312,6 +313,126 @@ fun DrawScope.uccelli(unita: Float, origine: Offset, tempo: Float, inchiostro: C
             color = inchiostro.copy(alpha = opacita.coerceIn(0f, 1f)),
             style = Stroke(width = (w * 0.15f).coerceAtLeast(2.2f), cap = StrokeCap.Round),
         )
+    }
+}
+
+/** Ogni quanti secondi passa un aereo. Lento apposta: e' un evento, come la
+ *  stella cadente, non un traffico. */
+private const val CICLO_AEREO = 38f
+
+/** Quanto ci mette ad attraversare lo schermo. */
+private const val VOLO_AEREO = 16f
+
+/** Quanto dura la scia dietro di lui prima di sciogliersi del tutto. */
+private const val VITA_SCIA = 7f
+
+/** In quanti tratti si disegna la scia: abbastanza perche' allargarsi e
+ *  svanire sembrino continui. */
+private const val TRATTI_SCIA = 28
+
+/**
+ * Un aereo alto, e la scia di condensazione che si lascia dietro.
+ *
+ * **E' il doppio diurno della stella cadente**: di notte l'unica cosa che passa
+ * e' una scia di luce, di giorno e' questa. Uno ogni quaranta secondi circa,
+ * da un lato o dall'altro, a quote diverse, leggermente inclinato.
+ *
+ * La scia e' **due fili** vicino ai motori che si fondono in uno allargandosi, e
+ * svanisce per esponenziale: e' quello che si vede alzando gli occhi, e la
+ * differenza fra una scia e una riga tirata col righello.
+ *
+ * I tratti hanno le punte piatte e non tonde: a opacita' parziale due punte
+ * tonde sovrapposte fanno un puntino piu' chiaro a ogni giunto, e la scia
+ * diventerebbe una collana (la stessa lezione del fulmine in `SalaCielo`).
+ */
+fun DrawScope.aereo(tempo: Float, inchiostro: Color, velo: Float) {
+    if (velo <= 0.01f) return
+    val giro = floor(tempo / CICLO_AEREO).toInt()
+    val dentro = tempo - giro * CICLO_AEREO
+    if (dentro > VOLO_AEREO + VITA_SCIA) return
+
+    val daSinistra = sparso(giro, 51) > 0.5f
+    // Sotto il nome della localita' e sopra il numero dei gradi.
+    val yPartenza = size.height * (0.15f + sparso(giro, 52) * 0.14f)
+    val yArrivo = yPartenza + size.height * (sparso(giro, 53) - 0.5f) * 0.12f
+    val xPartenza = if (daSinistra) -0.08f * size.width else 1.08f * size.width
+    val xArrivo = if (daSinistra) 1.08f * size.width else -0.08f * size.width
+    fun punto(s: Float) = Offset(
+        xPartenza + (xArrivo - xPartenza) * s,
+        yPartenza + (yArrivo - yPartenza) * s,
+    )
+    val dx = xArrivo - xPartenza
+    val dyVolo = yArrivo - yPartenza
+    val lunghezza = sqrt(dx * dx + dyVolo * dyVolo)
+    // La perpendicolare alla rotta: da li' si scostano i due fili.
+    val normale = Offset(-dyVolo / lunghezza, dx / lunghezza)
+
+    for (j in 0 until TRATTI_SCIA) {
+        val eta0 = j * VITA_SCIA / TRATTI_SCIA
+        val eta1 = (j + 1) * VITA_SCIA / TRATTI_SCIA
+        val s0 = ((dentro - eta0) / VOLO_AEREO).coerceAtMost(1f)
+        val s1 = ((dentro - eta1) / VOLO_AEREO).coerceAtMost(1f)
+        if (s0 <= 0f) break
+        if (s0 - s1.coerceAtLeast(0f) <= 0f) continue
+        val da = punto(s0)
+        val a = punto(s1.coerceAtLeast(0f))
+        // Nasce un poco dietro ai motori, poi si scioglie.
+        val nascita = (eta0 / 0.35f).coerceAtMost(1f)
+        val alfa = (0.42f * velo * nascita * exp(-eta0 / 2.4f)).coerceIn(0f, 1f)
+        if (alfa <= 0.006f) continue
+        val spessore = size.width * 0.0032f * (1f + eta0 * 0.9f)
+        // I due fili si avvicinano mentre la scia invecchia, e si fondono.
+        val scosta = size.width * 0.0042f * (1f - (eta0 / 2.2f).coerceAtMost(1f))
+        if (scosta > 0.5f) {
+            for (lato in intArrayOf(-1, 1)) {
+                val o = normale * (scosta * lato)
+                drawLine(
+                    color = inchiostro.copy(alpha = alfa * 0.7f),
+                    start = da + o,
+                    end = a + o,
+                    strokeWidth = spessore,
+                    cap = StrokeCap.Butt,
+                )
+            }
+        } else {
+            drawLine(
+                color = inchiostro.copy(alpha = alfa),
+                start = da,
+                end = a,
+                strokeWidth = spessore * 1.6f,
+                cap = StrokeCap.Butt,
+            )
+        }
+    }
+
+    // L'aereo, finche' e' in volo: la fusoliera, due ali a freccia a meta'
+    // corpo e due alette in coda. Con le ali dritte si leggeva un "+", con le
+    // sole ali in punta una freccia: e' la coda a dire "aereo".
+    val testa = dentro / VOLO_AEREO
+    if (testa in 0f..1f) {
+        val p = punto(testa)
+        val avanti = Offset(dx / lunghezza, dyVolo / lunghezza)
+        val corpo = size.width * 0.012f
+        val tinta = inchiostro.copy(alpha = (0.9f * velo).coerceIn(0f, 1f))
+        drawLine(tinta, p - avanti * corpo, p + avanti * corpo, strokeWidth = size.width * 0.0034f, cap = StrokeCap.Round)
+        val ali = p + avanti * (corpo * 0.1f)
+        val coda = p - avanti * (corpo * 0.8f)
+        for (lato in intArrayOf(-1, 1)) {
+            drawLine(
+                tinta,
+                ali,
+                ali - avanti * (corpo * 0.4f) + normale * (corpo * 0.95f * lato),
+                strokeWidth = size.width * 0.0028f,
+                cap = StrokeCap.Round,
+            )
+            drawLine(
+                tinta,
+                coda,
+                coda - avanti * (corpo * 0.2f) + normale * (corpo * 0.38f * lato),
+                strokeWidth = size.width * 0.0022f,
+                cap = StrokeCap.Round,
+            )
+        }
     }
 }
 
