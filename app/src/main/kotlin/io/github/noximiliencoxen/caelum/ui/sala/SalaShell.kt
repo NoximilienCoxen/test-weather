@@ -19,8 +19,12 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -99,6 +103,8 @@ import kotlin.math.abs
  * - la tavolozza, la scena - e non sanno che esista una molla. E' cio' che
  * permette di cambiare il modo in cui un colore passa senza aprire sette file.
  */
+// Il tirare per aggiornare di Material 3 e' ancora dichiarato sperimentale.
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SalaShell(
     state: UiState,
@@ -372,7 +378,7 @@ fun SalaShell(
     }
     val guidaDaSola = !state.guidaVista && attesaFinita && state.welcomed &&
         !state.animazioniIstantanee && state.forecast != null &&
-        !state.settingsOpen && !state.locationsOpen && !state.legaliOpen
+        !state.settingsOpen && !state.locationsOpen && !state.legaliOpen && !state.bollettinoAperto
     val guida = state.guidaAperta || guidaDaSola
 
     CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
@@ -403,6 +409,7 @@ fun SalaShell(
                     palette = palette,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
+                    onAvvisi = viewModel::apriBollettino,
                     modifier = Modifier
                         .padding(start = 22.dp, end = 26.dp, top = 12.dp)
                         .onGloballyPositioned { rIntestazione = it.boundsInRoot() },
@@ -426,6 +433,21 @@ fun SalaShell(
                     )
                 }
 
+                // **Quando i numeri non sono di adesso, lo si dice qui.** Aperta
+                // senza rete l'app mostra l'ultima previsione rimasta su disco;
+                // e' meglio dei trattini solo finche' non passa per quella di
+                // adesso. Toccata, riprova.
+                if (state.previsioneVecchia) {
+                    PastigliaAccento(
+                        testo = etichettaDatiVecchi(state.fetchedAt, senzaRete = state.error != null),
+                        palette = palette,
+                        modifier = Modifier
+                            .padding(start = 22.dp, top = 8.dp)
+                            .clip(CircleShape)
+                            .clickable(onClickLabel = "riprova ad aggiornare", onClick = viewModel::aggiornaAMano),
+                    )
+                }
+
                 // Il carosello lascia libero il fianco destro: sotto la colonna
                 // delle scorciatoie non deve finirci niente da leggere.
                 //
@@ -445,108 +467,132 @@ fun SalaShell(
                 // in uno schermo e il gesto va dritto alla sala dopo. Quando un
                 // pannello non ci sta, il dito lo scorre prima fino in fondo
                 // (scorrimento annidato di Compose) e poi passa alla sala.
-                VerticalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(end = riservaColonna)
-                        // Solo guarda, nel primo passaggio e senza consumare
-                        // niente: serve alla rete qui sopra per sapere se c'e'
-                        // un dito appoggiato.
-                        .pointerInput(Unit) {
-                            awaitEachGesture {
-                                awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                                ditoSulCarosello = true
-                                try {
-                                    do {
-                                        val evento = awaitPointerEvent(PointerEventPass.Initial)
-                                    } while (evento.changes.any { it.pressed })
-                                } finally {
-                                    ditoSulCarosello = false
-                                }
-                            }
-                        },
-                    // Un dodicesimo di pagina: il gesto resta deliberato - un
-                    // tocco che trema non cambia sala - ma basta un colpetto,
-                    // non una corsa per tutto lo schermo. La molla e' rigida e
-                    // senza rimbalzo, perche' l'attesa dopo il dito pesa
-                    // quanto il dito.
-                    flingBehavior = PagerDefaults.flingBehavior(
+                //
+                // **Tirando in giu' dalla prima sala si aggiorna.** E' lo
+                // stesso scorrimento annidato: sulla prima sala il carosello
+                // non ha niente sopra, e cio' che avanza del gesto arriva qui.
+                // Sulle altre sale lo stesso gesto torna alla sala prima, come
+                // sempre. L'indicatore prende i colori della scheda: quello di
+                // Material, viola su bianco, starebbe addosso al cielo come un
+                // adesivo.
+                val tiro = rememberPullToRefreshState()
+                PullToRefreshBox(
+                    isRefreshing = state.aggiornandoAMano,
+                    onRefresh = viewModel::aggiornaAMano,
+                    state = tiro,
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    indicator = {
+                        PullToRefreshDefaults.Indicator(
+                            state = tiro,
+                            isRefreshing = state.aggiornandoAMano,
+                            containerColor = palette.panelSolido,
+                            color = palette.accent,
+                            modifier = Modifier.align(Alignment.TopCenter).padding(end = riservaColonna),
+                        )
+                    },
+                ) {
+                    VerticalPager(
                         state = pagerState,
-                        snapPositionalThreshold = 0.08f,
-                        snapAnimationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMediumLow,
-                        ),
-                    ),
-                ) { page ->
-                    // **La scheda scorre quando non ci sta, e prima si faceva
-                    // tagliare.** Il pannello e' ancorato in basso e si
-                    // dimensiona sul contenuto: finche' il contenuto ci sta,
-                    // niente cambia di un punto. Quando non ci sta - "La
-                    // settimana" su uno schermo corto, o col corpo di sistema
-                    // ingrandito - il `Column` veniva misurato all'altezza
-                    // disponibile e i figli in eccesso, margine inferiore
-                    // compreso, finivano fuori dal ritaglio. Si faceva
-                    // tagliare in fondo, ed e' successo davvero (sezione 15.4).
-                    //
-                    // Il `Box` da' l'ancora in basso, il `verticalScroll` da'
-                    // la via d'uscita. Lo stato sta dentro `key(page)` perche'
-                    // ogni sala si ricordi il proprio: condiviso, aprendo una
-                    // sala corta dopo una lunga si troverebbe scorrevole senza
-                    // niente da scorrere.
-                    //
-                    // Col carosello verticale questo scorrimento viene prima
-                    // di lui: su una scheda lunga il dito la porta in fondo, e
-                    // solo li' cambia sala. Vedi la nota sul carosello.
-                    val scorrimento = key(page) { rememberScrollState() }
-                    Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
-                    ) {
-                        Column(
+                            .padding(end = riservaColonna)
+                            // Solo guarda, nel primo passaggio e senza consumare
+                            // niente: serve alla rete qui sopra per sapere se c'e'
+                            // un dito appoggiato.
+                            .pointerInput(Unit) {
+                                awaitEachGesture {
+                                    awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                                    ditoSulCarosello = true
+                                    try {
+                                        do {
+                                            val evento = awaitPointerEvent(PointerEventPass.Initial)
+                                        } while (evento.changes.any { it.pressed })
+                                    } finally {
+                                        ditoSulCarosello = false
+                                    }
+                                }
+                            },
+                        // Un dodicesimo di pagina: il gesto resta deliberato - un
+                        // tocco che trema non cambia sala - ma basta un colpetto,
+                        // non una corsa per tutto lo schermo. La molla e' rigida e
+                        // senza rimbalzo, perche' l'attesa dopo il dito pesa
+                        // quanto il dito.
+                        flingBehavior = PagerDefaults.flingBehavior(
+                            state = pagerState,
+                            snapPositionalThreshold = 0.08f,
+                            snapAnimationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow,
+                            ),
+                        ),
+                    ) { page ->
+                        // **La scheda scorre quando non ci sta, e prima si faceva
+                        // tagliare.** Il pannello e' ancorato in basso e si
+                        // dimensiona sul contenuto: finche' il contenuto ci sta,
+                        // niente cambia di un punto. Quando non ci sta - "La
+                        // settimana" su uno schermo corto, o col corpo di sistema
+                        // ingrandito - il `Column` veniva misurato all'altezza
+                        // disponibile e i figli in eccesso, margine inferiore
+                        // compreso, finivano fuori dal ritaglio. Si faceva
+                        // tagliare in fondo, ed e' successo davvero (sezione 15.4).
+                        //
+                        // Il `Box` da' l'ancora in basso, il `verticalScroll` da'
+                        // la via d'uscita. Lo stato sta dentro `key(page)` perche'
+                        // ogni sala si ricordi il proprio: condiviso, aprendo una
+                        // sala corta dopo una lunga si troverebbe scorrevole senza
+                        // niente da scorrere.
+                        //
+                        // Col carosello verticale questo scorrimento viene prima
+                        // di lui: su una scheda lunga il dito la porta in fondo, e
+                        // solo li' cambia sala. Vedi la nota sul carosello.
+                        val scorrimento = key(page) { rememberScrollState() }
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .verticalScroll(scorrimento)
-                                .onGloballyPositioned {
-                                    if (page == pagerState.currentPage) rScheda = it.boundsInRoot()
-                                },
+                                .fillMaxSize()
+                                .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
                         ) {
-                            when (rooms.getOrNull(page)) {
-                                SalaRoom.OGGI -> SalaOggiScreen(
-                                    state = state,
-                                    sky = sky,
-                                    palette = palette,
-                                    viewModel = viewModel,
-                                    faseLunare = faseLunare,
-                                    onVai = ::vaiA,
-                                )
-                                SalaRoom.SETTIMANA -> SalaSettimanaScreen(
-                                    state = state,
-                                    palette = palette,
-                                    viewModel = viewModel,
-                                    faseLunare = faseLunare,
-                                    onVai = ::vaiA,
-                                )
-                                SalaRoom.PIOGGIA -> SalaPioggiaScreen(
-                                    state = state,
-                                    palette = palette,
-                                    onSelectHour = viewModel::selectHour,
-                                    onSelectDay = viewModel::selectDay,
-                                    movimento = !ferme,
-                                )
-                                SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
-                                SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
-                                SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette, movimento = !ferme)
-                                SalaRoom.UV -> SalaUvScreen(
-                                    state = state,
-                                    palette = palette,
-                                    onSelectHour = viewModel::selectHour,
-                                    movimento = !ferme,
-                                )
-                                null -> Unit
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .verticalScroll(scorrimento)
+                                    .onGloballyPositioned {
+                                        if (page == pagerState.currentPage) rScheda = it.boundsInRoot()
+                                    },
+                            ) {
+                                when (rooms.getOrNull(page)) {
+                                    SalaRoom.OGGI -> SalaOggiScreen(
+                                        state = state,
+                                        sky = sky,
+                                        palette = palette,
+                                        viewModel = viewModel,
+                                        faseLunare = faseLunare,
+                                        onVai = ::vaiA,
+                                    )
+                                    SalaRoom.SETTIMANA -> SalaSettimanaScreen(
+                                        state = state,
+                                        palette = palette,
+                                        viewModel = viewModel,
+                                        faseLunare = faseLunare,
+                                        onVai = ::vaiA,
+                                    )
+                                    SalaRoom.PIOGGIA -> SalaPioggiaScreen(
+                                        state = state,
+                                        palette = palette,
+                                        onSelectHour = viewModel::selectHour,
+                                        onSelectDay = viewModel::selectDay,
+                                        movimento = !ferme,
+                                    )
+                                    SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
+                                    SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
+                                    SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette, movimento = !ferme)
+                                    SalaRoom.UV -> SalaUvScreen(
+                                        state = state,
+                                        palette = palette,
+                                        onSelectHour = viewModel::selectHour,
+                                        movimento = !ferme,
+                                    )
+                                    null -> Unit
+                                }
                             }
                         }
                     }
@@ -718,6 +764,33 @@ fun SalaShell(
                 }
             }
 
+            // Il bollettino si apre dalla pastiglia in cima alla sala, mai da
+            // un altro pannello: con loro non si sovrappone, e basta che stia
+            // dopo per avere l'indietro per primo.
+            val scorrimentoBollettino by animateFloatAsState(
+                targetValue = if (state.bollettinoAperto) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "bollettino",
+            )
+            if (scorrimentoBollettino > 0.001f) {
+                BackHandler(enabled = state.bollettinoAperto, onBack = viewModel::chiudiBollettino)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - scorrimentoBollettino) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaBollettinoScreen(
+                        avvisi = state.shownAlerts,
+                        luogo = state.place.name,
+                        adesso = state.forecast?.nowThere() ?: LocalDateTime.now(),
+                        senzaRete = state.error != null,
+                        palette = palette,
+                        onClose = viewModel::chiudiBollettino,
+                    )
+                }
+            }
+
             // Ultima, sopra tutto e ultima a registrare l'indietro.
             if (guida) {
                 // Il cielo non e' un pezzo misurabile: e' lo spazio fra
@@ -743,6 +816,27 @@ fun SalaShell(
         }
     }
 }
+
+/**
+ * La pastiglia dei dati vecchi: "SENZA RETE · DATI DELLE 14:10", "DATI DI IERI
+ * 18:40". Senza rete solo quando l'ultima richiesta e' davvero fallita; prima,
+ * mentre i tentativi girano ancora, si dice solo di quando sono.
+ */
+private fun etichettaDatiVecchi(quando: LocalDateTime?, senzaRete: Boolean): String {
+    val prima = if (senzaRete) "SENZA RETE · " else ""
+    if (quando == null) return "${prima}DATI NON AGGIORNATI"
+    val ora = oraMinuto(quando)
+    val oggi = LocalDate.now()
+    val dati = when (quando.toLocalDate()) {
+        oggi -> "DATI DELLE $ora"
+        oggi.minusDays(1) -> "DATI DI IERI $ora"
+        else -> "DATI DEL ${quando.dayOfMonth}/${quando.monthValue} $ora"
+    }
+    return prima + dati
+}
+
+private fun oraMinuto(t: LocalDateTime): String =
+    String.format(java.util.Locale.ITALY, "%02d:%02d", t.hour, t.minute)
 
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L
