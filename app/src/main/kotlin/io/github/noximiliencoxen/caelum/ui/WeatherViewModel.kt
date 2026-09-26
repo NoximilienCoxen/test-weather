@@ -14,6 +14,7 @@ import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.GiornoPolline
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.ScortaPrevisioni
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.TipoPolline
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
@@ -24,6 +25,7 @@ import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.data.derivedAlerts
 import io.github.noximiliencoxen.caelum.data.key
 import io.github.noximiliencoxen.caelum.data.mergeAlerts
+import io.github.noximiliencoxen.caelum.data.riportataAOggi
 import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
 import io.github.noximiliencoxen.caelum.prefs.AlertToggles
 import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
@@ -35,8 +37,11 @@ import io.github.noximiliencoxen.caelum.ui.sala.SalaRoom
 import java.io.IOException
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,6 +79,13 @@ internal fun failureMessage(failure: Throwable): String = when (failure) {
     is IOException -> "Rete non raggiungibile"
     else -> "Previsione non disponibile"
 }
+
+/**
+ * Oltre quest'eta' la previsione in scena si dichiara vecchia (vedi
+ * `UiState.previsioneVecchia`). Un'ora: la ricarica automatica ne aspetta
+ * venti, quindi con la rete non si arriva mai qui; ci si arriva senza.
+ */
+internal val VECCHIA_DOPO: Duration = Duration.ofMinutes(60)
 
 data class UiState(
     // **Qui stavano `loading` e `refreshing`.** Distinguevano il primo carico
@@ -267,6 +279,19 @@ data class UiState(
      */
     val legaliOpen: Boolean = false,
     /**
+     * Vero mentre e' aperto il bollettino degli avvisi: ogni avviso per
+     * intero, con descrizione, istruzioni e fonte. Si apre toccando la
+     * pastiglia degli avvisi in alto.
+     */
+    val bollettinoAperto: Boolean = false,
+    /**
+     * Vero mentre gira una ricarica chiesta col dito, trascinando in giu' la
+     * prima sala. Tiene acceso l'indicatore finche' la risposta arriva o
+     * l'ultimo tentativo fallisce; le ricariche partite da sole (apertura,
+     * ritorno in primo piano) non lo accendono.
+     */
+    val aggiornandoAMano: Boolean = false,
+    /**
      * Il meteo attuale delle localita' salvate, per la loro iconcina in "Le
      * località". Manca finche' non e' stato chiesto: quella riga resta
      * muta invece di mostrare un simbolo inventato.
@@ -414,6 +439,23 @@ data class UiState(
      * peggio di un'app che ammette di non sapere.
      */
     val fetchedAt: LocalDateTime? get() = forecast?.fetchedAt
+
+    /**
+     * Vero quando la previsione in scena non e' di adesso: l'ultima richiesta
+     * non e' arrivata, o quella in mano ha passato l'ora - tipicamente perche'
+     * viene dalla scorta su disco, aperta senza rete.
+     *
+     * La legge la pastiglia sotto l'intestazione, che dice "senza rete" e
+     * quando e' stata scaricata. Si guarda l'eta' e non solo l'errore perche'
+     * l'errore arriva dopo l'ultimo tentativo, cioe' decine di secondi dopo
+     * l'apertura: fino ad allora la previsione di ieri sera sarebbe passata per
+     * quella di adesso.
+     */
+    val previsioneVecchia: Boolean
+        get() {
+            val quando = fetchedAt ?: return false
+            return error != null || Duration.between(quando, LocalDateTime.now()) > VECCHIA_DOPO
+        }
 
     /**
      * Quanto e' alto il sole all'ora scelta.
@@ -596,10 +638,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         loading?.cancel()
         val place = _state.value.place
         val model = _state.value.model
+        val altroPosto = _state.value.forecast?.place?.key != place.key
         // L'aria misurata appartiene al posto da cui viene: tenerla mentre si
         // carica un'altra citta' vorrebbe dire attribuire a Bergen le polveri
         // di Forli' per il tempo di una richiesta.
-        if (_state.value.forecast?.place?.key != place.key) {
+        if (altroPosto) {
             // Le allerte seguono la stessa regola dell'aria, e per un motivo
             // piu' serio: un'allerta rossa lasciata in scena mentre si carica
             // un'altra citta' dice a chi guarda che il pericolo e' dove si
@@ -615,12 +658,28 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
         loading = viewModelScope.launch {
+            // **Prima la scorta, poi la rete.** Se di questo posto non c'e'
+            // ancora niente in scena, si mostra subito l'ultima previsione
+            // buona rimasta su disco: senza rete l'app apre su quella invece
+            // che sui trattini, e con la rete la si vede per il secondo che la
+            // risposta ci mette ad arrivare. Quanto e' vecchia lo dice la
+            // pastiglia sotto l'intestazione (`previsioneVecchia`).
+            //
+            // Le allerte ufficiali non si conservano: un bollettino di ieri
+            // mostrato come in corso e' un avviso dove non c'e'. Si calcolano
+            // solo le soglie, dagli stessi numeri che la schermata mostra.
+            if (altroPosto) {
+                leggiScorta(place, model)?.let { conservata ->
+                    mettiInScena(conservata)
+                    _state.update { it.copy(alerts = derivedAlerts(conservata).filter { a -> permessa(a) }) }
+                }
+            }
             var wait = FIRST_RETRY_MS
             val repository = WeatherRepository(place, model)
             repeat(MAX_ATTEMPTS) { attempt ->
-                val outcome = repository.load()
+                val outcome = repository.loadWithBody()
                 outcome
-                    .onSuccess { forecast ->
+                    .onSuccess { (forecast, body) ->
                         // L'unico log dell'app, e non serve a chi sviluppa:
                         // serve alla cattura in CI, che finora aspettava **a
                         // tempo** che i dati arrivassero. Un'attesa a tempo e'
@@ -631,37 +690,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // qui l'attesa smette di essere una durata e diventa
                         // una condizione.
                         Log.i(TAG, "previsione pronta: ${forecast.hours.size} ore")
-                        _state.update { current ->
-                            val last = (forecast.hours.size - 1).coerceAtLeast(0)
-                            // Copiata in una locale prima del `when`: e' una
-                            // proprieta' di classe modificabile, quindi il
-                            // compilatore non puo' restringerne il tipo fra la
-                            // condizione e il ramo, e serviva un `!!` - l'unico
-                            // di tutto il progetto.
-                            val forced = pendingHour
-                            val hour = when {
-                                // L'aggancio di verifica vince su tutto.
-                                forced != null -> forced.coerceIn(0, last)
-                                // Su una **ricarica** l'ora scelta resta quella:
-                                // chi stava guardando le sei di sera non deve
-                                // ritrovarsi sbalzato ad adesso solo perche' e'
-                                // arrivata una risposta dalla rete.
-                                current.forecast != null -> current.selectedHour.coerceIn(0, last)
-                                // All'apertura invece si mostra l'ora corrente,
-                                // non la prima disponibile: e' cio' che ci si
-                                // aspetta di vedere. Ed e' l'ora della
-                                // localita', non quella dell'orologio di chi
-                                // guarda.
-                                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
-                            }
-                            val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
-                            val wantedDay = pendingDay?.coerceIn(0, lastDay)
-                            current.copy(
-                                forecast = forecast,
-                                error = null,
-                                selectedHour = hour,
-                                selectedDay = wantedDay ?: current.selectedDay,
-                            )
+                        mettiInScena(forecast)
+                        _state.update { it.copy(aggiornandoAMano = false) }
+                        // Su disco per la prossima apertura senza rete, e per
+                        // il widget, che la trova fresca e non chiede niente.
+                        launch(Dispatchers.IO) {
+                            runCatching { ScortaPrevisioni.conserva(fileScorta(place, model), body) }
                         }
 
                         // La qualita' dell'aria vive su un altro host: si
@@ -719,7 +753,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // sarebbe anche peggiore - un'allerta della citta'
                         // sbagliata e' un avviso di maltempo dove non c'e'.
                         launch {
-                            WeatherAlertsRepository(place).load()
+                            WeatherAlertsRepository(place, ZoneOffset.ofTotalSeconds(forecast.utcOffsetSeconds)).load()
                                 .onSuccess { official ->
                                     _state.update {
                                         it.copy(
@@ -801,6 +835,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 } else {
                                     null
                                 },
+                                aggiornandoAMano = it.aggiornandoAMano && !lastAttempt,
                             )
                         }
                     }
@@ -825,6 +860,83 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             refresh()
         }
     }
+
+    /**
+     * La ricarica chiesta col dito, trascinando in giu' la prima sala.
+     *
+     * E' [refresh] con l'indicatore acceso: senza, il dito lascerebbe la
+     * schermata e non saprebbe se e' successo qualcosa finche' i numeri non
+     * cambiano - e spesso non cambiano, perche' la previsione e' la stessa.
+     */
+    fun aggiornaAMano() {
+        _state.update { it.copy(aggiornandoAMano = true) }
+        refresh()
+    }
+
+    fun apriBollettino() = _state.update { it.copy(bollettinoAperto = true) }
+
+    fun chiudiBollettino() = _state.update { it.copy(bollettinoAperto = false) }
+
+    /**
+     * Mette in scena una previsione, arrivata dalla rete o dalla scorta.
+     *
+     * Sceglie anche l'ora da mostrare, e la regola e' la stessa per le due
+     * provenienze: la scorta arriva per prima, la rete dopo, e la seconda deve
+     * trovare l'ora che la prima ha scelto invece di sceglierne un'altra.
+     */
+    private fun mettiInScena(forecast: Forecast) {
+        _state.update { current ->
+            val last = (forecast.hours.size - 1).coerceAtLeast(0)
+            // Copiata in una locale prima del `when`: e' una proprieta' di
+            // classe modificabile, quindi il compilatore non puo' restringerne
+            // il tipo fra la condizione e il ramo, e serviva un `!!` - l'unico
+            // di tutto il progetto.
+            val forced = pendingHour
+            val hour = when {
+                // L'aggancio di verifica vince su tutto.
+                forced != null -> forced.coerceIn(0, last)
+                // Su una **ricarica** l'ora scelta resta quella: chi stava
+                // guardando le sei di sera non deve ritrovarsi sbalzato ad
+                // adesso solo perche' e' arrivata una risposta dalla rete.
+                current.forecast != null -> current.selectedHour.coerceIn(0, last)
+                // All'apertura invece si mostra l'ora corrente, non la prima
+                // disponibile: e' cio' che ci si aspetta di vedere. Ed e' l'ora
+                // della localita', non quella dell'orologio di chi guarda.
+                else -> nearestHourIndex(forecast.hours, forecast.nowThere())
+            }
+            val lastDay = (forecast.days.size - 1).coerceAtLeast(0)
+            val wantedDay = pendingDay?.coerceIn(0, lastDay)
+            current.copy(
+                forecast = forecast,
+                error = null,
+                selectedHour = hour,
+                selectedDay = (wantedDay ?: current.selectedDay).coerceIn(0, lastDay),
+            )
+        }
+    }
+
+    private fun fileScorta(place: Place, model: WeatherModel) =
+        ScortaPrevisioni.file(getApplication<Application>().noBackupFilesDir, place, model)
+
+    /**
+     * L'ultima previsione buona di questo posto e modello, riportata a oggi.
+     *
+     * Fino a sette giorni: e' l'eta' oltre la quale la scorta si butta, e
+     * anche vecchia di giorni dice di piu' di una schermata vuota - purche' lo
+     * dica (vedi `previsioneVecchia`). Nulla se non c'e', se non si legge, o se
+     * di quei giorni non resta niente da oggi in poi.
+     */
+    private suspend fun leggiScorta(place: Place, model: WeatherModel): Forecast? =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val (testo, scritta) = ScortaPrevisioni.leggi(
+                    fileScorta(place, model),
+                    maxMinuti = ScortaPrevisioni.MAX_GIORNI * 24 * 60,
+                ) ?: return@runCatching null
+                val conservata = WeatherRepository(place, model).parse(testo).copy(fetchedAt = scritta)
+                conservata.riportataAOggi(conservata.nowThere())
+            }.getOrNull()
+        }
 
     /**
      * Riporta la schermata al presente: l'ora vera **e** il giorno di oggi.

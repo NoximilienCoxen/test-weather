@@ -3,16 +3,15 @@ package io.github.noximiliencoxen.caelum.widget
 import android.content.Context
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.Place
+import io.github.noximiliencoxen.caelum.data.ScortaPrevisioni
 import io.github.noximiliencoxen.caelum.data.WeatherRepository
+import io.github.noximiliencoxen.caelum.data.conOra
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 /**
  * La previsione per un widget, con l'ultima buona di scorta.
@@ -28,42 +27,44 @@ import java.util.Locale
  * manca il widget ridisegna quella - portata avanti all'ora di adesso da
  * [agedTo], cosi' non mostra come "oggi" un giorno gia' passato. Solo se non
  * c'e' niente di utilizzabile resta il disegno senza dati.
+ *
+ * La scorta e' la stessa dell'app ([ScortaPrevisioni]): quando l'app e' stata
+ * aperta da poco, il widget trova gia' la previsione fresca e non chiede niente.
  */
 internal object WidgetForecast {
-
-    /** Oltre questa eta' una previsione conservata non dice piu' niente di utile. */
-    private const val MAX_AGE_DAYS = 7L
 
     /** Sotto questa eta' la scorta vale come una risposta appena arrivata. */
     private const val FRESCA_MINUTI = 25L
 
     suspend fun load(context: Context, place: Place): Forecast? {
         val repository = WeatherRepository(place)
-        val file = fileFor(context, place)
+        val file = ScortaPrevisioni.file(context.noBackupFilesDir, place)
 
         // **Una scorta fresca basta, e non si chiede alla rete.** La riempie
-        // `AggiornaWidgetWorker`, che ha la rete garantita; chiederla di nuovo
-        // qui, da un ridisegno senza rete, vorrebbe dire aspettare un
-        // fallimento per poi usare la stessa scorta.
+        // `AggiornaWidgetWorker`, che ha la rete garantita, o l'app aperta da
+        // poco; chiederla di nuovo qui, da un ridisegno senza rete, vorrebbe
+        // dire aspettare un fallimento per poi usare la stessa scorta.
         leggi(file, repository, maxMinuti = FRESCA_MINUTI)?.let { return it }
 
         val fresh = repository.loadWithBody().getOrNull()
         if (fresh != null) {
             val (forecast, body) = fresh
-            withContext(Dispatchers.IO) { runCatching { keep(file, body) } }
+            withContext(Dispatchers.IO) { runCatching { ScortaPrevisioni.conserva(file, body) } }
             return forecast
         }
 
         // La rete non c'era: si chiede un aggiornamento appena torna, e
         // intanto si usa la scorta, anche se non e' fresca.
         runCatching { AggiornaWidgetWorker.appenaPossibile(context) }
-        return leggi(file, repository, maxMinuti = MAX_AGE_DAYS * 24 * 60)
+        return leggi(file, repository, maxMinuti = ScortaPrevisioni.MAX_GIORNI * 24 * 60)
     }
 
     /** Scarica e conserva, senza leggere: lo usa il lavoro in background. */
     suspend fun scarica(context: Context, place: Place): Boolean {
         val (_, body) = WeatherRepository(place).loadWithBody().getOrNull() ?: return false
-        withContext(Dispatchers.IO) { runCatching { keep(fileFor(context, place), body) } }
+        withContext(Dispatchers.IO) {
+            runCatching { ScortaPrevisioni.conserva(ScortaPrevisioni.file(context.noBackupFilesDir, place), body) }
+        }
         return true
     }
 
@@ -71,41 +72,11 @@ internal object WidgetForecast {
     private suspend fun leggi(file: File, repository: WeatherRepository, maxMinuti: Long): Forecast? =
         withContext(Dispatchers.IO) {
             runCatching {
-                if (!file.exists()) return@runCatching null
-                val savedAt = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(file.lastModified()),
-                    ZoneId.systemDefault(),
-                )
-                if (savedAt.isBefore(LocalDateTime.now().minusMinutes(maxMinuti))) return@runCatching null
-                val saved = repository.parse(file.readText()).copy(fetchedAt = savedAt)
+                val (testo, scritta) = ScortaPrevisioni.leggi(file, maxMinuti) ?: return@runCatching null
+                val saved = repository.parse(testo).copy(fetchedAt = scritta)
                 saved.agedTo(LocalDateTime.now(ZoneOffset.ofTotalSeconds(saved.utcOffsetSeconds)))
             }.getOrNull()
         }
-
-    /**
-     * Scrive su un file accanto e poi lo rinomina: un widget interrotto a meta'
-     * scrittura non deve lasciare una previsione troncata al posto di quella
-     * buona. E intanto butta via quelle troppo vecchie, di posti che nessun
-     * widget guarda piu'.
-     */
-    private fun keep(file: File, body: String) {
-        val dir = file.parentFile ?: return
-        dir.mkdirs()
-        val temp = File(dir, file.name + ".tmp")
-        temp.writeText(body)
-        if (!temp.renameTo(file)) {
-            file.delete()
-            temp.renameTo(file)
-        }
-        val limit = System.currentTimeMillis() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000
-        dir.listFiles()?.filter { it.lastModified() < limit }?.forEach { it.delete() }
-    }
-
-    // `noBackupFilesDir`: e' una scorta, non un dato da portare su un altro telefono.
-    private fun fileFor(context: Context, place: Place): File = File(
-        File(context.noBackupFilesDir, "widget-previsioni"),
-        String.format(Locale.ROOT, "%.4f_%.4f.json", place.latitude, place.longitude),
-    )
 }
 
 /**
@@ -115,6 +86,9 @@ internal object WidgetForecast {
  * della previsione oraria che cade adesso invece del valore misurato quando la
  * risposta e' arrivata: una previsione per le 15 e' piu' vera, alle 15, di una
  * misura delle 9. Se l'ora di adesso non c'e', "adesso" resta com'era.
+ *
+ * L'app ha la sua versione, `riportataAOggi`: le sue ore partono da mezzanotte,
+ * non da adesso.
  */
 internal fun Forecast.agedTo(now: LocalDateTime): Forecast {
     val today = now.toLocalDate()
@@ -126,19 +100,6 @@ internal fun Forecast.agedTo(now: LocalDateTime): Forecast {
         days = days.filter { !it.date.isBefore(today) },
         hours = ahead.take(24),
         allHours = ahead,
-        current = thisHour?.let { h ->
-            current.copy(
-                temperature = h.temperature,
-                apparent = h.apparent,
-                weatherCode = h.weatherCode,
-                isDay = h.isDay,
-                humidity = h.humidity,
-                dewPoint = h.dewPoint,
-                precipitation = h.precipitation,
-                windSpeed = h.windSpeed,
-                windDirection = h.windDirection,
-                windGusts = h.windGusts,
-            )
-        } ?: current,
+        current = thisHour?.let(current::conOra) ?: current,
     )
 }
