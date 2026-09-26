@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -71,6 +73,7 @@ import io.github.noximiliencoxen.caelum.ui.scene.tingiCielo
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
+import androidx.compose.runtime.mutableIntStateOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -163,21 +166,81 @@ fun SalaShell(
     // pannello - nessuno chiede al carosello di posarsi.
     //
     // La rete e' semplice: dito alzato, carosello fermo, pagina non posata,
-    // per piu' di un istante -> si va alla sala piu' vicina. Il dito si segue
-    // a parte (`ditoSulCarosello`, sotto) perche' `isScrollInProgress` non si
-    // accende per lo scorrimento annidato: senza, la rete tirerebbe via la
-    // pagina da sotto un dito ancora appoggiato.
+    // per piu' di un istante -> ci si posa. Il dito si segue a parte
+    // (`ditoSulCarosello`, sotto) perche' `isScrollInProgress` non si accende
+    // per lo scorrimento annidato: senza, la rete tirerebbe via la pagina da
+    // sotto un dito ancora appoggiato.
+    //
+    // ── Dove porta un gesto ─────────────────────────────────────────────────
+    //
+    // **Lo decide il dito, e si parte da dove il carosello stava andando.**
+    // Due difetti, uno dietro l'altro, entrambi misurati sul telefono:
+    //
+    // - col gesto che parte dal pannello e' lo scorrimento annidato a spostare
+    //   il carosello, e un colpetto lo sposta di pochi centesimi: posandosi
+    //   sulla sala piu' vicina, il colpetto tornava sempre indietro (150 pixel
+    //   sul pannello non cambiavano sala, 300 si');
+    // - a colpetti rapidi - uno ogni tre decimi di secondo, registrati mentre
+    //   chi usa l'app diceva "si blocca a meta'" - ogni colpetto interrompeva
+    //   l'aggancio del precedente, e la sala dopo si calcolava da quella
+    //   **visibile in cima**: a 5,9 in viaggio verso la 6, il colpetto dopo
+    //   puntava di nuovo alla 6. Dieci tocchi di fila sulla stessa sala, e il
+    //   carosello sempre a mezz'aria.
+    //
+    // Adesso al tocco si ricorda la sala verso cui il carosello stava gia'
+    // andando (`targetPage`, se si muoveva), e il gesto porta a quella dopo o
+    // a quella prima **secondo il verso del dito**, purche' il dito abbia fatto
+    // piu' di [SOGLIA_COLPETTO] di pagina e il carosello si sia mosso davvero in
+    // quel verso: un pannello lungo che scorre dentro di se' non cambia sala.
+    // La stessa decisione la prendono l'aggancio del carosello
+    // ([PagerSnapDistance] qui sotto) e la rete, che interviene quando nessuno
+    // ha chiesto al carosello di posarsi.
     var ditoSulCarosello by remember { mutableStateOf(false) }
+    var paginaAlTocco by remember { mutableIntStateOf(0) }
+    var posizioneAlTocco by remember { mutableFloatStateOf(0f) }
+    var corsaDelDito by remember { mutableFloatStateOf(0f) }
+    // La sala verso cui il carosello sta andando per un gesto: `targetPage` di
+    // Compose, durante un aggancio, la dice solo dopo meta' strada - da 5,1 in
+    // viaggio verso la 6 risponde ancora 5 - e il colpetto successivo si
+    // perdeva. Si azzera quando il carosello si posa.
+    var metaInCorso by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.isScrollInProgress }.collect { if (!it) metaInCorso = null }
+    }
+    fun metaDelGesto(): Int {
+        val pagina = pagerState.layoutInfo.pageSize.coerceAtLeast(1)
+        val mosso = pagerState.currentPage + pagerState.currentPageOffsetFraction - posizioneAlTocco
+        // Il dito in su porta alla sala dopo: la corsa e' negativa.
+        val verso = when {
+            corsaDelDito < -SOGLIA_COLPETTO * pagina && mosso > 0.002f -> 1
+            corsaDelDito > SOGLIA_COLPETTO * pagina && mosso < -0.002f -> -1
+            else -> 0
+        }
+        return (paginaAlTocco + verso).coerceIn(0, (pagerState.pageCount - 1).coerceAtLeast(0))
+            .also { metaInCorso = it }
+    }
+    val distanzaDelGesto = remember(pagerState) {
+        object : PagerSnapDistance {
+            override fun calculateTargetPage(
+                startPage: Int,
+                suggestedTargetPage: Int,
+                velocity: Float,
+                pageSize: Int,
+                pageSpacing: Int,
+            ): Int = metaDelGesto()
+        }
+    }
     LaunchedEffect(pagerState) {
         snapshotFlow {
             !ditoSulCarosello && !pagerState.isScrollInProgress &&
                 abs(pagerState.currentPageOffsetFraction) > 0.001f
         }.collectLatest { sospeso ->
             if (!sospeso) return@collectLatest
-            delay(160)
+            delay(90)
+            val meta = metaDelGesto()
             // Fuori da `collectLatest`: l'animazione stessa accende
             // `isScrollInProgress`, e quel cambio la cancellerebbe al primo passo.
-            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage) }
+            scope.launch { pagerState.animateScrollToPage(meta) }
         }
     }
 
@@ -501,28 +564,45 @@ fun SalaShell(
                             // un dito appoggiato.
                             .pointerInput(Unit) {
                                 awaitEachGesture {
-                                    awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                                    val giu = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
                                     ditoSulCarosello = true
+                                    posizioneAlTocco = pagerState.currentPage + pagerState.currentPageOffsetFraction
+                                    // In viaggio, conta la sala d'arrivo: vedi `metaDelGesto`.
+                                    paginaAlTocco = if (pagerState.isScrollInProgress) {
+                                        metaInCorso ?: pagerState.targetPage
+                                    } else {
+                                        posizioneAlTocco.roundToInt()
+                                    }
+                                    corsaDelDito = 0f
                                     try {
                                         do {
                                             val evento = awaitPointerEvent(PointerEventPass.Initial)
+                                            evento.changes.firstOrNull { it.id == giu.id }?.let {
+                                                corsaDelDito = it.position.y - giu.position.y
+                                            }
                                         } while (evento.changes.any { it.pressed })
                                     } finally {
                                         ditoSulCarosello = false
                                     }
                                 }
                             },
-                        // Un dodicesimo di pagina: il gesto resta deliberato - un
-                        // tocco che trema non cambia sala - ma basta un colpetto,
-                        // non una corsa per tutto lo schermo. La molla e' rigida e
-                        // senza rimbalzo, perche' l'attesa dopo il dito pesa
-                        // quanto il dito.
+                        // Tre centesimi di pagina, la stessa soglia della rete
+                        // (`SOGLIA_COLPETTO`): un tocco che trema non cambia
+                        // sala, un colpetto si'. Era un dodicesimo, e chi usa
+                        // l'app ha detto che bisognava scorrere troppo. La
+                        // molla e' rigida e senza rimbalzo, perche' l'attesa
+                        // dopo il dito pesa quanto il dito.
+                        //
+                        // La molla e' piu' rigida di prima (media invece di
+                        // medio-bassa): si posa in un quarto di secondo invece
+                        // che in piu' di mezzo, cioe' prima del colpetto dopo.
                         flingBehavior = PagerDefaults.flingBehavior(
                             state = pagerState,
-                            snapPositionalThreshold = 0.08f,
+                            pagerSnapDistance = distanzaDelGesto,
+                            snapPositionalThreshold = SOGLIA_COLPETTO,
                             snapAnimationSpec = spring(
                                 dampingRatio = Spring.DampingRatioNoBouncy,
-                                stiffness = Spring.StiffnessMediumLow,
+                                stiffness = Spring.StiffnessMedium,
                             ),
                         ),
                     ) { page ->
@@ -837,6 +917,13 @@ private fun etichettaDatiVecchi(quando: LocalDateTime?, senzaRete: Boolean): Str
 
 private fun oraMinuto(t: LocalDateTime): String =
     String.format(java.util.Locale.ITALY, "%02d:%02d", t.hour, t.minute)
+
+/**
+ * Di quanto il carosello deve spostarsi perche' il gesto cambi sala: tre
+ * centesimi di pagina, una settantina di pixel su un telefono. Sotto e' un
+ * dito che trema; sopra e' un colpetto, e porta alla sala dopo.
+ */
+private const val SOGLIA_COLPETTO = 0.03f
 
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L
