@@ -1355,7 +1355,14 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 _state.update { it.copy(locating = false, locationUnavailable = false) }
                 // Da qui in poi comanda il flusso delle preferenze, come per una
                 // localita' scelta a mano: una sola strada per cambiare posto.
-                pendingHour = null
+                //
+                // **Qui non si azzera `pendingHour`, a differenza di
+                // `choosePlace`.** La localizzazione dell'avvio parte da sola e
+                // di solito finisce prima della previsione: azzerandolo, l'ora
+                // chiesta con `--ei ora` si perdeva prima di poter essere
+                // applicata, e l'aggancio non spostava niente nemmeno a freddo.
+                // Una localita' scelta a mano e' un'altra cosa - li' chi
+                // guarda ha cambiato idea, e l'ora vecchia non vale piu'.
                 prefs.setPlace(found, following = true)
             } catch (e: CancellationException) {
                 // Un tentativo nuovo ha appena cancellato questo (vedi

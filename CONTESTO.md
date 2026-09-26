@@ -6398,10 +6398,28 @@ dalle 06:00 di venerdì", "Alle 06:00 di venerdì piove: smette verso le 09:00",
 "Comincia verso le 14:00 di domani". Il giorno lo scrive `UiState.diGiorno`
 in `SalaGiorni.kt`, contato dall'oggi del posto.
 
-**Trovato provando, non corretto**: gli agganci `--ei ora`, `--ei giorno` e
-`--ei sezione` funzionano solo avviando l'app a freddo (`am force-stop` prima);
-con l'app gia' aperta arrivano a `onNewIntent` e non spostano niente, e
-`--ei ora` non sposta l'ora nemmeno a freddo. Da guardare prima della prossima
-cattura: e' la famiglia di guasti di §12 ("gli agganci della cattura non hanno
-mai funzionato").
+### 40.1 Gli agganci `--ei`, e perche' non arrivavano
+
+Due guasti diversi, trovati provando questa sezione.
+
+**Con l'app gia' aperta non arrivava niente.** `MainActivity` aveva il
+`launchMode` normale, e un `am start` con lo stesso componente di chi ha aperto
+il task - gli extra non contano nel confronto fra intent - riporta il task in
+primo piano **senza chiamare `onNewIntent`**. `am` stampa lo stesso "intent has
+been delivered", che e' falso: nessuna riga `agganci:` nel log lo dimostra.
+Adesso l'attivita' e' `singleTop` e `onNewIntent` fa anche `setIntent`.
+`capture.sh` fa `force-stop` prima di ogni avvio, e aggirava il difetto senza
+saperlo: per lui non cambia niente.
+
+**`--ei ora` si perdeva anche a freddo.** `requestHour` tiene l'ora in
+`pendingHour` finche' la previsione non arriva; ma all'avvio, se il posto lo
+decide il telefono, parte `locate`, che finisce prima della previsione e
+**azzerava `pendingHour`**. Adesso lo azzera solo la scelta a mano di una
+localita' (`choosePlace`, `visita`) e `backToNow`. In CI probabilmente non si
+vedeva - l'emulatore non segue la posizione - ma sul telefono si'.
+
+Provato: a freddo `--ei ora 9 --ei sezione 4` apre l'aria alle 09:00 (prima
+restava sulle 16:00, l'ora vera); a caldo `--ei sezione 2 --ei giorno 6
+--ei ora 5` porta alla pioggia di venerdi' alle 05:00, con la riga `agganci:`
+nel log che prima non compariva.
 

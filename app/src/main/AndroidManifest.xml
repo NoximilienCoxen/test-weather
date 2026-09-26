@@ -37,11 +37,17 @@
             uno schermo alto, e in orizzontale il pannello copriva meta' cielo.
             Da Android 16 il blocco vale sui telefoni ma non sugli schermi larghi
             (tablet, pieghevoli aperti): li' il sistema lo ignora di proposito.
+
+            singleTop: con l'app gia' aperta, un intent uguale a quello che ha
+            aperto il task - gli extra non contano nel confronto - riportava il
+            task in primo piano senza chiamare onNewIntent. Gli agganci della
+            cattura (`am start ... -ei sezione 4`) non arrivavano mai.
         -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|density|fontScale"
             android:theme="@style/Theme.Caelum">
             <intent-filter>
