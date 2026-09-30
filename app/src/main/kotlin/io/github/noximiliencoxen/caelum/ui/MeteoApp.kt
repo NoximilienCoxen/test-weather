@@ -133,13 +133,18 @@ fun MeteoApp(viewModel: WeatherViewModel) {
             val widthPx = with(density) { maxWidth.toPx() }.coerceAtLeast(1f)
 
             // Le icone delle barre di sistema seguono cio' che hanno sotto.
-            // Sala dipinge la propria carta da bordo a bordo con le sue tinte
-            // (vedi `SalaPalette`), non piu' il cielo a sfumatura: qui restano
-            // solo i colori del benvenuto, l'unica schermata che li usa ancora.
-            SystemBarIcons(
-                behindStatusBar = colors.skyZenith,
-                behindNavigationBar = colors.skyHorizon,
-            )
+            // **Qui solo per il benvenuto**, l'unica schermata che dipinge
+            // questa sfumatura. Sala ha un cielo suo e pagine a schermo pieno
+            // con un fondo suo, e decide le icone da se' (`SalaShell`): quando
+            // la chiamata stava qui per tutta l'app, sopra la carta chiara di
+            // bollettino e impostazioni in una sera buia le icone uscivano
+            // chiare su chiaro (CONTESTO §27.8).
+            if (!state.welcomed) {
+                SystemBarIcons(
+                    behindStatusBar = colors.skyZenith,
+                    behindNavigationBar = colors.skyHorizon,
+                )
+            }
 
             // Al primo avvio l'app chiede dove sei, invece di dare per scontato
             // un posto che nessuno ha scelto. La galleria non entra in scena
@@ -198,7 +203,7 @@ fun MeteoApp(viewModel: WeatherViewModel) {
  * 0,07 e le vuole bianche, e i due sono altrettanto "saturi".
  */
 @Composable
-private fun SystemBarIcons(behindStatusBar: Color, behindNavigationBar: Color) {
+internal fun SystemBarIcons(behindStatusBar: Color, behindNavigationBar: Color) {
     val view = LocalView.current
     // Le due barre si decidono separatamente da quando il fondo e' una
     // sfumatura: in alto c'e' lo zenit e in fondo l'orizzonte, e al crepuscolo

@@ -64,6 +64,7 @@ fun SalaImpostazioniScreen(
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
     onToggleNotifichePioggia: (Boolean) -> Unit,
+    onToggleNotificheAllerte: (Boolean) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -245,6 +246,9 @@ fun SalaImpostazioniScreen(
             val chiediPermesso = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotifichePioggia(concesso) }
+            val chiediPermessoAllerte = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleNotificheAllerte(concesso) }
             GruppoImpostazioni(titolo = "NOTIFICHE", palette = palette) {
                 VoceInterruttore(
                     titolo = "Pioggia e grandine in arrivo",
@@ -258,6 +262,22 @@ fun SalaImpostazioniScreen(
                                 !PioggiaInArrivoWorker.puoNotificare(contesto) ->
                                 chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS)
                             else -> onToggleNotifichePioggia(true)
+                        }
+                    },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = "Allerte ufficiali",
+                    nota = "arancioni e rosse, diramate dagli enti; le gialle restano nel bollettino",
+                    acceso = state.notificheAllerte && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleNotificheAllerte(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoAllerte.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleNotificheAllerte(true)
                         }
                     },
                 )

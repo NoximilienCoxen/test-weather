@@ -141,6 +141,12 @@ fun SalaLegaliScreen(
                     palette,
                 )
                 Paragrafo(
+                    "Notifiche, per la pioggia o la grandine in arrivo e per le allerte " +
+                        "ufficiali arancioni e rosse sulla località dell'app. Si spengono una " +
+                        "per una dal gruppo \"Notifiche\" delle impostazioni.",
+                    palette,
+                )
+                Paragrafo(
                     "Posizione approssimativa — approssimativa, non precisa: serve a capire " +
                         "in quale città sei, non dove sei dentro casa. Si usa solo quando " +
                         "chiedi tu di seguire la posizione, e la località resta quella scelta " +

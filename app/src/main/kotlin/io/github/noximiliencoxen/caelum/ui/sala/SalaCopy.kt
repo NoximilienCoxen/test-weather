@@ -73,6 +73,22 @@ fun salaTitle(condition: SalaCondition, phase: SalaPhase): String =
     SalaTitles.getValue(condition).getValue(phase)
 
 /**
+ * Titolo e corpo di Sala I **quando una previsione non c'e'**: ne' arrivata,
+ * ne' salvata su disco da un'apertura precedente.
+ *
+ * Prima si scriveva la didascalia del cielo sereno - "Pieno sole, aria calda" -
+ * sopra una fila di trattini, perche' senza un codice del tempo la condizione
+ * ripiega su SERENO. Era un'affermazione sul tempo fatta senza nessun dato
+ * (CONTESTO §39.3). Qui si dice cosa succede davvero: o si sta ancora
+ * chiedendo, o la richiesta e' fallita, con le parole di `failureMessage`.
+ */
+fun titoloSenzaPrevisione(errore: String?): String = errore ?: "Sto chiedendo il tempo"
+
+fun corpoSenzaPrevisione(errore: String?): String =
+    if (errore == null) "La previsione di questo posto arriva fra un momento."
+    else "Di questo posto non c'è una previsione salvata da mostrare. Trascina in giù la sala per riprovare."
+
+/**
  * I corpi che una fase sola smentirebbe.
  *
  * Il corpo di NUVOLOSO parlava del sole coperto "a intervalli" anche alle due

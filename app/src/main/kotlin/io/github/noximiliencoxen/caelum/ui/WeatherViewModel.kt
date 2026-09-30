@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui
 
+import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import android.app.Application
 import android.util.Log
@@ -210,6 +211,8 @@ data class UiState(
     val guidaAperta: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. */
     val notifichePioggia: Boolean = true,
+    /** Le notifiche delle allerte ufficiali arancioni e rosse. */
+    val notificheAllerte: Boolean = true,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /**
@@ -608,6 +611,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
+                        notificheAllerte = settings.notificheAllerte,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                     )
                 }
@@ -1408,6 +1412,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         val app = getApplication<Application>()
         if (accese) PioggiaInArrivoWorker.pianifica(app) else PioggiaInArrivoWorker.annulla(app)
         viewModelScope.launch { prefs.setNotifichePioggia(accese) }
+    }
+
+    fun setNotificheAllerte(accese: Boolean) {
+        val app = getApplication<Application>()
+        if (accese) AllerteUfficialiWorker.pianifica(app) else AllerteUfficialiWorker.annulla(app)
+        viewModelScope.launch { prefs.setNotificheAllerte(accese) }
     }
 
     fun permessoNotificheChiesto() {
