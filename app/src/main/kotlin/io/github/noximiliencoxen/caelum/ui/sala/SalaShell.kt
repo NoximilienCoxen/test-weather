@@ -55,6 +55,7 @@ import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
+import io.github.noximiliencoxen.caelum.ui.SystemBarIcons
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelum.data.MoonPhase
@@ -80,6 +81,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
 
@@ -199,6 +201,8 @@ fun SalaShell(
     var paginaAlTocco by remember { mutableIntStateOf(0) }
     var posizioneAlTocco by remember { mutableFloatStateOf(0f) }
     var corsaDelDito by remember { mutableFloatStateOf(0f) }
+    // Vero se il dito si e' alzato **lanciando**: vedi [VELOCITA_COLPETTO].
+    var lancioDelDito by remember { mutableStateOf(false) }
     // La sala verso cui il carosello sta andando per un gesto: `targetPage` di
     // Compose, durante un aggancio, la dice solo dopo meta' strada - da 5,1 in
     // viaggio verso la 6 risponde ancora 5 - e il colpetto successivo si
@@ -207,13 +211,18 @@ fun SalaShell(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.isScrollInProgress }.collect { if (!it) metaInCorso = null }
     }
+    // La sala che il dito ha chiesto, decisa all'alzata e tenuta finche' il
+    // carosello non ci si posa. Vedi la garanzia qui sotto.
+    var metaVoluta by remember { mutableStateOf<Int?>(null) }
     fun metaDelGesto(): Int {
         val pagina = pagerState.layoutInfo.pageSize.coerceAtLeast(1)
         val mosso = pagerState.currentPage + pagerState.currentPageOffsetFraction - posizioneAlTocco
-        // Il dito in su porta alla sala dopo: la corsa e' negativa.
+        // Il dito in su porta alla sala dopo: la corsa e' negativa. Basta la
+        // corsa lunga, o una corsa corta ma lanciata: vedi [VELOCITA_COLPETTO].
+        val soglia = (if (lancioDelDito) SOGLIA_COLPETTO_LANCIATO else SOGLIA_COLPETTO) * pagina
         val verso = when {
-            corsaDelDito < -SOGLIA_COLPETTO * pagina && mosso > 0.002f -> 1
-            corsaDelDito > SOGLIA_COLPETTO * pagina && mosso < -0.002f -> -1
+            corsaDelDito < -soglia && mosso > 0.002f -> 1
+            corsaDelDito > soglia && mosso < -0.002f -> -1
             else -> 0
         }
         return (paginaAlTocco + verso).coerceIn(0, (pagerState.pageCount - 1).coerceAtLeast(0))
@@ -244,11 +253,42 @@ fun SalaShell(
         }
     }
 
+    // ── La garanzia: dove il dito ha chiesto, ci si arriva ───────────────────
+    //
+    // `metaDelGesto` non basta da sola, e il perche' sta nel sorgente di
+    // Compose (`PagerSnapLayoutInfoProvider`): per un salto di **una** sala il
+    // carosello non chiede a `PagerSnapDistance` dove andare. Sopra 400 punti
+    // al secondo si posa sulla sala vicina **alla posizione in cui si trova**,
+    // e sotto usa la soglia di posizione. A colpetti fitti - sei o sette al
+    // secondo, CONTESTO §41.1 - il colpetto arriva con il carosello a 5,8 in
+    // viaggio verso la 6, e "la vicina nel verso del dito" e' di nuovo la 6: il
+    // colpetto si perde. Un colpetto corto sotto i 400 punti al secondo torna
+    // indietro per la soglia di posizione.
+    //
+    // Quindi all'alzata si scrive la sala voluta, e quando il carosello si
+    // ferma - dito alzato, nessuno scorrimento - se non e' li' ce lo si porta.
+    // Posato dove doveva, la richiesta si cancella. I novanta millesimi
+    // lasciano partire il lancio del carosello, che fra la fine del
+    // trascinamento e l'inizio del lancio puo' dirsi fermo per un istante.
+    LaunchedEffect(pagerState) {
+        snapshotFlow { Triple(pagerState.isScrollInProgress, ditoSulCarosello, metaVoluta) }
+            .collectLatest { (scorre, dito, meta) ->
+                if (scorre || dito || meta == null) return@collectLatest
+                delay(90)
+                if (pagerState.currentPage == meta && abs(pagerState.currentPageOffsetFraction) < 0.001f) {
+                    metaVoluta = null
+                    return@collectLatest
+                }
+                scope.launch { pagerState.animateScrollToPage(meta) }
+            }
+    }
+
     // Andare a una sala si scrive una volta sola: lo chiedono la colonna sul
     // fianco, i sette trattini, il collegamento di Sala I e i sei riquadri di
     // Sala II, e quattro copie della stessa riga divergono alla prima che
     // qualcuno tara.
     fun vaiA(sala: SalaRoom) {
+        metaVoluta = null
         scope.launch { pagerState.animateScrollToPage(rooms.indexOf(sala)) }
     }
 
@@ -260,12 +300,14 @@ fun SalaShell(
     // attraversata vorrebbe dire che il carosello insegue il dito con mezzo
     // secondo di ritardo e arriva dove era, non dov'e'.
     fun portaA(sala: SalaRoom) {
+        metaVoluta = null
         scope.launch { pagerState.scrollToPage(rooms.indexOf(sala)) }
     }
 
     // Il tasto indietro torna alla prima sala prima di chiudere l'app: da sei
     // stanze sotto, uscire non e' quasi mai la risposta cercata.
     BackHandler(enabled = pagerState.currentPage != 0) {
+        metaVoluta = null
         scope.launch { pagerState.animateScrollToPage(0) }
     }
 
@@ -363,6 +405,24 @@ fun SalaShell(
         label = "crepuscolo",
     )
     val palette = remember(dk, crepuscolo, chiusura) { salaPalette(dk, crepuscolo, chiusura) }
+
+    // ── Le icone delle barre di sistema ──────────────────────────────────────
+    //
+    // Si decidono su cio' che c'e' **davvero** dietro, e dietro ci sono due
+    // cose diverse. Con una pagina a schermo pieno aperta (impostazioni,
+    // localita', note legali, bollettino) e' il suo fondo, `schermoPieno`, che
+    // segue il tema e non il cielo. Altrimenti in alto c'e' la prima fermata
+    // del cielo e in fondo la collina davanti, che poggia sul bordo.
+    //
+    // Prima le decideva `MeteoApp` sulla sfumatura del benvenuto, che in Sala
+    // non si vede: di sera, con la carta chiara del bollettino, icone chiare
+    // su chiaro (CONTESTO §27.8).
+    val paginaPiena = state.settingsOpen || state.locationsOpen ||
+        state.legaliOpen || state.bollettinoAperto
+    SystemBarIcons(
+        behindStatusBar = if (paginaPiena) palette.schermoPieno else stops.first(),
+        behindNavigationBar = if (paginaPiena) palette.schermoPieno else palette.collina3,
+    )
 
     // ── L'orologio della scena ───────────────────────────────────────────────
     //
@@ -574,13 +634,23 @@ fun SalaShell(
                                         posizioneAlTocco.roundToInt()
                                     }
                                     corsaDelDito = 0f
+                                    lancioDelDito = false
+                                    val tracciatore = VelocityTracker()
+                                    tracciatore.addPosition(giu.uptimeMillis, giu.position)
                                     try {
                                         do {
                                             val evento = awaitPointerEvent(PointerEventPass.Initial)
                                             evento.changes.firstOrNull { it.id == giu.id }?.let {
                                                 corsaDelDito = it.position.y - giu.position.y
+                                                tracciatore.addPosition(it.uptimeMillis, it.position)
                                             }
                                         } while (evento.changes.any { it.pressed })
+                                        // Si decide qui, sull'alzata, prima che il
+                                        // carosello (passaggio principale, dopo
+                                        // questo) chieda dove posarsi.
+                                        lancioDelDito = abs(tracciatore.calculateVelocity().y) >
+                                            VELOCITA_COLPETTO.toPx()
+                                        metaVoluta = metaDelGesto()
                                     } finally {
                                         ditoSulCarosello = false
                                     }
@@ -774,6 +844,7 @@ fun SalaShell(
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
                         onToggleNotifichePioggia = viewModel::setNotifichePioggia,
+                        onToggleNotificheAllerte = viewModel::setNotificheAllerte,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,
@@ -924,6 +995,23 @@ private fun oraMinuto(t: LocalDateTime): String =
  * dito che trema; sopra e' un colpetto, e porta alla sala dopo.
  */
 private const val SOGLIA_COLPETTO = 0.03f
+
+/**
+ * La corsa che basta **se il dito e' stato lanciato**: un centesimo e mezzo di
+ * pagina, una trentina di pixel. Non meno: sotto la soglia di trascinamento
+ * del sistema (otto punti, una ventina di pixel) il carosello non parte
+ * nemmeno, e `metaDelGesto` vuole anche che si sia mosso.
+ *
+ * A colpetti fitti - sei o sette al secondo - la corsa di ciascuno si accorcia,
+ * e scendeva sotto [SOGLIA_COLPETTO] pur essendo un lancio netto:
+ * il carosello tornava sulla sala di partenza e il colpetto si perdeva
+ * (CONTESTO §41.1). La velocita' distingue il lancio corto dal tremolio, che
+ * di corsa ne fa altrettanta ma piano.
+ */
+private const val SOGLIA_COLPETTO_LANCIATO = 0.015f
+
+/** Oltre questa velocita' all'alzata il dito ha lanciato, non tremato. */
+private val VELOCITA_COLPETTO = 300.dp
 
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L

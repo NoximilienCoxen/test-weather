@@ -38,6 +38,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
+import io.github.noximiliencoxen.caelum.ui.sala.titoloSenzaPrevisione
+import io.github.noximiliencoxen.caelum.ui.sala.corpoSenzaPrevisione
 import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -151,13 +153,16 @@ fun SalaOggiScreen(
                 }
             }
 
+            // Senza previsione la condizione ripiega su SERENO, e il titolo
+            // del sereno sopra i trattini era un tempo inventato.
+            val senzaPrevisione = state.forecast == null
             Text(
-                text = salaTitle(condizione, fase),
+                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else salaTitle(condizione, fase),
                 style = SalaType.cardTitle,
                 color = palette.ink,
             )
             Didascalia(
-                salaBody(condizione, fase),
+                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )

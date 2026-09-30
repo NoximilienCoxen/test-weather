@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import kotlinx.coroutines.flow.first
@@ -57,7 +58,8 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.first { s ->
-                    s.welcomed && s.guidaVista && !s.guidaAperta && s.notifichePioggia &&
+                    s.welcomed && s.guidaVista && !s.guidaAperta &&
+                        (s.notifichePioggia || s.notificheAllerte) &&
                         !s.permessoNotificheChiesto && !s.animazioniIstantanee
                 }
                 if (!PioggiaInArrivoWorker.puoNotificare(this@MainActivity)) {
@@ -96,6 +98,12 @@ class MainActivity : ComponentActivity() {
      */
     private fun applyWidgetTap(intent: Intent?) {
         if (intent == null) return
+        // Il tocco sulla notifica di un'allerta: il bollettino, dove si legge
+        // per intero. Come il widget, vale anche nella release.
+        if (intent.getBooleanExtra(EXTRA_BOLLETTINO, false)) {
+            intent.removeExtra(EXTRA_BOLLETTINO)
+            viewModel.apriBollettino()
+        }
         val sala = intent.getStringExtra(EXTRA_SALA_WIDGET)
             ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
             ?: return
@@ -134,10 +142,11 @@ class MainActivity : ComponentActivity() {
         // Il controllo della pioggia in arrivo: acceso di norma, e `KEEP` non
         // sposta il turno se c'e' gia'. Se le notifiche sono spente il lavoro
         // gira a vuoto e se ne va al primo giro: lo annulla l'interruttore.
+        // Le allerte ufficiali, con la stessa regola: accese di norma.
         lifecycleScope.launch {
-            if (SettingsPrefs(applicationContext).settings.first().notifichePioggia) {
-                PioggiaInArrivoWorker.pianifica(applicationContext)
-            }
+            val impostazioni = SettingsPrefs(applicationContext).settings.first()
+            if (impostazioni.notifichePioggia) PioggiaInArrivoWorker.pianifica(applicationContext)
+            if (impostazioni.notificheAllerte) AllerteUfficialiWorker.pianifica(applicationContext)
         }
     }
 
@@ -249,6 +258,9 @@ class MainActivity : ComponentActivity() {
     companion object {
         /** La sala da aprire, dal tocco su un widget (`WidgetKind.sala`). */
         const val EXTRA_SALA_WIDGET = "sala_widget"
+
+        /** Apre il bollettino: dal tocco sulla notifica di un'allerta. */
+        const val EXTRA_BOLLETTINO = "bollettino"
 
         /** La citta' del widget toccato, da mostrare senza salvarla. */
         const val EXTRA_WIDGET_NOME = "widget_nome"

@@ -6470,3 +6470,89 @@ Misurato con lo stesso script, sei colpetti rapidi (ogni 300 ms) da Oggi:
 giri su cinque, e tre all'indietro sempre 3. **Limite**: a sei-sette colpetti al
 secondo qualcuno si perde ancora (quattro colpetti fitti = 1-3 sale).
 
+
+## 42. Icone di sistema, Sala I senza dati, colpetti fitti, notifica delle allerte
+
+Quattro punti rimasti aperti dalle sezioni precedenti. **Nessuno e' stato
+provato sul telefono**: scritto da un container senza SDK, verificato solo
+dalla CI (compilazione, lint, prove JVM, scatti). Va provato in mano, con le
+controprove della skill `prova-sul-telefono`.
+
+### 42.1 Le icone delle barre di sistema (§27.8)
+
+`MeteoApp` chiama `SystemBarIcons` **solo nel benvenuto**, l'unica schermata
+che dipinge quella sfumatura. Sala le decide da se' in `SalaShell`, subito
+dopo la tavolozza: con una pagina a schermo pieno aperta (impostazioni,
+localita', note legali, bollettino) sul suo fondo `schermoPieno`; altrimenti
+la barra di stato sulla prima fermata del cielo (`stops.first()`, gia' tinta)
+e quella di navigazione sulla collina davanti (`collina3`), che poggia sul
+bordo. E' la "strada breve" gia' indicata in §27.8. **Cambia i pixel delle
+barre in molti scatti**, ed e' atteso: era la ragione per cui si era rinviato.
+
+Da guardare in mano: il bollettino aperto di sera, e il velo d'apertura, che
+sta sopra Sala nei primi tre secondi e non ha voce sulle icone.
+
+### 42.2 Sala I senza nessuna previsione (§39.3)
+
+Senza previsione, ne' dalla rete ne' dalla scorta, la condizione ripiegava su
+SERENO e il titolo diceva "Pieno sole, aria calda" sopra i trattini. Adesso
+`SalaOggi` guarda `state.forecast == null` e scrive `titoloSenzaPrevisione`
+/ `corpoSenzaPrevisione` (`SalaCopy.kt`): "Sto chiedendo il tempo" finche' i
+tentativi girano, il messaggio di `failureMessage` ("Rete non raggiungibile")
+quando l'ultimo e' fallito, con l'invito a trascinare in giu' per riprovare.
+Prova: `SenzaPrevisioneTest`. Il cielo dietro resta quello del sereno: non e'
+un'affermazione scritta, e toccarlo vorrebbe dire inventare un cielo "senza
+dati".
+
+### 42.3 I colpetti fitti (§41.1)
+
+Il limite scritto in §41.1: a sei-sette colpetti al secondo qualcuno si
+perdeva. **Il motivo sta nel sorgente di Compose, letto e non dedotto**
+(`PagerSnapLayoutInfoProvider.kt` e `calculateFinalSnappingItem`, ramo
+`androidx-main`): per un salto di una sala il carosello **non consulta**
+`PagerSnapDistance` - l'approccio vale zero e decide `calculateSnapOffset`.
+Sopra 400 punti al secondo (`MinFlingVelocityDp`) va alla sala vicina **alla
+posizione attuale** nel verso del lancio; sotto, alla piu' vicina con la
+soglia di posizione. Quindi un colpetto che arriva a 5,8 in viaggio verso la 6
+riporta alla 6, e `metaDelGesto` (§41.1) contava solo quando il salto era di
+due sale.
+
+Due correzioni in `SalaShell`:
+
+- **`metaVoluta`**: all'alzata del dito si scrive la sala che `metaDelGesto`
+  sceglie; quando il carosello si ferma (dito alzato, niente scorrimento, 90 ms
+  per lasciar partire il lancio) e non e' li', ce lo si porta; posato giusto,
+  si cancella. `vaiA`, `portaA` e l'indietro la azzerano.
+- **la velocita' del dito** (`VelocityTracker` nello stesso ascolto senza
+  consumo): oltre `VELOCITA_COLPETTO` (300 dp/s) basta una corsa di
+  `SOGLIA_COLPETTO_LANCIATO` (1,5% di pagina, sopra la soglia di trascinamento)
+  invece del 3%. Un tremolio fa la stessa corsa, ma piano.
+
+Il costo, dove prima si perdeva il colpetto: il carosello si posa sulla sala
+sbagliata e riparte. Da misurare con lo script di §41.1 a colpetti ogni 150 ms,
+con la controprova sulla build di prima.
+
+### 42.4 La notifica delle allerte ufficiali
+
+`notifiche/AllerteUfficialiWorker.kt`, ogni ora con la rete: legge MeteoAlarm
+sulla citta' dell'app (lo stesso `WeatherAlertsRepository`) e notifica le
+allerte **ufficiali arancioni e rosse** non ancora dette. **Le gialle no**: in
+Italia ce n'e' una quasi ogni giorno su una regione intera, e una notifica al
+giorno insegna a ignorare anche la rossa. **Gli avvisi calcolati no**: una
+notifica ha gia' la voce di un ente (§8-ter).
+
+- Una volta sola per allerta e livello: la gialla diventata arancione e
+  l'arancione diventata rossa si notificano di nuovo; tornare giu' no. La
+  memoria (`notifiche_allerte`, voci `id|peso|fine`) non si svuota se il feed
+  torna vuoto per un guasto, e dimentica le allerte finite da piu' di un
+  giorno. Prove: `AllerteUfficialiTest`.
+- Canale "Allerte ufficiali", importanza alta, icona a triangolo
+  (`ic_notifica_allerta`). La notifica scade quando scade l'allerta.
+- Il tocco apre l'app sul **bollettino** (`MainActivity.EXTRA_BOLLETTINO`,
+  valido anche in release come il tocco sul widget).
+- Interruttore "Allerte ufficiali" nel gruppo NOTIFICHE, acceso di norma,
+  con la stessa richiesta del permesso di quello della pioggia; il permesso
+  si chiede dopo la guida se e' accesa almeno una delle due.
+
+Non provato: un'allerta arancione vera, e il turno di WorkManager a telefono
+fermo (come per la pioggia, puo' ritardare).
