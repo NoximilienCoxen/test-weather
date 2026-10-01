@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.runtime.mutableFloatStateOf
@@ -525,7 +526,21 @@ fun SalaShell(
                 pollineOggi = state.pollineMostrato.firstOrNull()?.massimo ?: 0,
             )
 
-            Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
+            // **Su uno schermo largo le sale non si allargano con lui.** Dai
+            // seicento punti di lato corto - tablet, pieghevoli aperti -
+            // Android 16 ignora il blocco in verticale (§38), e senza un tetto
+            // le schede diventavano strisce larghe quanto lo schermo, coi
+            // numeri a un capo e le parole all'altro. Il cielo resta da bordo
+            // a bordo; schede, intestazione, barra delle ore e colonna stanno
+            // in una colonna centrata. Su un telefono il tetto non si
+            // raggiunge e non cambia un punto.
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .widthIn(max = LARGHEZZA_SALE)
+                    .fillMaxSize()
+                    .systemBarsPadding(),
+            ) {
                 IntestazioneCaelum(
                     citta = state.place.name,
                     avvisi = avvisi,
@@ -788,7 +803,14 @@ fun SalaShell(
             // sessanta punti che da qui in poi sono delle schede, che erano
             // strette. La colonna ha preso la cosa che i trattini facevano
             // meglio - seguire il dito in continuo - tramite `posizione`.
-            if (!larghe) ColonnaScorciatoie(
+            if (!larghe) Box(
+                // Lo stesso tetto della colonna qui sopra: la colonna delle
+                // sale sta accanto alle schede, non sul bordo di un tablet.
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .widthIn(max = LARGHEZZA_SALE)
+                    .fillMaxSize(),
+            ) { ColonnaScorciatoie(
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
                 posizione = posizione,
                 palette = palette,
@@ -805,7 +827,7 @@ fun SalaShell(
                     // sei punti dal vetro invece che a dieci.
                     .padding(end = 6.dp)
                     .onGloballyPositioned { rColonna = it.boundsInRoot() },
-            )
+            ) }
 
             // ── L'ordine di questi due blocchi e' funzionale ─────────────────
             //
@@ -1012,6 +1034,14 @@ private const val SOGLIA_COLPETTO_LANCIATO = 0.015f
 
 /** Oltre questa velocita' all'alzata il dito ha lanciato, non tremato. */
 private val VELOCITA_COLPETTO = 300.dp
+
+/**
+ * Il tetto di larghezza delle sale: oltre, su tablet e pieghevoli aperti, le
+ * schede restano larghe quanto su un telefono grande e si centrano. I telefoni
+ * stanno sotto (il Pixel 9 Pro e' largo 427 punti), quindi per loro non cambia
+ * niente.
+ */
+private val LARGHEZZA_SALE = 520.dp
 
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L

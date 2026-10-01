@@ -153,4 +153,55 @@ class ParseFeedTest {
         )
         assertEquals(null, verde.level)
     }
+
+    // ── Il documento CAP, quando parla due lingue ───────────────────────────
+
+    private fun cap(vararg info: String) = """
+        <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+          <identifier>prova</identifier>
+          ${info.joinToString("\n")}
+        </alert>
+    """.trimIndent()
+
+    private fun info(lingua: String?, descrizione: String, istruzioni: String?) = buildString {
+        append("<info>")
+        if (lingua != null) append("<language>$lingua</language>")
+        append("<senderName>Centro funzionale</senderName>")
+        append("<description>$descrizione</description>")
+        if (istruzioni != null) append("<instruction>$istruzioni</instruction>")
+        append("</info>")
+    }
+
+    @Test
+    fun `fra due lingue vince l'italiano anche se viene dopo`() {
+        val d = parseDetail(
+            cap(
+                info("en-GB", "Thunderstorms expected", "Stay indoors"),
+                info("it-IT", "Temporali attesi", "Restare al chiuso"),
+            ),
+        )
+        assertEquals("Temporali attesi", d.description)
+        assertEquals("Restare al chiuso", d.instruction)
+        assertEquals("Centro funzionale", d.sender)
+    }
+
+    @Test
+    fun `senza italiano resta il primo, e le lingue non si mescolano`() {
+        val d = parseDetail(
+            cap(
+                info("en-GB", "Thunderstorms expected", null),
+                info("de-DE", "Gewitter erwartet", "Drinnen bleiben"),
+            ),
+        )
+        assertEquals("Thunderstorms expected", d.description)
+        // Le istruzioni del secondo blocco non finiscono sotto la descrizione del primo.
+        assertEquals(null, d.instruction)
+    }
+
+    @Test
+    fun `un info senza lingua si legge come prima`() {
+        val d = parseDetail(cap(info(null, "Vento forte", "Fissare gli oggetti")))
+        assertEquals("Vento forte", d.description)
+        assertEquals("Fissare gli oggetti", d.instruction)
+    }
 }

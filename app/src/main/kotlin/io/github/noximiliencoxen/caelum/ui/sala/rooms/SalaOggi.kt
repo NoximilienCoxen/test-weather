@@ -15,6 +15,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,9 +105,17 @@ fun SalaOggiScreen(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Row(verticalAlignment = Alignment.Top) {
+            val gradi = ora?.temperature?.let { state.unit.from(it).roundToInt() }
+            // Il numero e il grado sono due scritte: TalkBack le leggeva "21",
+            // pausa, "simbolo di grado". Qui si legge una frase sola.
+            Row(
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = gradi?.let { "$it gradi" } ?: "temperatura non disponibile"
+                },
+            ) {
                 Text(
-                    text = ora?.temperature?.let { state.unit.from(it).roundToInt().toString() } ?: "--",
+                    text = gradi?.toString() ?: "--",
                     style = SalaType.giant(104),
                     color = palette.ink,
                 )
@@ -273,7 +285,20 @@ fun StrisciaGiorni(
                         color = if (attivo) palette.accent else Color.Transparent,
                         shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
-                    .clickable { onScegli(giorno.indice) }
+                    // La figuretta e' un disegno, e i due numeri da soli non
+                    // dicono quale e' la massima: per TalkBack il giorno si
+                    // legge per intero.
+                    .semantics {
+                        contentDescription = buildString {
+                            append(if (giorno.indice == 0) "oggi" else "${giorno.esteso} ${giorno.data}")
+                            append(", ").append(giorno.tipo)
+                            giorno.max?.let { append(", massima ${state.unit.from(it).roundToInt()} gradi") }
+                            giorno.min?.let { append(", minima ${state.unit.from(it).roundToInt()} gradi") }
+                            if (conMillimetri) append(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri")
+                        }
+                        selected = attivo
+                    }
+                    .clickable(onClickLabel = "mostra questo giorno") { onScegli(giorno.indice) }
                     .padding(top = 9.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),

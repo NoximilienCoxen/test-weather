@@ -31,6 +31,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setProgress
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.HourForecast
@@ -186,6 +193,28 @@ fun BarraDelleOre(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ALTEZZA)
+                // **Per TalkBack e' un cursore, perche' lo e'.** Un disegno con
+                // due riconoscitori di gesti, per chi non vede lo schermo, era
+                // un rettangolo muto: niente nome, niente valore, e il
+                // trascinamento non si fa col dito che esplora. Dichiarato come
+                // intervallo da 0 a 23 si annuncia ("ora mostrata, 14:00,
+                // oggi") e si regola coi gesti del lettore di schermo, un'ora
+                // per scalino - la stessa strada di `scegli`, colpetto escluso:
+                // la vibrazione segue il dito, non il lettore.
+                .semantics {
+                    contentDescription = "Ora mostrata"
+                    stateDescription = "${oraPiena(ora)}, $giorno"
+                    progressBarRangeInfo = ProgressBarRangeInfo(ora.toFloat(), 0f..(ORE - 1).toFloat(), steps = ORE - 2)
+                    if (attiva) {
+                        setProgress { valore ->
+                            val i = valore.roundToInt().coerceIn(0, ORE - 1)
+                            if (i != sceltaOra) scegli(i)
+                            true
+                        }
+                    } else {
+                        disabled()
+                    }
+                }
                 // Il tocco secco prima del trascinamento: chi tocca vuole
                 // andare li', non cominciare un gesto.
                 .pointerInput(attiva) {
