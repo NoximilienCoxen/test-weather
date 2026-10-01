@@ -417,29 +417,55 @@ private val FEED_LEAVES = setOf(
 /**
  * Legge un documento CAP singolo: solo le tre cose che l'Atom non dava.
  *
- * Il primo `info` vince. I feed nazionali ne pubblicano spesso due, uno per
- * lingua, e concatenarli darebbe lo stesso testo scritto due volte.
+ * **Vince l'`info` in italiano, se c'e'.** I feed nazionali ne pubblicano
+ * spesso uno per lingua - per l'Italia di norma italiano e inglese - e prima
+ * vinceva il primo, qualunque fosse: se l'emittente metteva l'inglese davanti,
+ * il bollettino di un'app tutta in italiano si leggeva in inglese (CONTESTO
+ * §39.1 lo lasciava aperto). Senza un `info` italiano si tiene il primo,
+ * come prima: un avviso in un'altra lingua e' meglio di nessun avviso.
+ *
+ * Mescolare due `info` resta escluso: descrizione italiana e istruzioni
+ * inglesi sarebbero due documenti cuciti insieme. Se quello italiano non ha le
+ * istruzioni, non le ha.
  */
 internal fun parseDetail(xml: String): CapDetail {
-    var description: String? = null
-    var instruction: String? = null
-    var sender: String? = null
+    val blocchi = mutableListOf<InfoCap>()
+    var corrente: InfoCap? = null
     forEachTag(xml) { name, parser ->
-        if (parser != null && name in DETAIL_LEAVES) {
-            val text = runCatching { parser.nextText() }.getOrNull()?.trim().orEmpty()
-            when (name) {
-                "description" -> if (description.isNullOrBlank()) description = text
-                "instruction" -> if (instruction.isNullOrBlank()) instruction = text
-                "senderName" -> if (sender.isNullOrBlank()) sender = text
+        when {
+            name == "info" && parser != null -> corrente = InfoCap().also { blocchi += it }
+            name == "info" -> corrente = null
+            parser != null && (name in DETAIL_LEAVES || name == "language") -> {
+                val text = runCatching { parser.nextText() }.getOrNull()?.trim().orEmpty()
+                // Fuori da un `info` (documenti malformati, o senderName messo
+                // a livello di `alert`) il testo va nel primo blocco: meglio
+                // tenerlo che perderlo.
+                val dove = corrente ?: blocchi.firstOrNull() ?: InfoCap().also { blocchi += it }
+                when (name) {
+                    "language" -> if (dove.language.isNullOrBlank()) dove.language = text
+                    "description" -> if (dove.description.isNullOrBlank()) dove.description = text
+                    "instruction" -> if (dove.instruction.isNullOrBlank()) dove.instruction = text
+                    "senderName" -> if (dove.sender.isNullOrBlank()) dove.sender = text
+                }
             }
         }
     }
+    val scelto = blocchi.firstOrNull { it.language?.lowercase()?.startsWith("it") == true }
+        ?: blocchi.firstOrNull()
     return CapDetail(
-        description = description?.takeIf { it.isNotBlank() },
-        instruction = instruction?.takeIf { it.isNotBlank() },
-        sender = sender?.takeIf { it.isNotBlank() },
+        description = scelto?.description?.takeIf { it.isNotBlank() },
+        instruction = scelto?.instruction?.takeIf { it.isNotBlank() },
+        sender = (scelto?.sender ?: blocchi.firstNotNullOfOrNull { it.sender })?.takeIf { it.isNotBlank() },
     )
 }
+
+/** Un `info` del documento CAP, mentre lo si legge. */
+private class InfoCap(
+    var language: String? = null,
+    var description: String? = null,
+    var instruction: String? = null,
+    var sender: String? = null,
+)
 
 private val DETAIL_LEAVES = setOf("description", "instruction", "senderName")
 

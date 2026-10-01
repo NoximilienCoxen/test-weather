@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
@@ -138,7 +139,14 @@ fun SalaUvScreen(
                     // racconterebbe un sole che non c'e'.
                     val quota = (valore / 11.0).coerceIn(0.0, 1.0).toFloat()
                     Column(
-                        modifier = Modifier.weight(1f).clickable { onSelectHour(indice) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics {
+                                contentDescription = "${oraDueCifre(ore[indice].time.hour)}:00, indice UV " +
+                                    (ore[indice].uvIndex?.roundToInt()?.toString() ?: "non disponibile")
+                                selected = indice == scelta
+                            }
+                            .clickable(onClickLabel = "mostra quest'ora") { onSelectHour(indice) },
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {

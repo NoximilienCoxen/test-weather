@@ -5,6 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -168,7 +171,17 @@ fun SalaPioggiaScreen(
                 val mm = pioggia[i]
                 val quota = (mm / massimo).coerceIn(0.0, 1.0).toFloat()
                 Column(
-                    modifier = Modifier.weight(1f).clickable { onSelectHour(indice) },
+                    modifier = Modifier
+                        .weight(1f)
+                        // Per TalkBack la colonna dice il suo dato intero: da
+                        // sola la scritta sotto e' "06", cioe' un'ora senza la
+                        // pioggia che la colonna disegna.
+                        .semantics {
+                            contentDescription = "${oraDueCifre(ore[indice].time.hour)}:00, " +
+                                "${mm.virgola()} millimetri, probabilità ${ore[indice].precipProbability ?: 0} per cento"
+                            selected = indice == scelta
+                        }
+                        .clickable(onClickLabel = "mostra quest'ora") { onSelectHour(indice) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
@@ -301,7 +314,11 @@ private fun SettimanaDellaPioggia(
                 modifier = Modifier
                     .weight(1f)
                     .clip(CircleShape)
-                    .clickable { onVai(indice) }
+                    .semantics {
+                        contentDescription = "${giorno.label}, ${mm.virgola()} millimetri"
+                        selected = mio
+                    }
+                    .clickable(onClickLabel = "mostra questo giorno") { onVai(indice) }
                     .padding(vertical = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

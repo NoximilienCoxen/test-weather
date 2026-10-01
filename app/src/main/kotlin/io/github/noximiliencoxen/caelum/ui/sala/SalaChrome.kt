@@ -546,7 +546,11 @@ fun IntestazioneCaelum(
         Box(
             modifier = Modifier
                 .size(MinTouchTarget)
-                .clickable(onClick = onImpostazioni),
+                // Due cursori disegnati: senza un nome, per TalkBack era solo
+                // "pulsante", e il comando piu' importante dopo le sale non si
+                // trovava.
+                .semantics { contentDescription = "Impostazioni" }
+                .clickable(onClickLabel = "apri le impostazioni", onClick = onImpostazioni),
             contentAlignment = Alignment.CenterStart,
         ) {
             DueCursori(palette.ink)
@@ -557,7 +561,7 @@ fun IntestazioneCaelum(
             color = palette.ink,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).clickable(onClick = onCitta),
+            modifier = Modifier.weight(1f).clickable(onClickLabel = "cambia località", onClick = onCitta),
         )
         PastigliaAvviso(avvisi, palette, onAvvisi)
     }

@@ -6556,3 +6556,52 @@ notifica ha gia' la voce di un ente (§8-ter).
 
 Non provato: un'allerta arancione vera, e il turno di WorkManager a telefono
 fermo (come per la pioggia, puo' ritardare).
+
+## 43. Il bollettino in italiano, TalkBack, gli schermi larghi
+
+Il seguito della lista di §42. Come la 42, **scritto senza SDK e senza
+telefono**: lo verifica la CI, il resto va provato in mano.
+
+### 43.1 La lingua del bollettino (§39.1)
+
+`parseDetail` sceglie l'`info` del documento CAP con `language` che comincia
+per `it`; senza, il primo come prima. Le parti di due `info` non si mescolano
+(descrizione italiana e istruzioni inglesi sarebbero due documenti cuciti).
+Prove in `ParseFeedTest`. Resta vero che non si e' visto un documento CAP
+italiano vero con due lingue: la prova e' su documenti scritti a mano.
+
+### 43.2 TalkBack
+
+Prima l'app aveva descrizioni solo su luna, ombra del sole, colonna delle sale e
+scene. Aggiunte dove un comando era muto o diceva meta' del dato:
+
+- **barra delle ore**: un cursore (`progressBarRangeInfo` 0-23, `setProgress`)
+  che si annuncia "Ora mostrata, 14:00, oggi" e si regola coi gesti del
+  lettore; senza ore, disabilitato;
+- **tasto impostazioni**: era due cursori disegnati senza nome, cioe'
+  "pulsante" e basta; la citta' dice che si tocca per cambiare localita';
+- **temperatura grande**: una frase ("21 gradi") invece di "21" e "simbolo di
+  grado";
+- **striscia dei giorni** (Sala I e II): giorno, tempo, massima, minima, e
+  millimetri dove ci sono; stato "selezionato";
+- **colonne di pioggia e UV**, e i sette giorni della pioggia: ora o giorno col
+  dato intero, invece della sola etichetta "06".
+
+Non provato con TalkBack acceso: l'ordine di lettura dentro le sale e il gesto
+di regolazione della barra vanno sentiti su un telefono.
+
+### 43.3 Tablet e pieghevoli aperti (§38)
+
+Android 16 ignora il blocco in verticale dai 600 punti di lato corto. Le sale
+adesso stanno in una colonna centrata larga al massimo `LARGHEZZA_SALE` (520
+punti), colonna delle sale compresa; il cielo resta da bordo a bordo. Su un
+telefono il tetto non si raggiunge e non cambia un pixel. Le pagine a schermo
+pieno (impostazioni, localita', bollettino, note legali) restano larghe quanto
+lo schermo. Non provato: nessun tablet ne' emulatore largo in CI.
+
+### 43.4 Cio' che non si e' fatto, e perche'
+
+- **Cipresso e urticacee nel polline**: il modello CAMS di Open-Meteo ha sei
+  specie e queste due non ci sono (§33). Servirebbe un'altra fonte.
+- **Altre lingue, le tre lune, il baseline profile**: lavori grossi, rimandati
+  a una decisione (vedi la conversazione che ha prodotto questa sezione).
