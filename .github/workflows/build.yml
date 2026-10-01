@@ -6,6 +6,13 @@ on:
       - "claude/**"
       - main
   workflow_dispatch:
+    inputs:
+      # Il baseline profile si genera su richiesta, non a ogni giro: vuole un
+      # emulatore tutto suo e un quarto d'ora. Vedi CONTESTO §45.
+      profilo:
+        description: "Genera il baseline profile sull'emulatore"
+        type: boolean
+        default: false
 
 concurrency:
   group: build-${{ github.ref }}
@@ -717,3 +724,79 @@ jobs:
           name: screenshots
           path: /tmp/ciout
           if-no-files-found: warn
+
+  # ── Il baseline profile (CONTESTO §45) ─────────────────────────────────────
+  #
+  # Solo a mano, con `profilo` acceso. Gira il modulo `:baselineprofile` su un
+  # emulatore come quello degli scatti, e pubblica il file prodotto fra gli
+  # artefatti (`profilo`). Il file si copia poi in `app/src/main/`, a mano:
+  # un giro di CI che scrive nel ramo da solo sarebbe un commit che nessuno ha
+  # letto.
+  profilo:
+    if: github.event_name == 'workflow_dispatch' && inputs.profilo
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Abilita KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Lo stesso SDK dell'immagine del job `build`, con le stesse ragioni.
+      - name: SDK Android dell'immagine
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [ -z "$SDK" ] || [ ! -d "$SDK" ]; then
+            echo "::error::L'immagine non espone un SDK Android."
+            exit 1
+          fi
+          for d in "$SDK/cmdline-tools/latest/bin" "$SDK/platform-tools"; do
+            if [ -d "$d" ]; then echo "$d" >> "$GITHUB_PATH"; fi
+          done
+          { echo "ANDROID_HOME=$SDK"; echo "ANDROID_SDK_ROOT=$SDK"; } >> "$GITHUB_ENV"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37" "build-tools;36.0.0" \
+            || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
+
+      # Si compila prima, fuori dall'emulatore: un errore di compilazione si
+      # legge cosi' nel suo passo, e non in mezzo al log dell'emulatore.
+      - name: Compila app e generatore
+        run: |
+          mkdir -p /tmp/ciout
+          ./gradlew :app:assembleDebug :baselineprofile:assembleDebug --no-daemon 2>&1 | tee /tmp/ciout/compila.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Emulatore e raccolta
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          ram-size: 4096M
+          cores: 4
+          disable-animations: false
+          emulator-boot-timeout: 900
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
+          script: bash scripts/profilo.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: profilo
+          path: /tmp/ciout
+          if-no-files-found: warn
+
