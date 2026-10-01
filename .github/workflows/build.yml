@@ -736,6 +736,10 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.profilo
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    # Pubblica su `ci-artifacts/profilo`: e' da li' che il file si legge, anche
+    # da dove i log e gli artefatti di GitHub non si raggiungono.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -792,6 +796,12 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
           script: bash scripts/profilo.sh
+
+      - name: Pubblica
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/publish.sh profilo
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -29,6 +29,8 @@ for f in /tmp/ciout/*baseline-prof*.txt; do
   echo "$f: $(wc -l < "$f") righe"
   head -5 "$f"
 done
+# Il logcat, per leggere cosa ha fatto l'app durante la raccolta.
+adb logcat -d > /tmp/ciout/logcat.txt 2>/dev/null || true
 # Anche i rapporti dei test, che dicono perche' se la raccolta e' fallita.
 cp -r baselineprofile/build/outputs/androidTest-results /tmp/ciout/ 2>/dev/null || true
 exit "$esito"
