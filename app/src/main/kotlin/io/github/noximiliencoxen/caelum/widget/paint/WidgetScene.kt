@@ -6,13 +6,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
+import io.github.noximiliencoxen.caelum.ui.sala.discoLunare
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.sala.GlifoMeteo
 import io.github.noximiliencoxen.caelum.ui.sala.disegnaGlifo
 import io.github.noximiliencoxen.caelum.widget.paint.render3d.Camera
-import io.github.noximiliencoxen.caelum.widget.paint.render3d.MOON_SEAS
 import io.github.noximiliencoxen.caelum.widget.paint.render3d.glow
-import io.github.noximiliencoxen.caelum.widget.paint.render3d.moon
 
 /**
  * L'illustrazione del tempo, dentro il riquadro dato.
@@ -43,22 +42,23 @@ internal fun DrawScope.glifoNelRiquadro(box: Rect, glifo: GlifoMeteo, notte: Boo
     }
 }
 
-/** La luna con la sua fase vera, grande quanto il riquadro: per il widget Luna. */
+/**
+ * La luna con la sua fase vera, grande quanto il riquadro: per il widget Luna.
+ *
+ * Il disco e' quello dell'app (`discoLunare`), con le sue tinte fisse: prima
+ * il widget aveva una luna sua, col grigio dell'inchiostro del widget, e la
+ * stessa sera non somigliava a quella del cielo di Sala. Resta l'alone, che e'
+ * del fondo e non della luna.
+ */
 internal fun DrawScope.moonFace(box: Rect, phase: Float, ink: WidgetInk) {
     val unit = minOf(box.width, box.height)
     val camera = Camera(yawDeg = 0f, pitchDeg = 0f, distance = unit * 2.1f, origin = box.center)
     val r = unit * 0.44f
     glow(camera, 0f, 0f, 0f, r, ink.moonCore, 0.30f, spread = 2.0f)
-    moon(
-        camera = camera,
-        x = 0f, y = 0f, z = 0f,
-        radius = r,
-        phase = phase,
-        light = ink.moonCore,
-        dark = ink.moonShade,
-        alpha = 1f,
-        marks = MOON_SEAS,
-    )
+    // `Camera` mette l'oggetto a distanza: il raggio sullo schermo e' quello
+    // che l'alone usa, scalato dalla prospettiva.
+    camera.place(0f, 0f, 0f)
+    discoLunare(Offset(camera.sx, camera.sy), r * camera.scale, phase)
 }
 
 /** Il pallino della qualita' dell'aria: pieno, con un alone che lo stacca. */

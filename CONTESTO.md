@@ -6605,3 +6605,27 @@ lo schermo. Non provato: nessun tablet ne' emulatore largo in CI.
   specie e queste due non ci sono (§33). Servirebbe un'altra fonte.
 - **Altre lingue, le tre lune, il baseline profile**: lavori grossi, rimandati
   a una decisione (vedi la conversazione che ha prodotto questa sezione).
+
+## 44. Una luna sola
+
+Le "tre lune" di §27.8 erano un disco disegnato tre volte: nel cielo di Sala,
+nell'iconetta del cursore di Sala IV e nel widget Luna, che passava da un
+motore 3D suo (`render3d/Bodies.kt`: `moon`, `surfaceMarks`, `blot`,
+`MOON_SEAS`). Tre ombre, tre gradienti, due serie di mari in posti diversi, e
+il widget con l'inchiostro del widget: di giorno la sua luna era grigia.
+
+Adesso c'e' `ui/sala/DiscoLunare.kt`, `discoLunare(centro, r, fase, alpha)`.
+**Il riferimento e' la luna del cielo**, la piu' vista: luce cinerea sulla parte
+in ombra, gradiente caldo, tre mari, filo di contorno. La sagoma viene da
+`MoonPhase` (`waxing`, `terminator`, `illumination`), non piu' ricopiata. Il
+cielo ci aggiunge le scintille, il widget l'alone (`glow`, l'unica cosa rimasta
+in `Bodies.kt`). Via anche `WidgetInk.moonShade`.
+
+**Cambiano i pixel** dell'iconetta del cursore di Sala IV (ombra e gradiente
+erano piu' scuri) e soprattutto del widget Luna. Resta fuori la grande luna di
+Sala IV (`luna3d`), che e' una sfera con la sua carta e si gira col dito.
+
+Prova: `DiscoLunareTest` misura la quota accesa a nove fasi, su fondo chiaro e
+scuro, contro `MoonPhase.illumination`, e il lato acceso nei due quarti; i PNG
+vanno in `widget-renders` (`disco-lunare-*.png`). Da guardare in mano: il
+widget Luna di giorno e di notte.

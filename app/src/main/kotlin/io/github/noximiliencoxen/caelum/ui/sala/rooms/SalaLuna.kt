@@ -20,19 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import io.github.noximiliencoxen.caelum.ui.sala.discoLunare
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.luna3d.LunaInterattiva
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.MoonPhase
@@ -41,12 +36,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelum.ui.sala.PannelloSala
 import io.github.noximiliencoxen.caelum.ui.sala.SalaPalette
-import io.github.noximiliencoxen.caelum.ui.sala.SalaTokens
 import io.github.noximiliencoxen.caelum.ui.sala.SalaType
 import java.time.LocalDate
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.roundToInt
 
 /**
@@ -244,63 +235,9 @@ private fun CursoreGiorni(
 
 private const val GIORNI_CURSORE = 15
 
-/**
- * Il disco lunare alla fase data.
- *
- * **Le tinte sono sue e fisse nei due temi**: un corpo celeste non ha il colore
- * dell'inchiostro della pagina che lo mostra. E' la lezione pagata quando la
- * parte illuminata veniva dipinta col nero del testo e al novilunio non restava
- * niente sullo schermo.
- */
+/** L'iconetta della fase sul cursore: la stessa luna del cielo, vedi `discoLunare`. */
 private fun DrawScope.disegnaLuna(fase: Float, alpha: Float) {
-    val r = size.minDimension / 2f
-    val centro = Offset(size.width / 2f, size.height / 2f)
-
-    drawCircle(color = SalaTokens.lunaOmbra.copy(alpha = 0.55f * alpha), radius = r, center = centro)
-
-    val crescente = fase < 0.5f
-    val terminatore = abs(cos(2.0 * PI * fase).toFloat())
-    val gibbosa = ((1f - cos(2.0 * PI * fase).toFloat()) / 2f) > 0.5f
-    val disco = Rect(centro.x - r, centro.y - r, centro.x + r, centro.y + r)
-    val mediana = Rect(centro.x - r * terminatore, centro.y - r, centro.x + r * terminatore, centro.y + r)
-    val illuminata = Path().apply {
-        arcTo(disco, if (crescente) -90f else 90f, 180f, true)
-        arcTo(mediana, if (crescente) 90f else -90f, if (gibbosa) 180f else -180f, false)
-        close()
-    }
-
-    clipPath(illuminata) {
-        drawCircle(
-            brush = Brush.radialGradient(
-                0f to SalaTokens.lunaLuce,
-                0.52f to SalaTokens.lunaMezzo,
-                1f to SalaTokens.lunaBordo,
-                center = Offset(centro.x - r * 0.32f, centro.y - r * 0.40f),
-                radius = r * 1.5f,
-            ),
-            radius = r,
-            center = centro,
-            alpha = alpha,
-        )
-        listOf(
-            Triple(-0.07f, -0.06f, 0.20f),
-            Triple(0.24f, -0.23f, 0.14f),
-            Triple(0.07f, 0.27f, 0.24f),
-        ).forEach { (mx, my, md) ->
-            drawOval(
-                color = Color(0xFF463830).copy(alpha = 0.22f * alpha),
-                topLeft = Offset(centro.x + mx * r - md * r, centro.y + my * r - md * r * 0.78f),
-                size = Size(md * 2f * r, md * 1.56f * r),
-            )
-        }
-    }
-
-    drawCircle(
-        color = SalaTokens.lunaBordo.copy(alpha = 0.30f * alpha),
-        radius = r,
-        center = centro,
-        style = Stroke(width = r * 0.04f),
-    )
+    discoLunare(Offset(size.width / 2f, size.height / 2f), size.minDimension / 2f, fase, alpha)
 }
 
 private fun descrizione(segmento: MoonSegment): String = when (segmento) {
