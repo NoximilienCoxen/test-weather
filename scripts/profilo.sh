@@ -18,13 +18,23 @@ esito=${PIPESTATUS[0]}
 
 # Dove finisce il file dipende dalla versione di AGP e della libreria: si
 # cerca in tutti e due i posti noti invece di indovinarne uno.
-find baselineprofile/build -name '*baseline-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
+#
+# **Il nome non e' solo `-baseline-prof.txt`.** Il primo giro (run 36842598106)
+# ha prodotto `GeneraProfilo_avvioESale-startup-prof.txt` e lo script, che
+# cercava `*baseline-prof*`, non l'ha visto: si cerca ogni `*-prof*.txt`.
+# AGP tira giu' da se' `additional_test_output` dal dispositivo, sotto
+# `build/outputs`; il pacchetto di prova viene disinstallato a fine giro, e con
+# lui la sua cartella sul dispositivo, quindi l'`adb pull` arriva tardi ed e'
+# solo un ripiego.
+find baselineprofile/build -name '*-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
 adb pull /sdcard/Android/media/io.github.noximiliencoxen.caelum.baselineprofile /tmp/ciout/media 2>/dev/null || true
-find /tmp/ciout/media -name '*baseline-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
+find /tmp/ciout/media -name '*-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
+echo "--- uscite di AGP ---"
+find baselineprofile/build/outputs -maxdepth 6 | head -60
 
 echo "--- prodotti ---"
 ls -la /tmp/ciout
-for f in /tmp/ciout/*baseline-prof*.txt; do
+for f in /tmp/ciout/*-prof*.txt; do
   [ -f "$f" ] || continue
   echo "$f: $(wc -l < "$f") righe"
   head -5 "$f"
