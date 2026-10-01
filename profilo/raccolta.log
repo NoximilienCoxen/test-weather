@@ -1,24 +1,24 @@
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 Calculating task graph as no cached configuration is available for tasks: :baselineprofile:connectedDebugAndroidTest
-> Task :baselineprofile:generateDebugAssets UP-TO-DATE
-> Task :app:generateDebugAssets UP-TO-DATE
-> Task :baselineprofile:preBuild UP-TO-DATE
 > Task :app:preBuild UP-TO-DATE
+> Task :baselineprofile:preBuild UP-TO-DATE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :baselineprofile:generateDebugAssets UP-TO-DATE
 > Task :baselineprofile:preDebugBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:generateDebugBuildConfig UP-TO-DATE
-> Task :app:generateDebugResources UP-TO-DATE
 > Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
 > Task :app:javaPreCompileDebug UP-TO-DATE
 > Task :app:packageDebugResources UP-TO-DATE
 > Task :app:mapDebugSourceSetPaths UP-TO-DATE
-> Task :app:mergeDebugResources UP-TO-DATE
 > Task :app:checkDebugAarMetadata UP-TO-DATE
-> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
 > Task :app:processDebugNavigationResources UP-TO-DATE
 > Task :app:mergeDebugArtProfile UP-TO-DATE
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
 > Task :app:compileDebugNavigationResources UP-TO-DATE
 > Task :app:parseDebugLocalResources UP-TO-DATE
 > Task :app:mergeDebugStartupProfile UP-TO-DATE
@@ -27,74 +27,74 @@ Calculating task graph as no cached configuration is available for tasks: :basel
 > Task :app:compressDebugAssets UP-TO-DATE
 > Task :app:extractDebugVersionControlInfo UP-TO-DATE
 > Task :app:extractProguardFiles UP-TO-DATE
-> Task :app:collectDebugDependencies UP-TO-DATE
-> Task :app:sdkDebugDependencyData UP-TO-DATE
-> Task :app:mergeDebugJniLibFolders UP-TO-DATE
 > Task :app:processDebugMainManifest UP-TO-DATE
 > Task :app:processDebugManifest UP-TO-DATE
+> Task :app:collectDebugDependencies UP-TO-DATE
 > Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:sdkDebugDependencyData UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
 > Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
 > Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:dexBuilderDebug UP-TO-DATE
+> Task :app:generateDebugLintVitalReportModel UP-TO-DATE
+> Task :app:lintVitalAnalyzeDebug UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:lintVitalReportDebug UP-TO-DATE
+> Task :app:lintVitalDebug
+> Task :app:optimizeDebugResources UP-TO-DATE
 > Task :app:stripDebugDebugSymbols UP-TO-DATE
 > Task :app:validateSigningDebug UP-TO-DATE
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 > Task :baselineprofile:checkTestedAppObfuscationDebug UP-TO-DATE
 > Task :baselineprofile:generateDebugResources UP-TO-DATE
-> Task :app:compileDebugKotlin UP-TO-DATE
-> Task :app:compileDebugJavaWithJavac UP-TO-DATE
 > Task :baselineprofile:packageDebugResources UP-TO-DATE
-> Task :app:generateDebugLintVitalReportModel UP-TO-DATE
-> Task :app:lintVitalAnalyzeDebug UP-TO-DATE
-> Task :app:processDebugJavaRes UP-TO-DATE
-> Task :app:lintVitalReportDebug UP-TO-DATE
-> Task :app:processDebugResources UP-TO-DATE
-> Task :app:dexBuilderDebug UP-TO-DATE
-> Task :app:lintVitalDebug
-> Task :app:optimizeDebugResources UP-TO-DATE
 > Task :app:mergeExtDexDebug UP-TO-DATE
 > Task :app:mergeDexDebug UP-TO-DATE
-> Task :app:mergeDebugJavaResource UP-TO-DATE
 > Task :baselineprofile:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
 > Task :baselineprofile:generateDebugGlobalSynthetics UP-TO-DATE
+> Task :app:compileDebugArtProfile UP-TO-DATE
+> Task :app:packageDebug UP-TO-DATE
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :baselineprofile:desugarDebugFileDependencies UP-TO-DATE
 > Task :baselineprofile:processDebugNavigationResources UP-TO-DATE
 > Task :baselineprofile:mergeDebugAssets UP-TO-DATE
 > Task :baselineprofile:parseDebugLocalResources UP-TO-DATE
-> Task :baselineprofile:compressDebugAssets UP-TO-DATE
-> Task :baselineprofile:desugarDebugFileDependencies UP-TO-DATE
-> Task :baselineprofile:generateDebugRFile UP-TO-DATE
-> Task :baselineprofile:checkDebugDuplicateClasses UP-TO-DATE
-> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
-> Task :app:compileDebugArtProfile UP-TO-DATE
 > Task :baselineprofile:checkDebugAarMetadata UP-TO-DATE
-> Task :baselineprofile:mergeLibDexDebug UP-TO-DATE
 > Task :baselineprofile:mapDebugSourceSetPaths UP-TO-DATE
+> Task :baselineprofile:generateDebugRFile UP-TO-DATE
+> Task :baselineprofile:compressDebugAssets UP-TO-DATE
 > Task :baselineprofile:compileDebugNavigationResources UP-TO-DATE
-> Task :app:packageDebug UP-TO-DATE
-> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :baselineprofile:checkDebugDuplicateClasses UP-TO-DATE
+> Task :baselineprofile:mergeDebugResources UP-TO-DATE
+> Task :baselineprofile:mergeLibDexDebug UP-TO-DATE
+> Task :baselineprofile:mergeDebugJniLibFolders UP-TO-DATE
+> Task :baselineprofile:mergeDebugManifest UP-TO-DATE
+> Task :baselineprofile:processDebugManifest UP-TO-DATE
 > Task :baselineprofile:compileDebugKotlin UP-TO-DATE
 > Task :baselineprofile:compileDebugJavaWithJavac NO-SOURCE
 > Task :baselineprofile:processDebugJavaRes UP-TO-DATE
-> Task :baselineprofile:mergeDebugResources UP-TO-DATE
-> Task :baselineprofile:mergeDebugJniLibFolders UP-TO-DATE
-> Task :baselineprofile:mergeExtDexDebug UP-TO-DATE
-> Task :baselineprofile:mergeDebugJavaResource UP-TO-DATE
-> Task :baselineprofile:validateSigningDebug UP-TO-DATE
-> Task :baselineprofile:mergeDebugManifest UP-TO-DATE
-> Task :baselineprofile:writeDebugSigningConfigVersions UP-TO-DATE
-> Task :baselineprofile:processDebugManifest UP-TO-DATE
 > Task :baselineprofile:mergeDebugNativeLibs UP-TO-DATE
 > Task :baselineprofile:stripDebugDebugSymbols UP-TO-DATE
+> Task :baselineprofile:validateSigningDebug UP-TO-DATE
+> Task :baselineprofile:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :baselineprofile:mergeExtDexDebug UP-TO-DATE
 > Task :baselineprofile:processDebugResources UP-TO-DATE
 > Task :baselineprofile:dexBuilderDebug UP-TO-DATE
+> Task :baselineprofile:mergeDebugJavaResource UP-TO-DATE
 > Task :baselineprofile:mergeProjectDexDebug UP-TO-DATE
 > Task :baselineprofile:packageDebug UP-TO-DATE
 > Task :baselineprofile:createDebugApkListingFileRedirect UP-TO-DATE
 
 > Task :baselineprofile:connectedDebugAndroidTest
 Running tests on devices: test(AVD) - 14
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__reactivecircus_android-emulator-runner-1790847164425.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__reactivecircus_android-emulator-runner-1790848783884.json
 
-BUILD SUCCESSFUL in 19m 11s
+BUILD SUCCESSFUL in 21m 47s
 83 actionable tasks: 2 executed, 81 up-to-date
 Configuration cache entry stored.
