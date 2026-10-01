@@ -592,6 +592,15 @@ jobs:
               $4 ~ /^res\// || $4 == "resources.arsc" { risorse += $1 }
               $4 ~ /^classes[0-9]*\.dex$/            { codice  += $1 }
               END { printf "  scompattati: risorse %.0f KB, dex %.0f KB\n", risorse/1024, codice/1024 }'
+            # Il baseline profile (CONTESTO §45) compilato dentro l'APK.
+            # Un'annotazione e non solo una riga: si legge dall'API anche dove
+            # i log non si raggiungono.
+            prof=$(unzip -l "$apk" 2>/dev/null | awk '$4 == "assets/dexopt/baseline.prof" { print $1 }')
+            if [ -n "$prof" ]; then
+              echo "::notice::$(basename "$apk"): baseline.prof di $prof byte"
+            else
+              echo "::warning::$(basename "$apk"): nessun baseline.prof nell'APK"
+            fi
           done
 
       - uses: actions/upload-artifact@v4

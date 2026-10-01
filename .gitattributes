@@ -21,3 +21,7 @@ gradlew text eol=lf
 *.jpg binary
 *.keystore binary
 gradle-wrapper.jar binary
+
+# Il baseline profile e' generato in CI (CONTESTO §45): GitHub ne chiude il
+# diff, che sono ventimila righe di firme di metodi.
+app/src/main/baseline-prof.txt linguist-generated=true
