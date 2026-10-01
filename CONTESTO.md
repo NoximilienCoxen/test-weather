@@ -6629,3 +6629,65 @@ Prova: `DiscoLunareTest` misura la quota accesa a nove fasi, su fondo chiaro e
 scuro, contro `MoonPhase.illumination`, e il lato acceso nei due quarti; i PNG
 vanno in `widget-renders` (`disco-lunare-*.png`). Da guardare in mano: il
 widget Luna di giorno e di notte.
+
+## 45. Il baseline profile
+
+Il debito di §27.8: avvio a freddo e primo scorrimento compilati in anticipo
+invece che interpretati. **Fatto tutto da qui, senza un telefono**, e quindi
+**non misurato**: che l'avvio sia piu' rapido va visto in mano (sotto).
+
+### 45.1 Come e' fatto, e perche' senza il plugin
+
+- `:baselineprofile`, un modulo `com.android.test` (AGP stesso) con
+  `benchmark-macro-junit4` 1.5.0, `uiautomator` 2.4.0, `androidx.test`.
+  **Non** il plugin `androidx.baselineprofile`: e' legato alle versioni di AGP
+  che conosce, il progetto e' su AGP 9, e da qui la compatibilita' si sarebbe
+  scoperta solo a tentativi in CI. Le versioni le ha lette `probe_deps.py` in
+  CI (§ sopra il catalogo), non la memoria.
+- `GeneraProfilo.avvioESale`: avvio con `saltabenvenuto` (mai `cattura`, che
+  fermerebbe le animazioni e le toglierebbe dal profilo), "Salta" sulla guida
+  se compare, le sette sale su e giu', la barra delle ore da un capo all'altro.
+- Prova la **build di debug**, che qui non e' debuggabile ne' offuscata: le
+  regole escono coi nomi veri, e AGP le riscrive per la release con la mappa di
+  R8.
+- `profileinstaller` dichiarata nell'app: l'APK si installa a mano, non dal
+  Play Store, e senza di lei il profilo non verrebbe applicato.
+
+### 45.2 Come si rigenera
+
+Lanciare il workflow `build` a mano con `profilo` acceso (`workflow_dispatch`).
+Il job `profilo` compila, accende un emulatore come quello degli scatti, fa
+girare `scripts/profilo.sh` (circa venti minuti: la libreria ripete il giro
+finche' il profilo e' stabile, dodici volte al primo giro) e pubblica su
+`ci-artifacts/profilo`. Il file si copia a mano:
+
+```bash
+gh api "repos/NoximilienCoxen/test-weather/contents/profilo/GeneraProfilo_avvioESale-startup-prof.txt?ref=ci-artifacts" \
+  -H 'Accept: application/vnd.github.raw' > app/src/main/baseline-prof.txt
+```
+
+**Si legge dalla API e non dagli artefatti**: log e artefatti di GitHub stanno
+su un host che il container blocca. Va rigenerato quando cambiano molto le
+sale o la barra delle ore; le regole che non trovano piu' il loro metodo si
+ignorano, non rompono niente.
+
+### 45.3 Cosa si e' imparato per strada
+
+- Con `includeInStartupProfile = true` la libreria 1.5.0 scrive
+  `…-startup-prof.txt` e **non** `…-baseline-prof.txt`: il primo giro lo
+  cercava col nome sbagliato e non pubblicava niente. Il contenuto e' nello
+  stesso formato, e qui fa da baseline profile.
+- Il pacchetto di prova si disinstalla a fine giro e la sua cartella sul
+  dispositivo sparisce con lui: il file lo tira giu' AGP, in `build/outputs`.
+- Il primo profilo: 24.419 righe, 2868 del codice di Caelum (`SalaShell`, la
+  barra delle ore, `discoLunare`, il cielo), il resto di Compose, DataStore e
+  WorkManager toccati dal giro.
+- Il job `build` dice con un'annotazione se `assets/dexopt/baseline.prof` e'
+  dentro ogni APK.
+
+### 45.4 Da provare in mano
+
+L'avvio a freddo con e senza: installare la build di prima, misurare
+`am start -W` a freddo cinque volte (`TotalTime`), poi questa. Nell'emulatore
+della CI, senza profilo, i primi avvii misuravano 1,4-1,9 s; e' un numero di un
+emulatore, non del telefono, e non e' un confronto.
