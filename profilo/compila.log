@@ -1,0 +1,114 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Calculating task graph as no cached configuration is available for tasks: :app:assembleDebug :baselineprofile:assembleDebug
+
+> Configure project :app
+w: file:///home/runner/work/test-weather/test-weather/app/build.gradle.kts:159:9: 'var textReport: Boolean' is deprecated. Lint reports are now always generated. Use SingleArtifact.LINT_TEXT_REPORT or SingleArtifact.AGGREGATED_LINT_TEXT_REPORT to consume lint report artifacts.
+
+> Task :baselineprofile:preBuild UP-TO-DATE
+> Task :baselineprofile:generateDebugAssets UP-TO-DATE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:desugarDebugFileDependencies
+> Task :app:generateDebugResources
+> Task :app:mergeDebugJniLibFolders
+> Task :app:packageDebugResources
+> Task :app:javaPreCompileDebug
+> Task :app:processDebugNavigationResources
+> Task :app:mergeDebugArtProfile
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:mergeDebugNativeLibs
+> Task :app:compileDebugNavigationResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:stripDebugDebugSymbols
+> Task :app:extractDeepLinksDebug
+> Task :app:extractDebugNativeSymbolTables
+> Task :app:parseDebugLocalResources
+> Task :app:mergeDebugNativeDebugMetadata
+> Task :app:generateDebugRFile
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugStartupProfile
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:extractDebugVersionControlInfo
+> Task :app:extractProguardFiles
+> Task :app:collectDebugDependencies
+> Task :app:sdkDebugDependencyData
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :baselineprofile:preDebugBuild UP-TO-DATE
+> Task :baselineprofile:checkTestedAppObfuscationDebug
+> Task :baselineprofile:generateDebugResources
+> Task :baselineprofile:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:checkDebugDuplicateClasses
+> Task :baselineprofile:processDebugNavigationResources
+> Task :baselineprofile:parseDebugLocalResources
+> Task :baselineprofile:generateDebugRFile
+> Task :app:processDebugResources
+> Task :app:optimizeDebugResources
+> Task :baselineprofile:javaPreCompileDebug FROM-CACHE
+> Task :baselineprofile:mergeDebugAssets
+> Task :baselineprofile:compileDebugKotlin
+> Task :baselineprofile:compileDebugJavaWithJavac NO-SOURCE
+> Task :baselineprofile:generateDebugGlobalSynthetics
+> Task :baselineprofile:processDebugJavaRes
+> Task :baselineprofile:mergeDebugJavaResource
+> Task :baselineprofile:compressDebugAssets
+> Task :baselineprofile:desugarDebugFileDependencies
+> Task :baselineprofile:checkDebugAarMetadata
+> Task :baselineprofile:mapDebugSourceSetPaths
+> Task :baselineprofile:compileDebugNavigationResources FROM-CACHE
+> Task :baselineprofile:mergeDebugResources
+> Task :baselineprofile:mergeDebugManifest
+> Task :baselineprofile:processDebugManifest
+> Task :baselineprofile:checkDebugDuplicateClasses
+> Task :baselineprofile:processDebugResources
+> Task :baselineprofile:mergeLibDexDebug
+> Task :baselineprofile:dexBuilderDebug
+> Task :baselineprofile:mergeProjectDexDebug
+> Task :app:compileDebugKotlin
+> Task :baselineprofile:mergeDebugJniLibFolders
+> Task :baselineprofile:mergeDebugNativeLibs
+> Task :baselineprofile:stripDebugDebugSymbols
+> Task :app:mergeExtDexDebug
+> Task :baselineprofile:validateSigningDebug
+> Task :baselineprofile:writeDebugSigningConfigVersions
+> Task :baselineprofile:mergeExtDexDebug
+> Task :baselineprofile:packageDebug
+> Task :baselineprofile:createDebugApkListingFileRedirect
+> Task :baselineprofile:assembleDebug
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/sala/rooms/PollineAria.kt:141:20 Unnecessary non-null assertion (!!) on a non-null receiver of type 'Int'.
+w: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/scene/SceneCitta.kt:184:9 'fun quadraticBezierTo(x1: Float, y1: Float, x2: Float, y2: Float): Unit' is deprecated. Use quadraticTo() for consistency with cubicTo().
+w: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/scene/SceneComuni.kt:151:5 'fun quadraticBezierTo(x1: Float, y1: Float, x2: Float, y2: Float): Unit' is deprecated. Use quadraticTo() for consistency with cubicTo().
+w: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/scene/SceneComuni.kt:152:5 'fun quadraticBezierTo(x1: Float, y1: Float, x2: Float, y2: Float): Unit' is deprecated. Use quadraticTo() for consistency with cubicTo().
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:generateDebugLintVitalReportModel
+> Task :app:processDebugJavaRes
+> Task :app:mergeDebugJavaResource
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:lintVitalAnalyzeDebug
+> Task :app:mergeDexDebug
+> Task :app:compileDebugArtProfile
+> Task :app:lintVitalReportDebug
+> Task :app:lintVitalDebug
+> Task :app:packageDebug
+> Task :app:assembleDebug
+> Task :app:createDebugApkListingFileRedirect
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790846910581.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/test-weather/test-weather/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 3m 6s
+84 actionable tasks: 82 executed, 2 from cache
+Configuration cache entry stored.
