@@ -190,6 +190,14 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
 
+    // **Il baseline profile si installa da se' solo dal Play Store.** Questa
+    // app si installa da un APK (`apk-latest`), e senza `profileinstaller` il
+    // profilo in `src/main/baseline-prof.txt` resterebbe nel file e basta. Ci
+    // arrivava gia' di passaggio con Compose; dichiarata perche' il profilo
+    // dipende da lei, e perche' la raccolta in CI (`:baselineprofile`) la usa
+    // per farsi consegnare il profilo dall'app. CONTESTO §45.
+    implementation(libs.androidx.profileinstaller)
+
     // **Qui c'erano `ui-tooling-preview` e `ui-tooling`, e non servivano a
     // niente.** Reggono le anteprime dell'editor, e in questo progetto non
     // esiste **una sola** `@Preview`: zero import di quel pacchetto in

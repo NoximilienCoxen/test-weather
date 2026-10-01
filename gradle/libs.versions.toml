@@ -12,11 +12,11 @@ datastore = "1.2.1"
 glance = "1.2.0"
 # Arriva gia' con Glance; dichiarata perche' la usiamo direttamente (AggiornaWidgetWorker).
 work = "2.10.1"
-# Il baseline profile (CONTESTO §45). Versioni da confermare con
-# `probe_deps.py` in CI: da dentro il container Maven non si raggiunge.
+# Il baseline profile (CONTESTO §45). Versioni lette da `probe_deps.py` in CI
+# il 1° ottobre 2026: da dentro il container Maven non si raggiunge.
 profileinstaller = "1.4.1"
-benchmark = "1.4.1"
-uiautomator = "2.3.0"
+benchmark = "1.5.0"
+uiautomator = "2.4.0"
 androidxTestExtJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
 
