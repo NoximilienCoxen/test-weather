@@ -6,6 +6,8 @@ import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
@@ -240,6 +242,13 @@ class MainActivity : ComponentActivity() {
         // aggancio non basterebbe: `capture.sh` avvia l'app anche senza alcun
         // extra, e quello scatto tornerebbe a dipendere da una `sleep`.
         if (intent.getBooleanExtra(EXTRA_CAPTURE, false)) viewModel.scattoFermo()
+        // La lingua degli scatti: l'emulatore della CI e' in inglese, e gli
+        // scatti di riferimento sono in italiano (CONTESTO §49). Prima di
+        // `setContent`, quindi gia' nel primo fotogramma.
+        when (intent.getStringExtra(EXTRA_LINGUA)) {
+            "it" -> Lingue.forzata = Lingua.ITALIANO
+            "en" -> Lingue.forzata = Lingua.INGLESE
+        }
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
@@ -282,6 +291,9 @@ class MainActivity : ComponentActivity() {
          * dipendere da una `sleep`. In `capture.sh` ci pensa l'helper `avvia`.
          */
         const val EXTRA_CAPTURE = "cattura"
+
+        /** La lingua imposta per la cattura: `--es lingua it` o `en`. */
+        const val EXTRA_LINGUA = "lingua"
 
         const val EXTRA_HOUR = "ora"
         const val EXTRA_WEATHER = "meteo"

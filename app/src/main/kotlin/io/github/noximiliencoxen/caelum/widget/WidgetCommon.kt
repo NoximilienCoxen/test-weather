@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver.PendingResult
 import android.content.ComponentName
@@ -189,10 +190,10 @@ internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
  * distinguere tanti widget sarebbero tante volte lo stesso codice.
  */
 enum class WidgetKind(
-    /** Come si chiama per esteso, nella schermata di configurazione. */
-    val label: String,
-    /** Come si chiama sul suo riquadro, dove lo spazio e' due celle. */
-    val shortLabel: String,
+    private val labelIt: String,
+    private val labelEn: String,
+    private val shortIt: String,
+    private val shortEn: String,
     /** Se ha bisogno di sapere dove si trova chi lo guarda. */
     val needsPlace: Boolean,
     /** Il ricevitore che il sistema sveglia per questo widget. */
@@ -201,16 +202,22 @@ enum class WidgetKind(
     /** La sala che il tocco apre. */
     val sala: SalaRoom,
 ) {
-    METEO("METEO", "METEO", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
+    METEO("METEO", "WEATHER", "METEO", "WEATHER", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
 
     // La luna e' la stessa da qualunque parte la si guardi: chiederle una
     // citta' sarebbe una domanda senza conseguenze.
-    LUNA("LUNA", "LUNA", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
+    LUNA("LUNA", "MOON", "LUNA", "MOON", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
 
-    ARIA("QUALITÀ DELL'ARIA", "ARIA", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
+    ARIA("QUALITÀ DELL'ARIA", "AIR QUALITY", "ARIA", "AIR", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
-    SETTIMANA("SETTIMANA", "SETTIMANA", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+    SETTIMANA("SETTIMANA", "WEEK", "SETTIMANA", "WEEK", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
     ;
+
+    /** Come si chiama per esteso, nella schermata di configurazione. */
+    val label: String get() = tr(labelIt, labelEn)
+
+    /** Come si chiama sul suo riquadro, dove lo spazio e' due celle. */
+    val shortLabel: String get() = tr(shortIt, shortEn)
 
     fun widget(): GlanceAppWidget = make()
 
@@ -335,8 +342,10 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
             val bitmap = withContext(Dispatchers.Default) {
                 WidgetCanvas.paint(frame, ink.background) { setupArt(kind.shortLabel, type, ink) }
             }
-            val spoken = "Widget ${kind.label.lowercase()} da configurare. " +
-                "Tocca per scegliere la città."
+            val spoken = tr(
+                "Widget ${kind.label.lowercase()} da configurare. Tocca per scegliere la città.",
+                "${kind.label.lowercase().replaceFirstChar { it.uppercase() }} widget to set up. Tap to choose the city.",
+            )
             return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
         }
 

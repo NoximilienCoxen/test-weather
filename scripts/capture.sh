@@ -39,7 +39,10 @@ adbt() { timeout 60 adb "$@"; }
 #
 # Le opzioni proprie di `am start` (per esempio `-W`) e gli altri agganci si
 # passano come argomenti; l'attivita' e la cattura le mette la funzione.
-avvia() { adbt shell am start "$@" -n "$ACT" --ez cattura true; }
+# La lingua si impone a ogni avvio: l'emulatore e' in inglese, e gli scatti di
+# riferimento sono in italiano (CONTESTO §49). `LINGUA=en` per la serie inglese.
+LINGUA="${LINGUA:-it}"
+avvia() { adbt shell am start "$@" -n "$ACT" --ez cattura true --es lingua "$LINGUA"; }
 
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
 # questo file e' l'unica testimonianza del perche'.

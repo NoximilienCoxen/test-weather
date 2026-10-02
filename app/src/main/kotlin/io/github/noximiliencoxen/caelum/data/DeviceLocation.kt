@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -32,7 +33,7 @@ import kotlin.coroutines.resume
 object DeviceLocation {
 
     /** Il nome che si mette quando non c'e' modo di saperne uno vero. */
-    const val FALLBACK_NAME = "POSIZIONE"
+    val FALLBACK_NAME: String get() = tr("POSIZIONE", "LOCATION")
 
     fun granted(context: Context): Boolean =
         ContextCompat.checkSelfPermission(

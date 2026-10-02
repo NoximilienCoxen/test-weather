@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.notifiche
 
+import io.github.noximiliencoxen.caelum.lingua.Lingue
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -93,9 +95,9 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
-                "Allerte ufficiali",
+                tr("Allerte ufficiali", "Official warnings"),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { description = "Allerte arancioni e rosse diramate dagli enti, via MeteoAlarm" }
+            ).apply { description = tr("Allerte arancioni e rosse diramate dagli enti, via MeteoAlarm", "Orange and red warnings issued by the authorities, via MeteoAlarm") }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -177,30 +179,36 @@ internal fun memoriaAggiornata(
 
 /** Titolo e testo della notifica: puri, per poterli provare. */
 internal fun testiAllerta(citta: String, allerta: WeatherAlert, adesso: LocalDateTime): Pair<String, String> {
-    val colore = allerta.level.label.removePrefix("ALLERTA ").lowercase(Locale.ITALIAN)
-    val titolo = "Allerta $colore a $citta: ${allerta.kind.label.lowercase(Locale.ITALIAN)}"
+    val colore = allerta.level.breve.lowercase(Lingue.locale)
+    val fenomeno = allerta.kind.label.lowercase(Lingue.locale)
+    val titolo = tr("Allerta $colore a $citta: $fenomeno", "${colore.replaceFirstChar { it.uppercase() }} warning for $citta: $fenomeno")
     val quando = finestraBreve(allerta, adesso)
-    val zona = allerta.areaDesc?.takeIf { it.isNotBlank() }?.let { " Zona: $it." } ?: ""
-    val testo = "${quando}Diramata dagli enti, via MeteoAlarm.$zona Tocca per leggere il bollettino."
+    val zona = allerta.areaDesc?.takeIf { it.isNotBlank() }?.let { tr(" Zona: $it.", " Area: $it.") } ?: ""
+    val testo = quando + tr(
+        "Diramata dagli enti, via MeteoAlarm.$zona Tocca per leggere il bollettino.",
+        "Issued by the authorities, via MeteoAlarm.$zona Tap to read the bulletin.",
+    )
     return titolo to testo
 }
 
 private fun finestraBreve(allerta: WeatherAlert, adesso: LocalDateTime): String {
     val inizio = allerta.onset
     val fine = allerta.expires
-    fun giornoEOra(t: LocalDateTime): String {
+    // "22:00 di oggi", "22:00 today": l'ora e il giorno, senza la preposizione,
+    // che cambia con la frase.
+    fun oraEGiorno(t: LocalDateTime): String {
         val ora = String.format(Locale.ITALIAN, "%02d:%02d", t.hour, t.minute)
         val oggi = adesso.toLocalDate()
         return when (t.toLocalDate()) {
-            oggi -> "alle $ora di oggi"
-            oggi.plusDays(1) -> "alle $ora di domani"
-            else -> "alle $ora del ${t.dayOfMonth}/${t.monthValue}"
+            oggi -> tr("$ora di oggi", "$ora today")
+            oggi.plusDays(1) -> tr("$ora di domani", "$ora tomorrow")
+            else -> tr("$ora del ${t.dayOfMonth}/${t.monthValue}", "$ora on ${t.dayOfMonth}/${t.monthValue}")
         }
     }
     return when {
         inizio != null && inizio.isAfter(adesso) && fine != null ->
-            "Dalle ${giornoEOra(inizio).removePrefix("alle ")} ${giornoEOra(fine)}. "
-        fine != null -> "In corso fino ${giornoEOra(fine)}. "
+            tr("Dalle ${oraEGiorno(inizio)} alle ${oraEGiorno(fine)}. ", "From ${oraEGiorno(inizio)} until ${oraEGiorno(fine)}. ")
+        fine != null -> tr("In corso fino alle ${oraEGiorno(fine)}. ", "In force until ${oraEGiorno(fine)}. ")
         else -> ""
     }
 }
