@@ -32,7 +32,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Interroga Open-Meteo
         run: |
@@ -262,14 +262,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
 
       # **Niente `setup-android`, e il perche' vale piu' della riga.**
       #
@@ -413,7 +413,7 @@ jobs:
       # GitHub non e' un difetto di questo progetto, e non deve tingere di rosso
       # un giro in cui il codice sta bene ne' - come e' successo - impedire ai
       # test di partire.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         continue-on-error: true
         with:
@@ -424,7 +424,7 @@ jobs:
       # Il rapporto per esteso: quando un test cade, la riga del log dice che e'
       # caduto e l'XML dice perche'. L'HTML si legge, l'XML si interroga: qui
       # servono tutti e due.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         continue-on-error: true
         with:
@@ -450,7 +450,7 @@ jobs:
       # di essere la versione 1 - esattamente il numero fisso da cui si voleva
       # uscire, ma stavolta in un modo che sembra funzionare. Il repository sta
       # in due megabyte: la storia intera non costa niente.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -459,7 +459,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
 
       # **Niente `setup-android`, e il perche' vale piu' della riga.**
       #
@@ -619,7 +619,7 @@ jobs:
             fi
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: success()
         with:
           name: apk
@@ -640,7 +640,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: apk
           path: apk
@@ -651,6 +651,12 @@ jobs:
           cp "$(find apk -name '*.apk' | head -1)" rilascio/weather.apk
           ls -la rilascio
 
+      # **Resta su v2, che e' ancora su Node 20, ed e' una scelta.** La prima su
+      # Node 24 e' la v3 (`probe_azioni.py`, 2 ottobre 2026), ma questo job
+      # gira solo su `main`: un cambio di versione maggiore qui non si prova da
+      # nessun ramo, e l'unica release che le persone installano non e' il
+      # posto dove scoprire che un parametro ha cambiato nome. GitHub intanto
+      # la fa girare su Node 24 e si limita ad avvisare. CONTESTO §46.
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
@@ -695,7 +701,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Abilita KVM
         run: |
@@ -705,7 +711,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
           echo "kvm:"; ls -l /dev/kvm || echo "NESSUN /dev/kvm"
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: apk
           path: apk
@@ -743,7 +749,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/publish.sh screenshots
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: screenshots
@@ -766,7 +772,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -782,7 +788,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
 
       # Lo stesso SDK dell'immagine del job `build`, con le stesse ragioni.
       - name: SDK Android dell'immagine
@@ -828,7 +834,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/publish.sh profilo
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: profilo
