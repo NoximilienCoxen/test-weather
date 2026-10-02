@@ -6730,3 +6730,65 @@ In due commit, perche' se qualcosa si muove si sappia di chi e':
 
 Il baseline profile non e' stato rigenerato: le regole che non trovano piu' il
 loro metodo si ignorano (§45.2).
+
+## 47. L'attribuzione delle fonti, e il confronto degli scatti
+
+### 47.1 Le parole delle fonti, lette e non ricordate
+
+Il blocco ATTRIBUZIONE delle note legali aspettava da §28 le frasi verbatim.
+Le ha scaricate la CI: `scripts/probe_licenze.py` nel job `probe-api`, testi in
+`ci-artifacts/api/licenze/` e un `INDICE.txt` con le righe su licenze,
+attribuzioni e collegamenti. Cosa dicono (2 ottobre 2026):
+
+- **Open-Meteo** (`/en/licence`; `/en/license` e' solo un rimando): "API data
+  are offered under Attribution 4.0 International (CC BY 4.0)"; "You must give
+  appropriate credit, provide a link to the licence, and indicate if changes
+  were made"; e soprattutto **"You must include a link next to any location
+  Open-Meteo data are displayed"**, con l'esempio "Weather data by
+  Open-Meteo.com". Fra le fonti di Open-Meteo c'e' ItaliaMeteo-ARPAE (CC BY).
+- **CAMS** (aria e polline, `/en/docs/air-quality-api`): "All users of
+  Open-Meteo data must provide a clear attribution to CAMS ENSEMBLE data
+  provider as well as a reference to Open-Meteo", con una citazione lunga
+  (gli istituti del consorzio, "(2022): CAMS European air quality forecasts,
+  ENSEMBLE data...").
+- **MeteoAlarm** (`feeds.meteoalarm.org`): "License (CC BY 4.0)", "Data
+  provided by EUMETNET members". La pagina delle condizioni di meteoalarm.org
+  e' un'app JavaScript: scaricata non dice niente.
+- Le tre pagine di Copernicus provate rispondono 404; non servono, perche' la
+  citazione CAMS la da' gia' Open-Meteo.
+
+### 47.2 Dove sta il credito
+
+- **Sotto la barra delle ore** (`RigaCrediti`, `ui/sala/SalaCrediti.kt`):
+  "Dati Open-Meteo.com · aria e polline CAMS Copernicus". La barra e' sotto
+  ogni sala, quindi il credito e' "next to" ogni dato. "Open-Meteo.com" apre
+  il sito; la parte CAMS apre le note legali. Costa una riga di altezza a tutte
+  le sale: i pannelli che non ci stanno scorrono (§16.4). **Cambiano gli
+  scatti**.
+- **In fondo al bollettino**: MeteoAlarm, EUMETNET, CC BY 4.0, e cosa compone
+  l'app (il titolo) e cosa resta dell'ente (descrizione, istruzioni).
+- **Note legali**: le tre fonti con le loro citazioni, i collegamenti alle
+  licenze, e cosa l'app cambia dei dati (la CC BY chiede di dirlo).
+- Le parole stanno in `Fonti`, un posto solo per le tre superfici.
+
+**Fuori, e da fare: i widget.** Mostrano dati di Open-Meteo (e il widget Aria
+dati CAMS) senza credito accanto. Le loro tre impaginazioni sono strette e
+sorvegliate da `WidgetOverflowTest`: un credito va disegnato e misurato su ogni
+forma, e guardato. La strada piu' semplice e' una riga minuta "Open-Meteo.com"
+in fondo, dove c'e' gia' spazio (sotto la striscia dei giorni nei larghi).
+
+### 47.3 Il confronto degli scatti
+
+`scripts/confronta_scatti.py RIF PRIMA DOPO [--affianca out.png]`, con tre
+numeri di giro. **L'impronta dei file non serve**: fra due giri senza cambi
+d'app cambiano 67 scatti su 74 (orologio, meteo vero, ora reale, scena
+d'apertura a caso). Lo script toglie le barre di sistema, conta i pixel
+cambiati in modo visibile e li confronta con lo scarto fra due giri senza
+cambi; quelli sopra il doppio del riferimento si guardano a occhio.
+
+Usato sulla BOM di Compose 2026.09.00 (37007837833, 37010950831,
+37014012156): 16 scatti sopra soglia, **nessuno per Compose**. Erano la scena
+d'apertura (nave contro montagna), l'aria non ancora arrivata al primo giro,
+l'ora reale passata dalle 15 alle 16 (e con lei vento, UV e la pastiglia
+"torna all'ora attuale"), la forma di una nuvola. Testi, impaginazione e
+disegni identici.

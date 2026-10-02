@@ -791,6 +791,17 @@ fun SalaShell(
                         .padding(start = 26.dp, end = if (larghe) 26.dp else 62.dp)
                         .onGloballyPositioned { rBarra = it.boundsInRoot() },
                 )
+
+                // **Il credito delle fonti sta qui, accanto ai dati.** La
+                // licenza di Open-Meteo chiede un collegamento "next to any
+                // location Open-Meteo data are displayed": la barra delle ore
+                // e' sotto ogni sala, e quindi lo e' anche questa riga.
+                // CONTESTO §47, e le parole in `Fonti`.
+                RigaCrediti(
+                    palette = palette,
+                    onLicenze = viewModel::openLegali,
+                    modifier = Modifier.padding(start = 26.dp, end = if (larghe) 26.dp else 62.dp, top = 2.dp),
+                )
             }
 
             // **I sette trattini qui sotto non ci sono piu'.** Facevano lo
