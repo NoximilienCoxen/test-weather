@@ -13,5 +13,65 @@
   </author>
   <id>tag:meteoalarm.org,2021-02-19:IT</id>
   <title>MeteoAlarm - Alerting Europe for Extreme Weather</title>
-  <updated>2026-10-02T18:05:30.801749Z</updated>
+  <updated>2026-10-02T22:35:04.251434Z</updated>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT019</value>
+    </cap:geocode>
+    <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
+    <cap:areaDesc>Sardegna</cap:areaDesc>
+    <cap:event>Yellow Wind Warning</cap:event>
+    <cap:sent>2026-10-02T08:42:27+00:00</cap:sent>
+    <cap:expires>2026-10-04T17:59:00+00:00</cap:expires>
+    <cap:effective>2026-10-04T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-04T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.261002104227.004</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/71442d43-df26-447d-bd61-070dedd79cff"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-02T08:42:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/71442d43-df26-447d-bd61-070dedd79cff?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Wind Warning issued for Italy - Sardegna</title>
+    <updated>2026-10-02T08:42:27Z</updated>
+  </entry>
+  <entry>
+    <cap:geocode>
+      <valueName>EMMA_ID</valueName>
+      <value>IT019</value>
+    </cap:geocode>
+    <link title="Sardegna" href="https://meteoalarm.org?geocode=EMMA_ID:IT019" hreflang="en"/>
+    <cap:areaDesc>Sardegna</cap:areaDesc>
+    <cap:event>Yellow Thunderstorm Warning</cap:event>
+    <cap:sent>2026-10-02T08:42:27+00:00</cap:sent>
+    <cap:expires>2026-10-04T11:59:00+00:00</cap:expires>
+    <cap:effective>2026-10-04T00:00:00+00:00</cap:effective>
+    <cap:onset>2026-10-04T00:00:00+00:00</cap:onset>
+    <cap:certainty>Likely</cap:certainty>
+    <cap:severity>Moderate</cap:severity>
+    <cap:urgency>Future</cap:urgency>
+    <cap:scope>Public</cap:scope>
+    <cap:message_type>Alert</cap:message_type>
+    <cap:status>Actual</cap:status>
+    <cap:identifier>2.49.0.0.380.3.IT.261002104227.003</cap:identifier>
+    <link type="application/cap+xml" href="https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c60a2359-6392-4571-aa4b-763f28b0fcff"/>
+    <link title="Italy" rel="related" href="https://meteoalarm.org?region=IT" hreflang="en"/>
+    <author>
+      <name>meteoalarm.org</name>
+      <uri>https://meteoalarm.org</uri>
+    </author>
+    <published>2026-10-02T08:42:27Z</published>
+    <id>https://feeds.meteoalarm.org/api/v1/warnings/feeds-italy/c60a2359-6392-4571-aa4b-763f28b0fcff?index_info=0&amp;index_area=0&amp;index_geocode=0</id>
+    <title>Yellow Thunderstorm Warning issued for Italy - Sardegna</title>
+    <updated>2026-10-02T08:42:27Z</updated>
+  </entry>
 </feed>
