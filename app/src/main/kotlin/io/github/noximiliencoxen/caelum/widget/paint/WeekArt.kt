@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -178,4 +179,4 @@ internal object WeekScale {
     }
 }
 
-private const val TITOLO = "SETTIMANA"
+private val TITOLO: String get() = tr("SETTIMANA", "WEEK")

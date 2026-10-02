@@ -168,6 +168,15 @@ android {
             // risorse di Android rispondono null e i fallimenti raccontano
             // tutt'altra storia rispetto a quella vera.
             isIncludeAndroidResources = true
+            // **Le prove parlano italiano**, qualunque sia la lingua della
+            // macchina: i runner della CI sono in inglese, e senza questa riga
+            // `tr()` risponderebbe in inglese a prove scritte sui testi
+            // italiani. Robolectric la sua lingua la prende da
+            // `src/test/resources/robolectric.properties`. CONTESTO §49.
+            all {
+                it.systemProperty("user.language", "it")
+                it.systemProperty("user.country", "IT")
+            }
         }
     }
 }

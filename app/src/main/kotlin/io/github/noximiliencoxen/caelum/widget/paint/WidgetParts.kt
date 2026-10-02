@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -180,7 +181,7 @@ internal fun DrawScope.creditoFonti(forme: List<String>, type: WidgetType, ink: 
 }
 
 /** Il credito dei widget che mostrano solo dati di Open-Meteo. */
-internal val CREDITO_OPEN_METEO = listOf("Dati Open-Meteo.com", "Open-Meteo.com")
+internal val CREDITO_OPEN_METEO: List<String> get() = listOf(tr("Dati Open-Meteo.com", "Data Open-Meteo.com"), "Open-Meteo.com")
 
 /** Il credito del widget dell'aria: Open-Meteo e i dati CAMS di Copernicus. */
 internal val CREDITO_ARIA = listOf("Open-Meteo.com · CAMS Copernicus", "Open-Meteo · CAMS")

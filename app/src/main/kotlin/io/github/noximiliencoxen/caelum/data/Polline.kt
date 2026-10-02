@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -10,10 +11,14 @@ import java.time.LocalDateTime
  * esiste perche' "Alberi" ed "Erbacce" da soli non dicono quali piante: e' la
  * prima cosa che ci si chiede guardando la sezione.
  */
-enum class TipoPolline(val nome: String, val cosa: String) {
-    ERBA("Erba", "Graminacee: i prati e le erbe dei campi. Tarda primavera ed estate."),
-    ALBERI("Alberi", "Betulla, ontano e olivo. Dalla fine dell'inverno alla primavera."),
-    ERBACCE("Erbacce", "Ambrosia e artemisia, erbe selvatiche di fine estate e autunno."),
+enum class TipoPolline(private val nomeIt: String, private val nomeEn: String, private val cosaIt: String, private val cosaEn: String) {
+    ERBA("Erba", "Grass", "Graminacee: i prati e le erbe dei campi. Tarda primavera ed estate.", "Grasses: lawns and meadows. Late spring and summer."),
+    ALBERI("Alberi", "Trees", "Betulla, ontano e olivo. Dalla fine dell'inverno alla primavera.", "Birch, alder and olive. From late winter into spring."),
+    ERBACCE("Erbacce", "Weeds", "Ambrosia e artemisia, erbe selvatiche di fine estate e autunno.", "Ragweed and mugwort, wild plants of late summer and autumn."),
+    ;
+
+    val nome: String get() = tr(nomeIt, nomeEn)
+    val cosa: String get() = tr(cosaIt, cosaEn)
 }
 
 /**
@@ -53,11 +58,11 @@ enum class SpeciePolline(val campo: String, val tipo: TipoPolline, internal val 
 
 /** Come si dice un livello, da 0 a 4. */
 fun nomeLivelloPolline(livello: Int): String = when (livello) {
-    0 -> "Assente"
-    1 -> "Ridotto"
-    2 -> "Moderato"
-    3 -> "Alto"
-    else -> "Molto alto"
+    0 -> tr("Assente", "None")
+    1 -> tr("Ridotto", "Low")
+    2 -> tr("Moderato", "Moderate")
+    3 -> tr("Alto", "High")
+    else -> tr("Molto alto", "Very high")
 }
 
 /**
