@@ -41,6 +41,26 @@ def azioni(testo):
     return [(r, sub, v) for (r, sub), v in sorted(trovate.items())]
 
 
+def action_yml(repo, sub, ref):
+    """Il testo dell'action.yml a quel riferimento, o None."""
+    for nome in ("action.yml", "action.yaml"):
+        percorso = f"{sub}/{nome}" if sub else nome
+        try:
+            return get(f"https://api.github.com/repos/{repo}/contents/{percorso}?ref={ref}", raw=True)
+        except Exception:
+            continue
+    return None
+
+
+def ingressi_di(repo, sub, ref):
+    """I nomi dei parametri (`inputs:`) che l'azione accetta a quel riferimento."""
+    testo = action_yml(repo, sub, ref) or ""
+    blocco = re.search(r"^inputs:\s*\n((?:[ \t]+.*\n|\s*\n)*)", testo, re.M)
+    if not blocco:
+        return set()
+    return set(re.findall(r"^  ([\w-]+):", blocco.group(1), re.M))
+
+
 def node_di(repo, sub, ref):
     """Il `runs.using` dell'action.yml a quel riferimento."""
     for nome in ("action.yml", "action.yaml"):
@@ -77,6 +97,11 @@ def main():
                 n = node_di(repo, sub, f"v{maggiore}")
                 if n == "node24":
                     nota = f"prima su node24: v{maggiore}"
+                    # **Cosa si perde passando di versione maggiore**: i
+                    # parametri che c'erano e non ci sono piu'. Serve per le
+                    # azioni che da un ramo non si provano (il rilascio).
+                    spariti = ingressi_di(repo, sub, in_uso) - ingressi_di(repo, sub, f"v{maggiore}")
+                    nota += f"; parametri spariti: {', '.join(sorted(spariti)) or 'nessuno'}"
                     break
         righe.append((nome, in_uso, node_uso, ultima, node_di(repo, sub, ultima), nota))
 

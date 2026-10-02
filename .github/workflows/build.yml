@@ -13,6 +13,13 @@ on:
         description: "Genera il baseline profile sull'emulatore"
         type: boolean
         default: false
+      # Per provare un'immagine nuova senza toccare il workflow: il 19 ottobre
+      # 2026 `ubuntu-latest` diventa 26 (CONTESTO §46.2, §48). Vuoto o
+      # assente - cioe' a ogni push - vale `ubuntu-24.04`.
+      runner:
+        description: "Immagine dei runner (es. ubuntu-26.04)"
+        type: string
+        default: "ubuntu-24.04"
 
 concurrency:
   group: build-${{ github.ref }}
@@ -28,7 +35,7 @@ jobs:
   # Indipendente dal build: voglio il contratto reale dell'API anche quando
   # la compilazione fallisce.
   probe-api:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     permissions:
       contents: write
     steps:
@@ -263,7 +270,7 @@ jobs:
   # non deve impedire di avere comunque un APK da installare. Cio' che dicono
   # si legge lo stesso.
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     # Scrittura solo per pubblicare i disegni dei widget su `ci-artifacts`.
     permissions:
       contents: write
@@ -441,7 +448,7 @@ jobs:
           if-no-files-found: warn
 
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     # **Mancava, e non si vedeva.** Gli altri tre job che pubblicano su
     # `ci-artifacts` lo dichiarano; questo no, quindi il suo `GITHUB_TOKEN` era
     # in sola lettura e la `git push` di `publish.sh` veniva respinta. Il passo
@@ -642,7 +649,7 @@ jobs:
   rilascio:
     needs: build
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     permissions:
       contents: write
     steps:
@@ -702,7 +709,7 @@ jobs:
 
   screenshots:
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     timeout-minutes: 30
     permissions:
       contents: write
@@ -771,7 +778,7 @@ jobs:
   # letto.
   profilo:
     if: github.event_name == 'workflow_dispatch' && inputs.profilo
-    runs-on: ubuntu-24.04
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
     timeout-minutes: 50
     # Pubblica su `ci-artifacts/profilo`: e' da li' che il file si legge, anche
     # da dove i log e gli artefatti di GitHub non si raggiungono.

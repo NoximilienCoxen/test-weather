@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.DayForecast
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Wmo
@@ -156,3 +157,30 @@ internal fun DrawScope.dayStrip(
 internal fun DrawScope.dayGlyph(box: Rect, day: DayForecast) {
     glifoNelRiquadro(box, glifoDi(day.weatherCode, day.nuvolositaStimata()))
 }
+
+/**
+ * Il credito delle fonti, nel margine in basso: CONTESTO §47.
+ *
+ * La licenza di Open-Meteo chiede un collegamento "next to any location
+ * Open-Meteo data are displayed", e i widget i dati li mostrano. **Sta nel
+ * margine di 16 punti e non nel riquadro**: cosi' non sposta niente
+ * dell'impaginazione dei tre tagli, che e' stretta e misurata da
+ * `WidgetOverflowTest`. Centrato e non in un angolo, perche' gli angoli del
+ * widget sono arrotondati e lo taglierebbero. Il tocco sul widget apre l'app,
+ * dove il collegamento vero sta sotto la barra delle ore.
+ */
+internal fun DrawScope.creditoFonti(forme: List<String>, type: WidgetType, ink: WidgetInk) {
+    val margine = 16.dp.toPx()
+    val pennello = type.brush(7.5.dp.toPx(), weight = 600, width = 82)
+    val alto = size.height - margine + (margine - lineHeight(pennello)) / 2f
+    // Dalla forma piu' lunga alla piu' corta: si prende la prima che ci sta.
+    // L'ultima e' la piu' corta che dice ancora chi fornisce i dati.
+    val scritta = forme.firstOrNull { type.widthOf(it, pennello) <= size.width - 2f * margine } ?: forme.last()
+    textCentered(scritta, size.width / 2f, alto, pennello, ink.secondary, alpha = 0.75f)
+}
+
+/** Il credito dei widget che mostrano solo dati di Open-Meteo. */
+internal val CREDITO_OPEN_METEO = listOf("Dati Open-Meteo.com", "Open-Meteo.com")
+
+/** Il credito del widget dell'aria: Open-Meteo e i dati CAMS di Copernicus. */
+internal val CREDITO_ARIA = listOf("Open-Meteo.com · CAMS Copernicus", "Open-Meteo · CAMS")
