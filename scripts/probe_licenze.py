@@ -23,6 +23,9 @@ OUT = os.environ.get("OUT", "/tmp/ciout/licenze")
 
 PAGINE = [
     ("open-meteo-licenza", "https://open-meteo.com/en/license"),
+    # Il primo giro: `/en/license` risponde con una pagina vuota (un rimando).
+    # Le condizioni di Open-Meteo scrivono "licence", all'inglese.
+    ("open-meteo-licence", "https://open-meteo.com/en/licence"),
     ("open-meteo-termini", "https://open-meteo.com/en/terms"),
     ("open-meteo-aria", "https://open-meteo.com/en/docs/air-quality-api"),
     ("open-meteo-previsione", "https://open-meteo.com/en/docs"),
@@ -68,11 +71,25 @@ def main():
             continue
         if "pdf" in tipo:
             open(os.path.join(OUT, f"{nome}.pdf"), "wb").write(corpo)
+        rimando = ""
+        if len(corpo) < 2000:
+            # Una pagina cortissima e' quasi sempre un rimando: lo si dice.
+            m = re.search(rb'(?i)(http-equiv="refresh"[^>]*url=|href=")([^"\'> ]+)', corpo)
+            if m:
+                rimando = f"   rimanda a {m.group(2).decode('utf-8', 'replace')}\n"
         testo = testo_di(corpo, tipo)
         open(os.path.join(OUT, f"{nome}.txt"), "w").write(testo + "\n")
         trovate = [r for r in testo.splitlines() if CHIAVI.search(r)][:40]
+        # I collegamenti che parlano di licenza: il testo ridotto li perde, e
+        # sono proprio loro a dire dove stanno le condizioni.
+        if "html" in tipo:
+            for href, etichetta in re.findall(r'(?is)<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', corpo.decode("utf-8", "replace")):
+                etichetta = re.sub(r"<[^>]+>", " ", etichetta).strip()
+                if re.search(r"(?i)licen|terms|attribut", href + " " + etichetta):
+                    trovate.append(f"[link] {etichetta[:80]} -> {href}")
         indice.append(
             f"== {nome}  {url}\n   HTTP {stato}  {tipo}  {len(corpo)} byte\n"
+            + rimando
             + "".join(f"   | {r[:300]}\n" for r in trovate)
         )
     testo_indice = "\n".join(indice)
