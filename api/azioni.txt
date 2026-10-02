@@ -1,9 +1,9 @@
 azione                                  in uso   node     ultima     node     nota
 ----------------------------------------------------------------------------------------
-actions/checkout                        v4       node20   v7.0.1     node24   
-actions/download-artifact               v4       node20   v8.0.1     node24   
+actions/checkout                        v4       node20   v7.0.1     node24   prima su node24: v5
+actions/download-artifact               v4       node20   v8.0.1     node24   prima su node24: v7
 actions/setup-java                      v5       node24   v6.0.1     node24   
-actions/upload-artifact                 v4       node20   v7.0.1     node24   
-gradle/actions/setup-gradle             v4       node20   v6.4.0     node24   
+actions/upload-artifact                 v4       node20   v7.0.1     node24   prima su node24: v6
+gradle/actions/setup-gradle             v4       node20   v6.4.0     node24   prima su node24: v5
 reactivecircus/android-emulator-runner  v2       node24   v2.38.0    node24   
-softprops/action-gh-release             v2       node20   v3.0.3     node24   
+softprops/action-gh-release             v2       node20   v3.0.3     node24   prima su node24: v3
