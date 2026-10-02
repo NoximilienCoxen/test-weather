@@ -150,6 +150,23 @@ fun SalaBollettinoScreen(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
                 )
             }
+
+            // Il credito di chi le dirama, accanto alle allerte: licenza CC BY
+            // 4.0, "Data provided by EUMETNET members" (CONTESTO §47, `Fonti`).
+            Text(
+                text = "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0. " +
+                    "Il titolo di ogni allerta lo compone l'app; descrizione e istruzioni sono quelle dell'ente.",
+                style = SalaType.rowNote,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 2.dp),
+            )
+            Collegamento(
+                "meteoalarm.org",
+                Fonti.METEOALARM,
+                SalaType.rowNote,
+                palette.accent,
+                Modifier.padding(horizontal = 8.dp),
+            )
         }
     }
 }

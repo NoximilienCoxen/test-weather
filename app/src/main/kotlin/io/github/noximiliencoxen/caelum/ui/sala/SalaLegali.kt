@@ -37,12 +37,10 @@ import androidx.compose.ui.unit.dp
  * poco: le coordinate della localita' scelta. Ma "poco" detto da chi scrive il
  * programma non vale niente se chi lo usa non ha modo di leggerlo.
  *
- * **Cosa resta da fare, e non l'ho inventato.** La frase di attribuzione che
- * Open-Meteo richiede e i termini di MeteoAlarm per il riuso dei feed vanno
- * presi **verbatim dalle loro pagine di licenza** e messi nell'ultimo blocco al
- * posto della riga generica che c'e' adesso. Scriverli a memoria in una pagina
- * legale sarebbe esattamente il tipo di errore che questa pagina esiste per
- * evitare.
+ * **L'attribuzione viene dalle pagine delle fonti, non dalla memoria.** Era
+ * rimasta una riga generica finche' le frasi verbatim non si potevano leggere;
+ * le ha scaricate la CI (`scripts/probe_licenze.py`, CONTESTO §47) e stanno in
+ * `Fonti`, da dove le legge anche la riga dei crediti sotto la barra delle ore.
  */
 @Composable
 fun SalaLegaliScreen(
@@ -155,20 +153,46 @@ fun SalaLegaliScreen(
                 )
             }
 
-            // **Questo blocco e' quello da riempire alle fonti.** La frase di
-            // attribuzione che Open-Meteo richiede e i termini di MeteoAlarm per
-            // il riuso dei feed stanno sulle loro pagine di licenza, e vanno
-            // copiati verbatim al posto della riga generica qui sotto. Finche'
-            // non ci sono, la riga dice una cosa vera e non impegna nessuno: che
-            // i dati sono di chi li fornisce e valgono le sue condizioni.
+            // Le fonti, con le parole che chiedono (vedi `Fonti`). Tre licenze,
+            // tre paragrafi: chi fornisce cosa, sotto quale licenza, e cosa
+            // l'app cambia - la CC BY chiede anche di dirlo.
             BloccoImpostazioni(etichetta = "ATTRIBUZIONE", palette = palette) {
                 Paragrafo(
-                    "I dati meteorologici e di qualità dell'aria sono forniti da Open-Meteo; " +
-                        "le allerte ufficiali dai servizi meteorologici nazionali attraverso " +
-                        "MeteoAlarm. L'uso di quei dati è soggetto alle condizioni pubblicate " +
-                        "da chi li fornisce.",
+                    "Previsioni: Open-Meteo.com, che usa i dati aperti dei servizi meteorologici " +
+                        "nazionali (fra cui DWD, ECMWF e, per l'Italia, ItaliaMeteo-ARPAE). " +
+                        "I dati dell'API sono offerti sotto licenza Creative Commons " +
+                        "Attribution 4.0 International (CC BY 4.0).",
                     palette,
                 )
+                Collegamento("Weather data by Open-Meteo.com", Fonti.OPEN_METEO, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+                Collegamento("Licenza e fonti di Open-Meteo", Fonti.OPEN_METEO_LICENZA, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+                Paragrafo(Fonti.CITAZIONE_OPEN_METEO, palette)
+
+                Paragrafo(
+                    "Qualità dell'aria e polline: CAMS European air quality forecasts, ENSEMBLE " +
+                        "data, del Copernicus Atmosphere Monitoring Service, attraverso " +
+                        "Open-Meteo.com. La citazione che chiedono:",
+                    palette,
+                )
+                Paragrafo(Fonti.CITAZIONE_CAMS, palette)
+                Collegamento("I dati CAMS su Open-Meteo", Fonti.CAMS_ARIA, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+
+                Paragrafo(
+                    "Allerte ufficiali: MeteoAlarm, con i dati forniti dai membri di EUMETNET, " +
+                        "sotto licenza CC BY 4.0.",
+                    palette,
+                )
+                Collegamento("meteoalarm.org", Fonti.METEOALARM, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+
+                Paragrafo(
+                    "Cosa cambia l'app: converte unità e ore nel fuso del posto, ricava da questi " +
+                        "dati il cielo disegnato, i testi delle sale e gli avvisi calcolati sulle " +
+                        "soglie, e compone in italiano il titolo di ogni allerta; descrizione e " +
+                        "istruzioni restano quelle pubblicate dall'ente. Nessuna delle fonti " +
+                        "approva o sostiene quest'app.",
+                    palette,
+                )
+                Collegamento("Il testo della licenza CC BY 4.0", Fonti.CC_BY_4, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
             }
         }
     }
