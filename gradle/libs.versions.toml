@@ -1,17 +1,17 @@
 [versions]
 junit = "4.13.2"
 robolectric = "4.16.1"
-agp = "9.4.0"
-kotlin = "2.4.10"
+agp = "9.4.1"
+kotlin = "2.4.20"
 composeBom = "2026.08.00"
-coreKtx = "1.19.0"
+coreKtx = "1.19.1"
 activityCompose = "1.13.0"
 lifecycle = "2.11.0"
 serialization = "1.11.0"
 datastore = "1.2.1"
 glance = "1.2.0"
 # Arriva gia' con Glance; dichiarata perche' la usiamo direttamente (AggiornaWidgetWorker).
-work = "2.10.1"
+work = "2.12.0"
 # Il baseline profile (CONTESTO §45). Versioni lette da `probe_deps.py` in CI
 # il 1° ottobre 2026: da dentro il container Maven non si raggiunge.
 profileinstaller = "1.4.1"
