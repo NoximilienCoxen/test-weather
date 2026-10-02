@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.inInglese
 import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.runtime.Immutable
 import io.github.noximiliencoxen.caelum.data.DayForecast
@@ -55,8 +56,15 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
     return giorni.mapIndexed { i, giorno ->
         GiornoSettimana(
             indice = i,
-            breve = if (i == 0) tr("oggi", "today") else giorno.label.lowercase(),
-            esteso = if (i == 0) tr("oggi", "today") else giorno.date.dayOfWeek.italiano(),
+            // In inglese i giorni hanno la maiuscola: "Sun", non "sun".
+            breve = if (i == 0) {
+                tr("oggi", "Today")
+            } else if (inInglese()) {
+                giorno.label.lowercase().replaceFirstChar { it.uppercase() }
+            } else {
+                giorno.label.lowercase()
+            },
+            esteso = if (i == 0) tr("oggi", "Today") else giorno.date.dayOfWeek.italiano(),
             data = "${giorno.date.dayOfMonth} ${giorno.date.monthValue.meseBreve()}",
             giornoDelMese = giorno.date.dayOfMonth,
             max = giorno.tempMax,
