@@ -664,13 +664,13 @@ jobs:
           cp "$(find apk -name '*.apk' | head -1)" rilascio/weather.apk
           ls -la rilascio
 
-      # **Resta su v2, che e' ancora su Node 20, ed e' una scelta.** La prima su
-      # Node 24 e' la v3 (`probe_azioni.py`, 2 ottobre 2026), ma questo job
-      # gira solo su `main`: un cambio di versione maggiore qui non si prova da
-      # nessun ramo, e l'unica release che le persone installano non e' il
-      # posto dove scoprire che un parametro ha cambiato nome. GitHub intanto
-      # la fa girare su Node 24 e si limita ad avvisare. CONTESTO §46.
-      - uses: softprops/action-gh-release@v2
+      # **v3, la prima su Node 24** (`probe_azioni.py`, 2 ottobre 2026). Questo
+      # job gira solo su `main`, quindi da un ramo non si prova: prima di alzarla
+      # la sonda ha confrontato i parametri di v2 e v3, e nessuno di quelli
+      # usati qui (`tag_name`, `name`, `prerelease`, `files`, `body`) e'
+      # sparito. Il primo rilascio dopo l'unione va guardato: la pagina della
+      # release `apk-latest` deve avere ancora `weather.apk`. CONTESTO §48.
+      - uses: softprops/action-gh-release@v3
         with:
           tag_name: apk-latest
           name: Weather — ultima build
