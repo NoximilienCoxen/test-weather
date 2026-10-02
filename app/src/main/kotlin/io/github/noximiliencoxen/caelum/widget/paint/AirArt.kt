@@ -21,6 +21,7 @@ internal fun DrawScope.airArt(
     val pad = 16.dp.toPx()
     val box = Rect(pad, pad, size.width - pad, size.height - pad)
     val band = air?.band
+    creditoFonti(CREDITO_ARIA, type, ink)
 
     val dotRadius = box.height * 0.055f
     // La larghezza per il nome finisce dove comincia il pallino, con un

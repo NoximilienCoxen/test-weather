@@ -52,6 +52,8 @@ internal fun DrawScope.weekArt(
     )
     text(TITOLO, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
 
+    creditoFonti(CREDITO_OPEN_METEO, type, ink)
+
     val top = box.top + lineHeight(name) * 1.35f
     if (shown.isEmpty()) {
         // Nessun dato: si dice, invece di disegnare colonne vuote che
