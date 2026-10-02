@@ -6691,3 +6691,42 @@ L'avvio a freddo con e senza: installare la build di prima, misurare
 `am start -W` a freddo cinque volte (`TotalTime`), poi questa. Nell'emulatore
 della CI, senza profilo, i primi avvii misuravano 1,4-1,9 s; e' un numero di un
 emulatore, non del telefono, e non e' un confronto.
+
+## 46. La CI su Node 24, il runner fissato, le dipendenze
+
+### 46.1 Le azioni
+
+GitHub avvisava che `checkout@v4`, `upload-artifact@v4`, `setup-gradle@v4`
+(e `download-artifact@v4`, `action-gh-release@v2`) giravano su Node 20,
+deprecato. Le versioni non si scrivono a memoria: `scripts/probe_azioni.py`,
+gemello di `probe_deps.py`, gira nel job `probe-api` e pubblica
+`ci-artifacts/api/azioni.txt` con, per ogni azione del workflow, il Node
+dichiarato e **la prima versione maggiore su Node 24** (non l'ultima: da v4 a
+v8 sarebbero quattro giri di cambiamenti per togliere un avviso).
+
+Il 2 ottobre: checkout v5, upload-artifact v6, download-artifact v7,
+setup-gradle v5. **`softprops/action-gh-release` resta su v2** di proposito:
+gira solo nel job `rilascio`, cioe' solo su `main`, e da nessun ramo si puo'
+provare. Da alzare a v3 con un giro su `main` guardato apposta.
+
+### 46.2 Il runner
+
+Tutti i job su `ubuntu-24.04`. Il 19 ottobre 2026 `ubuntu-latest` diventa
+Ubuntu 26, e SDK dell'immagine ed emulatore sono gia' caduti una volta per un
+cambio d'immagine (17 settembre). Il passaggio a 26 e' un lavoro a parte: un
+giro con `runs-on: ubuntu-26.04` (o com'e' chiamato allora), guardando i passi
+"SDK Android dell'immagine" ed "Emulatore e cattura".
+
+### 46.3 Le dipendenze
+
+In due commit, perche' se qualcosa si muove si sappia di chi e':
+
+- AGP 9.4.1, Kotlin 2.4.20, core-ktx 1.19.1, WorkManager 2.12.0: verde
+  (giro 37010950831). Il baseline profile della release passa da 8,5 a 9,3 KB:
+  con AGP e Kotlin nuovi R8 ne scarta meno.
+- Compose BOM 2026.09.00, Robolectric 4.17: verde (giro 37014012156), prove
+  grafiche comprese. **Gli scatti non sono stati confrontati pixel per pixel**
+  con quelli di prima: la CI dice che si fanno, non che sono uguali.
+
+Il baseline profile non e' stato rigenerato: le regole che non trovano piu' il
+loro metodo si ignorano (§45.2).
