@@ -65,7 +65,20 @@ def main():
             continue
         # La versione in uso e' spesso solo la maggiore ("v4"): il suo Node si
         # legge dal riferimento mobile, che punta all'ultima di quella serie.
-        righe.append((nome, in_uso, node_di(repo, sub, in_uso), ultima, node_di(repo, sub, ultima), ""))
+        node_uso = node_di(repo, sub, in_uso)
+        # **La prima maggiore su Node 24, non l'ultima.** Saltare da v4 a v8
+        # porta dentro quattro giri di cambiamenti; per togliere l'avviso basta
+        # la prima che non e' piu' su Node 20.
+        nota = ""
+        m_uso = re.match(r"v(\d+)$", in_uso)
+        m_ult = re.match(r"v(\d+)", ultima)
+        if node_uso == "node20" and m_uso and m_ult:
+            for maggiore in range(int(m_uso.group(1)) + 1, int(m_ult.group(1)) + 1):
+                n = node_di(repo, sub, f"v{maggiore}")
+                if n == "node24":
+                    nota = f"prima su node24: v{maggiore}"
+                    break
+        righe.append((nome, in_uso, node_uso, ultima, node_di(repo, sub, ultima), nota))
 
     w = max((len(r[0]) for r in righe), default=10)
     linee = [f"{'azione'.ljust(w)}  {'in uso':<8} {'node':<8} {'ultima':<10} {'node':<8} nota", "-" * (w + 50)]
