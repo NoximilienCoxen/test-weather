@@ -1,5 +1,61 @@
 == open-meteo-licenza  https://open-meteo.com/en/license
    HTTP 200  text/html; charset=utf-8  467 byte
+   rimanda a /en/licence
+
+== open-meteo-licence  https://open-meteo.com/en/licence
+   HTTP 200  text/html; charset=utf-8  40129 byte
+   | 🧑‍⚖️ Licence | Open-Meteo.com
+   | Licence
+   | Atmospheric, ensemble and wave forecasts from Deutscher Wetterdienst DWD ( CC-BY Licence )
+   | Atmospheric, ensemble and wave forecasts from European Centre for Medium-Range Weather Forecasts ECMWF ( CC-BY Licence )
+   | Atmospheric, ensemble and wave forecasts from NOAA NCEP ( Licence )
+   | Atmospheric and ensemble forecasts from Canadian Meteorological Centre CMC ( Licence )
+   | Atmospheric and wave forecasts from Météo-France ( Licence )
+   | Atmospheric forecasts from Japan Meteorological Agency JMA ( Licence )
+   | Atmospheric forecasts from Norwegian Meteorological Institute ( CC-BY Licence )
+   | Atmospheric forecasts from Chinese Meteorological Administration CMA ( CC-BY Licence )
+   | Atmospheric forecasts from Australian Bureau of Meteorology BOM ( CC-BY Licence )
+   | Atmospheric forecasts from Royal Netherlands Meteorological Institute KNMI ( CC-BY Licence )
+   | Atmospheric forecasts from Danish Meteorological Institute DMI ( CC-BY Licence )
+   | Atmospheric forecasts from UK Met Office ( CC-BY-SA Licence )
+   | Atmospheric forecasts from ItaliaMeteo-ARPAE ( CC-BY Licence )
+   | Atmospheric forecasts from MeteoSwiss ( CC-BY Licence )
+   | Wave forecasts from Copernicus Marine Service ( Licence )
+   | Weather reanalysis, air quality forecasts and elevation data from Copernicus Climate Change Service C3S ( Licence )
+   | Flood forecasts from Global Flood Awareness System GloFAS ( Licence )
+   | Location database from GeoNames ( CC-BY Licence )
+   | Licence
+   | API data are offered under Attribution 4.0 International (CC BY 4.0)
+   | Attribution: You must give appropriate credit, provide a link to the licence, and
+   | Source code is available on GitHub under the GNU Affero General Public Licence Version 3 AGPLv3 or any later version. You can find the licence here .
+   | Citation
+   | advancements in the field. Citing Open-Meteo not only gives proper credit to the API but also
+   | Citation:
+   | Licence
+   | © 2022-2026 Copyright: Open-Meteo.com
+   | [link] CC-BY Licence -> https://www.ecmwf.int/en/forecasts/datasets/open-data
+   | [link] CC-BY Licence -> https://www.ecmwf.int/en/forecasts/datasets/open-data
+   | [link] Licence -> https://www.weather.gov/disclaimer
+   | [link] Licence -> https://eccc-msc.github.io/open-data/licence/readme_en/
+   | [link] Licence -> https://donneespubliques.meteofrance.fr/?fond=dossier&amp;id_dossier=1
+   | [link] Licence -> https://www.jma.go.jp/jma/en/copyright.html
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY-SA Licence -> https://creativecommons.org/licenses/by-sa/4.0/deed.en
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] Licence -> https://marine.copernicus.eu/user-corner/service-commitments-and-licence
+   | [link] Licence -> https://object-store.os-api.cci2.ecmwf.int/cci2-prod-catalogue/licenses/licence-to-use-copernicus-products/licence-to-use-copernicus-products_b4b9451f54cffa16ecef5c912c9cebd6979925a956e3fa677976e0cf198c2c18.pdf
+   | [link] Licence -> https://object-store.os-api.cci2.ecmwf.int/cci2-prod-catalogue/licenses/cems-floods/cems-floods_428a6e1019ec50b3dad9c37a90d630fab139059933a939dd5df620bfcb420cc3.pdf
+   | [link] CC-BY Licence -> https://creativecommons.org/licenses/by/4.0/
+   | [link] SIL OFL 1.1 -> https://openfontlicense.org/
+   | [link] Attribution 4.0 International (CC BY 4.0) -> https://creativecommons.org/licenses/by/4.0/
+   | [link] find the licence here -> https://github.com/open-meteo/open-meteo/blob/main/LICENSE
+   | [link] Licence -> /en/licence
+   | [link] Terms &amp; Privacy -> /en/terms
 
 == open-meteo-termini  https://open-meteo.com/en/terms
    HTTP 200  text/html; charset=utf-8  37904 byte
@@ -16,6 +72,13 @@
    | Billing information, including your credit card details, billing address, and payment
    | Licence
    | © 2022-2026 Copyright: Open-Meteo.com
+   | [link] Terms of Use -> #terms
+   | [link] licence conditions -> /en/licence
+   | [link] licence conditions -> /en/licence
+   | [link] GitHub -> https://github.com/open-meteo/open-meteo-website/commits/main/src/routes/en/terms/%2Bpage.svelte
+   | [link] GitHub -> https://github.com/open-meteo/open-meteo-website/commits/main/src/routes/en/terms/%2Bpage.svelte
+   | [link] Licence -> /en/licence
+   | [link] Terms &amp; Privacy -> /en/terms
 
 == open-meteo-aria  https://open-meteo.com/en/docs/air-quality-api
    HTTP 200  text/html; charset=utf-8  211665 byte
@@ -25,12 +88,16 @@
    | All users of Open-Meteo data must provide a clear attribution to CAMS ENSEMBLE data provider as well as a reference to Open-Meteo.
    | Licence
    | © 2022-2026 Copyright: Open-Meteo.com
+   | [link] Licence -> /en/licence
+   | [link] Terms &amp; Privacy -> /en/terms
 
 == open-meteo-previsione  https://open-meteo.com/en/docs
    HTTP 200  text/html; charset=utf-8  532533 byte
    | Usage licence:
    | Licence
    | © 2022-2026 Copyright: Open-Meteo.com
+   | [link] Licence -> /en/licence
+   | [link] Terms &amp; Privacy -> /en/terms
 
 == cams-licenza  https://ads.atmosphere.copernicus.eu/cdsapp/#!/terms/licence-to-use-copernicus-products
    ERRORE: HTTP Error 404: Not Found
@@ -50,4 +117,5 @@
 == meteoalarm-feed  https://feeds.meteoalarm.org/
    HTTP 200  text/html; charset=utf-8  53315 byte
    | License (CC BY 4.0)
+   | [link] License (CC BY 4.0) -> https://creativecommons.org/licenses/by/4.0/
 
