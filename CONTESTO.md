@@ -6792,3 +6792,50 @@ d'apertura (nave contro montagna), l'aria non ancora arrivata al primo giro,
 l'ora reale passata dalle 15 alle 16 (e con lei vento, UV e la pastiglia
 "torna all'ora attuale"), la forma di una nuvola. Testi, impaginazione e
 disegni identici.
+
+## 48. Il credito nei widget, Ubuntu 26 provato, action-gh-release v3
+
+### 48.1 I widget
+
+Meteo, Settimana e Aria scrivono il credito delle fonti nel **margine di 16
+punti in basso**, centrato (`creditoFonti` in `WidgetParts.kt`): "Dati
+Open-Meteo.com", e per l'aria "Open-Meteo.com · CAMS Copernicus". Nel margine
+perche' l'impaginazione dei tre tagli non si sposta di un punto; centrato
+perche' gli angoli del widget sono arrotondati. Se non ci sta si usa una forma
+piu' corta che nomina ancora la fonte ("Open-Meteo · CAMS" per l'aria).
+`WidgetOverflowTest` lo misura come ogni altra scritta, e i render in
+`ci-artifacts/widget-renders` lo mostrano (giro 37038620830). La Luna non lo
+scrive: la fase e' astronomia calcolata qui, non un dato di Open-Meteo.
+
+### 48.2 Ubuntu 26, provato prima del 19 ottobre
+
+`workflow_dispatch` accetta `runner` (di serie `ubuntu-24.04`, anche a ogni
+push). Il 2 ottobre l'etichetta `ubuntu-26.04` esisteva gia', e il giro
+37041436318 e' verde su tutta la linea: SDK dell'immagine, `sdkmanager`,
+compilazione, prove, sonde, emulatore e tutti gli scatti. I job restano
+fissati a `ubuntu-24.04`: passare a 26 e' cambiare il valore di ripiego in
+`runs-on`, con la prova gia' fatta. Prima di farlo, ripeterla.
+
+### 48.3 action-gh-release v3
+
+`probe_azioni.py` adesso dice anche quali parametri spariscono passando alla
+prima versione su Node 24. Per `action-gh-release` da v2 a v3: nessuno, e
+quelli usati (`tag_name`, `name`, `prerelease`, `files`, `body`) ci sono
+tutti. Alzata a v3 senza averla vista girare, perche' gira solo su `main`:
+**il primo rilascio dopo l'unione va guardato**, la release `apk-latest` deve
+avere ancora `weather.apk` e il testo d'installazione.
+
+### 48.4 Cosa resta
+
+- **Le altre lingue.** Piu' di 500 frasi, quasi tutte nelle sale (313 in
+  `ui/sala`, 102 in `ui/sala/rooms`), poi dati (49), notifiche (20), widget,
+  benvenuto, configurazione dei widget. Tradurne una parte peggiora l'app
+  (notifiche in inglese sopra sale in italiano): va fatta per intero, con le
+  risorse Android (`values/strings.xml` + `values-en/`), in passi per
+  superficie ma pubblicata insieme. Piano proposto: prima l'estrazione in
+  italiano senza cambiare un pixel (gli scatti lo dimostrano col confronto di
+  §47.3), poi l'inglese, poi la prova con la lingua del telefono cambiata.
+- **Il profilo d'avvio** (ordine del dex): dopo aver misurato in mano che il
+  baseline profile aiuta (§45.4).
+- **Cipresso e urticacee nel polline**: servirebbe un'altra fonte (§33).
+- **Le prove in mano** elencate nella PR #33.
