@@ -241,6 +241,12 @@ jobs:
       # su quale Node gira. GitHub ha cominciato ad avvisare che alcune sono
       # ancora su Node 20 (CONTESTO §46), e i loro repository da dentro il
       # container non si leggono.
+      # Le pagine di licenza delle fonti, per copiare verbatim le frasi di
+      # attribuzione nelle note legali (CONTESTO §47).
+      - name: Le licenze delle fonti
+        continue-on-error: true
+        run: OUT=/tmp/ciout/licenze python3 scripts/probe_licenze.py
+
       - name: Quali versioni delle azioni
         continue-on-error: true
         env:
