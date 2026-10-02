@@ -18,11 +18,17 @@ concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
 
+# **I runner sono fissati a `ubuntu-24.04`, non `ubuntu-latest`.** Dal 19
+# ottobre 2026 `latest` diventa Ubuntu 26, e le due cose che questo workflow
+# prende dall'immagine - l'SDK Android e l'emulatore - sono gia' cadute una
+# volta per un cambio d'immagine (il 17 settembre, vedi il passo "SDK Android
+# dell'immagine"). Il passaggio a 26 si fa apposta, con un giro dedicato, non
+# come effetto collaterale di una data. CONTESTO §46.
 jobs:
   # Indipendente dal build: voglio il contratto reale dell'API anche quando
   # la compilazione fallisce.
   probe-api:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -231,6 +237,16 @@ jobs:
         continue-on-error: true
         run: OUT=/tmp/ciout/dipendenze.txt python3 scripts/probe_deps.py
 
+      # Lo stesso, per le azioni di questo workflow: quale versione esiste e
+      # su quale Node gira. GitHub ha cominciato ad avvisare che alcune sono
+      # ancora su Node 20 (CONTESTO §46), e i loro repository da dentro il
+      # container non si leggono.
+      - name: Quali versioni delle azioni
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: OUT=/tmp/ciout/azioni.txt python3 scripts/probe_azioni.py
+
       - name: Pubblica
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -241,7 +257,7 @@ jobs:
   # non deve impedire di avere comunque un APK da installare. Cio' che dicono
   # si legge lo stesso.
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Scrittura solo per pubblicare i disegni dei widget su `ci-artifacts`.
     permissions:
       contents: write
@@ -419,7 +435,7 @@ jobs:
           if-no-files-found: warn
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # **Mancava, e non si vedeva.** Gli altri tre job che pubblicano su
     # `ci-artifacts` lo dichiarano; questo no, quindi il suo `GITHUB_TOKEN` era
     # in sola lettura e la `git push` di `publish.sh` veniva respinta. Il passo
@@ -620,7 +636,7 @@ jobs:
   rilascio:
     needs: build
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -674,7 +690,7 @@ jobs:
 
   screenshots:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
       contents: write
@@ -743,7 +759,7 @@ jobs:
   # letto.
   profilo:
     if: github.event_name == 'workflow_dispatch' && inputs.profilo
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 50
     # Pubblica su `ci-artifacts/profilo`: e' da li' che il file si legge, anche
     # da dove i log e gli artefatti di GitHub non si raggiungono.
