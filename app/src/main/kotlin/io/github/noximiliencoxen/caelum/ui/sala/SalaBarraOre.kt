@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -137,11 +138,11 @@ fun BarraDelleOre(
                             style = Stroke(width = 2.dp.toPx()),
                         )
                     }
-                    Text(text = "TORNA ALL'ORA ATTUALE", style = SalaType.sectionLabel, color = palette.accentInk)
+                    Text(text = tr("TORNA ALL'ORA ATTUALE", "BACK TO NOW"), style = SalaType.sectionLabel, color = palette.accentInk)
                 }
             } else {
                 Text(
-                    text = "TRASCINA PER CAMBIARE ORA",
+                    text = tr("TRASCINA PER CAMBIARE ORA", "DRAG TO CHANGE THE HOUR"),
                     style = SalaType.sectionLabel,
                     // Questa riga **non sta su un pannello**: sta sulle
                     // colline, cioe' su un fondo che cambia con l'ora e che a
@@ -202,7 +203,7 @@ fun BarraDelleOre(
                 // per scalino - la stessa strada di `scegli`, colpetto escluso:
                 // la vibrazione segue il dito, non il lettore.
                 .semantics {
-                    contentDescription = "Ora mostrata"
+                    contentDescription = tr("Ora mostrata", "Hour shown")
                     stateDescription = "${oraPiena(ora)}, $giorno"
                     progressBarRangeInfo = ProgressBarRangeInfo(ora.toFloat(), 0f..(ORE - 1).toFloat(), steps = ORE - 2)
                     if (attiva) {

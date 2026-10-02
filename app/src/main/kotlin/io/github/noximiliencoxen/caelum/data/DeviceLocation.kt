@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import android.annotation.SuppressLint
@@ -16,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import java.util.Locale
 import kotlin.coroutines.resume
 
 /**
@@ -143,7 +143,7 @@ object DeviceLocation {
 
         val address = runCatching {
             @Suppress("DEPRECATION")
-            Geocoder(context, Locale.ITALIAN)
+            Geocoder(context, Lingue.locale)
                 .getFromLocation(fix.latitude, fix.longitude, 1)
                 ?.firstOrNull()
         }.getOrNull()

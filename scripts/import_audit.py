@@ -67,11 +67,18 @@ def pulisci(testo):
     righe = [r for r in testo.splitlines() if not r.startswith("import ")]
     t = "\n".join(righe)
     t = re.sub(r"/\*(?:.|\n)*?\*/", " ", t)
-    t = re.sub(r"//[^\n]*", " ", t)
+    # **I commenti di riga si tolgono qui, fuori dalle stringhe**, non con una
+    # regolare: `"https://..."` ha un `//` dentro, e tagliarlo lasciava la
+    # stringa aperta fino alla prossima virgoletta - un import usato tre righe
+    # sotto risultava morto.
 
     fuori = []
     i, n = 0, len(t)
     while i < n:
+        if t.startswith("//", i):
+            fine = t.find("\n", i)
+            i = n if fine < 0 else fine
+            continue
         tripla = t.startswith('"""', i)
         if not tripla and t[i] != '"':
             fuori.append(t[i]); i += 1; continue

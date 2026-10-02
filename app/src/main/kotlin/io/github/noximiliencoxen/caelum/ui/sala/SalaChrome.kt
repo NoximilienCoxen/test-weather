@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -297,7 +298,7 @@ fun RowScope.CellaValore(
 @Composable
 fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
     Text(
-        text = "Per questo giorno la previsione dà i totali, non le ore.",
+        text = tr("Per questo giorno la previsione dà i totali, non le ore.", "For this day the forecast gives totals, not hours."),
         style = SalaType.footnote,
         color = palette.inkFaint,
         modifier = modifier,
@@ -549,8 +550,8 @@ fun IntestazioneCaelum(
                 // Due cursori disegnati: senza un nome, per TalkBack era solo
                 // "pulsante", e il comando piu' importante dopo le sale non si
                 // trovava.
-                .semantics { contentDescription = "Impostazioni" }
-                .clickable(onClickLabel = "apri le impostazioni", onClick = onImpostazioni),
+                .semantics { contentDescription = tr("Impostazioni", "Settings") }
+                .clickable(onClickLabel = tr("apri le impostazioni", "open settings"), onClick = onImpostazioni),
             contentAlignment = Alignment.CenterStart,
         ) {
             DueCursori(palette.ink)
@@ -561,7 +562,7 @@ fun IntestazioneCaelum(
             color = palette.ink,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).clickable(onClickLabel = "cambia località", onClick = onCitta),
+            modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place"), onClick = onCitta),
         )
         PastigliaAvviso(avvisi, palette, onAvvisi)
     }
@@ -608,9 +609,11 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, on
     // sulle soglie dei dati dice "avviso": e' la stessa regola per cui
     // `badgeLabel` non scrive mai "allerta gialla" su una soglia nostra.
     val testo = when {
-        peggiore == null -> "NESSUN AVVISO"
-        peggiore.official -> "ALLERTA ${peggiore.kind.label}"
-        else -> "AVVISO ${peggiore.kind.label}"
+        peggiore == null -> tr("NESSUN AVVISO", "NO WARNINGS")
+        // In inglese "warning" resta agli enti, come "allerta" in italiano;
+        // gli avvisi calcolati sono "notice" (CONTESTO §8-ter, §49).
+        peggiore.official -> tr("ALLERTA ${peggiore.kind.label}", "${peggiore.kind.label} WARNING")
+        else -> tr("AVVISO ${peggiore.kind.label}", "${peggiore.kind.label} NOTICE")
     }
     val acceso = peggiore != null
     val fondo = if (acceso) {
@@ -633,7 +636,7 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, on
             .minimumInteractiveComponentSize()
             .clip(CircleShape)
             .background(fondo)
-            .clickable(onClickLabel = "apri il bollettino degli avvisi", onClick = onClick)
+            .clickable(onClickLabel = tr("apri il bollettino degli avvisi", "open the warnings bulletin"), onClick = onClick)
             .padding(horizontal = 13.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),

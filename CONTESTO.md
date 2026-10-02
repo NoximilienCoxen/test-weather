@@ -6827,7 +6827,7 @@ avere ancora `weather.apk` e il testo d'installazione.
 
 ### 48.4 Cosa resta
 
-- **Le altre lingue.** Piu' di 500 frasi, quasi tutte nelle sale (313 in
+- **Le altre lingue** (fatto l'inglese, §49). Piu' di 500 frasi, quasi tutte nelle sale (313 in
   `ui/sala`, 102 in `ui/sala/rooms`), poi dati (49), notifiche (20), widget,
   benvenuto, configurazione dei widget. Tradurne una parte peggiora l'app
   (notifiche in inglese sopra sale in italiano): va fatta per intero, con le
@@ -6839,3 +6839,56 @@ avere ancora `weather.apk` e il testo d'installazione.
   baseline profile aiuta (§45.4).
 - **Cipresso e urticacee nel polline**: servirebbe un'altra fonte (§33).
 - **Le prove in mano** elencate nella PR #33.
+
+## 49. L'inglese
+
+### 49.1 Come: `tr(italiano, inglese)`, non le risorse Android
+
+Il piano di §48.4 diceva `strings.xml`. Letto il codice, no: le frasi stanno in
+funzioni pure (`Wmo`, `DerivedAlerts`, i testi delle sale), nei widget Glance,
+nei worker delle notifiche e nelle prove JVM, quasi mai dove c'e' un `Context`
+a portata di mano, e molte sono composte con numeri e nomi in mezzo. Passarle
+tutte da `getString` voleva dire far viaggiare un `Context` fin dentro
+`Wmo.condition`. Invece c'e' `lingua/Lingua.kt`:
+
+- `tr("italiano", "inglese")` restituisce una delle due. **L'italiano e' la
+  stringa di prima, carattere per carattere**: gli scatti italiani non devono
+  cambiare di un pixel, ed e' la prova che l'estrazione non ha rotto niente.
+- Le `enum` con un'etichetta hanno `ita`/`eng` privati e `label` calcolata;
+  le `const val` e le mappe sono diventate proprieta' con `get()`, perche' la
+  lingua si legge ogni volta e non una volta al caricamento della classe.
+- `Lingue.locale` (`Locale.ITALY` o `Locale.UK`) per i decimali: virgola in
+  italiano, punto in inglese. Gli orari `%02d:%02d` non dipendono dalla lingua
+  e sono rimasti com'erano.
+- I nomi delle localita' arrivano dalla geocodifica in `language=it` o `en`.
+- Le citazioni delle fonti (`Fonti.CITAZIONE_*`) restano come le chiedono le
+  fonti, in inglese anche nell'app italiana.
+
+### 49.2 Quale lingua
+
+`Lingue.corrente`: se la scelta e' **Automatica** (di serie), italiano quando
+il telefono e' in italiano e inglese altrimenti - per un tedesco l'inglese e'
+piu' probabile dell'italiano. Nelle impostazioni, gruppo Aspetto, la voce
+**Lingua** (Automatica / Italiano / English) la fissa; la scelta sta in
+`SharedPreferences` (`lingua`), si legge in `CaelumApp.onCreate` e cambiarla
+rifa' l'attivita' e chiede un ridisegno dei widget. La lingua non e' uno stato
+di Compose, ed e' voluto: la leggono anche widget e notifiche.
+
+### 49.3 Le prove e la cattura
+
+- Le prove JVM girano con `user.language=it` (`app/build.gradle.kts`) e
+  Robolectric con `qualifiers=it-rIT`: le centinaia di asserzioni sui testi
+  italiani restano vere su qualunque macchina. `LinguaTest` forza l'inglese
+  con `Lingue.forzata` e controlla tempo, vento, allerte, notifiche, unita'.
+- L'emulatore della CI e' in inglese: `capture.sh` passa `--es lingua it` a
+  ogni avvio (aggancio solo in debug), cosi' la galleria resta italiana e si
+  confronta col giro precedente (`scripts/confronta_scatti.py`).
+- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese.
+
+### 49.4 Note, e cosa resta
+
+- La **voce Lingua** sposta in giu' di una riga il resto delle impostazioni:
+  e' l'unico scatto italiano che cambia, e cambia per questo.
+- La prova in mano col telefono in inglese, e con la voce cambiata a mano.
+- Descrizione e istruzioni delle allerte: il blocco CAP nella lingua dell'app
+  quando l'ente lo manda, altrimenti il primo (`parseDetail`).

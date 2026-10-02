@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -84,9 +85,9 @@ fun SalaBollettinoScreen(
     val ufficiali = avvisi.any { it.official }
     val calcolati = avvisi.any { !it.official }
     val titolo = when {
-        ufficiali && calcolati -> "Allerte e avvisi"
-        ufficiali -> "Le allerte"
-        else -> "Gli avvisi"
+        ufficiali && calcolati -> tr("Allerte e avvisi", "Warnings and notices")
+        ufficiali -> tr("Le allerte", "Warnings")
+        else -> tr("Gli avvisi", "Notices")
     }
 
     Column(
@@ -100,8 +101,8 @@ fun SalaBollettinoScreen(
         Text(
             text = when (avvisi.size) {
                 0 -> luogo
-                1 -> "$luogo · un avviso"
-                else -> "$luogo · ${avvisi.size} avvisi"
+                1 -> tr("$luogo · un avviso", "$luogo · one notice")
+                else -> tr("$luogo · ${avvisi.size} avvisi", "$luogo · ${avvisi.size} notices")
             },
             style = SalaType.rowNote,
             color = palette.inkSoft,
@@ -116,17 +117,25 @@ fun SalaBollettinoScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (ordinati.isEmpty()) {
-                BloccoImpostazioni(etichetta = "NESSUN AVVISO", palette = palette) {
+                BloccoImpostazioni(etichetta = tr("NESSUN AVVISO", "NO WARNINGS"), palette = palette) {
                     Text(
-                        text = "Per $luogo non è arrivata nessuna allerta ufficiale, e la previsione " +
-                            "di oggi e domani non supera nessuna delle soglie che l'app controlla.",
+                        text = tr(
+                            "Per $luogo non è arrivata nessuna allerta ufficiale, e la previsione " +
+                                "di oggi e domani non supera nessuna delle soglie che l'app controlla.",
+                            "No official warning has been issued for $luogo, and today's and tomorrow's " +
+                                "forecast stays below every threshold the app checks.",
+                        ),
                         style = SalaType.body,
                         color = palette.inkSoft,
                     )
                     if (senzaRete) {
                         Text(
-                            text = "Adesso però la rete manca: le allerte ufficiali non si possono " +
-                                "controllare finché non torna.",
+                            text = tr(
+                                "Adesso però la rete manca: le allerte ufficiali non si possono " +
+                                    "controllare finché non torna.",
+                                "But there is no connection right now: official warnings can't be " +
+                                    "checked until it comes back.",
+                            ),
                             style = SalaType.body,
                             color = palette.accent,
                             modifier = Modifier.padding(top = 8.dp),
@@ -141,10 +150,16 @@ fun SalaBollettinoScreen(
             // sotto ogni scheda diventerebbe rumore.
             if (ordinati.isNotEmpty()) {
                 Text(
-                    text = "ALLERTA vuol dire che l'ha diramata un ente, attraverso MeteoAlarm. " +
-                        "SOGLIA SUPERATA vuol dire che l'ha calcolata l'app confrontando la " +
-                        "previsione con delle soglie: non è un'allerta ufficiale e non sostituisce " +
-                        "un bollettino.",
+                    text = tr(
+                        "ALLERTA vuol dire che l'ha diramata un ente, attraverso MeteoAlarm. " +
+                            "SOGLIA SUPERATA vuol dire che l'ha calcolata l'app confrontando la " +
+                            "previsione con delle soglie: non è un'allerta ufficiale e non sostituisce " +
+                            "un bollettino.",
+                        "WARNING means an authority issued it, through MeteoAlarm. " +
+                            "THRESHOLD EXCEEDED means the app calculated it by comparing the " +
+                            "forecast with thresholds: it is not an official warning and does not " +
+                            "replace a bulletin.",
+                    ),
                     style = SalaType.rowNote,
                     color = palette.inkFaint,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
@@ -154,8 +169,12 @@ fun SalaBollettinoScreen(
             // Il credito di chi le dirama, accanto alle allerte: licenza CC BY
             // 4.0, "Data provided by EUMETNET members" (CONTESTO §47, `Fonti`).
             Text(
-                text = "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0. " +
-                    "Il titolo di ogni allerta lo compone l'app; descrizione e istruzioni sono quelle dell'ente.",
+                text = tr(
+                    "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0. " +
+                        "Il titolo di ogni allerta lo compone l'app; descrizione e istruzioni sono quelle dell'ente.",
+                    "Official warnings: MeteoAlarm, data provided by EUMETNET members, CC BY 4.0 licence. " +
+                        "The app writes the title of each warning; description and instructions are the authority's own.",
+                ),
                 style = SalaType.rowNote,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 2.dp),
@@ -185,7 +204,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
             SegnoAvviso(avviso, palette)
             EtichettaLivello(avviso, palette)
             if (inCorso(avviso, adesso)) {
-                Text(text = "IN CORSO", style = SalaType.sectionLabel, color = palette.accent, maxLines = 1)
+                Text(text = tr("IN CORSO", "IN FORCE"), style = SalaType.sectionLabel, color = palette.accent, maxLines = 1)
             }
         }
         Text(
@@ -205,7 +224,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         if (avviso.official) {
             avviso.areaDesc?.takeIf { it.isNotBlank() }?.let { zona ->
                 Text(
-                    text = "Zona: $zona",
+                    text = tr("Zona: $zona", "Area: $zona"),
                     style = SalaType.rowNote,
                     color = palette.inkSoft,
                     modifier = Modifier.padding(top = 2.dp),
@@ -222,7 +241,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         }
         avviso.instruction?.takeIf { it.isNotBlank() }?.let { testo ->
             Text(
-                text = "COSA FARE",
+                text = tr("COSA FARE", "WHAT TO DO"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 14.dp),
@@ -236,9 +255,9 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         }
         Text(
             text = if (avviso.official) {
-                "Fonte: ${avviso.source}"
+                tr("Fonte: ${avviso.source}", "Source: ${avviso.source}")
             } else {
-                "Calcolato dall'app sui dati Open-Meteo: non è un'allerta ufficiale."
+                tr("Calcolato dall'app sui dati Open-Meteo: non è un'allerta ufficiale.", "Calculated by the app from Open-Meteo data: not an official warning.")
             },
             style = SalaType.rowNote,
             color = palette.inkFaint,
@@ -323,8 +342,8 @@ internal fun finestra(avviso: WeatherAlert, oggi: LocalDate): String {
     val inizio = avviso.onset
     val fine = avviso.expires
     fun giorno(d: LocalDate): String = when (d) {
-        oggi -> "oggi"
-        oggi.plusDays(1) -> "domani"
+        oggi -> tr("oggi", "today")
+        oggi.plusDays(1) -> tr("domani", "tomorrow")
         else -> "${d.dayOfWeek.italiano()} ${d.dayOfMonth}"
     }
     fun ora(t: LocalDateTime): String = String.format(Locale.ITALY, "%02d:%02d", t.hour, t.minute)
@@ -333,13 +352,17 @@ internal fun finestra(avviso: WeatherAlert, oggi: LocalDate): String {
     if (inizio != null && fine != null && inizio.toLocalDate() == fine.toLocalDate()) {
         val tuttoIlGiorno = inizio.toLocalTime() == LocalTime.MIDNIGHT && !fine.toLocalTime().isBefore(LocalTime.of(23, 59))
         val quale = maiuscola(giorno(inizio.toLocalDate()))
-        return if (tuttoIlGiorno) "$quale, per tutta la giornata" else "$quale, dalle ${ora(inizio)} alle ${ora(fine)}"
+        return if (tuttoIlGiorno) tr("$quale, per tutta la giornata", "$quale, all day")
+        else tr("$quale, dalle ${ora(inizio)} alle ${ora(fine)}", "$quale, from ${ora(inizio)} to ${ora(fine)}")
     }
     return when {
         inizio != null && fine != null ->
-            "Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())} alle ${ora(fine)} di ${giorno(fine.toLocalDate())}"
-        fine != null -> "Fino alle ${ora(fine)} di ${giorno(fine.toLocalDate())}"
-        inizio != null -> "Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())}"
-        else -> "La fonte non dice fino a quando vale"
+            tr(
+                "Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())} alle ${ora(fine)} di ${giorno(fine.toLocalDate())}",
+                "From ${ora(inizio)} ${giorno(inizio.toLocalDate())} to ${ora(fine)} ${giorno(fine.toLocalDate())}",
+            )
+        fine != null -> tr("Fino alle ${ora(fine)} di ${giorno(fine.toLocalDate())}", "Until ${ora(fine)} ${giorno(fine.toLocalDate())}")
+        inizio != null -> tr("Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())}", "From ${ora(inizio)} ${giorno(inizio.toLocalDate())}")
+        else -> tr("La fonte non dice fino a quando vale", "The source doesn't say how long it lasts")
     }
 }

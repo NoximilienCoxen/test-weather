@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.prefs
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
@@ -44,11 +45,13 @@ enum class TempUnit(val symbol: String) {
 enum class CardTheme { AUTO, CHIARO, SCURO }
 
 /** L'unita' di velocita' del vento mostrata in Sala VI. */
-enum class SalaWindUnit(val label: String) {
-    KMH("km/h"),
-    MS("m/s"),
-    KN("nodi"),
+enum class SalaWindUnit(private val ita: String, private val eng: String) {
+    KMH("km/h", "km/h"),
+    MS("m/s", "m/s"),
+    KN("nodi", "kn"),
     ;
+
+    val label: String get() = tr(ita, eng)
 
     /** Da metri al secondo, che e' l'unita' in cui viaggia il dato. */
     fun from(metresPerSecond: Double): Double = when (this) {

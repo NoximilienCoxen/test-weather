@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.Lingua
+import io.github.noximiliencoxen.caelum.lingua.Lingue
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -203,5 +205,22 @@ class ParseFeedTest {
         val d = parseDetail(cap(info(null, "Vento forte", "Fissare gli oggetti")))
         assertEquals("Vento forte", d.description)
         assertEquals("Fissare gli oggetti", d.instruction)
+    }
+
+    @Test
+    fun `con l'app in inglese vince il blocco inglese`() {
+        Lingue.forzata = Lingua.INGLESE
+        try {
+            val d = parseDetail(
+                cap(
+                    info("it-IT", "Temporali attesi", "Restare al chiuso"),
+                    info("en-GB", "Thunderstorms expected", "Stay indoors"),
+                ),
+            )
+            assertEquals("Thunderstorms expected", d.description)
+            assertEquals("Stay indoors", d.instruction)
+        } finally {
+            Lingue.forzata = null
+        }
     }
 }
