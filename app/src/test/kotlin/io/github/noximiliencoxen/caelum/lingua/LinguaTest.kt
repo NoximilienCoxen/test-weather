@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.lingua
 
+import io.github.noximiliencoxen.caelum.ui.scene.Scena
+import io.github.noximiliencoxen.caelum.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelum.data.AlertKind
 import io.github.noximiliencoxen.caelum.data.AlertLevel
 import io.github.noximiliencoxen.caelum.data.PrecipitazioneInArrivo
@@ -75,5 +77,15 @@ class LinguaTest {
         val (titoloA, testoA) = testiAllerta("Forlì", allerta, adesso)
         assertEquals("Orange warning for Forlì: thunderstorms", titoloA)
         assertTrue(testoA, testoA.startsWith("In force until 22:05 today."))
+    }
+
+    @Test
+    fun `l'unita' del vento e le scene cambiano nome, l'italiano resta com'era`() {
+        assertEquals("nodi", SalaWindUnit.KN.label)
+        assertEquals("Sole e mare", Scena.MARE.nome)
+        Lingue.forzata = Lingua.INGLESE
+        assertEquals("kn", SalaWindUnit.KN.label)
+        assertEquals("km/h", SalaWindUnit.KMH.label)
+        assertEquals("Sun and sea", Scena.MARE.nome)
     }
 }

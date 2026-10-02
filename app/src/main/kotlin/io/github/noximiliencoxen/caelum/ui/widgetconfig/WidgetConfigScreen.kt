@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.widgetconfig
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -209,16 +210,16 @@ fun WidgetConfigScreen(
             if (showLocation) {
                 Column {
                     Text(
-                        text = "DA DOVE PRENDERE I DATI",
+                        text = tr("DA DOVE PRENDERE I DATI", "WHERE TO TAKE THE DATA FROM"),
                         style = SalaType.sectionLabel,
                         color = palette.inkFaint,
                         modifier = Modifier.padding(start = 20.dp, bottom = 8.dp),
                     )
                     SceltaSegmentata(
                         voci = listOf(
-                            LocationSource.GPS to "Posizione",
-                            LocationSource.FAVORITES to "Salvate",
-                            LocationSource.SEARCH to "Cerca",
+                            LocationSource.GPS to tr("Posizione", "Location"),
+                            LocationSource.FAVORITES to tr("Salvate", "Saved"),
+                            LocationSource.SEARCH to tr("Cerca", "Search"),
                         ),
                         scelta = source,
                         palette = palette,
@@ -231,13 +232,13 @@ fun WidgetConfigScreen(
                 }
 
                 when (source) {
-                    LocationSource.GPS -> GruppoImpostazioni(titolo = "POSIZIONE", palette = palette) {
+                    LocationSource.GPS -> GruppoImpostazioni(titolo = tr("POSIZIONE", "LOCATION"), palette = palette) {
                         VoceImpostazione(
-                            titolo = "Dove si trova il telefono",
+                            titolo = tr("Dove si trova il telefono", "Where the phone is"),
                             nota = if (locationGranted) {
-                                "il widget segue la posizione a ogni aggiornamento"
+                                tr("il widget segue la posizione a ogni aggiornamento", "the widget follows your location at every update")
                             } else {
-                                "serve il permesso di posizione approssimata"
+                                tr("serve il permesso di posizione approssimata", "needs the approximate location permission")
                             },
                             palette = palette,
                             onClick = if (locationGranted) {
@@ -249,7 +250,7 @@ fun WidgetConfigScreen(
                                 if (locationGranted) {
                                     Spunta(scelta = true, palette = palette)
                                 } else {
-                                    PastigliaAzione("Consenti", palette)
+                                    PastigliaAzione(tr("Consenti", "Allow"), palette)
                                 }
                             },
                         )
@@ -257,11 +258,11 @@ fun WidgetConfigScreen(
 
                     LocationSource.FAVORITES -> if (favorites.isEmpty()) {
                         Nota(
-                            "Nessuna località salvata. Aggiungile dall'app, in Impostazioni › Località.",
+                            tr("Nessuna località salvata. Aggiungile dall'app, in Impostazioni › Località.", "No saved places. Add them in the app, under Settings › Place."),
                             palette,
                         )
                     } else {
-                        GruppoImpostazioni(titolo = "LOCALITÀ SALVATE", palette = palette) {
+                        GruppoImpostazioni(titolo = tr("LOCALITÀ SALVATE", "SAVED PLACES"), palette = palette) {
                             ElencoPosti(favorites, selectedPlace, palette, scegli)
                         }
                     }
@@ -276,13 +277,13 @@ fun WidgetConfigScreen(
                             if (query.isBlank()) Place.SUGGESTIONS else emptyList()
                         }
                         when {
-                            searching -> Nota("Sto cercando…", palette)
+                            searching -> Nota(tr("Sto cercando…", "Searching…"), palette)
                             query.trim().length >= 2 && results.isEmpty() ->
-                                Nota("Nessuna località con questo nome", palette)
+                                Nota(tr("Nessuna località con questo nome", "No place with this name"), palette)
                         }
                         if (options.isNotEmpty()) {
                             GruppoImpostazioni(
-                                titolo = if (query.isBlank()) "OPPURE UNA DI QUESTE" else "RISULTATI",
+                                titolo = if (query.isBlank()) tr("OPPURE UNA DI QUESTE", "OR ONE OF THESE") else tr("RISULTATI", "RESULTS"),
                                 palette = palette,
                             ) {
                                 ElencoPosti(options, selectedPlace, palette, scegli)
@@ -294,7 +295,7 @@ fun WidgetConfigScreen(
         }
 
         BottoneSalva(
-            testo = if (initial.useLocation || initial.place != null) "Salva le modifiche" else "Aggiungi il widget",
+            testo = if (initial.useLocation || initial.place != null) tr("Salva le modifiche", "Save changes") else tr("Aggiungi il widget", "Add the widget"),
             enabled = canSave,
             palette = palette,
             onClick = { onSave(selectedPlace, useLocation) },
@@ -414,10 +415,10 @@ private fun BottoneSalva(testo: String, enabled: Boolean, palette: SalaPalette, 
 @Composable
 private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean, palette: SalaPalette) {
     val dove = when {
-        kind != null && !kind.needsPlace -> "Uguale da qualunque parte lo guardi"
-        following -> "Seguirà la posizione del telefono"
-        place != null -> "Mostrerà ${place.name}"
-        else -> "Scegli qui sotto da dove prendere i dati"
+        kind != null && !kind.needsPlace -> tr("Uguale da qualunque parte lo guardi", "The same wherever you look at it from")
+        following -> tr("Seguirà la posizione del telefono", "It will follow the phone's location")
+        place != null -> tr("Mostrerà ${place.name}", "It will show ${place.name}")
+        else -> tr("Scegli qui sotto da dove prendere i dati", "Choose below where to take the data from")
     }
     val (glifo, notte) = when (kind) {
         WidgetKind.LUNA -> GlifoMeteo.SOLE to true
@@ -442,7 +443,7 @@ private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean,
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = kind?.let { "WIDGET ${it.label}" } ?: "NUOVO WIDGET",
+                text = kind?.let { tr("WIDGET ${it.label}", "${it.label} WIDGET") } ?: tr("NUOVO WIDGET", "NEW WIDGET"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
             )

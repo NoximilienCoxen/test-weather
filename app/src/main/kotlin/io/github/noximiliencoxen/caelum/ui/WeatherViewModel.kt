@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import android.app.Application
@@ -73,12 +74,12 @@ import kotlinx.serialization.SerializationException
 internal fun failureMessage(failure: Throwable): String = when (failure) {
     // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
     // dichiara di essere. Non c'e' niente che chi guarda possa fare.
-    is SerializationException -> "Il servizio meteo ha risposto male"
+    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer")
     // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
     // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
     // stessa cosa.
-    is IOException -> "Rete non raggiungibile"
-    else -> "Previsione non disponibile"
+    is IOException -> tr("Rete non raggiungibile", "Network unreachable")
+    else -> tr("Previsione non disponibile", "Forecast unavailable")
 }
 
 /**
@@ -1260,7 +1261,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(
                             searching = false,
                             results = emptyList(),
-                            searchError = failure.message ?: "Ricerca non riuscita",
+                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed"),
                         )
                     }
                 }

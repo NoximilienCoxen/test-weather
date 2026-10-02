@@ -7,6 +7,7 @@ import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.regex.Pattern
 
 /**
  * Il percorso che il baseline profile insegna ad Android a compilare prima.
@@ -40,8 +41,10 @@ class GeneraProfilo {
 
         // La guida all'uso parte da sola qualche secondo dopo l'avvio, quando
         // arrivano i dati: se compare, si salta.
-        device.wait(Until.hasObject(By.text("Salta")), ATTESA_GUIDA_MS)
-        device.findObject(By.text("Salta"))?.click()
+        // "Salta" o "Skip": l'emulatore e' in inglese, e l'app segue la lingua
+        // del telefono (CONTESTO §49).
+        device.wait(Until.hasObject(By.text(SALTA)), ATTESA_GUIDA_MS)
+        device.findObject(By.text(SALTA))?.click()
         device.waitForIdle()
 
         val larghezza = device.displayWidth
@@ -66,6 +69,7 @@ class GeneraProfilo {
 
     private companion object {
         const val PACCHETTO = "io.github.noximiliencoxen.caelum"
+        val SALTA: Pattern = Pattern.compile("Salta|Skip")
         const val SALE = 7
         const val ATTESA_GUIDA_MS = 8_000L
         /** Passi di `swipe`, cinque millesimi l'uno: un colpetto. */

@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -85,7 +86,7 @@ internal fun Collegamento(
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .semantics { role = Role.Button }
-            .clickable(onClickLabel = "apri $indirizzo") { runCatching { apri.openUri(indirizzo) } },
+            .clickable(onClickLabel = tr("apri $indirizzo", "open $indirizzo")) { runCatching { apri.openUri(indirizzo) } },
     )
 }
 
@@ -109,18 +110,18 @@ internal fun RigaCrediti(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(text = "Dati", style = stile, color = colore, maxLines = 1)
+        Text(text = tr("Dati", "Data"), style = stile, color = colore, maxLines = 1)
         Collegamento("Open-Meteo.com", Fonti.OPEN_METEO, stile, colore)
         Text(text = "·", style = stile, color = colore, maxLines = 1)
         Text(
-            text = "aria e polline CAMS Copernicus",
+            text = tr("aria e polline CAMS Copernicus", "air and pollen CAMS Copernicus"),
             style = stile.copy(textDecoration = TextDecoration.Underline),
             color = colore,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .semantics { role = Role.Button }
-                .clickable(onClickLabel = "apri le note legali con le fonti", onClick = onLicenze),
+                .clickable(onClickLabel = tr("apri le note legali con le fonti", "open the legal notes with the sources"), onClick = onLicenze),
         )
     }
 }

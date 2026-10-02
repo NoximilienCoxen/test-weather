@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,14 +68,14 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
     Column(modifier = modifier.fillMaxWidth().padding(top = 14.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "IL POLLINE",
+                text = tr("IL POLLINE", "POLLEN"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.weight(1f),
             )
             giorni.forEachIndexed { i, giorno ->
                 Text(
-                    text = if (i == 0) "oggi" else giorno.giorno.dayOfWeek.italiano().take(3),
+                    text = if (i == 0) tr("oggi", "today") else giorno.giorno.dayOfWeek.italiano().take(3),
                     style = SalaType.microLabel,
                     color = palette.inkSoft,
                     textAlign = TextAlign.Center,
@@ -97,7 +98,7 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
                     .clickable { scelto = tipo }
                     .semantics {
                         contentDescription = tipo.nome + ": " + giorni.joinToString(", ") { g ->
-                            g.livelli[tipo]?.let(::nomeLivelloPolline) ?: "nessun dato"
+                            g.livelli[tipo]?.let(::nomeLivelloPolline) ?: tr("nessun dato", "no data")
                         }.lowercase()
                     },
                 verticalAlignment = Alignment.CenterVertically,
@@ -118,10 +119,10 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
         Didascalia(
             when {
                 spiegato != null && spiegato == peggiore ->
-                    "Oggi il più alto: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. " +
+                    tr("Oggi il più alto: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. ", "Highest today: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. ") +
                         spiegato.cosa
                 spiegato != null -> spiegato.cosa
-                else -> "Oggi nell'aria non c'è polline che dia fastidio."
+                else -> tr("Oggi nell'aria non c'è polline che dia fastidio.", "No troublesome pollen in the air today.")
             },
             palette,
             modifier = Modifier.padding(top = 8.dp),

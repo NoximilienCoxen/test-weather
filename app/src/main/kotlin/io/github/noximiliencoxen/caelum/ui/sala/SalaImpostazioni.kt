@@ -1,6 +1,10 @@
 package io.github.noximiliencoxen.caelum.ui.sala
 
+import io.github.noximiliencoxen.caelum.lingua.SceltaLingua
+import io.github.noximiliencoxen.caelum.lingua.Lingue
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
+import android.app.Activity
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.BuildConfig
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.widget.AggiornaWidgetWorker
 import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
 import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
@@ -82,7 +87,7 @@ fun SalaImpostazioniScreen(
             .systemBarsPadding()
             .padding(start = 22.dp, end = 22.dp, top = 12.dp),
     ) {
-        IntestazioneServizio(titolo = "Impostazioni", palette = palette, onIndietro = onClose)
+        IntestazioneServizio(titolo = tr("Impostazioni", "Settings"), palette = palette, onIndietro = onClose)
 
         Column(
             modifier = Modifier
@@ -91,35 +96,35 @@ fun SalaImpostazioniScreen(
                 .padding(top = 18.dp, bottom = 30.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp),
         ) {
-            GruppoImpostazioni(titolo = "LOCALITÀ", palette = palette) {
+            GruppoImpostazioni(titolo = tr("LOCALITÀ", "PLACE"), palette = palette) {
                 val salvate = state.favorites.size
                 VoceImpostazione(
                     titolo = state.place.name,
                     nota = listOf(
-                        if (state.followsLocation) "dalla posizione del telefono" else "scelta a mano",
-                        if (salvate == 1) "1 salvata" else "$salvate salvate",
+                        if (state.followsLocation) tr("dalla posizione del telefono", "from the phone's location") else tr("scelta a mano", "chosen by hand"),
+                        if (salvate == 1) tr("1 salvata", "1 saved") else tr("$salvate salvate", "$salvate saved"),
                     ).joinToString(" · "),
                     palette = palette,
                     onClick = onApriLocalita,
-                    coda = { FrecciaAvanti(palette, testo = "Cambia") },
+                    coda = { FrecciaAvanti(palette, testo = tr("Cambia", "Change")) },
                 )
             }
 
-            GruppoImpostazioni(titolo = "ASPETTO", palette = palette) {
+            GruppoImpostazioni(titolo = tr("ASPETTO", "APPEARANCE"), palette = palette) {
                 VoceImpostazione(
-                    titolo = "Tema",
+                    titolo = tr("Tema", "Theme"),
                     nota = when (state.cardTheme) {
-                        CardTheme.AUTO -> "chiaro col sole, scuro quando tramonta sulla località"
-                        CardTheme.CHIARO -> "sempre chiaro, a qualunque ora"
-                        CardTheme.SCURO -> "sempre scuro, a qualunque ora"
+                        CardTheme.AUTO -> tr("chiaro col sole, scuro quando tramonta sulla località", "light while the sun is up, dark once it sets over the place")
+                        CardTheme.CHIARO -> tr("sempre chiaro, a qualunque ora", "always light, at any hour")
+                        CardTheme.SCURO -> tr("sempre scuro, a qualunque ora", "always dark, at any hour")
                     },
                     palette = palette,
                     sotto = {
                         SceltaSegmentata(
                             voci = listOf(
-                                CardTheme.AUTO to "Segui il cielo",
-                                CardTheme.CHIARO to "Chiaro",
-                                CardTheme.SCURO to "Scuro",
+                                CardTheme.AUTO to tr("Segui il cielo", "Follow the sky"),
+                                CardTheme.CHIARO to tr("Chiaro", "Light"),
+                                CardTheme.SCURO to tr("Scuro", "Dark"),
                             ),
                             scelta = state.cardTheme,
                             palette = palette,
@@ -129,15 +134,15 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceImpostazione(
-                    titolo = "Testi delle sale",
+                    titolo = tr("Testi delle sale", "Room texts"),
                     nota = when (state.captionStyle) {
-                        CaptionStyle.COMPLETE -> "titolo, numeri e il paragrafo che li spiega"
-                        CaptionStyle.BREVI -> "solo titolo e numeri, senza il paragrafo"
+                        CaptionStyle.COMPLETE -> tr("titolo, numeri e il paragrafo che li spiega", "title, numbers and the paragraph that explains them")
+                        CaptionStyle.BREVI -> tr("solo titolo e numeri, senza il paragrafo", "only title and numbers, without the paragraph")
                     },
                     palette = palette,
                     sotto = {
                         SceltaSegmentata(
-                            voci = listOf(CaptionStyle.COMPLETE to "Completi", CaptionStyle.BREVI to "Brevi"),
+                            voci = listOf(CaptionStyle.COMPLETE to tr("Completi", "Full"), CaptionStyle.BREVI to tr("Brevi", "Short")),
                             scelta = state.captionStyle,
                             palette = palette,
                             onScegli = onChooseCaptionStyle,
@@ -145,17 +150,50 @@ fun SalaImpostazioniScreen(
                     },
                 )
                 FiloGruppo(palette)
+                // **La lingua non e' uno stato di Compose**: i testi la leggono
+                // da `Lingue` mentre si compongono, anche fuori dalle schermate
+                // (i widget, le notifiche). Cambiarla rifa' l'attivita', che
+                // ricompone tutto da capo; il ViewModel resta, i dati pure.
+                val attivita = LocalContext.current
+                VoceImpostazione(
+                    titolo = tr("Lingua", "Language"),
+                    nota = when (Lingue.scelta) {
+                        SceltaLingua.AUTOMATICA -> tr("quella del telefono: italiano se è in italiano, se no inglese", "the phone's: Italian if it is set to Italian, otherwise English")
+                        SceltaLingua.ITALIANO -> tr("sempre in italiano", "always Italian")
+                        SceltaLingua.INGLESE -> tr("sempre in inglese", "always English")
+                    },
+                    palette = palette,
+                    sotto = {
+                        SceltaSegmentata(
+                            voci = listOf(
+                                SceltaLingua.AUTOMATICA to tr("Automatica", "Automatic"),
+                                SceltaLingua.ITALIANO to "Italiano",
+                                SceltaLingua.INGLESE to "English",
+                            ),
+                            scelta = Lingue.scelta,
+                            palette = palette,
+                            onScegli = { nuova ->
+                                if (nuova != Lingue.scelta) {
+                                    Lingue.scegli(attivita, nuova)
+                                    AggiornaWidgetWorker.appenaPossibile(attivita)
+                                    (attivita as? Activity)?.recreate()
+                                }
+                            },
+                        )
+                    },
+                )
+                FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Animazioni ridotte",
-                    nota = "il cielo sta fermo e il telefono non vibra con pioggia e neve",
+                    titolo = tr("Animazioni ridotte", "Reduced motion"),
+                    nota = tr("il cielo sta fermo e il telefono non vibra con pioggia e neve", "the sky stays still and the phone does not buzz with rain and snow"),
                     acceso = state.animazioniRidotte,
                     palette = palette,
                     onCambia = onToggleAnimazioni,
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Schede larghe",
-                    nota = "toglie la colonna delle sale: si passa dall'una all'altra col dito",
+                    titolo = tr("Schede larghe", "Wide cards"),
+                    nota = tr("toglie la colonna delle sale: si passa dall'una all'altra col dito", "hides the room column: swipe from one room to the next"),
                     acceso = state.schedeLarghe,
                     palette = palette,
                     onCambia = onToggleSchedeLarghe,
@@ -164,9 +202,9 @@ fun SalaImpostazioniScreen(
 
             // Le unita' stanno sulla riga del loro nome: due o tre voci corte
             // non hanno bisogno di una riga intera, e il gruppo resta basso.
-            GruppoImpostazioni(titolo = "UNITÀ DI MISURA", palette = palette) {
+            GruppoImpostazioni(titolo = tr("UNITÀ DI MISURA", "UNITS"), palette = palette) {
                 VoceImpostazione(
-                    titolo = "Temperatura",
+                    titolo = tr("Temperatura", "Temperature"),
                     palette = palette,
                     coda = {
                         SceltaSegmentata(
@@ -180,7 +218,7 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceImpostazione(
-                    titolo = "Vento",
+                    titolo = tr("Vento", "Wind"),
                     palette = palette,
                     coda = {
                         SceltaSegmentata(
@@ -200,38 +238,42 @@ fun SalaImpostazioniScreen(
             // soglie, non su cio' che un ente dichiara. La nota sotto il gruppo
             // lo dice, perche' prima lo sapeva solo questo commento.
             GruppoImpostazioni(
-                titolo = "AVVISI NELLE SALE",
+                titolo = tr("AVVISI NELLE SALE", "NOTICES IN THE ROOMS"),
                 palette = palette,
-                nota = "Le allerte ufficiali di MeteoAlarm si vedono sempre: qui scegli solo " +
-                    "gli avvisi che l'app ricava dalla previsione.",
+                nota = tr(
+                    "Le allerte ufficiali di MeteoAlarm si vedono sempre: qui scegli solo " +
+                        "gli avvisi che l'app ricava dalla previsione.",
+                    "Official MeteoAlarm warnings always show: here you only choose " +
+                        "the notices the app works out from the forecast.",
+                ),
             ) {
                 VoceInterruttore(
-                    titolo = "Pioggia intensa",
-                    nota = "quando sono attesi molti millimetri",
+                    titolo = tr("Pioggia intensa", "Heavy rain"),
+                    nota = tr("quando sono attesi molti millimetri", "when a lot of millimetres are expected"),
                     acceso = state.alertToggles.pioggiaIntensa,
                     palette = palette,
                     onCambia = { onToggleAlert(AlertToggleKind.PIOGGIA, it) },
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Temporali",
-                    nota = "quando la previsione dà temporale",
+                    titolo = tr("Temporali", "Thunderstorms"),
+                    nota = tr("quando la previsione dà temporale", "when the forecast gives thunderstorms"),
                     acceso = state.alertToggles.temporali,
                     palette = palette,
                     onCambia = { onToggleAlert(AlertToggleKind.TEMPORALE, it) },
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Raggi UV alti",
-                    nota = "indice sopra 6, dove la scala mondiale passa ad alto",
+                    titolo = tr("Raggi UV alti", "High UV"),
+                    nota = tr("indice sopra 6, dove la scala mondiale passa ad alto", "index above 6, where the world scale turns to high"),
                     acceso = state.alertToggles.uvAlto,
                     palette = palette,
                     onCambia = { onToggleAlert(AlertToggleKind.UV, it) },
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Vento forte",
-                    nota = "quando sono attese raffiche forti",
+                    titolo = tr("Vento forte", "Strong wind"),
+                    nota = tr("quando sono attese raffiche forti", "when strong gusts are expected"),
                     acceso = state.alertToggles.ventoForte,
                     palette = palette,
                     onCambia = { onToggleAlert(AlertToggleKind.VENTO, it) },
@@ -249,10 +291,10 @@ fun SalaImpostazioniScreen(
             val chiediPermessoAllerte = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotificheAllerte(concesso) }
-            GruppoImpostazioni(titolo = "NOTIFICHE", palette = palette) {
+            GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS"), palette = palette) {
                 VoceInterruttore(
-                    titolo = "Pioggia e grandine in arrivo",
-                    nota = "un avviso poco prima che cominci, sulla località dell'app",
+                    titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way"),
+                    nota = tr("un avviso poco prima che cominci, sulla località dell'app", "a heads-up shortly before it starts, for the app's place"),
                     acceso = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto),
                     palette = palette,
                     onCambia = { vuole ->
@@ -267,8 +309,8 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = "Allerte ufficiali",
-                    nota = "arancioni e rosse, diramate dagli enti; le gialle restano nel bollettino",
+                    titolo = tr("Allerte ufficiali", "Official warnings"),
+                    nota = tr("arancioni e rosse, diramate dagli enti; le gialle restano nel bollettino", "orange and red, issued by the authorities; yellow ones stay in the bulletin"),
                     acceso = state.notificheAllerte && PioggiaInArrivoWorker.puoNotificare(contesto),
                     palette = palette,
                     onCambia = { vuole ->
@@ -283,18 +325,18 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            GruppoImpostazioni(titolo = "AIUTO", palette = palette) {
+            GruppoImpostazioni(titolo = tr("AIUTO", "HELP"), palette = palette) {
                 VoceImpostazione(
-                    titolo = "Guida all'uso",
-                    nota = "come si sfogliano le sale e si cambia ora",
+                    titolo = tr("Guida all'uso", "How to use it"),
+                    nota = tr("come si sfogliano le sale e si cambia ora", "how to move through the rooms and change the hour"),
                     palette = palette,
                     onClick = onApriGuida,
                     coda = { FrecciaAvanti(palette) },
                 )
                 FiloGruppo(palette)
                 VoceImpostazione(
-                    titolo = "Note legali e privacy",
-                    nota = "fonti dei dati, cosa esce dal telefono, permessi",
+                    titolo = tr("Note legali e privacy", "Legal notes and privacy"),
+                    nota = tr("fonti dei dati, cosa esce dal telefono, permessi", "data sources, what leaves the phone, permissions"),
                     palette = palette,
                     onClick = onApriLegali,
                     coda = { FrecciaAvanti(palette) },
@@ -312,10 +354,10 @@ fun SalaImpostazioniScreen(
             // e `state.error` - un messaggio gia' scritto per chi guarda - non
             // aveva un solo lettore in tutta l'app. Qui trovano tutti e due il
             // loro posto: si riprova a mano, e se va storto lo si legge.
-            GruppoImpostazioni(titolo = "DA DOVE VENGONO I NUMERI", palette = palette) {
+            GruppoImpostazioni(titolo = tr("DA DOVE VENGONO I NUMERI", "WHERE THE NUMBERS COME FROM"), palette = palette) {
                 VoceImpostazione(
-                    titolo = "Aggiorna adesso",
-                    nota = state.error ?: "ultimo aggiornamento ${quandoScaricata(state.fetchedAt)}",
+                    titolo = tr("Aggiorna adesso", "Refresh now"),
+                    nota = state.error ?: tr("ultimo aggiornamento ${quandoScaricata(state.fetchedAt)}", "last updated ${quandoScaricata(state.fetchedAt)}"),
                     notaInRisalto = state.error != null,
                     palette = palette,
                     onClick = onAggiorna,
@@ -323,11 +365,11 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
-                    VoceInformativa("Previsione", "Open-Meteo · modello ${state.model.label}", palette)
-                    VoceInformativa("Qualità dell'aria", "Open-Meteo", palette)
-                    VoceInformativa("Allerte", "MeteoAlarm, più avvisi calcolati sui dati", palette)
-                    VoceInformativa("Località", dettaglioLocalita(state), palette)
-                    VoceInformativa("Versione", "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
+                    VoceInformativa(tr("Previsione", "Forecast"), tr("Open-Meteo · modello ${state.model.label}", "Open-Meteo · model ${state.model.label}"), palette)
+                    VoceInformativa(tr("Qualità dell'aria", "Air quality"), "Open-Meteo", palette)
+                    VoceInformativa(tr("Allerte", "Warnings"), tr("MeteoAlarm, più avvisi calcolati sui dati", "MeteoAlarm, plus notices worked out from the data"), palette)
+                    VoceInformativa(tr("Località", "Place"), dettaglioLocalita(state), palette)
+                    VoceInformativa(tr("Versione", "Version"), "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
                 }
             }
         }
@@ -341,7 +383,7 @@ private val LarghezzaUnita = 176.dp
 @Composable
 private fun PastigliaAggiorna(palette: SalaPalette) {
     Text(
-        text = "Aggiorna",
+        text = tr("Aggiorna", "Refresh"),
         style = SalaType.pill,
         color = palette.accentInk,
         modifier = Modifier
@@ -385,12 +427,12 @@ private fun VoceInformativa(etichetta: String, valore: String, palette: SalaPale
  * partita la richiesta.
  */
 private fun quandoScaricata(quando: LocalDateTime?): String {
-    if (quando == null) return "non ancora"
+    if (quando == null) return tr("non ancora", "not yet")
     val ora = String.format(Locale.ITALY, "%02d:%02d", quando.hour, quando.minute)
     return when (quando.toLocalDate()) {
-        LocalDate.now() -> "oggi alle $ora"
-        LocalDate.now().minusDays(1) -> "ieri alle $ora"
-        else -> "il ${quando.dayOfMonth}/${quando.monthValue} alle $ora"
+        LocalDate.now() -> tr("oggi alle $ora", "today at $ora")
+        LocalDate.now().minusDays(1) -> tr("ieri alle $ora", "yesterday at $ora")
+        else -> tr("il ${quando.dayOfMonth}/${quando.monthValue} alle $ora", "on ${quando.dayOfMonth}/${quando.monthValue} at $ora")
     }
 }
 
@@ -408,12 +450,12 @@ private fun dettaglioLocalita(state: UiState): String {
         state.place.detail.takeIf { it.isNotEmpty() },
     ).joinToString(", ")
     val punto = String.format(
-        Locale.ITALY,
+        Lingue.locale,
         "%.2f / %.2f",
         state.place.latitude,
         state.place.longitude,
     )
-    val chi = if (state.followsLocation) "dal telefono" else "scelta a mano"
+    val chi = if (state.followsLocation) tr("dal telefono", "from the phone") else tr("scelta a mano", "chosen by hand")
     val fuso = state.forecast?.utcOffsetSeconds?.let { fusoOrario(it) }
     return listOfNotNull(dove, punto, fuso, chi).joinToString(" · ")
 }

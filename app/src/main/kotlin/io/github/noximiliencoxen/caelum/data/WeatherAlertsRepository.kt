@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.inInglese
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -113,7 +115,7 @@ class WeatherAlertsRepository(
 
     /** Il posto non e' fra quelli che MeteoAlarm serve. */
     class OutOfCoverage(val country: String?) :
-        Exception("MeteoAlarm non copre " + (country ?: "questa località"))
+        Exception(tr("MeteoAlarm non copre ", "MeteoAlarm does not cover ") + (country ?: tr("questa località", "this place")))
 
     companion object {
         /**
@@ -147,7 +149,7 @@ class WeatherAlertsRepository(
             "italia" to "italy", "italy" to "italy",
             "austria" to "austria",
             "belgio" to "belgium", "belgium" to "belgium",
-            "bosnia ed erzegovina" to "bosnia-herzegovina",
+            "bosnia ed erzegovina" to "bosnia-herzegovina", "bosnia and herzegovina" to "bosnia-herzegovina",
             "bulgaria" to "bulgaria",
             "cipro" to "cyprus", "cyprus" to "cyprus",
             "croazia" to "croatia", "croatia" to "croatia",
@@ -162,16 +164,16 @@ class WeatherAlertsRepository(
             "lettonia" to "latvia", "latvia" to "latvia",
             "lituania" to "lithuania", "lithuania" to "lithuania",
             "lussemburgo" to "luxembourg", "luxembourg" to "luxembourg",
-            "macedonia del nord" to "north-macedonia",
+            "macedonia del nord" to "north-macedonia", "north macedonia" to "north-macedonia",
             "malta" to "malta",
             "moldavia" to "moldova", "moldova" to "moldova",
             "montenegro" to "montenegro",
             "norvegia" to "norway", "norway" to "norway",
-            "paesi bassi" to "netherlands", "netherlands" to "netherlands",
+            "paesi bassi" to "netherlands", "netherlands" to "netherlands", "the netherlands" to "netherlands",
             "polonia" to "poland", "poland" to "poland",
             "portogallo" to "portugal", "portugal" to "portugal",
             "regno unito" to "united-kingdom", "united kingdom" to "united-kingdom",
-            "repubblica ceca" to "czechia", "czechia" to "czechia",
+            "repubblica ceca" to "czechia", "czechia" to "czechia", "czech republic" to "czechia",
             "romania" to "romania",
             "serbia" to "serbia",
             "slovacchia" to "slovakia", "slovakia" to "slovakia",
@@ -450,7 +452,9 @@ internal fun parseDetail(xml: String): CapDetail {
             }
         }
     }
-    val scelto = blocchi.firstOrNull { it.language?.lowercase()?.startsWith("it") == true }
+    // Nella lingua dell'app, se l'ente la manda (CONTESTO §49)
+    val lingua = if (inInglese()) "en" else "it"
+    val scelto = blocchi.firstOrNull { it.language?.lowercase()?.startsWith(lingua) == true }
         ?: blocchi.firstOrNull()
     return CapDetail(
         description = scelto?.description?.takeIf { it.isNotBlank() },
