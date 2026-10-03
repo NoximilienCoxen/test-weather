@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
@@ -52,4 +53,4 @@ internal fun DrawScope.setupArt(title: String, type: WidgetType, ink: WidgetInk)
     }
 }
 
-private const val INVITO = "TOCCA PER SCEGLIERE LA CITTÀ"
+private val INVITO: String get() = tr("TOCCA PER SCEGLIERE LA CITTÀ", "TAP TO CHOOSE THE CITY")

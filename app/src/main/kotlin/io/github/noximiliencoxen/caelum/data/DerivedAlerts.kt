@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -29,7 +30,7 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
     // Solo oggi e domani: piu' in la' la previsione e' troppo incerta perche'
     // valga la pena di allarmare qualcuno.
     forecast.days.take(2).forEachIndexed { index, day ->
-        val quando = if (index == 0) "oggi" else "domani"
+        val quando = if (index == 0) tr("oggi", "today") else tr("domani", "tomorrow")
         val giorno = day.date
 
         fun add(kind: AlertKind, level: AlertLevel, headline: String, detail: String) {
@@ -58,8 +59,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.VENTO, level,
-                    "Vento forte $quando",
-                    "Raffiche fino a ${kmh(gust)} km/h.",
+                    tr("Vento forte $quando", "Strong wind $quando"),
+                    tr("Raffiche fino a ${kmh(gust)} km/h.", "Gusts up to ${kmh(gust)} km/h."),
                 )
             }
         }
@@ -73,9 +74,9 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.PIOGGIA, level,
-                    "Pioggia abbondante $quando",
-                    "Attesi circa ${mm.toInt()} mm" +
-                        (day.precipHours?.let { " in ${it.toInt()} ore" } ?: "") + ".",
+                    tr("Pioggia abbondante $quando", "Heavy rain $quando"),
+                    tr("Attesi circa ${mm.toInt()} mm", "About ${mm.toInt()} mm expected") +
+                        (day.precipHours?.let { tr(" in ${it.toInt()} ore", " over ${it.toInt()} hours") } ?: "") + ".",
                 )
             }
         }
@@ -89,8 +90,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.NEVE_GHIACCIO, level,
-                    "Neve $quando",
-                    "Attesi circa ${cm.toInt()} cm.",
+                    tr("Neve $quando", "Snow $quando"),
+                    tr("Attesi circa ${cm.toInt()} cm.", "About ${cm.toInt()} cm expected."),
                 )
             }
         }
@@ -107,8 +108,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.CALDO, level,
-                    "Caldo intenso $quando",
-                    "Temperatura percepita fino a ${heat.toInt()}\u00B0C.",
+                    tr("Caldo intenso $quando", "Intense heat $quando"),
+                    tr("Temperatura percepita fino a ${heat.toInt()}\u00B0C.", "Feels like up to ${heat.toInt()}\u00B0C."),
                 )
             }
         }
@@ -122,8 +123,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.FREDDO, level,
-                    "Freddo intenso $quando",
-                    "Temperatura percepita fino a ${cold.toInt()}\u00B0C.",
+                    tr("Freddo intenso $quando", "Intense cold $quando"),
+                    tr("Temperatura percepita fino a ${cold.toInt()}\u00B0C.", "Feels like down to ${cold.toInt()}\u00B0C."),
                 )
             }
         }
@@ -141,8 +142,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             if (level != null) {
                 add(
                     AlertKind.UV, level,
-                    "Raggi UV alti $quando",
-                    "Indice UV fino a ${uv.toInt()} nelle ore centrali.",
+                    tr("Raggi UV alti $quando", "High UV $quando"),
+                    tr("Indice UV fino a ${uv.toInt()} nelle ore centrali.", "UV index up to ${uv.toInt()} around midday."),
                 )
             }
         }
@@ -157,8 +158,8 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             add(
                 AlertKind.TEMPORALI,
                 if (stormHours >= 5) AlertLevel.ARANCIONE else AlertLevel.GIALLA,
-                "Temporali $quando",
-                if (stormHours > 0) "Previsti temporali per circa $stormHours ore." else "Previsti temporali.",
+                tr("Temporali $quando", "Thunderstorms $quando"),
+                if (stormHours > 0) tr("Previsti temporali per circa $stormHours ore.", "Thunderstorms expected for about $stormHours hours.") else tr("Previsti temporali.", "Thunderstorms expected."),
             )
         }
     }
@@ -166,7 +167,7 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
 }
 
 /** Chi lo dice, quando non lo dice un ente. */
-private const val SOURCE = "Calcolata dai dati Open-Meteo"
+private val SOURCE: String get() = tr("Calcolata dai dati Open-Meteo", "Calculated from Open-Meteo data")
 
 /** Metri al secondo in chilometri orari, che e' come si dice il vento a voce. */
 private fun kmh(ms: Double): Int = (ms * 3.6).toInt()

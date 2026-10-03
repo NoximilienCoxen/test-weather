@@ -39,7 +39,10 @@ adbt() { timeout 60 adb "$@"; }
 #
 # Le opzioni proprie di `am start` (per esempio `-W`) e gli altri agganci si
 # passano come argomenti; l'attivita' e la cattura le mette la funzione.
-avvia() { adbt shell am start "$@" -n "$ACT" --ez cattura true; }
+# La lingua si impone a ogni avvio: l'emulatore e' in inglese, e gli scatti di
+# riferimento sono in italiano (CONTESTO §49). `LINGUA=en` per la serie inglese.
+LINGUA="${LINGUA:-it}"
+avvia() { adbt shell am start "$@" -n "$ACT" --ez cattura true --es lingua "$LINGUA"; }
 
 # Logcat in streaming da subito: se il dispositivo muore lanciando l'app,
 # questo file e' l'unica testimonianza del perche'.
@@ -858,9 +861,37 @@ session() {
 
 }
 
+# La serie inglese (CONTESTO §49): le sette sale e la guida, in tema scuro e
+# all'ora di mezzogiorno. Viene **dopo** quella italiana, che e' il
+# riferimento da confrontare pixel per pixel col giro precedente: se
+# l'emulatore se ne va a meta', a perdersi e' la coda nuova, non la galleria.
+inglese() {
+  echo "== serie inglese =="
+  alive || { echo "dispositivo non raggiungibile, salto"; return; }
+  local LINGUA=en sala
+  for sala in 0 1 2 3 4 5 6; do
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell logcat -c >/dev/null 2>&1 || true
+    avvia --es tema SCURO --ei ora 12 --ei sezione "$sala" >/dev/null 2>&1 || true
+    attendi_previsione
+    sleep 3
+    shoot "en-sala-$sala"
+    alive || { echo "dispositivo caduto nella serie inglese"; return; }
+  done
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  avvia --ez guida true >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 4
+  shoot "en-guida-1"
+}
+
 welcome
 session SCURO
 session CHIARO
+inglese
 
 sleep 2
 pkill -f "adb logcat -v time" >/dev/null 2>&1 || true

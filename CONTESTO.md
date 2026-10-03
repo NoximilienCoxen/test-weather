@@ -6470,3 +6470,425 @@ Misurato con lo stesso script, sei colpetti rapidi (ogni 300 ms) da Oggi:
 giri su cinque, e tre all'indietro sempre 3. **Limite**: a sei-sette colpetti al
 secondo qualcuno si perde ancora (quattro colpetti fitti = 1-3 sale).
 
+
+## 42. Icone di sistema, Sala I senza dati, colpetti fitti, notifica delle allerte
+
+Quattro punti rimasti aperti dalle sezioni precedenti. **Nessuno e' stato
+provato sul telefono**: scritto da un container senza SDK, verificato solo
+dalla CI (compilazione, lint, prove JVM, scatti). Va provato in mano, con le
+controprove della skill `prova-sul-telefono`.
+
+### 42.1 Le icone delle barre di sistema (§27.8)
+
+`MeteoApp` chiama `SystemBarIcons` **solo nel benvenuto**, l'unica schermata
+che dipinge quella sfumatura. Sala le decide da se' in `SalaShell`, subito
+dopo la tavolozza: con una pagina a schermo pieno aperta (impostazioni,
+localita', note legali, bollettino) sul suo fondo `schermoPieno`; altrimenti
+la barra di stato sulla prima fermata del cielo (`stops.first()`, gia' tinta)
+e quella di navigazione sulla collina davanti (`collina3`), che poggia sul
+bordo. E' la "strada breve" gia' indicata in §27.8. **Cambia i pixel delle
+barre in molti scatti**, ed e' atteso: era la ragione per cui si era rinviato.
+
+Da guardare in mano: il bollettino aperto di sera, e il velo d'apertura, che
+sta sopra Sala nei primi tre secondi e non ha voce sulle icone.
+
+### 42.2 Sala I senza nessuna previsione (§39.3)
+
+Senza previsione, ne' dalla rete ne' dalla scorta, la condizione ripiegava su
+SERENO e il titolo diceva "Pieno sole, aria calda" sopra i trattini. Adesso
+`SalaOggi` guarda `state.forecast == null` e scrive `titoloSenzaPrevisione`
+/ `corpoSenzaPrevisione` (`SalaCopy.kt`): "Sto chiedendo il tempo" finche' i
+tentativi girano, il messaggio di `failureMessage` ("Rete non raggiungibile")
+quando l'ultimo e' fallito, con l'invito a trascinare in giu' per riprovare.
+Prova: `SenzaPrevisioneTest`. Il cielo dietro resta quello del sereno: non e'
+un'affermazione scritta, e toccarlo vorrebbe dire inventare un cielo "senza
+dati".
+
+### 42.3 I colpetti fitti (§41.1)
+
+Il limite scritto in §41.1: a sei-sette colpetti al secondo qualcuno si
+perdeva. **Il motivo sta nel sorgente di Compose, letto e non dedotto**
+(`PagerSnapLayoutInfoProvider.kt` e `calculateFinalSnappingItem`, ramo
+`androidx-main`): per un salto di una sala il carosello **non consulta**
+`PagerSnapDistance` - l'approccio vale zero e decide `calculateSnapOffset`.
+Sopra 400 punti al secondo (`MinFlingVelocityDp`) va alla sala vicina **alla
+posizione attuale** nel verso del lancio; sotto, alla piu' vicina con la
+soglia di posizione. Quindi un colpetto che arriva a 5,8 in viaggio verso la 6
+riporta alla 6, e `metaDelGesto` (§41.1) contava solo quando il salto era di
+due sale.
+
+Due correzioni in `SalaShell`:
+
+- **`metaVoluta`**: all'alzata del dito si scrive la sala che `metaDelGesto`
+  sceglie; quando il carosello si ferma (dito alzato, niente scorrimento, 90 ms
+  per lasciar partire il lancio) e non e' li', ce lo si porta; posato giusto,
+  si cancella. `vaiA`, `portaA` e l'indietro la azzerano.
+- **la velocita' del dito** (`VelocityTracker` nello stesso ascolto senza
+  consumo): oltre `VELOCITA_COLPETTO` (300 dp/s) basta una corsa di
+  `SOGLIA_COLPETTO_LANCIATO` (1,5% di pagina, sopra la soglia di trascinamento)
+  invece del 3%. Un tremolio fa la stessa corsa, ma piano.
+
+Il costo, dove prima si perdeva il colpetto: il carosello si posa sulla sala
+sbagliata e riparte. Da misurare con lo script di §41.1 a colpetti ogni 150 ms,
+con la controprova sulla build di prima.
+
+### 42.4 La notifica delle allerte ufficiali
+
+`notifiche/AllerteUfficialiWorker.kt`, ogni ora con la rete: legge MeteoAlarm
+sulla citta' dell'app (lo stesso `WeatherAlertsRepository`) e notifica le
+allerte **ufficiali arancioni e rosse** non ancora dette. **Le gialle no**: in
+Italia ce n'e' una quasi ogni giorno su una regione intera, e una notifica al
+giorno insegna a ignorare anche la rossa. **Gli avvisi calcolati no**: una
+notifica ha gia' la voce di un ente (§8-ter).
+
+- Una volta sola per allerta e livello: la gialla diventata arancione e
+  l'arancione diventata rossa si notificano di nuovo; tornare giu' no. La
+  memoria (`notifiche_allerte`, voci `id|peso|fine`) non si svuota se il feed
+  torna vuoto per un guasto, e dimentica le allerte finite da piu' di un
+  giorno. Prove: `AllerteUfficialiTest`.
+- Canale "Allerte ufficiali", importanza alta, icona a triangolo
+  (`ic_notifica_allerta`). La notifica scade quando scade l'allerta.
+- Il tocco apre l'app sul **bollettino** (`MainActivity.EXTRA_BOLLETTINO`,
+  valido anche in release come il tocco sul widget).
+- Interruttore "Allerte ufficiali" nel gruppo NOTIFICHE, acceso di norma,
+  con la stessa richiesta del permesso di quello della pioggia; il permesso
+  si chiede dopo la guida se e' accesa almeno una delle due.
+
+Non provato: un'allerta arancione vera, e il turno di WorkManager a telefono
+fermo (come per la pioggia, puo' ritardare).
+
+## 43. Il bollettino in italiano, TalkBack, gli schermi larghi
+
+Il seguito della lista di §42. Come la 42, **scritto senza SDK e senza
+telefono**: lo verifica la CI, il resto va provato in mano.
+
+### 43.1 La lingua del bollettino (§39.1)
+
+`parseDetail` sceglie l'`info` del documento CAP con `language` che comincia
+per `it`; senza, il primo come prima. Le parti di due `info` non si mescolano
+(descrizione italiana e istruzioni inglesi sarebbero due documenti cuciti).
+Prove in `ParseFeedTest`. Resta vero che non si e' visto un documento CAP
+italiano vero con due lingue: la prova e' su documenti scritti a mano.
+
+### 43.2 TalkBack
+
+Prima l'app aveva descrizioni solo su luna, ombra del sole, colonna delle sale e
+scene. Aggiunte dove un comando era muto o diceva meta' del dato:
+
+- **barra delle ore**: un cursore (`progressBarRangeInfo` 0-23, `setProgress`)
+  che si annuncia "Ora mostrata, 14:00, oggi" e si regola coi gesti del
+  lettore; senza ore, disabilitato;
+- **tasto impostazioni**: era due cursori disegnati senza nome, cioe'
+  "pulsante" e basta; la citta' dice che si tocca per cambiare localita';
+- **temperatura grande**: una frase ("21 gradi") invece di "21" e "simbolo di
+  grado";
+- **striscia dei giorni** (Sala I e II): giorno, tempo, massima, minima, e
+  millimetri dove ci sono; stato "selezionato";
+- **colonne di pioggia e UV**, e i sette giorni della pioggia: ora o giorno col
+  dato intero, invece della sola etichetta "06".
+
+Non provato con TalkBack acceso: l'ordine di lettura dentro le sale e il gesto
+di regolazione della barra vanno sentiti su un telefono.
+
+### 43.3 Tablet e pieghevoli aperti (§38)
+
+Android 16 ignora il blocco in verticale dai 600 punti di lato corto. Le sale
+adesso stanno in una colonna centrata larga al massimo `LARGHEZZA_SALE` (520
+punti), colonna delle sale compresa; il cielo resta da bordo a bordo. Su un
+telefono il tetto non si raggiunge e non cambia un pixel. Le pagine a schermo
+pieno (impostazioni, localita', bollettino, note legali) restano larghe quanto
+lo schermo. Non provato: nessun tablet ne' emulatore largo in CI.
+
+### 43.4 Cio' che non si e' fatto, e perche'
+
+- **Cipresso e urticacee nel polline**: il modello CAMS di Open-Meteo ha sei
+  specie e queste due non ci sono (§33). Servirebbe un'altra fonte.
+- **Altre lingue, le tre lune, il baseline profile**: lavori grossi, rimandati
+  a una decisione (vedi la conversazione che ha prodotto questa sezione).
+
+## 44. Una luna sola
+
+Le "tre lune" di §27.8 erano un disco disegnato tre volte: nel cielo di Sala,
+nell'iconetta del cursore di Sala IV e nel widget Luna, che passava da un
+motore 3D suo (`render3d/Bodies.kt`: `moon`, `surfaceMarks`, `blot`,
+`MOON_SEAS`). Tre ombre, tre gradienti, due serie di mari in posti diversi, e
+il widget con l'inchiostro del widget: di giorno la sua luna era grigia.
+
+Adesso c'e' `ui/sala/DiscoLunare.kt`, `discoLunare(centro, r, fase, alpha)`.
+**Il riferimento e' la luna del cielo**, la piu' vista: luce cinerea sulla parte
+in ombra, gradiente caldo, tre mari, filo di contorno. La sagoma viene da
+`MoonPhase` (`waxing`, `terminator`, `illumination`), non piu' ricopiata. Il
+cielo ci aggiunge le scintille, il widget l'alone (`glow`, l'unica cosa rimasta
+in `Bodies.kt`). Via anche `WidgetInk.moonShade`.
+
+**Cambiano i pixel** dell'iconetta del cursore di Sala IV (ombra e gradiente
+erano piu' scuri) e soprattutto del widget Luna. Resta fuori la grande luna di
+Sala IV (`luna3d`), che e' una sfera con la sua carta e si gira col dito.
+
+Prova: `DiscoLunareTest` misura la quota accesa a nove fasi, su fondo chiaro e
+scuro, contro `MoonPhase.illumination`, e il lato acceso nei due quarti; i PNG
+vanno in `widget-renders` (`disco-lunare-*.png`). Da guardare in mano: il
+widget Luna di giorno e di notte.
+
+## 45. Il baseline profile
+
+Il debito di §27.8: avvio a freddo e primo scorrimento compilati in anticipo
+invece che interpretati. **Fatto tutto da qui, senza un telefono**, e quindi
+**non misurato**: che l'avvio sia piu' rapido va visto in mano (sotto).
+
+### 45.1 Come e' fatto, e perche' senza il plugin
+
+- `:baselineprofile`, un modulo `com.android.test` (AGP stesso) con
+  `benchmark-macro-junit4` 1.5.0, `uiautomator` 2.4.0, `androidx.test`.
+  **Non** il plugin `androidx.baselineprofile`: e' legato alle versioni di AGP
+  che conosce, il progetto e' su AGP 9, e da qui la compatibilita' si sarebbe
+  scoperta solo a tentativi in CI. Le versioni le ha lette `probe_deps.py` in
+  CI (§ sopra il catalogo), non la memoria.
+- `GeneraProfilo.avvioESale`: avvio con `saltabenvenuto` (mai `cattura`, che
+  fermerebbe le animazioni e le toglierebbe dal profilo), "Salta" sulla guida
+  se compare, le sette sale su e giu', la barra delle ore da un capo all'altro.
+- Prova la **build di debug**, che qui non e' debuggabile ne' offuscata: le
+  regole escono coi nomi veri, e AGP le riscrive per la release con la mappa di
+  R8.
+- `profileinstaller` dichiarata nell'app: l'APK si installa a mano, non dal
+  Play Store, e senza di lei il profilo non verrebbe applicato.
+
+### 45.2 Come si rigenera
+
+Lanciare il workflow `build` a mano con `profilo` acceso (`workflow_dispatch`).
+Il job `profilo` compila, accende un emulatore come quello degli scatti, fa
+girare `scripts/profilo.sh` (circa venti minuti: la libreria ripete il giro
+finche' il profilo e' stabile, dodici volte al primo giro) e pubblica su
+`ci-artifacts/profilo`. Il file si copia a mano:
+
+```bash
+gh api "repos/NoximilienCoxen/test-weather/contents/profilo/GeneraProfilo_avvioESale-startup-prof.txt?ref=ci-artifacts" \
+  -H 'Accept: application/vnd.github.raw' > app/src/main/baseline-prof.txt
+```
+
+**Si legge dalla API e non dagli artefatti**: log e artefatti di GitHub stanno
+su un host che il container blocca. Va rigenerato quando cambiano molto le
+sale o la barra delle ore; le regole che non trovano piu' il loro metodo si
+ignorano, non rompono niente.
+
+### 45.3 Cosa si e' imparato per strada
+
+- Con `includeInStartupProfile = true` la libreria 1.5.0 scrive
+  `…-startup-prof.txt` e **non** `…-baseline-prof.txt`: il primo giro lo
+  cercava col nome sbagliato e non pubblicava niente. Il contenuto e' nello
+  stesso formato, e qui fa da baseline profile.
+- Il pacchetto di prova si disinstalla a fine giro e la sua cartella sul
+  dispositivo sparisce con lui: il file lo tira giu' AGP, in `build/outputs`.
+- Il primo profilo: 24.419 righe, 2868 del codice di Caelum (`SalaShell`, la
+  barra delle ore, `discoLunare`, il cielo), il resto di Compose, DataStore e
+  WorkManager toccati dal giro.
+- Il job `build` dice con un'annotazione se `assets/dexopt/baseline.prof` e'
+  dentro ogni APK.
+
+### 45.4 Da provare in mano
+
+L'avvio a freddo con e senza: installare la build di prima, misurare
+`am start -W` a freddo cinque volte (`TotalTime`), poi questa. Nell'emulatore
+della CI, senza profilo, i primi avvii misuravano 1,4-1,9 s; e' un numero di un
+emulatore, non del telefono, e non e' un confronto.
+
+## 46. La CI su Node 24, il runner fissato, le dipendenze
+
+### 46.1 Le azioni
+
+GitHub avvisava che `checkout@v4`, `upload-artifact@v4`, `setup-gradle@v4`
+(e `download-artifact@v4`, `action-gh-release@v2`) giravano su Node 20,
+deprecato. Le versioni non si scrivono a memoria: `scripts/probe_azioni.py`,
+gemello di `probe_deps.py`, gira nel job `probe-api` e pubblica
+`ci-artifacts/api/azioni.txt` con, per ogni azione del workflow, il Node
+dichiarato e **la prima versione maggiore su Node 24** (non l'ultima: da v4 a
+v8 sarebbero quattro giri di cambiamenti per togliere un avviso).
+
+Il 2 ottobre: checkout v5, upload-artifact v6, download-artifact v7,
+setup-gradle v5. **`softprops/action-gh-release` resta su v2** di proposito:
+gira solo nel job `rilascio`, cioe' solo su `main`, e da nessun ramo si puo'
+provare. Da alzare a v3 con un giro su `main` guardato apposta.
+
+### 46.2 Il runner
+
+Tutti i job su `ubuntu-24.04`. Il 19 ottobre 2026 `ubuntu-latest` diventa
+Ubuntu 26, e SDK dell'immagine ed emulatore sono gia' caduti una volta per un
+cambio d'immagine (17 settembre). Il passaggio a 26 e' un lavoro a parte: un
+giro con `runs-on: ubuntu-26.04` (o com'e' chiamato allora), guardando i passi
+"SDK Android dell'immagine" ed "Emulatore e cattura".
+
+### 46.3 Le dipendenze
+
+In due commit, perche' se qualcosa si muove si sappia di chi e':
+
+- AGP 9.4.1, Kotlin 2.4.20, core-ktx 1.19.1, WorkManager 2.12.0: verde
+  (giro 37010950831). Il baseline profile della release passa da 8,5 a 9,3 KB:
+  con AGP e Kotlin nuovi R8 ne scarta meno.
+- Compose BOM 2026.09.00, Robolectric 4.17: verde (giro 37014012156), prove
+  grafiche comprese. **Gli scatti non sono stati confrontati pixel per pixel**
+  con quelli di prima: la CI dice che si fanno, non che sono uguali.
+
+Il baseline profile non e' stato rigenerato: le regole che non trovano piu' il
+loro metodo si ignorano (§45.2).
+
+## 47. L'attribuzione delle fonti, e il confronto degli scatti
+
+### 47.1 Le parole delle fonti, lette e non ricordate
+
+Il blocco ATTRIBUZIONE delle note legali aspettava da §28 le frasi verbatim.
+Le ha scaricate la CI: `scripts/probe_licenze.py` nel job `probe-api`, testi in
+`ci-artifacts/api/licenze/` e un `INDICE.txt` con le righe su licenze,
+attribuzioni e collegamenti. Cosa dicono (2 ottobre 2026):
+
+- **Open-Meteo** (`/en/licence`; `/en/license` e' solo un rimando): "API data
+  are offered under Attribution 4.0 International (CC BY 4.0)"; "You must give
+  appropriate credit, provide a link to the licence, and indicate if changes
+  were made"; e soprattutto **"You must include a link next to any location
+  Open-Meteo data are displayed"**, con l'esempio "Weather data by
+  Open-Meteo.com". Fra le fonti di Open-Meteo c'e' ItaliaMeteo-ARPAE (CC BY).
+- **CAMS** (aria e polline, `/en/docs/air-quality-api`): "All users of
+  Open-Meteo data must provide a clear attribution to CAMS ENSEMBLE data
+  provider as well as a reference to Open-Meteo", con una citazione lunga
+  (gli istituti del consorzio, "(2022): CAMS European air quality forecasts,
+  ENSEMBLE data...").
+- **MeteoAlarm** (`feeds.meteoalarm.org`): "License (CC BY 4.0)", "Data
+  provided by EUMETNET members". La pagina delle condizioni di meteoalarm.org
+  e' un'app JavaScript: scaricata non dice niente.
+- Le tre pagine di Copernicus provate rispondono 404; non servono, perche' la
+  citazione CAMS la da' gia' Open-Meteo.
+
+### 47.2 Dove sta il credito
+
+- **Sotto la barra delle ore** (`RigaCrediti`, `ui/sala/SalaCrediti.kt`):
+  "Dati Open-Meteo.com · aria e polline CAMS Copernicus". La barra e' sotto
+  ogni sala, quindi il credito e' "next to" ogni dato. "Open-Meteo.com" apre
+  il sito; la parte CAMS apre le note legali. Costa una riga di altezza a tutte
+  le sale: i pannelli che non ci stanno scorrono (§16.4). **Cambiano gli
+  scatti**.
+- **In fondo al bollettino**: MeteoAlarm, EUMETNET, CC BY 4.0, e cosa compone
+  l'app (il titolo) e cosa resta dell'ente (descrizione, istruzioni).
+- **Note legali**: le tre fonti con le loro citazioni, i collegamenti alle
+  licenze, e cosa l'app cambia dei dati (la CC BY chiede di dirlo).
+- Le parole stanno in `Fonti`, un posto solo per le tre superfici.
+
+**Fuori, e da fare: i widget.** Mostrano dati di Open-Meteo (e il widget Aria
+dati CAMS) senza credito accanto. Le loro tre impaginazioni sono strette e
+sorvegliate da `WidgetOverflowTest`: un credito va disegnato e misurato su ogni
+forma, e guardato. La strada piu' semplice e' una riga minuta "Open-Meteo.com"
+in fondo, dove c'e' gia' spazio (sotto la striscia dei giorni nei larghi).
+
+### 47.3 Il confronto degli scatti
+
+`scripts/confronta_scatti.py RIF PRIMA DOPO [--affianca out.png]`, con tre
+numeri di giro. **L'impronta dei file non serve**: fra due giri senza cambi
+d'app cambiano 67 scatti su 74 (orologio, meteo vero, ora reale, scena
+d'apertura a caso). Lo script toglie le barre di sistema, conta i pixel
+cambiati in modo visibile e li confronta con lo scarto fra due giri senza
+cambi; quelli sopra il doppio del riferimento si guardano a occhio.
+
+Usato sulla BOM di Compose 2026.09.00 (37007837833, 37010950831,
+37014012156): 16 scatti sopra soglia, **nessuno per Compose**. Erano la scena
+d'apertura (nave contro montagna), l'aria non ancora arrivata al primo giro,
+l'ora reale passata dalle 15 alle 16 (e con lei vento, UV e la pastiglia
+"torna all'ora attuale"), la forma di una nuvola. Testi, impaginazione e
+disegni identici.
+
+## 48. Il credito nei widget, Ubuntu 26 provato, action-gh-release v3
+
+### 48.1 I widget
+
+Meteo, Settimana e Aria scrivono il credito delle fonti nel **margine di 16
+punti in basso**, centrato (`creditoFonti` in `WidgetParts.kt`): "Dati
+Open-Meteo.com", e per l'aria "Open-Meteo.com · CAMS Copernicus". Nel margine
+perche' l'impaginazione dei tre tagli non si sposta di un punto; centrato
+perche' gli angoli del widget sono arrotondati. Se non ci sta si usa una forma
+piu' corta che nomina ancora la fonte ("Open-Meteo · CAMS" per l'aria).
+`WidgetOverflowTest` lo misura come ogni altra scritta, e i render in
+`ci-artifacts/widget-renders` lo mostrano (giro 37038620830). La Luna non lo
+scrive: la fase e' astronomia calcolata qui, non un dato di Open-Meteo.
+
+### 48.2 Ubuntu 26, provato prima del 19 ottobre
+
+`workflow_dispatch` accetta `runner` (di serie `ubuntu-24.04`, anche a ogni
+push). Il 2 ottobre l'etichetta `ubuntu-26.04` esisteva gia', e il giro
+37041436318 e' verde su tutta la linea: SDK dell'immagine, `sdkmanager`,
+compilazione, prove, sonde, emulatore e tutti gli scatti. I job restano
+fissati a `ubuntu-24.04`: passare a 26 e' cambiare il valore di ripiego in
+`runs-on`, con la prova gia' fatta. Prima di farlo, ripeterla.
+
+### 48.3 action-gh-release v3
+
+`probe_azioni.py` adesso dice anche quali parametri spariscono passando alla
+prima versione su Node 24. Per `action-gh-release` da v2 a v3: nessuno, e
+quelli usati (`tag_name`, `name`, `prerelease`, `files`, `body`) ci sono
+tutti. Alzata a v3 senza averla vista girare, perche' gira solo su `main`:
+**il primo rilascio dopo l'unione va guardato**, la release `apk-latest` deve
+avere ancora `weather.apk` e il testo d'installazione.
+
+### 48.4 Cosa resta
+
+- **Le altre lingue** (fatto l'inglese, §49). Piu' di 500 frasi, quasi tutte nelle sale (313 in
+  `ui/sala`, 102 in `ui/sala/rooms`), poi dati (49), notifiche (20), widget,
+  benvenuto, configurazione dei widget. Tradurne una parte peggiora l'app
+  (notifiche in inglese sopra sale in italiano): va fatta per intero, con le
+  risorse Android (`values/strings.xml` + `values-en/`), in passi per
+  superficie ma pubblicata insieme. Piano proposto: prima l'estrazione in
+  italiano senza cambiare un pixel (gli scatti lo dimostrano col confronto di
+  §47.3), poi l'inglese, poi la prova con la lingua del telefono cambiata.
+- **Il profilo d'avvio** (ordine del dex): dopo aver misurato in mano che il
+  baseline profile aiuta (§45.4).
+- **Cipresso e urticacee nel polline**: servirebbe un'altra fonte (§33).
+- **Le prove in mano** elencate nella PR #33.
+
+## 49. L'inglese
+
+### 49.1 Come: `tr(italiano, inglese)`, non le risorse Android
+
+Il piano di §48.4 diceva `strings.xml`. Letto il codice, no: le frasi stanno in
+funzioni pure (`Wmo`, `DerivedAlerts`, i testi delle sale), nei widget Glance,
+nei worker delle notifiche e nelle prove JVM, quasi mai dove c'e' un `Context`
+a portata di mano, e molte sono composte con numeri e nomi in mezzo. Passarle
+tutte da `getString` voleva dire far viaggiare un `Context` fin dentro
+`Wmo.condition`. Invece c'e' `lingua/Lingua.kt`:
+
+- `tr("italiano", "inglese")` restituisce una delle due. **L'italiano e' la
+  stringa di prima, carattere per carattere**: gli scatti italiani non devono
+  cambiare di un pixel, ed e' la prova che l'estrazione non ha rotto niente.
+- Le `enum` con un'etichetta hanno `ita`/`eng` privati e `label` calcolata;
+  le `const val` e le mappe sono diventate proprieta' con `get()`, perche' la
+  lingua si legge ogni volta e non una volta al caricamento della classe.
+- `Lingue.locale` (`Locale.ITALY` o `Locale.UK`) per i decimali: virgola in
+  italiano, punto in inglese. Gli orari `%02d:%02d` non dipendono dalla lingua
+  e sono rimasti com'erano.
+- I nomi delle localita' arrivano dalla geocodifica in `language=it` o `en`.
+- Le citazioni delle fonti (`Fonti.CITAZIONE_*`) restano come le chiedono le
+  fonti, in inglese anche nell'app italiana.
+
+### 49.2 Quale lingua
+
+`Lingue.corrente`: se la scelta e' **Automatica** (di serie), italiano quando
+il telefono e' in italiano e inglese altrimenti - per un tedesco l'inglese e'
+piu' probabile dell'italiano. Nelle impostazioni, gruppo Aspetto, la voce
+**Lingua** (Automatica / Italiano / English) la fissa; la scelta sta in
+`SharedPreferences` (`lingua`), si legge in `CaelumApp.onCreate` e cambiarla
+rifa' l'attivita' e chiede un ridisegno dei widget. La lingua non e' uno stato
+di Compose, ed e' voluto: la leggono anche widget e notifiche.
+
+### 49.3 Le prove e la cattura
+
+- Le prove JVM girano con `user.language=it` (`app/build.gradle.kts`) e
+  Robolectric con `qualifiers=it-rIT`: le centinaia di asserzioni sui testi
+  italiani restano vere su qualunque macchina. `LinguaTest` forza l'inglese
+  con `Lingue.forzata` e controlla tempo, vento, allerte, notifiche, unita'.
+- L'emulatore della CI e' in inglese: `capture.sh` passa `--es lingua it` a
+  ogni avvio (aggancio solo in debug), cosi' la galleria resta italiana e si
+  confronta col giro precedente (`scripts/confronta_scatti.py`).
+- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese.
+
+### 49.4 Note, e cosa resta
+
+- La **voce Lingua** sposta in giu' di una riga il resto delle impostazioni:
+  e' l'unico scatto italiano che cambia, e cambia per questo.
+- La prova in mano col telefono in inglese, e con la voce cambiata a mano.
+- Descrizione e istruzioni delle allerte: il blocco CAP nella lingua dell'app
+  quando l'ente lo manda, altrimenti il primo (`parseDetail`).

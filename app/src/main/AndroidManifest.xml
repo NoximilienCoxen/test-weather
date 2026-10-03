@@ -19,10 +19,12 @@
         senza, l'app funziona con la localita' scelta a mano.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Pioggia e grandine in arrivo (notifiche/PioggiaInArrivoWorker). -->
+    <!-- Pioggia e grandine in arrivo (notifiche/PioggiaInArrivoWorker) e allerte
+         ufficiali (notifiche/AllerteUfficialiWorker). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
+        android:name=".CaelumApp"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"

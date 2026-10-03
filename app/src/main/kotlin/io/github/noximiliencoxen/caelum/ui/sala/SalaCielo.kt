@@ -15,7 +15,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -25,7 +24,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
@@ -38,7 +36,6 @@ import io.github.noximiliencoxen.caelum.ui.motion.rememberDeviceTilt
 import io.github.noximiliencoxen.caelum.ui.motion.rememberVibrazioniMeteo
 import kotlinx.coroutines.launch
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.sin
@@ -702,18 +699,6 @@ private fun DrawScope.riflessi(sole: Offset, r: Float, dy: Float, scena: Scena, 
 }
 
 /**
- * I mari della luna: scostamento in x, in y e diametro, in frazioni di raggio.
- *
- * Alle stesse quote del prototipo. Restano dentro la parte illuminata: un mare
- * che si vedesse sull'ombra sarebbe una macchia.
- */
-private val MariDellaLuna = listOf(
-    Triple(-0.07f, -0.06f, 0.20f),
-    Triple(0.24f, -0.23f, 0.14f),
-    Triple(0.07f, 0.27f, 0.24f),
-)
-
-/**
  * La luna: corpo pieno coi suoi mari, e sopra la sola parte illuminata.
  *
  * **La fase e' quella vera del giorno mostrato**, non un disegno fisso: il
@@ -724,63 +709,9 @@ private val MariDellaLuna = listOf(
  * quando e' falce e sporge quando e' gibbosa.
  */
 private fun DrawScope.luna(centro: Offset, r: Float, fase: Float, alpha: Float, tempo: Float) {
-    // **La luce cinerea.** La parte in ombra non e' nera: e' Terra che la
-    // illumina, e a occhio nudo si vede eccome - e' quel disco fantasma dentro
-    // la falce. Prima era quasi nera, e al novilunio la luna spariva dal cielo
-    // come se qualcuno l'avesse spenta.
-    drawCircle(
-        brush = Brush.radialGradient(
-            0f to Color(0xFF2A3446).copy(alpha = 0.92f * alpha),
-            1f to Color(0xFF141C28).copy(alpha = 0.80f * alpha),
-            center = Offset(centro.x - r * 0.2f, centro.y - r * 0.2f),
-            radius = r * 1.3f,
-        ),
-        radius = r,
-        center = centro,
-    )
-
-    val crescente = fase < 0.5f
-    val terminatore = abs(cos(2.0 * PI * fase).toFloat())
-    val gibbosa = ((1f - cos(2.0 * PI * fase).toFloat()) / 2f) > 0.5f
-    val disco = Rect(centro.x - r, centro.y - r, centro.x + r, centro.y + r)
-    val mediana = Rect(centro.x - r * terminatore, centro.y - r, centro.x + r * terminatore, centro.y + r)
-    val illuminata = Path().apply {
-        arcTo(disco, if (crescente) -90f else 90f, 180f, true)
-        arcTo(mediana, if (crescente) 90f else -90f, if (gibbosa) 180f else -180f, false)
-        close()
-    }
-
-    clipPath(illuminata) {
-        drawCircle(
-            brush = Brush.radialGradient(
-                0f to Color(0xFFFFFDF6),
-                0.48f to SalaTokens.lunaLuce,
-                1f to SalaTokens.lunaMezzo,
-                center = Offset(centro.x - r * 0.32f, centro.y - r * 0.40f),
-                radius = r * 1.5f,
-            ),
-            radius = r,
-            center = centro,
-            alpha = alpha,
-        )
-        // I mari, alle stesse quote del prototipo. Restano dentro la parte
-        // illuminata: un mare che si vedesse sull'ombra sarebbe una macchia.
-        MariDellaLuna.forEach { (mx, my, md) ->
-            drawOval(
-                color = Color(0xFF6E6152).copy(alpha = 0.20f * alpha),
-                topLeft = Offset(centro.x + mx * r - md * r, centro.y + my * r - md * r * 0.78f),
-                size = Size(md * 2f * r, md * 1.56f * r),
-            )
-        }
-    }
-
-    // Un filo di contorno, perche' la sfera si stacchi anche da un cielo chiaro.
-    drawCircle(
-        color = SalaTokens.lunaBordo.copy(alpha = 0.30f * alpha),
-        radius = r,
-        center = centro,
-        style = Stroke(width = r * 0.04f),
-    )
+    // Il disco e' lo stesso del widget e dell'iconetta di Sala IV: vedi
+    // `discoLunare`. Qui si aggiungono solo le scintille.
+    discoLunare(centro, r, fase, alpha)
 
     // **Tre scintille che le girano attorno**, lente e sfasate. Non e'
     // astronomia: e' il segno con cui si disegna "brilla" da sempre, e a questa

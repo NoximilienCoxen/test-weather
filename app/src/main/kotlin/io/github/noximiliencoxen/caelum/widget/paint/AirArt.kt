@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -21,6 +22,7 @@ internal fun DrawScope.airArt(
     val pad = 16.dp.toPx()
     val box = Rect(pad, pad, size.width - pad, size.height - pad)
     val band = air?.band
+    creditoFonti(CREDITO_ARIA, type, ink)
 
     val dotRadius = box.height * 0.055f
     // La larghezza per il nome finisce dove comincia il pallino, con un
@@ -54,7 +56,7 @@ internal fun DrawScope.airArt(
     // a un minimo e li' si fermava, ci stesse o no: in un widget piu' alto che
     // largo "MOLTO SCARSA" arrivava al minimo ancora piu' larga del riquadro e
     // usciva dal bordo. Due righe grandi si leggono meglio di una minuscola.
-    val word = band?.label ?: "ARIA"
+    val word = band?.label ?: tr("ARIA", "AIR")
     val wordTop = indexTop + lineHeight(index) * 0.85f
     val room = box.bottom - wordTop
     var size = box.height * 0.42f

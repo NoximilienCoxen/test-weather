@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
 import io.github.noximiliencoxen.caelum.data.Place
@@ -42,8 +43,10 @@ internal class MoonWidget : CaelumWidget(WidgetKind.LUNA) {
             }
         }
 
-        val spoken = "Luna, ${label.lowercase()}, " +
-            "${(illuminated * 100).roundToInt()} per cento illuminata"
+        val spoken = tr(
+            "Luna, ${label.lowercase()}, ${(illuminated * 100).roundToInt()} per cento illuminata",
+            "Moon, ${label.lowercase()}, ${(illuminated * 100).roundToInt()} percent illuminated",
+        )
 
         return Drawn(bitmap, spoken)
     }

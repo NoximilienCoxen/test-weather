@@ -31,7 +31,6 @@ internal class WidgetInk(
     val sunCore: Color get() = Color(0xFFFFDE59)
     val sunShade: Color get() = Color(0xFFE39A0C)
     val moonCore: Color get() = if (night) Color(0xFFF6F7F9) else Color(0xFFC9CDD4)
-    val moonShade: Color get() = if (night) Color(0xFF9AA0AA) else Color(0xFF6E747E)
     val rain: Color get() = Color(0xFF3C8DF5)
     val snow: Color get() = if (night) Color(0xFFDCE6F2) else Color(0xFF8FB4DA)
     val bolt: Color get() = Color(0xFFFFC83D)

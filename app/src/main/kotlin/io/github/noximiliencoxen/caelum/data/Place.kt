@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,10 +24,12 @@ data class Place(
     val detail: String get() = listOfNotNull(admin, country).joinToString(", ")
 
     companion object {
-        val FORLI = Place(
+        // `get()` e non un valore fisso: il paese si scrive nella lingua
+        // dell'app, e la lingua si puo' cambiare senza riavviare il processo.
+        val FORLI: Place get() = Place(
             name = "Forlì",
             admin = "Emilia-Romagna",
-            country = "Italia",
+            country = tr("Italia", "Italy"),
             latitude = 44.2226,
             longitude = 12.0407,
         )
@@ -38,17 +41,17 @@ data class Place(
          * aspettare che piovesse: le prime tre di questa lista sono fra i posti
          * piu' piovosi che esistano, ed e' esattamente per questo che ci sono.
          */
-        val SUGGESTIONS = listOf(
+        val SUGGESTIONS: List<Place> get() = listOf(
             // Prima voce: neve e gelo garantiti tutto l'anno per testare la neve.
-            Place("Aoraki / Monte Cook", "Canterbury", "Nuova Zelanda", -43.5950, 170.1418),
+            Place(tr("Aoraki / Monte Cook", "Aoraki / Mount Cook"), "Canterbury", tr("Nuova Zelanda", "New Zealand"), -43.5950, 170.1418),
             FORLI,
-            Place("Bergen", "Vestland", "Norvegia", 60.3913, 5.3221),
-            Place("Londra", "England", "Regno Unito", 51.5085, -0.1257),
+            Place("Bergen", "Vestland", tr("Norvegia", "Norway"), 60.3913, 5.3221),
+            Place(tr("Londra", "London"), "England", tr("Regno Unito", "United Kingdom"), 51.5085, -0.1257),
             Place("Singapore", null, "Singapore", 1.2897, 103.8501),
-            Place("Milano", "Lombardia", "Italia", 45.4643, 9.1895),
-            Place("Roma", "Lazio", "Italia", 41.8933, 12.4829),
-            Place("Reykjavík", null, "Islanda", 64.1355, -21.8954),
-            Place("Tromsø", "Troms", "Norvegia", 69.6496, 18.9560),
+            Place(tr("Milano", "Milan"), tr("Lombardia", "Lombardy"), tr("Italia", "Italy"), 45.4643, 9.1895),
+            Place(tr("Roma", "Rome"), "Lazio", tr("Italia", "Italy"), 41.8933, 12.4829),
+            Place("Reykjavík", null, tr("Islanda", "Iceland"), 64.1355, -21.8954),
+            Place("Tromsø", "Troms", tr("Norvegia", "Norway"), 69.6496, 18.9560),
         )
     }
 }

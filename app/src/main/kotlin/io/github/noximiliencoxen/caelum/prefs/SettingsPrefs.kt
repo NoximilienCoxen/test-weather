@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.prefs
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.content.Context
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
@@ -44,11 +45,13 @@ enum class TempUnit(val symbol: String) {
 enum class CardTheme { AUTO, CHIARO, SCURO }
 
 /** L'unita' di velocita' del vento mostrata in Sala VI. */
-enum class SalaWindUnit(val label: String) {
-    KMH("km/h"),
-    MS("m/s"),
-    KN("nodi"),
+enum class SalaWindUnit(private val ita: String, private val eng: String) {
+    KMH("km/h", "km/h"),
+    MS("m/s", "m/s"),
+    KN("nodi", "kn"),
     ;
+
+    val label: String get() = tr(ita, eng)
 
     /** Da metri al secondo, che e' l'unita' in cui viaggia il dato. */
     fun from(metresPerSecond: Double): Double = when (this) {
@@ -131,6 +134,8 @@ data class Settings(
     val guidaVista: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. Accese di norma. */
     val notifichePioggia: Boolean = true,
+    /** Le notifiche delle allerte ufficiali arancioni e rosse. Accese di norma. */
+    val notificheAllerte: Boolean = true,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
 )
@@ -281,6 +286,7 @@ class SettingsPrefs(private val context: Context) {
             schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
             guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
             notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
+            notificheAllerte = prefs[KEY_NOTIFICHE_ALLERTE] ?: true,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
@@ -348,6 +354,10 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_NOTIFICHE_PIOGGIA] = accese }
     }
 
+    suspend fun setNotificheAllerte(accese: Boolean) {
+        context.settingsDataStore.edit { it[KEY_NOTIFICHE_ALLERTE] = accese }
+    }
+
     suspend fun setPermessoNotificheChiesto() {
         context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
     }
@@ -407,6 +417,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
         val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
         val KEY_NOTIFICHE_PIOGGIA = booleanPreferencesKey("notifiche_pioggia")
+        val KEY_NOTIFICHE_ALLERTE = booleanPreferencesKey("notifiche_allerte")
         val KEY_PERMESSO_NOTIFICHE = booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")

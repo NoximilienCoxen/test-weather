@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Caelum"
 include(":app")
+// Il generatore del baseline profile: gira solo in CI, su richiesta (§45).
+include(":baselineprofile")
