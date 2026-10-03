@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.tr
+
 /**
  * Da che parte arriva il vento **a chi guarda**, dato dove guarda.
  *
@@ -18,8 +20,8 @@ internal fun ventoRispettoASguardo(provenienza: Float, direzioneSguardo: Float):
 
 /** Lo scarto di [ventoRispettoASguardo], detto a parole. */
 internal fun latoDelVento(scarto: Float): String = when {
-    kotlin.math.abs(scarto) <= 45f -> "ti arriva in faccia"
-    kotlin.math.abs(scarto) >= 135f -> "ti arriva alle spalle"
-    scarto < 0f -> "ti arriva da sinistra"
-    else -> "ti arriva da destra"
+    kotlin.math.abs(scarto) <= 45f -> tr("ti arriva in faccia", "it hits you in the face")
+    kotlin.math.abs(scarto) >= 135f -> tr("ti arriva alle spalle", "it comes from behind you")
+    scarto < 0f -> tr("ti arriva da sinistra", "it comes from your left")
+    else -> tr("ti arriva da destra", "it comes from your right")
 }

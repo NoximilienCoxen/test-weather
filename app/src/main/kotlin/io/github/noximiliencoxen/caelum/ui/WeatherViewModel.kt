@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui
 
+import io.github.noximiliencoxen.caelum.lingua.tr
+import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
 import android.app.Application
 import android.util.Log
@@ -72,12 +74,12 @@ import kotlinx.serialization.SerializationException
 internal fun failureMessage(failure: Throwable): String = when (failure) {
     // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
     // dichiara di essere. Non c'e' niente che chi guarda possa fare.
-    is SerializationException -> "Il servizio meteo ha risposto male"
+    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer")
     // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
     // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
     // stessa cosa.
-    is IOException -> "Rete non raggiungibile"
-    else -> "Previsione non disponibile"
+    is IOException -> tr("Rete non raggiungibile", "Network unreachable")
+    else -> tr("Previsione non disponibile", "Forecast unavailable")
 }
 
 /**
@@ -210,6 +212,8 @@ data class UiState(
     val guidaAperta: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. */
     val notifichePioggia: Boolean = true,
+    /** Le notifiche delle allerte ufficiali arancioni e rosse. */
+    val notificheAllerte: Boolean = true,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /**
@@ -608,6 +612,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
+                        notificheAllerte = settings.notificheAllerte,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                     )
                 }
@@ -1256,7 +1261,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(
                             searching = false,
                             results = emptyList(),
-                            searchError = failure.message ?: "Ricerca non riuscita",
+                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed"),
                         )
                     }
                 }
@@ -1408,6 +1413,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         val app = getApplication<Application>()
         if (accese) PioggiaInArrivoWorker.pianifica(app) else PioggiaInArrivoWorker.annulla(app)
         viewModelScope.launch { prefs.setNotifichePioggia(accese) }
+    }
+
+    fun setNotificheAllerte(accese: Boolean) {
+        val app = getApplication<Application>()
+        if (accese) AllerteUfficialiWorker.pianifica(app) else AllerteUfficialiWorker.annulla(app)
+        viewModelScope.launch { prefs.setNotificheAllerte(accese) }
     }
 
     fun permessoNotificheChiesto() {

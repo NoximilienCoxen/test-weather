@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Il triangolo dell'allerta ufficiale, con il punto esclamativo scavato: una
+     sagoma sola, come Android vuole le icone piccole. Il triangolo e' il segno
+     che l'app riserva agli enti (CONTESTO §8-ter). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M12,2.5L22.5,20.5L1.5,20.5Z M11,9L13,9L12.7,14.5L11.3,14.5Z M12,16A1.2,1.2 0,1 0,12 18.4A1.2,1.2 0,1 0,12 16Z" />
+</vector>

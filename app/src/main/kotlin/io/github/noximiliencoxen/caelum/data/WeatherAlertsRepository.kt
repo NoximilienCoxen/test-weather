@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.data
 
+import io.github.noximiliencoxen.caelum.lingua.inInglese
+import io.github.noximiliencoxen.caelum.lingua.tr
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -113,7 +115,7 @@ class WeatherAlertsRepository(
 
     /** Il posto non e' fra quelli che MeteoAlarm serve. */
     class OutOfCoverage(val country: String?) :
-        Exception("MeteoAlarm non copre " + (country ?: "questa località"))
+        Exception(tr("MeteoAlarm non copre ", "MeteoAlarm does not cover ") + (country ?: tr("questa località", "this place")))
 
     companion object {
         /**
@@ -147,7 +149,7 @@ class WeatherAlertsRepository(
             "italia" to "italy", "italy" to "italy",
             "austria" to "austria",
             "belgio" to "belgium", "belgium" to "belgium",
-            "bosnia ed erzegovina" to "bosnia-herzegovina",
+            "bosnia ed erzegovina" to "bosnia-herzegovina", "bosnia and herzegovina" to "bosnia-herzegovina",
             "bulgaria" to "bulgaria",
             "cipro" to "cyprus", "cyprus" to "cyprus",
             "croazia" to "croatia", "croatia" to "croatia",
@@ -162,16 +164,16 @@ class WeatherAlertsRepository(
             "lettonia" to "latvia", "latvia" to "latvia",
             "lituania" to "lithuania", "lithuania" to "lithuania",
             "lussemburgo" to "luxembourg", "luxembourg" to "luxembourg",
-            "macedonia del nord" to "north-macedonia",
+            "macedonia del nord" to "north-macedonia", "north macedonia" to "north-macedonia",
             "malta" to "malta",
             "moldavia" to "moldova", "moldova" to "moldova",
             "montenegro" to "montenegro",
             "norvegia" to "norway", "norway" to "norway",
-            "paesi bassi" to "netherlands", "netherlands" to "netherlands",
+            "paesi bassi" to "netherlands", "netherlands" to "netherlands", "the netherlands" to "netherlands",
             "polonia" to "poland", "poland" to "poland",
             "portogallo" to "portugal", "portugal" to "portugal",
             "regno unito" to "united-kingdom", "united kingdom" to "united-kingdom",
-            "repubblica ceca" to "czechia", "czechia" to "czechia",
+            "repubblica ceca" to "czechia", "czechia" to "czechia", "czech republic" to "czechia",
             "romania" to "romania",
             "serbia" to "serbia",
             "slovacchia" to "slovakia", "slovakia" to "slovakia",
@@ -417,29 +419,57 @@ private val FEED_LEAVES = setOf(
 /**
  * Legge un documento CAP singolo: solo le tre cose che l'Atom non dava.
  *
- * Il primo `info` vince. I feed nazionali ne pubblicano spesso due, uno per
- * lingua, e concatenarli darebbe lo stesso testo scritto due volte.
+ * **Vince l'`info` in italiano, se c'e'.** I feed nazionali ne pubblicano
+ * spesso uno per lingua - per l'Italia di norma italiano e inglese - e prima
+ * vinceva il primo, qualunque fosse: se l'emittente metteva l'inglese davanti,
+ * il bollettino di un'app tutta in italiano si leggeva in inglese (CONTESTO
+ * §39.1 lo lasciava aperto). Senza un `info` italiano si tiene il primo,
+ * come prima: un avviso in un'altra lingua e' meglio di nessun avviso.
+ *
+ * Mescolare due `info` resta escluso: descrizione italiana e istruzioni
+ * inglesi sarebbero due documenti cuciti insieme. Se quello italiano non ha le
+ * istruzioni, non le ha.
  */
 internal fun parseDetail(xml: String): CapDetail {
-    var description: String? = null
-    var instruction: String? = null
-    var sender: String? = null
+    val blocchi = mutableListOf<InfoCap>()
+    var corrente: InfoCap? = null
     forEachTag(xml) { name, parser ->
-        if (parser != null && name in DETAIL_LEAVES) {
-            val text = runCatching { parser.nextText() }.getOrNull()?.trim().orEmpty()
-            when (name) {
-                "description" -> if (description.isNullOrBlank()) description = text
-                "instruction" -> if (instruction.isNullOrBlank()) instruction = text
-                "senderName" -> if (sender.isNullOrBlank()) sender = text
+        when {
+            name == "info" && parser != null -> corrente = InfoCap().also { blocchi += it }
+            name == "info" -> corrente = null
+            parser != null && (name in DETAIL_LEAVES || name == "language") -> {
+                val text = runCatching { parser.nextText() }.getOrNull()?.trim().orEmpty()
+                // Fuori da un `info` (documenti malformati, o senderName messo
+                // a livello di `alert`) il testo va nel primo blocco: meglio
+                // tenerlo che perderlo.
+                val dove = corrente ?: blocchi.firstOrNull() ?: InfoCap().also { blocchi += it }
+                when (name) {
+                    "language" -> if (dove.language.isNullOrBlank()) dove.language = text
+                    "description" -> if (dove.description.isNullOrBlank()) dove.description = text
+                    "instruction" -> if (dove.instruction.isNullOrBlank()) dove.instruction = text
+                    "senderName" -> if (dove.sender.isNullOrBlank()) dove.sender = text
+                }
             }
         }
     }
+    // Nella lingua dell'app, se l'ente la manda (CONTESTO §49)
+    val lingua = if (inInglese()) "en" else "it"
+    val scelto = blocchi.firstOrNull { it.language?.lowercase()?.startsWith(lingua) == true }
+        ?: blocchi.firstOrNull()
     return CapDetail(
-        description = description?.takeIf { it.isNotBlank() },
-        instruction = instruction?.takeIf { it.isNotBlank() },
-        sender = sender?.takeIf { it.isNotBlank() },
+        description = scelto?.description?.takeIf { it.isNotBlank() },
+        instruction = scelto?.instruction?.takeIf { it.isNotBlank() },
+        sender = (scelto?.sender ?: blocchi.firstNotNullOfOrNull { it.sender })?.takeIf { it.isNotBlank() },
     )
 }
+
+/** Un `info` del documento CAP, mentre lo si legge. */
+private class InfoCap(
+    var language: String? = null,
+    var description: String? = null,
+    var instruction: String? = null,
+    var sender: String? = null,
+)
 
 private val DETAIL_LEAVES = setOf("description", "instruction", "senderName")
 

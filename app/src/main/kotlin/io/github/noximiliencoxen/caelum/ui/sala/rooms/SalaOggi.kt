@@ -1,5 +1,7 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.Lingue
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,6 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +44,8 @@ import io.github.noximiliencoxen.caelum.ui.sala.salaBody
 import io.github.noximiliencoxen.caelum.ui.sala.salaConditionOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaPhaseOf
 import io.github.noximiliencoxen.caelum.ui.sala.salaTitle
+import io.github.noximiliencoxen.caelum.ui.sala.titoloSenzaPrevisione
+import io.github.noximiliencoxen.caelum.ui.sala.corpoSenzaPrevisione
 import io.github.noximiliencoxen.caelum.ui.sala.settimanaDi
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -99,9 +107,17 @@ fun SalaOggiScreen(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Row(verticalAlignment = Alignment.Top) {
+            val gradi = ora?.temperature?.let { state.unit.from(it).roundToInt() }
+            // Il numero e il grado sono due scritte: TalkBack le leggeva "21",
+            // pausa, "simbolo di grado". Qui si legge una frase sola.
+            Row(
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = gradi?.let { tr("$it gradi", "$it degrees") } ?: tr("temperatura non disponibile", "temperature not available")
+                },
+            ) {
                 Text(
-                    text = ora?.temperature?.let { state.unit.from(it).roundToInt().toString() } ?: "--",
+                    text = gradi?.toString() ?: "--",
                     style = SalaType.giant(104),
                     color = palette.ink,
                 )
@@ -118,7 +134,7 @@ fun SalaOggiScreen(
             ) {
                 val percepiti = ora?.apparent?.let { state.unit.from(it).roundToInt() }
                 Text(
-                    text = percepiti?.let { "percepiti $it°" } ?: "percepiti --",
+                    text = percepiti?.let { tr("percepiti $it°", "feels like $it°") } ?: tr("percepiti --", "feels like --"),
                     style = SalaType.rowTitle,
                     color = palette.ink,
                 )
@@ -143,7 +159,7 @@ fun SalaOggiScreen(
                     // Il ritorno al presente compare **solo quando serve**: un
                     // comando che non fa niente insegna a non fidarsi degli altri.
                     Text(
-                        text = "torna a oggi",
+                        text = tr("torna a oggi", "back to today"),
                         style = SalaType.pill,
                         color = palette.accent,
                         modifier = Modifier.clickable(onClick = viewModel::backToNow),
@@ -151,13 +167,16 @@ fun SalaOggiScreen(
                 }
             }
 
+            // Senza previsione la condizione ripiega su SERENO, e il titolo
+            // del sereno sopra i trattini era un tempo inventato.
+            val senzaPrevisione = state.forecast == null
             Text(
-                text = salaTitle(condizione, fase),
+                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else salaTitle(condizione, fase),
                 style = SalaType.cardTitle,
                 color = palette.ink,
             )
             Didascalia(
-                salaBody(condizione, fase),
+                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )
@@ -167,13 +186,13 @@ fun SalaOggiScreen(
                 horizontalArrangement = Arrangement.spacedBy(9.dp),
             ) {
                 CellaValore(
-                    etichetta = "VENTO",
+                    etichetta = tr("VENTO", "WIND"),
                     valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.VENTO) },
                 )
                 CellaValore(
-                    etichetta = "UMIDITÀ",
+                    etichetta = tr("UMIDITÀ", "HUMIDITY"),
                     valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.PIOGGIA) },
@@ -183,7 +202,7 @@ fun SalaOggiScreen(
                 // la luna, che di notte e' l'unica cosa che cambia.
                 if (sky.moonPresence > 0.5f) {
                     CellaValore(
-                        etichetta = "LUNA",
+                        etichetta = tr("LUNA", "MOON"),
                         valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
                         palette = palette,
                         onVai = { onVai(SalaRoom.LUNA) },
@@ -191,7 +210,7 @@ fun SalaOggiScreen(
                 } else {
                     CellaValore(
                         etichetta = "UV",
-                        valore = ora?.uvIndex?.let { String.format(Locale.ITALY, "%.1f", it) } ?: "--",
+                        valore = ora?.uvIndex?.let { String.format(Lingue.locale, "%.1f", it) } ?: "--",
                         palette = palette,
                         onVai = { onVai(SalaRoom.UV) },
                     )
@@ -211,12 +230,12 @@ fun SalaOggiScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(text = "TOCCA UN GIORNO", style = SalaType.sectionLabel, color = palette.inkFaint)
+                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY"), style = SalaType.sectionLabel, color = palette.inkFaint)
                 // **Non dice "apri la sala II".** Chi guarda non chiama queste
                 // schermate "sale" - e' un nome nostro, buono per il codice e
                 // non per chi legge: qui si nomina la cosa, la settimana.
                 Text(
-                    text = "apri la settimana",
+                    text = tr("apri la settimana", "open the week"),
                     style = SalaType.pill,
                     color = palette.accent,
                     modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
@@ -268,7 +287,20 @@ fun StrisciaGiorni(
                         color = if (attivo) palette.accent else Color.Transparent,
                         shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
-                    .clickable { onScegli(giorno.indice) }
+                    // La figuretta e' un disegno, e i due numeri da soli non
+                    // dicono quale e' la massima: per TalkBack il giorno si
+                    // legge per intero.
+                    .semantics {
+                        contentDescription = buildString {
+                            append(if (giorno.indice == 0) tr("oggi", "today") else "${giorno.esteso} ${giorno.data}")
+                            append(", ").append(giorno.tipo)
+                            giorno.max?.let { append(tr(", massima ${state.unit.from(it).roundToInt()} gradi", ", high ${state.unit.from(it).roundToInt()} degrees")) }
+                            giorno.min?.let { append(tr(", minima ${state.unit.from(it).roundToInt()} gradi", ", low ${state.unit.from(it).roundToInt()} degrees")) }
+                            if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres"))
+                        }
+                        selected = attivo
+                    }
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day")) { onScegli(giorno.indice) }
                     .padding(top = 9.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -314,7 +346,7 @@ fun StrisciaGiorni(
                                 .background(palette.accent.copy(alpha = if (mm > 0.05) 1f else 0.3f)),
                         )
                         Text(
-                            text = String.format(Locale.ITALY, "%.1f", mm),
+                            text = String.format(Lingue.locale, "%.1f", mm),
                             style = SalaType.microLabel,
                             color = palette.accent,
                             maxLines = 1,

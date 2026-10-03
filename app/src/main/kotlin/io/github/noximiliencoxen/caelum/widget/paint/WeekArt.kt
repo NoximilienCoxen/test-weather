@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.widget.paint
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -51,6 +52,8 @@ internal fun DrawScope.weekArt(
         color = ink.secondary,
     )
     text(TITOLO, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
+
+    creditoFonti(CREDITO_OPEN_METEO, type, ink)
 
     val top = box.top + lineHeight(name) * 1.35f
     if (shown.isEmpty()) {
@@ -176,4 +179,4 @@ internal object WeekScale {
     }
 }
 
-private const val TITOLO = "SETTIMANA"
+private val TITOLO: String get() = tr("SETTIMANA", "WEEK")

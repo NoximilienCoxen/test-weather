@@ -1,5 +1,6 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -125,13 +126,13 @@ fun SalaAriaScreen(
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "L'aria", style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("L'aria", "Air"), style = SalaType.cardTitle, color = palette.ink)
                 Text(
                     text = banda?.label?.lowercase()?.replaceFirstChar { it.uppercase() }
                         ?: when {
-                            fuoriModello -> "Non prevista"
-                            state.airUnavailable -> "Non disponibile"
-                            else -> "In arrivo"
+                            fuoriModello -> tr("Non prevista", "Not forecast")
+                            state.airUnavailable -> tr("Non disponibile", "Unavailable")
+                            else -> tr("In arrivo", "On its way")
                         },
                     style = SalaType.rowTitle,
                     color = palette.accent,
@@ -139,8 +140,12 @@ fun SalaAriaScreen(
                 )
                 if (!adesso && oraScelta != null) {
                     Text(
-                        text = "previsione ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} " +
-                            "alle ${oraDueCifre(oraScelta)}:00",
+                        text = tr(
+                            "previsione ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} " +
+                                "alle ${oraDueCifre(oraScelta)}:00",
+                            "forecast ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} " +
+                                "at ${oraDueCifre(oraScelta)}:00",
+                        ),
                         style = SalaType.rowNote,
                         color = palette.inkSoft,
                         modifier = Modifier.padding(top = 2.dp),
@@ -153,7 +158,7 @@ fun SalaAriaScreen(
         // righe, e tre righe erano un quinto della scheda.
         if (fuoriModello) {
             Didascalia(
-                "Il modello dell'aria arriva a oggi e ai due giorni dopo: per questo giorno non c'è.",
+                tr("Il modello dell'aria arriva a oggi e ai due giorni dopo: per questo giorno non c'è.", "The air model covers today and the two days after: there is nothing for this day."),
                 palette,
                 modifier = Modifier.padding(top = 8.dp),
             )
@@ -175,7 +180,7 @@ fun SalaAriaScreen(
         // l'unica domanda che ci si fa guardando l'aria.
         if (ore.size >= 6 && aria != null) {
             Text(
-                text = "NELLA GIORNATA",
+                text = tr("NELLA GIORNATA", "THROUGH THE DAY"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
@@ -217,7 +222,7 @@ fun SalaAriaScreen(
         // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
         // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
         Text(
-            text = if (adesso) "RISPETTO AL LIMITE OMS" else "RISPETTO AL LIMITE OMS · ADESSO",
+            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
@@ -347,13 +352,13 @@ private fun AndamentoAria(
 private fun consiglioOrario(ore: List<OraAria>, oraScelta: Int?): String {
     val da = oraScelta ?: ore.firstOrNull()?.ora?.hour ?: return ""
     val avanti = ore.filter { it.ora.hour >= da }
-    if (avanti.size < 3) return "La giornata è quasi finita: l'indice non cambia più di molto."
+    if (avanti.size < 3) return tr("La giornata è quasi finita: l'indice non cambia più di molto.", "The day is nearly over: the index will not change much more.")
     val migliore = avanti.minByOrNull { it.indice } ?: return ""
     val peggiore = avanti.maxByOrNull { it.indice } ?: return ""
     if (peggiore.indice - migliore.indice < 8) {
-        return "L'aria resta com'è per tutte le ore che restano: nessun momento è migliore di un altro."
+        return tr("L'aria resta com'è per tutte le ore che restano: nessun momento è migliore di un altro.", "The air stays as it is for the rest of the day: no hour is better than another.")
     }
-    return "Fra le ore che restano la migliore è verso le %02d:00, la peggiore verso le %02d:00."
+    return tr("Fra le ore che restano la migliore è verso le %02d:00, la peggiore verso le %02d:00.", "Of the hours left, the best is around %02d:00, the worst around %02d:00.")
         .format(migliore.ora.hour, peggiore.ora.hour)
 }
 
@@ -428,11 +433,11 @@ private fun coloreBanda(banda: AirBand?): Color = when (banda) {
 }
 
 private fun descrizione(banda: AirBand?, nonDisponibile: Boolean): String = when {
-    nonDisponibile -> "La misura dell'aria non è arrivata: la stazione più vicina non ha risposto."
-    banda == null -> "La misura dell'aria sta arrivando."
-    banda == AirBand.BUONA -> "Particolato basso: nessuna precauzione necessaria, nemmeno per chi è sensibile."
-    banda == AirBand.DISCRETA -> "Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto."
-    banda == AirBand.MEDIA -> "Chi è sensibile faccia attenzione: meglio rimandare l'attività intensa all'aperto."
-    banda == AirBand.SCARSA -> "Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali."
-    else -> "Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse."
+    nonDisponibile -> tr("La misura dell'aria non è arrivata: la stazione più vicina non ha risposto.", "The air reading has not arrived: the nearest station did not answer.")
+    banda == null -> tr("La misura dell'aria sta arrivando.", "The air reading is on its way.")
+    banda == AirBand.BUONA -> tr("Particolato basso: nessuna precauzione necessaria, nemmeno per chi è sensibile.", "Low particulates: no precautions needed, even for sensitive people.")
+    banda == AirBand.DISCRETA -> tr("Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto.", "Acceptable air: people with breathing problems should avoid long exertion outdoors.")
+    banda == AirBand.MEDIA -> tr("Chi è sensibile faccia attenzione: meglio rimandare l'attività intensa all'aperto.", "Sensitive people should take care: better to put off intense activity outdoors.")
+    banda == AirBand.SCARSA -> tr("Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali.", "Poor air: limit exertion outdoors, especially in the middle of the day.")
+    else -> tr("Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse.", "Very bad air: stay indoors when possible and keep the windows shut.")
 }

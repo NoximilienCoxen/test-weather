@@ -35,6 +35,7 @@ internal fun DrawScope.currentArt(
         Cut.MEDIO -> wide(box, place, degrees, condition, family, isDay, forecast, type, ink)
         Cut.GRANDE -> tall(box, place, degrees, condition, family, isDay, forecast, type, ink)
     }
+    creditoFonti(CREDITO_OPEN_METEO, type, ink)
 }
 
 /**
