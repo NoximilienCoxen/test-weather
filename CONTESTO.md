@@ -7146,8 +7146,17 @@ giro era stato annullato da un push successivo sullo stesso ramo):
 - `commento`: testo libero con `evidenza`, `situazione_pollini`,
   `previsione_pollini` ("Non sono previste variazioni..."). E' l'unica
   previsione che Arpae da', a parole e per tutta la regione.
-- **POLLnet** ha una pagina `opendata/` e una `download-dati/` (dalla
-  home): aggiunte alla sonda, da leggere al prossimo giro.
+- **POLLnet** (giro 37230891816, pagine `opendata/` e `download-dati/`): ha
+  **un servizio di dati aperti nazionale**, WFS su GeoServer di ISPRA
+  (`sdi.isprambiente.it/geoserver/om/ows`), con uscita `json` e `csv` e
+  **licenza CC-BY 4.0**. Tre strati: `om:Pollini_spore` (le particelle:
+  `PART_ID`, nome latino, famiglia), le stazioni, e
+  `om:Concentrazione_pollini_spore` (le misure), filtrabile per stazione,
+  particella e data: `cql_filter=STAT_ID=118 and PART_ID=1379 and
+  REMA_DATE between '2023-02-03' and '2024-01-30'`. Il cipresso e'
+  "Polline - Cupressaceae_Taxaceae" (`1330`); l'id delle urticacee e quello
+  della stazione di Forli' sono da leggere dalle tabelle. Ritardo e
+  frequenza non si vedono da qui: sono da misurare con una sonda.
 - **polleninformation.at** prevede anche per l'Italia (`country=IT`,
   `lang=it`), oggi + 3 giorni, livello 0-4 per polline, ma vuole una chiave
   data su richiesta e **vieta l'uso commerciale**; quali piante copra in
@@ -7155,7 +7164,11 @@ giro era stato annullato da un push successivo sullo stesso ramo):
 
 **Cosa cambia per la decisione.** Il client Arpae e' piccolo (due chiamate,
 JSON regolare, stazioni con coordinate) e il dato e' buono, ma e' una misura
-vecchia di una o due settimane e vale solo per l'Emilia-Romagna. Nella sala
+vecchia di una o due settimane e vale solo per l'Emilia-Romagna. **POLLnet
+copre l'Italia intera con la stessa licenza**: se il suo ritardo non e'
+peggiore, e' lui la fonte giusta e Arpae diventa superfluo. Prossimo passo:
+la sonda chiede a POLLnet stazioni, particelle e una settimana di misure di
+Forli' per cipresso e urticacee, e se ne confronta il ritardo con Arpae. Nella sala
 dell'aria andrebbe scritto come tale: "Cipresso, urticacee: misurati a Forli'
 dal 21 al 27 settembre", mai accanto ai tre giorni di previsione di CAMS.
 
