@@ -6940,7 +6940,8 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
     widget e il confronto mai arrivati (voce 17).*
 17. **Recuperare i widget MINI e PROSSIME ORE e il confronto fianco a
     fianco** da `widget-city-inconsistency-0g28uo` (§49.8): portarli a mano
-    su `main`, con le loro prove.
+    su `main`, con le loro prove. *Portati in §49.12; chiusa quando la CI e gli
+    scatti dei widget li hanno mostrati.*
 
 ### 49.6 La serie inglese nei due temi, con impostazioni e note legali
 
@@ -7157,3 +7158,43 @@ JSON regolare, stazioni con coordinate) e il dato e' buono, ma e' una misura
 vecchia di una o due settimane e vale solo per l'Emilia-Romagna. Nella sala
 dell'aria andrebbe scritto come tale: "Cipresso, urticacee: misurati a Forli'
 dal 21 al 27 settembre", mai accanto ai tre giorni di previsione di CAMS.
+
+### 49.12 I widget MINI e PROSSIME ORE, e il confronto, recuperati (voce 17)
+
+Da e3716062 e d5b39d6b di `widget-city-inconsistency-0g28uo` (§49.8),
+cherry-pick e poi adattati a mano al codice di oggi.
+
+**I widget.** `MiniWidget` (1x1: la figura del tempo e la temperatura, senza
+nome) e `HoursWidget` (4x2: dall'ora in corso, sei colonne con ora, figuretta,
+temperatura e probabilita' di pioggia dal 10% in su; quattro nel taglio
+piccolo). Si dichiarano in `WidgetKind` come gli altri, e configurazione,
+ripiego senza citta', aggiornamento periodico e tocco (apre Oggi) arrivano da
+`CaelumWidget` e da `WidgetKind.entries` senza altro codice. Cosa e' cambiato
+rispetto all'originale:
+
+- etichette bilingui in `WidgetKind`, nomi inglesi in `values-en`, frasi lette
+  e titoli ("PROSSIME ORE"/"NEXT HOURS", "ORA"/"NOW") con `tr()`;
+- `weatherBody` non prende piu' l'inchiostro;
+- nelle ore, la **figuretta dell'app** (`glifoDi` con la nuvolosita' vera
+  dell'ora, la luna di notte) al posto del corpo a sfere, come la Settimana;
+- **credito delle fonti** nelle prossime ore (`creditoFonti`, §48.1). Il MINI
+  non lo scrive: in una cella il margine e' un quarto dell'altezza e nemmeno
+  "Open-Meteo.com" ci sta; il tocco apre l'app, dove il credito c'e'.
+
+`MiniOreArtTest` sceglie le ore e disegna i due widget in chiaro e scuro: i
+render finiscono in `ci-artifacts/widget-renders` come quelli di
+`WeekArtTest`. **Non sono ancora in `WidgetOverflowTest`**: va aggiunto.
+
+**Il confronto.** "Confronta fianco a fianco" in fondo a Le localita', da due
+citta' in su (quella guardata entra anche se non e' salvata). Una colonna per
+citta', le stesse righe alla stessa altezza (adesso, massima, minima, pioggia,
+probabilita', vento, UV, poi i tre giorni dopo); il valore migliore di ogni
+riga col fondo in accento, nessuno in caso di pareggio; tocco su una colonna
+= quella citta' diventa quella dell'app. `ConfrontoTest` prova chi vince e
+chi entra. Adattato: testi con `tr()`, decimali con `Lingue.locale`,
+`IconaMeteo` con la firma di oggi (senza tavolozza, con la notte), e il
+confronto nell'elenco delle pagine a schermo pieno di `SalaShell` (icone di
+sistema sul fondo `schermoPieno`, guida che non parte da sola sopra).
+
+**Da provare in mano**: i due widget sulla Home, chiaro e scuro, e il
+confronto con tre o quattro citta' salvate (scorre in orizzontale).

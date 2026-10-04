@@ -412,14 +412,14 @@ fun SalaShell(
     //
     // Si decidono su cio' che c'e' **davvero** dietro, e dietro ci sono due
     // cose diverse. Con una pagina a schermo pieno aperta (impostazioni,
-    // localita', note legali, bollettino) e' il suo fondo, `schermoPieno`, che
+    // localita', confronto, note legali, bollettino) e' il suo fondo, `schermoPieno`, che
     // segue il tema e non il cielo. Altrimenti in alto c'e' la prima fermata
     // del cielo e in fondo la collina davanti, che poggia sul bordo.
     //
     // Prima le decideva `MeteoApp` sulla sfumatura del benvenuto, che in Sala
     // non si vede: di sera, con la carta chiara del bollettino, icone chiare
     // su chiaro (CONTESTO §27.8).
-    val paginaPiena = state.settingsOpen || state.locationsOpen ||
+    val paginaPiena = state.settingsOpen || state.locationsOpen || state.confrontoOpen ||
         state.legaliOpen || state.bollettinoAperto
     SystemBarIcons(
         behindStatusBar = if (paginaPiena) palette.schermoPieno else stops.first(),
@@ -503,7 +503,8 @@ fun SalaShell(
     }
     val guidaDaSola = !state.guidaVista && attesaFinita && state.welcomed &&
         !state.animazioniIstantanee && state.forecast != null &&
-        !state.settingsOpen && !state.locationsOpen && !state.legaliOpen && !state.bollettinoAperto
+        !state.settingsOpen && !state.locationsOpen && !state.confrontoOpen &&
+        !state.legaliOpen && !state.bollettinoAperto
     val guida = state.guidaAperta || guidaDaSola
 
     CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
@@ -918,6 +919,31 @@ fun SalaShell(
                         onSearch = viewModel::search,
                         onUseLocation = viewModel::useDeviceLocation,
                         onClose = viewModel::closeLocations,
+                        onConfronta = viewModel::openConfronto,
+                    )
+                }
+            }
+
+            // Il confronto si apre dalle localita', quindi entra davanti a
+            // loro e registra l'indietro dopo: stessa regola dei blocchi sopra.
+            val scorrimentoConfronto by animateFloatAsState(
+                targetValue = if (state.confrontoOpen) 1f else 0f,
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = 420f),
+                label = "confronto",
+            )
+            if (scorrimentoConfronto > 0.001f) {
+                BackHandler(enabled = state.confrontoOpen, onBack = viewModel::closeConfronto)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset { IntOffset(((1f - scorrimentoConfronto) * widthPx).roundToInt(), 0) },
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    SalaConfrontoScreen(
+                        state = state,
+                        palette = palette,
+                        onPick = viewModel::scegliDalConfronto,
+                        onClose = viewModel::closeConfronto,
                     )
                 }
             }
