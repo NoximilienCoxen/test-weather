@@ -454,6 +454,12 @@ fun SalaShell(
     val faseLunare = remember(giornoLuna) { MoonPhase.at(giornoLuna) }
 
     val avvisi = remember(state.shownAlerts, hour?.time) { state.shownAlerts.attiveA(hour?.time) }
+    // Quando all'ora mostrata non c'e' niente, la pastiglia annuncia la
+    // prossima allerta ufficiale invece di dire "nessun avviso": vedi
+    // [prossimaUfficiale].
+    val prossima = remember(state.shownAlerts, hour?.time) {
+        if (avvisi.isEmpty()) state.shownAlerts.prossimaUfficiale(hour?.time ?: LocalDateTime.now()) else null
+    }
     val giorno = state.detailDay ?: state.forecast?.days?.firstOrNull()
 
     // **Il giorno mostrato, scritto una volta e letto da tutte e sette.** La
@@ -546,6 +552,8 @@ fun SalaShell(
                 IntestazioneCaelum(
                     citta = state.place.name,
                     avvisi = avvisi,
+                    prossima = prossima,
+                    momento = hour?.time ?: LocalDateTime.now(),
                     palette = palette,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
@@ -1100,6 +1108,25 @@ private fun List<WeatherAlert>.attiveA(momento: LocalDateTime?): List<WeatherAle
         dopoInizio && primaDellaFine
     }.sortedByDescending { it.level.weight }
 }
+
+/**
+ * La prossima allerta **ufficiale** che comincia dopo [momento], o nulla.
+ *
+ * **Prima la pastiglia diceva "nessun avviso" anche con un'allerta gia'
+ * emessa.** La Protezione Civile pubblica i bollettini con uno o due giorni
+ * d'anticipo: il 4 ottobre MeteoAlarm aveva un'allerta gialla per temporali
+ * sull'Emilia-Romagna valida dalle 14 del 6. L'app la scaricava, il
+ * bollettino la elencava, ma la pastiglia guardava solo l'ora mostrata e
+ * rassicurava - e nessuno apre un bollettino sotto "nessun avviso". Google
+ * la mostrava; Caelum, che l'aveva in mano, no.
+ *
+ * Solo le ufficiali: un avviso calcolato sulle soglie di dopodomani e' una
+ * previsione fra le altre, non una notizia che qualcuno ha emesso. A parita'
+ * di inizio vince la piu' grave.
+ */
+internal fun List<WeatherAlert>.prossimaUfficiale(momento: LocalDateTime): WeatherAlert? =
+    filter { it.official && it.onset?.isAfter(momento) == true }
+        .minWithOrNull(compareBy<WeatherAlert> { it.onset }.thenByDescending { it.level.weight })
 
 /**
  * Quanto del colore della scena d'apertura entra nel cielo: meta', su una
