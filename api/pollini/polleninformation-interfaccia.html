@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head><script>var matomoUrl = 'https://www.polleninformation.at/matomo/';var matomoSiteId = '1';</script>
+    <meta charset="utf-8">
+
+<!-- 
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2026 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at https://typo3.org/
+-->
+
+
+<title>Polleninformation data interface / API  | Polleninformation</title>
+<meta name="generator" content="TYPO3 CMS">
+<meta name="viewport" content="width=device-width, height=device-height, maximum-scale=5.0, initial-scale=1">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="stylesheet" href="/typo3temp/assets/compressed/merged-e15d7292246306abadd7f7158dc38198-d423c0d85f26888c8d3e11682ae18668.1790680790.css" media="all">
+<link rel="stylesheet" href="/typo3temp/assets/compressed/merged-c2bd0cc9f27b2d183aa843984c2baf93-6501f205719bd71e2e5be187406a4227.1790680790.css" media="print">
+
+
+
+<script src="/typo3temp/assets/compressed/merged-5818aa4a215aa4bed65f62e54ed08450-164ac532b8812810ae63d9d344e73714.1779268947.js"></script>
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/apple-touch-icon.1697440459.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/favicon-32x32.1697440459.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/favicon-16x16.1697440459.png">
+<link rel="manifest" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/site.1710165085.webmanifest">
+<link rel="mask-icon" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/safari-pinned-tab.1697440459.svg" color="#6d9387">
+<link rel="shortcut icon" href="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/Favicons/favicon.1697440459.ico">
+<meta name="theme-color" content="#ffffff">
+
+
+<link rel="canonical" href="https://www.polleninformation.at/en/data-interface">
+
+<link rel="alternate" hreflang="de-AT" href="https://www.polleninformation.at/datenschnittstelle">
+<link rel="alternate" hreflang="en-US" href="https://www.polleninformation.at/en/data-interface">
+<link rel="alternate" hreflang="fi-FI" href="https://www.polleninformation.at/fi/data-interface">
+<link rel="alternate" hreflang="sv-SE" href="https://www.polleninformation.at/sv/data-interface">
+<link rel="alternate" hreflang="fr-FR" href="https://www.polleninformation.at/fr/data-interface">
+<link rel="alternate" hreflang="it-IT" href="https://www.polleninformation.at/it/data-interface">
+<link rel="alternate" hreflang="lv-LV" href="https://www.polleninformation.at/lv/data-interface">
+<link rel="alternate" hreflang="lt-LT" href="https://www.polleninformation.at/lt/data-interface">
+<link rel="alternate" hreflang="pl-PL" href="https://www.polleninformation.at/pl/data-interface">
+<link rel="alternate" hreflang="pt-PT" href="https://www.polleninformation.at/pt/data-interface">
+<link rel="alternate" hreflang="ru-RU" href="https://www.polleninformation.at/ru/data-interface">
+<link rel="alternate" hreflang="sk-SK" href="https://www.polleninformation.at/sk/data-interface">
+<link rel="alternate" hreflang="es-ES" href="https://www.polleninformation.at/es/data-interface">
+<link rel="alternate" hreflang="tr-TR" href="https://www.polleninformation.at/tr/data-interface">
+<link rel="alternate" hreflang="uk-UA" href="https://www.polleninformation.at/uk/data-interface">
+<link rel="alternate" hreflang="hu-HU" href="https://www.polleninformation.at/hu/data-interface">
+<link rel="alternate" hreflang="x-default" href="https://www.polleninformation.at/datenschnittstelle">
+</head>
+<body id="page_1318">
+
+
+
+
+<header id="header" class="position-relative d-print-none"><div id="pageswitcher"><a class="logo logo-polleninformation active" href="/en/"><img alt="Logo Polleninformation" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/logo_polleninformation.svg" width="667" height="160" /></a><a href="https://www.allergenvermeidung.org" class="logo logo-igav" title="To the website of the Interessensgemeinschaft Allergenvermeidung - I.G.A.V."><img alt="Logo IGAV" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/logo_igav_white.svg" width="965" height="390" /></a></div><button id="hamburger"><span>Open Navigation</span></button><div id="mainnavi_container"><div class="inner"><form action="/en/search?tx_indexedsearch_pi2%5Baction%5D=search&amp;tx_indexedsearch_pi2%5Bcontroller%5D=Search&amp;cHash=276a958175c6057a3e0cae404f424734" method="post" id="searchbox"><label for="searchbox_sword" class="visually-hidden">Search: </label><input type="text" name="tx_indexedsearch_pi2[search][sword]" class="form-control" value="" id="searchbox_sword" placeholder="Enter a search term
+" /><input type="hidden" name="tx_indexedsearch_pi2[search][languageUid]" value="1" /><input type="submit" name="search[submitButton]" value="Search" id="searchbox_submit" /></form><div class="d-flex align-items-end flex-wrap" id="mainnavi_buttons"><label for="countryswitch" class="visually-hidden">Country</label><select id="countryswitch" class="flex-grow-1 form-select w-auto me-3 mb-2"><option value="https://www.polleninformation.at/" selected>
+            Austria
+        </option><option value="https://www.polleninformation.eu/finland/" >
+            Finland
+        </option><option value="https://www.polleninformation.eu/france/" >
+            France
+        </option><option value="https://www.polleninformation.at/DE" >
+            Germany
+        </option><option value="https://www.polleninformation.eu/greatbritain/" >
+            Great Britain
+        </option><option value="https://www.polleninformation.eu/hungary/" >
+            Hungary
+        </option><option value="https://www.polleninformation.eu/italy/" >
+            Italy
+        </option><option value="https://www.polleninformation.eu/latvia/" >
+            Latvia
+        </option><option value="https://www.polleninformation.eu/lithuania/" >
+            Lithuania
+        </option><option value="https://www.polleninformation.eu/poland/" >
+            Poland
+        </option><option value="https://www.polleninformation.eu/portugal/" >
+            Portugal
+        </option><option value="https://www.polleninformation.eu/slovakia/" >
+            Slovakia
+        </option><option value="https://www.polleninformation.eu/spain/" >
+            Spain
+        </option><option value="https://www.polleninformation.eu/sweden/" >
+            Sweden
+        </option><option value="https://www.polleninformation.eu/switzerland/" >
+            Switzerland
+        </option><option value="https://www.polleninformation.eu/turkey/" >
+            Türkiye
+        </option><option value="https://www.polleninformation.eu/ukraine/" >
+            Ukraine
+        </option></select><label for="langswitch" class="visually-hidden">Language</label><select id="langswitch" class="flex-grow-0 form-select w-auto me-3 mb-2"><option value="/datenschnittstelle" >
+                DE
+                </option><option value="/en/data-interface" selected>
+                EN
+                </option></select><span id="diary_loginbutton_container"></span></div><h6>Navigation</h6><ul id="mainnavi"><li><a class=""
+                   href="/en/current-data/allergy-risk"
+                   target=""
+                   title="Current Data">
+                    Current Data
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/current-data/allergy-risk"
+                                       target=""
+                                       title="Allergy Risk">
+                                        Allergy Risk
+                                    </a></li><li><a class=""
+                                       href="/en/current-data/symptom-load-map"
+                                       target=""
+                                       title="Symptom Load Map">
+                                        Symptom Load Map
+                                    </a></li><li><a class=""
+                                       href="/en/current-data/pollen-countdown"
+                                       target=""
+                                       title="Pollen Countdown">
+                                        Pollen Countdown
+                                    </a></li><li><a class=""
+                                       href="/en/current-data/pollen-year"
+                                       target=""
+                                       title="Pollen-Year">
+                                        Pollen-Year
+                                    </a></li><li><a class=""
+                                       href="/en/current-data/current-pollen-count-charts"
+                                       target=""
+                                       title="Current Pollen Count Charts">
+                                        Current Pollen Count Charts
+                                    </a></li></ul></li><li><a class=""
+                   href="/en/prognosis/forecast"
+                   target=""
+                   title="Prognosis">
+                    Prognosis
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/prognosis/forecast"
+                                       target=""
+                                       title="Forecast">
+                                        Forecast
+                                    </a></li><li><a class=""
+                                       href="/en/prognosis/4-day-forecast"
+                                       target=""
+                                       title="4-Day-Forecast">
+                                        4-Day-Forecast
+                                    </a></li><li><a class=""
+                                       href="/en/prognosis/wettervorhersage"
+                                       target=""
+                                       title="Wettervorhersage">
+                                        Wettervorhersage
+                                    </a></li><li><a class=""
+                                       href="/en/prognosis/asthma-weather"
+                                       target=""
+                                       title="Asthma weather">
+                                        Asthma weather
+                                    </a></li><li><a class=""
+                                       href="/en/prognosis/hourly-load-distribution"
+                                       target=""
+                                       title="Hourly load distribution">
+                                        Hourly load distribution
+                                    </a></li><li><a class=""
+                                       href="/en/prognosis/forecast-maps/model-based"
+                                       target=""
+                                       title="Forecast maps">
+                                        Forecast maps
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="/en/prognosis/forecast-maps/model-based"
+                                                           target=""
+                                                           title="Model-based">
+                                                            Model-based
+                                                        </a></li><li><a class=""
+                                                           href="/en/prognosis/forecast-maps/model-independent"
+                                                           target=""
+                                                           title="Model-independent">
+                                                            Model-independent
+                                                        </a></li><li><a class=""
+                                                           href="/en/prognosis/forecast-maps/model-for-europe"
+                                                           target=""
+                                                           title="Model for Europe">
+                                                            Model for Europe
+                                                        </a></li><li><a class=""
+                                                           href="/en/prognosis/forecast-maps/r-pas-model-for-ragweed"
+                                                           target=""
+                                                           title="R-PAS Model for Ragweed">
+                                                            R-PAS Model for Ragweed
+                                                        </a></li></ul></li></ul></li><li><a class=""
+                   href="/en/allergy/pollen-load-map-of-europe"
+                   target=""
+                   title="Allergy">
+                    Allergy
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/allergy/pollen-load-map-of-europe"
+                                       target=""
+                                       title="Pollen Load Map of Europe">
+                                        Pollen Load Map of Europe
+                                    </a></li><li><a class=""
+                                       href="/en/allergy/diagnosis"
+                                       target=""
+                                       title="Diagnosis">
+                                        Diagnosis
+                                    </a></li><li><a class=""
+                                       href="/en/allergy/therapy"
+                                       target=""
+                                       title="Therapy">
+                                        Therapy
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="/en/allergy/therapy/allergen-avoidance"
+                                                           target=""
+                                                           title="Allergen Avoidance">
+                                                            Allergen Avoidance
+                                                        </a></li><li><a class=""
+                                                           href="/en/allergy/therapy/suppression-of-acute-symptoms"
+                                                           target=""
+                                                           title="Suppression of Acute Symptoms">
+                                                            Suppression of Acute Symptoms
+                                                        </a></li><li><a class=""
+                                                           href="/en/allergy/therapy/immunotherapy"
+                                                           target=""
+                                                           title="Immunotherapy">
+                                                            Immunotherapy
+                                                        </a></li><li><a class=""
+                                                           href="/en/allergy/therapy/alternative-medicine"
+                                                           target=""
+                                                           title="Alternative medicine">
+                                                            Alternative medicine
+                                                        </a></li></ul></li><li><a class=""
+                                       href="/en/allergy/cross-reactions"
+                                       target=""
+                                       title="Cross-Reactions">
+                                        Cross-Reactions
+                                    </a></li><li><a class=""
+                                       href="/en/allergy/plantcompass"
+                                       target=""
+                                       title="Plantcompass">
+                                        Plantcompass
+                                    </a></li></ul></li><li><a class=""
+                   href="/en/services/allergy-risk-questionnaire"
+                   target=""
+                   title="Services">
+                    Services
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/services/allergy-risk-questionnaire"
+                                       target=""
+                                       title="Allergy Risk Questionnaire">
+                                        Allergy Risk Questionnaire
+                                    </a></li><li><a class=""
+                                       href="/en/services/apps"
+                                       target=""
+                                       title="Apps">
+                                        Apps
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="/en/services/apps/pollen-app"
+                                                           target=""
+                                                           title="Pollen+ App">
+                                                            Pollen+ App
+                                                        </a></li><li><a class=""
+                                                           href="/en/services/apps/ragweed-finder-app"
+                                                           target=""
+                                                           title="Ragweed Finder App">
+                                                            Ragweed Finder App
+                                                        </a></li></ul></li><li><a class=""
+                                       href="/en/services/symptom-report"
+                                       target=""
+                                       title="Symptom Report">
+                                        Symptom Report
+                                    </a></li><li><a class=""
+                                       href="/en/services/insider-pollenpodcast"
+                                       target=""
+                                       title="Insider PollenPodcast">
+                                        Insider PollenPodcast
+                                    </a></li><li><a class=""
+                                       href="/en/services/media-press"
+                                       target=""
+                                       title="Media / Press">
+                                        Media / Press
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="https://www.polleninformation.at/fileadmin/user_upload/bilder/presse/polleninformation_factsheet.pdf"
+                                                           target="_blank"
+                                                           title="About the Austrian Pollen Information Service">
+                                                            About the Austrian Pollen Information Service
+                                                        </a></li><li><a class=""
+                                                           href="/en/services/media-press/current-press-releases"
+                                                           target=""
+                                                           title="Current press releases">
+                                                            Current press releases
+                                                        </a></li><li><a class=""
+                                                           href="/en/services/media-press/image-material"
+                                                           target=""
+                                                           title="Image material">
+                                                            Image material
+                                                        </a></li><li><a class=""
+                                                           href="https://www.allergenvermeidung.org/presse"
+                                                           target="_blank"
+                                                           title="Press releases IGAV">
+                                                            Press releases IGAV
+                                                        </a></li></ul></li><li><a class=""
+                                       href="/en/pollee"
+                                       target=""
+                                       title="Pollee - digital assistant">
+                                        Pollee - digital assistant
+                                    </a></li><li><a class=""
+                                       href="/en/services/patients-hay-fever-diary"
+                                       target=""
+                                       title="Patients Hay-fever Diary">
+                                        Patients Hay-fever Diary
+                                    </a></li></ul></li><li><a class=""
+                   href="/en/about"
+                   target=""
+                   title="About">
+                    About
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/about/association"
+                                       target=""
+                                       title="Association">
+                                        Association
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="/en/about/association/dr-med-univ-markus-berger"
+                                                           target=""
+                                                           title="Dr. med. univ. Markus Berger">
+                                                            Dr. med. univ. Markus Berger
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/association/mag-dr-johannes-m-bouchal"
+                                                           target=""
+                                                           title="Mag. Dr. Johannes M. Bouchal">
+                                                            Mag. Dr. Johannes M. Bouchal
+                                                        </a></li></ul></li><li><a class=""
+                                       href="/en/about/staff-forecasting"
+                                       target=""
+                                       title="Staff Forecasting">
+                                        Staff Forecasting
+                                    </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-dr-susanne-aigner"
+                                                           target=""
+                                                           title="Mag. Dr. Susanne Aigner">
+                                                            Mag. Dr. Susanne Aigner
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/lukas-dirr-msc"
+                                                           target=""
+                                                           title="Lukas Dirr, MSc">
+                                                            Lukas Dirr, MSc
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-dr-ulrike-gartner"
+                                                           target=""
+                                                           title="Mag. Dr. Ulrike Gartner">
+                                                            Mag. Dr. Ulrike Gartner
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-pramodchandra-harvey"
+                                                           target=""
+                                                           title="Mag. Pramodchandra Harvey">
+                                                            Mag. Pramodchandra Harvey
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/veronika-kofler"
+                                                           target=""
+                                                           title="Veronika Kofler">
+                                                            Veronika Kofler
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-herta-koll"
+                                                           target=""
+                                                           title="Mag. Herta Koll">
+                                                            Mag. Herta Koll
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-sabine-kottik"
+                                                           target=""
+                                                           title="Mag. Sabine Kottik">
+                                                            Mag. Sabine Kottik
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-dr-margit-langanger"
+                                                           target=""
+                                                           title="Mag. Dr. Margit Langanger">
+                                                            Mag. Dr. Margit Langanger
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/ulrike-langmann-msc"
+                                                           target=""
+                                                           title="Ulrike Langmann, MSc">
+                                                            Ulrike Langmann, MSc
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/laurent-marquer-phd"
+                                                           target=""
+                                                           title="Laurent Marquer, PhD">
+                                                            Laurent Marquer, PhD
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/prof-dr-roland-und-jutta-schmidt"
+                                                           target=""
+                                                           title="Prof. Dr. Roland und Jutta Schmidt">
+                                                            Prof. Dr. Roland und Jutta Schmidt
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/magdalena-widmann-msc"
+                                                           target=""
+                                                           title="Magdalena Widmann, MSc">
+                                                            Magdalena Widmann, MSc
+                                                        </a></li><li><a class=""
+                                                           href="/en/about/staff-forecasting/mag-dr-helmut-zwander"
+                                                           target=""
+                                                           title="Mag. Dr. Helmut Zwander">
+                                                            Mag. Dr. Helmut Zwander
+                                                        </a></li></ul></li></ul></li><li><a class=""
+                   href="/en/news"
+                   target=""
+                   title="News">
+                    News
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/news/newsletter"
+                                       target=""
+                                       title="Newsletter">
+                                        Newsletter
+                                    </a></li><li><a class=""
+                                       href="/en/news/pollen-alert"
+                                       target=""
+                                       title="Pollen Alert">
+                                        Pollen Alert
+                                    </a></li></ul></li><li><a class=""
+                   href="/en/links/austria"
+                   target=""
+                   title="Links">
+                    Links
+                </a><button class="open_subnavi_button " title="Open Subnavigation">Open Subnavigation</button><ul class="sub "><li><a class=""
+                                       href="/en/links/austria"
+                                       target=""
+                                       title="Austria">
+                                        Austria
+                                    </a></li><li><a class=""
+                                       href="/en/links/europe"
+                                       target=""
+                                       title="Europe">
+                                        Europe
+                                    </a></li><li><a class=""
+                                       href="/en/links/beyond-europe"
+                                       target=""
+                                       title="Beyond Europe">
+                                        Beyond Europe
+                                    </a></li><li><a class=""
+                                       href="/en/links/partner"
+                                       target=""
+                                       title="Partner">
+                                        Partner
+                                    </a></li></ul></li></ul></div></div><div id="headerimage" style="background-image: url(/fileadmin/_processed_/f/0/csm_Ragweed_worked_4d6833e5df.jpg); background-position: top center;" class=""><div id="socialmedia"><a href="https://www.facebook.com/polleninformation" target="_blank" class="tippy" title="Polleninformation on Facebook"><img alt="Facebook Logo" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_facebook.svg" width="20" height="40" /></a><a href="https://www.instagram.com/polleninformation.at" target="_blank" class="tippy" title="Polleninformation on Instagram"><img alt="Instagram Logo" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_instagram.svg" width="40" height="40" /></a><a class="tippy" title="Signal and Telegram Pollenwarner" href="/en/news/pollen-alert"><img alt="Telegram and Signal Logo" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_signal_telegram.svg" width="60" height="40" /></a><a class="tippy" title="Pollee - your digital assistent" href="/en/pollee"><img alt="Pollee Logo" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_pollee.svg" width="40" height="40" /></a><a class="tippy d-none d-sm-flex" title="Pollendiary login" href="/en/services/patients-hay-fever-diary"><img alt="Pollentagebuch" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_diary.svg" width="40" height="40" /></a><a class="tippy" title="Insider PollenPodcast" href="/en/services/insider-pollenpodcast"><img alt="Podcast" src="/_assets/d520de923ac5980f7c00dcf4542702c2/Images/icon_podcast.svg" width="40" height="40" /></a></div></div></header><main id="content_container" class="position-relative"><div id="content"><div class="frame"><div id="breadcrumb" class="fluidcontainer container-xl"><a href="/en/"
+                       target=""
+                       title="Polleninformation.at">Polleninformation.at</a><span class="spacer">\</span><span class="arrow"></span>
+        
+            
+                    Polleninformation data interface / API
+                
+            
+        
+    </div></div><!--TYPO3SEARCH_begin--><div id="c1543" class="
+            frame
+            frame-default
+            frame-type-text
+            frame-layout-0
+            
+            
+            
+"><div class="fluidcontainer container-xl"><a id="c1546"></a><header><h1 class="">
+                Data interface / API
+            </h1></header><p>Recently, the (unofficial) data interface (API) of the Pollen+ app has increasingly appeared in third-party applications. Since this API was never designed for public use and the external calls put an additional load on the web server, we have decided to restrict the public use of this API.</p><p>Instead, we now offer an official API that provides the most important forecast data. This includes the pollen forecast data, as well as the allergy risk for today and the next three days.</p><h2>Prerequisites for using this API:</h2><ul><li data-list-item-id="ed047d280938e0be7379a9896655a0a81">An <strong>API key</strong>, which is provided by us.<br>Please <a href="/en/data-interface/request-an-api-key"><strong>use this contact form</strong></a><strong></strong>and let us know what you would like to use the data interface for. We will then send you your personal API key.</li><li data-list-item-id="edfd84a375d7b243443845a34ce065693">If the data is used in publicly available applications, it is mandatory to <strong>name the origin of the data</strong>. (Austrian Pollen Information Service, www.polleninformation.at)</li><li data-list-item-id="e225abcf2dcc4f4dcb53b7a867158d9ae">The number of calls to the API is based on a <strong>fair-use basis</strong> so as not to overload the web server. We reserve the right to block access again in the event of disproportionately frequent calls. As the prediction data does not change continuously, a data retrieval every 4 hours is sufficient in most cases.</li><li data-list-item-id="ecfe24c65632a82948b96ed2177cec8e9">The data from the API may <strong>not be used for commercial purposes</strong>.</li><li data-list-item-id="ebdab0f03484edfc9b1c8c782eec03c82">Calling the unofficial API of the Pollen+ app, starting with the URLs:<br><a href="https://www.polleninformation.at/index.php?id=0&amp;type=15976824" target="_blank">https://www.polleninformation.at/index.php?id=0&amp;type=15976824 or</a><a href="https://www.polleninformation.at/index.php?eID=appinterface" target="_blank">https://www.polleninformation.at/index.php?eID=appinterface</a> is <strong>no longer permitted</strong>.</li></ul><p>&nbsp;</p><h2>Interface documentation</h2><h3>URL for retrieving the JSON data:</h3><p><a href="https://www.polleninformation.at/api/forecast/public?country={twoLetterIsoCountryCode}&amp;lang={twoLetterIsoLanguageCode}&amp;latitude={latitude}&amp;longitude={longitude}&amp;apikey={apikey}" target="_blank">https://www.polleninformation.at/api/forecast/public?country={twoLetterIsoCountryCode}&amp;lang={twoLetterIsoLanguageCode}&amp;latitude={latitude}&amp;longitude={longitude}&amp;apikey={apikey}</a></p><h3>Parameter:</h3><ul><li data-list-item-id="ec7aa2061250a375f983d4867130990ca"><i>twoLetterIsoCountryCode</i><br>The two-digit country code of the desired country&nbsp;<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank" rel="noreferrer">(https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)</a><br>Possible values: AT, CH, DE, ES, FR, GB, IT, LV, LT, PL, SE, TR, UA</li><li data-list-item-id="edd5cd040273f06dbe242366d3c6f848c"><i>twoLetterIsoLanguageCode</i><br>The two-digit language code for returning the titles of the allergens&nbsp;<a href="https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes" target="_blank" rel="noreferrer">(https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes)</a><br>Possible values: de, en, fi, sv, fr, it, lv, lt, pl, pt, ru, sk, es, tr, uk, hu</li><li data-list-item-id="e1ae091f2c90c702ee854f0262cce626e"><i>latitude</i><br>The latitude of the desired position. e.g.: 48.20671631686089</li><li data-list-item-id="e38bf22696f383f71f9a000b001c45aa5"><i>longitude</i><br>The longitude of the desired position. e.g.: 16.350157610474536</li><li data-list-item-id="e15623077ad2c71e2a5e0771aff0948a0"><i>apikey</i><br>The API key that we provide on request</li></ul><p><strong>Example:</strong><br><a href="https://www.polleninformation.at/api/forecast/public?country=AT&amp;lang=de&amp;latitude=48.20671631686089&amp;longitude=16.350157610474536&amp;apikey=123" target="_blank">https://www.polleninformation.at/api/forecast/public?country=AT&amp;lang=de&amp;latitude=48.20671631686089&amp;longitude=16.350157610474536&amp;apikey=123</a></p><p>&nbsp;</p><h3>JSON result:</h3><p>&nbsp;</p><pre><code>{
+    contamination: [
+        {
+            poll_id: 23,
+            poll_title: "Pilzsporen (Alternaria)",
+            contamination_1: 3,
+            contamination_2: 3,
+            contamination_3: 3,
+            contamination_4: 3
+        },
+        {
+            poll_id: 5,
+            poll_title: "Gräser (Poaceae)",
+            contamination_1: 2,
+            contamination_2: 2,
+            contamination_3: 2,
+            contamination_4: 2
+        }
+    ],
+    allergyrisk: {
+        allergyrisk_1: 8,
+        allergyrisk_2: 8,
+        allergyrisk_3: 8,
+        allergyrisk_4: 8
+    },
+    allergyrisk_hourly: {
+        allergyrisk_hourly_1: [
+            5,
+            5,
+            5,
+            5,
+            5,
+            4,
+            6,
+            8,
+            8,
+            8,
+            7,
+            6,
+            6,
+            4,
+            3,
+            3,
+            2,
+            1,
+            1,
+            1,
+            3,
+            3,
+            2,
+            2
+        ],
+        allergyrisk_hourly_2: [
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            5,
+            7,
+            8,
+            8,
+            8,
+            8,
+            7,
+            6,
+            5,
+            6,
+            5,
+            4,
+            4,
+            4,
+            3,
+            3
+        ],
+        allergyrisk_hourly_3: [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            4,
+            4,
+            3,
+            5,
+            4,
+            5,
+            4,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+        ],
+        allergyrisk_hourly_4: [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            5,
+            5,
+            5,
+            6,
+            7,
+            8,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7,
+            7
+        ]
+    }
+}</code></pre><p>&nbsp;</p><p><strong>contamination_1</strong>: Pollen load today from 0 (= no load) to 4 (= very high load)<br><strong>contamination_2</strong>: Pollen load tomorrow from 0 to 4<br>etc.</p><p><strong>allergyrisk_1</strong>: Allergy risk today from 0 (= no exposure) to 10 (= very high exposure)<br><strong>allergyrisk_2</strong>: Allergy risk tomorrow from 0 to 10<br>etc.</p><p><strong>allergyrisk_hourly_1</strong>: Hourly distribution of allergy risk today from 0 (= no exposure) to 10 (= very high exposure). (1st value = 12 a.m. to 1 a.m., 2nd value = 1 a.m. to 2 a.m., ...)<br><strong>allergyrisk_hourly_2</strong>: Hourly distribution of allergy risk tomorrow from 0 to 10.<br>etc.</p><p>&nbsp;</p><h3>JSON result in case of error:</h3><p>&nbsp;</p><pre><code>{
+    error: "invalid api key"
+}
+</code></pre></div></div><!--TYPO3SEARCH_end--></div></main><div id="pollee_button"></div><footer id="footer" class="bg-primary text-white py-5 d-print-none"><div class="container-xxl"><div class="row"><div class="col col-12 col-md-4 mb-5 mb-md-0"><h6 class="text-white">Newsletter</h6><p>Always stay informed with our Newsletter.
+We continuously report the actual pollen situation and provide news in the field of allergy via e-mail</p><a class="btn btn-primary" href="/en/news/newsletter">Go to newsletter</a></div><div class="col d-none d-md-flex col-1"></div><div class="col col-12 col-md-4"><nav id="footernavi_container"><ul id="footernavi"><li><a class=""
+                   href="/en/media-inquiries"
+                   target=""
+                   title="Media inquiries">
+                    Media inquiries
+                </a></li><li><a class=""
+                   href="/en/services/media-press"
+                   target=""
+                   title="Medien / Presse">
+                    Medien / Presse
+                </a></li><li><a class=""
+                   href="/en/scientific-partner"
+                   target=""
+                   title="Scientific Partner">
+                    Scientific Partner
+                </a></li><li><a class=""
+                   href="/en/strategic-partners"
+                   target=""
+                   title="Strategic partners">
+                    Strategic partners
+                </a></li><li><a class=""
+                   href="/en/sponsors"
+                   target=""
+                   title="Sponsors">
+                    Sponsors
+                </a></li><li><a class=""
+                   href="/en/contact"
+                   target=""
+                   title="Contact">
+                    Contact
+                </a></li><li><a class=""
+                   href="/en/imprint"
+                   target=""
+                   title="Imprint">
+                    Imprint
+                </a></li><li><a class=""
+                   href="/en/our-terms-of-use"
+                   target=""
+                   title="Our Terms of Use">
+                    Our Terms of Use
+                </a></li><li><a class=""
+                   href="/en/disclaimer"
+                   target=""
+                   title="Disclaimer">
+                    Disclaimer
+                </a></li></ul></nav></div></div></div></footer><div id="spinner" class="spinner-grow text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+
+<script src="/typo3temp/assets/compressed/merged-04c838c579e43323f2ba7797587b7ac0-7f33364aeddd446d2082e777a78b70f2.1790680782.js"></script>
+
+
+</body>
+</html>
