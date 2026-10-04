@@ -6926,7 +6926,7 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 13. **Cipresso e urticacee nel polline**: serve una seconda fonte, CAMS non li
     da' (§33).
 14. **La CI su Ubuntu 26**: gia' provata verde, e' una riga in `runs-on`
-    (§48.2). Ripetere la prova prima di passare.
+    (§48.2). Ripetere la prova prima di passare. *Fatta: §49.7.*
 15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
     impostazioni e note legali in inglese: oggi la serie `en-*` ha solo le
     sale e la guida (§49.3). *Fatta in §49.6; chiusa quando un giro di CI
@@ -6935,7 +6935,8 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 **Pulizia:**
 
 16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
-    repository piu' ordinato.
+    repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
+    da fare a mano.*
 
 ### 49.6 La serie inglese nei due temi, con impostazioni e note legali
 
@@ -6976,3 +6977,36 @@ tutta la parte ritratta, nei due temi.
 job a 30. Il limite di `screenshots` e' salito a 40: un giro che scade non
 pubblica niente, e la serie nuova sta in coda proprio per non costare la
 galleria.
+
+### 49.7 La CI su Ubuntu 26
+
+Prova ripetuta il 4 ottobre, come chiedeva §48.2: giro 37220941697,
+`workflow_dispatch` con `runner: ubuntu-26.04`, sul codice di §49.6. Verdi
+build, prove, lint, sonde e cattura; 90 scatti, gli stessi del giro su 24.04.
+La cattura ci mette 26 min 48 s, contro 27 min 12 s su 24.04 (giro
+37215857240): nessuna differenza che conti.
+
+Fatto il passaggio: il ripiego di `runs-on` in tutti i job e il valore di
+serie dell'input `runner` sono ora `ubuntu-26.04`. Si resta **fissati** a un
+numero e non a `ubuntu-latest`, per la stessa ragione di §46.2: il prossimo
+cambio d'immagine si fa con un giro dedicato, non lo decide una data.
+`--field runner=ubuntu-24.04` (o lo stesso campo a mano) riporta un giro
+sull'immagine di prima, se serve un confronto.
+
+### 49.8 I rami vecchi
+
+Con la storia intera (il clone delle sessioni e' parziale: `git fetch
+--unshallow` prima di contare, se no `merge-base` non trova niente e ogni
+ramo sembra non unito), il 4 ottobre:
+
+- **39 rami interamente in `main`**, cancellabili senza perdere nulla:
+  `ccr-a8f2fa11-pr2bf1` e 38 `claude/*`. La sessione non ha il permesso di
+  cancellare rami remoti, quindi si fa a mano (`git push origin --delete ...`).
+- **9 rami con lavoro mai unito**, da decidere uno per uno:
+  `sala-scultura` (archivio della scultura meteo), `feed-art-gallery-style-lgkan5`
+  (feed come galleria, diorama, script Blender), `widget-city-inconsistency-0g28uo`
+  (due widget nuovi, confronto delle localita', una prima app in inglese),
+  `foglio-pila-6m4t` e `radar-fulmini-9d2x` (solo specifiche),
+  `emulatore-diagnostica-3k7p`, `icona-cielo-diagonale`,
+  `openmeteo-italy-icon-2i-8hbs6j`, `analisi-file-lavoro-xnpx1o`.
+- Restano comunque `main`, `ci-artifacts` e il ramo di lavoro corrente.
