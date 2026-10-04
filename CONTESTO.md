@@ -7057,25 +7057,46 @@ d'installazione e nessun allegato in piu'. Chiuso.
 
 ### 49.10 Per la prossima chat
 
-Stato al 4 ottobre, sera. L'elenco numerato e' §49.5; qui solo cosa e'
-cambiato e da dove ripartire.
+Stato al 4 ottobre, notte, dopo le PR #34 e #35 (tutto unito su `main`).
+L'elenco numerato e' §49.5; qui solo a che punto e' ogni voce aperta e da
+dove ripartire. Una frase per cominciare: "leggi CONTESTO.md §49.5 e §49.10,
+poi...".
 
-- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7) e 15 (serie inglese nei due
-  temi con impostazioni e note legali, §49.6). Chiusa anche la verifica del
-  rilascio con action-gh-release v3 (§49.9).
-- **16, i rami**: elenco fatto (§49.8). I 39 gia' uniti vanno cancellati a
-  mano o dando alla sessione il permesso di cancellare rami remoti; per i 9
-  col lavoro mai unito serve una decisione ramo per ramo. Prima di contare,
-  `git fetch --unshallow`.
-- **Da fare in mano (1-10)**: invariate. La 9 (avvio a freddo con e senza
-  baseline profile) sblocca la 12.
-- **Pronta da cominciare da qui**: la 13, cercare una fonte aperta per
-  cipresso e urticacee in Italia, e dire se vale un secondo client.
+- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7), 15 (serie inglese nei due
+  temi, §49.6), 17 (widget MINI e PROSSIME ORE, confronto fianco a fianco,
+  §49.12). Verificato anche il rilascio con action-gh-release v3 (§49.9) e il
+  primo giro su `main` con 26.04 (37228337178, `apk-latest` aggiornata).
+- **13, cipresso e urticacee** (§49.11): nessuna fonte aperta li prevede.
+  Arpae li misura (Forli' = stazione `4186`, bollettino settimanale, 5-12
+  giorni di ritardo); POLLnet li misura per tutta Italia con un WFS CC-BY 4.0.
+  La sonda `scripts/probe_pollini.py` adesso interroga anche il WFS di
+  POLLnet in due tempi e scrive in fondo a `ci-artifacts/api/pollini/INDICE.txt`
+  l'id di Forli', quelli delle due particelle e **il ritardo dell'ultima
+  misura**. Il prossimo passo e' leggere quel numero: se POLLnet non e' piu'
+  in ritardo di Arpae, il client si scrive su POLLnet (tutta Italia), come
+  riga "misurati" separata dalla previsione di CAMS (§49.11). Resta una
+  decisione: mostrare o no una misura di una o due settimane fa.
+- **16, i rami** (§49.8): da cancellare 48 rami, tutti gia' in `main` o
+  superati: i 39 uniti, gli 8 superati, e `claude/manual-testing-checklist-5fi6wh`
+  quando non serve piu'. `widget-city-inconsistency-0g28uo` ormai si puo'
+  cancellare (recuperato in §49.12). La sessione non ha il permesso: o a mano
+  (`git push origin --delete ...`) o dando il permesso. `apk-latest` nomina
+  come destinazione `claude/android-weather-app-3d-jt6v8a`, uno dei 39: il tag
+  esiste gia' e non dovrebbe importare, ma conviene guardare il primo rilascio
+  dopo averlo cancellato. Prima di contare i rami, `git fetch --unshallow`.
+- **Da fare in mano**: le 1-10 di §49.5, piu' i due widget nuovi sulla Home
+  (chiaro e scuro) e il confronto con tre o quattro citta' salvate (§49.12).
+  La 9 (avvio a freddo con e senza baseline profile) sblocca la 12.
+- **In attesa**: 11 (altre lingue, solo se serve), 12 (dopo la 9).
 - **Da tenere d'occhio**: la cattura dura circa 27 minuti, il limite e' 40
-  (§49.6). Se cresce ancora, va accorciata, non alzato di nuovo il limite.
-- **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
-  `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
-  workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.
+  (§49.6). Se cresce ancora va accorciata, non alzato di nuovo il limite.
+  E sullo stesso ramo ogni push annulla il giro in corso (`cancel-in-progress`):
+  per leggere una sonda, aspettare la fine prima di spingere altro.
+- **Dove cercare cosa**: la galleria in `scripts/capture.sh`, gli agganci di
+  cattura in `MainActivity.applyExtras`, il workflow in
+  `.github/workflows/build.yml`, le sonde in `scripts/probe_*.py`, i widget in
+  `widget/` (dichiarati in `WidgetKind`), il confronto in
+  `ui/sala/SalaConfronto.kt`, scatti e risposte su `ci-artifacts`.
 
 ### 49.11 Cipresso e urticacee: le fonti cercate (voce 13)
 
@@ -7216,3 +7237,11 @@ sistema sul fondo `schermoPieno`, guida che non parte da sola sopra).
 
 **Da provare in mano**: i due widget sulla Home, chiaro e scuro, e il
 confronto con tre o quattro citta' salvate (scorre in orizzontale).
+
+**La sonda su POLLnet** (4 ottobre, notte): `pollnet()` in
+`probe_pollini.py` chiede al WFS `om:Stazioni_POLLnet` e `om:Pollini_spore`,
+ci cerca Forli' (o, se manca, una stazione emiliana) e le particelle di
+cipresso e urticacee, poi `om:Concentrazione_pollini_spore` degli ultimi 60
+giorni con `cql_filter=STAT_ID=... and PART_ID in (...) and REMA_DATE >= ...`.
+In fondo all'indice: date coperte, ultime dieci misure, e il ritardo in giorni
+dell'ultima. Isolata: se il WFS cade, l'indice di Arpae esce lo stesso.
