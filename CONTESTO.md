@@ -6930,7 +6930,7 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
     impostazioni e note legali in inglese: oggi la serie `en-*` ha solo le
     sale e la guida (§49.3). *Fatta in §49.6; chiusa quando un giro di CI
-    li ha fotografati e guardati.*
+    li ha fotografati e guardati.* Chiusa: giro 37215857240.
 
 **Pulizia:**
 
@@ -6965,3 +6965,14 @@ la cima, come `00-impostazioni`.
 `en-chiaro-*` chiaro (se a Forli' c'e' un temporale a mezzogiorno il chiaro
 esce scuro, `temaScuroPerTempesta`: e' il meteo vero, non un difetto), e che
 impostazioni e note legali siano in inglese su tutta la pagina.
+
+**Il giro** (37215857240): tutto verde, 94 scatti, i venti `en-*` ci sono
+tutti. `en-scuro-*` e' notte piena (stelle, luna, "Clear night, still air"),
+`en-chiaro-*` e' giorno; impostazioni ("Settings", "Follow the sky",
+"Language") e note legali ("Legal notes and privacy") sono in inglese su
+tutta la parte ritratta, nei due temi.
+
+**Il tempo**: la cattura e' passata da circa 25 a 27 minuti, col limite del
+job a 30. Il limite di `screenshots` e' salito a 40: un giro che scade non
+pubblica niente, e la serie nuova sta in coda proprio per non costare la
+galleria.
