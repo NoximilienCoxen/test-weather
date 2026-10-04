@@ -7079,3 +7079,8 @@ punto mostrato.
 che salva le risposte vere di `bollettini_pollini` e `pollini_stazioni` (e
 prova POLLnet e polleninformation.at), cosi' il client si scrive su risposte
 lette e non immaginate (§47.1). Solo dopo, il client.
+
+La sonda c'e': `scripts/probe_pollini.py`, passo "Le fonti di cipresso e
+urticacee" di `probe-api`. Salva le risposte grezze in `ci-artifacts/api/pollini/`
+e in `INDICE.txt` la forma dei JSON e dove compaiono Forli', cipresso e
+urticacee. Non fa fallire il giro.
