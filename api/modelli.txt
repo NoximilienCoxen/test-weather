@@ -19,10 +19,10 @@
     Forli    48/48 ore  quota 40.0 m  prime [12.8, 12.2, 11.7]
   ecmwf_ifs025
     Noceto   48/48 ore  quota 74.0 m  prime [12.4, 11.7, 11.5]
-    Forli     HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Forli    48/48 ore  quota 40.0 m  prime [12.5, 12.1, 12.1]
   ecmwf_aifs025_single
-    Noceto   48/48 ore  quota 74.0 m  prime [13.3, 12.5, 11.5]
-    Forli    48/48 ore  quota 40.0 m  prime [13.4, 12.9, 12.3]
+    Noceto   48/48 ore  quota 74.0 m  prime [13.3, 12.4, 11.4]
+    Forli     HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [12.1, 11.4, 11.3]
     Forli    48/48 ore  quota 40.0 m  prime [14.7, 14.5, 13.4]
@@ -41,15 +41,15 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=140  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.003814697265625,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Bergen    HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0026226043701171875,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
-    Singapore HTTP 200 ma NON JSON  tipo=application/json; charset=utf-8  lunghezza=144  corpo=[{"latitude":nan,"longitude":nan,"generationtime_ms":0.0054836273193359375,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT"}]
+    Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [14.1, 13.8, 13.4]
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [15.2, 15.2, 14.3]
     Bergen   48/48 ore  quota 17.0 m  prime [11.0, 11.4, 11.7]
@@ -60,11 +60,11 @@
   Tokyo          best_match = jma_seamless
   NewYork        best_match = gfs_seamless
   Oslo           best_match = metno_seamless
-  Reykjavik      best_match NON RISPONDE qui
+  Reykjavik      best_match = ? (nessun candidato coincide)
   Nairobi        best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Sydney         best_match NON RISPONDE qui
-  SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  CittaDelCapo   best_match = knmi_seamless
+  Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  SanPaolo       best_match = metno_seamless
   Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Noceto         best_match = icon_seamless
