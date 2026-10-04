@@ -6924,7 +6924,7 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 12. **Il profilo d'avvio** (ordine del dex): solo dopo che la 9 ha mostrato
     che il baseline profile aiuta.
 13. **Cipresso e urticacee nel polline**: serve una seconda fonte, CAMS non li
-    da' (§33).
+    da' (§33). *Fonti cercate in §49.11: nessuna li prevede; Arpae li misura.*
 14. **La CI su Ubuntu 26**: gia' provata verde, e' una riga in `runs-on`
     (§48.2). Ripetere la prova prima di passare. *Fatta: §49.7.*
 15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
@@ -7039,3 +7039,43 @@ cambiato e da dove ripartire.
 - **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
   `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
   workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.
+
+### 49.11 Cipresso e urticacee: le fonti cercate (voce 13)
+
+Cercato il 4 ottobre. Da questo contenitore i siti italiani sono irraggiungibili
+(il proxy li blocca), quindi le forme delle risposte qui sotto vengono da
+documentazione e ricerche, **non** da risposte lette: vanno confermate con una
+sonda in CI, come `probe-api` fa per Open-Meteo.
+
+| Fonte | Cipresso / urticacee | Che dato e' | Copertura | Accesso |
+|---|---|---|---|---|
+| Open-Meteo / CAMS (in uso) | no | previsione oraria, 4 giorni | Europa | libero |
+| SILAM (FMI) | no (cipresso solo in ricerca) | previsione, 5 giorni | Europa | aperto |
+| Google Pollen API | no in Italia (nocciolo, ontano, frassino, betulla, pioppo, quercia, olivo, pino, graminacee, ambrosia, artemisia) | previsione, 5 giorni | 65 paesi | a pagamento, chiave |
+| polleninformation.at | da verificare per l'Italia | previsione, oggi + 3 giorni | Austria e dintorni | chiave su richiesta, uso gratuito "fair use", citazione obbligatoria |
+| **Arpae Emilia-Romagna** | **si'**, con oltre 20 famiglie | **misure** settimanali per stazione + commento con la tendenza | 12 stazioni in regione, **Forli' compresa** | REST aperto (`apps.arpae.it/REST/bollettini_pollini`, `pollini_stazioni`), CC-BY |
+| POLLnet (ISPRA) | si' | misure settimanali per stazione | rete nazionale | da verificare (sito irraggiungibile da qui) |
+
+**Il punto.** Nessuna fonte aperta **prevede** cipresso e urticacee: i modelli
+europei (CAMS, SILAM) non li hanno, perche' il cipresso al microscopio non si
+distingue per specie e le urticacee (soprattutto la parietaria) si modellano
+male. Chi li ha sono le reti di **misura**: dicono quanto polline c'era la
+settimana scorsa vicino a una stazione, non quanto ce ne sara' domani nel
+punto mostrato.
+
+**Vale un secondo client?** Per una previsione, no: non esiste. Come
+"misurato" si', ma in piccolo e con limiti chiari:
+
+- una riga sotto la tabella del polline, solo quando la localita' e' vicina a
+  una stazione Arpae (poi, forse, POLLnet per il resto d'Italia): "Cipresso,
+  urticacee: misurati a Forli' nella settimana dal ... al ...", col livello
+  POLLnet e il nome della stazione;
+- mai mescolati alle famiglie di CAMS, che sono una previsione oraria: sono due
+  grandezze diverse e la tabella le deve tenere separate;
+- citazione "Dati Arpae Emilia-Romagna" nelle note legali (§47), e una quinta
+  rete nell'elenco degli indirizzi contattati.
+
+**Prossimo passo, se si decide di andare avanti:** una sonda in `probe-api`
+che salva le risposte vere di `bollettini_pollini` e `pollini_stazioni` (e
+prova POLLnet e polleninformation.at), cosi' il client si scrive su risposte
+lette e non immaginate (§47.1). Solo dopo, il client.
