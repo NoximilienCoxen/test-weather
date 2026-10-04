@@ -861,37 +861,63 @@ session() {
 
 }
 
-# La serie inglese (CONTESTO §49): le sette sale e la guida, in tema scuro e
-# all'ora di mezzogiorno. Viene **dopo** quella italiana, che e' il
-# riferimento da confrontare pixel per pixel col giro precedente: se
-# l'emulatore se ne va a meta', a perdersi e' la coda nuova, non la galleria.
+# La serie inglese (CONTESTO §49, §49.6): le sette sale, la guida, le
+# impostazioni e le note legali, una volta per tema. Viene **dopo** quella
+# italiana, che e' il riferimento da confrontare pixel per pixel col giro
+# precedente: se l'emulatore se ne va a meta', a perdersi e' la coda nuova,
+# non la galleria.
+#
+# **Il tema lo decide l'ora, non `--es tema`**, che l'app non legge piu': la
+# tavolozza segue il cielo (`temaScuro`). La prima serie inglese chiedeva
+# "SCURO" a mezzogiorno ed e' uscita chiara, col sole alto - chiara e' rimasta,
+# con il nome giusto, e la scura si chiede alle due di notte, come
+# `ora_dettaglio` nella sessione scura. Ogni avvio impone l'ora, guida e
+# impostazioni comprese: senza, il tema sarebbe quello dell'ora del runner.
 inglese() {
-  echo "== serie inglese =="
+  local tema="$1" ora slug sala
+  case "$tema" in
+    SCURO) ora=2  ;;
+    *)     ora=12 ;;
+  esac
+  slug="en-$(echo "$tema" | tr '[:upper:]' '[:lower:]')"
+  echo "== serie inglese, tema $tema =="
   alive || { echo "dispositivo non raggiungibile, salto"; return; }
-  local LINGUA=en sala
-  for sala in 0 1 2 3 4 5 6; do
+  local LINGUA=en
+
+  # Un avvio da capo per ogni scatto: con l'attivita' gia' in cima l'intento
+  # non arriverebbe (vedi la guida nella sessione).
+  da_capo() {
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
     adbt shell logcat -c >/dev/null 2>&1 || true
-    avvia --es tema SCURO --ei ora 12 --ei sezione "$sala" >/dev/null 2>&1 || true
+    avvia --ei ora "$ora" "$@" >/dev/null 2>&1 || true
     attendi_previsione
+  }
+
+  for sala in 0 1 2 3 4 5 6; do
+    da_capo --ei sezione "$sala"
     sleep 3
-    shoot "en-sala-$sala"
+    shoot "$slug-sala-$sala"
     alive || { echo "dispositivo caduto nella serie inglese"; return; }
   done
-  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
-  sleep 1
-  adbt shell logcat -c >/dev/null 2>&1 || true
-  avvia --ez guida true >/dev/null 2>&1 || true
-  attendi_previsione
+  da_capo --ez guida true
   sleep 4
-  shoot "en-guida-1"
+  shoot "$slug-guida-1"
+  # Le schermate di servizio entrano scorrendo da destra: l'attesa copre la
+  # fine dello scorrimento.
+  da_capo --ez impostazioni true
+  sleep 3
+  shoot "$slug-impostazioni"
+  da_capo --ez legali true
+  sleep 3
+  shoot "$slug-legali"
 }
 
 welcome
 session SCURO
 session CHIARO
-inglese
+inglese CHIARO
+inglese SCURO
 
 sleep 2
 pkill -f "adb logcat -v time" >/dev/null 2>&1 || true
