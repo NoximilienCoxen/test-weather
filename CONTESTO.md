@@ -7010,3 +7010,10 @@ ramo sembra non unito), il 4 ottobre:
   `emulatore-diagnostica-3k7p`, `icona-cielo-diagonale`,
   `openmeteo-italy-icon-2i-8hbs6j`, `analisi-file-lavoro-xnpx1o`.
 - Restano comunque `main`, `ci-artifacts` e il ramo di lavoro corrente.
+
+### 49.9 action-gh-release v3, guardato
+
+Il primo rilascio dopo l'unione chiesto da §48.3: giro 37081416671 su `main`,
+job `rilascio` verde con `softprops/action-gh-release@v3`. La release
+`apk-latest` ha ancora `weather.apk` (11,7 MB, commit c34884f), il testo
+d'installazione e nessun allegato in piu'. Chiuso.
