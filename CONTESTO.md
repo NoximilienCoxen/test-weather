@@ -7057,25 +7057,45 @@ d'installazione e nessun allegato in piu'. Chiuso.
 
 ### 49.10 Per la prossima chat
 
-Stato al 4 ottobre, sera. L'elenco numerato e' §49.5; qui solo cosa e'
-cambiato e da dove ripartire.
+Stato al 4 ottobre, notte, dopo le PR #34 e #35 (tutto unito su `main`).
+L'elenco numerato e' §49.5; qui solo a che punto e' ogni voce aperta e da
+dove ripartire. Una frase per cominciare: "leggi CONTESTO.md §49.5 e §49.10,
+poi...".
 
-- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7) e 15 (serie inglese nei due
-  temi con impostazioni e note legali, §49.6). Chiusa anche la verifica del
-  rilascio con action-gh-release v3 (§49.9).
-- **16, i rami**: elenco fatto (§49.8). I 39 gia' uniti vanno cancellati a
-  mano o dando alla sessione il permesso di cancellare rami remoti; per i 9
-  col lavoro mai unito serve una decisione ramo per ramo. Prima di contare,
-  `git fetch --unshallow`.
-- **Da fare in mano (1-10)**: invariate. La 9 (avvio a freddo con e senza
-  baseline profile) sblocca la 12.
-- **Pronta da cominciare da qui**: la 13, cercare una fonte aperta per
-  cipresso e urticacee in Italia, e dire se vale un secondo client.
+- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7), 15 (serie inglese nei due
+  temi, §49.6), 17 (widget MINI e PROSSIME ORE, confronto fianco a fianco,
+  §49.12). Verificato anche il rilascio con action-gh-release v3 (§49.9) e il
+  primo giro su `main` con 26.04 (37228337178, `apk-latest` aggiornata).
+- **13, cipresso e urticacee** (§49.11): nessuna fonte aperta li prevede.
+  Arpae li misura (Forli' = stazione `4186`, bollettino settimanale, 5-12
+  giorni di ritardo); POLLnet li misura per tutta Italia con un WFS CC-BY 4.0.
+  La sonda `scripts/probe_pollini.py` interroga anche il WFS di POLLnet:
+  **stesso dato di Arpae, stesso ritardo (8 giorni)**, ma per Forli' e' la
+  conta grezza (Arpae = POLLnet × 0,43, un giorno dopo), §49.11 in fondo.
+  Per l'Emilia-Romagna il client si scriverebbe su Arpae; fuori regione
+  POLLnet va prima capito. Resta la decisione: mostrare o no una misura di
+  una o due settimane fa, come riga "misurati" separata da CAMS.
+- **16, i rami** (§49.8): da cancellare 48 rami, tutti gia' in `main` o
+  superati: i 39 uniti, gli 8 superati, e `claude/manual-testing-checklist-5fi6wh`
+  quando non serve piu'. `widget-city-inconsistency-0g28uo` ormai si puo'
+  cancellare (recuperato in §49.12). La sessione non ha il permesso: o a mano
+  (`git push origin --delete ...`) o dando il permesso. `apk-latest` nomina
+  come destinazione `claude/android-weather-app-3d-jt6v8a`, uno dei 39: il tag
+  esiste gia' e non dovrebbe importare, ma conviene guardare il primo rilascio
+  dopo averlo cancellato. Prima di contare i rami, `git fetch --unshallow`.
+- **Da fare in mano**: le 1-10 di §49.5, piu' i due widget nuovi sulla Home
+  (chiaro e scuro) e il confronto con tre o quattro citta' salvate (§49.12).
+  La 9 (avvio a freddo con e senza baseline profile) sblocca la 12.
+- **In attesa**: 11 (altre lingue, solo se serve), 12 (dopo la 9).
 - **Da tenere d'occhio**: la cattura dura circa 27 minuti, il limite e' 40
-  (§49.6). Se cresce ancora, va accorciata, non alzato di nuovo il limite.
-- **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
-  `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
-  workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.
+  (§49.6). Se cresce ancora va accorciata, non alzato di nuovo il limite.
+  E sullo stesso ramo ogni push annulla il giro in corso (`cancel-in-progress`):
+  per leggere una sonda, aspettare la fine prima di spingere altro.
+- **Dove cercare cosa**: la galleria in `scripts/capture.sh`, gli agganci di
+  cattura in `MainActivity.applyExtras`, il workflow in
+  `.github/workflows/build.yml`, le sonde in `scripts/probe_*.py`, i widget in
+  `widget/` (dichiarati in `WidgetKind`), il confronto in
+  `ui/sala/SalaConfronto.kt`, scatti e risposte su `ci-artifacts`.
 
 ### 49.11 Cipresso e urticacee: le fonti cercate (voce 13)
 
@@ -7216,3 +7236,52 @@ sistema sul fondo `schermoPieno`, guida che non parte da sola sopra).
 
 **Da provare in mano**: i due widget sulla Home, chiaro e scuro, e il
 confronto con tre o quattro citta' salvate (scorre in orizzontale).
+
+**La sonda su POLLnet** (4 ottobre, notte): `pollnet()` in
+`probe_pollini.py` chiede al WFS `om:Stazioni_POLLnet` e `om:Pollini_spore`,
+ci cerca Forli' (o, se manca, una stazione emiliana) e le particelle di
+cipresso e urticacee, poi `om:Concentrazione_pollini_spore` degli ultimi 60
+giorni con `cql_filter=STAT_ID=... and PART_ID in (...) and REMA_DATE >= ...`.
+In fondo all'indice: date coperte, ultime dieci misure, e il ritardo in giorni
+dell'ultima. Isolata: se il WFS cade, l'indice di Arpae esce lo stesso.
+
+**Primo giro della sonda POLLnet** (commit 33dbf560): 72 stazioni, 42
+particelle. **Forli' e' `STAT_ID` 97** (Cesena 98, Ravenna 126, Rimini 121,
+Bologna 118); **cipresso `PART_ID` 1330** ("Cupressaceae/Taxaceae", classi
+da 4, 30, 90 granuli/m3) e **urticacee 1362** ("Urticaceae", da 2, 20, 70).
+Le stazioni portano `LATITUDE`/`LONGITUDE` (stringhe) e la regione. Il
+`PART_ID` non sta fra le `properties` ma nell'`id` del GeoJSON
+("Pollini_spore.1330"): il primo giro per questo non ha chiesto le misure, la
+sonda adesso lo ricava da li'. Se in 60 giorni non c'e' nessuna misura,
+chiede le ultime cinque in assoluto (`sortBy=REMA_DATE D`, `count=5`), cosi'
+il ritardo esce comunque.
+
+**Il risultato** (giro sul commit f45e11b7): 79 misure di Forli' negli ultimi
+60 giorni, dal 4 agosto al **26 settembre**: **8 giorni di ritardo**, come
+Arpae (ultimo giorno il 27 settembre). Le urticacee ci sono tutti i giorni
+(53 misure), il cipresso solo nei giorni in cui e' stato contato (26):
+**un giorno che manca vuol dire zero**, non dato mancante.
+
+**POLLnet e Arpae sono lo stesso dato**, e il confronto lo dimostra cifra per
+cifra. Il valore di POLLnet per un giorno, moltiplicato per il `coefficiente`
+che Arpae da' per la stazione di Forli' (0,43), e' il valore di Arpae del
+giorno **dopo**: 10 -> 4,30, 14 -> 6,02, 9 -> 3,87, 2 -> 0,86, 15 -> 6,45,
+tutte e sette le giornate. Quindi:
+
+- `REMA_CONCENTRATION` di POLLnet, almeno per Forli', e' la **conta** grezza
+  dei granuli, non i granuli al metro cubo: il nome del campo inganna. Le
+  soglie di classe di POLLnet (urticacee 2/20/70) sono su concentrazioni, e
+  applicate a una conta darebbero classi piu' alte del vero (×2,3 a Forli').
+- La data differisce di un giorno: uno dei due segna il giorno in cui parte
+  il campionamento, l'altro quello in cui finisce. Quale sia quale non si
+  ricava da qui.
+- POLLnet il coefficiente non lo pubblica (non e' fra le proprieta' delle
+  stazioni).
+
+**Cosa ne segue per il client.** Per Forli' e l'Emilia-Romagna, **Arpae**: da'
+gia' i granuli/m3 e la classe calcolata, lo stesso giorno di aggiornamento.
+POLLnet servirebbe solo fuori regione, e li' prima va capito se il campo e'
+una conta anche per le altre reti e da dove si prende il coefficiente di
+ciascuna stazione. Prossimo passo, se si va avanti: una seconda stazione
+fuori Emilia-Romagna confrontata con il bollettino della sua ARPA, prima di
+mostrare un solo numero di POLLnet.

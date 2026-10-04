@@ -19,12 +19,20 @@ interessa davvero:
 
 Gli indirizzi Arpae vengono da chi li usa gia' (un'integrazione di Home
 Assistant), non dalla documentazione ufficiale: se uno risponde 404 lo dice
-l'indice. POLLnet e polleninformation.at si guardano solo per sapere come ci
-si arriva; il secondo vuole una chiave che non abbiamo.
+l'indice. polleninformation.at si guarda solo per sapere come ci si arriva:
+vuole una chiave che non abbiamo.
+
+**POLLnet** (secondo giro, §49.11) ha un WFS nazionale con licenza CC-BY 4.0,
+e la sonda lo interroga in due tempi: prima stazioni e particelle, da cui si
+ricavano l'identificativo di Forli' e quelli di cipresso e urticacee; poi le
+misure degli ultimi 60 giorni di quella stazione per quelle due particelle.
+In fondo all'indice: l'ultima data misurata e quanti giorni fa e', da mettere
+accanto al ritardo di Arpae (5-12 giorni).
 
 Non fa fallire il giro: e' una ricognizione, non un contratto ancora.
 """
 
+import datetime
 import json
 import os
 import re
@@ -34,6 +42,7 @@ import urllib.request
 OUT = os.environ.get("OUT", "/tmp/ciout/pollini")
 AGENTE = "caelum-probe (github.com/NoximilienCoxen/test-weather)"
 REST = "https://apps.arpae.it/REST"
+WFS = "https://sdi.isprambiente.it/geoserver/om/ows"
 
 
 def q(**parametri):
@@ -102,6 +111,114 @@ def forma(valore, profondita=0, max_prof=8):
     return righe
 
 
+def wfs(strato, **altro):
+    """Un GetFeature del WFS di POLLnet, in GeoJSON."""
+    return f"{WFS}?" + q(service="WFS", version="2.0.0", request="GetFeature",
+                         typeName=f"om:{strato}", outputFormat="application/json", **altro)
+
+
+def proprieta(geojson):
+    """
+    Le `properties` di ogni elemento, piu' il suo identificativo.
+
+    Le particelle il `PART_ID` non lo portano fra le proprieta': sta nell'`id`
+    del GeoJSON, "Pollini_spore.1330" (primo giro: tutte e due trovate per
+    nome, nessun id, e niente misure chieste). Lo si riporta qui come
+    `PART_ID`, se manca.
+    """
+    righe = []
+    for f in (geojson or {}).get("features", []):
+        riga = dict(f.get("properties") or {})
+        numero = str(f.get("id", "")).rpartition(".")[2]
+        if numero.isdigit() and str(f.get("id", "")).startswith("Pollini_spore"):
+            riga.setdefault("PART_ID", int(numero))
+        righe.append(riga)
+    return righe
+
+
+def primo(riga, *chiavi):
+    """Il primo campo presente fra quelli nominati: i nomi esatti li dice la risposta."""
+    for k in chiavi:
+        if riga.get(k) not in (None, ""):
+            return riga[k]
+    return None
+
+
+def pollnet(indice):
+    """Stazioni e particelle, poi le misure di Forli' per cipresso e urticacee."""
+    indice.append("######## POLLnet, WFS")
+    dati = {}
+    for nome, strato in (("pollnet-stazioni", "Stazioni_POLLnet"), ("pollnet-particelle", "Pollini_spore")):
+        url = wfs(strato)
+        indice.append(f"== {nome}\n   {url}")
+        try:
+            stato, tipo, corpo = scarica(url)
+            open(os.path.join(OUT, f"{nome}.json"), "wb").write(corpo)
+            dati[nome] = json.loads(corpo.decode("utf-8", "replace"))
+            righe = proprieta(dati[nome])
+            indice.append(f"   HTTP {stato}  tipo={tipo}  byte={len(corpo)}  elementi={len(righe)}")
+            indice.append("   forma del primo elemento:")
+            indice += ["     " + r for r in forma(righe[0] if righe else {})]
+        except Exception as e:
+            indice.append(f"   ERRORE: {e}")
+        indice.append("")
+
+    stazioni = proprieta(dati.get("pollnet-stazioni"))
+    particelle = proprieta(dati.get("pollnet-particelle"))
+    forli = [s for s in stazioni if CERCATI["forli"].search(str(primo(s, "STAT_NAME_I", "STAT_NAME_E", "STAT_CODE") or ""))]
+    emilia = [s for s in stazioni if re.search(r"(?i)emilia", json.dumps(s, ensure_ascii=False))]
+    cercate = {
+        chi: [p for p in particelle if CERCATI[chi].search(str(primo(p, "PART_NAME_L", "PART_NAME_I", "PART_CODE") or ""))]
+        for chi in ("cipresso", "urticacee")
+    }
+    indice.append("== cosa ne esce")
+    indice.append(f"   stazioni di Forli': {[(primo(s, 'STAT_ID'), primo(s, 'STAT_NAME_I')) for s in forli]}")
+    indice.append(f"   stazioni in Emilia-Romagna: {[(primo(s, 'STAT_ID'), primo(s, 'STAT_NAME_I')) for s in emilia]}")
+    for chi, trovate in cercate.items():
+        indice.append(f"   {chi}: {[(primo(p, 'PART_ID'), primo(p, 'PART_NAME_L', 'PART_NAME_I'), primo(p, 'PART_LOW'), primo(p, 'PART_MIDDLE'), primo(p, 'PART_HIGH')) for p in trovate]}")
+    indice.append("")
+
+    # Forli' se c'e', altrimenti la prima stazione emiliana: serve un ritardo
+    # vero da confrontare con Arpae, e una stazione vicina lo da' lo stesso.
+    stazione = (forli or emilia or [None])[0]
+    ids = [primo(p, "PART_ID") for t in cercate.values() for p in t if primo(p, "PART_ID") is not None]
+    if stazione is None or not ids:
+        indice.append("   nessuna stazione o particella trovata: niente misure da chiedere\n")
+        return
+    oggi = datetime.date.today()
+    filtro = (f"STAT_ID={primo(stazione, 'STAT_ID')} and PART_ID in ({','.join(str(i) for i in ids)}) "
+              f"and REMA_DATE >= '{oggi - datetime.timedelta(days=60)}'")
+    url = wfs("Concentrazione_pollini_spore", cql_filter=filtro)
+    indice.append(f"== pollnet-misure ({primo(stazione, 'STAT_NAME_I')}, ultimi 60 giorni)\n   {url}")
+    try:
+        stato, tipo, corpo = scarica(url)
+        open(os.path.join(OUT, "pollnet-misure.json"), "wb").write(corpo)
+        misure = proprieta(json.loads(corpo.decode("utf-8", "replace")))
+        indice.append(f"   HTTP {stato}  tipo={tipo}  byte={len(corpo)}  misure={len(misure)}")
+        if not misure:
+            # Niente in 60 giorni puo' voler dire un ritardo piu' lungo, non
+            # assenza di dati: si chiedono le ultime cinque misure in assoluto.
+            senza_data = filtro.rsplit(" and REMA_DATE", 1)[0]
+            url = wfs("Concentrazione_pollini_spore", cql_filter=senza_data, sortBy="REMA_DATE D", count="5")
+            indice.append(f"   nessuna misura in 60 giorni: le ultime cinque in assoluto\n   {url}")
+            stato, tipo, corpo = scarica(url)
+            open(os.path.join(OUT, "pollnet-ultime.json"), "wb").write(corpo)
+            misure = proprieta(json.loads(corpo.decode("utf-8", "replace")))
+            indice.append(f"   HTTP {stato}  byte={len(corpo)}  misure={len(misure)}")
+        indice.append("   forma della prima misura:")
+        indice += ["     " + r for r in forma(misure[0] if misure else {})]
+        date = sorted({str(primo(m, "REMA_DATE"))[:10] for m in misure if primo(m, "REMA_DATE")})
+        if date:
+            ultima = datetime.date.fromisoformat(date[-1])
+            indice.append(f"   date: dalla {date[0]} alla {date[-1]}, {len(date)} giorni misurati")
+            indice.append(f"   **ritardo: l'ultima misura e' di {(oggi - ultima).days} giorni fa** (oggi {oggi})")
+        for m in sorted(misure, key=lambda m: str(primo(m, "REMA_DATE")))[-10:]:
+            indice.append(f"     {primo(m, 'REMA_DATE')}  PART_ID={primo(m, 'PART_ID')}  {primo(m, 'REMA_CONCENTRATION')}")
+    except Exception as e:
+        indice.append(f"   ERRORE: {e}")
+    indice.append("")
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     indice = []
@@ -131,6 +248,12 @@ def main():
             indice.append(f"   {chi}: {len(regex.findall(testo))} occorrenze")
             indice += [f"     ... {c}" for c in trovati]
         indice.append("")
+
+    # Isolata: se il WFS cade, l'indice di Arpae si scrive lo stesso.
+    try:
+        pollnet(indice)
+    except Exception as e:
+        indice.append(f"######## POLLnet: ERRORE inatteso: {e}")
 
     open(os.path.join(OUT, "INDICE.txt"), "w").write("\n".join(indice) + "\n")
     print("\n".join(indice))
