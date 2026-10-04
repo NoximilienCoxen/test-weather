@@ -710,7 +710,10 @@ jobs:
   screenshots:
     needs: build
     runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
-    timeout-minutes: 30
+    # 40 e non 30: con la serie inglese nei due temi (CONTESTO §49.6) la
+    # cattura e' arrivata a 27 minuti, e un giro che scade perde tutta la
+    # galleria, non solo la coda.
+    timeout-minutes: 40
     permissions:
       contents: write
     steps:
