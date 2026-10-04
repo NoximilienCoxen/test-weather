@@ -6883,7 +6883,8 @@ di Compose, ed e' voluto: la leggono anche widget e notifiche.
 - L'emulatore della CI e' in inglese: `capture.sh` passa `--es lingua it` a
   ogni avvio (aggancio solo in debug), cosi' la galleria resta italiana e si
   confronta col giro precedente (`scripts/confronta_scatti.py`).
-- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese.
+- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese (poi
+  in due temi, con impostazioni e note legali: §49.6).
 
 ### 49.4 Note, e cosa resta
 
@@ -6928,9 +6929,39 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
     (§48.2). Ripetere la prova prima di passare.
 15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
     impostazioni e note legali in inglese: oggi la serie `en-*` ha solo le
-    sale e la guida (§49.3).
+    sale e la guida (§49.3). *Fatta in §49.6; chiusa quando un giro di CI
+    li ha fotografati e guardati.*
 
 **Pulizia:**
 
 16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
     repository piu' ordinato.
+
+### 49.6 La serie inglese nei due temi, con impostazioni e note legali
+
+**La prima serie inglese era gia' chiara.** `inglese()` chiedeva
+`--es tema SCURO --ei ora 12`, ma `--es tema` l'app non lo legge piu': il
+tema segue il cielo (`temaScuro`), e a mezzogiorno di sole e' chiaro. Gli
+scatti `en-sala-*` del giro di §49 hanno il sole alto e il fondo azzurro, e il
+commento diceva "tema scuro". Mancava quindi lo **scuro**, non il chiaro.
+
+Adesso `inglese CHIARO` (ora 12) e `inglese SCURO` (ora 2, la stessa notte
+piena di `ora_dettaglio`), ciascuna con le sette sale, la guida, le
+impostazioni e le note legali: `en-chiaro-*` e `en-scuro-*`, ventidue scatti.
+I vecchi `en-sala-*` e `en-guida-1` spariscono da `ci-artifacts` (lo
+sostituisce `publish.sh`), quindi il primo confronto (§47.3) li dara' come
+mancanti: e' il cambio di nome, non un guasto. Ogni avvio impone l'ora,
+guida compresa, che prima prendeva il tema dall'ora del runner.
+
+Per le schermate di servizio, due agganci nuovi (solo con
+`AGGANCI_CATTURA`, come gli altri): `--ez impostazioni true` apre le
+impostazioni, `--ez legali true` le note legali **sopra** le impostazioni,
+come ci si arriva col dito. Agganci e non tocchi perche' una coordinata e'
+cio' che il prossimo redisegno sposta senza dirlo (§42, `00-localita`). Entrano
+nella riga `agganci:` del logcat. Lo scatto delle impostazioni ne ritrae solo
+la cima, come `00-impostazioni`.
+
+**Da guardare nel giro**: che `en-scuro-*` sia scuro davvero e
+`en-chiaro-*` chiaro (se a Forli' c'e' un temporale a mezzogiorno il chiaro
+esce scuro, `temaScuroPerTempesta`: e' il meteo vero, non un difetto), e che
+impostazioni e note legali siano in inglese su tutta la pagina.
