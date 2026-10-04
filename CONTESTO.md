@@ -6936,7 +6936,11 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 
 16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
     repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
-    da fare a mano.*
+    da fare a mano. Dei 9 non uniti, 8 sono superati; il nono porta due
+    widget e il confronto mai arrivati (voce 17).*
+17. **Recuperare i widget MINI e PROSSIME ORE e il confronto fianco a
+    fianco** da `widget-city-inconsistency-0g28uo` (§49.8): portarli a mano
+    su `main`, con le loro prove.
 
 ### 49.6 La serie inglese nei due temi, con impostazioni e note legali
 
@@ -7010,6 +7014,38 @@ ramo sembra non unito), il 4 ottobre:
   `emulatore-diagnostica-3k7p`, `icona-cielo-diagonale`,
   `openmeteo-italy-icon-2i-8hbs6j`, `analisi-file-lavoro-xnpx1o`.
 - Restano comunque `main`, `ci-artifacts` e il ramo di lavoro corrente.
+
+**I 9 guardati uno per uno** (4 ottobre). Gli SHA sono quelli della punta: dopo
+la cancellazione `git fetch origin <sha>` li riporta finche' GitHub li tiene,
+e per i rami con una PR chiusa restano in `refs/pull/<n>/head`.
+
+| Ramo | Punta | Verdetto |
+|---|---|---|
+| `analisi-file-lavoro-xnpx1o` | 2db9709c | superato: toglie log da `com.forli.meteo.widget`, un pacchetto che non esiste piu' |
+| `icona-cielo-diagonale` | d386050c | superato: corregge file poi tolti (`TemperatureDetailScreen`, `AirPage`) e abbassa AGP, che oggi e' 9.4.1 |
+| `openmeteo-italy-icon-2i-8hbs6j` | 26236b39 | superato **apposta**: forzava ICON-2I con AUTO; `main` ha scelto il contrario (ICON-2I non arriva al settimo giorno, vedi `modelsQueryValue`) |
+| `emulatore-diagnostica-3k7p` | f3708973 | superato: `polso`/`autopsia` per un guasto dell'emulatore poi risolto con memoria e processori (trappola #38) |
+| `feed-art-gallery-style-lgkan5` | e8569e1b | superato: il feed come galleria e il diorama, sostituiti da Sala (§12) |
+| `foglio-pila-6m4t` | 47d5d6be | superato: specifica di un foglio del dettaglio che con Sala non c'e' piu' |
+| `radar-fulmini-9d2x` | ea3ffcfb | superato: il radar e' stato tolto (`via-il-radar`) |
+| `sala-scultura` | 4255c67a | archivio voluto, di sola consultazione; la scultura sta comunque in 8ba268e, che e' nella storia di `main` |
+| `widget-city-inconsistency-0g28uo` | 862caec4 | **da recuperare in parte**, vedi sotto |
+
+**`widget-city-inconsistency-0g28uo`: tre commit spinti dopo l'unione della PR
+#26**, mai uniti e mai scritti qui:
+
+- e3716062, **due widget nuovi**: MINI (1x1, illustrazione e temperatura) e
+  PROSSIME ORE (4x2, sei colonne con ora, tempo, temperatura e probabilita'
+  di pioggia). 378 righe, con `MiniOreArtTest`.
+- d5b39d6b, **il confronto fianco a fianco** delle localita' salvate: una
+  colonna per citta', stesse righe alla stessa altezza, il valore migliore
+  evidenziato. 377 righe, con `ConfrontoTest`.
+- 862caec4, l'app in inglese: superato da §49, che ha rifatto la stessa cosa
+  (stesso `tr()`, stesso `Lingua.kt`).
+
+I primi due sono funzioni vere e finite, con le loro prove; da allora `main` e'
+cambiato molto (108 file), quindi vanno portati a mano, non uniti. Il ramo si
+tiene finche' non si decide.
 
 ### 49.9 action-gh-release v3, guardato
 
