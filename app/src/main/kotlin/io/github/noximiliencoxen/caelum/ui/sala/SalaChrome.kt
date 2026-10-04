@@ -78,6 +78,7 @@ import androidx.compose.ui.unit.sp
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.ui.theme.MinTouchTarget
+import java.time.LocalDateTime
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -538,6 +539,10 @@ fun IntestazioneCaelum(
     modifier: Modifier = Modifier,
     /** Apre il bollettino: ogni avviso per intero. */
     onAvvisi: () -> Unit = {},
+    /** L'allerta ufficiale in arrivo, quando [avvisi] e' vuoto. */
+    prossima: WeatherAlert? = null,
+    /** L'ora mostrata: da qui si conta "domani" per [prossima]. */
+    momento: LocalDateTime = LocalDateTime.now(),
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(MinTouchTarget),
@@ -564,7 +569,7 @@ fun IntestazioneCaelum(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place"), onClick = onCitta),
         )
-        PastigliaAvviso(avvisi, palette, onAvvisi)
+        PastigliaAvviso(avvisi, prossima, momento, palette, onAvvisi)
     }
 }
 
@@ -603,12 +608,25 @@ private fun DueCursori(ink: Color) {
  * Il bersaglio e' allargato ai quarantotto punti senza cambiare il disegno.
  */
 @Composable
-private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, onClick: () -> Unit) {
+private fun PastigliaAvviso(
+    avvisi: List<WeatherAlert>,
+    prossima: WeatherAlert?,
+    momento: LocalDateTime,
+    palette: SalaPalette,
+    onClick: () -> Unit,
+) {
     val peggiore = avvisi.maxByOrNull { it.level.weight }
+    // Un'allerta che deve ancora cominciare si annuncia con il giorno, e
+    // sulla carta normale invece che in terracotta: c'e', ma non e' adesso.
+    val inArrivo = if (peggiore == null) prossima else null
     // **"Allerta" e' una parola che la spetta a un ente.** Un avviso calcolato
     // sulle soglie dei dati dice "avviso": e' la stessa regola per cui
     // `badgeLabel` non scrive mai "allerta gialla" su una soglia nostra.
     val testo = when {
+        inArrivo != null -> tr(
+            "ALLERTA ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
+            "${inArrivo.kind.label} WARNING · ${quandoInArrivo(inArrivo, momento)}",
+        )
         peggiore == null -> tr("NESSUN AVVISO", "NO WARNINGS")
         // In inglese "warning" resta agli enti, come "allerta" in italiano;
         // gli avvisi calcolati sono "notice" (CONTESTO §8-ter, §49).
@@ -626,7 +644,7 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, on
     } else {
         palette.ink
     }
-    val pallino = if (acceso) {
+    val pallino = if (acceso || inArrivo != null) {
         SalaTokens.accent500
     } else {
         lerp(SalaTokens.verde600, SalaTokens.verde400, palette.buio)
@@ -643,6 +661,25 @@ private fun PastigliaAvviso(avvisi: List<WeatherAlert>, palette: SalaPalette, on
     ) {
         Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(pallino))
         Text(text = testo, style = SalaType.sectionLabel, color = inchiostro, maxLines = 1)
+    }
+}
+
+/**
+ * Quando comincia un'allerta in arrivo, detto in poche lettere: "DALLE 14"
+ * se e' nello stesso giorno di [momento], "DOMANI" se e' il successivo, se no
+ * il giorno della settimana abbreviato ("MAR"). La pastiglia divide la riga
+ * con il nome della citta': il resto lo dice il bollettino.
+ */
+internal fun quandoInArrivo(avviso: WeatherAlert, momento: LocalDateTime): String {
+    val inizio = avviso.onset ?: return ""
+    val giorno = inizio.toLocalDate()
+    return when (giorno) {
+        momento.toLocalDate() -> {
+            val ora = if (inizio.minute == 0) "${inizio.hour}" else "${inizio.hour}:%02d".format(inizio.minute)
+            tr("DALLE $ora", "FROM $ora")
+        }
+        momento.toLocalDate().plusDays(1) -> tr("DOMANI", "TOMORROW")
+        else -> giorno.dayOfWeek.italiano().take(3).uppercase()
     }
 }
 
