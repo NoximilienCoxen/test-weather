@@ -6924,7 +6924,7 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 12. **Il profilo d'avvio** (ordine del dex): solo dopo che la 9 ha mostrato
     che il baseline profile aiuta.
 13. **Cipresso e urticacee nel polline**: serve una seconda fonte, CAMS non li
-    da' (§33).
+    da' (§33). *Fonti cercate in §49.11: nessuna li prevede; Arpae li misura.*
 14. **La CI su Ubuntu 26**: gia' provata verde, e' una riga in `runs-on`
     (§48.2). Ripetere la prova prima di passare. *Fatta: §49.7.*
 15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
@@ -6936,7 +6936,12 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 
 16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
     repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
-    da fare a mano.*
+    da fare a mano. Dei 9 non uniti, 8 sono superati; il nono porta due
+    widget e il confronto mai arrivati (voce 17).*
+17. **Recuperare i widget MINI e PROSSIME ORE e il confronto fianco a
+    fianco** da `widget-city-inconsistency-0g28uo` (§49.8): portarli a mano
+    su `main`, con le loro prove. *Portati in §49.12; chiusa quando la CI e gli
+    scatti dei widget li hanno mostrati.*
 
 ### 49.6 La serie inglese nei due temi, con impostazioni e note legali
 
@@ -7011,6 +7016,38 @@ ramo sembra non unito), il 4 ottobre:
   `openmeteo-italy-icon-2i-8hbs6j`, `analisi-file-lavoro-xnpx1o`.
 - Restano comunque `main`, `ci-artifacts` e il ramo di lavoro corrente.
 
+**I 9 guardati uno per uno** (4 ottobre). Gli SHA sono quelli della punta: dopo
+la cancellazione `git fetch origin <sha>` li riporta finche' GitHub li tiene,
+e per i rami con una PR chiusa restano in `refs/pull/<n>/head`.
+
+| Ramo | Punta | Verdetto |
+|---|---|---|
+| `analisi-file-lavoro-xnpx1o` | 2db9709c | superato: toglie log da `com.forli.meteo.widget`, un pacchetto che non esiste piu' |
+| `icona-cielo-diagonale` | d386050c | superato: corregge file poi tolti (`TemperatureDetailScreen`, `AirPage`) e abbassa AGP, che oggi e' 9.4.1 |
+| `openmeteo-italy-icon-2i-8hbs6j` | 26236b39 | superato **apposta**: forzava ICON-2I con AUTO; `main` ha scelto il contrario (ICON-2I non arriva al settimo giorno, vedi `modelsQueryValue`) |
+| `emulatore-diagnostica-3k7p` | f3708973 | superato: `polso`/`autopsia` per un guasto dell'emulatore poi risolto con memoria e processori (trappola #38) |
+| `feed-art-gallery-style-lgkan5` | e8569e1b | superato: il feed come galleria e il diorama, sostituiti da Sala (§12) |
+| `foglio-pila-6m4t` | 47d5d6be | superato: specifica di un foglio del dettaglio che con Sala non c'e' piu' |
+| `radar-fulmini-9d2x` | ea3ffcfb | superato: il radar e' stato tolto (`via-il-radar`) |
+| `sala-scultura` | 4255c67a | archivio voluto, di sola consultazione; la scultura sta comunque in 8ba268e, che e' nella storia di `main` |
+| `widget-city-inconsistency-0g28uo` | 862caec4 | **da recuperare in parte**, vedi sotto |
+
+**`widget-city-inconsistency-0g28uo`: tre commit spinti dopo l'unione della PR
+#26**, mai uniti e mai scritti qui:
+
+- e3716062, **due widget nuovi**: MINI (1x1, illustrazione e temperatura) e
+  PROSSIME ORE (4x2, sei colonne con ora, tempo, temperatura e probabilita'
+  di pioggia). 378 righe, con `MiniOreArtTest`.
+- d5b39d6b, **il confronto fianco a fianco** delle localita' salvate: una
+  colonna per citta', stesse righe alla stessa altezza, il valore migliore
+  evidenziato. 377 righe, con `ConfrontoTest`.
+- 862caec4, l'app in inglese: superato da §49, che ha rifatto la stessa cosa
+  (stesso `tr()`, stesso `Lingua.kt`).
+
+I primi due sono funzioni vere e finite, con le loro prove; da allora `main` e'
+cambiato molto (108 file), quindi vanno portati a mano, non uniti. Il ramo si
+tiene finche' non si decide.
+
 ### 49.9 action-gh-release v3, guardato
 
 Il primo rilascio dopo l'unione chiesto da §48.3: giro 37081416671 su `main`,
@@ -7039,3 +7076,143 @@ cambiato e da dove ripartire.
 - **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
   `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
   workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.
+
+### 49.11 Cipresso e urticacee: le fonti cercate (voce 13)
+
+Cercato il 4 ottobre. Da questo contenitore i siti italiani sono irraggiungibili
+(il proxy li blocca), quindi le forme delle risposte qui sotto vengono da
+documentazione e ricerche, **non** da risposte lette: vanno confermate con una
+sonda in CI, come `probe-api` fa per Open-Meteo.
+
+| Fonte | Cipresso / urticacee | Che dato e' | Copertura | Accesso |
+|---|---|---|---|---|
+| Open-Meteo / CAMS (in uso) | no | previsione oraria, 4 giorni | Europa | libero |
+| SILAM (FMI) | no (cipresso solo in ricerca) | previsione, 5 giorni | Europa | aperto |
+| Google Pollen API | no in Italia (nocciolo, ontano, frassino, betulla, pioppo, quercia, olivo, pino, graminacee, ambrosia, artemisia) | previsione, 5 giorni | 65 paesi | a pagamento, chiave |
+| polleninformation.at | da verificare per l'Italia | previsione, oggi + 3 giorni | Austria e dintorni | chiave su richiesta, uso gratuito "fair use", citazione obbligatoria |
+| **Arpae Emilia-Romagna** | **si'**, con oltre 20 famiglie | **misure** settimanali per stazione + commento con la tendenza | 12 stazioni in regione, **Forli' compresa** | REST aperto (`apps.arpae.it/REST/bollettini_pollini`, `pollini_stazioni`), CC-BY |
+| POLLnet (ISPRA) | si' | misure settimanali per stazione | rete nazionale | da verificare (sito irraggiungibile da qui) |
+
+**Il punto.** Nessuna fonte aperta **prevede** cipresso e urticacee: i modelli
+europei (CAMS, SILAM) non li hanno, perche' il cipresso al microscopio non si
+distingue per specie e le urticacee (soprattutto la parietaria) si modellano
+male. Chi li ha sono le reti di **misura**: dicono quanto polline c'era la
+settimana scorsa vicino a una stazione, non quanto ce ne sara' domani nel
+punto mostrato.
+
+**Vale un secondo client?** Per una previsione, no: non esiste. Come
+"misurato" si', ma in piccolo e con limiti chiari:
+
+- una riga sotto la tabella del polline, solo quando la localita' e' vicina a
+  una stazione Arpae (poi, forse, POLLnet per il resto d'Italia): "Cipresso,
+  urticacee: misurati a Forli' nella settimana dal ... al ...", col livello
+  POLLnet e il nome della stazione;
+- mai mescolati alle famiglie di CAMS, che sono una previsione oraria: sono due
+  grandezze diverse e la tabella le deve tenere separate;
+- citazione "Dati Arpae Emilia-Romagna" nelle note legali (§47), e una quinta
+  rete nell'elenco degli indirizzi contattati.
+
+**Prossimo passo, se si decide di andare avanti:** una sonda in `probe-api`
+che salva le risposte vere di `bollettini_pollini` e `pollini_stazioni` (e
+prova POLLnet e polleninformation.at), cosi' il client si scrive su risposte
+lette e non immaginate (§47.1). Solo dopo, il client.
+
+La sonda c'e': `scripts/probe_pollini.py`, passo "Le fonti di cipresso e
+urticacee" di `probe-api`. Salva le risposte grezze in `ci-artifacts/api/pollini/`
+e in `INDICE.txt` la forma dei JSON e dove compaiono Forli', cipresso e
+urticacee. Non fa fallire il giro.
+
+**Cosa ha risposto** (giro 37229250157, `ci-artifacts/api/pollini/`; il primo
+giro era stato annullato da un push successivo sullo stesso ramo):
+
+- **Arpae risponde, e meglio del previsto.** `pollini_stazioni`: 13 stazioni
+  (`_items`, ognuna con `_id`, `nome`, `loc.coordinates` [lon, lat]).
+  **Forli' e' `4186`**, a 12.0328, 44.2180; Cesena `4187`, Ravenna `4185`,
+  Rimini `4188`, Faenza `4184`.
+- `bollettini_pollini`: uno a settimana, `_id` = la domenica che chiude la
+  settimana (`20260927`), `intervallo_validita` lunedi'-domenica,
+  `data_bollettino` il giorno di uscita. 287 in archivio. **Il ritardo e'
+  il limite vero**: la settimana 21-27 settembre e' uscita venerdi' 2
+  ottobre, quindi il dato piu' fresco ha da 5 a 12 giorni.
+- `letture.<stazione>.<FAMIGLIA>` per 38 famiglie, e **dentro ci sono i
+  valori giornalieri**, non solo la media: `dati."27/09/2026" = {value:
+  3.87, classe: "bassa"}` (granuli/m3; classi `assente`, `bassa`, `media`,
+  `alta`), piu' `media`, `max`, `tendenza` (`S`, oppure `#N/A`) e
+  `web` (`SI`/`NO`: se Arpae la mostra quella settimana).
+- **I nomi**: `CUPRESSACEE/TAXACEE` (codice `B48021`) e `URTICACEE`
+  (`B48019`). A fine settembre: urticacee a Forli' 0,9-6,5, classe bassa;
+  cipresso 0-0,4, senza classe e con `web: NO`, cioe' fuori stagione (il
+  cipresso fiorisce fra febbraio e aprile).
+- `commento`: testo libero con `evidenza`, `situazione_pollini`,
+  `previsione_pollini` ("Non sono previste variazioni..."). E' l'unica
+  previsione che Arpae da', a parole e per tutta la regione.
+- **POLLnet** (giro 37230891816, pagine `opendata/` e `download-dati/`): ha
+  **un servizio di dati aperti nazionale**, WFS su GeoServer di ISPRA
+  (`sdi.isprambiente.it/geoserver/om/ows`), con uscita `json` e `csv` e
+  **licenza CC-BY 4.0**. Tre strati: `om:Pollini_spore` (le particelle:
+  `PART_ID`, nome latino, famiglia), le stazioni, e
+  `om:Concentrazione_pollini_spore` (le misure), filtrabile per stazione,
+  particella e data: `cql_filter=STAT_ID=118 and PART_ID=1379 and
+  REMA_DATE between '2023-02-03' and '2024-01-30'`. Il cipresso e'
+  "Polline - Cupressaceae_Taxaceae" (`1330`); l'id delle urticacee e quello
+  della stazione di Forli' sono da leggere dalle tabelle. Ritardo e
+  frequenza non si vedono da qui: sono da misurare con una sonda.
+- **polleninformation.at** prevede anche per l'Italia (`country=IT`,
+  `lang=it`), oggi + 3 giorni, livello 0-4 per polline, ma vuole una chiave
+  data su richiesta e **vieta l'uso commerciale**; quali piante copra in
+  Italia non si vede senza chiave.
+
+**Cosa cambia per la decisione.** Il client Arpae e' piccolo (due chiamate,
+JSON regolare, stazioni con coordinate) e il dato e' buono, ma e' una misura
+vecchia di una o due settimane e vale solo per l'Emilia-Romagna. **POLLnet
+copre l'Italia intera con la stessa licenza**: se il suo ritardo non e'
+peggiore, e' lui la fonte giusta e Arpae diventa superfluo. Prossimo passo:
+la sonda chiede a POLLnet stazioni, particelle e una settimana di misure di
+Forli' per cipresso e urticacee, e se ne confronta il ritardo con Arpae. Nella sala
+dell'aria andrebbe scritto come tale: "Cipresso, urticacee: misurati a Forli'
+dal 21 al 27 settembre", mai accanto ai tre giorni di previsione di CAMS.
+
+### 49.12 I widget MINI e PROSSIME ORE, e il confronto, recuperati (voce 17)
+
+Da e3716062 e d5b39d6b di `widget-city-inconsistency-0g28uo` (§49.8),
+cherry-pick e poi adattati a mano al codice di oggi.
+
+**I widget.** `MiniWidget` (1x1: la figura del tempo e la temperatura, senza
+nome) e `HoursWidget` (4x2: dall'ora in corso, sei colonne con ora, figuretta,
+temperatura e probabilita' di pioggia dal 10% in su; quattro nel taglio
+piccolo). Si dichiarano in `WidgetKind` come gli altri, e configurazione,
+ripiego senza citta', aggiornamento periodico e tocco (apre Oggi) arrivano da
+`CaelumWidget` e da `WidgetKind.entries` senza altro codice. Cosa e' cambiato
+rispetto all'originale:
+
+- etichette bilingui in `WidgetKind`, nomi inglesi in `values-en`, frasi lette
+  e titoli ("PROSSIME ORE"/"NEXT HOURS", "ORA"/"NOW") con `tr()`;
+- `weatherBody` non prende piu' l'inchiostro;
+- nelle ore, la **figuretta dell'app** (`glifoDi` con la nuvolosita' vera
+  dell'ora, la luna di notte) al posto del corpo a sfere, come la Settimana;
+- **credito delle fonti** nelle prossime ore (`creditoFonti`, §48.1). Il MINI
+  non lo scrive: in una cella il margine e' un quarto dell'altezza e nemmeno
+  "Open-Meteo.com" ci sta; il tocco apre l'app, dove il credito c'e'.
+
+`MiniOreArtTest` sceglie le ore e disegna i due widget in chiaro e scuro: i
+render finiscono in `ci-artifacts/widget-renders` come quelli di
+`WeekArtTest`. In `WidgetOverflowTest` ci sono le prossime ore nei tagli
+largo e stretto coi nomi peggiori, il MINI a 57, 70 e 80 punti (col margine di
+8 punti che usa) e l'invito a configurare per ORE e per il MINI in una cella.
+Giro 37230217907: compilazione, lint e prove verdi; i render guardati (le ore
+col sole e le nuvole di giorno, la luna dopo il tramonto, "TOCCA PER SCEGLIERE
+LA CITTÀ" che sta su tre righe anche in 70 punti).
+
+**Il confronto.** "Confronta fianco a fianco" in fondo a Le localita', da due
+citta' in su (quella guardata entra anche se non e' salvata). Una colonna per
+citta', le stesse righe alla stessa altezza (adesso, massima, minima, pioggia,
+probabilita', vento, UV, poi i tre giorni dopo); il valore migliore di ogni
+riga col fondo in accento, nessuno in caso di pareggio; tocco su una colonna
+= quella citta' diventa quella dell'app. `ConfrontoTest` prova chi vince e
+chi entra. Adattato: testi con `tr()`, decimali con `Lingue.locale`,
+`IconaMeteo` con la firma di oggi (senza tavolozza, con la notte), e il
+confronto nell'elenco delle pagine a schermo pieno di `SalaShell` (icone di
+sistema sul fondo `schermoPieno`, guida che non parte da sola sopra).
+
+**Da provare in mano**: i due widget sulla Home, chiaro e scuro, e il
+confronto con tre o quattro citta' salvate (scorre in orizzontale).
