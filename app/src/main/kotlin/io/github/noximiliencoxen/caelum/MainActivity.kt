@@ -213,6 +213,8 @@ class MainActivity : ComponentActivity() {
                 "nuvolosita=${intent.getIntExtra(EXTRA_CLOUDS, -1)} " +
                 "polline=${intent.getIntExtra(EXTRA_POLLINE, -1)} " +
                 "allerta=${intent.getIntExtra(EXTRA_ALERT, -1)} " +
+                "impostazioni=${intent.getBooleanExtra(EXTRA_IMPOSTAZIONI, false)} " +
+                "legali=${intent.getBooleanExtra(EXTRA_LEGALI, false)} " +
                 // Ci sta **apposta**: e' l'unico modo di sapere, dal logcat che
                 // la cattura salva fra gli artefatti, se un avvio ha davvero
                 // ricevuto il suo `--ez cattura true`. Un aggancio saltato da
@@ -262,6 +264,11 @@ class MainActivity : ComponentActivity() {
         if (intent.getBooleanExtra(EXTRA_SKIP_WELCOME, false)) viewModel.dismissWelcome()
         intent.getIntExtra(EXTRA_ALERT, -1).takeIf { it >= 0 }?.let(viewModel::forceAlert)
         if (intent.getBooleanExtra(EXTRA_GUIDE, false)) viewModel.apriGuida()
+        // Le note legali stanno sopra le impostazioni, come quando ci si arriva
+        // col dito: chiuderle riporta alle impostazioni, non al cielo.
+        val legali = intent.getBooleanExtra(EXTRA_LEGALI, false)
+        if (legali || intent.getBooleanExtra(EXTRA_IMPOSTAZIONI, false)) viewModel.openSettings()
+        if (legali) viewModel.openLegali()
     }
 
     companion object {
@@ -352,6 +359,16 @@ class MainActivity : ComponentActivity() {
 
         /** Apre la guida all'uso: la cattura la fotografa, perche' da sola non compare. */
         const val EXTRA_GUIDE = "guida"
+
+        /**
+         * Apre le impostazioni, o le note legali sopra di esse.
+         *
+         * Per la serie inglese della cattura (CONTESTO §49.6): ci si arriverebbe
+         * anche coi tocchi, come per `00-impostazioni`, ma un tocco su una
+         * coordinata e' cio' che il prossimo redisegno sposta senza avvisare.
+         */
+        const val EXTRA_IMPOSTAZIONI = "impostazioni"
+        const val EXTRA_LEGALI = "legali"
 
     }
 }
