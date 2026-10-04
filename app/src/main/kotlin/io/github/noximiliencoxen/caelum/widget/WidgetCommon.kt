@@ -211,6 +211,11 @@ enum class WidgetKind(
     ARIA("QUALITÀ DELL'ARIA", "AIR QUALITY", "ARIA", "AIR", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
     SETTIMANA("SETTIMANA", "WEEK", "SETTIMANA", "WEEK", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+
+    // Una cella: niente nome, solo tempo e temperatura.
+    MINI("TEMPERATURA", "TEMPERATURE", "MINI", "MINI", true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
+
+    ORE("PROSSIME ORE", "NEXT HOURS", "ORE", "HOURS", true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
     ;
 
     /** Come si chiama per esteso, nella schermata di configurazione. */

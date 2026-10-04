@@ -95,12 +95,35 @@ class WidgetOverflowTest {
     }
 
     @Test
+    fun `prossime ore`() {
+        names.forEach { name ->
+            check("ore-${name.take(8)}", wide.first, wide.second, Cut.MEDIO) { hoursArt(it, name, forecast().hours, type, ink) }
+            check("ore-stretta-${name.take(8)}", 200f, 150f, Cut.PICCOLO) { hoursArt(it, name, forecast().hours, type, ink) }
+        }
+    }
+
+    /**
+     * Una cella, dai 57 punti di un lanciatore fitto agli 80 di uno largo. Il
+     * margine qui e' di 8 punti e non 16 (`miniArt`): in una cella 16 per lato
+     * lascerebbero meta' dello spazio.
+     */
+    @Test
+    fun `una cella`() {
+        listOf(57f, 70f, 80f).forEach { lato ->
+            check("mini-${lato.toInt()}", lato, lato, Cut.PICCOLO, edgeDp = 8f) { miniArt(forecast(), type, ink) }
+            check("mini-vuoto-${lato.toInt()}", lato, lato, Cut.PICCOLO, edgeDp = 8f) { miniArt(null, type, ink) }
+        }
+    }
+
+    @Test
     fun `da configurare`() {
-        listOf("METEO", "ARIA", "SETTIMANA").forEach { title ->
+        listOf("METEO", "ARIA", "SETTIMANA", "ORE").forEach { title ->
             small.forEach { (w, h) ->
                 check("setup-$title-${w.toInt()}x${h.toInt()}", w, h, Cut.PICCOLO) { setupArt(title, type, ink) }
             }
         }
+        // Il MINI da configurare sta in una cella sola.
+        check("setup-MINI-70", 70f, 70f, Cut.PICCOLO) { setupArt("MINI", type, ink) }
     }
 
     // ---------------------------------------------------------------------
@@ -116,14 +139,21 @@ class WidgetOverflowTest {
         night = true,
     )
 
-    private fun check(name: String, wDp: Float, hDp: Float, cut: Cut, body: DrawScope.(Frame) -> Unit) {
+    private fun check(
+        name: String,
+        wDp: Float,
+        hDp: Float,
+        cut: Cut,
+        edgeDp: Float = 16f,
+        body: DrawScope.(Frame) -> Unit,
+    ) {
         val scale = 2f
         val frame = Frame((wDp * scale).toInt(), (hDp * scale).toInt(), scale, cut, 20f)
 
         // Il margine del disegno e' di 16dp: una scritta puo' avvicinarsi al
         // bordo, non attraversarlo. Mezzo pixel di tolleranza per gli
         // arrotondamenti della misura.
-        val edge = 16f * scale
+        val edge = edgeDp * scale
         val offenders = mutableListOf<String>()
         writtenText = { value, left, right ->
             if (left < edge - 0.5f || right > frame.widthPx - edge + 0.5f) {
