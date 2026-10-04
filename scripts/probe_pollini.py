@@ -118,8 +118,22 @@ def wfs(strato, **altro):
 
 
 def proprieta(geojson):
-    """Le `properties` di ogni elemento: il resto del GeoJSON qui non serve."""
-    return [f.get("properties", {}) for f in (geojson or {}).get("features", [])]
+    """
+    Le `properties` di ogni elemento, piu' il suo identificativo.
+
+    Le particelle il `PART_ID` non lo portano fra le proprieta': sta nell'`id`
+    del GeoJSON, "Pollini_spore.1330" (primo giro: tutte e due trovate per
+    nome, nessun id, e niente misure chieste). Lo si riporta qui come
+    `PART_ID`, se manca.
+    """
+    righe = []
+    for f in (geojson or {}).get("features", []):
+        riga = dict(f.get("properties") or {})
+        numero = str(f.get("id", "")).rpartition(".")[2]
+        if numero.isdigit() and str(f.get("id", "")).startswith("Pollini_spore"):
+            riga.setdefault("PART_ID", int(numero))
+        righe.append(riga)
+    return righe
 
 
 def primo(riga, *chiavi):
@@ -181,6 +195,16 @@ def pollnet(indice):
         open(os.path.join(OUT, "pollnet-misure.json"), "wb").write(corpo)
         misure = proprieta(json.loads(corpo.decode("utf-8", "replace")))
         indice.append(f"   HTTP {stato}  tipo={tipo}  byte={len(corpo)}  misure={len(misure)}")
+        if not misure:
+            # Niente in 60 giorni puo' voler dire un ritardo piu' lungo, non
+            # assenza di dati: si chiedono le ultime cinque misure in assoluto.
+            senza_data = filtro.rsplit(" and REMA_DATE", 1)[0]
+            url = wfs("Concentrazione_pollini_spore", cql_filter=senza_data, sortBy="REMA_DATE D", count="5")
+            indice.append(f"   nessuna misura in 60 giorni: le ultime cinque in assoluto\n   {url}")
+            stato, tipo, corpo = scarica(url)
+            open(os.path.join(OUT, "pollnet-ultime.json"), "wb").write(corpo)
+            misure = proprieta(json.loads(corpo.decode("utf-8", "replace")))
+            indice.append(f"   HTTP {stato}  byte={len(corpo)}  misure={len(misure)}")
         indice.append("   forma della prima misura:")
         indice += ["     " + r for r in forma(misure[0] if misure else {})]
         date = sorted({str(primo(m, "REMA_DATE"))[:10] for m in misure if primo(m, "REMA_DATE")})
