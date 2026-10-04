@@ -51,6 +51,9 @@ INDIRIZZI = [
         embedded='{"stazioni":0}', sort='[("_id",-1)]', max_results="3")),
     ("arpae-radice", f"{REST}/"),
     ("pollnet-home", "https://pollnet.isprambiente.it/"),
+    # Le due pagine di dati che la home di POLLnet nomina (primo giro).
+    ("pollnet-opendata", "https://pollnet.isprambiente.it/opendata/"),
+    ("pollnet-download", "https://pollnet.isprambiente.it/download-dati/"),
     ("polleninformation-interfaccia", "https://www.polleninformation.at/en/data-interface"),
 ]
 
@@ -116,6 +119,9 @@ def main():
         if ext == "json":
             try:
                 dati = json.loads(testo)
+                # Le lettere accentate arrivano come \u00ec: senza ridecodificarle
+                # "Forli'" non si trova (primo giro: zero occorrenze, c'era).
+                testo = json.dumps(dati, ensure_ascii=False)
                 indice.append("   forma:")
                 indice += ["     " + r for r in forma(dati)]
             except ValueError as e:

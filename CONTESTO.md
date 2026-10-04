@@ -7120,3 +7120,40 @@ La sonda c'e': `scripts/probe_pollini.py`, passo "Le fonti di cipresso e
 urticacee" di `probe-api`. Salva le risposte grezze in `ci-artifacts/api/pollini/`
 e in `INDICE.txt` la forma dei JSON e dove compaiono Forli', cipresso e
 urticacee. Non fa fallire il giro.
+
+**Cosa ha risposto** (giro 37229250157, `ci-artifacts/api/pollini/`; il primo
+giro era stato annullato da un push successivo sullo stesso ramo):
+
+- **Arpae risponde, e meglio del previsto.** `pollini_stazioni`: 13 stazioni
+  (`_items`, ognuna con `_id`, `nome`, `loc.coordinates` [lon, lat]).
+  **Forli' e' `4186`**, a 12.0328, 44.2180; Cesena `4187`, Ravenna `4185`,
+  Rimini `4188`, Faenza `4184`.
+- `bollettini_pollini`: uno a settimana, `_id` = la domenica che chiude la
+  settimana (`20260927`), `intervallo_validita` lunedi'-domenica,
+  `data_bollettino` il giorno di uscita. 287 in archivio. **Il ritardo e'
+  il limite vero**: la settimana 21-27 settembre e' uscita venerdi' 2
+  ottobre, quindi il dato piu' fresco ha da 5 a 12 giorni.
+- `letture.<stazione>.<FAMIGLIA>` per 38 famiglie, e **dentro ci sono i
+  valori giornalieri**, non solo la media: `dati."27/09/2026" = {value:
+  3.87, classe: "bassa"}` (granuli/m3; classi `assente`, `bassa`, `media`,
+  `alta`), piu' `media`, `max`, `tendenza` (`S`, oppure `#N/A`) e
+  `web` (`SI`/`NO`: se Arpae la mostra quella settimana).
+- **I nomi**: `CUPRESSACEE/TAXACEE` (codice `B48021`) e `URTICACEE`
+  (`B48019`). A fine settembre: urticacee a Forli' 0,9-6,5, classe bassa;
+  cipresso 0-0,4, senza classe e con `web: NO`, cioe' fuori stagione (il
+  cipresso fiorisce fra febbraio e aprile).
+- `commento`: testo libero con `evidenza`, `situazione_pollini`,
+  `previsione_pollini` ("Non sono previste variazioni..."). E' l'unica
+  previsione che Arpae da', a parole e per tutta la regione.
+- **POLLnet** ha una pagina `opendata/` e una `download-dati/` (dalla
+  home): aggiunte alla sonda, da leggere al prossimo giro.
+- **polleninformation.at** prevede anche per l'Italia (`country=IT`,
+  `lang=it`), oggi + 3 giorni, livello 0-4 per polline, ma vuole una chiave
+  data su richiesta e **vieta l'uso commerciale**; quali piante copra in
+  Italia non si vede senza chiave.
+
+**Cosa cambia per la decisione.** Il client Arpae e' piccolo (due chiamate,
+JSON regolare, stazioni con coordinate) e il dato e' buono, ma e' una misura
+vecchia di una o due settimane e vale solo per l'Emilia-Romagna. Nella sala
+dell'aria andrebbe scritto come tale: "Cipresso, urticacee: misurati a Forli'
+dal 21 al 27 settembre", mai accanto ai tre giorni di previsione di CAMS.
