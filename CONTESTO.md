@@ -7245,3 +7245,14 @@ cipresso e urticacee, poi `om:Concentrazione_pollini_spore` degli ultimi 60
 giorni con `cql_filter=STAT_ID=... and PART_ID in (...) and REMA_DATE >= ...`.
 In fondo all'indice: date coperte, ultime dieci misure, e il ritardo in giorni
 dell'ultima. Isolata: se il WFS cade, l'indice di Arpae esce lo stesso.
+
+**Primo giro della sonda POLLnet** (commit 33dbf560): 72 stazioni, 42
+particelle. **Forli' e' `STAT_ID` 97** (Cesena 98, Ravenna 126, Rimini 121,
+Bologna 118); **cipresso `PART_ID` 1330** ("Cupressaceae/Taxaceae", classi
+da 4, 30, 90 granuli/m3) e **urticacee 1362** ("Urticaceae", da 2, 20, 70).
+Le stazioni portano `LATITUDE`/`LONGITUDE` (stringhe) e la regione. Il
+`PART_ID` non sta fra le `properties` ma nell'`id` del GeoJSON
+("Pollini_spore.1330"): il primo giro per questo non ha chiesto le misure, la
+sonda adesso lo ricava da li'. Se in 60 giorni non c'e' nessuna misura,
+chiede le ultime cinque in assoluto (`sortBy=REMA_DATE D`, `count=5`), cosi'
+il ritardo esce comunque.
