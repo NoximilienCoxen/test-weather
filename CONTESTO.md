@@ -6892,3 +6892,45 @@ di Compose, ed e' voluto: la leggono anche widget e notifiche.
 - La prova in mano col telefono in inglese, e con la voce cambiata a mano.
 - Descrizione e istruzioni delle allerte: il blocco CAP nella lingua dell'app
   quando l'ente lo manda, altrimenti il primo (`parseDetail`).
+
+### 49.5 Cosa resta, tutto in un posto
+
+L'elenco unico da cui ripartire: sostituisce i "Cosa resta" sparsi (§48.4,
+§49.4) e le prove in mano della PR #33. Il numero resta lo stesso anche quando
+una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
+
+**Da provare in mano sul telefono** (la CI non le vede):
+
+1. **L'inglese** (§49): telefono in inglese con la voce Lingua su Automatica;
+   la voce Lingua cambiata a mano (Italiano / English) col telefono in
+   italiano; widget e notifiche in inglese dopo il cambio.
+2. **Le icone delle barre di sistema** col bollettino aperto, di sera (§42.1).
+3. **Il titolo di Sala I** in modalita' aereo, senza dati salvati (§42.2).
+4. **I colpetti fitti**, uno ogni 150 ms, confrontati con la build di prima
+   (§42.3).
+5. **Un'allerta arancione vera**: la notifica e il bollettino (§42.4, §43.1).
+6. **TalkBack** sulla barra delle ore (§43.2).
+7. **Un tablet o uno schermo largo** (§43.3).
+8. **Il widget della Luna** di giorno e di notte (§44).
+9. **L'avvio a freddo** con e senza baseline profile: `am start -W`, cinque
+   volte per parte, `TotalTime` (§45.4). Dice se il profilo aiuta.
+10. **I link del credito delle fonti**: devono aprire il browser (§47.2).
+
+**Da sviluppare:**
+
+11. **Le altre lingue** (tedesco, francese, spagnolo...): `tr(it, en)` dovrebbe
+    diventare una tabella per lingua. Solo se c'e' un bisogno vero.
+12. **Il profilo d'avvio** (ordine del dex): solo dopo che la 9 ha mostrato
+    che il baseline profile aiuta.
+13. **Cipresso e urticacee nel polline**: serve una seconda fonte, CAMS non li
+    da' (§33).
+14. **La CI su Ubuntu 26**: gia' provata verde, e' una riga in `runs-on`
+    (§48.2). Ripetere la prova prima di passare.
+15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
+    impostazioni e note legali in inglese: oggi la serie `en-*` ha solo le
+    sale e la guida (§49.3).
+
+**Pulizia:**
+
+16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
+    repository piu' ordinato.
