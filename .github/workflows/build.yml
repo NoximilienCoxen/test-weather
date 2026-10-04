@@ -255,6 +255,13 @@ jobs:
         continue-on-error: true
         run: OUT=/tmp/ciout/licenze python3 scripts/probe_licenze.py
 
+      # Cipresso e urticacee: CAMS non li ha, le reti di misura si' (CONTESTO
+      # §49.11). Prima di un client si guarda cosa risponde davvero il REST di
+      # Arpae, che da dentro il container non si raggiunge.
+      - name: Le fonti di cipresso e urticacee
+        continue-on-error: true
+        run: OUT=/tmp/ciout/pollini python3 scripts/probe_pollini.py
+
       - name: Quali versioni delle azioni
         continue-on-error: true
         env:
