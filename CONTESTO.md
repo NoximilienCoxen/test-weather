@@ -7069,13 +7069,12 @@ poi...".
 - **13, cipresso e urticacee** (§49.11): nessuna fonte aperta li prevede.
   Arpae li misura (Forli' = stazione `4186`, bollettino settimanale, 5-12
   giorni di ritardo); POLLnet li misura per tutta Italia con un WFS CC-BY 4.0.
-  La sonda `scripts/probe_pollini.py` adesso interroga anche il WFS di
-  POLLnet in due tempi e scrive in fondo a `ci-artifacts/api/pollini/INDICE.txt`
-  l'id di Forli', quelli delle due particelle e **il ritardo dell'ultima
-  misura**. Il prossimo passo e' leggere quel numero: se POLLnet non e' piu'
-  in ritardo di Arpae, il client si scrive su POLLnet (tutta Italia), come
-  riga "misurati" separata dalla previsione di CAMS (§49.11). Resta una
-  decisione: mostrare o no una misura di una o due settimane fa.
+  La sonda `scripts/probe_pollini.py` interroga anche il WFS di POLLnet:
+  **stesso dato di Arpae, stesso ritardo (8 giorni)**, ma per Forli' e' la
+  conta grezza (Arpae = POLLnet × 0,43, un giorno dopo), §49.11 in fondo.
+  Per l'Emilia-Romagna il client si scriverebbe su Arpae; fuori regione
+  POLLnet va prima capito. Resta la decisione: mostrare o no una misura di
+  una o due settimane fa, come riga "misurati" separata da CAMS.
 - **16, i rami** (§49.8): da cancellare 48 rami, tutti gia' in `main` o
   superati: i 39 uniti, gli 8 superati, e `claude/manual-testing-checklist-5fi6wh`
   quando non serve piu'. `widget-city-inconsistency-0g28uo` ormai si puo'
@@ -7256,3 +7255,33 @@ Le stazioni portano `LATITUDE`/`LONGITUDE` (stringhe) e la regione. Il
 sonda adesso lo ricava da li'. Se in 60 giorni non c'e' nessuna misura,
 chiede le ultime cinque in assoluto (`sortBy=REMA_DATE D`, `count=5`), cosi'
 il ritardo esce comunque.
+
+**Il risultato** (giro sul commit f45e11b7): 79 misure di Forli' negli ultimi
+60 giorni, dal 4 agosto al **26 settembre**: **8 giorni di ritardo**, come
+Arpae (ultimo giorno il 27 settembre). Le urticacee ci sono tutti i giorni
+(53 misure), il cipresso solo nei giorni in cui e' stato contato (26):
+**un giorno che manca vuol dire zero**, non dato mancante.
+
+**POLLnet e Arpae sono lo stesso dato**, e il confronto lo dimostra cifra per
+cifra. Il valore di POLLnet per un giorno, moltiplicato per il `coefficiente`
+che Arpae da' per la stazione di Forli' (0,43), e' il valore di Arpae del
+giorno **dopo**: 10 -> 4,30, 14 -> 6,02, 9 -> 3,87, 2 -> 0,86, 15 -> 6,45,
+tutte e sette le giornate. Quindi:
+
+- `REMA_CONCENTRATION` di POLLnet, almeno per Forli', e' la **conta** grezza
+  dei granuli, non i granuli al metro cubo: il nome del campo inganna. Le
+  soglie di classe di POLLnet (urticacee 2/20/70) sono su concentrazioni, e
+  applicate a una conta darebbero classi piu' alte del vero (×2,3 a Forli').
+- La data differisce di un giorno: uno dei due segna il giorno in cui parte
+  il campionamento, l'altro quello in cui finisce. Quale sia quale non si
+  ricava da qui.
+- POLLnet il coefficiente non lo pubblica (non e' fra le proprieta' delle
+  stazioni).
+
+**Cosa ne segue per il client.** Per Forli' e l'Emilia-Romagna, **Arpae**: da'
+gia' i granuli/m3 e la classe calcolata, lo stesso giorno di aggiornamento.
+POLLnet servirebbe solo fuori regione, e li' prima va capito se il campo e'
+una conta anche per le altre reti e da dove si prende il coefficiente di
+ciascuna stazione. Prossimo passo, se si va avanti: una seconda stazione
+fuori Emilia-Romagna confrontata con il bollettino della sua ARPA, prima di
+mostrare un solo numero di POLLnet.
