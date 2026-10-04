@@ -2030,6 +2030,19 @@ Quattro trappole gia' pagate qui:
   primo caricamento sovrascrive quella lista con le allerte vere, e lo scatto
   usciva senza fascia. Le schermate leggono `UiState.shownAlerts`.
 
+**Un'allerta gia' emessa si annuncia anche prima che cominci.** La pastiglia
+in cima guarda l'ora mostrata, e per questo il 4 ottobre 2026 diceva "NESSUN
+AVVISO" mentre MeteoAlarm aveva un'allerta gialla per temporali sull'Emilia e
+Romagna dalle 14 del 6 - quella che Google mostrava "pubblicata 12 ore fa".
+L'app la scaricava e il bollettino la elencava, ma sotto "nessun avviso"
+nessuno apre un bollettino. Adesso, quando all'ora mostrata non c'e' niente,
+la pastiglia scrive la prossima allerta **ufficiale** col giorno -
+`ALLERTA TEMPORALI · MAR`, `· DOMANI`, `· DALLE 14` - con il pallino
+terracotta sulla carta normale: c'e', ma non e' adesso. Le calcolate no: una
+soglia superata dopodomani e' una previsione, non una notizia
+(`prossimaUfficiale` in `SalaShell.kt`, `quandoInArrivo` in `SalaChrome.kt`,
+`AllertaInArrivoTest`).
+
 ## 8-quinquies. La scheda della pioggia
 
 `ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,
