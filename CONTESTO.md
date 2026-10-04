@@ -7183,7 +7183,12 @@ rispetto all'originale:
 
 `MiniOreArtTest` sceglie le ore e disegna i due widget in chiaro e scuro: i
 render finiscono in `ci-artifacts/widget-renders` come quelli di
-`WeekArtTest`. **Non sono ancora in `WidgetOverflowTest`**: va aggiunto.
+`WeekArtTest`. In `WidgetOverflowTest` ci sono le prossime ore nei tagli
+largo e stretto coi nomi peggiori, il MINI a 57, 70 e 80 punti (col margine di
+8 punti che usa) e l'invito a configurare per ORE e per il MINI in una cella.
+Giro 37230217907: compilazione, lint e prove verdi; i render guardati (le ore
+col sole e le nuvole di giorno, la luna dopo il tramonto, "TOCCA PER SCEGLIERE
+LA CITTÀ" che sta su tre righe anche in 70 punti).
 
 **Il confronto.** "Confronta fianco a fianco" in fondo a Le localita', da due
 citta' in su (quella guardata entra anche se non e' salvata). Una colonna per
