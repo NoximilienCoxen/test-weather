@@ -6883,7 +6883,8 @@ di Compose, ed e' voluto: la leggono anche widget e notifiche.
 - L'emulatore della CI e' in inglese: `capture.sh` passa `--es lingua it` a
   ogni avvio (aggancio solo in debug), cosi' la galleria resta italiana e si
   confronta col giro precedente (`scripts/confronta_scatti.py`).
-- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese.
+- In coda c'e' la serie `en-*`: le sette sale e la guida in inglese (poi
+  in due temi, con impostazioni e note legali: §49.6).
 
 ### 49.4 Note, e cosa resta
 
@@ -6892,3 +6893,149 @@ di Compose, ed e' voluto: la leggono anche widget e notifiche.
 - La prova in mano col telefono in inglese, e con la voce cambiata a mano.
 - Descrizione e istruzioni delle allerte: il blocco CAP nella lingua dell'app
   quando l'ente lo manda, altrimenti il primo (`parseDetail`).
+
+### 49.5 Cosa resta, tutto in un posto
+
+L'elenco unico da cui ripartire: sostituisce i "Cosa resta" sparsi (§48.4,
+§49.4) e le prove in mano della PR #33. Il numero resta lo stesso anche quando
+una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
+
+**Da provare in mano sul telefono** (la CI non le vede):
+
+1. **L'inglese** (§49): telefono in inglese con la voce Lingua su Automatica;
+   la voce Lingua cambiata a mano (Italiano / English) col telefono in
+   italiano; widget e notifiche in inglese dopo il cambio.
+2. **Le icone delle barre di sistema** col bollettino aperto, di sera (§42.1).
+3. **Il titolo di Sala I** in modalita' aereo, senza dati salvati (§42.2).
+4. **I colpetti fitti**, uno ogni 150 ms, confrontati con la build di prima
+   (§42.3).
+5. **Un'allerta arancione vera**: la notifica e il bollettino (§42.4, §43.1).
+6. **TalkBack** sulla barra delle ore (§43.2).
+7. **Un tablet o uno schermo largo** (§43.3).
+8. **Il widget della Luna** di giorno e di notte (§44).
+9. **L'avvio a freddo** con e senza baseline profile: `am start -W`, cinque
+   volte per parte, `TotalTime` (§45.4). Dice se il profilo aiuta.
+10. **I link del credito delle fonti**: devono aprire il browser (§47.2).
+
+**Da sviluppare:**
+
+11. **Le altre lingue** (tedesco, francese, spagnolo...): `tr(it, en)` dovrebbe
+    diventare una tabella per lingua. Solo se c'e' un bisogno vero.
+12. **Il profilo d'avvio** (ordine del dex): solo dopo che la 9 ha mostrato
+    che il baseline profile aiuta.
+13. **Cipresso e urticacee nel polline**: serve una seconda fonte, CAMS non li
+    da' (§33).
+14. **La CI su Ubuntu 26**: gia' provata verde, e' una riga in `runs-on`
+    (§48.2). Ripetere la prova prima di passare. *Fatta: §49.7.*
+15. **Gli scatti inglesi** anche nel tema chiaro, e nella cattura anche
+    impostazioni e note legali in inglese: oggi la serie `en-*` ha solo le
+    sale e la guida (§49.3). *Fatta in §49.6; chiusa quando un giro di CI
+    li ha fotografati e guardati.* Chiusa: giro 37215857240.
+
+**Pulizia:**
+
+16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
+    repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
+    da fare a mano.*
+
+### 49.6 La serie inglese nei due temi, con impostazioni e note legali
+
+**La prima serie inglese era gia' chiara.** `inglese()` chiedeva
+`--es tema SCURO --ei ora 12`, ma `--es tema` l'app non lo legge piu': il
+tema segue il cielo (`temaScuro`), e a mezzogiorno di sole e' chiaro. Gli
+scatti `en-sala-*` del giro di §49 hanno il sole alto e il fondo azzurro, e il
+commento diceva "tema scuro". Mancava quindi lo **scuro**, non il chiaro.
+
+Adesso `inglese CHIARO` (ora 12) e `inglese SCURO` (ora 2, la stessa notte
+piena di `ora_dettaglio`), ciascuna con le sette sale, la guida, le
+impostazioni e le note legali: `en-chiaro-*` e `en-scuro-*`, ventidue scatti.
+I vecchi `en-sala-*` e `en-guida-1` spariscono da `ci-artifacts` (lo
+sostituisce `publish.sh`), quindi il primo confronto (§47.3) li dara' come
+mancanti: e' il cambio di nome, non un guasto. Ogni avvio impone l'ora,
+guida compresa, che prima prendeva il tema dall'ora del runner.
+
+Per le schermate di servizio, due agganci nuovi (solo con
+`AGGANCI_CATTURA`, come gli altri): `--ez impostazioni true` apre le
+impostazioni, `--ez legali true` le note legali **sopra** le impostazioni,
+come ci si arriva col dito. Agganci e non tocchi perche' una coordinata e'
+cio' che il prossimo redisegno sposta senza dirlo (§42, `00-localita`). Entrano
+nella riga `agganci:` del logcat. Lo scatto delle impostazioni ne ritrae solo
+la cima, come `00-impostazioni`.
+
+**Da guardare nel giro**: che `en-scuro-*` sia scuro davvero e
+`en-chiaro-*` chiaro (se a Forli' c'e' un temporale a mezzogiorno il chiaro
+esce scuro, `temaScuroPerTempesta`: e' il meteo vero, non un difetto), e che
+impostazioni e note legali siano in inglese su tutta la pagina.
+
+**Il giro** (37215857240): tutto verde, 94 scatti, i venti `en-*` ci sono
+tutti. `en-scuro-*` e' notte piena (stelle, luna, "Clear night, still air"),
+`en-chiaro-*` e' giorno; impostazioni ("Settings", "Follow the sky",
+"Language") e note legali ("Legal notes and privacy") sono in inglese su
+tutta la parte ritratta, nei due temi.
+
+**Il tempo**: la cattura e' passata da circa 25 a 27 minuti, col limite del
+job a 30. Il limite di `screenshots` e' salito a 40: un giro che scade non
+pubblica niente, e la serie nuova sta in coda proprio per non costare la
+galleria.
+
+### 49.7 La CI su Ubuntu 26
+
+Prova ripetuta il 4 ottobre, come chiedeva §48.2: giro 37220941697,
+`workflow_dispatch` con `runner: ubuntu-26.04`, sul codice di §49.6. Verdi
+build, prove, lint, sonde e cattura; 90 scatti, gli stessi del giro su 24.04.
+La cattura ci mette 26 min 48 s, contro 27 min 12 s su 24.04 (giro
+37215857240): nessuna differenza che conti.
+
+Fatto il passaggio: il ripiego di `runs-on` in tutti i job e il valore di
+serie dell'input `runner` sono ora `ubuntu-26.04`. Si resta **fissati** a un
+numero e non a `ubuntu-latest`, per la stessa ragione di §46.2: il prossimo
+cambio d'immagine si fa con un giro dedicato, non lo decide una data.
+`--field runner=ubuntu-24.04` (o lo stesso campo a mano) riporta un giro
+sull'immagine di prima, se serve un confronto.
+
+### 49.8 I rami vecchi
+
+Con la storia intera (il clone delle sessioni e' parziale: `git fetch
+--unshallow` prima di contare, se no `merge-base` non trova niente e ogni
+ramo sembra non unito), il 4 ottobre:
+
+- **39 rami interamente in `main`**, cancellabili senza perdere nulla:
+  `ccr-a8f2fa11-pr2bf1` e 38 `claude/*`. La sessione non ha il permesso di
+  cancellare rami remoti, quindi si fa a mano (`git push origin --delete ...`).
+- **9 rami con lavoro mai unito**, da decidere uno per uno:
+  `sala-scultura` (archivio della scultura meteo), `feed-art-gallery-style-lgkan5`
+  (feed come galleria, diorama, script Blender), `widget-city-inconsistency-0g28uo`
+  (due widget nuovi, confronto delle localita', una prima app in inglese),
+  `foglio-pila-6m4t` e `radar-fulmini-9d2x` (solo specifiche),
+  `emulatore-diagnostica-3k7p`, `icona-cielo-diagonale`,
+  `openmeteo-italy-icon-2i-8hbs6j`, `analisi-file-lavoro-xnpx1o`.
+- Restano comunque `main`, `ci-artifacts` e il ramo di lavoro corrente.
+
+### 49.9 action-gh-release v3, guardato
+
+Il primo rilascio dopo l'unione chiesto da §48.3: giro 37081416671 su `main`,
+job `rilascio` verde con `softprops/action-gh-release@v3`. La release
+`apk-latest` ha ancora `weather.apk` (11,7 MB, commit c34884f), il testo
+d'installazione e nessun allegato in piu'. Chiuso.
+
+### 49.10 Per la prossima chat
+
+Stato al 4 ottobre, sera. L'elenco numerato e' §49.5; qui solo cosa e'
+cambiato e da dove ripartire.
+
+- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7) e 15 (serie inglese nei due
+  temi con impostazioni e note legali, §49.6). Chiusa anche la verifica del
+  rilascio con action-gh-release v3 (§49.9).
+- **16, i rami**: elenco fatto (§49.8). I 39 gia' uniti vanno cancellati a
+  mano o dando alla sessione il permesso di cancellare rami remoti; per i 9
+  col lavoro mai unito serve una decisione ramo per ramo. Prima di contare,
+  `git fetch --unshallow`.
+- **Da fare in mano (1-10)**: invariate. La 9 (avvio a freddo con e senza
+  baseline profile) sblocca la 12.
+- **Pronta da cominciare da qui**: la 13, cercare una fonte aperta per
+  cipresso e urticacee in Italia, e dire se vale un secondo client.
+- **Da tenere d'occhio**: la cattura dura circa 27 minuti, il limite e' 40
+  (§49.6). Se cresce ancora, va accorciata, non alzato di nuovo il limite.
+- **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
+  `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
+  workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.

@@ -13,29 +13,30 @@ on:
         description: "Genera il baseline profile sull'emulatore"
         type: boolean
         default: false
-      # Per provare un'immagine nuova senza toccare il workflow: il 19 ottobre
-      # 2026 `ubuntu-latest` diventa 26 (CONTESTO §46.2, §48). Vuoto o
-      # assente - cioe' a ogni push - vale `ubuntu-24.04`.
+      # Per provare un'immagine diversa senza toccare il workflow (CONTESTO
+      # §46.2, §48, §49.7). Vuoto o assente - cioe' a ogni push - vale
+      # `ubuntu-26.04`; `ubuntu-24.04` resta il ripiego da chiedere a mano.
       runner:
-        description: "Immagine dei runner (es. ubuntu-26.04)"
+        description: "Immagine dei runner (es. ubuntu-24.04)"
         type: string
-        default: "ubuntu-24.04"
+        default: "ubuntu-26.04"
 
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
 
-# **I runner sono fissati a `ubuntu-24.04`, non `ubuntu-latest`.** Dal 19
-# ottobre 2026 `latest` diventa Ubuntu 26, e le due cose che questo workflow
-# prende dall'immagine - l'SDK Android e l'emulatore - sono gia' cadute una
-# volta per un cambio d'immagine (il 17 settembre, vedi il passo "SDK Android
-# dell'immagine"). Il passaggio a 26 si fa apposta, con un giro dedicato, non
-# come effetto collaterale di una data. CONTESTO §46.
+# **I runner sono fissati a `ubuntu-26.04`, non `ubuntu-latest`.** Le due
+# cose che questo workflow prende dall'immagine - l'SDK Android e l'emulatore -
+# sono gia' cadute una volta per un cambio d'immagine (il 17 settembre, vedi il
+# passo "SDK Android dell'immagine"). Il passaggio da 24 a 26 si e' fatto
+# apposta, con due giri dedicati tutti verdi (37041436318 e 37220941697), e non
+# come effetto collaterale del 19 ottobre. Il prossimo si fa allo stesso modo.
+# CONTESTO §46, §49.7.
 jobs:
   # Indipendente dal build: voglio il contratto reale dell'API anche quando
   # la compilazione fallisce.
   probe-api:
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     permissions:
       contents: write
     steps:
@@ -270,7 +271,7 @@ jobs:
   # non deve impedire di avere comunque un APK da installare. Cio' che dicono
   # si legge lo stesso.
   test:
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     # Scrittura solo per pubblicare i disegni dei widget su `ci-artifacts`.
     permissions:
       contents: write
@@ -300,7 +301,7 @@ jobs:
       # fronte a una dipendenza che fallisce **e non sa dire perche'**, la
       # risposta non e' cambiarle versione una terza volta: e' toglierla.
       #
-      # L'immagine `ubuntu-latest` porta gia' l'SDK Android. Qui si dichiara
+      # L'immagine del runner porta gia' l'SDK Android. Qui si dichiara
       # dove sta e lo si mette nel PATH; se non ci fosse, lo si dice con un
       # `::error::`, che si legge dall'API anche quando i log non si leggono.
       # Cosi' il prossimo guasto in questo punto arriva gia' spiegato.
@@ -448,7 +449,7 @@ jobs:
           if-no-files-found: warn
 
   build:
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     # **Mancava, e non si vedeva.** Gli altri tre job che pubblicano su
     # `ci-artifacts` lo dichiarano; questo no, quindi il suo `GITHUB_TOKEN` era
     # in sola lettura e la `git push` di `publish.sh` veniva respinta. Il passo
@@ -490,7 +491,7 @@ jobs:
       # fronte a una dipendenza che fallisce **e non sa dire perche'**, la
       # risposta non e' cambiarle versione una terza volta: e' toglierla.
       #
-      # L'immagine `ubuntu-latest` porta gia' l'SDK Android. Qui si dichiara
+      # L'immagine del runner porta gia' l'SDK Android. Qui si dichiara
       # dove sta e lo si mette nel PATH; se non ci fosse, lo si dice con un
       # `::error::`, che si legge dall'API anche quando i log non si leggono.
       # Cosi' il prossimo guasto in questo punto arriva gia' spiegato.
@@ -649,7 +650,7 @@ jobs:
   rilascio:
     needs: build
     if: github.ref == 'refs/heads/main'
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     permissions:
       contents: write
     steps:
@@ -709,8 +710,11 @@ jobs:
 
   screenshots:
     needs: build
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
-    timeout-minutes: 30
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
+    # 40 e non 30: con la serie inglese nei due temi (CONTESTO §49.6) la
+    # cattura e' arrivata a 27 minuti, e un giro che scade perde tutta la
+    # galleria, non solo la coda.
+    timeout-minutes: 40
     permissions:
       contents: write
     steps:
@@ -778,7 +782,7 @@ jobs:
   # letto.
   profilo:
     if: github.event_name == 'workflow_dispatch' && inputs.profilo
-    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     timeout-minutes: 50
     # Pubblica su `ci-artifacts/profilo`: e' da li' che il file si legge, anche
     # da dove i log e gli artefatti di GitHub non si raggiungono.
