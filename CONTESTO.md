@@ -7017,3 +7017,25 @@ Il primo rilascio dopo l'unione chiesto da §48.3: giro 37081416671 su `main`,
 job `rilascio` verde con `softprops/action-gh-release@v3`. La release
 `apk-latest` ha ancora `weather.apk` (11,7 MB, commit c34884f), il testo
 d'installazione e nessun allegato in piu'. Chiuso.
+
+### 49.10 Per la prossima chat
+
+Stato al 4 ottobre, sera. L'elenco numerato e' §49.5; qui solo cosa e'
+cambiato e da dove ripartire.
+
+- **Fatte**: 14 (CI su `ubuntu-26.04`, §49.7) e 15 (serie inglese nei due
+  temi con impostazioni e note legali, §49.6). Chiusa anche la verifica del
+  rilascio con action-gh-release v3 (§49.9).
+- **16, i rami**: elenco fatto (§49.8). I 39 gia' uniti vanno cancellati a
+  mano o dando alla sessione il permesso di cancellare rami remoti; per i 9
+  col lavoro mai unito serve una decisione ramo per ramo. Prima di contare,
+  `git fetch --unshallow`.
+- **Da fare in mano (1-10)**: invariate. La 9 (avvio a freddo con e senza
+  baseline profile) sblocca la 12.
+- **Pronta da cominciare da qui**: la 13, cercare una fonte aperta per
+  cipresso e urticacee in Italia, e dire se vale un secondo client.
+- **Da tenere d'occhio**: la cattura dura circa 27 minuti, il limite e' 40
+  (§49.6). Se cresce ancora, va accorciata, non alzato di nuovo il limite.
+- **Dove cercare cosa**: `scripts/capture.sh` (la galleria, funzione
+  `inglese`), gli agganci di cattura in `MainActivity.applyExtras`, il
+  workflow in `.github/workflows/build.yml`, gli scatti su `ci-artifacts`.
