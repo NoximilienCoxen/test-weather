@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AlertLevel
+import io.github.noximiliencoxen.caelum.data.FonteAllerte
 import io.github.noximiliencoxen.caelum.data.StatoAllerteUfficiali
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.badgeLabel
@@ -79,6 +80,8 @@ fun SalaBollettinoScreen(
     palette: SalaPalette,
     onClose: () -> Unit,
     statoUfficiali: StatoAllerteUfficiali = StatoAllerteUfficiali.ARRIVATE,
+    /** Il canale delle allerte ufficiali per il posto mostrato, se ce n'e' uno. */
+    fontePosto: FonteAllerte? = null,
 ) {
     val ordinati = remember(avvisi, adesso) {
         avvisi.sortedWith(
@@ -122,7 +125,7 @@ fun SalaBollettinoScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (ordinati.isEmpty()) {
-                val (etichetta, testo) = testoNessunAvviso(luogo, statoUfficiali)
+                val (etichetta, testo) = testoNessunAvviso(luogo, statoUfficiali, fontePosto)
                 BloccoImpostazioni(etichetta = etichetta, palette = palette) {
                     Text(
                         text = testo,
@@ -149,9 +152,10 @@ fun SalaBollettinoScreen(
             if (ordinati.isNotEmpty() && statoUfficiali == StatoAllerteUfficiali.NON_ARRIVATE) {
                 Text(
                     text = tr(
-                        "Le allerte ufficiali non si sono potute controllare: MeteoAlarm non ha risposto. " +
+                        "Le allerte ufficiali non si sono potute controllare: " +
+                            "${fontePosto?.nome ?: "la fonte"} non ha risposto. " +
                             "Qui sotto ci sono solo gli avvisi che l'app calcola da sé.",
-                        "Official warnings couldn't be checked: MeteoAlarm didn't respond. " +
+                        "Official warnings couldn't be checked: ${fontePosto?.nome ?: "the source"} didn't respond. " +
                             "Below are only the notices the app works out itself.",
                     ),
                     style = SalaType.body,
@@ -166,15 +170,15 @@ fun SalaBollettinoScreen(
             if (ordinati.isNotEmpty()) {
                 Text(
                     text = tr(
-                        "ALLERTA vuol dire che l'ha emessa il servizio meteorologico nazionale (per l'Italia " +
-                            "l'Aeronautica Militare) e arriva attraverso MeteoAlarm: è un'allerta meteo, non un " +
-                            "messaggio di allertamento della Protezione Civile. " +
+                        "ALLERTA vuol dire che l'ha emessa un servizio meteorologico nazionale - per l'Italia " +
+                            "l'Aeronautica Militare, attraverso MeteoAlarm; per gli Stati Uniti il National " +
+                            "Weather Service - ed è un'allerta meteo, non un messaggio di protezione civile. " +
                             "SOGLIA SUPERATA vuol dire che l'ha calcolata l'app confrontando la " +
                             "previsione con delle soglie: non è un'allerta ufficiale e non sostituisce " +
                             "un bollettino.",
-                        "WARNING means the national weather service issued it (for Italy, the Aeronautica " +
-                            "Militare) and it comes through MeteoAlarm: it is a weather warning, not a civil " +
-                            "protection alert. " +
+"WARNING means a national weather service issued it - for Italy the Aeronautica " +
+                            "Militare, through MeteoAlarm; for the United States the National Weather " +
+                            "Service - and it is a weather warning, not a civil protection alert. " +
                             "THRESHOLD EXCEEDED means the app calculated it by comparing the " +
                             "forecast with thresholds: it is not an official warning and does not " +
                             "replace a bulletin.",
@@ -185,26 +189,37 @@ fun SalaBollettinoScreen(
                 )
             }
 
-            // Il credito di chi le dirama, accanto alle allerte: licenza CC BY
-            // 4.0, "Data provided by EUMETNET members" (CONTESTO §47, `Fonti`).
-            Text(
-                text = tr(
-                    "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0. " +
+            // Il credito di chi le dirama, accanto alle allerte, per ogni canale
+            // da cui viene cio' che si mostra - e per quello del posto, anche a
+            // bollettino vuoto: MeteoAlarm chiede CC BY 4.0 e "Data provided by
+            // EUMETNET members" (CONTESTO §47), il NWS e' di pubblico dominio.
+            val fonti = (avvisi.mapNotNull { it.fonte } + listOfNotNull(fontePosto)).distinct()
+            fonti.forEach { fonte ->
+                Text(
+                    text = fonte.credito,
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 2.dp),
+                )
+                Collegamento(
+                    fonte.sito,
+                    fonte.indirizzo,
+                    SalaType.rowNote,
+                    palette.accent,
+                    Modifier.padding(horizontal = 8.dp),
+                )
+            }
+            if (fonti.isNotEmpty()) {
+                Text(
+                    text = tr(
                         "Il titolo di ogni allerta lo compone l'app; descrizione e istruzioni sono quelle dell'ente.",
-                    "Official warnings: MeteoAlarm, data provided by EUMETNET members, CC BY 4.0 licence. " +
                         "The app writes the title of each warning; description and instructions are the authority's own.",
-                ),
-                style = SalaType.rowNote,
-                color = palette.inkFaint,
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 2.dp),
-            )
-            Collegamento(
-                "meteoalarm.org",
-                Fonti.METEOALARM,
-                SalaType.rowNote,
-                palette.accent,
-                Modifier.padding(horizontal = 8.dp),
-            )
+                    ),
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 2.dp),
+                )
+            }
         }
     }
 }
@@ -354,7 +369,12 @@ private fun coloreLivello(livello: AlertLevel): Color = when (livello) {
  * il tempo del 406 di MeteoAlarm (CONTESTO §8-ter) il bollettino ha
  * rassicurato su un controllo mai avvenuto. Adesso dice cosa e' successo.
  */
-internal fun testoNessunAvviso(luogo: String, stato: StatoAllerteUfficiali): Pair<String, String> {
+internal fun testoNessunAvviso(
+    luogo: String,
+    stato: StatoAllerteUfficiali,
+    fonte: FonteAllerte? = null,
+): Pair<String, String> {
+    val chi = fonte?.nome ?: "MeteoAlarm"
     val soglie = tr(
         "la previsione di oggi e domani non supera nessuna delle soglie che l'app controlla.",
         "today's and tomorrow's forecast stays below every threshold the app checks.",
@@ -365,15 +385,16 @@ internal fun testoNessunAvviso(luogo: String, stato: StatoAllerteUfficiali): Pai
             "No official warning has been issued for $luogo, and $soglie",
         )
         StatoAllerteUfficiali.NON_ARRIVATE -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED") to tr(
-            "Le allerte ufficiali per $luogo non si sono potute controllare: MeteoAlarm non ha " +
+            "Le allerte ufficiali per $luogo non si sono potute controllare: $chi non ha " +
                 "risposto. Non vuol dire che non ce ne siano. Intanto $soglie",
-            "Official warnings for $luogo couldn't be checked: MeteoAlarm didn't respond. That " +
+            "Official warnings for $luogo couldn't be checked: $chi didn't respond. That " +
                 "doesn't mean there are none. Meanwhile, $soglie",
         )
         StatoAllerteUfficiali.FUORI_COPERTURA -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
-            "Per $luogo l'app non ha una fonte di allerte ufficiali: MeteoAlarm copre l'Europa. " +
-                "Restano le soglie calcolate, e $soglie",
-            "The app has no official warning source for $luogo: MeteoAlarm covers Europe. " +
+            "Per $luogo l'app non ha una fonte di allerte ufficiali: legge MeteoAlarm in Europa e " +
+                "il National Weather Service negli Stati Uniti. Restano le soglie calcolate, e $soglie",
+            "The app has no official warning source for $luogo: it reads MeteoAlarm in Europe and " +
+                "the National Weather Service in the United States. " +
                 "Only the computed thresholds remain, and $soglie",
         )
         StatoAllerteUfficiali.IN_ATTESA -> tr("NESSUN AVVISO, PER ORA", "NO WARNINGS YET") to tr(
