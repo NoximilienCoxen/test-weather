@@ -2066,6 +2066,16 @@ avvisi calcolati, una riga sopra le schede avverte che sono solo quelli. Fuori
 copertura e in attesa hanno parole loro (`testoNessunAvviso`,
 `NessunAvvisoTest`).
 
+**Il codice del giorno non promette pioggia a zero millimetri.** Open-Meteo
+da' a volte un codice di precipitazione a un giorno con `precipitation_sum`
+0,0: il 6 ottobre 2026 su Forli' `weather_code` 80 (rovesci) con zero
+millimetri e zero ore, e a Noceto le gocce sull'icona di "oggi" mentre la sala
+della pioggia diceva 0,0 mm. `codiceDelGiorno` (`WeatherRepository.kt`) lo
+corregge alla fonte - striscia, widget e avviso calcolato "Temporali" leggono
+tutti `DayForecast.weatherCode` - solo con un totale di zero esatto, mettendo
+al suo posto il tempo asciutto piu' frequente nelle ore del giorno
+(`CodiceDelGiornoTest`).
+
 ## 8-quinquies. La scheda della pioggia
 
 `ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,
