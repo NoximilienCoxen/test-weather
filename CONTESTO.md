@@ -2043,6 +2043,21 @@ soglia superata dopodomani e' una previsione, non una notizia
 (`prossimaUfficiale` in `SalaShell.kt`, `quandoInArrivo` in `SalaChrome.kt`,
 `AllertaInArrivoTest`).
 
+**Le allerte ufficiali non sono mai arrivate: MeteoAlarm rispondeva 406.** La
+nota qui sopra non bastava: sul telefono, a Fontevivo, anche il bollettino
+diceva "nessun avviso". Il caricamento falliva e il ripiego sulle soglie lo
+copriva senza lasciare traccia. Con un log aggiunto apposta, la cattura del 5
+ottobre ha scritto `HTTP 406 da MeteoAlarm: Not Acceptable`: l'intestazione
+`Accept` elencava solo `application/atom+xml, application/cap+xml,
+application/xml`, e il server con quella combinazione rifiuta. La sonda
+`probe-api` usava curl, che manda `*/*`, e riceveva il feed regolarmente.
+Adesso `FEED_ACCEPT` e `CAP_ACCEPT` tengono i tipi preferiti davanti e il
+jolly in fondo, `AcceptMeteoAlarmTest` impedisce di toglierlo, la sonda chiede
+anche con le intestazioni dell'app, e il logcat dice sempre com'e' andata
+(`MeteoAlarm italy: ... voci, ... valide, ... per <posto>` oppure l'errore).
+Resta aperto: un caricamento fallito e un feed vuoto, sullo schermo, si
+dicono ancora con le stesse parole.
+
 ## 8-quinquies. La scheda della pioggia
 
 `ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,
