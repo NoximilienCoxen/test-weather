@@ -1,0 +1,174 @@
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "@vocab": "https://api.weather.gov/ontology#"
+        }
+    ],
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a3042abbabc389719ec25af1f955cd0041ee288.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a3042abbabc389719ec25af1f955cd0041ee288.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.4a3042abbabc389719ec25af1f955cd0041ee288.001.1",
+                "areaDesc": "Western Copper Valley; Central Copper Valley",
+                "geocode": {
+                    "SAME": [
+                        "002066"
+                    ],
+                    "UGC": [
+                        "AKZ742",
+                        "AKZ743"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ742",
+                    "https://api.weather.gov/zones/forecast/AKZ743"
+                ],
+                "references": [],
+                "sent": "2026-10-04T22:03:00-08:00",
+                "effective": "2026-10-04T22:03:00-08:00",
+                "onset": "2026-10-04T22:03:00-08:00",
+                "expires": "2026-10-05T10:00:00-08:00",
+                "ends": "2026-10-05T10:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Dense Fog Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Dense Fog Advisory issued October 4 at 10:03PM AKDT until October 5 at 10:00AM AKDT by NWS Anchorage AK",
+                "description": "* WHAT...Visibility as low as one quarter mile in dense fog.\n\n* WHERE...Central Copper Valley and Western Copper Valley.\n\n* WHEN...Until 10 AM AKDT Monday.\n\n* IMPACTS...Hazardous driving conditions due to low visibility.\n\n* ADDITIONAL DETAILS...Fog, in combination with temperatures near\nfreezing, may result in slippery road conditions and patchy black\nice.",
+                "instruction": "A dense fog advisory means visibilities will frequently be reduced to\nless than one quarter mile. If driving, slow down, use your\nheadlights, and leave plenty of distance ahead of you.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK71 PAFC 050603"
+                    ],
+                    "NWSheadline": [
+                        "DENSE FOG ADVISORY IN EFFECT UNTIL 10 AM AKDT MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFC.FG.Y.0014.261005T0603Z-261005T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-05T10:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FGY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.76b5af7e208e69622fda95c7825ee69556aefbaf.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.76b5af7e208e69622fda95c7825ee69556aefbaf.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.76b5af7e208e69622fda95c7825ee69556aefbaf.001.1",
+                "areaDesc": "Northern Copper Valley; Western Copper Valley; Central Copper Valley; Ernestine; Southern Copper Valley",
+                "geocode": {
+                    "SAME": [
+                        "002066"
+                    ],
+                    "UGC": [
+                        "AKZ741",
+                        "AKZ742",
+                        "AKZ743",
+                        "AKZ744",
+                        "AKZ749"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ741",
+                    "https://api.weather.gov/zones/forecast/AKZ742",
+                    "https://api.weather.gov/zones/forecast/AKZ743",
+                    "https://api.weather.gov/zones/forecast/AKZ744",
+                    "https://api.weather.gov/zones/forecast/AKZ749"
+                ],
+                "references": [],
+                "sent": "2026-10-04T19:50:00-08:00",
+                "effective": "2026-10-04T19:50:00-08:00",
+                "onset": "2026-10-04T19:50:00-08:00",
+                "expires": "2026-10-05T07:00:00-08:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Special Weather Statement issued October 4 at 7:50PM AKDT by NWS Anchorage AK",
+                "description": "Areas of locally dense fog will persist along portions of the\nGlenn and Richardson Highways, especially from Glennallen west to\nMendeltna, this evening through early Monday morning.\n\nPeriods of a wintry mix of precipitation are also expected across\nthe Copper River Basin through Monday morning. With temperatures\naround freezing for most locations, any precipitation may fall as\na mix of rain, snow, and freezing drizzle. Little to no\nsignificant snow and ice accumulation is expected. However, the\ncombination of falling precipitation and temperatures around\nfreezing may result in slippery road conditions and patchy black\nice. The precipitation and fog is expected to taper off by early\nto mid Monday morning.\n\nMotorists are urged to slow down and use caution while traveling.\nFor the latest road conditions call 5 1 1 or visit\n511.alaska.gov.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK81 PAFC 050350"
+                    ],
+                    "NWSheadline": [
+                        "AREAS OF DENSE FOG ALONG WITH PERIODS OF A WINTRY MIX OF RAIN, SNOW, AND FREEZING DRIZZLE FOR THE CENTRAL COPPER RIVER BASIN THROUGH MONDAY MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        }
+    ],
+    "title": "Current watches, warnings, and advisories for Alaska",
+    "updated": "2026-10-05T09:15:00+00:00"
+}
