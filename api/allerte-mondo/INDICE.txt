@@ -17,14 +17,14 @@
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1  voci=0
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:15:00+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:26:21+00:00" }
 
 == us-nws-punto-cap
    https://api.weather.gov/alerts/active?point=40.7128,-74.0060
    Accept: application/cap+xml, application/xml;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:15:00+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:26:21+00:00" }
 
 == us-nws-area-fl
    https://api.weather.gov/alerts/active?area=FL
@@ -53,9 +53,9 @@
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=28536
+   HTTP 200  tipo=application/ld+json  byte=28578
    nessun segno noto
-   inizio: { "total": 352, "land": 92, "marine": 262, "regions": { "AL": 145, "AT": 42, "GL": 49, "GM": 9, "PA": 12, "PI": 5 }, "areas": { "AK": 2, "AL": 5, "AM": 16, "AN": 26, "AZ": 1, "CA": 19, "DC": 2, "FL": 10, "GA": 7, "GM": 9, "IA": 9, "
+   inizio: { "total": 382, "land": 93, "marine": 291, "regions": { "AL": 174, "AT": 42, "GL": 49, "GM": 9, "PA": 12, "PI": 5 }, "areas": { "AK": 2, "AL": 6, "AM": 16, "AN": 26, "AZ": 1, "CA": 19, "DC": 2, "FL": 10, "GA": 7, "GM": 9, "IA": 9, "
 
 == ca-eccc-ogc
    https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=3
@@ -74,9 +74,9 @@
 == jp-jma-feed
    https://www.data.jma.go.jp/developer/xml/feed/extra.xml
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=text/xml  byte=202429
+   HTTP 200  tipo=text/xml  byte=202450
    <entry=349
-   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T17:45:53+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791189953</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T18:32:28+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791192748</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
 
 == jp-jma-tokyo
    https://www.jma.go.jp/bosai/warning/data/warning/130000.json
