@@ -70,18 +70,19 @@ fun SalaLegaliScreen(
                     tr(
                         "La previsione e la qualità dell'aria arrivano da Open-Meteo. " +
                             "La ricerca delle località passa dal suo servizio di geocodifica. " +
-                            "Le allerte ufficiali arrivano dai feed di MeteoAlarm in Europa e dal National " +
-                            "Weather Service negli Stati Uniti.",
+                            "Le allerte ufficiali arrivano dai servizi meteorologici nazionali: " +
+                            "${FonteAllerte.elenco}.",
                         "Forecasts and air quality come from Open-Meteo. Place search goes through its geocoding service. " +
-                            "Official warnings come from the MeteoAlarm feeds in Europe and from the National Weather Service in the United States.",
+                            "Official warnings come from the national weather services: ${FonteAllerte.elenco}.",
                     ),
                     palette,
                 )
                 Paragrafo(
                     tr(
-                        "Sono i soli cinque indirizzi che questa applicazione interroga. " +
-                            "Non ce ne sono altri.",
-                        "These are the only five addresses this app contacts. There are no others.",
+                        "Sono i soli indirizzi che questa applicazione interroga: tre di Open-Meteo e " +
+                            "uno per ciascun servizio di allerta. Non ce ne sono altri.",
+                        "These are the only addresses this app contacts: three Open-Meteo ones and one " +
+                            "for each warning service. There are no others.",
                     ),
                     palette,
                 )
@@ -90,12 +91,11 @@ fun SalaLegaliScreen(
             BloccoImpostazioni(etichetta = tr("ALLERTE E AVVISI NON SONO LA STESSA COSA", "WARNINGS AND NOTICES ARE NOT THE SAME THING"), palette = palette) {
                 Paragrafo(
                     tr(
-                        "Dove c'è scritto ALLERTA, l'avviso viene da un servizio meteorologico nazionale - " +
-                            "attraverso MeteoAlarm in Europa, dal National Weather Service negli Stati Uniti - " +
-                            "ed è quel servizio a emetterlo. È un'allerta meteo, non un messaggio di protezione civile.",
-                        "Where it says WARNING, it comes from a national weather service - through MeteoAlarm in Europe, " +
-                            "from the National Weather Service in the United States - and it is that service that issues it. " +
-                            "It is a weather warning, not a civil protection alert.",
+                        "Dove c'è scritto ALLERTA, l'avviso viene da un servizio meteorologico nazionale " +
+                            "(in Europa attraverso MeteoAlarm) ed è quel servizio a emetterlo. " +
+                            "È un'allerta meteo, non un messaggio di protezione civile.",
+                        "Where it says WARNING, it comes from a national weather service (in Europe through " +
+                            "MeteoAlarm) and it is that service that issues it. It is a weather warning, not a civil protection alert.",
                     ),
                     palette,
                 )
@@ -239,8 +239,10 @@ fun SalaLegaliScreen(
                 )
                 Collegamento("meteoalarm.org", Fonti.METEOALARM, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
 
-                Paragrafo(FonteAllerte.NWS.credito, palette)
-                Collegamento(FonteAllerte.NWS.sito, FonteAllerte.NWS.indirizzo, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+                FonteAllerte.entries.filter { it != FonteAllerte.METEOALARM }.forEach { fonte ->
+                    Paragrafo(fonte.credito, palette)
+                    Collegamento(fonte.sito, fonte.indirizzo, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+                }
 
                 Paragrafo(
                     tr(

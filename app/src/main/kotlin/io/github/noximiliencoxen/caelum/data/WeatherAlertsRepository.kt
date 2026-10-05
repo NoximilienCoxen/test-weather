@@ -98,6 +98,9 @@ class WeatherAlertsRepository(
                 FonteAllerte.NWS -> NwsAlerts.load(place, fuso).also {
                     Log.i("meteo", "National Weather Service: ${it.size} per ${place.name}")
                 }
+                FonteAllerte.ECCC -> EcccAlerts.load(place, fuso).also {
+                    Log.i("meteo", "Environment Canada: ${it.size} per ${place.name}")
+                }
                 null -> throw OutOfCoverage(place.country)
             }
         }
@@ -194,6 +197,7 @@ class WeatherAlertsRepository(
             return when {
                 COUNTRIES.containsKey(nome) -> FonteAllerte.METEOALARM
                 nome in STATI_UNITI -> FonteAllerte.NWS
+                nome == "canada" -> FonteAllerte.ECCC
                 else -> null
             }
         }
@@ -384,9 +388,12 @@ internal fun tipoDaEvento(evento: String?): AlertKind {
         t.contains("high-temperature") || t.contains("heat") -> AlertKind.CALDO
         t.contains("low-temperature") || t.contains("cold") || t.contains("wind chill") ||
             t.contains("freeze") || t.contains("frost") -> AlertKind.FREDDO
-        t.contains("hurricane") || t.contains("tropical") || t.contains("typhoon") -> AlertKind.VENTO
+        t.contains("arctic") -> AlertKind.FREDDO
+        t.contains("hurricane") || t.contains("tropical") || t.contains("typhoon") || t.contains("squall") ->
+            AlertKind.VENTO
         t.contains("wind") -> AlertKind.VENTO
-        t.contains("snow") || t.contains("ice") || t.contains("winter") || t.contains("blizzard") ->
+        t.contains("snow") || t.contains("ice") || t.contains("winter") || t.contains("blizzard") ||
+            t.contains("freezing") ->
             AlertKind.NEVE_GHIACCIO
         t.contains("fog") -> AlertKind.NEBBIA
         t.contains("coastal") || t.contains("rip current") || t.contains("surf") || t.contains("beach") ||

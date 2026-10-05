@@ -40,7 +40,7 @@ class NessunAvvisoTest {
     fun `fuori copertura e in attesa hanno parole loro`() {
         val fuori = testoNessunAvviso("Singapore", StatoAllerteUfficiali.FUORI_COPERTURA).second
         val attesa = testoNessunAvviso("Forlì", StatoAllerteUfficiali.IN_ATTESA).second
-        assertTrue(fuori.contains("National Weather Service negli Stati Uniti"))
+        assertTrue(fuori.contains("National Weather Service (Stati Uniti)"))
         assertTrue(attesa.contains("stanno ancora arrivando"))
     }
 }

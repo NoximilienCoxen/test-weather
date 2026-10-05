@@ -31,8 +31,8 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
- * Ogni ora guarda le allerte ufficiali sulla citta' dell'app (MeteoAlarm in
- * Europa, National Weather Service negli Stati Uniti), e se c'e'
+ * Ogni ora guarda le allerte ufficiali sulla citta' dell'app (il canale lo
+ * sceglie `WeatherAlertsRepository.fonteDi`), e se c'e'
  * un'allerta **ufficiale arancione o rossa** che non ha ancora detto, la dice.
  *
  * **Solo arancione e rossa, e non e' prudenza a meta'.** In Italia una gialla
