@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit
  *
  * **Solo le ufficiali.** Gli avvisi calcolati dalle soglie non passano di qui:
  * una notifica e' gia' una voce autorevole, e "soglia superata" detto dal
- * telefono in tasca si leggerebbe come la Protezione Civile (vedi
+ * telefono in tasca si leggerebbe come un ente (vedi
  * `WeatherAlert.badgeLabel`). Per l'acqua che arriva c'e' gia'
  * [PioggiaInArrivoWorker].
  *

@@ -1117,7 +1117,7 @@ private fun List<WeatherAlert>.attiveA(momento: LocalDateTime?): List<WeatherAle
  * La prossima allerta **ufficiale** che comincia dopo [momento], o nulla.
  *
  * **Prima la pastiglia diceva "nessun avviso" anche con un'allerta gia'
- * emessa.** La Protezione Civile pubblica i bollettini con uno o due giorni
+ * emessa.** Il servizio meteorologico pubblica le allerte con uno o due giorni
  * d'anticipo: il 4 ottobre MeteoAlarm aveva un'allerta gialla per temporali
  * sull'Emilia-Romagna valida dalle 14 del 6. L'app la scaricava, il
  * bollettino la elencava, ma la pastiglia guardava solo l'ora mostrata e

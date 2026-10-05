@@ -1878,9 +1878,18 @@ ha piu' niente a che vedere con la temperatura in particolare.
 endpoint per gli avvisi. Il servizio meteo dell'Aeronautica pubblica bollettini
 su meteoam.it ma **non espone un'API pubblica documentata**: i dati si ottengono
 per accordo, non con una GET - verificato, non supposto. Si usa **MeteoAlarm**,
-il canale di EUMETNET su cui i servizi nazionali pubblicano in CAP, e per
-l'Italia sono i bollettini della Protezione Civile e dei centri funzionali
-regionali. Stessa informazione, per una via leggibile. Gli **RSS legacy sono
+il canale di EUMETNET su cui i servizi meteorologici nazionali pubblicano in
+CAP, e per l'Italia a pubblicare e' **proprio l'Aeronautica** (`senderName`:
+"Servizio Meteorologico dell'Aeronautica Militare"). Stessa fonte, per una via
+leggibile. **Non sono le allerte della Protezione Civile**, come questa
+sezione sosteneva fino al 5 ottobre 2026: il testo di ogni voce dichiara che
+le informazioni MeteoAlarm riguardano "esclusivamente l'intensità e la
+ricorrenza dei fenomeni" e "non rappresentano i messaggi di Allerta Ufficiali"
+del Servizio Nazionale di Protezione Civile. Giallo, arancione e rosso sono i
+livelli di MeteoAlarm, non quelli del sistema di allertamento nazionale di cui
+parla piu' sotto la regola sul nome degli avvisi calcolati - che resta valida:
+anche questi colori li assegna un ente, non l'app. Il bollettino lo scrive in
+fondo. Gli **RSS legacy sono
 stati spenti il 14 gennaio 2026**: si legge l'Atom.
 
 **Due strati, e la differenza si dichiara.** MeteoAlarm copre l'Europa; l'app no

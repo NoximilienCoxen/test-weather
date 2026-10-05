@@ -232,8 +232,8 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            // **Gli avvisi filtrano solo quelli calcolati.** Un bollettino della
-            // Protezione Civile non lo si nasconde perche' un interruttore e'
+            // **Gli avvisi filtrano solo quelli calcolati.** Un'allerta del
+            // servizio meteorologico non la si nasconde perche' un interruttore e'
             // giu': la scelta e' su cio' che questa applicazione deduce dalle
             // soglie, non su cio' che un ente dichiara. La nota sotto il gruppo
             // lo dice, perche' prima lo sapeva solo questo commento.
