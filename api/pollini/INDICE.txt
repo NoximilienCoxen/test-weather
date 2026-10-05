@@ -19794,9 +19794,9 @@
                value: str = '935'
                classe: str = 'alta'
              count: int = 0
-         _updated: str = 'Mon, 05 Oct 2026 08:44:27 GMT'
+         _updated: str = 'Mon, 05 Oct 2026 09:14:27 GMT'
          _created: str = 'Fri, 02 Oct 2026 15:07:45 GMT'
-         _etag: str = 'f6e599251602f2e5c7cf264c598505c7f58f68d4'
+         _etag: str = '9ea49a60398032423df554c05494f7e571fdee82'
          _links: dict
            self: dict
              title: str = 'Pollini - Bollettino dati'
@@ -19896,7 +19896,7 @@
 ######## POLLnet, WFS
 == pollnet-stazioni
    https://sdi.isprambiente.it/geoserver/om/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=om%3AStazioni_POLLnet&outputFormat=application%2Fjson
-   HTTP 200  tipo=application/json;charset=UTF-8  byte=26492  elementi=72
+   HTTP 200  tipo=application/json;charset=UTF-8  byte=26564  elementi=72
    forma del primo elemento:
      STAT_ID: int = 70
      STAT_CODE: str = 'LU1'
@@ -19933,7 +19933,7 @@
 
 == pollnet-misure (Forlì, ultimi 60 giorni)
    https://sdi.isprambiente.it/geoserver/om/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=om%3AConcentrazione_pollini_spore&outputFormat=application%2Fjson&cql_filter=STAT_ID%3D97+and+PART_ID+in+%281330%2C1362%29+and+REMA_DATE+%3E%3D+%272026-08-06%27
-   HTTP 200  tipo=application/json;charset=UTF-8  byte=25984  misure=77
+   HTTP 200  tipo=application/json;charset=UTF-8  byte=26061  misure=77
    forma della prima misura:
      PART_SEQ: int = 403132
      PART_LEVEL: int = 2
