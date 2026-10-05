@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.data
 
 import io.github.noximiliencoxen.caelum.lingua.inInglese
 import io.github.noximiliencoxen.caelum.lingua.tr
+import android.util.Log
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,16 +85,24 @@ class WeatherAlertsRepository(
                 // interrogare, e non e' un errore: si dichiara e basta, cosi'
                 // chi chiama sa che deve cavarsela con le soglie.
                 ?: throw OutOfCoverage(place.country)
-            val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = CAP_ACCEPT)
+            val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = FEED_ACCEPT)
             val now = OffsetDateTime.now()
-            val mine = parseFeed(body)
-                .filter { it.isCurrent(now) }
-                .filter { it.level != null }
+            val voci = parseFeed(body)
+            val valide = voci.filter { it.isCurrent(now) }.filter { it.level != null }
+            val mine = valide
                 .filter { it.matches(place) }
                 // Piu' di tre avvisi contemporanei sulla stessa regione non si
                 // sono mai visti, e il tetto e' li' per non trasformare una
                 // giornata storta in una raffica di richieste.
                 .take(MAX_DETAILS)
+            // Dove si perde un'allerta: nel feed, nella validita' o nel
+            // confronto col posto. Una riga sola, e dice quale dei tre.
+            Log.i(
+                "meteo",
+                "MeteoAlarm $slug: ${body.length} caratteri, ${voci.size} voci, " +
+                    "${valide.size} valide, ${mine.size} per ${place.name} " +
+                    "(regione=${place.admin}, paese=${place.country})",
+            )
             mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl), fuso = fuso) }
         }
     }
@@ -121,9 +130,20 @@ class WeatherAlertsRepository(
         /**
          * Le allerte sono l'unica cosa che non arriva in JSON: Atom per
          * l'elenco delle voci, CAP per il dettaglio di ognuna.
+         *
+         * **Il tipo jolly in fondo non e' un ripiego, e' cio' che fa funzionare
+         * tutto.** Prima l'intestazione elencava solo i tre tipi XML, e
+         * MeteoAlarm rispondeva `406 Not Acceptable` a **ogni** richiesta: in
+         * nessun momento l'app ha ricevuto un'allerta ufficiale, ne' sulla
+         * schermata ne' nelle notifiche, e il ripiego silenzioso sulle soglie
+         * lo nascondeva. La sonda in CI non se ne accorgeva perche' curl manda
+         * il jolly (CONTESTO §8-ter). I tipi preferiti restano davanti; il
+         * jolly con peso piu' basso toglie al server il motivo di rifiutare.
          */
-        private const val CAP_ACCEPT =
-            "application/atom+xml, application/cap+xml, application/xml"
+        internal const val FEED_ACCEPT =
+            "application/atom+xml, application/xml;q=0.9, */*;q=0.8"
+        internal const val CAP_ACCEPT =
+            "application/cap+xml, application/xml;q=0.9, */*;q=0.8"
 
         const val FEED_ENDPOINT = "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-"
 

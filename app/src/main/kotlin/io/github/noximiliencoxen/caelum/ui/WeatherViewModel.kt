@@ -764,13 +764,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         launch {
                             WeatherAlertsRepository(place, ZoneOffset.ofTotalSeconds(forecast.utcOffsetSeconds)).load()
                                 .onSuccess { official ->
+                                    // Come "previsione pronta": senza questa
+                                    // riga un'allerta mancante non lasciava
+                                    // traccia, e non si sapeva se il feed fosse
+                                    // vuoto o la richiesta fallita (§8-ter).
+                                    Log.i(TAG, "allerte ufficiali: ${official.size} per ${place.name}")
                                     _state.update {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
                                         )
                                     }
                                 }
-                                .onFailure {
+                                .onFailure { failure ->
+                                    Log.w(TAG, "allerte ufficiali non arrivate per ${place.name}: $failure", failure)
                                     // Il feed ufficiale non ha risposto: si
                                     // resta sulle allerte derivate dai dati
                                     // gia' scaricati. **Che sia un guasto o
