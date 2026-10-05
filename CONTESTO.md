@@ -7014,7 +7014,13 @@ L'elenco unico da cui ripartire: sostituisce i "Cosa resta" sparsi (§48.4,
 §49.4) e le prove in mano della PR #33. Il numero resta lo stesso anche quando
 una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 
-**Da provare in mano sul telefono** (la CI non le vede):
+**Provate in mano il 5 ottobre** (riferito dall'utente, senza numeri ne'
+dettagli): le voci 1-10 qui sotto, piu' i widget MINI e PROSSIME ORE e il
+confronto fra citta' (§49.12). Non sono registrati gli esiti: se qualcosa e'
+andato storto, non e' scritto qui. Per la 9 mancano i `TotalTime` e quindi
+non si sa ancora se il baseline profile aiuti, cioe' se la 12 si sblocca.
+
+**Elenco originale, ora provato:**
 
 1. **L'inglese** (§49): telefono in inglese con la voce Lingua su Automatica;
    la voce Lingua cambiata a mano (Italiano / English) col telefono in
@@ -7182,9 +7188,9 @@ server rispondeva 406), NWS, ECCC, JMA, IFRC con `PoligonoCap`; bollettino e
 pastiglia distinguono un controllo fallito da un feed vuoto; il codice del
 giorno non disegna gocce con zero millimetri; allerte attribuite
 all'Aeronautica e non alla Protezione Civile. Ancora aperte: Australia (BoM
-blocca i client) e Nuova Zelanda come lettore proprio. **Prove su telefono dopo
-il 4 ottobre: nessuna** - questa sezione non ne registra di nuove, e la lista
-delle voci 1-10 di §49.5 resta tutta da fare in mano.
+blocca i client) e Nuova Zelanda come lettore proprio. **Prove in mano: fatte
+tutte** (voci 1-10 di §49.5, widget MINI/PROSSIME ORE, confronto), senza
+esiti scritti. Resta il numero dell'avvio a freddo (voce 9).
 
 
 Stato al 4 ottobre, notte, dopo le PR #34 e #35 (tutto unito su `main`).
