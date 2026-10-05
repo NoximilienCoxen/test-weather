@@ -212,39 +212,43 @@ internal fun nuvolositaVisibile(totale: Int?, bassa: Int?, media: Int?, alta: In
     return (coperto * 100f).roundToInt()
 }
 
+/**
+ * Il codice di un giorno, corretto quando dice precipitazione e i millimetri
+ * no.
+ *
+ * **Open-Meteo puo' dare "rovesci" a un giorno con zero millimetri.** Il 5
+ * ottobre 2026 a Noceto la striscia mostrava le gocce su "oggi" mentre la sala
+ * della pioggia diceva 0,0 mm e nessuna precipitazione attesa; nella cattura
+ * della CI su Forli' il 6 ottobre aveva `weather_code` 80 con
+ * `precipitation_sum` 0,0 e zero ore di precipitazione. Il codice giornaliero
+ * e' il peggiore della giornata secondo il modello, e basta un'ora di
+ * instabilita' sotto la soglia del decimo di millimetro per accenderlo.
+ *
+ * Solo con un totale **di zero esatto**: un decimo di millimetro e' una
+ * pioviggine vera, e un totale che manca non autorizza a correggere niente.
+ * Al posto del codice va il tempo asciutto piu' frequente nelle ore di quel
+ * giorno (a parita', il piu' coperto); senza ore, "coperto". Vale anche per
+ * i temporali: un temporale senza una goccia e' il caso piu' raro, e l'avviso
+ * calcolato "Temporali" non deve accendersi su quello.
+ */
+internal fun codiceDelGiorno(codice: Int?, precipitazione: Double?, codiciOrari: List<Int?>): Int? {
+    val bagnato = Wmo.family(codice) in setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
+    if (!bagnato || precipitazione == null || precipitazione > 0.0) return codice
+    val asciutti = codiciOrari.filterNotNull().filter {
+        Wmo.family(it) in setOf(Wmo.Family.ASCIUTTO, Wmo.Family.NUVOLOSO, Wmo.Family.NEBBIA)
+    }
+    return asciutti.groupingBy { it }.eachCount()
+        .maxWithOrNull(compareBy<Map.Entry<Int, Int>> { it.value }.thenBy { it.key })
+        ?.key
+        ?: 3
+}
+
 private fun String?.asDateTime(): LocalDateTime? =
     this?.let { runCatching { LocalDateTime.parse(it) }.getOrNull() }
 
 internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
     val d = daily
     val today = LocalDate.now()
-
-    val days = d?.time?.mapIndexed { i, iso ->
-        val date = runCatching { LocalDate.parse(iso) }.getOrDefault(today.plusDays(i.toLong()))
-        DayForecast(
-            date = date,
-            label = if (date == today) tr("OGGI", "TODAY") else date.dayOfWeek.italianShort(),
-            weatherCode = d.weatherCode.at(i),
-            tempMax = d.tempMax.at(i),
-            tempMin = d.tempMin.at(i),
-            apparentMax = d.apparentMax.at(i),
-            apparentMin = d.apparentMin.at(i),
-            humidityMean = d.humidityMean.at(i),
-            dewPointMean = d.dewPointMean.at(i),
-            precipitationSum = d.precipitationSum.at(i),
-            precipProbability = d.precipProbability.at(i),
-            precipHours = d.precipitationHours.at(i),
-            windMax = d.windMax.at(i),
-            gustMax = d.gustMax.at(i),
-            windDirection = d.windDirection.at(i),
-            uvMax = d.uvMax.at(i),
-            rainSum = d.rainSum.at(i),
-            snowfallSum = d.snowfallSum.at(i),
-            sunshineSeconds = d.sunshineSeconds.at(i),
-            sunrise = d.sunrise.at(i).asDateTime(),
-            sunset = d.sunset.at(i).asDateTime(),
-        )
-    }.orEmpty()
 
     val allHours = hourly?.time?.mapIndexedNotNull { i, iso ->
         val at = iso.asDateTime() ?: return@mapIndexedNotNull null
@@ -272,6 +276,37 @@ internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             visibility = hourly.visibility.at(i),
             rain = hourly.rain.at(i),
             snowfall = hourly.snowfall.at(i),
+        )
+    }.orEmpty()
+
+    val days = d?.time?.mapIndexed { i, iso ->
+        val date = runCatching { LocalDate.parse(iso) }.getOrDefault(today.plusDays(i.toLong()))
+        DayForecast(
+            date = date,
+            label = if (date == today) tr("OGGI", "TODAY") else date.dayOfWeek.italianShort(),
+            weatherCode = codiceDelGiorno(
+                codice = d.weatherCode.at(i),
+                precipitazione = d.precipitationSum.at(i),
+                codiciOrari = allHours.filter { it.time.toLocalDate() == date }.map { it.weatherCode },
+            ),
+            tempMax = d.tempMax.at(i),
+            tempMin = d.tempMin.at(i),
+            apparentMax = d.apparentMax.at(i),
+            apparentMin = d.apparentMin.at(i),
+            humidityMean = d.humidityMean.at(i),
+            dewPointMean = d.dewPointMean.at(i),
+            precipitationSum = d.precipitationSum.at(i),
+            precipProbability = d.precipProbability.at(i),
+            precipHours = d.precipitationHours.at(i),
+            windMax = d.windMax.at(i),
+            gustMax = d.gustMax.at(i),
+            windDirection = d.windDirection.at(i),
+            uvMax = d.uvMax.at(i),
+            rainSum = d.rainSum.at(i),
+            snowfallSum = d.snowfallSum.at(i),
+            sunshineSeconds = d.sunshineSeconds.at(i),
+            sunrise = d.sunrise.at(i).asDateTime(),
+            sunset = d.sunset.at(i).asDateTime(),
         )
     }.orEmpty()
 
