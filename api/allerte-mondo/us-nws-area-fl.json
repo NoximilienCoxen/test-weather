@@ -10,6 +10,122 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -85.62,
+                            30.27
+                        ],
+                        [
+                            -85.74,
+                            30.36
+                        ],
+                        [
+                            -85.63,
+                            30.58
+                        ],
+                        [
+                            -85.27,
+                            30.44
+                        ],
+                        [
+                            -85.62,
+                            30.27
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
+                "areaDesc": "Washington; Inland Bay; Calhoun; Coastal Bay",
+                "geocode": {
+                    "SAME": [
+                        "012133",
+                        "012005",
+                        "012013"
+                    ],
+                    "UGC": [
+                        "FLZ010",
+                        "FLZ012",
+                        "FLZ013",
+                        "FLZ112"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ010",
+                    "https://api.weather.gov/zones/forecast/FLZ012",
+                    "https://api.weather.gov/zones/forecast/FLZ013",
+                    "https://api.weather.gov/zones/forecast/FLZ112"
+                ],
+                "references": [],
+                "sent": "2026-10-05T07:23:00-04:00",
+                "effective": "2026-10-05T07:23:00-04:00",
+                "onset": "2026-10-05T07:23:00-04:00",
+                "expires": "2026-10-05T08:15:00-04:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tallahassee FL",
+                "headline": "Special Weather Statement issued October 5 at 7:23AM EDT by NWS Tallahassee FL",
+                "description": "At 723 AM EDT/623 AM CDT/, Doppler radar was tracking a strong\nthunderstorm 7 miles north of Lynn Haven, moving northeast at 20 mph.\n\nHAZARD...Wind gusts up to 40 mph.\n\nSOURCE...Radar indicated.\n\nIMPACT...Gusty winds could knock down tree limbs and blow around\nunsecured objects.\n\nLocations impacted include...\nBayhead, Southport, Fountain, Singer Road, Recota Beach, Saunders,\nGreenhead, Camp Flowers, Gainer Spring, Bennett, Youngstown, Porter\nLake, Vicksburg, and Riverside.",
+                "instruction": "If outdoors, consider seeking shelter inside a building.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSTAE"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS82 KTAE 051123"
+                    ],
+                    "NWSheadline": [
+                        "A STRONG THUNDERSTORM WILL IMPACT NORTHEASTERN BAY...WEST CENTRAL CALHOUN AND SOUTHEASTERN WASHINGTON COUNTIES IN THE PANHANDLE OF FLORIDA THROUGH 815 AM EDT/715 AM CDT/"
+                    ],
+                    "eventMotionDescription": [
+                        "2026-10-05T11:23:00-00:00...storm...237DEG...17KT...30.34,-85.61"
+                    ],
+                    "maxWindGust": [
+                        "40 MPH"
+                    ],
+                    "maxHailSize": [
+                        "0.00"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f220bebec915177b3c561da1e2cd9aa4e40a27f4.001.1",
             "type": "Feature",
             "geometry": {
@@ -1635,5 +1751,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-10-05T11:17:24+00:00"
+    "updated": "2026-10-05T11:24:35+00:00"
 }

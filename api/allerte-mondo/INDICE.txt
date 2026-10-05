@@ -17,22 +17,22 @@
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1  voci=0
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:17:24+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:24:35+00:00" }
 
 == us-nws-punto-cap
    https://api.weather.gov/alerts/active?point=40.7128,-74.0060
    Accept: application/cap+xml, application/xml;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:17:24+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:24:35+00:00" }
 
 == us-nws-area-fl
    https://api.weather.gov/alerts/active?area=FL
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/geo+json  byte=85130
-   areaDesc=12  "features"=1  "event"=12  "severity"=12  "areaDesc"=12  "onset"=12  "expires"=12  senderName=12  "senderName"=12  voci=12
-   eventi: Flash Flood Warning | Flood Advisory | Flood Advisory | Coastal Flood Statement | Rip Current Statement
-   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f220bebec9
+   HTTP 200  tipo=application/geo+json  byte=90141
+   areaDesc=13  "features"=1  "event"=13  "severity"=13  "areaDesc"=13  "onset"=13  "expires"=13  senderName=13  "senderName"=13  voci=13
+   eventi: Special Weather Statement | Flash Flood Warning | Flood Advisory | Flood Advisory | Coastal Flood Statement
+   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3bca6d9ca
 
 == us-nws-area-ca
    https://api.weather.gov/alerts/active?area=CA
@@ -53,9 +53,9 @@
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=29080
+   HTTP 200  tipo=application/ld+json  byte=29101
    nessun segno noto
-   inizio: { "total": 387, "land": 98, "marine": 290, "regions": { "AL": 174, "AT": 40, "GL": 48, "GM": 10, "PA": 13, "PI": 5 }, "areas": { "AK": 2, "AL": 7, "AM": 16, "AN": 24, "AZ": 1, "CA": 19, "DC": 1, "FL": 12, "GA": 8, "GM": 10, "IA": 9, 
+   inizio: { "total": 388, "land": 99, "marine": 290, "regions": { "AL": 174, "AT": 40, "GL": 48, "GM": 10, "PA": 13, "PI": 5 }, "areas": { "AK": 2, "AL": 7, "AM": 16, "AN": 24, "AZ": 1, "CA": 19, "DC": 1, "FL": 13, "GA": 8, "GM": 10, "IA": 9, 
 
 == ca-eccc-ogc
    https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=3
@@ -130,7 +130,7 @@
 == geo-tokyo
    https://geocoding-api.open-meteo.com/v1/search?name=Tokyo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=558
+   HTTP 200  tipo=application/json; charset=utf-8  byte=559
    nessun segno noto
    inizio: {"results":[{"id":1850147,"name":"Tokyo","latitude":35.6895,"longitude":139.69171,"elevation":44.0,"feature_code":"PPLC","country_code":"JP","admin1_id":1850144,"timezone":"Asia/Tokyo","population":9733276,"country_id":1861060,"country":"Giappone","admin1":"Tokyo"},{"id":2085290,"name":"Tokyo","latitude":-8.4,"longitude":147.15,"elevation":2047.0,"feature_code":"PPL","country_code":"PG","admin1_id
 
@@ -144,7 +144,7 @@
 == geo-sapporo
    https://geocoding-api.open-meteo.com/v1/search?name=Sapporo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=662
+   HTTP 200  tipo=application/json; charset=utf-8  byte=663
    nessun segno noto
    inizio: {"results":[{"id":2128295,"name":"Sapporo","latitude":43.06667,"longitude":141.35,"elevation":26.0,"feature_code":"PPLA","country_code":"JP","admin1_id":2130037,"admin2_id":2128291,"timezone":"Asia/Tokyo","population":1973832,"country_id":1861060,"country":"Giappone","admin1":"Hokkaido","admin2":"Sapporo-shi"},{"id":2128294,"name":"Sapporo-dake","latitude":42.9,"longitude":141.2,"elevation":1264.0
 
@@ -222,7 +222,7 @@
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1386
+   HTTP 403  tipo=text/html  byte=1384
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
@@ -243,6 +243,9 @@
 == ifrc-alerthub: script ['https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV', '/assets/index-DNItz1Iz.js']
    https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV  HTTP 200  byte=533429  indirizzi: []
    https://alerthub.ifrc.org/assets/index-DNItz1Iz.js  HTTP 200  byte=664302  indirizzi: ['https://alerthub-api.ifrc.org/graphql/']
+== ifrc-schema: 445 caratteri
+   {"data": {"__schema": {"queryType": {"fields": [{"name": "public", "args": [], "type": {"name": null, "kind": "NON_NULL", "ofType": {"name": "PublicQuery", "kind": "OBJECT"}}}, {"name": "private", "args": [], "type": {"name": null, "kind": "NON_NULL", "ofType": {"name": "PrivateQuery", "kind": "OBJECT"}}}, {"name": "enums", "args": [], "type": {"name": null, "kind": "NON_NULL", "ofType": {"name": "AppEnumCollection", "kind": "OBJECT"}}}]}}}}
+== ifrc-tipi: 14596 caratteri, tipi interessanti: ['AlertFilter', 'AlertInfoAreaCircleType', 'AlertInfoAreaGeocodeType', 'AlertInfoAreaPolygonType', 'AlertInfoAreaType', 'AlertInfoCategory', 'AlertInfoCategoryEnum', 'AlertInfoCertainty', 'AlertInfoCertaintyEnum', 'AlertInfoFilter', 'AlertInfoOrder', 'AlertInfoParameterType', 'AlertInfoResponseType', 'AlertInfoResponseTypeEnum', 'AlertInfoSeverity', 'AlertInfoSeverityEnum', 'AlertInfoType', 'AlertInfoTypeCountList', 'AlertInfoUrgency', 'AlertInfoUrgencyEnum', 'AlertMsgType', 'AlertMsgTypeEnum', 'AlertOrder', 'AlertStatus', 'AlertStatusEnum', 'AlertType', 'AlertTypeCountList', 'AppEnumCollectionAlertInfoCategory', 'AppEnumCollectionAlertInfoCertainty', 'AppEnumCollectionAlertInfoResponseType', 'AppEnumCollectionAlertInfoSeverity', 'AppEnumCollectionAlertInfoUrgency', 'AppEnumCollectionAlertMsgType', 'AppEnumCollectionAlertStatus', 'AppEnumCollectionUserAlertSubscriptionEmailFrequency', 'AppEnumCollectionUserAlertSubscriptionFilterAlertCategories', 'AppEnumCollectionUserAlertSubscriptionFilterAlertCertainties', 'AppEnumCollectionUserAlertSubscriptionFilterAlertSeverities', 'AppEnumCollectionUserAlertSubscriptionFilterAlertUrgencies', 'CountryFilter', 'CountryOrder', 'CountryType', 'CountryTypeCountList', 'LanguageInfoType', 'PolygonScalar', 'UserAlertSubscriptionEmailFrequency', 'UserAlertSubscriptionEmailFrequencyEnum', 'UserAlertSubscriptionFilter', 'UserAlertSubscriptionFilterAlertCategories', 'UserAlertSubscriptionFilterAlertCertainties', 'UserAlertSubscriptionFilterAlertSeverities', 'UserAlertSubscriptionFilterAlertUrgencies', 'UserAlertSubscriptionInput', 'UserAlertSubscriptionOrder', 'UserAlertSubscriptionType', 'UserAlertSubscriptionTypeCountList', 'UserAlertSubscriptionTypeMutationResponseType', 'UserAlertSubscriptionUnsubscribeInput', 'alertInfo', 'alertInfoAreaId']
 == wmo-registro: 26 link, 4 simili a feed
    /atom.xml | /rss.xml | https://alertingauthority.wmo.int/atom.xml | https://alertingauthority.wmo.int/rss.xml
    altri: # | #top | /atom.xml | /css/leaflet.css | /css/main.css | /css/mapbox-gl.css | /css/print.css | /css/speech.css | /css/text.css | /favicon.ico | /rss.xml | callto://41227308111/ | https://alertingauthority.wmo.int/atom.xml | https://alertingauthority.wmo.int/edit.php | https://alertingauthority.wmo.int/rss.xml | https://old.wmo.int/extranet/pages/documents/wmo.vcf | https://public.wmo.int/en | https://public.wmo.int/en/about-us/contact-us | https://public.wmo.int/en/copyright | https://public.wmo.int/en/disclaimer | https://public.wmo.int/en/disclaimer#mapdisclaimer | https://public.wmo.int/en/privacy-policy | https://public.wmo.int/en/programmes/public-weather-services-programme | https://severeweather.wmo.int | https://worldweather.wmo.int | mailto:webdesk@wmo.int
