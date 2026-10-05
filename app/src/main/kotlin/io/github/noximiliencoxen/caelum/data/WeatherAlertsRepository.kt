@@ -20,9 +20,19 @@ import java.time.ZoneOffset
  * dell'Aeronautica pubblica bollettini su meteoam.it, ma non espone un'API
  * pubblica documentata per gli avvisi: i dati si ottengono per accordo, non
  * con una GET. MeteoAlarm invece e' il canale di EUMETNET su cui i servizi
- * nazionali pubblicano i propri avvisi, ed e' li' che finiscono anche quelli
- * italiani della Protezione Civile e dei centri funzionali regionali. Stessa
- * informazione, per una via che si puo' leggere.
+ * meteorologici nazionali pubblicano i propri avvisi, e per l'Italia a
+ * pubblicarli e' **proprio l'Aeronautica**: il `senderName` dei documenti CAP
+ * e' "Servizio Meteorologico dell'Aeronautica Militare". Stessa fonte, per
+ * una via che si puo' leggere.
+ *
+ * **Non sono le allerte della Protezione Civile**, e una stesura precedente
+ * di questo commento lo affermava. Lo dice il testo stesso di ogni voce: le
+ * informazioni MeteoAlarm "riguardano esclusivamente l'intensità e la
+ * ricorrenza dei fenomeni", "non forniscono la valutazione di impatto sul
+ * territorio e non rappresentano i messaggi di Allerta Ufficiali" del
+ * Servizio Nazionale di Protezione Civile. Sono allerte **meteo**: il colore
+ * e' il livello di MeteoAlarm, non quello del sistema di allertamento
+ * nazionale (CONTESTO §8-ter).
  *
  * **Perche' l'Atom e non l'RSS.** Gli RSS legacy sono stati spenti il
  * 14 gennaio 2026. L'Atom porta gli stessi dati ed e' quello mantenuto.
@@ -80,31 +90,39 @@ class WeatherAlertsRepository(
 
     suspend fun load(): Result<List<WeatherAlert>> = withContext(Dispatchers.IO) {
         runCatching {
-            val slug = countrySlug(place.country)
-                // Fuori dai paesi che MeteoAlarm copre non c'e' un feed da
-                // interrogare, e non e' un errore: si dichiara e basta, cosi'
-                // chi chiama sa che deve cavarsela con le soglie.
-                ?: throw OutOfCoverage(place.country)
-            val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = FEED_ACCEPT)
-            val now = OffsetDateTime.now()
-            val voci = parseFeed(body)
-            val valide = voci.filter { it.isCurrent(now) }.filter { it.level != null }
-            val mine = valide
-                .filter { it.matches(place) }
-                // Piu' di tre avvisi contemporanei sulla stessa regione non si
-                // sono mai visti, e il tetto e' li' per non trasformare una
-                // giornata storta in una raffica di richieste.
-                .take(MAX_DETAILS)
-            // Dove si perde un'allerta: nel feed, nella validita' o nel
-            // confronto col posto. Una riga sola, e dice quale dei tre.
-            Log.i(
-                "meteo",
-                "MeteoAlarm $slug: ${body.length} caratteri, ${voci.size} voci, " +
-                    "${valide.size} valide, ${mine.size} per ${place.name} " +
-                    "(regione=${place.admin}, paese=${place.country})",
-            )
-            mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl), fuso = fuso) }
+            // Una fonte per area del mondo. Fuori da tutte non c'e' un feed da
+            // interrogare, e non e' un errore: si dichiara e basta, cosi' chi
+            // chiama sa che deve cavarsela con le soglie.
+            when (fonteDi(place.country)) {
+                FonteAllerte.METEOALARM -> caricaMeteoAlarm(checkNotNull(countrySlug(place.country)))
+                FonteAllerte.NWS -> NwsAlerts.load(place, fuso).also {
+                    Log.i("meteo", "National Weather Service: ${it.size} per ${place.name}")
+                }
+                null -> throw OutOfCoverage(place.country)
+            }
         }
+    }
+
+    private fun caricaMeteoAlarm(slug: String): List<WeatherAlert> {
+        val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = FEED_ACCEPT)
+        val now = OffsetDateTime.now()
+        val voci = parseFeed(body)
+        val valide = voci.filter { it.isCurrent(now) }.filter { it.level != null }
+        val mine = valide
+            .filter { it.matches(place) }
+            // Piu' di tre avvisi contemporanei sulla stessa regione non si
+            // sono mai visti, e il tetto e' li' per non trasformare una
+            // giornata storta in una raffica di richieste.
+            .take(MAX_DETAILS)
+        // Dove si perde un'allerta: nel feed, nella validita' o nel
+        // confronto col posto. Una riga sola, e dice quale dei tre.
+        Log.i(
+            "meteo",
+            "MeteoAlarm $slug: ${body.length} caratteri, ${voci.size} voci, " +
+                "${valide.size} valide, ${mine.size} per ${place.name} " +
+                "(regione=${place.admin}, paese=${place.country})",
+        )
+        return mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl), fuso = fuso) }
     }
 
     /**
@@ -122,9 +140,9 @@ class WeatherAlertsRepository(
         }.getOrNull()
     }
 
-    /** Il posto non e' fra quelli che MeteoAlarm serve. */
+    /** Il posto non e' fra quelli che le fonti dell'app servono. */
     class OutOfCoverage(val country: String?) :
-        Exception(tr("MeteoAlarm non copre ", "MeteoAlarm does not cover ") + (country ?: tr("questa località", "this place")))
+        Exception(tr("Nessuna fonte di allerte ufficiali per ", "No official warning source for ") + (country ?: tr("questa località", "this place")))
 
     companion object {
         /**
@@ -164,6 +182,25 @@ class WeatherAlertsRepository(
          */
         fun countrySlug(country: String?): String? =
             COUNTRIES[country?.trim()?.lowercase() ?: return null]
+
+        /**
+         * Quale canale serve il paese, o nullo se nessuno.
+         *
+         * Il nome arriva in italiano dalla geocodifica di Open-Meteo e nella
+         * lingua del telefono dalla posizione: per questo ci sono le due forme.
+         */
+        fun fonteDi(country: String?): FonteAllerte? {
+            val nome = country?.trim()?.lowercase() ?: return null
+            return when {
+                COUNTRIES.containsKey(nome) -> FonteAllerte.METEOALARM
+                nome in STATI_UNITI -> FonteAllerte.NWS
+                else -> null
+            }
+        }
+
+        private val STATI_UNITI = setOf(
+            "stati uniti", "stati uniti d'america", "usa", "united states", "united states of america",
+        )
 
         private val COUNTRIES: Map<String, String> = mapOf(
             "italia" to "italy", "italy" to "italy",
@@ -259,22 +296,7 @@ internal data class FeedEntry(
      * peggiore di trattare l'ignoto.
      */
     val kind: AlertKind
-        get() {
-            val t = event?.lowercase().orEmpty()
-            return when {
-                t.contains("thunder") -> AlertKind.TEMPORALI
-                t.contains("high-temperature") || t.contains("heat") -> AlertKind.CALDO
-                t.contains("low-temperature") || t.contains("cold") -> AlertKind.FREDDO
-                t.contains("wind") -> AlertKind.VENTO
-                t.contains("snow") || t.contains("ice") -> AlertKind.NEVE_GHIACCIO
-                t.contains("fog") -> AlertKind.NEBBIA
-                t.contains("coastal") -> AlertKind.COSTIERO
-                t.contains("forest") || t.contains("fire") -> AlertKind.INCENDI
-                t.contains("avalanche") -> AlertKind.VALANGHE
-                t.contains("flood") || t.contains("rain") -> AlertKind.PIOGGIA
-                else -> AlertKind.ALTRO
-            }
-        }
+        get() = tipoDaEvento(event)
 
     /** Un avviso scaduto non e' un avviso: il feed li tiene in scena un po' dopo la fine. */
     fun isCurrent(now: OffsetDateTime): Boolean = expires == null || expires.isAfter(now)
@@ -339,7 +361,41 @@ internal data class FeedEntry(
             source = detail?.sender?.takeIf { it.isNotBlank() }?.let { "MeteoAlarm - $it" }
                 ?: "MeteoAlarm",
             official = true,
+            fonte = FonteAllerte.METEOALARM,
         )
+    }
+}
+
+/**
+ * Il fenomeno, dal nome inglese dell'evento.
+ *
+ * Serve a due fonti che scrivono in inglese in due vocabolari diversi:
+ * MeteoAlarm ("Yellow High-temperature Warning", "Orange Snow-Ice Warning") e
+ * il National Weather Service ("Extreme Heat Warning", "Rip Current
+ * Statement", "Wind Chill Advisory"). L'ordine conta: "wind chill" e' freddo
+ * prima di essere vento, "coastal flood" e' mareggiata prima di essere
+ * alluvione. Cio' che non si riconosce resta [AlertKind.ALTRO] e **si mostra
+ * lo stesso**.
+ */
+internal fun tipoDaEvento(evento: String?): AlertKind {
+    val t = evento?.lowercase().orEmpty()
+    return when {
+        t.contains("thunder") || t.contains("tornado") -> AlertKind.TEMPORALI
+        t.contains("high-temperature") || t.contains("heat") -> AlertKind.CALDO
+        t.contains("low-temperature") || t.contains("cold") || t.contains("wind chill") ||
+            t.contains("freeze") || t.contains("frost") -> AlertKind.FREDDO
+        t.contains("hurricane") || t.contains("tropical") || t.contains("typhoon") -> AlertKind.VENTO
+        t.contains("wind") -> AlertKind.VENTO
+        t.contains("snow") || t.contains("ice") || t.contains("winter") || t.contains("blizzard") ->
+            AlertKind.NEVE_GHIACCIO
+        t.contains("fog") -> AlertKind.NEBBIA
+        t.contains("coastal") || t.contains("rip current") || t.contains("surf") || t.contains("beach") ||
+            t.contains("storm surge") ->
+            AlertKind.COSTIERO
+        t.contains("forest") || t.contains("fire") || t.contains("red flag") -> AlertKind.INCENDI
+        t.contains("avalanche") -> AlertKind.VALANGHE
+        t.contains("flood") || t.contains("rain") -> AlertKind.PIOGGIA
+        else -> AlertKind.ALTRO
     }
 }
 

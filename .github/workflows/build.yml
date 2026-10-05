@@ -238,6 +238,13 @@ jobs:
           rm -f /tmp/ciout/_a /tmp/ciout/_feeds.html
           cat /tmp/ciout/allerte-mondo.txt
 
+      # Le fonti nazionali fuori dall'area MeteoAlarm (e il Regno Unito dentro),
+      # chieste con le intestazioni dell'app: niente lettore finche' qui non
+      # compare una risposta vera (CONTESTO §8-ter).
+      - name: Le allerte dei servizi nazionali fuori Europa
+        continue-on-error: true
+        run: OUT=/tmp/ciout/allerte-mondo python3 scripts/probe_allerte_mondo.py
+
       - name: Quali modelli coprono l'Italia
         run: python3 scripts/probe_models.py
 
