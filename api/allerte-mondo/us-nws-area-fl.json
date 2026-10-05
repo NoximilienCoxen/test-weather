@@ -10,105 +10,126 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.48ecf56af23c3cdfb34249a8176816246ea75fc2.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
                     [
                         [
-                            -85.62,
-                            30.27
+                            -85.15,
+                            29.91
                         ],
                         [
-                            -85.74,
-                            30.36
+                            -84.57,
+                            29.92
                         ],
                         [
-                            -85.63,
-                            30.58
+                            -84.56,
+                            29.8
                         ],
                         [
-                            -85.27,
-                            30.44
+                            -84.57,
+                            29.79
                         ],
                         [
-                            -85.62,
-                            30.27
+                            -84.61,
+                            29.76
+                        ],
+                        [
+                            -84.68,
+                            29.75
+                        ],
+                        [
+                            -84.76,
+                            29.67
+                        ],
+                        [
+                            -84.95,
+                            29.59
+                        ],
+                        [
+                            -85.05,
+                            29.56
+                        ],
+                        [
+                            -85.11,
+                            29.6
+                        ],
+                        [
+                            -85.14,
+                            29.6
+                        ],
+                        [
+                            -85.21,
+                            29.64
+                        ],
+                        [
+                            -85.15,
+                            29.91
                         ]
                     ]
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.48ecf56af23c3cdfb34249a8176816246ea75fc2.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.e3bca6d9ca7447bf9ea2079e9e0d11b374456e5b.001.1",
-                "areaDesc": "Washington; Inland Bay; Calhoun; Coastal Bay",
+                "id": "urn:oid:2.49.0.1.840.0.48ecf56af23c3cdfb34249a8176816246ea75fc2.001.1",
+                "areaDesc": "Franklin, FL; Gulf, FL",
                 "geocode": {
                     "SAME": [
-                        "012133",
-                        "012005",
-                        "012013"
+                        "012037",
+                        "012045"
                     ],
                     "UGC": [
-                        "FLZ010",
-                        "FLZ012",
-                        "FLZ013",
-                        "FLZ112"
+                        "FLC037",
+                        "FLC045"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ010",
-                    "https://api.weather.gov/zones/forecast/FLZ012",
-                    "https://api.weather.gov/zones/forecast/FLZ013",
-                    "https://api.weather.gov/zones/forecast/FLZ112"
+                    "https://api.weather.gov/zones/county/FLC037",
+                    "https://api.weather.gov/zones/county/FLC045"
                 ],
                 "references": [],
-                "sent": "2026-10-05T07:23:00-04:00",
-                "effective": "2026-10-05T07:23:00-04:00",
-                "onset": "2026-10-05T07:23:00-04:00",
-                "expires": "2026-10-05T08:15:00-04:00",
-                "ends": null,
+                "sent": "2026-10-05T08:35:00-04:00",
+                "effective": "2026-10-05T08:35:00-04:00",
+                "onset": "2026-10-05T08:35:00-04:00",
+                "expires": "2026-10-05T10:30:00-04:00",
+                "ends": "2026-10-05T10:30:00-04:00",
                 "status": "Actual",
                 "messageType": "Alert",
                 "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
+                "severity": "Minor",
+                "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Special Weather Statement",
+                "event": "Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Tallahassee FL",
-                "headline": "Special Weather Statement issued October 5 at 7:23AM EDT by NWS Tallahassee FL",
-                "description": "At 723 AM EDT/623 AM CDT/, Doppler radar was tracking a strong\nthunderstorm 7 miles north of Lynn Haven, moving northeast at 20 mph.\n\nHAZARD...Wind gusts up to 40 mph.\n\nSOURCE...Radar indicated.\n\nIMPACT...Gusty winds could knock down tree limbs and blow around\nunsecured objects.\n\nLocations impacted include...\nBayhead, Southport, Fountain, Singer Road, Recota Beach, Saunders,\nGreenhead, Camp Flowers, Gainer Spring, Bennett, Youngstown, Porter\nLake, Vicksburg, and Riverside.",
-                "instruction": "If outdoors, consider seeking shelter inside a building.",
-                "response": "Execute",
+                "headline": "Flood Advisory issued October 5 at 8:35AM EDT until October 5 at 10:30AM EDT by NWS Tallahassee FL",
+                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Southwestern Franklin County in Big Bend Florida...\nSoutheastern Gulf County in the panhandle of Florida...\n\n* WHEN...Until 1030 AM EDT /930 AM CDT/.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\nWater over roadways. Ponding of water in urban or other areas is\noccurring or is imminent.\n\n* ADDITIONAL DETAILS...\n- At 835 AM EDT /735 AM CDT/, Doppler radar indicated heavy rain\ndue to thunderstorms. Minor flooding is ongoing or expected to\nbegin shortly in the advisory area. Between 1 and 2 inches of\nrain have fallen.\n- Additional rainfall amounts of 1 to 2 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nCarrabelle, Eastpoint, Apalachicola, St George Island, Franklin,\nCreels, Hays Place, Green Point, Beverly, High Bluff, Bay City,\nApalachicola Airport, Buck Siding, Royal Bluff, Tilton, St George\nIsland St Pk, Howard Creek, Nine Mile, Yent Place and Carrabelle\nBeach.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe aware of your surroundings and do not drive on flooded roads.\n\nPlease report observed flooding to local emergency services or law\nenforcement and request they pass this information to the National\nWeather Service when you can do so safely.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "SPSTAE"
+                        "FLSTAE"
                     ],
                     "WMOidentifier": [
-                        "WWUS82 KTAE 051123"
+                        "WGUS82 KTAE 051235"
                     ],
                     "NWSheadline": [
-                        "A STRONG THUNDERSTORM WILL IMPACT NORTHEASTERN BAY...WEST CENTRAL CALHOUN AND SOUTHEASTERN WASHINGTON COUNTIES IN THE PANHANDLE OF FLORIDA THROUGH 815 AM EDT/715 AM CDT/"
-                    ],
-                    "eventMotionDescription": [
-                        "2026-10-05T11:23:00-00:00...storm...237DEG...17KT...30.34,-85.61"
-                    ],
-                    "maxWindGust": [
-                        "40 MPH"
-                    ],
-                    "maxHailSize": [
-                        "0.00"
+                        "FLOOD ADVISORY IN EFFECT UNTIL 1030 AM EDT /930 AM CDT/ THIS MORNING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
                         "NWEM",
                         "CMAS"
                     ],
-                    "EAS-ORG": [
-                        "WXR"
+                    "VTEC": [
+                        "/O.NEW.KTAE.FA.Y.0192.261005T1235Z-261005T1430Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-05T10:30:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -117,10 +138,10 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "SPS"
+                        "NWS"
                     ],
                     "NationalWeatherService": [
-                        "SPS"
+                        "FAY"
                     ]
                 }
             }
@@ -1416,5 +1437,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-10-05T12:03:12+00:00"
+    "updated": "2026-10-05T12:43:32+00:00"
 }
