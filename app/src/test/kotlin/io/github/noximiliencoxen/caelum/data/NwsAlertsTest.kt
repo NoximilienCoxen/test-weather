@@ -1,7 +1,6 @@
 package io.github.noximiliencoxen.caelum.data
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDateTime
@@ -89,8 +88,9 @@ class NwsAlertsTest {
         assertEquals(FonteAllerte.NWS, WeatherAlertsRepository.fonteDi("United States"))
         assertEquals(FonteAllerte.METEOALARM, WeatherAlertsRepository.fonteDi("Italia"))
         assertEquals(FonteAllerte.METEOALARM, WeatherAlertsRepository.fonteDi("Regno Unito"))
-        assertNull(WeatherAlertsRepository.fonteDi("Singapore"))
-        assertNull(WeatherAlertsRepository.fonteDi(null))
+        // Tutti gli altri, e un posto senza paese, vanno all'IFRC.
+        assertEquals(FonteAllerte.IFRC, WeatherAlertsRepository.fonteDi("Singapore"))
+        assertEquals(FonteAllerte.IFRC, WeatherAlertsRepository.fonteDi(null))
     }
 
     @Test

@@ -2114,6 +2114,36 @@ credito di ciascuna (MeteoAlarm CC BY 4.0, NWS pubblico dominio) invece di
 "MeteoAlarm" e basta. `WeatherAlertsRepository.fonteDi` sceglie il canale dal
 paese; fuori da tutti resta `OutOfCoverage`.
 
+**Canada, Giappone e tutti gli altri.** Altri tre lettori, ciascuno scritto
+sulle risposte vere della sonda (giri del 5 ottobre 2026):
+
+- **Canada** (`EcccAlerts.kt`): API OGC di GeoMet, `status_en=active` e un
+  `bbox` di qualche centinaio di metri attorno al posto. Quel giorno nessuna
+  allerta era attiva in tutto il Canada: i campi si conoscono da voci gia'
+  concluse, e `validity_datetime` letto come inizio e' un'interpretazione.
+- **Giappone** (`JmaAlerts.kt`): il JSON del sito JMA era fermo al 28 maggio
+  2026. Si legge il servizio XML ufficiale: il feed lungo (~2 MB, sette
+  giorni) per trovare l'ultimo bollettino `VPWW53` dell'area, poi gli avvisi
+  di prefettura. Niente orari: un avviso JMA vale finche' non lo si revoca.
+- **Tutti gli altri** (`IfrcAlerts.kt`): l'IFRC Alert Hub raccoglie i feed
+  CAP dei servizi registrati alla WMO in un'API GraphQL (indirizzo trovato
+  dalla sonda nel codice del sito, perche' la GET dava 404). 196 paesi, 38
+  con allerte quel giorno, Russia compresa (570, dal feed CAP di Roshydromet).
+  Paese e regione si trovano dai riquadri, non dai nomi; i riquadri si
+  sovrappongono (Tomsk cade anche in quelli di Kemerovo e Novosibirsk),
+  quindi si chiedono fino a tre regioni candidate e decide il poligono di
+  ciascuna allerta. Roshydromet manda ogni allerta due volte, in russo e in
+  inglese: si uniscono e vince la lingua dell'app, poi l'inglese.
+
+`fonteDi` non torna piu' nullo: le fonti nazionali dove ci sono, l'IFRC per
+il resto (anche per un posto senza paese). Fuori copertura e' l'IFRC a
+dirlo, quando nessun paese contiene il punto. `PoligonoCap.kt` e' il punto
+nel poligono CAP ("lat,lon" separati da spazi), provato su quello di Tomsk.
+
+Restano fuori: **Australia** (il BoM blocca le richieste automatiche) e
+**Nuova Zelanda** come lettore proprio (feed MetService vuoto il 5 ottobre;
+intanto passa dall'IFRC, che elenca NZL).
+
 ## 8-quinquies. La scheda della pioggia
 
 `ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,

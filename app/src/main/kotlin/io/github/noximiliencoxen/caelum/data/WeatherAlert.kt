@@ -61,6 +61,9 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
 
     /** Il Giappone: l'Agenzia meteorologica (気象庁). */
     JMA("Japan Meteorological Agency", "jma.go.jp", "https://www.jma.go.jp/"),
+
+    /** Tutti gli altri: i feed CAP dei servizi nazionali, raccolti dall'IFRC. */
+    IFRC("IFRC Alert Hub", "alerthub.ifrc.org", "https://alerthub.ifrc.org/"),
     ;
 
     /** Dove serve, detto per chi legge. */
@@ -70,6 +73,7 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             NWS -> tr("Stati Uniti", "United States")
             ECCC -> "Canada"
             JMA -> tr("Giappone", "Japan")
+            IFRC -> tr("gli altri paesi", "other countries")
         }
 
     companion object {
@@ -95,6 +99,12 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             JMA -> tr(
                 "Allerte ufficiali: Japan Meteorological Agency (気象庁), dati riutilizzabili citando la fonte.",
                 "Official warnings: Japan Meteorological Agency (気象庁), reusable with attribution.",
+            )
+            IFRC -> tr(
+                "Allerte ufficiali: i servizi meteorologici nazionali, raccolte dall'IFRC Alert Hub " +
+                    "(Federazione internazionale della Croce Rossa) dai loro feed CAP.",
+                "Official warnings: the national weather services, collected by the IFRC Alert Hub " +
+                    "(International Federation of Red Cross) from their CAP feeds.",
             )
         }
 }
