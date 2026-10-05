@@ -7024,6 +7024,11 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 4. **I colpetti fitti**, uno ogni 150 ms, confrontati con la build di prima
    (§42.3).
 5. **Un'allerta arancione vera**: la notifica e il bollettino (§42.4, §43.1).
+   Dal 5 ottobre le allerte non sono piu' solo MeteoAlarm: NWS (Stati Uniti),
+   ECCC (Canada), JMA (Giappone) e IFRC Alert Hub per il resto (§8-ter). Tutte
+   provate su risposte vere della sonda e con test, **nessuna vista sul
+   telefono**: la prova in mano e' un posto con un'allerta attiva per ciascun
+   canale, con il credito della fonte giusto in fondo al bollettino.
 6. **TalkBack** sulla barra delle ore (§43.2).
 7. **Un tablet o uno schermo largo** (§43.3).
 8. **Il widget della Luna** di giorno e di notte (§44).
@@ -7170,6 +7175,17 @@ job `rilascio` verde con `softprops/action-gh-release@v3`. La release
 d'installazione e nessun allegato in piu'. Chiuso.
 
 ### 49.10 Per la prossima chat
+
+**Aggiornamento del 5 ottobre** (PR #38-#41, unite su `main`): le allerte
+ufficiali coprono il mondo (§8-ter): MeteoAlarm col jolly in `Accept` (il
+server rispondeva 406), NWS, ECCC, JMA, IFRC con `PoligonoCap`; bollettino e
+pastiglia distinguono un controllo fallito da un feed vuoto; il codice del
+giorno non disegna gocce con zero millimetri; allerte attribuite
+all'Aeronautica e non alla Protezione Civile. Ancora aperte: Australia (BoM
+blocca i client) e Nuova Zelanda come lettore proprio. **Prove su telefono dopo
+il 4 ottobre: nessuna** - questa sezione non ne registra di nuove, e la lista
+delle voci 1-10 di §49.5 resta tutta da fare in mano.
+
 
 Stato al 4 ottobre, notte, dopo le PR #34 e #35 (tutto unito su `main`).
 L'elenco numerato e' §49.5; qui solo a che punto e' ogni voce aperta e da
