@@ -1,0 +1,752 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+           	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+	<head>
+	    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+		<link href="https://alertingauthority.wmo.int/rss.xml" rel="alternate" type="application/rss+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<link href="https://alertingauthority.wmo.int/atom.xml" rel="alternate" type="application/atom+xml" title="WMO Register of Alerting Authorities News Feed" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="keywords" content="alerting, authorities, WMO, member, official, list" />
+		<meta name="description" content="WMO Register of Alerting Authorities" />
+		<meta name="owner" content="WMO-OMM" />
+		<meta name="robots" content="INDEX, FOLLOW" />
+		<meta name="publisher" content="WMO" />
+		<meta name="distribution" content="global" /> 
+		<meta name="rating" content="GENERAL" />
+		<meta name="page-topic" content="Scientific" />
+		<meta name="abstract" content="Working together in weather, climate, and water" /> 
+		<meta name="audience" content="All" />
+		<meta name="page-type" content="specialized agency" />
+		<meta name="mssmarttagspreventparsing" content="true" />
+		<title>WMO Register of Alerting Authorities</title>
+		<style type="text/css">
+			body { color:black; background-color:white; font-family:sans-serif; font-size:medium; font-weight:normal }
+			v\:* { behavior:url(#default#VML); }
+			.leaflet-bottom { visibility: hidden; }
+		</style>
+		<!--<script type="text/javascript" src="/js/boxSelect.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>-->
+		<!-- 
+			Use this to get the more sophisticated Google Maps v3 API, which includes spherical geometry functions      
+			<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
+		-->
+		<script src="/js/OpenLayers.js"></script>
+
+		<link rev="MADE" href="mailto:webdesk@wmo.int" />
+		<link href="/css/main.css" rel="stylesheet" type="text/css" />
+		<link href="/css/text.css" rel="stylesheet" type="text/css" />
+		<link href="/css/print.css" rel="stylesheet" type="text/css" media="print,projection,handheld">
+		<link href="/css/speech.css" rel="stylesheet" type="text/css" media="speech">
+		<script type="text/javascript" src="/js/zoom.js"></script>
+		
+		
+		<!-- @2019-07-18 -->
+		<script type="text/javascript" src="/js/jquery.min.js"></script>
+		<link rel="stylesheet" href="/css/leaflet.css"/>
+		<script type="text/javascript" src="/js/leaflet.js"></script>
+		<!-- Load Mapbox GL -->
+		<link rel="stylesheet" href="/css/mapbox-gl.css"/>
+		<script src="/js/mapbox-gl.js"></script>
+
+		<script src="/js/esri-leaflet.js"></script>
+		<script src="/js/esri-leaflet-vector.js"></script>
+
+		<script src="/js/turf.min.js"></script>
+		<!-- @2019-07-18 -->
+
+		<script type="text/javascript">
+			function addToFavorites()
+			{
+				var url = location.href; 
+				var title = document.title;
+				if ((navigator.appName == "Microsoft Internet Explorer") && (parseInt(navigator.appVersion) >= 4)) 
+				{
+					window.external.AddFavorite(url,title);
+				}
+				else if (navigator.appName == "Netscape")
+				{
+					window.sidebar.addPanel(title,url,"");
+				}
+				else
+				{
+					alert("Press CTRL-D (Netscape) or CTRL-T (Opera) to bookmark");
+				}
+			} 
+			
+			function validatePassword (pw, options) 
+			{
+				// default options (allows any password)
+				var o = 
+				{
+					lower:    0,
+					upper:    0,
+					alpha:    0, /* lower + upper */
+					numeric:  0,
+					special:  0,
+					length:   [0, Infinity],
+					custom:   [ /* regexes and/or functions */ ],
+					badWords: [],
+					badSequenceLength: 0,
+					noQwertySequences: false,
+					noSequential:      false
+				};
+
+				for (var property in options)
+					o[property] = options[property];
+
+				var	re = {
+						lower:   /[a-z]/g,
+						upper:   /[A-Z]/g,
+						alpha:   /[A-Z]/gi,
+						numeric: /[0-9]/g,
+						special: /[\W_]/g
+					},
+					rule, i;
+
+				// enforce min/max length
+				if (pw.length < o.length[0] || pw.length > o.length[1])
+					return false;
+
+				// enforce lower/upper/alpha/numeric/special rules
+				for (rule in re) {
+					if ((pw.match(re[rule]) || []).length < o[rule])
+						return false;
+				}
+
+				// enforce word ban (case insensitive)
+				for (i = 0; i < o.badWords.length; i++) {
+					if (pw.toLowerCase().indexOf(o.badWords[i].toLowerCase()) > -1)
+						return false;
+				}
+
+				// enforce the no sequential, identical characters rule
+				if (o.noSequential && /([\S\s])\1/.test(pw))
+					return false;
+
+				// enforce alphanumeric/qwerty sequence ban rules
+				if (o.badSequenceLength) {
+					var	lower   = "abcdefghijklmnopqrstuvwxyz",
+						upper   = lower.toUpperCase(),
+						numbers = "0123456789",
+						qwerty  = "qwertyuiopasdfghjklzxcvbnm",
+						start   = o.badSequenceLength - 1,
+						seq     = "_" + pw.slice(0, start);
+					for (i = start; i < pw.length; i++) {
+						seq = seq.slice(1) + pw.charAt(i);
+						if (
+							lower.indexOf(seq)   > -1 ||
+							upper.indexOf(seq)   > -1 ||
+							numbers.indexOf(seq) > -1 ||
+							(o.noQwertySequences && qwerty.indexOf(seq) > -1)
+						) {
+							return false;
+						}
+					}
+				}
+
+				// enforce custom regex/function rules
+				for (i = 0; i < o.custom.length; i++) 
+				{
+					rule = o.custom[i];
+					if (rule instanceof RegExp) 
+					{
+						if (!rule.test(pw))
+							return false;
+					} 
+					else if (rule instanceof Function) 
+					{
+						if (!rule(pw))
+							return false;
+					}
+				}
+
+				// great success!
+				return true;
+			}
+		</script>
+
+		<!-- WMO map, added by On@2014-09-12 -->
+		<script type="text/javascript">
+        var map, polygonControl, vectors, modifyControl;
+        function boxMapInit(){
+            /*map = new OpenLayers.Map('map');
+            
+            var wmsLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
+                "http://vmap0.tiles.osgeo.org/wms/vmap0?", {layers: 'basic'}); 
+
+            var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
+*/
+			
+			//@2019-07-18
+			map = L.map('map_canvas', {
+				'center': [22,114],
+				'zoom': 1,
+				'worldCopyJump': true,
+				minZoom: 1,
+				maxZoom: 8,
+				zoomControl: true
+				//'maxBounds': bounds
+				//'renderer': L.canvas()
+			});
+			//@2019-07-18
+			L.esri.Vector.layer('2848c7bbd9bf479f9d810d8f1c32e2f5').addTo(map);
+
+			// draw default polygon 
+			var default_area = '';
+			var alerting_areas = document.showAuthority.alertingAreas.value;
+			if (alerting_areas != "")
+			{
+				default_area = alerting_areas;
+			}
+			else
+				default_area =document.showAuthority.defaultNWSE.value;
+
+			var area_arr = default_area.split(" ");
+			//@2019-07-18
+			var p1 = [area_arr[0],area_arr[1]];
+			var p2 = [area_arr[2],area_arr[1]];
+			var p3 = [area_arr[2],area_arr[3]];
+			var p4 = [area_arr[0],area_arr[3]];
+			var polygon = L.polygon(
+				[ p1,p2,p3,p4 ] ,
+				{
+					color: 'rgb(238, 153, 0)'
+					,weight: 1
+				}
+			).addTo(map);
+			
+			//@2019-07-18
+			//get polygon center
+			var features = turf.featureCollection([
+				turf.point( [parseFloat(area_arr[0]),parseFloat(area_arr[1])] ),
+				turf.point( [parseFloat(area_arr[2]),parseFloat(area_arr[1])] ),
+				turf.point( [parseFloat(area_arr[2]),parseFloat(area_arr[3])] ),
+				turf.point( [parseFloat(area_arr[0]),parseFloat(area_arr[3])] )
+			]);
+			var point_center = turf.center(features);
+			
+			//@2019-07-18
+			map.setView(
+				[point_center.geometry.coordinates[0],point_center.geometry.coordinates[1]]
+				, zoomByDegrees(area_arr[3]-area_arr[1])
+				, { animation: false }
+			);
+			
+			//<!---   lat   lng //@2019-07-18
+			map.on('mousemove', function(e){
+				var coord = e.latlng;
+				var lat = coord.lat;
+				var lng = coord.lng;
+				//console.log("lat: " + lat + ", lng: " + lng);
+				jQuery(".latlng-msg p").html(lat.toFixed(5) + ", " + lng.toFixed(5));
+			});
+			//   lat   lng  -->
+			
+			//@2019-07-18
+			jQuery("#map_canvas").append('<div class="latlng-msg"><p></p></div>');
+			
+			setTimeout(function() {
+				if($(".esri-dynamic-attribution").length == 1) {
+					$(".leaflet-control-attribution").html("The boundaries and names shown and the designations used do not imply official endorsement or acceptance by WMO or the United Nations.");
+					var att = $(".leaflet-bottom.leaflet-right").html();
+					$(".leaflet-bottom.leaflet-right").html("");
+					$(".leaflet-bottom.leaflet-left").html(att);
+					$(".leaflet-bottom").css({"visibility":"visible"});
+				}
+			}, 1500);
+
+        }
+		function zoomByDegrees(degreesLongitude) {
+			// these figures are approximate
+			var degrees = Math.abs(degreesLongitude);
+			//alert("degrees: "+degrees);
+			switch (true) {
+				case (degrees < 2):
+					return 8;
+					break;
+				case (degrees < 5):
+					return 7;
+					break;
+				case (degrees < 10):
+					return 6;
+					break;
+				case (degrees < 20):
+					return 5;
+					break;
+				case (degrees < 40):
+					return 4;
+					break;
+				case (degrees < 60):
+					return 3;
+					break;
+				case (degrees < 80):
+					return 2;
+					break;
+				case (degrees < 100):
+					return 1;
+					break;
+			/*	case (degrees < 5.5):
+					return 3;
+					break;
+				case (degrees < 11.2):
+					return 2;
+					break;
+				case (degrees < 22.5):
+					return 3;
+					break;
+				case (degrees < 45):
+					return 3;
+					break;
+				case (degrees < 90):
+					return 2;
+					break;
+				case (degrees < 180):
+					return 2;
+					break;*/
+				default:
+					return 1;
+			}
+		}
+		function stopDrawPolygon(data)
+		{
+			if(data && data.type && data.type == 'featureadded')
+			{
+				polygonControl.deactivate();
+				document.getElementById("resize").checked = true;
+				update();
+			//	modifyControl.activate();
+			}
+		}
+		function chkZoomLevel(event) {
+			var zLevel = map.getZoom();
+			if( zLevel > 8) {
+				map.events.unregister("zoomend", map, chkZoomLevel);
+				var center = map.getCenter();
+				setMapCenter(center.lat, center.lon, 8);
+				map.events.register('zoomend', map, chkZoomLevel);
+			}
+			if( zLevel < 1) {
+				map.events.unregister("zoomend", map, chkZoomLevel);
+				var center = map.getCenter();
+				setMapCenter(center.lat, center.lon, 1);
+				map.events.register('zoomend', map, chkZoomLevel);
+			}
+		}
+        function setOptions(options) {
+            polygonControl.handler.setOptions(options);
+        }
+        function setSize(fraction) {
+            var radius = fraction * map.getExtent().getHeight();
+            polygonControl.handler.setOptions({radius: radius,
+                                               angle: 0});
+        }
+		function setMapCenter(lat, lng, zoomlv) {
+			map.setCenter(new OpenLayers.LonLat(lng, lat).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				new OpenLayers.Projection("EPSG:3857")
+			), zoomlv);
+		}
+		function setPoint(lat, lng) {
+			var pt = new OpenLayers.Geometry.Point(lat, lng).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				new OpenLayers.Projection("EPSG:3857")
+			);
+			return pt;
+		}
+		function getPolygonCenter()
+		{
+			return vectors.features[0].geometry.getCentroid().transform(
+				new OpenLayers.Projection("EPSG:3857"),
+				new OpenLayers.Projection("EPSG:4326")
+			);
+		}
+		function tranformLatLng(coord) {
+			return coord.transform(
+				new OpenLayers.Projection("EPSG:3857"),
+				new OpenLayers.Projection("EPSG:4326")
+			);
+		}
+		function serialize() {
+          //  var str = geojson.write(vectors.features, true);
+          //  document.getElementById('features').value = str;
+			var pt1, pt2, pt3, pt4, str='';
+			var points = vectors.features[0].geometry.getVertices();
+			
+				pt1 = tranformLatLng(points[0]);
+				pt2 = tranformLatLng(points[1]);
+				pt3 = tranformLatLng(points[2]);
+				pt4 = tranformLatLng(points[3]);
+				str += "PT1 - x: "+pt1.x+"   y: "+pt1.y+"\n";
+				str += "PT2 - x: "+pt2.x+"   y: "+pt2.y+"\n";
+				str += "PT3 - x: "+pt3.x+"   y: "+pt3.y+"\n";
+				str += "PT4 - x: "+pt4.x+"   y: "+pt4.y+"\n";
+			/*.transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				new OpenLayers.Projection("EPSG:3857")
+			);*/
+			document.getElementById('features').value = str;
+        }
+		function update() {
+            // reset modification mode
+            var resize = document.getElementById("resize").checked;
+            if(resize) {
+                modifyControl.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
+              /*  var keepAspectRatio = document.getElementById("keepAspectRatio").checked;
+                if (keepAspectRatio) {
+                    controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+                }*/
+				toggleControl(true);
+            }
+			else
+				toggleControl(false);
+        }
+		function toggleControl(bool) {
+          //  for(key in controls) {
+          //      var control = controls[key];
+                if(bool) {
+                    modifyControl.activate();
+					polygonControl.deactivate();
+                } else {
+                    polygonControl.activate();
+					modifyControl.deactivate();
+                }
+           // }
+        }
+    </script>
+
+	<style>
+	/*//@2019-07-18*/
+	.latlng-msg { 
+		position:absolute; z-index:999; 
+		left:45px; top:0; 
+		font-size:14px;
+		font-family:arial; line-height:25px; 
+		height:35px; width:450px; 
+	}
+	.latlng-msg p { margin:5px 10px; }
+	</style>
+
+	</head>
+
+<body><div class="hidetop">
+								<table style="width: 924px;" align="center" cellpadding="0" cellspacing="0">
+									<tr>
+										<td style="height:98px; background-color: #00529c" class="hBlue">
+											<table style="width: 100%;" cellpadding="0" cellspacing="0" border="0">
+												<tr>
+													<td width="5%">&nbsp;</td>
+													<td width="95%">
+														<a href="https://public.wmo.int/en" target="_blank" rel="noopener noreferrer">
+															<img src="/images/WMOLogo.png" alt="World Meteorological Organization" name="logoWMO" width="527" height="84" border="0" id="logoWMO" /></a>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td height="16" bgcolor="ff9b00" class="hOrange">
+											<table width="265" border="0" align="right" cellpadding="0" cellspacing="0">
+												<tr> 
+													<td width="55" nowrap="nowrap" class="navHeadLinksBlue"><a href="https://public.wmo.int/en" target="_blank" rel="noopener noreferrer">HOME</a></td>
+													<td width="105" nowrap="nowrap" class="navHeadLinksBlue"><a href="https://worldweather.wmo.int" target="_blank" rel="noopener noreferrer">WORLDWEATHER</a></td>
+													<td width="105" nowrap="nowrap" class="navHeadLinksBlue"><a href="https://severeweather.wmo.int" target="_blank" rel="noopener noreferrer">SEVERE WEATHER</a></td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td><div align="center"><a href="https://public.wmo.int/en/programmes/public-weather-services-programme" target="_blank" rel="noopener noreferrer"><br />Public Weather Services</a> established this register of information about alerting authorities as identified by Members.<br />For questions, <a href="https://public.wmo.int/en/about-us/contact-us" target="_blank" rel="noopener noreferrer">please contact us</a>. Select a country to get started.</div><form name= "selectMember" method="post">
+<input type="hidden" name="memberCode" value=""><input type="hidden" name="csrfToken" value="9e1d6b75cb4eed901f8da6f9dbf5e0e3bd1ae720d47b3042cdf6ef4363e46bd9996bce">
+<p><center><b>WMO Register of Alerting Authorities (official Db)</b><br>To monitor updates to this Register, subscribe to the <a href="/rss.xml">RSS</a> or <a href="/atom.xml">ATOM</a> news feed.</center></p><table border="1"><tr><td style="width:20%" valign="top"><input type="radio" id="radio-AF" name="grpraa" onClick="selected('AF')">Afghanistan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AL" name="grpraa" onClick="selected('AL')">Albania</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-DZ" name="grpraa" onClick="selected('DZ')">Algeria</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AD" name="grpraa" onClick="selected('AD')">Andorra</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AO" name="grpraa" onClick="selected('AO')">Angola</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-AI" name="grpraa" onClick="selected('AI')">Anguilla</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AG" name="grpraa" onClick="selected('AG')">Antigua and Barbuda</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AR" name="grpraa" onClick="selected('AR')">Argentina</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AM" name="grpraa" onClick="selected('AM')">Armenia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AU" name="grpraa" onClick="selected('AU')">Australia</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-AT" name="grpraa" onClick="selected('AT')">Austria</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AZ" name="grpraa" onClick="selected('AZ')">Azerbaijan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BS" name="grpraa" onClick="selected('BS')">Bahamas</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BH" name="grpraa" onClick="selected('BH')">Bahrain</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BD" name="grpraa" onClick="selected('BD')">Bangladesh</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-BB" name="grpraa" onClick="selected('BB')">Barbados</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BY" name="grpraa" onClick="selected('BY')">Belarus</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BE" name="grpraa" onClick="selected('BE')">Belgium</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BZ" name="grpraa" onClick="selected('BZ')">Belize</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BJ" name="grpraa" onClick="selected('BJ')">Benin</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-BT" name="grpraa" onClick="selected('BT')">Bhutan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BO" name="grpraa" onClick="selected('BO')">Bolivia (Plurinational State of)</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BA" name="grpraa" onClick="selected('BA')">Bosnia and Herzegovina</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BW" name="grpraa" onClick="selected('BW')">Botswana</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BR" name="grpraa" onClick="selected('BR')">Brazil</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-VG" name="grpraa" onClick="selected('VG')">British Virgin Islands</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BN" name="grpraa" onClick="selected('BN')">Brunei Darussalam</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BG" name="grpraa" onClick="selected('BG')">Bulgaria</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BF" name="grpraa" onClick="selected('BF')">Burkina Faso</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-BI" name="grpraa" onClick="selected('BI')">Burundi</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-CV" name="grpraa" onClick="selected('CV')">Cabo Verde</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KH" name="grpraa" onClick="selected('KH')">Cambodia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CM" name="grpraa" onClick="selected('CM')">Cameroon</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CA" name="grpraa" onClick="selected('CA')">Canada</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KY" name="grpraa" onClick="selected('KY')">Cayman Islands</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-CF" name="grpraa" onClick="selected('CF')">Central African Republic</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TD" name="grpraa" onClick="selected('TD')">Chad</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CL" name="grpraa" onClick="selected('CL')">Chile</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CN" name="grpraa" onClick="selected('CN')">China</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CO" name="grpraa" onClick="selected('CO')">Colombia</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-KM" name="grpraa" onClick="selected('KM')">Comoros</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CG" name="grpraa" onClick="selected('CG')">Congo</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CK" name="grpraa" onClick="selected('CK')">Cook Islands</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CR" name="grpraa" onClick="selected('CR')">Costa Rica</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CI" name="grpraa" onClick="selected('CI')">Côte d'Ivoire</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-HR" name="grpraa" onClick="selected('HR')">Croatia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CU" name="grpraa" onClick="selected('CU')">Cuba</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AN" name="grpraa" onClick="selected('AN')">Curaçao and Sint Maarten</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CY" name="grpraa" onClick="selected('CY')">Cyprus</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CZ" name="grpraa" onClick="selected('CZ')">Czechia</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-KP" name="grpraa" onClick="selected('KP')">Democratic People's Republic of Korea</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CD" name="grpraa" onClick="selected('CD')">Democratic Republic of the Congo</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-DK" name="grpraa" onClick="selected('DK')">Denmark</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-DJ" name="grpraa" onClick="selected('DJ')">Djibouti</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-DM" name="grpraa" onClick="selected('DM')">Dominica</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-DO" name="grpraa" onClick="selected('DO')">Dominican Republic</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-EC" name="grpraa" onClick="selected('EC')">Ecuador</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-EG" name="grpraa" onClick="selected('EG')">Egypt</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SV" name="grpraa" onClick="selected('SV')">El Salvador</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ER" name="grpraa" onClick="selected('ER')">Eritrea</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-EE" name="grpraa" onClick="selected('EE')">Estonia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SZ" name="grpraa" onClick="selected('SZ')">Eswatini</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ET" name="grpraa" onClick="selected('ET')">Ethiopia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-EU" name="grpraa" onClick="selected('EU')">EUMETNET</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-FJ" name="grpraa" onClick="selected('FJ')">Fiji</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-FI" name="grpraa" onClick="selected('FI')">Finland</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-FR" name="grpraa" onClick="selected('FR')">France</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PF" name="grpraa" onClick="selected('PF')">French Polynesia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GA" name="grpraa" onClick="selected('GA')">Gabon</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GM" name="grpraa" onClick="selected('GM')">Gambia (The)</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-GE" name="grpraa" onClick="selected('GE')">Georgia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-DE" name="grpraa" onClick="selected('DE')">Germany</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GH" name="grpraa" onClick="selected('GH')">Ghana</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GR" name="grpraa" onClick="selected('GR')">Greece</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GD" name="grpraa" onClick="selected('GD')">Grenada</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-GT" name="grpraa" onClick="selected('GT')">Guatemala</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GN" name="grpraa" onClick="selected('GN')">Guinea</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GW" name="grpraa" onClick="selected('GW')">Guinea-Bissau</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GY" name="grpraa" onClick="selected('GY')">Guyana</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-HT" name="grpraa" onClick="selected('HT')">Haiti</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-HN" name="grpraa" onClick="selected('HN')">Honduras</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-HK" name="grpraa" onClick="selected('HK')">Hong Kong, China</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-HU" name="grpraa" onClick="selected('HU')">Hungary</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IS" name="grpraa" onClick="selected('IS')">Iceland</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IN" name="grpraa" onClick="selected('IN')">India</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-ID" name="grpraa" onClick="selected('ID')">Indonesia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IR" name="grpraa" onClick="selected('IR')">Iran (Islamic Republic of)</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IQ" name="grpraa" onClick="selected('IQ')">Iraq</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IE" name="grpraa" onClick="selected('IE')">Ireland</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-IL" name="grpraa" onClick="selected('IL')">Israel</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-IT" name="grpraa" onClick="selected('IT')">Italy</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-JM" name="grpraa" onClick="selected('JM')">Jamaica</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-JP" name="grpraa" onClick="selected('JP')">Japan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-JO" name="grpraa" onClick="selected('JO')">Jordan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KZ" name="grpraa" onClick="selected('KZ')">Kazakhstan</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-KE" name="grpraa" onClick="selected('KE')">Kenya</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KI" name="grpraa" onClick="selected('KI')">Kiribati</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KW" name="grpraa" onClick="selected('KW')">Kuwait</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KG" name="grpraa" onClick="selected('KG')">Kyrgyzstan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LA" name="grpraa" onClick="selected('LA')">Lao People's Democratic Republic</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-LV" name="grpraa" onClick="selected('LV')">Latvia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LB" name="grpraa" onClick="selected('LB')">Lebanon</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LS" name="grpraa" onClick="selected('LS')">Lesotho</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LR" name="grpraa" onClick="selected('LR')">Liberia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LY" name="grpraa" onClick="selected('LY')">Libya (State of)</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-LT" name="grpraa" onClick="selected('LT')">Lithuania</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LU" name="grpraa" onClick="selected('LU')">Luxembourg</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MO" name="grpraa" onClick="selected('MO')">Macao, China</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MG" name="grpraa" onClick="selected('MG')">Madagascar</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MW" name="grpraa" onClick="selected('MW')">Malawi</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-MY" name="grpraa" onClick="selected('MY')">Malaysia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MV" name="grpraa" onClick="selected('MV')">Maldives</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ML" name="grpraa" onClick="selected('ML')">Mali</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MT" name="grpraa" onClick="selected('MT')">Malta</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MR" name="grpraa" onClick="selected('MR')">Mauritania</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-MU" name="grpraa" onClick="selected('MU')">Mauritius</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MX" name="grpraa" onClick="selected('MX')">Mexico</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-FM" name="grpraa" onClick="selected('FM')">Micronesia (Federated States of)</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MC" name="grpraa" onClick="selected('MC')">Monaco</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MN" name="grpraa" onClick="selected('MN')">Mongolia</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-ME" name="grpraa" onClick="selected('ME')">Montenegro</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MS" name="grpraa" onClick="selected('MS')">Montserrat</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MA" name="grpraa" onClick="selected('MA')">Morocco</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MZ" name="grpraa" onClick="selected('MZ')">Mozambique</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MM" name="grpraa" onClick="selected('MM')">Myanmar</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-NA" name="grpraa" onClick="selected('NA')">Namibia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NP" name="grpraa" onClick="selected('NP')">Nepal</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NL" name="grpraa" onClick="selected('NL')">Netherlands (Kingdom of the)</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NC" name="grpraa" onClick="selected('NC')">New Caledonia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NZ" name="grpraa" onClick="selected('NZ')">New Zealand</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-NI" name="grpraa" onClick="selected('NI')">Nicaragua</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NE" name="grpraa" onClick="selected('NE')">Niger</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NG" name="grpraa" onClick="selected('NG')">Nigeria</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-NU" name="grpraa" onClick="selected('NU')">Niue</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MK" name="grpraa" onClick="selected('MK')">North Macedonia</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-NO" name="grpraa" onClick="selected('NO')">Norway</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-OM" name="grpraa" onClick="selected('OM')">Oman</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PK" name="grpraa" onClick="selected('PK')">Pakistan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PA" name="grpraa" onClick="selected('PA')">Panama</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PG" name="grpraa" onClick="selected('PG')">Papua New Guinea</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-PY" name="grpraa" onClick="selected('PY')">Paraguay</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PE" name="grpraa" onClick="selected('PE')">Peru</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PH" name="grpraa" onClick="selected('PH')">Philippines</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PL" name="grpraa" onClick="selected('PL')">Poland</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-PT" name="grpraa" onClick="selected('PT')">Portugal</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-QA" name="grpraa" onClick="selected('QA')">Qatar</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KR" name="grpraa" onClick="selected('KR')">Republic of Korea</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-MD" name="grpraa" onClick="selected('MD')">Republic of Moldova</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-RO" name="grpraa" onClick="selected('RO')">Romania</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-RU" name="grpraa" onClick="selected('RU')">Russian Federation</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-RW" name="grpraa" onClick="selected('RW')">Rwanda</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-KN" name="grpraa" onClick="selected('KN')">Saint Kitts and Nevis</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LC" name="grpraa" onClick="selected('LC')">Saint Lucia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-VC" name="grpraa" onClick="selected('VC')">Saint Vincent and the Grenadines</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-WS" name="grpraa" onClick="selected('WS')">Samoa</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-ST" name="grpraa" onClick="selected('ST')">Sao Tome and Principe</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SA" name="grpraa" onClick="selected('SA')">Saudi Arabia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SN" name="grpraa" onClick="selected('SN')">Senegal</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-RS" name="grpraa" onClick="selected('RS')">Serbia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SC" name="grpraa" onClick="selected('SC')">Seychelles</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-SL" name="grpraa" onClick="selected('SL')">Sierra Leone</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SG" name="grpraa" onClick="selected('SG')">Singapore</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SK" name="grpraa" onClick="selected('SK')">Slovakia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SI" name="grpraa" onClick="selected('SI')">Slovenia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SB" name="grpraa" onClick="selected('SB')">Solomon Islands</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-SO" name="grpraa" onClick="selected('SO')">Somalia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ZA" name="grpraa" onClick="selected('ZA')">South Africa</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SS" name="grpraa" onClick="selected('SS')">South Sudan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ES" name="grpraa" onClick="selected('ES')">Spain</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-LK" name="grpraa" onClick="selected('LK')">Sri Lanka</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-SD" name="grpraa" onClick="selected('SD')">Sudan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SR" name="grpraa" onClick="selected('SR')">Suriname</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SE" name="grpraa" onClick="selected('SE')">Sweden</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-CH" name="grpraa" onClick="selected('CH')">Switzerland</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-SY" name="grpraa" onClick="selected('SY')">Syrian Arab Republic</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-TJ" name="grpraa" onClick="selected('TJ')">Tajikistan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TH" name="grpraa" onClick="selected('TH')">Thailand</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TL" name="grpraa" onClick="selected('TL')">Timor-Leste</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TG" name="grpraa" onClick="selected('TG')">Togo</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TO" name="grpraa" onClick="selected('TO')">Tonga</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-TT" name="grpraa" onClick="selected('TT')">Trinidad and Tobago</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TN" name="grpraa" onClick="selected('TN')">Tunisia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TM" name="grpraa" onClick="selected('TM')">Turkmenistan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TC" name="grpraa" onClick="selected('TC')">Turks and Caicos Islands</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-TV" name="grpraa" onClick="selected('TV')">Tuvalu</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-TR" name="grpraa" onClick="selected('TR')">Türkiye</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-UG" name="grpraa" onClick="selected('UG')">Uganda</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-UA" name="grpraa" onClick="selected('UA')">Ukraine</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-AE" name="grpraa" onClick="selected('AE')">United Arab Emirates</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-GB" name="grpraa" onClick="selected('GB')">United Kingdom of Great Britain and Northern Ireland</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-TZ" name="grpraa" onClick="selected('TZ')">United Republic of Tanzania</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-US" name="grpraa" onClick="selected('US')">United States of America</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-UY" name="grpraa" onClick="selected('UY')">Uruguay</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-UZ" name="grpraa" onClick="selected('UZ')">Uzbekistan</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-VU" name="grpraa" onClick="selected('VU')">Vanuatu</td>
+</tr>
+<tr><td style="width:20%" valign="top"><input type="radio" id="radio-VE" name="grpraa" onClick="selected('VE')">Venezuela, Bolivarian Republic of</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-VN" name="grpraa" onClick="selected('VN')">Viet Nam</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-YE" name="grpraa" onClick="selected('YE')">Yemen</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ZM" name="grpraa" onClick="selected('ZM')">Zambia</td>
+<td style="width:20%" valign="top"><input type="radio" id="radio-ZW" name="grpraa" onClick="selected('ZW')">Zimbabwe</td>
+</tr></table></form>
+<script type="text/javascript">
+	function selected(alpha2Code)
+				{
+					var selectedRadioId = "radio-"+alpha2Code;
+					var selectedRadio = document.getElementById(selectedRadioId);
+					selectedRadio.checked = false;
+					document.selectMember.memberCode.value = alpha2Code;
+					document.selectMember.submit();
+				}
+				</script>					</td>
+				</tr>
+				<tr>
+					<td>
+						<br/><br/>
+						<p align="center">Authorized registry editors may proceed to the editing page by clicking <a href="https://alertingauthority.wmo.int/edit.php">here</a>.</p>
+						<p align="center"><img src="/images/linehoriz.gif" alt="line" width="394" height="4" /></p>
+						<table width="200" border="0" align="right" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="center"><a href="#top"><img src="/images/btnTop.gif" alt="top" width="23" height="20" border="0" /></a></td>
+							</tr>
+							<tr>
+								<td align="center" class="topics"><div align="center"><a href="#">Back to top</a></p></div></td>
+							</tr>
+							<tr>
+								<td align="center" class="topics"></td>
+							</tr>
+							<tr>
+								<td align="center" class="topics">&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" bgcolor="#ccdceb" class="foot">
+						<a href="https://old.wmo.int/extranet/pages/documents/wmo.vcf">&copy; World Meteorological Organization</a>, 7bis, avenue de la Paix, Case postale 2300, CH-1211 Geneva 2, Switzerland<br />
+						<a href="callto://41227308111/">Tel.: + 41(0) 22 730 81 11</a> / Fax: + 41(0) 22 730 81 81 - &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+						<a href="https://public.wmo.int/en/copyright">Copyright</a> | 
+						<a href="https://public.wmo.int/en/privacy-policy">Privacy Policy</a> | 
+						<a href="https://public.wmo.int/en/disclaimer">Disclaimer</a> | 
+						<a href="https://public.wmo.int/en/disclaimer#mapdisclaimer">Map disclaimer</a>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>
