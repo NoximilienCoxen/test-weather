@@ -89,7 +89,7 @@ class NwsAlertsTest {
         assertEquals(FonteAllerte.NWS, WeatherAlertsRepository.fonteDi("United States"))
         assertEquals(FonteAllerte.METEOALARM, WeatherAlertsRepository.fonteDi("Italia"))
         assertEquals(FonteAllerte.METEOALARM, WeatherAlertsRepository.fonteDi("Regno Unito"))
-        assertNull(WeatherAlertsRepository.fonteDi("Giappone"))
+        assertNull(WeatherAlertsRepository.fonteDi("Singapore"))
         assertNull(WeatherAlertsRepository.fonteDi(null))
     }
 
