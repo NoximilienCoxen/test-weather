@@ -133,10 +133,12 @@ jobs:
           echo "--- byte ricevuti: $(wc -c < /tmp/ciout/allerte.xml) ---"
           head -c 600 /tmp/ciout/allerte.xml; echo
           # La stessa richiesta con gli header dell'app (`Http.kt`,
-          # `WeatherAlertsRepository.CAP_ACCEPT`): se il server rifiuta quelli
-          # e non quelli di curl, l'app resta senza allerte e la sonda no.
+          # `WeatherAlertsRepository.FEED_ACCEPT`). Non e' scrupolo: con i soli
+          # tipi XML il server rispondeva 406 all'app e 200 a curl, che manda
+          # `*/*`, e nessuna allerta ufficiale arrivava senza che
+          # questa sonda lo vedesse (CONTESTO §8-ter).
           curl -sS -o /dev/null -w "con gli header dell'app: HTTP %{http_code}, %{size_download} byte, %{content_type}\n" \
-            -H "Accept: application/atom+xml, application/cap+xml, application/xml" \
+            -H "Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8" \
             -H "User-Agent: Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)" \
             "$FEED" || true
           for campo in "cap:event" "cap:severity" "cap:areaDesc" "cap:expires"; do
