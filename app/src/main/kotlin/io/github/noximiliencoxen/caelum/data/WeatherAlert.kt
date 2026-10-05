@@ -7,16 +7,17 @@ import java.time.LocalDateTime
  * Un'allerta meteo, da qualunque parte venga.
  *
  * Il modello e' uno solo per due fonti diverse apposta. Le allerte ufficiali
- * arrivano da MeteoAlarm - il canale di EUMETNET su cui i servizi nazionali
- * pubblicano i propri bollettini, che per l'Italia sono quelli del Dipartimento
- * della Protezione Civile e dei centri funzionali regionali - e coprono
- * l'Europa. Fuori da li' non c'e' nessuno che le pubblichi in un formato
+ * arrivano da MeteoAlarm - il canale di EUMETNET su cui i servizi
+ * meteorologici nazionali pubblicano i propri avvisi, che per l'Italia sono
+ * quelli dell'Aeronautica Militare - e coprono l'Europa. Sono allerte meteo,
+ * non i messaggi di allertamento della Protezione Civile: lo dichiara il
+ * testo stesso di ogni voce (vedi `WeatherAlertsRepository`). Fuori da li' non c'e' nessuno che le pubblichi in un formato
  * leggibile da un'app senza accordi, e una schermata che non dice niente su
  * mezzo mondo non e' una funzione: quelle calcolate dalle soglie riempiono il
  * buco.
  *
  * [official] tiene distinte le due cose, e non e' un dettaglio da nascondere.
- * "La Protezione Civile ha diramato un'allerta arancione" e "domani sono
+ * "Il servizio meteorologico ha emesso un'allerta arancione" e "domani sono
  * previsti novanta chilometri orari di raffica" sono due affermazioni con un
  * peso diverso, e chi legge ha diritto di sapere quale delle due sta leggendo.
  */

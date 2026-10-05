@@ -166,11 +166,15 @@ fun SalaBollettinoScreen(
             if (ordinati.isNotEmpty()) {
                 Text(
                     text = tr(
-                        "ALLERTA vuol dire che l'ha diramata un ente, attraverso MeteoAlarm. " +
+                        "ALLERTA vuol dire che l'ha emessa il servizio meteorologico nazionale (per l'Italia " +
+                            "l'Aeronautica Militare) e arriva attraverso MeteoAlarm: è un'allerta meteo, non un " +
+                            "messaggio di allertamento della Protezione Civile. " +
                             "SOGLIA SUPERATA vuol dire che l'ha calcolata l'app confrontando la " +
                             "previsione con delle soglie: non è un'allerta ufficiale e non sostituisce " +
                             "un bollettino.",
-                        "WARNING means an authority issued it, through MeteoAlarm. " +
+                        "WARNING means the national weather service issued it (for Italy, the Aeronautica " +
+                            "Militare) and it comes through MeteoAlarm: it is a weather warning, not a civil " +
+                            "protection alert. " +
                             "THRESHOLD EXCEEDED means the app calculated it by comparing the " +
                             "forecast with thresholds: it is not an official warning and does not " +
                             "replace a bulletin.",

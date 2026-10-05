@@ -20,9 +20,19 @@ import java.time.ZoneOffset
  * dell'Aeronautica pubblica bollettini su meteoam.it, ma non espone un'API
  * pubblica documentata per gli avvisi: i dati si ottengono per accordo, non
  * con una GET. MeteoAlarm invece e' il canale di EUMETNET su cui i servizi
- * nazionali pubblicano i propri avvisi, ed e' li' che finiscono anche quelli
- * italiani della Protezione Civile e dei centri funzionali regionali. Stessa
- * informazione, per una via che si puo' leggere.
+ * meteorologici nazionali pubblicano i propri avvisi, e per l'Italia a
+ * pubblicarli e' **proprio l'Aeronautica**: il `senderName` dei documenti CAP
+ * e' "Servizio Meteorologico dell'Aeronautica Militare". Stessa fonte, per
+ * una via che si puo' leggere.
+ *
+ * **Non sono le allerte della Protezione Civile**, e una stesura precedente
+ * di questo commento lo affermava. Lo dice il testo stesso di ogni voce: le
+ * informazioni MeteoAlarm "riguardano esclusivamente l'intensità e la
+ * ricorrenza dei fenomeni", "non forniscono la valutazione di impatto sul
+ * territorio e non rappresentano i messaggi di Allerta Ufficiali" del
+ * Servizio Nazionale di Protezione Civile. Sono allerte **meteo**: il colore
+ * e' il livello di MeteoAlarm, non quello del sistema di allertamento
+ * nazionale (CONTESTO §8-ter).
  *
  * **Perche' l'Atom e non l'RSS.** Gli RSS legacy sono stati spenti il
  * 14 gennaio 2026. L'Atom porta gli stessi dati ed e' quello mantenuto.

@@ -760,7 +760,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // insegna a non fidarsi anche degli altri.
                         //
                         // Filtrano le **calcolate** e non le ufficiali, ed e'
-                        // una scelta: un avviso della Protezione Civile non lo
+                        // una scelta: un'allerta del servizio meteorologico non la
                         // si nasconde perche' un interruttore e' giu'.
                         val derived = derivedAlerts(forecast).filter { permessa(it) }
                         _state.update { it.copy(alerts = derived) }

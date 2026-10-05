@@ -350,7 +350,7 @@ class MainActivity : ComponentActivity() {
          * 3 rossa.
          *
          * Senza, la fascia si potrebbe fotografare solo nei giorni in cui la
-         * Protezione Civile ha davvero diramato qualcosa su Forli', cioe' quasi
+         * servizio meteorologico ha davvero emesso qualcosa su Forli', cioe' quasi
          * mai e mai su richiesta. Un riquadro che compare solo col maltempo e'
          * esattamente quello che nessuno riesce a verificare prima di
          * pubblicarlo.
