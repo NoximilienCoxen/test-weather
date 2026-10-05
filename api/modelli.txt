@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
@@ -18,16 +18,16 @@
     Noceto   48/48 ore  quota 74.0 m  prime [14.8, 14.0, 12.7]
     Forli    48/48 ore  quota 40.0 m  prime [14.7, 14.0, 13.5]
   ecmwf_ifs025
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Noceto   48/48 ore  quota 74.0 m  prime [13.3, 13.3, 13.6]
     Forli    48/48 ore  quota 40.0 m  prime [13.2, 12.8, 12.6]
   ecmwf_aifs025_single
-    Noceto   48/48 ore  quota 74.0 m  prime [12.6, 12.1, 11.7]
+    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
     Forli    48/48 ore  quota 40.0 m  prime [13.5, 13.0, 12.6]
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [13.6, 13.7, 13.4]
     Forli    48/48 ore  quota 40.0 m  prime [15.6, 15.4, 15.2]
   arpae_cosmo_5m
-    Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Noceto    HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
     Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [16.2, 16.0, 15.6]
@@ -37,19 +37,19 @@
     Forli    48/48 ore  quota 40.0 m  prime [17.3, 16.8, 16.1]
   ukmo_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [12.5, 12.6, 13.0]
-    Forli     HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Forli    48/48 ore  quota 40.0 m  prime [12.5, 12.1, 12.3]
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"reason":"No data is available for this location","error":true}
     Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
-    Londra   48/48 ore  quota 29.0 m  prime [13.9, 13.4, 13.0]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
+    Londra    HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [14.3, 13.8, 13.6]
     Bergen   48/48 ore  quota 17.0 m  prime [13.1, 13.3, 13.5]
@@ -57,14 +57,14 @@
     NewYork  48/48 ore  quota 27.0 m  prime [14.2, 14.3, 14.2]
 
 === chi risponde sotto best_match, nel mondo ===
-  Tokyo          best_match NON RISPONDE qui
+  Tokyo          best_match = jma_seamless
   NewYork        best_match = gfs_seamless
-  Oslo           best_match = metno_seamless
+  Oslo           best_match NON RISPONDE qui
   Reykjavik      best_match = ? (nessun candidato coincide)
-  Nairobi        best_match = knmi_seamless
+  Nairobi        best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
+  SanPaolo       best_match NON RISPONDE qui
   Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Noceto         best_match = icon_seamless
@@ -80,13 +80,13 @@
   Reykjavik      giorni   7  assenti=-  tutte nulle=-
   Nairobi        ore    168  assenti=-  tutte nulle=-
   Nairobi        giorni   7  assenti=-  tutte nulle=-
-  CittaDelCapo   HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+  CittaDelCapo   ore    168  assenti=-  tutte nulle=-
+  CittaDelCapo   giorni   7  assenti=-  tutte nulle=-
   Sydney         ore    168  assenti=-  tutte nulle=-
   Sydney         giorni   7  assenti=-  tutte nulle=-
   SanPaolo       ore    168  assenti=-  tutte nulle=-
   SanPaolo       giorni   7  assenti=-  tutte nulle=-
-  Delhi          ore    168  assenti=-  tutte nulle=-
-  Delhi          giorni   7  assenti=-  tutte nulle=-
+  Delhi          HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   Singapore      ore    168  assenti=-  tutte nulle=-
   Singapore      giorni   7  assenti=-  tutte nulle=-
   Noceto         ore    168  assenti=-  tutte nulle=-

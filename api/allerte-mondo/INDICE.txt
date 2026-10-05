@@ -17,30 +17,30 @@
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1  voci=0
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:26:21+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:00:00+00:00" }
 
 == us-nws-punto-cap
    https://api.weather.gov/alerts/active?point=40.7128,-74.0060
    Accept: application/cap+xml, application/xml;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T09:26:21+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:00:00+00:00" }
 
 == us-nws-area-fl
    https://api.weather.gov/alerts/active?area=FL
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/geo+json  byte=69963
-   areaDesc=10  "features"=1  "event"=10  "severity"=10  "areaDesc"=10  "onset"=10  "expires"=10  senderName=10  "senderName"=10  voci=10
-   eventi: Coastal Flood Statement | Flood Advisory | Rip Current Statement | Flood Watch | Rip Current Statement
-   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7536d85f9c
+   HTTP 200  tipo=application/geo+json  byte=85130
+   areaDesc=12  "features"=1  "event"=12  "severity"=12  "areaDesc"=12  "onset"=12  "expires"=12  senderName=12  "senderName"=12  voci=12
+   eventi: Flash Flood Warning | Flood Advisory | Flood Advisory | Coastal Flood Statement | Rip Current Statement
+   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f220bebec9
 
 == us-nws-area-ca
    https://api.weather.gov/alerts/active?area=CA
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/geo+json  byte=111836
+   HTTP 200  tipo=application/geo+json  byte=112947
    areaDesc=19  "features"=1  "event"=19  "severity"=19  "areaDesc"=19  "onset"=19  "expires"=19  senderName=19  "senderName"=19  voci=19
-   eventi: Heat Advisory | Beach Hazards Statement | Extreme Heat Watch | Heat Advisory | Extreme Heat Warning
-   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb9d59ba26
+   eventi: Extreme Heat Warning | Extreme Heat Warning | Extreme Heat Warning | Extreme Heat Warning | Extreme Heat Warning
+   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3cf20025db
 
 == us-nws-area-ak
    https://api.weather.gov/alerts/active?area=AK
@@ -53,16 +53,16 @@
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=28578
+   HTTP 200  tipo=application/ld+json  byte=29122
    nessun segno noto
-   inizio: { "total": 382, "land": 93, "marine": 291, "regions": { "AL": 174, "AT": 42, "GL": 49, "GM": 9, "PA": 12, "PI": 5 }, "areas": { "AK": 2, "AL": 6, "AM": 16, "AN": 26, "AZ": 1, "CA": 19, "DC": 2, "FL": 10, "GA": 7, "GM": 9, "IA": 9, "
+   inizio: { "total": 388, "land": 98, "marine": 291, "regions": { "AL": 174, "AT": 40, "GL": 48, "GM": 11, "PA": 13, "PI": 5 }, "areas": { "AK": 2, "AL": 7, "AM": 16, "AN": 24, "AZ": 1, "CA": 19, "DC": 1, "FL": 12, "GA": 8, "GM": 11, "IA": 9, 
 
 == ca-eccc-ogc
    https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=3
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/json  byte=12401
+   HTTP 200  tipo=application/json  byte=8549
    "features"=1  voci=3
-   inizio: {"type":"FeatureCollection","features":[{"id":"183432824638615149202610030504_fea1-1026","type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-67.00134746,48.44949759],[-66.99985772,48.75042193],[-67.00017027,48.75034481],[-67.58262532,48.60441087],[-67.61206932,48.62213692],[-67.61672482,48.62485421],[-67.60620981,48.62436249],[-67.62265053,48.63405946],[-67.64018851,48.64437537],[-67.6
+   inizio: {"type":"FeatureCollection","features":[{"id":"547207521133772084202610040507_fea1-862","type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-58.4207998,47.57446071],[-58.42,47.65351964],[-58.42,47.66664325],[-58.42,47.67016522],[-58.42,47.68288401],[-58.42,47.68544188],[-58.42,48.1],[-58.56779582,48.1],[-58.56779768,48.1],[-59.09562692,48.10033781],[-59.25925384,48.1046773],[-59.5757361
 
 == nz-metservice-cap
    https://alerts.metservice.com/cap/rss
@@ -74,9 +74,9 @@
 == jp-jma-feed
    https://www.data.jma.go.jp/developer/xml/feed/extra.xml
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=text/xml  byte=202450
-   <entry=349
-   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T18:32:28+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791192748</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
+   HTTP 200  tipo=text/xml  byte=212541
+   <entry=363
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T19:47:41+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791197261</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
 
 == jp-jma-tokyo
    https://www.jma.go.jp/bosai/warning/data/warning/130000.json
@@ -88,7 +88,7 @@
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1386
+   HTTP 403  tipo=text/html  byte=1387
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
