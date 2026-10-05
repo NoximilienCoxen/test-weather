@@ -17,14 +17,14 @@
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1  voci=0
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:03:16+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:17:24+00:00" }
 
 == us-nws-punto-cap
    https://api.weather.gov/alerts/active?point=40.7128,-74.0060
    Accept: application/cap+xml, application/xml;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:06:13+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-10-05T11:17:24+00:00" }
 
 == us-nws-area-fl
    https://api.weather.gov/alerts/active?area=FL
@@ -53,9 +53,9 @@
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=29122
+   HTTP 200  tipo=application/ld+json  byte=29080
    nessun segno noto
-   inizio: { "total": 388, "land": 98, "marine": 291, "regions": { "AL": 174, "AT": 40, "GL": 48, "GM": 11, "PA": 13, "PI": 5 }, "areas": { "AK": 2, "AL": 7, "AM": 16, "AN": 24, "AZ": 1, "CA": 19, "DC": 1, "FL": 12, "GA": 8, "GM": 11, "IA": 9, 
+   inizio: { "total": 387, "land": 98, "marine": 290, "regions": { "AL": 174, "AT": 40, "GL": 48, "GM": 10, "PA": 13, "PI": 5 }, "areas": { "AK": 2, "AL": 7, "AM": 16, "AN": 24, "AZ": 1, "CA": 19, "DC": 1, "FL": 12, "GA": 8, "GM": 10, "IA": 9, 
 
 == ca-eccc-ogc
    https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=3
@@ -74,9 +74,9 @@
 == jp-jma-feed
    https://www.data.jma.go.jp/developer/xml/feed/extra.xml
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=text/xml  byte=204048
-   <entry=348
-   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T20:04:12+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791198252</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
+   HTTP 200  tipo=text/xml  byte=191393
+   <entry=326
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T20:16:46+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791199006</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
 
 == jp-jma-tokyo
    https://www.jma.go.jp/bosai/warning/data/warning/130000.json
@@ -130,7 +130,7 @@
 == geo-tokyo
    https://geocoding-api.open-meteo.com/v1/search?name=Tokyo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=559
+   HTTP 200  tipo=application/json; charset=utf-8  byte=558
    nessun segno noto
    inizio: {"results":[{"id":1850147,"name":"Tokyo","latitude":35.6895,"longitude":139.69171,"elevation":44.0,"feature_code":"PPLC","country_code":"JP","admin1_id":1850144,"timezone":"Asia/Tokyo","population":9733276,"country_id":1861060,"country":"Giappone","admin1":"Tokyo"},{"id":2085290,"name":"Tokyo","latitude":-8.4,"longitude":147.15,"elevation":2047.0,"feature_code":"PPL","country_code":"PG","admin1_id
 
@@ -144,7 +144,7 @@
 == geo-sapporo
    https://geocoding-api.open-meteo.com/v1/search?name=Sapporo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=663
+   HTTP 200  tipo=application/json; charset=utf-8  byte=662
    nessun segno noto
    inizio: {"results":[{"id":2128295,"name":"Sapporo","latitude":43.06667,"longitude":141.35,"elevation":26.0,"feature_code":"PPLA","country_code":"JP","admin1_id":2130037,"admin2_id":2128291,"timezone":"Asia/Tokyo","population":1973832,"country_id":1861060,"country":"Giappone","admin1":"Hokkaido","admin2":"Sapporo-shi"},{"id":2128294,"name":"Sapporo-dake","latitude":42.9,"longitude":141.2,"elevation":1264.0
 
@@ -190,20 +190,59 @@
    <item=33
    inizio: <?xml version="1.0" encoding="UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/CAP/estilo_ar.xsl"?> <rss xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"> <channel> <title>Ultimos Avisos publicados por el Servicio Meteorologico Nacional (SMN) de Argentina</title> <link>h
 
+== jp-jma-feed-lungo
+   https://www.data.jma.go.jp/developer/xml/feed/extra_l.xml
+   Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
+   HTTP 200  tipo=text/xml  byte=2118496
+   <entry=3754
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>長期（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-10-05T20:16:46+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1791199006</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/de
+
+== ru-meteoinfo
+   https://meteoinfo.ru/
+   Accept: text/html, */*;q=0.8
+   HTTP 200  tipo=text/html; charset=utf-8  byte=71790
+   "event"=1
+   eventi: mouseenter
+   inizio: <!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru" dir="ltr"> <head> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <meta charset="utf-8" /> <base href="https://meteoinfo.ru/" /> <meta name="keywords" content="прогноз погоды, официальный прогноз, гидрологическая обстанов
+
+== ru-meteoinfo-rss
+   https://meteoinfo.ru/rss/hazards
+   Accept: application/rss+xml, application/xml;q=0.9, */*;q=0.8
+   HTTP 200  tipo=text/html; charset=UTF-8  byte=788
+   <item=1
+   inizio: <?xml version="1.0" encoding="utf-8"?> <rss version="2.0"> <channel> <title>Гидрометцентр России: Предупреждения о неблагоприятных погодных явлениях по территории Центрального ФО</title> <link>http://www.meteoinfo.ru</link> <description>Предупреждения о неблагоприятных погодных явлениях по территории Центрального ФО</description> <ttl>60</ttl> <item><title>2026-09-30</title> <link>http://w
+
+== ru-meteoalarm
+   https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-russia
+   Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
+   HTTP 404  tipo=text/html; charset=utf-8  byte=9
+   nessun segno noto
+   inizio: Not Found
+
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1387
+   HTTP 403  tipo=text/html  byte=1386
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
 ######## secondo passo
-== jp-jma-documenti: 348 voci nel feed, 2 sugli avvisi
+== jp-jma-documenti: 326 voci nel feed, 2 sugli avvisi
    titoli nel feed: 全般気象情報 | 全般気象解説情報 | 台風の暴風域に入る確率 | 台風解析・予報情報（５日予報）（Ｈ３０） | 地方気象情報 | 地方気象解説情報 | 府県気象情報 | 府県気象解説情報 | 早期天候情報 | 気象特別警報・警報・注意報 | 気象警報・注意報（Ｈ２７） | 気象警報・注意報（Ｒ０６）（その他注意報） | 気象警報・注意報（Ｒ０６）（土砂） | 気象警報・注意報（Ｒ０６）（大雨） | 気象警報・注意報（Ｒ０６）（暴風） | 気象警報・注意報（Ｒ０６）（波浪） | 高頻度（随時）
-   doc 1: https://www.data.jma.go.jp/developer/xml/data/20261005110359_0_VPWW54_340000.xml  HTTP 200  byte=19062
-   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象警報・注意報（Ｈ２７）</Title> <DateTime>2026-10-05T11:03:58Z</DateTime> <Status>通常</Status> <EditorialOffice>広島地方気象台</EditorialOffice> <PublishingOffice>広島地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>広島県気象警報・注意報</Title> <ReportDateTime>2026-10-05T20:03:00+09:00</ReportDateTime> <TargetDateTime>2026-10-05T20:03:00+09:00</TargetDateTi
-   doc 2: https://www.data.jma.go.jp/developer/xml/data/20261005110359_0_VPWW53_340000.xml  HTTP 200  byte=12343
-   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象特別警報・警報・注意報</Title> <DateTime>2026-10-05T11:03:58Z</DateTime> <Status>通常</Status> <EditorialOffice>広島地方気象台</EditorialOffice> <PublishingOffice>広島地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>広島県気象警報・注意報</Title> <ReportDateTime>2026-10-05T20:03:00+09:00</ReportDateTime> <TargetDateTime>2026-10-05T20:03:00+09:00</TargetDateTi
+   doc 1: https://www.data.jma.go.jp/developer/xml/data/20261005111623_0_VPWW54_140000.xml  HTTP 200  byte=113769
+   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象警報・注意報（Ｈ２７）</Title> <DateTime>2026-10-05T11:16:22Z</DateTime> <Status>通常</Status> <EditorialOffice>横浜地方気象台</EditorialOffice> <PublishingOffice>横浜地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>神奈川県気象警報・注意報</Title> <ReportDateTime>2026-10-05T20:16:00+09:00</ReportDateTime> <TargetDateTime>2026-10-05T20:16:00+09:00</TargetDateT
+   doc 2: https://www.data.jma.go.jp/developer/xml/data/20261005111623_0_VPWW53_140000.xml  HTTP 200  byte=33365
+   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象特別警報・警報・注意報</Title> <DateTime>2026-10-05T11:16:22Z</DateTime> <Status>通常</Status> <EditorialOffice>横浜地方気象台</EditorialOffice> <PublishingOffice>横浜地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>神奈川県気象警報・注意報</Title> <ReportDateTime>2026-10-05T20:16:00+09:00</ReportDateTime> <TargetDateTime>2026-10-05T20:16:00+09:00</TargetDateT
+== br-inmet-doc: https://apiprevmet3.inmet.gov.br/avisos/rss/55951  HTTP 200  tipo=text/xml  byte=69900
+   <alert=1  <info=1  <event>=1  <severity>=1  <polygon>=1  <areaDesc>=1  <onset>=1  <expires>=1  <geocode>=0
+   <?xml version="1.0" encoding="UTF-8" standalone="no"?><alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>urn:oid:2.49.0.0.76.0.2026.28411.2</identifier><sender>info.aviso@inmet.gov.br</sender><sent>2026-10-03T00:00:00-03:00</sent><status>Actual</status><msgType>Cancel</msgType><scope>Public</scope><references>info.aviso@inmet.gov.br,urn:oid:2.49.0.0.76.0.2026.28411.1,2026-10-03T00:00:00-03:00</references><info><language>pt-BR</language><category>Met</category><event>Tempestade</event><responseType>Prepare</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-10-05T00:00:00-03:00</onset><expires>2026-10-05T23:59:00-03:00</expires><senderName>Instituto Nacional de Meteorologia</senderName><headline>Aviso de Tempestade. Severidade Grau: Moderate</headline><description>INMET publica aviso iniciando em: 05/10/2026 00:00. Chuv
+== ar-smn-doc: https://ssl.smn.gob.ar/feeds/CAP/xml_generados/CAP_20261005090848_Nevada_Cordillera_alertas_alertas_6.xml  HTTP 200  tipo=text/xml  byte=3054
+   <alert=1  <info=1  <event>=1  <severity>=1  <polygon>=1  <areaDesc>=1  <onset>=1  <expires>=1  <geocode>=0
+   <?xml version="1.0"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/feeds/CAP/estilo_cap_interno_2026.xsl"?> <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>urn:oid:2.49.0.1.32.0.2026.10.05.09.07.16.6</identifier><sender>smn@smn.gob.ar</sender><sent>2026-10-05T09:07:16-03:00</sent><status>Actual</status><msgType>Update</msgType><scope>Public</scope><references>smn@smn.gob.ar,urn:oid:2.49.0.1.32.0.2026.10.04.20.53.42,2026-10-04T20:53:42-03:00</references><info><language>es-AR</language><category>Met</category><event>Nevadas</event><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-10-05T21:00:00-03:00</onset><expires>2026-10-06T08:59:59-03:00</expires><senderName>Servicio Meteorologico Nacional</senderName><headline>Nevadas</headline><description>El &#xE1;rea ser&#xE1; afectada por nevadas de variada intensidad. S
+== jp-jma-feed-lungo: 1670140 caratteri, aggiornamenti da 2026-09-28T11:18:09Z a 2026-10-05T20:16:46+09:00, 1362 VPWW53 per 58 uffici
+== ifrc-alerthub: script ['https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV', '/assets/index-DNItz1Iz.js']
+   https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV  HTTP 200  byte=533429  indirizzi: []
+   https://alerthub.ifrc.org/assets/index-DNItz1Iz.js  HTTP 200  byte=664302  indirizzi: ['https://alerthub-api.ifrc.org/graphql/']
 == wmo-registro: 26 link, 4 simili a feed
    /atom.xml | /rss.xml | https://alertingauthority.wmo.int/atom.xml | https://alertingauthority.wmo.int/rss.xml
    altri: # | #top | /atom.xml | /css/leaflet.css | /css/main.css | /css/mapbox-gl.css | /css/print.css | /css/speech.css | /css/text.css | /favicon.ico | /rss.xml | callto://41227308111/ | https://alertingauthority.wmo.int/atom.xml | https://alertingauthority.wmo.int/edit.php | https://alertingauthority.wmo.int/rss.xml | https://old.wmo.int/extranet/pages/documents/wmo.vcf | https://public.wmo.int/en | https://public.wmo.int/en/about-us/contact-us | https://public.wmo.int/en/copyright | https://public.wmo.int/en/disclaimer | https://public.wmo.int/en/disclaimer#mapdisclaimer | https://public.wmo.int/en/privacy-policy | https://public.wmo.int/en/programmes/public-weather-services-programme | https://severeweather.wmo.int | https://worldweather.wmo.int | mailto:webdesk@wmo.int
