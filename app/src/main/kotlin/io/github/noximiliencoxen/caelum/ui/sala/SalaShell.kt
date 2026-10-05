@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.StatoAllerteUfficiali
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
+import io.github.noximiliencoxen.caelum.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
@@ -1010,6 +1011,7 @@ fun SalaShell(
                         palette = palette,
                         onClose = viewModel::chiudiBollettino,
                         statoUfficiali = state.statoUfficiali,
+                        fontePosto = WeatherAlertsRepository.fonteDi(state.place.country),
                     )
                 }
             }

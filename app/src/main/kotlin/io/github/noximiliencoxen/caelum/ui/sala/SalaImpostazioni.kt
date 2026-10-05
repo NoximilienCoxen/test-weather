@@ -241,9 +241,9 @@ fun SalaImpostazioniScreen(
                 titolo = tr("AVVISI NELLE SALE", "NOTICES IN THE ROOMS"),
                 palette = palette,
                 nota = tr(
-                    "Le allerte ufficiali di MeteoAlarm si vedono sempre: qui scegli solo " +
+                    "Le allerte ufficiali dei servizi meteorologici si vedono sempre: qui scegli solo " +
                         "gli avvisi che l'app ricava dalla previsione.",
-                    "Official MeteoAlarm warnings always show: here you only choose " +
+                    "Official weather service warnings always show: here you only choose " +
                         "the notices the app works out from the forecast.",
                 ),
             ) {
@@ -367,7 +367,7 @@ fun SalaImpostazioniScreen(
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
                     VoceInformativa(tr("Previsione", "Forecast"), tr("Open-Meteo · modello ${state.model.label}", "Open-Meteo · model ${state.model.label}"), palette)
                     VoceInformativa(tr("Qualità dell'aria", "Air quality"), "Open-Meteo", palette)
-                    VoceInformativa(tr("Allerte", "Warnings"), tr("MeteoAlarm, più avvisi calcolati sui dati", "MeteoAlarm, plus notices worked out from the data"), palette)
+                    VoceInformativa(tr("Allerte", "Warnings"), tr("MeteoAlarm, National Weather Service, più avvisi calcolati sui dati", "MeteoAlarm, National Weather Service, plus notices worked out from the data"), palette)
                     VoceInformativa(tr("Località", "Place"), dettaglioLocalita(state), palette)
                     VoceInformativa(tr("Versione", "Version"), "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
                 }

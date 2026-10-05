@@ -38,7 +38,38 @@ data class WeatherAlert(
     val source: String,
     /** Vero per i bollettini di un ente, falso per quelli calcolati dai dati. */
     val official: Boolean,
+    /** Da quale canale e' arrivata, se ufficiale: decide credito e licenza. */
+    val fonte: FonteAllerte? = null,
 )
+
+/**
+ * I canali da cui arrivano le allerte ufficiali, uno per area del mondo.
+ *
+ * Ciascuno ha la sua licenza e il suo credito, e il bollettino li scrive per
+ * quelli da cui viene cio' che mostra: un'allerta del National Weather Service
+ * sotto "dati dei membri di EUMETNET" sarebbe un credito sbagliato.
+ */
+enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: String) {
+    /** L'Europa: i servizi meteorologici nazionali membri di EUMETNET. */
+    METEOALARM("MeteoAlarm", "meteoalarm.org", "https://meteoalarm.org/"),
+
+    /** Gli Stati Uniti: il servizio meteorologico federale (NOAA). */
+    NWS("National Weather Service", "weather.gov", "https://www.weather.gov/"),
+    ;
+
+    /** Il credito, nella forma che chiede la licenza della fonte. */
+    val credito: String
+        get() = when (this) {
+            METEOALARM -> tr(
+                "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0.",
+                "Official warnings: MeteoAlarm, data provided by EUMETNET members, CC BY 4.0 licence.",
+            )
+            NWS -> tr(
+                "Allerte ufficiali: National Weather Service (NOAA), dati di pubblico dominio.",
+                "Official warnings: National Weather Service (NOAA), public domain data.",
+            )
+        }
+}
 
 /**
  * Come l'avviso si annuncia, per esteso.
