@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.data
 
 import io.github.noximiliencoxen.caelum.lingua.inInglese
 import io.github.noximiliencoxen.caelum.lingua.tr
+import android.util.Log
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -86,14 +87,22 @@ class WeatherAlertsRepository(
                 ?: throw OutOfCoverage(place.country)
             val body = httpGet(FEED_ENDPOINT + slug, fonte = "MeteoAlarm", accept = CAP_ACCEPT)
             val now = OffsetDateTime.now()
-            val mine = parseFeed(body)
-                .filter { it.isCurrent(now) }
-                .filter { it.level != null }
+            val voci = parseFeed(body)
+            val valide = voci.filter { it.isCurrent(now) }.filter { it.level != null }
+            val mine = valide
                 .filter { it.matches(place) }
                 // Piu' di tre avvisi contemporanei sulla stessa regione non si
                 // sono mai visti, e il tetto e' li' per non trasformare una
                 // giornata storta in una raffica di richieste.
                 .take(MAX_DETAILS)
+            // Dove si perde un'allerta: nel feed, nella validita' o nel
+            // confronto col posto. Una riga sola, e dice quale dei tre.
+            Log.i(
+                "meteo",
+                "MeteoAlarm $slug: ${body.length} caratteri, ${voci.size} voci, " +
+                    "${valide.size} valide, ${mine.size} per ${place.name} " +
+                    "(regione=${place.admin}, paese=${place.country})",
+            )
             mine.map { entry -> entry.toAlert(detail = fetchDetail(entry.capUrl), fuso = fuso) }
         }
     }
