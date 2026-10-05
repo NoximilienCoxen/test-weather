@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.AlertLevel
+import io.github.noximiliencoxen.caelum.data.StatoAllerteUfficiali
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.badgeLabel
 import io.github.noximiliencoxen.caelum.ui.theme.onColor
@@ -65,6 +66,9 @@ import java.util.Locale
  *   gli avvisi sono scritti (vedi `WeatherAlertsRepository.toAlert`).
  * @param senzaRete l'ultima richiesta non e' arrivata: un bollettino vuoto
  *   senza rete non vuol dire che nessuno abbia diramato niente, e lo si dice.
+ * @param statoUfficiali se le allerte ufficiali sono state davvero
+ *   controllate: un bollettino vuoto perche' MeteoAlarm non ha risposto non
+ *   e' un bollettino tranquillo (vedi [testoNessunAvviso]).
  */
 @Composable
 fun SalaBollettinoScreen(
@@ -74,6 +78,7 @@ fun SalaBollettinoScreen(
     senzaRete: Boolean,
     palette: SalaPalette,
     onClose: () -> Unit,
+    statoUfficiali: StatoAllerteUfficiali = StatoAllerteUfficiali.ARRIVATE,
 ) {
     val ordinati = remember(avvisi, adesso) {
         avvisi.sortedWith(
@@ -117,14 +122,10 @@ fun SalaBollettinoScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (ordinati.isEmpty()) {
-                BloccoImpostazioni(etichetta = tr("NESSUN AVVISO", "NO WARNINGS"), palette = palette) {
+                val (etichetta, testo) = testoNessunAvviso(luogo, statoUfficiali)
+                BloccoImpostazioni(etichetta = etichetta, palette = palette) {
                     Text(
-                        text = tr(
-                            "Per $luogo non è arrivata nessuna allerta ufficiale, e la previsione " +
-                                "di oggi e domani non supera nessuna delle soglie che l'app controlla.",
-                            "No official warning has been issued for $luogo, and today's and tomorrow's " +
-                                "forecast stays below every threshold the app checks.",
-                        ),
+                        text = testo,
                         style = SalaType.body,
                         color = palette.inkSoft,
                     )
@@ -142,6 +143,20 @@ fun SalaBollettinoScreen(
                         )
                     }
                 }
+            }
+            // Con avvisi calcolati in scena ma il feed ufficiale muto, le schede
+            // da sole lascerebbero credere che quelli siano tutti.
+            if (ordinati.isNotEmpty() && statoUfficiali == StatoAllerteUfficiali.NON_ARRIVATE) {
+                Text(
+                    text = tr(
+                        "Le allerte ufficiali non si sono potute controllare: MeteoAlarm non ha risposto. " +
+                            "Qui sotto ci sono solo gli avvisi che l'app calcola da sé.",
+                        "Official warnings couldn't be checked: MeteoAlarm didn't respond. " +
+                            "Below are only the notices the app works out itself.",
+                    ),
+                    style = SalaType.body,
+                    color = palette.accent,
+                )
             }
             ordinati.forEach { avviso -> SchedaAvviso(avviso, adesso, palette) }
 
@@ -325,6 +340,43 @@ private fun coloreLivello(livello: AlertLevel): Color = when (livello) {
     AlertLevel.GIALLA -> Color(0xFFF4C542)
     AlertLevel.ARANCIONE -> Color(0xFFEE8A2A)
     AlertLevel.ROSSA -> Color(0xFFD23C33)
+}
+
+/**
+ * Etichetta e testo del bollettino quando non c'e' niente da mostrare.
+ *
+ * **Prima il testo era uno solo**, "non è arrivata nessuna allerta
+ * ufficiale", e lo si leggeva anche quando la richiesta era fallita: per tutto
+ * il tempo del 406 di MeteoAlarm (CONTESTO §8-ter) il bollettino ha
+ * rassicurato su un controllo mai avvenuto. Adesso dice cosa e' successo.
+ */
+internal fun testoNessunAvviso(luogo: String, stato: StatoAllerteUfficiali): Pair<String, String> {
+    val soglie = tr(
+        "la previsione di oggi e domani non supera nessuna delle soglie che l'app controlla.",
+        "today's and tomorrow's forecast stays below every threshold the app checks.",
+    )
+    return when (stato) {
+        StatoAllerteUfficiali.ARRIVATE -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
+            "Per $luogo non è arrivata nessuna allerta ufficiale, e $soglie",
+            "No official warning has been issued for $luogo, and $soglie",
+        )
+        StatoAllerteUfficiali.NON_ARRIVATE -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED") to tr(
+            "Le allerte ufficiali per $luogo non si sono potute controllare: MeteoAlarm non ha " +
+                "risposto. Non vuol dire che non ce ne siano. Intanto $soglie",
+            "Official warnings for $luogo couldn't be checked: MeteoAlarm didn't respond. That " +
+                "doesn't mean there are none. Meanwhile, $soglie",
+        )
+        StatoAllerteUfficiali.FUORI_COPERTURA -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
+            "Per $luogo l'app non ha una fonte di allerte ufficiali: MeteoAlarm copre l'Europa. " +
+                "Restano le soglie calcolate, e $soglie",
+            "The app has no official warning source for $luogo: MeteoAlarm covers Europe. " +
+                "Only the computed thresholds remain, and $soglie",
+        )
+        StatoAllerteUfficiali.IN_ATTESA -> tr("NESSUN AVVISO, PER ORA", "NO WARNINGS YET") to tr(
+            "Le allerte ufficiali per $luogo stanno ancora arrivando. Intanto $soglie",
+            "Official warnings for $luogo are still loading. Meanwhile, $soglie",
+        )
+    }
 }
 
 private fun inCorso(avviso: WeatherAlert, adesso: LocalDateTime): Boolean {
