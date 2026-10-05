@@ -117,3 +117,38 @@ private fun httpGetGrezzo(
         connection.disconnect()
     }
 }
+
+/**
+ * Una POST con un corpo JSON, per le API GraphQL (l'IFRC Alert Hub).
+ *
+ * Stesse intestazioni e stesso trattamento degli errori di [httpGet]: un
+ * codice fuori dai 2xx solleva, con il nome della fonte e l'inizio della
+ * risposta, cosi' il log dice chi ha rifiutato e perche'.
+ */
+internal fun httpPostJson(
+    url: String,
+    corpo: String,
+    fonte: String,
+    timeoutMs: Int = 15_000,
+): String {
+    val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+        requestMethod = "POST"
+        connectTimeout = timeoutMs
+        readTimeout = timeoutMs
+        doOutput = true
+        setRequestProperty("Content-Type", "application/json")
+        setRequestProperty("Accept", "application/json, */*;q=0.8")
+        setRequestProperty("User-Agent", AGENTE)
+    }
+    try {
+        connection.outputStream.use { it.write(corpo.toByteArray(Charsets.UTF_8)) }
+        val code = connection.responseCode
+        val ok = code in 200..299
+        val stream = if (ok) connection.inputStream else connection.errorStream
+        val testo = stream?.use { String(it.readBytes(), Charsets.UTF_8) }.orEmpty()
+        if (!ok) error("HTTP $code da $fonte: ${testo.take(200)}")
+        return testo
+    } finally {
+        connection.disconnect()
+    }
+}

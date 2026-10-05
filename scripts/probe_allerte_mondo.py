@@ -81,6 +81,77 @@ FONTI = [
     ("jp-jma-tokyo",
      "https://www.jma.go.jp/bosai/warning/data/warning/130000.json",
      "application/json, */*;q=0.8", "json"),
+    # Canada, secondo giro: le allerte **attive**, e attorno a quattro citta'
+    # (bbox di qualche chilometro) - cosi' si vede come si chiede per un punto.
+    ("ca-eccc-attive",
+     "https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=5&status_en=active",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("ca-eccc-toronto",
+     "https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-79.43,43.61,-79.33,43.71",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("ca-eccc-montreal",
+     "https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-73.62,45.45,-73.52,45.55",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("ca-eccc-vancouver",
+     "https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-123.17,49.23,-123.07,49.33",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("ca-eccc-calgary",
+     "https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-114.12,51.0,-114.02,51.1",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    # Giappone, secondo giro: il JSON degli avvisi di Tokyo era fermo al 28
+    # maggio 2026. Le aree della JMA (nomi e codici) e la geocodifica di
+    # Open-Meteo per citta' giapponesi e canadesi: per sapere come si passa da
+    # un posto dell'app a un codice d'area.
+    ("jp-jma-aree",
+     "https://www.jma.go.jp/bosai/common/const/area.json",
+     "application/json, */*;q=0.8", "json"),
+    ("geo-tokyo",
+     "https://geocoding-api.open-meteo.com/v1/search?name=Tokyo&count=2&language=it",
+     "application/json", "json"),
+    ("geo-osaka",
+     "https://geocoding-api.open-meteo.com/v1/search?name=Osaka&count=2&language=it",
+     "application/json", "json"),
+    ("geo-sapporo",
+     "https://geocoding-api.open-meteo.com/v1/search?name=Sapporo&count=2&language=it",
+     "application/json", "json"),
+    ("geo-toronto",
+     "https://geocoding-api.open-meteo.com/v1/search?name=Toronto&count=2&language=it",
+     "application/json", "json"),
+    # Gli aggregatori: se uno solo coprisse molti paesi, sarebbe la strada per
+    # "tutti". L'IFRC Alert Hub raccoglie i feed CAP del registro WMO; il
+    # registro stesso elenca i feed per paese.
+    ("ifrc-alerthub",
+     "https://alerthub.ifrc.org/",
+     "text/html, */*;q=0.8", "html"),
+    ("ifrc-alerthub-api",
+     "https://alerthub-api.ifrc.org/graphql/",
+     "application/json, */*;q=0.8", "html"),
+    ("wmo-registro",
+     "https://alertingauthority.wmo.int/",
+     "text/html, */*;q=0.8", "html"),
+    # Altri paesi con feed CAP pubblici dichiarati dal servizio nazionale.
+    ("br-inmet",
+     "https://apiprevmet3.inmet.gov.br/avisos/rss",
+     "application/rss+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    ("ar-smn",
+     "https://ssl.smn.gob.ar/CAP/AR.php",
+     "application/rss+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    # Terzo giro. Giappone: il feed "lungo" della JMA, da cui si trova l'ultimo
+    # bollettino di una prefettura anche se non e' dell'ultima decina di minuti.
+    ("jp-jma-feed-lungo",
+     "https://www.data.jma.go.jp/developer/xml/feed/extra_l.xml",
+     "application/atom+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    # Russia, Roshydromet: il centro idrometeorologico pubblica gli avvisi su
+    # meteoinfo.ru. Indirizzi da provare, non da credere.
+    ("ru-meteoinfo",
+     "https://meteoinfo.ru/",
+     "text/html, */*;q=0.8", "html"),
+    ("ru-meteoinfo-rss",
+     "https://meteoinfo.ru/rss/hazards",
+     "application/rss+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    ("ru-meteoalarm",
+     "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-russia",
+     "application/atom+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
     # Australia, Bureau of Meteorology: gli avvisi del Victoria in XML.
     ("au-bom-vic",
      "https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml",
@@ -133,10 +204,170 @@ def main():
             righe.append("   eventi: " + " | ".join(eventi))
         righe.append("   inizio: " + re.sub(r"\s+", " ", testo[:400]))
         righe.append("")
+    righe += secondo_passo()
     indice = "\n".join(righe)
     with open(os.path.join(OUT, "INDICE.txt"), "w") as f:
         f.write(indice + "\n")
     print(indice)
+
+
+def secondo_passo():
+    """Cio' che si chiede solo dopo aver letto le prime risposte.
+
+    - I documenti XML della JMA: il feed elenca voci con un `link`; si
+      prendono le prime due il cui titolo parla di avvisi (警報 o 注意報).
+    - I link del registro WMO che sembrano feed (rss, cap, xml, atom).
+    """
+    righe = ["######## secondo passo"]
+    feed = _leggi("jp-jma-feed.xml")
+    voci = re.findall(r"<entry>(.*?)</entry>", feed, re.S)
+    scelte = [v for v in voci if re.search(r"<title>[^<]*(警報|注意報)[^<]*</title>", v)][:2]
+    righe.append(f"== jp-jma-documenti: {len(voci)} voci nel feed, {len(scelte)} sugli avvisi")
+    titoli = sorted(set(re.findall(r"<title>([^<]*)</title>", feed)))
+    righe.append("   titoli nel feed: " + " | ".join(titoli[:30]))
+    for i, v in enumerate(scelte, 1):
+        m = re.search(r'<link[^>]*href="([^"]+)"', v)
+        if not m:
+            continue
+        code, tipo, corpo = chiedi(m.group(1), "application/xml, */*;q=0.8")
+        with open(os.path.join(OUT, f"jp-jma-doc-{i}.xml"), "wb") as f:
+            f.write(corpo)
+        testo = corpo.decode("utf-8", errors="replace")
+        righe.append(f"   doc {i}: {m.group(1)}  HTTP {code}  byte={len(corpo)}")
+        righe.append("   " + re.sub(r"\s+", " ", testo[:600]))
+    # Brasile e Argentina: il documento collegato alla prima voce di ciascun
+    # feed, per vedere se e' CAP e se porta poligoni.
+    for nome, sorgente in (("br-inmet-doc", "br-inmet.xml"), ("ar-smn-doc", "ar-smn.xml")):
+        testo = _leggi(sorgente)
+        m = re.search(r"<item>.*?<link>([^<]+)</link>", testo, re.S)
+        if not m:
+            righe.append(f"== {nome}: nessuna voce")
+            continue
+        code, tipo, corpo = chiedi(m.group(1).strip(), "application/cap+xml, application/xml;q=0.9, */*;q=0.8")
+        with open(os.path.join(OUT, f"{nome}.xml"), "wb") as f:
+            f.write(corpo)
+        doc = corpo.decode("utf-8", errors="replace")
+        righe.append(f"== {nome}: {m.group(1).strip()}  HTTP {code}  tipo={tipo}  byte={len(corpo)}")
+        righe.append("   " + "  ".join(f"{t}={doc.count(t)}" for t in
+                                       ("<alert", "<info", "<event>", "<severity>", "<polygon>", "<areaDesc>",
+                                        "<onset>", "<expires>", "<geocode>")))
+        righe.append("   " + re.sub(r"\s+", " ", doc[:900]))
+    # Il feed lungo della JMA: quanto pesa, quanto indietro arriva, quanti
+    # bollettini di avvisi porta e per quante prefetture.
+    lungo = _leggi("jp-jma-feed-lungo.xml")
+    date = re.findall(r"<updated>([^<]+)</updated>", lungo)
+    vpww = re.findall(r'href="[^"]+VPWW53_(\d{6})\.xml"', lungo)
+    righe.append(f"== jp-jma-feed-lungo: {len(lungo)} caratteri, aggiornamenti da {min(date) if date else '-'} "
+                 f"a {max(date) if date else '-'}, {len(vpww)} VPWW53 per {len(set(vpww))} uffici")
+    # L'API dell'Alert Hub: l'indirizzo sta nel codice del sito, non nella
+    # pagina. Si leggono gli script e si cercano indirizzi d'API.
+    pagina = _leggi("ifrc-alerthub.html")
+    script = re.findall(r'<script[^>]+src="([^"]+)"', pagina)
+    righe.append(f"== ifrc-alerthub: script {script[:5]}")
+    for src in script[:3]:
+        url = src if src.startswith("http") else "https://alerthub.ifrc.org" + ("" if src.startswith("/") else "/") + src
+        code, tipo, corpo = chiedi(url, "*/*")
+        js = corpo.decode("utf-8", errors="replace")
+        api = sorted(set(re.findall(r"https://[a-zA-Z0-9.-]*ifrc[a-zA-Z0-9.-]*/[a-zA-Z0-9/_.-]*", js)))
+        righe.append(f"   {url}  HTTP {code}  byte={len(corpo)}  indirizzi: {api[:20]}")
+    # Quarto giro: l'API GraphQL dell'Alert Hub vuole POST. Prima lo schema
+    # (quali domande accetta), poi le prime voci di un paese, se lo schema le
+    # nomina come ci si aspetta: altrimenti l'indice mostra cosa c'e'.
+    gql = "https://alerthub-api.ifrc.org/graphql/"
+    schema = _post_json(gql, {"query": "{ __schema { queryType { fields { name args { name type { name kind ofType { name kind } } } type { name kind ofType { name kind } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-schema.json"), "w") as f:
+        f.write(schema)
+    righe.append(f"== ifrc-schema: {len(schema)} caratteri")
+    righe.append("   " + re.sub(r"\s+", " ", schema[:3000]))
+    tipi = _post_json(gql, {"query": "{ __schema { types { name kind fields { name } } } }"})
+    with open(os.path.join(OUT, "ifrc-tipi.json"), "w") as f:
+        f.write(tipi)
+    nomi = re.findall(r'"name":\s*"([A-Za-z]*(?:Alert|Country|Admin|Info|Area|Polygon)[A-Za-z]*)"', tipi)
+    righe.append(f"== ifrc-tipi: {len(tipi)} caratteri, tipi interessanti: {sorted(set(nomi))[:60]}")
+    # Quinto giro: argomenti delle domande e campi dei filtri, poi l'elenco dei
+    # paesi con quante allerte ha ciascuno - e' la copertura vera - e un
+    # tentativo di prime voci per paese (gli errori GraphQL dicono la forma).
+    argomenti = _post_json(gql, {"query": "{ __type(name: \"PublicQuery\") { fields { name args { name type { name kind ofType { name kind ofType { name } } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-argomenti.json"), "w") as f:
+        f.write(argomenti)
+    righe.append("== ifrc-argomenti: " + re.sub(r"\s+", " ", argomenti[:2500]))
+    for tipo in ("AlertFilter", "AlertInfoFilter", "CountryFilter", "OffsetPaginationInput"):
+        campi = _post_json(gql, {"query": "{ __type(name: \"%s\") { inputFields { name type { name kind ofType { name kind } } } } }" % tipo})
+        righe.append(f"== ifrc-{tipo}: " + re.sub(r"\s+", " ", campi[:1500]))
+    paesi = _post_json(gql, {"query": "{ public { allCountries { id name iso3 alertCount } } }"})
+    with open(os.path.join(OUT, "ifrc-paesi.json"), "w") as f:
+        f.write(paesi)
+    try:
+        import json
+        elenco = json.loads(paesi)["data"]["public"]["allCountries"]
+        con = sorted((c for c in elenco if c.get("alertCount")), key=lambda c: -c["alertCount"])
+        righe.append(f"== ifrc-paesi: {len(elenco)} paesi, {len(con)} con allerte ora")
+        righe.append("   " + " | ".join(f"{c['iso3']}:{c['alertCount']}" for c in con))
+        righe.append("   tutti: " + " ".join(sorted(c["iso3"] for c in elenco if c.get("iso3"))))
+    except Exception as e:
+        righe.append(f"== ifrc-paesi: illeggibile ({e}): " + paesi[:800])
+    prova = _post_json(gql, {"query": "{ public { alerts(pagination: {limit: 2}) { count items { id sent status msgType country { iso3 name } info { event severity onset expires language headline areas { areaDesc polygons { value } } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-prova.json"), "w") as f:
+        f.write(prova)
+    righe.append("== ifrc-prova: " + re.sub(r"\s+", " ", prova[:3000]))
+    # Sesto giro: la forma dei riquadri (bbox) di paesi e regioni, le regioni
+    # della Russia, e le allerte filtrate per paese e per regione - Mosca e la
+    # prima regione russa che ha allerte - con tutti i campi che servono.
+    try:
+        import json
+        tutti = json.loads(_post_json(gql, {"query": "{ public { allCountries { id iso3 name bbox } } }"}))["data"]["public"]["allCountries"]
+        righe.append("== ifrc-bbox: " + json.dumps(tutti[:3])[:900])
+        russia = next(c for c in tutti if c["iso3"] == "RUS")
+        regioni = _post_json(gql, {"query": "{ public { country(pk: \"%s\") { id name admin1s { id name bbox alertCount } } } }" % russia["id"]})
+        with open(os.path.join(OUT, "ifrc-regioni-rus.json"), "w") as f:
+            f.write(regioni)
+        r = json.loads(regioni)["data"]["public"]["country"]["admin1s"]
+        con = [a for a in r if a.get("alertCount")]
+        righe.append(f"== ifrc-regioni-rus: {len(r)} regioni, {len(con)} con allerte; esempio {json.dumps(r[:2])[:600]}")
+        mosca = next((a for a in r if "Moscow" in (a.get("name") or "")), None)
+        scelte = [a for a in (mosca, con[0] if con else None) if a]
+        campi = ("count items { id sent status msgType url sender source country { iso3 } admin1s { id name } "
+                 "infos { language event severity urgency certainty onset expires senderName headline "
+                 "description instruction web areas { areaDesc polygons { value } circles { value } "
+                 "geocodes { valueName value } } } }")
+        for a in scelte:
+            q = "{ public { alerts(filters: {country: {pk: \"%s\"}, admin1: \"%s\"}, pagination: {offset: 0, limit: 5}) { %s } } }" % (russia["id"], a["id"], campi)
+            risposta = _post_json(gql, {"query": q})
+            nome = re.sub(r"[^a-z0-9]+", "-", a["name"].lower()).strip("-")
+            with open(os.path.join(OUT, f"ifrc-allerte-rus-{nome}.json"), "w") as f:
+                f.write(risposta)
+            righe.append(f"== ifrc-allerte-rus-{nome}: " + re.sub(r"\s+", " ", risposta[:2500]))
+    except Exception as e:
+        righe.append(f"== ifrc-sesto-giro: non riuscito ({type(e).__name__}: {e})")
+    registro = _leggi("wmo-registro.html")
+    link = sorted(set(re.findall(r'href="([^"]+)"', registro)))
+    feedish = [l for l in link if re.search(r"(rss|cap|atom|\.xml|feed)", l, re.I)]
+    righe.append(f"== wmo-registro: {len(link)} link, {len(feedish)} simili a feed")
+    righe.append("   " + " | ".join(feedish[:40]))
+    righe.append("   altri: " + " | ".join(link[:60]))
+    return righe
+
+
+def _post_json(url, corpo):
+    import json
+    req = urllib.request.Request(url, data=json.dumps(corpo).encode(), method="POST", headers={
+        "User-Agent": AGENTE, "Content-Type": "application/json", "Accept": "application/json",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return r.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        return f"HTTP {e.code}: " + e.read().decode("utf-8", errors="replace")[:2000]
+    except Exception as e:
+        return f"{type(e).__name__}: {e}"
+
+
+def _leggi(nome):
+    try:
+        with open(os.path.join(OUT, nome), encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except OSError:
+        return ""
 
 
 if __name__ == "__main__":

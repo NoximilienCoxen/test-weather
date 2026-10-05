@@ -171,14 +171,14 @@ fun SalaBollettinoScreen(
                 Text(
                     text = tr(
                         "ALLERTA vuol dire che l'ha emessa un servizio meteorologico nazionale - per l'Italia " +
-                            "l'Aeronautica Militare, attraverso MeteoAlarm; per gli Stati Uniti il National " +
-                            "Weather Service - ed è un'allerta meteo, non un messaggio di protezione civile. " +
+                            "l'Aeronautica Militare, attraverso MeteoAlarm - ed è un'allerta meteo, non un " +
+                            "messaggio di protezione civile. " +
                             "SOGLIA SUPERATA vuol dire che l'ha calcolata l'app confrontando la " +
                             "previsione con delle soglie: non è un'allerta ufficiale e non sostituisce " +
                             "un bollettino.",
 "WARNING means a national weather service issued it - for Italy the Aeronautica " +
-                            "Militare, through MeteoAlarm; for the United States the National Weather " +
-                            "Service - and it is a weather warning, not a civil protection alert. " +
+                            "Militare, through MeteoAlarm - and it is a weather warning, not a civil " +
+                            "protection alert. " +
                             "THRESHOLD EXCEEDED means the app calculated it by comparing the " +
                             "forecast with thresholds: it is not an official warning and does not " +
                             "replace a bulletin.",
@@ -391,10 +391,9 @@ internal fun testoNessunAvviso(
                 "doesn't mean there are none. Meanwhile, $soglie",
         )
         StatoAllerteUfficiali.FUORI_COPERTURA -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
-            "Per $luogo l'app non ha una fonte di allerte ufficiali: legge MeteoAlarm in Europa e " +
-                "il National Weather Service negli Stati Uniti. Restano le soglie calcolate, e $soglie",
-            "The app has no official warning source for $luogo: it reads MeteoAlarm in Europe and " +
-                "the National Weather Service in the United States. " +
+            "Per $luogo l'app non ha una fonte di allerte ufficiali: legge ${FonteAllerte.elenco}. " +
+                "Restano le soglie calcolate, e $soglie",
+            "The app has no official warning source for $luogo: it reads ${FonteAllerte.elenco}. " +
                 "Only the computed thresholds remain, and $soglie",
         )
         StatoAllerteUfficiali.IN_ATTESA -> tr("NESSUN AVVISO, PER ORA", "NO WARNINGS YET") to tr(

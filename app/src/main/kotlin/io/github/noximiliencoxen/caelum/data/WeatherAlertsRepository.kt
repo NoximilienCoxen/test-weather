@@ -98,7 +98,15 @@ class WeatherAlertsRepository(
                 FonteAllerte.NWS -> NwsAlerts.load(place, fuso).also {
                     Log.i("meteo", "National Weather Service: ${it.size} per ${place.name}")
                 }
-                null -> throw OutOfCoverage(place.country)
+                FonteAllerte.ECCC -> EcccAlerts.load(place, fuso).also {
+                    Log.i("meteo", "Environment Canada: ${it.size} per ${place.name}")
+                }
+                FonteAllerte.JMA -> JmaAlerts.load(place).also {
+                    Log.i("meteo", "JMA: ${it.size} per ${place.name} (area ${JmaAlerts.areaDi(place).codice})")
+                }
+                FonteAllerte.IFRC -> IfrcAlerts.load(place, fuso).also {
+                    Log.i("meteo", "IFRC Alert Hub: ${it.size} per ${place.name}")
+                }
             }
         }
     }
@@ -189,12 +197,16 @@ class WeatherAlertsRepository(
          * Il nome arriva in italiano dalla geocodifica di Open-Meteo e nella
          * lingua del telefono dalla posizione: per questo ci sono le due forme.
          */
-        fun fonteDi(country: String?): FonteAllerte? {
-            val nome = country?.trim()?.lowercase() ?: return null
+        fun fonteDi(country: String?): FonteAllerte {
+            val nome = country?.trim()?.lowercase() ?: return FonteAllerte.IFRC
             return when {
                 COUNTRIES.containsKey(nome) -> FonteAllerte.METEOALARM
                 nome in STATI_UNITI -> FonteAllerte.NWS
-                else -> null
+                nome == "canada" -> FonteAllerte.ECCC
+                nome == "giappone" || nome == "japan" -> FonteAllerte.JMA
+                // Tutti gli altri (e un posto senza paese, sopra): l'IFRC
+                // trova il paese dalle coordinate. Fuori copertura lo dice lui.
+                else -> FonteAllerte.IFRC
             }
         }
 
@@ -372,7 +384,9 @@ internal data class FeedEntry(
  * Serve a due fonti che scrivono in inglese in due vocabolari diversi:
  * MeteoAlarm ("Yellow High-temperature Warning", "Orange Snow-Ice Warning") e
  * il National Weather Service ("Extreme Heat Warning", "Rip Current
- * Statement", "Wind Chill Advisory"). L'ordine conta: "wind chill" e' freddo
+ * Statement", "Wind Chill Advisory"). Dall'IFRC arrivano anche feed senza
+ * versione inglese, e per quelli ci sono le parole spagnole e portoghesi piu'
+ * comuni (Argentina, Brasile, America latina). L'ordine conta: "wind chill" e' freddo
  * prima di essere vento, "coastal flood" e' mareggiata prima di essere
  * alluvione. Cio' che non si riconosce resta [AlertKind.ALTRO] e **si mostra
  * lo stesso**.
@@ -380,21 +394,28 @@ internal data class FeedEntry(
 internal fun tipoDaEvento(evento: String?): AlertKind {
     val t = evento?.lowercase().orEmpty()
     return when {
-        t.contains("thunder") || t.contains("tornado") -> AlertKind.TEMPORALI
-        t.contains("high-temperature") || t.contains("heat") -> AlertKind.CALDO
+        t.contains("thunder") || t.contains("tornado") || t.contains("tormenta") ||
+            t.contains("tempestade") || t.contains("granizo") -> AlertKind.TEMPORALI
+        t.contains("high-temperature") || t.contains("heat") || t.contains("calor") -> AlertKind.CALDO
         t.contains("low-temperature") || t.contains("cold") || t.contains("wind chill") ||
-            t.contains("freeze") || t.contains("frost") -> AlertKind.FREDDO
-        t.contains("hurricane") || t.contains("tropical") || t.contains("typhoon") -> AlertKind.VENTO
-        t.contains("wind") -> AlertKind.VENTO
-        t.contains("snow") || t.contains("ice") || t.contains("winter") || t.contains("blizzard") ->
+            t.contains("freeze") || t.contains("frost") || t.contains("frío") || t.contains("frio") ||
+            t.contains("helada") || t.contains("geada") -> AlertKind.FREDDO
+        t.contains("arctic") -> AlertKind.FREDDO
+        t.contains("hurricane") || t.contains("tropical") || t.contains("typhoon") || t.contains("squall") ->
+            AlertKind.VENTO
+        t.contains("wind") || t.contains("viento") || t.contains("vendaval") -> AlertKind.VENTO
+        t.contains("snow") || t.contains("ice") || t.contains("winter") || t.contains("blizzard") ||
+            t.contains("freezing") || t.contains("nieve") || t.contains("nevada") ->
             AlertKind.NEVE_GHIACCIO
-        t.contains("fog") -> AlertKind.NEBBIA
+        t.contains("fog") || t.contains("niebla") || t.contains("nevoeiro") -> AlertKind.NEBBIA
         t.contains("coastal") || t.contains("rip current") || t.contains("surf") || t.contains("beach") ||
             t.contains("storm surge") ->
             AlertKind.COSTIERO
-        t.contains("forest") || t.contains("fire") || t.contains("red flag") -> AlertKind.INCENDI
+        t.contains("forest") || t.contains("fire") || t.contains("red flag") || t.contains("incendio") ->
+            AlertKind.INCENDI
         t.contains("avalanche") -> AlertKind.VALANGHE
-        t.contains("flood") || t.contains("rain") -> AlertKind.PIOGGIA
+        t.contains("flood") || t.contains("rain") || t.contains("lluvia") || t.contains("chuva") ||
+            t.contains("inunda") -> AlertKind.PIOGGIA
         else -> AlertKind.ALTRO
     }
 }

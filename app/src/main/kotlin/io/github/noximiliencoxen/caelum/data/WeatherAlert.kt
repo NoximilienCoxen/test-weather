@@ -55,7 +55,31 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
 
     /** Gli Stati Uniti: il servizio meteorologico federale (NOAA). */
     NWS("National Weather Service", "weather.gov", "https://www.weather.gov/"),
+
+    /** Il Canada: Environment and Climate Change Canada. */
+    ECCC("Environment and Climate Change Canada", "weather.gc.ca", "https://weather.gc.ca/"),
+
+    /** Il Giappone: l'Agenzia meteorologica (気象庁). */
+    JMA("Japan Meteorological Agency", "jma.go.jp", "https://www.jma.go.jp/"),
+
+    /** Tutti gli altri: i feed CAP dei servizi nazionali, raccolti dall'IFRC. */
+    IFRC("IFRC Alert Hub", "alerthub.ifrc.org", "https://alerthub.ifrc.org/"),
     ;
+
+    /** Dove serve, detto per chi legge. */
+    val zona: String
+        get() = when (this) {
+            METEOALARM -> tr("Europa", "Europe")
+            NWS -> tr("Stati Uniti", "United States")
+            ECCC -> "Canada"
+            JMA -> tr("Giappone", "Japan")
+            IFRC -> tr("gli altri paesi", "other countries")
+        }
+
+    companion object {
+        /** "MeteoAlarm (Europa), National Weather Service (Stati Uniti), ...": per i testi. */
+        val elenco: String get() = entries.joinToString(", ") { "${it.nome} (${it.zona})" }
+    }
 
     /** Il credito, nella forma che chiede la licenza della fonte. */
     val credito: String
@@ -67,6 +91,20 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             NWS -> tr(
                 "Allerte ufficiali: National Weather Service (NOAA), dati di pubblico dominio.",
                 "Official warnings: National Weather Service (NOAA), public domain data.",
+            )
+            ECCC -> tr(
+                "Allerte ufficiali: Environment and Climate Change Canada, Open Government Licence - Canada.",
+                "Official warnings: Environment and Climate Change Canada, Open Government Licence - Canada.",
+            )
+            JMA -> tr(
+                "Allerte ufficiali: Japan Meteorological Agency (気象庁), dati riutilizzabili citando la fonte.",
+                "Official warnings: Japan Meteorological Agency (気象庁), reusable with attribution.",
+            )
+            IFRC -> tr(
+                "Allerte ufficiali: i servizi meteorologici nazionali, raccolte dall'IFRC Alert Hub " +
+                    "(Federazione internazionale della Croce Rossa) dai loro feed CAP.",
+                "Official warnings: the national weather services, collected by the IFRC Alert Hub " +
+                    "(International Federation of Red Cross) from their CAP feeds.",
             )
         }
 }
