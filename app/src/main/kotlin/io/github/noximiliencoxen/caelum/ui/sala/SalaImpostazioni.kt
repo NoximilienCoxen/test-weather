@@ -367,7 +367,7 @@ fun SalaImpostazioniScreen(
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
                     VoceInformativa(tr("Previsione", "Forecast"), tr("Open-Meteo · modello ${state.model.label}", "Open-Meteo · model ${state.model.label}"), palette)
                     VoceInformativa(tr("Qualità dell'aria", "Air quality"), "Open-Meteo", palette)
-                    VoceInformativa(tr("Allerte", "Warnings"), tr("MeteoAlarm, National Weather Service, più avvisi calcolati sui dati", "MeteoAlarm, National Weather Service, plus notices worked out from the data"), palette)
+                    VoceInformativa(tr("Allerte", "Warnings"), tr("Servizi meteorologici nazionali, più avvisi calcolati sui dati", "National weather services, plus notices worked out from the data"), palette)
                     VoceInformativa(tr("Località", "Place"), dettaglioLocalita(state), palette)
                     VoceInformativa(tr("Versione", "Version"), "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)
                 }
