@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.data.SkyState
+import io.github.noximiliencoxen.caelum.data.StatoAllerteUfficiali
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
 import io.github.noximiliencoxen.caelum.data.Wmo
 import io.github.noximiliencoxen.caelum.prefs.CardTheme
@@ -554,6 +555,8 @@ fun SalaShell(
                     avvisi = avvisi,
                     prossima = prossima,
                     momento = hour?.time ?: LocalDateTime.now(),
+                    ufficialiNonVerificate = state.statoUfficiali == StatoAllerteUfficiali.NON_ARRIVATE &&
+                        state.forcedAlert == null,
                     palette = palette,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
@@ -1006,6 +1009,7 @@ fun SalaShell(
                         senzaRete = state.error != null,
                         palette = palette,
                         onClose = viewModel::chiudiBollettino,
+                        statoUfficiali = state.statoUfficiali,
                     )
                 }
             }

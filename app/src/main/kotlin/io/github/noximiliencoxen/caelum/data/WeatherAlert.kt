@@ -144,3 +144,27 @@ enum class AlertKind(private val ita: String, private val eng: String) {
 // dito. Quando la fascia tornera', questa e' la regola da rimettere - non un
 // booleano "gia' vista".
 
+
+/**
+ * Com'e' andata l'ultima richiesta delle allerte ufficiali.
+ *
+ * **Una lista vuota non basta a dirlo.** Per tutto il tempo in cui MeteoAlarm
+ * rispondeva 406 (CONTESTO §8-ter) la lista era vuota esattamente come in una
+ * giornata tranquilla, e il bollettino scriveva "non è arrivata nessuna allerta
+ * ufficiale" sopra un controllo che non era mai avvenuto. Quattro stati e non
+ * due, come per l'aria: fuori copertura non e' un guasto, e in attesa non e'
+ * ne' l'uno ne' l'altro.
+ */
+enum class StatoAllerteUfficiali {
+    /** Non ancora chieste per il posto mostrato, o la risposta e' in volo. */
+    IN_ATTESA,
+
+    /** Il feed ha risposto: la lista dice davvero cosa c'e'. */
+    ARRIVATE,
+
+    /** MeteoAlarm non copre questo paese: non c'e' niente da chiedere. */
+    FUORI_COPERTURA,
+
+    /** La richiesta e' fallita: nessuno ha controllato. */
+    NON_ARRIVATE,
+}

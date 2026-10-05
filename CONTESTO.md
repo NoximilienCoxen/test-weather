@@ -2055,8 +2055,26 @@ Adesso `FEED_ACCEPT` e `CAP_ACCEPT` tengono i tipi preferiti davanti e il
 jolly in fondo, `AcceptMeteoAlarmTest` impedisce di toglierlo, la sonda chiede
 anche con le intestazioni dell'app, e il logcat dice sempre com'e' andata
 (`MeteoAlarm italy: ... voci, ... valide, ... per <posto>` oppure l'errore).
-Resta aperto: un caricamento fallito e un feed vuoto, sullo schermo, si
-dicono ancora con le stesse parole.
+
+**Un controllo fallito non si annuncia piu' come un controllo riuscito.**
+`UiState.statoUfficiali` (`StatoAllerteUfficiali`: in attesa, arrivate, fuori
+copertura, non arrivate) dice com'e' andata la richiesta, perche' la lista
+vuota da sola non lo dice. Con il feed muto la pastiglia scrive `ALLERTE NON
+VERIFICATE` con un pallino neutro invece del salvia di "nessun avviso", e il
+bollettino lo spiega: "non vuol dire che non ce ne siano". Se in scena ci sono
+avvisi calcolati, una riga sopra le schede avverte che sono solo quelli. Fuori
+copertura e in attesa hanno parole loro (`testoNessunAvviso`,
+`NessunAvvisoTest`).
+
+**Il codice del giorno non promette pioggia a zero millimetri.** Open-Meteo
+da' a volte un codice di precipitazione a un giorno con `precipitation_sum`
+0,0: il 6 ottobre 2026 su Forli' `weather_code` 80 (rovesci) con zero
+millimetri e zero ore, e a Noceto le gocce sull'icona di "oggi" mentre la sala
+della pioggia diceva 0,0 mm. `codiceDelGiorno` (`WeatherRepository.kt`) lo
+corregge alla fonte - striscia, widget e avviso calcolato "Temporali" leggono
+tutti `DayForecast.weatherCode` - solo con un totale di zero esatto, mettendo
+al suo posto il tempo asciutto piu' frequente nelle ore del giorno
+(`CodiceDelGiornoTest`).
 
 ## 8-quinquies. La scheda della pioggia
 
