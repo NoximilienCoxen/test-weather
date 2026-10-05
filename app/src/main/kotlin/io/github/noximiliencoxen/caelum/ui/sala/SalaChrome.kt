@@ -543,6 +543,8 @@ fun IntestazioneCaelum(
     prossima: WeatherAlert? = null,
     /** L'ora mostrata: da qui si conta "domani" per [prossima]. */
     momento: LocalDateTime = LocalDateTime.now(),
+    /** Il feed ufficiale non ha risposto: "nessun avviso" non si puo' dire. */
+    ufficialiNonVerificate: Boolean = false,
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(MinTouchTarget),
@@ -569,7 +571,7 @@ fun IntestazioneCaelum(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place"), onClick = onCitta),
         )
-        PastigliaAvviso(avvisi, prossima, momento, palette, onAvvisi)
+        PastigliaAvviso(avvisi, prossima, momento, ufficialiNonVerificate, palette, onAvvisi)
     }
 }
 
@@ -612,6 +614,7 @@ private fun PastigliaAvviso(
     avvisi: List<WeatherAlert>,
     prossima: WeatherAlert?,
     momento: LocalDateTime,
+    ufficialiNonVerificate: Boolean,
     palette: SalaPalette,
     onClick: () -> Unit,
 ) {
@@ -627,6 +630,9 @@ private fun PastigliaAvviso(
             "ALLERTA ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
             "${inArrivo.kind.label} WARNING · ${quandoInArrivo(inArrivo, momento)}",
         )
+        // Il pallino salvia di "nessun avviso" e' una rassicurazione, e
+        // senza il feed ufficiale nessuno ha controllato niente.
+        peggiore == null && ufficialiNonVerificate -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED")
         peggiore == null -> tr("NESSUN AVVISO", "NO WARNINGS")
         // In inglese "warning" resta agli enti, come "allerta" in italiano;
         // gli avvisi calcolati sono "notice" (CONTESTO §8-ter, §49).
@@ -646,6 +652,8 @@ private fun PastigliaAvviso(
     }
     val pallino = if (acceso || inArrivo != null) {
         SalaTokens.accent500
+    } else if (ufficialiNonVerificate) {
+        palette.inkSoft
     } else {
         lerp(SalaTokens.verde600, SalaTokens.verde400, palette.buio)
     }

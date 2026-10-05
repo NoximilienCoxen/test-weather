@@ -17,6 +17,7 @@ import io.github.noximiliencoxen.caelum.data.GiornoPolline
 import io.github.noximiliencoxen.caelum.data.HourForecast
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.ScortaPrevisioni
+import io.github.noximiliencoxen.caelum.data.StatoAllerteUfficiali
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.TipoPolline
 import io.github.noximiliencoxen.caelum.data.WeatherAlert
@@ -125,6 +126,11 @@ data class UiState(
      * proprio `official`, perche' il peso delle due affermazioni e' diverso.
      */
     val alerts: List<WeatherAlert> = emptyList(),
+    /**
+     * Se le allerte ufficiali sono state davvero controllate: senza, una
+     * richiesta fallita e una giornata tranquilla si mostravano uguali.
+     */
+    val statoUfficiali: StatoAllerteUfficiali = StatoAllerteUfficiali.IN_ATTESA,
     /**
      * Allerta imposta dall'esterno, solo per la verifica automatica.
      *
@@ -661,6 +667,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     alerts = emptyList(),
+                    statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
                     // Un fotogramma e' una fotografia di **un posto**, e
                     // vale ancora meno dell'aria fuori da quello: la
                 )
@@ -772,6 +779,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     _state.update {
                                         it.copy(
                                             alerts = mergeAlerts(official, derived),
+                                            statoUfficiali = StatoAllerteUfficiali.ARRIVATE,
                                         )
                                     }
                                 }
@@ -779,12 +787,15 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     Log.w(TAG, "allerte ufficiali non arrivate per ${place.name}: $failure", failure)
                                     // Il feed ufficiale non ha risposto: si
                                     // resta sulle allerte derivate dai dati
-                                    // gia' scaricati. **Che sia un guasto o
-                                    // una zona che MeteoAlarm non copre, qui
-                                    // non si distingue piu'**: i due campi che
-                                    // lo dicevano sono usciti con la fascia
-                                    // che li mostrava (vedi UiState).
-                                    _state.update { it.copy(alerts = derived) }
+                                    // gia' scaricati, e **si dice perche'**:
+                                    // fuori copertura non e' un guasto, e un
+                                    // guasto non e' una giornata tranquilla.
+                                    val stato = if (failure is WeatherAlertsRepository.OutOfCoverage) {
+                                        StatoAllerteUfficiali.FUORI_COPERTURA
+                                    } else {
+                                        StatoAllerteUfficiali.NON_ARRIVATE
+                                    }
+                                    _state.update { it.copy(alerts = derived, statoUfficiali = stato) }
                                 }
                         }
 

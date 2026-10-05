@@ -2055,8 +2055,16 @@ Adesso `FEED_ACCEPT` e `CAP_ACCEPT` tengono i tipi preferiti davanti e il
 jolly in fondo, `AcceptMeteoAlarmTest` impedisce di toglierlo, la sonda chiede
 anche con le intestazioni dell'app, e il logcat dice sempre com'e' andata
 (`MeteoAlarm italy: ... voci, ... valide, ... per <posto>` oppure l'errore).
-Resta aperto: un caricamento fallito e un feed vuoto, sullo schermo, si
-dicono ancora con le stesse parole.
+
+**Un controllo fallito non si annuncia piu' come un controllo riuscito.**
+`UiState.statoUfficiali` (`StatoAllerteUfficiali`: in attesa, arrivate, fuori
+copertura, non arrivate) dice com'e' andata la richiesta, perche' la lista
+vuota da sola non lo dice. Con il feed muto la pastiglia scrive `ALLERTE NON
+VERIFICATE` con un pallino neutro invece del salvia di "nessun avviso", e il
+bollettino lo spiega: "non vuol dire che non ce ne siano". Se in scena ci sono
+avvisi calcolati, una riga sopra le schede avverte che sono solo quelli. Fuori
+copertura e in attesa hanno parole loro (`testoNessunAvviso`,
+`NessunAvvisoTest`).
 
 ## 8-quinquies. La scheda della pioggia
 
