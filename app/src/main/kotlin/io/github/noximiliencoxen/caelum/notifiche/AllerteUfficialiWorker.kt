@@ -31,7 +31,8 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
- * Ogni ora guarda i bollettini di MeteoAlarm sulla citta' dell'app, e se c'e'
+ * Ogni ora guarda le allerte ufficiali sulla citta' dell'app (MeteoAlarm in
+ * Europa, National Weather Service negli Stati Uniti), e se c'e'
  * un'allerta **ufficiale arancione o rossa** che non ha ancora detto, la dice.
  *
  * **Solo arancione e rossa, e non e' prudenza a meta'.** In Italia una gialla
@@ -42,7 +43,7 @@ import java.util.concurrent.TimeUnit
  *
  * **Solo le ufficiali.** Gli avvisi calcolati dalle soglie non passano di qui:
  * una notifica e' gia' una voce autorevole, e "soglia superata" detto dal
- * telefono in tasca si leggerebbe come la Protezione Civile (vedi
+ * telefono in tasca si leggerebbe come un ente (vedi
  * `WeatherAlert.badgeLabel`). Per l'acqua che arriva c'e' gia'
  * [PioggiaInArrivoWorker].
  *
@@ -59,7 +60,7 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
 
         val posto = impostazioni.place
         val allerte = WeatherAlertsRepository(posto).load().getOrElse { errore ->
-            // Fuori da cio' che MeteoAlarm copre non c'e' niente da chiedere,
+            // Fuori da cio' che le fonti coprono non c'e' niente da chiedere,
             // e riprovare non cambierebbe la risposta.
             return if (errore is WeatherAlertsRepository.OutOfCoverage) Result.success() else Result.retry()
         }
@@ -97,7 +98,7 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
                 CANALE,
                 tr("Allerte ufficiali", "Official warnings"),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { description = tr("Allerte arancioni e rosse diramate dagli enti, via MeteoAlarm", "Orange and red warnings issued by the authorities, via MeteoAlarm") }
+            ).apply { description = tr("Allerte arancioni e rosse emesse dai servizi meteorologici nazionali", "Orange and red warnings issued by national weather services") }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -184,9 +185,10 @@ internal fun testiAllerta(citta: String, allerta: WeatherAlert, adesso: LocalDat
     val titolo = tr("Allerta $colore a $citta: $fenomeno", "${colore.replaceFirstChar { it.uppercase() }} warning for $citta: $fenomeno")
     val quando = finestraBreve(allerta, adesso)
     val zona = allerta.areaDesc?.takeIf { it.isNotBlank() }?.let { tr(" Zona: $it.", " Area: $it.") } ?: ""
+    val via = allerta.fonte?.nome ?: "MeteoAlarm"
     val testo = quando + tr(
-        "Diramata dagli enti, via MeteoAlarm.$zona Tocca per leggere il bollettino.",
-        "Issued by the authorities, via MeteoAlarm.$zona Tap to read the bulletin.",
+        "Diramata dagli enti, via $via.$zona Tocca per leggere il bollettino.",
+        "Issued by the authorities, via $via.$zona Tap to read the bulletin.",
     )
     return titolo to testo
 }

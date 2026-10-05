@@ -7,16 +7,17 @@ import java.time.LocalDateTime
  * Un'allerta meteo, da qualunque parte venga.
  *
  * Il modello e' uno solo per due fonti diverse apposta. Le allerte ufficiali
- * arrivano da MeteoAlarm - il canale di EUMETNET su cui i servizi nazionali
- * pubblicano i propri bollettini, che per l'Italia sono quelli del Dipartimento
- * della Protezione Civile e dei centri funzionali regionali - e coprono
- * l'Europa. Fuori da li' non c'e' nessuno che le pubblichi in un formato
+ * arrivano da MeteoAlarm - il canale di EUMETNET su cui i servizi
+ * meteorologici nazionali pubblicano i propri avvisi, che per l'Italia sono
+ * quelli dell'Aeronautica Militare - e coprono l'Europa. Sono allerte meteo,
+ * non i messaggi di allertamento della Protezione Civile: lo dichiara il
+ * testo stesso di ogni voce (vedi `WeatherAlertsRepository`). Fuori da li' non c'e' nessuno che le pubblichi in un formato
  * leggibile da un'app senza accordi, e una schermata che non dice niente su
  * mezzo mondo non e' una funzione: quelle calcolate dalle soglie riempiono il
  * buco.
  *
  * [official] tiene distinte le due cose, e non e' un dettaglio da nascondere.
- * "La Protezione Civile ha diramato un'allerta arancione" e "domani sono
+ * "Il servizio meteorologico ha emesso un'allerta arancione" e "domani sono
  * previsti novanta chilometri orari di raffica" sono due affermazioni con un
  * peso diverso, e chi legge ha diritto di sapere quale delle due sta leggendo.
  */
@@ -37,7 +38,38 @@ data class WeatherAlert(
     val source: String,
     /** Vero per i bollettini di un ente, falso per quelli calcolati dai dati. */
     val official: Boolean,
+    /** Da quale canale e' arrivata, se ufficiale: decide credito e licenza. */
+    val fonte: FonteAllerte? = null,
 )
+
+/**
+ * I canali da cui arrivano le allerte ufficiali, uno per area del mondo.
+ *
+ * Ciascuno ha la sua licenza e il suo credito, e il bollettino li scrive per
+ * quelli da cui viene cio' che mostra: un'allerta del National Weather Service
+ * sotto "dati dei membri di EUMETNET" sarebbe un credito sbagliato.
+ */
+enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: String) {
+    /** L'Europa: i servizi meteorologici nazionali membri di EUMETNET. */
+    METEOALARM("MeteoAlarm", "meteoalarm.org", "https://meteoalarm.org/"),
+
+    /** Gli Stati Uniti: il servizio meteorologico federale (NOAA). */
+    NWS("National Weather Service", "weather.gov", "https://www.weather.gov/"),
+    ;
+
+    /** Il credito, nella forma che chiede la licenza della fonte. */
+    val credito: String
+        get() = when (this) {
+            METEOALARM -> tr(
+                "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0.",
+                "Official warnings: MeteoAlarm, data provided by EUMETNET members, CC BY 4.0 licence.",
+            )
+            NWS -> tr(
+                "Allerte ufficiali: National Weather Service (NOAA), dati di pubblico dominio.",
+                "Official warnings: National Weather Service (NOAA), public domain data.",
+            )
+        }
+}
 
 /**
  * Come l'avviso si annuncia, per esteso.

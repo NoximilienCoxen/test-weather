@@ -1878,9 +1878,18 @@ ha piu' niente a che vedere con la temperatura in particolare.
 endpoint per gli avvisi. Il servizio meteo dell'Aeronautica pubblica bollettini
 su meteoam.it ma **non espone un'API pubblica documentata**: i dati si ottengono
 per accordo, non con una GET - verificato, non supposto. Si usa **MeteoAlarm**,
-il canale di EUMETNET su cui i servizi nazionali pubblicano in CAP, e per
-l'Italia sono i bollettini della Protezione Civile e dei centri funzionali
-regionali. Stessa informazione, per una via leggibile. Gli **RSS legacy sono
+il canale di EUMETNET su cui i servizi meteorologici nazionali pubblicano in
+CAP, e per l'Italia a pubblicare e' **proprio l'Aeronautica** (`senderName`:
+"Servizio Meteorologico dell'Aeronautica Militare"). Stessa fonte, per una via
+leggibile. **Non sono le allerte della Protezione Civile**, come questa
+sezione sosteneva fino al 5 ottobre 2026: il testo di ogni voce dichiara che
+le informazioni MeteoAlarm riguardano "esclusivamente l'intensità e la
+ricorrenza dei fenomeni" e "non rappresentano i messaggi di Allerta Ufficiali"
+del Servizio Nazionale di Protezione Civile. Giallo, arancione e rosso sono i
+livelli di MeteoAlarm, non quelli del sistema di allertamento nazionale di cui
+parla piu' sotto la regola sul nome degli avvisi calcolati - che resta valida:
+anche questi colori li assegna un ente, non l'app. Il bollettino lo scrive in
+fondo. Gli **RSS legacy sono
 stati spenti il 14 gennaio 2026**: si legge l'Atom.
 
 **Due strati, e la differenza si dichiara.** MeteoAlarm copre l'Europa; l'app no
@@ -2075,6 +2084,35 @@ corregge alla fonte - striscia, widget e avviso calcolato "Temporali" leggono
 tutti `DayForecast.weatherCode` - solo con un totale di zero esatto, mettendo
 al suo posto il tempo asciutto piu' frequente nelle ore del giorno
 (`CodiceDelGiornoTest`).
+
+**Fuori Europa: gli Stati Uniti dal National Weather Service.** La sonda
+`probe_allerte_mondo.py` (job `probe-api`, risposte grezze in
+`ci-artifacts/api/allerte-mondo/`) ha chiesto con le intestazioni dell'app le
+fonti nazionali senza chiave. Il 5 ottobre 2026:
+
+- **Stati Uniti, NWS** (`api.weather.gov/alerts/active?point=lat,lon`):
+  risponde, **solo GeoJSON** anche chiedendo CAP. Letto da `NwsAlerts.kt`
+  sulle catture vere di California, Florida e Alaska
+  (`src/test/resources/nws-*.json`, `NwsAlertsTest`). Due cose che la
+  documentazione non dice a colpo d'occhio: `expires` e' la scadenza del
+  messaggio e non dell'evento (la fine e' `ends`, e quando manca resta
+  `expires`); e il NWS non ha colori, quindi il colore viene dalla `severity`
+  CAP (Extreme rossa, Severe arancione, il resto gialla) e il nome originale
+  ("Extreme Heat Warning") resta in testa alla descrizione.
+- **Nuova Zelanda, MetService** (`alerts.metservice.com/cap/rss`, CC BY 4.0):
+  risponde, ma **vuoto** - nessuna allerta in corso. Niente lettore finche' un
+  giro non pubblica una voce vera: la sonda resta accesa.
+- **Regno Unito**: il feed MeteoAlarm (`united-kingdom`) e l'RSS del Met
+  Office rispondono, tutti e due vuoti. Coerente con nessun avviso in corso,
+  ma non ancora una conferma che il Met Office pubblichi su MeteoAlarm.
+- **Canada** (ECCC, API OGC) e **Giappone** (JMA) rispondono con dati veri:
+  candidati per un giro successivo. **Australia** (BoM): 403, blocca le
+  richieste automatiche e rimanda all'FTP.
+
+Ogni allerta ufficiale porta la sua `FonteAllerte`, e il bollettino scrive il
+credito di ciascuna (MeteoAlarm CC BY 4.0, NWS pubblico dominio) invece di
+"MeteoAlarm" e basta. `WeatherAlertsRepository.fonteDi` sceglie il canale dal
+paese; fuori da tutti resta `OutOfCoverage`.
 
 ## 8-quinquies. La scheda della pioggia
 
