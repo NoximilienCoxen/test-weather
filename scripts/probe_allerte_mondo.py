@@ -284,6 +284,32 @@ def secondo_passo():
         f.write(tipi)
     nomi = re.findall(r'"name":\s*"([A-Za-z]*(?:Alert|Country|Admin|Info|Area|Polygon)[A-Za-z]*)"', tipi)
     righe.append(f"== ifrc-tipi: {len(tipi)} caratteri, tipi interessanti: {sorted(set(nomi))[:60]}")
+    # Quinto giro: argomenti delle domande e campi dei filtri, poi l'elenco dei
+    # paesi con quante allerte ha ciascuno - e' la copertura vera - e un
+    # tentativo di prime voci per paese (gli errori GraphQL dicono la forma).
+    argomenti = _post_json(gql, {"query": "{ __type(name: \"PublicQuery\") { fields { name args { name type { name kind ofType { name kind ofType { name } } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-argomenti.json"), "w") as f:
+        f.write(argomenti)
+    righe.append("== ifrc-argomenti: " + re.sub(r"\s+", " ", argomenti[:2500]))
+    for tipo in ("AlertFilter", "AlertInfoFilter", "CountryFilter", "OffsetPaginationInput"):
+        campi = _post_json(gql, {"query": "{ __type(name: \"%s\") { inputFields { name type { name kind ofType { name kind } } } } }" % tipo})
+        righe.append(f"== ifrc-{tipo}: " + re.sub(r"\s+", " ", campi[:1500]))
+    paesi = _post_json(gql, {"query": "{ public { allCountries { id name iso3 alertCount } } }"})
+    with open(os.path.join(OUT, "ifrc-paesi.json"), "w") as f:
+        f.write(paesi)
+    try:
+        import json
+        elenco = json.loads(paesi)["data"]["public"]["allCountries"]
+        con = sorted((c for c in elenco if c.get("alertCount")), key=lambda c: -c["alertCount"])
+        righe.append(f"== ifrc-paesi: {len(elenco)} paesi, {len(con)} con allerte ora")
+        righe.append("   " + " | ".join(f"{c['iso3']}:{c['alertCount']}" for c in con))
+        righe.append("   tutti: " + " ".join(sorted(c["iso3"] for c in elenco if c.get("iso3"))))
+    except Exception as e:
+        righe.append(f"== ifrc-paesi: illeggibile ({e}): " + paesi[:800])
+    prova = _post_json(gql, {"query": "{ public { alerts(pagination: {limit: 2}) { count items { id sent status msgType country { iso3 name } info { event severity onset expires language headline areas { areaDesc polygons { value } } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-prova.json"), "w") as f:
+        f.write(prova)
+    righe.append("== ifrc-prova: " + re.sub(r"\s+", " ", prova[:3000]))
     registro = _leggi("wmo-registro.html")
     link = sorted(set(re.findall(r'href="([^"]+)"', registro)))
     feedish = [l for l in link if re.search(r"(rss|cap|atom|\.xml|feed)", l, re.I)]
