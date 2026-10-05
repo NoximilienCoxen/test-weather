@@ -136,6 +136,22 @@ FONTI = [
     ("ar-smn",
      "https://ssl.smn.gob.ar/CAP/AR.php",
      "application/rss+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    # Terzo giro. Giappone: il feed "lungo" della JMA, da cui si trova l'ultimo
+    # bollettino di una prefettura anche se non e' dell'ultima decina di minuti.
+    ("jp-jma-feed-lungo",
+     "https://www.data.jma.go.jp/developer/xml/feed/extra_l.xml",
+     "application/atom+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    # Russia, Roshydromet: il centro idrometeorologico pubblica gli avvisi su
+    # meteoinfo.ru. Indirizzi da provare, non da credere.
+    ("ru-meteoinfo",
+     "https://meteoinfo.ru/",
+     "text/html, */*;q=0.8", "html"),
+    ("ru-meteoinfo-rss",
+     "https://meteoinfo.ru/rss/hazards",
+     "application/rss+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    ("ru-meteoalarm",
+     "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-russia",
+     "application/atom+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
     # Australia, Bureau of Meteorology: gli avvisi del Victoria in XML.
     ("au-bom-vic",
      "https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml",
@@ -219,6 +235,41 @@ def secondo_passo():
         testo = corpo.decode("utf-8", errors="replace")
         righe.append(f"   doc {i}: {m.group(1)}  HTTP {code}  byte={len(corpo)}")
         righe.append("   " + re.sub(r"\s+", " ", testo[:600]))
+    # Brasile e Argentina: il documento collegato alla prima voce di ciascun
+    # feed, per vedere se e' CAP e se porta poligoni.
+    for nome, sorgente in (("br-inmet-doc", "br-inmet.xml"), ("ar-smn-doc", "ar-smn.xml")):
+        testo = _leggi(sorgente)
+        m = re.search(r"<item>.*?<link>([^<]+)</link>", testo, re.S)
+        if not m:
+            righe.append(f"== {nome}: nessuna voce")
+            continue
+        code, tipo, corpo = chiedi(m.group(1).strip(), "application/cap+xml, application/xml;q=0.9, */*;q=0.8")
+        with open(os.path.join(OUT, f"{nome}.xml"), "wb") as f:
+            f.write(corpo)
+        doc = corpo.decode("utf-8", errors="replace")
+        righe.append(f"== {nome}: {m.group(1).strip()}  HTTP {code}  tipo={tipo}  byte={len(corpo)}")
+        righe.append("   " + "  ".join(f"{t}={doc.count(t)}" for t in
+                                       ("<alert", "<info", "<event>", "<severity>", "<polygon>", "<areaDesc>",
+                                        "<onset>", "<expires>", "<geocode>")))
+        righe.append("   " + re.sub(r"\s+", " ", doc[:900]))
+    # Il feed lungo della JMA: quanto pesa, quanto indietro arriva, quanti
+    # bollettini di avvisi porta e per quante prefetture.
+    lungo = _leggi("jp-jma-feed-lungo.xml")
+    date = re.findall(r"<updated>([^<]+)</updated>", lungo)
+    vpww = re.findall(r'href="[^"]+VPWW53_(\d{6})\.xml"', lungo)
+    righe.append(f"== jp-jma-feed-lungo: {len(lungo)} caratteri, aggiornamenti da {min(date) if date else '-'} "
+                 f"a {max(date) if date else '-'}, {len(vpww)} VPWW53 per {len(set(vpww))} uffici")
+    # L'API dell'Alert Hub: l'indirizzo sta nel codice del sito, non nella
+    # pagina. Si leggono gli script e si cercano indirizzi d'API.
+    pagina = _leggi("ifrc-alerthub.html")
+    script = re.findall(r'<script[^>]+src="([^"]+)"', pagina)
+    righe.append(f"== ifrc-alerthub: script {script[:5]}")
+    for src in script[:3]:
+        url = src if src.startswith("http") else "https://alerthub.ifrc.org" + ("" if src.startswith("/") else "/") + src
+        code, tipo, corpo = chiedi(url, "*/*")
+        js = corpo.decode("utf-8", errors="replace")
+        api = sorted(set(re.findall(r"https://[a-zA-Z0-9.-]*ifrc[a-zA-Z0-9.-]*/[a-zA-Z0-9/_.-]*", js)))
+        righe.append(f"   {url}  HTTP {code}  byte={len(corpo)}  indirizzi: {api[:20]}")
     registro = _leggi("wmo-registro.html")
     link = sorted(set(re.findall(r'href="([^"]+)"', registro)))
     feedish = [l for l in link if re.search(r"(rss|cap|atom|\.xml|feed)", l, re.I)]
