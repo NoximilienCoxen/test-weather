@@ -270,6 +270,20 @@ def secondo_passo():
         js = corpo.decode("utf-8", errors="replace")
         api = sorted(set(re.findall(r"https://[a-zA-Z0-9.-]*ifrc[a-zA-Z0-9.-]*/[a-zA-Z0-9/_.-]*", js)))
         righe.append(f"   {url}  HTTP {code}  byte={len(corpo)}  indirizzi: {api[:20]}")
+    # Quarto giro: l'API GraphQL dell'Alert Hub vuole POST. Prima lo schema
+    # (quali domande accetta), poi le prime voci di un paese, se lo schema le
+    # nomina come ci si aspetta: altrimenti l'indice mostra cosa c'e'.
+    gql = "https://alerthub-api.ifrc.org/graphql/"
+    schema = _post_json(gql, {"query": "{ __schema { queryType { fields { name args { name type { name kind ofType { name kind } } } type { name kind ofType { name kind } } } } } }"})
+    with open(os.path.join(OUT, "ifrc-schema.json"), "w") as f:
+        f.write(schema)
+    righe.append(f"== ifrc-schema: {len(schema)} caratteri")
+    righe.append("   " + re.sub(r"\s+", " ", schema[:3000]))
+    tipi = _post_json(gql, {"query": "{ __schema { types { name kind fields { name } } } }"})
+    with open(os.path.join(OUT, "ifrc-tipi.json"), "w") as f:
+        f.write(tipi)
+    nomi = re.findall(r'"name":\s*"([A-Za-z]*(?:Alert|Country|Admin|Info|Area|Polygon)[A-Za-z]*)"', tipi)
+    righe.append(f"== ifrc-tipi: {len(tipi)} caratteri, tipi interessanti: {sorted(set(nomi))[:60]}")
     registro = _leggi("wmo-registro.html")
     link = sorted(set(re.findall(r'href="([^"]+)"', registro)))
     feedish = [l for l in link if re.search(r"(rss|cap|atom|\.xml|feed)", l, re.I)]
@@ -277,6 +291,20 @@ def secondo_passo():
     righe.append("   " + " | ".join(feedish[:40]))
     righe.append("   altri: " + " | ".join(link[:60]))
     return righe
+
+
+def _post_json(url, corpo):
+    import json
+    req = urllib.request.Request(url, data=json.dumps(corpo).encode(), method="POST", headers={
+        "User-Agent": AGENTE, "Content-Type": "application/json", "Accept": "application/json",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return r.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        return f"HTTP {e.code}: " + e.read().decode("utf-8", errors="replace")[:2000]
+    except Exception as e:
+        return f"{type(e).__name__}: {e}"
 
 
 def _leggi(nome):
