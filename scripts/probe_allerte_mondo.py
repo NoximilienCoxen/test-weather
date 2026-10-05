@@ -50,6 +50,18 @@ FONTI = [
     ("us-nws-punto-cap",
      "https://api.weather.gov/alerts/active?point=40.7128,-74.0060",
      "application/cap+xml, application/xml;q=0.9, */*;q=0.8", "xml"),
+    # Il punto di New York il 5 ottobre era vuoto: per vedere la forma di una
+    # voce vera servono stati con allerte attive in quel momento. Si chiedono
+    # i piu' grandi, e l'indice dice quanti `features` ha ciascuno.
+    ("us-nws-area-fl",
+     "https://api.weather.gov/alerts/active?area=FL",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("us-nws-area-ca",
+     "https://api.weather.gov/alerts/active?area=CA",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
+    ("us-nws-area-ak",
+     "https://api.weather.gov/alerts/active?area=AK",
+     "application/geo+json, application/json;q=0.9, */*;q=0.8", "json"),
     ("us-nws-conteggio",
      "https://api.weather.gov/alerts/active/count",
      "application/json, */*;q=0.8", "json"),
@@ -107,6 +119,12 @@ def main():
         righe.append(f"   Accept: {accept}")
         righe.append(f"   HTTP {code}  tipo={tipo}  byte={len(corpo)}")
         conti = [f"{s}={testo.count(s)}" for s in SEGNI if s in testo]
+        if ext == "json" and "\"features\"" in testo:
+            try:
+                import json
+                conti.append(f"voci={len(json.loads(testo).get('features', []))}")
+            except Exception as e:
+                conti.append(f"json illeggibile: {e}")
         righe.append("   " + ("  ".join(conti) if conti else "nessun segno noto"))
         # I primi eventi, per vedere come si chiamano davvero.
         eventi = re.findall(r"<(?:cap:)?event>([^<]{1,80})<", testo)[:5]
