@@ -101,6 +101,9 @@ class WeatherAlertsRepository(
                 FonteAllerte.ECCC -> EcccAlerts.load(place, fuso).also {
                     Log.i("meteo", "Environment Canada: ${it.size} per ${place.name}")
                 }
+                FonteAllerte.JMA -> JmaAlerts.load(place).also {
+                    Log.i("meteo", "JMA: ${it.size} per ${place.name} (area ${JmaAlerts.areaDi(place).codice})")
+                }
                 null -> throw OutOfCoverage(place.country)
             }
         }
@@ -198,6 +201,7 @@ class WeatherAlertsRepository(
                 COUNTRIES.containsKey(nome) -> FonteAllerte.METEOALARM
                 nome in STATI_UNITI -> FonteAllerte.NWS
                 nome == "canada" -> FonteAllerte.ECCC
+                nome == "giappone" || nome == "japan" -> FonteAllerte.JMA
                 else -> null
             }
         }

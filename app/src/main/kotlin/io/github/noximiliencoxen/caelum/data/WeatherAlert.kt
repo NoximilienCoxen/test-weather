@@ -58,6 +58,9 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
 
     /** Il Canada: Environment and Climate Change Canada. */
     ECCC("Environment and Climate Change Canada", "weather.gc.ca", "https://weather.gc.ca/"),
+
+    /** Il Giappone: l'Agenzia meteorologica (気象庁). */
+    JMA("Japan Meteorological Agency", "jma.go.jp", "https://www.jma.go.jp/"),
     ;
 
     /** Dove serve, detto per chi legge. */
@@ -66,6 +69,7 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             METEOALARM -> tr("Europa", "Europe")
             NWS -> tr("Stati Uniti", "United States")
             ECCC -> "Canada"
+            JMA -> tr("Giappone", "Japan")
         }
 
     companion object {
@@ -87,6 +91,10 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             ECCC -> tr(
                 "Allerte ufficiali: Environment and Climate Change Canada, Open Government Licence - Canada.",
                 "Official warnings: Environment and Climate Change Canada, Open Government Licence - Canada.",
+            )
+            JMA -> tr(
+                "Allerte ufficiali: Japan Meteorological Agency (気象庁), dati riutilizzabili citando la fonte.",
+                "Official warnings: Japan Meteorological Agency (気象庁), reusable with attribution.",
             )
         }
 }
