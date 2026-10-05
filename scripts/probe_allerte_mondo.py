@@ -310,6 +310,35 @@ def secondo_passo():
     with open(os.path.join(OUT, "ifrc-prova.json"), "w") as f:
         f.write(prova)
     righe.append("== ifrc-prova: " + re.sub(r"\s+", " ", prova[:3000]))
+    # Sesto giro: la forma dei riquadri (bbox) di paesi e regioni, le regioni
+    # della Russia, e le allerte filtrate per paese e per regione - Mosca e la
+    # prima regione russa che ha allerte - con tutti i campi che servono.
+    try:
+        import json
+        tutti = json.loads(_post_json(gql, {"query": "{ public { allCountries { id iso3 name bbox } } }"}))["data"]["public"]["allCountries"]
+        righe.append("== ifrc-bbox: " + json.dumps(tutti[:3])[:900])
+        russia = next(c for c in tutti if c["iso3"] == "RUS")
+        regioni = _post_json(gql, {"query": "{ public { country(pk: \"%s\") { id name admin1s { id name bbox alertCount } } } }" % russia["id"]})
+        with open(os.path.join(OUT, "ifrc-regioni-rus.json"), "w") as f:
+            f.write(regioni)
+        r = json.loads(regioni)["data"]["public"]["country"]["admin1s"]
+        con = [a for a in r if a.get("alertCount")]
+        righe.append(f"== ifrc-regioni-rus: {len(r)} regioni, {len(con)} con allerte; esempio {json.dumps(r[:2])[:600]}")
+        mosca = next((a for a in r if "Moscow" in (a.get("name") or "")), None)
+        scelte = [a for a in (mosca, con[0] if con else None) if a]
+        campi = ("count items { id sent status msgType url sender source country { iso3 } admin1s { id name } "
+                 "infos { language event severity urgency certainty onset expires senderName headline "
+                 "description instruction web areas { areaDesc polygons { value } circles { value } "
+                 "geocodes { valueName value } } } }")
+        for a in scelte:
+            q = "{ public { alerts(filters: {country: {pk: \"%s\"}, admin1: \"%s\"}, pagination: {offset: 0, limit: 5}) { %s } } }" % (russia["id"], a["id"], campi)
+            risposta = _post_json(gql, {"query": q})
+            nome = re.sub(r"[^a-z0-9]+", "-", a["name"].lower()).strip("-")
+            with open(os.path.join(OUT, f"ifrc-allerte-rus-{nome}.json"), "w") as f:
+                f.write(risposta)
+            righe.append(f"== ifrc-allerte-rus-{nome}: " + re.sub(r"\s+", " ", risposta[:2500]))
+    except Exception as e:
+        righe.append(f"== ifrc-sesto-giro: non riuscito ({type(e).__name__}: {e})")
     registro = _leggi("wmo-registro.html")
     link = sorted(set(re.findall(r'href="([^"]+)"', registro)))
     feedish = [l for l in link if re.search(r"(rss|cap|atom|\.xml|feed)", l, re.I)]
