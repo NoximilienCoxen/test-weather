@@ -196,7 +196,7 @@ Note: Current conditions are based on 15-minutely weather model data. Every weat
 available in hourly data, is available as current condition as well.
 Settings
 Global + European Domain
-ISO 8601 (e.g. 2026-10-05) Timeformat
+ISO 8601 (e.g. 2026-10-09) Timeformat
 Usage licence:
 Non-Commercial Commercial Self-Hosted
 API Response
@@ -229,39 +229,30 @@ variables and responds with a JSON hourly air quality forecast for 5 days. Time 
 0:00 today.
 All URL parameters are listed below:
 Parameter Format Required Default Description
-latitude, longitude Floating point Yes Geographical WGS84 coordinates of the location. Multiple coordinates can be comma
-separated. E.g. &latitude=52.52,48.85&longitude=13.41,2.35 . To return
-data for multiple locations the JSON output changes to a list of structures. CSV and
+latitude, longitude Floating point Yes Geographical WGS84 coordinates of the location. Multiple coordinates can be comma separated. E.g. &latitude=52.52,48.85&longitude=13.41,2.35 . To return data for multiple locations the JSON output changes to a list of structures. CSV and
 XLSX formats add a column location_id .
-hourly String array No A list of weather variables which should be returned. Values can be comma separated,
-or multiple &hourly= parameter in the URL can be used.
+hourly String array No A list of weather variables which should be returned. Values can be comma separated, or multiple &hourly= parameter in the URL can be used.
 current String array No A list of variables to get current conditions.
-domains String No auto Automatically combine both domains auto or specifically select the
-European cams_europe or global domain cams_global .
-timeformat String No iso8601 If format unixtime is selected, all time values are returned in UNIX
-epoch time in seconds. Please note that all timestamp are in GMT+0! For daily values
-with unix timestamps, please apply utc_offset_seconds again to get the correct date.
-timezone String No GMT If timezone is set, all timestamps are returned as local-time and data
-is returned starting at 00:00 local-time. Any time zone name from the time zone database is supported. If auto is set as a time zone, the coordinates will be automatically
-resolved to the local time zone. For multiple coordinates, a comma separated list of timezones
-can be specified.
+domains String No auto Automatically combine both domains auto or specifically select the European cams_europe or global domain cams_global .
+timeformat String No iso8601 By default, timestamps use ISO 8601 format with a fixed offset, utc_offset_seconds ,
+resolved at request time (see timezone ). With unixtime , timestamps are
+seconds since 1970-01-01 00:00 UTC. To reproduce the API's dates and times, format them using utc_offset_seconds .
+timezone String No GMT The requested timezone 's UTC offset at request time is returned as utc_offset_seconds and used for ISO 8601 timestamps and daily boundaries throughout the response. Daylight saving time
+(DST) changes within the requested range are ignored. For DST-aware local times, request timeformat=unixtime and convert using the returned timezone in your application. Any name from the time zone database is supported. auto resolves the time zone from the coordinates. For multiple coordinates,
+a comma separated list of time zones can be specified.
 past_days Integer (0-92) No 0 If past_days is set, yesterday or the day before yesterday data are also returned.
 forecast_days Integer (0-7) No 5 Per default, 5 days are returned. Up to 7 days of forecast are possible.
 forecast_hours
-past_hours Integer (>0) No Similar to forecast_days, the number of timesteps of hourly data can controlled.
-Instead of using the current day as a reference, the current hour is used.
+past_hours Integer (>0) No Similar to forecast_days, the number of timesteps of hourly data can controlled. Instead of using the current day as a reference, the current hour is used.
 start_date
-end_date String (yyyy-mm-dd) No The time interval to get weather data. A day must be specified as an ISO8601 date
-(e.g. 2022-06-30 ).
+end_date String (yyyy-mm-dd) No The time interval to get weather data. A day must be specified as an ISO8601 date (e.g. 2022-06-30 ).
 start_hour
-end_hour String (yyyy-mm-ddThh:mm) No The time interval to get weather data for hourly data. Time must be specified as an
-ISO8601 date (e.g. 2022-06-30T12:00 ).
-cell_selection String No nearest Set a preference how grid-cells are selected. The default land finds a
-suitable grid-cell on land with similar elevation to the requested coordinates using a 90-meter digital elevation
-model . sea prefers grid-cells on sea. nearest selects the nearest possible
-grid-cell.
-apikey String No Only required to commercial use to access reserved API resources for customers. The
-server URL requires the prefix customer- . See pricing for more information.
+end_hour String (yyyy-mm-ddThh:mm) No The time interval to get weather data for hourly data. Time must be specified as an ISO8601 date
+(e.g. 2022-06-30T12:00 ).
+cell_selection String No nearest Set a preference how grid-cells are selected. The default land finds a suitable
+grid-cell on land with similar elevation to the requested coordinates using a 90-meter digital elevation model . sea prefers grid-cells on sea. nearest selects the nearest possible grid-cell.
+apikey String No Only required to commercial use to access reserved API resources for customers. The server URL
+requires the prefix customer- . See pricing for more information.
 Additional optional URL parameters will be added. For API stability, no required parameters
 will be added in the future!
 Hourly Parameter Definition
@@ -328,16 +319,15 @@ On success a JSON object will be returned.
 },
 }
 Parameter Format Description
-latitude, longitude Floating point WGS84 of the center of the weather grid-cell which was used to generate this
-forecast. This coordinate might be a few kilometres away from the requested
-coordinate.
-generationtime_ms Floating point Generation time of the weather forecast in milliseconds. This is mainly used for
-performance monitoring and improvements.
-utc_offset_seconds Integer Applied timezone offset from the &timezone= parameter.
+latitude, longitude Floating point WGS84 of the center of the weather grid-cell which was used to generate this forecast. This coordinate might be a few kilometres away from the requested coordinate.
+generationtime_ms Floating point Generation time of the weather forecast in milliseconds. This is mainly used for performance monitoring and improvements.
+utc_offset_seconds Integer UTC offset for the requested timezone , in seconds, resolved at request time and fixed
+throughout the response, including across daylight saving time transitions.
 timezone
-timezone_abbreviation String Timezone identifier (e.g. Europe/Berlin ) and abbreviation (e.g. CEST )
-hourly Object For each selected weather variable, data will be returned as a floating point array.
-Additionally a time array will be returned with ISO8601 timestamps.
+timezone_abbreviation String Resolved time zone identifier (e.g. Europe/Berlin ) and its abbreviation at request
+time (e.g. CEST ).
+hourly Object For each selected weather variable, data will be returned as a floating point array. Additionally
+a time array will be returned with ISO8601 timestamps.
 hourly_units Object For each selected weather variable, the unit will be listed here.
 Errors
 In case an error occurs, for example a URL parameter is not correctly specified, a JSON error

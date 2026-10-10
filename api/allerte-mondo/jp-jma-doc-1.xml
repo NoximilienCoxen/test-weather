@@ -2,32 +2,32 @@
 <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/">
 <Control>
 <Title>気象警報・注意報（Ｈ２７）</Title>
-<DateTime>2026-10-05T13:58:01Z</DateTime>
+<DateTime>2026-10-10T22:04:58Z</DateTime>
 <Status>通常</Status>
-<EditorialOffice>南大東島地方気象台</EditorialOffice>
-<PublishingOffice>南大東島地方気象台</PublishingOffice>
+<EditorialOffice>長野地方気象台</EditorialOffice>
+<PublishingOffice>長野地方気象台</PublishingOffice>
 </Control>
 <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/">
-<Title>大東島地方気象警報・注意報</Title>
-<ReportDateTime>2026-10-05T22:58:00+09:00</ReportDateTime>
-<TargetDateTime>2026-10-05T22:58:00+09:00</TargetDateTime>
+<Title>長野県気象警報・注意報</Title>
+<ReportDateTime>2026-10-11T07:04:00+09:00</ReportDateTime>
+<TargetDateTime>2026-10-11T07:04:00+09:00</TargetDateTime>
 <EventID/>
 <InfoType>発表</InfoType>
 <Serial/>
 <InfoKind>気象警報・注意報</InfoKind>
 <InfoKindVersion>1.2_2</InfoKindVersion>
 <Headline>
-<Text>大東島地方では、高波に注意してください。</Text>
+<Text>長野県では、濃霧による視程障害に注意してください。</Text>
 <Information type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長野県</Name>
+<Code>200000</Code>
 </Area>
 </Areas>
 </Item>
@@ -35,13 +35,37 @@
 <Information type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>北部</Name>
+<Code>200010</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>中部</Name>
+<Code>200020</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>南部</Name>
+<Code>200030</Code>
 </Area>
 </Areas>
 </Item>
@@ -49,13 +73,121 @@
 <Information type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長野地域</Name>
+<Code>200011</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>中野飯山地域</Name>
+<Code>200012</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>大北地域</Name>
+<Code>200013</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>上田地域</Name>
+<Code>200021</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>佐久地域</Name>
+<Code>200022</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>松本地域</Name>
+<Code>200023</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>乗鞍上高地地域</Name>
+<Code>200024</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>諏訪地域</Name>
+<Code>200025</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>上伊那地域</Name>
+<Code>200031</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>下伊那地域</Name>
+<Code>200033</Code>
 </Area>
 </Areas>
 </Item>
@@ -63,25 +195,889 @@
 <Information type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>南大東村</Name>
-<Code>4735700</Code>
+<Name>長野</Name>
+<Code>2020111</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>北大東村</Name>
-<Code>4735800</Code>
+<Name>鬼無里戸隠</Name>
+<Code>2020112</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>松本</Name>
+<Code>2020201</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>乗鞍上高地</Name>
+<Code>2020202</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>上田市</Name>
+<Code>2020300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>岡谷市</Name>
+<Code>2020400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>飯田市</Name>
+<Code>2020500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>諏訪市</Name>
+<Code>2020600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>須坂市</Name>
+<Code>2020700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小諸市</Name>
+<Code>2020800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>伊那</Name>
+<Code>2020911</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>長谷</Name>
+<Code>2020912</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>駒ヶ根市</Name>
+<Code>2021000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>中野市</Name>
+<Code>2021100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>大町市</Name>
+<Code>2021200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>飯山市</Name>
+<Code>2021300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>茅野市</Name>
+<Code>2021400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>塩尻</Name>
+<Code>2021501</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>佐久市</Name>
+<Code>2021700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>千曲市</Name>
+<Code>2021800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>東御市</Name>
+<Code>2021900</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>安曇野市</Name>
+<Code>2022000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小海町</Name>
+<Code>2030300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>川上村</Name>
+<Code>2030400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>南牧村</Name>
+<Code>2030500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>南相木村</Name>
+<Code>2030600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>北相木村</Name>
+<Code>2030700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>佐久穂町</Name>
+<Code>2030900</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>軽井沢町</Name>
+<Code>2032100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>御代田町</Name>
+<Code>2032300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>立科町</Name>
+<Code>2032400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>青木村</Name>
+<Code>2034900</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>長和町</Name>
+<Code>2035000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>下諏訪町</Name>
+<Code>2036100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>富士見町</Name>
+<Code>2036200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>原村</Name>
+<Code>2036300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>辰野町</Name>
+<Code>2038200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>箕輪町</Name>
+<Code>2038300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>飯島町</Name>
+<Code>2038400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>南箕輪村</Name>
+<Code>2038500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>中川村</Name>
+<Code>2038600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>解除</Name>
+<Code>00</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>宮田村</Name>
+<Code>2038800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>松川町</Name>
+<Code>2040200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>高森町</Name>
+<Code>2040300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>阿南町</Name>
+<Code>2040400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>阿智村</Name>
+<Code>2040700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>平谷村</Name>
+<Code>2040900</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>根羽村</Name>
+<Code>2041000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>下條村</Name>
+<Code>2041100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>売木村</Name>
+<Code>2041200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>天龍村</Name>
+<Code>2041300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>泰阜村</Name>
+<Code>2041400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>喬木村</Name>
+<Code>2041500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>豊丘村</Name>
+<Code>2041600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>大鹿村</Name>
+<Code>2041700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>麻績村</Name>
+<Code>2044600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>生坂村</Name>
+<Code>2044800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>山形村</Name>
+<Code>2045000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>朝日村</Name>
+<Code>2045100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>筑北村</Name>
+<Code>2045200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>池田町</Name>
+<Code>2048100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>松川村</Name>
+<Code>2048200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>白馬村</Name>
+<Code>2048500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小谷村</Name>
+<Code>2048600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>坂城町</Name>
+<Code>2052100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小布施町</Name>
+<Code>2054100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>高山村</Name>
+<Code>2054300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>山ノ内町</Name>
+<Code>2056100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>木島平村</Name>
+<Code>2056200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>野沢温泉村</Name>
+<Code>2056300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>信濃町</Name>
+<Code>2058300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小川村</Name>
+<Code>2058800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>飯綱町</Name>
+<Code>2059000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>栄村</Name>
+<Code>2060200</Code>
 </Area>
 </Areas>
 </Item>
@@ -89,13 +1085,29 @@
 <Information type="気象警報・注意報（警報注意報種別毎）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>北部</Name>
+<Code>200010</Code>
+</Area>
+<Area>
+<Name>上田地域</Name>
+<Code>200021</Code>
+</Area>
+<Area>
+<Name>佐久地域</Name>
+<Code>200022</Code>
+</Area>
+<Area>
+<Name>松本地域</Name>
+<Code>200023</Code>
+</Area>
+<Area>
+<Name>下伊那地域</Name>
+<Code>200033</Code>
 </Area>
 </Areas>
 </Item>
@@ -104,112 +1116,1773 @@
 </Head>
 <Body xmlns="http://xml.kishou.go.jp/jmaxml1/body/meteorology1/" xmlns:jmx_eb="http://xml.kishou.go.jp/jmaxml1/elementBasis1/">
 <Notice>［危険警報・氾濫特別警報の発表状況］
-なし</Notice>
+なし
+［お知らせ］
+令和８年４月１８日に発生した長野県北部の地震で、揺れの大きかった大町市については、土砂災害に関する警報等の発表基準について通常より引き下げた暫定基準で運用しています。</Notice>
 <Warning type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Status>継続</Status>
 <LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </LastKind>
-<Addition>
-<Note>うねり</Note>
-</Addition>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長野県</Name>
+<Code>200000</Code>
 </Area>
-<ChangeStatus>変化無</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>1</EditingMark>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>一部</FullStatus>
+<EditingMark>0</EditingMark>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Status>継続</Status>
 <LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </LastKind>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>北部</Name>
+<Code>200010</Code>
 </Area>
 <ChangeStatus>変化無</ChangeStatus>
 <FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>中部</Name>
+<Code>200020</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>一部</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>南部</Name>
+<Code>200030</Code>
+</Area>
+<ChangeStatus>変化無</ChangeStatus>
+<FullStatus>一部</FullStatus>
 <EditingMark>0</EditingMark>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Status>継続</Status>
 <LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </LastKind>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長野地域</Name>
+<Code>200011</Code>
 </Area>
 <ChangeStatus>変化無</ChangeStatus>
 <FullStatus>全域</FullStatus>
 <EditingMark>0</EditingMark>
 </Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>中野飯山地域</Name>
+<Code>200012</Code>
+</Area>
+<ChangeStatus>変化無</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>大北地域</Name>
+<Code>200013</Code>
+</Area>
+<ChangeStatus>変化無</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>上田地域</Name>
+<Code>200021</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>佐久地域</Name>
+<Code>200022</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>松本地域</Name>
+<Code>200023</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>乗鞍上高地地域</Name>
+<Code>200024</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>諏訪地域</Name>
+<Code>200025</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>上伊那地域</Name>
+<Code>200031</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>木曽地域</Name>
+<Code>200032</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>下伊那地域</Name>
+<Code>200033</Code>
+</Area>
+<ChangeStatus>変化無</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Status>継続</Status>
 <LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </LastKind>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Kind>
 <Area>
-<Name>南大東村</Name>
-<Code>4735700</Code>
+<Name>長野</Name>
+<Code>2020111</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
 </Item>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Status>継続</Status>
 <LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 </LastKind>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Kind>
 <Area>
-<Name>北大東村</Name>
-<Code>4735800</Code>
+<Name>鬼無里戸隠</Name>
+<Code>2020112</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>松本</Name>
+<Code>2020201</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>乗鞍上高地</Name>
+<Code>2020202</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>上田市</Name>
+<Code>2020300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>岡谷市</Name>
+<Code>2020400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>飯田市</Name>
+<Code>2020500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>諏訪市</Name>
+<Code>2020600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>須坂市</Name>
+<Code>2020700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>小諸市</Name>
+<Code>2020800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>伊那</Name>
+<Code>2020911</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>長谷</Name>
+<Code>2020912</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>駒ヶ根市</Name>
+<Code>2021000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>中野市</Name>
+<Code>2021100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>大町市</Name>
+<Code>2021200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>飯山市</Name>
+<Code>2021300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>茅野市</Name>
+<Code>2021400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>塩尻</Name>
+<Code>2021501</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>楢川</Name>
+<Code>2021502</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>佐久市</Name>
+<Code>2021700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>千曲市</Name>
+<Code>2021800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>東御市</Name>
+<Code>2021900</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>安曇野市</Name>
+<Code>2022000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>小海町</Name>
+<Code>2030300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>川上村</Name>
+<Code>2030400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>南牧村</Name>
+<Code>2030500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>南相木村</Name>
+<Code>2030600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>北相木村</Name>
+<Code>2030700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>佐久穂町</Name>
+<Code>2030900</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>軽井沢町</Name>
+<Code>2032100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>御代田町</Name>
+<Code>2032300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>立科町</Name>
+<Code>2032400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>青木村</Name>
+<Code>2034900</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>長和町</Name>
+<Code>2035000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>下諏訪町</Name>
+<Code>2036100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>富士見町</Name>
+<Code>2036200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>原村</Name>
+<Code>2036300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>辰野町</Name>
+<Code>2038200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>箕輪町</Name>
+<Code>2038300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>飯島町</Name>
+<Code>2038400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>南箕輪村</Name>
+<Code>2038500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>中川村</Name>
+<Code>2038600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>宮田村</Name>
+<Code>2038800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>松川町</Name>
+<Code>2040200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>高森町</Name>
+<Code>2040300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>阿南町</Name>
+<Code>2040400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>阿智村</Name>
+<Code>2040700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>平谷村</Name>
+<Code>2040900</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>根羽村</Name>
+<Code>2041000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>下條村</Name>
+<Code>2041100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>売木村</Name>
+<Code>2041200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>天龍村</Name>
+<Code>2041300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>泰阜村</Name>
+<Code>2041400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>喬木村</Name>
+<Code>2041500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>豊丘村</Name>
+<Code>2041600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>大鹿村</Name>
+<Code>2041700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>上松町</Name>
+<Code>2042200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>南木曽町</Name>
+<Code>2042300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>木祖村</Name>
+<Code>2042500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>王滝村</Name>
+<Code>2042900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>大桑村</Name>
+<Code>2043000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>木曽町</Name>
+<Code>2043200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>麻績村</Name>
+<Code>2044600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>生坂村</Name>
+<Code>2044800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>山形村</Name>
+<Code>2045000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>朝日村</Name>
+<Code>2045100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Kind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>霜注意報</Name>
+<Code>24</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>筑北村</Name>
+<Code>2045200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>池田町</Name>
+<Code>2048100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>松川村</Name>
+<Code>2048200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>白馬村</Name>
+<Code>2048500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>小谷村</Name>
+<Code>2048600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>坂城町</Name>
+<Code>2052100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>小布施町</Name>
+<Code>2054100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>高山村</Name>
+<Code>2054300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>山ノ内町</Name>
+<Code>2056100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>木島平村</Name>
+<Code>2056200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>野沢温泉村</Name>
+<Code>2056300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>信濃町</Name>
+<Code>2058300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>小川村</Name>
+<Code>2058800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>飯綱町</Name>
+<Code>2059000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Status>継続</Status>
+<LastKind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>栄村</Name>
+<Code>2060200</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
 </Item>
@@ -218,193 +2891,3587 @@
 <TimeSeriesInfo>
 <TimeDefines>
 <TimeDefine timeId="1">
-<DateTime>2026-10-05T21:00:00+09:00</DateTime>
+<DateTime>2026-10-11T06:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>５日夜遅く</Name>
+<Name>１１日朝</Name>
 </TimeDefine>
 <TimeDefine timeId="2">
-<DateTime>2026-10-06T00:00:00+09:00</DateTime>
+<DateTime>2026-10-11T09:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日未明</Name>
+<Name>１１日昼前</Name>
 </TimeDefine>
 <TimeDefine timeId="3">
-<DateTime>2026-10-06T03:00:00+09:00</DateTime>
+<DateTime>2026-10-11T12:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日明け方</Name>
+<Name>１１日昼過ぎ</Name>
 </TimeDefine>
 <TimeDefine timeId="4">
-<DateTime>2026-10-06T06:00:00+09:00</DateTime>
+<DateTime>2026-10-11T15:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日朝</Name>
+<Name>１１日夕方</Name>
 </TimeDefine>
 <TimeDefine timeId="5">
-<DateTime>2026-10-06T09:00:00+09:00</DateTime>
+<DateTime>2026-10-11T18:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日昼前</Name>
+<Name>１１日夜のはじめ頃</Name>
 </TimeDefine>
 <TimeDefine timeId="6">
-<DateTime>2026-10-06T12:00:00+09:00</DateTime>
+<DateTime>2026-10-11T21:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日昼過ぎ</Name>
+<Name>１１日夜遅く</Name>
 </TimeDefine>
 <TimeDefine timeId="7">
-<DateTime>2026-10-06T15:00:00+09:00</DateTime>
+<DateTime>2026-10-12T00:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日夕方</Name>
+<Name>１２日未明</Name>
 </TimeDefine>
 <TimeDefine timeId="8">
-<DateTime>2026-10-06T18:00:00+09:00</DateTime>
+<DateTime>2026-10-12T03:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日夜のはじめ頃</Name>
+<Name>１２日明け方</Name>
 </TimeDefine>
 <TimeDefine timeId="9">
-<DateTime>2026-10-06T21:00:00+09:00</DateTime>
+<DateTime>2026-10-12T06:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
-<Name>６日夜遅く</Name>
+<Name>１２日朝</Name>
 </TimeDefine>
 </TimeDefines>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Property>
 <Type>危険度</Type>
 <SignificancyPart>
 <Base>
-<Significancy refID="1" type="波危険度">
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
 <Name>注意報級未満</Name>
 <Code>00</Code>
 </Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Base>
 </SignificancyPart>
 </Property>
 <Property>
-<Type>波</Type>
-<WaveHeightPart>
+<Type>濃霧</Type>
+<VisibilityPart>
 <Base>
-<jmx_eb:WaveHeight condition="値なし" refID="1" type="波高" unit="m"/>
-<jmx_eb:WaveHeight description="３メートル" refID="2" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="3" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="4" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="5" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="6" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="7" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="8" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="9" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
 </Base>
-</WaveHeightPart>
+</VisibilityPart>
 </Property>
 </Kind>
 <Area>
-<Name>南大東村</Name>
-<Code>4735700</Code>
+<Name>長野</Name>
+<Code>2020111</Code>
 </Area>
 </Item>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
 <Property>
 <Type>危険度</Type>
 <SignificancyPart>
 <Base>
-<Significancy refID="1" type="波危険度">
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
 <Name>注意報級未満</Name>
 <Code>00</Code>
 </Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Addition>
-<Note>うねり</Note>
-</Addition>
 </Base>
 </SignificancyPart>
 </Property>
 <Property>
-<Type>波</Type>
-<WaveHeightPart>
+<Type>濃霧</Type>
+<VisibilityPart>
 <Base>
-<jmx_eb:WaveHeight condition="値なし" refID="1" type="波高" unit="m"/>
-<jmx_eb:WaveHeight description="３メートル" refID="2" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="3" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="4" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="5" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="6" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="7" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="8" type="波高" unit="m">3</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="３メートル" refID="9" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
 </Base>
-</WaveHeightPart>
+</VisibilityPart>
 </Property>
 </Kind>
 <Area>
-<Name>北大東村</Name>
-<Code>4735800</Code>
+<Name>鬼無里戸隠</Name>
+<Code>2020112</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>松本</Name>
+<Code>2020201</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>上田市</Name>
+<Code>2020300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>飯田市</Name>
+<Code>2020500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>須坂市</Name>
+<Code>2020700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>小諸市</Name>
+<Code>2020800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>中野市</Name>
+<Code>2021100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>大町市</Name>
+<Code>2021200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>飯山市</Name>
+<Code>2021300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>塩尻</Name>
+<Code>2021501</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>佐久市</Name>
+<Code>2021700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>千曲市</Name>
+<Code>2021800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>東御市</Name>
+<Code>2021900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>安曇野市</Name>
+<Code>2022000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>小海町</Name>
+<Code>2030300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>川上村</Name>
+<Code>2030400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>南牧村</Name>
+<Code>2030500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>南相木村</Name>
+<Code>2030600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>北相木村</Name>
+<Code>2030700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>佐久穂町</Name>
+<Code>2030900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>軽井沢町</Name>
+<Code>2032100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>御代田町</Name>
+<Code>2032300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>立科町</Name>
+<Code>2032400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>青木村</Name>
+<Code>2034900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>長和町</Name>
+<Code>2035000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>松川町</Name>
+<Code>2040200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>高森町</Name>
+<Code>2040300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>阿南町</Name>
+<Code>2040400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>阿智村</Name>
+<Code>2040700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>平谷村</Name>
+<Code>2040900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>根羽村</Name>
+<Code>2041000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>下條村</Name>
+<Code>2041100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>売木村</Name>
+<Code>2041200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>天龍村</Name>
+<Code>2041300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>泰阜村</Name>
+<Code>2041400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>喬木村</Name>
+<Code>2041500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>豊丘村</Name>
+<Code>2041600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>大鹿村</Name>
+<Code>2041700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>麻績村</Name>
+<Code>2044600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>生坂村</Name>
+<Code>2044800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>山形村</Name>
+<Code>2045000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>朝日村</Name>
+<Code>2045100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>筑北村</Name>
+<Code>2045200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>池田町</Name>
+<Code>2048100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>松川村</Name>
+<Code>2048200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>白馬村</Name>
+<Code>2048500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>小谷村</Name>
+<Code>2048600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>坂城町</Name>
+<Code>2052100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>小布施町</Name>
+<Code>2054100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>高山村</Name>
+<Code>2054300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>山ノ内町</Name>
+<Code>2056100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>木島平村</Name>
+<Code>2056200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>野沢温泉村</Name>
+<Code>2056300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>信濃町</Name>
+<Code>2058300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>小川村</Name>
+<Code>2058800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>飯綱町</Name>
+<Code>2059000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>濃霧注意報</Name>
+<Code>20</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="濃霧危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="3" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="5" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="6" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="7" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="8" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="9" type="濃霧危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+</Property>
+<Property>
+<Type>濃霧</Type>
+<VisibilityPart>
+<Base>
+<jmx_eb:Visibility condition="以下" description="１００メートル以下" type="視程" unit="m">100</jmx_eb:Visibility>
+</Base>
+</VisibilityPart>
+</Property>
+</Kind>
+<Area>
+<Name>栄村</Name>
+<Code>2060200</Code>
 </Area>
 </Item>
 </TimeSeriesInfo>
