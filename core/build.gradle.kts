@@ -28,6 +28,10 @@ android {
 }
 
 dependencies {
+    // Solo il disegno (`DrawScope`, `Path`, `Color`): niente compilatore di
+    // Compose, perche' qui non ci sono funzioni `@Composable`.
+    api(platform(libs.compose.bom))
+    api(libs.compose.ui.graphics)
     api(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
 }
