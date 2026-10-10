@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum
 
 import android.app.Application
 import io.github.noximiliencoxen.caelum.lingua.Lingue
+import io.github.noximiliencoxen.caelum.lingua.inizializza
 
 /**
  * L'applicazione, solo per una cosa: leggere la lingua scelta prima di tutto il

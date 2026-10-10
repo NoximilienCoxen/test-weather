@@ -22,5 +22,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Caelum"
 include(":app")
+// Il codice che telefono e orologio hanno in comune: dati, modello, lingua.
+include(":core")
 // Il generatore del baseline profile: gira solo in CI, su richiesta (§45).
 include(":baselineprofile")
