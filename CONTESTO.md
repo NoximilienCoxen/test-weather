@@ -1614,11 +1614,12 @@ comunque a ogni fotogramma.
    vera e' anche la prima verifica vera - e con lei si giudica anche il
    passaggio fascia -> pallino, che e' un movimento e in uno scatto non si
    giudica.
-8. **I widget si aggiornano con `updatePeriodMillis="1800000"`**, che Android
-   limita a mezz'ora e rimanda in Doze: il widget mostra il meteo di un'ora fa
-   senza dirlo. La risposta moderna e' `WorkManager` periodico, ed e' una
-   dipendenza e un ciclo di vita nuovi - da fare quando i widget saranno stati
-   visti almeno una volta su una home vera.
+8. **FATTA** (verificato il 10 ottobre): `widget/AggiornaWidgetWorker.kt` e'
+   un `CoroutineWorker` periodico (30 minuti, `KEEP`, rete richiesta) piu' uno
+   immediato `appenaPossibile`; si pianifica da `MainActivity` e da
+   `ConfigurableWidgetReceiver`, si annulla quando non resta nessun widget.
+   `updatePeriodMillis="1800000"` resta nei `res/xml/*_widget_info.xml` come
+   rete di sicurezza. Il testo originale diceva "da fare": era vecchio.
 9. **`PredictiveBackHandler`** al posto di `BackHandler`, per il ritorno con
    animazione di Android 14+. Gli strati adesso sono due - allerte e
    impostazioni - piu' l'indietro del feed, che dalla scheda in cui si e'
@@ -1626,15 +1627,12 @@ comunque a ogni fotogramma.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
-4. **Le schede in orizzontale** non sono state pensate: in landscape una
-   schermata piena e' larga e bassa, e cifra, segnaposto e numeri restano
-   impilati dove ci starebbero affiancati. `MeteoLayout.landscape` c'e' gia' e
-   nessuno glielo chiede.
-10. **Quattro schede su sei sono ancora segnaposto**, ed e' voluto: cosa ospita
-   ciascuna si decide una sezione alla volta. `FeedSection.stage` porta la
-   consegna scritta accanto al riquadro vuoto - dall'erba che si piega dalla
-   parte da cui tira all'arco della giornata da percorrere col dito. La pioggia
-   e' uscita dal segnaposto (sezione 8-quinquies); restano aria, vento, sole e luna.
+4. **Superata**: l'app e' solo in verticale (§38, `screenOrientation="portrait"`)
+   e il feed con `MeteoLayout` non esiste piu'; gli schermi larghi sono un
+   problema di larghezza, non di orientamento (§43.3, `LARGHEZZA_SALE`).
+10. **Superata**: aria, vento, sole e luna non sono piu' segnaposto, sono
+   stanze vere di Sala (`ui/sala/rooms/`: `SalaAria`, `SalaVento`, `SalaUv`,
+   `SalaLuna`). `FeedSection` non esiste piu'.
 
 ---
 
@@ -2143,6 +2141,15 @@ nel poligono CAP ("lat,lon" separati da spazi), provato su quello di Tomsk.
 Restano fuori: **Australia** (il BoM blocca le richieste automatiche) e
 **Nuova Zelanda** come lettore proprio (feed MetService vuoto il 5 ottobre;
 intanto passa dall'IFRC, che elenca NZL).
+
+**Nuova Zelanda, riguardato il 10 ottobre.** L'ultima cattura della sonda
+(`ci-artifacts`, 5 ottobre) e' ancora un canale RSS 2.0 senza `<item>`; da
+questo container il feed non si raggiunge (CONNECT 403). Quindi niente lettore:
+vale la regola dei lettori scritti solo su risposte vere. Il feed e' RSS e non
+Atom, per cui `parseFeed` non basta: servira' un piccolo lettore di `<item>`.
+La sonda adesso scarica anche il CAP collegato alla prima voce
+(`nz-metservice-doc`), cosi' il primo giorno con un'allerta dara' una cattura
+completa.
 
 ## 8-quinquies. La scheda della pioggia
 
