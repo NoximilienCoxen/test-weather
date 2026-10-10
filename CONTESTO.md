@@ -1620,10 +1620,19 @@ comunque a ogni fotogramma.
    `ConfigurableWidgetReceiver`, si annulla quando non resta nessun widget.
    `updatePeriodMillis="1800000"` resta nei `res/xml/*_widget_info.xml` come
    rete di sicurezza. Il testo originale diceva "da fare": era vecchio.
-9. **`PredictiveBackHandler`** al posto di `BackHandler`, per il ritorno con
-   animazione di Android 14+. Gli strati adesso sono due - allerte e
-   impostazioni - piu' l'indietro del feed, che dalla scheda in cui si e'
-   riporta alla prima invece di chiudere l'app.
+9. **`PredictiveBackHandler`**: scritto il 10 ottobre, **mai provato in mano**
+   (da questo container non compila nulla di Compose: la prova e' la CI).
+   `enableOnBackInvokedCallback="true"` sulla `MainActivity`, e i cinque pannelli
+   a schermo pieno di `SalaShell` (impostazioni, localita', confronto, legali,
+   bollettino) chiamano `indietroPredittivo()` (`ui/sala/IndietroPredittivo.kt`)
+   **nello stesso punto** dei vecchi `BackHandler`, perche' la precedenza
+   dipende dall'ordine di composizione. Durante il gesto il pannello si
+   rimpicciolisce fino al 90% (`scalaIndietro`, provata in
+   `IndietroPredittivoTest`); annullato torna a 1 con una molla. Restano
+   `BackHandler` semplici il ritorno del pager alla prima sala, la visita
+   widget (`lasciaVisita`) e la guida (`SalaGuida`). **Da guardare in mano su
+   Android 14+**: i cinque pannelli, l'annullo a meta' gesto, e che localita'
+   aperte dalle impostazioni si chiudano per prime.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
