@@ -10,6 +10,112 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e122ad581c01b47feec2c3af7c206ff4ed5904fe.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -117.26,
+                            32.79
+                        ],
+                        [
+                            -116.9,
+                            32.91
+                        ],
+                        [
+                            -116.86,
+                            32.85
+                        ],
+                        [
+                            -117.16,
+                            32.73
+                        ],
+                        [
+                            -117.27,
+                            32.73
+                        ],
+                        [
+                            -117.26,
+                            32.79
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e122ad581c01b47feec2c3af7c206ff4ed5904fe.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.e122ad581c01b47feec2c3af7c206ff4ed5904fe.001.1",
+                "areaDesc": "San Diego, CA",
+                "geocode": {
+                    "SAME": [
+                        "006073"
+                    ],
+                    "UGC": [
+                        "CAC073"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/CAC073"
+                ],
+                "references": [],
+                "sent": "2026-10-10T15:26:00-07:00",
+                "effective": "2026-10-10T15:26:00-07:00",
+                "onset": "2026-10-11T15:00:00-07:00",
+                "expires": "2026-10-11T10:00:00-07:00",
+                "ends": "2026-10-11T16:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Diego CA",
+                "headline": "Flood Advisory issued October 10 at 3:26PM PDT until October 11 at 4:00PM PDT by NWS San Diego CA",
+                "description": "...The National Weather Service in San Diego has issued a Flood\nAdvisory for the following rivers in California...\n\nSan Diego River At Fashion Valley affecting San Diego County.\n\n.Widespread moderate to locally heavy rainfall associated with\nTropical Storm Rachel over the San Diego River basin is expected\ntonight into late Sunday morning. The San Diego River at Fashion\nValley is expected to peak at 8.1 ft (action/monitor stage) just\nbefore Noon on Sunday, falling below action stage Sunday afternoon.\n\nFor the San Diego River...including Fashion Valley...elevated river\nlevels are forecast.\n\n* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...San Diego River at Fashion Valley.\n\n* WHEN...For Sunday afternoon.\n\n* IMPACTS...At 7.5 feet, Action stage. The first real impacts are\nseen on the San Diego River at this level. Low lying roads in and\naround Fashion Valley Mall begin to take on water. Avenida Del Rio\nis the first road to begin flooding.\n\n* ADDITIONAL DETAILS...\n- At 2:15 PM PDT Saturday the stage was 2.3 feet.\n- Bankfull stage is 10.0 feet.\n- Forecast...The river is expected to rise to a crest of 8.1 feet\nlate tomorrow morning.\n- Action stage is 7.5 feet.\n- Flood stage is 10.0 feet.\n- https://www.weather.gov/safety/flood",
+                "instruction": "If you encounter a flooded roadway, turn around and find an\nalternative route.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday morning at 1000 AM PDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSSGX"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS86 KSGX 102226"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD ADVISORY IN EFFECT FOR SUNDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KSGX.FL.Y.0002.261011T2200Z-261011T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T16:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6c60f379419099eb26bf7b29886549bbb5d6a37c.001.1",
             "type": "Feature",
             "geometry": null,
@@ -2201,6 +2307,82 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
+                "areaDesc": "Catalina and Santa Barbara Islands",
+                "geocode": {
+                    "SAME": [
+                        "006037"
+                    ],
+                    "UGC": [
+                        "CAZ087"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ087"
+                ],
+                "references": [],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T15:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-13T14:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 13 at 2:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable southeast facing beaches, such as\nAvalon and Pebbly Beach. For all other beaches and harbors,\nminor to moderate coastal flooding is expected. The most\nDAMAGING and WIDESPREAD coastal flooding risk along southeast\nbeaches will likely be with the Sunday morning high tide due to\nthe expected combination of very high level tide levels\napproaching 8 feet (including additive effect of low barometric\npressure, high surf of 5 to 8 feet, and light to moderate\nrainfall.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is likely across southeast facing beaches\nnear Sunday mornings high tide. Significant beach erosion is\nexpected. There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning, returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
+                "instruction": "Stay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.KLOX.CF.Y.0008.261011T2200Z-261013T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-13T14:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.2",
             "type": "Feature",
             "geometry": null,
@@ -2290,82 +2472,6 @@
                     ],
                     "NationalWeatherService": [
                         "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.1",
-                "areaDesc": "Catalina and Santa Barbara Islands",
-                "geocode": {
-                    "SAME": [
-                        "006037"
-                    ],
-                    "UGC": [
-                        "CAZ087"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ087"
-                ],
-                "references": [],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-11T15:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-13T14:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 13 at 2:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable southeast facing beaches, such as\nAvalon and Pebbly Beach. For all other beaches and harbors,\nminor to moderate coastal flooding is expected. The most\nDAMAGING and WIDESPREAD coastal flooding risk along southeast\nbeaches will likely be with the Sunday morning high tide due to\nthe expected combination of very high level tide levels\napproaching 8 feet (including additive effect of low barometric\npressure, high surf of 5 to 8 feet, and light to moderate\nrainfall.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is likely across southeast facing beaches\nnear Sunday mornings high tide. Significant beach erosion is\nexpected. There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning, returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
-                "instruction": "Stay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KLOX.CF.Y.0008.261011T2200Z-261013T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-13T14:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
                     ]
                 }
             }
@@ -5812,5 +5918,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-10-10T22:18:23+00:00"
+    "updated": "2026-10-10T22:58:39+00:00"
 }
