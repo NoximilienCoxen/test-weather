@@ -82,6 +82,19 @@ class RiepilogoMattinoTest {
     }
 
     @Test
+    fun `dopo un giro il turno dopo cade all'ora esatta`() {
+        val otto = LocalTime.of(8, 0)
+        // Il caso visto sul telefono: un giro alle 00:04 prenotava le 07:29.
+        val adesso = LocalDateTime.of(2026, 10, 12, 0, 4)
+        assertEquals(LocalDateTime.of(2026, 10, 12, 8, 0), adesso.plus(ritardoDopoUnGiro(adesso, otto)))
+        // Un giro partito alle 07:50 per le 08:00 non ne prenota un altro oggi.
+        val primaDellOra = LocalDateTime.of(2026, 10, 12, 7, 50)
+        assertEquals(LocalDateTime.of(2026, 10, 13, 8, 0), primaDellOra.plus(ritardoDopoUnGiro(primaDellOra, otto)))
+        val dopo = LocalDateTime.of(2026, 10, 12, 8, 1)
+        assertEquals(LocalDateTime.of(2026, 10, 13, 8, 0), dopo.plus(ritardoDopoUnGiro(dopo, otto)))
+    }
+
+    @Test
     fun `a mezzogiorno il buongiorno non parte`() {
         val ora = LocalTime.of(7, 0)
         assertTrue(inTempo(sette.plusMinutes(5), ora))

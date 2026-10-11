@@ -283,7 +283,7 @@ fun SalaVentoScreen(
             )
             pressione.scarto?.let { scarto ->
                 Didascalia(
-                    notaPressione(pressione.tendenza, scarto),
+                    notaPressione(pressione.tendenza, scarto, pressione.inAvanti),
                     palette,
                     modifier = Modifier.padding(top = 4.dp),
                 )
@@ -304,7 +304,7 @@ private fun nomeTendenza(t: TendenzaPressione): String = when (t) {
  * Cosa vuol dire, detto con prudenza: "di solito", perche' il barometro e' un
  * indizio e non una previsione - la previsione vera sta nelle altre sale.
  */
-private fun notaPressione(t: TendenzaPressione?, scarto: Double): String {
+private fun notaPressione(t: TendenzaPressione?, scarto: Double, inAvanti: Boolean): String {
     val quanto = String.format(Lingue.locale, "%+.1f", scarto)
     val senso = when (t) {
         TendenzaPressione.SCENDE_IN_FRETTA ->
@@ -315,7 +315,12 @@ private fun notaPressione(t: TendenzaPressione?, scarto: Double): String {
             tr("Si rasserena, ma spesso con vento teso per qualche ora.", "Clearing, often with a brisk wind for a few hours.")
         TendenzaPressione.STABILE, null -> tr("Nessun cambio in vista dal barometro.", "No change in sight from the barometer.")
     }
-    return tr("$quanto hPa nelle ultime tre ore. ", "$quanto hPa over the last three hours. ") + senso
+    val quando = if (inAvanti) {
+        tr("$quanto hPa nelle prossime tre ore. ", "$quanto hPa over the next three hours. ")
+    } else {
+        tr("$quanto hPa nelle ultime tre ore. ", "$quanto hPa over the last three hours. ")
+    }
+    return quando + senso
 }
 
 /**

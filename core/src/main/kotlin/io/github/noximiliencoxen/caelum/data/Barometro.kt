@@ -15,24 +15,29 @@ enum class TendenzaPressione { SALE_IN_FRETTA, SALE, STABILE, SCENDE, SCENDE_IN_
 
 data class Pressione(
     val hPa: Double,
-    /** Quanto e' cambiata nelle tre ore prima; nullo se quelle ore non ci sono. */
+    /** Quanto cambia in tre ore; nullo se nessuna delle due terne c'e'. */
     val scarto: Double?,
     val tendenza: TendenzaPressione?,
+    /** Vero se lo [scarto] guarda alle tre ore **dopo**: vedi [pressioneAlle]. */
+    val inAvanti: Boolean = false,
 )
 
 /**
  * La pressione all'[istante] e la sua tendenza, presa sulle tre ore **prima**.
  *
  * Prima e non dopo, perche' e' cosi' che si legge un barometro: guarda dove sei
- * arrivato, non dove arriverai. Le ore passate di oggi la previsione le ha
- * sempre, da mezzanotte; manca solo la mezzanotte stessa, e li' la tendenza
- * resta nulla invece di inventarne una.
+ * arrivato, non dove arriverai. Ma la previsione comincia a mezzanotte, e fra
+ * mezzanotte e le due le ore prima non ci sono: provato sul telefono, ogni
+ * notte la riga restava senza tendenza. Li' si guarda alle tre ore dopo, e il
+ * testo lo dice.
  */
 fun pressioneAlle(ore: List<HourForecast>, istante: LocalDateTime): Pressione? {
     val adesso = ore.firstOrNull { it.time == istante }?.pressure ?: return null
     val prima = ore.firstOrNull { it.time == istante.minusHours(3) }?.pressure
-    val scarto = prima?.let { adesso - it }
-    return Pressione(adesso, scarto, scarto?.let(::tendenzaDi))
+    if (prima != null) return (adesso - prima).let { Pressione(adesso, it, tendenzaDi(it)) }
+    val dopo = ore.firstOrNull { it.time == istante.plusHours(3) }?.pressure
+        ?: return Pressione(adesso, null, null)
+    return (dopo - adesso).let { Pressione(adesso, it, tendenzaDi(it), inAvanti = true) }
 }
 
 fun tendenzaDi(scarto: Double): TendenzaPressione = when {

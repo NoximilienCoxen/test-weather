@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDateTime
 
@@ -21,7 +22,15 @@ class BarometroTest {
     }
 
     @Test
-    fun `a mezzanotte la tendenza non si inventa`() {
+    fun `a mezzanotte la tendenza guarda avanti`() {
+        val p = pressioneAlle(ore(1015.0, 1014.0, 1013.0, 1012.0), mezzanotte)!!
+        assertEquals(-3.0, p.scarto!!, 1e-9)
+        assertEquals(TendenzaPressione.SCENDE, p.tendenza)
+        assertTrue(p.inAvanti)
+    }
+
+    @Test
+    fun `senza ore ne' prima ne' dopo la tendenza non si inventa`() {
         val p = pressioneAlle(ore(1015.0, 1016.0), mezzanotte)!!
         assertNull(p.scarto)
         assertNull(p.tendenza)

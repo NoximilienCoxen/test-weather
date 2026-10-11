@@ -98,9 +98,7 @@ class RiepilogoMattinoWorker(contesto: Context, parametri: WorkerParameters) : C
             }
         }
 
-        // Il prossimo parte da mezz'ora piu' in la': un giro partito un attimo
-        // prima dell'ora non deve prenotarne un secondo per oggi stesso.
-        prenota(contesto, ritardoFinoA(adesso.plusMinutes(MARGINE_PRIMA + 1), ora), ExistingWorkPolicy.APPEND_OR_REPLACE)
+        prenota(contesto, ritardoDopoUnGiro(adesso, ora), ExistingWorkPolicy.APPEND_OR_REPLACE)
         return Result.success()
     }
 
@@ -109,8 +107,6 @@ class RiepilogoMattinoWorker(contesto: Context, parametri: WorkerParameters) : C
         const val CANALE = "riepilogo_mattino"
         private const val ID_NOTIFICA = 4301
         private const val TENTATIVI = 4
-        private const val MARGINE_PRIMA = 30L
-        private const val MARGINE_DOPO = 120L
 
         /** Le ore fra cui si sceglie, in minuti dalla mezzanotte. */
         val ORE_POSSIBILI = listOf(6 * 60, 7 * 60, 8 * 60, 9 * 60)
@@ -195,6 +191,20 @@ internal fun ritardoFinoA(adesso: LocalDateTime, ora: LocalTime): Duration {
     val oggi = adesso.toLocalDate().atTime(ora)
     val prossimo = if (oggi.isAfter(adesso)) oggi else oggi.plusDays(1)
     return Duration.between(adesso, prossimo)
+}
+
+/**
+ * Il ritardo del turno successivo, prenotato alla fine di un giro.
+ *
+ * L'ora si cerca da mezz'ora piu' in la': un giro partito un attimo prima
+ * dell'ora non deve prenotarne un secondo per oggi stesso. **Ma il ritardo si
+ * conta da adesso**, non da quella mezz'ora dopo: contato da li', provato sul
+ * telefono, il turno usciva trentun minuti prima dell'ora, fuori dalla finestra
+ * di [inTempo], e il riepilogo saltava tutti i giorni.
+ */
+internal fun ritardoDopoUnGiro(adesso: LocalDateTime, ora: LocalTime): Duration {
+    val da = adesso.plusMinutes(31)
+    return Duration.between(adesso, da.plus(ritardoFinoA(da, ora)))
 }
 
 /**

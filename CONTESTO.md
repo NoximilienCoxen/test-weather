@@ -7681,8 +7681,10 @@ risposta di Open-Meteo e nel `Model`, ma nessuna sala li leggeva.
   barometro. Sta in Sala VI, sotto le sei ore del vento: valore, tendenza e una
   riga prudente su cosa vuol dire. La tendenza e' presa sulle **tre ore prima**
   dell'ora scelta (`data/Barometro.kt`, `pressioneAlle`): sotto 1 hPa e'
-  stabile, da 3,5 in su e' "in fretta". A mezzanotte le ore prima non ci sono
-  e la tendenza resta nulla. Le scorte su disco vecchie hanno ancora
+  stabile, da 3,5 in su e' "in fretta". Fra mezzanotte e le due le ore prima
+  non ci sono (la previsione parte da mezzanotte): li' si guardano le tre ore
+  **dopo** e la nota dice "nelle prossime tre ore" (§55). Le scorte su disco
+  vecchie hanno ancora
   `surface_pressure`: si leggono senza pressione finche' non arriva una
   risposta nuova.
 - **Rugiada**: in Sala III, una riga sotto i tre riquadri con umidita',
@@ -7718,11 +7720,14 @@ piu' grave di oggi. Le righe senza niente da dire non ci sono.
   lo schermo. Con un'allerta il tocco apre il bollettino, se no Sala I.
 
 Prove JVM in `app/src/test/.../RiepilogoMattinoTest.kt` (testi, ritardo,
-finestra). **Non provato in mano**: un giro si forza con
-`adb shell cmd jobscheduler run -f io.github.noximiliencoxen.caelum <id>` (il
-numero da `adb shell dumpsys jobscheduler | grep caelum`), ma la notifica esce
-solo dentro la finestra: di pomeriggio il giro salta e si riprenota, ed e'
-giusto cosi'.
+finestra). Un giro si forza con
+`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler io.github.noximiliencoxen.caelum <id>`
+(senza `-n` il comando non trova il lavoro: WorkManager usa uno spazio di nomi
+suo). Il numero e' quello della riga
+`JOB androidx.work.systemjobscheduler:u0aNNN/<id>: ... #RiepilogoMattinoWorker`
+in `adb shell dumpsys jobscheduler io.github.noximiliencoxen.caelum`. La
+notifica esce solo dentro la finestra: di notte il giro salta e si riprenota,
+ed e' giusto cosi'. Prova sul telefono in §55.
 
 ## 53. Le scorciatoie di sistema
 
@@ -7772,3 +7777,45 @@ Prove JVM in `LuceDelleFotoTest` (tramonto vero di Forli', ordine blu/oro,
 durata, Tromsø, soglie del cielo). **Non provato in mano**: che la sala UV,
 piu' lunga di una sezione, scorra bene, e che le due colonne non vadano a capo
 su uno schermo stretto.
+
+## 55. Le sezioni 51-54 provate sul telefono
+
+Il 12 ottobre 2026, poco dopo mezzanotte, su Pixel 9 Pro (Android 17), Noceto,
+build di debug installata con `adb install -r`. Le sale si aprono con gli
+stessi extra delle scorciatoie (`--es sala_widget VENTO`), che cosi' restano
+provati anch'essi.
+
+**Visto e giusto**
+- Sala VI: "1012 hPa · stabile" e la nota; con la sezione in piu' la sala
+  **non scorre**. Sala III: "umidità 79 % · rugiada 13° · gradevole" sotto i
+  riquadri. Sala II: "alba 07:30 · tramonto 18:40 · 7 h di sole" su una riga.
+- Sala VII: "07:17 – 08:15 · ora blu dalle 07:05 · coperto" e "17:56 – 18:54 ·
+  ora blu fino alle 19:06 · cielo libero"; il tramonto delle 18:40 sta dentro
+  l'oro della sera. Le due colonne non vanno a capo, la sala non scorre.
+- Sala I: "condividi" a destra di min e max; il tocco apre il pannello di
+  sistema col testo "Noceto, oggi: 12° – 20°, coperto. Niente pioggia. UV
+  moderato, 4 verso le 14. Allerta gialla per temporali. — Caelum".
+- Scorciatoie: `dumpsys shortcut` le elenca tutte e tre; `--es localita true`
+  apre "Le località".
+- Riquadro: aggiunto con `cmd statusbar add-tile
+  io.github.noximiliencoxen.caelum/.tile.RiquadroMeteo`. SystemUI lo riporta
+  con `label=16° · Coperto, secondaryLabel=Noceto, state=2`. Su Android 17 nella
+  tendina compatta e' un tondo con la sola icona; il tocco (app chiusa prima
+  con `force-stop`) apre `MainActivity`.
+- Riepilogo: l'interruttore si accende, la nota diventa "ogni giorno alle
+  07:00", la scelta dell'ora compare; il lavoro e' prenotato a +6h56m alle
+  00:04, e passando a 08:00 a +7h56m (il vecchio sparisce).
+
+**Due difetti che solo il telefono ha mostrato**
+- **Il riepilogo sarebbe saltato ogni giorno.** Il giro forzato prenotava il
+  successivo a +7h24m, cioe' alle 07:29 per le 08:00: il ritardo si cercava da
+  "adesso + 31 minuti" ma si applicava da adesso, e 07:29 cade fuori dalla
+  finestra di `inTempo` (da 07:30). Adesso lo calcola `ritardoDopoUnGiro`, con
+  la sua prova; rifatto il giro, il turno dopo cade alle 08:00.
+- **A mezzanotte la pressione non aveva tendenza**: la previsione parte da
+  mezzanotte e le tre ore prima non ci sono. Si guarda avanti (§51).
+
+Il buffer `crash` e' rimasto vuoto per tutto il giro.
+
+**Non visto**: la notifica del mattino vera (si vedra' alle 08:00, lasciata
+accesa apposta), le icone delle scorciatoie nel menu del launcher.
