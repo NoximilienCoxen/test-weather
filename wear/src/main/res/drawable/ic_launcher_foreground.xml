@@ -1,0 +1,40 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!--
+        Il sole che sorge dietro la collina: la prima sala, ridotta a icona.
+
+        **Niente nuvola.** Quella di prima, a 48dp, era una macchia dai bordi
+        sfrangiati, e con le sue gobbe sovrapposte in certi lanciatori sembrava
+        un errore di disegno. Un disco e due colline sono tre forme piene che si
+        leggono a qualunque misura.
+
+        **Tinte piatte, dalla tavolozza dell'app**: il sole e' `accent500` con
+        l'alone `accent400`, le colline `verde500` dietro e `verde600` davanti.
+        L'unico "rilievo" e' la sovrapposizione delle due colline.
+
+        **Il disegno che conta sta nel cerchio di raggio 33** attorno a (54,54):
+        il sole va da y 33 a 71 e da x 35 a 73. Le colline arrivano ai bordi
+        apposta - la maschera le taglia, ed e' giusto che sembrino continuare.
+    -->
+
+    <!-- L'alone -->
+    <path
+        android:fillColor="#73F6A06B"
+        android:pathData="M54,27 A24,24 0 1,1 53.99,27 Z" />
+
+    <!-- Il sole -->
+    <path
+        android:fillColor="#FFD67F48"
+        android:pathData="M54,33 A19,19 0 1,1 53.99,33 Z" />
+
+    <!-- La collina di dietro: taglia il sole, che sta sorgendo -->
+    <path
+        android:fillColor="#FF8FA073"
+        android:pathData="M0,70 C18,60 38,58 58,64 C74,69 90,64 108,57 L108,108 L0,108 Z" />
+
+    <!-- La collina davanti -->
+    <path
+        android:fillColor="#FF728157"
+        android:pathData="M0,82 C20,72 42,74 62,81 C80,87 96,84 108,78 L108,108 L0,108 Z" />
+</vector>

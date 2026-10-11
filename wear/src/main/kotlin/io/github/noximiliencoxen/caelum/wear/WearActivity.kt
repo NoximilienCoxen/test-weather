@@ -12,6 +12,7 @@ class WearActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AggiornaOrologio.pianifica(this)
         setContent {
             val stato = viewModel.stato.collectAsStateWithLifecycle().value
             WearApp(stato)
@@ -20,7 +21,8 @@ class WearActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Un aggiornamento a ogni apertura: l'orologio non ha un lavoro periodico (ancora).
+        // Un aggiornamento a ogni apertura; fra un'apertura e l'altra ci pensa
+        // `AggiornaOrologio`, per Tile e complicazione.
         viewModel.aggiorna()
     }
 }

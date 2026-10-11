@@ -109,5 +109,14 @@ dependencies {
     // Il Data Layer: riceve dal telefono localita', unita' e lingua.
     implementation(libs.play.services.wearable)
 
+    // La Tile (pagina da scorrere dal quadrante) e la complicazione per il
+    // quadrante, aggiornate da un lavoro periodico.
+    implementation(libs.wear.tiles)
+    implementation(libs.wear.protolayout)
+    implementation(libs.wear.protolayout.expression)
+    implementation(libs.wear.complications.data.source.ktx)
+    implementation(libs.androidx.concurrent.futures.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+
     testImplementation(libs.junit)
 }
