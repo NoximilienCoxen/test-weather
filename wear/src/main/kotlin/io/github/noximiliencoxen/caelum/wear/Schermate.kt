@@ -40,22 +40,22 @@ fun WearApp(stato: WearViewModel.Stato) {
             when (stato) {
                 WearViewModel.Stato.Caricamento -> Messaggio(tr("Carico il tempo…", "Loading weather…"))
                 WearViewModel.Stato.Errore -> Messaggio(tr("Nessun dato. Serve la rete.", "No data. Network needed."))
-                is WearViewModel.Stato.Pronta -> Pagine(stato.previsione)
+                is WearViewModel.Stato.Pronta -> Pagine(stato.previsione, stato.fahrenheit)
             }
         }
     }
 }
 
 @Composable
-private fun Pagine(previsione: Forecast) {
+private fun Pagine(previsione: Forecast, fahrenheit: Boolean) {
     val pagine = rememberPagerState { 3 }
     // L'ora del posto, non quella dell'orologio: la previsione e' per la' dove si trova.
     val adesso = LocalDateTime.now(ZoneOffset.ofTotalSeconds(previsione.utcOffsetSeconds))
     HorizontalPager(state = pagine, modifier = Modifier.fillMaxSize().clipToBounds()) { pagina ->
         when (pagina) {
-            0 -> PaginaAdesso(previsione, adesso)
-            1 -> PaginaOre(previsione, adesso)
-            else -> PaginaGiorni(previsione)
+            0 -> PaginaAdesso(previsione, adesso, fahrenheit)
+            1 -> PaginaOre(previsione, adesso, fahrenheit)
+            else -> PaginaGiorni(previsione, fahrenheit)
         }
     }
 }
@@ -68,7 +68,7 @@ private fun Messaggio(testo: String) {
 }
 
 @Composable
-private fun PaginaAdesso(previsione: Forecast, adesso: LocalDateTime) {
+private fun PaginaAdesso(previsione: Forecast, adesso: LocalDateTime, fahrenheit: Boolean) {
     val ora = previsione.current
     val glifo = glifoDi(ora.weatherCode, nuvolositaAdesso(previsione, adesso))
     Column(
@@ -78,7 +78,7 @@ private fun PaginaAdesso(previsione: Forecast, adesso: LocalDateTime) {
     ) {
         Text(previsione.place.name, style = MaterialTheme.typography.labelMedium, maxLines = 1)
         IconaGlifo(glifo, notte = !ora.isDay, dimensione = 56.dp)
-        Text(temperatura(ora.temperature), style = MaterialTheme.typography.displaySmall)
+        Text(temperatura(ora.temperature, fahrenheit), style = MaterialTheme.typography.displaySmall)
         Text(
             Wmo.condition(ora.weatherCode),
             style = MaterialTheme.typography.bodySmall,
@@ -89,7 +89,7 @@ private fun PaginaAdesso(previsione: Forecast, adesso: LocalDateTime) {
 }
 
 @Composable
-private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime) {
+private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime, fahrenheit: Boolean) {
     val ore = oreDaAdesso(previsione, adesso)
     ScalingLazyColumn(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         item { Text(tr("Prossime ore", "Next hours"), style = MaterialTheme.typography.labelMedium) }
@@ -98,7 +98,7 @@ private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime) {
                 sinistra = oraBreve(ora.time),
                 glifo = glifoDi(ora.weatherCode, ora.cloudCover),
                 notte = !ora.isDay,
-                centro = temperatura(ora.temperature),
+                centro = temperatura(ora.temperature, fahrenheit),
                 destra = probabilitaPioggia(ora.precipProbability),
             )
         }
@@ -106,7 +106,7 @@ private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime) {
 }
 
 @Composable
-private fun PaginaGiorni(previsione: Forecast) {
+private fun PaginaGiorni(previsione: Forecast, fahrenheit: Boolean) {
     ScalingLazyColumn(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         item { Text(tr("Giorni", "Days"), style = MaterialTheme.typography.labelMedium) }
         items(previsione.days) { giorno ->
@@ -114,7 +114,7 @@ private fun PaginaGiorni(previsione: Forecast) {
                 sinistra = giorno.label,
                 glifo = glifoDi(giorno.weatherCode, null),
                 notte = false,
-                centro = "${temperatura(giorno.tempMax)} ${temperatura(giorno.tempMin)}",
+                centro = "${temperatura(giorno.tempMax, fahrenheit)} ${temperatura(giorno.tempMin, fahrenheit)}",
                 destra = probabilitaPioggia(giorno.precipProbability),
             )
         }

@@ -1,6 +1,7 @@
 package io.github.noximiliencoxen.caelum.lingua
 
 import android.content.Context
+import io.github.noximiliencoxen.caelum.sync.SincronizzaOrologio
 
 /**
  * La scelta della lingua, salvata sul telefono. La parte pura (`Lingue`, `tr`)
@@ -17,4 +18,6 @@ fun Lingue.inizializza(context: Context) {
 fun Lingue.scegli(context: Context, nuova: SceltaLingua) {
     impostaScelta(nuova)
     context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(CHIAVE, nuova.name).apply()
+    // La lingua non passa dal flusso delle impostazioni: l'orologio va avvisato a mano.
+    SincronizzaOrologio.linguaCambiata()
 }

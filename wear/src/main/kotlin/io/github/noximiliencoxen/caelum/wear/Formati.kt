@@ -10,9 +10,12 @@ import kotlin.math.roundToInt
 // Funzioni pure per le schermate dell'orologio: niente Compose e niente Android,
 // cosi' le prove le leggono su una JVM.
 
-/** La temperatura intera col grado, o un trattino quando il dato manca. */
-fun temperatura(valore: Double?): String =
-    valore?.let { "${it.roundToInt()}°" } ?: "–"
+/**
+ * La temperatura intera col grado, o un trattino quando il dato manca.
+ * I dati arrivano in gradi Celsius; con [fahrenheit] si convertono.
+ */
+fun temperatura(valore: Double?, fahrenheit: Boolean = false): String =
+    valore?.let { "${(if (fahrenheit) it * 9.0 / 5.0 + 32.0 else it).roundToInt()}°" } ?: "–"
 
 /** L'ora a due cifre ("07", "15"): sull'orologio non c'e' posto per i minuti. */
 fun oraBreve(momento: LocalDateTime): String =

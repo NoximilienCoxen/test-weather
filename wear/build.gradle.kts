@@ -106,5 +106,8 @@ dependencies {
     implementation(libs.wear.compose.material3)
     implementation(libs.wear.compose.foundation)
 
+    // Il Data Layer: riceve dal telefono localita', unita' e lingua.
+    implementation(libs.play.services.wearable)
+
     testImplementation(libs.junit)
 }

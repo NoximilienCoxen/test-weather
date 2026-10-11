@@ -25,6 +25,13 @@ class FormatiTest {
     }
 
     @Test
+    fun `in Fahrenheit la temperatura si converte`() {
+        assertEquals("32°", temperatura(0.0, fahrenheit = true))
+        assertEquals("70°", temperatura(21.0, fahrenheit = true))
+        assertEquals("-4°", temperatura(-20.0, fahrenheit = true))
+    }
+
+    @Test
     fun `senza dato la temperatura e' un trattino`() {
         assertEquals("–", temperatura(null))
     }

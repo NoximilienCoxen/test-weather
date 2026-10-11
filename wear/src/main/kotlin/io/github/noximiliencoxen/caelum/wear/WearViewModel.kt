@@ -3,10 +3,13 @@ package io.github.noximiliencoxen.caelum.wear
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.SharedPreferences
 import io.github.noximiliencoxen.caelum.data.Forecast
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.ScortaPrevisioni
+import io.github.noximiliencoxen.caelum.data.StatoSincronizzato
 import io.github.noximiliencoxen.caelum.data.WeatherRepository
+import io.github.noximiliencoxen.caelum.lingua.Lingue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,23 +28,41 @@ class WearViewModel(app: Application) : AndroidViewModel(app) {
 
     sealed interface Stato {
         data object Caricamento : Stato
-        data class Pronta(val previsione: Forecast) : Stato
+        data class Pronta(val previsione: Forecast, val fahrenheit: Boolean = false) : Stato
         data object Errore : Stato
     }
 
     private val _stato = MutableStateFlow<Stato>(Stato.Caricamento)
     val stato: StateFlow<Stato> = _stato.asStateFlow()
 
+    // Quando il telefono manda uno stato nuovo si ricarica da solo. Il listener va
+    // tenuto in un campo: SharedPreferences lo tiene con un riferimento debole.
+    private val ascoltatore = SharedPreferences.OnSharedPreferenceChangeListener { _, chiave ->
+        if (chiave == StatoOrologio.CHIAVE_JSON) aggiorna()
+    }
+
     init {
+        StatoOrologio.prefs(app).registerOnSharedPreferenceChangeListener(ascoltatore)
         aggiorna()
     }
 
-    fun aggiorna() {
-        viewModelScope.launch { _stato.value = carica(localita()) }
+    override fun onCleared() {
+        StatoOrologio.prefs(getApplication()).unregisterOnSharedPreferenceChangeListener(ascoltatore)
     }
 
-    // Fino alla sincronizzazione col telefono (fase 3) la localita' e' fissa.
-    private fun localita(): Place = Place.FORLI
+    fun aggiorna() {
+        viewModelScope.launch {
+            // Lo stato del telefono, o Forli' finche' non ne e' arrivato uno.
+            val telefono: StatoSincronizzato? = withContext(Dispatchers.IO) { StatoOrologio.leggi(getApplication()) }
+            telefono?.let { Lingue.impostaScelta(it.sceltaLingua) }
+            val risultato = carica(telefono?.toPlace() ?: Place.FORLI)
+            _stato.value = if (risultato is Stato.Pronta) {
+                risultato.copy(fahrenheit = telefono?.inFahrenheit == true)
+            } else {
+                risultato
+            }
+        }
+    }
 
     private suspend fun carica(place: Place): Stato {
         val repository = WeatherRepository(place)
