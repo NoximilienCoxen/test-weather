@@ -10,6 +10,121 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85abeb941a50e24a85f5c116243e9da446822032.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -114.71,
+                            32.9
+                        ],
+                        [
+                            -115.29,
+                            32.72
+                        ],
+                        [
+                            -115.54,
+                            33.23
+                        ],
+                        [
+                            -114.93,
+                            33.51
+                        ],
+                        [
+                            -114.71,
+                            32.9
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85abeb941a50e24a85f5c116243e9da446822032.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.85abeb941a50e24a85f5c116243e9da446822032.001.1",
+                "areaDesc": "Chuckwalla Mountains; Imperial County Southeast; Imperial Valley; Palo Verde Valley",
+                "geocode": {
+                    "SAME": [
+                        "006025",
+                        "006065"
+                    ],
+                    "UGC": [
+                        "CAZ564",
+                        "CAZ565",
+                        "CAZ567",
+                        "CAZ569"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ564",
+                    "https://api.weather.gov/zones/forecast/CAZ565",
+                    "https://api.weather.gov/zones/forecast/CAZ567",
+                    "https://api.weather.gov/zones/forecast/CAZ569"
+                ],
+                "references": [],
+                "sent": "2026-10-10T17:51:00-07:00",
+                "effective": "2026-10-10T17:51:00-07:00",
+                "onset": "2026-10-10T17:51:00-07:00",
+                "expires": "2026-10-10T19:15:00-07:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Phoenix AZ",
+                "headline": "Special Weather Statement issued October 10 at 5:51PM PDT by NWS Phoenix AZ",
+                "description": "At 551 PM PDT, Doppler radar was tracking a strong thunderstorm 25\nmiles north of Algodones Dunes, or 31 miles east of Brawley, moving\nnorth at 45 mph.\n\nHAZARD...Wind gusts up to 30 mph.\n\nSOURCE...Radar indicated.\n\nIMPACT...Gusty winds could knock down tree limbs and blow around\nunsecured objects.\n\nLocations impacted include...\nCalipatria, Slab City, Glamis, Wiest and Niland.",
+                "instruction": "Monitor the weather situation closely and be alert for threatening\nweather conditions.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSPSR"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS85 KPSR 110051"
+                    ],
+                    "NWSheadline": [
+                        "A STRONG THUNDERSTORM WILL IMPACT CENTRAL IMPERIAL COUNTY UNTIL 715 PM PDT"
+                    ],
+                    "eventMotionDescription": [
+                        "2026-10-11T00:51:00-00:00...storm...160DEG...40KT...33.08,-115.01"
+                    ],
+                    "maxWindGust": [
+                        "30 MPH"
+                    ],
+                    "maxHailSize": [
+                        "0.00"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e122ad581c01b47feec2c3af7c206ff4ed5904fe.001.1",
             "type": "Feature",
             "geometry": {
@@ -192,126 +307,32 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
-                "areaDesc": "San Francisco; Northern Monterey Bay; Southern Monterey Bay and Big Sur Coast",
+                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
+                "areaDesc": "San Francisco Bay Shoreline",
                 "geocode": {
                     "SAME": [
-                        "006075",
-                        "006087",
-                        "006053"
-                    ],
-                    "UGC": [
-                        "CAZ006",
-                        "CAZ529",
-                        "CAZ530"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ006",
-                    "https://api.weather.gov/zones/forecast/CAZ529",
-                    "https://api.weather.gov/zones/forecast/CAZ530"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T15:16:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T14:47:00-07:00",
-                "effective": "2026-10-10T14:47:00-07:00",
-                "onset": "2026-10-10T14:47:00-07:00",
-                "expires": "2026-10-11T07:00:00-07:00",
-                "ends": "2026-10-12T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Beach Hazards Statement issued October 10 at 2:47PM PDT until October 12 at 10:00PM PDT by NWS San Francisco CA",
-                "description": "* WHAT...For the Coastal Flood Advisory, Up to 1.4 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, increased risk of rip currents and sneaker waves\nexpected with breaking waves up to 16 feet.\n\n* WHERE...San Francisco, Northern Monterey Bay and Southern\nMonterey Bay and Big Sur Coast Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 3 PM PDT Tuesday.\nFor the Beach Hazards Statement, remains in effect through\nMonday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical. Dangerous conditions are\nforecast along the shoreline. Hazards include sneaker waves,\nstrong rip currents, and large breaking waves.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, and 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 102147"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 3 PM PDT TUESDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH MONDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.BH.S.0020.000000T0000Z-261013T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T22:00:00-07:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.001.2,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.001.1,2026-10-08T13:03:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
-                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast",
-                "geocode": {
-                    "SAME": [
-                        "006041",
-                        "006097",
+                        "006001",
+                        "006013",
                         "006081",
-                        "006087"
+                        "006085"
                     ],
                     "UGC": [
-                        "CAZ505",
-                        "CAZ509"
+                        "CAZ508"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ505",
-                    "https://api.weather.gov/zones/forecast/CAZ509"
+                    "https://api.weather.gov/zones/forecast/CAZ508"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.004.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.003.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-10-09T15:16:00-07:00"
                     }
@@ -320,95 +341,7 @@
                 "effective": "2026-10-10T14:47:00-07:00",
                 "onset": "2026-10-10T14:47:00-07:00",
                 "expires": "2026-10-11T07:00:00-07:00",
-                "ends": "2026-10-12T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Beach Hazards Statement issued October 10 at 2:47PM PDT until October 12 at 10:00PM PDT by NWS San Francisco CA",
-                "description": "* WHAT...Increased risk of rip currents and sneaker waves\nexpected with breaking waves up to 16 feet.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore and San Francisco Peninsula Coast Counties.\n\n* WHEN...From Saturday morning through Monday evening.\n\n* IMPACTS...Dangerous conditions are forecast along the\nshoreline. Hazards include sneaker waves, strong rip currents,\nand large breaking waves.",
-                "instruction": "Stay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 102147"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH MONDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.BH.S.0020.000000T0000Z-261013T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T22:00:00-07:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.004.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.004.1,2026-10-08T13:03:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
-                "areaDesc": "North Bay Interior Valleys",
-                "geocode": {
-                    "SAME": [
-                        "006041",
-                        "006055",
-                        "006097"
-                    ],
-                    "UGC": [
-                        "CAZ506"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ506"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T15:16:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T14:47:00-07:00",
-                "effective": "2026-10-10T14:47:00-07:00",
-                "onset": "2026-10-10T14:47:00-07:00",
-                "expires": "2026-10-11T07:00:00-07:00",
-                "ends": "2026-10-14T16:00:00-07:00",
+                "ends": "2026-10-13T15:00:00-07:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -418,8 +351,8 @@
                 "event": "Coastal Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued October 10 at 2:47PM PDT until October 14 at 4:00PM PDT by NWS San Francisco CA",
-                "description": "* WHAT...Up to 1.4 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...Bayshore locations along the San Pablo Bay.\n\n* WHEN...Until 4 PM PDT Wednesday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical. Dangerous conditions are\nforecast along the shoreline. Hazards include sneaker waves,\nstrong rip currents, and large breaking waves.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13, and 0.9 ft above normal (6.7 ft MLLW) at 1:46 PM\nWednesday 10/14. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
+                "headline": "Coastal Flood Advisory issued October 10 at 2:47PM PDT until October 13 at 3:00PM PDT by NWS San Francisco CA",
+                "description": "* WHAT...Up to 1.4 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...Bayshore locations along the San Francisco and\nMonterey Bays.\n\n* WHEN...From 9 AM Friday to 3 PM PDT Tuesday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, and 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
                 "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
                 "response": "Monitor",
                 "note": null,
@@ -431,7 +364,7 @@
                         "WHUS46 KMTR 102147"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PDT WEDNESDAY"
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 3 PM PDT TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -439,13 +372,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KMTR.CF.Y.0012.000000T0000Z-261014T2300Z/"
+                        "/O.CON.KMTR.CF.Y.0013.000000T0000Z-261013T2200Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-14T16:00:00-07:00"
+                        "2026-10-13T15:00:00-07:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.002.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.002.1,2026-10-08T13:03:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ae2ebe2f5bd5a06768ab277e7d14bff22d75e9f.002.1,2026-10-07T12:33:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2e99202f45ace853dfaaa9907574452c2fd759fd.001.1,2026-10-06T22:50:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ac28b6adc8263737fcf5282c8f698f817cdc79d.001.1,2026-10-05T23:54:00-07:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.003.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.003.1,2026-10-08T13:03:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ae2ebe2f5bd5a06768ab277e7d14bff22d75e9f.001.1,2026-10-07T12:33:00-07:00"
                     ]
                 },
                 "scope": "Public",
@@ -555,32 +488,31 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.003.1",
-                "areaDesc": "San Francisco Bay Shoreline",
+                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.002.1",
+                "areaDesc": "North Bay Interior Valleys",
                 "geocode": {
                     "SAME": [
-                        "006001",
-                        "006013",
-                        "006081",
-                        "006085"
+                        "006041",
+                        "006055",
+                        "006097"
                     ],
                     "UGC": [
-                        "CAZ508"
+                        "CAZ506"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ508"
+                    "https://api.weather.gov/zones/forecast/CAZ506"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.003.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.002.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-10-09T15:16:00-07:00"
                     }
@@ -589,7 +521,7 @@
                 "effective": "2026-10-10T14:47:00-07:00",
                 "onset": "2026-10-10T14:47:00-07:00",
                 "expires": "2026-10-11T07:00:00-07:00",
-                "ends": "2026-10-13T15:00:00-07:00",
+                "ends": "2026-10-14T16:00:00-07:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -599,8 +531,8 @@
                 "event": "Coastal Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued October 10 at 2:47PM PDT until October 13 at 3:00PM PDT by NWS San Francisco CA",
-                "description": "* WHAT...Up to 1.4 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...Bayshore locations along the San Francisco and\nMonterey Bays.\n\n* WHEN...From 9 AM Friday to 3 PM PDT Tuesday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, and 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
+                "headline": "Coastal Flood Advisory issued October 10 at 2:47PM PDT until October 14 at 4:00PM PDT by NWS San Francisco CA",
+                "description": "* WHAT...Up to 1.4 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...Bayshore locations along the San Pablo Bay.\n\n* WHEN...Until 4 PM PDT Wednesday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical. Dangerous conditions are\nforecast along the shoreline. Hazards include sneaker waves,\nstrong rip currents, and large breaking waves.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13, and 0.9 ft above normal (6.7 ft MLLW) at 1:46 PM\nWednesday 10/14. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
                 "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
                 "response": "Monitor",
                 "note": null,
@@ -612,7 +544,7 @@
                         "WHUS46 KMTR 102147"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 3 PM PDT TUESDAY"
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PDT WEDNESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -620,13 +552,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KMTR.CF.Y.0013.000000T0000Z-261013T2200Z/"
+                        "/O.CON.KMTR.CF.Y.0012.000000T0000Z-261014T2300Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-13T15:00:00-07:00"
+                        "2026-10-14T16:00:00-07:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.003.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.003.1,2026-10-08T13:03:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ae2ebe2f5bd5a06768ab277e7d14bff22d75e9f.001.1,2026-10-07T12:33:00-07:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.002.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.002.1,2026-10-08T13:03:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ae2ebe2f5bd5a06768ab277e7d14bff22d75e9f.002.1,2026-10-07T12:33:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2e99202f45ace853dfaaa9907574452c2fd759fd.001.1,2026-10-06T22:50:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ac28b6adc8263737fcf5282c8f698f817cdc79d.001.1,2026-10-05T23:54:00-07:00"
                     ]
                 },
                 "scope": "Public",
@@ -639,6 +571,189 @@
                     ],
                     "NationalWeatherService": [
                         "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.004.1",
+                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast",
+                "geocode": {
+                    "SAME": [
+                        "006041",
+                        "006097",
+                        "006081",
+                        "006087"
+                    ],
+                    "UGC": [
+                        "CAZ505",
+                        "CAZ509"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ505",
+                    "https://api.weather.gov/zones/forecast/CAZ509"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T15:16:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T14:47:00-07:00",
+                "effective": "2026-10-10T14:47:00-07:00",
+                "onset": "2026-10-10T14:47:00-07:00",
+                "expires": "2026-10-11T07:00:00-07:00",
+                "ends": "2026-10-12T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Beach Hazards Statement issued October 10 at 2:47PM PDT until October 12 at 10:00PM PDT by NWS San Francisco CA",
+                "description": "* WHAT...Increased risk of rip currents and sneaker waves\nexpected with breaking waves up to 16 feet.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore and San Francisco Peninsula Coast Counties.\n\n* WHEN...From Saturday morning through Monday evening.\n\n* IMPACTS...Dangerous conditions are forecast along the\nshoreline. Hazards include sneaker waves, strong rip currents,\nand large breaking waves.",
+                "instruction": "Stay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 102147"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH MONDAY EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.BH.S.0020.000000T0000Z-261013T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T22:00:00-07:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.004.1,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.004.1,2026-10-08T13:03:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.bafab02fdc4868b4893dac4f26862e48a7432545.001.2",
+                "areaDesc": "San Francisco; Northern Monterey Bay; Southern Monterey Bay and Big Sur Coast",
+                "geocode": {
+                    "SAME": [
+                        "006075",
+                        "006087",
+                        "006053"
+                    ],
+                    "UGC": [
+                        "CAZ006",
+                        "CAZ529",
+                        "CAZ530"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ006",
+                    "https://api.weather.gov/zones/forecast/CAZ529",
+                    "https://api.weather.gov/zones/forecast/CAZ530"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.28d1eba05854a28fdda6b5dbd48e062379aa3692.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T15:16:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T14:47:00-07:00",
+                "effective": "2026-10-10T14:47:00-07:00",
+                "onset": "2026-10-10T14:47:00-07:00",
+                "expires": "2026-10-11T07:00:00-07:00",
+                "ends": "2026-10-12T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Beach Hazards Statement issued October 10 at 2:47PM PDT until October 12 at 10:00PM PDT by NWS San Francisco CA",
+                "description": "* WHAT...For the Coastal Flood Advisory, Up to 1.4 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, increased risk of rip currents and sneaker waves\nexpected with breaking waves up to 16 feet.\n\n* WHERE...San Francisco, Northern Monterey Bay and Southern\nMonterey Bay and Big Sur Coast Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 3 PM PDT Tuesday.\nFor the Beach Hazards Statement, remains in effect through\nMonday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. High tides will result in\nflooding along coastal trails, cut off access to some low-\nlying beaches and coastal areas, and bring water and waves\nfarther up the beach than typical. Dangerous conditions are\nforecast along the shoreline. Hazards include sneaker waves,\nstrong rip currents, and large breaking waves.\n\n* ADDITIONAL DETAILS...At the San Francisco tidal gauge, high tide\nis expected to be 1.4 ft above normal (7.3 ft MLLW) at 12:18 PM\nSunday 10/11, 1.2 ft above normal (7.1 ft MLLW) at 12:46 PM\nMonday 10/12, and 1.1 ft above normal (7.0 ft MLLW) at 1:14 PM\nTuesday 10/13. These predictions include up to 1.2 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 102147"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 3 PM PDT TUESDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH MONDAY EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.BH.S.0020.000000T0000Z-261013T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T22:00:00-07:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dccbc7c8a304a3b21e8e37ce0815d5563d2c00f4.001.2,2026-10-08T21:45:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0d67b6c22984acee4a28f52a9b83794eee307a15.001.1,2026-10-08T13:03:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
                     ]
                 }
             }
@@ -718,6 +833,284 @@
                     ],
                     "NationalWeatherService": [
                         "HLS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -117.474,
+                            33.363
+                        ],
+                        [
+                            -117.459,
+                            33.36
+                        ],
+                        [
+                            -117.444,
+                            33.364
+                        ],
+                        [
+                            -117.434,
+                            33.376
+                        ],
+                        [
+                            -117.297,
+                            33.279
+                        ],
+                        [
+                            -117.209,
+                            33.165
+                        ],
+                        [
+                            -117.189,
+                            33.106
+                        ],
+                        [
+                            -117.172,
+                            33.087
+                        ],
+                        [
+                            -117.163,
+                            33.059
+                        ],
+                        [
+                            -117.137,
+                            33.022
+                        ],
+                        [
+                            -117.122,
+                            32.969
+                        ],
+                        [
+                            -117.118,
+                            32.925
+                        ],
+                        [
+                            -117.091,
+                            32.88
+                        ],
+                        [
+                            -117.08,
+                            32.845
+                        ],
+                        [
+                            -117.027,
+                            32.758
+                        ],
+                        [
+                            -117.011,
+                            32.747
+                        ],
+                        [
+                            -116.968,
+                            32.69
+                        ],
+                        [
+                            -116.907,
+                            32.578
+                        ],
+                        [
+                            -116.887,
+                            32.555
+                        ],
+                        [
+                            -117.125,
+                            32.536
+                        ],
+                        [
+                            -117.245,
+                            32.667
+                        ],
+                        [
+                            -117.258,
+                            32.726
+                        ],
+                        [
+                            -117.254,
+                            32.758
+                        ],
+                        [
+                            -117.257,
+                            32.796
+                        ],
+                        [
+                            -117.281,
+                            32.822
+                        ],
+                        [
+                            -117.282,
+                            32.832
+                        ],
+                        [
+                            -117.279,
+                            32.847
+                        ],
+                        [
+                            -117.264,
+                            32.849
+                        ],
+                        [
+                            -117.252,
+                            32.874
+                        ],
+                        [
+                            -117.272,
+                            32.979
+                        ],
+                        [
+                            -117.28,
+                            33.012
+                        ],
+                        [
+                            -117.297,
+                            33.037
+                        ],
+                        [
+                            -117.328,
+                            33.122
+                        ],
+                        [
+                            -117.36,
+                            33.165
+                        ],
+                        [
+                            -117.406,
+                            33.213
+                        ],
+                        [
+                            -117.446,
+                            33.269
+                        ],
+                        [
+                            -117.509,
+                            33.337
+                        ],
+                        [
+                            -117.548,
+                            33.365
+                        ],
+                        [
+                            -117.596,
+                            33.387
+                        ],
+                        [
+                            -117.585,
+                            33.428
+                        ],
+                        [
+                            -117.564,
+                            33.431
+                        ],
+                        [
+                            -117.532,
+                            33.421
+                        ],
+                        [
+                            -117.516,
+                            33.391
+                        ],
+                        [
+                            -117.488,
+                            33.377
+                        ],
+                        [
+                            -117.474,
+                            33.363
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
+                "areaDesc": "San Diego County Coastal Areas",
+                "geocode": {
+                    "SAME": [
+                        "006073"
+                    ],
+                    "UGC": [
+                        "CAZ043"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ043"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fb26f91ea2f2d4e7a9bc21f523c0f30158e622b9.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.fb26f91ea2f2d4e7a9bc21f523c0f30158e622b9.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T02:26:00-07:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e802249bb9fd3adefe9daa8e50843a11cbb0ab78.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.e802249bb9fd3adefe9daa8e50843a11cbb0ab78.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T08:02:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T13:54:00-07:00",
+                "effective": "2026-10-10T13:54:00-07:00",
+                "onset": "2026-10-10T13:54:00-07:00",
+                "expires": "2026-10-10T22:00:00-07:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Tropical Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Diego CA",
+                "headline": "Tropical Storm Watch issued October 10 at 1:54PM PDT by NWS San Diego CA",
+                "description": "* LOCATIONS AFFECTED\n- Oceanside\n- Carlsbad\n- Chula Vista\n- San Diego\n\n* WIND\n- LATEST LOCAL FORECAST: Below tropical storm force wind\n- Peak Wind Forecast: 10-20 mph with gusts to 30 mph\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Potential for wind 39\nto 57 mph\n- The wind threat has remained nearly steady from the\nprevious assessment.\n- PLAN: Plan for hazardous wind of equivalent tropical storm\nforce.\n- PREPARE: Efforts to protect property should now be\nunderway. Prepare for limited wind damage.\n- ACT: Act now to complete preparations before the wind\nbecomes hazardous.\n\n- POTENTIAL IMPACTS: Limited\n- Damage to porches, awnings, carports, sheds, and unanchored\nmobile homes. Unsecured lightweight objects blown about.\n- Many large tree limbs broken off. A few trees snapped or\nuprooted, but with greater numbers in places where trees\nare shallow rooted, especially in coastal and valley\nlocations that don't typically experience strong winds.\nSome fences and roadway signs blown over.\n- A few roads impassable from debris, particularly within\nurban or heavily wooded places. Hazardous driving\nconditions on bridges and other elevated roadways.\n- Scattered power and communications outages.\n\n* STORM SURGE\n- While true storm surge is unlikely, significant coastal flooding\nand beach erosion from tides over 7 feet, high surf, and\nincreased onshore winds expected.\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Little to no storm\nsurge flooding\n- PLAN: Coastal flooding, rough surf, coastal erosion, and\nlife-threatening rip currents are possible.\n- PREPARE: Do not make plans to go to the beach. Take necessary\nactions to protect flood prone property.\n- ACT: Follow the instructions of local officials. Monitor\nforecasts.\n\n- POTENTIAL IMPACTS: Significant coastal flooding and beach erosion\npossible. Dangerous swimming conditions due to high surf and\nstrong rip currents.\n\n* FLOODING RAIN\n- LATEST LOCAL FORECAST: Flood Watch is in effect\n- Peak Rainfall Amounts: Additional around 1 inch\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Potential for major\nflooding rain\n- The flooding rain threat has remained nearly steady from\nthe previous assessment.\n- PLAN: Emergency plans should include the potential for\nmajor flooding from heavy rain. Evacuations and rescues are\nlikely.\n- PREPARE: Strongly consider protective actions, especially\nif you are in an area vulnerable to flooding.\n- ACT: Heed any flood watches and warnings. Failure to take\naction will likely result in serious injury or loss of life.\n\n- POTENTIAL IMPACTS: Extensive\n- Major rainfall flooding may prompt many evacuations and\nrescues.\n- Rivers and tributaries may rapidly overflow their banks in\nmultiple places. Small streams, creeks, canals, arroyos,\nand ditches may become dangerous rivers. In mountain areas,\ndestructive runoff may run quickly down valleys while\nincreasing susceptibility to rockslides and mudslides.\nFlood control systems and barriers may become stressed.\n- Flood waters can enter many structures within multiple\ncommunities, some structures becoming uninhabitable or\nwashed away. Many places where flood waters may cover\nescape routes. Streets and parking lots become rivers of\nmoving water with underpasses submerged. Driving conditions\nbecome dangerous. Many road and bridge closures with some\nweakened or washed out.\n\n* TORNADO\n- LATEST LOCAL FORECAST:\n- Situation is unfavorable for tornadoes\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Tornadoes not expected\n- The tornado threat has remained nearly steady from the\nprevious assessment.\n- PLAN: Tornadoes are not expected. Showers and thunderstorms\nwith gusty winds may still occur.\n- PREPARE: Little to no preparations needed to protect\nagainst tornadoes at this time. Keep informed of the latest\ntornado situation.\n- ACT: Listen for changes in the forecast.\n\n- POTENTIAL IMPACTS: Little to None\n- Little to no potential impacts from tornadoes.\n\n* FOR MORE INFORMATION:\n- sdcountyemergency.com",
+                "instruction": null,
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "TCVSGX"
+                    ],
+                    "WMOidentifier": [
+                        "WTUS86 KSGX 102054"
+                    ],
+                    "NWSheadline": [
+                        "TROPICAL STORM WATCH REMAINS IN EFFECT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KSGX.TR.A.2018.000000T0000Z-000000T0000Z/"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ea67ee397cf3cb9fe10392f2c915cff0ccd9e94b.001.1,2026-10-09T20:23:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.324721bfaa4015d62e9a6c9452874147669cf85f.001.1,2026-10-09T13:57:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.51ae8b323fdc74185f224157edbf4f4ad6e2ae8b.001.1,2026-10-09T07:59:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "TRA"
+                    ],
+                    "NationalWeatherService": [
+                        "TRA"
                     ]
                 }
             }
@@ -2029,253 +2422,156 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
             "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -117.474,
-                            33.363
-                        ],
-                        [
-                            -117.459,
-                            33.36
-                        ],
-                        [
-                            -117.444,
-                            33.364
-                        ],
-                        [
-                            -117.434,
-                            33.376
-                        ],
-                        [
-                            -117.297,
-                            33.279
-                        ],
-                        [
-                            -117.209,
-                            33.165
-                        ],
-                        [
-                            -117.189,
-                            33.106
-                        ],
-                        [
-                            -117.172,
-                            33.087
-                        ],
-                        [
-                            -117.163,
-                            33.059
-                        ],
-                        [
-                            -117.137,
-                            33.022
-                        ],
-                        [
-                            -117.122,
-                            32.969
-                        ],
-                        [
-                            -117.118,
-                            32.925
-                        ],
-                        [
-                            -117.091,
-                            32.88
-                        ],
-                        [
-                            -117.08,
-                            32.845
-                        ],
-                        [
-                            -117.027,
-                            32.758
-                        ],
-                        [
-                            -117.011,
-                            32.747
-                        ],
-                        [
-                            -116.968,
-                            32.69
-                        ],
-                        [
-                            -116.907,
-                            32.578
-                        ],
-                        [
-                            -116.887,
-                            32.555
-                        ],
-                        [
-                            -117.125,
-                            32.536
-                        ],
-                        [
-                            -117.245,
-                            32.667
-                        ],
-                        [
-                            -117.258,
-                            32.726
-                        ],
-                        [
-                            -117.254,
-                            32.758
-                        ],
-                        [
-                            -117.257,
-                            32.796
-                        ],
-                        [
-                            -117.281,
-                            32.822
-                        ],
-                        [
-                            -117.282,
-                            32.832
-                        ],
-                        [
-                            -117.279,
-                            32.847
-                        ],
-                        [
-                            -117.264,
-                            32.849
-                        ],
-                        [
-                            -117.252,
-                            32.874
-                        ],
-                        [
-                            -117.272,
-                            32.979
-                        ],
-                        [
-                            -117.28,
-                            33.012
-                        ],
-                        [
-                            -117.297,
-                            33.037
-                        ],
-                        [
-                            -117.328,
-                            33.122
-                        ],
-                        [
-                            -117.36,
-                            33.165
-                        ],
-                        [
-                            -117.406,
-                            33.213
-                        ],
-                        [
-                            -117.446,
-                            33.269
-                        ],
-                        [
-                            -117.509,
-                            33.337
-                        ],
-                        [
-                            -117.548,
-                            33.365
-                        ],
-                        [
-                            -117.596,
-                            33.387
-                        ],
-                        [
-                            -117.585,
-                            33.428
-                        ],
-                        [
-                            -117.564,
-                            33.431
-                        ],
-                        [
-                            -117.532,
-                            33.421
-                        ],
-                        [
-                            -117.516,
-                            33.391
-                        ],
-                        [
-                            -117.488,
-                            33.377
-                        ],
-                        [
-                            -117.474,
-                            33.363
-                        ]
-                    ]
-                ]
-            },
+            "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.5f597c2456fecf44bb3ddfab6efd89d7528b48c0.001.1",
-                "areaDesc": "San Diego County Coastal Areas",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
+                "areaDesc": "Ventura County Beaches",
                 "geocode": {
                     "SAME": [
-                        "006073"
+                        "006111"
                     ],
                     "UGC": [
-                        "CAZ043"
+                        "CAZ354"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ043"
+                    "https://api.weather.gov/zones/forecast/CAZ354"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fb26f91ea2f2d4e7a9bc21f523c0f30158e622b9.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.fb26f91ea2f2d4e7a9bc21f523c0f30158e622b9.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.003.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T02:26:00-07:00"
+                        "sent": "2026-10-09T14:18:00-07:00"
                     },
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e802249bb9fd3adefe9daa8e50843a11cbb0ab78.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.e802249bb9fd3adefe9daa8e50843a11cbb0ab78.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.003.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.003.2",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T08:02:00-07:00"
+                        "sent": "2026-10-10T01:57:00-07:00"
                     }
                 ],
-                "sent": "2026-10-10T13:54:00-07:00",
-                "effective": "2026-10-10T13:54:00-07:00",
-                "onset": "2026-10-10T13:54:00-07:00",
-                "expires": "2026-10-10T22:00:00-07:00",
-                "ends": null,
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T06:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-11T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 11 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT... For the Coastal Flood Advisory, minor to moderate\ncoastal flooding can be expected near times of high tide,\nespecially with the Sunday morning high tide. Localized damage\nis possible in most vulnerable low-lying areas. For the High\nSurf Advisory, large breaking waves of 5 to 8 feet with\ndangerous rip currents is expected on Sunday.\n\n* WHERE...Ventura County Beaches.\n\n* WHEN...For the Coastal Flood Advisory, until 2 PM PDT Tuesday.\nFor the High Surf Advisory, from 6 AM to 10 PM PDT Sunday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is possible during the Sunday morning high\ntide which is expected to peak around 8 feet. The most\nvulnerable locations to coastal flooding will be low-lying areas\nfrom Ventura to LA county line. Localized pockets of Highway 1\nbetween Point Mugu and LA county line could see significant surf\nspray and some sea-water on the roadway. Significant beach\nerosion is expected. There is an increased risk for ocean\ndrowning. Rip currents can pull swimmers and surfers out to sea.\nLarge breaking waves can cause injury, wash people off beaches\nand rocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides approaching 8 feet will be\nlikely on Sunday morning (nearly 2 feet above astronomical high\ntide of 6.1 feet), returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
+                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 2 PM PDT TUESDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM TO 10 PM PDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261012T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T22:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
+                "areaDesc": "Catalina and Santa Barbara Islands",
+                "geocode": {
+                    "SAME": [
+                        "006037"
+                    ],
+                    "UGC": [
+                        "CAZ087"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ087"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T14:18:00-07:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T01:57:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-10T13:51:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-11T15:00:00-07:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
                 "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Tropical Storm Watch",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Diego CA",
-                "headline": "Tropical Storm Watch issued October 10 at 1:54PM PDT by NWS San Diego CA",
-                "description": "* LOCATIONS AFFECTED\n- Oceanside\n- Carlsbad\n- Chula Vista\n- San Diego\n\n* WIND\n- LATEST LOCAL FORECAST: Below tropical storm force wind\n- Peak Wind Forecast: 10-20 mph with gusts to 30 mph\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Potential for wind 39\nto 57 mph\n- The wind threat has remained nearly steady from the\nprevious assessment.\n- PLAN: Plan for hazardous wind of equivalent tropical storm\nforce.\n- PREPARE: Efforts to protect property should now be\nunderway. Prepare for limited wind damage.\n- ACT: Act now to complete preparations before the wind\nbecomes hazardous.\n\n- POTENTIAL IMPACTS: Limited\n- Damage to porches, awnings, carports, sheds, and unanchored\nmobile homes. Unsecured lightweight objects blown about.\n- Many large tree limbs broken off. A few trees snapped or\nuprooted, but with greater numbers in places where trees\nare shallow rooted, especially in coastal and valley\nlocations that don't typically experience strong winds.\nSome fences and roadway signs blown over.\n- A few roads impassable from debris, particularly within\nurban or heavily wooded places. Hazardous driving\nconditions on bridges and other elevated roadways.\n- Scattered power and communications outages.\n\n* STORM SURGE\n- While true storm surge is unlikely, significant coastal flooding\nand beach erosion from tides over 7 feet, high surf, and\nincreased onshore winds expected.\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Little to no storm\nsurge flooding\n- PLAN: Coastal flooding, rough surf, coastal erosion, and\nlife-threatening rip currents are possible.\n- PREPARE: Do not make plans to go to the beach. Take necessary\nactions to protect flood prone property.\n- ACT: Follow the instructions of local officials. Monitor\nforecasts.\n\n- POTENTIAL IMPACTS: Significant coastal flooding and beach erosion\npossible. Dangerous swimming conditions due to high surf and\nstrong rip currents.\n\n* FLOODING RAIN\n- LATEST LOCAL FORECAST: Flood Watch is in effect\n- Peak Rainfall Amounts: Additional around 1 inch\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Potential for major\nflooding rain\n- The flooding rain threat has remained nearly steady from\nthe previous assessment.\n- PLAN: Emergency plans should include the potential for\nmajor flooding from heavy rain. Evacuations and rescues are\nlikely.\n- PREPARE: Strongly consider protective actions, especially\nif you are in an area vulnerable to flooding.\n- ACT: Heed any flood watches and warnings. Failure to take\naction will likely result in serious injury or loss of life.\n\n- POTENTIAL IMPACTS: Extensive\n- Major rainfall flooding may prompt many evacuations and\nrescues.\n- Rivers and tributaries may rapidly overflow their banks in\nmultiple places. Small streams, creeks, canals, arroyos,\nand ditches may become dangerous rivers. In mountain areas,\ndestructive runoff may run quickly down valleys while\nincreasing susceptibility to rockslides and mudslides.\nFlood control systems and barriers may become stressed.\n- Flood waters can enter many structures within multiple\ncommunities, some structures becoming uninhabitable or\nwashed away. Many places where flood waters may cover\nescape routes. Streets and parking lots become rivers of\nmoving water with underpasses submerged. Driving conditions\nbecome dangerous. Many road and bridge closures with some\nweakened or washed out.\n\n* TORNADO\n- LATEST LOCAL FORECAST:\n- Situation is unfavorable for tornadoes\n\n- THREAT TO LIFE AND PROPERTY THAT INCLUDES TYPICAL FORECAST\nUNCERTAINTY IN TRACK, SIZE AND INTENSITY: Tornadoes not expected\n- The tornado threat has remained nearly steady from the\nprevious assessment.\n- PLAN: Tornadoes are not expected. Showers and thunderstorms\nwith gusty winds may still occur.\n- PREPARE: Little to no preparations needed to protect\nagainst tornadoes at this time. Keep informed of the latest\ntornado situation.\n- ACT: Listen for changes in the forecast.\n\n- POTENTIAL IMPACTS: Little to None\n- Little to no potential impacts from tornadoes.\n\n* FOR MORE INFORMATION:\n- sdcountyemergency.com",
-                "instruction": null,
-                "response": "Prepare",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Coastal Flood Warning issued October 10 at 1:51PM PDT until October 11 at 3:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable southeast facing beaches, such as\nAvalon and Pebbly Beach. For all other beaches and harbors,\nminor to moderate coastal flooding is expected. The most\nDAMAGING and WIDESPREAD coastal flooding risk along southeast\nbeaches will likely be with the Sunday morning high tide due to\nthe expected combination of very high level tide levels\napproaching 8 feet (including additive effect of low barometric\npressure, high surf of 5 to 8 feet, and light to moderate\nrainfall.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is likely across southeast facing beaches\nnear Sunday mornings high tide. Significant beach erosion is\nexpected. There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning, returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
+                "instruction": "Stay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "TCVSGX"
+                        "CFWLOX"
                     ],
                     "WMOidentifier": [
-                        "WTUS86 KSGX 102054"
+                        "WHUS46 KLOX 102051"
                     ],
                     "NWSheadline": [
-                        "TROPICAL STORM WATCH REMAINS IN EFFECT"
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -2286,10 +2582,10 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.CON.KSGX.TR.A.2018.000000T0000Z-000000T0000Z/"
+                        "/O.CON.KLOX.CF.W.0001.000000T0000Z-261011T2200Z/"
                     ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ea67ee397cf3cb9fe10392f2c915cff0ccd9e94b.001.1,2026-10-09T20:23:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.324721bfaa4015d62e9a6c9452874147669cf85f.001.1,2026-10-09T13:57:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.51ae8b323fdc74185f224157edbf4f4ad6e2ae8b.001.1,2026-10-09T07:59:00-07:00"
+                    "eventEndingTime": [
+                        "2026-10-11T15:00:00-07:00"
                     ]
                 },
                 "scope": "Public",
@@ -2298,10 +2594,445 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "TRA"
+                        "CFW"
                     ],
                     "NationalWeatherService": [
-                        "TRA"
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
+                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
+                "geocode": {
+                    "SAME": [
+                        "006079",
+                        "006083"
+                    ],
+                    "UGC": [
+                        "CAZ340",
+                        "CAZ346"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ340",
+                    "https://api.weather.gov/zones/forecast/CAZ346"
+                ],
+                "references": [],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T06:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-12T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
+                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.KLOX.CF.Y.0008.261011T1300Z-261013T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T22:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
+                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
+                "geocode": {
+                    "SAME": [
+                        "006079",
+                        "006083"
+                    ],
+                    "UGC": [
+                        "CAZ340",
+                        "CAZ346"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ340",
+                    "https://api.weather.gov/zones/forecast/CAZ346"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T14:18:00-07:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T01:57:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T06:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-12T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
+                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261013T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T22:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
+                "areaDesc": "Santa Barbara County Southwestern Coast; Santa Barbara County Southeastern Coast",
+                "geocode": {
+                    "SAME": [
+                        "006083"
+                    ],
+                    "UGC": [
+                        "CAZ349",
+                        "CAZ350"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ349",
+                    "https://api.weather.gov/zones/forecast/CAZ350"
+                ],
+                "references": [],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T06:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-12T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...For the Beach Hazards Statement, minor tidal overflow\nflooding with elevated surf and dangerous rip currents are\nexpected. For the Coastal Flood Advisory, minor to moderate\ncoastal flooding can be expected near times of high tide,\nespecially with the Sunday morning high tide.\n\n* WHERE...Santa Barbara County Southwestern Coast and Santa\nBarbara County Southeastern Coast.\n\n* WHEN...For the Beach Hazards Statement, through Tuesday\nafternoon. For the Coastal Flood Advisory, from 6 AM Sunday to\n10 PM PDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at low-lying beach and harbor areas that is\nuncommon with normal tidal ranges. Enhanced beach erosion is\npossible. The risk for significant damage is very low. There is\nan increased risk of ocean drowning. Rip currents can pull\nswimmers and surfers out to sea. Waves can wash people off\nbeaches and rocks, and capsize small boats nearshore. Large\nsecondary high tides are also expected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.7\nfeet on Sunday morning, then 7.1 to 7.3 feet on Monday and\nTuesday mornings.",
+                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.KLOX.CF.Y.0008.261011T1300Z-261013T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T22:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
+                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
+                "geocode": {
+                    "SAME": [
+                        "006079",
+                        "006083"
+                    ],
+                    "UGC": [
+                        "CAZ340",
+                        "CAZ346"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ340",
+                    "https://api.weather.gov/zones/forecast/CAZ346"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T14:18:00-07:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T01:57:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-10T13:51:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-11T06:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Beach Hazards Statement issued October 10 at 1:51PM PDT until October 11 at 6:00AM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
+                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.BH.S.0021.000000T0000Z-261011T1300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T06:00:00-07:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b615fdadc595779c2bd9417878287505c03ed35.002.1,2026-10-08T13:10:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
+                "areaDesc": "Malibu Coast; Los Angeles County Beaches",
+                "geocode": {
+                    "SAME": [
+                        "006037"
+                    ],
+                    "UGC": [
+                        "CAZ362",
+                        "CAZ366"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ362",
+                    "https://api.weather.gov/zones/forecast/CAZ366"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.001.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.001.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-09T14:18:00-07:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T01:57:00-07:00"
+                    }
+                ],
+                "sent": "2026-10-10T13:51:00-07:00",
+                "effective": "2026-10-10T13:51:00-07:00",
+                "onset": "2026-10-11T06:00:00-07:00",
+                "expires": "2026-10-11T14:00:00-07:00",
+                "ends": "2026-10-11T22:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 11 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable south-facing beaches due to the\nexpected combination of very high level tide levels around 8\nfeet (including additive effect of low barometric pressure and\nonshore winds gusting to 15 to 25 mph), high surf of 5 to 8\nfeet, and light to moderate rainfall. For all other beaches,\nminor to moderate coastal flooding is expected near times of\nhigh tide. From Sunday night through Tuesday, there will be the\ncontinued threat of at least minor to moderate coastal flooding\nand elevated surf across Los Angeles county beaches, especially\nsouth facing shores. Dangerous rip currents are likely.\n\n* WHERE...Malibu Coast and Los Angeles County Beaches.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the High Surf Advisory, from 6 AM to 10 PM PDT Sunday. For\nthe Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...For vulnerable south-facing beaches (such as Alamitos\nPeninsula and Naples in Long Beach as well as Malibu),\nSIGNIFICANT sea- water flooding will likely DAMAGE coastal\nstructures and beach roadways around the time of high tide,\nespecially the Sunday morning high tide. In addition,\nsignificant ponding of water on low-lying beach roadways could\nmake driving difficult. THERE IS GROWING CONFIDENCE THAT THE\nEXPECTED COASTAL FLOODING IMPACTS ON SUNDAY MORNING FOR\nVULNERABLE SOUTH FACING BEACHES OF LA COUNTY COULD BE THE MOST\nSIGNIFICANT WE HAVE SEEN SO FAR THIS SEASON, INCLUDING THOSE\nSEEN WITH MARIE. For all other beaches and harbors, shallow with\nminor to moderate sea- water flooding will likely impact\nbeaches and walkways, especially with the Sunday morning high\ntide which could cause local damage to most vulnerable locations\nsuch as Venice. For all beach areas, significant erosion is\nexpected. There is an increased risk for ocean drowning.\nDangerous and life- threatening rip currents can pull swimmers\nand surfers out to sea. Large breaking waves can cause injury,\nwash people off beaches and rocks, and capsize small boats near\nshore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning (nearly 2 feet above astronomical high tide of\n6.1 feet), returning to around 7.5 feet for Monday and Tuesday\nmornings. The projected high tides of around 8 feet for Sunday\nmorning would approach or exceed recent record tide levels for\nLA county. Large secondary high tides are also expected each\nevening.",
+                "instruction": "Follow directions of emergency officials.\nStay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 102051"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM TO 10 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261012T0500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T22:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
                     ]
                 }
             }
@@ -2575,255 +3306,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.004.1",
-                "areaDesc": "Santa Barbara County Southwestern Coast; Santa Barbara County Southeastern Coast",
-                "geocode": {
-                    "SAME": [
-                        "006083"
-                    ],
-                    "UGC": [
-                        "CAZ349",
-                        "CAZ350"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ349",
-                    "https://api.weather.gov/zones/forecast/CAZ350"
-                ],
-                "references": [],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-12T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...For the Beach Hazards Statement, minor tidal overflow\nflooding with elevated surf and dangerous rip currents are\nexpected. For the Coastal Flood Advisory, minor to moderate\ncoastal flooding can be expected near times of high tide,\nespecially with the Sunday morning high tide.\n\n* WHERE...Santa Barbara County Southwestern Coast and Santa\nBarbara County Southeastern Coast.\n\n* WHEN...For the Beach Hazards Statement, through Tuesday\nafternoon. For the Coastal Flood Advisory, from 6 AM Sunday to\n10 PM PDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at low-lying beach and harbor areas that is\nuncommon with normal tidal ranges. Enhanced beach erosion is\npossible. The risk for significant damage is very low. There is\nan increased risk of ocean drowning. Rip currents can pull\nswimmers and surfers out to sea. Waves can wash people off\nbeaches and rocks, and capsize small boats nearshore. Large\nsecondary high tides are also expected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.7\nfeet on Sunday morning, then 7.1 to 7.3 feet on Monday and\nTuesday mornings.",
-                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KLOX.CF.Y.0008.261011T1300Z-261013T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T22:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.2",
-                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
-                "geocode": {
-                    "SAME": [
-                        "006079",
-                        "006083"
-                    ],
-                    "UGC": [
-                        "CAZ340",
-                        "CAZ346"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ340",
-                    "https://api.weather.gov/zones/forecast/CAZ346"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T14:18:00-07:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T01:57:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-12T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
-                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261013T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T22:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.1",
-                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
-                "geocode": {
-                    "SAME": [
-                        "006079",
-                        "006083"
-                    ],
-                    "UGC": [
-                        "CAZ340",
-                        "CAZ346"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ340",
-                    "https://api.weather.gov/zones/forecast/CAZ346"
-                ],
-                "references": [],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-12T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Coastal Flood Advisory issued October 10 at 1:51PM PDT until October 12 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
-                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KLOX.CF.Y.0008.261011T1300Z-261013T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T22:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.1",
             "type": "Feature",
             "geometry": null,
@@ -2897,187 +3379,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.005.2",
-                "areaDesc": "Ventura County Beaches",
-                "geocode": {
-                    "SAME": [
-                        "006111"
-                    ],
-                    "UGC": [
-                        "CAZ354"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ354"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T14:18:00-07:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.003.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.003.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T01:57:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-11T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 11 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT... For the Coastal Flood Advisory, minor to moderate\ncoastal flooding can be expected near times of high tide,\nespecially with the Sunday morning high tide. Localized damage\nis possible in most vulnerable low-lying areas. For the High\nSurf Advisory, large breaking waves of 5 to 8 feet with\ndangerous rip currents is expected on Sunday.\n\n* WHERE...Ventura County Beaches.\n\n* WHEN...For the Coastal Flood Advisory, until 2 PM PDT Tuesday.\nFor the High Surf Advisory, from 6 AM to 10 PM PDT Sunday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is possible during the Sunday morning high\ntide which is expected to peak around 8 feet. The most\nvulnerable locations to coastal flooding will be low-lying areas\nfrom Ventura to LA county line. Localized pockets of Highway 1\nbetween Point Mugu and LA county line could see significant surf\nspray and some sea-water on the roadway. Significant beach\nerosion is expected. There is an increased risk for ocean\ndrowning. Rip currents can pull swimmers and surfers out to sea.\nLarge breaking waves can cause injury, wash people off beaches\nand rocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides approaching 8 feet will be\nlikely on Sunday morning (nearly 2 feet above astronomical high\ntide of 6.1 feet), returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
-                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 2 PM PDT TUESDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM TO 10 PM PDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261012T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T22:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.002.2",
-                "areaDesc": "Catalina and Santa Barbara Islands",
-                "geocode": {
-                    "SAME": [
-                        "006037"
-                    ],
-                    "UGC": [
-                        "CAZ087"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ087"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T14:18:00-07:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T01:57:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-10T13:51:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-11T15:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Coastal Flood Warning issued October 10 at 1:51PM PDT until October 11 at 3:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable southeast facing beaches, such as\nAvalon and Pebbly Beach. For all other beaches and harbors,\nminor to moderate coastal flooding is expected. The most\nDAMAGING and WIDESPREAD coastal flooding risk along southeast\nbeaches will likely be with the Sunday morning high tide due to\nthe expected combination of very high level tide levels\napproaching 8 feet (including additive effect of low barometric\npressure, high surf of 5 to 8 feet, and light to moderate\nrainfall.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...Sea-water flooding of beach and harbor roads, parking\nlots, and walkways is likely, especially around the time of high\ntide. Isolated damage is likely across southeast facing beaches\nnear Sunday mornings high tide. Significant beach erosion is\nexpected. There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning, returning to around 7.5 feet for Monday and\nTuesday mornings. Large secondary high tides are also expected\neach evening.",
-                "instruction": "Stay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.CF.W.0001.000000T0000Z-261011T2200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T15:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
                     ]
                 }
             }
@@ -3177,138 +3478,41 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.001.3",
-                "areaDesc": "Malibu Coast; Los Angeles County Beaches",
+                "id": "urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
+                "areaDesc": "San Diego County Coastal Areas; Orange County Coastal",
                 "geocode": {
                     "SAME": [
-                        "006037"
+                        "006073",
+                        "006059"
                     ],
                     "UGC": [
-                        "CAZ362",
-                        "CAZ366"
+                        "CAZ043",
+                        "CAZ552"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ362",
-                    "https://api.weather.gov/zones/forecast/CAZ366"
+                    "https://api.weather.gov/zones/forecast/CAZ043",
+                    "https://api.weather.gov/zones/forecast/CAZ552"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.001.3",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.001.3",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f7f40adeb700c5327fccc1cb8bb7595889537f2d.001.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f7f40adeb700c5327fccc1cb8bb7595889537f2d.001.3",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T14:18:00-07:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T01:57:00-07:00"
+                        "sent": "2026-10-10T02:03:00-07:00"
                     }
                 ],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
+                "sent": "2026-10-10T13:38:00-07:00",
+                "effective": "2026-10-10T13:38:00-07:00",
                 "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
+                "expires": "2026-10-10T22:15:00-07:00",
                 "ends": "2026-10-11T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "High Surf Advisory issued October 10 at 1:51PM PDT until October 11 at 10:00PM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...DAMAGING sea-water coastal flooding is likely through\nSunday, especially near the Sunday morning high tide where\nanticipated tide levels are expected to be around 8 feet. The\nmost likely areas for DAMAGING coastal flooding on Sunday\nmorning will be vulnerable south-facing beaches due to the\nexpected combination of very high level tide levels around 8\nfeet (including additive effect of low barometric pressure and\nonshore winds gusting to 15 to 25 mph), high surf of 5 to 8\nfeet, and light to moderate rainfall. For all other beaches,\nminor to moderate coastal flooding is expected near times of\nhigh tide. From Sunday night through Tuesday, there will be the\ncontinued threat of at least minor to moderate coastal flooding\nand elevated surf across Los Angeles county beaches, especially\nsouth facing shores. Dangerous rip currents are likely.\n\n* WHERE...Malibu Coast and Los Angeles County Beaches.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the High Surf Advisory, from 6 AM to 10 PM PDT Sunday. For\nthe Coastal Flood Advisory, from 3 PM Sunday to 2 PM PDT\nTuesday.\n\n* IMPACTS...For vulnerable south-facing beaches (such as Alamitos\nPeninsula and Naples in Long Beach as well as Malibu),\nSIGNIFICANT sea- water flooding will likely DAMAGE coastal\nstructures and beach roadways around the time of high tide,\nespecially the Sunday morning high tide. In addition,\nsignificant ponding of water on low-lying beach roadways could\nmake driving difficult. THERE IS GROWING CONFIDENCE THAT THE\nEXPECTED COASTAL FLOODING IMPACTS ON SUNDAY MORNING FOR\nVULNERABLE SOUTH FACING BEACHES OF LA COUNTY COULD BE THE MOST\nSIGNIFICANT WE HAVE SEEN SO FAR THIS SEASON, INCLUDING THOSE\nSEEN WITH MARIE. For all other beaches and harbors, shallow with\nminor to moderate sea- water flooding will likely impact\nbeaches and walkways, especially with the Sunday morning high\ntide which could cause local damage to most vulnerable locations\nsuch as Venice. For all beach areas, significant erosion is\nexpected. There is an increased risk for ocean drowning.\nDangerous and life- threatening rip currents can pull swimmers\nand surfers out to sea. Large breaking waves can cause injury,\nwash people off beaches and rocks, and capsize small boats near\nshore.\n\n* ADDITIONAL DETAILS...High tides of around 8 feet are expected on\nSunday morning (nearly 2 feet above astronomical high tide of\n6.1 feet), returning to around 7.5 feet for Monday and Tuesday\nmornings. The projected high tides of around 8 feet for Sunday\nmorning would approach or exceed recent record tide levels for\nLA county. Large secondary high tides are also expected each\nevening.",
-                "instruction": "Follow directions of emergency officials.\nStay off of beaches and coastal walkways, roads, and structures.\nDo NOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM TO 10 PM PDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.SU.Y.0019.261011T1300Z-261012T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T22:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b561af5f972be13968ac55a4d081d277b71f8c97.003.3",
-                "areaDesc": "San Luis Obispo County Beaches; Santa Barbara County Central Coast Beaches",
-                "geocode": {
-                    "SAME": [
-                        "006079",
-                        "006083"
-                    ],
-                    "UGC": [
-                        "CAZ340",
-                        "CAZ346"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ340",
-                    "https://api.weather.gov/zones/forecast/CAZ346"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b38a446fa072e4111dda5cec8cbe07c3ba9807e6.004.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T14:18:00-07:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9db7aae8eba81971e399b2019ff631e4075346aa.004.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T01:57:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T13:51:00-07:00",
-                "effective": "2026-10-10T13:51:00-07:00",
-                "onset": "2026-10-10T13:51:00-07:00",
-                "expires": "2026-10-11T14:00:00-07:00",
-                "ends": "2026-10-11T06:00:00-07:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -3317,21 +3521,21 @@
                 "urgency": "Expected",
                 "event": "Beach Hazards Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Beach Hazards Statement issued October 10 at 1:51PM PDT until October 11 at 6:00AM PDT by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...For the Beach Hazards Statement, Minor tidal overflow\nflooding and strong rip currents are expected. For the Coastal\nFlood Advisory, minor to moderate coastal flooding can be\nexpected near times of high tide, especially with the Sunday\nmorning high tide. For the High Surf Advisory, large breaking\nwaves of 8 to 12 feet is expected with dangerous rip currents.\n\n* WHERE...San Luis Obispo County Beaches and Santa Barbara\nCounty Central Coast Beaches.\n\n* WHEN...For the Beach Hazards Statement, through late tonight.\nFor the Coastal Flood Advisory, from 6 AM Sunday to 10 PM PDT\nMonday. For the High Surf Advisory, from 6 AM Sunday to 10 PM\nPDT Monday.\n\n* IMPACTS...Minor to moderate flooding of sea water is likely\naround high tide at beach and harbor areas that is uncommon with\nnormal tidal ranges. Low lying areas will be most susceptible,\nincluding Oceano. Enhanced beach erosion is likely. The risk for\nsignificant damage is very low. There is an increased risk of\nocean drowning. Rip currents can pull swimmers and surfers out\nto sea. Waves can wash people off beaches and rocks, and capsize\nsmall boats nearshore. Large secondary high tides are also\nexpected each evening.\n\n* ADDITIONAL DETAILS...High tides are expected to peak around 7.5\nfeet on Sunday morning, then around 7 feet on Monday morning.",
-                "instruction": "Take the necessary actions to protect flood-prone property. Do\nNOT drive around barricades or through water of unknown depth.\n\nRemain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
+                "senderName": "NWS San Diego CA",
+                "headline": "Beach Hazards Statement issued October 10 at 1:38PM PDT until October 11 at 10:00PM PDT by NWS San Diego CA",
+                "description": "* WHAT...For the Coastal Flood Warning through Sunday afternoon,\nsignificant coastal flooding and erosion is likely. For the\nBeach Hazards Statement from Sunday morning until Sunday\nevening, surf of 5 to 7 feet with local sets up to 9 feet. For\nthe Coastal Flood Advisory from Sunday afternoon until Tuesday\nafternoon, minor coastal flooding expected.\n\n* WHERE...San Diego County Coastal Areas and Orange County\nCoastal Areas.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Beach Hazards Statement, from Sunday morning through\nSunday evening. For the Coastal Flood Advisory, from 3 PM\nSunday to 2 PM PDT Tuesday.\n\n* IMPACTS...Numerous roads and walking paths may be closed due\nto high water. Low-lying property including homes, businesses,\nand some critical infrastructure may flood. Shoreline erosion\nwill occur during high tides in the mornings. Elevated surf\nwill lead to a high risk of rip currents.\n\n* ADDITIONAL DETAILS...Greatest impacts on Sunday morning from\nTropical Storm Rachel with a combination of increased swell,\nonshore winds, and high tides locally over 7.5 feet. High tides\nlower each day into the middle of the week.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nRemain out of the water to avoid hazardous swimming conditions.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "CFWLOX"
+                        "CFWSGX"
                     ],
                     "WMOidentifier": [
-                        "WHUS46 KLOX 102051"
+                        "WHUS46 KSGX 102038"
                     ],
                     "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 6 AM SUNDAY TO 10 PM PDT MONDAY"
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT FROM SUNDAY MORNING THROUGH SUNDAY EVENING... ...COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -3339,13 +3543,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KLOX.BH.S.0021.000000T0000Z-261011T1300Z/"
+                        "/O.CON.KSGX.BH.S.0013.261011T1300Z-261012T0500Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-11T06:00:00-07:00"
+                        "2026-10-11T22:00:00-07:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b615fdadc595779c2bd9417878287505c03ed35.002.1,2026-10-08T13:10:00-07:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c8d090ae87aeb6f0d7ac5ba12a22c3986bcedc12.001.3,2026-10-09T20:27:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89af3d794de98b9235d7d4e7284bd9a39e6cbcc1.001.5,2026-10-09T13:42:00-07:00"
                     ]
                 },
                 "scope": "Public",
@@ -3447,95 +3651,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.d458213036ab9f82615292dca5036aced47b9e87.001.3",
-                "areaDesc": "San Diego County Coastal Areas; Orange County Coastal",
-                "geocode": {
-                    "SAME": [
-                        "006073",
-                        "006059"
-                    ],
-                    "UGC": [
-                        "CAZ043",
-                        "CAZ552"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ043",
-                    "https://api.weather.gov/zones/forecast/CAZ552"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f7f40adeb700c5327fccc1cb8bb7595889537f2d.001.3",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f7f40adeb700c5327fccc1cb8bb7595889537f2d.001.3",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T02:03:00-07:00"
-                    }
-                ],
-                "sent": "2026-10-10T13:38:00-07:00",
-                "effective": "2026-10-10T13:38:00-07:00",
-                "onset": "2026-10-11T06:00:00-07:00",
-                "expires": "2026-10-10T22:15:00-07:00",
-                "ends": "2026-10-11T22:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Diego CA",
-                "headline": "Beach Hazards Statement issued October 10 at 1:38PM PDT until October 11 at 10:00PM PDT by NWS San Diego CA",
-                "description": "* WHAT...For the Coastal Flood Warning through Sunday afternoon,\nsignificant coastal flooding and erosion is likely. For the\nBeach Hazards Statement from Sunday morning until Sunday\nevening, surf of 5 to 7 feet with local sets up to 9 feet. For\nthe Coastal Flood Advisory from Sunday afternoon until Tuesday\nafternoon, minor coastal flooding expected.\n\n* WHERE...San Diego County Coastal Areas and Orange County\nCoastal Areas.\n\n* WHEN...For the Coastal Flood Warning, until 3 PM PDT Sunday.\nFor the Beach Hazards Statement, from Sunday morning through\nSunday evening. For the Coastal Flood Advisory, from 3 PM\nSunday to 2 PM PDT Tuesday.\n\n* IMPACTS...Numerous roads and walking paths may be closed due\nto high water. Low-lying property including homes, businesses,\nand some critical infrastructure may flood. Shoreline erosion\nwill occur during high tides in the mornings. Elevated surf\nwill lead to a high risk of rip currents.\n\n* ADDITIONAL DETAILS...Greatest impacts on Sunday morning from\nTropical Storm Rachel with a combination of increased swell,\nonshore winds, and high tides locally over 7.5 feet. High tides\nlower each day into the middle of the week.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nRemain out of the water to avoid hazardous swimming conditions.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWSGX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KSGX 102038"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT UNTIL 3 PM PDT SUNDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT FROM SUNDAY MORNING THROUGH SUNDAY EVENING... ...COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 3 PM SUNDAY TO 2 PM PDT TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KSGX.BH.S.0013.261011T1300Z-261012T0500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T22:00:00-07:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c8d090ae87aeb6f0d7ac5ba12a22c3986bcedc12.001.3,2026-10-09T20:27:00-07:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89af3d794de98b9235d7d4e7284bd9a39e6cbcc1.001.5,2026-10-09T13:42:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
                     ]
                 }
             }
@@ -4862,86 +4977,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
-                "areaDesc": "Western Siskiyou County; Central Siskiyou County; South Central Siskiyou County",
-                "geocode": {
-                    "SAME": [
-                        "006093"
-                    ],
-                    "UGC": [
-                        "CAZ080",
-                        "CAZ081",
-                        "CAZ082"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ080",
-                    "https://api.weather.gov/zones/forecast/CAZ081",
-                    "https://api.weather.gov/zones/forecast/CAZ082"
-                ],
-                "references": [],
-                "sent": "2026-10-10T10:56:00-07:00",
-                "effective": "2026-10-10T10:56:00-07:00",
-                "onset": "2026-10-12T02:00:00-07:00",
-                "expires": "2026-10-11T05:00:00-07:00",
-                "ends": "2026-10-12T09:00:00-07:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Freeze Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Medford OR",
-                "headline": "Freeze Warning issued October 10 at 10:56AM PDT until October 12 at 9:00AM PDT by NWS Medford OR",
-                "description": "* WHAT...Sunday morning, sub-freezing temperatures as low as 28\nexpected. Monday morning, sub-freezing temperatures as low as 27\nexpected.\n\n* WHERE...Valleys of western and central Siskiyou County, including\nthe Shasta Valley, Scott Valley, portions of the lower Klamath\nRiver Valley. This also includes Mount Shasta City and areas to the\neast.\n\n* WHEN...For the first Freeze Warning, from 2 AM to 8 AM PDT Sunday.\nFor the second Freeze Warning, from 2 AM to 9 AM PDT Monday.\n\n* IMPACTS...Frost and freeze conditions could kill crops and other\nsensitive vegetation.",
-                "instruction": "Take steps now to protect tender plants from the cold.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWMFR"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KMFR 101756"
-                    ],
-                    "NWSheadline": [
-                        "FREEZE WARNING IN EFFECT FROM 2 AM TO 9 AM PDT MONDAY... ...FREEZE WARNING REMAINS IN EFFECT FROM 2 AM TO 8 AM PDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMFR.FZ.W.0010.261012T0900Z-261012T1600Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-12T09:00:00-07:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FZW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.3",
             "type": "Feature",
             "geometry": null,
@@ -5018,6 +5053,86 @@
                     ],
                     "eventEndingTime": [
                         "2026-10-11T08:00:00-07:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FZW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.bb5038740402781ffd6971aac80efa7fc362153d.001.2",
+                "areaDesc": "Western Siskiyou County; Central Siskiyou County; South Central Siskiyou County",
+                "geocode": {
+                    "SAME": [
+                        "006093"
+                    ],
+                    "UGC": [
+                        "CAZ080",
+                        "CAZ081",
+                        "CAZ082"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ080",
+                    "https://api.weather.gov/zones/forecast/CAZ081",
+                    "https://api.weather.gov/zones/forecast/CAZ082"
+                ],
+                "references": [],
+                "sent": "2026-10-10T10:56:00-07:00",
+                "effective": "2026-10-10T10:56:00-07:00",
+                "onset": "2026-10-12T02:00:00-07:00",
+                "expires": "2026-10-11T05:00:00-07:00",
+                "ends": "2026-10-12T09:00:00-07:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Freeze Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Medford OR",
+                "headline": "Freeze Warning issued October 10 at 10:56AM PDT until October 12 at 9:00AM PDT by NWS Medford OR",
+                "description": "* WHAT...Sunday morning, sub-freezing temperatures as low as 28\nexpected. Monday morning, sub-freezing temperatures as low as 27\nexpected.\n\n* WHERE...Valleys of western and central Siskiyou County, including\nthe Shasta Valley, Scott Valley, portions of the lower Klamath\nRiver Valley. This also includes Mount Shasta City and areas to the\neast.\n\n* WHEN...For the first Freeze Warning, from 2 AM to 8 AM PDT Sunday.\nFor the second Freeze Warning, from 2 AM to 9 AM PDT Monday.\n\n* IMPACTS...Frost and freeze conditions could kill crops and other\nsensitive vegetation.",
+                "instruction": "Take steps now to protect tender plants from the cold.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWMFR"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KMFR 101756"
+                    ],
+                    "NWSheadline": [
+                        "FREEZE WARNING IN EFFECT FROM 2 AM TO 9 AM PDT MONDAY... ...FREEZE WARNING REMAINS IN EFFECT FROM 2 AM TO 8 AM PDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KMFR.FZ.W.0010.261012T0900Z-261012T1600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T09:00:00-07:00"
                     ]
                 },
                 "scope": "Public",
@@ -5839,5 +5954,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-10-11T00:30:51+00:00"
+    "updated": "2026-10-11T01:21:13+00:00"
 }
