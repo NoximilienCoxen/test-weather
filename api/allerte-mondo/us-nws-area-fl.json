@@ -10,6 +10,100 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79c7d8d6507302a992a98de04c7f12040e48d5af.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79c7d8d6507302a992a98de04c7f12040e48d5af.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.79c7d8d6507302a992a98de04c7f12040e48d5af.001.2",
+                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
+                "geocode": {
+                    "SAME": [
+                        "012103",
+                        "012057",
+                        "012081",
+                        "012115",
+                        "012015",
+                        "012071"
+                    ],
+                    "UGC": [
+                        "FLZ050",
+                        "FLZ151",
+                        "FLZ155",
+                        "FLZ160",
+                        "FLZ162",
+                        "FLZ165"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ050",
+                    "https://api.weather.gov/zones/forecast/FLZ151",
+                    "https://api.weather.gov/zones/forecast/FLZ155",
+                    "https://api.weather.gov/zones/forecast/FLZ160",
+                    "https://api.weather.gov/zones/forecast/FLZ162",
+                    "https://api.weather.gov/zones/forecast/FLZ165"
+                ],
+                "references": [],
+                "sent": "2026-10-10T20:18:00-04:00",
+                "effective": "2026-10-10T20:18:00-04:00",
+                "onset": "2026-10-10T20:18:00-04:00",
+                "expires": "2026-10-11T20:00:00-04:00",
+                "ends": "2026-10-11T20:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Rip Current Statement issued October 10 at 8:18PM EDT until October 11 at 8:00PM EDT by NWS Tampa Bay Ruskin FL",
+                "description": "* WHAT...Dangerous rip currents.\n\n* WHERE...West central and southwest Florida.\n\n* WHEN...For the Rip Current Risk, through Sunday evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTBW 110018"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH SUNDAY EVENING... ...HIGH SURF ADVISORY HAS EXPIRED"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.RP.S.0018.000000T0000Z-261012T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T20:00:00-04:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.2,2026-10-10T09:55:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.002.2,2026-10-10T03:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.001.2,2026-10-10T03:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.002.2,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.001.3,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fb47ece589523f80d98428de3e6138112a429351.003.1,2026-10-08T14:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fb47ece589523f80d98428de3e6138112a429351.001.1,2026-10-08T14:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.004.2,2026-10-09T23:01:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.002.3,2026-10-09T23:01:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9785534a9bc399ed56e042a85e90ee1636d60a54.001.1",
             "type": "Feature",
             "geometry": {
@@ -483,117 +577,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d728a3333e9ad58c2cd92d6b9e1ee282849ef0f7.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d728a3333e9ad58c2cd92d6b9e1ee282849ef0f7.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.d728a3333e9ad58c2cd92d6b9e1ee282849ef0f7.002.1",
-                "areaDesc": "Madison; Inland Taylor; Lafayette; Inland Dixie; Coastal Jefferson; Coastal Taylor; Coastal Dixie",
-                "geocode": {
-                    "SAME": [
-                        "012079",
-                        "012123",
-                        "012067",
-                        "012029",
-                        "012065"
-                    ],
-                    "UGC": [
-                        "FLZ019",
-                        "FLZ028",
-                        "FLZ029",
-                        "FLZ034",
-                        "FLZ118",
-                        "FLZ128",
-                        "FLZ134"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ019",
-                    "https://api.weather.gov/zones/forecast/FLZ028",
-                    "https://api.weather.gov/zones/forecast/FLZ029",
-                    "https://api.weather.gov/zones/forecast/FLZ034",
-                    "https://api.weather.gov/zones/forecast/FLZ118",
-                    "https://api.weather.gov/zones/forecast/FLZ128",
-                    "https://api.weather.gov/zones/forecast/FLZ134"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d227de3f547097b6a992eeea5914adfcfb8d99d7.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d227de3f547097b6a992eeea5914adfcfb8d99d7.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T03:52:00-04:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.300f9c69e89f74487511c1d212215bb30e25e891.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.300f9c69e89f74487511c1d212215bb30e25e891.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T10:56:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T16:26:00-04:00",
-                "effective": "2026-10-10T16:26:00-04:00",
-                "onset": "2026-10-10T16:26:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Flood Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tallahassee FL",
-                "headline": "Flood Watch issued October 10 at 4:26PM EDT until October 10 at 8:00PM EDT by NWS Tallahassee FL",
-                "description": "* WHAT...Flooding caused by excessive rainfall continues to be\npossible.\n\n* WHERE...A portion of Big Bend Florida, including the following\nareas, Coastal Dixie, Coastal Jefferson, Coastal Taylor, Inland\nDixie, Inland Taylor, Lafayette and Madison.\n\n* WHEN...Until 8 PM EDT this evening.\n\n* IMPACTS...Excessive runoff may result in flooding of rivers,\ncreeks, streams, and other low-lying and flood-prone locations.\nFlooding may occur in poor drainage and urban areas.\n\n* ADDITIONAL DETAILS...\n- 1 to 2 inches of rain is forecast today, with localized amounts\nof 3 inches\n- http://www.weather.gov/safety/flood",
-                "instruction": "You should monitor later forecasts and be alert for possible Flood\nWarnings. Those living in areas prone to flooding should be prepared\nto take action should flooding develop.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FFATAE"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS62 KTAE 102026"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WATCH REMAINS IN EFFECT UNTIL 8 PM EDT THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTAE.FA.A.0005.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e3c6f872677d788426e1e2d998b7a7e367b59d20.001.1,2026-10-09T17:17:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1b7e328565ba483f5e62ccf369417fa38f111109.002.1,2026-10-10T01:57:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae4bf2675dfa6be3f4264b03482611aef6ebe56e.003.1,2026-10-09T02:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae4bf2675dfa6be3f4264b03482611aef6ebe56e.002.1,2026-10-09T02:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae4bf2675dfa6be3f4264b03482611aef6ebe56e.001.1,2026-10-09T02:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3111859c58f610db46910dd28de9341594ed3ac.002.1,2026-10-08T23:23:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3111859c58f610db46910dd28de9341594ed3ac.001.1,2026-10-08T23:23:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.08f3f4596c59b45e9f1cf94a3cce7c8c45fe4b51.001.1,2026-10-08T02:38:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a273c7190a0a5a2d8a5c453d4cdae9049a16ae28.002.1,2026-10-08T17:04:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a273c7190a0a5a2d8a5c453d4cdae9049a16ae28.001.1,2026-10-08T17:04:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FFA"
-                    ],
-                    "NationalWeatherService": [
-                        "FAA"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b0dce3d8b6fbdb21bd62b6b7822b40e53389f8e2.001.2",
             "type": "Feature",
             "geometry": null,
@@ -1051,63 +1034,61 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
                     [
                         [
-                            -82.63,
-                            28.2
+                            -82.44,
+                            28.98
                         ],
                         [
-                            -82.71,
-                            28.19
+                            -82.48,
+                            29.02
                         ],
                         [
-                            -82.71,
-                            28.17
+                            -82.44,
+                            29.09
                         ],
                         [
-                            -82.75,
-                            28.17
+                            -82.37,
+                            29.07
                         ],
                         [
-                            -82.72,
-                            28.23
-                        ],
-                        [
-                            -82.63,
-                            28.24
-                        ],
-                        [
-                            -82.63,
-                            28.2
+                            -82.44,
+                            28.98
                         ]
                     ]
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.001.1",
-                "areaDesc": "Pasco, FL",
+                "id": "urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
+                "areaDesc": "Citrus, FL; Levy, FL; Marion, FL",
                 "geocode": {
                     "SAME": [
-                        "012101"
+                        "012017",
+                        "012075",
+                        "012083"
                     ],
                     "UGC": [
-                        "FLC101"
+                        "FLC017",
+                        "FLC075",
+                        "FLC083"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC101"
+                    "https://api.weather.gov/zones/county/FLC017",
+                    "https://api.weather.gov/zones/county/FLC075",
+                    "https://api.weather.gov/zones/county/FLC083"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-10-09T20:46:00-04:00"
                     }
@@ -1115,8 +1096,8 @@
                 "sent": "2026-10-10T11:06:00-04:00",
                 "effective": "2026-10-10T11:06:00-04:00",
                 "onset": "2026-10-10T11:06:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
+                "expires": "2026-10-10T23:15:00-04:00",
+                "ends": null,
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -1126,8 +1107,8 @@
                 "event": "Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Flood Warning issued October 10 at 11:06AM EDT until October 10 at 8:00PM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\nAnclote River At Elfers at Little Road affecting Pasco County.\n\n...The Flood Warning continues for the following rivers in Florida...\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Citrus and Levy\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek and\nAnclote River remain elevated. With additional heavy rainfall\nforecast, water levels are expected to continue rising, and could\nreach minor flood stage in the next few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...Anclote River at Elfers at Little Road.\n\n* WHEN...Until this evening.\n\n* IMPACTS...At 22.0 feet, There is water over the roadway along the\nElfers Parkway.\n\n* ADDITIONAL DETAILS...\n- At 10:30 AM EDT Saturday the stage was 20.3 feet.\n- Bankfull stage is 20.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 10:30 AM EDT Saturday was 20.5 feet.\n- Forecast...The river is expected to fall below flood stage this\nafternoon and continue falling to 15.7 feet Tuesday morning.\n- Flood stage is 20.0 feet.\n- Flood History...This crest compares to a previous crest of 20.4\nfeet on 08/08/1957.\n- https://www.weather.gov/safety/flood",
+                "headline": "Flood Warning issued October 10 at 11:06AM EDT by NWS Tampa Bay Ruskin FL",
+                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\nAnclote River At Elfers at Little Road affecting Pasco County.\n\n...The Flood Warning continues for the following rivers in Florida...\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Citrus and Levy\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek and\nAnclote River remain elevated. With additional heavy rainfall\nforecast, water levels are expected to continue rising, and could\nreach minor flood stage in the next few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...Withlacoochee at US 41 Dunnellon.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 28.2 feet, Docks and boat ramps flood along the river\nin Citrus and Marion counties.\n\n* ADDITIONAL DETAILS...\n- At 10:45 AM EDT Saturday the stage was 28.3 feet.\n- Bankfull stage is 28.2 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 10:45 AM EDT Saturday was 28.3 feet.\n- Forecast...The river is expected to rise to a crest of 28.3 feet\nthis afternoon.\n- Flood stage is 28.2 feet.\n- Flood History...This crest compares to a previous crest of 28.3\nfeet on 10/05/1965.\n- https://www.weather.gov/safety/flood",
                 "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 800 PM EDT.",
                 "response": "Avoid",
                 "note": null,
@@ -1139,7 +1120,7 @@
                         "WGUS82 KTBW 101506"
                     ],
                     "NWSheadline": [
-                        "FLOOD WARNING NOW IN EFFECT UNTIL THIS EVENING"
+                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -1150,13 +1131,10 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.EXT.KTBW.FL.W.0013.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
+                        "/O.CON.KTBW.FL.W.0009.000000T0000Z-000000T0000Z/"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2d049c342971cc1e910c0200dc9487469b87a2a3.001.1,2026-10-09T18:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de5bd258c62865c61d5fe247c8128339295108ea.001.1,2026-10-09T08:48:00-04:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.004.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.003.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.002.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.90d2cd9ab9db07e57853ce8f68153f65459db1bd.001.1,2026-10-07T21:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5b162b63db4059beac74c91ded7803d1d2b8f3d.001.1,2026-10-07T15:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e30a37fe3135e733bd102cecffda4f2fb583ce3.001.1,2026-10-07T11:22:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9b23803be4c3880ba1697fe86cfc5bb9d7047a3a.001.1,2026-10-07T06:34:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -1286,124 +1264,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -82.44,
-                            28.98
-                        ],
-                        [
-                            -82.48,
-                            29.02
-                        ],
-                        [
-                            -82.44,
-                            29.09
-                        ],
-                        [
-                            -82.37,
-                            29.07
-                        ],
-                        [
-                            -82.44,
-                            28.98
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
-                "areaDesc": "Citrus, FL; Levy, FL; Marion, FL",
-                "geocode": {
-                    "SAME": [
-                        "012017",
-                        "012075",
-                        "012083"
-                    ],
-                    "UGC": [
-                        "FLC017",
-                        "FLC075",
-                        "FLC083"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC017",
-                    "https://api.weather.gov/zones/county/FLC075",
-                    "https://api.weather.gov/zones/county/FLC083"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T20:46:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T11:06:00-04:00",
-                "effective": "2026-10-10T11:06:00-04:00",
-                "onset": "2026-10-10T11:06:00-04:00",
-                "expires": "2026-10-10T23:15:00-04:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Flood Warning issued October 10 at 11:06AM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\nAnclote River At Elfers at Little Road affecting Pasco County.\n\n...The Flood Warning continues for the following rivers in Florida...\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Citrus and Levy\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek and\nAnclote River remain elevated. With additional heavy rainfall\nforecast, water levels are expected to continue rising, and could\nreach minor flood stage in the next few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...Withlacoochee at US 41 Dunnellon.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 28.2 feet, Docks and boat ramps flood along the river\nin Citrus and Marion counties.\n\n* ADDITIONAL DETAILS...\n- At 10:45 AM EDT Saturday the stage was 28.3 feet.\n- Bankfull stage is 28.2 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 10:45 AM EDT Saturday was 28.3 feet.\n- Forecast...The river is expected to rise to a crest of 28.3 feet\nthis afternoon.\n- Flood stage is 28.2 feet.\n- Flood History...This crest compares to a previous crest of 28.3\nfeet on 10/05/1965.\n- https://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 800 PM EDT.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KTBW 101506"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.FL.W.0009.000000T0000Z-000000T0000Z/"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.004.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.003.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.002.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.90d2cd9ab9db07e57853ce8f68153f65459db1bd.001.1,2026-10-07T21:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5b162b63db4059beac74c91ded7803d1d2b8f3d.001.1,2026-10-07T15:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e30a37fe3135e733bd102cecffda4f2fb583ce3.001.1,2026-10-07T11:22:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9b23803be4c3880ba1697fe86cfc5bb9d7047a3a.001.1,2026-10-07T06:34:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.3",
             "type": "Feature",
             "geometry": null,
@@ -1460,6 +1320,165 @@
                     ],
                     "VTEC": [
                         "/O.NEW.KJAX.CF.Y.0005.261011T1000Z-261011T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T17:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
+                "areaDesc": "Trout River",
+                "geocode": {
+                    "SAME": [
+                        "012031"
+                    ],
+                    "UGC": [
+                        "FLZ225"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ225"
+                ],
+                "references": [],
+                "sent": "2026-10-10T11:01:00-04:00",
+                "effective": "2026-10-10T11:01:00-04:00",
+                "onset": "2026-10-11T06:00:00-04:00",
+                "expires": "2026-10-11T06:00:00-04:00",
+                "ends": "2026-10-11T17:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Coastal Flood Advisory issued October 10 at 11:01AM EDT until October 11 at 5:00PM EDT by NWS Jacksonville FL",
+                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Trout River County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 101501"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KJAX.CF.Y.0005.261011T1000Z-261011T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T17:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
+                "areaDesc": "Inland Flagler",
+                "geocode": {
+                    "SAME": [
+                        "012035"
+                    ],
+                    "UGC": [
+                        "FLZ038"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ038"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T09:44:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-10T11:01:00-04:00",
+                "effective": "2026-10-10T11:01:00-04:00",
+                "onset": "2026-10-10T11:01:00-04:00",
+                "expires": "2026-10-11T06:00:00-04:00",
+                "ends": "2026-10-11T17:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Coastal Flood Advisory issued October 10 at 11:01AM EDT until October 11 at 5:00PM EDT by NWS Jacksonville FL",
+                "description": "* WHAT...Minor coastal flooding.\n\n* WHERE...Inland Flagler County.\n\n* WHEN...Until 5 PM EDT Sunday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 101501"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 PM EDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KJAX.CF.Y.0003.000000T0000Z-261011T2100Z/"
                     ],
                     "eventEndingTime": [
                         "2026-10-11T17:00:00-04:00"
@@ -1565,51 +1584,44 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.004.1",
-                "areaDesc": "Inland Flagler",
+                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
+                "areaDesc": "Trout River",
                 "geocode": {
                     "SAME": [
-                        "012035"
+                        "012031"
                     ],
                     "UGC": [
-                        "FLZ038"
+                        "FLZ225"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ038"
+                    "https://api.weather.gov/zones/forecast/FLZ225"
                 ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T09:44:00-04:00"
-                    }
-                ],
+                "references": [],
                 "sent": "2026-10-10T11:01:00-04:00",
                 "effective": "2026-10-10T11:01:00-04:00",
                 "onset": "2026-10-10T11:01:00-04:00",
                 "expires": "2026-10-11T06:00:00-04:00",
-                "ends": "2026-10-11T17:00:00-04:00",
+                "ends": "2026-10-11T06:00:00-04:00",
                 "status": "Actual",
-                "messageType": "Update",
+                "messageType": "Alert",
                 "category": "Met",
-                "severity": "Minor",
+                "severity": "Severe",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
+                "event": "Coastal Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Jacksonville FL",
-                "headline": "Coastal Flood Advisory issued October 10 at 11:01AM EDT until October 11 at 5:00PM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...Minor coastal flooding.\n\n* WHERE...Inland Flagler County.\n\n* WHEN...Until 5 PM EDT Sunday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
-                "response": "Monitor",
+                "headline": "Coastal Flood Warning issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
+                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Trout River County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
@@ -1619,7 +1631,187 @@
                         "WHUS42 KJAX 101501"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 PM EDT SUNDAY"
+                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KJAX.CF.W.0002.261010T1501Z-261011T1000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T06:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
+                "areaDesc": "Eastern Clay; Eastern Putnam; South Central Duval; Western St. Johns",
+                "geocode": {
+                    "SAME": [
+                        "012019",
+                        "012107",
+                        "012031",
+                        "012109"
+                    ],
+                    "UGC": [
+                        "FLZ132",
+                        "FLZ137",
+                        "FLZ325",
+                        "FLZ633"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ132",
+                    "https://api.weather.gov/zones/forecast/FLZ137",
+                    "https://api.weather.gov/zones/forecast/FLZ325",
+                    "https://api.weather.gov/zones/forecast/FLZ633"
+                ],
+                "references": [],
+                "sent": "2026-10-10T11:01:00-04:00",
+                "effective": "2026-10-10T11:01:00-04:00",
+                "onset": "2026-10-10T11:01:00-04:00",
+                "expires": "2026-10-11T06:00:00-04:00",
+                "ends": "2026-10-11T06:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Coastal Flood Warning issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
+                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...St Johns River Basin.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 101501"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KJAX.CF.W.0002.261010T1501Z-261011T1000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T06:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
+                "areaDesc": "Coastal Duval",
+                "geocode": {
+                    "SAME": [
+                        "012031"
+                    ],
+                    "UGC": [
+                        "FLZ125"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ125"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bd1c644d51b3772f9fecea836c5e3854236ae1b9.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bd1c644d51b3772f9fecea836c5e3854236ae1b9.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T02:59:00-04:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T09:44:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-10T11:01:00-04:00",
+                "effective": "2026-10-10T11:01:00-04:00",
+                "onset": "2026-10-10T11:01:00-04:00",
+                "expires": "2026-10-11T06:00:00-04:00",
+                "ends": "2026-10-11T06:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Rip Current Statement issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
+                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Coastal Duval County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the High Rip Current Risk, through late tonight. For the\nCoastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 101501"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -1627,10 +1819,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KJAX.CF.Y.0003.000000T0000Z-261011T2100Z/"
+                        "/O.CON.KJAX.RP.S.0032.000000T0000Z-261011T1000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-11T17:00:00-04:00"
+                        "2026-10-11T06:00:00-04:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a148bed3f8b954c4ba8afaf6430b34a6d883ab7a.001.2,2026-10-09T14:42:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6837c304bef3b1c73b5146147ab7d214b5ebe70d.001.2,2026-10-09T02:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ead5f608abf95ec0ed54c45a712d95ad914651c9.003.2,2026-10-08T14:05:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9faf43716da46d7c583b22631ed0deef1357ff76.003.2,2026-10-08T01:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.10ba2020daf587326fb8e120df73e46a1b65b356.003.2,2026-10-07T11:32:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.59b07211c1592fc5543ea62594b8897ea047a7e9.002.3,2026-10-07T02:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a22961ec6970d762cf5b725ef8a82753c16449b8.001.3,2026-10-06T15:10:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.cd8c1ade7c7fa9940c3538e87deed0742e431bf6.001.3,2026-10-06T02:57:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a3a4636ae627d9ad8259d51b2faf6e54f586666.002.2,2026-10-05T12:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c8b31ae717bcbaef35afbfa71e9e999f778072fa.002.1,2026-10-05T03:22:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -1642,7 +1837,7 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "CFY"
+                        "RPS"
                     ]
                 }
             }
@@ -1828,341 +2023,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.001.4",
-                "areaDesc": "Coastal Duval",
-                "geocode": {
-                    "SAME": [
-                        "012031"
-                    ],
-                    "UGC": [
-                        "FLZ125"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ125"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bd1c644d51b3772f9fecea836c5e3854236ae1b9.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bd1c644d51b3772f9fecea836c5e3854236ae1b9.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T02:59:00-04:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f3d0387d7a2ec3d605fecbd365a223458f7c1921.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T09:44:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T11:01:00-04:00",
-                "effective": "2026-10-10T11:01:00-04:00",
-                "onset": "2026-10-10T11:01:00-04:00",
-                "expires": "2026-10-11T06:00:00-04:00",
-                "ends": "2026-10-11T06:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Rip Current Statement issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Coastal Duval County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the High Rip Current Risk, through late tonight. For the\nCoastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 101501"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH LATE TONIGHT... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KJAX.RP.S.0032.000000T0000Z-261011T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T06:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a148bed3f8b954c4ba8afaf6430b34a6d883ab7a.001.2,2026-10-09T14:42:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6837c304bef3b1c73b5146147ab7d214b5ebe70d.001.2,2026-10-09T02:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ead5f608abf95ec0ed54c45a712d95ad914651c9.003.2,2026-10-08T14:05:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9faf43716da46d7c583b22631ed0deef1357ff76.003.2,2026-10-08T01:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.10ba2020daf587326fb8e120df73e46a1b65b356.003.2,2026-10-07T11:32:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.59b07211c1592fc5543ea62594b8897ea047a7e9.002.3,2026-10-07T02:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a22961ec6970d762cf5b725ef8a82753c16449b8.001.3,2026-10-06T15:10:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.cd8c1ade7c7fa9940c3538e87deed0742e431bf6.001.3,2026-10-06T02:57:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a3a4636ae627d9ad8259d51b2faf6e54f586666.002.2,2026-10-05T12:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c8b31ae717bcbaef35afbfa71e9e999f778072fa.002.1,2026-10-05T03:22:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.002.2",
-                "areaDesc": "Eastern Clay; Eastern Putnam; South Central Duval; Western St. Johns",
-                "geocode": {
-                    "SAME": [
-                        "012019",
-                        "012107",
-                        "012031",
-                        "012109"
-                    ],
-                    "UGC": [
-                        "FLZ132",
-                        "FLZ137",
-                        "FLZ325",
-                        "FLZ633"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ132",
-                    "https://api.weather.gov/zones/forecast/FLZ137",
-                    "https://api.weather.gov/zones/forecast/FLZ325",
-                    "https://api.weather.gov/zones/forecast/FLZ633"
-                ],
-                "references": [],
-                "sent": "2026-10-10T11:01:00-04:00",
-                "effective": "2026-10-10T11:01:00-04:00",
-                "onset": "2026-10-10T11:01:00-04:00",
-                "expires": "2026-10-11T06:00:00-04:00",
-                "ends": "2026-10-11T06:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Coastal Flood Warning issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...St Johns River Basin.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 101501"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KJAX.CF.W.0002.261010T1501Z-261011T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T06:00:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.2",
-                "areaDesc": "Trout River",
-                "geocode": {
-                    "SAME": [
-                        "012031"
-                    ],
-                    "UGC": [
-                        "FLZ225"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ225"
-                ],
-                "references": [],
-                "sent": "2026-10-10T11:01:00-04:00",
-                "effective": "2026-10-10T11:01:00-04:00",
-                "onset": "2026-10-10T11:01:00-04:00",
-                "expires": "2026-10-11T06:00:00-04:00",
-                "ends": "2026-10-11T06:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Coastal Flood Warning issued October 10 at 11:01AM EDT until October 11 at 6:00AM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Trout River County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 101501"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KJAX.CF.W.0002.261010T1501Z-261011T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T06:00:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.2ae269fc6c1ff79e31931ecd754448ee7ad70632.003.3",
-                "areaDesc": "Trout River",
-                "geocode": {
-                    "SAME": [
-                        "012031"
-                    ],
-                    "UGC": [
-                        "FLZ225"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ225"
-                ],
-                "references": [],
-                "sent": "2026-10-10T11:01:00-04:00",
-                "effective": "2026-10-10T11:01:00-04:00",
-                "onset": "2026-10-11T06:00:00-04:00",
-                "expires": "2026-10-11T06:00:00-04:00",
-                "ends": "2026-10-11T17:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Coastal Flood Advisory issued October 10 at 11:01AM EDT until October 11 at 5:00PM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Trout River County.\n\n* WHEN...For the Coastal Flood Warning, until 6 AM EDT Sunday.\nFor the Coastal Flood Advisory, from 6 AM to 5 PM EDT Sunday.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 101501"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 6 AM EDT SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 6 AM TO 5 PM EDT SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KJAX.CF.Y.0005.261011T1000Z-261011T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T17:00:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
                     ]
                 }
             }
@@ -2793,343 +2653,29 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.1",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
+                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
+                "areaDesc": "Coastal Palm Beach County",
                 "geocode": {
                     "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
+                        "012099"
                     ],
                     "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
+                        "FLZ168"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
+                    "https://api.weather.gov/zones/forecast/FLZ168"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T03:36:00-04:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T03:36:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T09:55:00-04:00",
-                "effective": "2026-10-10T09:55:00-04:00",
-                "onset": "2026-10-10T09:55:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "High Surf Advisory issued October 10 at 9:55AM EDT until October 10 at 8:00PM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents and large breaking waves\nexpected. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Pinellas and Coastal Hillsborough Counties.\n\n* WHEN...For the the Coastal Flood Advisory, through 8 AM EDT\nthis morning. For the High Surf Risk, through 8 PM EDT this\nevening. For the Rip Current Risk, through Sunday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nInexperienced swimmers should remain out of the water due to\ndangerous surf conditions.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 101355"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 8 PM EDT THIS EVENING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH SUNDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.SU.Y.0003.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.002.1,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.001.1,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.004.1,2026-10-09T23:01:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.002.2,2026-10-09T23:01:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4e1f4fe8cdffc4f8b2c5f5d6665e56d3b0523f4c.001.2",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
-                "geocode": {
-                    "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
-                    ],
-                    "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T03:36:00-04:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f5935e5ae8e717b3758f7385decf5e48304da2d5.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T03:36:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T09:55:00-04:00",
-                "effective": "2026-10-10T09:55:00-04:00",
-                "onset": "2026-10-10T09:55:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-11T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Rip Current Statement issued October 10 at 9:55AM EDT until October 11 at 8:00PM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents and large breaking waves\nexpected. For the Coastal Flood Advisory, minor coastal\nflooding expected.\n\n* WHERE...Pinellas and Coastal Hillsborough Counties.\n\n* WHEN...For the the Coastal Flood Advisory, through 8 AM EDT\nthis morning. For the High Surf Risk, through 8 PM EDT this\nevening. For the Rip Current Risk, through Sunday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nInexperienced swimmers should remain out of the water due to\ndangerous surf conditions.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 101355"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 8 PM EDT THIS EVENING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH SUNDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.RP.S.0018.000000T0000Z-261012T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T20:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.002.2,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5a5a075f5042299986cc4f7252480299e1dca2a0.001.3,2026-10-09T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fb47ece589523f80d98428de3e6138112a429351.003.1,2026-10-08T14:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fb47ece589523f80d98428de3e6138112a429351.001.1,2026-10-08T14:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.004.2,2026-10-09T23:01:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62963419564245fe33b2b2f019e6226bb8cd614d.002.3,2026-10-09T23:01:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d535e7c51ce555557e5e8ac6106193a69edc5ddc.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d535e7c51ce555557e5e8ac6106193a69edc5ddc.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.d535e7c51ce555557e5e8ac6106193a69edc5ddc.001.1",
-                "areaDesc": "Suwannee; Baker; Union; Gilchrist; Eastern Hamilton; Western Hamilton; Northern Columbia; Southeastern Columbia; Southwestern Columbia",
-                "geocode": {
-                    "SAME": [
-                        "012121",
-                        "012003",
-                        "012125",
-                        "012041",
-                        "012047",
-                        "012023"
-                    ],
-                    "UGC": [
-                        "FLZ021",
-                        "FLZ023",
-                        "FLZ030",
-                        "FLZ035",
-                        "FLZ120",
-                        "FLZ220",
-                        "FLZ322",
-                        "FLZ422",
-                        "FLZ522"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ021",
-                    "https://api.weather.gov/zones/forecast/FLZ023",
-                    "https://api.weather.gov/zones/forecast/FLZ030",
-                    "https://api.weather.gov/zones/forecast/FLZ035",
-                    "https://api.weather.gov/zones/forecast/FLZ120",
-                    "https://api.weather.gov/zones/forecast/FLZ220",
-                    "https://api.weather.gov/zones/forecast/FLZ322",
-                    "https://api.weather.gov/zones/forecast/FLZ422",
-                    "https://api.weather.gov/zones/forecast/FLZ522"
-                ],
-                "references": [],
-                "sent": "2026-10-10T02:04:00-04:00",
-                "effective": "2026-10-10T02:04:00-04:00",
-                "onset": "2026-10-10T02:04:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Flood Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Flood Watch issued October 10 at 2:04AM EDT until October 10 at 8:00PM EDT by NWS Jacksonville FL",
-                "description": "* WHAT...Flash flooding caused by excessive rainfall continues to be\npossible.\n\n* WHERE...Portions of northeast and northern Florida, including the\nfollowing areas, in northeast Florida, Baker. In northern Florida,\nEastern Hamilton, Gilchrist, Northern Columbia, Southeastern\nColumbia, Southwestern Columbia, Suwannee, Union and Western\nHamilton.\n\n* WHEN...Through this evening.\n\n* IMPACTS...Excessive runoff may result in flooding of rivers,\ncreeks, streams, and other low-lying and flood-prone locations.\n\n* ADDITIONAL DETAILS...\n- A lifting warm front and moisture from the remnants of Tropical\nCyclone Isaias passing northwest of the area will bring rounds of\nmoderate to heavy showers and thunderstorms across areas of\nSoutheast Georgia and the Suwannee Valley of Northeast Florida\ntoday. Additional rainfall amounts of 1 to 3 inches are likely\nwith locally higher amounts possible.\n- http://www.weather.gov/safety/flood",
-                "instruction": "You should monitor later forecasts and be prepared to take action\nshould Flash Flood Warnings be issued.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FFAJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS62 KJAX 100604"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WATCH IN EFFECT THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXA.KJAX.FA.A.0006.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FFA"
-                    ],
-                    "NationalWeatherService": [
-                        "FAA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
-                "areaDesc": "Coastal Collier County",
-                "geocode": {
-                    "SAME": [
-                        "012021"
-                    ],
-                    "UGC": [
-                        "FLZ069"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ069"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-10-09T19:15:00-04:00"
                     }
@@ -3149,7 +2695,7 @@
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Miami FL",
                 "headline": "Coastal Flood Statement issued October 10 at 12:53AM EDT until October 11 at 12:00PM EDT by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Collier County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
+                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Palm Beach County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
                 "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
                 "response": "Monitor",
                 "note": null,
@@ -3175,7 +2721,7 @@
                         "2026-10-11T12:00:00-04:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.001.2,2026-10-09T10:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de502ad7c5376910033f4fd101e5a20b174b7451.002.1,2026-10-09T01:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.af8df1e365c8819101971e75d525e6ad40ea05c3.001.1,2026-10-08T16:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49229713b893d0d2339d807a3b37744b2782ad08.001.1,2026-10-08T01:36:00-04:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.002.1,2026-10-09T10:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de502ad7c5376910033f4fd101e5a20b174b7451.001.2,2026-10-09T01:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.af8df1e365c8819101971e75d525e6ad40ea05c3.001.1,2026-10-08T16:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49229713b893d0d2339d807a3b37744b2782ad08.002.1,2026-10-08T01:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c84a7570060c90de95d1f110801d6f0cec3a2264.001.1,2026-10-07T19:59:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.10af6cd096aa59d531600eef1f3086bb369bc5a0.001.1,2026-10-07T08:26:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -3287,29 +2833,29 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.1",
-                "areaDesc": "Coastal Palm Beach County",
+                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.1",
+                "areaDesc": "Coastal Collier County",
                 "geocode": {
                     "SAME": [
-                        "012099"
+                        "012021"
                     ],
                     "UGC": [
-                        "FLZ168"
+                        "FLZ069"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ168"
+                    "https://api.weather.gov/zones/forecast/FLZ069"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-10-09T19:15:00-04:00"
                     }
@@ -3329,7 +2875,7 @@
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Miami FL",
                 "headline": "Coastal Flood Statement issued October 10 at 12:53AM EDT until October 11 at 12:00PM EDT by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Palm Beach County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
+                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Collier County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
                 "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
                 "response": "Monitor",
                 "note": null,
@@ -3355,7 +2901,7 @@
                         "2026-10-11T12:00:00-04:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.002.1,2026-10-09T10:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de502ad7c5376910033f4fd101e5a20b174b7451.001.2,2026-10-09T01:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.af8df1e365c8819101971e75d525e6ad40ea05c3.001.1,2026-10-08T16:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49229713b893d0d2339d807a3b37744b2782ad08.002.1,2026-10-08T01:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c84a7570060c90de95d1f110801d6f0cec3a2264.001.1,2026-10-07T19:59:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.10af6cd096aa59d531600eef1f3086bb369bc5a0.001.1,2026-10-07T08:26:00-04:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.001.2,2026-10-09T10:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de502ad7c5376910033f4fd101e5a20b174b7451.002.1,2026-10-09T01:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.af8df1e365c8819101971e75d525e6ad40ea05c3.001.1,2026-10-08T16:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49229713b893d0d2339d807a3b37744b2782ad08.001.1,2026-10-08T01:36:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -3368,178 +2914,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.002.2",
-                "areaDesc": "Coastal Collier County",
-                "geocode": {
-                    "SAME": [
-                        "012021"
-                    ],
-                    "UGC": [
-                        "FLZ069"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ069"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T19:15:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T00:53:00-04:00",
-                "effective": "2026-10-10T00:53:00-04:00",
-                "onset": "2026-10-10T00:53:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Rip Current Statement issued October 10 at 12:53AM EDT until October 10 at 8:00PM EDT by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Collier County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
-                "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KMFL 100453"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT NOW IN EFFECT THROUGH SUNDAY MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMFL.RP.S.0031.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.001.1,2026-10-09T10:02:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4625919330933f91c99d3f410cbce8c427999774.001.2",
-                "areaDesc": "Coastal Palm Beach County",
-                "geocode": {
-                    "SAME": [
-                        "012099"
-                    ],
-                    "UGC": [
-                        "FLZ168"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ168"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.29f79dbd02e2b175b2499a10a8479ed665e042fc.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-09T19:15:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T00:53:00-04:00",
-                "effective": "2026-10-10T00:53:00-04:00",
-                "onset": "2026-10-10T00:53:00-04:00",
-                "expires": "2026-10-10T20:00:00-04:00",
-                "ends": "2026-10-10T20:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Rip Current Statement issued October 10 at 12:53AM EDT until October 10 at 8:00PM EDT by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Palm Beach County.\n\n* WHEN...For the Coastal Flood Statement, through Sunday\nmorning. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
-                "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KMFL 100453"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT NOW IN EFFECT THROUGH SUNDAY MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMFL.RP.S.0031.000000T0000Z-261011T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-10T20:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.daa287eda6ebd9bc6f919cc94d0b7c9a7105d2d2.002.2,2026-10-09T10:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.de502ad7c5376910033f4fd101e5a20b174b7451.001.1,2026-10-09T01:45:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
                     ]
                 }
             }
@@ -3650,5 +3024,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-10-10T23:55:10+00:00"
+    "updated": "2026-10-11T00:20:06+00:00"
 }
