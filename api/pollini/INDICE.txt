@@ -33,9 +33,9 @@
          campionamento: str = 'settimanale'
          tecnica_campionamento: str = 'POLLnet - Linee Guida per il monitoraggio biologico ISPRA, 
          dati_disponibili: str = 'conte e concentrazioni polliniche giornaliere'
-         _updated: str = 'Sat, 10 Oct 2026 22:21:17 GMT'
+         _updated: str = 'Sat, 10 Oct 2026 23:21:15 GMT'
          _created: str = 'Wed, 16 Oct 2024 13:19:16 GMT'
-         _etag: str = '7a6cfbae4d334dcc0025d456da0203e457543323'
+         _etag: str = '60ce2ae0d897712411bb04796962f39e8e63c739'
          _links: dict
            self: dict
              title: str = 'Pollini - Stazione di monitoraggio dei pollini'
@@ -122,9 +122,9 @@
              dati_disponibili: str = 'conte e concentrazioni polliniche giornaliere'
              foto: dict
                img_data: str = '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBAQFBAYFBQYJBgUGCQsIBgY
-             _updated: str = 'Sat, 10 Oct 2026 23:06:14 GMT'
+             _updated: str = 'Sat, 10 Oct 2026 23:51:17 GMT'
              _created: str = 'Wed, 16 Oct 2024 13:19:16 GMT'
-             _etag: str = 'fed6cc2bed78118b8dedbc8fdaa22baed9c326cc'
+             _etag: str = 'a96e3cdfd3b15462884da8e6af758862775a332b'
          letture: dict
            4176: dict
              GRAMINACEE: dict
@@ -9923,9 +9923,9 @@
                value: str = '383'
                classe: str = 'alta'
              count: int = 0
-         _updated: str = 'Sat, 10 Oct 2026 23:06:19 GMT'
+         _updated: str = 'Sat, 10 Oct 2026 23:51:20 GMT'
          _created: str = 'Wed, 07 Oct 2026 14:40:12 GMT'
-         _etag: str = 'd79f7e5fbd9688f13df2497c044402f353d853d1'
+         _etag: str = 'cc57acc64f5e11d18a84c169c315fe7a8be0b68f'
          _links: dict
            self: dict
              title: str = 'Pollini - Bollettino dati'
@@ -9967,7 +9967,7 @@
      ... ontanea è limitata agli spazi residuali e formata in prevalenza da graminacee e urticacee (parietaria)", "data_installazione": "1981", "funzionamento": "annuale", "c
      ... imitata agli spazi residuali e formata in prevalenza da graminacee e urticacee (parietaria)", "data_installazione": "1981", "funzionamento": "annuale", "campionamento":
    forli: 6 occorrenze
-     ... fb7ae65cb80341f28032f213e818711bced0a"}, {"_id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20
+     ... f7d191184485449d08634fdb190065ee14424"}, {"_id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20
      ... id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20 nota: i campionatori di Arpae Emilia-Romagn
      ... con altezza compresa fra i 15 e i 20 m dal suolo", "area": "Urbana", "comune": "Forlì", "provincia": "Forlì-Cesena", "sigla_provincia": "FC", "gestore": "-", "loc":
      ... ra i 15 e i 20 m dal suolo", "area": "Urbana", "comune": "Forlì", "provincia": "Forlì-Cesena", "sigla_provincia": "FC", "gestore": "-", "loc": {"coordinates": [12.03
@@ -19794,9 +19794,9 @@
                value: str = '383'
                classe: str = 'alta'
              count: int = 0
-         _updated: str = 'Sat, 10 Oct 2026 23:06:19 GMT'
+         _updated: str = 'Sat, 10 Oct 2026 23:21:32 GMT'
          _created: str = 'Wed, 07 Oct 2026 14:40:12 GMT'
-         _etag: str = 'd79f7e5fbd9688f13df2497c044402f353d853d1'
+         _etag: str = 'c08ff3a5a78235af677fbdc89b622677526955ac'
          _links: dict
            self: dict
              title: str = 'Pollini - Bollettino dati'
@@ -19932,21 +19932,21 @@
    urticacee: [(1362, 'Urticaceae', 2, 20, 70)]
 
 == pollnet-misure (Forlì, ultimi 60 giorni)
-   https://sdi.isprambiente.it/geoserver/om/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=om%3AConcentrazione_pollini_spore&outputFormat=application%2Fjson&cql_filter=STAT_ID%3D97+and+PART_ID+in+%281330%2C1362%29+and+REMA_DATE+%3E%3D+%272026-08-11%27
-   HTTP 200  tipo=application/json;charset=UTF-8  byte=26288  misure=78
+   https://sdi.isprambiente.it/geoserver/om/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=om%3AConcentrazione_pollini_spore&outputFormat=application%2Fjson&cql_filter=STAT_ID%3D97+and+PART_ID+in+%281330%2C1362%29+and+REMA_DATE+%3E%3D+%272026-08-12%27
+   HTTP 200  tipo=application/json;charset=UTF-8  byte=25609  misure=76
    forma della prima misura:
-     PART_SEQ: int = 403753
+     PART_SEQ: int = 403754
      PART_LEVEL: int = 2
-     PART_ID: int = 1330
-     PART_NAME_L: str = 'Cupressaceae/Taxaceae'
-     PART_PARENT_NAME_L: str = 'Cupressaceae/Taxaceae'
-     REMA_CONCENTRATION: int = 1
-     REMA_DATE: str = '2026-08-10Z'
+     PART_ID: int = 1362
+     PART_NAME_L: str = 'Urticaceae'
+     PART_PARENT_NAME_L: str = 'Urticaceae'
+     REMA_CONCENTRATION: int = 23
+     REMA_DATE: str = '2026-08-11Z'
      STAT_ID: int = 97
      STAT_CODE: str = 'FO1'
      STAT_NAME_I: str = 'Forlì'
-   date: dalla 2026-08-10 alla 2026-10-03, 55 giorni misurati
-   **ritardo: l'ultima misura e' di 7 giorni fa** (oggi 2026-10-10)
+   date: dalla 2026-08-11 alla 2026-10-03, 54 giorni misurati
+   **ritardo: l'ultima misura e' di 8 giorni fa** (oggi 2026-10-11)
      2026-09-27Z  PART_ID=1362  8
      2026-09-28Z  PART_ID=1362  4
      2026-09-29Z  PART_ID=1362  10

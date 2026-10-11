@@ -5446,85 +5446,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3fed4f1a07497bb69c4a4fe9708f116179f42ce2.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3fed4f1a07497bb69c4a4fe9708f116179f42ce2.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.3fed4f1a07497bb69c4a4fe9708f116179f42ce2.001.1",
-                "areaDesc": "San Diego County Coastal Areas; San Diego County Inland Valleys; San Diego County Mountains; San Diego County Deserts",
-                "geocode": {
-                    "SAME": [
-                        "006073"
-                    ],
-                    "UGC": [
-                        "CAZ043",
-                        "CAZ050",
-                        "CAZ058",
-                        "CAZ062"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ043",
-                    "https://api.weather.gov/zones/forecast/CAZ050",
-                    "https://api.weather.gov/zones/forecast/CAZ058",
-                    "https://api.weather.gov/zones/forecast/CAZ062"
-                ],
-                "references": [],
-                "sent": "2026-10-10T08:07:00-07:00",
-                "effective": "2026-10-10T08:07:00-07:00",
-                "onset": "2026-10-10T08:07:00-07:00",
-                "expires": "2026-10-10T16:15:00-07:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Tropical Cyclone Local Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Diego CA",
-                "headline": "Tropical Cyclone Local Statement issued October 10 at 8:07AM PDT by NWS San Diego CA",
-                "description": "HLSSGX\n\nThis product covers EXTREME SOUTHWESTERN CALIFORNIA\n\n**Impacts from Tropical Storm Rachel Expected in San Diego County Late\nTonight through Sunday Afternoon**\n\nNEW INFORMATION\n---------------\n\n* CHANGES TO WATCHES AND WARNINGS:\n- None\n\n* CURRENT WATCHES AND WARNINGS:\n- A Tropical Storm Watch is in effect for San Diego County\nCoastal Areas, San Diego County Deserts, San Diego County\nMountains, and San Diego County Valleys\n\n* STORM INFORMATION:\n- About 560 miles south-southwest of San Mateo Point CA or about\n510 miles south-southwest of Mouth of Tijuana River CA\n- 25.5N 119.6W\n- Storm Intensity 60 mph\n- Movement Northeast or 55 degrees at 22 mph\n\nSITUATION OVERVIEW\n------------------\n\nTropical Storm Rachel is currently about 520 miles south-southwest of\nSan Diego, moving northeast towards Northern Baja at about 22 mph.\nRachel is expected to make landfall somewhere just south of the\nUS/Mexico Border Saturday evening. Tropical storm level impacts will\nlikely affect San Diego County. A Tropical Storm Watch is in effect for\nall of San Diego County. The main concerns with Tropical Storm Rachel\nare coastal flooding, wind, and periods of heavy rain which could lead\nto localized flooding and flash flooding. The majority of impacts from\nthe tropical storm are expected late tonight through early Sunday\nafternoon.\n\nSouth swell from Tropical Storm Rachel will arrive on Sunday. The\ncombination of south and northwest swells, increased onshore winds,\nand high tides over 7 feet will maintain a threat of coastal flooding\nand beach erosion along area beaches. Surf on Sunday is currently\nexpected to peak at 6 to 9 feet, decreasing to 3 to 6 feet for Monday\nand Tuesday. Confidence in impactful coastal flooding is high, with\nsignificant coastal flooding and beach erosion likely.\n\nWidespread rain is expected on Sunday from Tropical Storm Rachel.\nThere is expected to be a gradient in rainfall amounts with the higher\namounts on the southeastern side of the storm. Confidence is high that\nthe heaviest rain will occur over San Diego County mountains and\ndeserts. Peak rainfall rates of 0.50 to 0.60 inches are possible for\nthe coast and valleys, 0.50 to 0.70 inches per hour possible for the\ndeserts, and 0.70 to 1 inch per hour for the mountains. Current\nforecast has rainfall totals of 0.50 to 1.25 inches for the coast,\nvalleys, and deserts and 1 to 2.5 inches for the mountains. Areas of\nflash and urban flooding are probable, especially where the maximum\nrainfall rates occur. The San Diego River at Fashion Valley is\ncurrently forecast to peak at 7.4 feet (just below monitor stage)\nSunday afternoon. Those with interests near the San Diego River should\ncontinue to monitor the forecast.\n\nIncreased winds are expected with the onset and passage of Tropical\nStorm Rachel. Sustained winds of 39+ mph are expected on the southeast\nside of the storm. Based on the current track, more southern and\neastern parts of San Diego County are most likely to see winds of this\nmagnitude. Regardless, strong sustained winds and wind gusts can be\nexpected on Sunday. Winds will likely be enhanced by local terrain\nwith gusts 40 to 55 mph on the desert slopes of the mountains and into\nthe deserts. Local gusts up to 60 mph possible on mountain ridges and\nin passes and canyons. Winds are expected to remain elevated in\nRachel's wake with continued strong gusts on the desert mountain\nslopes into the deserts through Monday morning.\n\nPOTENTIAL IMPACTS\n-----------------\n\n* COASTAL HAZARDS:\nHigh tides over 7 ft, combined with high surf and gusty onshore winds\nwill increase the threat for coastal flooding across area beaches.\nAdditionally surf of 6 to 9 ft will create dangerous swimming\nconditions. Significant coastal flooding and beach erosion is likely.\n\n* FLOODING RAIN:\nPrepare for life-threatening rainfall flooding having possible\nextensive impacts across San Diego County. Potential impacts include:\n- Major rainfall flooding may prompt many evacuations and rescues.\n- Rivers and tributaries may rapidly overflow their banks in\nmultiple places. Small streams, creeks, canals, arroyos, and\nditches may become dangerous rivers. In mountain areas,\ndestructive runoff may run quickly down valleys while\nincreasing susceptibility to rockslides and mudslides. Flood\ncontrol systems and barriers may become stressed.\n- Flood waters can enter many structures within multiple\ncommunities, some structures becoming uninhabitable or washed\naway. Many places where flood waters may cover escape routes.\nStreets and parking lots become rivers of moving water with\nunderpasses submerged. Driving conditions become dangerous.\nMany road and bridge closures with some weakened or washed out.\n\nPrepare for dangerous rainfall flooding having possible significant\nimpacts across San Diego County.\n\n* WIND:\nPrepare for hazardous wind having possible limited impacts across\nEXTREME SOUTHWESTERN CALIFORNIA. Potential impacts in this area\ninclude:\n- Damage to porches, awnings, carports, sheds, and unanchored\nmobile homes. Unsecured lightweight objects blown about.\n- Many large tree limbs broken off. A few trees snapped or\nuprooted, but with greater numbers in places where trees are\nshallow rooted, especially in coastal and valley locations that\ndon't typically experience strong winds. Some fences and\nroadway signs blown over.\n- A few roads impassable from debris, particularly within urban\nor heavily wooded places. Hazardous driving conditions on\nbridges and other elevated roadways.\n- Scattered power and communications outages.\n\nElsewhere across EXTREME SOUTHWESTERN CALIFORNIA, little to no impact\nis anticipated.\n\nPRECAUTIONARY/PREPAREDNESS ACTIONS\n----------------------------------\n\n* EVACUATIONS:\nFollow the advice of local officials.\n\n\n* OTHER PREPAREDNESS INFORMATION:\nNow is the time to check your emergency plan and emergency supplies\nkit and take necessary actions to protect your family and secure your\nhome or business.\n\nIf you live in a place particularly vulnerable to flooding, such as\nnear the ocean, in a low-lying or poor drainage area, in a valley, or\nnear a river, plan to move to safe shelter on higher ground.\n\nAlways heed the advice of local officials and comply with orders that\nare issued. Do not needlessly jeopardize your life or the lives of\nothers.\n\nClosely monitor weather.gov, NOAA Weather Radio and local news\noutlets for official storm information. Listen for possible changes\nto the forecast.\n\n* ADDITIONAL SOURCES OF INFORMATION:\n- For information on appropriate preparations see ready.gov\n- For information on creating an emergency plan see getagameplan.org\n- For additional disaster preparedness information see redcross.org\n\nNEXT UPDATE\n-----------\n\nThe next local statement will be issued by the National Weather\nService in San Diego CA around 2 PM PDT, or sooner if conditions\nwarrant.",
-                "instruction": null,
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "HLSSGX"
-                    ],
-                    "WMOidentifier": [
-                        "WTUS86 KSGX 101507"
-                    ],
-                    "NWSheadline": [
-                        "Impacts from Tropical Storm Rachel Expected in San Diego County Late\nTonight through Sunday Afternoon"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "HLS"
-                    ],
-                    "NationalWeatherService": [
-                        "HLS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.672c811103acda30e37fb5fc7041699dc62e0311.001.1",
             "type": "Feature",
             "geometry": null,
@@ -5918,5 +5839,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-10-10T23:13:40+00:00"
+    "updated": "2026-10-10T23:55:10+00:00"
 }
