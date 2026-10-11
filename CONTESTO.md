@@ -7749,3 +7749,26 @@ Prove JVM: `tile/RiquadroMeteoTest.kt` e il giorno condiviso in
 `RiepilogoMattinoTest`. **Non provato in mano**: come il launcher disegna le
 icone delle scorciatoie, e il riquadro su un telefono vero (si aggiunge
 modificando la tendina, "Meteo").
+
+## 54. L'ora d'oro e l'ora blu
+
+In Sala VII, sotto i tre riquadri: "LA LUCE PER LE FOTO", due colonne, mattina
+e sera, del giorno mostrato. In grande l'ora d'oro, sotto l'ora blu (dalle...
+la mattina, fino alle... la sera) e che cielo ci sara'.
+
+- `ui/sala/rooms/uv/LuceDelleFoto.kt`. Soglie: oro da -4° a +6°, blu da -6° a
+  -4° (le piu' usate, nessun ente le fissa). Si calcola **minuto per minuto**
+  con `OmbraSole.altezza`, la stessa formula dell'ombra, e la giornata si
+  divide al minuto del culmine, non a mezzogiorno. Dove una fascia non c'e'
+  (Tromsø d'estate) resta nulla e si scrive un trattino.
+- Il cielo e' la nuvolosita' media delle ore toccate dall'ora d'oro: sotto 25 %
+  "cielo libero", sotto 75 % "nuvole sparse, possibili colori", sopra
+  "coperto". E' la nuvolosita' gia' corretta per quota (`nuvolositaVisibile`).
+- L'ora e' quella del posto, con lo scarto dall'UTC della previsione: un giorno
+  di cambio d'ora sbaglia di un'ora la meta' che sta dall'altra parte.
+- `hhmm` non usa `oraDueCifre`, che si ferma a 23 e coi minuti sbaglierebbe.
+
+Prove JVM in `LuceDelleFotoTest` (tramonto vero di Forli', ordine blu/oro,
+durata, Tromsø, soglie del cielo). **Non provato in mano**: che la sala UV,
+piu' lunga di una sezione, scorra bene, e che le due colonne non vadano a capo
+su uno schermo stretto.
