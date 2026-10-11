@@ -235,9 +235,10 @@ def secondo_passo():
         testo = corpo.decode("utf-8", errors="replace")
         righe.append(f"   doc {i}: {m.group(1)}  HTTP {code}  byte={len(corpo)}")
         righe.append("   " + re.sub(r"\s+", " ", testo[:600]))
-    # Brasile e Argentina: il documento collegato alla prima voce di ciascun
-    # feed, per vedere se e' CAP e se porta poligoni.
-    for nome, sorgente in (("br-inmet-doc", "br-inmet.xml"), ("ar-smn-doc", "ar-smn.xml")):
+    # Brasile, Argentina e Nuova Zelanda (RSS, vuoto il 5 ottobre): il documento
+    # collegato alla prima voce di ciascun feed, per vedere se e' CAP e se porta poligoni.
+    for nome, sorgente in (("br-inmet-doc", "br-inmet.xml"), ("ar-smn-doc", "ar-smn.xml"),
+                           ("nz-metservice-doc", "nz-metservice-cap.xml")):
         testo = _leggi(sorgente)
         m = re.search(r"<item>.*?<link>([^<]+)</link>", testo, re.S)
         if not m:

@@ -50,6 +50,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:enableOnBackInvokedCallback="true"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|density|fontScale"
             android:theme="@style/Theme.Caelum">
             <intent-filter>

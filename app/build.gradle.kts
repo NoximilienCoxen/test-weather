@@ -182,6 +182,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -220,6 +221,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
+
+    // Il Data Layer: localita', unita' e lingua all'orologio (`sync/`).
+    implementation(libs.play.services.wearable)
 
     implementation(libs.glance.appwidget)
     // WorkManager era gia' nell'APK, portato da Glance. Si dichiara perche' ora

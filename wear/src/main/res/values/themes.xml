@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Il lampo fra il tocco e il primo fotogramma: nero, come lo schermo di un orologio. -->
+    <style name="Theme.Caelum.Wear" parent="android:Theme.DeviceDefault">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

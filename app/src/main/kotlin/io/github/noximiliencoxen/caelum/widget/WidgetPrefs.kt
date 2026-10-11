@@ -204,8 +204,10 @@ class WidgetPrefs(private val context: Context) {
             this[nomeKey(prefix, id)] = place.name
             // I campi nullable vengono rimossi se assenti per non lasciare
             // valori vecchi da una configurazione precedente.
-            if (place.admin != null) this[adminKey(prefix, id)] = place.admin else remove(adminKey(prefix, id))
-            if (place.country != null) this[paeseKey(prefix, id)] = place.country else remove(paeseKey(prefix, id))
+            // `?.let` e non `if (x != null)`: `Place` sta nel modulo `core`, e fra
+            // moduli diversi Kotlin non fa lo smart cast su una proprieta' pubblica.
+            place.admin?.let { this[adminKey(prefix, id)] = it } ?: remove(adminKey(prefix, id))
+            place.country?.let { this[paeseKey(prefix, id)] = it } ?: remove(paeseKey(prefix, id))
         }
 
         fun MutablePreferences.removePlace(prefix: String, id: Int) {

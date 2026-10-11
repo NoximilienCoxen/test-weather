@@ -2,6 +2,7 @@ package io.github.noximiliencoxen.caelum.ui.sala
 
 import io.github.noximiliencoxen.caelum.lingua.SceltaLingua
 import io.github.noximiliencoxen.caelum.lingua.Lingue
+import io.github.noximiliencoxen.caelum.lingua.scegli
 import io.github.noximiliencoxen.caelum.lingua.tr
 import android.Manifest
 import android.app.Activity

@@ -46,6 +46,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -877,10 +878,11 @@ fun SalaShell(
                 label = "impostazioni",
             )
             if (scorrimentoImpostazioni > 0.001f) {
-                BackHandler(enabled = state.settingsOpen, onBack = viewModel::closeSettings)
+                val scalaPannelloImpostazioni = indietroPredittivo(attivo = state.settingsOpen, alIndietro = viewModel::closeSettings)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
+                        .graphicsLayer { scaleX = scalaPannelloImpostazioni; scaleY = scalaPannelloImpostazioni }
                         .offset { IntOffset((-(1f - scorrimentoImpostazioni) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
@@ -911,10 +913,11 @@ fun SalaShell(
                 label = "localita",
             )
             if (scorrimentoLocalita > 0.001f) {
-                BackHandler(enabled = state.locationsOpen, onBack = viewModel::closeLocations)
+                val scalaPannelloLocalita = indietroPredittivo(attivo = state.locationsOpen, alIndietro = viewModel::closeLocations)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
+                        .graphicsLayer { scaleX = scalaPannelloLocalita; scaleY = scalaPannelloLocalita }
                         .offset { IntOffset(((1f - scorrimentoLocalita) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
@@ -944,10 +947,11 @@ fun SalaShell(
                 label = "confronto",
             )
             if (scorrimentoConfronto > 0.001f) {
-                BackHandler(enabled = state.confrontoOpen, onBack = viewModel::closeConfronto)
+                val scalaPannelloConfronto = indietroPredittivo(attivo = state.confrontoOpen, alIndietro = viewModel::closeConfronto)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
+                        .graphicsLayer { scaleX = scalaPannelloConfronto; scaleY = scalaPannelloConfronto }
                         .offset { IntOffset(((1f - scorrimentoConfronto) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
@@ -976,10 +980,11 @@ fun SalaShell(
                 label = "legali",
             )
             if (scorrimentoLegali > 0.001f) {
-                BackHandler(enabled = state.legaliOpen, onBack = viewModel::closeLegali)
+                val scalaPannelloLegali = indietroPredittivo(attivo = state.legaliOpen, alIndietro = viewModel::closeLegali)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
+                        .graphicsLayer { scaleX = scalaPannelloLegali; scaleY = scalaPannelloLegali }
                         .offset { IntOffset(((1f - scorrimentoLegali) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {
@@ -996,10 +1001,11 @@ fun SalaShell(
                 label = "bollettino",
             )
             if (scorrimentoBollettino > 0.001f) {
-                BackHandler(enabled = state.bollettinoAperto, onBack = viewModel::chiudiBollettino)
+                val scalaPannelloBollettino = indietroPredittivo(attivo = state.bollettinoAperto, alIndietro = viewModel::chiudiBollettino)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
+                        .graphicsLayer { scaleX = scalaPannelloBollettino; scaleY = scalaPannelloBollettino }
                         .offset { IntOffset(((1f - scorrimentoBollettino) * widthPx).roundToInt(), 0) },
                     color = MaterialTheme.colorScheme.surface,
                 ) {

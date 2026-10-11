@@ -205,7 +205,7 @@ private fun <T> List<T>.at(index: Int): T? = getOrNull(index)
  *
  * Senza le quote - un modello che non le da' - resta il totale.
  */
-internal fun nuvolositaVisibile(totale: Int?, bassa: Int?, media: Int?, alta: Int?): Int? {
+fun nuvolositaVisibile(totale: Int?, bassa: Int?, media: Int?, alta: Int?): Int? {
     if (bassa == null && media == null && alta == null) return totale
     fun libero(p: Int?, peso: Float) = 1f - (p ?: 0).coerceIn(0, 100) / 100f * peso
     val coperto = 1f - libero(bassa, 1f) * libero(media, 1f) * libero(alta, 0.25f)
@@ -231,7 +231,7 @@ internal fun nuvolositaVisibile(totale: Int?, bassa: Int?, media: Int?, alta: In
  * i temporali: un temporale senza una goccia e' il caso piu' raro, e l'avviso
  * calcolato "Temporali" non deve accendersi su quello.
  */
-internal fun codiceDelGiorno(codice: Int?, precipitazione: Double?, codiciOrari: List<Int?>): Int? {
+fun codiceDelGiorno(codice: Int?, precipitazione: Double?, codiciOrari: List<Int?>): Int? {
     val bagnato = Wmo.family(codice) in setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
     if (!bagnato || precipitazione == null || precipitazione > 0.0) return codice
     val asciutti = codiciOrari.filterNotNull().filter {
@@ -246,7 +246,7 @@ internal fun codiceDelGiorno(codice: Int?, precipitazione: Double?, codiciOrari:
 private fun String?.asDateTime(): LocalDateTime? =
     this?.let { runCatching { LocalDateTime.parse(it) }.getOrNull() }
 
-internal fun OpenMeteoResponse.toForecast(place: Place): Forecast {
+fun OpenMeteoResponse.toForecast(place: Place): Forecast {
     val d = daily
     val today = LocalDate.now()
 
