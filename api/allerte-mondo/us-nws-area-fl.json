@@ -10,6 +10,936 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.aa802d8a98eaf80a1ca4590a6ff4f064e08bd77a.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.aa802d8a98eaf80a1ca4590a6ff4f064e08bd77a.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.aa802d8a98eaf80a1ca4590a6ff4f064e08bd77a.001.1",
+                "areaDesc": "Mobile Coastal; Baldwin Coastal; Escambia Coastal; Santa Rosa Coastal; Okaloosa Coastal",
+                "geocode": {
+                    "SAME": [
+                        "001097",
+                        "001003",
+                        "012033",
+                        "012113",
+                        "012091"
+                    ],
+                    "UGC": [
+                        "ALZ265",
+                        "ALZ266",
+                        "FLZ202",
+                        "FLZ204",
+                        "FLZ206"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/ALZ265",
+                    "https://api.weather.gov/zones/forecast/ALZ266",
+                    "https://api.weather.gov/zones/forecast/FLZ202",
+                    "https://api.weather.gov/zones/forecast/FLZ204",
+                    "https://api.weather.gov/zones/forecast/FLZ206"
+                ],
+                "references": [],
+                "sent": "2026-10-11T10:38:00-05:00",
+                "effective": "2026-10-11T10:38:00-05:00",
+                "onset": "2026-10-11T10:38:00-05:00",
+                "expires": "2026-10-11T18:00:00-05:00",
+                "ends": "2026-10-11T18:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Mobile AL",
+                "headline": "Rip Current Statement issued October 11 at 10:38AM CDT until October 11 at 6:00PM CDT by NWS Mobile AL",
+                "description": "* WHAT...Dangerous rip currents.\n\n* WHERE...In Alabama, Mobile Coastal and Baldwin Coastal\nCounties. In Florida, Escambia Coastal, Santa Rosa Coastal and\nOkaloosa Coastal Counties.\n\n* WHEN...Until 6 PM CDT this evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMOB"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS44 KMOB 111538"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT UNTIL 6 PM CDT THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMOB.RP.S.0027.000000T0000Z-261011T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T18:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33f7087d7dbce5b2eddaf588e2f8cd58f99969f4.001.1,2026-10-11T02:30:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fbf7562f2aeb0be9d3e187b21048db291b6fc4f2.001.1,2026-10-10T18:19:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9eef66104452c1870f7625e88c2e7d5b2d97b04.002.2,2026-10-10T09:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9eef66104452c1870f7625e88c2e7d5b2d97b04.001.3,2026-10-10T09:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2ebaff294168d66e9b232ea2e77111a494819f82.002.2,2026-10-10T04:45:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2ebaff294168d66e9b232ea2e77111a494819f82.001.2,2026-10-10T04:45:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca3282dcf7fde6d7a15a1e1ef68c73b78bf677c7.001.2,2026-10-10T01:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bfb550b189068312e8997063b40d1d3acb846838.001.2,2026-10-09T13:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c9f4a2a5470dadc5db454627fd5d459cc02e7e69.001.2,2026-10-09T04:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0029978a55ed871fe6117343f8f81e41d6a27044.001.2,2026-10-08T23:00:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63aeea6c688789cc51d501ba71e1e4f89c31b4fe.001.2,2026-10-08T14:55:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ad47e935bd44a2eb07898704ea5b1ef3dd6af2a8.001.2,2026-10-08T08:19:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae2630c72b9f4fa1cf40f0dee2817e9eeff9b43b.001.1,2026-10-08T04:30:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b0edaeba332dd26f51ab7361c3a77703a74abad6.001.1,2026-10-07T17:55:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dfdb03f17e300464352f6c7ccd6eb9fb9d9faa63.001.1,2026-10-07T11:37:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bfcc718e992f022a1dcca438f16f12e4f54bb01b.001.1,2026-10-06T18:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.39833925db1898afb246978225f139ae73deec29.001.1,2026-10-06T12:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3592868ac24bf895b30d9f5f5d799bcad25906e3.001.1,2026-10-06T03:09:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31229e74ed504ca805a7384b66de3346ed5cd167.001.1,2026-10-05T19:20:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fcb53b77fafcd10f7f3046434d04cef22dd0bca6.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -81.5,
+                            29.08
+                        ],
+                        [
+                            -81.69,
+                            29.32
+                        ],
+                        [
+                            -81.57,
+                            29.35
+                        ],
+                        [
+                            -81.42,
+                            29.1
+                        ],
+                        [
+                            -81.5,
+                            29.08
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fcb53b77fafcd10f7f3046434d04cef22dd0bca6.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fcb53b77fafcd10f7f3046434d04cef22dd0bca6.001.1",
+                "areaDesc": "Lake, FL; Volusia, FL",
+                "geocode": {
+                    "SAME": [
+                        "012069",
+                        "012127"
+                    ],
+                    "UGC": [
+                        "FLC069",
+                        "FLC127"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC069",
+                    "https://api.weather.gov/zones/county/FLC127"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b426cf88562c3f2344793ae431fbc46ad7363ab7.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b426cf88562c3f2344793ae431fbc46ad7363ab7.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T21:43:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-11T11:01:00-04:00",
+                "effective": "2026-10-11T11:01:00-04:00",
+                "onset": "2026-10-11T11:01:00-04:00",
+                "expires": "2026-10-12T11:15:00-04:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Melbourne FL",
+                "headline": "Flood Warning issued October 11 at 11:01AM EDT by NWS Melbourne FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Astor affecting Lake and Volusia Counties.\n\n.The St Johns River at Astor remains in Moderate Flood Stage due to\nnorth winds forecast and repeated rounds of heavy rainfall across the\nbasin. River levels are forecast to remain just above Moderate Flood\nStage through this weekend and into next week.\n\nFor the St. Johns River...including Astor...Minor flooding is\nforecast.\n\n* WHAT...Moderate flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...St Johns River near Astor.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 3.0 feet, Water approaches or may enter lowest homes\non or near Wildhog Road and nearby canals. Flooding reaches the\nparking lot of the Juno Trail Apartments. Flooding on portions of\nAlligator Road and Holiday Road. Lowest lying yards along Blue\nCreek are flooded. Roads at Astor Landing Campground and Lake\nDexter Boat Ramp begin to flood. Water enters lower homes closest\nto the river on McPherson Lane.\n\n* ADDITIONAL DETAILS...\n- At 10:30 AM EDT Sunday the stage was 3.1 feet.\n- Bankfull stage is 2.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 10:30 AM EDT Sunday was 3.2 feet.\n- Forecast...The river is expected remain steady around 3.2ft\nthrough at least midweek.\n- Flood stage is 2.3 feet.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Monday morning at 1115 AM EDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSMLB"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KMLB 111501"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMLB.FL.W.0003.000000T0000Z-000000T0000Z/"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a7086518664f7fe6da003a715a0944cf95960638.001.1,2026-10-10T12:14:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2e9ae2594103671ac374c677fd0eac7bef3a271.001.1,2026-10-09T20:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a3dd7595a5686c7b226150184ef3ef916f9c33d.001.1,2026-10-09T08:52:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.36254b6b2cc30b96af78b5ddccf3eecd597d2c5e.001.1,2026-10-09T00:09:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8757dc22c528c67fe6f6c1975d46b5b177ecb9a3.001.1,2026-10-08T21:59:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.52572978a4c286c19f5039b707506f65bb11d4f0.001.1,2026-10-08T22:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4005b1c5d9f2d912d3640b6fd16da3a7dfa314b0.001.1,2026-10-08T10:05:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3291d526cabe593657cc11dd69dad3433dc800f5.001.1,2026-10-08T09:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2d26e4d2ee1b9e255115bd0b478eb1efdecbdd34.001.1,2026-10-07T19:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5435b68e1ad2031724f8b67da651e8b47f906f1.001.1,2026-10-07T14:30:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3489ac5dc4a2782ddacffcbc40bd6c036b56e1c.001.1,2026-10-06T21:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e4d9436c0e7b6043fa60b5d83484fce1dfd4ab4.001.1,2026-10-06T07:40:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a8ac81ae299ec227086b6949e09ca4a4b1dd132a.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -85.8,
+                            30.99
+                        ],
+                        [
+                            -85.81,
+                            30.7
+                        ],
+                        [
+                            -85.92,
+                            30.7
+                        ],
+                        [
+                            -85.89,
+                            30.77
+                        ],
+                        [
+                            -85.91,
+                            30.85
+                        ],
+                        [
+                            -85.88,
+                            30.99
+                        ],
+                        [
+                            -85.8,
+                            30.99
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a8ac81ae299ec227086b6949e09ca4a4b1dd132a.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.a8ac81ae299ec227086b6949e09ca4a4b1dd132a.001.1",
+                "areaDesc": "Holmes, FL; Washington, FL",
+                "geocode": {
+                    "SAME": [
+                        "012059",
+                        "012133"
+                    ],
+                    "UGC": [
+                        "FLC059",
+                        "FLC133"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC059",
+                    "https://api.weather.gov/zones/county/FLC133"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.007.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.007.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T22:13:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-11T10:55:00-04:00",
+                "effective": "2026-10-11T10:55:00-04:00",
+                "onset": "2026-10-15T02:00:00-04:00",
+                "expires": "2026-10-11T23:00:00-04:00",
+                "ends": "2026-10-16T08:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tallahassee FL",
+                "headline": "Flood Warning issued October 11 at 10:55AM EDT until October 16 at 8:00AM EDT by NWS Tallahassee FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nChoctawhatchee River near Caryville (US 90) affecting Holmes and\nWashington Counties.\n\n* WHAT...Minor flooding is forecast.\n\n* WHERE...Choctawhatchee River near Caryville (US 90).\n\n* WHEN...From late Wednesday night to Friday morning.\n\n* IMPACTS...At 14.0 feet, In Holmes County, Boat Ramp Road south of\nCR-179 will flood. Access to several of the fish camps off Boat\nRamp Road may become inaccessible above this level.\n\n* ADDITIONAL DETAILS...\n- At 9:00 AM CDT Sunday the stage was 8.7 feet.\n- Forecast...The river is expected to rise above flood stage early\nThursday morning to a crest of 14.1 feet Thursday morning. It\nwill then fall below flood stage Thursday evening.\n- Flood stage is 14.0 feet.\n- Flood History...This crest compares to a previous crest of 14.1\nfeet on 01/25/2017.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 1000 PM CDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSTAE"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KTAE 111455"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING NOW IN EFFECT FROM LATE WEDNESDAY NIGHT TO FRIDAY MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.KTAE.FL.W.0010.261015T0600Z-261016T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-16T08:00:00-04:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.794d1335b77d797811cd287705cac80e0b65313a.001.1,2026-10-10T11:09:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ece51610cf8486e3b943eb9a18d06ec952e6cfaf.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -86.39,
+                            30.82
+                        ],
+                        [
+                            -86.3,
+                            30.82
+                        ],
+                        [
+                            -86.2,
+                            30.8
+                        ],
+                        [
+                            -86.19,
+                            30.77
+                        ],
+                        [
+                            -86.31,
+                            30.77
+                        ],
+                        [
+                            -86.39,
+                            30.76
+                        ],
+                        [
+                            -86.39,
+                            30.82
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ece51610cf8486e3b943eb9a18d06ec952e6cfaf.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.ece51610cf8486e3b943eb9a18d06ec952e6cfaf.001.1",
+                "areaDesc": "Walton, FL",
+                "geocode": {
+                    "SAME": [
+                        "012131"
+                    ],
+                    "UGC": [
+                        "FLC131"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC131"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T22:13:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-11T10:23:00-04:00",
+                "effective": "2026-10-11T10:23:00-04:00",
+                "onset": "2026-10-11T10:23:00-04:00",
+                "expires": "2026-10-11T22:30:00-04:00",
+                "ends": "2026-10-12T02:37:00-04:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tallahassee FL",
+                "headline": "Flood Warning issued October 11 at 10:23AM EDT until October 12 at 2:37AM EDT by NWS Tallahassee FL",
+                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nShoal River near Mossy Head (CR 1087) affecting Walton County.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...Shoal River near Mossy Head (CR 1087).\n\n* WHEN...Until late tonight.\n\n* IMPACTS...At 14.0 feet, Water begins to overflow into wooded areas\nalong the river from New Harmony Road westward to Laird Road.\n\n* ADDITIONAL DETAILS...\n- At 8:15 AM CDT Sunday the stage was 15.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:15 AM CDT Sunday was 22.5 feet.\n- Forecast...The river is expected to fall below flood stage this\nafternoon and continue falling to 6.7 feet tomorrow evening.\n- Flood stage is 14.0 feet.\n- Flood History...This crest compares to a previous crest of 15.0\nfeet on 06/22/2026.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 930 PM CDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSTAE"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KTAE 111423"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING NOW IN EFFECT UNTIL LATE TONIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.KTAE.FL.W.0006.000000T0000Z-261012T0637Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-12T02:37:00-04:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f12b7ef22305aded232a8e97096203293ad7be88.001.1,2026-10-10T12:42:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2cf6762d3dac18282920795bfe3d618ac88b4ef.001.1,2026-10-10T05:57:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e9fb8b719f8a45e3cc2693f4acd72c4343fc5c09.001.1,2026-10-09T22:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1d22e96ebe1ff69592273215c665b6a9f401d647.001.1,2026-10-09T21:27:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.002.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.44,
+                            28.98
+                        ],
+                        [
+                            -82.48,
+                            29.02
+                        ],
+                        [
+                            -82.44,
+                            29.09
+                        ],
+                        [
+                            -82.37,
+                            29.07
+                        ],
+                        [
+                            -82.44,
+                            28.98
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.002.1",
+                "areaDesc": "Citrus, FL; Levy, FL; Marion, FL",
+                "geocode": {
+                    "SAME": [
+                        "012017",
+                        "012075",
+                        "012083"
+                    ],
+                    "UGC": [
+                        "FLC017",
+                        "FLC075",
+                        "FLC083"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC017",
+                    "https://api.weather.gov/zones/county/FLC075",
+                    "https://api.weather.gov/zones/county/FLC083"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T22:06:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-11T10:09:00-04:00",
+                "effective": "2026-10-11T10:09:00-04:00",
+                "onset": "2026-10-11T10:09:00-04:00",
+                "expires": "2026-10-11T22:15:00-04:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Flood Warning issued October 11 at 10:09AM EDT by NWS Tampa Bay Ruskin FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Citrus and Levy\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek remain\nelevated. With additional heavy rainfall forecast, water levels are\nexpected to continue rising, and could reach minor flood stage in the\nnext few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...Withlacoochee at US 41 Dunnellon.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 28.2 feet, Docks and boat ramps flood along the river\nin Citrus and Marion counties.\n\n* ADDITIONAL DETAILS...\n- At 9:45 AM EDT Sunday the stage was 28.2 feet.\n- Bankfull stage is 28.2 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 9:45 AM EDT Sunday was 28.3 feet.\n- Forecast...The river is expected to remain steady at flood stage.\n- Flood stage is 28.2 feet.\n- Flood History...This crest compares to a previous crest of 28.2\nfeet on 10/02/1979.\n- https://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 1015 PM EDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KTBW 111409"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.FL.W.0009.000000T0000Z-000000T0000Z/"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1,2026-10-10T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1,2026-10-09T20:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.004.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.003.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.002.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.90d2cd9ab9db07e57853ce8f68153f65459db1bd.001.1,2026-10-07T21:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5b162b63db4059beac74c91ded7803d1d2b8f3d.001.1,2026-10-07T15:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e30a37fe3135e733bd102cecffda4f2fb583ce3.001.1,2026-10-07T11:22:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9b23803be4c3880ba1697fe86cfc5bb9d7047a3a.001.1,2026-10-07T06:34:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.34,
+                            28.19
+                        ],
+                        [
+                            -82.34,
+                            28.14
+                        ],
+                        [
+                            -82.4,
+                            28.14
+                        ],
+                        [
+                            -82.4,
+                            28.19
+                        ],
+                        [
+                            -82.34,
+                            28.19
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.1f8cd94e29d84353a314ea011e6fe65275a58542.001.1",
+                "areaDesc": "Pasco, FL",
+                "geocode": {
+                    "SAME": [
+                        "012101"
+                    ],
+                    "UGC": [
+                        "FLC101"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC101"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-10T22:06:00-04:00"
+                    }
+                ],
+                "sent": "2026-10-11T10:09:00-04:00",
+                "effective": "2026-10-11T10:09:00-04:00",
+                "onset": "2026-10-13T02:00:00-04:00",
+                "expires": "2026-10-11T22:15:00-04:00",
+                "ends": "2026-10-14T02:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Flood Warning issued October 11 at 10:09AM EDT until October 14 at 2:00AM EDT by NWS Tampa Bay Ruskin FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Citrus and Levy\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek remain\nelevated. With additional heavy rainfall forecast, water levels are\nexpected to continue rising, and could reach minor flood stage in the\nnext few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is forecast.\n\n* WHERE...Cypress Creek at SR 54 Worthington Gardens.\n\n* WHEN...From late Monday night to late Tuesday night.\n\n* IMPACTS...At 8.0 feet, Flooding begins at the recreation area on\nState Road 54.\n\n* ADDITIONAL DETAILS...\n- At 9:00 AM EDT Sunday the stage was 7.2 feet.\n- Bankfull stage is 8.0 feet.\n- Forecast...The river is expected to rise to a crest of 8.0 feet\nearly Tuesday morning. It will then fall below flood stage\nTuesday evening.\n- Flood stage is 8.0 feet.\n- Flood History...This crest compares to a previous crest of 8.1\nfeet on 05/29/1976.\n- https://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 1015 PM EDT.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KTBW 111409"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING NOW IN EFFECT FROM LATE MONDAY NIGHT TO LATE TUESDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.KTBW.FL.W.0010.261013T0600Z-261014T0600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-14T02:00:00-04:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.002.1,2026-10-10T11:06:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.004.1,2026-10-09T20:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.003.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.002.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.001.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.48743f827e2a63228908f97c43d3c42a8eba79eb.001.1,2026-10-07T21:54:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5b20df7677ae257204c245c06da5f08702ddbeb2.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -86.5,
+                            30.78
+                        ],
+                        [
+                            -86.49,
+                            30.78
+                        ],
+                        [
+                            -86.53,
+                            30.69
+                        ],
+                        [
+                            -86.63,
+                            30.69
+                        ],
+                        [
+                            -86.63,
+                            30.7
+                        ],
+                        [
+                            -86.55,
+                            30.7
+                        ],
+                        [
+                            -86.5,
+                            30.78
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5b20df7677ae257204c245c06da5f08702ddbeb2.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.5b20df7677ae257204c245c06da5f08702ddbeb2.001.1",
+                "areaDesc": "Okaloosa, FL",
+                "geocode": {
+                    "SAME": [
+                        "012091"
+                    ],
+                    "UGC": [
+                        "FLC091"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC091"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d2fe30d00195d8a92ab5fd52f791213138f3d088.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.d2fe30d00195d8a92ab5fd52f791213138f3d088.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-11T04:47:00-05:00"
+                    }
+                ],
+                "sent": "2026-10-11T08:55:00-05:00",
+                "effective": "2026-10-11T08:55:00-05:00",
+                "onset": "2026-10-11T08:55:00-05:00",
+                "expires": "2026-10-11T21:00:00-05:00",
+                "ends": "2026-10-13T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Observed",
+                "urgency": "Immediate",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Mobile AL",
+                "headline": "Flood Warning issued October 11 at 8:55AM CDT until October 13 at 7:00PM CDT by NWS Mobile AL",
+                "description": "...The Flood Warning continues for the following river in Florida...\n\nShoal River Near Crestview affecting Okaloosa County.\n\nFor the Shoal River...including Crestview...Moderate flooding is\nforecast.\n\nAdditional information is available at www.weather.gov/mob. Click on\nthe Rivers and Lakes menu for forecasts and observations.\n\nThe next statement will be issued when updates occur.\n\n* WHAT...Minor flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...Shoal River near Crestview.\n\n* WHEN...Until Tuesday evening.\n\n* IMPACTS...At 13.0 feet, homes on south bank of river begin to flood\nnear Crestview. At 14.0 feet, residential flooding in the Trevor\nCourt area.\n\n* ADDITIONAL DETAILS...\n- At 8:15 AM CDT Sunday the stage was 11.7 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:15 AM CDT Sunday was 11.7 feet.\n- Forecast...The river is expected to rise to a crest of 13.8 feet\nthis evening. It will then fall below flood stage early Tuesday\nafternoon.\n- Flood stage is 8.0 feet.\n- Flood History...This crest compares to a previous crest of 13.7\nfeet on 03/18/1990.\n- http://www.weather.gov/safety/flood",
+                "instruction": null,
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSMOB"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS84 KMOB 111355"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING REMAINS IN EFFECT UNTIL TUESDAY EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMOB.FL.W.0048.000000T0000Z-261014T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-13T19:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d640a7de0f591f69ed47b938dcf5aa412012e71.001.1,2026-10-10T20:41:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a519de814aaeac91013b5464bb4e4e66dc5c7cf6.001.1,2026-10-10T09:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b35f4371a930d682115bfacce2c8f1fd4a60c596.001.1,2026-10-10T00:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.86658255771cabced6a8d66b36a36aeac5f9d3c0.001.1,2026-10-09T21:00:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.db0ee09963865ffdf0ebfdd854335cdca59315da.001.1,2026-10-09T09:12:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9ae69686cb7ff24464b7fdf8a7e2e164d554aba.001.1,2026-10-08T20:21:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7a2b1e0a3897bb508f4d6ca35041fe8182a0e6b3.001.1,2026-10-08T08:38:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLS"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1ecf364e055bc2988ecb6279f0222ac1f1249f06.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.21,
+                            30.41
+                        ],
+                        [
+                            -82.07,
+                            30.38
+                        ],
+                        [
+                            -82.04,
+                            30.62
+                        ],
+                        [
+                            -81.98,
+                            30.62
+                        ],
+                        [
+                            -82.03,
+                            30.34
+                        ],
+                        [
+                            -82.2,
+                            30.35
+                        ],
+                        [
+                            -82.21,
+                            30.41
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1ecf364e055bc2988ecb6279f0222ac1f1249f06.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.1ecf364e055bc2988ecb6279f0222ac1f1249f06.001.1",
+                "areaDesc": "Baker, FL; Nassau, FL; Charlton, GA",
+                "geocode": {
+                    "SAME": [
+                        "012003",
+                        "012089",
+                        "013049"
+                    ],
+                    "UGC": [
+                        "FLC003",
+                        "FLC089",
+                        "GAC049"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC003",
+                    "https://api.weather.gov/zones/county/FLC089",
+                    "https://api.weather.gov/zones/county/GAC049"
+                ],
+                "references": [],
+                "sent": "2026-10-11T09:25:00-04:00",
+                "effective": "2026-10-11T09:25:00-04:00",
+                "onset": "2026-10-11T09:25:00-04:00",
+                "expires": "2026-10-12T09:30:00-04:00",
+                "ends": "2026-10-14T02:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Flood Warning issued October 11 at 9:25AM EDT until October 14 at 2:00AM EDT by NWS Jacksonville FL",
+                "description": "...The National Weather Service in Jacksonville has issued a Flood\nWarning for the following rivers in Florida...Georgia...\n\nSt Mary's River At Macclenny affecting Charlton, Nassau and Baker\nCounties.\n\nAdditional information is available at\nhttps://water.weather.gov/wfo/JAX\n\nThe next statement will be issued Monday morning at 930 AM EDT.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...St Mary's River at Macclenny.\n\n* WHEN...From this morning to late Tuesday night.\n\n* IMPACTS...At 12.0 feet, Minor flooding of low lying areas and\ntimber lands including some properties along St. Mary's River Bluff\nRoad and the Cypress Landing Resort on the Georgia side. At 14.0\nfeet, Flooding of bottomlands along the river and some lower access\nroads including the lower half of St. Mary's River Bluff Road which\ncuts off 15 to 20 homes on the Georgia side.\n\n* ADDITIONAL DETAILS...\n- At 8:45 AM EDT Sunday the stage was 12.1 feet.\n- Forecast...The river is expected to rise to a crest of 12.2 feet\nthis afternoon. It will then fall below flood stage Tuesday\nevening.\n- Flood stage is 12.0 feet.\n- http://www.weather.gov/safety/flood",
+                "instruction": null,
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS42 KJAX 111325"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WARNING IN EFFECT FROM THIS MORNING TO LATE TUESDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KJAX.FL.W.0006.261011T1325Z-261014T0600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-14T02:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FLW"
+                    ],
+                    "NationalWeatherService": [
+                        "FLW"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7bacc62cb650b5fd286c048b14ac5e4e8a723e92.002.1",
             "type": "Feature",
             "geometry": null,
@@ -109,129 +1039,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d2fe30d00195d8a92ab5fd52f791213138f3d088.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -86.5,
-                            30.78
-                        ],
-                        [
-                            -86.49,
-                            30.78
-                        ],
-                        [
-                            -86.53,
-                            30.69
-                        ],
-                        [
-                            -86.63,
-                            30.69
-                        ],
-                        [
-                            -86.63,
-                            30.7
-                        ],
-                        [
-                            -86.55,
-                            30.7
-                        ],
-                        [
-                            -86.5,
-                            30.78
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d2fe30d00195d8a92ab5fd52f791213138f3d088.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.d2fe30d00195d8a92ab5fd52f791213138f3d088.001.1",
-                "areaDesc": "Okaloosa, FL",
-                "geocode": {
-                    "SAME": [
-                        "012091"
-                    ],
-                    "UGC": [
-                        "FLC091"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC091"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d640a7de0f591f69ed47b938dcf5aa412012e71.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9d640a7de0f591f69ed47b938dcf5aa412012e71.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T20:41:00-05:00"
-                    }
-                ],
-                "sent": "2026-10-11T04:47:00-05:00",
-                "effective": "2026-10-11T04:47:00-05:00",
-                "onset": "2026-10-11T04:47:00-05:00",
-                "expires": "2026-10-11T17:00:00-05:00",
-                "ends": "2026-10-13T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Mobile AL",
-                "headline": "Flood Warning issued October 11 at 4:47AM CDT until October 13 at 7:00PM CDT by NWS Mobile AL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nShoal River Near Crestview affecting Okaloosa County.\n\nFor the Shoal River...including Crestview...Moderate flooding is\nforecast.\n\n* WHAT...Minor flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...Shoal River near Crestview.\n\n* WHEN...Until Tuesday evening.\n\n* IMPACTS...At 14.0 feet, Residential flooding in the Trevor Court\narea.\n\n* ADDITIONAL DETAILS...\n- At 4:15 AM CDT Sunday the stage was 10.7 feet.\n- Forecast...The river is expected to rise to a crest of 14.0 feet\nthis evening. It will then fall below flood stage early Tuesday\nafternoon.\n- Flood stage is 8.0 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov/mob. Click on\nthe Rivers and Lakes menu for forecasts and observations.\n\nThe next statement will be issued when updates occur.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSMOB"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS84 KMOB 110947"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING REMAINS IN EFFECT UNTIL TUESDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMOB.FL.W.0048.000000T0000Z-261014T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-13T19:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a519de814aaeac91013b5464bb4e4e66dc5c7cf6.001.1,2026-10-10T09:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b35f4371a930d682115bfacce2c8f1fd4a60c596.001.1,2026-10-10T00:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.86658255771cabced6a8d66b36a36aeac5f9d3c0.001.1,2026-10-09T21:00:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.db0ee09963865ffdf0ebfdd854335cdca59315da.001.1,2026-10-09T09:12:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9ae69686cb7ff24464b7fdf8a7e2e164d554aba.001.1,2026-10-08T20:21:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7a2b1e0a3897bb508f4d6ca35041fe8182a0e6b3.001.1,2026-10-08T08:38:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
                     ]
                 }
             }
@@ -422,97 +1229,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.33f7087d7dbce5b2eddaf588e2f8cd58f99969f4.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.33f7087d7dbce5b2eddaf588e2f8cd58f99969f4.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.33f7087d7dbce5b2eddaf588e2f8cd58f99969f4.001.1",
-                "areaDesc": "Mobile Coastal; Baldwin Coastal; Escambia Coastal; Santa Rosa Coastal; Okaloosa Coastal",
-                "geocode": {
-                    "SAME": [
-                        "001097",
-                        "001003",
-                        "012033",
-                        "012113",
-                        "012091"
-                    ],
-                    "UGC": [
-                        "ALZ265",
-                        "ALZ266",
-                        "FLZ202",
-                        "FLZ204",
-                        "FLZ206"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/ALZ265",
-                    "https://api.weather.gov/zones/forecast/ALZ266",
-                    "https://api.weather.gov/zones/forecast/FLZ202",
-                    "https://api.weather.gov/zones/forecast/FLZ204",
-                    "https://api.weather.gov/zones/forecast/FLZ206"
-                ],
-                "references": [],
-                "sent": "2026-10-11T02:30:00-05:00",
-                "effective": "2026-10-11T02:30:00-05:00",
-                "onset": "2026-10-11T02:30:00-05:00",
-                "expires": "2026-10-11T10:30:00-05:00",
-                "ends": "2026-10-11T18:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Mobile AL",
-                "headline": "Rip Current Statement issued October 11 at 2:30AM CDT until October 11 at 6:00PM CDT by NWS Mobile AL",
-                "description": "* WHAT...Dangerous rip currents.\n\n* WHERE...In Alabama, Mobile Coastal and Baldwin Coastal\nCounties. In Florida, Escambia Coastal, Santa Rosa Coastal and\nOkaloosa Coastal Counties.\n\n* WHEN...Through this afternoon.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMOB"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS44 KMOB 110730"
-                    ],
-                    "NWSheadline": [
-                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMOB.RP.S.0027.000000T0000Z-261011T2300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T18:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fbf7562f2aeb0be9d3e187b21048db291b6fc4f2.001.1,2026-10-10T18:19:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9eef66104452c1870f7625e88c2e7d5b2d97b04.002.2,2026-10-10T09:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a9eef66104452c1870f7625e88c2e7d5b2d97b04.001.3,2026-10-10T09:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2ebaff294168d66e9b232ea2e77111a494819f82.002.2,2026-10-10T04:45:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2ebaff294168d66e9b232ea2e77111a494819f82.001.2,2026-10-10T04:45:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca3282dcf7fde6d7a15a1e1ef68c73b78bf677c7.001.2,2026-10-10T01:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bfb550b189068312e8997063b40d1d3acb846838.001.2,2026-10-09T13:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c9f4a2a5470dadc5db454627fd5d459cc02e7e69.001.2,2026-10-09T04:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0029978a55ed871fe6117343f8f81e41d6a27044.001.2,2026-10-08T23:00:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63aeea6c688789cc51d501ba71e1e4f89c31b4fe.001.2,2026-10-08T14:55:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ad47e935bd44a2eb07898704ea5b1ef3dd6af2a8.001.2,2026-10-08T08:19:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae2630c72b9f4fa1cf40f0dee2817e9eeff9b43b.001.1,2026-10-08T04:30:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b0edaeba332dd26f51ab7361c3a77703a74abad6.001.1,2026-10-07T17:55:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dfdb03f17e300464352f6c7ccd6eb9fb9d9faa63.001.1,2026-10-07T11:37:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bfcc718e992f022a1dcca438f16f12e4f54bb01b.001.1,2026-10-06T18:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.39833925db1898afb246978225f139ae73deec29.001.1,2026-10-06T12:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3592868ac24bf895b30d9f5f5d799bcad25906e3.001.1,2026-10-06T03:09:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31229e74ed504ca805a7384b66de3346ed5cd167.001.1,2026-10-05T19:20:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.74d8f49ce68603a096f865e4e9b0838c71337fdd.001.1",
             "type": "Feature",
             "geometry": null,
@@ -613,723 +1329,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.007.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -85.8,
-                            30.99
-                        ],
-                        [
-                            -85.81,
-                            30.7
-                        ],
-                        [
-                            -85.92,
-                            30.7
-                        ],
-                        [
-                            -85.89,
-                            30.77
-                        ],
-                        [
-                            -85.91,
-                            30.85
-                        ],
-                        [
-                            -85.88,
-                            30.99
-                        ],
-                        [
-                            -85.8,
-                            30.99
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.007.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.007.1",
-                "areaDesc": "Holmes, FL; Washington, FL",
-                "geocode": {
-                    "SAME": [
-                        "012059",
-                        "012133"
-                    ],
-                    "UGC": [
-                        "FLC059",
-                        "FLC133"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC059",
-                    "https://api.weather.gov/zones/county/FLC133"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.794d1335b77d797811cd287705cac80e0b65313a.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.794d1335b77d797811cd287705cac80e0b65313a.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T11:09:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T22:13:00-04:00",
-                "effective": "2026-10-10T22:13:00-04:00",
-                "onset": "2026-10-13T05:00:00-04:00",
-                "expires": "2026-10-11T14:00:00-04:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tallahassee FL",
-                "headline": "Flood Warning issued October 10 at 10:13PM EDT by NWS Tallahassee FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\nAlabama...Georgia...\n\nShoal River near Mossy Head (CR 1087) affecting Walton County.\n\nChoctawhatchee River at Geneva (SR 52) affecting Geneva County.\n\nOchlockonee River near Thomasville (US 84) affecting Thomas and\nGrady Counties.\n\n...The Flood Warning is extended for the following rivers in\nAlabama...Florida...\n\nPea River near Ariton (US 231) affecting Coffee and Dale Counties.\n\nChoctawhatchee River near Caryville (US 90) affecting Washington\nand Holmes Counties.\n\n...The Flood Warning is cancelled for the following rivers in\nAlabama...Florida...\n\nPea River at Elba (US 84) affecting Coffee County.\n\nSt. Marks River near Newport On Old Magnolia Rd affecting Leon and\nWakulla Counties.\n\n* WHAT...Minor flooding is forecast.\n\n* WHERE...Choctawhatchee River near Caryville (US 90).\n\n* WHEN...From late Monday night until further notice.\n\n* IMPACTS...At 15.0 feet, In Holmes County, water begins to flood\nareas off Buck Rodgers Road east of CR-179A in Holmes County.\nAccess to several of the fish camps become inaccessible above this\nlevel.\n\n* ADDITIONAL DETAILS...\n- At 8:00 PM CDT Saturday the stage was 7.8 feet.\n- Forecast...The river is expected to rise above flood stage early\nTuesday morning and continue rising to a crest of 15.4 feet\nWednesday evening.\n- Flood stage is 14.0 feet.\n- Flood History...This crest compares to a previous crest of 15.5\nfeet on 12/09/1953.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 1115 PM EDT /1015\nPM CDT/.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSTAE"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KTAE 110213"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING NOW IN EFFECT FROM LATE MONDAY NIGHT UNTIL FURTHER NOTICE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KTAE.FL.W.0010.261013T0900Z-000000T0000Z/"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.004.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -86.39,
-                            30.82
-                        ],
-                        [
-                            -86.3,
-                            30.82
-                        ],
-                        [
-                            -86.2,
-                            30.8
-                        ],
-                        [
-                            -86.19,
-                            30.77
-                        ],
-                        [
-                            -86.31,
-                            30.77
-                        ],
-                        [
-                            -86.39,
-                            30.76
-                        ],
-                        [
-                            -86.39,
-                            30.82
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.004.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.759213196a29fda18007a9a068a037aa73c139a2.004.1",
-                "areaDesc": "Walton, FL",
-                "geocode": {
-                    "SAME": [
-                        "012131"
-                    ],
-                    "UGC": [
-                        "FLC131"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC131"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f12b7ef22305aded232a8e97096203293ad7be88.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f12b7ef22305aded232a8e97096203293ad7be88.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T12:42:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T22:13:00-04:00",
-                "effective": "2026-10-10T22:13:00-04:00",
-                "onset": "2026-10-10T22:13:00-04:00",
-                "expires": "2026-10-11T14:00:00-04:00",
-                "ends": "2026-10-11T20:56:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tallahassee FL",
-                "headline": "Flood Warning issued October 10 at 10:13PM EDT until October 11 at 8:56PM EDT by NWS Tallahassee FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\nAlabama...Georgia...\n\nShoal River near Mossy Head (CR 1087) affecting Walton County.\n\nChoctawhatchee River at Geneva (SR 52) affecting Geneva County.\n\nOchlockonee River near Thomasville (US 84) affecting Thomas and\nGrady Counties.\n\n...The Flood Warning is extended for the following rivers in\nAlabama...Florida...\n\nPea River near Ariton (US 231) affecting Coffee and Dale Counties.\n\nChoctawhatchee River near Caryville (US 90) affecting Washington\nand Holmes Counties.\n\n...The Flood Warning is cancelled for the following rivers in\nAlabama...Florida...\n\nPea River at Elba (US 84) affecting Coffee County.\n\nSt. Marks River near Newport On Old Magnolia Rd affecting Leon and\nWakulla Counties.\n\n* WHAT...Moderate flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...Shoal River near Mossy Head (CR 1087).\n\n* WHEN...Until Sunday evening.\n\n* IMPACTS...At 20.0 feet, Numerous residences along Plantation Lane\nare flooded at this level.\n\n* ADDITIONAL DETAILS...\n- At 8:15 PM CDT Saturday the stage was 19.5 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:15 PM CDT Saturday was 22.5 feet.\n- Forecast...The river is expected to fall below flood stage\ntomorrow morning and continue falling to 6.6 feet Monday evening.\n- Flood stage is 14.0 feet.\n- Flood History...This crest compares to a previous crest of 19.7\nfeet on 05/23/1953.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued this evening at 1115 PM EDT /1015\nPM CDT/.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSTAE"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KTAE 110213"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING NOW IN EFFECT UNTIL SUNDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KTAE.FL.W.0006.000000T0000Z-261012T0056Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T20:56:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2cf6762d3dac18282920795bfe3d618ac88b4ef.001.1,2026-10-10T05:57:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e9fb8b719f8a45e3cc2693f4acd72c4343fc5c09.001.1,2026-10-09T22:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1d22e96ebe1ff69592273215c665b6a9f401d647.001.1,2026-10-09T21:27:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.002.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -82.44,
-                            28.98
-                        ],
-                        [
-                            -82.48,
-                            29.02
-                        ],
-                        [
-                            -82.44,
-                            29.09
-                        ],
-                        [
-                            -82.37,
-                            29.07
-                        ],
-                        [
-                            -82.44,
-                            28.98
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.002.1",
-                "areaDesc": "Citrus, FL; Levy, FL; Marion, FL",
-                "geocode": {
-                    "SAME": [
-                        "012017",
-                        "012075",
-                        "012083"
-                    ],
-                    "UGC": [
-                        "FLC017",
-                        "FLC075",
-                        "FLC083"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC017",
-                    "https://api.weather.gov/zones/county/FLC075",
-                    "https://api.weather.gov/zones/county/FLC083"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T11:06:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T22:06:00-04:00",
-                "effective": "2026-10-10T22:06:00-04:00",
-                "onset": "2026-10-10T22:06:00-04:00",
-                "expires": "2026-10-11T12:00:00-04:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Flood Warning issued October 10 at 10:06PM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\n...The Flood Warning continues for the following rivers in Florida...\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Levy and Citrus\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek remain\nelevated. With additional heavy rainfall forecast, water levels are\nexpected to continue rising, and could reach minor flood stage in the\nnext few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is occurring and is forecast to continue.\n\n* WHERE...Withlacoochee at US 41 Dunnellon.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 28.2 feet, Docks and boat ramps flood along the river\nin Citrus and Marion counties.\n\n* ADDITIONAL DETAILS...\n- At 8:45 PM EDT Saturday the stage was 28.3 feet.\n- Bankfull stage is 28.2 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:45 PM EDT Saturday was 28.3 feet.\n- Forecast...The river is expected to hold around 28.3 feet for the\nnext few days.\n- Flood stage is 28.2 feet.\n- Flood History...This crest compares to a previous crest of 28.3\nfeet on 10/05/1965.\n- https://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday afternoon at noon EDT.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KTBW 110206"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.FL.W.0009.000000T0000Z-000000T0000Z/"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.005.1,2026-10-09T20:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.004.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.003.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.002.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.90d2cd9ab9db07e57853ce8f68153f65459db1bd.001.1,2026-10-07T21:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5b162b63db4059beac74c91ded7803d1d2b8f3d.001.1,2026-10-07T15:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e30a37fe3135e733bd102cecffda4f2fb583ce3.001.1,2026-10-07T11:22:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9b23803be4c3880ba1697fe86cfc5bb9d7047a3a.001.1,2026-10-07T06:34:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -82.34,
-                            28.19
-                        ],
-                        [
-                            -82.34,
-                            28.14
-                        ],
-                        [
-                            -82.4,
-                            28.14
-                        ],
-                        [
-                            -82.4,
-                            28.19
-                        ],
-                        [
-                            -82.34,
-                            28.19
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.db96c46ebfd7bf75631a19815aacccfe3269135c.001.1",
-                "areaDesc": "Pasco, FL",
-                "geocode": {
-                    "SAME": [
-                        "012101"
-                    ],
-                    "UGC": [
-                        "FLC101"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC101"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.31489c7220a272adb4394ff8e47d4c9d28d4a5df.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T11:06:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T22:06:00-04:00",
-                "effective": "2026-10-10T22:06:00-04:00",
-                "onset": "2026-10-13T02:00:00-04:00",
-                "expires": "2026-10-11T12:00:00-04:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Flood Warning issued October 10 at 10:06PM EDT by NWS Tampa Bay Ruskin FL",
-                "description": "...The Flood Warning is extended for the following rivers in\nFlorida...\n\nCypress Creek At SR 54 Worthington Gardens affecting Pasco County.\n\n...The Flood Warning continues for the following rivers in Florida...\n\nWithlacoochee At US 41 Dunnellon affecting Marion, Levy and Citrus\nCounties.\n\n.Due to recent heavy rainfall, water levels on Cypress Creek remain\nelevated. With additional heavy rainfall forecast, water levels are\nexpected to continue rising, and could reach minor flood stage in the\nnext few days.\n\nElevated water levels continue on the Withlacoochee River at\nDunnellon due to a combination of excessive hydrilla growth along a\n4.5 mile stretch of river between U.S. 41 and Lake Rousseau, and\nrecent heavy rainfall. Water levels are expected to hold steady\nbefore slowly decreasing over the next several days. However, the\nriver is forecast to remain in flood stage.\n\n* WHAT...Minor flooding is forecast.\n\n* WHERE...Cypress Creek at SR 54 Worthington Gardens.\n\n* WHEN...From late Monday night until further notice.\n\n* IMPACTS...At 8.0 feet, Flooding begins at the recreation area on\nState Road 54.\n\n* ADDITIONAL DETAILS...\n- At 9:00 PM EDT Saturday the stage was 7.0 feet.\n- Bankfull stage is 8.0 feet.\n- Forecast...The river is expected to rise above flood stage late\nMonday night and continue rising to 8.0 feet early Tuesday\nmorning. Additional rises are possible thereafter.\n- Flood stage is 8.0 feet.\n- Flood History...This crest compares to a previous crest of 8.1\nfeet on 05/29/1976.\n- https://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nMotorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday afternoon at noon EDT.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KTBW 110206"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING NOW IN EFFECT FROM LATE MONDAY NIGHT UNTIL FURTHER NOTICE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KTBW.FL.W.0010.261013T0600Z-000000T0000Z/"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0ae120e5e42364eada546183230ae819a361aa1a.004.1,2026-10-09T20:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a72fed8f8ad9da2a0cf0bdde6e5253f206786ae.003.1,2026-10-09T10:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faad6f037beba1e8c7d397d13124975fcefa3117.002.1,2026-10-08T22:35:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3d2bee0d4bf148bc17102b75cce7c72775dab84.001.1,2026-10-08T11:37:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.48743f827e2a63228908f97c43d3c42a8eba79eb.001.1,2026-10-07T21:54:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b426cf88562c3f2344793ae431fbc46ad7363ab7.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -81.5,
-                            29.08
-                        ],
-                        [
-                            -81.69,
-                            29.32
-                        ],
-                        [
-                            -81.57,
-                            29.35
-                        ],
-                        [
-                            -81.42,
-                            29.1
-                        ],
-                        [
-                            -81.5,
-                            29.08
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b426cf88562c3f2344793ae431fbc46ad7363ab7.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b426cf88562c3f2344793ae431fbc46ad7363ab7.001.1",
-                "areaDesc": "Lake, FL; Volusia, FL",
-                "geocode": {
-                    "SAME": [
-                        "012069",
-                        "012127"
-                    ],
-                    "UGC": [
-                        "FLC069",
-                        "FLC127"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC069",
-                    "https://api.weather.gov/zones/county/FLC127"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a7086518664f7fe6da003a715a0944cf95960638.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.a7086518664f7fe6da003a715a0944cf95960638.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T12:14:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T21:43:00-04:00",
-                "effective": "2026-10-10T21:43:00-04:00",
-                "onset": "2026-10-10T21:43:00-04:00",
-                "expires": "2026-10-11T12:45:00-04:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Melbourne FL",
-                "headline": "Flood Warning issued October 10 at 9:43PM EDT by NWS Melbourne FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Astor affecting Volusia and Lake Counties.\n\n.The St Johns River at Astor remains in Moderate Flood Stage due to\nrecent northeast winds and repeated rounds of heavy rainfall across\nthe basin. River levels are forecast to remain just above Moderate\nFlood Stage through this weekend and into next week.\n\nFor the St. Johns River...including Astor...Moderate flooding is\nforecast.\n\n* WHAT...Moderate flooding is occurring and is forecast.\n\n* WHERE...St Johns River near Astor.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 3.0 feet, Water approaches or may enter lowest homes\non or near Wildhog Road and nearby canals. Flooding reaches the\nparking lot of the Juno Trail Apartments. Flooding on portions of\nAlligator Road and Holiday Road. Lowest lying yards along Blue\nCreek are flooded. Roads at Astor Landing Campground and Lake\nDexter Boat Ramp begin to flood. Water enters lower homes closest\nto the river on McPherson Lane.\n\n* ADDITIONAL DETAILS...\n- At 8:30 PM EDT Saturday the stage was 3.1 feet.\n- Bankfull stage is 2.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:30 PM EDT Saturday was 3.2 feet.\n- Forecast...The river is expected to rise to a crest of 3.2 feet\njust after midnight tonight.\n- Flood stage is 2.3 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday afternoon at 1245 PM EDT.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSMLB"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KMLB 110143"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMLB.FL.W.0003.000000T0000Z-000000T0000Z/"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2e9ae2594103671ac374c677fd0eac7bef3a271.001.1,2026-10-09T20:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a3dd7595a5686c7b226150184ef3ef916f9c33d.001.1,2026-10-09T08:52:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.36254b6b2cc30b96af78b5ddccf3eecd597d2c5e.001.1,2026-10-09T00:09:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8757dc22c528c67fe6f6c1975d46b5b177ecb9a3.001.1,2026-10-08T21:59:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.52572978a4c286c19f5039b707506f65bb11d4f0.001.1,2026-10-08T22:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4005b1c5d9f2d912d3640b6fd16da3a7dfa314b0.001.1,2026-10-08T10:05:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3291d526cabe593657cc11dd69dad3433dc800f5.001.1,2026-10-08T09:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2d26e4d2ee1b9e255115bd0b478eb1efdecbdd34.001.1,2026-10-07T19:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e5435b68e1ad2031724f8b67da651e8b47f906f1.001.1,2026-10-07T14:30:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a3489ac5dc4a2782ddacffcbc40bd6c036b56e1c.001.1,2026-10-06T21:45:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9e4d9436c0e7b6043fa60b5d83484fce1dfd4ab4.001.1,2026-10-06T07:40:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85c7ba8a1ac5ab09ca1ecfbc62d526761857e566.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -82.21,
-                            30.41
-                        ],
-                        [
-                            -82.07,
-                            30.38
-                        ],
-                        [
-                            -82.04,
-                            30.62
-                        ],
-                        [
-                            -81.98,
-                            30.62
-                        ],
-                        [
-                            -82.03,
-                            30.34
-                        ],
-                        [
-                            -82.2,
-                            30.35
-                        ],
-                        [
-                            -82.21,
-                            30.41
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85c7ba8a1ac5ab09ca1ecfbc62d526761857e566.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.85c7ba8a1ac5ab09ca1ecfbc62d526761857e566.001.1",
-                "areaDesc": "Baker, FL; Nassau, FL; Charlton, GA",
-                "geocode": {
-                    "SAME": [
-                        "012003",
-                        "012089",
-                        "013049"
-                    ],
-                    "UGC": [
-                        "FLC003",
-                        "FLC089",
-                        "GAC049"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC003",
-                    "https://api.weather.gov/zones/county/FLC089",
-                    "https://api.weather.gov/zones/county/GAC049"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a6af8f3859a73cea7707cc9e845c10b9e9577bba.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.a6af8f3859a73cea7707cc9e845c10b9e9577bba.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T10:33:00-04:00"
-                    }
-                ],
-                "sent": "2026-10-10T21:37:00-04:00",
-                "effective": "2026-10-10T21:37:00-04:00",
-                "onset": "2026-10-10T21:37:00-04:00",
-                "expires": "2026-10-11T08:00:00-04:00",
-                "ends": "2026-10-11T08:00:00-04:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Observed",
-                "urgency": "Immediate",
-                "event": "Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Flood Warning issued October 10 at 9:37PM EDT until October 11 at 8:00AM EDT by NWS Jacksonville FL",
-                "description": "...The Flood Warning continues for the following rivers in Georgia...\nFlorida...\n\nSt Mary's River At Macclenny affecting Nassau, Baker and Charlton\nCounties.\n\nAdditional information is available at\nhttps://water.weather.gov/wfo/JAX\n\nThe next statement will be issued Sunday morning at 800 AM EDT.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...St Mary's River at Macclenny.\n\n* WHEN...Until Sunday morning.\n\n* IMPACTS...At 12.0 feet, Minor flooding of low lying areas and\ntimber lands including some properties along St. Mary's River Bluff\nRoad and the Cypress Landing Resort on the Georgia side. At 14.0\nfeet, Flooding of bottomlands along the river and some lower access\nroads including the lower half of St. Mary's River Bluff Road which\ncuts off 15 to 20 homes on the Georgia side.\n\n* ADDITIONAL DETAILS...\n- At 8:45 PM EDT Saturday the stage was 12.1 feet.\n- Forecast...The river is expected to slowly fall below flood stage\nafter midnight tonight and continue falling to 10.3 feet Tuesday\nevening.\n- Flood stage is 12.0 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": null,
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KJAX 110137"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD WARNING NOW IN EFFECT UNTIL SUNDAY MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KJAX.FL.W.0004.000000T0000Z-261011T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T08:00:00-04:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bdf561fb983aa7ae18da67867610792583fc8c16.001.1,2026-10-09T20:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7f8131b94dfb92173184209f64da2653377b6e9e.001.1,2026-10-09T10:40:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0b6339c3ef058a8f77013d484c0a54f81a164845.001.1,2026-10-08T21:23:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b6fe2222fac2bf65209239dc023ae329a487cfe7.001.1,2026-10-08T10:39:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.92f7c85dc06e330b078908cc48848fdba36bc964.001.1,2026-10-07T20:53:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.718ad341e4c3e8bf4298aad69e5803cf3b92d1d7.001.1,2026-10-07T11:32:00-04:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "FLS"
-                    ],
-                    "NationalWeatherService": [
-                        "FLW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79c7d8d6507302a992a98de04c7f12040e48d5af.001.2",
             "type": "Feature",
             "geometry": null,
@@ -1425,5 +1424,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-10-11T11:38:31+00:00"
+    "updated": "2026-10-11T18:13:40+00:00"
 }
