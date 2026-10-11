@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelum.BuildConfig
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.notifiche.RiepilogoMattinoWorker
 import io.github.noximiliencoxen.caelum.widget.AggiornaWidgetWorker
 import io.github.noximiliencoxen.caelum.prefs.AlertToggleKind
 import io.github.noximiliencoxen.caelum.prefs.CaptionStyle
@@ -71,6 +72,8 @@ fun SalaImpostazioniScreen(
     onApriGuida: () -> Unit,
     onToggleNotifichePioggia: (Boolean) -> Unit,
     onToggleNotificheAllerte: (Boolean) -> Unit,
+    onToggleRiepilogo: (Boolean) -> Unit,
+    onChooseOraRiepilogo: (Int) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -292,6 +295,9 @@ fun SalaImpostazioniScreen(
             val chiediPermessoAllerte = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotificheAllerte(concesso) }
+            val chiediPermessoRiepilogo = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleRiepilogo(concesso) }
             GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS"), palette = palette) {
                 VoceInterruttore(
                     titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way"),
@@ -324,6 +330,40 @@ fun SalaImpostazioniScreen(
                         }
                     },
                 )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = tr("Riepilogo del mattino", "Morning summary"),
+                    nota = if (state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
+                        tr(
+                            "ogni giorno alle ${oraRiepilogo(state.oraRiepilogo)}: temperature, pioggia, UV e allerte",
+                            "every day at ${oraRiepilogo(state.oraRiepilogo)}: temperatures, rain, UV and warnings",
+                        )
+                    } else {
+                        tr("la giornata in tre righe, una volta al giorno", "the day in three lines, once a day")
+                    },
+                    acceso = state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleRiepilogo(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoRiepilogo.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleRiepilogo(true)
+                        }
+                    },
+                )
+                // L'ora si sceglie solo a riepilogo acceso: spento, quattro
+                // bottoni che non comandano niente (vedi la regola in testa).
+                if (state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
+                    SceltaSegmentata(
+                        voci = RiepilogoMattinoWorker.ORE_POSSIBILI.map { it to oraRiepilogo(it) },
+                        scelta = state.oraRiepilogo,
+                        palette = palette,
+                        onScegli = onChooseOraRiepilogo,
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                    )
+                }
             }
 
             GruppoImpostazioni(titolo = tr("AIUTO", "HELP"), palette = palette) {
@@ -427,6 +467,10 @@ private fun VoceInformativa(etichetta: String, valore: String, palette: SalaPale
  * domanda e' *quando l'ho scaricata io*, non che ore fossero a Bergen quando e'
  * partita la richiesta.
  */
+/** "07:00", dai minuti dalla mezzanotte. */
+private fun oraRiepilogo(minuti: Int): String =
+    String.format(Locale.ROOT, "%02d:%02d", minuti / 60, minuti % 60)
+
 private fun quandoScaricata(quando: LocalDateTime?): String {
     if (quando == null) return tr("non ancora", "not yet")
     val ora = String.format(Locale.ITALY, "%02d:%02d", quando.hour, quando.minute)

@@ -9,12 +9,14 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.noximiliencoxen.caelum.data.Place
 import io.github.noximiliencoxen.caelum.data.WeatherModel
 import io.github.noximiliencoxen.caelum.data.hasFiniteCoordinates
 import io.github.noximiliencoxen.caelum.data.key
+import io.github.noximiliencoxen.caelum.notifiche.RiepilogoMattinoWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -136,6 +138,10 @@ data class Settings(
     val notifichePioggia: Boolean = true,
     /** Le notifiche delle allerte ufficiali arancioni e rosse. Accese di norma. */
     val notificheAllerte: Boolean = true,
+    /** Il riepilogo del mattino. Spento di norma: vedi `RiepilogoMattinoWorker`. */
+    val riepilogoMattino: Boolean = false,
+    /** A che ora arriva, in minuti dalla mezzanotte del telefono. */
+    val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
 )
@@ -287,6 +293,8 @@ class SettingsPrefs(private val context: Context) {
             guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
             notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
             notificheAllerte = prefs[KEY_NOTIFICHE_ALLERTE] ?: true,
+            riepilogoMattino = prefs[KEY_RIEPILOGO] ?: false,
+            oraRiepilogo = prefs[KEY_ORA_RIEPILOGO] ?: RiepilogoMattinoWorker.ORA_PREDEFINITA,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
@@ -358,6 +366,14 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_NOTIFICHE_ALLERTE] = accese }
     }
 
+    suspend fun setRiepilogoMattino(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_RIEPILOGO] = acceso }
+    }
+
+    suspend fun setOraRiepilogo(minuti: Int) {
+        context.settingsDataStore.edit { it[KEY_ORA_RIEPILOGO] = minuti }
+    }
+
     suspend fun setPermessoNotificheChiesto() {
         context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
     }
@@ -418,7 +434,9 @@ class SettingsPrefs(private val context: Context) {
         val KEY_GUIDA_VISTA = booleanPreferencesKey("sala_guida_vista")
         val KEY_NOTIFICHE_PIOGGIA = booleanPreferencesKey("notifiche_pioggia")
         val KEY_NOTIFICHE_ALLERTE = booleanPreferencesKey("notifiche_allerte")
-        val KEY_PERMESSO_NOTIFICHE = booleanPreferencesKey("permesso_notifiche_chiesto")
+        val KEY_RIEPILOGO = booleanPreferencesKey("riepilogo_mattino")
+        val KEY_ORA_RIEPILOGO = intPreferencesKey("riepilogo_ora")
+        val KEY_PERMESSO_NOTIFICHE =booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

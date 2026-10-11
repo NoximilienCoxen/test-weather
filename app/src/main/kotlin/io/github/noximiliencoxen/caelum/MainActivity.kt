@@ -10,6 +10,7 @@ import io.github.noximiliencoxen.caelum.lingua.Lingua
 import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.notifiche.RiepilogoMattinoWorker
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import kotlinx.coroutines.flow.first
 import android.os.Bundle
@@ -149,6 +150,11 @@ class MainActivity : ComponentActivity() {
             val impostazioni = SettingsPrefs(applicationContext).settings.first()
             if (impostazioni.notifichePioggia) PioggiaInArrivoWorker.pianifica(applicationContext)
             if (impostazioni.notificheAllerte) AllerteUfficialiWorker.pianifica(applicationContext)
+            // Il riepilogo si prenota da se' giro dopo giro; qui solo se la
+            // catena si fosse interrotta (`KEEP` non sposta un turno che c'e').
+            if (impostazioni.riepilogoMattino) {
+                RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
+            }
         }
     }
 

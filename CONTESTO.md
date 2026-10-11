@@ -7694,3 +7694,32 @@ risposta di Open-Meteo e nel `Model`, ma nessuna sala li leggeva.
 Prove JVM in `core/src/test/.../BarometroTest.kt`. **Non provato in mano**:
 nessun telefono era collegato. Da guardare: che la sala del vento, piu' alta di
 quattro righe, non scorra su un Pixel di serie.
+
+## 52. Il riepilogo del mattino
+
+`notifiche/RiepilogoMattinoWorker.kt`. Una notifica al giorno sulla localita'
+dell'app: titolo con minima, massima e tempo; testo con pioggia (da che ora e
+quanta), UV solo da 3 in su, raffiche solo da 50 km/h, e l'allerta ufficiale
+piu' grave di oggi. Le righe senza niente da dire non ci sono.
+
+- **Spento di norma**, al contrario di pioggia e allerte: arriva ogni giorno
+  comunque. Si accende dalle impostazioni, gruppo NOTIFICHE; acceso mostra la
+  scelta dell'ora (6, 7, 8, 9). L'ora e' quella **del telefono**, la giornata
+  quella del posto.
+- **Non e' periodico.** Un `PeriodicWorkRequest` di 24 ore scivola; qui ogni
+  giro prenota il successivo all'ora esatta con `APPEND_OR_REPLACE` (il nuovo
+  aspetta la fine di questo invece di cancellarlo). Cambiare l'ora usa
+  `REPLACE`, l'avvio dell'app `KEEP`, solo per riattaccare una catena rotta.
+- **Finestra**: parte solo fra mezz'ora prima e due ore dopo l'ora scelta. Fuori
+  (rete assente, Android che rimanda) salta il giorno e prenota il successivo.
+  Senza rete riprova quattro volte, poi lascia perdere.
+- Usa lo stesso modello numerico dell'app e riempie la stessa scorta su disco.
+  Canale `riepilogo_mattino`, importanza normale: suona ma non si apre sopra
+  lo schermo. Con un'allerta il tocco apre il bollettino, se no Sala I.
+
+Prove JVM in `app/src/test/.../RiepilogoMattinoTest.kt` (testi, ritardo,
+finestra). **Non provato in mano**: un giro si forza con
+`adb shell cmd jobscheduler run -f io.github.noximiliencoxen.caelum <id>` (il
+numero da `adb shell dumpsys jobscheduler | grep caelum`), ma la notifica esce
+solo dentro la finestra: di pomeriggio il giro salta e si riprenota, ed e'
+giusto cosi'.
