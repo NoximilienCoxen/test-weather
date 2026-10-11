@@ -1,9 +1,220 @@
 {
-    "@context": {
-        "@version": "1.1"
-    },
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "@vocab": "https://api.weather.gov/ontology#"
+        }
+    ],
     "type": "FeatureCollection",
-    "features": [],
+    "features": [
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3ae37ec51c51f57c357617afaa0c29eea7a8318.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -74.36,
+                            40.76
+                        ],
+                        [
+                            -74.34,
+                            40.88
+                        ],
+                        [
+                            -74.27,
+                            40.9
+                        ],
+                        [
+                            -74.28,
+                            40.95
+                        ],
+                        [
+                            -74.1,
+                            41.16
+                        ],
+                        [
+                            -73.48,
+                            41.08
+                        ],
+                        [
+                            -73.52,
+                            41
+                        ],
+                        [
+                            -73.65,
+                            40.98
+                        ],
+                        [
+                            -73.74,
+                            40.89
+                        ],
+                        [
+                            -73.76,
+                            40.85
+                        ],
+                        [
+                            -73.56,
+                            40.93
+                        ],
+                        [
+                            -73.76,
+                            40.57
+                        ],
+                        [
+                            -73.94,
+                            40.53
+                        ],
+                        [
+                            -74.04,
+                            40.61
+                        ],
+                        [
+                            -74.13,
+                            40.52
+                        ],
+                        [
+                            -74.25,
+                            40.48
+                        ],
+                        [
+                            -74.22,
+                            40.6
+                        ],
+                        [
+                            -74.46,
+                            40.6
+                        ],
+                        [
+                            -74.4,
+                            40.66
+                        ],
+                        [
+                            -74.46,
+                            40.67
+                        ],
+                        [
+                            -74.36,
+                            40.76
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e3ae37ec51c51f57c357617afaa0c29eea7a8318.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.e3ae37ec51c51f57c357617afaa0c29eea7a8318.001.1",
+                "areaDesc": "Fairfield, CT; Bergen, NJ; Essex, NJ; Hudson, NJ; Passaic, NJ; Union, NJ; Bronx, NY; Kings, NY; Nassau, NY; New York, NY; Queens, NY; Richmond, NY; Rockland, NY; Westchester, NY",
+                "geocode": {
+                    "SAME": [
+                        "009001",
+                        "034003",
+                        "034013",
+                        "034017",
+                        "034031",
+                        "034039",
+                        "036005",
+                        "036047",
+                        "036059",
+                        "036061",
+                        "036081",
+                        "036085",
+                        "036087",
+                        "036119"
+                    ],
+                    "UGC": [
+                        "CTC001",
+                        "NJC003",
+                        "NJC013",
+                        "NJC017",
+                        "NJC031",
+                        "NJC039",
+                        "NYC005",
+                        "NYC047",
+                        "NYC059",
+                        "NYC061",
+                        "NYC081",
+                        "NYC085",
+                        "NYC087",
+                        "NYC119"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/CTC001",
+                    "https://api.weather.gov/zones/county/NJC003",
+                    "https://api.weather.gov/zones/county/NJC013",
+                    "https://api.weather.gov/zones/county/NJC017",
+                    "https://api.weather.gov/zones/county/NJC031",
+                    "https://api.weather.gov/zones/county/NJC039",
+                    "https://api.weather.gov/zones/county/NYC005",
+                    "https://api.weather.gov/zones/county/NYC047",
+                    "https://api.weather.gov/zones/county/NYC059",
+                    "https://api.weather.gov/zones/county/NYC061",
+                    "https://api.weather.gov/zones/county/NYC081",
+                    "https://api.weather.gov/zones/county/NYC085",
+                    "https://api.weather.gov/zones/county/NYC087",
+                    "https://api.weather.gov/zones/county/NYC119"
+                ],
+                "references": [],
+                "sent": "2026-10-11T17:21:00-04:00",
+                "effective": "2026-10-11T17:21:00-04:00",
+                "onset": "2026-10-11T17:21:00-04:00",
+                "expires": "2026-10-11T20:00:00-04:00",
+                "ends": "2026-10-11T20:00:00-04:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Upton NY",
+                "headline": "Flood Advisory issued October 11 at 5:21PM EDT until October 11 at 8:00PM EDT by NWS Upton NY",
+                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Southern Fairfield County in southern Connecticut...\nBergen County in northeastern New Jersey...\nEssex County in northeastern New Jersey...\nHudson County in northeastern New Jersey...\nEastern Passaic County in northeastern New Jersey...\nUnion County in northeastern New Jersey...\nBronx County in southeastern New York...\nKings (Brooklyn) County in southeastern New York...\nWestern Nassau County in southeastern New York...\nNew York (Manhattan) County in southeastern New York...\nQueens County in southeastern New York...\nRichmond (Staten Island) County in southeastern New York...\nRockland County in southeastern New York...\nSouthern Westchester County in southeastern New York...\n\n* WHEN...Until 800 PM EDT.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 521 PM EDT, Doppler radar indicated and area of moderate to\nbriefly heavy rain. Minor flooding is ongoing or expected to\nbegin shortly in the advisory area. Between 0.5 and 1 inch of\nrain has fallen.\n- Additional rainfall amounts of 0.5 to 1 inch are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nNewark, Jersey City, Jamaica, Yonkers, Paterson, Elizabeth,\nStamford, Flatbush, New Rochelle, Flushing, Passaic, Bayonne,\nWhite Plains, Wayne and Mott Haven.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSOKX"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS81 KOKX 112121"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD ADVISORY IN EFFECT UNTIL 8 PM EDT THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KOKX.FA.Y.0136.261011T2121Z-261012T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-11T20:00:00-04:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FAY"
+                    ]
+                }
+            }
+        }
+    ],
     "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W",
-    "updated": "2026-10-11T19:05:08+00:00"
+    "updated": "2026-10-11T22:07:30+00:00"
 }

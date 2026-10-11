@@ -10,99 +10,13 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6de3552b9b455e44e31e084b4a02c84034e8a798.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6de3552b9b455e44e31e084b4a02c84034e8a798.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.002.1",
-                "areaDesc": "Upper Koyukuk Valley",
-                "geocode": {
-                    "SAME": [
-                        "002290"
-                    ],
-                    "UGC": [
-                        "AKZ831"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ831"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d06729ce6fa884436c9165a4d5db4bee819c132c.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d06729ce6fa884436c9165a4d5db4bee819c132c.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-11T03:50:00-08:00"
-                    }
-                ],
-                "sent": "2026-10-11T06:27:00-08:00",
-                "effective": "2026-10-11T06:27:00-08:00",
-                "onset": "2026-10-11T06:27:00-08:00",
-                "expires": "2026-10-11T12:00:00-08:00",
-                "ends": "2026-10-11T12:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Weather Advisory issued October 11 at 6:27AM AKDT until October 11 at 12:00PM AKDT by NWS Fairbanks AK",
-                "description": "* WHAT...Snow and rain. Additional snow accumulations up to one inch.\nIce accumulations of a light glaze.\n\n* WHERE...Upper Koyukuk Valley.\n\n* WHEN...Until noon AKDT today.\n\n* IMPACTS...Temperatures are hovering right around 32F with rain and\nsnow around. Any rain with temperatures at or below 32F may result\nin a light glaze of ice. Travel may be difficult in spots.",
-                "instruction": "Slow down and use caution while traveling.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAFG"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK43 PAFG 111427"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL NOON AKDT TODAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFG.WW.Y.0077.000000T0000Z-261011T2000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-10-11T12:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.13ee749a57e42fa4be4afa042616fe990e0fd33a.002.1,2026-10-10T22:24:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.003.1",
+                "id": "urn:oid:2.49.0.1.840.0.6de3552b9b455e44e31e084b4a02c84034e8a798.002.1",
                 "areaDesc": "Eastern Alaska Range South of Trims Camp",
                 "geocode": {
                     "SAME": [
@@ -117,28 +31,16 @@
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ca844f8d7fc2541a70daac03863f3ac10173a921.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ca844f8d7fc2541a70daac03863f3ac10173a921.002.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.641d0c3a57d7749fcce9c21889ae31afb6f9b33b.003.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T13:09:00-08:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.52da4819cb0a95cb9fb59b19e22f1f136ef5bde8.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.52da4819cb0a95cb9fb59b19e22f1f136ef5bde8.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-10T18:52:00-08:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d06729ce6fa884436c9165a4d5db4bee819c132c.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d06729ce6fa884436c9165a4d5db4bee819c132c.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-11T03:50:00-08:00"
+                        "sent": "2026-10-11T06:27:00-08:00"
                     }
                 ],
-                "sent": "2026-10-11T06:27:00-08:00",
-                "effective": "2026-10-11T06:27:00-08:00",
-                "onset": "2026-10-11T06:27:00-08:00",
-                "expires": "2026-10-11T12:00:00-08:00",
+                "sent": "2026-10-11T11:53:00-08:00",
+                "effective": "2026-10-11T11:53:00-08:00",
+                "onset": "2026-10-11T11:53:00-08:00",
+                "expires": "2026-10-11T16:00:00-08:00",
                 "ends": "2026-10-11T16:00:00-08:00",
                 "status": "Actual",
                 "messageType": "Update",
@@ -149,9 +51,9 @@
                 "event": "Winter Weather Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Weather Advisory issued October 11 at 6:27AM AKDT until October 11 at 4:00PM AKDT by NWS Fairbanks AK",
-                "description": "* WHAT...Snow. Additional snow accumulations up to 3 inches. Winds\ngusting as high as 35 mph.\n\n* WHERE...Eastern Alaska Range South of Trims Camp.\n\n* WHEN...Until 4 PM AKDT this afternoon.\n\n* IMPACTS...An early season snowfall is expected late tonight through\nSunday. Roads and especially bridges are likely to become slick and\nsnow covered.",
-                "instruction": "Slow down and use caution while traveling. Visit 511.alaska.gov or\ncall 5 1 1 for the latest road conditions.",
+                "headline": "Winter Weather Advisory issued October 11 at 11:53AM AKDT until October 11 at 4:00PM AKDT by NWS Fairbanks AK",
+                "description": "* WHAT...Additional snow accumulations up to an inch is possible.\nWinds gusting as high as 40 mph.\n\n* WHERE...Southern Denali Borough, especially south of Denali Park.\n\n* WHEN...Until 4 PM AKDT this afternoon.\n\n* IMPACTS...An early season snowfall is expected late tonight through\nSunday. Roads and especially bridges are likely to become slick and\nsnow covered.",
+                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency. Visit 511.alaska.gov or call 5 1 1\nfor the latest road conditions.\n\nMotorists should use caution if travel is absolutely necessary.",
                 "response": "Execute",
                 "note": null,
                 "parameters": {
@@ -159,7 +61,7 @@
                         "WSWAFG"
                     ],
                     "WMOidentifier": [
-                        "WWAK43 PAFG 111427"
+                        "WWAK43 PAFG 111953"
                     ],
                     "NWSheadline": [
                         "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 4 PM AKDT THIS AFTERNOON"
@@ -176,7 +78,7 @@
                         "2026-10-11T16:00:00-08:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.13ee749a57e42fa4be4afa042616fe990e0fd33a.004.1,2026-10-10T22:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b0f90e3bcce4e5f8c5d35cbd6dea93dd03dd188.002.1,2026-10-09T20:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.adb5ed89c3a44559100df198bcd7d7eb99912b29.002.1,2026-10-10T04:51:00-08:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.52da4819cb0a95cb9fb59b19e22f1f136ef5bde8.003.1,2026-10-10T18:52:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d06729ce6fa884436c9165a4d5db4bee819c132c.004.1,2026-10-11T03:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca844f8d7fc2541a70daac03863f3ac10173a921.002.1,2026-10-10T13:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.13ee749a57e42fa4be4afa042616fe990e0fd33a.004.1,2026-10-10T22:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b0f90e3bcce4e5f8c5d35cbd6dea93dd03dd188.002.1,2026-10-09T20:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.adb5ed89c3a44559100df198bcd7d7eb99912b29.002.1,2026-10-10T04:51:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -195,5 +97,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-10-11T19:05:08+00:00"
+    "updated": "2026-10-11T22:07:30+00:00"
 }
