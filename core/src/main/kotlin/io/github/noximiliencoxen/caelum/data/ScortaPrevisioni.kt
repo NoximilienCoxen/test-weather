@@ -104,7 +104,7 @@ fun Forecast.riportataAOggi(adesso: LocalDateTime): Forecast? {
 }
 
 /** "Adesso" preso da un'ora della previsione: la stessa scelta per app e widget. */
-internal fun CurrentWeather.conOra(h: HourForecast): CurrentWeather = copy(
+fun CurrentWeather.conOra(h: HourForecast): CurrentWeather = copy(
     temperature = h.temperature,
     apparent = h.apparent,
     weatherCode = h.weatherCode,

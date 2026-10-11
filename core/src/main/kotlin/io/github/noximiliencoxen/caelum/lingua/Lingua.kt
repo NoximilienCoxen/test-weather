@@ -1,6 +1,5 @@
 package io.github.noximiliencoxen.caelum.lingua
 
-import android.content.Context
 import java.util.Locale
 
 /**
@@ -60,18 +59,14 @@ object Lingue {
     val locale: Locale
         get() = if (corrente == Lingua.INGLESE) Locale.UK else Locale.ITALY
 
-    fun inizializza(context: Context) {
-        val salvata = context.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(CHIAVE, null)
-        scelta = SceltaLingua.entries.firstOrNull { it.name == salvata } ?: SceltaLingua.AUTOMATICA
-    }
-
-    fun scegli(context: Context, nuova: SceltaLingua) {
+    /**
+     * Imposta la scelta. La persistenza non sta qui: sul telefono la tiene
+     * `Lingue.inizializza`/`Lingue.scegli` (modulo `app`, una SharedPreferences),
+     * sull'orologio arriva dal telefono. Questo file non conosce Android.
+     */
+    fun impostaScelta(nuova: SceltaLingua) {
         scelta = nuova
-        context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(CHIAVE, nuova.name).apply()
     }
-
-    private const val FILE = "lingua"
-    private const val CHIAVE = "scelta"
 }
 
 /** Il testo nella lingua corrente: italiano o inglese. */

@@ -1614,27 +1614,34 @@ comunque a ogni fotogramma.
    vera e' anche la prima verifica vera - e con lei si giudica anche il
    passaggio fascia -> pallino, che e' un movimento e in uno scatto non si
    giudica.
-8. **I widget si aggiornano con `updatePeriodMillis="1800000"`**, che Android
-   limita a mezz'ora e rimanda in Doze: il widget mostra il meteo di un'ora fa
-   senza dirlo. La risposta moderna e' `WorkManager` periodico, ed e' una
-   dipendenza e un ciclo di vita nuovi - da fare quando i widget saranno stati
-   visti almeno una volta su una home vera.
-9. **`PredictiveBackHandler`** al posto di `BackHandler`, per il ritorno con
-   animazione di Android 14+. Gli strati adesso sono due - allerte e
-   impostazioni - piu' l'indietro del feed, che dalla scheda in cui si e'
-   riporta alla prima invece di chiudere l'app.
+8. **FATTA** (verificato il 10 ottobre): `widget/AggiornaWidgetWorker.kt` e'
+   un `CoroutineWorker` periodico (30 minuti, `KEEP`, rete richiesta) piu' uno
+   immediato `appenaPossibile`; si pianifica da `MainActivity` e da
+   `ConfigurableWidgetReceiver`, si annulla quando non resta nessun widget.
+   `updatePeriodMillis="1800000"` resta nei `res/xml/*_widget_info.xml` come
+   rete di sicurezza. Il testo originale diceva "da fare": era vecchio.
+9. **`PredictiveBackHandler`**: scritto il 10 ottobre, **mai provato in mano**
+   (da questo container non compila nulla di Compose: la prova e' la CI).
+   `enableOnBackInvokedCallback="true"` sulla `MainActivity`, e i cinque pannelli
+   a schermo pieno di `SalaShell` (impostazioni, localita', confronto, legali,
+   bollettino) chiamano `indietroPredittivo()` (`ui/sala/IndietroPredittivo.kt`)
+   **nello stesso punto** dei vecchi `BackHandler`, perche' la precedenza
+   dipende dall'ordine di composizione. Durante il gesto il pannello si
+   rimpicciolisce fino al 90% (`scalaIndietro`, provata in
+   `IndietroPredittivoTest`); annullato torna a 1 con una molla. Restano
+   `BackHandler` semplici il ritorno del pager alla prima sala, la visita
+   widget (`lasciaVisita`) e la guida (`SalaGuida`). **Da guardare in mano su
+   Android 14+**: i cinque pannelli, l'annullo a meta' gesto, e che localita'
+   aperte dalle impostazioni si chiudano per prime.
 3. **La qualita' dell'aria non ha una previsione**, solo l'ora corrente: e'
    quello che l'endpoint da'. La pagina lo dichiara invece di disegnare una
    curva piatta.
-4. **Le schede in orizzontale** non sono state pensate: in landscape una
-   schermata piena e' larga e bassa, e cifra, segnaposto e numeri restano
-   impilati dove ci starebbero affiancati. `MeteoLayout.landscape` c'e' gia' e
-   nessuno glielo chiede.
-10. **Quattro schede su sei sono ancora segnaposto**, ed e' voluto: cosa ospita
-   ciascuna si decide una sezione alla volta. `FeedSection.stage` porta la
-   consegna scritta accanto al riquadro vuoto - dall'erba che si piega dalla
-   parte da cui tira all'arco della giornata da percorrere col dito. La pioggia
-   e' uscita dal segnaposto (sezione 8-quinquies); restano aria, vento, sole e luna.
+4. **Superata**: l'app e' solo in verticale (§38, `screenOrientation="portrait"`)
+   e il feed con `MeteoLayout` non esiste piu'; gli schermi larghi sono un
+   problema di larghezza, non di orientamento (§43.3, `LARGHEZZA_SALE`).
+10. **Superata**: aria, vento, sole e luna non sono piu' segnaposto, sono
+   stanze vere di Sala (`ui/sala/rooms/`: `SalaAria`, `SalaVento`, `SalaUv`,
+   `SalaLuna`). `FeedSection` non esiste piu'.
 
 ---
 
@@ -2144,6 +2151,15 @@ Restano fuori: **Australia** (il BoM blocca le richieste automatiche) e
 **Nuova Zelanda** come lettore proprio (feed MetService vuoto il 5 ottobre;
 intanto passa dall'IFRC, che elenca NZL).
 
+**Nuova Zelanda, riguardato il 10 ottobre.** L'ultima cattura della sonda
+(`ci-artifacts`, 5 ottobre) e' ancora un canale RSS 2.0 senza `<item>`; da
+questo container il feed non si raggiunge (CONNECT 403). Quindi niente lettore:
+vale la regola dei lettori scritti solo su risposte vere. Il feed e' RSS e non
+Atom, per cui `parseFeed` non basta: servira' un piccolo lettore di `<item>`.
+La sonda adesso scarica anche il CAP collegato alla prima voce
+(`nz-metservice-doc`), cosi' il primo giorno con un'allerta dara' una cattura
+completa.
+
 ## 8-quinquies. La scheda della pioggia
 
 `ui/feed/RainWindow.kt`, `ui/feed/WindowGlass.kt`, `ui/feed/Walkers.kt`,
@@ -2563,7 +2579,7 @@ dimezzato.
 
 ## 11. Comandi universali — lavorare in due sullo stesso progetto
 
-Questa sezione e' per chi arriva adesso, con una sessione di Claude propria, e
+Questa sezione e' per chi arriva adesso, con una sessione di lavoro propria, e
 vuole contribuire senza rompere niente. Vale anche per chi il progetto lo
 conosce: sono gli stessi comandi, sempre gli stessi, e l'ordine conta.
 
@@ -2591,7 +2607,7 @@ ieri di uno solo.
 
 ### 11.2 Chi firma i commit — da impostare **prima** di committare
 
-Ogni sessione nuova di Claude riparte con la propria identita' come autore, e
+Ogni sessione nuova riparte con la propria identita' come autore, e
 quella identita' qui non e' voluta (sezione 9). Due comandi, prima di qualsiasi
 altra cosa:
 
@@ -2618,8 +2634,8 @@ git log -3 --format='%an <%ae>%n%B'
 # 1. si parte sempre da un main aggiornato
 git checkout main && git pull --ff-only origin main
 
-# 2. un branch a tema, dentro claude/
-git checkout -b claude/<argomento>-<sigla>
+# 2. un branch a tema
+git checkout -b <argomento>-<sigla>
 
 # 3. si lavora, si prova sul telefono
 ./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/*.apk
@@ -2628,7 +2644,7 @@ git checkout -b claude/<argomento>-<sigla>
 git add -A && git commit -m "Cosa cambia, in una riga"
 
 # 5. si pubblica il branch
-git push -u origin claude/<argomento>-<sigla>
+git push -u origin <argomento>-<sigla>
 ```
 
 Poi si apre una pull request verso `main`, si aspetta che la CI sia verde, e si
@@ -2650,7 +2666,7 @@ In `.github/workflows/build.yml` il job che pubblica ha questa condizione:
 
 Cioe':
 
-- un push su `claude/**` **compila, prova e fotografa**, ma non pubblica niente;
+- un push su un branch di lavoro **compila, prova e fotografa**, ma non pubblica niente;
 - solo un `main` che si muove, e con `build` verde, riscrive l'allegato
   `weather.apk` sul tag fisso `apk-latest`.
 
@@ -2685,7 +2701,7 @@ gh run list  --branch main --limit 3 --repo NoximilienCoxen/test-weather
 gh release view apk-latest --repo NoximilienCoxen/test-weather --json publishedAt,body
 ```
 
-Dentro Claude Code sul web `gh` non c'e': la stessa cosa si chiede con gli
+Dentro la sessione sul web `gh` non c'e': la stessa cosa si chiede con gli
 strumenti GitHub dell'agente (elenco dei run, ultima release).
 
 Se il run su `main` e' rosso, **il lavoro non e' finito**: si corregge e si
@@ -2776,7 +2792,7 @@ al trascinamento della cifra. `ui/render3d/Camera.kt` e `Bodies.kt` **restano**
 luna di Sala IV - e cosi' `ui/motion/DeviceTilt.kt`, che serve al benvenuto.
 
 **Perche' un cambio cosi' grande.** Non e' un restyling sopra il feed: e' la
-sostituzione decisa nella chat di Claude Design "Mobile app design watercolor"
+sostituzione decisa nella chat di design "Mobile app design watercolor"
 (`chats/` nel bundle di handoff) - la direzione **1a - Sala**, scelta esplicita
 dell'utente contro **1b - Catalogo**. Sette sale sfogliabili in un carosello
 verticale al posto delle sei schede del feed, un indicatore di percorso al
@@ -3372,7 +3388,7 @@ che partisse la CI — che e' precisamente il lavoro per cui esiste.
 ## 13. Organic: il cielo al posto della carta
 
 Tredicesimo giro, e il piu' largo dopo Sala. Viene da un secondo passaggio di
-Claude Design — chat *"App meteo a tema organico"*, direzione **Oggi-1c**
+Chat di design — *"App meteo a tema organico"*, direzione **Oggi-1c**
 scelta dall'utente — consegnato come bundle di handoff con `Caelum.dc.html`,
 i transcript e il design system **Organic** (`_ds/organic-*`).
 
@@ -7014,7 +7030,13 @@ L'elenco unico da cui ripartire: sostituisce i "Cosa resta" sparsi (§48.4,
 §49.4) e le prove in mano della PR #33. Il numero resta lo stesso anche quando
 una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 
-**Da provare in mano sul telefono** (la CI non le vede):
+**Provate in mano il 5 ottobre** (riferito dall'utente, senza numeri ne'
+dettagli): le voci 1-10 qui sotto, piu' i widget MINI e PROSSIME ORE e il
+confronto fra citta' (§49.12). Non sono registrati gli esiti: se qualcosa e'
+andato storto, non e' scritto qui. Per la 9 mancano i `TotalTime` e quindi
+non si sa ancora se il baseline profile aiuti, cioe' se la 12 si sblocca.
+
+**Elenco originale, ora provato:**
 
 1. **L'inglese** (§49): telefono in inglese con la voce Lingua su Automatica;
    la voce Lingua cambiata a mano (Italiano / English) col telefono in
@@ -7024,6 +7046,11 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 4. **I colpetti fitti**, uno ogni 150 ms, confrontati con la build di prima
    (§42.3).
 5. **Un'allerta arancione vera**: la notifica e il bollettino (§42.4, §43.1).
+   Dal 5 ottobre le allerte non sono piu' solo MeteoAlarm: NWS (Stati Uniti),
+   ECCC (Canada), JMA (Giappone) e IFRC Alert Hub per il resto (§8-ter). Tutte
+   provate su risposte vere della sonda e con test, **nessuna vista sul
+   telefono**: la prova in mano e' un posto con un'allerta attiva per ciascun
+   canale, con il credito della fonte giusto in fondo al bollettino.
 6. **TalkBack** sulla barra delle ore (§43.2).
 7. **Un tablet o uno schermo largo** (§43.3).
 8. **Il widget della Luna** di giorno e di notte (§44).
@@ -7048,7 +7075,7 @@ una voce si chiude, cosi' i rimandi ("dopo la 9") restano veri.
 
 **Pulizia:**
 
-16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
+16. Cancellare i rami di lavoro vecchi e gli altri gia' uniti, se si vuole un
     repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
     da fare a mano. Dei 9 non uniti, 8 sono superati; il nono porta due
     widget e il confronto mai arrivati (voce 17).*
@@ -7119,7 +7146,7 @@ Con la storia intera (il clone delle sessioni e' parziale: `git fetch
 ramo sembra non unito), il 4 ottobre:
 
 - **39 rami interamente in `main`**, cancellabili senza perdere nulla:
-  `ccr-a8f2fa11-pr2bf1` e 38 `claude/*`. La sessione non ha il permesso di
+  `ccr-a8f2fa11-pr2bf1` e 38 rami di lavoro. La sessione non ha il permesso di
   cancellare rami remoti, quindi si fa a mano (`git push origin --delete ...`).
 - **9 rami con lavoro mai unito**, da decidere uno per uno:
   `sala-scultura` (archivio della scultura meteo), `feed-art-gallery-style-lgkan5`
@@ -7171,6 +7198,17 @@ d'installazione e nessun allegato in piu'. Chiuso.
 
 ### 49.10 Per la prossima chat
 
+**Aggiornamento del 5 ottobre** (PR #38-#41, unite su `main`): le allerte
+ufficiali coprono il mondo (§8-ter): MeteoAlarm col jolly in `Accept` (il
+server rispondeva 406), NWS, ECCC, JMA, IFRC con `PoligonoCap`; bollettino e
+pastiglia distinguono un controllo fallito da un feed vuoto; il codice del
+giorno non disegna gocce con zero millimetri; allerte attribuite
+all'Aeronautica e non alla Protezione Civile. Ancora aperte: Australia (BoM
+blocca i client) e Nuova Zelanda come lettore proprio. **Prove in mano: fatte
+tutte** (voci 1-10 di §49.5, widget MINI/PROSSIME ORE, confronto), senza
+esiti scritti. Resta il numero dell'avvio a freddo (voce 9).
+
+
 Stato al 4 ottobre, notte, dopo le PR #34 e #35 (tutto unito su `main`).
 L'elenco numerato e' §49.5; qui solo a che punto e' ogni voce aperta e da
 dove ripartire. Una frase per cominciare: "leggi CONTESTO.md §49.5 e §49.10,
@@ -7190,11 +7228,11 @@ poi...".
   POLLnet va prima capito. Resta la decisione: mostrare o no una misura di
   una o due settimane fa, come riga "misurati" separata da CAMS.
 - **16, i rami** (§49.8): da cancellare 48 rami, tutti gia' in `main` o
-  superati: i 39 uniti, gli 8 superati, e `claude/manual-testing-checklist-5fi6wh`
+  superati: i 39 uniti, gli 8 superati, e `manual-testing-checklist-5fi6wh`
   quando non serve piu'. `widget-city-inconsistency-0g28uo` ormai si puo'
   cancellare (recuperato in §49.12). La sessione non ha il permesso: o a mano
   (`git push origin --delete ...`) o dando il permesso. `apk-latest` nomina
-  come destinazione `claude/android-weather-app-3d-jt6v8a`, uno dei 39: il tag
+  come destinazione `android-weather-app-3d-jt6v8a`, uno dei 39: il tag
   esiste gia' e non dovrebbe importare, ma conviene guardare il primo rilascio
   dopo averlo cancellato. Prima di contare i rami, `git fetch --unshallow`.
 - **Da fare in mano**: le 1-10 di §49.5, piu' i due widget nuovi sulla Home
@@ -7399,3 +7437,105 @@ una conta anche per le altre reti e da dove si prende il coefficiente di
 ciascuna stazione. Prossimo passo, se si va avanti: una seconda stazione
 fuori Emilia-Romagna confrontata con il bollettino della sua ARPA, prima di
 mostrare un solo numero di POLLnet.
+
+---
+
+## 50. L'orologio (Wear OS)
+
+L'11 ottobre 2026. Tre moduli invece di uno: `:core` (quello che telefono e
+orologio hanno in comune), `:app` (il telefono, com'era) e `:wear`.
+
+### 50.1 `:core`, e cosa ci sta dentro
+
+`data/` e' quasi tutto JVM puro, e si e' spostato **senza cambiare package**
+(`io.github.noximiliencoxen.caelum.data`), cosi' nessun import dell'app e'
+cambiato. Sono in `core/`: `Http`, `Model`, `OpenMeteoDto`, `WeatherModel`,
+`WeatherRepository`, `ScortaPrevisioni`, `Place`, `Wmo`, `SunClock`, la parte
+pura di `Lingua` (`Lingue`, `tr()`, `inInglese()`), i glifi del tempo
+(`ui/sala/Glifi.kt`: `GlifoMeteo`, `glifoDi`, `disegnaGlifo`, solo `DrawScope`,
+niente `@Composable`) e `StatoSincronizzato`. **Restano in `:app`** i lettori
+delle allerte (`android.util.Xml`, `Log`), `DeviceLocation` e la persistenza
+della lingua (`lingua/LinguaSalvata.kt`, due estensioni di `Lingue`).
+
+**Trappole pagate**
+
+- Fra moduli diversi Kotlin **non fa lo smart cast** su una proprieta'
+  pubblica: `if (place.admin != null) x = place.admin` non compila piu'.
+  Si scrive `place.admin?.let { ... }`. L'ha trovato la CI, in
+  `widget/WidgetPrefs.kt`.
+- `internal` non vale fra moduli: sette funzioni e classi di `Http`,
+  `WeatherRepository` e `ScortaPrevisioni` sono diventate pubbliche.
+- `scripts/import_audit.py` non vede i file dello stesso package finiti in un
+  altro modulo, e segnala piu' simboli non risolti (188 contro 125): sono falsi
+  allarmi. Il giudice e' la compilazione della CI.
+- Un modulo senza `@Composable` non vuole il compilatore di Compose: `core`
+  prende solo `compose-ui-graphics`.
+
+**Verificato**: gli scatti della CI prima e dopo lo spostamento sono
+equivalenti. Sei su novanta differivano, e per motivi che non c'entrano: sul
+tema scuro la richiesta dell'aria era andata in timeout (nello stesso giro lo
+scatto chiaro, identico, aveva i dati; il log ha quattro timeout di lettura
+anche nel giro di prima).
+
+### 50.2 L'app dell'orologio
+
+`wear/`: **stesso `applicationId` e stessa chiave di debug** dell'app del
+telefono, perche' il Data Layer fa parlare due app solo a questa condizione.
+`minSdk 30`. Tre pagine da scorrere di lato: **Adesso** (figurina, temperatura,
+condizione), **Prossime ore** (dodici) e **Giorni**. La previsione la scarica
+l'orologio da solo con `WeatherRepository` e la tiene su disco con
+`ScortaPrevisioni`: senza rete mostra l'ultima risposta buona, fino a sette
+giorni. Le funzioni di formato (`Formati.kt`) sono pure e hanno prove JVM.
+
+Le versioni di Wear Compose, `androidx.wear` e `play-services-wearable` non si
+leggono da questo container (Google Maven e' bloccato): le ha lette
+`probe_deps.py` in CI (1.7.1, 1.4.0, 20.0.1).
+
+### 50.3 La sincronizzazione col telefono
+
+Il telefono scrive un solo dato nel Data Layer, `/caelum/stato`:
+`StatoSincronizzato`, un JSON con localita', unita' di temperatura e di vento e
+lingua. Lo fa `sync/SincronizzaOrologio.kt`, che ascolta il flusso delle
+impostazioni: **nessun punto di chiamata e' cambiato**. La lingua sta in una
+SharedPreferences fuori da quel flusso, quindi `Lingue.scegli` avvisa a mano.
+Un orologio assente, o un telefono senza Google Play Services, non e' un
+guasto: l'errore si ignora (uno scope senza gestore porterebbe giu' il
+processo).
+
+L'orologio lo riceve con `SincronizzaRicevuta` e lo salva in una
+SharedPreferences con `commit()`, **sincrono**: una scrittura asincrona poteva
+perdersi se il sistema fermava il servizio subito dopo. Finche' non e' arrivato
+niente, resta Forli'. Le temperature passano a Fahrenheit se il telefono le usa
+cosi'. Un valore sconosciuto (una versione piu' nuova del telefono) ripiega sul
+valore di serie, e un testo illeggibile non sostituisce quello di prima.
+
+### 50.4 Le allerte sul polso: nessun codice
+
+La notifica di `AllerteUfficialiWorker` (testo lungo, categoria allarme, apre
+il bollettino) viene **inoltrata da Android** all'orologio abbinato, con
+l'annullamento sincronizzato. Un `WearableExtender` non aggiungerebbe niente di
+misurabile, quindi non c'e'. Limite noto: senza telefono abbinato non c'e'
+allerta sul polso, perche' i lettori restano in `:app`.
+
+### 50.5 La CI e il rilascio
+
+L'APK dell'orologio ha un **artifact suo** (`wear-apk`) e non sta dentro `apk`:
+`screenshots` e `rilascio` prendono il primo `.apk` che trovano, e con due file
+dentro avrebbero installato l'orologio sull'emulatore del telefono. Il rilascio
+(solo da `main`) pubblica due allegati, `weather.apk` e `wear.apk`, e il ciclo
+che toglie gli allegati vecchi li salta **tutti e due**. **Il primo rilascio
+dopo l'unione va guardato**: la pagina di `apk-latest` deve avere due file.
+`scripts/capture.sh` non cambia: non c'e' un emulatore Wear nella cattura.
+
+### 50.6 Cosa non e' stato provato, e non poteva esserlo
+
+- Da qui non c'e' SDK, e la CI non ha un orologio: **nessuna delle tre pagine e'
+  mai stata vista**, ne' su un orologio vero ne' su un emulatore. Compilano e le
+  funzioni di formato passano, e basta.
+- La sincronizzazione non e' mai partita: da guardare in mano un cambio di
+  localita', di unita' e di lingua sul telefono, e che arrivino sull'orologio.
+- La notifica di un'allerta vera sul polso, passando dal bridging di sistema.
+- Come stanno le tre pagine su uno schermo tondo e su uno piccolo (testo
+  tagliato, glifo al bordo).
+- Che l'orologio si installi con `adb -s <orologio> install wear.apk` sopra una
+  build precedente, con la chiave di debug fissa.

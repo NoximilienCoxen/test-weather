@@ -1,10 +1,10 @@
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/MainActivity.kt: funzione non risolta -> registerForActivityResult()
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/MainActivity.kt: funzione non risolta -> setIntent()
-app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Http.kt: funzione non risolta -> setRequestProperty()
-app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Http.kt: simbolo non risolto -> Charsets
-app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Model.kt: simbolo non risolto -> LazyThreadSafetyMode
+core/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Http.kt: funzione non risolta -> setRequestProperty()
+core/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Http.kt: simbolo non risolto -> Charsets
+core/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Model.kt: simbolo non risolto -> LazyThreadSafetyMode
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/Polline.kt: funzione non risolta -> doubleArrayOf()
-app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/ScortaPrevisioni.kt: funzione non risolta -> copy()
+core/src/main/kotlin/io/github/noximiliencoxen/caelum/data/ScortaPrevisioni.kt: funzione non risolta -> copy()
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/WeatherAlert.kt: estensione non importata -> .label
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/data/WeatherAlertsRepository.kt: estensione non importata -> .label
 app/src/main/kotlin/io/github/noximiliencoxen/caelum/notifiche/AllerteUfficialiWorker.kt: estensione non importata -> .label

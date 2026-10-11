@@ -69,7 +69,7 @@ import java.net.URL
  */
 private const val AGENTE = "Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)"
 
-internal fun httpGet(
+fun httpGet(
     url: String,
     fonte: String,
     accept: String = "application/json",
@@ -84,7 +84,7 @@ internal fun httpGet(
 // rompa qui e non a valle, dove sarebbe un accento storto senza spiegazione.
 
 /** Il corpo di una risposta, coi byte intatti e il tipo che il server dichiara. */
-internal class RispostaGrezza(val byte: ByteArray, val tipo: String) {
+class RispostaGrezza(val byte: ByteArray, val tipo: String) {
     /** Lo stesso corpo letto come testo, per chi si aspettava testo. */
     val testo: String get() = String(byte, Charsets.UTF_8)
 }
@@ -125,7 +125,7 @@ private fun httpGetGrezzo(
  * codice fuori dai 2xx solleva, con il nome della fonte e l'inizio della
  * risposta, cosi' il log dice chi ha rifiutato e perche'.
  */
-internal fun httpPostJson(
+fun httpPostJson(
     url: String,
     corpo: String,
     fonte: String,
