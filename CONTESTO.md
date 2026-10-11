@@ -7437,3 +7437,105 @@ una conta anche per le altre reti e da dove si prende il coefficiente di
 ciascuna stazione. Prossimo passo, se si va avanti: una seconda stazione
 fuori Emilia-Romagna confrontata con il bollettino della sua ARPA, prima di
 mostrare un solo numero di POLLnet.
+
+---
+
+## 50. L'orologio (Wear OS)
+
+L'11 ottobre 2026. Tre moduli invece di uno: `:core` (quello che telefono e
+orologio hanno in comune), `:app` (il telefono, com'era) e `:wear`.
+
+### 50.1 `:core`, e cosa ci sta dentro
+
+`data/` e' quasi tutto JVM puro, e si e' spostato **senza cambiare package**
+(`io.github.noximiliencoxen.caelum.data`), cosi' nessun import dell'app e'
+cambiato. Sono in `core/`: `Http`, `Model`, `OpenMeteoDto`, `WeatherModel`,
+`WeatherRepository`, `ScortaPrevisioni`, `Place`, `Wmo`, `SunClock`, la parte
+pura di `Lingua` (`Lingue`, `tr()`, `inInglese()`), i glifi del tempo
+(`ui/sala/Glifi.kt`: `GlifoMeteo`, `glifoDi`, `disegnaGlifo`, solo `DrawScope`,
+niente `@Composable`) e `StatoSincronizzato`. **Restano in `:app`** i lettori
+delle allerte (`android.util.Xml`, `Log`), `DeviceLocation` e la persistenza
+della lingua (`lingua/LinguaSalvata.kt`, due estensioni di `Lingue`).
+
+**Trappole pagate**
+
+- Fra moduli diversi Kotlin **non fa lo smart cast** su una proprieta'
+  pubblica: `if (place.admin != null) x = place.admin` non compila piu'.
+  Si scrive `place.admin?.let { ... }`. L'ha trovato la CI, in
+  `widget/WidgetPrefs.kt`.
+- `internal` non vale fra moduli: sette funzioni e classi di `Http`,
+  `WeatherRepository` e `ScortaPrevisioni` sono diventate pubbliche.
+- `scripts/import_audit.py` non vede i file dello stesso package finiti in un
+  altro modulo, e segnala piu' simboli non risolti (188 contro 125): sono falsi
+  allarmi. Il giudice e' la compilazione della CI.
+- Un modulo senza `@Composable` non vuole il compilatore di Compose: `core`
+  prende solo `compose-ui-graphics`.
+
+**Verificato**: gli scatti della CI prima e dopo lo spostamento sono
+equivalenti. Sei su novanta differivano, e per motivi che non c'entrano: sul
+tema scuro la richiesta dell'aria era andata in timeout (nello stesso giro lo
+scatto chiaro, identico, aveva i dati; il log ha quattro timeout di lettura
+anche nel giro di prima).
+
+### 50.2 L'app dell'orologio
+
+`wear/`: **stesso `applicationId` e stessa chiave di debug** dell'app del
+telefono, perche' il Data Layer fa parlare due app solo a questa condizione.
+`minSdk 30`. Tre pagine da scorrere di lato: **Adesso** (figurina, temperatura,
+condizione), **Prossime ore** (dodici) e **Giorni**. La previsione la scarica
+l'orologio da solo con `WeatherRepository` e la tiene su disco con
+`ScortaPrevisioni`: senza rete mostra l'ultima risposta buona, fino a sette
+giorni. Le funzioni di formato (`Formati.kt`) sono pure e hanno prove JVM.
+
+Le versioni di Wear Compose, `androidx.wear` e `play-services-wearable` non si
+leggono da questo container (Google Maven e' bloccato): le ha lette
+`probe_deps.py` in CI (1.7.1, 1.4.0, 20.0.1).
+
+### 50.3 La sincronizzazione col telefono
+
+Il telefono scrive un solo dato nel Data Layer, `/caelum/stato`:
+`StatoSincronizzato`, un JSON con localita', unita' di temperatura e di vento e
+lingua. Lo fa `sync/SincronizzaOrologio.kt`, che ascolta il flusso delle
+impostazioni: **nessun punto di chiamata e' cambiato**. La lingua sta in una
+SharedPreferences fuori da quel flusso, quindi `Lingue.scegli` avvisa a mano.
+Un orologio assente, o un telefono senza Google Play Services, non e' un
+guasto: l'errore si ignora (uno scope senza gestore porterebbe giu' il
+processo).
+
+L'orologio lo riceve con `SincronizzaRicevuta` e lo salva in una
+SharedPreferences con `commit()`, **sincrono**: una scrittura asincrona poteva
+perdersi se il sistema fermava il servizio subito dopo. Finche' non e' arrivato
+niente, resta Forli'. Le temperature passano a Fahrenheit se il telefono le usa
+cosi'. Un valore sconosciuto (una versione piu' nuova del telefono) ripiega sul
+valore di serie, e un testo illeggibile non sostituisce quello di prima.
+
+### 50.4 Le allerte sul polso: nessun codice
+
+La notifica di `AllerteUfficialiWorker` (testo lungo, categoria allarme, apre
+il bollettino) viene **inoltrata da Android** all'orologio abbinato, con
+l'annullamento sincronizzato. Un `WearableExtender` non aggiungerebbe niente di
+misurabile, quindi non c'e'. Limite noto: senza telefono abbinato non c'e'
+allerta sul polso, perche' i lettori restano in `:app`.
+
+### 50.5 La CI e il rilascio
+
+L'APK dell'orologio ha un **artifact suo** (`wear-apk`) e non sta dentro `apk`:
+`screenshots` e `rilascio` prendono il primo `.apk` che trovano, e con due file
+dentro avrebbero installato l'orologio sull'emulatore del telefono. Il rilascio
+(solo da `main`) pubblica due allegati, `weather.apk` e `wear.apk`, e il ciclo
+che toglie gli allegati vecchi li salta **tutti e due**. **Il primo rilascio
+dopo l'unione va guardato**: la pagina di `apk-latest` deve avere due file.
+`scripts/capture.sh` non cambia: non c'e' un emulatore Wear nella cattura.
+
+### 50.6 Cosa non e' stato provato, e non poteva esserlo
+
+- Da qui non c'e' SDK, e la CI non ha un orologio: **nessuna delle tre pagine e'
+  mai stata vista**, ne' su un orologio vero ne' su un emulatore. Compilano e le
+  funzioni di formato passano, e basta.
+- La sincronizzazione non e' mai partita: da guardare in mano un cambio di
+  localita', di unita' e di lingua sul telefono, e che arrivino sull'orologio.
+- La notifica di un'allerta vera sul polso, passando dal bridging di sistema.
+- Come stanno le tre pagine su uno schermo tondo e su uno piccolo (testo
+  tagliato, glifo al bordo).
+- Che l'orologio si installi con `adb -s <orologio> install wear.apk` sopra una
+  build precedente, con la chiave di debug fissa.

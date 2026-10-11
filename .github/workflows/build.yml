@@ -637,6 +637,12 @@ jobs:
       - name: Quanto pesa
         if: always()
         run: |
+          # L'orologio: la dimensione e basta. Non ha un baseline profile, e
+          # l'avviso "nessun baseline.prof" qui sotto sarebbe rumore.
+          for apk in wear/build/outputs/apk/*/*.apk; do
+            [ -f "$apk" ] || continue
+            echo "wear/$(basename "$apk"): $(du -h "$apk" | cut -f1)"
+          done
           for apk in app/build/outputs/apk/*/*.apk; do
             [ -f "$apk" ] || continue
             echo "$(basename "$apk"): $(du -h "$apk" | cut -f1)"
@@ -662,6 +668,17 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
+      # **Un artifact a parte, non dentro `apk`.** `screenshots` e `rilascio`
+      # prendono "il primo .apk" che trovano in `apk/`: con due file dentro
+      # avrebbero potuto installare l'orologio sull'emulatore del telefono, o
+      # pubblicarlo come `weather.apk`. CONTESTO §50.
+      - uses: actions/upload-artifact@v6
+        if: success()
+        with:
+          name: wear-apk
+          path: wear/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
   # Livello 3: l'APK in mano al telefono. Tag fisso, cosi' il link resta
   # sempre lo stesso e si puo' salvare fra i preferiti.
   #
@@ -681,10 +698,16 @@ jobs:
           name: apk
           path: apk
 
-      - name: Prepara il file
+      - uses: actions/download-artifact@v7
+        with:
+          name: wear-apk
+          path: wear-apk
+
+      - name: Prepara i file
         run: |
           mkdir -p rilascio
           cp "$(find apk -name '*.apk' | head -1)" rilascio/weather.apk
+          cp "$(find wear-apk -name '*.apk' | head -1)" rilascio/wear.apk
           ls -la rilascio
 
       # **v3, la prima su Node 24** (`probe_azioni.py`, 2 ottobre 2026). Questo
@@ -698,7 +721,9 @@ jobs:
           tag_name: apk-latest
           name: Weather — ultima build
           prerelease: true
-          files: rilascio/weather.apk
+          files: |
+            rilascio/weather.apk
+            rilascio/wear.apk
           body: |
             APK di debug, sempre aggiornato all'ultimo commit del branch di sviluppo.
 
@@ -710,6 +735,11 @@ jobs:
 
             La firma e' una chiave di debug fissa, quindi le build successive
             si installano sopra la precedente senza doverla disinstallare.
+
+            **Orologio (Wear OS 3 o successivo)**: `wear.apk` e' l'app per lo
+            smartwatch, stesso pacchetto e stessa firma di quella del telefono.
+            Si installa dal computer: `adb -s <orologio> install wear.apk`.
+            Il telefono le manda localita', unita' e lingua da solo.
 
             Commit: ${{ github.sha }}
 
@@ -724,7 +754,9 @@ jobs:
           presenti=$(gh release view apk-latest --repo "$GITHUB_REPOSITORY" \
             --json assets --jq '.assets[].name')
           for allegato in $presenti; do
+            # Gli allegati buoni sono due: il telefono e l'orologio.
             [ "$allegato" = "weather.apk" ] && continue
+            [ "$allegato" = "wear.apk" ] && continue
             echo "rimuovo allegato obsoleto: $allegato"
             gh release delete-asset apk-latest "$allegato" \
               --repo "$GITHUB_REPOSITORY" --yes
