@@ -57,7 +57,27 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Le scorciatoie tenendo premuta l'icona: pioggia, settimana, località. -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
+
+        <!--
+            Il riquadro delle Impostazioni rapide (tile/RiquadroMeteo): il tempo di
+            adesso sulla localita' dell'app. Non e' ACTIVE_TILE: si aggiorna
+            quando si apre la tendina, che e' l'unico momento in cui conta.
+        -->
+        <service
+            android:name=".tile.RiquadroMeteo"
+            android:exported="true"
+            android:icon="@drawable/ic_notifica_riepilogo"
+            android:label="@string/riquadro_meteo"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".widget.WidgetConfigActivity"

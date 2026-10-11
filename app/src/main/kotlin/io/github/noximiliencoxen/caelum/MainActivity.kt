@@ -107,6 +107,12 @@ class MainActivity : ComponentActivity() {
             intent.removeExtra(EXTRA_BOLLETTINO)
             viewModel.apriBollettino()
         }
+        // La scorciatoia "Le località" dall'icona. L'extra arriva come testo,
+        // perche' cosi' lo scrive `xml/shortcuts.xml`: basta che ci sia.
+        if (intent.hasExtra(EXTRA_LOCALITA)) {
+            intent.removeExtra(EXTRA_LOCALITA)
+            viewModel.openLocations()
+        }
         val sala = intent.getStringExtra(EXTRA_SALA_WIDGET)
             ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
             ?: return
@@ -283,6 +289,9 @@ class MainActivity : ComponentActivity() {
 
         /** Apre il bollettino: dal tocco sulla notifica di un'allerta. */
         const val EXTRA_BOLLETTINO = "bollettino"
+
+        /** Apre le località: dalla scorciatoia dell'icona. */
+        const val EXTRA_LOCALITA = "localita"
 
         /** La citta' del widget toccato, da mostrare senza salvarla. */
         const val EXTRA_WIDGET_NOME = "widget_nome"

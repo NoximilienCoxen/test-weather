@@ -7723,3 +7723,29 @@ finestra). **Non provato in mano**: un giro si forza con
 numero da `adb shell dumpsys jobscheduler | grep caelum`), ma la notifica esce
 solo dentro la finestra: di pomeriggio il giro salta e si riprenota, ed e'
 giusto cosi'.
+
+## 53. Le scorciatoie di sistema
+
+Tre porte da fuori dell'app.
+
+- **Tenendo premuta l'icona** (`res/xml/shortcuts.xml`): Pioggia, Settimana,
+  Localita'. Usano gli extra del tocco sui widget (`EXTRA_SALA_WIDGET`) e uno
+  nuovo, `EXTRA_LOCALITA`, letti in `applyWidgetTap`, quindi valgono anche
+  nella release. L'extra di una scorciatoia statica arriva **come testo**: per
+  le localita' si guarda `hasExtra`, non `getBooleanExtra`. Le icone sono
+  adattive col fondo di quella dell'app (`ic_scorciatoia_*`). I nomi seguono la
+  lingua del telefono, non quella scelta nell'app: sono risorse, e le legge il
+  launcher.
+- **Riquadro delle Impostazioni rapide** (`tile/RiquadroMeteo.kt`): "21° ·
+  Sereno" e sotto la citta'. Si aggiorna solo all'apertura della tendina, con
+  `WidgetForecast.load` (scorta sotto i 25 minuti, se no rete). Icona della
+  goccia se piove, del sole se no. Il tocco apre l'app; da Android 14 con il
+  `PendingIntent`, prima con l'`Intent`.
+- **Condividi** in Sala I, accanto a min e max: manda il **giorno mostrato**
+  con le parole del riepilogo del mattino (`testiRiepilogo`, che ha preso
+  `giornoDetto`), piu' "— Caelum" in fondo.
+
+Prove JVM: `tile/RiquadroMeteoTest.kt` e il giorno condiviso in
+`RiepilogoMattinoTest`. **Non provato in mano**: come il launcher disegna le
+icone delle scorciatoie, e il riquadro su un telefono vero (si aggiunge
+modificando la tendina, "Meteo").
