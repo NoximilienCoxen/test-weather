@@ -8,13 +8,12 @@ coreKtx = "1.19.1"
 activityCompose = "1.13.0"
 lifecycle = "2.11.0"
 serialization = "1.11.0"
-# Wear OS (app per l'orologio, CONTESTO §50). "0" e' un segnaposto: da questo
-# container Google Maven non si raggiunge, e la versione vera la legge
-# `probe_deps.py` in CI ("ultima" in api/dipendenze.txt). Nessun modulo le usa
-# finche' il segnaposto non e' sostituito.
-wearCompose = "0"
-wearFramework = "0"
-playServicesWearable = "0"
+# Wear OS (app per l'orologio, CONTESTO §50). Versioni lette da
+# `probe_deps.py` in CI l'11 ottobre 2026: da questo container Google Maven non
+# si raggiunge.
+wearCompose = "1.7.1"
+wearFramework = "1.4.0"
+playServicesWearable = "20.0.1"
 # Letta da Maven Central il 10 ottobre 2026; il modulo core la usa direttamente (WeatherRepository).
 coroutines = "1.11.0"
 datastore = "1.2.1"
