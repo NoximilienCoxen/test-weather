@@ -83,7 +83,12 @@ data class HourForecast(
     val uvIndex: Double? = null,
     /** Copertura nuvolosa in percentuale. */
     val cloudCover: Int? = null,
-    /** Pressione al suolo in hPa. */
+    /**
+     * Pressione ridotta al livello del mare, in hPa.
+     *
+     * Non quella al suolo: a Cortina quella vale 850 e a Venezia 1015 con lo
+     * stesso tempo, e nessun barometro di casa la scrive cosi'.
+     */
     val pressure: Double? = null,
     /** Visibilita' in metri. */
     val visibility: Double? = null,

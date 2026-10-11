@@ -33,7 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.noximiliencoxen.caelum.data.Afa
 import io.github.noximiliencoxen.caelum.data.DayForecast
+import io.github.noximiliencoxen.caelum.data.afaDi
+import kotlin.math.roundToInt
 import io.github.noximiliencoxen.caelum.ui.UiState
 import io.github.noximiliencoxen.caelum.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelum.ui.sala.Didascalia
@@ -236,6 +239,23 @@ fun SalaPioggiaScreen(
             )
             CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY"), valore = intensita(oraScelta?.precipitation), palette = palette)
             CellaValore(etichetta = tr("SUOLO", "GROUND"), valore = if (totale > 4.0) tr("saturo", "soaked") else tr("asciutto", "dry"), palette = palette)
+        }
+
+        // **L'acqua che resta sospesa.** Il riquadro dell'umidita' in Sala I
+        // porta qui, e qui l'umidita' non c'era. Accanto il punto di rugiada,
+        // che e' il numero che dice davvero se l'aria e' pesante: vedi `afaDi`.
+        val rugiada = oraScelta?.dewPoint
+        if (oraScelta?.humidity != null || rugiada != null) {
+            Text(
+                text = listOfNotNull(
+                    oraScelta?.humidity?.let { tr("umidità ${it.roundToInt()} %", "humidity ${it.roundToInt()} %") },
+                    rugiada?.let { tr("rugiada ${state.unit.from(it).roundToInt()}°", "dew point ${state.unit.from(it).roundToInt()}°") },
+                    rugiada?.let { nomeAfa(afaDi(it)) },
+                ).joinToString(" · "),
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+                modifier = Modifier.padding(top = 10.dp),
+            )
         }
 
         HorizontalDivider(
@@ -451,6 +471,14 @@ private fun intensita(mm: Double?): String = when {
     mm < 2.0 -> tr("moderata", "moderate")
     mm < 4.0 -> tr("forte", "heavy")
     else -> tr("rovescio", "downpour")
+}
+
+private fun nomeAfa(afa: Afa): String = when (afa) {
+    Afa.SECCA -> tr("aria secca", "dry air")
+    Afa.GRADEVOLE -> tr("gradevole", "comfortable")
+    Afa.UMIDA -> tr("un po' pesante", "a bit sticky")
+    Afa.AFOSA -> tr("afosa", "muggy")
+    Afa.OPPRIMENTE -> tr("opprimente", "oppressive")
 }
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)

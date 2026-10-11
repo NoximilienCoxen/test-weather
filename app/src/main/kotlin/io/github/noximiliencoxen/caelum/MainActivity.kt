@@ -10,6 +10,7 @@ import io.github.noximiliencoxen.caelum.lingua.Lingua
 import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.notifiche.RiepilogoMattinoWorker
 import io.github.noximiliencoxen.caelum.prefs.SettingsPrefs
 import kotlinx.coroutines.flow.first
 import android.os.Bundle
@@ -106,6 +107,12 @@ class MainActivity : ComponentActivity() {
             intent.removeExtra(EXTRA_BOLLETTINO)
             viewModel.apriBollettino()
         }
+        // La scorciatoia "Le località" dall'icona. L'extra arriva come testo,
+        // perche' cosi' lo scrive `xml/shortcuts.xml`: basta che ci sia.
+        if (intent.hasExtra(EXTRA_LOCALITA)) {
+            intent.removeExtra(EXTRA_LOCALITA)
+            viewModel.openLocations()
+        }
         val sala = intent.getStringExtra(EXTRA_SALA_WIDGET)
             ?.let { nome -> SalaRoom.entries.firstOrNull { it.name == nome } }
             ?: return
@@ -149,6 +156,11 @@ class MainActivity : ComponentActivity() {
             val impostazioni = SettingsPrefs(applicationContext).settings.first()
             if (impostazioni.notifichePioggia) PioggiaInArrivoWorker.pianifica(applicationContext)
             if (impostazioni.notificheAllerte) AllerteUfficialiWorker.pianifica(applicationContext)
+            // Il riepilogo si prenota da se' giro dopo giro; qui solo se la
+            // catena si fosse interrotta (`KEEP` non sposta un turno che c'e').
+            if (impostazioni.riepilogoMattino) {
+                RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
+            }
         }
     }
 
@@ -277,6 +289,9 @@ class MainActivity : ComponentActivity() {
 
         /** Apre il bollettino: dal tocco sulla notifica di un'allerta. */
         const val EXTRA_BOLLETTINO = "bollettino"
+
+        /** Apre le località: dalla scorciatoia dell'icona. */
+        const val EXTRA_LOCALITA = "localita"
 
         /** La citta' del widget toccato, da mostrare senza salvarla. */
         const val EXTRA_WIDGET_NOME = "widget_nome"

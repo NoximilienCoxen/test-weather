@@ -2,7 +2,12 @@ package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
 import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.lingua.tr
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.platform.LocalContext
+import io.github.noximiliencoxen.caelum.notifiche.testiRiepilogo
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -146,6 +151,26 @@ fun SalaOggiScreen(
                     color = palette.inkFaint,
                 )
             }
+            // **Condividere il giorno mostrato**, non quello di oggi: se si e'
+            // toccato sabato e' sabato che si vuole mandare a chi viene al mare.
+            // Una parola e non un'icona, come "apri la settimana" e "torna a
+            // oggi": in questa sala i comandi si leggono.
+            if (state.forecast != null && giorno != null) {
+                val contesto = LocalContext.current
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = tr("condividi", "share"),
+                    style = SalaType.pill,
+                    color = palette.accent,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(onClickLabel = tr("condividi la previsione", "share the forecast")) {
+                            condividi(contesto, testoDaCondividere(state, giornoScelto))
+                        }
+                        .padding(horizontal = 6.dp, vertical = 6.dp),
+                )
+            }
         }
 
         PannelloSala(palette = palette) {
@@ -251,6 +276,39 @@ fun SalaOggiScreen(
             )
         }
     }
+}
+
+/**
+ * La giornata mostrata, in parole: le stesse del riepilogo del mattino
+ * (`testiRiepilogo`), cosi' la notifica e il messaggio condiviso non possono
+ * raccontare lo stesso giorno in due modi.
+ *
+ * Per oggi la pioggia si conta da adesso; per un giorno futuro dalla sua
+ * mezzanotte, perche' "dalle 15" di sabato vale tutto il sabato.
+ */
+internal fun testoDaCondividere(state: UiState, scelto: GiornoSettimana?): String {
+    val previsione = state.forecast ?: return ""
+    val giorno = state.detailDay ?: return ""
+    val oggi = state.selectedDay == 0 || scelto == null
+    val (titolo, corpo) = testiRiepilogo(
+        citta = state.place.name,
+        giorno = giorno,
+        ore = previsione.hoursOf(giorno.date),
+        adesso = if (oggi) previsione.nowThere() else giorno.date.atStartOfDay(),
+        unita = state.unit,
+        vento = state.windUnit,
+        allerte = state.alerts,
+        giornoDetto = if (oggi) tr("oggi", "today") else "${scelto!!.esteso} ${scelto.data}",
+    )
+    return "$titolo.\n$corpo\n— Caelum"
+}
+
+private fun condividi(contesto: Context, testo: String) {
+    if (testo.isEmpty()) return
+    val invio = Intent(Intent.ACTION_SEND)
+        .setType("text/plain")
+        .putExtra(Intent.EXTRA_TEXT, testo)
+    runCatching { contesto.startActivity(Intent.createChooser(invio, null)) }
 }
 
 /**

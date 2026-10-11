@@ -7670,3 +7670,152 @@ protolayout 1.4.2, watchface-complications 1.3.0, concurrent-futures-ktx 1.3.0
 offre solo l'arco), il giro orario lasciato andare per ore, il consumo di
 batteria, e una Tile su schermo quadrato (l'anteprima quadrata e' lo stesso
 scatto tondo).
+
+## 51. I dati che arrivavano e nessuno mostrava
+
+L'11 ottobre 2026. Pressione, punto di rugiada e ore di sole erano gia' nella
+risposta di Open-Meteo e nel `Model`, ma nessuna sala li leggeva.
+
+- **Pressione**: si chiede `pressure_msl` e non piu' `surface_pressure`. Quella
+  al suolo dipende dalla quota (850 hPa in montagna) e non e' il numero di un
+  barometro. Sta in Sala VI, sotto le sei ore del vento: valore, tendenza e una
+  riga prudente su cosa vuol dire. La tendenza e' presa sulle **tre ore prima**
+  dell'ora scelta (`data/Barometro.kt`, `pressioneAlle`): sotto 1 hPa e'
+  stabile, da 3,5 in su e' "in fretta". Fra mezzanotte e le due le ore prima
+  non ci sono (la previsione parte da mezzanotte): li' si guardano le tre ore
+  **dopo** e la nota dice "nelle prossime tre ore" (§55). Le scorte su disco
+  vecchie hanno ancora
+  `surface_pressure`: si leggono senza pressione finche' non arriva una
+  risposta nuova.
+- **Rugiada**: in Sala III, una riga sotto i tre riquadri con umidita',
+  rugiada e quanto pesa l'aria (`afaDi`, soglie 10/16/18/21 °C). Il riquadro
+  dell'umidita' di Sala I portava gia' qui, e qui l'umidita' non c'era.
+- **Ore di sole**: in Sala II, sulla riga di alba e tramonto. Sotto la
+  mezz'ora dice "sole assente", non "0 h".
+
+Prove JVM in `core/src/test/.../BarometroTest.kt`. **Non provato in mano**:
+nessun telefono era collegato. Da guardare: che la sala del vento, piu' alta di
+quattro righe, non scorra su un Pixel di serie.
+
+## 52. Il riepilogo del mattino
+
+`notifiche/RiepilogoMattinoWorker.kt`. Una notifica al giorno sulla localita'
+dell'app: titolo con minima, massima e tempo; testo con pioggia (da che ora e
+quanta), UV solo da 3 in su, raffiche solo da 50 km/h, e l'allerta ufficiale
+piu' grave di oggi. Le righe senza niente da dire non ci sono.
+
+- **Spento di norma**, al contrario di pioggia e allerte: arriva ogni giorno
+  comunque. Si accende dalle impostazioni, gruppo NOTIFICHE; acceso mostra la
+  scelta dell'ora (6, 7, 8, 9). L'ora e' quella **del telefono**, la giornata
+  quella del posto.
+- **Non e' periodico.** Un `PeriodicWorkRequest` di 24 ore scivola; qui ogni
+  giro prenota il successivo all'ora esatta con `APPEND_OR_REPLACE` (il nuovo
+  aspetta la fine di questo invece di cancellarlo). Cambiare l'ora usa
+  `REPLACE`, l'avvio dell'app `KEEP`, solo per riattaccare una catena rotta.
+- **Finestra**: parte solo fra mezz'ora prima e due ore dopo l'ora scelta. Fuori
+  (rete assente, Android che rimanda) salta il giorno e prenota il successivo.
+  Senza rete riprova quattro volte, poi lascia perdere.
+- Usa lo stesso modello numerico dell'app e riempie la stessa scorta su disco.
+  Canale `riepilogo_mattino`, importanza normale: suona ma non si apre sopra
+  lo schermo. Con un'allerta il tocco apre il bollettino, se no Sala I.
+
+Prove JVM in `app/src/test/.../RiepilogoMattinoTest.kt` (testi, ritardo,
+finestra). Un giro si forza con
+`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler io.github.noximiliencoxen.caelum <id>`
+(senza `-n` il comando non trova il lavoro: WorkManager usa uno spazio di nomi
+suo). Il numero e' quello della riga
+`JOB androidx.work.systemjobscheduler:u0aNNN/<id>: ... #RiepilogoMattinoWorker`
+in `adb shell dumpsys jobscheduler io.github.noximiliencoxen.caelum`. La
+notifica esce solo dentro la finestra: di notte il giro salta e si riprenota,
+ed e' giusto cosi'. Prova sul telefono in §55.
+
+## 53. Le scorciatoie di sistema
+
+Tre porte da fuori dell'app.
+
+- **Tenendo premuta l'icona** (`res/xml/shortcuts.xml`): Pioggia, Settimana,
+  Localita'. Usano gli extra del tocco sui widget (`EXTRA_SALA_WIDGET`) e uno
+  nuovo, `EXTRA_LOCALITA`, letti in `applyWidgetTap`, quindi valgono anche
+  nella release. L'extra di una scorciatoia statica arriva **come testo**: per
+  le localita' si guarda `hasExtra`, non `getBooleanExtra`. Le icone sono
+  adattive col fondo di quella dell'app (`ic_scorciatoia_*`). I nomi seguono la
+  lingua del telefono, non quella scelta nell'app: sono risorse, e le legge il
+  launcher.
+- **Riquadro delle Impostazioni rapide** (`tile/RiquadroMeteo.kt`): "21° ·
+  Sereno" e sotto la citta'. Si aggiorna solo all'apertura della tendina, con
+  `WidgetForecast.load` (scorta sotto i 25 minuti, se no rete). Icona della
+  goccia se piove, del sole se no. Il tocco apre l'app; da Android 14 con il
+  `PendingIntent`, prima con l'`Intent`.
+- **Condividi** in Sala I, accanto a min e max: manda il **giorno mostrato**
+  con le parole del riepilogo del mattino (`testiRiepilogo`, che ha preso
+  `giornoDetto`), piu' "— Caelum" in fondo.
+
+Prove JVM: `tile/RiquadroMeteoTest.kt` e il giorno condiviso in
+`RiepilogoMattinoTest`. **Non provato in mano**: come il launcher disegna le
+icone delle scorciatoie, e il riquadro su un telefono vero (si aggiunge
+modificando la tendina, "Meteo").
+
+## 54. L'ora d'oro e l'ora blu
+
+In Sala VII, sotto i tre riquadri: "LA LUCE PER LE FOTO", due colonne, mattina
+e sera, del giorno mostrato. In grande l'ora d'oro, sotto l'ora blu (dalle...
+la mattina, fino alle... la sera) e che cielo ci sara'.
+
+- `ui/sala/rooms/uv/LuceDelleFoto.kt`. Soglie: oro da -4° a +6°, blu da -6° a
+  -4° (le piu' usate, nessun ente le fissa). Si calcola **minuto per minuto**
+  con `OmbraSole.altezza`, la stessa formula dell'ombra, e la giornata si
+  divide al minuto del culmine, non a mezzogiorno. Dove una fascia non c'e'
+  (Tromsø d'estate) resta nulla e si scrive un trattino.
+- Il cielo e' la nuvolosita' media delle ore toccate dall'ora d'oro: sotto 25 %
+  "cielo libero", sotto 75 % "nuvole sparse, possibili colori", sopra
+  "coperto". E' la nuvolosita' gia' corretta per quota (`nuvolositaVisibile`).
+- L'ora e' quella del posto, con lo scarto dall'UTC della previsione: un giorno
+  di cambio d'ora sbaglia di un'ora la meta' che sta dall'altra parte.
+- `hhmm` non usa `oraDueCifre`, che si ferma a 23 e coi minuti sbaglierebbe.
+
+Prove JVM in `LuceDelleFotoTest` (tramonto vero di Forli', ordine blu/oro,
+durata, Tromsø, soglie del cielo). **Non provato in mano**: che la sala UV,
+piu' lunga di una sezione, scorra bene, e che le due colonne non vadano a capo
+su uno schermo stretto.
+
+## 55. Le sezioni 51-54 provate sul telefono
+
+Il 12 ottobre 2026, poco dopo mezzanotte, su Pixel 9 Pro (Android 17), Noceto,
+build di debug installata con `adb install -r`. Le sale si aprono con gli
+stessi extra delle scorciatoie (`--es sala_widget VENTO`), che cosi' restano
+provati anch'essi.
+
+**Visto e giusto**
+- Sala VI: "1012 hPa · stabile" e la nota; con la sezione in piu' la sala
+  **non scorre**. Sala III: "umidità 79 % · rugiada 13° · gradevole" sotto i
+  riquadri. Sala II: "alba 07:30 · tramonto 18:40 · 7 h di sole" su una riga.
+- Sala VII: "07:17 – 08:15 · ora blu dalle 07:05 · coperto" e "17:56 – 18:54 ·
+  ora blu fino alle 19:06 · cielo libero"; il tramonto delle 18:40 sta dentro
+  l'oro della sera. Le due colonne non vanno a capo, la sala non scorre.
+- Sala I: "condividi" a destra di min e max; il tocco apre il pannello di
+  sistema col testo "Noceto, oggi: 12° – 20°, coperto. Niente pioggia. UV
+  moderato, 4 verso le 14. Allerta gialla per temporali. — Caelum".
+- Scorciatoie: `dumpsys shortcut` le elenca tutte e tre; `--es localita true`
+  apre "Le località".
+- Riquadro: aggiunto con `cmd statusbar add-tile
+  io.github.noximiliencoxen.caelum/.tile.RiquadroMeteo`. SystemUI lo riporta
+  con `label=16° · Coperto, secondaryLabel=Noceto, state=2`. Su Android 17 nella
+  tendina compatta e' un tondo con la sola icona; il tocco (app chiusa prima
+  con `force-stop`) apre `MainActivity`.
+- Riepilogo: l'interruttore si accende, la nota diventa "ogni giorno alle
+  07:00", la scelta dell'ora compare; il lavoro e' prenotato a +6h56m alle
+  00:04, e passando a 08:00 a +7h56m (il vecchio sparisce).
+
+**Due difetti che solo il telefono ha mostrato**
+- **Il riepilogo sarebbe saltato ogni giorno.** Il giro forzato prenotava il
+  successivo a +7h24m, cioe' alle 07:29 per le 08:00: il ritardo si cercava da
+  "adesso + 31 minuti" ma si applicava da adesso, e 07:29 cade fuori dalla
+  finestra di `inTempo` (da 07:30). Adesso lo calcola `ritardoDopoUnGiro`, con
+  la sua prova; rifatto il giro, il turno dopo cade alle 08:00.
+- **A mezzanotte la pressione non aveva tendenza**: la previsione parte da
+  mezzanotte e le tre ore prima non ci sono. Si guarda avanti (§51).
+
+Il buffer `crash` e' rimasto vuoto per tutto il giro.
+
+**Non visto**: la notifica del mattino vera (si vedra' alle 08:00, lasciata
+accesa apposta), le icone delle scorciatoie nel menu del launcher.

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Le scorciatoie che compaiono tenendo premuta l'icona.
+
+    Tre e non sette: sono le tre domande per cui si apre l'app sapendo gia'
+    dove andare - piove?, com'e' la settimana?, e com'e' altrove? La prima sala
+    non serve, e' quella che si apre dall'icona.
+
+    Passano dagli stessi extra del tocco su un widget (`MainActivity
+    .applyWidgetTap`), che valgono anche nella release. L'azione VIEW e'
+    obbligatoria: un intent di scorciatoia senza azione il sistema lo scarta.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="pioggia"
+        android:enabled="true"
+        android:icon="@drawable/ic_scorciatoia_pioggia"
+        android:shortcutShortLabel="@string/scorciatoia_pioggia"
+        android:shortcutLongLabel="@string/scorciatoia_pioggia_lunga">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.noximiliencoxen.caelum"
+            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            <extra android:name="sala_widget" android:value="PIOGGIA" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="settimana"
+        android:enabled="true"
+        android:icon="@drawable/ic_scorciatoia_settimana"
+        android:shortcutShortLabel="@string/scorciatoia_settimana"
+        android:shortcutLongLabel="@string/scorciatoia_settimana_lunga">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.noximiliencoxen.caelum"
+            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            <extra android:name="sala_widget" android:value="SETTIMANA" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="localita"
+        android:enabled="true"
+        android:icon="@drawable/ic_scorciatoia_localita"
+        android:shortcutShortLabel="@string/scorciatoia_localita"
+        android:shortcutLongLabel="@string/scorciatoia_localita_lunga">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.noximiliencoxen.caelum"
+            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            <extra android:name="localita" android:value="true" />
+        </intent>
+    </shortcut>
+</shortcuts>

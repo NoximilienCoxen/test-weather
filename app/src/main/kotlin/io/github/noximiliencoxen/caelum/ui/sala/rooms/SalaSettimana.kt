@@ -108,10 +108,13 @@ fun SalaSettimanaScreen(
 
         if (scelto != null) {
             // Alba e tramonto non sono riquadri: sono due istanti, non quantita'
-            // da confrontare fra giorni, e non portano a nessuna sala.
+            // da confrontare fra giorni, e non portano a nessuna sala. Le ore di
+            // sole stanno con loro perche' sono la stessa domanda: quanta luce,
+            // e quanta di quella arriva davvero.
             Text(
                 text = tr("alba", "sunrise") + " ${scelto.alba?.format(OraMinuto) ?: "--:--"} · " +
-                    tr("tramonto", "sunset") + " ${scelto.tramonto?.format(OraMinuto) ?: "--:--"}",
+                    tr("tramonto", "sunset") + " ${scelto.tramonto?.format(OraMinuto) ?: "--:--"}" +
+                    (scelto.sole?.let { " · " + oreDiSole(it) } ?: ""),
                 style = SalaType.microLabel,
                 color = palette.inkSoft,
                 modifier = Modifier.padding(top = 10.dp),
@@ -167,6 +170,15 @@ private fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): Str
 }
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)
+
+/**
+ * "6 h di sole", e sotto la mezz'ora "sole assente": "0 h di sole" si legge
+ * come un dato che manca, non come un giorno coperto.
+ */
+internal fun oreDiSole(secondi: Double): String {
+    val ore = (secondi / 3600.0).roundToInt()
+    return if (ore == 0) tr("sole assente", "no sun") else tr("$ore h di sole", "$ore h of sun")
+}
 
 /**
  * I sei riquadri del giorno scelto, e dove portano.

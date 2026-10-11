@@ -123,7 +123,7 @@ class WeatherRepository(
                 "precipitation_probability,is_day," +
                 "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m," +
                 "wind_direction_10m,uv_index,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high," +
-                "surface_pressure,visibility," +
+                "pressure_msl,visibility," +
                 "rain,snowfall"
 
         const val DAILY_VARS =

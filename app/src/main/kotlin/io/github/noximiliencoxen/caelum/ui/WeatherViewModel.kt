@@ -3,6 +3,7 @@ package io.github.noximiliencoxen.caelum.ui
 import io.github.noximiliencoxen.caelum.lingua.tr
 import io.github.noximiliencoxen.caelum.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelum.notifiche.PioggiaInArrivoWorker
+import io.github.noximiliencoxen.caelum.notifiche.RiepilogoMattinoWorker
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -220,6 +221,9 @@ data class UiState(
     val notifichePioggia: Boolean = true,
     /** Le notifiche delle allerte ufficiali arancioni e rosse. */
     val notificheAllerte: Boolean = true,
+    /** Il riepilogo del mattino, e a che ora (minuti dalla mezzanotte). */
+    val riepilogoMattino: Boolean = false,
+    val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /**
@@ -623,6 +627,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
                         notificheAllerte = settings.notificheAllerte,
+                        riepilogoMattino = settings.riepilogoMattino,
+                        oraRiepilogo = settings.oraRiepilogo,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                     )
                 }
@@ -1462,6 +1468,26 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         val app = getApplication<Application>()
         if (accese) AllerteUfficialiWorker.pianifica(app) else AllerteUfficialiWorker.annulla(app)
         viewModelScope.launch { prefs.setNotificheAllerte(accese) }
+    }
+
+    fun setRiepilogoMattino(acceso: Boolean) {
+        val app = getApplication<Application>()
+        if (acceso) {
+            RiepilogoMattinoWorker.pianifica(app, _state.value.oraRiepilogo, sostituisci = true)
+        } else {
+            RiepilogoMattinoWorker.annulla(app)
+        }
+        viewModelScope.launch { prefs.setRiepilogoMattino(acceso) }
+    }
+
+    fun setOraRiepilogo(minuti: Int) {
+        // Lo stato subito, il disco dopo: la scelta segmentata si sposta al
+        // tocco, non quando il DataStore ha finito di scrivere.
+        _state.update { it.copy(oraRiepilogo = minuti) }
+        if (_state.value.riepilogoMattino) {
+            RiepilogoMattinoWorker.pianifica(getApplication(), minuti, sostituisci = true)
+        }
+        viewModelScope.launch { prefs.setOraRiepilogo(minuti) }
     }
 
     fun permessoNotificheChiesto() {

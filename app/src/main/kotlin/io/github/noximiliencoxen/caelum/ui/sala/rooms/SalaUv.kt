@@ -14,7 +14,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.semantics.semantics
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.CieloDellaLuce
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.Fascia
 import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.OmbraSole
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.cieloDellaLuce
+import io.github.noximiliencoxen.caelum.ui.sala.rooms.uv.luceDelGiorno
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import kotlin.math.cos
 import kotlin.math.sin
 import androidx.compose.foundation.background
@@ -287,8 +293,94 @@ fun SalaUvScreen(
                 palette = palette,
             )
         }
+
+        // ── La luce per le foto ──────────────────────────────────────────────
+        //
+        // Sta qui perche' questa e' la sala del sole: l'ombra sopra dice quanto
+        // e' alto, e queste due colonne quando e' abbastanza basso da fare la
+        // luce che si fotografa. Del giorno mostrato, come tutto il resto.
+        val data = ore.firstOrNull()?.time?.toLocalDate()
+        if (data != null) {
+            val luce = remember(data, state.place, state.forecast?.utcOffsetSeconds) {
+                luceDelGiorno(data, state.place.latitude, state.place.longitude, state.forecast?.utcOffsetSeconds ?: 0)
+            }
+            Text(
+                text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+            ) {
+                ColonnaLuce(
+                    quando = tr("MATTINA", "MORNING"),
+                    oro = luce.oroMattina,
+                    blu = luce.bluMattina?.let { tr("ora blu dalle ${hhmm(it.inizio)}", "blue hour from ${hhmm(it.inizio)}") },
+                    cielo = cieloDellaLuce(luce.oroMattina, ore),
+                    palette = palette,
+                )
+                ColonnaLuce(
+                    quando = tr("SERA", "EVENING"),
+                    oro = luce.oroSera,
+                    blu = luce.bluSera?.let { tr("ora blu fino alle ${hhmm(it.fine)}", "blue hour until ${hhmm(it.fine)}") },
+                    cielo = cieloDellaLuce(luce.oroSera, ore),
+                    palette = palette,
+                )
+            }
+        }
     }
 }
+
+/**
+ * Mezza giornata di luce: l'ora d'oro in grande, perche' e' quella che si
+ * cerca; l'ora blu e il cielo sotto, piccoli.
+ */
+@Composable
+private fun RowScope.ColonnaLuce(
+    quando: String,
+    oro: Fascia?,
+    blu: String?,
+    cielo: CieloDellaLuce?,
+    palette: SalaPalette,
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .clip(RoundedCornerShape(22.dp))
+            .background(palette.chip)
+            .padding(horizontal = 13.dp, vertical = 11.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        Text(text = quando, style = SalaType.microLabel, color = palette.inkFaint)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(SalaTokens.accent400))
+            Text(
+                text = oro?.let { "${hhmm(it.inizio)} – ${hhmm(it.fine)}" } ?: "--",
+                style = SalaType.rowTitle,
+                color = palette.ink,
+                maxLines = 1,
+            )
+        }
+        if (blu != null) Text(text = blu, style = SalaType.microLabel, color = palette.inkSoft, maxLines = 1)
+        if (cielo != null) {
+            Text(
+                text = when (cielo) {
+                    CieloDellaLuce.LIBERO -> tr("cielo libero, luce calda", "clear sky, warm light")
+                    CieloDellaLuce.SPARSO -> tr("nuvole sparse, possibili colori", "scattered clouds, maybe colour")
+                    CieloDellaLuce.COPERTO -> tr("coperto, luce piatta", "overcast, flat light")
+                },
+                style = SalaType.rowNote,
+                color = palette.inkFaint,
+            )
+        }
+    }
+}
+
+// Non `oraDueCifre`, che si ferma a 23: i minuti arrivano a 59.
+private fun hhmm(t: java.time.LocalDateTime): String =
+    String.format(java.util.Locale.ROOT, "%02d:%02d", t.hour, t.minute)
 
 /**
  * Una persona e la sua ombra, con il sole all'altezza vera di quell'ora.
