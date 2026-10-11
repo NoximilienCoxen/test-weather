@@ -7539,3 +7539,134 @@ dopo l'unione va guardato**: la pagina di `apk-latest` deve avere due file.
   tagliato, glifo al bordo).
 - Che l'orologio si installi con `adb -s <orologio> install wear.apk` sopra una
   build precedente, con la chiave di debug fissa.
+
+### 50.7 La faccia dell'app sull'orologio
+
+L'11 ottobre 2026, sera. Le tre pagine erano testo grigio su nero con l'icona
+di sistema; adesso hanno la faccia di Sala. **Viste su un emulatore**
+(`Wear_OS_XL_Round`, 480 x 480, 320 dpi), di notte, a mezzogiorno, all'alba e al
+tramonto, in italiano e in inglese.
+
+**Cosa si e' spostato in `:core`**, senza cambiare package: `ui/sala/SalaTheme.kt`
+(tavole del cielo, fasi, `salaPalette`, `SalaType`), `ui/theme/Contrast.kt` e i
+caratteri Caprasimo e Figtree (`core/src/main/res/font`). `SalaTheme` ora legge
+`io.github.noximiliencoxen.caelum.core.R`; `archivo_variable` resta in `app`
+perche' lo usano solo il tema Material e i widget. `core` prende in piu'
+`ui-text`, `ui-util` e `runtime` (per `TextStyle`, `lerp` e `@Immutable`),
+sempre senza compilatore di Compose.
+
+**Il cielo** (`wear/CieloOrologio.kt`) e' lo stesso del telefono: fase continua
+dal sole vero del posto, chiusura dalla nuvolosita' dell'ora, neve e fronte del
+temporale, colline e due alberi in fondo. E' **uno per tutte le pagine** e non
+scorre con loro. Senza previsione e' una notte serena.
+
+**Il velo.** Sul telefono il testo sta nei pannelli; sulla pagina Adesso sta
+sul cielo nudo, e all'alba la fascia sotto il testo va da viola scuro a pesca:
+nessun inchiostro ci regge AA (misurato: 3,9 alle 6:30). Al centro del
+quadrante c'e' un velo radiale verso il fondo dei pannelli del tema, con
+**l'opacita' minima** che riporta il contrasto sopra 4,5 su nove campioni della
+fascia. A mezzogiorno e a mezzanotte vale zero, e una prova lo tiene fermo.
+`CieloOrologioTest` passa ogni quarto d'ora di un giorno con sei tempi diversi.
+
+**Le pagine.**
+- *Adesso*: il posto, figurina e gradi in Caprasimo affiancati, la condizione
+  in frase ("Parz. nuvoloso", non il maiuscolo del telefono), massima, minima e
+  percepita in una riga, e in fondo una pastiglia sola per la pioggia nelle
+  prossime dodici ore (`pioggiaInVista`): accento pieno se piove o piovera',
+  pannello quieto se e' asciutto. Un'ora e' "bagnata" da un decimo di
+  millimetro o dal cinquanta per cento.
+- *Prossime ore* e *Giorni*: righe a pastiglia translucide come i pannelli del
+  telefono; la prima ora si chiama "Ora" in accento. I giorni hanno una barra
+  da minima a massima sulla **scala comune della settimana**.
+- L'indicatore di pagina e il pager sono quelli di Wear
+  (`HorizontalPagerScaffold`), che convivono con lo scorrimento per uscire;
+  l'ora in cima e' senza la pillola scura di serie, con l'inchiostro del cielo.
+- L'icona e' quella del telefono (tre `ic_launcher_*` copiati in `wear/res`).
+
+**Trappole pagate**
+- `TimeTextDefaults.timeTextStyle` e' `@Composable`: si calcola fuori dal
+  blocco curvo di `TimeText`, non dentro.
+- **L'emulatore Wear nasce in ambient e con l'orologio indietro.** In ambient
+  lo schermo e' velato e gli scorrimenti non arrivano: `adb shell svc power
+  stayon true` e `input keyevent KEYCODE_WAKEUP`. L'ora si rimette con
+  `settings put global auto_time 0` e `cmd alarm set-time <millisecondi UTC>`
+  (con `auto_time 1` torna sbagliata). Per vedere l'alba o il tramonto basta
+  spostare l'ora cosi'; le condizioni attuali pero' restano quelle vere.
+- La lingua dell'app si impone senza telefono con `cmd locale
+  set-app-locales io.github.noximiliencoxen.caelum --locales it-IT`.
+- La copia di lavoro su questa macchina aveva nove file di `app/.../data`
+  rimasti da prima dello spostamento in `core`: con loro l'app non arrivava al
+  dex (`mergeDexDebug`, classi doppie). Tolti; il lavoro sta sul ramo
+  `claude/orologio-faccia`, che parte da `origin/main`.
+
+**Ancora da provare in mano**: una localita' dal nome lungo (`Aoraki / Monte
+Cook`; il nome ha i puntini, ma non si e' visto), uno schermo piccolo e uno
+quadrato, e le pagine su un orologio vero col sole addosso.
+
+### 50.8 Tile, complicazione e aggiornamento in background
+
+Stessa sera. **Viste sull'emulatore**: la Tile di sera e a mezzogiorno, la
+complicazione sul quadrante di sistema "Offhand", il tocco su tutte e due che
+apre l'app.
+
+**Una strada sola per la previsione**: `PrevisioneOrologio.carica`. La usano
+l'app, la Tile, la complicazione e il lavoro periodico, cosi' non possono
+mostrare quattro tempi diversi. Con `preferisciRete = false` (Tile e
+complicazione) basta una scorta di meno di 30 minuti, e niente rete a ogni
+sguardo al quadrante; una scorta di piu' di un'ora passa per
+`riportataAOggi`, perche' il suo "adesso" e' vecchio.
+
+**`AggiornaOrologio`** (WorkManager): un giro **ogni ora** con la rete, piu' uno
+subito quando `SincronizzaRicevuta` riceve una localita' nuova dal telefono.
+Si pianifica all'apertura dell'app, all'aggiunta della Tile e all'attivazione
+della complicazione (`KEEP`: chiamarlo piu' volte non ne crea un secondo).
+Dopo una previsione arrivata dalla rete - dal lavoro o dall'app aperta -
+`avvisaQuadrante` chiede di ridisegnare Tile e complicazioni. Verificato:
+aprendo l'app la complicazione si e' rifatta da sola.
+
+**La Tile** (`TileCaelum`) e' la pagina Adesso: posto, figurina e gradi,
+condizione con massima e minima, le tre ore successive, la pastiglia della
+pioggia. ProtoLayout non ha disegno libero ne' i caratteri di Sala, quindi:
+- il **cielo arriva come immagine di fondo**, disegnata dallo stesso codice
+  della pagina Adesso (`DisegnoCielo.kt`: sfumatura, velo, colline). Gli
+  inchiostri sono quelli gia' misurati di `CieloOrologio`, velo compreso;
+- le figurine sono immagini PNG, giorno e notte, una risorsa per ciascuna;
+- il testo e' il carattere di sistema (niente Caprasimo: e' il limite vero
+  di una Tile).
+
+**La versione delle risorse porta il quarto d'ora** (`cielo-<secondi>`): il
+sistema chiede le risorse dopo il layout, e in mezzo l'ora puo' cambiare. Le
+risorse si ridisegnano per l'istante scritto nella versione, non per adesso.
+La Tile dichiara una freschezza di 30 minuti; il sistema la tiene in cache
+fino ad allora o fino a una sollecitazione.
+
+**La complicazione** (`ComplicazioneCaelum`) ha tre forme: testo corto (gradi,
+e sopra "☂ 21" se piove o piovera', altrimenti la massima), testo lungo, e
+valore fra minima e massima di oggi (l'arco si allarga se adesso e' fuori).
+L'immagine e' la figurina ridotta a **sagoma bianca** (`sagoma()`), perche' il
+quadrante la vuole di un colore solo. Il sistema la chiede ogni mezz'ora.
+
+**Versioni** (lette da Google Maven l'11 ottobre 2026): tiles 1.6.2,
+protolayout 1.4.2, watchface-complications 1.3.0, concurrent-futures-ktx 1.3.0
+(per `SuspendToFutureAdapter.launchFuture`: la Tile vuole un
+`ListenableFuture`).
+
+**Come si prova sull'emulatore**
+- Tile: `adb shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE
+  --es operation add-tile --ecn component
+  io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.wear.TileCaelum`,
+  poi dal quadrante si scorre verso sinistra (prima `KEYCODE_WAKEUP`, e una
+  pausa: lo scorrimento dato mentre si sveglia va perso). `show-tile` non
+  esiste.
+- Complicazione: `set-complication` vuole il pacchetto del quadrante, e quello
+  di sistema e' il runtime dichiarativo condiviso ("Watch face package is not
+  installed"). Si fa a mano: pressione lunga sul quadrante, matita, seconda
+  pagina, tocco sul posto vuoto, "Caelum" in fondo all'elenco. Le coordinate
+  con `uiautomator dump`.
+- L'anteprima nel selettore delle Tile e' uno scatto vero
+  (`drawable-nodpi` e `drawable-round-nodpi/tile_anteprima.png`).
+
+**Non provato**: il testo corto e il testo lungo (il quadrante dell'emulatore
+offre solo l'arco), il giro orario lasciato andare per ore, il consumo di
+batteria, e una Tile su schermo quadrato (l'anteprima quadrata e' lo stesso
+scatto tondo).

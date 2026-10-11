@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!--
+        Per le icone a tema di Android 13+: il colore lo mette il sistema, qui
+        conta solo la sagoma. La stessa del disegno a colori - il sole e la
+        collina - ma con uno stacco fra i due, perche' con un colore solo le
+        forme sovrapposte si fonderebbero in una macchia.
+
+        Tutto dentro il cerchio di raggio 33 attorno a (54,54).
+    -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M54,32 A17,17 0 1,1 53.99,32 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M24,76 C34,68 46,67 58,71 C68,74 78,72 86,67 C87,72 86,78 82,82 L26,82 C24,80 23,78 24,76 Z" />
+</vector>

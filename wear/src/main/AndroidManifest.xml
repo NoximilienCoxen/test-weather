@@ -8,7 +8,8 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Caelum.Wear">
@@ -31,9 +32,44 @@
             </intent-filter>
         </service>
 
+        <!-- La Tile: la pagina Adesso, da scorrere dal quadrante. -->
+        <service
+            android:name=".TileCaelum"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_monochrome"
+            android:label="@string/app_name"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_anteprima" />
+        </service>
+
+        <!-- La complicazione per il quadrante: gradi, figurina, pioggia in arrivo. -->
+        <service
+            android:name=".ComplicazioneCaelum"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_monochrome"
+            android:label="@string/app_name"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="SHORT_TEXT,LONG_TEXT,RANGED_VALUE" />
+            <!-- Mezz'ora: il sistema la richiede da solo; il lavoro orario la sollecita quando la previsione cambia. -->
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="1800" />
+        </service>
+
         <activity
             android:name=".WearActivity"
-            android:exported="true">
+            android:exported="true"
+            android:taskAffinity="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -14,7 +14,11 @@ class SincronizzaRicevuta : WearableListenerService() {
             if (evento.dataItem.uri.path != StatoSincronizzato.PERCORSO) continue
             val json = evento.dataItem.data?.toString(Charsets.UTF_8) ?: continue
             // Solo un messaggio leggibile sostituisce quello di prima.
-            if (StatoSincronizzato.fromJson(json) != null) StatoOrologio.salva(this, json)
+            if (StatoSincronizzato.fromJson(json) != null) {
+                StatoOrologio.salva(this, json)
+                // Localita' o unita' nuove: Tile e complicazione si rifanno subito.
+                AggiornaOrologio.subito(this)
+            }
         }
     }
 }

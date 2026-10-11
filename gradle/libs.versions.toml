@@ -14,6 +14,12 @@ serialization = "1.11.0"
 wearCompose = "1.7.1"
 wearFramework = "1.4.0"
 playServicesWearable = "20.0.1"
+# Tile e complicazione dell'orologio (CONTESTO §50.8). Lette da Google Maven
+# l'11 ottobre 2026, ultime stabili.
+wearTiles = "1.6.2"
+protolayout = "1.4.2"
+wearComplications = "1.3.0"
+concurrentFutures = "1.3.0"
 # Letta da Maven Central il 10 ottobre 2026; il modulo core la usa direttamente (WeatherRepository).
 coroutines = "1.11.0"
 datastore = "1.2.1"
@@ -37,6 +43,9 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
+compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
@@ -44,6 +53,11 @@ wear-compose-material3 = { group = "androidx.wear.compose", name = "compose-mate
 wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }
 wear-framework = { group = "androidx.wear", name = "wear", version.ref = "wearFramework" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+wear-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "wearTiles" }
+wear-protolayout = { group = "androidx.wear.protolayout", name = "protolayout", version.ref = "protolayout" }
+wear-protolayout-expression = { group = "androidx.wear.protolayout", name = "protolayout-expression", version.ref = "protolayout" }
+wear-complications-data-source-ktx = { group = "androidx.wear.watchface", name = "watchface-complications-data-source-ktx", version.ref = "wearComplications" }
+androidx-concurrent-futures-ktx = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "concurrentFutures" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }

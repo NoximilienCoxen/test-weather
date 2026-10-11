@@ -5,7 +5,9 @@ plugins {
 
 /**
  * Il codice che l'app del telefono e quella dell'orologio hanno in comune:
- * modello e lettura delle previsioni (`data/`) e la lingua (`lingua/`).
+ * modello e lettura delle previsioni (`data/`), la lingua (`lingua/`), e la
+ * faccia di Sala: cielo, inchiostri, caratteri (`ui/sala/SalaTheme.kt`, con
+ * Caprasimo e Figtree in `res/font`) e il contrasto (`ui/theme/Contrast.kt`).
  *
  * **Niente Android qui dentro, a parte la libreria stessa**: nessun `Context`,
  * nessuna `SharedPreferences`. La scelta della lingua si salva nel modulo `app`
@@ -28,10 +30,15 @@ android {
 }
 
 dependencies {
-    // Solo il disegno (`DrawScope`, `Path`, `Color`): niente compilatore di
-    // Compose, perche' qui non ci sono funzioni `@Composable`.
+    // Il disegno (`DrawScope`, `Path`, `Color`) e i caratteri (`TextStyle`):
+    // niente compilatore di Compose, perche' qui non ci sono funzioni
+    // `@Composable`.
     api(platform(libs.compose.bom))
     api(libs.compose.ui.graphics)
+    api(libs.compose.ui.text)
+    // `lerp` sui numeri, e `@Immutable` sulle tinte della palette.
+    api(libs.compose.ui.util)
+    api(libs.compose.runtime)
     api(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
 

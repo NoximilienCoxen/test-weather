@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import io.github.noximiliencoxen.caelum.R
+import io.github.noximiliencoxen.caelum.core.R
 import io.github.noximiliencoxen.caelum.data.SkyState
 import io.github.noximiliencoxen.caelum.data.SunClock
 import io.github.noximiliencoxen.caelum.data.Wmo
