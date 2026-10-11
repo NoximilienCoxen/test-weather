@@ -2,8 +2,8 @@
 <feed xmlns="http://www.w3.org/2005/Atom" lang="ja">
   <title>高頻度（随時）</title>
   <subtitle>JMAXML publishing feed</subtitle>
-  <updated>2026-10-11T09:17:15+09:00</updated>
-  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791677835</id>
+  <updated>2026-10-11T09:29:02+09:00</updated>
+  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1791678542</id>
   <link rel="related" href="https://www.jma.go.jp/"/>
   <link rel="self" href="https://www.data.jma.go.jp/developer/xml/feed/extra.xml"/>
   <link rel="hub" href="http://alert-hub.appspot.com/"/>
@@ -13,13 +13,33 @@
 ]]></rights>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261011001709_0_VPWW54_460040.xml</id>
-    <updated>2026-10-11T00:17:08Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011002834_0_VPWW54_260000.xml</id>
+    <updated>2026-10-11T00:28:33Z</updated>
     <author>
-      <name>名瀬測候所</name>
+      <name>京都地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011001709_0_VPWW54_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011002834_0_VPWW54_260000.xml"/>
+    <content type="text">【京都府気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011002834_0_VPWW53_260000.xml</id>
+    <updated>2026-10-11T00:28:33Z</updated>
+    <author>
+      <name>京都地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011002834_0_VPWW53_260000.xml"/>
+    <content type="text">【京都府気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011002823_0_VPWW61_260000.xml</id>
+    <updated>2026-10-11T00:28:23Z</updated>
+    <author>
+      <name>京都地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011002823_0_VPWW61_260000.xml"/>
+    <content type="text">【京都府濃霧注意報】注意報を解除します。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -29,6 +49,16 @@
       <name>名瀬測候所</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011001709_0_VPWW53_460040.xml"/>
+    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011001709_0_VPWW54_460040.xml</id>
+    <updated>2026-10-11T00:17:08Z</updated>
+    <author>
+      <name>名瀬測候所</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011001709_0_VPWW54_460040.xml"/>
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -352,16 +382,6 @@
     <content type="text">【大東島地方気象警報・注意報】大東島地方では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW54_471000.xml</id>
-    <updated>2026-10-10T19:58:30Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW54_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】本島中南部、本島北部では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW53_471000.xml</id>
     <updated>2026-10-10T19:58:30Z</updated>
@@ -369,6 +389,16 @@
       <name>沖縄気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW53_471000.xml"/>
+    <content type="text">【沖縄本島地方気象警報・注意報】本島中南部、本島北部では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW54_471000.xml</id>
+    <updated>2026-10-10T19:58:30Z</updated>
+    <author>
+      <name>沖縄気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195832_0_VPWW54_471000.xml"/>
     <content type="text">【沖縄本島地方気象警報・注意報】本島中南部、本島北部では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -392,16 +422,6 @@
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW54_450000.xml</id>
-    <updated>2026-10-10T19:58:27Z</updated>
-    <author>
-      <name>宮崎地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW54_450000.xml"/>
-    <content type="text">【宮崎県気象警報・注意報】宮崎県では、高波に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW53_450000.xml</id>
     <updated>2026-10-10T19:58:27Z</updated>
@@ -409,6 +429,16 @@
       <name>宮崎地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW53_450000.xml"/>
+    <content type="text">【宮崎県気象警報・注意報】宮崎県では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW54_450000.xml</id>
+    <updated>2026-10-10T19:58:27Z</updated>
+    <author>
+      <name>宮崎地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195828_0_VPWW54_450000.xml"/>
     <content type="text">【宮崎県気象警報・注意報】宮崎県では、高波に注意してください。</content>
   </entry>
   <entry>
@@ -492,16 +522,6 @@
     <content type="text">【大分県気象警報・注意報】南部では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW53_280000.xml</id>
-    <updated>2026-10-10T19:58:18Z</updated>
-    <author>
-      <name>神戸地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW53_280000.xml"/>
-    <content type="text">【兵庫県気象警報・注意報】兵庫県では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW54_280000.xml</id>
     <updated>2026-10-10T19:58:18Z</updated>
@@ -509,6 +529,16 @@
       <name>神戸地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW54_280000.xml"/>
+    <content type="text">【兵庫県気象警報・注意報】兵庫県では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW53_280000.xml</id>
+    <updated>2026-10-10T19:58:18Z</updated>
+    <author>
+      <name>神戸地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195820_0_VPWW53_280000.xml"/>
     <content type="text">【兵庫県気象警報・注意報】兵庫県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -532,16 +562,6 @@
     <content type="text">【広島県気象警報・注意報】北部では、濃霧による視程障害に注意してください。南部では、空気の乾燥した状態が続くため、火の取り扱いに注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195816_0_VPWW53_260000.xml</id>
-    <updated>2026-10-10T19:58:15Z</updated>
-    <author>
-      <name>京都地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195816_0_VPWW53_260000.xml"/>
-    <content type="text">【京都府気象警報・注意報】京都府では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195816_0_VPWW54_260000.xml</id>
     <updated>2026-10-10T19:58:15Z</updated>
@@ -553,13 +573,13 @@
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195814_0_VPWW53_140000.xml</id>
-    <updated>2026-10-10T19:58:13Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195816_0_VPWW53_260000.xml</id>
+    <updated>2026-10-10T19:58:15Z</updated>
     <author>
-      <name>横浜地方気象台</name>
+      <name>京都地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195814_0_VPWW53_140000.xml"/>
-    <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195816_0_VPWW53_260000.xml"/>
+    <content type="text">【京都府気象警報・注意報】京都府では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -569,6 +589,16 @@
       <name>横浜地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195814_0_VPWW54_140000.xml"/>
+    <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195814_0_VPWW53_140000.xml</id>
+    <updated>2026-10-10T19:58:13Z</updated>
+    <author>
+      <name>横浜地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195814_0_VPWW53_140000.xml"/>
     <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
   </entry>
   <entry>
@@ -712,16 +742,6 @@
     <content type="text">【長野県気象警報・注意報】長野県では、濃霧による視程障害に注意してください。中部では、霜に対する農作物の管理に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW54_150000.xml</id>
-    <updated>2026-10-10T19:57:58Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW54_150000.xml"/>
-    <content type="text">【新潟県気象警報・注意報】下越、中越では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW53_150000.xml</id>
     <updated>2026-10-10T19:57:58Z</updated>
@@ -729,6 +749,16 @@
       <name>新潟地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW53_150000.xml"/>
+    <content type="text">【新潟県気象警報・注意報】下越、中越では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW54_150000.xml</id>
+    <updated>2026-10-10T19:57:58Z</updated>
+    <author>
+      <name>新潟地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195759_0_VPWW54_150000.xml"/>
     <content type="text">【新潟県気象警報・注意報】下越、中越では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -792,16 +822,6 @@
     <content type="text">【山形県気象警報・注意報】村山、置賜、最上では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW53_030000.xml</id>
-    <updated>2026-10-10T19:57:52Z</updated>
-    <author>
-      <name>盛岡地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW53_030000.xml"/>
-    <content type="text">【岩手県気象警報・注意報】岩手県では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW54_030000.xml</id>
     <updated>2026-10-10T19:57:52Z</updated>
@@ -809,6 +829,16 @@
       <name>盛岡地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW54_030000.xml"/>
+    <content type="text">【岩手県気象警報・注意報】岩手県では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW53_030000.xml</id>
+    <updated>2026-10-10T19:57:52Z</updated>
+    <author>
+      <name>盛岡地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195753_0_VPWW53_030000.xml"/>
     <content type="text">【岩手県気象警報・注意報】岩手県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -832,16 +862,6 @@
     <content type="text">【秋田県気象警報・注意報】秋田県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195751_0_VPWW53_020000.xml</id>
-    <updated>2026-10-10T19:57:49Z</updated>
-    <author>
-      <name>青森地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195751_0_VPWW53_020000.xml"/>
-    <content type="text">【青森県気象警報・注意報】青森県では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195751_0_VPWW54_020000.xml</id>
     <updated>2026-10-10T19:57:49Z</updated>
@@ -852,14 +872,14 @@
     <content type="text">【青森県気象警報・注意報】青森県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195749_0_VPWW54_015000.xml</id>
-    <updated>2026-10-10T19:57:48Z</updated>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195751_0_VPWW53_020000.xml</id>
+    <updated>2026-10-10T19:57:49Z</updated>
     <author>
-      <name>室蘭地方気象台</name>
+      <name>青森地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195749_0_VPWW54_015000.xml"/>
-    <content type="text">【胆振・日高地方気象警報・注意報】胆振・日高地方では、濃霧による視程障害に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195751_0_VPWW53_020000.xml"/>
+    <content type="text">【青森県気象警報・注意報】青森県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -869,6 +889,16 @@
       <name>室蘭地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195749_0_VPWW53_015000.xml"/>
+    <content type="text">【胆振・日高地方気象警報・注意報】胆振・日高地方では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195749_0_VPWW54_015000.xml</id>
+    <updated>2026-10-10T19:57:48Z</updated>
+    <author>
+      <name>室蘭地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195749_0_VPWW54_015000.xml"/>
     <content type="text">【胆振・日高地方気象警報・注意報】胆振・日高地方では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -932,16 +962,6 @@
     <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩・空知・後志地方では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW53_013000.xml</id>
-    <updated>2026-10-10T19:57:43Z</updated>
-    <author>
-      <name>網走地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW53_013000.xml"/>
-    <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見、紋別地方では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW54_013000.xml</id>
     <updated>2026-10-10T19:57:43Z</updated>
@@ -949,6 +969,16 @@
       <name>網走地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW54_013000.xml"/>
+    <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見、紋別地方では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW53_013000.xml</id>
+    <updated>2026-10-10T19:57:43Z</updated>
+    <author>
+      <name>網走地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195744_0_VPWW53_013000.xml"/>
     <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見、紋別地方では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -972,16 +1002,6 @@
     <content type="text">【上川・留萌地方気象警報・注意報】上川・留萌地方では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW54_011000.xml</id>
-    <updated>2026-10-10T19:57:41Z</updated>
-    <author>
-      <name>稚内地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW54_011000.xml"/>
-    <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW53_011000.xml</id>
     <updated>2026-10-10T19:57:41Z</updated>
@@ -989,6 +1009,16 @@
       <name>稚内地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW53_011000.xml"/>
+    <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW54_011000.xml</id>
+    <updated>2026-10-10T19:57:41Z</updated>
+    <author>
+      <name>稚内地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010195742_0_VPWW54_011000.xml"/>
     <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -1042,16 +1072,6 @@
     <content type="text">【長野県濃霧・霜注意報】長野県では、濃霧による視程障害に注意してください。中部では、霜に対する農作物の管理に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW53_190000.xml</id>
-    <updated>2026-10-10T19:28:19Z</updated>
-    <author>
-      <name>甲府地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW53_190000.xml"/>
-    <content type="text">【山梨県気象警報・注意報】東部・富士五湖では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW54_190000.xml</id>
     <updated>2026-10-10T19:28:19Z</updated>
@@ -1059,6 +1079,16 @@
       <name>甲府地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW54_190000.xml"/>
+    <content type="text">【山梨県気象警報・注意報】東部・富士五湖では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW53_190000.xml</id>
+    <updated>2026-10-10T19:28:19Z</updated>
+    <author>
+      <name>甲府地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010192820_0_VPWW53_190000.xml"/>
     <content type="text">【山梨県気象警報・注意報】東部・富士五湖では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -1072,16 +1102,6 @@
     <content type="text">【山梨県濃霧注意報】東部・富士五湖では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ51_471000.xml</id>
-    <updated>2026-10-10T19:19:21Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ51_471000.xml"/>
-    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島中南部、本島北部では、１２日にかけて土砂災害や低い土地の浸水、河川の増水に十分注意してください。雨雲の発達の程度によっては警報級の大雨となるおそれがあります。また、沖縄本島地方では、１２日にかけて落雷や竜巻などの激しい突風に十分注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ50_471000.xml</id>
     <updated>2026-10-10T19:19:21Z</updated>
@@ -1089,6 +1109,16 @@
       <name>沖縄気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ50_471000.xml"/>
+    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島中南部、本島北部では、１２日にかけて土砂災害や低い土地の浸水、河川の増水に十分注意してください。雨雲の発達の程度によっては警報級の大雨となるおそれがあります。また、沖縄本島地方では、１２日にかけて落雷や竜巻などの激しい突風に十分注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ51_471000.xml</id>
+    <updated>2026-10-10T19:19:21Z</updated>
+    <author>
+      <name>沖縄気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191922_0_VPFJ51_471000.xml"/>
     <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島中南部、本島北部では、１２日にかけて土砂災害や低い土地の浸水、河川の増水に十分注意してください。雨雲の発達の程度によっては警報級の大雨となるおそれがあります。また、沖縄本島地方では、１２日にかけて落雷や竜巻などの激しい突風に十分注意してください。</content>
   </entry>
   <entry>
@@ -1122,16 +1152,6 @@
     <content type="text">【沖縄本島地方雷注意報】本島中南部、本島北部では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW54_472000.xml</id>
-    <updated>2026-10-10T19:12:34Z</updated>
-    <author>
-      <name>南大東島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW54_472000.xml"/>
-    <content type="text">【大東島地方気象警報・注意報】大東島地方では、高波に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW53_472000.xml</id>
     <updated>2026-10-10T19:12:34Z</updated>
@@ -1139,6 +1159,16 @@
       <name>南大東島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW53_472000.xml"/>
+    <content type="text">【大東島地方気象警報・注意報】大東島地方では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW54_472000.xml</id>
+    <updated>2026-10-10T19:12:34Z</updated>
+    <author>
+      <name>南大東島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010191235_0_VPWW54_472000.xml"/>
     <content type="text">【大東島地方気象警報・注意報】大東島地方では、高波に注意してください。</content>
   </entry>
   <entry>
@@ -1282,16 +1312,6 @@
     <content type="text">【台風解析・予報情報】</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW53_240000.xml</id>
-    <updated>2026-10-10T18:21:10Z</updated>
-    <author>
-      <name>津地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW53_240000.xml"/>
-    <content type="text">【三重県気象警報・注意報】北中部では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW54_240000.xml</id>
     <updated>2026-10-10T18:21:10Z</updated>
@@ -1299,6 +1319,16 @@
       <name>津地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW54_240000.xml"/>
+    <content type="text">【三重県気象警報・注意報】北中部では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW53_240000.xml</id>
+    <updated>2026-10-10T18:21:10Z</updated>
+    <author>
+      <name>津地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010182111_0_VPWW53_240000.xml"/>
     <content type="text">【三重県気象警報・注意報】北中部では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -1332,16 +1362,6 @@
     <content type="text">【三重県濃霧注意報】北中部では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW54_460040.xml</id>
-    <updated>2026-10-10T18:07:00Z</updated>
-    <author>
-      <name>名瀬測候所</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW54_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW53_460040.xml</id>
     <updated>2026-10-10T18:07:00Z</updated>
@@ -1349,6 +1369,16 @@
       <name>名瀬測候所</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW53_460040.xml"/>
+    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW54_460040.xml</id>
+    <updated>2026-10-10T18:07:00Z</updated>
+    <author>
+      <name>名瀬測候所</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010180700_0_VPWW54_460040.xml"/>
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波や竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -1362,16 +1392,6 @@
     <content type="text">【奄美地方（鹿児島県）土砂災害警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW54_140000.xml</id>
-    <updated>2026-10-10T16:37:37Z</updated>
-    <author>
-      <name>横浜地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW54_140000.xml"/>
-    <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW53_140000.xml</id>
     <updated>2026-10-10T16:37:37Z</updated>
@@ -1379,6 +1399,16 @@
       <name>横浜地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW53_140000.xml"/>
+    <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW54_140000.xml</id>
+    <updated>2026-10-10T16:37:37Z</updated>
+    <author>
+      <name>横浜地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010163738_0_VPWW54_140000.xml"/>
     <content type="text">【神奈川県気象警報・注意報】神奈川県では、高波に注意してください。</content>
   </entry>
   <entry>
@@ -1570,25 +1600,5 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010150340_0_VPWW56_460040.xml"/>
     <content type="text">【奄美地方（鹿児島県）土砂災害警報・注意報】奄美地方では、土砂災害に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010142343_0_VPWW53_060000.xml</id>
-    <updated>2026-10-10T14:23:42Z</updated>
-    <author>
-      <name>山形地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010142343_0_VPWW53_060000.xml"/>
-    <content type="text">【山形県気象警報・注意報】村山、置賜、最上では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261010142343_0_VPWW54_060000.xml</id>
-    <updated>2026-10-10T14:23:42Z</updated>
-    <author>
-      <name>山形地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261010142343_0_VPWW54_060000.xml"/>
-    <content type="text">【山形県気象警報・注意報】村山、置賜、最上では、濃霧による視程障害に注意してください。</content>
   </entry>
 </feed>
