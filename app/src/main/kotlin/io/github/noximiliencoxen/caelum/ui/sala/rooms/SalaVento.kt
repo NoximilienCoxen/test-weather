@@ -1,6 +1,9 @@
 package io.github.noximiliencoxen.caelum.ui.sala.rooms
 
+import io.github.noximiliencoxen.caelum.lingua.Lingue
 import io.github.noximiliencoxen.caelum.lingua.tr
+import io.github.noximiliencoxen.caelum.data.TendenzaPressione
+import io.github.noximiliencoxen.caelum.data.pressioneAlle
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -256,7 +259,63 @@ fun SalaVentoScreen(
                 }
             }
         }
+
+        // ── La pressione ─────────────────────────────────────────────────────
+        //
+        // Sta col vento perche' il vento e' la pressione che si muove: e' la
+        // differenza fra due barometri a far correre l'aria. Il numero da solo
+        // dice poco, quindi la riga lo accompagna sempre con dove sta andando.
+        val pressione = remember(state.forecast, ora?.time) {
+            ora?.time?.let { pressioneAlle(state.forecast?.allHours.orEmpty(), it) }
+        }
+        if (pressione != null) {
+            Text(
+                text = tr("LA PRESSIONE", "PRESSURE"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 18.dp, bottom = 6.dp),
+            )
+            Text(
+                text = "${pressione.hPa.roundToInt()} hPa" +
+                    (pressione.tendenza?.let { " · " + nomeTendenza(it) } ?: ""),
+                style = SalaType.rowTitle,
+                color = palette.ink,
+            )
+            pressione.scarto?.let { scarto ->
+                Didascalia(
+                    notaPressione(pressione.tendenza, scarto),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
     }
+}
+
+private fun nomeTendenza(t: TendenzaPressione): String = when (t) {
+    TendenzaPressione.SALE_IN_FRETTA -> tr("sale in fretta", "rising fast")
+    TendenzaPressione.SALE -> tr("in salita", "rising")
+    TendenzaPressione.STABILE -> tr("stabile", "steady")
+    TendenzaPressione.SCENDE -> tr("in calo", "falling")
+    TendenzaPressione.SCENDE_IN_FRETTA -> tr("cala in fretta", "falling fast")
+}
+
+/**
+ * Cosa vuol dire, detto con prudenza: "di solito", perche' il barometro e' un
+ * indizio e non una previsione - la previsione vera sta nelle altre sale.
+ */
+private fun notaPressione(t: TendenzaPressione?, scarto: Double): String {
+    val quanto = String.format(Lingue.locale, "%+.1f", scarto)
+    val senso = when (t) {
+        TendenzaPressione.SCENDE_IN_FRETTA ->
+            tr("Di solito annuncia vento in rinforzo o un peggioramento.", "Usually a sign of rising wind or worsening weather.")
+        TendenzaPressione.SCENDE -> tr("Il tempo tende a farsi più incerto.", "The weather tends to turn less settled.")
+        TendenzaPressione.SALE -> tr("Il tempo tende a stabilizzarsi.", "The weather tends to settle.")
+        TendenzaPressione.SALE_IN_FRETTA ->
+            tr("Si rasserena, ma spesso con vento teso per qualche ora.", "Clearing, often with a brisk wind for a few hours.")
+        TendenzaPressione.STABILE, null -> tr("Nessun cambio in vista dal barometro.", "No change in sight from the barometer.")
+    }
+    return tr("$quanto hPa nelle ultime tre ore. ", "$quanto hPa over the last three hours. ") + senso
 }
 
 /**

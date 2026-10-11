@@ -7670,3 +7670,27 @@ protolayout 1.4.2, watchface-complications 1.3.0, concurrent-futures-ktx 1.3.0
 offre solo l'arco), il giro orario lasciato andare per ore, il consumo di
 batteria, e una Tile su schermo quadrato (l'anteprima quadrata e' lo stesso
 scatto tondo).
+
+## 51. I dati che arrivavano e nessuno mostrava
+
+L'11 ottobre 2026. Pressione, punto di rugiada e ore di sole erano gia' nella
+risposta di Open-Meteo e nel `Model`, ma nessuna sala li leggeva.
+
+- **Pressione**: si chiede `pressure_msl` e non piu' `surface_pressure`. Quella
+  al suolo dipende dalla quota (850 hPa in montagna) e non e' il numero di un
+  barometro. Sta in Sala VI, sotto le sei ore del vento: valore, tendenza e una
+  riga prudente su cosa vuol dire. La tendenza e' presa sulle **tre ore prima**
+  dell'ora scelta (`data/Barometro.kt`, `pressioneAlle`): sotto 1 hPa e'
+  stabile, da 3,5 in su e' "in fretta". A mezzanotte le ore prima non ci sono
+  e la tendenza resta nulla. Le scorte su disco vecchie hanno ancora
+  `surface_pressure`: si leggono senza pressione finche' non arriva una
+  risposta nuova.
+- **Rugiada**: in Sala III, una riga sotto i tre riquadri con umidita',
+  rugiada e quanto pesa l'aria (`afaDi`, soglie 10/16/18/21 °C). Il riquadro
+  dell'umidita' di Sala I portava gia' qui, e qui l'umidita' non c'era.
+- **Ore di sole**: in Sala II, sulla riga di alba e tramonto. Sotto la
+  mezz'ora dice "sole assente", non "0 h".
+
+Prove JVM in `core/src/test/.../BarometroTest.kt`. **Non provato in mano**:
+nessun telefono era collegato. Da guardare: che la sala del vento, piu' alta di
+quattro righe, non scorra su un Pixel di serie.

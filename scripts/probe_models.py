@@ -106,7 +106,7 @@ APP_HOURLY = (
     "temperature_2m,apparent_temperature,weather_code,precipitation,"
     "precipitation_probability,is_day,"
     "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m,"
-    "wind_direction_10m,uv_index,cloud_cover,surface_pressure,visibility,"
+    "wind_direction_10m,uv_index,cloud_cover,pressure_msl,visibility,"
     "rain,snowfall"
 )
 

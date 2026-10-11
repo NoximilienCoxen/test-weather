@@ -121,7 +121,7 @@ data class HourlyDto(
     @SerialName("cloud_cover_low") val cloudCoverLow: List<Int?> = emptyList(),
     @SerialName("cloud_cover_mid") val cloudCoverMid: List<Int?> = emptyList(),
     @SerialName("cloud_cover_high") val cloudCoverHigh: List<Int?> = emptyList(),
-    @SerialName("surface_pressure") val pressure: List<Double?> = emptyList(),
+    @SerialName("pressure_msl") val pressure: List<Double?> = emptyList(),
     val visibility: List<Double?> = emptyList(),
     /** Millimetri di sola pioggia: distinguerla dalla neve cambia cosa indossi. */
     val rain: List<Double?> = emptyList(),

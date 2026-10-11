@@ -38,6 +38,8 @@ data class GiornoSettimana(
     val uv: Double?,
     val alba: LocalDateTime?,
     val tramonto: LocalDateTime?,
+    /** Secondi di sole effettivo: non le ore di luce, vedi `DayForecast`. */
+    val sole: Double?,
     val glifo: GlifoMeteo,
     /** Come si chiama questo tempo, per esteso. */
     val tipo: String,
@@ -74,6 +76,7 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
             uv = giorno.uvMax,
             alba = giorno.sunrise,
             tramonto = giorno.sunset,
+            sole = giorno.sunshineSeconds,
             glifo = glifoDi(giorno.weatherCode, giorno.nuvolositaStimata()),
             tipo = Wmo.condition(giorno.weatherCode),
         )
