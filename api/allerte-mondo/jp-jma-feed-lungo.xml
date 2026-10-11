@@ -2,8 +2,8 @@
 <feed xmlns="http://www.w3.org/2005/Atom" lang="ja">
   <title>長期（随時）</title>
   <subtitle>JMAXML publishing feed</subtitle>
-  <updated>2026-10-12T02:19:17+09:00</updated>
-  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1791739157</id>
+  <updated>2026-10-12T03:44:35+09:00</updated>
+  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1791744275</id>
   <link rel="related" href="https://www.jma.go.jp/"/>
   <link rel="self" href="https://www.data.jma.go.jp/developer/xml/feed/extra.xml"/>
   <link rel="hub" href="http://alert-hub.appspot.com/"/>
@@ -11,6 +11,26 @@
 <a href="https://www.jma.go.jp/jma/kishou/info/coment.html">利用規約</a>,
 <a href="https://www.jma.go.jp/jma/en/copyright.html">Terms of Use</a>
 ]]></rights>
+  <entry>
+    <title>台風の暴風域に入る確率</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011184430_0_VPTA51_010000.xml</id>
+    <updated>2026-10-11T18:43:04Z</updated>
+    <author>
+      <name>気象庁</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011184430_0_VPTA51_010000.xml"/>
+    <content type="text">【台風の暴風域に入る確率】</content>
+  </entry>
+  <entry>
+    <title>台風解析・予報情報（５日予報）（Ｈ３０）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261011184024_0_VPTW61_010000.xml</id>
+    <updated>2026-10-11T18:40:23Z</updated>
+    <author>
+      <name>気象庁</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261011184024_0_VPTW61_010000.xml"/>
+    <content type="text">【台風解析・予報情報】</content>
+  </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261011171853_0_VPWW54_350000.xml</id>
@@ -37150,55 +37170,5 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004190141_0_VPWW59_080000.xml"/>
     <content type="text">【茨城県波浪警報・注意報】茨城県では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>台風の暴風域に入る確率</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261004184430_0_VPTA50_010000.xml</id>
-    <updated>2026-10-04T18:43:04Z</updated>
-    <author>
-      <name>気象庁</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004184430_0_VPTA50_010000.xml"/>
-    <content type="text">【台風の暴風域に入る確率】</content>
-  </entry>
-  <entry>
-    <title>台風解析・予報情報（５日予報）（Ｈ３０）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261004184012_0_VPTW60_010000.xml</id>
-    <updated>2026-10-04T18:40:11Z</updated>
-    <author>
-      <name>気象庁</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004184012_0_VPTW60_010000.xml"/>
-    <content type="text">【台風解析・予報情報】</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261004183616_0_VPWW53_460040.xml</id>
-    <updated>2026-10-04T18:36:15Z</updated>
-    <author>
-      <name>名瀬測候所</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004183616_0_VPWW53_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261004183616_0_VPWW54_460040.xml</id>
-    <updated>2026-10-04T18:36:15Z</updated>
-    <author>
-      <name>名瀬測候所</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004183616_0_VPWW54_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261004183609_0_VPWW59_460040.xml</id>
-    <updated>2026-10-04T18:36:09Z</updated>
-    <author>
-      <name>名瀬測候所</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261004183609_0_VPWW59_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）波浪警報・注意報】奄美地方では、高波に注意してください。</content>
   </entry>
 </feed>
