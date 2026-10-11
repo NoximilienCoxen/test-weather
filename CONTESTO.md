@@ -2579,7 +2579,7 @@ dimezzato.
 
 ## 11. Comandi universali — lavorare in due sullo stesso progetto
 
-Questa sezione e' per chi arriva adesso, con una sessione di Claude propria, e
+Questa sezione e' per chi arriva adesso, con una sessione di lavoro propria, e
 vuole contribuire senza rompere niente. Vale anche per chi il progetto lo
 conosce: sono gli stessi comandi, sempre gli stessi, e l'ordine conta.
 
@@ -2607,7 +2607,7 @@ ieri di uno solo.
 
 ### 11.2 Chi firma i commit — da impostare **prima** di committare
 
-Ogni sessione nuova di Claude riparte con la propria identita' come autore, e
+Ogni sessione nuova riparte con la propria identita' come autore, e
 quella identita' qui non e' voluta (sezione 9). Due comandi, prima di qualsiasi
 altra cosa:
 
@@ -2634,8 +2634,8 @@ git log -3 --format='%an <%ae>%n%B'
 # 1. si parte sempre da un main aggiornato
 git checkout main && git pull --ff-only origin main
 
-# 2. un branch a tema, dentro claude/
-git checkout -b claude/<argomento>-<sigla>
+# 2. un branch a tema
+git checkout -b <argomento>-<sigla>
 
 # 3. si lavora, si prova sul telefono
 ./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/*.apk
@@ -2644,7 +2644,7 @@ git checkout -b claude/<argomento>-<sigla>
 git add -A && git commit -m "Cosa cambia, in una riga"
 
 # 5. si pubblica il branch
-git push -u origin claude/<argomento>-<sigla>
+git push -u origin <argomento>-<sigla>
 ```
 
 Poi si apre una pull request verso `main`, si aspetta che la CI sia verde, e si
@@ -2666,7 +2666,7 @@ In `.github/workflows/build.yml` il job che pubblica ha questa condizione:
 
 Cioe':
 
-- un push su `claude/**` **compila, prova e fotografa**, ma non pubblica niente;
+- un push su un branch di lavoro **compila, prova e fotografa**, ma non pubblica niente;
 - solo un `main` che si muove, e con `build` verde, riscrive l'allegato
   `weather.apk` sul tag fisso `apk-latest`.
 
@@ -2701,7 +2701,7 @@ gh run list  --branch main --limit 3 --repo NoximilienCoxen/test-weather
 gh release view apk-latest --repo NoximilienCoxen/test-weather --json publishedAt,body
 ```
 
-Dentro Claude Code sul web `gh` non c'e': la stessa cosa si chiede con gli
+Dentro la sessione sul web `gh` non c'e': la stessa cosa si chiede con gli
 strumenti GitHub dell'agente (elenco dei run, ultima release).
 
 Se il run su `main` e' rosso, **il lavoro non e' finito**: si corregge e si
@@ -2792,7 +2792,7 @@ al trascinamento della cifra. `ui/render3d/Camera.kt` e `Bodies.kt` **restano**
 luna di Sala IV - e cosi' `ui/motion/DeviceTilt.kt`, che serve al benvenuto.
 
 **Perche' un cambio cosi' grande.** Non e' un restyling sopra il feed: e' la
-sostituzione decisa nella chat di Claude Design "Mobile app design watercolor"
+sostituzione decisa nella chat di design "Mobile app design watercolor"
 (`chats/` nel bundle di handoff) - la direzione **1a - Sala**, scelta esplicita
 dell'utente contro **1b - Catalogo**. Sette sale sfogliabili in un carosello
 verticale al posto delle sei schede del feed, un indicatore di percorso al
@@ -3388,7 +3388,7 @@ che partisse la CI — che e' precisamente il lavoro per cui esiste.
 ## 13. Organic: il cielo al posto della carta
 
 Tredicesimo giro, e il piu' largo dopo Sala. Viene da un secondo passaggio di
-Claude Design — chat *"App meteo a tema organico"*, direzione **Oggi-1c**
+Chat di design — *"App meteo a tema organico"*, direzione **Oggi-1c**
 scelta dall'utente — consegnato come bundle di handoff con `Caelum.dc.html`,
 i transcript e il design system **Organic** (`_ds/organic-*`).
 
@@ -7075,7 +7075,7 @@ non si sa ancora se il baseline profile aiuti, cioe' se la 12 si sblocca.
 
 **Pulizia:**
 
-16. Cancellare i rami `claude/*` vecchi e gli altri gia' uniti, se si vuole un
+16. Cancellare i rami di lavoro vecchi e gli altri gia' uniti, se si vuole un
     repository piu' ordinato. *Elenco fatto in §49.8; la cancellazione e'
     da fare a mano. Dei 9 non uniti, 8 sono superati; il nono porta due
     widget e il confronto mai arrivati (voce 17).*
@@ -7146,7 +7146,7 @@ Con la storia intera (il clone delle sessioni e' parziale: `git fetch
 ramo sembra non unito), il 4 ottobre:
 
 - **39 rami interamente in `main`**, cancellabili senza perdere nulla:
-  `ccr-a8f2fa11-pr2bf1` e 38 `claude/*`. La sessione non ha il permesso di
+  `ccr-a8f2fa11-pr2bf1` e 38 rami di lavoro. La sessione non ha il permesso di
   cancellare rami remoti, quindi si fa a mano (`git push origin --delete ...`).
 - **9 rami con lavoro mai unito**, da decidere uno per uno:
   `sala-scultura` (archivio della scultura meteo), `feed-art-gallery-style-lgkan5`
@@ -7228,11 +7228,11 @@ poi...".
   POLLnet va prima capito. Resta la decisione: mostrare o no una misura di
   una o due settimane fa, come riga "misurati" separata da CAMS.
 - **16, i rami** (§49.8): da cancellare 48 rami, tutti gia' in `main` o
-  superati: i 39 uniti, gli 8 superati, e `claude/manual-testing-checklist-5fi6wh`
+  superati: i 39 uniti, gli 8 superati, e `manual-testing-checklist-5fi6wh`
   quando non serve piu'. `widget-city-inconsistency-0g28uo` ormai si puo'
   cancellare (recuperato in §49.12). La sessione non ha il permesso: o a mano
   (`git push origin --delete ...`) o dando il permesso. `apk-latest` nomina
-  come destinazione `claude/android-weather-app-3d-jt6v8a`, uno dei 39: il tag
+  come destinazione `android-weather-app-3d-jt6v8a`, uno dei 39: il tag
   esiste gia' e non dovrebbe importare, ma conviene guardare il primo rilascio
   dopo averlo cancellato. Prima di contare i rami, `git fetch --unshallow`.
 - **Da fare in mano**: le 1-10 di §49.5, piu' i due widget nuovi sulla Home
