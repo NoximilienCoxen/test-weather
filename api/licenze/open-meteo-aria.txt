@@ -51,51 +51,57 @@ Forecast Length Time Interval
 By default, we provide forecasts for 5 days, but you can access forecasts for up to 7 days. If you're interested in past weather data, you can use the Past Days feature
 to access archived forecasts.
 Hourly Air Quality Variables
-10</sub>">
+10</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Particulate Matter PM 10
-2.5</sub>">
+2.5</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Particulate Matter PM 2.5
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Carbon Monoxide CO
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Carbon Dioxide CO 2
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Nitrogen Dioxide NO 2
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Sulphur Dioxide SO 2
-3</sub>">
+3</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ozone O 3
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Aerosol Optical Depth
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Dust
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index Clear Sky
-3</sub> <small class="text-muted-foreground">(*)</small>">
+3</sub> <small class="text-muted-foreground">(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ammonia NH 3 (*)
-4</sub>">
+4</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Methane CH 4
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Alder Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Birch Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Grass Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Mugwort Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Olive Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ragweed Pollen (*)
 * Only available in Europe during pollen season with 4 days forecast
 svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s56" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> European Air Quality Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI
-2.5</sub>">
+2.5</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI PM 2.5
-10</sub>">
+10</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI PM 10
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI NO 2
-3</sub>">
+3</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI O 3
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI SO 2
 Pollutant thresholds from the European Environment Agency (EEA) are given below, using the bands revised in 2024. Hourly concentrations are used for all
 five pollutants.
@@ -108,17 +114,19 @@ NO 2 (μg/m³) 0-10 10-25 25-60 60-100 100-150 >150
 O 3 (μg/m³) 0-60 60-100 100-120 120-160 160-180 >180
 SO 2 (μg/m³) 0-20 20-40 40-125 125-190 190-275 >275
 svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s72" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> United States Air Quality Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI
-2.5</sub>">
+2.5</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI PM 2.5
-10</sub>">
+10</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI PM 10
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI NO 2
+svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI CO
-3</sub>">
+3</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI O 3
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI SO 2
 Pollutant thresholds from the United States Environmental Protection Agency (EPA) are given below. Some thresholds are in parts per billion (ppb) instead of μg/m³. Conversion
 explained here . Particulate Matter (PM) uses a rolling average over the preceding 24 hours, carbon
@@ -139,64 +147,76 @@ SO 2 (ppb) 1h 0-35 35-75 75-185 185-305 - -
 SO 2 (ppb) 24h - - - - 305-605 605-1005
 NO 2 (ppb) 1h 0-54 54-100 100-360 360-650 650-1250 1250-2050
 svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s90" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Variables And Options
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Formaldehyde CH₂O
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Glyoxal C₂H₂O₂
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Non Methane Volatile Organic Compounds (*)
-10</sub> caused by wildfires <small class="text-muted-foreground">(*)</small>">
+10</sub> caused by wildfires <small class="text-muted-foreground">(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 PM 10 caused by wildfires (*)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Peroxyacyl Nitrates PAN
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Secondary Inorganic Aerosol (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Residential Elementary Carbon (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Total Elementary Carbon (*)
-2.5</sub> Total Organic Matter <small class="text-muted-foreground">(*)</small>">
+2.5</sub> Total Organic Matter <small class="text-muted-foreground">(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 PM 2.5 Total Organic Matter (*)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sea Salt Aerosol
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Nitrogen Monoxide NO
 Note: You can further adjust the forecast time range for hourly weather variables using &forecast_hours= and &past_hours= as shown below. - (default) Forecast Hours
 - (default) Past Hours
 1 Hourly Temporal Resolution For Hourly Data
 Terrain Optimised, Prefers Land Grid Cell Selection
 Current Conditions
+svg]:size-3.5 grid place-content-center text-current transition-none">
 European AQI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 United States AQI
-10</sub>">
+10</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Particulate Matter PM 10
-2.5</sub>">
+2.5</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Particulate Matter PM 2.5
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Carbon Monoxide CO
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Nitrogen Dioxide NO 2
-2</sub>">
+2</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Sulphur Dioxide SO 2
-3</sub>">
+3</sub>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ozone O 3
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Aerosol Optical Depth
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Dust
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index Clear Sky
-3</sub> <small class="text-muted-foreground">(*)</small>">
+3</sub> <small class="text-muted-foreground">(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ammonia NH 3 (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Alder Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Birch Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Grass Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Mugwort Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Olive Pollen (*)
-(*)</small>">
+(*)</small>"> svg]:size-3.5 grid place-content-center text-current transition-none">
 Ragweed Pollen (*)
 Note: Current conditions are based on 15-minutely weather model data. Every weather variable
 available in hourly data, is available as current condition as well.
 Settings
 Global + European Domain
-ISO 8601 (e.g. 2026-10-09) Timeformat
+ISO 8601 (e.g. 2026-10-13) Timeformat
 Usage licence:
 Non-Commercial Commercial Self-Hosted
 API Response

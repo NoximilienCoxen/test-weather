@@ -51,81 +51,146 @@ Forecast Length Time Interval
 By default, we provide forecasts for 7 days, but you can access forecasts for up to 16 days. If you're interested in past weather data, you can use the Past Days feature
 to access archived forecasts.
 Hourly Weather Variables
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Dewpoint (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Apparent Temperature
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation Probability
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation (rain + showers + snow)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Rain
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Showers
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snow Depth
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Weather code
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sea Level Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Surface Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Cloud Cover Total
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Cloud Cover Low
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Cloud Cover Mid
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Cloud Cover High
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Visibility
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Evapotranspiration
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Reference Evapotranspiration (ET₀)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Vapour Pressure Deficit
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (80 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (120 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (180 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (80 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (120 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (180 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Gusts (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (80 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (120 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (180 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Temperature (0 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Temperature (6 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Temperature (18 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Temperature (54 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (0-1 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (1-3 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (3-9 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (9-27 cm)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (27-81 cm)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s739" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Variables And Options
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s757" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Variables And Options
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index Clear Sky
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Is Day or Night
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sunshine Duration
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wet Bulb Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Total Column Integrated Water Vapour
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CAPE
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Lifted Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Convective Inhibition
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Freezing Level Height
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Boundary Layer Height PBL
 Note: You can further adjust the forecast time range for hourly weather variables using &forecast_hours= and &past_hours= as shown below. Forecast Hours
 Past Hours
 Temporal Resolution For Hourly Data
 Grid Cell Selection
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s773" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Solar Radiation Variables
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s791" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Solar Radiation Variables
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Solar Radiation GHI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Solar Radiation
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Diffuse Solar Radiation DHI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Normal Irradiance DNI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Global Tilted Radiation GTI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Terrestrial Solar Radiation
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Solar Radiation GHI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Solar Radiation (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Diffuse Solar Radiation DHI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Normal Irradiance DNI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Global Tilted Radiation GTI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Terrestrial Solar Radiation (Instant)
 Note: Solar radiation is averaged over the past hour. Use instant for radiation at the indicated time. For global tilted irradiance GTI please
 specify Tilt and Azimuth below. Panel Tilt (0° horizontal)
 Panel Azimuth (0° S, -90° E, 90° W, ±180° N)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s803" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Pressure Level Variables
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s821" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Pressure Level Variables
 Temperature
 Relative Humidity
 Cloud Cover
@@ -133,115 +198,224 @@ Wind Speed
 Wind Direction
 Geopotential Height
 Temperature
+svg]:size-3.5 grid place-content-center text-current transition-none">
 1000 hPa (110 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 975 hPa (320 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 950 hPa (500 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 925 hPa (800 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 900 hPa (1000 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 850 hPa (1500 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 800 hPa (1900 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 700 hPa (3 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 600 hPa (4.2 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 500 hPa (5.6 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 400 hPa (7.2 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 300 hPa (9.2 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 250 hPa (10.4 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 200 hPa (11.8 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 150 hPa (13.5 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 100 hPa (15.8 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 70 hPa (17.7 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 50 hPa (19.3 km)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 30 hPa (22 km)
 Note: Altitudes are approximate and in meters above sea level (not above ground). Use geopotential_height to get precise altitudes above sea
 level.
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s852" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Weather models
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s870" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Weather models
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Best match
+svg]:size-3.5 grid place-content-center text-current transition-none">
 ECMWF IFS HRES 9km
+svg]:size-3.5 grid place-content-center text-current transition-none">
 ECMWF IFS 0.25°
+svg]:size-3.5 grid place-content-center text-current transition-none">
 ECMWF AIFS 0.25° Single
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CMA GRAPES Global
+svg]:size-3.5 grid place-content-center text-current transition-none">
 BOM ACCESS Global
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP GFS Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP GFS Global 0.11°/0.25°
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP HRRR U.S. Conus
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP NBM U.S. Conus
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP NAM U.S. Conus
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP AIGFS 0.25°
+svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP HGEFS 0.25° Ensemble Mean
+svg]:size-3.5 grid place-content-center text-current transition-none">
 JMA Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 JMA MSM
+svg]:size-3.5 grid place-content-center text-current transition-none">
 JMA GSM
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KMA Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KMA LDPS
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KMA GDPS
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON Global
+svg]:size-3.5 grid place-content-center text-current transition-none">
+DWD ICON Global Native
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON EU
+svg]:size-3.5 grid place-content-center text-current transition-none">
+DWD ICON EU Native
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON D2
+svg]:size-3.5 grid place-content-center text-current transition-none">
+DWD ICON D2 Native
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM Global
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM Regional
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM HRDPS Continental
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM HRDPS West
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Météo-France Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Météo-France ARPEGE World
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Météo-France ARPEGE Europe
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Météo-France AROME France
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Météo-France AROME France HD
+svg]:size-3.5 grid place-content-center text-current transition-none">
 ItaliaMeteo ARPAE ICON 2I
+svg]:size-3.5 grid place-content-center text-current transition-none">
 MET Norway Nordic Seamless (with ECMWF)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 MET Norway Nordic
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KNMI Seamless (with ECMWF)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KNMI Harmonie AROME Europe
+svg]:size-3.5 grid place-content-center text-current transition-none">
 KNMI Harmonie AROME Netherlands
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DMI Seamless (with ECMWF)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 DMI Harmonie AROME Europe
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UK Met Office Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UK Met Office Global 10km
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UK Met Office UK 2km
+svg]:size-3.5 grid place-content-center text-current transition-none">
 MeteoSwiss ICON Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 MeteoSwiss ICON CH1
+svg]:size-3.5 grid place-content-center text-current transition-none">
 MeteoSwiss ICON CH2
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GeoSphere Seamless (with ECMWF)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 GeoSphere AROME Austria
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CHMI Aladin Seamless
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CHMI Aladin Central Europe 2km
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CHMI Aladin CZ 1km
 Note: The default Best Match provides the best forecast for any given
 location worldwide. Seamless combines all models from a given provider into a
 seamless prediction.
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s960" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> 15-Minutely Weather Variables
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s984" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> 15-Minutely Weather Variables
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Dewpoint (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Apparent Temperature
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation (rain + showers + snow)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Rain
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall Height
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Freezing Level Height
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sunshine Duration
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Weather code
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (80 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (80 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Gusts (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Visibility
+svg]:size-3.5 grid place-content-center text-current transition-none">
 CAPE
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Lightning Potential Index LPI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Is Day or Night
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Solar Radiation GHI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Solar Radiation
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Diffuse Solar Radiation DHI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Normal Irradiance DNI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Global Tilted Radiation GTI
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Terrestrial Solar Radiation
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Solar Radiation GHI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Solar Radiation (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Diffuse Solar Radiation DHI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Direct Normal Irradiance DNI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Global Tilted Radiation GTI (Instant)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Terrestrial Solar Radiation (Instant)
 Note: Only available in Central Europe and North America. Other regions use
 interpolated hourly data. Solar radiation is averaged over the 15 minutes. Use instant for radiation at the indicated time.
@@ -250,85 +424,163 @@ using &forecast_minutely_15= and &past_minutely_15= as shown below.
 Forecast Minutely 15
 Past Minutely 15
 Daily Weather Variables
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Weather code
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Apparent Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Apparent Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index
+svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index Clear Sky
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sunrise
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sunset
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Daylight Duration
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sunshine Duration
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Moonrise
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Moonset
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Moon Phase
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Rain Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Showers Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation Hours
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation Probability Max
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Wind Gusts (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Dominant Wind Direction (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Radiation Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Reference Evapotranspiration (ET₀)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s1164" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Daily Variables
+svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s1188" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Daily Variables
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Apparent Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean CAPE
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum CAPE
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum CAPE
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Cloud Cover
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Cloud Cover
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Cloud Cover
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Dewpoint (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Dewpoint (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Dewpoint (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Reference Evapotranspiration Sum (ET₀)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Growing Degree Days Base 0 Limit 50
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Leaf Wetness Probability
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Precipitation Probability
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Precipitation Probability
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall Water Equivalent Sum
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Sea Level Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Sea Level Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Sea Level Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Surface Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Surface Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Surface Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Updraft
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Visibility
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Visibility
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Visibility
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Wind Gusts (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Wind Gusts (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Wet Bulb Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Wet Bulb Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Minimum Wet Bulb Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Maximum Vapour Pressure Deficit
 Current Weather
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Relative Humidity (2 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Apparent Temperature
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Is Day or Night
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Precipitation
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Rain
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Showers
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Snowfall
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Weather code
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Cloud Cover Total
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Sea Level Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Surface Pressure
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Speed (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Direction (10 m)
+svg]:size-3.5 grid place-content-center text-current transition-none">
 Wind Gusts (10 m)
 Note: Current conditions are based on 15-minutely weather model data. Every weather variable
 available in hourly data, is available as current condition as well.
@@ -336,7 +588,7 @@ Settings
 Celsius °C Temperature Unit
 km/h Wind Speed Unit
 Millimeter Precipitation Unit
-ISO 8601 (e.g. 2026-10-09) Timeformat
+ISO 8601 (e.g. 2026-10-13) Timeformat
 Usage licence:
 Non-Commercial Commercial Self-Hosted
 API Response
