@@ -247,11 +247,11 @@ fun SalaLegaliScreen(
                 Paragrafo(
                     tr(
                         "Cosa cambia l'app: converte unità e ore nel fuso del posto, ricava da questi " +
-                            "dati il cielo disegnato, i testi delle sale e gli avvisi calcolati sulle " +
+                            "dati il cielo disegnato, i testi delle schermate e gli avvisi calcolati sulle " +
                             "soglie, e compone in italiano il titolo di ogni allerta; descrizione e " +
                             "istruzioni restano quelle pubblicate dall'ente. Nessuna delle fonti " +
                             "approva o sostiene quest'app.",
-                        "What the app changes: it converts units and times to the local time zone, derives from these data the drawn sky, the room texts and the threshold notices, and writes the title of each warning in English; description and instructions remain those published by the authority. None of the sources endorses or supports this app.",
+                        "What the app changes: it converts units and times to the local time zone, derives from these data the drawn sky, the screen texts and the threshold notices, and writes the title of each warning in English; description and instructions remain those published by the authority. None of the sources endorses or supports this app.",
                     ),
                     palette,
                 )

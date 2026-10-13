@@ -138,7 +138,7 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceImpostazione(
-                    titolo = tr("Testi delle sale", "Room texts"),
+                    titolo = tr("Testi delle schermate", "Screen texts"),
                     nota = when (state.captionStyle) {
                         CaptionStyle.COMPLETE -> tr("titolo, numeri e il paragrafo che li spiega", "title, numbers and the paragraph that explains them")
                         CaptionStyle.BREVI -> tr("solo titolo e numeri, senza il paragrafo", "only title and numbers, without the paragraph")
@@ -197,7 +197,7 @@ fun SalaImpostazioniScreen(
                 FiloGruppo(palette)
                 VoceInterruttore(
                     titolo = tr("Schede larghe", "Wide cards"),
-                    nota = tr("toglie la colonna delle sale: si passa dall'una all'altra col dito", "hides the room column: swipe from one room to the next"),
+                    nota = tr("toglie la colonna delle icone: si passa da una schermata all'altra col dito", "hides the icon column: swipe from one screen to the next"),
                     acceso = state.schedeLarghe,
                     palette = palette,
                     onCambia = onToggleSchedeLarghe,
@@ -242,7 +242,7 @@ fun SalaImpostazioniScreen(
             // soglie, non su cio' che un ente dichiara. La nota sotto il gruppo
             // lo dice, perche' prima lo sapeva solo questo commento.
             GruppoImpostazioni(
-                titolo = tr("AVVISI NELLE SALE", "NOTICES IN THE ROOMS"),
+                titolo = tr("AVVISI NELLE SCHERMATE", "NOTICES ON THE SCREENS"),
                 palette = palette,
                 nota = tr(
                     "Le allerte ufficiali dei servizi meteorologici si vedono sempre: qui scegli solo " +
@@ -369,7 +369,7 @@ fun SalaImpostazioniScreen(
             GruppoImpostazioni(titolo = tr("AIUTO", "HELP"), palette = palette) {
                 VoceImpostazione(
                     titolo = tr("Guida all'uso", "How to use it"),
-                    nota = tr("come si sfogliano le sale e si cambia ora", "how to move through the rooms and change the hour"),
+                    nota = tr("come si sfogliano le schermate e si cambia ora", "how to move through the screens and change the hour"),
                     palette = palette,
                     onClick = onApriGuida,
                     coda = { FrecciaAvanti(palette) },

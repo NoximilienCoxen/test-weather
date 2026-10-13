@@ -64,7 +64,7 @@ private val SalaTitles: Map<SalaCondition, Map<SalaPhase, String>> get() = mapOf
 private val SalaBodies: Map<SalaCondition, String> get() = mapOf(
     SalaCondition.SERENO to tr("Cielo aperto e visibilità ottima.", "Open sky and excellent visibility."),
     SalaCondition.NUVOLOSO to tr("Nubi medie che coprono il sole a intervalli. Non portano pioggia, ma tengono la temperatura ferma.", "Mid-level clouds hiding the sun now and then. No rain in them, but they hold the temperature steady."),
-    SalaCondition.PIOGGIA to tr("Pioggia in corso: i millimetri e la probabilità ora per ora sono in Sala III.", "Rain falling: millimetres and chance hour by hour are in the Rain room."),
+    SalaCondition.PIOGGIA to tr("Pioggia in corso: i millimetri e la probabilità ora per ora sono nella schermata della pioggia.", "Rain falling: millimetres and chance hour by hour are on the Rain screen."),
     SalaCondition.NEVE to tr("Neve in caduta: fondo scivoloso e visibilità ridotta, soprattutto dove non passa nessuno.", "Snow falling: slippery ground and poor visibility, especially where nobody has walked."),
     SalaCondition.TEMPORALE to tr("Fulminazione attiva. Meglio non stare all'aperto fino a mezz'ora dopo l'ultimo tuono.", "Lightning about. Best not to stay outdoors until half an hour after the last thunder."),
     SalaCondition.TEMPORALE_GRANDINE to tr("Cella temporalesca con grandine: raffiche improvvise e visibilità ridotta.", "Storm cell with hail: sudden gusts and poor visibility."),
@@ -87,7 +87,7 @@ fun titoloSenzaPrevisione(errore: String?): String = errore ?: tr("Sto chiedendo
 
 fun corpoSenzaPrevisione(errore: String?): String =
     if (errore == null) tr("La previsione di questo posto arriva fra un momento.", "The forecast for this place is on its way.")
-    else tr("Di questo posto non c'è una previsione salvata da mostrare. Trascina in giù la sala per riprovare.", "There is no saved forecast for this place. Pull the room down to try again.")
+    else tr("Di questo posto non c'è una previsione salvata da mostrare. Trascina in giù la schermata per riprovare.", "There is no saved forecast for this place. Pull the screen down to try again.")
 
 /**
  * I corpi che una fase sola smentirebbe.
