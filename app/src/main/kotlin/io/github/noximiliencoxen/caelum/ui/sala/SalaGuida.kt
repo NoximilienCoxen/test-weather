@@ -237,12 +237,12 @@ internal fun passiGuida(
     barra: Rect?,
 ): List<PassoGuida> = listOf(
     PassoGuida(
-        titolo = tr("Le sale", "The rooms"),
+        titolo = tr("Le schermate", "The screens"),
         testo = tr(
-            "Scorri in su o in giù sulla scheda per passare da una sala all'altra: " +
+            "Scorri in su o in giù sulla scheda per passare da una schermata all'altra: " +
                 "oggi, la settimana, la pioggia, la luna, l'aria, il vento e i raggi UV. " +
                 "Basta un colpetto.",
-            "Swipe up or down on the card to move from one room to the next: " +
+            "Swipe up or down on the card to move from one screen to the next: " +
                 "today, the week, rain, the moon, air, wind and UV rays. " +
                 "A light flick is enough.",
         ),
@@ -251,19 +251,19 @@ internal fun passiGuida(
     PassoGuida(
         titolo = tr("Dentro le schede", "Inside the cards"),
         testo = tr(
-            "Le voci con › si aprono e portano alla loro sala. " +
-                "Tocca un giorno per vedere quel giorno in tutte le sale.",
-            "Items marked › open and take you to their room. " +
-                "Tap a day to see that day in every room.",
+            "Le voci con › si aprono e portano alla loro schermata. " +
+                "Tocca un giorno per vedere quel giorno in tutte le schermate.",
+            "Items marked › open and take you to their screen. " +
+                "Tap a day to see that day on every screen.",
         ),
         dove = scheda,
     ),
     PassoGuida(
-        titolo = tr("La colonna delle sale", "The room column"),
+        titolo = tr("La colonna delle icone", "The icon column"),
         testo = tr(
-            "Tocca un'icona per andare dritto a quella sala, o fai scorrere il dito " +
+            "Tocca un'icona per andare dritto a quella schermata, o fai scorrere il dito " +
                 "lungo la colonna. Dalle impostazioni puoi nasconderla e avere schede più larghe.",
-            "Tap an icon to go straight to that room, or slide your finger " +
+            "Tap an icon to go straight to that screen, or slide your finger " +
                 "along the column. In settings you can hide it and get wider cards.",
         ),
         dove = colonna,

@@ -729,6 +729,23 @@ fun SalaShell(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
+                                // **Il passaggio da una schermata all'altra.** La
+                                // scheda che se ne va si allontana - un poco piu'
+                                // piccola, un poco piu' trasparente - e quella che
+                                // arriva fa il contrario, cosi' lo scorrimento si
+                                // legge come un cambio di pagina e non come un
+                                // nastro che scorre. Si legge nel disegno, non
+                                // nella composizione: niente ricomposizioni per
+                                // fotogramma. Con le animazioni spente resta il
+                                // carosello nudo.
+                                .graphicsLayer {
+                                    if (ferme) return@graphicsLayer
+                                    val distanza = abs(pagerState.getOffsetDistanceInPages(page)).coerceIn(0f, 1f)
+                                    val scala = 1f - RIENTRO_SCHEDA * distanza
+                                    scaleX = scala
+                                    scaleY = scala
+                                    alpha = 1f - DISSOLVENZA_SCHEDA * distanza
+                                }
                                 .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
                         ) {
                             Column(
@@ -1094,6 +1111,16 @@ private const val SOGLIA_COLPETTO_LANCIATO = 0.015f
 
 /** Oltre questa velocita' all'alzata il dito ha lanciato, non tremato. */
 private val VELOCITA_COLPETTO = 300.dp
+
+/**
+ * Quanto si rimpicciolisce una scheda a una pagina di distanza: un decimo,
+ * come il ritorno predittivo dei pannelli. Abbastanza da vedere che la scheda
+ * si allontana, non tanto da sembrare un'altra app.
+ */
+private const val RIENTRO_SCHEDA = 0.10f
+
+/** Quanto sbiadisce, alla stessa distanza: a meta' strada e' ancora leggibile. */
+private const val DISSOLVENZA_SCHEDA = 0.65f
 
 /**
  * Il tetto di larghezza delle sale: oltre, su tablet e pieghevoli aperti, le
