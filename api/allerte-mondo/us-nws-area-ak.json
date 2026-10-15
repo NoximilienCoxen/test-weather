@@ -10,50 +10,55 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.002.1",
-                "areaDesc": "Petersburg Borough",
+                "id": "urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.001.1",
+                "areaDesc": "City and Borough of Sitka; Western Kupreanof and Kuiu Island; Prince of Wales Island",
                 "geocode": {
                     "SAME": [
-                        "002195"
+                        "002220",
+                        "002198"
                     ],
                     "UGC": [
-                        "AKZ326"
+                        "AKZ323",
+                        "AKZ327",
+                        "AKZ328"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ326"
+                    "https://api.weather.gov/zones/forecast/AKZ323",
+                    "https://api.weather.gov/zones/forecast/AKZ327",
+                    "https://api.weather.gov/zones/forecast/AKZ328"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6ff27f1f10f8c0bd14c05e0cce9bd57e3c4aa52b.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.6ff27f1f10f8c0bd14c05e0cce9bd57e3c4aa52b.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-10-12T20:33:00-08:00"
+                        "sent": "2026-10-14T17:12:00-08:00"
                     }
                 ],
-                "sent": "2026-10-13T04:26:00-08:00",
-                "effective": "2026-10-13T04:26:00-08:00",
-                "onset": "2026-10-13T04:26:00-08:00",
-                "expires": "2026-10-13T11:00:00-08:00",
-                "ends": "2026-10-13T11:00:00-08:00",
+                "sent": "2026-10-15T00:57:00-08:00",
+                "effective": "2026-10-15T00:57:00-08:00",
+                "onset": "2026-10-15T01:00:00-08:00",
+                "expires": "2026-10-15T09:00:00-08:00",
+                "ends": "2026-10-15T16:00:00-08:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
                 "severity": "Moderate",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Dense Fog Advisory",
+                "event": "Wind Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Juneau AK",
-                "headline": "Dense Fog Advisory issued October 13 at 4:26AM AKDT until October 13 at 11:00AM AKDT by NWS Juneau AK",
-                "description": "* WHAT...Visibility down to 1/4 mile in dense fog.\n\n* WHERE...Petersburg Borough.\n\n* WHEN...Until 11 AM AKDT this morning.\n\n* IMPACTS...Low visibility could make travel conditions hazardous.",
-                "instruction": "If driving, slow down, use your headlights, and leave plenty of\ndistance ahead of you.",
+                "headline": "Wind Advisory issued October 15 at 12:57AM AKDT until October 15 at 4:00PM AKDT by NWS Juneau AK",
+                "description": "* WHAT...Southeast winds 20 to 30 mph with gusts up to 55 mph\nexpected.\n\n* WHERE...City and Borough of Sitka, Prince of Wales Island, and\nWestern Kupreanof Island and Kuiu Island.\n\n* WHEN...Until 4 PM AKDT this afternoon.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down.\n\n* ADDITIONAL DETAILS...Highest wind gusts are expected Thursday night\ninto Friday. Gusts above 1000 ft may exceed 60 mph.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
                 "response": "Execute",
                 "note": null,
                 "parameters": {
@@ -61,10 +66,10 @@
                         "NPWAJK"
                     ],
                     "WMOidentifier": [
-                        "WWAK77 PAJK 131226"
+                        "WWAK77 PAJK 150857"
                     ],
                     "NWSheadline": [
-                        "DENSE FOG ADVISORY REMAINS IN EFFECT UNTIL 11 AM AKDT THIS MORNING"
+                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 4 PM AKDT THIS AFTERNOON"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -72,10 +77,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.PAJK.FG.Y.0038.000000T0000Z-261013T1900Z/"
+                        "/O.CON.PAJK.WI.Y.0052.261015T0900Z-261016T0000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-13T11:00:00-08:00"
+                        "2026-10-15T16:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.94d09b34de099e8d77d935cb9503aa35f0143f35.003.1,2026-10-14T09:21:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.57ea383c8416d56ab653e00c6da484cdeb4824a7.002.1,2026-10-14T04:00:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c5fb17b2cdc054aed3e20a6fa91239f3f6f39a0.001.1,2026-10-14T03:48:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -87,49 +95,56 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "FGY"
+                        "WIY"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.fc22def3cd51f7cfd4a75a5097573d97334b7ae3.001.1",
-                "areaDesc": "Admiralty Island",
+                "id": "urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.002.1",
+                "areaDesc": "City and Borough of Juneau",
                 "geocode": {
                     "SAME": [
-                        "002105"
+                        "002110"
                     ],
                     "UGC": [
-                        "AKZ324"
+                        "AKZ325"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ324"
+                    "https://api.weather.gov/zones/forecast/AKZ325"
                 ],
-                "references": [],
-                "sent": "2026-10-13T04:26:00-08:00",
-                "effective": "2026-10-13T04:26:00-08:00",
-                "onset": "2026-10-15T04:00:00-08:00",
-                "expires": "2026-10-13T12:30:00-08:00",
-                "ends": "2026-10-15T09:00:00-08:00",
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-14T17:12:00-08:00"
+                    }
+                ],
+                "sent": "2026-10-15T00:57:00-08:00",
+                "effective": "2026-10-15T00:57:00-08:00",
+                "onset": "2026-10-15T01:00:00-08:00",
+                "expires": "2026-10-15T09:00:00-08:00",
+                "ends": "2026-10-15T16:00:00-08:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
                 "severity": "Moderate",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Dense Fog Advisory",
+                "event": "Wind Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Juneau AK",
-                "headline": "Dense Fog Advisory issued October 13 at 4:26AM AKDT until October 15 at 9:00AM AKDT by NWS Juneau AK",
-                "description": "* WHAT...Visibility down to 1/4 mile in dense fog.\n\n* WHERE...Admiralty Island.\n\n* WHEN...From 4 AM to 9 AM AKDT Thursday.\n\n* IMPACTS...Low visibility could make travel conditions hazardous.",
-                "instruction": null,
+                "headline": "Wind Advisory issued October 15 at 12:57AM AKDT until October 15 at 4:00PM AKDT by NWS Juneau AK",
+                "description": "* WHAT...East winds 15 to 25 mph with gusts up to 40 mph expected.\n\n* WHERE...City and Borough of Juneau.\n\n* WHEN...Until 4 PM AKDT this afternoon.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down.\n\n* ADDITIONAL DETAILS...Highest wind gusts are expected Thursday night\ninto Friday. Gusts above 1000 ft may exceed 60 mph.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
                 "response": "Execute",
                 "note": null,
                 "parameters": {
@@ -137,10 +152,10 @@
                         "NPWAJK"
                     ],
                     "WMOidentifier": [
-                        "WWAK77 PAJK 131226"
+                        "WWAK77 PAJK 150857"
                     ],
                     "NWSheadline": [
-                        "DENSE FOG ADVISORY IN EFFECT FROM 4 AM TO 9 AM AKDT THURSDAY"
+                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 4 PM AKDT THIS AFTERNOON"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -148,10 +163,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.NEW.PAJK.FG.Y.0039.261015T1200Z-261015T1700Z/"
+                        "/O.CON.PAJK.WI.Y.0052.261015T0900Z-261016T0000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-10-15T09:00:00-08:00"
+                        "2026-10-15T16:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.94d09b34de099e8d77d935cb9503aa35f0143f35.001.1,2026-10-14T09:21:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -163,188 +181,87 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "FGY"
+                        "WIY"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.98fa5800b3ab6ac53bf23d5f016fb1a1a52394c9.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.003.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.98fa5800b3ab6ac53bf23d5f016fb1a1a52394c9.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.003.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.98fa5800b3ab6ac53bf23d5f016fb1a1a52394c9.001.1",
-                "areaDesc": "South Slopes Of The Eastern Brooks Range; South Slopes Of The Central Brooks Range; Upper Koyukuk Valley; Dalton Highway Summits; Yukon Flats",
+                "id": "urn:oid:2.49.0.1.840.0.85e616a6c062563b70e109ac2b282ee3ee606778.003.1",
+                "areaDesc": "City and Borough of Wrangell; Ketchikan Gateway Borough; Annette Island",
                 "geocode": {
                     "SAME": [
-                        "002290"
-                    ],
-                    "UGC": [
-                        "AKZ811",
-                        "AKZ812",
-                        "AKZ831",
-                        "AKZ832",
-                        "AKZ833"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ811",
-                    "https://api.weather.gov/zones/forecast/AKZ812",
-                    "https://api.weather.gov/zones/forecast/AKZ831",
-                    "https://api.weather.gov/zones/forecast/AKZ832",
-                    "https://api.weather.gov/zones/forecast/AKZ833"
-                ],
-                "references": [],
-                "sent": "2026-10-13T03:48:00-08:00",
-                "effective": "2026-10-13T03:48:00-08:00",
-                "onset": "2026-10-13T03:48:00-08:00",
-                "expires": "2026-10-13T12:00:00-08:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Special Weather Statement issued October 13 at 3:48AM AKDT by NWS Fairbanks AK",
-                "description": "Observations around the Northern Interior have shown areas of\nmist, flurries and drizzle with temperatures around freezing.\nWith any mist or drizzle Tuesday morning, there is the potential\nfor patchy ice to develop resulting in slick conditions. Please\nuse caution if you are out and about this morning. The risk for\npatchy ice will end this afternoon as temperatures rise above\nfreezing in most spots.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSAFG"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK83 PAFG 131148"
-                    ],
-                    "NWSheadline": [
-                        "Flurries and Freezing Drizzle May Cause Patchy Ice"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4b723cce1aad957d471b1c3d431b15ccfd14ef01.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4b723cce1aad957d471b1c3d431b15ccfd14ef01.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4b723cce1aad957d471b1c3d431b15ccfd14ef01.001.1",
-                "areaDesc": "City and Borough of Yakutat; Municipality of Skagway; Haines Borough and Klukwan; Glacier Bay; Eastern Chichagof Island; Cape Fairweather to Lisianski Strait; City and Borough of Sitka; Admiralty Island; City and Borough of Juneau; Petersburg Borough; Western Kupreanof and Kuiu Island; Prince of Wales Island; City and Borough of Wrangell; Ketchikan Gateway Borough; City of Hyder; Annette Island",
-                "geocode": {
-                    "SAME": [
-                        "002282",
-                        "002230",
-                        "002100",
-                        "002105",
-                        "002220",
-                        "002110",
-                        "002195",
-                        "002198",
                         "002275",
-                        "002130"
+                        "002130",
+                        "002198"
                     ],
                     "UGC": [
-                        "AKZ317",
-                        "AKZ318",
-                        "AKZ319",
-                        "AKZ320",
-                        "AKZ321",
-                        "AKZ322",
-                        "AKZ323",
-                        "AKZ324",
-                        "AKZ325",
-                        "AKZ326",
-                        "AKZ327",
-                        "AKZ328",
                         "AKZ329",
                         "AKZ330",
-                        "AKZ331",
                         "AKZ332"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ317",
-                    "https://api.weather.gov/zones/forecast/AKZ318",
-                    "https://api.weather.gov/zones/forecast/AKZ319",
-                    "https://api.weather.gov/zones/forecast/AKZ320",
-                    "https://api.weather.gov/zones/forecast/AKZ321",
-                    "https://api.weather.gov/zones/forecast/AKZ322",
-                    "https://api.weather.gov/zones/forecast/AKZ323",
-                    "https://api.weather.gov/zones/forecast/AKZ324",
-                    "https://api.weather.gov/zones/forecast/AKZ325",
-                    "https://api.weather.gov/zones/forecast/AKZ326",
-                    "https://api.weather.gov/zones/forecast/AKZ327",
-                    "https://api.weather.gov/zones/forecast/AKZ328",
                     "https://api.weather.gov/zones/forecast/AKZ329",
                     "https://api.weather.gov/zones/forecast/AKZ330",
-                    "https://api.weather.gov/zones/forecast/AKZ331",
                     "https://api.weather.gov/zones/forecast/AKZ332"
                 ],
-                "references": [],
-                "sent": "2026-10-13T01:51:00-08:00",
-                "effective": "2026-10-13T01:51:00-08:00",
-                "onset": "2026-10-13T01:51:00-08:00",
-                "expires": "2026-10-13T10:00:00-08:00",
-                "ends": null,
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f2154c2dc85e3a947e79a074dce4e1106a5d9e70.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-14T17:12:00-08:00"
+                    }
+                ],
+                "sent": "2026-10-15T00:57:00-08:00",
+                "effective": "2026-10-15T00:57:00-08:00",
+                "onset": "2026-10-15T01:00:00-08:00",
+                "expires": "2026-10-15T09:00:00-08:00",
+                "ends": "2026-10-16T04:00:00-08:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
                 "severity": "Moderate",
-                "certainty": "Observed",
+                "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Special Weather Statement",
+                "event": "Wind Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Juneau AK",
-                "headline": "Special Weather Statement issued October 13 at 1:51AM AKDT by NWS Juneau AK",
-                "description": "Thursday into the weekend, a series of low pressure systems will\nmove toward Southeast Alaska, bringing widespread moderate to heavy\nrainfall and gale force winds to the Gulf. Strong winds are also\nexpected for coastal and southern panhandle communities. While the\nexact timing and impacts of the system are still being refined,\nconfidence is continuing to increase that this will be a more\nimpactful system for Southeast Alaska.\n\nStay tuned to weather.gov/juneau as we continue to monitor the\ndeveloping situation and update our forecast.",
-                "instruction": null,
+                "headline": "Wind Advisory issued October 15 at 12:57AM AKDT until October 16 at 4:00AM AKDT by NWS Juneau AK",
+                "description": "* WHAT...Southeast winds 25 to 35 mph with gusts up to 55 mph\nexpected.\n\n* WHERE...Annette Island, City and Borough of Wrangell, and Ketchikan\nGateway Borough.\n\n* WHEN...Until 4 AM AKDT Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down.\n\n* ADDITIONAL DETAILS...Highest wind gusts are expected Thursday night\ninto Friday. Gusts above 1000 ft may exceed 60 mph.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.\n\nSecure outdoor objects.",
                 "response": "Execute",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "SPSAJK"
+                        "NPWAJK"
                     ],
                     "WMOidentifier": [
-                        "WWAK87 PAJK 130951"
+                        "WWAK77 PAJK 150857"
                     ],
                     "NWSheadline": [
-                        "HEAVY RAIN AND GUSTY WINDS THURSDAY INTO WEEKEND"
+                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 4 AM AKDT FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
                         "NWEM",
                         "CMAS"
                     ],
-                    "EAS-ORG": [
-                        "WXR"
+                    "VTEC": [
+                        "/O.CON.PAJK.WI.Y.0052.261015T0900Z-261016T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-16T04:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.94d09b34de099e8d77d935cb9503aa35f0143f35.004.1,2026-10-14T09:21:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.94d09b34de099e8d77d935cb9503aa35f0143f35.002.1,2026-10-14T09:21:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.57ea383c8416d56ab653e00c6da484cdeb4824a7.001.2,2026-10-14T04:00:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -353,191 +270,95 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "SPS"
+                        "NWS"
                     ],
                     "NationalWeatherService": [
-                        "SPS"
+                        "WIY"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9aa65a11cc86c0e5060b203ce17e92d0bcb10375.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9aa65a11cc86c0e5060b203ce17e92d0bcb10375.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9aa65a11cc86c0e5060b203ce17e92d0bcb10375.001.1",
-                "areaDesc": "White Mountains and High Terrain South of the Yukon River; Fortymile Country; Upper Tanana Valley; Delta Junction; Upper Chena River Valley; Tanana Flats; Eielson AFB and Salcha; Goldstream Valley and Nenana Hills; Chatanika River Valley; Two Rivers; Fairbanks Metro Area; Nenana; Central Interior; Northern Denali Borough; Southern Denali Borough; Eastern Alaska Range North of Trims Camp; Eastern Alaska Range South of Trims Camp",
-                "geocode": {
-                    "SAME": [
-                        "002290",
-                        "002240",
-                        "002090",
-                        "002068"
-                    ],
-                    "UGC": [
-                        "AKZ834",
-                        "AKZ835",
-                        "AKZ836",
-                        "AKZ837",
-                        "AKZ838",
-                        "AKZ839",
-                        "AKZ840",
-                        "AKZ841",
-                        "AKZ842",
-                        "AKZ843",
-                        "AKZ844",
-                        "AKZ845",
-                        "AKZ846",
-                        "AKZ847",
-                        "AKZ848",
-                        "AKZ849",
-                        "AKZ850"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ834",
-                    "https://api.weather.gov/zones/forecast/AKZ835",
-                    "https://api.weather.gov/zones/forecast/AKZ836",
-                    "https://api.weather.gov/zones/forecast/AKZ837",
-                    "https://api.weather.gov/zones/forecast/AKZ838",
-                    "https://api.weather.gov/zones/forecast/AKZ839",
-                    "https://api.weather.gov/zones/forecast/AKZ840",
-                    "https://api.weather.gov/zones/forecast/AKZ841",
-                    "https://api.weather.gov/zones/forecast/AKZ842",
-                    "https://api.weather.gov/zones/forecast/AKZ843",
-                    "https://api.weather.gov/zones/forecast/AKZ844",
-                    "https://api.weather.gov/zones/forecast/AKZ845",
-                    "https://api.weather.gov/zones/forecast/AKZ846",
-                    "https://api.weather.gov/zones/forecast/AKZ847",
-                    "https://api.weather.gov/zones/forecast/AKZ848",
-                    "https://api.weather.gov/zones/forecast/AKZ849",
-                    "https://api.weather.gov/zones/forecast/AKZ850"
-                ],
-                "references": [],
-                "sent": "2026-10-13T01:07:00-08:00",
-                "effective": "2026-10-13T01:07:00-08:00",
-                "onset": "2026-10-13T01:07:00-08:00",
-                "expires": "2026-10-13T10:00:00-08:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Special Weather Statement issued October 13 at 1:07AM AKDT by NWS Fairbanks AK",
-                "description": "As temperatures drop below freezing, any wet spots that lingered\nthrough the day have begun to freeze creating some slick spots.\nUse extra caution during the morning commute or if you are out\nwalking around as you may come across some icy spots.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSAFG"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK83 PAFG 130907"
-                    ],
-                    "NWSheadline": [
-                        "Ice Forming on Wet Surfaces"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.77d4ac39040d95b0295a35a0f43855cff61f93b9.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.77d4ac39040d95b0295a35a0f43855cff61f93b9.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.77d4ac39040d95b0295a35a0f43855cff61f93b9.001.1",
-                "areaDesc": "Petersburg Borough; Western Kupreanof and Kuiu Island; Prince of Wales Island; City and Borough of Wrangell; Ketchikan Gateway Borough; City of Hyder; Annette Island",
+                "id": "urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.002.1",
+                "areaDesc": "Petersburg Borough; Western Kupreanof and Kuiu Island; Prince of Wales Island; City and Borough of Wrangell",
                 "geocode": {
                     "SAME": [
                         "002195",
                         "002198",
-                        "002275",
-                        "002130"
+                        "002275"
                     ],
                     "UGC": [
                         "AKZ326",
                         "AKZ327",
                         "AKZ328",
-                        "AKZ329",
-                        "AKZ330",
-                        "AKZ331",
-                        "AKZ332"
+                        "AKZ329"
                     ]
                 },
                 "affectedZones": [
                     "https://api.weather.gov/zones/forecast/AKZ326",
                     "https://api.weather.gov/zones/forecast/AKZ327",
                     "https://api.weather.gov/zones/forecast/AKZ328",
-                    "https://api.weather.gov/zones/forecast/AKZ329",
-                    "https://api.weather.gov/zones/forecast/AKZ330",
-                    "https://api.weather.gov/zones/forecast/AKZ331",
-                    "https://api.weather.gov/zones/forecast/AKZ332"
+                    "https://api.weather.gov/zones/forecast/AKZ329"
                 ],
-                "references": [],
-                "sent": "2026-10-12T10:07:00-08:00",
-                "effective": "2026-10-12T10:07:00-08:00",
-                "onset": "2026-10-12T10:07:00-08:00",
-                "expires": "2026-10-13T10:15:00-08:00",
-                "ends": null,
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9603768b901cd6ce7dab7904dfa90316e2b75b89.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9603768b901cd6ce7dab7904dfa90316e2b75b89.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-14T10:18:00-08:00"
+                    }
+                ],
+                "sent": "2026-10-14T21:57:00-08:00",
+                "effective": "2026-10-14T21:57:00-08:00",
+                "onset": "2026-10-15T13:00:00-08:00",
+                "expires": "2026-10-15T10:00:00-08:00",
+                "ends": "2026-10-16T13:00:00-08:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
-                "severity": "Unknown",
+                "severity": "Severe",
                 "certainty": "Possible",
                 "urgency": "Future",
-                "event": "Hydrologic Outlook",
+                "event": "Flood Watch",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Juneau AK",
-                "headline": "Hydrologic Outlook issued October 12 at 10:07AM AKDT by NWS Juneau AK",
-                "description": "ESFAJK\n\nAn atmospheric river will move into the region Thursday, driving\nheavy rain across much of the Panhandle into the weekend. However,\nareas south of Frederick Sound will likely see the heaviest rain.\nAnticipate 24 hour rainfall amounts to reach 3 to 5 inches at sea\nlevel for many communities south of Frederick Sound, with localized\nareas near Ketchikan and Misty Fjords closer to 4 to 6 inches,\nespecially in the mountains. At this time, the primary threat is many\nrivers and streams reaching bankfull conditions with ponding of water\non roads and areas of poor drainage. Mariners, check those bilge\npumps.\n\nSignificant rises and flooding in rivers is possible but at this time\nthere exists large variability in how rain develops and persists\nacross the southern Panhandle.\n\nStay tuned to weather.gov/juneau as we continue to assess the\nsituation and make updates to the forecast.",
-                "instruction": null,
-                "response": "Monitor",
+                "headline": "Flood Watch issued October 14 at 9:57PM AKDT until October 16 at 1:00PM AKDT by NWS Juneau AK",
+                "description": "A stronger atmospheric river is expected to move over the panhandle\nbeginning early Thursday morning, continuing through Friday morning.\nMultiple waves moving up will bring persistent moderate to heavy rain\nfor much of the southern half of the panhandle. Elevated gusty winds\nare expected alongside this heavier rainfall on Thursday, with the\nstrongest winds expected Thursday night. Prolonged periods of\nmoderate to heavy rain will produce significant river rises with the\npotential for at least minor flooding.\n\n* WHAT...Flooding caused by excessive rainfall continues to be\npossible.\n\n* WHERE...The following areas, Central Inner Channels, Southern Inner\nChannels and Southeast Gulf Coast. This includes the cities of\nPetersburg, Kake, Port Alexander, Craig, Klawock, Hydaburg, Coffman\nCove, Thorne Bay, And Wrangell.\n\n* WHEN...From Thursday afternoon through Friday afternoon.\n\n* IMPACTS...Excessive runoff may result in flooding of rivers,\ncreeks, streams, other low-lying areas and flood-prone locations.\nStreet flooding and flooding of creeks and rivers are possible.\nIsolated landslides are possible in areas of steep terrain.\n\n* ADDITIONAL DETAILS...\n- Rain totals between early Thursday morning and late Friday\nmorning for the Central Panhandle and Prince of Wales Island area\nare still expected to be around 2 to 3.5 inches, with higher rain\ntotals favoring southern facing mountain sides. Highest rain\nrates are currently expected during the late morning through\nevening timeframe on Thursday, where rates could be as high as\n0.25 inches per hour.\n\nConfidence has increased for the area seeing winds of 20 to 30\nmph with gusts to 40 mph on Thursday, with potential for up to 50\nmph wind gusts Thursday evening into the night. With the multiple\nrounds of moderate to heavy rainfall and the elevated winds\nThursday, there is possibility for isolated landslides along\nsteep mountain slopes.",
+                "instruction": "Stay tuned to further developments by listening to your local radio,\ntelevision, or NOAA Weather Radio for further information.\n\nYou should monitor later forecasts and be alert for possible Flood\nWarnings. Those living in areas prone to flooding should be prepared\nto take action should flooding develop.",
+                "response": "Prepare",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "ESFAJK"
+                        "FFAAJK"
                     ],
                     "WMOidentifier": [
-                        "FGAK77 PAJK 121807"
+                        "WGAK67 PAJK 150557"
                     ],
                     "NWSheadline": [
-                        "HEAVY RAIN THURSDAY INTO THE WEEKEND"
+                        "FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY AFTERNOON THROUGH FRIDAY AFTERNOON"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
                         "NWEM",
                         "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAJK.FA.A.0003.261015T2100Z-261016T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-16T13:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.519b22ce32ab26b85c4dd97aab6c54c3d3234d59.002.1,2026-10-13T22:20:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.79430e0c9b12b9c3f003bb4317f1ef387bbdd1db.002.1,2026-10-13T10:57:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -546,15 +367,107 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "NWS"
+                        "FFA"
                     ],
                     "NationalWeatherService": [
-                        "ESF"
+                        "FAA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.8256f63885aeab7ff39bf767a4a711988c2854e3.001.1",
+                "areaDesc": "Ketchikan Gateway Borough; Annette Island",
+                "geocode": {
+                    "SAME": [
+                        "002130",
+                        "002198"
+                    ],
+                    "UGC": [
+                        "AKZ330",
+                        "AKZ332"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ330",
+                    "https://api.weather.gov/zones/forecast/AKZ332"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9603768b901cd6ce7dab7904dfa90316e2b75b89.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9603768b901cd6ce7dab7904dfa90316e2b75b89.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-10-14T10:18:00-08:00"
+                    }
+                ],
+                "sent": "2026-10-14T21:57:00-08:00",
+                "effective": "2026-10-14T21:57:00-08:00",
+                "onset": "2026-10-15T13:00:00-08:00",
+                "expires": "2026-10-15T10:00:00-08:00",
+                "ends": "2026-10-16T13:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Flood Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Juneau AK",
+                "headline": "Flood Watch issued October 14 at 9:57PM AKDT until October 16 at 1:00PM AKDT by NWS Juneau AK",
+                "description": "A stronger atmospheric river is expected to move over the panhandle\nbeginning early Thursday morning, continuing through Friday morning.\nMultiple waves moving up will bring persistent moderate to heavy rain\nfor much of the southern half of the panhandle. Elevated gusty winds\nare expected alongside this heavier rainfall on Thursday, with the\nstrongest winds expected Thursday night. Prolonged periods of\nmoderate to heavy rain will produce significant river rises with the\npotential for at least minor flooding.\n\n* WHAT...Flooding caused by excessive rainfall continues to be\npossible.\n\n* WHERE...The following area, Southern Inner Channels. This includes\nthe cities of Ketchikan And Metlakatla.\n\n* WHEN...From Thursday afternoon through Friday afternoon.\n\n* IMPACTS...Excessive runoff may result in flooding of rivers,\ncreeks, streams, other low-lying areas and flood-prone locations.\nStreet flooding and flooding of creeks and rivers are possible.\nIsolated landslides are possible in areas of steep terrain.\n\n* ADDITIONAL DETAILS...\n- Rain totals between early Thursday morning and late Friday\nmorning for the Ketchikan and Metlakatla area are still expected\nto be around 4 to 6 inches, with higher rain totals favoring\nsouthern facing mountain sides. Highest rain rates are currently\nexpected during the late morning through evening timeframe on\nThursday, where rates could exceed 0.3 inches per hour.\n\nConfidence has increased for the area seeing winds of 25 to 35\nmph with gusts to 50 mph on Thursday, with the highest winds\nexpected Thursday evening into the night. With the multiple\nrounds of moderate to heavy rainfall and the elevated winds\nThursday, there is possibility for isolated landslides along\nsteep mountain slopes.",
+                "instruction": "Stay tuned to further developments by listening to your local radio,\ntelevision, or NOAA Weather Radio for further information.\n\nYou should monitor later forecasts and be alert for possible Flood\nWarnings. Those living in areas prone to flooding should be prepared\nto take action should flooding develop.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FFAAJK"
+                    ],
+                    "WMOidentifier": [
+                        "WGAK67 PAJK 150557"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY AFTERNOON THROUGH FRIDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAJK.FA.A.0003.261015T2100Z-261016T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-10-16T13:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.519b22ce32ab26b85c4dd97aab6c54c3d3234d59.001.1,2026-10-13T22:20:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.79430e0c9b12b9c3f003bb4317f1ef387bbdd1db.001.1,2026-10-13T10:57:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "FFA"
+                    ],
+                    "NationalWeatherService": [
+                        "FAA"
                     ]
                 }
             }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-10-13T13:51:54+00:00"
+    "updated": "2026-10-15T09:33:23+00:00"
 }
