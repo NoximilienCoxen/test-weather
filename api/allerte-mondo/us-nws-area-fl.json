@@ -10,70 +10,161 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d7ee76c0828ff1d2485832b7acbf2909050d314e.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d7ee76c0828ff1d2485832b7acbf2909050d314e.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
-                "areaDesc": "Monroe Middle Keys; Monroe Lower Keys",
+                "id": "urn:oid:2.49.0.1.840.0.d7ee76c0828ff1d2485832b7acbf2909050d314e.001.1",
+                "areaDesc": "Suwannee; Baker; Inland Nassau; Union; Bradford; Gilchrist; Inland Flagler; Eastern Hamilton; Coastal Nassau; Coastal Duval; Eastern Clay; Eastern Alachua; Eastern Putnam; Eastern Marion; Western Hamilton; Trout River; Western Clay; Western Alachua; Western Putnam; Central Marion; Northern Columbia; South Central Duval; Western Marion; Southeastern Columbia; Western Duval; Northern Inland St. Johns; Southwestern Columbia; Southern Inland St. Johns; Western St. Johns; Brantley; Inland Glynn; Coastal Glynn; Echols; Clinch; Inland Camden; Coastal Camden; Northern Ware; Northeastern Charlton; Southern Ware; Western Charlton",
                 "geocode": {
                     "SAME": [
-                        "012087"
+                        "012121",
+                        "012003",
+                        "012089",
+                        "012125",
+                        "012007",
+                        "012041",
+                        "012035",
+                        "012047",
+                        "012031",
+                        "012019",
+                        "012001",
+                        "012107",
+                        "012083",
+                        "012023",
+                        "012109",
+                        "013025",
+                        "013127",
+                        "013101",
+                        "013065",
+                        "013039",
+                        "013299",
+                        "013049"
                     ],
                     "UGC": [
-                        "FLZ077",
-                        "FLZ078"
+                        "FLZ021",
+                        "FLZ023",
+                        "FLZ024",
+                        "FLZ030",
+                        "FLZ031",
+                        "FLZ035",
+                        "FLZ038",
+                        "FLZ120",
+                        "FLZ124",
+                        "FLZ125",
+                        "FLZ132",
+                        "FLZ136",
+                        "FLZ137",
+                        "FLZ140",
+                        "FLZ220",
+                        "FLZ225",
+                        "FLZ232",
+                        "FLZ236",
+                        "FLZ237",
+                        "FLZ240",
+                        "FLZ322",
+                        "FLZ325",
+                        "FLZ340",
+                        "FLZ422",
+                        "FLZ425",
+                        "FLZ433",
+                        "FLZ522",
+                        "FLZ533",
+                        "FLZ633",
+                        "GAZ152",
+                        "GAZ153",
+                        "GAZ154",
+                        "GAZ162",
+                        "GAZ163",
+                        "GAZ165",
+                        "GAZ166",
+                        "GAZ250",
+                        "GAZ264",
+                        "GAZ350",
+                        "GAZ364"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ077",
-                    "https://api.weather.gov/zones/forecast/FLZ078"
+                    "https://api.weather.gov/zones/forecast/FLZ021",
+                    "https://api.weather.gov/zones/forecast/FLZ023",
+                    "https://api.weather.gov/zones/forecast/FLZ024",
+                    "https://api.weather.gov/zones/forecast/FLZ030",
+                    "https://api.weather.gov/zones/forecast/FLZ031",
+                    "https://api.weather.gov/zones/forecast/FLZ035",
+                    "https://api.weather.gov/zones/forecast/FLZ038",
+                    "https://api.weather.gov/zones/forecast/FLZ120",
+                    "https://api.weather.gov/zones/forecast/FLZ124",
+                    "https://api.weather.gov/zones/forecast/FLZ125",
+                    "https://api.weather.gov/zones/forecast/FLZ132",
+                    "https://api.weather.gov/zones/forecast/FLZ136",
+                    "https://api.weather.gov/zones/forecast/FLZ137",
+                    "https://api.weather.gov/zones/forecast/FLZ140",
+                    "https://api.weather.gov/zones/forecast/FLZ220",
+                    "https://api.weather.gov/zones/forecast/FLZ225",
+                    "https://api.weather.gov/zones/forecast/FLZ232",
+                    "https://api.weather.gov/zones/forecast/FLZ236",
+                    "https://api.weather.gov/zones/forecast/FLZ237",
+                    "https://api.weather.gov/zones/forecast/FLZ240",
+                    "https://api.weather.gov/zones/forecast/FLZ322",
+                    "https://api.weather.gov/zones/forecast/FLZ325",
+                    "https://api.weather.gov/zones/forecast/FLZ340",
+                    "https://api.weather.gov/zones/forecast/FLZ422",
+                    "https://api.weather.gov/zones/forecast/FLZ425",
+                    "https://api.weather.gov/zones/forecast/FLZ433",
+                    "https://api.weather.gov/zones/forecast/FLZ522",
+                    "https://api.weather.gov/zones/forecast/FLZ533",
+                    "https://api.weather.gov/zones/forecast/FLZ633",
+                    "https://api.weather.gov/zones/forecast/GAZ152",
+                    "https://api.weather.gov/zones/forecast/GAZ153",
+                    "https://api.weather.gov/zones/forecast/GAZ154",
+                    "https://api.weather.gov/zones/forecast/GAZ162",
+                    "https://api.weather.gov/zones/forecast/GAZ163",
+                    "https://api.weather.gov/zones/forecast/GAZ165",
+                    "https://api.weather.gov/zones/forecast/GAZ166",
+                    "https://api.weather.gov/zones/forecast/GAZ250",
+                    "https://api.weather.gov/zones/forecast/GAZ264",
+                    "https://api.weather.gov/zones/forecast/GAZ350",
+                    "https://api.weather.gov/zones/forecast/GAZ364"
                 ],
                 "references": [],
-                "sent": "2026-11-10T03:55:00-05:00",
-                "effective": "2026-11-10T03:55:00-05:00",
-                "onset": "2026-11-10T03:55:00-05:00",
-                "expires": "2026-11-10T04:10:30-05:00",
-                "ends": "2026-11-10T05:00:00-05:00",
+                "sent": "2026-11-10T04:15:00-05:00",
+                "effective": "2026-11-10T04:15:00-05:00",
+                "onset": "2026-11-10T04:15:00-05:00",
+                "expires": "2026-11-10T08:30:00-05:00",
+                "ends": null,
                 "status": "Actual",
                 "messageType": "Alert",
                 "category": "Met",
-                "severity": "Minor",
+                "severity": "Moderate",
                 "certainty": "Observed",
-                "urgency": "Past",
-                "event": "Coastal Flood Statement",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Key West FL",
-                "headline": "The Coastal Flood Statement has been cancelled.",
-                "description": "The Coastal Flood Statement has been cancelled and is no longer in effect.",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Special Weather Statement issued November 10 at 4:15AM EST by NWS Jacksonville FL",
+                "description": "Locally dense fog is expected to develop across portions of\nSoutheast Georgia and Northeast Florida through sunrise this\nmorning. Visibilities will fall to 1/2 mile or less in some\nlocations. Conditions will not improve until the mid morning hours\naround 9 am. The nature of the fog is such that visibilities will\nvary greatly over short distances. Motorists should be alert for\nrapidly changing conditions through sunrise. If driving, slow down\nand leave extra distance ahead of you in case a sudden stop is\nneeded.",
                 "instruction": null,
-                "response": "AllClear",
+                "response": "Execute",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "CFWKEY"
+                        "SPSJAX"
                     ],
                     "WMOidentifier": [
-                        "WHUS42 KKEY 100855"
+                        "WWUS82 KJAX 100915"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT IS CANCELLED"
+                        "LOCALLY DENSE FOG EARLY THIS MORNING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
                         "NWEM",
                         "CMAS"
                     ],
-                    "VTEC": [
-                        "/O.CAN.KKEY.CF.S.0012.000000T0000Z-261110T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T05:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1,2026-11-09T16:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d87b3661b1947dd88686f13ec489333fe55d9a5.001.1,2026-11-09T04:20:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5ffb8519924edb82cf2eb72c35b62557cd781cb3.001.1,2026-11-08T11:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec9691a9082394088b145b8d43d7cad7de7c96d7.001.1,2026-11-08T04:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fede3039f3b6afd999d28014abdd36b1ae2de8ea.001.1,2026-11-07T16:05:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faa0b806c844d516b58f83952540c3f13fba3948.001.1,2026-11-07T12:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ce662f0ed997870995a6e225a8f5d02acdb01c71.001.1,2026-11-07T04:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33ce67a936e75ca899a7b8ae5681ac9aab77f837.001.1,2026-11-06T11:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f7c0ea8841f1311b47064589142d84c6c49e8d5c.001.1,2026-11-06T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c06204493b8ac117801154e7f80d84536393f7ba.001.1,2026-11-04T10:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89c5e4b3e00a0c0ebc5284212822848109a32150.001.1,2026-11-05T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3f4fbb75a66d210a0144d52852d908a62e8631b6.001.1,2026-11-04T04:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.003.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.cd1da42c9d70972876af781c47a18dd0fd056768.002.1,2026-11-03T10:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.002.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3d0ff85984eb75211850c1e7fa1dadbbff2920cf.002.1,2026-11-03T04:10:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.aa5a01bc6bce0b7f689ea54b83f124df50e5be90.001.2,2026-11-02T15:48:00-05:00"
+                    "EAS-ORG": [
+                        "WXR"
                     ]
                 },
                 "scope": "Public",
@@ -82,10 +173,10 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "NWS"
+                        "SPS"
                     ],
                     "NationalWeatherService": [
-                        "CFS"
+                        "SPS"
                     ]
                 }
             }
@@ -1208,5 +1299,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-10T09:07:58+00:00"
+    "updated": "2026-11-10T11:21:32+00:00"
 }
