@@ -70,7 +70,7 @@ fun VeloDAvvio(
             ) {
                 // Solo il nome. Sotto c'era scritto cosa rappresentava la scena,
                 // e un quadro con la didascalia si legge invece di guardarlo.
-                Text(text = "Caelum", style = SalaType.pageTitle, color = SalaTokens.neutral100)
+                Text(text = "Caelum Weather", style = SalaType.pageTitle, color = SalaTokens.neutral100)
             }
         }
     }

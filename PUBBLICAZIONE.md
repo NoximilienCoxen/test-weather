@@ -1,4 +1,4 @@
-# Pubblicare Caelum sul Play Store
+# Pubblicare Caelum Weather sul Play Store
 
 Cosa c'è già nel repository, e cosa può fare solo chi possiede l'account.
 Scritto il 10 novembre 2026; le regole dello store cambiano, quindi i punti
@@ -71,7 +71,7 @@ adb install app/build/outputs/apk/release/app-release.apk
 1. **Account sviluppatore** (25 USD una tantum, verifica dell'identità).
    Gli account personali nuovi devono fare un **test chiuso con almeno 12
    tester per 14 giorni** prima di poter pubblicare in produzione **(verifica)**.
-2. **Crea l'app**: nome `Caelum`, lingua predefinita italiano, app, gratuita.
+2. **Crea l'app**: nome `Caelum Weather`, lingua predefinita italiano, app, gratuita.
 3. **Scheda dello store**: i testi stanno in `fastlane/metadata/android/`
    (titolo, descrizione breve, descrizione completa) per `it-IT` e `en-US`.
    Servono inoltre, e si fanno a mano:
@@ -115,5 +115,8 @@ adb install app/build/outputs/apk/release/app-release.apk
   dello store: la firma è diversa.
 - **`targetSdk`**: lo store alza il minimo richiesto ogni anno, di solito a fine
   agosto. Oggi è 36.
-- Il nome "Caelum" va cercato sullo store prima di affezionarcisi: se esiste
-  già un'app meteo con lo stesso nome conviene saperlo ora.
+- **Il nome e' "Caelum Weather"**, non piu' "Caelum" da solo. Sul Play Store
+  esiste "Caelum - Local AI assistant" (altra categoria) e su iOS "iCaelum"
+  (meteo, solo iPhone): nessuna si chiama esattamente cosi', ma in caso di
+  contestazione sul nome conviene saperlo. Il pacchetto resta
+  `io.github.noximiliencoxen.caelum`, coerente col nome.

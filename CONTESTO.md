@@ -7849,3 +7849,10 @@ cio' che riguarda il codice.
 **Non fatto, e conta**: la release minificata non e' mai stata aperta su un
 telefono; l'orologio esce senza R8; Gradle e' fermo a 9.6.0 (corrente 9.9.0)
 perche' un salto di wrapper si fa da solo, come in §2.
+
+**Il nome visibile e' "Caelum Weather"** (10 novembre): etichetta di telefono e
+orologio (`app_name`), velo d'avvio, firma del testo condiviso, scheda e
+informativa. Pacchetto, classi e tema restano `caelum`/`Caelum`. Sotto l'icona
+il launcher puo' troncarlo: da guardare in mano. AGP e' passata a 9.5.1 senza
+chiedere un Gradle piu' nuovo.
+

@@ -1,10 +1,10 @@
-# Caelum — Informativa sulla privacy / Privacy policy
+# Caelum Weather — Informativa sulla privacy / Privacy policy
 
 *Ultimo aggiornamento / Last updated: 10 novembre 2026*
 
 ## Italiano
 
-Caelum è un'app di previsioni del tempo per telefono Android e orologio Wear OS.
+Caelum Weather è un'app di previsioni del tempo per telefono Android e orologio Wear OS.
 Non ha account, non ha pubblicità, non contiene strumenti di statistica o di
 tracciamento e non invia rapporti d'errore automatici.
 
@@ -75,7 +75,7 @@ Per domande: <https://github.com/NoximilienCoxen/test-weather/issues>
 
 ## English
 
-Caelum is a weather forecast app for Android phones and Wear OS watches. It has
+Caelum Weather is a forecast app for Android phones and Wear OS watches. It has
 no accounts, no ads, no analytics or tracking tools, and it sends no automatic
 crash reports.
 

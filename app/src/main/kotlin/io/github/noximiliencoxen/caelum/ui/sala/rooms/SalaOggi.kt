@@ -300,7 +300,7 @@ internal fun testoDaCondividere(state: UiState, scelto: GiornoSettimana?): Strin
         allerte = state.alerts,
         giornoDetto = if (oggi) tr("oggi", "today") else "${scelto!!.esteso} ${scelto.data}",
     )
-    return "$titolo.\n$corpo\n— Caelum"
+    return "$titolo.\n$corpo\n— Caelum Weather"
 }
 
 private fun condividi(contesto: Context, testo: String) {
