@@ -73,7 +73,7 @@ sopra l'altra senza disinstallare).
 
 | | |
 |---|---|
-| AGP | 9.4.1 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
+| AGP | 9.5.1 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
 | Gradle | 9.6.0 — **minimo di AGP 9.4**, non una scelta |
 | JDK | 17 |
 | compileSdk | **37** — Compose 1.12 lo pretende; 36 non basta |
