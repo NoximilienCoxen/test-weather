@@ -27,6 +27,8 @@ import io.github.noximiliencoxen.caelumweather.data.WeatherAlert
 import io.github.noximiliencoxen.caelumweather.data.WeatherAlertsRepository
 import io.github.noximiliencoxen.caelumweather.data.WeatherRepository
 import io.github.noximiliencoxen.caelumweather.data.Wmo
+import io.github.noximiliencoxen.caelumweather.data.scartoDaIeri
+import io.github.noximiliencoxen.caelumweather.data.scartoDaIeriEsteso
 import io.github.noximiliencoxen.caelumweather.prefs.SalaWindUnit
 import io.github.noximiliencoxen.caelumweather.prefs.SettingsPrefs
 import io.github.noximiliencoxen.caelumweather.prefs.TempUnit
@@ -92,6 +94,7 @@ class RiepilogoMattinoWorker(contesto: Context, parametri: WorkerParameters) : C
                         unita = impostazioni.unit,
                         vento = impostazioni.windUnit,
                         allerte = allerte,
+                        ieri = previsione.ieri,
                     )
                     notifica(contesto, titolo, corpo, conAllerta = allertaDiOggi(allerte, previsione.nowThere()) != null)
                 }
@@ -246,12 +249,16 @@ internal fun testiRiepilogo(
     allerte: List<WeatherAlert>,
     /** "oggi", o il giorno per esteso quando lo si condivide da Sala I. */
     giornoDetto: String = tr("oggi", "today"),
+    /** Solo quando il giorno raccontato e' oggi: di sabato "ieri" e' venerdi'. */
+    ieri: DayForecast? = null,
 ): Pair<String, String> {
     fun gradi(c: Double?) = c?.let { "${unita.from(it).roundToInt()}°" } ?: "--"
     val tempo = Wmo.condition(giorno.weatherCode).lowercase(Lingue.locale)
     val titolo = "$citta, $giornoDetto: ${gradi(giorno.tempMin)} – ${gradi(giorno.tempMax)}, $tempo"
 
     val righe = mutableListOf<String>()
+
+    scartoDaIeri(giorno, ieri, unita::from)?.let(::scartoDaIeriEsteso)?.let { righe += it }
 
     val mm = giorno.precipitationSum ?: 0.0
     val neve = (giorno.snowfallSum ?: 0.0) > 0.0 && (giorno.rainSum ?: 0.0) < mm / 2

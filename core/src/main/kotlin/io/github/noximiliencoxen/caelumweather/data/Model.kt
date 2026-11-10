@@ -132,6 +132,12 @@ data class Forecast(
      * perche' chi lo legge smette di andare a controllare.
      */
     val fetchedAt: LocalDateTime = LocalDateTime.now(),
+    /**
+     * Il giorno prima di oggi, staccato dalla settimana: serve solo al
+     * confronto ("3 gradi piu' di ieri"). Manca nelle scorte salvate prima che
+     * lo si chiedesse, e quando la risposta non lo porta.
+     */
+    val ieri: DayForecast? = null,
 ) {
     /**
      * Le ore raccolte per giornata, una volta sola.

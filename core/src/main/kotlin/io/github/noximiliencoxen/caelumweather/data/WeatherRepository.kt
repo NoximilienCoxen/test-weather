@@ -78,6 +78,10 @@ class WeatherRepository(
         // quindi l'ottavo non costa una richiesta in piu' ne' un endpoint
         // diverso - allunga soltanto la lista che gia' arriva.
         append("&forecast_days=8")
+        // Ieri, per poter dire "3 gradi piu' di ieri": stessa richiesta, una
+        // colonna in piu'. Chi legge la risposta lo stacca dalla settimana
+        // (`toForecast`), che continua a cominciare da oggi.
+        append("&past_days=1")
         append("&wind_speed_unit=ms")
         modelsQueryValue()?.let { append("&models=").append(it) }
         append("&current=").append(CURRENT_VARS)
@@ -310,9 +314,23 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
         )
     }.orEmpty()
 
+    // **La settimana comincia da oggi, anche quando la risposta comincia da
+    // ieri.** Tutto cio' che conta indici - l'ora scelta, il giorno toccato, i
+    // widget - da' per scontato che il primo giorno sia oggi e la prima ora la
+    // sua mezzanotte. "Oggi" e' quello della localita', letto dal blocco
+    // `current`, non quello del telefono: a Tokyo e' gia' domani. Una scorta
+    // vecchia, salvata prima di `past_days`, non ha niente da staccare e passa
+    // com'e'.
+    val oggiLi = current?.time?.take(10)?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+    val staccato = oggiLi?.takeIf { oggi -> days.any { it.date == oggi } && days.first().date < oggi }
+    val ieri = staccato?.let { oggi -> days.lastOrNull { it.date == oggi.minusDays(1) } }
+    val giorni = staccato?.let { oggi -> days.filter { it.date >= oggi } } ?: days
+    val ore = staccato?.let { oggi -> allHours.filter { it.time.toLocalDate() >= oggi } } ?: allHours
+
     return Forecast(
-        hours = allHours.take(HOURS_IN_DAY),
-        allHours = allHours,
+        hours = ore.take(HOURS_IN_DAY),
+        allHours = ore,
+        ieri = ieri,
         current = CurrentWeather(
             temperature = current?.temperature,
             apparent = current?.apparent,
@@ -325,7 +343,7 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             windGusts = current?.windGusts,
             isDay = (current?.isDay ?: 1) == 1,
         ),
-        days = days,
+        days = giorni,
         place = place,
         utcOffsetSeconds = utcOffsetSeconds ?: 0,
     )

@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import io.github.noximiliencoxen.caelumweather.data.SkyState
 import io.github.noximiliencoxen.caelumweather.ui.UiState
 import io.github.noximiliencoxen.caelumweather.data.MoonPhase
+import io.github.noximiliencoxen.caelumweather.data.scartoDaIeri
+import io.github.noximiliencoxen.caelumweather.data.scartoDaIeriBreve
 import io.github.noximiliencoxen.caelumweather.ui.WeatherViewModel
 import io.github.noximiliencoxen.caelumweather.ui.sala.CellaValore
 import io.github.noximiliencoxen.caelumweather.ui.sala.Didascalia
@@ -150,6 +152,18 @@ fun SalaOggiScreen(
                     style = SalaType.rowNote,
                     color = palette.inkFaint,
                 )
+                // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
+                // giorno, e la riga direbbe una cosa per un'altra. La riga
+                // manca del tutto quando ieri non c'e' (scorta vecchia).
+                val suIeri = if (futuro) null else scartoDaIeri(giorno, state.forecast?.ieri) { state.unit.from(it) }
+                if (suIeri != null) {
+                    Text(
+                        text = scartoDaIeriBreve(suIeri),
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                        maxLines = 1,
+                    )
+                }
             }
             // **Condividere il giorno mostrato**, non quello di oggi: se si e'
             // toccato sabato e' sabato che si vuole mandare a chi viene al mare.
@@ -299,6 +313,7 @@ internal fun testoDaCondividere(state: UiState, scelto: GiornoSettimana?): Strin
         vento = state.windUnit,
         allerte = state.alerts,
         giornoDetto = if (oggi) tr("oggi", "today") else "${scelto!!.esteso} ${scelto.data}",
+        ieri = if (oggi) previsione.ieri else null,
     )
     return "$titolo.\n$corpo\n— Caelum Weather"
 }

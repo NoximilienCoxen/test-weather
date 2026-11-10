@@ -50,6 +50,16 @@ class RiepilogoMattinoTest {
     }
 
     @Test
+    fun `ieri si nomina solo se lo scarto si sente`() {
+        fun con(massimaIeri: Double) = testiRiepilogo(
+            "Forlì", sereno, ore(), sette, TempUnit.CELSIUS, SalaWindUnit.KMH, emptyList(),
+            ieri = DayForecast(date = data.minusDays(1), label = "DOM", tempMax = massimaIeri),
+        ).second
+        assertEquals("4° più caldo di ieri. Niente pioggia.", con(17.2))
+        assertEquals("Niente pioggia.", con(20.6))
+    }
+
+    @Test
     fun `la pioggia dice da quando e quanta`() {
         val (_, testo) = testi(sereno.copy(precipitationSum = 3.2, rainSum = 3.2), ore(pioggiaDalle = 15))
         assertTrue(testo, testo.contains("Pioggia dalle 15 circa, 3,2 mm"))
