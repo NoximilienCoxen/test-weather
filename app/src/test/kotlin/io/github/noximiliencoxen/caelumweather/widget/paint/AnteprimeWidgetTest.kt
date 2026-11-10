@@ -69,7 +69,7 @@ class AnteprimeWidgetTest {
                 moonArt(3 / 8f, 0.78f, MoonSegment.GIBBOSA_CRESCENTE.label, type, ink)
             }
             scatta("anteprima-settimana-$sigla", 340f, 170f, Cut.MEDIO) { weekArt(it, posto.name, previsione.days, type, ink) }
-            scatta("anteprima-ore-$sigla", 340f, 170f, Cut.MEDIO) { hoursArt(it, posto.name, previsione.hours, type, ink) }
+            scatta("anteprima-ore-$sigla", 340f, 170f, Cut.MEDIO) { hoursArt(it, posto.name, previsione.hours.drop(10), type, ink) }
             scatta("anteprima-mini-$sigla", 70f, 70f, Cut.PICCOLO) { miniArt(previsione, type, ink) }
         }
     }
