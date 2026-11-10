@@ -73,16 +73,16 @@ sopra l'altra senza disinstallare).
 
 | | |
 |---|---|
-| AGP | 9.4.0 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
+| AGP | 9.4.1 — **ha Kotlin integrato**, il plugin `kotlin.android` NON va applicato |
 | Gradle | 9.6.0 — **minimo di AGP 9.4**, non una scelta |
 | JDK | 17 |
 | compileSdk | **37** — Compose 1.12 lo pretende; 36 non basta |
 | targetSdk / minSdk | 36 / 26 |
-| Kotlin | 2.4.10 |
-| Compose BOM | 2026.08.00 |
+| Kotlin | 2.4.21 |
+| Compose BOM | 2026.09.00 |
 | Glance | 1.2.0 |
-| core-ktx / activity-compose / lifecycle | 1.19.0 / 1.13.0 / 2.11.0 |
-| Test | JUnit 4.13.2, Robolectric 4.16.1 — solo `testImplementation` |
+| core-ktx / activity-compose / lifecycle | 1.19.1 / 1.13.0 / 2.11.0 |
+| Test | JUnit 4.13.2, Robolectric 4.17 — solo `testImplementation` |
 
 **Le versioni non si scrivono a memoria: le misura la CI.** Da questo container
 `dl.google.com` e Maven Central rispondono 403 al CONNECT del proxy, quindi qui
@@ -7819,3 +7819,33 @@ Il buffer `crash` e' rimasto vuoto per tutto il giro.
 
 **Non visto**: la notifica del mattino vera (si vedra' alle 08:00, lasciata
 accesa apposta), le icone delle scorciatoie nel menu del launcher.
+
+---
+
+## 56. Verso lo store
+
+Il 10 novembre 2026. Fino a qui l'app usciva solo come APK di debug su
+`apk-latest`; questa passata prepara il percorso per il Play Store senza
+toccare quello. **La guida passo per passo e' `PUBBLICAZIONE.md`**, qui solo
+cio' che riguarda il codice.
+
+- **Firma di rilascio da fuori**: `segreto()` in `app/` e `wear/build.gradle.kts`
+  legge `CAELUM_KEYSTORE`, `CAELUM_KEYSTORE_PASSWORD`, `CAELUM_KEY_ALIAS`,
+  `CAELUM_KEY_PASSWORD` da ambiente o proprieta' Gradle. Senza, tutto resta
+  com'era: release del telefono non firmata, quella dell'orologio con la chiave
+  di debug. La chiave vera non entra mai nel repository.
+- **`versionCode` dell'orologio = 1 000 000 + commit**: lo store tiene i due
+  bundle sotto lo stesso pacchetto e rifiuta due file con lo stesso numero.
+- **CI**: il job `build` ha il passo `bundleRelease (per lo store)` e
+  l'artifact `bundle` (`caelum-telefono.aab`, `caelum-orologio.aab`). Legge la
+  chiave dal segreto `CAELUM_KEYSTORE_BASE64`; senza segreti resta verde e
+  avvisa.
+- **`docs/privacy.md`** e **`fastlane/metadata/android/`**: informativa e testi
+  della scheda, it e en. Ogni frase e' stata riscontrata sul codice (gli host
+  contattati sono quelli di `Http`/`FonteAllerte`); se si aggiunge una fonte o
+  un permesso vanno aggiornati insieme a `SalaLegali`.
+- Kotlin 2.4.21 e kotlinx.serialization 1.12.0.
+
+**Non fatto, e conta**: la release minificata non e' mai stata aperta su un
+telefono; l'orologio esce senza R8; Gradle e' fermo a 9.6.0 (corrente 9.9.0)
+perche' un salto di wrapper si fa da solo, come in §2.

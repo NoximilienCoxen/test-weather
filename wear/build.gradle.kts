@@ -26,6 +26,29 @@ val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNul
     ?: 1
 val commitSha: String = comando("git", "rev-parse", "--short", "HEAD") ?: "ignoto"
 
+/**
+ * La chiave con cui si firma cio' che va sullo store, **letta da fuori**.
+ *
+ * Quattro variabili d'ambiente (o proprieta' Gradle con lo stesso nome):
+ * `CAELUM_KEYSTORE` (il percorso del file), `CAELUM_KEYSTORE_PASSWORD`,
+ * `CAELUM_KEY_ALIAS`, `CAELUM_KEY_PASSWORD`. In CI arrivano dai segreti del
+ * repository; il file della chiave **non sta nel repository** e non deve
+ * entrarci mai, al contrario di `debug.keystore` che e' pubblico per
+ * costruzione.
+ *
+ * Senza quelle variabili la build funziona lo stesso, e la release resta
+ * com'era prima. E' la stessa di `app`: il Data Layer vuole stessa firma. Vedi `PUBBLICAZIONE.md`.
+ */
+fun segreto(nome: String): String? =
+    providers.environmentVariable(nome).orElse(providers.gradleProperty(nome)).orNull?.ifBlank { null }
+
+val chiaveStore: String? = segreto("CAELUM_KEYSTORE")
+val chiaveStorePassword: String? = segreto("CAELUM_KEYSTORE_PASSWORD")
+val chiaveAlias: String? = segreto("CAELUM_KEY_ALIAS")
+val chiavePassword: String? = segreto("CAELUM_KEY_PASSWORD")
+val firmaDiRilascio: Boolean =
+    chiaveStore != null && chiaveStorePassword != null && chiaveAlias != null && chiavePassword != null
+
 android {
     namespace = "io.github.noximiliencoxen.caelum.wear"
     compileSdk = 37
@@ -36,7 +59,12 @@ android {
         minSdk = 30
         targetSdk = 36
 
-        versionCode = commitCount
+        // **Non lo stesso numero del telefono.** Lo store tiene telefono e
+        // orologio sotto lo stesso pacchetto, e rifiuta due file con lo stesso
+        // `versionCode`: il secondo caricato risulta "gia' usato". Un milione
+        // di scarto basta per sempre (il conto dei commit e' a qualche
+        // centinaio) e lascia leggibile il numero vero nelle ultime cifre.
+        versionCode = 1_000_000 + commitCount
         versionName = "1.0-$commitSha"
     }
 
@@ -46,6 +74,14 @@ android {
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
+        }
+        if (firmaDiRilascio) {
+            create("release") {
+                storeFile = rootProject.file(chiaveStore!!)
+                storePassword = chiaveStorePassword
+                keyAlias = chiaveAlias
+                keyPassword = chiavePassword
+            }
         }
     }
 
@@ -61,7 +97,9 @@ android {
             // `app/proguard-rules.pro`). Si accende quando l'orologio avra' un
             // percorso di rilascio che qualcuno ha davvero provato.
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            // Con la chiave di caricamento, quella; senza, la chiave di debug
+            // come prima. Sempre la stessa di `app`.
+            signingConfig = signingConfigs.getByName(if (firmaDiRilascio) "release" else "debug")
         }
     }
 
