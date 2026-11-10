@@ -19,8 +19,8 @@
         android:shortcutLongLabel="@string/scorciatoia_pioggia_lunga">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="io.github.noximiliencoxen.caelum"
-            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            android:targetPackage="io.github.noximiliencoxen.caelumweather"
+            android:targetClass="io.github.noximiliencoxen.caelumweather.MainActivity">
             <extra android:name="sala_widget" android:value="PIOGGIA" />
         </intent>
     </shortcut>
@@ -32,8 +32,8 @@
         android:shortcutLongLabel="@string/scorciatoia_settimana_lunga">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="io.github.noximiliencoxen.caelum"
-            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            android:targetPackage="io.github.noximiliencoxen.caelumweather"
+            android:targetClass="io.github.noximiliencoxen.caelumweather.MainActivity">
             <extra android:name="sala_widget" android:value="SETTIMANA" />
         </intent>
     </shortcut>
@@ -45,8 +45,8 @@
         android:shortcutLongLabel="@string/scorciatoia_localita_lunga">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="io.github.noximiliencoxen.caelum"
-            android:targetClass="io.github.noximiliencoxen.caelum.MainActivity">
+            android:targetPackage="io.github.noximiliencoxen.caelumweather"
+            android:targetClass="io.github.noximiliencoxen.caelumweather.MainActivity">
             <extra android:name="localita" android:value="true" />
         </intent>
     </shortcut>

@@ -15,7 +15,7 @@ plugins {
  * resta lo stesso di prima per non toccare gli import dell'app.
  */
 android {
-    namespace = "io.github.noximiliencoxen.caelum.core"
+    namespace = "io.github.noximiliencoxen.caelumweather.core"
     compileSdk = 37
 
     defaultConfig {

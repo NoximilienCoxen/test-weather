@@ -1,0 +1,28 @@
+package io.github.noximiliencoxen.caelumweather.wear
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+class WearActivity : ComponentActivity() {
+
+    private val viewModel: WearViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AggiornaOrologio.pianifica(this)
+        setContent {
+            val stato = viewModel.stato.collectAsStateWithLifecycle().value
+            WearApp(stato)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Un aggiornamento a ogni apertura; fra un'apertura e l'altra ci pensa
+        // `AggiornaOrologio`, per Tile e complicazione.
+        viewModel.aggiorna()
+    }
+}

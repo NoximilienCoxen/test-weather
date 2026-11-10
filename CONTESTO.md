@@ -49,7 +49,7 @@ git show origin/ci-artifacts:screenshots/scuro-d3-allerta-pallino.png > /tmp/y.p
 git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 ```
 
-**Il nome dell'app e' Caelum**, `io.github.noximiliencoxen.caelum`. Era
+**Il nome dell'app e' Caelum**, `io.github.noximiliencoxen.caelumweather`. Era
 `com.forli.meteo` con l'etichetta `Weather`, e nessuna delle due cose andava:
 l'app cerca qualunque localita' del mondo, quindi una citta' nel nome e' una
 smentita in cima allo schermo, e un'etichetta inglese in un'app tutta italiana
@@ -606,7 +606,7 @@ contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n io.github.noximiliencoxen.caelum/.MainActivity --ei ora 2 --ei meteo 63
+adb shell am start -n io.github.noximiliencoxen.caelumweather/.MainActivity --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
@@ -663,7 +663,7 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-Per le prestazioni, `dumpsys gfxinfo io.github.noximiliencoxen.caelum framestats`. **Attenzione
+Per le prestazioni, `dumpsys gfxinfo io.github.noximiliencoxen.caelumweather framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di
@@ -1284,7 +1284,7 @@ pure ci finiva sopra.
 
 **48. La ridenominazione del pacchetto era ferma a meta', e il progetto non
 compilava.** Nell'indice convivevano due alberi sorgente: i 76 file nuovi sotto
-`io/github/noximiliencoxen/caelum`, aggiunti, e i 55 vecchi sotto
+`io/github/noximiliencoxen/caelumweather`, aggiunti, e i 55 vecchi sotto
 `com/forli/meteo`, mai cancellati. `build.gradle.kts` e il manifesto puntavano
 gia' al pacchetto nuovo, quindi i vecchi cercavano una `com.forli.meteo.R` che
 non esisteva piu': dieci errori di compilazione, e niente da installare su un
@@ -1799,7 +1799,7 @@ Le tre regole sul colore che seguono sono costate una passata intera e valgono
 identiche sul feed.
 
 **Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
-cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelum/ui/theme/Contrast.kt)
+cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelumweather/ui/theme/Contrast.kt)
 e la formula di contrasto della WCAG 2.1. Il difetto che questo toglie di mezzo
 era esattamente uno scritto a mano: il titolo del dettaglio era `colors.text`,
 cioe' quasi nero a mezzogiorno, sopra un pannello antracite fisso. E l'etichetta
@@ -7448,7 +7448,7 @@ orologio hanno in comune), `:app` (il telefono, com'era) e `:wear`.
 ### 50.1 `:core`, e cosa ci sta dentro
 
 `data/` e' quasi tutto JVM puro, e si e' spostato **senza cambiare package**
-(`io.github.noximiliencoxen.caelum.data`), cosi' nessun import dell'app e'
+(`io.github.noximiliencoxen.caelumweather.data`), cosi' nessun import dell'app e'
 cambiato. Sono in `core/`: `Http`, `Model`, `OpenMeteoDto`, `WeatherModel`,
 `WeatherRepository`, `ScortaPrevisioni`, `Place`, `Wmo`, `SunClock`, la parte
 pura di `Lingua` (`Lingue`, `tr()`, `inInglese()`), i glifi del tempo
@@ -7550,7 +7550,7 @@ tramonto, in italiano e in inglese.
 **Cosa si e' spostato in `:core`**, senza cambiare package: `ui/sala/SalaTheme.kt`
 (tavole del cielo, fasi, `salaPalette`, `SalaType`), `ui/theme/Contrast.kt` e i
 caratteri Caprasimo e Figtree (`core/src/main/res/font`). `SalaTheme` ora legge
-`io.github.noximiliencoxen.caelum.core.R`; `archivo_variable` resta in `app`
+`io.github.noximiliencoxen.caelumweather.core.R`; `archivo_variable` resta in `app`
 perche' lo usano solo il tema Material e i widget. `core` prende in piu'
 `ui-text`, `ui-util` e `runtime` (per `TextStyle`, `lerp` e `@Immutable`),
 sempre senza compilatore di Compose.
@@ -7593,7 +7593,7 @@ fascia. A mezzogiorno e a mezzanotte vale zero, e una prova lo tiene fermo.
   (con `auto_time 1` torna sbagliata). Per vedere l'alba o il tramonto basta
   spostare l'ora cosi'; le condizioni attuali pero' restano quelle vere.
 - La lingua dell'app si impone senza telefono con `cmd locale
-  set-app-locales io.github.noximiliencoxen.caelum --locales it-IT`.
+  set-app-locales io.github.noximiliencoxen.caelumweather --locales it-IT`.
 - La copia di lavoro su questa macchina aveva nove file di `app/.../data`
   rimasti da prima dello spostamento in `core`: con loro l'app non arrivava al
   dex (`mergeDexDebug`, classi doppie). Tolti; il lavoro sta sul ramo
@@ -7654,7 +7654,7 @@ protolayout 1.4.2, watchface-complications 1.3.0, concurrent-futures-ktx 1.3.0
 **Come si prova sull'emulatore**
 - Tile: `adb shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE
   --es operation add-tile --ecn component
-  io.github.noximiliencoxen.caelum/io.github.noximiliencoxen.caelum.wear.TileCaelum`,
+  io.github.noximiliencoxen.caelumweather/io.github.noximiliencoxen.caelumweather.wear.TileCaelum`,
   poi dal quadrante si scorre verso sinistra (prima `KEYCODE_WAKEUP`, e una
   pausa: lo scorrimento dato mentre si sveglia va perso). `show-tile` non
   esiste.
@@ -7721,11 +7721,11 @@ piu' grave di oggi. Le righe senza niente da dire non ci sono.
 
 Prove JVM in `app/src/test/.../RiepilogoMattinoTest.kt` (testi, ritardo,
 finestra). Un giro si forza con
-`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler io.github.noximiliencoxen.caelum <id>`
+`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler io.github.noximiliencoxen.caelumweather <id>`
 (senza `-n` il comando non trova il lavoro: WorkManager usa uno spazio di nomi
 suo). Il numero e' quello della riga
 `JOB androidx.work.systemjobscheduler:u0aNNN/<id>: ... #RiepilogoMattinoWorker`
-in `adb shell dumpsys jobscheduler io.github.noximiliencoxen.caelum`. La
+in `adb shell dumpsys jobscheduler io.github.noximiliencoxen.caelumweather`. La
 notifica esce solo dentro la finestra: di notte il giro salta e si riprenota,
 ed e' giusto cosi'. Prova sul telefono in §55.
 
@@ -7798,7 +7798,7 @@ provati anch'essi.
 - Scorciatoie: `dumpsys shortcut` le elenca tutte e tre; `--es localita true`
   apre "Le località".
 - Riquadro: aggiunto con `cmd statusbar add-tile
-  io.github.noximiliencoxen.caelum/.tile.RiquadroMeteo`. SystemUI lo riporta
+  io.github.noximiliencoxen.caelumweather/.tile.RiquadroMeteo`. SystemUI lo riporta
   con `label=16° · Coperto, secondaryLabel=Noceto, state=2`. Su Android 17 nella
   tendina compatta e' un tondo con la sola icona; il tocco (app chiusa prima
   con `force-stop`) apre `MainActivity`.
@@ -7852,7 +7852,11 @@ perche' un salto di wrapper si fa da solo, come in §2.
 
 **Il nome visibile e' "Caelum Weather"** (10 novembre): etichetta di telefono e
 orologio (`app_name`), velo d'avvio, firma del testo condiviso, scheda e
-informativa. Pacchetto, classi e tema restano `caelum`/`Caelum`. Sotto l'icona
+informativa. **Anche il pacchetto e' cambiato**: `io.github.noximiliencoxen.caelumweather`
+(cartelle, `namespace`, `applicationId`, profilo, script; sostituzione meccanica,
+anche in questo file). Chi aveva l'app da `apk-latest` la disinstalla e la
+reinstalla una volta. Classi e tema restano `Caelum*`; il percorso del Data
+Layer resta `/caelum/stato`. Sotto l'icona
 il launcher puo' troncarlo: da guardare in mano. AGP e' passata a 9.5.1 senza
 chiedere un Gradle piu' nuovo.
 
