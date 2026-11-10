@@ -10,85 +10,6 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
-                "areaDesc": "Cordova",
-                "geocode": {
-                    "SAME": [
-                        "002063"
-                    ],
-                    "UGC": [
-                        "AKZ735"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ735"
-                ],
-                "references": [],
-                "sent": "2026-11-10T02:21:00-09:00",
-                "effective": "2026-11-10T02:21:00-09:00",
-                "onset": "2026-11-10T02:21:00-09:00",
-                "expires": "2026-11-10T09:00:00-09:00",
-                "ends": "2026-11-10T09:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Wind Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "High Wind Warning issued November 10 at 2:21AM AKST until November 10 at 9:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Southeast winds 20 to 35 mph with gusts up to 80 mph.\n\n* WHERE...Cordova.\n\n* WHEN...Until 9 AM AKST this morning.\n\n* IMPACTS...High winds may move loose debris, damage property, and\ncause power outages. Travel will be difficult.\n\n* ADDITIONAL DETAILS...Strong winds will continue through mid-morning\nTuesday before quickly diminishing. Gusts to 80 mph are expected in\ntown, especially between 2 AM and 6 AM this morning, with gusts up\nto 60 mph at the airport.",
-                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind. Prepare for the possibility of widespread\npower outages. Use caution if you must drive.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK71 PAFC 101121"
-                    ],
-                    "NWSheadline": [
-                        "HIGH WIND WARNING IN EFFECT UNTIL 9 AM AKST THIS MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.PAFC.HW.W.0014.261110T1121Z-261110T1800Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T09:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "HWW"
-                    ],
-                    "NationalWeatherService": [
-                        "HWW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.002.1",
             "type": "Feature",
             "geometry": null,
@@ -175,6 +96,85 @@
                     ],
                     "NationalWeatherService": [
                         "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.291c42b1294b8794f782285af4bb937a0fd99f65.001.1",
+                "areaDesc": "Cordova",
+                "geocode": {
+                    "SAME": [
+                        "002063"
+                    ],
+                    "UGC": [
+                        "AKZ735"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ735"
+                ],
+                "references": [],
+                "sent": "2026-11-10T02:21:00-09:00",
+                "effective": "2026-11-10T02:21:00-09:00",
+                "onset": "2026-11-10T02:21:00-09:00",
+                "expires": "2026-11-10T09:00:00-09:00",
+                "ends": "2026-11-10T09:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Wind Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "High Wind Warning issued November 10 at 2:21AM AKST until November 10 at 9:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Southeast winds 20 to 35 mph with gusts up to 80 mph.\n\n* WHERE...Cordova.\n\n* WHEN...Until 9 AM AKST this morning.\n\n* IMPACTS...High winds may move loose debris, damage property, and\ncause power outages. Travel will be difficult.\n\n* ADDITIONAL DETAILS...Strong winds will continue through mid-morning\nTuesday before quickly diminishing. Gusts to 80 mph are expected in\ntown, especially between 2 AM and 6 AM this morning, with gusts up\nto 60 mph at the airport.",
+                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind. Prepare for the possibility of widespread\npower outages. Use caution if you must drive.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK71 PAFC 101121"
+                    ],
+                    "NWSheadline": [
+                        "HIGH WIND WARNING IN EFFECT UNTIL 9 AM AKST THIS MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFC.HW.W.0014.261110T1121Z-261110T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T09:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "HWW"
+                    ],
+                    "NationalWeatherService": [
+                        "HWW"
                     ]
                 }
             }
@@ -286,47 +286,47 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
-                "areaDesc": "Anchorage Hillside / Eagle River",
+                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
+                "areaDesc": "Thompson Pass",
                 "geocode": {
                     "SAME": [
-                        "002020"
+                        "002063"
                     ],
                     "UGC": [
-                        "AKZ702"
+                        "AKZ732"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ702"
+                    "https://api.weather.gov/zones/forecast/AKZ732"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.006.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.006.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-09T14:05:00-09:00"
                     },
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.006.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.006.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-09T14:07:00-09:00"
                     },
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.003.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-09T23:19:00-09:00"
                     },
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.006.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.006.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.002.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-09T10:39:00-09:00"
                     }
@@ -334,8 +334,119 @@
                 "sent": "2026-11-10T00:06:00-09:00",
                 "effective": "2026-11-10T00:06:00-09:00",
                 "onset": "2026-11-10T00:06:00-09:00",
-                "expires": "2026-11-10T09:00:00-09:00",
-                "ends": "2026-11-10T09:00:00-09:00",
+                "expires": "2026-11-10T12:00:00-09:00",
+                "ends": "2026-11-10T12:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Extreme",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Blizzard Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Blizzard Warning issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Blizzard conditions likely. Total snow accumulations between\n8 and 16 inches. Winds could gust as high as 50 mph. Visibility\nreduced to as low as one quarter mile in blowing snow.\n\n* WHERE...Thompson Pass.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced within heavy snow.\n\n* ADDITIONAL DETAILS...Heavy snow is likely through Tuesday morning.\nConditions will begin to improve starting late Tuesday morning as\nwinds begin to slowly diminish and snow becomes lighter and more\nshowery in nature.",
+                "instruction": "A Blizzard Warning means severe winter weather conditions are\nexpected or occurring. Falling and blowing snow with strong winds and\npoor visibilities are likely. This will lead to whiteout conditions,\nmaking travel very hazardous. If you must travel, have a winter\nsurvival kit with you. If you get stranded, stay with your vehicle.\n\nFor the latest road conditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 100906"
+                    ],
+                    "NWSheadline": [
+                        "BLIZZARD WARNING REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.BZ.W.0014.000000T0000Z-261110T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T12:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.002.2,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.001.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.002.2,2026-11-09T03:15:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "BZW"
+                    ],
+                    "NationalWeatherService": [
+                        "BZW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
+                "areaDesc": "SW Kenai Peninsula; NW Kenai Peninsula; Skilak Lake",
+                "geocode": {
+                    "SAME": [
+                        "002122"
+                    ],
+                    "UGC": [
+                        "AKZ722",
+                        "AKZ723",
+                        "AKZ724"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ722",
+                    "https://api.weather.gov/zones/forecast/AKZ723",
+                    "https://api.weather.gov/zones/forecast/AKZ724"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.007.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.007.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:05:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.007.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.007.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:07:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.005.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.005.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T23:19:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.007.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.007.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T10:39:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-10T00:06:00-09:00",
+                "effective": "2026-11-10T00:06:00-09:00",
+                "onset": "2026-11-10T00:06:00-09:00",
+                "expires": "2026-11-10T12:00:00-09:00",
+                "ends": "2026-11-10T12:00:00-09:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -345,8 +456,8 @@
                 "event": "Winter Weather Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 9:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations 1 to\n5 inches, highest amounts above 1000 feet elevation. Ice\naccumulations of a trace to a light glaze. Winds gusting as high as\n60 mph, mainly across southern parts of the Anchorage Hillside,\nincluding Upper Potter Valley and Bear Valley.\n\n* WHERE...Anchorage and Eagle River Hillsides.\n\n* WHEN...Until 9 AM AKST Tuesday.\n\n* IMPACTS...Travel could be difficult. Strong winds could cause\ndamage to trees and power lines.\n\n* ADDITIONAL DETAILS...Areas of light snow will transition to\nfreezing rain before becoming all rain with above freezing\ntemperatures Tuesday morning. There is increased confidence in a\nquicker warm-up, meaning less snow accumulation and a quicker\nchangeover to rain.",
+                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations up to\n3 inches and ice accumulations up to one tenth of an inch. Winds\ngusting as high as 45 mph, mainly along the Inlet.\n\n* WHERE...NW Kenai Peninsula, SW Kenai Peninsula, and Skilak Lake.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be difficult. Along the coast, gusty winds\ncould bring down a few tree branches. Roads, and especially bridges\nand overpasses, will likely become slick and hazardous overnight\ninto early Tuesday morning.\n\n* ADDITIONAL DETAILS...Areas of light snow will transition to\nfreezing rain before becoming all rain with above freezing\ntemperatures Tuesday morning. There is increased confidence in a\nquicker warm-up, meaning less snow accumulation and a quicker\nchangeover to rain. Areas at sea level will likely see little snow\naccumulation, with most of the accumulation expected at higher\nelevations, including the Homer Bluffs.",
                 "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
                 "response": "Execute",
                 "note": null,
@@ -358,7 +469,7 @@
                         "WWAK41 PAFC 100906"
                     ],
                     "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 9 AM AKST TUESDAY"
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -366,13 +477,195 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T1800Z/"
+                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T2100Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-10T09:00:00-09:00"
+                        "2026-11-10T12:00:00-09:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.007.1,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.006.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.007.1,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c320e6d3b099419dbf6e2ab5f5b46968f772389a.002.1,2026-11-08T12:26:00-09:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.008.1,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.007.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.008.1,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c320e6d3b099419dbf6e2ab5f5b46968f772389a.003.1,2026-11-08T12:26:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
+                "areaDesc": "Ernestine",
+                "geocode": {
+                    "SAME": [
+                        "002066"
+                    ],
+                    "UGC": [
+                        "AKZ744"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ744"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:05:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:07:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.007.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.007.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T23:19:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.008.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.008.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T10:39:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-10T00:06:00-09:00",
+                "effective": "2026-11-10T00:06:00-09:00",
+                "onset": "2026-11-10T00:06:00-09:00",
+                "expires": "2026-11-10T12:00:00-09:00",
+                "ends": "2026-11-10T12:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Mixed precipitation likely. Total snow accumulations between\n6 and 12 inches. Ice accumulations around a trace.\n\n* WHERE...Richardson Highway from mile marker 60 and south.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced within heavy snow.\n\n* ADDITIONAL DETAILS...Heavy snow is likely through Tuesday morning.\nThe higher-end snow amounts are expected towards the north side of\nThompson Pass with the lower-end snow totals expected to the north.\nFreezing rain potential is decreasing with this system, although it\ncannot be fully ruled out. There is a 10 percent or less chance of\nfreezing rain mixing in with the snow as temperatures look cold\nenough for all snow. Tonsina is not expected to see much snow\naccumulation from this system.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 100906"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T12:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.005.2,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.005.2,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.004.1,2026-11-09T05:15:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
+                "areaDesc": "Sutton / Upper Matanuska Valley; Eureka / Tahneta Pass",
+                "geocode": {
+                    "SAME": [
+                        "002170"
+                    ],
+                    "UGC": [
+                        "AKZ713",
+                        "AKZ714"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ713",
+                    "https://api.weather.gov/zones/forecast/AKZ714"
+                ],
+                "references": [],
+                "sent": "2026-11-10T00:06:00-09:00",
+                "effective": "2026-11-10T00:06:00-09:00",
+                "onset": "2026-11-10T00:06:00-09:00",
+                "expires": "2026-11-10T11:00:00-09:00",
+                "ends": "2026-11-10T11:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 11:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Snow expected. Total snow accumulations between 4 and 8\ninches.\n\n* WHERE...Glenn Highway from Mile Post 90 to 150, including Eureka\nand Tahneta Pass.\n\n* WHEN...Until 11 AM AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced due to heavier snow and gusty winds.\n\n* ADDITIONAL DETAILS...Steady snow will continue through Tuesday\nmorning before tapering off. Snow may be heavy at times through 7\nAM Tuesday. Winds may gust to around 20 mph times resulting in\nlocalized areas of drifting snow.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 100906"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY IN EFFECT UNTIL 11 AM AKST TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.PAFC.WW.Y.0052.000000T0000Z-261110T2000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T11:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -497,35 +790,58 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.002.1",
-                "areaDesc": "Sutton / Upper Matanuska Valley; Eureka / Tahneta Pass",
+                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.004.1",
+                "areaDesc": "Anchorage Hillside / Eagle River",
                 "geocode": {
                     "SAME": [
-                        "002170"
+                        "002020"
                     ],
                     "UGC": [
-                        "AKZ713",
-                        "AKZ714"
+                        "AKZ702"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ713",
-                    "https://api.weather.gov/zones/forecast/AKZ714"
+                    "https://api.weather.gov/zones/forecast/AKZ702"
                 ],
-                "references": [],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.006.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.006.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:05:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.006.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.006.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:07:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T23:19:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.006.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.006.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T10:39:00-09:00"
+                    }
+                ],
                 "sent": "2026-11-10T00:06:00-09:00",
                 "effective": "2026-11-10T00:06:00-09:00",
                 "onset": "2026-11-10T00:06:00-09:00",
-                "expires": "2026-11-10T11:00:00-09:00",
-                "ends": "2026-11-10T11:00:00-09:00",
+                "expires": "2026-11-10T09:00:00-09:00",
+                "ends": "2026-11-10T09:00:00-09:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
                 "severity": "Moderate",
                 "certainty": "Likely",
@@ -533,8 +849,8 @@
                 "event": "Winter Weather Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 11:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Snow expected. Total snow accumulations between 4 and 8\ninches.\n\n* WHERE...Glenn Highway from Mile Post 90 to 150, including Eureka\nand Tahneta Pass.\n\n* WHEN...Until 11 AM AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced due to heavier snow and gusty winds.\n\n* ADDITIONAL DETAILS...Steady snow will continue through Tuesday\nmorning before tapering off. Snow may be heavy at times through 7\nAM Tuesday. Winds may gust to around 20 mph times resulting in\nlocalized areas of drifting snow.",
+                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 9:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations 1 to\n5 inches, highest amounts above 1000 feet elevation. Ice\naccumulations of a trace to a light glaze. Winds gusting as high as\n60 mph, mainly across southern parts of the Anchorage Hillside,\nincluding Upper Potter Valley and Bear Valley.\n\n* WHERE...Anchorage and Eagle River Hillsides.\n\n* WHEN...Until 9 AM AKST Tuesday.\n\n* IMPACTS...Travel could be difficult. Strong winds could cause\ndamage to trees and power lines.\n\n* ADDITIONAL DETAILS...Areas of light snow will transition to\nfreezing rain before becoming all rain with above freezing\ntemperatures Tuesday morning. There is increased confidence in a\nquicker warm-up, meaning less snow accumulation and a quicker\nchangeover to rain.",
                 "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
                 "response": "Execute",
                 "note": null,
@@ -546,7 +862,7 @@
                         "WWAK41 PAFC 100906"
                     ],
                     "NWSheadline": [
-                        "WINTER WEATHER ADVISORY IN EFFECT UNTIL 11 AM AKST TUESDAY"
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 9 AM AKST TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -554,10 +870,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.EXB.PAFC.WW.Y.0052.000000T0000Z-261110T2000Z/"
+                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T1800Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-10T11:00:00-09:00"
+                        "2026-11-10T09:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.007.1,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.006.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.007.1,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c320e6d3b099419dbf6e2ab5f5b46968f772389a.002.1,2026-11-08T12:26:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -570,325 +889,6 @@
                     ],
                     "NationalWeatherService": [
                         "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.008.1",
-                "areaDesc": "Ernestine",
-                "geocode": {
-                    "SAME": [
-                        "002066"
-                    ],
-                    "UGC": [
-                        "AKZ744"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ744"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:05:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:07:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.007.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.007.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T23:19:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.008.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.008.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T10:39:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-10T00:06:00-09:00",
-                "effective": "2026-11-10T00:06:00-09:00",
-                "onset": "2026-11-10T00:06:00-09:00",
-                "expires": "2026-11-10T12:00:00-09:00",
-                "ends": "2026-11-10T12:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Mixed precipitation likely. Total snow accumulations between\n6 and 12 inches. Ice accumulations around a trace.\n\n* WHERE...Richardson Highway from mile marker 60 and south.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced within heavy snow.\n\n* ADDITIONAL DETAILS...Heavy snow is likely through Tuesday morning.\nThe higher-end snow amounts are expected towards the north side of\nThompson Pass with the lower-end snow totals expected to the north.\nFreezing rain potential is decreasing with this system, although it\ncannot be fully ruled out. There is a 10 percent or less chance of\nfreezing rain mixing in with the snow as temperatures look cold\nenough for all snow. Tonsina is not expected to see much snow\naccumulation from this system.",
-                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 100906"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T12:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.005.2,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.005.2,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.004.1,2026-11-09T05:15:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.006.1",
-                "areaDesc": "SW Kenai Peninsula; NW Kenai Peninsula; Skilak Lake",
-                "geocode": {
-                    "SAME": [
-                        "002122"
-                    ],
-                    "UGC": [
-                        "AKZ722",
-                        "AKZ723",
-                        "AKZ724"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ722",
-                    "https://api.weather.gov/zones/forecast/AKZ723",
-                    "https://api.weather.gov/zones/forecast/AKZ724"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.007.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.007.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:05:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.007.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.007.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:07:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.005.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.005.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T23:19:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.007.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.007.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T10:39:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-10T00:06:00-09:00",
-                "effective": "2026-11-10T00:06:00-09:00",
-                "onset": "2026-11-10T00:06:00-09:00",
-                "expires": "2026-11-10T12:00:00-09:00",
-                "ends": "2026-11-10T12:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations up to\n3 inches and ice accumulations up to one tenth of an inch. Winds\ngusting as high as 45 mph, mainly along the Inlet.\n\n* WHERE...NW Kenai Peninsula, SW Kenai Peninsula, and Skilak Lake.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be difficult. Along the coast, gusty winds\ncould bring down a few tree branches. Roads, and especially bridges\nand overpasses, will likely become slick and hazardous overnight\ninto early Tuesday morning.\n\n* ADDITIONAL DETAILS...Areas of light snow will transition to\nfreezing rain before becoming all rain with above freezing\ntemperatures Tuesday morning. There is increased confidence in a\nquicker warm-up, meaning less snow accumulation and a quicker\nchangeover to rain. Areas at sea level will likely see little snow\naccumulation, with most of the accumulation expected at higher\nelevations, including the Homer Bluffs.",
-                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 100906"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0052.000000T0000Z-261110T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T12:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.008.1,2026-11-09T03:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.007.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.008.1,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c320e6d3b099419dbf6e2ab5f5b46968f772389a.003.1,2026-11-08T12:26:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9cf94126c465decc6147e9313b69b6de1bfca6b2.001.1",
-                "areaDesc": "Thompson Pass",
-                "geocode": {
-                    "SAME": [
-                        "002063"
-                    ],
-                    "UGC": [
-                        "AKZ732"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ732"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.19822e33c14783e9cf45efa15a99495a680cbc52.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:05:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.b6454935de143984ce008f354dc66b4646108031.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:07:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bdb5d74778557fc8f7faf5b923dca80dd881b48c.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T23:19:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ec5d4d677b059298432868e9106c26fd951adeb0.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T10:39:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-10T00:06:00-09:00",
-                "effective": "2026-11-10T00:06:00-09:00",
-                "onset": "2026-11-10T00:06:00-09:00",
-                "expires": "2026-11-10T12:00:00-09:00",
-                "ends": "2026-11-10T12:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Extreme",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Blizzard Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Blizzard Warning issued November 10 at 12:06AM AKST until November 10 at 12:00PM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Blizzard conditions likely. Total snow accumulations between\n8 and 16 inches. Winds could gust as high as 50 mph. Visibility\nreduced to as low as one quarter mile in blowing snow.\n\n* WHERE...Thompson Pass.\n\n* WHEN...Until noon AKST Tuesday.\n\n* IMPACTS...Travel could be very difficult. Visibility could be\nsignificantly reduced within heavy snow.\n\n* ADDITIONAL DETAILS...Heavy snow is likely through Tuesday morning.\nConditions will begin to improve starting late Tuesday morning as\nwinds begin to slowly diminish and snow becomes lighter and more\nshowery in nature.",
-                "instruction": "A Blizzard Warning means severe winter weather conditions are\nexpected or occurring. Falling and blowing snow with strong winds and\npoor visibilities are likely. This will lead to whiteout conditions,\nmaking travel very hazardous. If you must travel, have a winter\nsurvival kit with you. If you get stranded, stay with your vehicle.\n\nFor the latest road conditions call 5 1 1 or visit 511.alaska.gov.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 100906"
-                    ],
-                    "NWSheadline": [
-                        "BLIZZARD WARNING REMAINS IN EFFECT UNTIL NOON AKST TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.BZ.W.0014.000000T0000Z-261110T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T12:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.290bd704151f8ffee99ee4f2cf1916ddd3546cf0.002.2,2026-11-09T03:29:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.76a5644596f00b8ddbe0096dc2e0d05ebb1f3d2f.001.1,2026-11-09T05:15:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.35010bfad1cb7288821b6355cc4aa2b906f10b0f.002.2,2026-11-09T03:15:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "BZW"
-                    ],
-                    "NationalWeatherService": [
-                        "BZW"
                     ]
                 }
             }
@@ -1069,98 +1069,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
-                "areaDesc": "City and Borough of Yakutat",
-                "geocode": {
-                    "SAME": [
-                        "002282"
-                    ],
-                    "UGC": [
-                        "AKZ317"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ317"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1b7bc7dc2c6a7b115157f388181064ce52ed688e.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.1b7bc7dc2c6a7b115157f388181064ce52ed688e.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T14:51:00-09:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f93e41320147c1811b49f42223ef8eece4c6cfa4.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f93e41320147c1811b49f42223ef8eece4c6cfa4.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T15:07:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-09T20:54:00-09:00",
-                "effective": "2026-11-09T20:54:00-09:00",
-                "onset": "2026-11-09T20:54:00-09:00",
-                "expires": "2026-11-10T05:00:00-09:00",
-                "ends": "2026-11-10T05:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Juneau AK",
-                "headline": "Wind Advisory issued November 9 at 8:54PM AKST until November 10 at 5:00AM AKST by NWS Juneau AK",
-                "description": "* WHAT...East winds 20 to 30 mph with gusts up to 55 mph expected.\n\n* WHERE...City and Borough of Yakutat.\n\n* WHEN...Until 5 AM AKST Tuesday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Wind gusts will  peak through the evening\nbefore diminishing into early Tuesday morning.",
-                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWAJK"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK77 PAJK 100554"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 5 AM AKST TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAJK.WI.Y.0061.000000T0000Z-261110T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T05:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b353418b74b677d76e86c57a338e5c9753e1200a.004.1,2026-11-09T12:40:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8dd5a942a180d686928fb0ae56659e02ad898171.004.1,2026-11-09T04:41:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.13a5d9b1d9babbaa92650843e7d65392cfafc030.004.1,2026-11-08T20:56:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5c9c1e92a7ea56ae93d9cf960c9e04974205e076.005.1,2026-11-08T13:24:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.003.1",
             "type": "Feature",
             "geometry": null,
@@ -1318,6 +1226,98 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-10T12:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.4319f7b0c848d7e7c27fe8bd4238dda6c6299a34.002.1",
+                "areaDesc": "City and Borough of Yakutat",
+                "geocode": {
+                    "SAME": [
+                        "002282"
+                    ],
+                    "UGC": [
+                        "AKZ317"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ317"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1b7bc7dc2c6a7b115157f388181064ce52ed688e.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.1b7bc7dc2c6a7b115157f388181064ce52ed688e.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T14:51:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f93e41320147c1811b49f42223ef8eece4c6cfa4.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f93e41320147c1811b49f42223ef8eece4c6cfa4.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-09T15:07:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-09T20:54:00-09:00",
+                "effective": "2026-11-09T20:54:00-09:00",
+                "onset": "2026-11-09T20:54:00-09:00",
+                "expires": "2026-11-10T05:00:00-09:00",
+                "ends": "2026-11-10T05:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Juneau AK",
+                "headline": "Wind Advisory issued November 9 at 8:54PM AKST until November 10 at 5:00AM AKST by NWS Juneau AK",
+                "description": "* WHAT...East winds 20 to 30 mph with gusts up to 55 mph expected.\n\n* WHERE...City and Borough of Yakutat.\n\n* WHEN...Until 5 AM AKST Tuesday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Wind gusts will  peak through the evening\nbefore diminishing into early Tuesday morning.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWAJK"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK77 PAJK 100554"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 5 AM AKST TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAJK.WI.Y.0061.000000T0000Z-261110T1400Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T05:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b353418b74b677d76e86c57a338e5c9753e1200a.004.1,2026-11-09T12:40:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8dd5a942a180d686928fb0ae56659e02ad898171.004.1,2026-11-09T04:41:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.13a5d9b1d9babbaa92650843e7d65392cfafc030.004.1,2026-11-08T20:56:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5c9c1e92a7ea56ae93d9cf960c9e04974205e076.005.1,2026-11-08T13:24:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -1602,5 +1602,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-10T11:27:21+00:00"
+    "updated": "2026-11-10T12:05:01+00:00"
 }
