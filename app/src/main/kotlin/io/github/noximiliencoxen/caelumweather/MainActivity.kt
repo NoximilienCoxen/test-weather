@@ -8,6 +8,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.noximiliencoxen.caelumweather.lingua.Lingua
 import io.github.noximiliencoxen.caelumweather.lingua.Lingue
+import io.github.noximiliencoxen.caelumweather.lingua.inizializza
+import io.github.noximiliencoxen.caelumweather.sync.SincronizzaOrologio
 import io.github.noximiliencoxen.caelumweather.notifiche.AllerteUfficialiWorker
 import io.github.noximiliencoxen.caelumweather.notifiche.PioggiaInArrivoWorker
 import io.github.noximiliencoxen.caelumweather.notifiche.RiepilogoMattinoWorker
@@ -38,6 +40,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // La lingua puo' essere stata cambiata dalle impostazioni di sistema
+        // mentre l'app era viva: il sistema ricrea l'attivita', non il
+        // processo, e la scelta in memoria sarebbe quella di prima.
+        if (Lingue.inizializza(this)) {
+            AggiornaWidgetWorker.appenaPossibile(this)
+            SincronizzaOrologio.linguaCambiata()
+        }
         // Il tocco sul widget si applica solo al primo avvio dell'intento: la
         // stessa attivita' ricreata (rotazione, ritorno dai recenti) lo
         // riceverebbe di nuovo e riaprirebbe una visita gia' finita.
