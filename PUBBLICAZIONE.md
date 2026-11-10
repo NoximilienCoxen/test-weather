@@ -119,4 +119,6 @@ adb install app/build/outputs/apk/release/app-release.apk
   esiste "Caelum - Local AI assistant" (altra categoria) e su iOS "iCaelum"
   (meteo, solo iPhone): nessuna si chiama esattamente cosi', ma in caso di
   contestazione sul nome conviene saperlo. Il pacchetto e'
-  `io.github.noximiliencoxen.caelumweather`.
+  `io.github.noximiliencoxen.caelumweather`. Sotto l'icona compare solo
+  "Caelum" (il nome intero verrebbe troncato); il titolo dello store porta una
+  coda descrittiva, entro i 30 caratteri: "Caelum Weather: meteo, allerte".

@@ -11,6 +11,12 @@
         segnaposto inglese rimasto in mezzo a un'app tutta in italiano.
     -->
     <string name="app_name">Caelum Weather</string>
+    <!--
+        Sotto l'icona lo spazio e' di una dozzina di lettere: il nome intero
+        finirebbe troncato in "Caelum Weat...". L'icona porta il nome breve,
+        le impostazioni di sistema e lo store quello intero.
+    -->
+    <string name="app_name_icona" translatable="false">Caelum</string>
 
     <!--
         I widget si scelgono da una lista in cui compare solo il nome: se si
