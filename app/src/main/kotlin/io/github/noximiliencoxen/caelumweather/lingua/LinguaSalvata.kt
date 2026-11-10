@@ -80,7 +80,6 @@ private fun allineaAlSistema(context: Context, prefs: SharedPreferences, salvata
     return scelta
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
 private fun SceltaLingua.perIlSistema(): LocaleList = when (this) {
     SceltaLingua.AUTOMATICA -> LocaleList.getEmptyLocaleList()
     SceltaLingua.ITALIANO -> LocaleList.forLanguageTags("it")

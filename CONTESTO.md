@@ -7860,3 +7860,44 @@ Layer resta `/caelum/stato`. Sotto l'icona
 il launcher puo' troncarlo: da guardare in mano. AGP e' passata a 9.5.1 senza
 chiedere un Gradle piu' nuovo.
 
+
+## 57. Quattro aggiunte prima dello store
+
+Il 10 novembre 2026, dopo il cambio di nome. **Nessuna e' stata vista su un
+telefono**: compilate e provate in CI, niente di piu'.
+
+- **Sotto l'icona "Caelum", altrove "Caelum Weather".** `app_name_icona`
+  sull'attivita' di lancio di telefono e orologio: il nome intero verrebbe
+  troncato. Il titolo dello store porta una coda cercabile entro i 30
+  caratteri (`fastlane/.../title.txt`).
+- **La lingua nelle impostazioni di sistema** (Android 13+):
+  `res/xml/locales_config.xml` e `lingua/LinguaSalvata.kt`. La voce Lingua
+  dell'app e quella di sistema sono la stessa scelta scritta in due posti;
+  **comanda il sistema**. `Lingue.inizializza` ora si chiama anche in
+  `MainActivity.onCreate`, perche' il sistema ricrea l'attivita' e non il
+  processo. La scelta fatta prima di questa versione passa al sistema una volta
+  sola (`passata_al_sistema`). Da guardare in mano: cambiare lingua dalle
+  impostazioni di sistema con l'app aperta, e che il cambio dall'app non
+  faccia due lampi (il sistema ricrea, e `SalaImpostazioni` chiama ancora
+  `recreate()` per i telefoni sotto il 13).
+- **Ieri**: la richiesta ha `past_days=1`, e `toForecast` stacca subito il
+  giorno in piu' in `Forecast.ieri`. **La settimana comincia ancora da oggi** -
+  indici di ore e giorni non si sono mossi - e "oggi" e' quello della
+  localita' (`current.time`), non del telefono. `data/Ieri.kt` fa il conto
+  sulle massime **come si leggono**, arrotondate. Sala I lo dice sotto minima
+  e massima ("+3° su ieri"), solo sul giorno di oggi; il riepilogo del mattino
+  e il testo condiviso solo dai due gradi in su. Le scorte su disco salvate
+  prima non hanno ieri: la riga manca finche' non arriva una risposta nuova.
+- **Le cifre che scorrono**: `ui/sala/CifreCheScorrono.kt`, per ora solo sul
+  numero grande di Sala I. Una scritta per cifra, contate da destra; si muove
+  solo quella che cambia, dal basso se il numero sale. 170 ms, poi ferma
+  (trappola #8); spenta dalle animazioni ridotte. **Rischio dichiarato**: ogni
+  cifra e' ora una scritta a se', quindi fra due cifre non c'e' piu' la
+  crenatura del carattere. Se il numero risulta piu' largo o piu' stretto di
+  prima lo dicono gli scatti (`confronta_scatti.py`); in mano va guardato
+  trascinando la barra delle ore in fretta.
+- **Le anteprime dei widget**: `AnteprimeWidgetTest` le disegna col codice dei
+  widget veri (Bologna, 21 gradi), la CI le pubblica in `widget-renders` come
+  `anteprima-*-{it,en}.png`. Si copiano in `res/drawable-nodpi` e
+  `res/drawable-en-nodpi` e le dichiara `android:previewImage`. **Quando un
+  widget cambia faccia vanno ricopiate a mano**: non c'e' un passo che lo fa.
