@@ -10,6 +10,166 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.001.1",
+                "areaDesc": "Monroe Middle Keys; Monroe Lower Keys",
+                "geocode": {
+                    "SAME": [
+                        "012087"
+                    ],
+                    "UGC": [
+                        "FLZ077",
+                        "FLZ078"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ077",
+                    "https://api.weather.gov/zones/forecast/FLZ078"
+                ],
+                "references": [],
+                "sent": "2026-11-10T03:55:00-05:00",
+                "effective": "2026-11-10T03:55:00-05:00",
+                "onset": "2026-11-10T03:55:00-05:00",
+                "expires": "2026-11-10T04:10:30-05:00",
+                "ends": "2026-11-10T05:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Observed",
+                "urgency": "Past",
+                "event": "Coastal Flood Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Key West FL",
+                "headline": "The Coastal Flood Statement has been cancelled.",
+                "description": "The Coastal Flood Statement has been cancelled and is no longer in effect.",
+                "instruction": null,
+                "response": "AllClear",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWKEY"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KKEY 100855"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD STATEMENT IS CANCELLED"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CAN.KKEY.CF.S.0012.000000T0000Z-261110T1000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T05:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1,2026-11-09T16:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d87b3661b1947dd88686f13ec489333fe55d9a5.001.1,2026-11-09T04:20:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5ffb8519924edb82cf2eb72c35b62557cd781cb3.001.1,2026-11-08T11:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec9691a9082394088b145b8d43d7cad7de7c96d7.001.1,2026-11-08T04:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fede3039f3b6afd999d28014abdd36b1ae2de8ea.001.1,2026-11-07T16:05:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faa0b806c844d516b58f83952540c3f13fba3948.001.1,2026-11-07T12:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ce662f0ed997870995a6e225a8f5d02acdb01c71.001.1,2026-11-07T04:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33ce67a936e75ca899a7b8ae5681ac9aab77f837.001.1,2026-11-06T11:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f7c0ea8841f1311b47064589142d84c6c49e8d5c.001.1,2026-11-06T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c06204493b8ac117801154e7f80d84536393f7ba.001.1,2026-11-04T10:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89c5e4b3e00a0c0ebc5284212822848109a32150.001.1,2026-11-05T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3f4fbb75a66d210a0144d52852d908a62e8631b6.001.1,2026-11-04T04:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.003.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.cd1da42c9d70972876af781c47a18dd0fd056768.002.1,2026-11-03T10:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.002.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3d0ff85984eb75211850c1e7fa1dadbbff2920cf.002.1,2026-11-03T04:10:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.aa5a01bc6bce0b7f689ea54b83f124df50e5be90.001.2,2026-11-02T15:48:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.4a0d45bc3087ce2db24a8d929092922dbc3a3c6d.002.1",
+                "areaDesc": "Monroe Upper Keys",
+                "geocode": {
+                    "SAME": [
+                        "012087"
+                    ],
+                    "UGC": [
+                        "FLZ076"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ076"
+                ],
+                "references": [],
+                "sent": "2026-11-10T03:55:00-05:00",
+                "effective": "2026-11-10T03:55:00-05:00",
+                "onset": "2026-11-10T03:55:00-05:00",
+                "expires": "2026-11-10T12:00:00-05:00",
+                "ends": "2026-11-10T17:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Key West FL",
+                "headline": "Coastal Flood Statement issued November 10 at 3:55AM EST until November 10 at 5:00PM EST by NWS Key West FL",
+                "description": "* WHAT...Minor saltwater flooding.\n\n* WHERE...Upper Keys.\n\n* WHEN...Through this afternoon.\n\n* IMPACTS...Minor saltwater flooding of low elevation streets and\nlots is likely. Some storm drains will overflow, and some\nseawalls and docks will be overtopped. Boaters can expect less\nclearance under fixed bridges. Motorists should remember that\npersistent puddles around the times of high tide are almost\ncertain to contain a mix of saltwater.",
+                "instruction": "Do not drive through flooded roadways.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWKEY"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KKEY 100855"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD STATEMENT REMAINS IN EFFECT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.KKEY.CF.S.0012.000000T0000Z-261110T2200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-10T17:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1,2026-11-09T16:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d87b3661b1947dd88686f13ec489333fe55d9a5.001.1,2026-11-09T04:20:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5ffb8519924edb82cf2eb72c35b62557cd781cb3.001.1,2026-11-08T11:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec9691a9082394088b145b8d43d7cad7de7c96d7.001.1,2026-11-08T04:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fede3039f3b6afd999d28014abdd36b1ae2de8ea.001.1,2026-11-07T16:05:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faa0b806c844d516b58f83952540c3f13fba3948.001.1,2026-11-07T12:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ce662f0ed997870995a6e225a8f5d02acdb01c71.001.1,2026-11-07T04:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33ce67a936e75ca899a7b8ae5681ac9aab77f837.001.1,2026-11-06T11:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f7c0ea8841f1311b47064589142d84c6c49e8d5c.002.1,2026-11-06T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c5377fca672579fd445e7310ce2c826a74f0de86.001.1,2026-11-05T21:23:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3cc8712ab516141600daac5fee51e8b447687235.001.1,2026-11-05T11:54:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89c5e4b3e00a0c0ebc5284212822848109a32150.002.1,2026-11-05T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c06204493b8ac117801154e7f80d84536393f7ba.001.1,2026-11-04T10:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3f4fbb75a66d210a0144d52852d908a62e8631b6.001.1,2026-11-04T04:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.001.2,2026-11-04T04:04:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.85519a36e19e79f8e62b44485f22e3328c7a329f.001.1",
             "type": "Feature",
             "geometry": null,
@@ -823,96 +983,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4941592f781c6bbb3e3a3f0ccd24b6231fd8e9d7.001.1",
-                "areaDesc": "Monroe Upper Keys; Monroe Middle Keys; Monroe Lower Keys",
-                "geocode": {
-                    "SAME": [
-                        "012087"
-                    ],
-                    "UGC": [
-                        "FLZ076",
-                        "FLZ077",
-                        "FLZ078"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ076",
-                    "https://api.weather.gov/zones/forecast/FLZ077",
-                    "https://api.weather.gov/zones/forecast/FLZ078"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d87b3661b1947dd88686f13ec489333fe55d9a5.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9d87b3661b1947dd88686f13ec489333fe55d9a5.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-09T04:20:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-09T16:33:00-05:00",
-                "effective": "2026-11-09T16:33:00-05:00",
-                "onset": "2026-11-09T16:33:00-05:00",
-                "expires": "2026-11-10T00:45:00-05:00",
-                "ends": "2026-11-10T05:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Key West FL",
-                "headline": "Coastal Flood Statement issued November 9 at 4:33PM EST until November 10 at 5:00AM EST by NWS Key West FL",
-                "description": "* WHAT...Minor saltwater flooding.\n\n* WHERE...The Florida Keys.\n\n* WHEN...Through late tonight.\n\n* IMPACTS...Minor saltwater flooding of low elevation streets\nand lots is likely. Some storm drains will overflow, and some\nseawalls and docks will be overtopped. Boaters can expect less\nclearance under fixed bridges. Motorists should remember that\npersistent puddles around the times of high tide are almost\ncertain to contain a mix of saltwater.",
-                "instruction": "Do not drive through flooded roadways.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWKEY"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KKEY 092133"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT REMAINS IN EFFECT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KKEY.CF.S.0012.000000T0000Z-261110T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-10T05:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5ffb8519924edb82cf2eb72c35b62557cd781cb3.001.1,2026-11-08T11:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec9691a9082394088b145b8d43d7cad7de7c96d7.001.1,2026-11-08T04:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fede3039f3b6afd999d28014abdd36b1ae2de8ea.001.1,2026-11-07T16:05:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.faa0b806c844d516b58f83952540c3f13fba3948.001.1,2026-11-07T12:08:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ce662f0ed997870995a6e225a8f5d02acdb01c71.001.1,2026-11-07T04:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33ce67a936e75ca899a7b8ae5681ac9aab77f837.001.1,2026-11-06T11:28:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f7c0ea8841f1311b47064589142d84c6c49e8d5c.002.1,2026-11-06T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f7c0ea8841f1311b47064589142d84c6c49e8d5c.001.1,2026-11-06T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c5377fca672579fd445e7310ce2c826a74f0de86.001.1,2026-11-05T21:23:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3cc8712ab516141600daac5fee51e8b447687235.001.1,2026-11-05T11:54:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89c5e4b3e00a0c0ebc5284212822848109a32150.002.1,2026-11-05T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c06204493b8ac117801154e7f80d84536393f7ba.001.1,2026-11-04T10:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89c5e4b3e00a0c0ebc5284212822848109a32150.001.1,2026-11-05T04:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3f4fbb75a66d210a0144d52852d908a62e8631b6.001.1,2026-11-04T04:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.001.2,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.003.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.cd1da42c9d70972876af781c47a18dd0fd056768.002.1,2026-11-03T10:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e190d1f672609204ebf4dab019a50b6c468af6d5.002.1,2026-11-04T04:04:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3d0ff85984eb75211850c1e7fa1dadbbff2920cf.002.1,2026-11-03T04:10:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.aa5a01bc6bce0b7f689ea54b83f124df50e5be90.001.2,2026-11-02T15:48:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.261f33fe4eff03bff266dcc8b9a5ad052cbd5b06.001.1",
             "type": "Feature",
             "geometry": {
@@ -1138,5 +1208,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-10T08:48:33+00:00"
+    "updated": "2026-11-10T09:07:58+00:00"
 }
