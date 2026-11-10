@@ -38,7 +38,9 @@ import io.github.noximiliencoxen.caelumweather.data.MoonPhase
 import io.github.noximiliencoxen.caelumweather.data.scartoDaIeri
 import io.github.noximiliencoxen.caelumweather.data.scartoDaIeriBreve
 import io.github.noximiliencoxen.caelumweather.ui.WeatherViewModel
+import io.github.noximiliencoxen.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import io.github.noximiliencoxen.caelumweather.ui.sala.CellaValore
+import io.github.noximiliencoxen.caelumweather.ui.sala.CifreCheScorrono
 import io.github.noximiliencoxen.caelumweather.ui.sala.Didascalia
 import io.github.noximiliencoxen.caelumweather.ui.sala.GiornoSettimana
 import io.github.noximiliencoxen.caelumweather.ui.sala.IconaMeteo
@@ -123,10 +125,12 @@ fun SalaOggiScreen(
                     contentDescription = gradi?.let { tr("$it gradi", "$it degrees") } ?: tr("temperatura non disponibile", "temperature not available")
                 },
             ) {
-                Text(
-                    text = gradi?.toString() ?: "--",
+                CifreCheScorrono(
+                    testo = gradi?.toString() ?: "--",
+                    valore = gradi,
                     style = SalaType.giant(104),
                     color = palette.ink,
+                    ferme = state.animazioniRidotte || sistemaSenzaAnimazioni(),
                 )
                 Text(
                     text = "°",
