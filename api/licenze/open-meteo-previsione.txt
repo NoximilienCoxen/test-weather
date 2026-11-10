@@ -11,12 +11,10 @@ NOAA U.S.
 Météo-France
 ECMWF
 UK Met Office
-KMA Korea
 JMA Japan
 MeteoSwiss
 MET Norway
 GEM Canada
-BOM Australia
 CMA China
 KNMI Netherlands
 DMI Denmark
@@ -135,7 +133,7 @@ svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (9-27 cm)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Soil Moisture (27-81 cm)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s757" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Variables And Options
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s773" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Variables And Options
 svg]:size-3.5 grid place-content-center text-current transition-none">
 UV Index
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -162,7 +160,7 @@ Note: You can further adjust the forecast time range for hourly weather variable
 Past Hours
 Temporal Resolution For Hourly Data
 Grid Cell Selection
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s791" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Solar Radiation Variables
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s807" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Solar Radiation Variables
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Solar Radiation GHI
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -190,8 +188,9 @@ Terrestrial Solar Radiation (Instant)
 Note: Solar radiation is averaged over the past hour. Use instant for radiation at the indicated time. For global tilted irradiance GTI please
 specify Tilt and Azimuth below. Panel Tilt (0° horizontal)
 Panel Azimuth (0° S, -90° E, 90° W, ±180° N)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s821" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Pressure Level Variables
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s837" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Pressure Level Variables
 Temperature
+Dewpoint
 Relative Humidity
 Cloud Cover
 Wind Speed
@@ -238,7 +237,7 @@ svg]:size-3.5 grid place-content-center text-current transition-none">
 30 hPa (22 km)
 Note: Altitudes are approximate and in meters above sea level (not above ground). Use geopotential_height to get precise altitudes above sea
 level.
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s870" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Weather models
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s887" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Weather models
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Best match
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -250,17 +249,21 @@ ECMWF AIFS 0.25° Single
 svg]:size-3.5 grid place-content-center text-current transition-none">
 CMA GRAPES Global
 svg]:size-3.5 grid place-content-center text-current transition-none">
-BOM ACCESS Global
+BOM ACCESS Global (Discontinued 2025-06-26)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP GFS Seamless
 svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP GFS Global 0.11°/0.25°
 svg]:size-3.5 grid place-content-center text-current transition-none">
-NCEP HRRR U.S. Conus
+NCEP RRFS North America
 svg]:size-3.5 grid place-content-center text-current transition-none">
-NCEP NBM U.S. Conus
+NCEP RRFS U.S. CONUS
 svg]:size-3.5 grid place-content-center text-current transition-none">
-NCEP NAM U.S. Conus
+NCEP HRRR U.S. CONUS (Discontinued 2026-11-30)
+svg]:size-3.5 grid place-content-center text-current transition-none">
+NCEP NBM U.S. CONUS
+svg]:size-3.5 grid place-content-center text-current transition-none">
+NCEP NAM U.S. CONUS (Discontinued 2026-11-01)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 NCEP AIGFS 0.25°
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -272,25 +275,29 @@ JMA MSM
 svg]:size-3.5 grid place-content-center text-current transition-none">
 JMA GSM
 svg]:size-3.5 grid place-content-center text-current transition-none">
-KMA Seamless
+KMA Seamless (Discontinued 2026-03-31)
 svg]:size-3.5 grid place-content-center text-current transition-none">
-KMA LDPS
+KMA LDPS (Discontinued 2026-03-31)
 svg]:size-3.5 grid place-content-center text-current transition-none">
-KMA GDPS
+KMA GDPS (Discontinued 2026-03-31)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON Seamless
 svg]:size-3.5 grid place-content-center text-current transition-none">
-DWD ICON Global
+DWD ICON Global (Discontinued 2026-11-30)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON Global Native
 svg]:size-3.5 grid place-content-center text-current transition-none">
-DWD ICON EU
+DWD AICON Global Native
+svg]:size-3.5 grid place-content-center text-current transition-none">
+DWD ICON EU (Discontinued 2026-11-30)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON EU Native
 svg]:size-3.5 grid place-content-center text-current transition-none">
-DWD ICON D2
+DWD ICON D2 (Discontinued 2026-11-30)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 DWD ICON D2 Native
+svg]:size-3.5 grid place-content-center text-current transition-none">
+DWD ICON D2 RUC Native
 svg]:size-3.5 grid place-content-center text-current transition-none">
 GEM Seamless
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -342,7 +349,9 @@ MeteoSwiss ICON CH2
 svg]:size-3.5 grid place-content-center text-current transition-none">
 GeoSphere Seamless (with ECMWF)
 svg]:size-3.5 grid place-content-center text-current transition-none">
-GeoSphere AROME Austria
+GeoSphere C-LAEF Austria
+svg]:size-3.5 grid place-content-center text-current transition-none">
+GeoSphere AROME Austria (Discontinued 2026-11-04)
 svg]:size-3.5 grid place-content-center text-current transition-none">
 CHMI Aladin Seamless
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -352,7 +361,7 @@ CHMI Aladin CZ 1km
 Note: The default Best Match provides the best forecast for any given
 location worldwide. Seamless combines all models from a given provider into a
 seamless prediction.
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s984" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> 15-Minutely Weather Variables
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s1011" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> 15-Minutely Weather Variables
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Temperature (2 m)
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -474,7 +483,7 @@ svg]:size-3.5 grid place-content-center text-current transition-none">
 Shortwave Radiation Sum
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Reference Evapotranspiration (ET₀)
-svg]:rotate-180 border-border [[data-state=open]]:bg-accent flex cursor-pointer px-4 underline-offset-3 [[data-state=open]]:border-b" id="bits-s1188" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Daily Variables
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s1215" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Additional Daily Variables
 svg]:size-3.5 grid place-content-center text-current transition-none">
 Mean Temperature (2 m)
 svg]:size-3.5 grid place-content-center text-current transition-none">
@@ -588,7 +597,7 @@ Settings
 Celsius °C Temperature Unit
 km/h Wind Speed Unit
 Millimeter Precipitation Unit
-ISO 8601 (e.g. 2026-10-13) Timeformat
+ISO 8601 (e.g. 2026-11-09) Timeformat
 Usage licence:
 Non-Commercial Commercial Self-Hosted
 API Response
@@ -612,7 +621,7 @@ You can find the update timings in the model updates documentation . Weather Mod
 ICON 🌍
 Global & Europe
 Deutscher Wetterdienst (DWD) Germany 2 - 11 km 7.5 days Every 3 hours
-GFS & HRRR 🌍
+GFS & RRFS 🌍
 Global & North America
 NOAA United States 3 - 25 km 16 days Every hour
 ARPEGE & AROME 🌍
@@ -624,9 +633,6 @@ ECMWF European Union 9 - 25km 15 days Every 6 hours
 UKMO 🌍
 Global & UK
 UK Met Office United Kingdom 2 - 10 km 7 days Every hour
-KMA 🌍
-Global & South Korea
-KMA Korea Korea 1.5 - 13 km 12 days Every 6 hours
 MSM & GSM 🌍
 Global & Japan
 JMA Japan 5 - 55 km 11 days Every 3 hours
@@ -639,9 +645,6 @@ MET Norway Norway 1 km 2.5 days Every hour
 GEM 🌍
 Global & Canada
 Canadian Weather Service Canada 2.5 km 10 days Every 6 hours
-ACCESS-G 🌍
-Global
-Australian Bureau of Meteorology (BOM) Australia 15 km 10 days Every 6 hours
 GFS GRAPES 🌍
 Global
 China Meteorological Administration (CMA) China 15 km 10 days Every 6 hours
@@ -654,12 +657,54 @@ DMI Denmark 2 km 2.5 days Every 3 hours
 ARPAE
 Italy
 ItaliaMeteo Italy 2 km 3 days Every 12 hours
-AROME
+C-LAEF
 Central Europe
-GeoSphere Austria Austria 2.5 km 2.5 days Every 3 hours
+GeoSphere Austria Austria 1 km 2.5 days Every 3 hours
 ALADIN
 Central Europe
 CHMI Czech Republic 1 - 2.3 km 3 days Every 6 hours
+ACCESS-G 🌍
+Global
+Australian Bureau of Meteorology (BOM) Australia 15 km 10 days Every 6 hours no updates since 2025-06-26
+KMA 🌍
+Global & South Korea
+KMA Korea Korea 1.5 - 13 km 12 days Every 6 hours no updates since 2026-03-31
+svg]:rotate-180 group border-border data-[state=open]:bg-accent flex cursor-pointer px-4 underline-offset-3 data-[state=open]:border-b xl:px-6 xl:py-5" id="bits-s1334" aria-expanded="false" aria-disabled="false" data-state="closed" data-orientation="vertical" data-accordion-trigger="" tabindex="0"> Best Match Model Selection
+The default model selection best_match automatically combines the most suitable weather
+models for the requested coordinates. Every forecast is built on a global backbone of DWD ICON,
+NOAA GFS and ECMWF IFS. Depending on the location, high-resolution regional models are added on
+top. Regions are evaluated from top to bottom and the first match determines the model combination:
+Region Regional Models 15-Minutely Data
+Netherlands & Belgium
+KNMI HARMONIE , ICON EU & ICON D2
+Scandinavia
+MET Nordic
+United Kingdom & Ireland
+UKMO UK 2 km & Global 10 km
+Central Europe
+ICON EU & ICON D2 ✓
+France & Western Europe
+AROME France HD (1.5 km) & ARPEGE ✓
+Northern Europe & Iceland
+DMI HARMONIE
+North America
+NOAA RRFS ✓
+Japan
+JMA MSM
+Remaining Europe
+ICON EU
+🌍
+Everywhere else
+Global models only
+For each weather variable and forecast hour, the highest-resolution model takes precedence.
+Where it does not provide data — because its forecast length is exceeded, a variable is not
+available or the location lies outside its coverage — the next coarser model fills the gap
+with a smooth transition. Precipitation probability is always derived from ensemble models
+such as the GFS, ICON and ECMWF IFS ensembles. To override this selection, pick individual
+models in the Weather models section above.
+Click to enlarge Best match regions over Europe, each drawn after the higher-priority regions above it
+have been taken out. Source: Open-Meteo . Click to enlarge The same regions worldwide, including North America and Japan. Everywhere outside them
+uses the global models only. Source: Open-Meteo .
 API Documentation
 The API endpoint /v1/forecast accepts a geographical coordinate, a list of
 weather variables and responds with a JSON hourly weather forecast for 7 days. Time always
@@ -747,6 +792,18 @@ Azimuth should be close to 0° (0° south, -90° east, 90° west, ±180 north). 
 is set to "nan", the calculation assumes a vertical tracker (east-west). If tilt is
 set to "nan", it is assumed that the panel has a horizontal tracker (up-down). If both
 are set to "nan", a bi-axial tracker is assumed.
+terrestrial_radiation Preceding hour mean W/m² The solar radiation at the top of the atmosphere, unaffected by clouds or aerosols.
+It is purely calculated using the solar position factor multiplied by the solar
+constant of 1367.7 W/m². This differs from clear sky radiation, which accounts for
+aerosols but not clouds.
+*_instant Instant W/m² All solar radiation parameters can be expressed as instantaneous values by accounting
+for the solar zenith angle at a specific moment. Instantaneous values are useful for
+direct comparison with local measurements. However, for energy calculations or model
+evaluations, backward-averaged (preceding hour) data is preferred. By default, the
+Open-Meteo API provides backward-averaged solar radiation to simplify energy
+calculations.
+uv_index
+uv_index_clear_sky Preceding hour mean Index UV index starting from 0 as average of the preceding hour. uv_index_clear_sky assumes cloud free conditions. See the WHO UV index guidelines for more information.
 vapour_pressure_deficit Instant kPa Vapour Pressure Deficit (VPD) in kilopascal (kPa). For high VPD (>1.6), water
 transpiration of plants increases. For low VPD (<0.4), transpiration decreases
 cape Instant J/kg Convective available potential energy. See Wikipedia .
@@ -782,11 +839,11 @@ soil_moisture_27_to_81cm Instant m³/m³ Average soil water content as volumetri
 is_day Instant Dimensionless 1 if the current time step has daylight, 0 at night.
 15-Minutely Parameter Definition
 The parameter &minutely_15= can be used to get 15-minutely data. This data is based
-on NOAA HRRR model for North America and DWD ICON-D2 and Météo-France AROME model for Central Europe.
+on NOAA RRFS model for North America and DWD ICON-D2 and Météo-France AROME model for Central Europe.
 If 15-minutely data is requested for other regions data is interpolated from 1-hourly to 15-minutely.
 15-minutely data can be requested for other weather variables that are available for hourly
 data, but will use interpolation.
-Variable Valid time Unit HRRR ICON-D2 AROME
+Variable Valid time Unit RRFS ICON-D2 AROME
 temperature_2m Instant °C (°F) x x
 relative_humidity_2m Instant % x x
 dew_point_2m Instant °C (°F) x x
@@ -802,10 +859,10 @@ lightning_potential Instant J/kg x
 precipitation Preceding 15 minutes sum mm (inch) x x x
 snowfall Preceding 15 minutes sum cm (inch) x x x
 rain Preceding 15 minutes sum mm (inch) x x x
-showers Preceding 15 minutes sum mm (inch) x
+showers Preceding 15 minutes sum mm (inch) x x
 snowfall_height Instant meters x
 freezing_level_height Instant meters x
-cape Instant J/kg x x x
+cape Instant J/kg x x
 wind_speed_10m
 wind_speed_80m Instant km/h (mph, m/s, knots) x x
 wind_direction_10m
@@ -813,7 +870,7 @@ wind_direction_80m
 Instant ° x x
 wind_gusts_10m Preceding 15 min max km/h (mph, m/s, knots) x
 visibility Instant meters x x
-weather_code Instant WMO code x x
+weather_code Instant WMO code x
 Pressure Level Variables
 Pressure level variables do not have fixed altitudes. Altitude varies with atmospheric
 pressure. 1000 hPa is roughly between 60 and 160 meters above sea level. Estimated altitudes
@@ -871,7 +928,7 @@ wind_direction_10m_dominant ° Dominant wind direction
 shortwave_radiation_sum MJ/m² The sum of solar radiation on a given day in Megajoules
 et0_fao_evapotranspiration mm Daily sum of ET₀ Reference Evapotranspiration of a well watered grass field
 uv_index_max
-uv_index_clear_sky_max Index Daily maximum in UV Index starting from 0. uv_index_clear_sky_max assumes cloud free conditions. Please follow the official WMO guidelines for ultraviolet index.
+uv_index_clear_sky_max Index Daily maximum in UV Index starting from 0. uv_index_clear_sky_max assumes cloud free conditions. See the WHO UV index guidelines for more information.
 JSON Return Object
 On success a JSON object will be returned.
 {
@@ -997,7 +1054,7 @@ Terms & Privacy
 Weather APIs Weather Forecast API
 Historical Weather API
 ECMWF API
-GFS & HRRR Forecast API
+GFS & RRFS Forecast API
 Météo-France API
 DWD ICON API
 GEM API

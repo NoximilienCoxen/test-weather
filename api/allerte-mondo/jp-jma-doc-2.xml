@@ -2,22 +2,22 @@
 <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/">
 <Control>
 <Title>気象特別警報・警報・注意報</Title>
-<DateTime>2026-10-15T07:58:08Z</DateTime>
+<DateTime>2026-11-10T07:58:16Z</DateTime>
 <Status>通常</Status>
-<EditorialOffice>宮古島地方気象台</EditorialOffice>
-<PublishingOffice>宮古島地方気象台</PublishingOffice>
+<EditorialOffice>南大東島地方気象台</EditorialOffice>
+<PublishingOffice>南大東島地方気象台</PublishingOffice>
 </Control>
 <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/">
-<Title>宮古島地方気象警報・注意報</Title>
-<ReportDateTime>2026-10-15T16:58:00+09:00</ReportDateTime>
-<TargetDateTime>2026-10-15T16:58:00+09:00</TargetDateTime>
+<Title>大東島地方気象警報・注意報</Title>
+<ReportDateTime>2026-11-10T16:58:00+09:00</ReportDateTime>
+<TargetDateTime>2026-11-10T16:58:00+09:00</TargetDateTime>
 <EventID/>
 <InfoType>発表</InfoType>
 <Serial/>
 <InfoKind>気象警報・注意報</InfoKind>
 <InfoKindVersion>1.1_2</InfoKindVersion>
 <Headline>
-<Text>宮古島地方では、高波に注意してください。</Text>
+<Text>大東島地方では、高波に注意してください。</Text>
 <Information type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
@@ -26,8 +26,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>宮古島地方</Name>
-<Code>473000</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 </Areas>
 </Item>
@@ -40,8 +40,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>宮古島地方</Name>
-<Code>473000</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 </Areas>
 </Item>
@@ -54,20 +54,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>宮古島</Name>
-<Code>473001</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>多良間島</Name>
-<Code>473002</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 </Areas>
 </Item>
@@ -80,8 +68,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>宮古島市</Name>
-<Code>4721400</Code>
+<Name>南大東村</Name>
+<Code>4735700</Code>
 </Area>
 </Areas>
 </Item>
@@ -92,8 +80,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>多良間村</Name>
-<Code>4737500</Code>
+<Name>北大東村</Name>
+<Code>4735800</Code>
 </Area>
 </Areas>
 </Item>
@@ -106,8 +94,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>宮古島地方</Name>
-<Code>473000</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 </Areas>
 </Item>
@@ -123,10 +111,13 @@
 <Name>波浪注意報</Name>
 <Code>16</Code>
 <Status>継続</Status>
+<Addition>
+<Note>うねり</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>宮古島地方</Name>
-<Code>473000</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 <ChangeStatus>変化無</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -139,10 +130,13 @@
 <Name>波浪注意報</Name>
 <Code>16</Code>
 <Status>継続</Status>
+<Addition>
+<Note>うねり</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>宮古島地方</Name>
-<Code>473000</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 <ChangeStatus>変化無</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -155,24 +149,13 @@
 <Name>波浪注意報</Name>
 <Code>16</Code>
 <Status>継続</Status>
+<Addition>
+<Note>うねり</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>宮古島</Name>
-<Code>473001</Code>
-</Area>
-<ChangeStatus>変化無</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-</Kind>
-<Area>
-<Name>多良間島</Name>
-<Code>473002</Code>
+<Name>大東島地方</Name>
+<Code>472000</Code>
 </Area>
 <ChangeStatus>変化無</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -185,28 +168,32 @@
 <Name>波浪注意報</Name>
 <Code>16</Code>
 <Status>継続</Status>
+<Addition>
+<Note>うねり</Note>
+</Addition>
 <Property>
 <Type>波</Type>
 <AdvisoryPeriod>
 <StartTime>
-<Date>１５日</Date>
+<Date>１０日</Date>
 <Term>夜のはじめ頃</Term>
 </StartTime>
 <EndTime>
-<Date>１５日</Date>
-<Term>夜遅く</Term>
+<Date>１１日</Date>
+<Term>夕方</Term>
 </EndTime>
+<OverTime>にかけて　以後も続く</OverTime>
 </AdvisoryPeriod>
 <WaveHeightPart>
 <Base>
-<jmx_eb:WaveHeight description="２．５メートル" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" type="波高" unit="m">3</jmx_eb:WaveHeight>
 </Base>
 </WaveHeightPart>
 </Property>
 </Kind>
 <Area>
-<Name>宮古島市</Name>
-<Code>4721400</Code>
+<Name>南大東村</Name>
+<Code>4735700</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
 </Item>
@@ -215,28 +202,32 @@
 <Name>波浪注意報</Name>
 <Code>16</Code>
 <Status>継続</Status>
+<Addition>
+<Note>うねり</Note>
+</Addition>
 <Property>
 <Type>波</Type>
 <AdvisoryPeriod>
 <StartTime>
-<Date>１５日</Date>
+<Date>１０日</Date>
 <Term>夜のはじめ頃</Term>
 </StartTime>
 <EndTime>
-<Date>１５日</Date>
-<Term>夜遅く</Term>
+<Date>１１日</Date>
+<Term>夕方</Term>
 </EndTime>
+<OverTime>にかけて　以後も続く</OverTime>
 </AdvisoryPeriod>
 <WaveHeightPart>
 <Base>
-<jmx_eb:WaveHeight description="２．５メートル" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" type="波高" unit="m">3</jmx_eb:WaveHeight>
 </Base>
 </WaveHeightPart>
 </Property>
 </Kind>
 <Area>
-<Name>多良間村</Name>
-<Code>4737500</Code>
+<Name>北大東村</Name>
+<Code>4735800</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
 </Item>

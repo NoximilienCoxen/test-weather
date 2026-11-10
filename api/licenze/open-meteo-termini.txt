@@ -19,17 +19,20 @@ You may only use the free API services for non-commercial purposes.
 You accept to the CC-BY 4.0 licence, as specified in the licence conditions .
 We reserve the right to block applications and IP addresses that misuse our service
 without prior notice.
+Rate limits are applied by IP addresses and application. If you are using providers like
+Vercel, Netlify, Render, or Google Sheets you might be rate-limited earlier then
+expected. Consider using Cloudflare Workers, as we apply limits per Cloudflare user.
 Non-commercial use is defined as elaborated by creative commons . To make it easier to understand, here are some examples that qualify as non-commercial
 use:
-Using our service for private or non-profit websites or apps that do not have
-subscriptions or advertising.
-Utilizing our service for personal home automation purposes.
-Using our service for public research conducted at public institutions.
-Incorporating our service into educational content.
+Private or non-profit websites or apps that do not have subscriptions or advertising.
+Personal home automation purposes.
+Public research conducted at public institutions.
+Use in educational content.
+Voluntary donations, including contributions through a tip jar, are permitted.
 On the other hand, the following examples are considered commercial use:
-Operating websites or apps that have subscriptions or display advertisements.
-Integrating our service into commercial products or promotional activities.
-Conducting undisclosed research at commercial entities.
+Websites or apps that have subscriptions or display advertisements.
+Commercial products or promotional activities.
+Undisclosed research at commercial entities.
 If you plan to use our service for commercial purposes or require additional API calls, we
 kindly request you to consider subscribing to our API plans as explained in detail on the pricing page. Your subscription helps support the continuous development, maintenance, and support
 of Open-Meteo.
@@ -88,6 +91,9 @@ Privacy
 By using our service, you consent to the terms of our privacy policy and agree that we may
 collect non-personal information as outlined below. If you have any questions or concerns about
 our privacy policy, please contact us.
+We comply with the General Data Protection Regulation (GDPR) where it applies. OpenMeteo GmbH
+acts as an independent data controller for the personal data processed for the purposes
+described in this privacy notice.
 Website of Open-Meteo.com
 The Open-Meteo.com website does not collect any data from our users, including personal
 information, usage statistics, or any other data that could be used to identify you. We do
@@ -153,7 +159,7 @@ Terms & Privacy
 Weather APIs Weather Forecast API
 Historical Weather API
 ECMWF API
-GFS & HRRR Forecast API
+GFS & RRFS Forecast API
 Météo-France API
 DWD ICON API
 GEM API
