@@ -2,8 +2,8 @@
 <feed xmlns="http://www.w3.org/2005/Atom" lang="ja">
   <title>長期（随時）</title>
   <subtitle>JMAXML publishing feed</subtitle>
-  <updated>2026-11-10T16:59:13+09:00</updated>
-  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794297553</id>
+  <updated>2026-11-10T17:40:29+09:00</updated>
+  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794300029</id>
   <link rel="related" href="https://www.jma.go.jp/"/>
   <link rel="self" href="https://www.data.jma.go.jp/developer/xml/feed/extra.xml"/>
   <link rel="hub" href="http://alert-hub.appspot.com/"/>
@@ -11,6 +11,16 @@
 <a href="https://www.jma.go.jp/jma/kishou/info/coment.html">利用規約</a>,
 <a href="https://www.jma.go.jp/jma/en/copyright.html">Terms of Use</a>
 ]]></rights>
+  <entry>
+    <title>台風解析・予報情報（５日予報）（Ｈ３０）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261110084015_0_VPTW60_010000.xml</id>
+    <updated>2026-11-10T08:40:14Z</updated>
+    <author>
+      <name>気象庁</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261110084015_0_VPTW60_010000.xml"/>
+    <content type="text">【台風解析・予報情報】</content>
+  </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261110075816_0_VPWW54_472000.xml</id>
