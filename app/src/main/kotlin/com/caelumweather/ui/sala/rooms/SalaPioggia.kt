@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.caelumweather.data.Afa
 import com.caelumweather.data.DayForecast
 import com.caelumweather.data.afaDi
+import com.caelumweather.data.serveLaNeve
 import kotlin.math.roundToInt
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.CellaValore
@@ -324,6 +325,17 @@ fun SalaPioggiaScreen(
                 scelto = state.selectedDay,
                 palette = palette,
                 onVai = onSelectDay,
+            )
+        }
+
+        // ── La neve, per chi sta in montagna ─────────────────────────────────
+        val prev = state.forecast
+        if (prev != null && serveLaNeve(prev)) {
+            SezioneNeve(
+                previsione = prev,
+                zeroTermicoOra = oraScelta?.freezingLevel,
+                unita = state.unit,
+                palette = palette,
             )
         }
     }

@@ -74,4 +74,60 @@ class MareTest {
         assertEquals("Onde non disponibili per quest'ora", rigaOnde(vuota, TempUnit.CELSIUS))
         assertEquals("temperatura dell'acqua non disponibile", rigaAcqua(vuota, TempUnit.CELSIUS))
     }
+
+    // ── Le maree, contro una risposta vera di Venezia dell'11 novembre 2026 ──
+
+    @Test
+    fun `a Venezia le alte e le basse si alternano e hanno un'ora fra le ore`() {
+        val mare = parseMare(risorsa("mare-venezia-livello.json"))!!
+        val estremi = estremiDiMarea(mare.ore)
+        // Tre giorni di marea semidiurna: una decina di estremi.
+        assert(estremi.size in 8..11) { "estremi: ${estremi.size}" }
+        estremi.zipWithNext().forEach { (a, b) ->
+            assertEquals("si alternano", true, a.tipo != b.tipo)
+            // Sei ore e un quarto, in media, fra un'alta e la bassa dopo.
+            val ore = java.time.Duration.between(a.quando, b.quando).toMinutes() / 60.0
+            assert(ore in 4.0..8.5) { "distanza $ore h" }
+        }
+        // La prima bassa dell'11 e' fra le 03 e le 04 (-0,47 alle 3 e alle 4).
+        val prima = estremi.first()
+        assertEquals(TipoMarea.BASSA, prima.tipo)
+        assertEquals(3, prima.quando.hour)
+        assertEquals(-0.47, prima.metri, 0.02)
+    }
+
+    @Test
+    fun `una curva piatta non ha maree`() {
+        val inizio = LocalDateTime.of(2026, 11, 11, 0, 0)
+        val piatta = (0 until 24).map { OraMare(inizio.plusHours(it.toLong()), livello = 0.02 + (it % 2) * 0.01) }
+        assertEquals(emptyList<EstremoMarea>(), estremiDiMarea(piatta))
+    }
+
+    @Test
+    fun `un buco nei dati non si interpola`() {
+        val inizio = LocalDateTime.of(2026, 11, 11, 0, 0)
+        // Alta a mezzogiorno... ma l'ora di mezzogiorno non ha livello.
+        val buco = (0 until 25).map { h ->
+            OraMare(inizio.plusHours(h.toLong()), livello = if (h == 12) null else 0.4 * kotlin.math.cos((h - 12) / 12.4 * 2 * Math.PI))
+        }
+        assertEquals(emptyList<EstremoMarea>(), estremiDiMarea(buco).filter { it.quando.hour in 11..13 })
+    }
+
+    @Test
+    fun `i prossimi estremi partono dall'ora scelta`() {
+        val mare = parseMare(risorsa("mare-venezia-livello.json"))!!
+        val dalle10 = prossimiEstremi(mare, LocalDateTime.of(2026, 11, 11, 10, 0), quanti = 3)
+        assertEquals(3, dalle10.size)
+        assert(dalle10.all { !it.quando.isBefore(LocalDateTime.of(2026, 11, 11, 10, 0)) })
+        assertEquals(TipoMarea.BASSA, dalle10.first().tipo)
+    }
+
+    @Test
+    fun `la riga di un estremo dice tipo, ora e livello`() {
+        val da = LocalDateTime.of(2026, 11, 11, 10, 0)
+        val riga = com.caelumweather.ui.sala.rooms.rigaEstremo(
+            EstremoMarea(TipoMarea.BASSA, LocalDateTime.of(2026, 11, 12, 4, 5), -0.43), da, TempUnit.CELSIUS,
+        )
+        assert("04:05" in riga && "0,43" in riga && "domani" in riga) { riga }
+    }
 }

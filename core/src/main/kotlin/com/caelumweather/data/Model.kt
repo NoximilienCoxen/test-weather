@@ -96,6 +96,8 @@ data class HourForecast(
     val rain: Double? = null,
     /** Centimetri di neve. */
     val snowfall: Double? = null,
+    /** Quota dello zero termico in metri sul mare: vedi [quotaNeve]. */
+    val freezingLevel: Double? = null,
 )
 
 data class Forecast(
@@ -138,6 +140,8 @@ data class Forecast(
      * lo si chiedesse, e quando la risposta non lo porta.
      */
     val ieri: DayForecast? = null,
+    /** Quota del posto in metri sul mare, come la dice Open-Meteo; nulla nelle scorte vecchie. */
+    val elevation: Double? = null,
 ) {
     /**
      * Le ore raccolte per giornata, una volta sola.

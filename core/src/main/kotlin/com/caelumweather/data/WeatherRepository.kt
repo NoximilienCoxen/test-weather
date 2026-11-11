@@ -128,7 +128,7 @@ class WeatherRepository(
                 "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m," +
                 "wind_direction_10m,uv_index,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high," +
                 "pressure_msl,visibility," +
-                "rain,snowfall"
+                "rain,snowfall,freezing_level_height"
 
         const val DAILY_VARS =
             "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max," +
@@ -280,6 +280,7 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             visibility = hourly.visibility.at(i),
             rain = hourly.rain.at(i),
             snowfall = hourly.snowfall.at(i),
+            freezingLevel = hourly.freezingLevel.at(i),
         )
     }.orEmpty()
 
@@ -331,6 +332,7 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
         hours = ore.take(HOURS_IN_DAY),
         allHours = ore,
         ieri = ieri,
+        elevation = elevation,
         current = CurrentWeather(
             temperature = current?.temperature,
             apparent = current?.apparent,

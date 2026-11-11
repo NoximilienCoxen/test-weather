@@ -27,6 +27,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.caelumweather.data.Forecast
+import com.caelumweather.data.OraMare
+import com.caelumweather.prefs.TempUnit
+import java.time.temporal.ChronoUnit
 import com.caelumweather.data.Place
 import com.caelumweather.data.Wmo
 import com.caelumweather.data.key
@@ -140,7 +143,13 @@ internal enum class Meglio { ALTO, BASSO }
 
 private fun righeConfronto(state: UiState): List<RigaConfronto> {
     fun gradi(v: Double) = "${state.unit.from(v).roundToInt()}°"
-    return listOf(
+    /** L'ora di mare di una previsione: quella di adesso nel suo posto. */
+    fun mareDi(f: Forecast): OraMare? {
+        val mare = if (f.place.key == state.place.key) state.mare else state.favoritesMare[f.place.key]
+        return mare?.alle(f.nowThere().truncatedTo(ChronoUnit.HOURS))
+    }
+    val conMare = state.mare != null || state.favoritesMare.values.any { it != null }
+    val righe = listOf(
         RigaConfronto(tr("ADESSO", "NOW", "JETZT", "MAINTENANT", "AHORA"), { it.current.temperature }, ::gradi, null),
         RigaConfronto(tr("MASSIMA", "HIGH", "MAX", "MAXI", "MÁXIMA"), { it.days.firstOrNull()?.tempMax }, ::gradi, Meglio.ALTO),
         RigaConfronto(tr("MINIMA", "LOW", "MIN", "MINI", "MÍNIMA"), { it.days.firstOrNull()?.tempMin }, ::gradi, null),
@@ -168,6 +177,20 @@ private fun righeConfronto(state: UiState): List<RigaConfronto> {
             { String.format(Lingue.locale, "%.1f", it) },
             null,
         ),
+    )
+    if (!conMare) return righe
+    // Il mare, solo se almeno una delle colonne ce l'ha: in un confronto fra
+    // citta' dell'interno due righe di trattini sarebbero rumore. Le onde piu'
+    // basse vincono (chi sceglie dove andare al mare vuole l'acqua piu' calma),
+    // la temperatura dell'acqua informa e basta.
+    fun altezza(m: Double) = if (state.unit == TempUnit.FAHRENHEIT) {
+        String.format(Lingue.locale, "%.1f ft", m * 3.28084)
+    } else {
+        String.format(Lingue.locale, "%.1f m", m)
+    }
+    return righe + listOf(
+        RigaConfronto(tr("ONDE", "WAVES", "WELLEN", "VAGUES", "OLAS"), { mareDi(it)?.onda }, ::altezza, Meglio.BASSO),
+        RigaConfronto(tr("ACQUA", "WATER", "WASSER", "EAU", "AGUA"), { mareDi(it)?.acqua }, { "${state.unit.from(it).roundToInt()}°" }, null),
     )
 }
 

@@ -23,7 +23,7 @@ import java.time.LocalDateTime
  * scritto nell'informativa (`docs/privacy.md`) e nelle note legali, che vanno
  * tenute al passo con questo file.
  *
- * **E' una stima al largo.** Il modello d'onda lavora su celle di chilometri e
+ * **E' una stima al largo, e vale anche per le maree.** Il modello d'onda lavora su celle di chilometri e
  * non vede moli, secche e risacca: la sala lo dice sotto i numeri, e dice di
  * non usarli per navigare ne' per decidere un bagno.
  */
@@ -37,6 +37,11 @@ data class OraMare(
     val periodo: Double? = null,
     /** Temperatura dell'acqua in superficie, in gradi Celsius. */
     val acqua: Double? = null,
+    /**
+     * Livello del mare sul livello medio, in metri, **maree comprese**. Da qui
+     * si ricavano alte e basse (`Marea.kt`); nullo dove il modello non lo da'.
+     */
+    val livello: Double? = null,
 )
 
 data class Mare(val ore: List<OraMare>) {
@@ -98,6 +103,7 @@ private data class MareOreDto(
     @SerialName("wave_direction") val direzione: List<Double?> = emptyList(),
     @SerialName("wave_period") val periodo: List<Double?> = emptyList(),
     @SerialName("sea_surface_temperature") val acqua: List<Double?> = emptyList(),
+    @SerialName("sea_level_height_msl") val livello: List<Double?> = emptyList(),
 )
 
 private val mareJson = Json {
@@ -125,9 +131,10 @@ internal fun parseMare(body: String): Mare? {
             direzione = h.direzione.getOrNull(i),
             periodo = h.periodo.getOrNull(i),
             acqua = h.acqua.getOrNull(i),
+            livello = h.livello.getOrNull(i),
         )
     }
-    if (ore.none { it.onda != null || it.acqua != null }) return null
+    if (ore.none { it.onda != null || it.acqua != null || it.livello != null }) return null
     return Mare(ore)
 }
 
@@ -155,6 +162,6 @@ class MareRepository(private val place: Place) {
 
     companion object {
         const val MARE_ENDPOINT = "https://marine-api.open-meteo.com/v1/marine"
-        const val MARE_VARS = "wave_height,wave_direction,wave_period,sea_surface_temperature"
+        const val MARE_VARS = "wave_height,wave_direction,wave_period,sea_surface_temperature,sea_level_height_msl"
     }
 }
