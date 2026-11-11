@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.caelumweather.ui.sala.AstroDiAttesa
+import com.caelumweather.ui.sala.IndicatoreCielo
 import com.caelumweather.ui.sala.SalaTokens
 import com.caelumweather.ui.sala.SalaType
 import kotlinx.coroutines.delay
@@ -71,6 +73,18 @@ fun VeloDAvvio(
                 // Solo il nome. Sotto c'era scritto cosa rappresentava la scena,
                 // e un quadro con la didascalia si legge invece di guardarlo.
                 Text(text = "Caelum Weather", style = SalaType.pageTitle, color = SalaTokens.neutral100)
+                // Finche' i dati non ci sono, sotto il nome gira l'astro del
+                // momento: un sole, o una luna se e' notte. Sparisce col velo.
+                // Fermo se le animazioni sono ridotte (resta disegnato, non gira).
+                IndicatoreCielo(
+                    astro = if (notte) AstroDiAttesa.LUNA else AstroDiAttesa.SOLE,
+                    caricando = !pronto,
+                    tiro = 0f,
+                    colore = SalaTokens.neutral100,
+                    movimento = movimento,
+                    misura = 34.dp,
+                    modifier = Modifier.padding(top = 14.dp),
+                )
             }
         }
     }

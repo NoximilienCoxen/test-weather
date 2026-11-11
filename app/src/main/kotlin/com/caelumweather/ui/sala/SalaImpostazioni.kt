@@ -79,6 +79,7 @@ fun SalaImpostazioniScreen(
     state: UiState,
     palette: SalaPalette,
     onToggleAnimazioni: (Boolean) -> Unit,
+    onToggleWidgetColori: (Boolean) -> Unit,
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
     onToggleNotifichePioggia: (Boolean) -> Unit,
@@ -234,6 +235,18 @@ fun SalaImpostazioniScreen(
                     palette = palette,
                     onCambia = onToggleSchedeLarghe,
                 )
+                // I colori dinamici esistono da Android 12: prima, la voce
+                // sarebbe una levetta che non cambia niente.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    FiloGruppo(palette)
+                    VoceInterruttore(
+                        titolo = tr("Widget coi colori del telefono", "Widgets in phone colours", "Widgets in Telefonfarben", "Widgets aux couleurs du téléphone", "Widgets con los colores del teléfono"),
+                        nota = tr("Material You: sfondo e testo prendono la tinta dello sfondo del telefono", "Material You: background and text take the tint of the phone's wallpaper", "Material You: Hintergrund und Text übernehmen die Tönung des Hintergrundbilds", "Material You : le fond et le texte prennent la teinte du fond d'écran", "Material You: el fondo y el texto toman el tono del fondo de pantalla"),
+                        acceso = state.widgetColoriTelefono,
+                        palette = palette,
+                        onCambia = onToggleWidgetColori,
+                    )
+                }
             }
 
             // Le unita' stanno sulla riga del loro nome: due o tre voci corte

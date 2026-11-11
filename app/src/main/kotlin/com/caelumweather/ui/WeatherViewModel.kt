@@ -225,6 +225,8 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
+    val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
     val schedeLarghe: Boolean = false,
     /**
@@ -669,6 +671,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
                         animazioniRidotte = settings.animazioniRidotte,
+                        widgetColoriTelefono = settings.widgetColoriTelefono,
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
@@ -1121,6 +1124,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * spegne, cosi' la stessa sala chiesta due volte di fila riparte davvero.
      */
     fun roomRequestHonoured() = _state.update { it.copy(roomRequest = null) }
+
+    /**
+     * Colori del telefono nei widget. Le immagini gia' dipinte non si
+     * ricolorano da sole: dopo la scrittura si ridisegnano tutti.
+     */
+    fun setWidgetColoriTelefono(accesi: Boolean) {
+        _state.update { it.copy(widgetColoriTelefono = accesi) }
+        val app = getApplication<Application>()
+        viewModelScope.launch {
+            prefs.setWidgetColoriTelefono(accesi)
+            runCatching { com.caelumweather.widget.repaintWidgets(app) }
+        }
+    }
 
     fun setCardTheme(theme: CardTheme) {
         viewModelScope.launch { prefs.setCardTheme(theme) }

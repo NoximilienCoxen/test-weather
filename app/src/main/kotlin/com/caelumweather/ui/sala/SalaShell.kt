@@ -46,6 +46,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Alignment
@@ -684,13 +686,40 @@ fun SalaShell(
                     state = tiro,
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     indicator = {
-                        PullToRefreshDefaults.Indicator(
-                            state = tiro,
-                            isRefreshing = state.aggiornandoAMano,
-                            containerColor = palette.panelSolido,
-                            color = palette.accent,
-                            modifier = Modifier.align(Alignment.TopCenter).padding(end = riservaColonna),
-                        )
+                        // **Non il cerchio di Material**: un sole, una luna o
+                        // un fiocco, secondo il cielo che c'e' (vedi
+                        // `IndicatoreCielo`). Scende col dito, e a molla
+                        // aperta resta a meta' della sua corsa finche' si
+                        // carica.
+                        val frazione = if (state.aggiornandoAMano) 1f else tiro.distanceFraction
+                        val astro = when {
+                            scena.neve > 0.5f && scena.bagnato > 0.05f -> AstroDiAttesa.FIOCCO
+                            scena.notte > 0.5f -> AstroDiAttesa.LUNA
+                            else -> AstroDiAttesa.SOLE
+                        }
+                        androidx.compose.foundation.layout.Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(end = riservaColonna)
+                                .graphicsLayer {
+                                    val f = frazione.coerceIn(0f, 1.3f)
+                                    translationY = (f * 64.dp.toPx()) - 44.dp.toPx()
+                                    alpha = (f * 1.6f).coerceIn(0f, 1f)
+                                    scaleX = 0.6f + 0.4f * f.coerceAtMost(1f)
+                                    scaleY = scaleX
+                                }
+                                .size(46.dp)
+                                .background(palette.panelSolido, CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            IndicatoreCielo(
+                                astro = astro,
+                                caricando = state.aggiornandoAMano,
+                                tiro = frazione,
+                                colore = palette.accent,
+                                movimento = !ferme,
+                            )
+                        }
                     },
                 ) {
                     VerticalPager(
@@ -965,6 +994,7 @@ fun SalaShell(
                         state = state,
                         palette = palette,
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onToggleWidgetColori = viewModel::setWidgetColoriTelefono,
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
                         onToggleNotifichePioggia = viewModel::setNotifichePioggia,

@@ -335,7 +335,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
 
     private suspend fun draw(context: Context, appWidgetId: Int, config: WidgetConfig): Face {
         val frame = WidgetCanvas.plan(context, appWidgetId)
-        val ink = WidgetInk.of(context)
+        val ink = WidgetInk.of(context, SettingsPrefs(context).settings.first().widgetColoriTelefono)
         val type = WidgetType(context)
 
         val place = if (kind.needsPlace) config.resolvePlace(context, appWidgetId) else null
