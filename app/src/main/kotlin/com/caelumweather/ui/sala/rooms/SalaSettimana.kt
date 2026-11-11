@@ -104,7 +104,7 @@ fun SalaSettimanaScreen(
             faseLunare = faseLunare,
             palette = palette,
             onVai = onVai,
-            onOra = viewModel::selectHour,
+            onOra = viewModel::apriAllOra,
             modifier = Modifier.padding(top = 9.dp),
         )
 
@@ -198,6 +198,9 @@ internal fun oreDiSole(secondi: Double): String {
  * il sole e' piu' forte, e per la pioggia quella in cui **comincia**, perche'
  * la sala somma le dodici ore successive e da li' il conto copre la giornata.
  * Se il giorno non ha ore, o non piove affatto, l'ora resta quella che era.
+ *
+ * **Quell'ora e' in prestito**: uscendo dalla sala d'arrivo torna quella di
+ * prima, se nessuno l'ha spostata a mano (`WeatherViewModel.apriAllOra`).
  */
 @Composable
 private fun RiepilogoGiorno(
@@ -206,7 +209,7 @@ private fun RiepilogoGiorno(
     faseLunare: Float,
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
-    onOra: (Int) -> Unit,
+    onOra: (Int, SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val ore = state.shownHours
@@ -285,7 +288,7 @@ private fun RiepilogoGiorno(
                             .clip(RoundedCornerShape(26.dp))
                             .background(palette.chip)
                             .clickable {
-                                voce.ora?.let(onOra)
+                                voce.ora?.let { onOra(it, voce.sala) }
                                 onVai(voce.sala)
                             }
                             .padding(horizontal = 13.dp, vertical = 11.dp),

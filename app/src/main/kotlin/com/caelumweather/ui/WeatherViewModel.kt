@@ -1043,8 +1043,40 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /**
+     * L'ora a cui un riquadro della settimana ha portato, e quella di prima.
+     *
+     * **Il salto d'ora e' in prestito, non una scelta.** Toccando "Pioggia" su
+     * giovedi' si arriva all'ora in cui comincia a piovere - le quattro del
+     * mattino - perche' li' la sala racconta il numero del riquadro. Ma l'ora
+     * restava quella anche tornando indietro: la settimana si ritrovava di
+     * notte, scura, con "GIO 04:00" sulla barra, e chi aveva solo toccato un
+     * riquadro non aveva mai chiesto le quattro. Visto in mano l'11 novembre
+     * 2026, e a ragione scambiato per un guasto.
+     *
+     * Uscendo dalla sala d'arrivo l'ora torna quella di prima - **a meno che
+     * nel frattempo non sia stata spostata a mano**: allora e' una scelta, e
+     * resta.
+     */
+    private var saltoDaRiquadro: SaltoDOra? = null
+
+    /** Il tocco su un riquadro della settimana che porta anche a un'ora: vedi [saltoDaRiquadro]. */
+    fun apriAllOra(ora: Int, sala: SalaRoom) {
+        val prima = saltoDaRiquadro?.prima ?: _state.value.selectedHour
+        selectHour(ora)
+        saltoDaRiquadro = SaltoDOra(prima = prima, arrivo = _state.value.selectedHour, sala = sala)
+    }
+
     /** Il carosello di Sala ha posato una stanza: da li' si riparte alla prossima apertura. */
-    fun showRoom(room: SalaRoom) = _state.update { it.copy(room = room) }
+    fun showRoom(room: SalaRoom) {
+        saltoDaRiquadro?.let { salto ->
+            if (room != salto.sala) {
+                saltoDaRiquadro = null
+                if (_state.value.selectedHour == salto.arrivo) selectHour(salto.prima)
+            }
+        }
+        _state.update { it.copy(room = room) }
+    }
 
     /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
     fun requestRoom(index: Int) {
@@ -1614,6 +1646,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 }
 
 /** L'ora della previsione piu' vicina a un istante dato. */
+/** Un'ora presa in prestito da un riquadro: vedi `WeatherViewModel.saltoDaRiquadro`. */
+private data class SaltoDOra(val prima: Int, val arrivo: Int, val sala: SalaRoom)
+
 private fun nearestHourIndex(hours: List<HourForecast>, target: LocalDateTime): Int {
     if (hours.isEmpty()) return 0
     var best = 0

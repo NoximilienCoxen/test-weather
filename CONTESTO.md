@@ -8090,3 +8090,21 @@ sull'inglese, una notifica intera per lingua).
   disegna in tutte e cinque (`anteprima-*-{de,fr,es}.png` in `widget-renders`),
   ma vanno copiate a mano in `res/drawable-{de,fr,es}-nodpi` (§57).
 - **L'informativa** (`docs/privacy.md`) resta in italiano e inglese.
+
+## 63. L'ora presa in prestito da un riquadro
+
+L'11 novembre 2026, da un video girato sul telefono (Fontevivo, build di
+`main`). Nella settimana, scelto giovedi' e toccato il riquadro PIOGGIA, la
+sala si apriva alle 04:00 - l'ora in cui comincia a piovere, com'e' voluto
+(§ sui sei riquadri in `SalaSettimana`) - ma **l'ora restava quella anche
+tornando indietro**: la settimana si ritrovava di notte, col tema scuro e
+"GIO 12 04:00" sulla barra. Su oggi lo stesso tocco spostava le 13 alle 15.
+Chi guarda ha toccato un riquadro, non la barra delle ore: sembrava un guasto.
+
+Adesso quell'ora e' **in prestito** (`WeatherViewModel.apriAllOra` e
+`saltoDaRiquadro`): la sala d'arrivo si apre ancora all'ora che il numero
+racconta, e quando il carosello si posa su un'altra sala l'ora torna quella di
+prima. Se nel frattempo e' stata spostata a mano, e' una scelta e resta.
+
+**Non provato in mano.** Resta vero che entrando nella pioggia di giovedi' il
+cielo si fa notte: alle quattro e' notte, e la barra lo dice.
