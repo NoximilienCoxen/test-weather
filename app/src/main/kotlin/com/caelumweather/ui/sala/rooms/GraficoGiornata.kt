@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -80,8 +81,6 @@ internal fun GraficoGiornata(
 
     val minimo = punti.minOf { it.second }
     val massimo = punti.maxOf { it.second }
-    val indiceMin = punti.indexOfFirst { it.second == minimo }
-    val indiceMax = punti.indexOfFirst { it.second == massimo }
     val corrente = ore.getOrNull(scelta)
     fun gradi(v: Double) = "${unita.from(v).roundToInt()}°"
 
@@ -119,11 +118,6 @@ internal fun GraficoGiornata(
             "Température sur 24 heures : minimale ${gradi(minimo)}, maximale ${gradi(massimo)}. Faites glisser pour choisir l'heure.",
             "Temperatura en 24 horas: mínima ${gradi(minimo)}, máxima ${gradi(massimo)}. Arrastra para elegir la hora.",
         )
-        val inchiostro = palette.ink
-        val accento = palette.accent
-        val debole = palette.inkFaint
-        val notte = palette.ink.copy(alpha = 0.06f)
-        val stileEtichetta = SalaType.microLabel.copy(color = palette.inkSoft)
         val altezzaGiorno = ore.size.coerceAtLeast(2)
         Canvas(
             modifier = Modifier
@@ -150,75 +144,17 @@ internal fun GraficoGiornata(
                     }
                 },
         ) {
-            val sinistra = 6.dp.toPx()
-            val destra = size.width - 6.dp.toPx()
-            val alto = 22.dp.toPx()
-            val basso = size.height - 20.dp.toPx()
-            val intervallo = (massimo - minimo).coerceAtLeast(3.0)
-            fun x(ora: Float) = sinistra + (destra - sinistra) * (ora / (altezzaGiorno - 1).toFloat())
-            fun y(t: Double) = (basso - (basso - alto) * ((t - minimo) / intervallo)).toFloat()
-
-            // La notte: una fascia piu' scura per ogni ora senza sole.
-            val passo = (destra - sinistra) / (altezzaGiorno - 1)
-            ore.forEachIndexed { i, h ->
-                if (!h.isDay) drawRect(notte, topLeft = Offset(x(i.toFloat()) - passo / 2f, 0f), size = androidx.compose.ui.geometry.Size(passo, size.height))
-            }
-
-            val tracciato = Path()
-            val area = Path()
-            val xy = punti.map { (o, t) -> Offset(x(o.toFloat()), y(t)) }
-            tracciato.moveTo(xy[0].x, xy[0].y)
-            area.moveTo(xy[0].x, basso + 8.dp.toPx())
-            area.lineTo(xy[0].x, xy[0].y)
-            for (i in 0 until xy.size - 1) {
-                val p0 = xy.getOrElse(i - 1) { xy[i] }
-                val p1 = xy[i]
-                val p2 = xy[i + 1]
-                val p3 = xy.getOrElse(i + 2) { xy[i + 1] }
-                val c1 = Offset(p1.x + (p2.x - p0.x) / 6f, p1.y + (p2.y - p0.y) / 6f)
-                val c2 = Offset(p2.x - (p3.x - p1.x) / 6f, p2.y - (p3.y - p1.y) / 6f)
-                tracciato.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
-                area.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
-            }
-            area.lineTo(xy.last().x, basso + 8.dp.toPx())
-            area.close()
-
-            clipRect(right = size.width * rivelazione.value) {
-                drawPath(area, Brush.verticalGradient(listOf(accento.copy(alpha = 0.28f), accento.copy(alpha = 0.0f)), startY = alto, endY = basso + 8.dp.toPx()))
-                drawPath(tracciato, accento, style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-            }
-
-            // Minima e massima: un punto e il numero, sopra la massima e sotto la minima.
-            fun etichetta(i: Int, t: Double, sopra: Boolean) {
-                val c = xy[i]
-                drawCircle(accento, radius = 3.dp.toPx(), center = c)
-                val testo = misura.measure(gradi(t), stileEtichetta)
-                val tx = (c.x - testo.size.width / 2f).coerceIn(0f, size.width - testo.size.width)
-                val ty = if (sopra) c.y - testo.size.height - 4.dp.toPx() else c.y + 4.dp.toPx()
-                drawText(testo, topLeft = Offset(tx, ty.coerceIn(0f, size.height - testo.size.height)))
-            }
-            if (rivelazione.value >= 0.98f) {
-                etichetta(indiceMax, massimo, sopra = true)
-                if (indiceMin != indiceMax) etichetta(indiceMin, minimo, sopra = false)
-            }
-
-            // L'ora di adesso: un tacchetto sotto la curva, non una riga, per non
-            // farla confondere col cursore.
-            adesso?.let { a ->
-                if (a in 0 until altezzaGiorno) {
-                    drawLine(debole, Offset(x(a.toFloat()), basso + 10.dp.toPx()), Offset(x(a.toFloat()), basso + 16.dp.toPx()), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
-                }
-            }
-
-            // Il cursore: riga sottile, e un anello sul punto della curva.
-            val cx = x(cursore.coerceIn(0f, (altezzaGiorno - 1).toFloat()))
-            drawLine(inchiostro.copy(alpha = 0.28f), Offset(cx, alto - 6.dp.toPx()), Offset(cx, basso + 8.dp.toPx()), strokeWidth = 1.2.dp.toPx())
-            val sulla = ore.getOrNull(scelta)?.temperature
-            if (sulla != null) {
-                val cy = y(sulla)
-                drawCircle(palette.chip, radius = 7.dp.toPx(), center = Offset(cx, cy))
-                drawCircle(accento, radius = 5.dp.toPx(), center = Offset(cx, cy), style = Stroke(width = 2.4.dp.toPx()))
-            }
+            disegnaGiornata(
+                ore = ore,
+                punti = punti,
+                scelta = scelta,
+                cursore = cursore,
+                adesso = adesso,
+                rivelazione = rivelazione.value,
+                unita = unita,
+                palette = palette,
+                misura = misura,
+            )
         }
         // Le ore in basso: ogni sei, a coprire la giornata.
         Row(modifier = Modifier.fillMaxWidth().padding(top = 2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -226,5 +162,104 @@ internal fun GraficoGiornata(
                 Text(text = oraDueCifre(h), style = SalaType.microLabel, color = palette.inkFaint)
             }
         }
+    }
+}
+
+/**
+ * Il disegno della curva, fuori dalla composizione perche' si possa provare
+ * (`GraficoGiornataRenderTest`): solo `DrawScope`, niente stato.
+ */
+internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
+    ore: List<HourForecast>,
+    punti: List<Pair<Int, Double>>,
+    scelta: Int,
+    cursore: Float,
+    adesso: Int?,
+    rivelazione: Float,
+    unita: TempUnit,
+    palette: SalaPalette,
+    misura: androidx.compose.ui.text.TextMeasurer,
+) {
+    val minimo = punti.minOf { it.second }
+    val massimo = punti.maxOf { it.second }
+    val indiceMin = punti.indexOfFirst { it.second == minimo }
+    val indiceMax = punti.indexOfFirst { it.second == massimo }
+    fun gradi(v: Double) = "${unita.from(v).roundToInt()}°"
+    val inchiostro = palette.ink
+    val accento = palette.accent
+    val debole = palette.inkFaint
+    // La notte e' la fascia piu' scura in tutti e due i temi: con la carta scura
+    // l'inchiostro e' chiaro, e un velo d'inchiostro la schiarirebbe.
+    val notte = if (palette.buio > 0.5f) Color.Black.copy(alpha = 0.22f) else palette.ink.copy(alpha = 0.06f)
+    val stileEtichetta = SalaType.microLabel.copy(color = palette.inkSoft)
+    val altezzaGiorno = ore.size.coerceAtLeast(2)
+    val sinistra = 6.dp.toPx()
+    val destra = size.width - 6.dp.toPx()
+    val alto = 22.dp.toPx()
+    val basso = size.height - 20.dp.toPx()
+    val intervallo = (massimo - minimo).coerceAtLeast(3.0)
+    fun x(ora: Float) = sinistra + (destra - sinistra) * (ora / (altezzaGiorno - 1).toFloat())
+    fun y(t: Double) = (basso - (basso - alto) * ((t - minimo) / intervallo)).toFloat()
+
+    // La notte: una fascia piu' scura per ogni ora senza sole.
+    val passo = (destra - sinistra) / (altezzaGiorno - 1)
+    ore.forEachIndexed { i, h ->
+        if (!h.isDay) drawRect(notte, topLeft = Offset(x(i.toFloat()) - passo / 2f, 0f), size = androidx.compose.ui.geometry.Size(passo, size.height))
+    }
+
+    val tracciato = Path()
+    val area = Path()
+    val xy = punti.map { (o, t) -> Offset(x(o.toFloat()), y(t)) }
+    tracciato.moveTo(xy[0].x, xy[0].y)
+    area.moveTo(xy[0].x, basso + 8.dp.toPx())
+    area.lineTo(xy[0].x, xy[0].y)
+    for (i in 0 until xy.size - 1) {
+        val p0 = xy.getOrElse(i - 1) { xy[i] }
+        val p1 = xy[i]
+        val p2 = xy[i + 1]
+        val p3 = xy.getOrElse(i + 2) { xy[i + 1] }
+        val c1 = Offset(p1.x + (p2.x - p0.x) / 6f, p1.y + (p2.y - p0.y) / 6f)
+        val c2 = Offset(p2.x - (p3.x - p1.x) / 6f, p2.y - (p3.y - p1.y) / 6f)
+        tracciato.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
+        area.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
+    }
+    area.lineTo(xy.last().x, basso + 8.dp.toPx())
+    area.close()
+
+    clipRect(right = size.width * rivelazione) {
+        drawPath(area, Brush.verticalGradient(listOf(accento.copy(alpha = 0.28f), accento.copy(alpha = 0.0f)), startY = alto, endY = basso + 8.dp.toPx()))
+        drawPath(tracciato, accento, style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+    }
+
+    // Minima e massima: un punto e il numero, sopra la massima e sotto la minima.
+    fun etichetta(i: Int, t: Double, sopra: Boolean) {
+        val c = xy[i]
+        drawCircle(accento, radius = 3.dp.toPx(), center = c)
+        val testo = misura.measure(gradi(t), stileEtichetta)
+        val tx = (c.x - testo.size.width / 2f).coerceIn(0f, size.width - testo.size.width)
+        val ty = if (sopra) c.y - testo.size.height - 4.dp.toPx() else c.y + 4.dp.toPx()
+        drawText(testo, topLeft = Offset(tx, ty.coerceIn(0f, size.height - testo.size.height)))
+    }
+    if (rivelazione >= 0.98f) {
+        etichetta(indiceMax, massimo, sopra = true)
+        if (indiceMin != indiceMax) etichetta(indiceMin, minimo, sopra = false)
+    }
+
+    // L'ora di adesso: un tacchetto sotto la curva, non una riga, per non
+    // farla confondere col cursore.
+    adesso?.let { a ->
+        if (a in 0 until altezzaGiorno) {
+            drawLine(debole, Offset(x(a.toFloat()), basso + 10.dp.toPx()), Offset(x(a.toFloat()), basso + 16.dp.toPx()), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+        }
+    }
+
+    // Il cursore: riga sottile, e un anello sul punto della curva.
+    val cx = x(cursore.coerceIn(0f, (altezzaGiorno - 1).toFloat()))
+    drawLine(inchiostro.copy(alpha = 0.28f), Offset(cx, alto - 6.dp.toPx()), Offset(cx, basso + 8.dp.toPx()), strokeWidth = 1.2.dp.toPx())
+    val sulla = ore.getOrNull(scelta)?.temperature
+    if (sulla != null) {
+        val cy = y(sulla)
+        drawCircle(palette.chip, radius = 7.dp.toPx(), center = Offset(cx, cy))
+        drawCircle(accento, radius = 5.dp.toPx(), center = Offset(cx, cy), style = Stroke(width = 2.4.dp.toPx()))
     }
 }

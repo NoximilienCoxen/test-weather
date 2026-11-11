@@ -78,15 +78,20 @@ fun IndicatoreCielo(
         1f
     }
     Canvas(modifier = modifier.size(misura)) {
-        val lato = size.minDimension
-        val c = Offset(size.width / 2f, size.height / 2f)
-        val angoloDito = tiro.coerceIn(0f, 1.4f) * 140f
-        when (astro) {
-            AstroDiAttesa.SOLE -> sole(c, lato * respiro, colore, if (caricando) giro else angoloDito)
-            AstroDiAttesa.FIOCCO -> fiocco(c, lato * respiro, colore, if (caricando) giro else angoloDito)
-            // La luna oscilla fra -18 e +18 gradi, come un pendolo; tirando, si inclina.
-            AstroDiAttesa.LUNA -> luna(c, lato, colore, if (caricando) (giro - 0.5f) * 36f else angoloDito * 0.25f - 10f, giro)
-        }
+        disegnaAstro(astro, caricando, tiro, colore, giro, respiro)
+    }
+}
+
+/** Il disegno dell'astro, fuori dalla composizione per provarlo (`IndicatoreCieloRenderTest`). */
+internal fun DrawScope.disegnaAstro(astro: AstroDiAttesa, caricando: Boolean, tiro: Float, colore: Color, giro: Float, respiro: Float) {
+    val lato = size.minDimension
+    val c = Offset(size.width / 2f, size.height / 2f)
+    val angoloDito = tiro.coerceIn(0f, 1.4f) * 140f
+    when (astro) {
+        AstroDiAttesa.SOLE -> sole(c, lato * respiro, colore, if (caricando) giro else angoloDito)
+        AstroDiAttesa.FIOCCO -> fiocco(c, lato * respiro, colore, if (caricando) giro else angoloDito)
+        // La luna oscilla fra -18 e +18 gradi, come un pendolo; tirando, si inclina.
+        AstroDiAttesa.LUNA -> luna(c, lato, colore, if (caricando) (giro - 0.5f) * 36f else angoloDito * 0.25f - 10f, giro)
     }
 }
 

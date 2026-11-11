@@ -1134,7 +1134,7 @@ private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
  * sotto di lui. Una cosa dipinta dove nessuno la vede e' peggio di una cosa
  * che manca, perche' costa e non si nota se si rompe.
  */
-private fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>, scroscio: Float) {
+internal fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>, scroscio: Float) {
     if (scena.bagnato <= 0.01f) return
     // Lo scroscio infittisce **solo la pioggia**: neve e grandine non si
     // addensano a un colpo di dito, e non devono sembrare pioggia.
@@ -1298,23 +1298,23 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>
                 for (anello in 0..1) {
                     val e = (eta - anello * 0.16f).coerceIn(0f, 1f)
                     if (e <= 0f) continue
-                    val r = l * 0.17f * (1f - (1f - e) * (1f - e))
+                    val r = l * 0.24f * (1f - (1f - e) * (1f - e))
                     drawOval(
-                        color = tintaPioggia.copy(alpha = 0.55f * (1f - e) * (1f - e)),
+                        color = tintaPioggia.copy(alpha = 0.95f * (1f - e) * (1f - e)),
                         topLeft = Offset(t.centro.x - r, t.centro.y - r * 0.32f),
                         size = Size(r * 2f, r * 0.64f),
-                        style = Stroke(width = l * 0.0042f),
+                        style = Stroke(width = l * 0.0065f),
                     )
                 }
                 val secondi = eta * DURATA_TOCCO
-                for (j in 0 until 11) {
-                    val angolo = (-PI / 2).toFloat() + (j - 5) * 0.24f + (sparso(j, t.seme) - 0.5f) * 0.16f
+                for (j in 0 until 15) {
+                    val angolo = (-PI / 2).toFloat() + (j - 7) * 0.20f + (sparso(j, t.seme) - 0.5f) * 0.16f
                     val v = l * (0.42f + 0.34f * sparso(j + 40, t.seme))
                     val gx = t.centro.x + cos(angolo) * v * secondi
                     val gy = t.centro.y + sin(angolo) * v * secondi + 0.5f * l * 2.2f * secondi * secondi
                     drawCircle(
                         color = tintaPioggia.copy(alpha = 0.85f * svanire),
-                        radius = l * (0.0045f + 0.0030f * sparso(j + 80, t.seme)) * (1f - eta * 0.5f),
+                        radius = l * (0.0070f + 0.0040f * sparso(j + 80, t.seme)) * (1f - eta * 0.5f),
                         center = Offset(gx, gy),
                     )
                 }
@@ -1323,13 +1323,13 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>
                 // Un cristallo a sei braccia che gira piano e si scioglie: e'
                 // il fiocco che si ingrandisce quando lo si guarda da vicino.
                 val crescita = 1f - (1f - minOf(1f, eta * 3f)) * (1f - minOf(1f, eta * 3f))
-                val braccio = l * 0.085f * (0.5f + 0.5f * crescita)
+                val braccio = l * 0.115f * (0.5f + 0.5f * crescita)
                 val giro = eta * 0.9f
                 val tinta = SalaTokens.neutral100.copy(alpha = svanire.coerceIn(0f, 1f))
                 for (b in 0 until 6) {
                     val a = giro + b * (PI.toFloat() / 3f)
                     val punta = Offset(t.centro.x + cos(a) * braccio, t.centro.y + sin(a) * braccio)
-                    drawLine(tinta, t.centro, punta, strokeWidth = l * 0.0042f, cap = StrokeCap.Round)
+                    drawLine(tinta, t.centro, punta, strokeWidth = l * 0.0060f, cap = StrokeCap.Round)
                     // I due rametti, a un terzo dalla punta.
                     val base = Offset(t.centro.x + cos(a) * braccio * 0.62f, t.centro.y + sin(a) * braccio * 0.62f)
                     for (lato in intArrayOf(-1, 1)) {
@@ -1338,21 +1338,21 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>
                             tinta,
                             base,
                             Offset(base.x + cos(ar) * braccio * 0.34f, base.y + sin(ar) * braccio * 0.34f),
-                            strokeWidth = l * 0.0030f,
+                            strokeWidth = l * 0.0044f,
                             cap = StrokeCap.Round,
                         )
                     }
                 }
-                drawCircle(tinta, radius = l * 0.0065f, center = t.centro)
+                drawCircle(tinta, radius = l * 0.0090f, center = t.centro)
             }
             Caduta.GRANDINE -> {
                 // I chicchi rimbalzano: salgono, ricadono, risalgono piu' bassi.
-                for (j in 0 until 7) {
-                    val dx = (sparso(j, t.seme) - 0.5f) * l * 0.36f * eta
+                for (j in 0 until 9) {
+                    val dx = (sparso(j, t.seme) - 0.5f) * l * 0.58f * eta
                     val fase = eta * (2.6f + sparso(j + 20, t.seme))
-                    val rimbalzo = kotlin.math.abs(sin(fase * PI.toFloat())) * (1f - eta) * l * 0.20f
+                    val rimbalzo = kotlin.math.abs(sin(fase * PI.toFloat())) * (1f - eta) * l * 0.26f
                     val c = Offset(t.centro.x + dx, t.centro.y - rimbalzo)
-                    val r = l * (0.0070f + 0.0040f * sparso(j + 60, t.seme))
+                    val r = l * (0.0115f + 0.0060f * sparso(j + 60, t.seme))
                     drawCircle(SalaTokens.ghiaccioChiaro.copy(alpha = (1f - eta * 0.8f).coerceIn(0f, 1f)), radius = r, center = c)
                     drawCircle(Color.White.copy(alpha = 0.8f * svanire), radius = r * 0.34f, center = Offset(c.x - r * 0.3f, c.y - r * 0.34f))
                 }

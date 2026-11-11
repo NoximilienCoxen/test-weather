@@ -8133,3 +8133,208 @@ risponde con la sala giusta, ma chi aggiunge una riga che compare e scompare
 sopra o sotto il carosello lo tenga presente.
 
 **Non provato in mano**: e' dedotto dal video e dal codice, e compila.
+
+## 64. Le novita' del 11 novembre 2026: soglie, neve, maree, storico, grafico, widget
+
+Scritte e provate **da un container con l'SDK Android scaricato a mano** (vedi
+§64.8: `dl.google.com` si raggiunge, e basta quello). Compilano, i test JVM
+passano - compresi quelli Robolectric, che disegnano i widget - e i disegni nuovi
+si sono guardati come immagine. **Nessuna e' stata provata su un telefono**:
+quello che segue dice, per ogni punto, cosa resta da guardare in mano.
+
+### 64.1 Avvisi a soglia: pioggia, UV, e piu' localita'
+
+`TipoSoglia` ha due voci in piu' in **fondo** (`PIOGGIA`, `UV`: `ordinal` entra
+nel numero di notifica, quindi l'ordine non si tocca). Pioggia da 2/5/10 mm
+l'ora, UV da 6/8/11. Il confronto e' sul numero che si leggera': l'UV si
+arrotonda come i gradi, la pioggia no (il millimetro e' gia' un decimale).
+
+**Piu' localita'** (`SogliePersonali.altreLocalita`, spenta di norma): il giro
+guarda la localita' dell'app e fino a `ALTRE_LOCALITA_MAX` = 5 salvate. La
+localita' dell'app e' l'unica per cui si riprova se la rete manca; le altre
+no. La chiave di "un episodio, una notifica" gia' conteneva il posto
+(`posto.key`); il **numero** della notifica adesso lo contiene anche (hash del
+posto x numero di tipi), se no due citta' con la stessa soglia si
+sostituirebbero in tendina. `ID_BASE` e' passato da 4400 a 100000 per non
+cozzare con le allerte ufficiali (4300 + 10 bit).
+
+Il tocco su una notifica di una localita' salvata apre la sala giusta **ma non
+cambia localita'**: l'app mostra la sua. Un extra `EXTRA_LOCALITA` per portarci
+la localita' della notifica e' il passo logico, non fatto.
+
+Prove: `SogliePersonaliTest` (pioggia alla soglia, UV arrotondato, testi).
+**Non provato in mano**: il giro con tre localita' vere, e il permesso delle
+notifiche chiesto dalle due levette nuove.
+
+### 64.2 La neve
+
+`freezing_level_height` e' entrato in `HOURLY_VARS`, e `elevation` (la quota
+del posto, nella risposta) in `Forecast`. `core/data/Neve.kt`:
+**quota neve = zero termico - 300 m**, a passi di 50. E' la regola dei
+bollettini di montagna, non un dato dell'API, e la sala lo scrive ("circa" e
+una nota). `nevePrevista` da' i giorni con >= 0,1 cm e, per ciascuno, la
+quota **piu' bassa** fra le ore in cui nevica (e' la domanda di chi risale
+una valle). `postoRispettoAllaNeve` confronta la quota del posto: da +200 m in
+su "da te nevica", entro 200 m "al limite", sotto "la neve resta piu' in alto".
+
+`SezioneNeve` sta in fondo a Sala III e compare solo con neve in arrivo o su un
+posto sopra i mille metri (`serveLaNeve`). I metri si danno in piedi per chi ha
+i gradi Fahrenheit, come le onde.
+
+Prove: `NeveTest` (core) e `app/src/test/resources/neve-dolomiti.json`, una
+risposta **vera** (Dolomiti, 11 novembre: zero termico a 2900 m, nessuna neve:
+e' la prova che la colonna nuova si legge, non che la neve funzioni).
+**Non provato**: una nevicata vera. L'11 novembre sulle Dolomiti non nevicava.
+
+### 64.3 Le maree
+
+`sea_level_height_msl` entra in `MARE_VARS` e in `OraMare.livello`. Le alte e le
+basse **non sono nell'API**: `data/Marea.kt` le ricava dalla curva con un filtro a
+isteresi - un massimo e' tale solo se poi la curva **scende** di 10 cm
+(`ESCURSIONE_MINIMA_M`), e viceversa. La prima stesura cercava "un'ora piu'
+alta delle due accanto" e a Venezia trovava come marea gli scalini da 1 cm
+(0,09 - 0,09 - 0,10): `MareTest` la teneva fuori per un soffio, ed e' la
+ragione dell'isteresi. Il primo punto della serie non si dichiara mai un
+estremo (non si sa cosa facesse prima); l'ora si raffina al minuto con una
+parabola per tre punti. Le ore senza livello spezzano la curva.
+
+Dentro `SezioneMare` (Sala VI): curva delle 24 ore dall'ora scelta, le
+prossime quattro alte/basse in parole, e **la stessa avvertenza** del mare
+(modello globale, porti e lagune diversi di decine di centimetri, non per
+navigare). Dove la marea e' sotto i 10 cm (mari chiusi, laghi) la sezione non
+compare.
+
+Il **confronto fra localita'** (`SalaConfronto`) ha due righe in piu' - ONDE
+(vince la piu' bassa) e ACQUA - solo se almeno una colonna e' di costa;
+`UiState.favoritesMare` distingue "qui non c'e' mare" (chiave presente, valore
+nullo) da "non ancora chiesto" (chiave assente). Verificato contro risposte
+vere di Venezia, Rimini, Honolulu (con livello) e Forli', Milano, Denver (tutto
+nullo: il mare resta "solo dove c'e'" anche con la colonna nuova).
+
+Prove: `MareTest` + `mare-venezia-livello.json` (risposta vera dell'11
+novembre).
+
+### 64.4 Un anno fa oggi
+
+`data/Storico.kt`: **una** richiesta a `archive-api.open-meteo.com` per
+localita' e data, tenuta in `WeatherViewModel.storicoInMemoria` (`Optional`
+perche' "nessun dato" e' una risposta). E' il **quinto indirizzo** di
+Open-Meteo: informativa (`docs/privacy.md`) e note legali l'hanno. L'archivio
+stava nell'app per la "norma storica" (§ sul perche' e' stata tolta: dieci
+richieste a previsione, un campo che nessuno leggeva); qui si chiede un
+giorno, quando serve.
+
+Il riquadro "UN ANNO FA OGGI" sta in Sala I sotto la curva e solo su oggi.
+Confronto sulle **massime mostrate**, come per "ieri"; sotto i due gradi "quasi
+come allora".
+
+**Non e' stato provato contro l'archivio vero**: da questo container l'host e'
+bloccato dal proxy (403 al CONNECT). `archivio-un-giorno.json` e' scritto a
+mano nel formato documentato. **E' la prima cosa da guardare sul telefono**:
+se la risposta ha un'altra forma, `parseStorico` torna nullo e la riga non
+compare - non rompe niente, ma non si vede nemmeno.
+
+### 64.5 La curva della giornata
+
+`ui/sala/rooms/GraficoGiornata.kt`, in Sala I sotto i tre riquadri: la
+temperatura sulle ore del giorno mostrato, minima e massima segnate, la notte
+in fascia piu' scura, un tacchetto sull'ora di adesso, un cursore agganciato a
+`selectHour` (tocco e trascinamento, con colpetto). Si rivela da sinistra in
+900 ms quando compare; il cursore va a molla. Con `LocalMovimento` falso: niente
+rivelazione ne' molla ne' colpetto. Un giorno senza ore (oltre il quarto con
+ICON-2I) non disegna niente.
+
+**Non provato in mano**: il trascinamento sulla curva dentro il carosello
+verticale (come la colonna della pioggia, `detectHorizontalDragGestures` con
+`consume`, ma li' e' una fila, qui e' un'area alta 128 dp), e quanto la sala
+sia piu' alta di uno schermo piccolo - Sala I ha adesso una curva e un riquadro
+in piu'.
+
+### 64.6 Cio' che si muove e si tocca
+
+- **Pioggia/neve/grandine al tocco** (`SalaCielo.Tocco`). Il cielo aveva gia'
+  le increspature e la fiammata del sole; quando cade qualcosa, il tocco fuori
+  dal disco fa altro: pioggia = anelli schiacciati, corona di gocce balistiche e
+  uno **scroscio** (la pioggia si infittisce per due secondi: `bagnato`
+  aumentato solo per le corsie accese, non per neve e grandine) con colpetto
+  `goccia()`; neve = un soffio che spinge i fiocchi vicini lontano dal dito e li
+  fa girare, e un cristallo a sei bracci che si scioglie; grandine = chicchi che
+  rimbalzano e `chicco()`. Il tocco legge la scena con `rememberUpdatedState`
+  (il gestore e' chiavato su `interattivo`, vedrebbe sempre la scena di
+  quando e' nato).
+- **L'astro di attesa** (`IndicatoreCielo`): sole con raggi che girano, luna
+  che dondola con due stelline, fiocco che gira, al posto del cerchio di
+  Material nel tiro per aggiornare e **sotto il nome nel velo d'apertura**
+  mentre i dati non ci sono. L'animazione infinita parte solo con `caricando`
+  e solo se il movimento e' consentito. **Non provato in mano**: la corsa
+  dell'indicatore col tiro (`distanceFraction`, si sposta con `graphicsLayer`
+  invece che col posizionamento di Material).
+
+### 64.7 I widget
+
+- **Vento** e **mare** (`widget/VentoWidget`, `MareWidget`, `paint/VentoArt`,
+  `MareArt`): ridimensionabili, con anteprima nelle due lingue di
+  `drawable(-en)-nodpi`. Il vento usa l'unita' scelta nell'app; la freccia
+  della bussola punta **dove il vento va** (la scritta dice "da"). Il mare
+  distingue "qui non c'e'" (risposta riuscita e vuota: scritto) da "non so"
+  (rete: trattini). `Mare.adesso()` legge l'ora del posto da
+  `utc_offset_seconds`. Il mare non scarica la previsione
+  (`AggiornaWidgetWorker` e `WidgetConfigActivity` lo saltano come l'aria).
+- **Colori del telefono** (Material You): `WidgetInk.of(context, coloriTelefono)`
+  prende sfondo, testo e accento da `android.R.color.system_*` su Android 12+.
+  E' una scelta **dell'app, non del singolo widget**
+  (`Settings.widgetColoriTelefono`, **accesa di norma**), con una levetta in
+  Impostazioni solo da Android 12; cambiarla ridisegna tutti i widget. Accesa
+  di norma vuol dire che chi aggiorna vede i suoi widget cambiare colore: se
+  non va bene, e' una riga (`?: true` -> `?: false` in `SettingsPrefs`).
+- **Widget unico** (`WidgetKind.UNICO`, "Caelum · ridimensionabile"): resize
+  in tutti e due i versi, `VistaWidget.AUTO` sceglie dalla forma (`vistaDaForma`:
+  cella -> temperatura, due per due -> tempo adesso, largo -> ore, alto ->
+  settimana) oppure la faccia fissata in configurazione (anche aria, luna, vento,
+  mare). **Non ridipinge niente**: `CaelumWidget.paint` e' diventato
+  `internal` e prende `vista`, e `UnicoWidget` chiama il widget giusto. **I sei
+  vecchi non sono stati tolti**: chi li ha sulla Home li perderebbe. Toglierli
+  dal selettore del lanciatore (senza disinstallare quelli piazzati) e'
+  possibile mettendo `android:enabled="false"` ai ricevitori nel manifesto - non
+  fatto, lo decide chi usa l'app.
+  L'anteprima nel selettore e' ancora **quella del meteo**, copiata: la va
+  rifatta con `AnteprimeWidgetTest`.
+  **Non provato in mano**: il ridimensionamento vero, e che `maxResizeWidth`
+  e' rispettato da ogni lanciatore.
+
+### 64.8 Compilare e provare in questo container
+
+Il container **non e' piu'** quello descritto in §1, ma neanche l'ambiente
+della macchina con il telefono: c'e' la rete, non l'SDK. Come si e' fatto:
+
+```
+curl -O https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+sdkmanager --install "platforms;android-37.0" "build-tools;36.0.0"   # android-37 e' "37.0"
+echo "sdk.dir=..." > local.properties                                  # ignorato da git
+```
+
+- **Maven Central risponde 429** a ondate (e ad `android-all-instrumented`, 150
+  MB, sempre): una build ne mette in cache un pezzo a ogni tentativo, quindi si
+  ripete finche' arriva in fondo. Il jar di Robolectric (`14-robolectric-10818077-i7`)
+  si scarica da `maven-central.storage-download.googleapis.com/maven2/...`, che
+  non limita, e si passa con
+  `-Drobolectric.offline=true -Drobolectric.dependency.dir=<cartella>` in
+  `JAVA_TOOL_OPTIONS`: i test girano senza toccare il repository.
+- **Raggiungibili**: `api.open-meteo.com`, `marine-api.open-meteo.com`,
+  `dl.google.com`, `maven-central.storage-download.googleapis.com`.
+  **Bloccato**: `archive-api.open-meteo.com` (403).
+- I disegni dei widget si guardano da `app/build/widget-renders/*.png` dopo
+  `AnteprimeWidgetTest` e `WidgetOverflowTest`.
+
+### 64.9 Cosa NON e' stato fatto
+
+- **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le
+  novita' di oggi. Il modulo `wear` condivide `core`, quindi `Forecast` ha
+  adesso `elevation` e `freezingLevel` (con valore di default): compila lo
+  stesso, ma non e' stato provato.
+- Il tocco su una notifica di soglia non porta alla localita' della notifica
+  (§64.1).
+- Le maree non entrano negli avvisi a soglia ("alta marea sopra X"): serve una
+  soglia sul livello, e il livello e' un modello globale di cui l'app stessa
+  dice di non fidarsi sotto costa.
+- Nessuna anteprima propria per il widget unico (§64.7).
