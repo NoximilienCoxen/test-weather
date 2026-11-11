@@ -152,6 +152,18 @@
         </receiver>
 
         <receiver
+            android:name=".widget.UnicoWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_unico_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/unico_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".widget.VentoWidgetReceiver"
             android:exported="true"
             android:label="@string/widget_vento_label">

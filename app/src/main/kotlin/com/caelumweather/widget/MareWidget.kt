@@ -35,6 +35,7 @@ internal class MareWidget : CaelumWidget(WidgetKind.MARE) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
         val risposta = MareRepository(where).load()

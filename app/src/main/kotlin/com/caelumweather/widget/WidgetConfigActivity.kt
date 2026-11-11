@@ -75,8 +75,8 @@ class WidgetConfigActivity : ComponentActivity() {
                         // Il tondo per tornare chiude senza salvare: resta il
                         // RESULT_CANCELED di onCreate, come col tasto indietro.
                         onCancel = { finish() },
-                        onSave = { place, useLocation ->
-                            lifecycleScope.launch { saveAndFinish(place, useLocation) }
+                        onSave = { place, useLocation, vista ->
+                            lifecycleScope.launch { saveAndFinish(place, useLocation, vista) }
                         },
                     )
                 }
@@ -84,7 +84,7 @@ class WidgetConfigActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun saveAndFinish(chosen: Place?, useLocation: Boolean) {
+    private suspend fun saveAndFinish(chosen: Place?, useLocation: Boolean, vista: VistaWidget) {
         // **Chi segue la posizione la rileva adesso, finche' e' in primo
         // piano.** Da dietro le quinte il widget non la ottiene quasi mai (vedi
         // WidgetPrefs.lastFix), e senza un punto di partenza ripiegava su
@@ -103,7 +103,7 @@ class WidgetConfigActivity : ComponentActivity() {
         withContext(Dispatchers.IO) {
             WidgetPrefs(this@WidgetConfigActivity).save(
                 appWidgetId = appWidgetId,
-                config = WidgetConfig(useLocation = useLocation, place = place),
+                config = WidgetConfig(useLocation = useLocation, place = place, vista = vista),
             )
         }
 
@@ -131,7 +131,7 @@ class WidgetConfigActivity : ComponentActivity() {
         // perche' e' un tocco su SALVA; se non basta, ci pensa il lavoro in
         // background appena c'e' rete.
         val tipo = kind
-        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA && tipo != WidgetKind.MARE) {
+        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA && tipo != WidgetKind.MARE && vista != VistaWidget.ARIA && vista != VistaWidget.MARE) {
             val scaricata = withTimeoutOrNull(DOWNLOAD_TIMEOUT_MS) {
                 WidgetForecast.scarica(this@WidgetConfigActivity, place)
             } ?: false

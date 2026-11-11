@@ -217,6 +217,9 @@ enum class WidgetKind(
 
     ORE(listOf("PROSSIME ORE", "NEXT HOURS", "NÄCHSTE STUNDEN", "PROCHAINES HEURES", "PRÓXIMAS HORAS"), listOf("ORE", "HOURS", "STUNDEN", "HEURES", "HORAS"), true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
 
+    // Il widget unico: una faccia sola che si ridimensiona, al posto di sei.
+    UNICO(listOf("CAELUM", "CAELUM", "CAELUM", "CAELUM", "CAELUM"), listOf("CAELUM", "CAELUM", "CAELUM", "CAELUM", "CAELUM"), true, UnicoWidgetReceiver::class.java, ::UnicoWidget, SalaRoom.OGGI),
+
     VENTO(listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), true, VentoWidgetReceiver::class.java, ::VentoWidget, SalaRoom.VENTO),
 
     // Il mare sta nella sala del vento: e' vento che ha avuto tempo.
@@ -278,12 +281,14 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
      * caso "non configurato" e' gia' stato intercettato prima di arrivare qui,
      * quindi qui non c'e' nessun ripiego da inventare.
      */
-    protected abstract suspend fun paint(
+    internal abstract suspend fun paint(
         context: Context,
         frame: Frame,
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        /** Cosa mostrare, per il widget unico; gli altri non la leggono. */
+        vista: VistaWidget,
     ): Drawn
 
     /**
@@ -365,7 +370,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
         // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
         // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
         // saperne di piu', non lo stesso numero ridisegnato.
-        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
+        return Face(paint(context, frame, place, type, ink, config.vista), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
     }
 }
 

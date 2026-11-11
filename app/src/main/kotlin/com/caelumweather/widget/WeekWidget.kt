@@ -24,6 +24,7 @@ internal class WeekWidget : CaelumWidget(WidgetKind.SETTIMANA) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         // Non-null per costruzione: SETTIMANA dichiara `needsPlace`.
         val where = requireNotNull(place)

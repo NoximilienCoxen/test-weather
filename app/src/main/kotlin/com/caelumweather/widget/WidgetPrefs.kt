@@ -52,7 +52,19 @@ private val Context.widgetDataStore: DataStore<Preferences> by
 data class WidgetConfig(
     val useLocation: Boolean = false,
     val place: Place? = null,
+    /** Cosa mostra il widget unico; gli altri non la leggono. */
+    val vista: VistaWidget = VistaWidget.AUTO,
 )
+
+/**
+ * Le facce del widget unico ([WidgetKind.UNICO]).
+ *
+ * [AUTO] sceglie dalla forma: una cella e' la temperatura, due per due il tempo
+ * adesso, largo le prossime ore, grande la settimana. Tutte le altre fissano la
+ * faccia a prescindere dalla forma - e sono, una per una, i sei widget di prima
+ * piu' vento e mare.
+ */
+enum class VistaWidget { AUTO, METEO, MINI, ORE, SETTIMANA, ARIA, LUNA, VENTO, MARE }
 
 class WidgetPrefs(private val context: Context) {
 
@@ -133,6 +145,7 @@ class WidgetPrefs(private val context: Context) {
     suspend fun save(appWidgetId: Int, config: WidgetConfig) {
         context.widgetDataStore.edit { prefs ->
             prefs[useLocationKey(appWidgetId)] = config.useLocation
+            prefs[vistaKey(appWidgetId)] = config.vista.name
 
             val place = config.place
             if (place != null) {
@@ -156,6 +169,7 @@ class WidgetPrefs(private val context: Context) {
     suspend fun forget(appWidgetId: Int) {
         context.widgetDataStore.edit { prefs ->
             prefs.remove(useLocationKey(appWidgetId))
+            prefs.remove(vistaKey(appWidgetId))
             prefs.removePlace(PLACE_PREFIX, appWidgetId)
             prefs.removePlace(FIX_PREFIX, appWidgetId)
             // Chiavi legacy: non vengono piu' scritte ma vanno rimosse per
@@ -174,6 +188,7 @@ class WidgetPrefs(private val context: Context) {
         const val FIX_PREFIX = "gps_"
 
         fun useLocationKey(id: Int) = booleanPreferencesKey("posizione_$id")
+        fun vistaKey(id: Int) = stringPreferencesKey("vista_$id")
         fun latKey(prefix: String, id: Int) = doublePreferencesKey("${prefix}lat_$id")
         fun lonKey(prefix: String, id: Int) = doublePreferencesKey("${prefix}lon_$id")
         fun nomeKey(prefix: String, id: Int) = stringPreferencesKey("${prefix}nome_$id")
@@ -183,6 +198,9 @@ class WidgetPrefs(private val context: Context) {
         fun Preferences.configOf(id: Int) = WidgetConfig(
             useLocation = this[useLocationKey(id)] ?: false,
             place = placeOf(PLACE_PREFIX, id),
+            // Un nome che non c'e' piu' torna ad AUTO: meglio la faccia
+            // sensata che un widget che non sa cosa disegnare.
+            vista = this[vistaKey(id)]?.let { nome -> VistaWidget.entries.firstOrNull { it.name == nome } } ?: VistaWidget.AUTO,
         )
 
         fun Preferences.placeOf(prefix: String, id: Int): Place? {

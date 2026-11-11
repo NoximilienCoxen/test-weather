@@ -26,6 +26,7 @@ internal class VentoWidget : CaelumWidget(WidgetKind.VENTO) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
         val previsione = WidgetForecast.load(context, where)

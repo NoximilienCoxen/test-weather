@@ -24,6 +24,7 @@ internal class MiniWidget : CaelumWidget(WidgetKind.MINI) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
         val forecast = WidgetForecast.load(context, where)

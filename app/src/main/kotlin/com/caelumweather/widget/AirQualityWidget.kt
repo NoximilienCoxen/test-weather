@@ -23,6 +23,7 @@ internal class AirQualityWidget : CaelumWidget(WidgetKind.ARIA) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
         val air = AirQualityRepository(where).load().getOrNull()
