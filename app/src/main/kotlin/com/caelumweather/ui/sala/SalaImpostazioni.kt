@@ -365,7 +365,7 @@ fun SalaImpostazioniScreen(
                 )
                 // L'ora si sceglie solo a riepilogo acceso: spento, quattro
                 // bottoni che non comandano niente (vedi la regola in testa).
-                if (state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
+                ComparsaMorbida(visibile = state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
                     SceltaSegmentata(
                         voci = RiepilogoMattinoWorker.ORE_POSSIBILI.map { it to oraRiepilogo(it) },
                         scelta = state.oraRiepilogo,
@@ -442,7 +442,7 @@ fun SalaImpostazioniScreen(
                     )
                     // La soglia si sceglie solo ad avviso acceso: spento, tre
                     // bottoni che non comandano niente (vedi la regola in testa).
-                    if (accesa) {
+                    ComparsaMorbida(visibile = accesa) {
                         SceltaSegmentata(
                             voci = SogliePersonali.possibili(tipo).map { it to scritta(it) },
                             scelta = state.soglie.valore(tipo),

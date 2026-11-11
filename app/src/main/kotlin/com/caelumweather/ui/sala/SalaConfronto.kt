@@ -196,6 +196,7 @@ private fun ColonnaConfronto(
     Column(
         modifier = Modifier
             .width(148.dp)
+            .cedevole()
             .clip(RoundedCornerShape(28.dp))
             .background(if (corrente) palette.accent.copy(alpha = 0.16f) else palette.chip)
             .clickable(onClick = onClick)

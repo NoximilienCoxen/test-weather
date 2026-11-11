@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.snap
 import com.caelumweather.lingua.tr
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -151,7 +153,13 @@ fun PannelloSala(
             // quindi accorciarlo non sposta niente verso il basso, scopre in
             // alto. Il margine superiore sale da venti a ventiquattro perche'
             // il titolo non si appoggi al raggio dell'angolo, che qui e' largo.
-            content()
+            //
+            // **I pezzi della scheda arrivano uno dopo l'altro** mentre la si
+            // sfoglia: vedi `ColonnaInRitardo`. I modificatori di colonna che
+            // il contenuto chiedesse a questo livello non avrebbero effetto;
+            // le sale non ne usano.
+            val colonna = this
+            ColonnaInRitardo(modifier = Modifier.fillMaxWidth()) { colonna.content() }
         }
         // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
@@ -229,9 +237,12 @@ fun RowScope.CellaValore(
     /** Dove porta la cella, se porta da qualche parte. */
     onVai: (() -> Unit)? = null,
 ) {
+    // La cella che porta altrove cede sotto il dito: e' il secondo segno, dopo
+    // la freccetta, che la distingue da una che si limita a dire.
     Column(
         modifier = modifier
             .weight(1f)
+            .then(if (onVai != null) Modifier.cedevole() else Modifier)
             .clip(RoundedCornerShape(RaggioCella))
             .background(palette.chip)
             // `then` e non due rami di `Column`: il corpo della cella e' lo
@@ -396,14 +407,20 @@ fun IntestazioneCaelum(
         ) {
             DueCursori(palette.ink)
         }
-        Text(
-            text = citta,
-            style = SalaType.citta,
-            color = palette.ink,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        // Cambiando localita' il nome si scambia invece di saltare: e' il
+        // segno che tutto il resto della schermata sta per cambiare con lui.
+        ScambioMorbido(
+            stato = citta,
             modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place"), onClick = onCitta),
-        )
+        ) { nome ->
+            Text(
+                text = nome,
+                style = SalaType.citta,
+                color = palette.ink,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         PastigliaAvviso(avvisi, prossima, momento, ufficialiNonVerificate, palette, onAvvisi)
     }
 }
@@ -490,18 +507,28 @@ private fun PastigliaAvviso(
     } else {
         lerp(SalaTokens.verde600, SalaTokens.verde400, palette.buio)
     }
+    // Fondo, inchiostro e pallino passano invece di scattare: trascinando la
+    // barra delle ore dentro e fuori da un'allerta, la pastiglia si accende.
+    val movimento = LocalMovimento.current
+    val passaggio: AnimationSpec<Color> = if (movimento) tween(260) else snap()
+    val fondoMosso by animateColorAsState(fondo, passaggio, label = "avviso-fondo")
+    val inchiostroMosso by animateColorAsState(inchiostro, passaggio, label = "avviso-inchiostro")
+    val pallinoMosso by animateColorAsState(pallino, passaggio, label = "avviso-pallino")
     Row(
         modifier = Modifier
             .minimumInteractiveComponentSize()
+            .cedevole()
             .clip(CircleShape)
-            .background(fondo)
+            .background(fondoMosso)
             .clickable(onClickLabel = tr("apri il bollettino degli avvisi", "open the warnings bulletin"), onClick = onClick)
             .padding(horizontal = 13.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(pallino))
-        Text(text = testo, style = SalaType.sectionLabel, color = inchiostro, maxLines = 1)
+        Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(pallinoMosso))
+        ScambioMorbido(stato = testo) { scritta ->
+            Text(text = scritta, style = SalaType.sectionLabel, color = inchiostroMosso, maxLines = 1)
+        }
     }
 }
 
@@ -1026,6 +1053,7 @@ fun TondoIndietro(palette: SalaPalette, onClick: () -> Unit, modifier: Modifier 
     Box(
         modifier = modifier
             .size(40.dp)
+            .cedevole(premuto = 0.90f)
             .clip(CircleShape)
             .background(palette.chip)
             .clickable(onClick = onClick),

@@ -516,7 +516,12 @@ fun SalaShell(
         !state.legaliOpen && !state.bollettinoAperto
     val guida = state.guidaAperta || guidaDaSola
 
-    CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
+    CompositionLocalProvider(
+        LocalDidascalie provides state.captionStyle,
+        // Un interruttore solo per tutto cio' che si muove nelle schede e nei
+        // pannelli: vedi `SalaMovimento.kt`.
+        LocalMovimento provides !ferme,
+    ) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
                 palette = palette,
@@ -573,11 +578,20 @@ fun SalaShell(
                 // Fontevivo a chi l'app l'ha impostata su Noceto, senza
                 // spiegare perche'. L'indietro torna a casa anche lui; le
                 // impostazioni e le localita', composte dopo, lo precedono.
+                //
+                // Le due pastiglie qui sotto **aprono il proprio spazio**
+                // comparendo, invece di spingere di colpo la scheda in giu'.
+                // L'ultima casa vista resta ricordata perche' la pastiglia
+                // abbia ancora un nome da scrivere mentre se ne va.
                 val casa = state.casa
-                if (casa != null) {
-                    BackHandler(onBack = viewModel::lasciaVisita)
+                // Un ricordo e non uno stato: scriverlo non deve ricomporre.
+                val ultimaCasa = remember { arrayOfNulls<com.caelumweather.data.Place>(1) }
+                if (casa != null) ultimaCasa[0] = casa
+                if (casa != null) BackHandler(onBack = viewModel::lasciaVisita)
+                ComparsaMorbida(visibile = casa != null) {
+                    val nome = (casa ?: ultimaCasa[0])?.name.orEmpty()
                     PastigliaAccento(
-                        testo = tr("DAL WIDGET · TORNA A ${casa.name.uppercase()}", "FROM THE WIDGET · BACK TO ${casa.name.uppercase()}"),
+                        testo = tr("DAL WIDGET · TORNA A ${nome.uppercase()}", "FROM THE WIDGET · BACK TO ${nome.uppercase()}"),
                         palette = palette,
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
@@ -590,7 +604,7 @@ fun SalaShell(
                 // senza rete l'app mostra l'ultima previsione rimasta su disco;
                 // e' meglio dei trattini solo finche' non passa per quella di
                 // adesso. Toccata, riprova.
-                if (state.previsioneVecchia) {
+                ComparsaMorbida(visibile = state.previsioneVecchia) {
                     PastigliaAccento(
                         testo = etichettaDatiVecchi(state.fetchedAt, senzaRete = state.error != null),
                         palette = palette,
@@ -726,6 +740,14 @@ fun SalaShell(
                         // di lui: su una scheda lunga il dito la porta in fondo, e
                         // solo li' cambia sala. Vedi la nota sul carosello.
                         val scorrimento = key(page) { rememberScrollState() }
+                        //
+                        // **Lo scarto dal centro, per i pezzi della scheda**: lo
+                        // legge `ColonnaInRitardo` mentre posa i figli. Zero con
+                        // le animazioni ferme, e il carosello resta nudo.
+                        val scartoDellaScheda = remember(page, ferme) {
+                            { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
+                        }
+                        CompositionLocalProvider(LocalScartoSala provides scartoDellaScheda) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -791,6 +813,7 @@ fun SalaShell(
                                     null -> Unit
                                 }
                             }
+                        }
                         }
                     }
                 }

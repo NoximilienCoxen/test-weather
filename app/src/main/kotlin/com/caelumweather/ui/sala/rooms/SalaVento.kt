@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import com.caelumweather.data.TendenzaPressione
@@ -30,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.caelumweather.data.Wmo
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.Didascalia
+import com.caelumweather.ui.sala.NumeroCheScorre
+import com.caelumweather.ui.sala.angoloCheGira
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
@@ -152,7 +156,9 @@ fun SalaVentoScreen(
                 Canvas(
                     modifier = Modifier
                         .size(ROSA)
-                        .rotate((direzione?.toFloat() ?: 0f) + 180f),
+                        // Cambiando ora la lancetta gira fin li', per la via
+                        // piu' corta, invece di saltarci.
+                        .rotate(angoloCheGira((direzione?.toFloat() ?: 0f) + 180f)),
                 ) {
                     // La lancetta parte dal centro e va verso l'alto; la
                     // rotazione la porta dove serve. Mezzo giro in piu' perche'
@@ -174,8 +180,10 @@ fun SalaVentoScreen(
                     modifier = Modifier.padding(top = 6.dp),
                     verticalAlignment = Alignment.Top,
                 ) {
-                    Text(
-                        text = velocita?.let { unita.from(it).roundToInt().toString() } ?: "--",
+                    val nodi = velocita?.let { unita.from(it).roundToInt() }
+                    NumeroCheScorre(
+                        testo = nodi?.toString() ?: "--",
+                        valore = nodi,
                         style = SalaType.numeroSala,
                         color = palette.ink,
                     )
@@ -245,7 +253,7 @@ fun SalaVentoScreen(
                     Box(
                         modifier = Modifier
                             .width(4.dp)
-                            .height((10f + quota * 36f).dp)
+                            .height(misuraCheArriva((10f + quota * 36f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (unita.from(ms) > 24) SalaTokens.accent500 else SalaTokens.verde400,
@@ -375,6 +383,7 @@ private fun RigaBussola(
                 style = SalaType.sectionLabel,
                 color = if (bussolaAccesa) palette.accentInk else palette.accent,
                 modifier = Modifier
+                    .cedevole()
                     .clip(RoundedCornerShape(16.dp))
                     .background(if (bussolaAccesa) palette.accent else palette.chip)
                     .clickable { onBussola(!bussolaAccesa) }

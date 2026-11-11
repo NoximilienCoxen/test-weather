@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.background
@@ -279,6 +280,7 @@ private fun RiepilogoGiorno(
                     Row(
                         modifier = Modifier
                             .weight(1f)
+                            .cedevole()
                             .clip(RoundedCornerShape(26.dp))
                             .background(palette.chip)
                             .clickable {

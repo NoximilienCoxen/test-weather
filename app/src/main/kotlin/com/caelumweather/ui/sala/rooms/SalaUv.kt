@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.NumeroCheScorre
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
@@ -49,6 +50,7 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.SalaTokens
 import com.caelumweather.ui.sala.SalaType
 import com.caelumweather.ui.sala.oraDueCifre
@@ -109,8 +111,11 @@ fun SalaUvScreen(
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
-            Text(
-                text = String.format(Lingue.locale, "%.1f", corrente),
+            // In decimi, perche' il verso dello scorrimento segua anche un
+            // passo da 4,2 a 4,6.
+            NumeroCheScorre(
+                testo = String.format(Lingue.locale, "%.1f", corrente),
+                valore = (corrente * 10).roundToInt(),
                 style = SalaType.giant(46),
                 color = palette.ink,
             )
@@ -175,7 +180,7 @@ fun SalaUvScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height((3f + quota * 80f).dp)
+                                .height(misuraCheArriva((3f + quota * 80f).dp))
                                 .clip(CircleShape)
                                 .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
                         )

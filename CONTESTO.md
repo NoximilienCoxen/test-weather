@@ -7992,3 +7992,46 @@ L'attribuzione dice "i modelli d'onda dei servizi meteorologici" e rimanda alla
 loro pagina senza elencarli; `probe_licenze.py` ora la scarica
 (`api/licenze/open-meteo-mare.txt`): **va letta, e l'elenco dei modelli va
 scritto com'e' la'**. Non provato in mano.
+
+## 61. Il movimento di schede e comandi
+
+L'11 novembre 2026. `ui/sala/SalaMovimento.kt`, accanto a `SalaMolle.kt` (che
+resta delle molle del cielo). **Tutto obbedisce a `LocalMovimento`**, che la
+Shell mette a falso con le animazioni ridotte (app o sistema) e nella cattura:
+li' ogni cosa salta al valore finale e gli scatti non cambiano. Niente resta
+acceso: parte da un gesto o da un dato che cambia, e finisce (trappola #8).
+
+| Cosa | Dove | Come |
+|---|---|---|
+| I pezzi della scheda arrivano uno dopo l'altro | `ColonnaInRitardo`, dentro `PannelloSala` | guidato dal dito (`LocalScartoSala` = scarto del carosello), niente orologio: dal basso resta indietro cio' che sta sotto, dall'alto cio' che sta sopra. Uno strato per figlio, letto mentre si posa |
+| Il comando cede sotto il dito | `Modifier.cedevole()` | va **prima** di `clip`/`background`; guarda il dito senza consumare. Celle-porta, pastiglia degli avvisi, indietro, riquadri della settimana, giorni, localita', confronto, bussola, "torna a ora" |
+| Le barre arrivano | `misuraCheArriva` | pioggia, UV, vento: cambiando ora le colonne si riassestano |
+| La lancetta gira per la via corta | `angoloCheGira` | la rosa di Sala VI |
+| I numeri grandi scorrono | `NumeroCheScorre` | vento, UV, millimetri (Sala I lo faceva gia') |
+| Una riga apre il proprio spazio | `ComparsaMorbida` | le due pastiglie sotto l'intestazione; le scelte sotto un interruttore acceso |
+| Un testo si scambia | `ScambioMorbido` | nome della citta', pastiglia degli avvisi (che passa anche di colore) |
+| Un colore passa | `coloreChePassa` | fondo e bordo del giorno scelto in Sala I |
+
+Nel cielo, due cose nuove (`SalaVita.stellaCadente`, `SalaCielo.arcobaleno`):
+
+- **Una stella cadente** ogni diciassette secondi, in tre giri su cinque, a
+  notte aperta e asciutta. Parte a 6,5 s dentro il giro e **non a zero**: con
+  l'orologio fermo (cattura, animazioni ridotte) non c'e' mai.
+- **L'arcobaleno** quando piove col sole su e il cielo non e' chiuso: pieno a
+  copertura 0,80 (il pavimento della pioggia), spento a 0,94; niente con neve o
+  temporale. Sta dalla parte opposta al sole. **Cambia gli scatti di pioggia
+  diurna** della CI quando la nuvolosita' vera dell'ora e' bassa: e' voluto.
+
+**Le tre proposte vecchie, com'erano scritte, e cosa ne e' stato.** "Il
+cartellino che entra in ritardo" e' `ColonnaInRitardo`. "La dissolvenza del
+fondo quando cambia la condizione" c'era gia' dal §13: i sette numeri della
+scena passano con `mollaScena`, e non c'e' piu' un fondo che scatta. "Il bordo
+irregolare delle macchie d'acquerello" **non si e' fatto**: le macchie sono
+uscite con la carta (§13), e l'unico modo di rifare quel bordo sulle nuvole e'
+uno shader AGSL, che se non compila **fa cadere l'app all'avvio** e da qui non
+si puo' provare su nessun telefono.
+
+**Non provato in mano, niente di tutto questo.** Compila, e le prove JVM
+passano; come si sente sotto il dito - quanto ritardo, quanto cede un comando,
+se le barre ondeggiano troppo - lo dice solo il telefono. I numeri da tarare
+stanno in cima a `SalaMovimento.kt`.

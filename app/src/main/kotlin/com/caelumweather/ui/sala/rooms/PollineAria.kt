@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -90,6 +91,7 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 6.dp)
+                    .cedevole(premuto = 0.98f)
                     .clip(CircleShape)
                     // **Un tocco sceglie, e basta.** Toccare di nuovo la riga
                     // gia' scelta tornava alla famiglia peggiore: da fuori,

@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.NumeroCheScorre
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -43,6 +45,7 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.SalaTokens
 import com.caelumweather.ui.sala.SalaType
 import com.caelumweather.ui.sala.diGiorno
@@ -130,7 +133,12 @@ fun SalaPioggiaScreen(
                 )
             }
             Row(verticalAlignment = Alignment.Top) {
-                Text(text = totale.virgola(), style = SalaType.numeroSala, color = palette.ink)
+                NumeroCheScorre(
+                    testo = totale.virgola(),
+                    valore = (totale * 10).roundToInt(),
+                    style = SalaType.numeroSala,
+                    color = palette.ink,
+                )
                 Text(
                     text = "mm",
                     style = SalaType.hourLabel,
@@ -204,7 +212,7 @@ fun SalaPioggiaScreen(
                             // Una colonna a zero resta visibile: una colonna
                             // assente si legge come un dato mancante, non come
                             // un'ora asciutta.
-                            .height((3f + quota * 85f).dp)
+                            .height(misuraCheArriva((3f + quota * 85f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (mm > 0.01) {
@@ -343,6 +351,7 @@ private fun SettimanaDellaPioggia(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .cedevole()
                     .clip(CircleShape)
                     .semantics {
                         contentDescription = tr("${giorno.label}, ${mm.virgola()} millimetri", "${giorno.label}, ${mm.virgola()} millimetres")

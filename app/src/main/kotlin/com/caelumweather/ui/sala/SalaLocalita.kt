@@ -128,6 +128,7 @@ fun SalaLocalitaScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp)
+                    .cedevole(premuto = 0.98f)
                     .clip(CircleShape)
                     .background(palette.chip)
                     .clickable(onClick = onConfronta)
@@ -141,6 +142,7 @@ fun SalaLocalitaScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .cedevole(premuto = 0.98f)
                 .clip(CircleShape)
                 .background(palette.accent)
                 .clickable {
@@ -182,6 +184,7 @@ private fun RigaLocalita(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .cedevole(premuto = 0.98f)
             .clip(RoundedCornerShape(32.dp))
             .background(if (corrente) palette.accent.copy(alpha = 0.18f) else palette.chip)
             .clickable(onClick = onClick)

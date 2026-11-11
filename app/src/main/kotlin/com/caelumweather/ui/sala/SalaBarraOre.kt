@@ -124,6 +124,7 @@ fun BarraDelleOre(
             if (spostata) {
                 Row(
                     modifier = Modifier
+                        .cedevole(premuto = 0.92f)
                         .clip(CircleShape)
                         .background(palette.accent)
                         .clickable(onClick = onTornaOra)

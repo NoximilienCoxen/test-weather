@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
+import com.caelumweather.ui.sala.coloreChePassa
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.content.Context
@@ -357,11 +359,12 @@ fun StrisciaGiorni(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .cedevole()
                     .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
-                    .background(if (attivo) palette.chip else Color.Transparent)
+                    .background(coloreChePassa(if (attivo) palette.chip else palette.chip.copy(alpha = 0f)))
                     .border(
                         width = 1.5.dp,
-                        color = if (attivo) palette.accent else Color.Transparent,
+                        color = coloreChePassa(if (attivo) palette.accent else palette.accent.copy(alpha = 0f)),
                         shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
                     // La figuretta e' un disegno, e i due numeri da soli non
