@@ -1,6 +1,6 @@
 # Caelum Weather — Informativa sulla privacy / Privacy policy
 
-*Ultimo aggiornamento / Last updated: 10 novembre 2026*
+*Ultimo aggiornamento / Last updated: 11 novembre 2026*
 
 ## Italiano
 
@@ -25,8 +25,9 @@ IP da cui arriva la richiesta.
 ### A chi vengono inviate
 
 - Open-Meteo (`api.open-meteo.com`, `air-quality-api.open-meteo.com`,
-  `geocoding-api.open-meteo.com`): previsioni, qualità dell'aria e polline,
-  ricerca delle località.
+  `marine-api.open-meteo.com`, `geocoding-api.open-meteo.com`): previsioni,
+  qualità dell'aria e polline, onde e temperatura del mare, ricerca delle
+  località.
 - I servizi di allerta meteo ufficiali, a seconda del Paese della località:
   MeteoAlarm (`feeds.meteoalarm.org`), National Weather Service
   (`api.weather.gov`), Environment and Climate Change Canada
@@ -97,8 +98,8 @@ request comes from.
 ### Who receives it
 
 - Open-Meteo (`api.open-meteo.com`, `air-quality-api.open-meteo.com`,
-  `geocoding-api.open-meteo.com`): forecasts, air quality and pollen, place
-  search.
+  `marine-api.open-meteo.com`, `geocoding-api.open-meteo.com`): forecasts, air
+  quality and pollen, waves and sea temperature, place search.
 - Official weather warning services, depending on the country of the place:
   MeteoAlarm (`feeds.meteoalarm.org`), National Weather Service
   (`api.weather.gov`), Environment and Climate Change Canada

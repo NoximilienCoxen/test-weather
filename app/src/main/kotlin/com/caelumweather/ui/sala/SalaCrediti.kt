@@ -44,6 +44,7 @@ object Fonti {
     const val OPEN_METEO_LICENZA = "https://open-meteo.com/en/licence"
     const val CC_BY_4 = "https://creativecommons.org/licenses/by/4.0/"
     const val CAMS_ARIA = "https://open-meteo.com/en/docs/air-quality-api"
+    const val MARE = "https://open-meteo.com/en/docs/marine-weather-api"
     const val METEOALARM = "https://meteoalarm.org/"
 
     /** La citazione che Open-Meteo chiede per i dati CAMS, parola per parola. */

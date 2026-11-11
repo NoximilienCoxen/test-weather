@@ -496,6 +496,9 @@ fun SalaImpostazioniScreen(
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
                     VoceInformativa(tr("Previsione", "Forecast"), tr("Open-Meteo · modello ${state.model.label}", "Open-Meteo · model ${state.model.label}"), palette)
                     VoceInformativa(tr("Qualità dell'aria", "Air quality"), "Open-Meteo", palette)
+                    // Solo dove il mare c'e': altrove la riga direbbe di una
+                    // fonte che per questa localita' non porta niente.
+                    if (state.mare != null) VoceInformativa(tr("Mare", "Sea"), tr("Open-Meteo · stima al largo", "Open-Meteo · open-water estimate"), palette)
                     VoceInformativa(tr("Allerte", "Warnings"), tr("Servizi meteorologici nazionali, più avvisi calcolati sui dati", "National weather services, plus notices worked out from the data"), palette)
                     VoceInformativa(tr("Località", "Place"), dettaglioLocalita(state), palette)
                     VoceInformativa(tr("Versione", "Version"), "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", palette)

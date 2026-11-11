@@ -488,6 +488,19 @@ session() {
     shoot "${slug}-polline-${coppia#*:}"
   done
 
+  # ── Il mare, in fondo alla sala del vento ────────────────────────────────
+  #
+  # Forli' il mare non lo vede, e la sezione esiste solo dove l'API lo porta:
+  # `--ei mare 120` impone un'onda di un metro e venti (CONTESTO §60).
+  alive || { echo "dispositivo caduto al mare"; return; }
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  sleep 1
+  adbt shell logcat -c >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei mare 120 --ei sezione 5 >/dev/null 2>&1 || true
+  attendi_previsione
+  sleep 1
+  shoot "${slug}-mare-vento"
+
   # ── Un colpetto in verticale cambia sala ─────────────────────────────────
   #
   # Le sale si sfogliano in su e in giu', e deve bastare poco: un decimo di

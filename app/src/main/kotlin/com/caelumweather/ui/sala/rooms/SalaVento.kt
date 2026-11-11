@@ -289,6 +289,14 @@ fun SalaVentoScreen(
                 )
             }
         }
+
+        // ── Il mare ──────────────────────────────────────────────────────────
+        //
+        // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
+        // il resto della sala.
+        state.mareMostrato?.let { oraDiMare ->
+            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento)
+        }
     }
 }
 

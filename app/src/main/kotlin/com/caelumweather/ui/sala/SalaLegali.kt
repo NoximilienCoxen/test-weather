@@ -68,20 +68,21 @@ fun SalaLegaliScreen(
             BloccoImpostazioni(etichetta = tr("DA DOVE VENGONO I DATI", "WHERE THE DATA COME FROM"), palette = palette) {
                 Paragrafo(
                     tr(
-                        "La previsione e la qualità dell'aria arrivano da Open-Meteo. " +
+                        "La previsione, la qualità dell'aria e, per le località di costa, onde e " +
+                            "temperatura del mare arrivano da Open-Meteo. " +
                             "La ricerca delle località passa dal suo servizio di geocodifica. " +
                             "Le allerte ufficiali arrivano dai servizi meteorologici nazionali: " +
                             "${FonteAllerte.elenco}.",
-                        "Forecasts and air quality come from Open-Meteo. Place search goes through its geocoding service. " +
+                        "Forecasts, air quality and, for coastal places, waves and sea temperature come from Open-Meteo. Place search goes through its geocoding service. " +
                             "Official warnings come from the national weather services: ${FonteAllerte.elenco}.",
                     ),
                     palette,
                 )
                 Paragrafo(
                     tr(
-                        "Sono i soli indirizzi che questa applicazione interroga: tre di Open-Meteo e " +
+                        "Sono i soli indirizzi che questa applicazione interroga: quattro di Open-Meteo e " +
                             "uno per ciascun servizio di allerta. Non ce ne sono altri.",
-                        "These are the only addresses this app contacts: three Open-Meteo ones and one " +
+                        "These are the only addresses this app contacts: four Open-Meteo ones and one " +
                             "for each warning service. There are no others.",
                     ),
                     palette,
@@ -239,6 +240,19 @@ fun SalaLegaliScreen(
                 )
                 Paragrafo(Fonti.CITAZIONE_CAMS, palette)
                 Collegamento(tr("I dati CAMS su Open-Meteo", "CAMS data on Open-Meteo"), Fonti.CAMS_ARIA, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
+
+                Paragrafo(
+                    tr(
+                        "Onde e temperatura del mare: Open-Meteo.com Marine Weather API, sotto la " +
+                            "stessa licenza CC BY 4.0, che usa i modelli d'onda dei servizi " +
+                            "meteorologici (l'elenco è nella sua pagina). Sono stime per il mare " +
+                            "aperto, poco precise sotto costa: non servono alla navigazione e non " +
+                            "sostituiscono bollettini del mare, portolani o le bandiere in spiaggia.",
+                        "Waves and sea temperature: Open-Meteo.com Marine Weather API, under the same CC BY 4.0 licence, which uses the wave models of the weather services (the list is on its page). They are estimates for open water, with limited accuracy near the coast: they are not suitable for navigation and do not replace marine bulletins, nautical almanacs or beach flags.",
+                    ),
+                    palette,
+                )
+                Collegamento(tr("I dati del mare su Open-Meteo", "Marine data on Open-Meteo"), Fonti.MARE, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
 
                 Paragrafo(
                     tr(

@@ -104,6 +104,22 @@ jobs:
           } > /tmp/ciout/aria-mondo.txt 2>&1
           cat /tmp/ciout/aria-mondo.txt
 
+      # Il mare sta su un quarto host (`marine-api`). L'app decide se una
+      # localita' e' di costa da cio' che risponde - colonne piene o nulle - e
+      # non da un elenco: qui si vede se la regola regge ancora, a Rimini (mare)
+      # e a Forli' (niente). CONTESTO §60.
+      - name: Interroga il mare
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/ciout
+          MARE="https://marine-api.open-meteo.com/v1/marine?timezone=auto&forecast_days=1&hourly=wave_height,wave_direction,wave_period,sea_surface_temperature"
+          for punto in "rimini:44.06:12.57" "forli:44.2226:12.0407"; do
+            nome="${punto%%:*}"; resto="${punto#*:}"
+            curl -sS -w "\nHTTP %{http_code}\n" "$MARE&latitude=${resto%%:*}&longitude=${resto#*:}" \
+              -o "/tmp/ciout/mare-$nome.json" || true
+            head -c 500 "/tmp/ciout/mare-$nome.json"; echo
+          done
+
       # Le allerte vengono da MeteoAlarm, che e' l'unica fonte pubblica e senza
       # accordi su cui i servizi nazionali - per l'Italia la Protezione Civile e
       # i centri funzionali regionali - pubblicano i propri avvisi.

@@ -279,6 +279,7 @@ class MainActivity : ComponentActivity() {
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
         intent.getIntExtra(EXTRA_POLLINE, -1).takeIf { it >= 0 }?.let(viewModel::forcePolline)
+        intent.getIntExtra(EXTRA_MARE, -1).takeIf { it >= 0 }?.let(viewModel::forceMare)
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
@@ -337,6 +338,9 @@ class MainActivity : ComponentActivity() {
 
         /** Il livello del polline, da 0 a 4, per tre giorni e tutte le famiglie. */
         const val EXTRA_POLLINE = "polline"
+
+        /** Il mare, in centimetri d'onda: la sezione in fondo a Sala VI. */
+        const val EXTRA_MARE = "mare"
 
         /**
          * Apre il dettaglio di un giorno. Serve perche' col dito si arriva

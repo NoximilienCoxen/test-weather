@@ -619,6 +619,7 @@ adb shell am start -n com.caelumweather/.MainActivity --ei ora 2 --ei meteo 63
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
 | `--ei polline` | impone il polline da 0 a 4, per tre giorni e tutte le famiglie: granelli nel cielo da 3 in su, e la sezione in fondo all'aria |
+| `--ei mare` | impone il mare, in centimetri d'onda: la sezione in fondo a Sala VI, che a Forli' non c'e' |
 | `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -7958,3 +7959,36 @@ le librerie risolte da Google Maven (i `classes.jar` estratti dagli AAR),
 `R` e `BuildConfig`. Fa girare anche le prove che non chiedono Robolectric
 (246 l'11 novembre). **Non sostituisce la CI**: niente risorse, niente lint,
 niente R8, niente modulo `wear`.
+
+## 60. Il mare, solo dove c'e'
+
+L'11 novembre 2026. `data/MareRepository.kt` e `ui/sala/rooms/MareVento.kt`:
+altezza, direzione e periodo dell'onda e temperatura dell'acqua, in fondo a
+Sala VI sotto la pressione, all'ora scelta. Il riquadro con l'onda si muove
+(ampiezza dai metri, passo dal periodo) e sta fermo con le animazioni ridotte.
+
+- **E' un quarto indirizzo di Open-Meteo**, `marine-api.open-meteo.com`:
+  aggiunto all'informativa (`docs/privacy.md`, it e en), alle note legali
+  ("quattro di Open-Meteo"), all'attribuzione e alla scheda dello store. La
+  sonda in CI ha un passo suo (`Interroga il mare`, `api/mare-*.json`).
+- **Chi e' di costa lo decidono i dati.** L'API risponde a ogni coordinata: a
+  Forli', Milano, Bologna, Como, Denver lascia nulle tutte le colonne; a
+  Rimini, Genova, Venezia, Honolulu le riempie con la cella di mare piu'
+  vicina (lette l'11 novembre). `parseMare` torna nullo senza nemmeno un
+  numero, e la sezione non esiste. Le due risposte vere stanno in
+  `app/src/test/resources/mare-{rimini,forli}.json`.
+- **Lo stato del mare** e' la scala Douglas (`StatoDelMare`). Chi legge i
+  Fahrenheit legge l'onda in piedi.
+- **L'avvertenza sotto i numeri non e' una `Didascalia`**: con i testi brevi
+  quelle spariscono, e "non usarla per navigare ne' per decidere un bagno"
+  deve restare. Lo ripetono le note legali.
+- Arriva dopo la previsione, come l'aria, figlio dello stesso lavoro; non si
+  conserva su disco: senza rete la sezione manca.
+- `--ei mare 120` lo impone per la cattura (scatto `*-mare-vento`).
+
+**Non verificato alle fonti**: la pagina di Open-Meteo sul mare da questa
+sessione non si raggiunge (`open-meteo.com` non e' fra gli host concessi).
+L'attribuzione dice "i modelli d'onda dei servizi meteorologici" e rimanda alla
+loro pagina senza elencarli; `probe_licenze.py` ora la scarica
+(`api/licenze/open-meteo-mare.txt`): **va letta, e l'elenco dei modelli va
+scritto com'e' la'**. Non provato in mano.

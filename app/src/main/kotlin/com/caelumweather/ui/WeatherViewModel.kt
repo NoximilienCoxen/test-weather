@@ -13,6 +13,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.caelumweather.data.AirQuality
 import com.caelumweather.data.AirQualityRepository
+import com.caelumweather.data.Mare
+import com.caelumweather.data.MareRepository
 import com.caelumweather.data.AlertKind
 import com.caelumweather.data.AlertLevel
 import com.caelumweather.data.DeviceLocation
@@ -121,6 +123,11 @@ data class UiState(
     /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
     val airUnavailable: Boolean = false,
     /**
+     * Il mare davanti alla localita'; nullo dove non c'e' (o finche' non
+     * arriva). Come l'aria, appartiene al posto da cui viene.
+     */
+    val mare: Mare? = null,
+    /**
      * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
      *
      * Come [air], sono un arricchimento che arriva dopo la previsione e per
@@ -178,6 +185,8 @@ data class UiState(
      * stagione, quando il dato vero e' tutto zero.
      */
     val forcedPolline: Int? = null,
+    /** L'altezza dell'onda imposta dalla cattura, in centimetri: vedi [mareMostrato]. */
+    val forcedMare: Int? = null,
     // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
     // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
     // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
@@ -367,6 +376,26 @@ data class UiState(
         get() = forcedAlert?.let { listOf(it) } ?: alerts
 
     /** Il polline da mostrare: quello vero, o quello imposto da [forcedPolline]. */
+    /**
+     * Il mare da mostrare all'ora scelta: quello imposto dalla cattura, o
+     * quello vero. Imposto in lettura, come il polline: la localita' della
+     * cattura e' Forli', che il mare non lo vede.
+     */
+    val mareMostrato: com.caelumweather.data.OraMare?
+        get() {
+            val quando = (detailHour ?: hour)?.time
+            forcedMare?.let { centimetri ->
+                return com.caelumweather.data.OraMare(
+                    time = quando ?: LocalDateTime.now(),
+                    onda = centimetri / 100.0,
+                    direzione = 135.0,
+                    periodo = 6.0,
+                    acqua = 19.0,
+                )
+            }
+            return mare?.alle(quando)
+        }
+
     val pollineMostrato: List<GiornoPolline>
         get() = forcedPolline?.let { livello ->
             val oggi = java.time.LocalDate.now()
@@ -678,6 +707,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 it.copy(
                     air = null,
                     airUnavailable = false,
+                    mare = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
                     // Un fotogramma e' una fotografia di **un posto**, e
@@ -751,6 +781,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 .onFailure {
                                     _state.update { it.copy(airUnavailable = true) }
                                 }
+                        }
+
+                        // Il mare, con la stessa regola dell'aria: un altro
+                        // host, figlio di questo lavoro, e nessuno lo aspetta.
+                        // Se non arriva la sezione non compare, e quella di
+                        // prima - dello stesso posto - resta.
+                        launch {
+                            MareRepository(place).load().onSuccess { mare ->
+                                _state.update { it.copy(mare = mare) }
+                            }
                         }
 
                         // Le allerte: prima i bollettini ufficiali, e le
@@ -1357,6 +1397,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Impone il livello del polline: vedi [UiState.forcedPolline]. */
     fun forcePolline(livello: Int) {
         _state.update { it.copy(forcedPolline = livello.coerceIn(0, 4)) }
+    }
+
+    /** Impone il mare, in centimetri d'onda: vedi [UiState.mareMostrato]. */
+    fun forceMare(centimetri: Int) {
+        _state.update { it.copy(forcedMare = centimetri.coerceIn(0, 1500)) }
     }
 
     /** Impone la nuvolosita' oraria: vedi [UiState.forcedCloudCover]. */
