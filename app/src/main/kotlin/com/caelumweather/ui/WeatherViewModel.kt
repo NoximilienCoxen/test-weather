@@ -15,6 +15,7 @@ import com.caelumweather.data.AirQuality
 import com.caelumweather.data.AirQualityRepository
 import com.caelumweather.data.Mare
 import com.caelumweather.data.MareRepository
+import com.caelumweather.data.StoricoRepository
 import com.caelumweather.data.AlertKind
 import com.caelumweather.data.AlertLevel
 import com.caelumweather.data.DeviceLocation
@@ -127,6 +128,11 @@ data class UiState(
      * arriva). Come l'aria, appartiene al posto da cui viene.
      */
     val mare: Mare? = null,
+    /**
+     * Com'era questo giorno un anno fa, dall'archivio. Nullo finche' non
+     * arriva, e per sempre se non arriva: la riga allora non compare.
+     */
+    val unAnnoFa: com.caelumweather.data.GiornoStorico? = null,
     /**
      * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
      *
@@ -714,6 +720,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     mare = null,
+                    unAnnoFa = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
                     // Un fotogramma e' una fotografia di **un posto**, e
@@ -796,6 +803,25 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         launch {
                             MareRepository(place).load().onSuccess { mare ->
                                 _state.update { it.copy(mare = mare) }
+                            }
+                        }
+
+                        // Un anno fa, dall'archivio: **una** richiesta, e solo
+                        // se questa localita' e questa data non ce l'hanno gia'
+                        // in memoria. Stessa regola del mare: figlio di questo
+                        // lavoro, nessuno lo aspetta, se non arriva la riga
+                        // non compare.
+                        launch {
+                            val oggi = forecast.nowThere().toLocalDate()
+                            val chiave = "${place.key}|$oggi"
+                            val noto = storicoInMemoria[chiave]
+                            if (noto != null) {
+                                _state.update { it.copy(unAnnoFa = noto.orElse(null)) }
+                            } else {
+                                StoricoRepository(place).unAnnoFa(oggi).onSuccess { giorno ->
+                                    storicoInMemoria[chiave] = java.util.Optional.ofNullable(giorno)
+                                    _state.update { it.copy(unAnnoFa = giorno) }
+                                }
                             }
                         }
 
@@ -1163,6 +1189,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      * deve svuotare le altre.
      */
     private var favoritesJob: Job? = null
+
+    /** L'archivio gia' chiesto, per localita' e data; `Optional` perche' "nessun dato" e' una risposta. */
+    private val storicoInMemoria = mutableMapOf<String, java.util.Optional<com.caelumweather.data.GiornoStorico>>()
 
     /** Quando l'ultima richiesta per una salvata e' stata fatta. */
     private val favoritesFetchedAt = mutableMapOf<String, Long>()

@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.UiState
 import com.caelumweather.data.MoonPhase
+import com.caelumweather.data.righeUnAnnoFa
 import com.caelumweather.data.scartoDaIeri
 import com.caelumweather.data.scartoDaIeriBreve
 import com.caelumweather.ui.WeatherViewModel
@@ -259,6 +260,40 @@ fun SalaOggiScreen(
                         palette = palette,
                         onVai = { onVai(SalaRoom.UV) },
                     )
+                }
+            }
+
+            // ── La giornata, in una curva ────────────────────────────────────
+            GraficoGiornata(
+                ore = state.shownHours,
+                scelta = state.selectedHour,
+                adesso = if (state.selectedDay == 0) state.nowIndex else null,
+                unita = state.unit,
+                palette = palette,
+                onScegli = viewModel::selectHour,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+
+            // ── Un anno fa, solo per oggi ─────────────────────────────────────
+            val storico = state.unAnnoFa
+            if (!futuro && storico != null) {
+                val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 14.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(palette.chip)
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp),
+                ) {
+                    Text(
+                        text = tr("UN ANNO FA OGGI", "THIS DAY LAST YEAR", "VOR EINEM JAHR", "IL Y A UN AN", "HACE UN AÑO"),
+                        style = SalaType.sectionLabel,
+                        color = palette.inkFaint,
+                    )
+                    Text(text = righe.cosaEra, style = SalaType.rowTitle, color = palette.ink)
+                    righe.confronto?.let { Text(text = it, style = SalaType.rowNote, color = palette.inkSoft) }
                 }
             }
 

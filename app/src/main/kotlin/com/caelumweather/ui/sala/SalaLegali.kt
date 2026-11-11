@@ -69,11 +69,11 @@ fun SalaLegaliScreen(
                 Paragrafo(
                     tr(
                         "La previsione, la qualità dell'aria e, per le località di costa, onde e " +
-                            "temperatura del mare arrivano da Open-Meteo. " +
+                            "temperatura del mare e maree arrivano da Open-Meteo, come il tempo di un anno fa dal suo archivio. " +
                             "La ricerca delle località passa dal suo servizio di geocodifica. " +
                             "Le allerte ufficiali arrivano dai servizi meteorologici nazionali: " +
                             "${FonteAllerte.elenco}.",
-                        "Forecasts, air quality and, for coastal places, waves and sea temperature come from Open-Meteo. Place search goes through its geocoding service. " +
+                        "Forecasts, air quality and, for coastal places, waves, tides and sea temperature come from Open-Meteo, and so does the weather a year ago, from its archive. Place search goes through its geocoding service. " +
                             "Official warnings come from the national weather services: ${FonteAllerte.elenco}.",
                         "Vorhersage, Luftqualität und – für Küstenorte – Wellen und Meerestemperatur kommen von Open-Meteo. Die Ortssuche läuft über dessen Geocoding-Dienst. Amtliche Warnungen kommen von den nationalen Wetterdiensten: ${FonteAllerte.elenco}.",
                         "La prévision, la qualité de l'air et, pour les lieux côtiers, les vagues et la température de la mer viennent d'Open-Meteo. La recherche de lieux passe par son service de géocodage. Les alertes officielles viennent des services météorologiques nationaux : ${FonteAllerte.elenco}.",
@@ -83,13 +83,13 @@ fun SalaLegaliScreen(
                 )
                 Paragrafo(
                     tr(
-                        "Sono i soli indirizzi che questa applicazione interroga: quattro di Open-Meteo e " +
+                        "Sono i soli indirizzi che questa applicazione interroga: cinque di Open-Meteo e " +
                             "uno per ciascun servizio di allerta. Non ce ne sono altri.",
-                        "These are the only addresses this app contacts: four Open-Meteo ones and one " +
+                        "These are the only addresses this app contacts: five Open-Meteo ones and one " +
                             "for each warning service. There are no others.",
-                        "Das sind die einzigen Adressen, die diese App kontaktiert: vier von Open-Meteo und eine für jeden Warndienst. Weitere gibt es nicht.",
-                        "Ce sont les seules adresses que cette application contacte : quatre d'Open-Meteo et une pour chaque service d'alerte. Il n'y en a pas d'autres.",
-                        "Son las únicas direcciones que esta aplicación consulta: cuatro de Open-Meteo y una por cada servicio de alertas. No hay otras.",
+                        "Das sind die einzigen Adressen, die diese App kontaktiert: fünf von Open-Meteo und eine für jeden Warndienst. Weitere gibt es nicht.",
+                        "Ce sont les seules adresses que cette application contacte : cinq d'Open-Meteo et une pour chaque service d'alerte. Il n'y en a pas d'autres.",
+                        "Son las únicas direcciones que esta aplicación consulta: cinco de Open-Meteo y una por cada servicio de alertas. No hay otras.",
                     ),
                     palette,
                 )
