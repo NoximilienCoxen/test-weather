@@ -27,7 +27,7 @@ esito=${PIPESTATUS[0]}
 # lui la sua cartella sul dispositivo, quindi l'`adb pull` arriva tardi ed e'
 # solo un ripiego.
 find baselineprofile/build -name '*-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
-adb pull /sdcard/Android/media/io.github.noximiliencoxen.caelum.baselineprofile /tmp/ciout/media 2>/dev/null || true
+adb pull /sdcard/Android/media/com.caelumweather.baselineprofile /tmp/ciout/media 2>/dev/null || true
 find /tmp/ciout/media -name '*-prof*.txt' -exec cp -v {} /tmp/ciout/ \; 2>/dev/null
 echo "--- uscite di AGP ---"
 find baselineprofile/build/outputs -maxdepth 6 | head -60

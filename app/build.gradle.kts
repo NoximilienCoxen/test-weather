@@ -58,12 +58,35 @@ val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNul
     ?: 1
 val commitSha: String = comando("git", "rev-parse", "--short", "HEAD") ?: "ignoto"
 
+/**
+ * La chiave con cui si firma cio' che va sullo store, **letta da fuori**.
+ *
+ * Quattro variabili d'ambiente (o proprieta' Gradle con lo stesso nome):
+ * `CAELUM_KEYSTORE` (il percorso del file), `CAELUM_KEYSTORE_PASSWORD`,
+ * `CAELUM_KEY_ALIAS`, `CAELUM_KEY_PASSWORD`. In CI arrivano dai segreti del
+ * repository; il file della chiave **non sta nel repository** e non deve
+ * entrarci mai, al contrario di `debug.keystore` che e' pubblico per
+ * costruzione.
+ *
+ * Senza quelle variabili la build funziona lo stesso, e la release resta
+ * com'era prima. Vedi `PUBBLICAZIONE.md`.
+ */
+fun segreto(nome: String): String? =
+    providers.environmentVariable(nome).orElse(providers.gradleProperty(nome)).orNull?.ifBlank { null }
+
+val chiaveStore: String? = segreto("CAELUM_KEYSTORE")
+val chiaveStorePassword: String? = segreto("CAELUM_KEYSTORE_PASSWORD")
+val chiaveAlias: String? = segreto("CAELUM_KEY_ALIAS")
+val chiavePassword: String? = segreto("CAELUM_KEY_PASSWORD")
+val firmaDiRilascio: Boolean =
+    chiaveStore != null && chiaveStorePassword != null && chiaveAlias != null && chiavePassword != null
+
 android {
-    namespace = "io.github.noximiliencoxen.caelum"
+    namespace = "com.caelumweather"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.noximiliencoxen.caelum"
+        applicationId = "com.caelumweather"
         minSdk = 26
         targetSdk = 36
 
@@ -82,6 +105,14 @@ android {
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
+        }
+        if (firmaDiRilascio) {
+            create("release") {
+                storeFile = rootProject.file(chiaveStore!!)
+                storePassword = chiaveStorePassword
+                keyAlias = chiaveAlias
+                keyPassword = chiavePassword
+            }
         }
     }
 
@@ -126,6 +157,9 @@ android {
             // agganci restano spenti, se no qualunque app installata potrebbe
             // far comparire a Caelum un'allerta che nessun ente ha diramato.
             buildConfigField("boolean", "AGGANCI_CATTURA", "false")
+            // Firmata solo se la chiave di caricamento c'e' (vedi `segreto`):
+            // senza, esce non firmata come prima, e la CI la compila comunque.
+            if (firmaDiRilascio) signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

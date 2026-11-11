@@ -31,7 +31,7 @@ Stanno in `CONTESTO.md` §1 e fanno perdere mezz'ora a chi non le conosce.
 $env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe
 ```
 
-Il pacchetto e' `io.github.noximiliencoxen.caelum`.
+Il pacchetto e' `com.caelumweather`.
 
 ## Compila e installa
 
@@ -73,10 +73,10 @@ poi ripristina e ripeti.
 Due condizioni, e **la seconda e' quella che non si indovina**.
 
 1. La schermata compare solo con `welcomed = false`: serve
-   `adb shell pm clear io.github.noximiliencoxen.caelum`. **Cancella le
+   `adb shell pm clear com.caelumweather`. **Cancella le
    localita' salvate e i preferiti: chiedi prima di farlo.**
 2. Il permesso di posizione dev'essere **gia' concesso**:
-   `adb shell pm grant io.github.noximiliencoxen.caelum android.permission.ACCESS_COARSE_LOCATION`
+   `adb shell pm grant com.caelumweather android.permission.ACCESS_COARSE_LOCATION`
    (`pm clear` lo revoca, quindi va in quest'ordine).
 
 Il perche' della seconda: se il permesso va chiesto, si apre la finestra di
@@ -106,7 +106,7 @@ adb shell dumpsys appwidget
 La configurazione di **una** istanza si apre direttamente:
 
 ```
-adb shell "am start -n io.github.noximiliencoxen.caelum/.widget.WidgetConfigActivity -a android.appwidget.action.APPWIDGET_CONFIGURE --ei appWidgetId <id>"
+adb shell "am start -n com.caelumweather/.widget.WidgetConfigActivity -a android.appwidget.action.APPWIDGET_CONFIGURE --ei appWidgetId <id>"
 ```
 
 Da li' si legge la schermata e si ricavano i riquadri su cui battere:
@@ -136,7 +136,7 @@ frattempo prepara i buffer.
 ```
 adb logcat -c -b crash -b main      # azzera prima della prova
 adb logcat -b crash -d              # gli schianti, dopo
-adb shell pidof io.github.noximiliencoxen.caelum   # il processo e' sopravvissuto?
+adb shell pidof com.caelumweather   # il processo e' sopravvissuto?
 ```
 
 Il buffer `crash` e' piccolo e mirato: guardalo per primo. Un `FATAL EXCEPTION`

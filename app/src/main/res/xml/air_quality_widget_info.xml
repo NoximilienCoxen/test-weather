@@ -15,6 +15,7 @@
     android:updatePeriodMillis="1800000"
     android:resizeMode="none"
     android:widgetCategory="home_screen"
-    android:configure="io.github.noximiliencoxen.caelum.widget.WidgetConfigActivity"
+    android:configure="com.caelumweather.widget.WidgetConfigActivity"
     android:widgetFeatures="reconfigurable"
+    android:previewImage="@drawable/widget_anteprima_aria"
     android:initialLayout="@layout/widget_loading" />

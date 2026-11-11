@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Le lingue che l'app parla, dette ad Android: da Android 13 compaiono in
+    Impostazioni > Sistema > Lingue > Lingue delle app. Devono restare le
+    stesse di `SceltaLingua` (lingua/Lingua.kt).
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="it" />
+    <locale android:name="en" />
+</locale-config>

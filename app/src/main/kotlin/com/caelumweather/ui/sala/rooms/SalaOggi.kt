@@ -1,0 +1,437 @@
+package com.caelumweather.ui.sala.rooms
+
+import com.caelumweather.lingua.Lingue
+import com.caelumweather.lingua.tr
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.platform.LocalContext
+import com.caelumweather.notifiche.testiRiepilogo
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.caelumweather.data.SkyState
+import com.caelumweather.ui.UiState
+import com.caelumweather.data.MoonPhase
+import com.caelumweather.data.scartoDaIeri
+import com.caelumweather.data.scartoDaIeriBreve
+import com.caelumweather.ui.WeatherViewModel
+import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
+import com.caelumweather.ui.sala.CellaValore
+import com.caelumweather.ui.sala.CifreCheScorrono
+import com.caelumweather.ui.sala.Didascalia
+import com.caelumweather.ui.sala.GiornoSettimana
+import com.caelumweather.ui.sala.IconaMeteo
+import com.caelumweather.ui.sala.PannelloSala
+import com.caelumweather.ui.sala.PastigliaAccento
+import com.caelumweather.ui.sala.SalaPalette
+import com.caelumweather.ui.sala.SalaRoom
+import com.caelumweather.ui.sala.SalaType
+import com.caelumweather.ui.sala.salaBody
+import com.caelumweather.ui.sala.salaConditionOf
+import com.caelumweather.ui.sala.salaPhaseOf
+import com.caelumweather.ui.sala.salaTitle
+import com.caelumweather.ui.sala.titoloSenzaPrevisione
+import com.caelumweather.ui.sala.corpoSenzaPrevisione
+import com.caelumweather.ui.sala.settimanaDi
+import java.util.Locale
+import kotlin.math.roundToInt
+
+/**
+ * Sala I — Oggi.
+ *
+ * Il numero dei gradi sta **fuori** dal pannello, sul cielo: e' la cosa che si
+ * guarda, e metterla dentro un riquadro la farebbe diventare una delle tante.
+ * Sotto, il pannello racconta l'ora con parole e tre valori, e in fondo la
+ * striscia dei sette giorni.
+ *
+ * **Toccando un giorno tutto il resto lo segue.** Non e' una scorciatoia verso
+ * Sala II: il giorno e' un asse che attraversa la galleria intera, quindi cielo,
+ * temperatura, titolo, vento, umidita' e avvisi passano a quel giorno - e una
+ * pastiglia dice quale si sta guardando, con la via del ritorno accanto.
+ * La scena la ricalcola la Shell, che e' l'unico posto in cui il cielo vive.
+ *
+ * ## I tre riquadri sono tre porte
+ *
+ * Vento, umidita' e luna - o raggi UV, di giorno - erano tre numeri e basta.
+ * Erano pero' anche le tre domande che questa schermata apre senza chiuderle:
+ * *undici chilometri all'ora da dove?*, *e nelle prossime ore?*. La risposta sta
+ * gia' nella galleria, tre o quattro sale piu' in la', e l'unico modo di
+ * arrivarci era cercare il glifo giusto in colonna - cioe' sapere gia' quale
+ * sala risponde a quale numero.
+ *
+ * Adesso il riquadro **e'** il collegamento, come i sei di Sala II. L'umidita'
+ * porta a "La pioggia" e non a "L'aria": l'acqua sospesa e l'acqua che cade sono
+ * la stessa storia raccontata a due stadi, mentre Sala V parla di polveri e
+ * biossidi, che con la percentuale di umidita' non hanno niente a che vedere.
+ */
+@Composable
+fun SalaOggiScreen(
+    state: UiState,
+    /** Il cielo **gia' smorzato**, lo stesso che dipinge il fondo. */
+    sky: SkyState,
+    palette: SalaPalette,
+    viewModel: WeatherViewModel,
+    /** La fase del giorno mostrato, calcolata una volta sola dalla Shell. */
+    faseLunare: Float,
+    /** L'unica via per cambiare sala da qui: la usano il collegamento alla
+     *  settimana e i tre riquadri dei valori. */
+    onVai: (SalaRoom) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val fase = salaPhaseOf(sky)
+    val ora = state.detailHour ?: state.hour
+    val condizione = salaConditionOf(state.forcedWeatherCode ?: ora?.weatherCode)
+    val settimana = remember(state.forecast) { settimanaDi(state.forecast) }
+    val giornoScelto = settimana.getOrNull(state.selectedDay)
+    val futuro = state.selectedDay > 0
+    val giorno = state.detailDay
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        // ── Il numero, sul cielo ─────────────────────────────────────────────
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            val gradi = ora?.temperature?.let { state.unit.from(it).roundToInt() }
+            // Il numero e il grado sono due scritte: TalkBack le leggeva "21",
+            // pausa, "simbolo di grado". Qui si legge una frase sola.
+            Row(
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = gradi?.let { tr("$it gradi", "$it degrees") } ?: tr("temperatura non disponibile", "temperature not available")
+                },
+            ) {
+                CifreCheScorrono(
+                    testo = gradi?.toString() ?: "--",
+                    valore = gradi,
+                    style = SalaType.giant(104),
+                    color = palette.ink,
+                    ferme = state.animazioniRidotte || sistemaSenzaAnimazioni(),
+                )
+                Text(
+                    text = "°",
+                    style = SalaType.giant(38),
+                    color = palette.accent,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+            Column(
+                modifier = Modifier.padding(bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                val percepiti = ora?.apparent?.let { state.unit.from(it).roundToInt() }
+                Text(
+                    text = percepiti?.let { tr("percepiti $it°", "feels like $it°") } ?: tr("percepiti --", "feels like --"),
+                    style = SalaType.rowTitle,
+                    color = palette.ink,
+                )
+                val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
+                val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
+                Text(
+                    text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                )
+                // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
+                // giorno, e la riga direbbe una cosa per un'altra. La riga
+                // manca del tutto quando ieri non c'e' (scorta vecchia).
+                val suIeri = if (futuro) null else scartoDaIeri(giorno, state.forecast?.ieri) { state.unit.from(it) }
+                if (suIeri != null) {
+                    Text(
+                        text = scartoDaIeriBreve(suIeri),
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                        maxLines = 1,
+                    )
+                }
+            }
+            // **Condividere il giorno mostrato**, non quello di oggi: se si e'
+            // toccato sabato e' sabato che si vuole mandare a chi viene al mare.
+            // Una parola e non un'icona, come "apri la settimana" e "torna a
+            // oggi": in questa sala i comandi si leggono.
+            if (state.forecast != null && giorno != null) {
+                val contesto = LocalContext.current
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = tr("condividi", "share"),
+                    style = SalaType.pill,
+                    color = palette.accent,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(onClickLabel = tr("condividi la previsione", "share the forecast")) {
+                            condividi(contesto, testoDaCondividere(state, giornoScelto))
+                        }
+                        .padding(horizontal = 6.dp, vertical = 6.dp),
+                )
+            }
+        }
+
+        PannelloSala(palette = palette) {
+            if (futuro && giornoScelto != null) {
+                Row(
+                    modifier = Modifier.padding(bottom = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(9.dp),
+                ) {
+                    PastigliaAccento("${giornoScelto.esteso} ${giornoScelto.data}", palette)
+                    // Il ritorno al presente compare **solo quando serve**: un
+                    // comando che non fa niente insegna a non fidarsi degli altri.
+                    Text(
+                        text = tr("torna a oggi", "back to today"),
+                        style = SalaType.pill,
+                        color = palette.accent,
+                        modifier = Modifier.clickable(onClick = viewModel::backToNow),
+                    )
+                }
+            }
+
+            // Senza previsione la condizione ripiega su SERENO, e il titolo
+            // del sereno sopra i trattini era un tempo inventato.
+            val senzaPrevisione = state.forecast == null
+            Text(
+                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else salaTitle(condizione, fase),
+                style = SalaType.cardTitle,
+                color = palette.ink,
+            )
+            Didascalia(
+                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else salaBody(condizione, fase),
+                palette,
+                modifier = Modifier.padding(top = 7.dp),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+            ) {
+                CellaValore(
+                    etichetta = tr("VENTO", "WIND"),
+                    valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
+                    palette = palette,
+                    onVai = { onVai(SalaRoom.VENTO) },
+                )
+                CellaValore(
+                    etichetta = tr("UMIDITÀ", "HUMIDITY"),
+                    valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
+                    palette = palette,
+                    onVai = { onVai(SalaRoom.PIOGGIA) },
+                )
+                // Di notte l'indice UV vale zero a ogni latitudine, e una cella
+                // che dice sempre la stessa cosa e' una cella sprecata: li' va
+                // la luna, che di notte e' l'unica cosa che cambia.
+                if (sky.moonPresence > 0.5f) {
+                    CellaValore(
+                        etichetta = tr("LUNA", "MOON"),
+                        valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
+                        palette = palette,
+                        onVai = { onVai(SalaRoom.LUNA) },
+                    )
+                } else {
+                    CellaValore(
+                        etichetta = "UV",
+                        valore = ora?.uvIndex?.let { String.format(Lingue.locale, "%.1f", it) } ?: "--",
+                        palette = palette,
+                        onVai = { onVai(SalaRoom.UV) },
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 13.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY"), style = SalaType.sectionLabel, color = palette.inkFaint)
+                // **Non dice "apri la sala II".** Chi guarda non chiama queste
+                // schermate "sale" - e' un nome nostro, buono per il codice e
+                // non per chi legge: qui si nomina la cosa, la settimana.
+                Text(
+                    text = tr("apri la settimana", "open the week"),
+                    style = SalaType.pill,
+                    color = palette.accent,
+                    modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
+                )
+            }
+
+            StrisciaGiorni(
+                settimana = settimana,
+                scelto = state.selectedDay,
+                state = state,
+                palette = palette,
+                onScegli = viewModel::selectDay,
+            )
+        }
+    }
+}
+
+/**
+ * La giornata mostrata, in parole: le stesse del riepilogo del mattino
+ * (`testiRiepilogo`), cosi' la notifica e il messaggio condiviso non possono
+ * raccontare lo stesso giorno in due modi.
+ *
+ * Per oggi la pioggia si conta da adesso; per un giorno futuro dalla sua
+ * mezzanotte, perche' "dalle 15" di sabato vale tutto il sabato.
+ */
+internal fun testoDaCondividere(state: UiState, scelto: GiornoSettimana?): String {
+    val previsione = state.forecast ?: return ""
+    val giorno = state.detailDay ?: return ""
+    val oggi = state.selectedDay == 0 || scelto == null
+    val (titolo, corpo) = testiRiepilogo(
+        citta = state.place.name,
+        giorno = giorno,
+        ore = previsione.hoursOf(giorno.date),
+        adesso = if (oggi) previsione.nowThere() else giorno.date.atStartOfDay(),
+        unita = state.unit,
+        vento = state.windUnit,
+        allerte = state.alerts,
+        giornoDetto = if (oggi) tr("oggi", "today") else "${scelto!!.esteso} ${scelto.data}",
+        ieri = if (oggi) previsione.ieri else null,
+    )
+    return "$titolo.\n$corpo\n— Caelum Weather"
+}
+
+private fun condividi(contesto: Context, testo: String) {
+    if (testo.isEmpty()) return
+    val invio = Intent(Intent.ACTION_SEND)
+        .setType("text/plain")
+        .putExtra(Intent.EXTRA_TEXT, testo)
+    runCatching { contesto.startActivity(Intent.createChooser(invio, null)) }
+}
+
+/**
+ * La striscia dei sette giorni: sigla, figuretta, massima, minima.
+ *
+ * E' la **stessa** striscia che Sala II mette in fondo alla propria schermata,
+ * con una riga in meno: li' c'e' spazio per i millimetri, qui no. Che sia la
+ * stessa non e' una ripetizione: e' il modo in cui il giorno scelto resta
+ * riconoscibile passando da una sala all'altra.
+ */
+@Composable
+fun StrisciaGiorni(
+    settimana: List<GiornoSettimana>,
+    scelto: Int,
+    state: UiState,
+    palette: SalaPalette,
+    onScegli: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    conMillimetri: Boolean = false,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
+    ) {
+        settimana.forEach { giorno ->
+            val attivo = giorno.indice == scelto
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
+                    .background(if (attivo) palette.chip else Color.Transparent)
+                    .border(
+                        width = 1.5.dp,
+                        color = if (attivo) palette.accent else Color.Transparent,
+                        shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
+                    )
+                    // La figuretta e' un disegno, e i due numeri da soli non
+                    // dicono quale e' la massima: per TalkBack il giorno si
+                    // legge per intero.
+                    .semantics {
+                        contentDescription = buildString {
+                            append(if (giorno.indice == 0) tr("oggi", "today") else "${giorno.esteso} ${giorno.data}")
+                            append(", ").append(giorno.tipo)
+                            giorno.max?.let { append(tr(", massima ${state.unit.from(it).roundToInt()} gradi", ", high ${state.unit.from(it).roundToInt()} degrees")) }
+                            giorno.min?.let { append(tr(", minima ${state.unit.from(it).roundToInt()} gradi", ", low ${state.unit.from(it).roundToInt()} degrees")) }
+                            if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres"))
+                        }
+                        selected = attivo
+                    }
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day")) { onScegli(giorno.indice) }
+                    .padding(top = 9.dp, bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
+            ) {
+                Text(
+                    text = giorno.breve,
+                    style = SalaType.sectionLabel,
+                    color = palette.inkSoft,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                )
+                IconaMeteo(giorno.glifo)
+                Text(
+                    text = giorno.max?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
+                    style = SalaType.giornoMax,
+                    color = palette.ink,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = giorno.min?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
+                    style = SalaType.giornoMin,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (conMillimetri) {
+                    // **La gocciolina dice di che numero si tratta.** Un numero
+                    // nudo sotto una temperatura si legge come un'altra
+                    // temperatura; smorzata quando il giorno e' asciutto,
+                    // perche' "0,0" con una goccia piena accanto e' una
+                    // contraddizione.
+                    val mm = giorno.mm ?: 0.0
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(5.dp)
+                                .width(5.dp)
+                                .clip(RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp, bottomEnd = 3.dp, bottomStart = 0.dp))
+                                .background(palette.accent.copy(alpha = if (mm > 0.05) 1f else 0.3f)),
+                        )
+                        Text(
+                            text = String.format(Lingue.locale, "%.1f", mm),
+                            style = SalaType.microLabel,
+                            color = palette.accent,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

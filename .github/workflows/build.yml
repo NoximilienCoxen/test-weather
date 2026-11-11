@@ -624,6 +624,45 @@ jobs:
             exit 1
           }
 
+      # **Cio' che lo store vuole: un bundle (.aab), non un APK.** Telefono e
+      # orologio, uno per ciascuno. Si compila a ogni giro per la stessa
+      # ragione di `assembleRelease`: un percorso che gira solo il giorno della
+      # pubblicazione si rompe quel giorno.
+      #
+      # La chiave di caricamento arriva dai segreti del repository, in base64
+      # (`CAELUM_KEYSTORE_BASE64`) con le sue tre parole. **Finche' i segreti
+      # non ci sono il passo resta verde** e lo dice con un avviso: il bundle
+      # esce lo stesso, ma non e' firmato per lo store. I segreti non arrivano
+      # ai giri lanciati da un fork, ed e' giusto cosi'. PUBBLICAZIONE.md.
+      - name: bundleRelease (per lo store)
+        env:
+          CAELUM_KEYSTORE_BASE64: ${{ secrets.CAELUM_KEYSTORE_BASE64 }}
+          CAELUM_KEYSTORE_PASSWORD: ${{ secrets.CAELUM_KEYSTORE_PASSWORD }}
+          CAELUM_KEY_ALIAS: ${{ secrets.CAELUM_KEY_ALIAS }}
+          CAELUM_KEY_PASSWORD: ${{ secrets.CAELUM_KEY_PASSWORD }}
+        run: |
+          set -o pipefail
+          if [ -n "$CAELUM_KEYSTORE_BASE64" ]; then
+            printf '%s' "$CAELUM_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/caricamento.jks"
+            export CAELUM_KEYSTORE="$RUNNER_TEMP/caricamento.jks"
+            echo "::notice::bundle firmati con la chiave di caricamento"
+          else
+            echo "::warning::nessuna chiave di caricamento fra i segreti: i bundle non sono firmati per lo store (PUBBLICAZIONE.md)"
+          fi
+          ./gradlew :app:bundleRelease :wear:bundleRelease --no-daemon 2>&1 | tee /tmp/bundle.log
+          rm -f "$RUNNER_TEMP/caricamento.jks"
+          mkdir -p bundle
+          cp app/build/outputs/bundle/release/*.aab bundle/caelum-telefono.aab
+          cp wear/build/outputs/bundle/release/*.aab bundle/caelum-orologio.aab
+          ls -la bundle
+
+      - uses: actions/upload-artifact@v6
+        if: success()
+        with:
+          name: bundle
+          path: bundle/*.aab
+          if-no-files-found: error
+
       # **Quanto pesa, detto e non dedotto.** Questo giro di pulizia ha tolto un
       # megabyte di risorse senza un solo riferimento, e per saperlo bisognava
       # scaricare due APK e confrontarli a mano. Un numero stampato a ogni giro
