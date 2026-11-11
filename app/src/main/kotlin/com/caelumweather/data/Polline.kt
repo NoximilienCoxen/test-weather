@@ -11,14 +11,42 @@ import java.time.LocalDateTime
  * esiste perche' "Alberi" ed "Erbacce" da soli non dicono quali piante: e' la
  * prima cosa che ci si chiede guardando la sezione.
  */
-enum class TipoPolline(private val nomeIt: String, private val nomeEn: String, private val cosaIt: String, private val cosaEn: String) {
-    ERBA("Erba", "Grass", "Graminacee: i prati e le erbe dei campi. Tarda primavera ed estate.", "Grasses: lawns and meadows. Late spring and summer."),
-    ALBERI("Alberi", "Trees", "Betulla, ontano e olivo. Dalla fine dell'inverno alla primavera.", "Birch, alder and olive. From late winter into spring."),
-    ERBACCE("Erbacce", "Weeds", "Ambrosia e artemisia, erbe selvatiche di fine estate e autunno.", "Ragweed and mugwort, wild plants of late summer and autumn."),
+enum class TipoPolline(private val nomi: List<String>, private val cose: List<String>) {
+    // Nell'ordine di sempre: italiano, inglese, tedesco, francese, spagnolo.
+    ERBA(
+        listOf("Erba", "Grass", "Gräser", "Graminées", "Gramíneas"),
+        listOf(
+            "Graminacee: i prati e le erbe dei campi. Tarda primavera ed estate.",
+            "Grasses: lawns and meadows. Late spring and summer.",
+            "Süßgräser: Wiesen und Feldgräser. Spätes Frühjahr und Sommer.",
+            "Graminées : les prés et les herbes des champs. Fin du printemps et été.",
+            "Gramíneas: prados y hierbas del campo. Final de la primavera y verano.",
+        ),
+    ),
+    ALBERI(
+        listOf("Alberi", "Trees", "Bäume", "Arbres", "Árboles"),
+        listOf(
+            "Betulla, ontano e olivo. Dalla fine dell'inverno alla primavera.",
+            "Birch, alder and olive. From late winter into spring.",
+            "Birke, Erle und Olivenbaum. Vom Spätwinter bis ins Frühjahr.",
+            "Bouleau, aulne et olivier. De la fin de l'hiver au printemps.",
+            "Abedul, aliso y olivo. Del final del invierno a la primavera.",
+        ),
+    ),
+    ERBACCE(
+        listOf("Erbacce", "Weeds", "Kräuter", "Herbacées", "Malezas"),
+        listOf(
+            "Ambrosia e artemisia, erbe selvatiche di fine estate e autunno.",
+            "Ragweed and mugwort, wild plants of late summer and autumn.",
+            "Ambrosia und Beifuß, Wildkräuter im Spätsommer und Herbst.",
+            "Ambroisie et armoise, plantes sauvages de la fin de l'été et de l'automne.",
+            "Ambrosía y artemisa, plantas silvestres del final del verano y el otoño.",
+        ),
+    ),
     ;
 
-    val nome: String get() = tr(nomeIt, nomeEn)
-    val cosa: String get() = tr(cosaIt, cosaEn)
+    val nome: String get() = tr(nomi[0], nomi[1], nomi[2], nomi[3], nomi[4])
+    val cosa: String get() = tr(cose[0], cose[1], cose[2], cose[3], cose[4])
 }
 
 /**
@@ -58,11 +86,11 @@ enum class SpeciePolline(val campo: String, val tipo: TipoPolline, internal val 
 
 /** Come si dice un livello, da 0 a 4. */
 fun nomeLivelloPolline(livello: Int): String = when (livello) {
-    0 -> tr("Assente", "None")
-    1 -> tr("Ridotto", "Low")
-    2 -> tr("Moderato", "Moderate")
-    3 -> tr("Alto", "High")
-    else -> tr("Molto alto", "Very high")
+    0 -> tr("Assente", "None", "Keine", "Nul", "Nulo")
+    1 -> tr("Ridotto", "Low", "Gering", "Réduit", "Reducido")
+    2 -> tr("Moderato", "Moderate", "Mäßig", "Modéré", "Moderado")
+    3 -> tr("Alto", "High", "Hoch", "Élevé", "Alto")
+    else -> tr("Molto alto", "Very high", "Sehr hoch", "Très élevé", "Muy alto")
 }
 
 /**

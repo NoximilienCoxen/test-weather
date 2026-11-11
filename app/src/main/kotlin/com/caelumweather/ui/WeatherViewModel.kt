@@ -81,12 +81,12 @@ import kotlinx.serialization.SerializationException
 internal fun failureMessage(failure: Throwable): String = when (failure) {
     // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
     // dichiara di essere. Non c'e' niente che chi guarda possa fare.
-    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer")
+    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer", "Der Wetterdienst hat fehlerhaft geantwortet", "Le service météo a mal répondu", "El servicio meteorológico respondió mal")
     // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
     // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
     // stessa cosa.
-    is IOException -> tr("Rete non raggiungibile", "Network unreachable")
-    else -> tr("Previsione non disponibile", "Forecast unavailable")
+    is IOException -> tr("Rete non raggiungibile", "Network unreachable", "Netz nicht erreichbar", "Réseau injoignable", "Red no disponible")
+    else -> tr("Previsione non disponibile", "Forecast unavailable", "Vorhersage nicht verfügbar", "Prévision indisponible", "Previsión no disponible")
 }
 
 /**
@@ -1356,7 +1356,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(
                             searching = false,
                             results = emptyList(),
-                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed"),
+                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed", "Suche fehlgeschlagen", "La recherche a échoué", "La búsqueda ha fallado"),
                         )
                     }
                 }

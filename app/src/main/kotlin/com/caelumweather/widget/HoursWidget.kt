@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
@@ -33,11 +34,11 @@ internal class HoursWidget : CaelumWidget(WidgetKind.ORE) {
             }
         }
         val spoken = buildString {
-            append(tr("Prossime ore a ${where.name}", "Next hours in ${where.name}"))
+            append(tr("Prossime ore a ${where.name}", "Next hours in ${where.name}", "Nächste Stunden in ${where.name}", "Prochaines heures à ${where.name}", "Próximas horas en ${where.name}"))
             hours.take(6).forEach { h ->
-                append(tr(". Alle ${h.time.hour}, ", ". At ${h.time.hour}, ") + Wmo.condition(h.weatherCode).lowercase())
-                h.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees")) }
-                h.precipProbability?.takeIf { it >= 10 }?.let { append(tr(", pioggia al $it per cento", ", $it per cent chance of rain")) }
+                append(tr(". Alle ${h.time.hour}, ", ". At ${h.time.hour}, ", ". Um ${h.time.hour} Uhr, ", ". À ${h.time.hour} h, ", ". A las ${h.time.hour}, ") + Wmo.condition(h.weatherCode).inMezzoAllaFrase())
+                h.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees", ", $it Grad", ", $it degrés", ", $it grados")) }
+                h.precipProbability?.takeIf { it >= 10 }?.let { append(tr(", pioggia al $it per cento", ", $it per cent chance of rain", ", Regenwahrscheinlichkeit $it Prozent", ", $it pour cent de risque de pluie", ", $it por ciento de probabilidad de lluvia")) }
             }
         }
         return Drawn(bitmap, spoken)

@@ -179,4 +179,4 @@ internal object WeekScale {
     }
 }
 
-private val TITOLO: String get() = tr("SETTIMANA", "WEEK")
+private val TITOLO: String get() = tr("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA")

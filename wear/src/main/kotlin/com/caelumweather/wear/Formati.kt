@@ -90,18 +90,18 @@ fun pioggiaInVista(ore: List<HourForecast>): PioggiaInVista {
 /** La riga sotto la temperatura: "Pioggia alle 15 · 60%", "Piove fino alle 17"... */
 fun testoPioggia(vista: PioggiaInVista): String = when (vista) {
     is PioggiaInVista.Adesso -> when {
-        vista.finoAlle == null && vista.neve -> tr("Neve per ore", "Snow for hours")
-        vista.finoAlle == null -> tr("Pioggia per ore", "Rain for hours")
-        vista.neve -> tr("Nevica fino alle ${oraBreve(vista.finoAlle)}", "Snow until ${oraBreve(vista.finoAlle)}")
-        else -> tr("Piove fino alle ${oraBreve(vista.finoAlle)}", "Rain until ${oraBreve(vista.finoAlle)}")
+        vista.finoAlle == null && vista.neve -> tr("Neve per ore", "Snow for hours", "Schnee für Stunden", "Neige pendant des heures", "Nieve durante horas")
+        vista.finoAlle == null -> tr("Pioggia per ore", "Rain for hours", "Regen für Stunden", "Pluie pendant des heures", "Lluvia durante horas")
+        vista.neve -> tr("Nevica fino alle ${oraBreve(vista.finoAlle)}", "Snow until ${oraBreve(vista.finoAlle)}", "Schnee bis ${oraBreve(vista.finoAlle)}", "Neige jusqu'à ${oraBreve(vista.finoAlle)}", "Nieva hasta las ${oraBreve(vista.finoAlle)}")
+        else -> tr("Piove fino alle ${oraBreve(vista.finoAlle)}", "Rain until ${oraBreve(vista.finoAlle)}", "Regen bis ${oraBreve(vista.finoAlle)}", "Pluie jusqu'à ${oraBreve(vista.finoAlle)}", "Llueve hasta las ${oraBreve(vista.finoAlle)}")
     }
     is PioggiaInVista.Arriva -> {
         val ora = oraBreve(vista.alle)
         val quanto = probabilitaPioggia(vista.probabilita)?.let { " · $it" }.orEmpty()
-        if (vista.neve) tr("Neve alle $ora$quanto", "Snow at $ora$quanto")
-        else tr("Pioggia alle $ora$quanto", "Rain at $ora$quanto")
+        if (vista.neve) tr("Neve alle $ora$quanto", "Snow at $ora$quanto", "Schnee um $ora$quanto", "Neige à $ora$quanto", "Nieve a las $ora$quanto")
+        else tr("Pioggia alle $ora$quanto", "Rain at $ora$quanto", "Regen um $ora$quanto", "Pluie à $ora$quanto", "Lluvia a las $ora$quanto")
     }
-    is PioggiaInVista.Asciutto -> tr("Asciutto per ${vista.ore} ore", "Dry for ${vista.ore} hours")
+    is PioggiaInVista.Asciutto -> tr("Asciutto per ${vista.ore} ore", "Dry for ${vista.ore} hours", "Trocken für ${vista.ore} Stunden", "Sec pendant ${vista.ore} heures", "Seco durante ${vista.ore} horas")
 }
 
 /**

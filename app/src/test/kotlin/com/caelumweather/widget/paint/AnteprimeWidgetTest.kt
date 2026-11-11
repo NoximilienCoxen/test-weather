@@ -56,7 +56,7 @@ class AnteprimeWidgetTest {
 
     @Test
     fun `le sei anteprime, nelle due lingue`() {
-        listOf(Lingua.ITALIANO to "it", Lingua.INGLESE to "en").forEach { (lingua, sigla) ->
+        Lingua.entries.map { it to it.codice }.forEach { (lingua, sigla) ->
             Lingue.forzata = lingua
             val posto = Place(name = "BOLOGNA", latitude = 44.49, longitude = 11.34)
             val previsione = previsione()

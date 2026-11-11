@@ -1,5 +1,6 @@
 package com.caelumweather.data
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import android.util.Xml
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
@@ -111,7 +112,7 @@ internal object JmaAlerts {
             id = "jma|${area.codice}|$nome",
             level = livello,
             kind = tipo,
-            headline = "${livello.label}: ${tipo.label.lowercase()}",
+            headline = "${livello.label}: ${tipo.label.inMezzoAllaFrase()}",
             // Il nome giapponese in testa: e' cio' che si ritrova sui canali
             // della JMA. Il testo e' quello dell'ente, in giapponese.
             description = listOfNotNull(nome, titolo?.takeIf { it.isNotBlank() }).joinToString("\n\n"),

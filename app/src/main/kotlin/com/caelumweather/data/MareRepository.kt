@@ -54,20 +54,27 @@ data class Mare(val ore: List<OraMare>) {
  * Dieci gradini, da 0 a 9, coi limiti della scala: 0,10 - 0,50 - 1,25 - 2,50 -
  * 4 - 6 - 9 - 14 metri.
  */
-enum class StatoDelMare(private val ita: String, private val eng: String, internal val finoA: Double) {
-    CALMO("calmo", "calm", 0.05),
-    QUASI_CALMO("quasi calmo", "rippled", 0.10),
-    POCO_MOSSO("poco mosso", "smooth", 0.50),
-    MOSSO("mosso", "slight", 1.25),
-    MOLTO_MOSSO("molto mosso", "moderate", 2.50),
-    AGITATO("agitato", "rough", 4.0),
-    MOLTO_AGITATO("molto agitato", "very rough", 6.0),
-    GROSSO("grosso", "high", 9.0),
-    MOLTO_GROSSO("molto grosso", "very high", 14.0),
-    TEMPESTOSO("tempestoso", "phenomenal", Double.MAX_VALUE),
+enum class StatoDelMare(
+    private val ita: String,
+    private val eng: String,
+    private val ted: String,
+    private val fra: String,
+    private val spa: String,
+    internal val finoA: Double,
+) {
+    CALMO("calmo", "calm", "spiegelglatt", "mer calme", "mar en calma", 0.05),
+    QUASI_CALMO("quasi calmo", "rippled", "ruhig", "mer ridée", "mar rizada", 0.10),
+    POCO_MOSSO("poco mosso", "smooth", "schwach bewegt", "mer belle", "marejadilla", 0.50),
+    MOSSO("mosso", "slight", "leicht bewegt", "mer peu agitée", "marejada", 1.25),
+    MOLTO_MOSSO("molto mosso", "moderate", "mäßig bewegt", "mer agitée", "fuerte marejada", 2.50),
+    AGITATO("agitato", "rough", "grobe See", "mer forte", "mar gruesa", 4.0),
+    MOLTO_AGITATO("molto agitato", "very rough", "sehr grobe See", "mer très forte", "mar muy gruesa", 6.0),
+    GROSSO("grosso", "high", "hohe See", "mer grosse", "mar arbolada", 9.0),
+    MOLTO_GROSSO("molto grosso", "very high", "sehr hohe See", "mer très grosse", "mar montañosa", 14.0),
+    TEMPESTOSO("tempestoso", "phenomenal", "außergewöhnlich schwere See", "mer énorme", "mar enorme", Double.MAX_VALUE),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     companion object {
         fun di(metri: Double?): StatoDelMare? {

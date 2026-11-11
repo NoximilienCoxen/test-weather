@@ -124,5 +124,5 @@ internal fun prossimeOre(
     return tutte.filter { !it.time.isBefore(da) }
 }
 
-private val TITOLO_ORE: String get() = tr("PROSSIME ORE", "NEXT HOURS")
-private val ADESSO: String get() = tr("ORA", "NOW")
+private val TITOLO_ORE: String get() = tr("PROSSIME ORE", "NEXT HOURS", "NÄCHSTE STUNDEN", "PROCHAINES HEURES", "PRÓXIMAS HORAS")
+private val ADESSO: String get() = tr("ORA", "NOW", "JETZT", "MAINT.", "AHORA")

@@ -271,10 +271,7 @@ class MainActivity : ComponentActivity() {
         // La lingua degli scatti: l'emulatore della CI e' in inglese, e gli
         // scatti di riferimento sono in italiano (CONTESTO §49). Prima di
         // `setContent`, quindi gia' nel primo fotogramma.
-        when (intent.getStringExtra(EXTRA_LINGUA)) {
-            "it" -> Lingue.forzata = Lingua.ITALIANO
-            "en" -> Lingue.forzata = Lingua.INGLESE
-        }
+        Lingua.diCodice(intent.getStringExtra(EXTRA_LINGUA))?.let { Lingue.forzata = it }
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
@@ -327,7 +324,7 @@ class MainActivity : ComponentActivity() {
          */
         const val EXTRA_CAPTURE = "cattura"
 
-        /** La lingua imposta per la cattura: `--es lingua it` o `en`. */
+        /** La lingua imposta per la cattura: `--es lingua it`, `en`, `de`, `fr` o `es`. */
         const val EXTRA_LINGUA = "lingua"
 
         const val EXTRA_HOUR = "ora"

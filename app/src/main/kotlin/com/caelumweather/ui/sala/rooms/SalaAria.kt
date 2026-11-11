@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -126,13 +127,13 @@ fun SalaAriaScreen(
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = tr("L'aria", "Air"), style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("L'aria", "Air", "Die Luft", "L'air", "El aire"), style = SalaType.cardTitle, color = palette.ink)
                 Text(
-                    text = banda?.label?.lowercase()?.replaceFirstChar { it.uppercase() }
+                    text = banda?.label?.inMezzoAllaFrase()?.replaceFirstChar { it.uppercase() }
                         ?: when {
-                            fuoriModello -> tr("Non prevista", "Not forecast")
-                            state.airUnavailable -> tr("Non disponibile", "Unavailable")
-                            else -> tr("In arrivo", "On its way")
+                            fuoriModello -> tr("Non prevista", "Not forecast", "Keine Vorhersage", "Non prévue", "Sin previsión")
+                            state.airUnavailable -> tr("Non disponibile", "Unavailable", "Nicht verfügbar", "Indisponible", "No disponible")
+                            else -> tr("In arrivo", "On its way", "Unterwegs", "En cours d'arrivée", "En camino")
                         },
                     style = SalaType.rowTitle,
                     color = palette.accent,
@@ -145,6 +146,9 @@ fun SalaAriaScreen(
                                 "alle ${oraDueCifre(oraScelta)}:00",
                             "forecast ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} " +
                                 "at ${oraDueCifre(oraScelta)}:00",
+                            "Vorhersage ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} um ${oraDueCifre(oraScelta)}:00",
+                            "prévision ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} à ${oraDueCifre(oraScelta)}:00",
+                            "previsión ${state.diGiorno(state.detailDay?.date ?: LocalDate.now())} a las ${oraDueCifre(oraScelta)}:00",
                         ),
                         style = SalaType.rowNote,
                         color = palette.inkSoft,
@@ -158,7 +162,7 @@ fun SalaAriaScreen(
         // righe, e tre righe erano un quinto della scheda.
         if (fuoriModello) {
             Didascalia(
-                tr("Il modello dell'aria arriva a oggi e ai due giorni dopo: per questo giorno non c'è.", "The air model covers today and the two days after: there is nothing for this day."),
+                tr("Il modello dell'aria arriva a oggi e ai due giorni dopo: per questo giorno non c'è.", "The air model covers today and the two days after: there is nothing for this day.", "Das Luftmodell reicht bis heute und die zwei Tage danach: Für diesen Tag gibt es nichts.", "Le modèle de l'air couvre aujourd'hui et les deux jours suivants : pour ce jour, il n'y a rien.", "El modelo del aire llega a hoy y a los dos días siguientes: para este día no hay nada."),
                 palette,
                 modifier = Modifier.padding(top = 8.dp),
             )
@@ -180,7 +184,7 @@ fun SalaAriaScreen(
         // l'unica domanda che ci si fa guardando l'aria.
         if (ore.size >= 6 && aria != null) {
             Text(
-                text = tr("NELLA GIORNATA", "THROUGH THE DAY"),
+                text = tr("NELLA GIORNATA", "THROUGH THE DAY", "IM TAGESVERLAUF", "DANS LA JOURNÉE", "A LO LARGO DEL DÍA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
@@ -222,7 +226,7 @@ fun SalaAriaScreen(
         // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
         // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
         Text(
-            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW"),
+            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
@@ -352,13 +356,13 @@ private fun AndamentoAria(
 private fun consiglioOrario(ore: List<OraAria>, oraScelta: Int?): String {
     val da = oraScelta ?: ore.firstOrNull()?.ora?.hour ?: return ""
     val avanti = ore.filter { it.ora.hour >= da }
-    if (avanti.size < 3) return tr("La giornata è quasi finita: l'indice non cambia più di molto.", "The day is nearly over: the index will not change much more.")
+    if (avanti.size < 3) return tr("La giornata è quasi finita: l'indice non cambia più di molto.", "The day is nearly over: the index will not change much more.", "Der Tag ist fast vorbei: Der Index ändert sich nicht mehr viel.", "La journée est presque finie : l'indice ne changera plus beaucoup.", "El día casi ha terminado: el índice ya no cambia mucho.")
     val migliore = avanti.minByOrNull { it.indice } ?: return ""
     val peggiore = avanti.maxByOrNull { it.indice } ?: return ""
     if (peggiore.indice - migliore.indice < 8) {
-        return tr("L'aria resta com'è per tutte le ore che restano: nessun momento è migliore di un altro.", "The air stays as it is for the rest of the day: no hour is better than another.")
+        return tr("L'aria resta com'è per tutte le ore che restano: nessun momento è migliore di un altro.", "The air stays as it is for the rest of the day: no hour is better than another.", "Die Luft bleibt für den Rest des Tages, wie sie ist: Keine Stunde ist besser als eine andere.", "L'air reste tel quel pour le reste de la journée : aucun moment n'est meilleur qu'un autre.", "El aire sigue como está el resto del día: ningún momento es mejor que otro.")
     }
-    return tr("Fra le ore che restano la migliore è verso le %02d:00, la peggiore verso le %02d:00.", "Of the hours left, the best is around %02d:00, the worst around %02d:00.")
+    return tr("Fra le ore che restano la migliore è verso le %02d:00, la peggiore verso le %02d:00.", "Of the hours left, the best is around %02d:00, the worst around %02d:00.", "Von den verbleibenden Stunden ist die beste gegen %02d:00, die schlechteste gegen %02d:00.", "Parmi les heures restantes, la meilleure est vers %02d:00, la pire vers %02d:00.", "De las horas que quedan, la mejor es hacia las %02d:00, la peor hacia las %02d:00.")
         .format(migliore.ora.hour, peggiore.ora.hour)
 }
 
@@ -433,11 +437,11 @@ private fun coloreBanda(banda: AirBand?): Color = when (banda) {
 }
 
 private fun descrizione(banda: AirBand?, nonDisponibile: Boolean): String = when {
-    nonDisponibile -> tr("La misura dell'aria non è arrivata: la stazione più vicina non ha risposto.", "The air reading has not arrived: the nearest station did not answer.")
-    banda == null -> tr("La misura dell'aria sta arrivando.", "The air reading is on its way.")
-    banda == AirBand.BUONA -> tr("Particolato basso: nessuna precauzione necessaria, nemmeno per chi è sensibile.", "Low particulates: no precautions needed, even for sensitive people.")
-    banda == AirBand.DISCRETA -> tr("Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto.", "Acceptable air: people with breathing problems should avoid long exertion outdoors.")
-    banda == AirBand.MEDIA -> tr("Chi è sensibile faccia attenzione: meglio rimandare l'attività intensa all'aperto.", "Sensitive people should take care: better to put off intense activity outdoors.")
-    banda == AirBand.SCARSA -> tr("Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali.", "Poor air: limit exertion outdoors, especially in the middle of the day.")
-    else -> tr("Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse.", "Very bad air: stay indoors when possible and keep the windows shut.")
+    nonDisponibile -> tr("La misura dell'aria non è arrivata: la stazione più vicina non ha risposto.", "The air reading has not arrived: the nearest station did not answer.", "Die Luftmessung ist nicht angekommen: Die nächste Station hat nicht geantwortet.", "La mesure de l'air n'est pas arrivée : la station la plus proche n'a pas répondu.", "La medición del aire no ha llegado: la estación más cercana no ha respondido.")
+    banda == null -> tr("La misura dell'aria sta arrivando.", "The air reading is on its way.", "Die Luftmessung ist unterwegs.", "La mesure de l'air arrive.", "La medición del aire está llegando.")
+    banda == AirBand.BUONA -> tr("Particolato basso: nessuna precauzione necessaria, nemmeno per chi è sensibile.", "Low particulates: no precautions needed, even for sensitive people.", "Wenig Feinstaub: keine Vorsicht nötig, auch nicht für empfindliche Menschen.", "Peu de particules : aucune précaution nécessaire, même pour les personnes sensibles.", "Pocas partículas: no hace falta ninguna precaución, ni siquiera para las personas sensibles.")
+    banda == AirBand.DISCRETA -> tr("Aria accettabile: chi ha problemi respiratori eviti lo sforzo prolungato all'aperto.", "Acceptable air: people with breathing problems should avoid long exertion outdoors.", "Annehmbare Luft: Wer Atemprobleme hat, sollte lange Anstrengung im Freien meiden.", "Air acceptable : les personnes ayant des problèmes respiratoires devraient éviter les efforts prolongés en plein air.", "Aire aceptable: quien tenga problemas respiratorios debería evitar el esfuerzo prolongado al aire libre.")
+    banda == AirBand.MEDIA -> tr("Chi è sensibile faccia attenzione: meglio rimandare l'attività intensa all'aperto.", "Sensitive people should take care: better to put off intense activity outdoors.", "Empfindliche Menschen sollten aufpassen: intensive Aktivität im Freien besser verschieben.", "Les personnes sensibles doivent faire attention : mieux vaut reporter l'activité intense en plein air.", "Las personas sensibles deben tener cuidado: mejor aplazar la actividad intensa al aire libre.")
+    banda == AirBand.SCARSA -> tr("Aria scarsa: limitare lo sforzo all'aperto, soprattutto nelle ore centrali.", "Poor air: limit exertion outdoors, especially in the middle of the day.", "Schlechte Luft: Anstrengung im Freien begrenzen, vor allem in den Mittagsstunden.", "Air mauvais : limiter les efforts en plein air, surtout en milieu de journée.", "Aire malo: limitar el esfuerzo al aire libre, sobre todo en las horas centrales.")
+    else -> tr("Aria pessima: restare al chiuso quando possibile e tenere le finestre chiuse.", "Very bad air: stay indoors when possible and keep the windows shut.", "Sehr schlechte Luft: wenn möglich drinnen bleiben und die Fenster geschlossen halten.", "Air très mauvais : rester à l'intérieur si possible et garder les fenêtres fermées.", "Aire muy malo: quedarse en interiores cuando sea posible y mantener las ventanas cerradas.")
 }

@@ -23,10 +23,10 @@ fun scartoDaIeri(oggi: DayForecast?, ieri: DayForecast?, mostrati: (Double) -> D
 
 /** In poche lettere, per stare sotto la minima e la massima di Sala I. */
 fun scartoDaIeriBreve(scarto: Int): String = when {
-    scarto == 0 -> tr("come ieri", "same as yesterday")
-    scarto > 0 -> tr("+$scarto° su ieri", "+$scarto° on yesterday")
+    scarto == 0 -> tr("come ieri", "same as yesterday", "wie gestern", "comme hier", "igual que ayer")
+    scarto > 0 -> tr("+$scarto° su ieri", "+$scarto° on yesterday", "+$scarto° gegenüber gestern", "+$scarto° par rapport à hier", "+$scarto° respecto a ayer")
     // Il meno vero, non il trattino: accanto a un piu' il trattino sembra un refuso.
-    else -> tr("\u2212${abs(scarto)}° su ieri", "\u2212${abs(scarto)}° on yesterday")
+    else -> tr("\u2212${abs(scarto)}° su ieri", "\u2212${abs(scarto)}° on yesterday", "−${abs(scarto)}° gegenüber gestern", "−${abs(scarto)}° par rapport à hier", "−${abs(scarto)}° respecto a ayer")
 }
 
 /**
@@ -34,7 +34,7 @@ fun scartoDaIeriBreve(scarto: Int): String = when {
  * riepilogo dice solo cio' che cambia cosa fai, e un grado non cambia niente.
  */
 fun scartoDaIeriEsteso(scarto: Int): String? = when {
-    scarto >= 2 -> tr("$scarto° più caldo di ieri.", "$scarto° warmer than yesterday.")
-    scarto <= -2 -> tr("${abs(scarto)}° più freddo di ieri.", "${abs(scarto)}° colder than yesterday.")
+    scarto >= 2 -> tr("$scarto° più caldo di ieri.", "$scarto° warmer than yesterday.", "$scarto° wärmer als gestern.", "$scarto° de plus qu'hier.", "$scarto° más cálido que ayer.")
+    scarto <= -2 -> tr("${abs(scarto)}° più freddo di ieri.", "${abs(scarto)}° colder than yesterday.", "${abs(scarto)}° kälter als gestern.", "${abs(scarto)}° de moins qu'hier.", "${abs(scarto)}° más frío que ayer.")
     else -> null
 }

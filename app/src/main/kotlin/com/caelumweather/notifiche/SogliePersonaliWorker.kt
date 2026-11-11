@@ -115,12 +115,15 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
             // riguarda, non una cosa che sta succedendo adesso.
             val canale = NotificationChannel(
                 CANALE,
-                tr("Avvisi personali", "Personal notices"),
+                tr("Avvisi personali", "Personal notices", "Persönliche Hinweise", "Avis personnels", "Avisos personales"),
                 NotificationManager.IMPORTANCE_DEFAULT,
             ).apply {
                 description = tr(
                     "Gelo, caldo e vento forte, quando la previsione passa le soglie che hai scelto tu. Non sono allerte ufficiali",
                     "Frost, heat and strong wind, when the forecast crosses the thresholds you chose. They are not official warnings",
+                    "Frost, Hitze und starker Wind, wenn die Vorhersage die von dir gewählten Schwellen überschreitet. Es sind keine amtlichen Warnungen",
+                    "Gel, chaleur et vent fort, quand la prévision franchit les seuils que vous avez choisis. Ce ne sont pas des alertes officielles",
+                    "Helada, calor y viento fuerte, cuando la previsión supera los umbrales que has elegido. No son alertas oficiales",
                 )
             }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
@@ -259,29 +262,29 @@ internal fun testiSoglia(
 ): Pair<String, String> {
     val ora = evento.quando.hour
     val quando = when (evento.quando.toLocalDate()) {
-        adesso.toLocalDate() -> tr("oggi verso le $ora", "today around $ora:00")
-        adesso.toLocalDate().plusDays(1) -> tr("domani verso le $ora", "tomorrow around $ora:00")
-        else -> tr("verso le $ora", "around $ora:00")
+        adesso.toLocalDate() -> tr("oggi verso le $ora", "today around $ora:00", "heute gegen $ora Uhr", "aujourd'hui vers $ora h", "hoy hacia las $ora")
+        adesso.toLocalDate().plusDays(1) -> tr("domani verso le $ora", "tomorrow around $ora:00", "morgen gegen $ora Uhr", "demain vers $ora h", "mañana hacia las $ora")
+        else -> tr("verso le $ora", "around $ora:00", "gegen $ora Uhr", "vers $ora h", "hacia las $ora")
     }
-    val coda = tr("È una previsione, non un'allerta ufficiale.", "This is a forecast, not an official warning.")
+    val coda = tr("È una previsione, non un'allerta ufficiale.", "This is a forecast, not an official warning.", "Das ist eine Vorhersage, keine amtliche Warnung.", "C'est une prévision, pas une alerte officielle.", "Es una previsión, no una alerta oficial.")
     return when (evento.tipo) {
         TipoSoglia.GELO -> {
             val gradi = "${unita.from(evento.valore).roundToInt()}°"
             val soglia = gradiDiSoglia(evento.soglia, unita)
-            tr("Gelo a $citta: minima di $gradi", "Frost in $citta: low of $gradi") to
-                tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda")
+            tr("Gelo a $citta: minima di $gradi", "Frost in $citta: low of $gradi", "Frost in $citta: Tiefstwert $gradi", "Gel à $citta : minimale de $gradi", "Helada en $citta: mínima de $gradi") to
+                tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévue $quando. Votre seuil : $soglia. $coda", "Prevista $quando. Tu umbral: $soglia. $coda")
         }
         TipoSoglia.CALDO -> {
             val gradi = "${unita.from(evento.valore).roundToInt()}°"
             val soglia = gradiDiSoglia(evento.soglia, unita)
-            tr("Caldo a $citta: massima di $gradi", "Heat in $citta: high of $gradi") to
-                tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda")
+            tr("Caldo a $citta: massima di $gradi", "Heat in $citta: high of $gradi", "Hitze in $citta: Höchstwert $gradi", "Chaleur à $citta : maximale de $gradi", "Calor en $citta: máxima de $gradi") to
+                tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévue $quando. Votre seuil : $soglia. $coda", "Prevista $quando. Tu umbral: $soglia. $coda")
         }
         TipoSoglia.VENTO -> {
             val raffica = "${vento.from(evento.valore).roundToInt()} ${vento.label}"
             val soglia = ventoDiSoglia(evento.soglia, vento)
-            tr("Vento forte a $citta: raffiche a $raffica", "Strong wind in $citta: gusts of $raffica") to
-                tr("Previste $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda")
+            tr("Vento forte a $citta: raffiche a $raffica", "Strong wind in $citta: gusts of $raffica", "Starker Wind in $citta: Böen bis $raffica", "Vent fort à $citta : rafales à $raffica", "Viento fuerte en $citta: rachas de $raffica") to
+                tr("Previste $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévues $quando. Votre seuil : $soglia. $coda", "Previstas $quando. Tu umbral: $soglia. $coda")
         }
     }
 }

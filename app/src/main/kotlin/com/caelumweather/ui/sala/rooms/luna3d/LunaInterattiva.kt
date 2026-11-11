@@ -126,7 +126,7 @@ internal fun LunaInterattiva(
         Canvas(
             modifier = Modifier
                 .size(220.dp)
-                .semantics { contentDescription = tr("Luna, $descrizione. Trascina per girarle intorno.", "Moon, $descrizione. Drag to move around it.") }
+                .semantics { contentDescription = tr("Luna, $descrizione. Trascina per girarle intorno.", "Moon, $descrizione. Drag to move around it.", "Mond, $descrizione. Ziehen, um ihn zu umrunden.", "Lune, $descrizione. Faites glisser pour en faire le tour.", "Luna, $descrizione. Arrastra para rodearla.") }
                 .pointerInput(movimento) {
                     // Il gesto si consuma: con il dito sulla luna ne' le sale
                     // ne' lo scorrimento del pannello lo devono prendere.
@@ -157,9 +157,9 @@ internal fun LunaInterattiva(
 
         Text(
             text = if (daCasa) {
-                tr("Vista dalla Terra · trascina per girarle intorno", "Seen from Earth · drag to move around it")
+                tr("Vista dalla Terra · trascina per girarle intorno", "Seen from Earth · drag to move around it", "Von der Erde gesehen · ziehen, um ihn zu umrunden", "Vue de la Terre · faites glisser pour en faire le tour", "Vista desde la Tierra · arrastra para rodearla")
             } else {
-                tr("Da qui è illuminato il ${(frazione * 100f).roundToInt()} % del disco", "From here ${(frazione * 100f).roundToInt()} % of the disc is lit")
+                tr("Da qui è illuminato il ${(frazione * 100f).roundToInt()} % del disco", "From here ${(frazione * 100f).roundToInt()} % of the disc is lit", "Von hier aus sind ${(frazione * 100f).roundToInt()} % der Scheibe beleuchtet", "D'ici, ${(frazione * 100f).roundToInt()} % du disque est éclairé", "Desde aquí está iluminado el ${(frazione * 100f).roundToInt()} % del disco")
             },
             style = SalaType.body,
             color = palette.inkSoft,

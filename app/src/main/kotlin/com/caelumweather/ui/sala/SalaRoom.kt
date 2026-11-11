@@ -15,16 +15,23 @@ import com.caelumweather.lingua.tr
  * dire quale scatto e' quale. **Non si scrive piu' a schermo**: chi guarda non
  * chiama queste schermate "sale", e non deve impararlo per usarle.
  */
-enum class SalaRoom(val roman: String, private val headingIt: String, private val headingEn: String) {
-    OGGI("I", "Oggi", "Today"),
-    SETTIMANA("II", "La settimana", "The week"),
-    PIOGGIA("III", "La pioggia", "Rain"),
-    LUNA("IV", "La luna", "The moon"),
-    ARIA("V", "L'aria", "Air"),
-    VENTO("VI", "Il vento", "Wind"),
-    UV("VII", "I raggi UV", "UV rays"),
+enum class SalaRoom(
+    val roman: String,
+    private val headingIt: String,
+    private val headingEn: String,
+    private val headingDe: String,
+    private val headingFr: String,
+    private val headingEs: String,
+) {
+    OGGI("I", "Oggi", "Today", "Heute", "Aujourd'hui", "Hoy"),
+    SETTIMANA("II", "La settimana", "The week", "Die Woche", "La semaine", "La semana"),
+    PIOGGIA("III", "La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
+    LUNA("IV", "La luna", "The moon", "Der Mond", "La lune", "La luna"),
+    ARIA("V", "L'aria", "Air", "Die Luft", "L'air", "El aire"),
+    VENTO("VI", "Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
+    UV("VII", "I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
     ;
 
     /** Come si chiama, nella lingua dell'app. */
-    val heading: String get() = tr(headingIt, headingEn)
+    val heading: String get() = tr(headingIt, headingEn, headingDe, headingFr, headingEs)
 }

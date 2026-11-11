@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
@@ -32,8 +33,8 @@ internal class MiniWidget : CaelumWidget(WidgetKind.MINI) {
         val current = forecast?.current
         val spoken = buildString {
             append(where.name)
-            current?.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees")) }
-            append(", ${Wmo.condition(current?.weatherCode).lowercase()}")
+            current?.temperature?.roundToInt()?.let { append(tr(", $it gradi", ", $it degrees", ", $it Grad", ", $it degrés", ", $it grados")) }
+            append(", ${Wmo.condition(current?.weatherCode).inMezzoAllaFrase()}")
         }
         return Drawn(bitmap, spoken)
     }

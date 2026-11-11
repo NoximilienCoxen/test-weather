@@ -308,7 +308,7 @@ fun RowScope.CellaValore(
 @Composable
 fun RigaSenzaOre(palette: SalaPalette, modifier: Modifier = Modifier) {
     Text(
-        text = tr("Per questo giorno la previsione dà i totali, non le ore.", "For this day the forecast gives totals, not hours."),
+        text = tr("Per questo giorno la previsione dà i totali, non le ore.", "For this day the forecast gives totals, not hours.", "Für diesen Tag liefert die Vorhersage Tageswerte, keine Stunden.", "Pour ce jour, la prévision donne les totaux, pas les heures.", "Para este día la previsión da los totales, no las horas."),
         style = SalaType.footnote,
         color = palette.inkFaint,
         modifier = modifier,
@@ -401,8 +401,8 @@ fun IntestazioneCaelum(
                 // Due cursori disegnati: senza un nome, per TalkBack era solo
                 // "pulsante", e il comando piu' importante dopo le sale non si
                 // trovava.
-                .semantics { contentDescription = tr("Impostazioni", "Settings") }
-                .clickable(onClickLabel = tr("apri le impostazioni", "open settings"), onClick = onImpostazioni),
+                .semantics { contentDescription = tr("Impostazioni", "Settings", "Einstellungen", "Réglages", "Ajustes") }
+                .clickable(onClickLabel = tr("apri le impostazioni", "open settings", "Einstellungen öffnen", "ouvrir les réglages", "abrir los ajustes"), onClick = onImpostazioni),
             contentAlignment = Alignment.CenterStart,
         ) {
             DueCursori(palette.ink)
@@ -411,7 +411,7 @@ fun IntestazioneCaelum(
         // segno che tutto il resto della schermata sta per cambiare con lui.
         ScambioMorbido(
             stato = citta,
-            modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place"), onClick = onCitta),
+            modifier = Modifier.weight(1f).clickable(onClickLabel = tr("cambia località", "change place", "Ort ändern", "changer de lieu", "cambiar de lugar"), onClick = onCitta),
         ) { nome ->
             Text(
                 text = nome,
@@ -479,15 +479,18 @@ private fun PastigliaAvviso(
         inArrivo != null -> tr(
             "ALLERTA ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
             "${inArrivo.kind.label} WARNING · ${quandoInArrivo(inArrivo, momento)}",
+            "WARNUNG ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
+            "ALERTE ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
+            "ALERTA ${inArrivo.kind.label} · ${quandoInArrivo(inArrivo, momento)}",
         )
         // Il pallino salvia di "nessun avviso" e' una rassicurazione, e
         // senza il feed ufficiale nessuno ha controllato niente.
-        peggiore == null && ufficialiNonVerificate -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED")
-        peggiore == null -> tr("NESSUN AVVISO", "NO WARNINGS")
+        peggiore == null && ufficialiNonVerificate -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED", "WARNUNGEN NICHT GEPRÜFT", "ALERTES NON VÉRIFIÉES", "ALERTAS SIN COMPROBAR")
+        peggiore == null -> tr("NESSUN AVVISO", "NO WARNINGS", "KEINE WARNUNGEN", "AUCUNE ALERTE", "SIN AVISOS")
         // In inglese "warning" resta agli enti, come "allerta" in italiano;
         // gli avvisi calcolati sono "notice" (CONTESTO §8-ter, §49).
-        peggiore.official -> tr("ALLERTA ${peggiore.kind.label}", "${peggiore.kind.label} WARNING")
-        else -> tr("AVVISO ${peggiore.kind.label}", "${peggiore.kind.label} NOTICE")
+        peggiore.official -> tr("ALLERTA ${peggiore.kind.label}", "${peggiore.kind.label} WARNING", "WARNUNG ${peggiore.kind.label}", "ALERTE ${peggiore.kind.label}", "ALERTA ${peggiore.kind.label}")
+        else -> tr("AVVISO ${peggiore.kind.label}", "${peggiore.kind.label} NOTICE", "HINWEIS ${peggiore.kind.label}", "AVIS ${peggiore.kind.label}", "AVISO ${peggiore.kind.label}")
     }
     val acceso = peggiore != null
     val fondo = if (acceso) {
@@ -520,7 +523,7 @@ private fun PastigliaAvviso(
             .cedevole()
             .clip(CircleShape)
             .background(fondoMosso)
-            .clickable(onClickLabel = tr("apri il bollettino degli avvisi", "open the warnings bulletin"), onClick = onClick)
+            .clickable(onClickLabel = tr("apri il bollettino degli avvisi", "open the warnings bulletin", "Warnbericht öffnen", "ouvrir le bulletin des alertes", "abrir el boletín de avisos"), onClick = onClick)
             .padding(horizontal = 13.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),
@@ -544,9 +547,9 @@ internal fun quandoInArrivo(avviso: WeatherAlert, momento: LocalDateTime): Strin
     return when (giorno) {
         momento.toLocalDate() -> {
             val ora = if (inizio.minute == 0) "${inizio.hour}" else "${inizio.hour}:%02d".format(inizio.minute)
-            tr("DALLE $ora", "FROM $ora")
+            tr("DALLE $ora", "FROM $ora", "AB $ora", "DÈS $ora", "DESDE $ora")
         }
-        momento.toLocalDate().plusDays(1) -> tr("DOMANI", "TOMORROW")
+        momento.toLocalDate().plusDays(1) -> tr("DOMANI", "TOMORROW", "MORGEN", "DEMAIN", "MAÑANA")
         else -> giorno.dayOfWeek.italiano().take(3).uppercase()
     }
 }
@@ -1323,11 +1326,20 @@ fun <T> SceltaSegmentata(
     onScegli: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val indice = voci.indexOfFirst { it.first == scelta }.coerceAtLeast(0)
+    // **La scelta puo' non essere fra queste voci**: le lingue sono sei e
+    // stanno su due binari, e in uno dei due il cursore non c'e'. Li' sbiadisce
+    // restando dov'era, invece di saltare sulla prima voce a dire il falso.
+    val trovata = voci.indexOfFirst { it.first == scelta }
+    val indice = trovata
     val posizione by animateFloatAsState(
-        targetValue = indice.toFloat(),
+        targetValue = trovata.coerceAtLeast(0).toFloat(),
         animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f),
         label = "segmento",
+    )
+    val presente by animateFloatAsState(
+        targetValue = if (trovata >= 0) 1f else 0f,
+        animationSpec = spring(dampingRatio = 1f, stiffness = 500f),
+        label = "segmento-presente",
     )
     BoxWithConstraints(
         modifier = modifier
@@ -1343,6 +1355,7 @@ fun <T> SceltaSegmentata(
                 .offset(x = larga * posizione)
                 .width(larga)
                 .fillMaxHeight()
+                .graphicsLayer { alpha = presente }
                 .clip(CircleShape)
                 .background(palette.accent),
         )

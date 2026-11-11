@@ -56,7 +56,7 @@ internal fun SezioneMare(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = tr("IL MARE", "THE SEA"),
+            text = tr("IL MARE", "THE SEA", "DAS MEER", "LA MER", "EL MAR"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
@@ -99,6 +99,9 @@ internal fun SezioneMare(
                     "Non usarla per navigare né per decidere un bagno: valgono i bollettini e le bandiere.",
                 "A model estimate for open water: near the shore waves and water can differ. " +
                     "Do not use it for navigation or to decide on a swim: bulletins and beach flags come first.",
+                "Schätzung eines Modells für die offene See: In Küstennähe können Wellen und Wasser anders sein. Nicht zum Navigieren und nicht für die Entscheidung über ein Bad verwenden: Es gelten die Seewetterberichte und die Flaggen am Strand.",
+                "Estimation d'un modèle au large : près du rivage, les vagues et l'eau peuvent être différentes. Ne l'utilisez pas pour naviguer ni pour décider d'une baignade : les bulletins et les drapeaux de plage font foi.",
+                "Estimación de un modelo mar adentro: cerca de la orilla las olas y el agua pueden ser distintas. No la uses para navegar ni para decidir un baño: mandan los boletines y las banderas de la playa.",
             ),
             style = SalaType.rowNote,
             color = palette.inkSoft,
@@ -109,7 +112,7 @@ internal fun SezioneMare(
 
 /** "Poco mosso · onde di 0,3 m da ESE": puro, per poterlo provare. */
 internal fun rigaOnde(ora: OraMare, unita: TempUnit): String {
-    val metri = ora.onda ?: return tr("Onde non disponibili per quest'ora", "Waves unavailable for this hour")
+    val metri = ora.onda ?: return tr("Onde non disponibili per quest'ora", "Waves unavailable for this hour", "Wellen für diese Stunde nicht verfügbar", "Vagues indisponibles pour cette heure", "Olas no disponibles para esta hora")
     val stato = StatoDelMare.di(metri)?.label?.replaceFirstChar { it.uppercase() }
     // Chi legge i gradi Fahrenheit legge anche i piedi: e' la stessa scelta.
     val altezza = if (unita == TempUnit.FAHRENHEIT) {
@@ -117,18 +120,18 @@ internal fun rigaOnde(ora: OraMare, unita: TempUnit): String {
     } else {
         String.format(Lingue.locale, "%.1f m", metri)
     }
-    val da = ora.direzione?.let { tr(" da ${Wmo.windDirection(it)}", " from ${Wmo.windDirection(it)}") } ?: ""
-    return listOfNotNull(stato, tr("onde di $altezza$da", "$altezza waves$da")).joinToString(" · ")
+    val da = ora.direzione?.let { tr(" da ${Wmo.windDirection(it)}", " from ${Wmo.windDirection(it)}", " aus ${Wmo.windDirection(it)}", " de ${Wmo.windDirection(it)}", " del ${Wmo.windDirection(it)}") } ?: ""
+    return listOfNotNull(stato, tr("onde di $altezza$da", "$altezza waves$da", "Wellen von $altezza$da", "vagues de $altezza$da", "olas de $altezza$da")).joinToString(" · ")
 }
 
 /** "Acqua 16° · un'onda ogni 5 s". */
 internal fun rigaAcqua(ora: OraMare, unita: TempUnit): String {
-    val acqua = ora.acqua?.let { tr("acqua ${unita.from(it).roundToInt()}°", "water ${unita.from(it).roundToInt()}°") }
+    val acqua = ora.acqua?.let { tr("acqua ${unita.from(it).roundToInt()}°", "water ${unita.from(it).roundToInt()}°", "Wasser ${unita.from(it).roundToInt()}°", "eau ${unita.from(it).roundToInt()}°", "agua ${unita.from(it).roundToInt()}°") }
     val periodo = ora.periodo?.takeIf { it >= 1.0 }?.let {
-        tr("un'onda ogni ${it.roundToInt()} s", "a wave every ${it.roundToInt()} s")
+        tr("un'onda ogni ${it.roundToInt()} s", "a wave every ${it.roundToInt()} s", "eine Welle alle ${it.roundToInt()} s", "une vague toutes les ${it.roundToInt()} s", "una ola cada ${it.roundToInt()} s")
     }
     return listOfNotNull(acqua, periodo).joinToString(" · ")
-        .ifEmpty { tr("temperatura dell'acqua non disponibile", "water temperature unavailable") }
+        .ifEmpty { tr("temperatura dell'acqua non disponibile", "water temperature unavailable", "Wassertemperatur nicht verfügbar", "température de l'eau indisponible", "temperatura del agua no disponible") }
 }
 
 /**

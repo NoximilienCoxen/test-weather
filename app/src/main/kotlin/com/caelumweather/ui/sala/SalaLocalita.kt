@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,7 +63,7 @@ fun SalaLocalitaScreen(
             .systemBarsPadding()
             .padding(start = 26.dp, end = 26.dp, top = 12.dp, bottom = 30.dp),
     ) {
-        IntestazioneServizio(titolo = tr("Le località", "Places"), palette = palette, onIndietro = onClose)
+        IntestazioneServizio(titolo = tr("Le località", "Places", "Orte", "Les lieux", "Lugares"), palette = palette, onIndietro = onClose)
 
         CampoDiRicerca(
             valore = state.query,
@@ -80,9 +81,9 @@ fun SalaLocalitaScreen(
             val esito = state.searchError
             when {
                 esito != null -> item { Nota(esito, palette) }
-                state.searching -> item { Nota(tr("Sto cercando…", "Searching…"), palette) }
+                state.searching -> item { Nota(tr("Sto cercando…", "Searching…", "Ich suche…", "Recherche…", "Buscando…"), palette) }
                 state.query.trim().length >= 2 && state.results.isEmpty() ->
-                    item { Nota(tr("Nessuna località con questo nome", "No place with this name"), palette) }
+                    item { Nota(tr("Nessuna località con questo nome", "No place with this name", "Kein Ort mit diesem Namen", "Aucun lieu de ce nom", "Ningún lugar con este nombre"), palette) }
             }
             items(state.results, key = { "trovata-" + it.key }) { trovata ->
                 RigaLocalita(
@@ -104,7 +105,7 @@ fun SalaLocalitaScreen(
                     titolo = posto.name,
                     nota = listOfNotNull(
                         posto.admin,
-                        meteo?.weatherCode?.let { Wmo.condition(it).lowercase() },
+                        meteo?.weatherCode?.let { Wmo.condition(it).inMezzoAllaFrase() },
                     ).joinToString(" · "),
                     temperatura = meteo?.temperature?.let { state.unit.from(it).roundToInt() },
                     corrente = posto.key == state.place.key,
@@ -121,7 +122,7 @@ fun SalaLocalitaScreen(
         // una colonna che si confronta con se stessa.
         if (postiDaConfrontare(state).size >= 2) {
             Text(
-                text = tr("Confronta fianco a fianco", "Compare side by side"),
+                text = tr("Confronta fianco a fianco", "Compare side by side", "Seite an Seite vergleichen", "Comparer côte à côte", "Comparar lado a lado"),
                 style = SalaType.rowTitle,
                 color = palette.accent,
                 textAlign = TextAlign.Center,
@@ -136,7 +137,7 @@ fun SalaLocalitaScreen(
             )
         }
         Text(
-            text = tr("Aggiungi la posizione attuale", "Add the current location"),
+            text = tr("Aggiungi la posizione attuale", "Add the current location", "Aktuellen Standort hinzufügen", "Ajouter la position actuelle", "Añadir la ubicación actual"),
             style = SalaType.rowTitle,
             color = palette.accentInk,
             textAlign = TextAlign.Center,
@@ -252,7 +253,7 @@ fun CampoDiRicerca(
     palette: SalaPalette,
     onValore: (String) -> Unit,
     modifier: Modifier = Modifier,
-    segnaposto: String = tr("Cerca una città o un comune", "Search for a city or town"),
+    segnaposto: String = tr("Cerca una città o un comune", "Search for a city or town", "Stadt oder Gemeinde suchen", "Chercher une ville ou une commune", "Busca una ciudad o un municipio"),
 ) {
     Row(
         modifier = modifier

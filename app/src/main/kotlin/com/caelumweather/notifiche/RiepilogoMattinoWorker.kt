@@ -1,5 +1,6 @@
 package com.caelumweather.notifiche
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.annotation.SuppressLint
@@ -145,9 +146,9 @@ class RiepilogoMattinoWorker(contesto: Context, parametri: WorkerParameters) : C
             // schermo come la pioggia che sta per cadere.
             val canale = NotificationChannel(
                 CANALE,
-                tr("Riepilogo del mattino", "Morning summary"),
+                tr("Riepilogo del mattino", "Morning summary", "Morgenüberblick", "Résumé du matin", "Resumen de la mañana"),
                 NotificationManager.IMPORTANCE_DEFAULT,
-            ).apply { description = tr("La giornata sulla località dell'app, una volta al giorno all'ora scelta", "The day ahead for the app's place, once a day at the time you choose") }
+            ).apply { description = tr("La giornata sulla località dell'app, una volta al giorno all'ora scelta", "The day ahead for the app's place, once a day at the time you choose", "Der Tag am Ort der App, einmal täglich zur gewählten Uhrzeit", "La journée pour le lieu de l'app, une fois par jour à l'heure choisie", "El día en el lugar de la app, una vez al día a la hora elegida") }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -248,12 +249,12 @@ internal fun testiRiepilogo(
     vento: SalaWindUnit,
     allerte: List<WeatherAlert>,
     /** "oggi", o il giorno per esteso quando lo si condivide da Sala I. */
-    giornoDetto: String = tr("oggi", "today"),
+    giornoDetto: String = tr("oggi", "today", "heute", "aujourd'hui", "hoy"),
     /** Solo quando il giorno raccontato e' oggi: di sabato "ieri" e' venerdi'. */
     ieri: DayForecast? = null,
 ): Pair<String, String> {
     fun gradi(c: Double?) = c?.let { "${unita.from(it).roundToInt()}°" } ?: "--"
-    val tempo = Wmo.condition(giorno.weatherCode).lowercase(Lingue.locale)
+    val tempo = Wmo.condition(giorno.weatherCode).inMezzoAllaFrase()
     val titolo = "$citta, $giornoDetto: ${gradi(giorno.tempMin)} – ${gradi(giorno.tempMax)}, $tempo"
 
     val righe = mutableListOf<String>()
@@ -267,24 +268,24 @@ internal fun testiRiepilogo(
         val inizio = ore.firstOrNull { !it.time.isBefore(daOra) && (it.precipitation ?: 0.0) >= 0.1 }?.time
         val quanta = String.format(Lingue.locale, "%.1f", mm)
         righe += when {
-            inizio != null && neve -> tr("Neve dalle ${inizio.hour} circa.", "Snow from about ${inizio.hour}:00.")
-            neve -> tr("Neve in giornata.", "Snow during the day.")
-            inizio != null -> tr("Pioggia dalle ${inizio.hour} circa, $quanta mm in giornata.", "Rain from about ${inizio.hour}:00, $quanta mm over the day.")
-            else -> tr("$quanta mm di pioggia in giornata.", "$quanta mm of rain over the day.")
+            inizio != null && neve -> tr("Neve dalle ${inizio.hour} circa.", "Snow from about ${inizio.hour}:00.", "Schnee ab etwa ${inizio.hour} Uhr.", "Neige à partir de ${inizio.hour} h environ.", "Nieve desde las ${inizio.hour} aprox.")
+            neve -> tr("Neve in giornata.", "Snow during the day.", "Schnee im Tagesverlauf.", "Neige dans la journée.", "Nieve a lo largo del día.")
+            inizio != null -> tr("Pioggia dalle ${inizio.hour} circa, $quanta mm in giornata.", "Rain from about ${inizio.hour}:00, $quanta mm over the day.", "Regen ab etwa ${inizio.hour} Uhr, $quanta mm im Tagesverlauf.", "Pluie à partir de ${inizio.hour} h environ, $quanta mm dans la journée.", "Lluvia desde las ${inizio.hour} aprox., $quanta mm a lo largo del día.")
+            else -> tr("$quanta mm di pioggia in giornata.", "$quanta mm of rain over the day.", "$quanta mm Regen im Tagesverlauf.", "$quanta mm de pluie dans la journée.", "$quanta mm de lluvia a lo largo del día.")
         }
     } else {
-        righe += tr("Niente pioggia.", "No rain.")
+        righe += tr("Niente pioggia.", "No rain.", "Kein Regen.", "Pas de pluie.", "Sin lluvia.")
     }
 
     val uv = giorno.uvMax ?: 0.0
     if (uv >= 3.0) {
         val picco = ore.maxByOrNull { it.uvIndex ?: 0.0 }?.time?.hour
-        val quando = picco?.let { tr(" verso le $it", " around $it:00") } ?: ""
+        val quando = picco?.let { tr(" verso le $it", " around $it:00", " gegen $it Uhr", " vers $it h", " hacia las $it") } ?: ""
         val valore = uv.roundToInt()
         righe += if (uv >= 6.0) {
-            tr("UV alto, $valore$quando: crema e cappello.", "High UV, $valore$quando: sunscreen and a hat.")
+            tr("UV alto, $valore$quando: crema e cappello.", "High UV, $valore$quando: sunscreen and a hat.", "Hoher UV-Index, $valore$quando: Sonnencreme und Hut.", "UV élevés, $valore$quando : crème solaire et chapeau.", "UV alto, $valore$quando: crema y sombrero.")
         } else {
-            tr("UV moderato, $valore$quando.", "Moderate UV, $valore$quando.")
+            tr("UV moderato, $valore$quando.", "Moderate UV, $valore$quando.", "Mäßiger UV-Index, $valore$quando.", "UV modérés, $valore$quando.", "UV moderado, $valore$quando.")
         }
     }
 
@@ -295,16 +296,19 @@ internal fun testiRiepilogo(
         righe += tr(
             "Raffiche fino a ${vento.from(raffica).roundToInt()} ${vento.label}.",
             "Gusts up to ${vento.from(raffica).roundToInt()} ${vento.label}.",
+            "Böen bis ${vento.from(raffica).roundToInt()} ${vento.label}.",
+            "Rafales jusqu'à ${vento.from(raffica).roundToInt()} ${vento.label}.",
+            "Rachas de hasta ${vento.from(raffica).roundToInt()} ${vento.label}.",
         )
     }
 
     allertaDiOggi(allerte, adesso)?.let { a ->
-        val colore = a.level.breve.lowercase(Lingue.locale)
-        val cosa = a.kind.label.lowercase(Lingue.locale)
+        val colore = a.level.breve.inMezzoAllaFrase()
+        val cosa = a.kind.label.inMezzoAllaFrase()
         righe += if (a.level.weight >= AlertLevel.ARANCIONE.weight) {
-            tr("Allerta $colore per $cosa: tocca per il bollettino.", "${colore.replaceFirstChar { it.uppercase() }} warning for $cosa: tap for the bulletin.")
+            tr("Allerta $colore per $cosa: tocca per il bollettino.", "${colore.replaceFirstChar { it.uppercase() }} warning for $cosa: tap for the bulletin.", "Warnstufe ${colore.replaceFirstChar { it.uppercase() }} für $cosa: Tippe für den Warnbericht.", "Alerte $colore pour $cosa : touchez pour le bulletin.", "Alerta $colore por $cosa: toca para ver el boletín.")
         } else {
-            tr("Allerta $colore per $cosa.", "${colore.replaceFirstChar { it.uppercase() }} warning for $cosa.")
+            tr("Allerta $colore per $cosa.", "${colore.replaceFirstChar { it.uppercase() }} warning for $cosa.", "Warnstufe ${colore.replaceFirstChar { it.uppercase() }} für $cosa.", "Alerte $colore pour $cosa.", "Alerta $colore por $cosa.")
         }
     }
 

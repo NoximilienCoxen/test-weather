@@ -81,8 +81,8 @@ fun WearApp(stato: WearViewModel.Stato) {
             Box(Modifier.fillMaxSize()) {
                 Canvas(Modifier.fillMaxSize()) { disegnaCielo(cielo) }
                 when (stato) {
-                    WearViewModel.Stato.Caricamento -> Messaggio(tr("Carico il tempo…", "Loading weather…"), cielo)
-                    WearViewModel.Stato.Errore -> Messaggio(tr("Nessun dato.\nServe la rete.", "No data.\nNetwork needed."), cielo)
+                    WearViewModel.Stato.Caricamento -> Messaggio(tr("Carico il tempo…", "Loading weather…", "Wetter wird geladen…", "Chargement de la météo…", "Cargando el tiempo…"), cielo)
+                    WearViewModel.Stato.Errore -> Messaggio(tr("Nessun dato.\nServe la rete.", "No data.\nNetwork needed.", "Keine Daten.\nNetz erforderlich.", "Aucune donnée.\nRéseau nécessaire.", "Sin datos.\nHace falta red."), cielo)
                     is WearViewModel.Stato.Pronta -> Pagine(stato.previsione, adesso, stato.fahrenheit, cielo)
                 }
             }
@@ -181,7 +181,7 @@ private fun rigaGiornata(oggi: DayForecast?, percepita: Double?, fahrenheit: Boo
         if (oggi?.tempMax != null && oggi.tempMin != null) {
             add("↑${temperatura(oggi.tempMax, fahrenheit)} ↓${temperatura(oggi.tempMin, fahrenheit)}")
         }
-        if (percepita != null) add(tr("percepita ", "feels ") + temperatura(percepita, fahrenheit))
+        if (percepita != null) add(tr("percepita ", "feels ", "gefühlt ", "ressenti ", "sensación ") + temperatura(percepita, fahrenheit))
     }
     return pezzi.joinToString(" · ")
 }
@@ -219,7 +219,7 @@ private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime, fahrenheit: B
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            item { Titolo(tr("Prossime ore", "Next hours"), cielo) }
+            item { Titolo(tr("Prossime ore", "Next hours", "Nächste Stunden", "Prochaines heures", "Próximas horas"), cielo) }
             items(ore) { ora -> RigaOra(ora, ora == ore.first(), fahrenheit, cielo) }
         }
     }
@@ -229,7 +229,7 @@ private fun PaginaOre(previsione: Forecast, adesso: LocalDateTime, fahrenheit: B
 private fun RigaOra(ora: HourForecast, prima: Boolean, fahrenheit: Boolean, cielo: CieloOrologio) {
     Riga(cielo) {
         Text(
-            if (prima) tr("Ora", "Now") else oraBreve(ora.time),
+            if (prima) tr("Ora", "Now", "Jetzt", "Maint.", "Ahora") else oraBreve(ora.time),
             style = SalaType.hourLabel.copy(fontSize = 13.sp),
             color = if (prima) cielo.palette.accent else cielo.inkPanel,
             modifier = Modifier.width(34.dp),
@@ -263,7 +263,7 @@ private fun PaginaGiorni(previsione: Forecast, fahrenheit: Boolean, cielo: Cielo
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            item { Titolo(tr("Giorni", "Days"), cielo) }
+            item { Titolo(tr("Giorni", "Days", "Tage", "Jours", "Días"), cielo) }
             items(previsione.days) { giorno -> RigaGiorno(giorno, scala, fahrenheit, cielo) }
         }
     }

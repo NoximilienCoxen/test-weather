@@ -477,8 +477,8 @@ fun SalaShell(
         // ritorno al presente.** "giovedì 18 set" accanto a "13:00" spingeva
         // l'ora contro la pillola sugli schermi stretti; "gio 18" no.
         when {
-            scelto == null -> tr("oggi", "today")
-            scelto.indice == 0 -> tr("oggi", "today")
+            scelto == null -> tr("oggi", "today", "heute", "aujourd'hui", "hoy")
+            scelto.indice == 0 -> tr("oggi", "today", "heute", "aujourd'hui", "hoy")
             else -> "${scelto.breve} ${scelto.giornoDelMese}"
         }
     }
@@ -591,7 +591,7 @@ fun SalaShell(
                 ComparsaMorbida(visibile = casa != null) {
                     val nome = (casa ?: ultimaCasa[0])?.name.orEmpty()
                     PastigliaAccento(
-                        testo = tr("DAL WIDGET · TORNA A ${nome.uppercase()}", "FROM THE WIDGET · BACK TO ${nome.uppercase()}"),
+                        testo = tr("DAL WIDGET · TORNA A ${nome.uppercase()}", "FROM THE WIDGET · BACK TO ${nome.uppercase()}", "VOM WIDGET · ZURÜCK ZU ${nome.uppercase()}", "DEPUIS LE WIDGET · RETOUR À ${nome.uppercase()}", "DESDE EL WIDGET · VOLVER A ${nome.uppercase()}"),
                         palette = palette,
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
@@ -611,7 +611,7 @@ fun SalaShell(
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
                             .clip(CircleShape)
-                            .clickable(onClickLabel = tr("riprova ad aggiornare", "try updating again"), onClick = viewModel::aggiornaAMano),
+                            .clickable(onClickLabel = tr("riprova ad aggiornare", "try updating again", "erneut aktualisieren", "réessayer d'actualiser", "volver a intentar actualizar"), onClick = viewModel::aggiornaAMano),
                     )
                 }
 
@@ -1098,14 +1098,14 @@ fun SalaShell(
  * mentre i tentativi girano ancora, si dice solo di quando sono.
  */
 private fun etichettaDatiVecchi(quando: LocalDateTime?, senzaRete: Boolean): String {
-    val prima = if (senzaRete) tr("SENZA RETE · ", "OFFLINE · ") else ""
-    if (quando == null) return prima + tr("DATI NON AGGIORNATI", "DATA NOT UPDATED")
+    val prima = if (senzaRete) tr("SENZA RETE · ", "OFFLINE · ", "OFFLINE · ", "HORS LIGNE · ", "SIN RED · ") else ""
+    if (quando == null) return prima + tr("DATI NON AGGIORNATI", "DATA NOT UPDATED", "DATEN NICHT AKTUALISIERT", "DONNÉES NON ACTUALISÉES", "DATOS SIN ACTUALIZAR")
     val ora = oraMinuto(quando)
     val oggi = LocalDate.now()
     val dati = when (quando.toLocalDate()) {
-        oggi -> tr("DATI DELLE $ora", "DATA FROM $ora")
-        oggi.minusDays(1) -> tr("DATI DI IERI $ora", "DATA FROM YESTERDAY $ora")
-        else -> tr("DATI DEL ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATA FROM ${quando.dayOfMonth}/${quando.monthValue} $ora")
+        oggi -> tr("DATI DELLE $ora", "DATA FROM $ora", "DATEN VON $ora", "DONNÉES DE $ora", "DATOS DE LAS $ora")
+        oggi.minusDays(1) -> tr("DATI DI IERI $ora", "DATA FROM YESTERDAY $ora", "DATEN VON GESTERN $ora", "DONNÉES D'HIER $ora", "DATOS DE AYER $ora")
+        else -> tr("DATI DEL ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATA FROM ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATEN VOM ${quando.dayOfMonth}.${quando.monthValue}. $ora", "DONNÉES DU ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATOS DEL ${quando.dayOfMonth}/${quando.monthValue} $ora")
     }
     return prima + dati
 }

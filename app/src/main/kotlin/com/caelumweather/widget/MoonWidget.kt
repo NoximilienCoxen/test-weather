@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
@@ -44,8 +45,11 @@ internal class MoonWidget : CaelumWidget(WidgetKind.LUNA) {
         }
 
         val spoken = tr(
-            "Luna, ${label.lowercase()}, ${(illuminated * 100).roundToInt()} per cento illuminata",
-            "Moon, ${label.lowercase()}, ${(illuminated * 100).roundToInt()} percent illuminated",
+            "Luna, ${label.inMezzoAllaFrase()}, ${(illuminated * 100).roundToInt()} per cento illuminata",
+            "Moon, ${label.inMezzoAllaFrase()}, ${(illuminated * 100).roundToInt()} percent illuminated",
+            "Mond, ${label.inMezzoAllaFrase()}, zu ${(illuminated * 100).roundToInt()} Prozent beleuchtet",
+            "Lune, ${label.inMezzoAllaFrase()}, éclairée à ${(illuminated * 100).roundToInt()} pour cent",
+            "Luna, ${label.inMezzoAllaFrase()}, iluminada al ${(illuminated * 100).roundToInt()} por ciento",
         )
 
         return Drawn(bitmap, spoken)

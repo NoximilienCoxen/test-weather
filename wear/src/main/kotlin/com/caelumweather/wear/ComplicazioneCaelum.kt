@@ -113,7 +113,7 @@ class ComplicazioneCaelum : SuspendingComplicationDataSourceService() {
          * cambia cosa si fa uscendo.
          */
         fun titoloCorto(pioggia: PioggiaInVista, oggi: DayForecast?, fahrenheit: Boolean): String = when (pioggia) {
-            is PioggiaInVista.Adesso -> "☂ " + tr("ora", "now")
+            is PioggiaInVista.Adesso -> "☂ " + tr("ora", "now", "jetzt", "maint.", "ahora")
             is PioggiaInVista.Arriva -> "☂ ${oraBreve(pioggia.alle)}"
             is PioggiaInVista.Asciutto -> "↑${temperatura(oggi?.tempMax, fahrenheit)}"
         }

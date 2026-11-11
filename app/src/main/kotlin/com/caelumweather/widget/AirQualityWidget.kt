@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
@@ -33,9 +34,9 @@ internal class AirQualityWidget : CaelumWidget(WidgetKind.ARIA) {
         }
 
         val spoken = buildString {
-            append(tr("Qualità dell'aria a ${where.name}", "Air quality in ${where.name}"))
-            air?.index?.let { append(tr(", indice $it", ", index $it")) }
-            air?.band?.let { append(", ${it.label.lowercase()}") }
+            append(tr("Qualità dell'aria a ${where.name}", "Air quality in ${where.name}", "Luftqualität in ${where.name}", "Qualité de l'air à ${where.name}", "Calidad del aire en ${where.name}"))
+            air?.index?.let { append(tr(", indice $it", ", index $it", ", Index $it", ", indice $it", ", índice $it")) }
+            air?.band?.let { append(", ${it.label.inMezzoAllaFrase()}") }
         }
 
         return Drawn(bitmap, spoken)

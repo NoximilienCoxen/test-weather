@@ -93,9 +93,9 @@ fun SalaBollettinoScreen(
     val ufficiali = avvisi.any { it.official }
     val calcolati = avvisi.any { !it.official }
     val titolo = when {
-        ufficiali && calcolati -> tr("Allerte e avvisi", "Warnings and notices")
-        ufficiali -> tr("Le allerte", "Warnings")
-        else -> tr("Gli avvisi", "Notices")
+        ufficiali && calcolati -> tr("Allerte e avvisi", "Warnings and notices", "Warnungen und Hinweise", "Alertes et avis", "Alertas y avisos")
+        ufficiali -> tr("Le allerte", "Warnings", "Warnungen", "Les alertes", "Las alertas")
+        else -> tr("Gli avvisi", "Notices", "Hinweise", "Les avis", "Los avisos")
     }
 
     Column(
@@ -109,8 +109,8 @@ fun SalaBollettinoScreen(
         Text(
             text = when (avvisi.size) {
                 0 -> luogo
-                1 -> tr("$luogo · un avviso", "$luogo · one notice")
-                else -> tr("$luogo · ${avvisi.size} avvisi", "$luogo · ${avvisi.size} notices")
+                1 -> tr("$luogo · un avviso", "$luogo · one notice", "$luogo · ein Hinweis", "$luogo · un avis", "$luogo · un aviso")
+                else -> tr("$luogo · ${avvisi.size} avvisi", "$luogo · ${avvisi.size} notices", "$luogo · ${avvisi.size} Hinweise", "$luogo · ${avvisi.size} avis", "$luogo · ${avvisi.size} avisos")
             },
             style = SalaType.rowNote,
             color = palette.inkSoft,
@@ -139,6 +139,9 @@ fun SalaBollettinoScreen(
                                     "controllare finché non torna.",
                                 "But there is no connection right now: official warnings can't be " +
                                     "checked until it comes back.",
+                                "Im Moment fehlt aber die Verbindung: Amtliche Warnungen lassen sich erst wieder prüfen, wenn sie zurück ist.",
+                                "Mais il n'y a pas de connexion pour l'instant : les alertes officielles ne pourront être vérifiées qu'à son retour.",
+                                "Pero ahora no hay conexión: las alertas oficiales no se pueden comprobar hasta que vuelva.",
                             ),
                             style = SalaType.body,
                             color = palette.accent,
@@ -157,6 +160,9 @@ fun SalaBollettinoScreen(
                             "Qui sotto ci sono solo gli avvisi che l'app calcola da sé.",
                         "Official warnings couldn't be checked: ${fontePosto?.nome ?: "the source"} didn't respond. " +
                             "Below are only the notices the app works out itself.",
+                        "Die amtlichen Warnungen konnten nicht geprüft werden: ${fontePosto?.nome ?: "die Quelle"} hat nicht geantwortet. Unten stehen nur die Hinweise, die die App selbst berechnet.",
+                        "Les alertes officielles n'ont pas pu être vérifiées : ${fontePosto?.nome ?: "la source"} n'a pas répondu. Ci-dessous, seulement les avis que l'app calcule elle-même.",
+                        "No se han podido comprobar las alertas oficiales: ${fontePosto?.nome ?: "la fuente"} no ha respondido. Abajo solo están los avisos que la app calcula por sí misma.",
                     ),
                     style = SalaType.body,
                     color = palette.accent,
@@ -182,6 +188,9 @@ fun SalaBollettinoScreen(
                             "THRESHOLD EXCEEDED means the app calculated it by comparing the " +
                             "forecast with thresholds: it is not an official warning and does not " +
                             "replace a bulletin.",
+                        "WARNUNG bedeutet, dass ein nationaler Wetterdienst sie herausgegeben hat – in Europa über MeteoAlarm – und es ist eine Wetterwarnung, keine Meldung des Katastrophenschutzes. SCHWELLE ÜBERSCHRITTEN bedeutet, dass die App sie berechnet hat, indem sie die Vorhersage mit Schwellenwerten vergleicht: Das ist keine amtliche Warnung und ersetzt keinen Warnbericht.",
+                        "ALERTE signifie qu'un service météorologique national l'a émise – en Europe via MeteoAlarm – et c'est une alerte météo, pas un message de la sécurité civile. SEUIL DÉPASSÉ signifie que l'app l'a calculé en comparant la prévision à des seuils : ce n'est pas une alerte officielle et cela ne remplace pas un bulletin.",
+                        "ALERTA significa que la ha emitido un servicio meteorológico nacional – en Europa a través de MeteoAlarm – y es una alerta meteorológica, no un mensaje de protección civil. UMBRAL SUPERADO significa que la ha calculado la app comparando la previsión con unos umbrales: no es una alerta oficial y no sustituye a un boletín.",
                     ),
                     style = SalaType.rowNote,
                     color = palette.inkFaint,
@@ -214,6 +223,9 @@ fun SalaBollettinoScreen(
                     text = tr(
                         "Il titolo di ogni allerta lo compone l'app; descrizione e istruzioni sono quelle dell'ente.",
                         "The app writes the title of each warning; description and instructions are the authority's own.",
+                        "Den Titel jeder Warnung formuliert die App; Beschreibung und Anweisungen stammen von der Behörde.",
+                        "L'app rédige le titre de chaque alerte ; la description et les consignes sont celles de l'organisme.",
+                        "La app redacta el título de cada alerta; la descripción y las instrucciones son las del organismo.",
                     ),
                     style = SalaType.rowNote,
                     color = palette.inkFaint,
@@ -238,7 +250,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
             SegnoAvviso(avviso, palette)
             EtichettaLivello(avviso, palette)
             if (inCorso(avviso, adesso)) {
-                Text(text = tr("IN CORSO", "IN FORCE"), style = SalaType.sectionLabel, color = palette.accent, maxLines = 1)
+                Text(text = tr("IN CORSO", "IN FORCE", "AKTIV", "EN COURS", "EN VIGOR"), style = SalaType.sectionLabel, color = palette.accent, maxLines = 1)
             }
         }
         Text(
@@ -258,7 +270,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         if (avviso.official) {
             avviso.areaDesc?.takeIf { it.isNotBlank() }?.let { zona ->
                 Text(
-                    text = tr("Zona: $zona", "Area: $zona"),
+                    text = tr("Zona: $zona", "Area: $zona", "Gebiet: $zona", "Zone : $zona", "Zona: $zona"),
                     style = SalaType.rowNote,
                     color = palette.inkSoft,
                     modifier = Modifier.padding(top = 2.dp),
@@ -275,7 +287,7 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         }
         avviso.instruction?.takeIf { it.isNotBlank() }?.let { testo ->
             Text(
-                text = tr("COSA FARE", "WHAT TO DO"),
+                text = tr("COSA FARE", "WHAT TO DO", "WAS ZU TUN IST", "QUE FAIRE", "QUÉ HACER"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 14.dp),
@@ -289,9 +301,9 @@ private fun SchedaAvviso(avviso: WeatherAlert, adesso: LocalDateTime, palette: S
         }
         Text(
             text = if (avviso.official) {
-                tr("Fonte: ${avviso.source}", "Source: ${avviso.source}")
+                tr("Fonte: ${avviso.source}", "Source: ${avviso.source}", "Quelle: ${avviso.source}", "Source : ${avviso.source}", "Fuente: ${avviso.source}")
             } else {
-                tr("Calcolato dall'app sui dati Open-Meteo: non è un'allerta ufficiale.", "Calculated by the app from Open-Meteo data: not an official warning.")
+                tr("Calcolato dall'app sui dati Open-Meteo: non è un'allerta ufficiale.", "Calculated by the app from Open-Meteo data: not an official warning.", "Von der App aus Open-Meteo-Daten berechnet: keine amtliche Warnung.", "Calculé par l'app à partir des données Open-Meteo : ce n'est pas une alerte officielle.", "Calculado por la app con datos de Open-Meteo: no es una alerta oficial.")
             },
             style = SalaType.rowNote,
             color = palette.inkFaint,
@@ -378,27 +390,42 @@ internal fun testoNessunAvviso(
     val soglie = tr(
         "la previsione di oggi e domani non supera nessuna delle soglie che l'app controlla.",
         "today's and tomorrow's forecast stays below every threshold the app checks.",
+        "die Vorhersage für heute und morgen bleibt unter allen Schwellen, die die App prüft.",
+        "la prévision d'aujourd'hui et de demain reste sous tous les seuils que l'app surveille.",
+        "la previsión de hoy y de mañana no supera ninguno de los umbrales que la app comprueba.",
     )
     return when (stato) {
-        StatoAllerteUfficiali.ARRIVATE -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
+        StatoAllerteUfficiali.ARRIVATE -> tr("NESSUN AVVISO", "NO WARNINGS", "KEINE WARNUNGEN", "AUCUNE ALERTE", "SIN AVISOS") to tr(
             "Per $luogo non è arrivata nessuna allerta ufficiale, e $soglie",
             "No official warning has been issued for $luogo, and $soglie",
+            "Für $luogo liegt keine amtliche Warnung vor, und $soglie",
+            "Aucune alerte officielle n'a été émise pour $luogo, et $soglie",
+            "No se ha emitido ninguna alerta oficial para $luogo, y $soglie",
         )
-        StatoAllerteUfficiali.NON_ARRIVATE -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED") to tr(
+        StatoAllerteUfficiali.NON_ARRIVATE -> tr("ALLERTE NON VERIFICATE", "WARNINGS NOT CHECKED", "WARNUNGEN NICHT GEPRÜFT", "ALERTES NON VÉRIFIÉES", "ALERTAS SIN COMPROBAR") to tr(
             "Le allerte ufficiali per $luogo non si sono potute controllare: $chi non ha " +
                 "risposto. Non vuol dire che non ce ne siano. Intanto $soglie",
             "Official warnings for $luogo couldn't be checked: $chi didn't respond. That " +
                 "doesn't mean there are none. Meanwhile, $soglie",
+            "Die amtlichen Warnungen für $luogo konnten nicht geprüft werden: $chi hat nicht geantwortet. Das heißt nicht, dass es keine gibt. Unterdessen: $soglie",
+            "Les alertes officielles pour $luogo n'ont pas pu être vérifiées : $chi n'a pas répondu. Cela ne veut pas dire qu'il n'y en a pas. En attendant, $soglie",
+            "No se han podido comprobar las alertas oficiales para $luogo: $chi no ha respondido. Eso no significa que no haya ninguna. Mientras tanto, $soglie",
         )
-        StatoAllerteUfficiali.FUORI_COPERTURA -> tr("NESSUN AVVISO", "NO WARNINGS") to tr(
+        StatoAllerteUfficiali.FUORI_COPERTURA -> tr("NESSUN AVVISO", "NO WARNINGS", "KEINE WARNUNGEN", "AUCUNE ALERTE", "SIN AVISOS") to tr(
             "Per $luogo l'app non ha una fonte di allerte ufficiali: legge ${FonteAllerte.elenco}. " +
                 "Restano le soglie calcolate, e $soglie",
             "The app has no official warning source for $luogo: it reads ${FonteAllerte.elenco}. " +
                 "Only the computed thresholds remain, and $soglie",
+            "Für $luogo hat die App keine Quelle für amtliche Warnungen: Sie liest ${FonteAllerte.elenco}. Es bleiben nur die berechneten Schwellen, und $soglie",
+            "Pour $luogo, l'app n'a pas de source d'alertes officielles : elle lit ${FonteAllerte.elenco}. Il ne reste que les seuils calculés, et $soglie",
+            "Para $luogo la app no tiene una fuente de alertas oficiales: lee ${FonteAllerte.elenco}. Solo quedan los umbrales calculados, y $soglie",
         )
-        StatoAllerteUfficiali.IN_ATTESA -> tr("NESSUN AVVISO, PER ORA", "NO WARNINGS YET") to tr(
+        StatoAllerteUfficiali.IN_ATTESA -> tr("NESSUN AVVISO, PER ORA", "NO WARNINGS YET", "NOCH KEINE WARNUNGEN", "AUCUNE ALERTE POUR L'INSTANT", "SIN AVISOS, POR AHORA") to tr(
             "Le allerte ufficiali per $luogo stanno ancora arrivando. Intanto $soglie",
             "Official warnings for $luogo are still loading. Meanwhile, $soglie",
+            "Die amtlichen Warnungen für $luogo werden noch geladen. Unterdessen: $soglie",
+            "Les alertes officielles pour $luogo sont en cours de chargement. En attendant, $soglie",
+            "Las alertas oficiales para $luogo todavía se están cargando. Mientras tanto, $soglie",
         )
     }
 }
@@ -418,8 +445,8 @@ internal fun finestra(avviso: WeatherAlert, oggi: LocalDate): String {
     val inizio = avviso.onset
     val fine = avviso.expires
     fun giorno(d: LocalDate): String = when (d) {
-        oggi -> tr("oggi", "today")
-        oggi.plusDays(1) -> tr("domani", "tomorrow")
+        oggi -> tr("oggi", "today", "heute", "aujourd'hui", "hoy")
+        oggi.plusDays(1) -> tr("domani", "tomorrow", "morgen", "demain", "mañana")
         else -> "${d.dayOfWeek.italiano()} ${d.dayOfMonth}"
     }
     fun ora(t: LocalDateTime): String = String.format(Locale.ITALY, "%02d:%02d", t.hour, t.minute)
@@ -428,17 +455,20 @@ internal fun finestra(avviso: WeatherAlert, oggi: LocalDate): String {
     if (inizio != null && fine != null && inizio.toLocalDate() == fine.toLocalDate()) {
         val tuttoIlGiorno = inizio.toLocalTime() == LocalTime.MIDNIGHT && !fine.toLocalTime().isBefore(LocalTime.of(23, 59))
         val quale = maiuscola(giorno(inizio.toLocalDate()))
-        return if (tuttoIlGiorno) tr("$quale, per tutta la giornata", "$quale, all day")
-        else tr("$quale, dalle ${ora(inizio)} alle ${ora(fine)}", "$quale, from ${ora(inizio)} to ${ora(fine)}")
+        return if (tuttoIlGiorno) tr("$quale, per tutta la giornata", "$quale, all day", "$quale, den ganzen Tag", "$quale, toute la journée", "$quale, todo el día")
+        else tr("$quale, dalle ${ora(inizio)} alle ${ora(fine)}", "$quale, from ${ora(inizio)} to ${ora(fine)}", "$quale, von ${ora(inizio)} bis ${ora(fine)}", "$quale, de ${ora(inizio)} à ${ora(fine)}", "$quale, de ${ora(inizio)} a ${ora(fine)}")
     }
     return when {
         inizio != null && fine != null ->
             tr(
                 "Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())} alle ${ora(fine)} di ${giorno(fine.toLocalDate())}",
                 "From ${ora(inizio)} ${giorno(inizio.toLocalDate())} to ${ora(fine)} ${giorno(fine.toLocalDate())}",
+                "Von ${ora(inizio)} ${giorno(inizio.toLocalDate())} bis ${ora(fine)} ${giorno(fine.toLocalDate())}",
+                "De ${ora(inizio)} ${giorno(inizio.toLocalDate())} à ${ora(fine)} ${giorno(fine.toLocalDate())}",
+                "Desde las ${ora(inizio)} ${giorno(inizio.toLocalDate())} hasta las ${ora(fine)} ${giorno(fine.toLocalDate())}",
             )
-        fine != null -> tr("Fino alle ${ora(fine)} di ${giorno(fine.toLocalDate())}", "Until ${ora(fine)} ${giorno(fine.toLocalDate())}")
-        inizio != null -> tr("Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())}", "From ${ora(inizio)} ${giorno(inizio.toLocalDate())}")
-        else -> tr("La fonte non dice fino a quando vale", "The source doesn't say how long it lasts")
+        fine != null -> tr("Fino alle ${ora(fine)} di ${giorno(fine.toLocalDate())}", "Until ${ora(fine)} ${giorno(fine.toLocalDate())}", "Bis ${ora(fine)} ${giorno(fine.toLocalDate())}", "Jusqu'à ${ora(fine)} ${giorno(fine.toLocalDate())}", "Hasta las ${ora(fine)} ${giorno(fine.toLocalDate())}")
+        inizio != null -> tr("Dalle ${ora(inizio)} di ${giorno(inizio.toLocalDate())}", "From ${ora(inizio)} ${giorno(inizio.toLocalDate())}", "Ab ${ora(inizio)} ${giorno(inizio.toLocalDate())}", "À partir de ${ora(inizio)} ${giorno(inizio.toLocalDate())}", "Desde las ${ora(inizio)} ${giorno(inizio.toLocalDate())}")
+        else -> tr("La fonte non dice fino a quando vale", "The source doesn't say how long it lasts", "Die Quelle sagt nicht, wie lange sie gilt", "La source n'indique pas jusqu'à quand elle vaut", "La fuente no dice hasta cuándo es válida")
     }
 }

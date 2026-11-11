@@ -1,5 +1,6 @@
 package com.caelumweather.notifiche
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.annotation.SuppressLint
@@ -96,9 +97,9 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
-                tr("Allerte ufficiali", "Official warnings"),
+                tr("Allerte ufficiali", "Official warnings", "Amtliche Warnungen", "Alertes officielles", "Alertas oficiales"),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { description = tr("Allerte arancioni e rosse emesse dai servizi meteorologici nazionali", "Orange and red warnings issued by national weather services") }
+            ).apply { description = tr("Allerte arancioni e rosse emesse dai servizi meteorologici nazionali", "Orange and red warnings issued by national weather services", "Orange und rote Warnungen der nationalen Wetterdienste", "Alertes orange et rouges émises par les services météorologiques nationaux", "Alertas naranjas y rojas emitidas por los servicios meteorológicos nacionales") }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -180,15 +181,18 @@ internal fun memoriaAggiornata(
 
 /** Titolo e testo della notifica: puri, per poterli provare. */
 internal fun testiAllerta(citta: String, allerta: WeatherAlert, adesso: LocalDateTime): Pair<String, String> {
-    val colore = allerta.level.breve.lowercase(Lingue.locale)
-    val fenomeno = allerta.kind.label.lowercase(Lingue.locale)
-    val titolo = tr("Allerta $colore a $citta: $fenomeno", "${colore.replaceFirstChar { it.uppercase() }} warning for $citta: $fenomeno")
+    val colore = allerta.level.breve.inMezzoAllaFrase()
+    val fenomeno = allerta.kind.label.inMezzoAllaFrase()
+    val titolo = tr("Allerta $colore a $citta: $fenomeno", "${colore.replaceFirstChar { it.uppercase() }} warning for $citta: $fenomeno", "Warnstufe ${colore.replaceFirstChar { it.uppercase() }} für $citta: $fenomeno", "Alerte $colore à $citta : $fenomeno", "Alerta $colore en $citta: $fenomeno")
     val quando = finestraBreve(allerta, adesso)
-    val zona = allerta.areaDesc?.takeIf { it.isNotBlank() }?.let { tr(" Zona: $it.", " Area: $it.") } ?: ""
+    val zona = allerta.areaDesc?.takeIf { it.isNotBlank() }?.let { tr(" Zona: $it.", " Area: $it.", " Gebiet: $it.", " Zone : $it.", " Zona: $it.") } ?: ""
     val via = allerta.fonte?.nome ?: "MeteoAlarm"
     val testo = quando + tr(
         "Diramata dagli enti, via $via.$zona Tocca per leggere il bollettino.",
         "Issued by the authorities, via $via.$zona Tap to read the bulletin.",
+        "Von den Behörden herausgegeben, über $via.$zona Tippe, um den Warnbericht zu lesen.",
+        "Émise par les organismes, via $via.$zona Touchez pour lire le bulletin.",
+        "Emitida por los organismos, a través de $via.$zona Toca para leer el boletín.",
     )
     return titolo to testo
 }
@@ -202,15 +206,15 @@ private fun finestraBreve(allerta: WeatherAlert, adesso: LocalDateTime): String 
         val ora = String.format(Locale.ITALIAN, "%02d:%02d", t.hour, t.minute)
         val oggi = adesso.toLocalDate()
         return when (t.toLocalDate()) {
-            oggi -> tr("$ora di oggi", "$ora today")
-            oggi.plusDays(1) -> tr("$ora di domani", "$ora tomorrow")
-            else -> tr("$ora del ${t.dayOfMonth}/${t.monthValue}", "$ora on ${t.dayOfMonth}/${t.monthValue}")
+            oggi -> tr("$ora di oggi", "$ora today", "heute $ora", "$ora aujourd'hui", "$ora de hoy")
+            oggi.plusDays(1) -> tr("$ora di domani", "$ora tomorrow", "morgen $ora", "$ora demain", "$ora de mañana")
+            else -> tr("$ora del ${t.dayOfMonth}/${t.monthValue}", "$ora on ${t.dayOfMonth}/${t.monthValue}", "$ora am ${t.dayOfMonth}.${t.monthValue}.", "$ora le ${t.dayOfMonth}/${t.monthValue}", "$ora del ${t.dayOfMonth}/${t.monthValue}")
         }
     }
     return when {
         inizio != null && inizio.isAfter(adesso) && fine != null ->
-            tr("Dalle ${oraEGiorno(inizio)} alle ${oraEGiorno(fine)}. ", "From ${oraEGiorno(inizio)} until ${oraEGiorno(fine)}. ")
-        fine != null -> tr("In corso fino alle ${oraEGiorno(fine)}. ", "In force until ${oraEGiorno(fine)}. ")
+            tr("Dalle ${oraEGiorno(inizio)} alle ${oraEGiorno(fine)}. ", "From ${oraEGiorno(inizio)} until ${oraEGiorno(fine)}. ", "Von ${oraEGiorno(inizio)} bis ${oraEGiorno(fine)}. ", "De ${oraEGiorno(inizio)} à ${oraEGiorno(fine)}. ", "Desde las ${oraEGiorno(inizio)} hasta las ${oraEGiorno(fine)}. ")
+        fine != null -> tr("In corso fino alle ${oraEGiorno(fine)}. ", "In force until ${oraEGiorno(fine)}. ", "Gültig bis ${oraEGiorno(fine)}. ", "En cours jusqu'à ${oraEGiorno(fine)}. ", "En vigor hasta las ${oraEGiorno(fine)}. ")
         else -> ""
     }
 }

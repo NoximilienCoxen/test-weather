@@ -33,7 +33,7 @@ import kotlin.coroutines.resume
 object DeviceLocation {
 
     /** Il nome che si mette quando non c'e' modo di saperne uno vero. */
-    val FALLBACK_NAME: String get() = tr("POSIZIONE", "LOCATION")
+    val FALLBACK_NAME: String get() = tr("POSIZIONE", "LOCATION", "STANDORT", "POSITION", "UBICACIÓN")
 
     fun granted(context: Context): Boolean =
         ContextCompat.checkSelfPermission(

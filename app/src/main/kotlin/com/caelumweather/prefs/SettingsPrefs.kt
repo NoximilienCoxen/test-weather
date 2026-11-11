@@ -47,13 +47,13 @@ enum class TempUnit(val symbol: String) {
 enum class CardTheme { AUTO, CHIARO, SCURO }
 
 /** L'unita' di velocita' del vento mostrata in Sala VI. */
-enum class SalaWindUnit(private val ita: String, private val eng: String) {
-    KMH("km/h", "km/h"),
-    MS("m/s", "m/s"),
-    KN("nodi", "kn"),
+enum class SalaWindUnit(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
+    KMH("km/h", "km/h", "km/h", "km/h", "km/h"),
+    MS("m/s", "m/s", "m/s", "m/s", "m/s"),
+    KN("nodi", "kn", "kn", "nœuds", "nudos"),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     /** Da metri al secondo, che e' l'unita' in cui viaggia il dato. */
     fun from(metresPerSecond: Double): Double = when (this) {

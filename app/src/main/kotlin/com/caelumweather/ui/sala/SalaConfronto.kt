@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -64,7 +65,7 @@ fun SalaConfrontoScreen(
             .padding(top = 12.dp, bottom = 24.dp),
     ) {
         IntestazioneServizio(
-            titolo = tr("Confronto", "Compare"),
+            titolo = tr("Confronto", "Compare", "Vergleich", "Comparer", "Comparar"),
             palette = palette,
             onIndietro = onClose,
             modifier = Modifier.padding(horizontal = 26.dp),
@@ -74,6 +75,9 @@ fun SalaConfrontoScreen(
                 text = tr(
                     "Salva almeno due località in «Le località» per confrontarle qui.",
                     "Save at least two places in «Places» to compare them here.",
+                    "Speichere mindestens zwei Orte unter «Orte», um sie hier zu vergleichen.",
+                    "Enregistrez au moins deux lieux dans « Les lieux » pour les comparer ici.",
+                    "Guarda al menos dos lugares en «Lugares» para compararlos aquí.",
                 ),
                 style = SalaType.body,
                 color = palette.inkSoft,
@@ -82,7 +86,7 @@ fun SalaConfrontoScreen(
             return@Column
         }
         Text(
-            text = tr("Oggi, fianco a fianco. Tocca una città per aprirla.", "Today, side by side. Tap a city to open it."),
+            text = tr("Oggi, fianco a fianco. Tocca una città per aprirla.", "Today, side by side. Tap a city to open it.", "Heute, Seite an Seite. Tippe auf eine Stadt, um sie zu öffnen.", "Aujourd'hui, côte à côte. Touchez une ville pour l'ouvrir.", "Hoy, lado a lado. Toca una ciudad para abrirla."),
             style = SalaType.footnote,
             color = palette.inkFaint,
             modifier = Modifier.padding(start = 26.dp, end = 26.dp, top = 6.dp, bottom = 14.dp),
@@ -137,23 +141,23 @@ internal enum class Meglio { ALTO, BASSO }
 private fun righeConfronto(state: UiState): List<RigaConfronto> {
     fun gradi(v: Double) = "${state.unit.from(v).roundToInt()}°"
     return listOf(
-        RigaConfronto(tr("ADESSO", "NOW"), { it.current.temperature }, ::gradi, null),
-        RigaConfronto(tr("MASSIMA", "HIGH"), { it.days.firstOrNull()?.tempMax }, ::gradi, Meglio.ALTO),
-        RigaConfronto(tr("MINIMA", "LOW"), { it.days.firstOrNull()?.tempMin }, ::gradi, null),
+        RigaConfronto(tr("ADESSO", "NOW", "JETZT", "MAINTENANT", "AHORA"), { it.current.temperature }, ::gradi, null),
+        RigaConfronto(tr("MASSIMA", "HIGH", "MAX", "MAXI", "MÁXIMA"), { it.days.firstOrNull()?.tempMax }, ::gradi, Meglio.ALTO),
+        RigaConfronto(tr("MINIMA", "LOW", "MIN", "MINI", "MÍNIMA"), { it.days.firstOrNull()?.tempMin }, ::gradi, null),
         RigaConfronto(
-            tr("PIOGGIA", "RAIN"),
+            tr("PIOGGIA", "RAIN", "REGEN", "PLUIE", "LLUVIA"),
             { it.days.firstOrNull()?.precipitationSum },
             { String.format(Lingue.locale, "%.1f mm", it) },
             Meglio.BASSO,
         ),
         RigaConfronto(
-            tr("PROBABILITÀ", "CHANCE"),
+            tr("PROBABILITÀ", "CHANCE", "CHANCE", "RISQUE", "PROB."),
             { it.days.firstOrNull()?.precipProbability?.toDouble() },
             { "${it.roundToInt()}%" },
             Meglio.BASSO,
         ),
         RigaConfronto(
-            tr("VENTO", "WIND"),
+            tr("VENTO", "WIND", "WIND", "VENT", "VIENTO"),
             { it.days.firstOrNull()?.windMax },
             { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" },
             Meglio.BASSO,
@@ -218,7 +222,7 @@ private fun ColonnaConfronto(
                 previsione?.let { IconaMeteo(glifoDi(it.current.weatherCode, null), notte = !it.current.isDay) }
             }
             Text(
-                text = previsione?.current?.weatherCode?.let { Wmo.condition(it).lowercase() } ?: "…",
+                text = previsione?.current?.weatherCode?.let { Wmo.condition(it).inMezzoAllaFrase() } ?: "…",
                 style = SalaType.rowNote,
                 color = palette.inkSoft,
                 maxLines = 2,

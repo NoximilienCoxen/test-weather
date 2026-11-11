@@ -29,7 +29,7 @@ data class Place(
         val FORLI: Place get() = Place(
             name = "Forlì",
             admin = "Emilia-Romagna",
-            country = tr("Italia", "Italy"),
+            country = tr("Italia", "Italy", "Italien", "Italie", "Italia"),
             latitude = 44.2226,
             longitude = 12.0407,
         )
@@ -43,15 +43,15 @@ data class Place(
          */
         val SUGGESTIONS: List<Place> get() = listOf(
             // Prima voce: neve e gelo garantiti tutto l'anno per testare la neve.
-            Place(tr("Aoraki / Monte Cook", "Aoraki / Mount Cook"), "Canterbury", tr("Nuova Zelanda", "New Zealand"), -43.5950, 170.1418),
+            Place(tr("Aoraki / Monte Cook", "Aoraki / Mount Cook", "Aoraki / Mount Cook", "Aoraki / Mont Cook", "Aoraki / Monte Cook"), "Canterbury", tr("Nuova Zelanda", "New Zealand", "Neuseeland", "Nouvelle-Zélande", "Nueva Zelanda"), -43.5950, 170.1418),
             FORLI,
-            Place("Bergen", "Vestland", tr("Norvegia", "Norway"), 60.3913, 5.3221),
-            Place(tr("Londra", "London"), "England", tr("Regno Unito", "United Kingdom"), 51.5085, -0.1257),
+            Place("Bergen", "Vestland", tr("Norvegia", "Norway", "Norwegen", "Norvège", "Noruega"), 60.3913, 5.3221),
+            Place(tr("Londra", "London", "London", "Londres", "Londres"), "England", tr("Regno Unito", "United Kingdom", "Vereinigtes Königreich", "Royaume-Uni", "Reino Unido"), 51.5085, -0.1257),
             Place("Singapore", null, "Singapore", 1.2897, 103.8501),
-            Place(tr("Milano", "Milan"), tr("Lombardia", "Lombardy"), tr("Italia", "Italy"), 45.4643, 9.1895),
-            Place(tr("Roma", "Rome"), "Lazio", tr("Italia", "Italy"), 41.8933, 12.4829),
-            Place("Reykjavík", null, tr("Islanda", "Iceland"), 64.1355, -21.8954),
-            Place("Tromsø", "Troms", tr("Norvegia", "Norway"), 69.6496, 18.9560),
+            Place(tr("Milano", "Milan", "Mailand", "Milan", "Milán"), tr("Lombardia", "Lombardy", "Lombardei", "Lombardie", "Lombardía"), tr("Italia", "Italy", "Italien", "Italie", "Italia"), 45.4643, 9.1895),
+            Place(tr("Roma", "Rome", "Rom", "Rome", "Roma"), "Lazio", tr("Italia", "Italy", "Italien", "Italie", "Italia"), 41.8933, 12.4829),
+            Place("Reykjavík", null, tr("Islanda", "Iceland", "Island", "Islande", "Islandia"), 64.1355, -21.8954),
+            Place("Tromsø", "Troms", tr("Norvegia", "Norway", "Norwegen", "Norvège", "Noruega"), 69.6496, 18.9560),
         )
     }
 }

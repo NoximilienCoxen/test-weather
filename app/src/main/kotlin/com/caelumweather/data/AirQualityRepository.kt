@@ -66,15 +66,22 @@ private data class AirQualityCurrentDto(
  * questo [label] non e' un'etichetta di contorno - e' la sola cosa che rende
  * leggibile il numero accanto.
  */
-enum class AirScale(private val ita: String, private val eng: String, internal val cuts: IntArray) {
+enum class AirScale(
+    private val ita: String,
+    private val eng: String,
+    private val ted: String,
+    private val fra: String,
+    private val spa: String,
+    internal val cuts: IntArray,
+) {
     /** Agenzia europea dell'ambiente: sei bande da venti in venti. */
-    EUROPEA("INDICE EUROPEO", "EUROPEAN INDEX", intArrayOf(20, 40, 60, 80, 100)),
+    EUROPEA("INDICE EUROPEO", "EUROPEAN INDEX", "EUROPÄISCHER INDEX", "INDICE EUROPÉEN", "ÍNDICE EUROPEO", intArrayOf(20, 40, 60, 80, 100)),
 
     /** EPA: sei bande, e la prima da sola vale due e mezzo di quelle europee. */
-    STATUNITENSE("INDICE STATUNITENSE", "US INDEX", intArrayOf(50, 100, 150, 200, 300)),
+    STATUNITENSE("INDICE STATUNITENSE", "US INDEX", "US-INDEX", "INDICE AMÉRICAIN", "ÍNDICE DE EE. UU.", intArrayOf(50, 100, 150, 200, 300)),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     fun band(index: Int?): AirBand? {
         if (index == null) return null
@@ -91,18 +98,18 @@ enum class AirScale(private val ita: String, private val eng: String, internal v
  * americane. A dire con quale metro si e' arrivati a quel giudizio ci pensa
  * [AirScale.label], scritto accanto al numero.
  */
-enum class AirBand(private val ita: String, private val eng: String) {
+enum class AirBand(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
     // In inglese i nomi dell'AEA: good, fair, moderate, poor, very poor,
     // extremely poor.
-    BUONA("BUONA", "GOOD"),
-    DISCRETA("DISCRETA", "FAIR"),
-    MEDIA("MEDIA", "MODERATE"),
-    SCARSA("SCARSA", "POOR"),
-    MOLTO_SCARSA("MOLTO SCARSA", "VERY POOR"),
-    ESTREMAMENTE_SCARSA("PESSIMA", "EXTREMELY POOR"),
+    BUONA("BUONA", "GOOD", "GUT", "BON", "BUENA"),
+    DISCRETA("DISCRETA", "FAIR", "ORDENTLICH", "MOYEN", "RAZONABLE"),
+    MEDIA("MEDIA", "MODERATE", "MITTEL", "DÉGRADÉ", "REGULAR"),
+    SCARSA("SCARSA", "POOR", "SCHLECHT", "MAUVAIS", "DESFAVORABLE"),
+    MOLTO_SCARSA("MOLTO SCARSA", "VERY POOR", "SEHR SCHLECHT", "TRÈS MAUVAIS", "MUY DESFAVORABLE"),
+    ESTREMAMENTE_SCARSA("PESSIMA", "EXTREMELY POOR", "EXTREM SCHLECHT", "EXTRÊMEMENT MAUVAIS", "PÉSIMA"),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     companion object {
         /**
@@ -165,10 +172,10 @@ data class AirQuality(
      */
     val dominante: Inquinante?
         get() = listOfNotNull(
-            pm25?.let { Inquinante(tr("PM 2,5", "PM 2.5"), tr("il PM 2,5", "PM 2.5"), it, 15.0) },
-            pm10?.let { Inquinante("PM 10", tr("il PM 10", "PM 10"), it, 45.0) },
-            nitrogenDioxide?.let { Inquinante(tr("Biossido d'azoto", "Nitrogen dioxide"), tr("il biossido d'azoto", "nitrogen dioxide"), it, 25.0) },
-            ozone?.let { Inquinante(tr("Ozono", "Ozone"), tr("l'ozono", "ozone"), it, 100.0) },
+            pm25?.let { Inquinante(tr("PM 2,5", "PM 2.5", "PM 2,5", "PM 2,5", "PM 2,5"), tr("il PM 2,5", "PM 2.5", "PM 2,5", "les PM 2,5", "las PM 2,5"), it, 15.0) },
+            pm10?.let { Inquinante("PM 10", tr("il PM 10", "PM 10", "PM 10", "les PM 10", "las PM 10"), it, 45.0) },
+            nitrogenDioxide?.let { Inquinante(tr("Biossido d'azoto", "Nitrogen dioxide", "Stickstoffdioxid", "Dioxyde d'azote", "Dióxido de nitrógeno"), tr("il biossido d'azoto", "nitrogen dioxide", "Stickstoffdioxid", "le dioxyde d'azote", "el dióxido de nitrógeno"), it, 25.0) },
+            ozone?.let { Inquinante(tr("Ozono", "Ozone", "Ozon", "Ozone", "Ozono"), tr("l'ozono", "ozone", "Ozon", "l'ozone", "el ozono"), it, 100.0) },
         ).maxByOrNull { it.quota }
 }
 

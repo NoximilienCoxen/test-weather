@@ -46,7 +46,7 @@ fun ScenaAnimata(scena: Scena, notte: Boolean, movimento: Boolean, modifier: Mod
             }
         }
     }
-    Canvas(modifier = modifier.semantics { contentDescription = "${scena.nome}, ${if (notte) tr("di notte", "at night") else tr("di giorno", "by day")}" }) {
+    Canvas(modifier = modifier.semantics { contentDescription = "${scena.nome}, ${if (notte) tr("di notte", "at night", "bei Nacht", "de nuit", "de noche") else tr("di giorno", "by day", "bei Tag", "de jour", "de día")}" }) {
         disegnaScena(scena, t, notte)
     }
 }

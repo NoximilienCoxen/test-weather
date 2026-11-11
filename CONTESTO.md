@@ -7986,12 +7986,14 @@ Sala VI sotto la pressione, all'ora scelta. Il riquadro con l'onda si muove
   conserva su disco: senza rete la sezione manca.
 - `--ei mare 120` lo impone per la cattura (scatto `*-mare-vento`).
 
-**Non verificato alle fonti**: la pagina di Open-Meteo sul mare da questa
-sessione non si raggiunge (`open-meteo.com` non e' fra gli host concessi).
-L'attribuzione dice "i modelli d'onda dei servizi meteorologici" e rimanda alla
-loro pagina senza elencarli; `probe_licenze.py` ora la scarica
-(`api/licenze/open-meteo-mare.txt`): **va letta, e l'elenco dei modelli va
-scritto com'e' la'**. Non provato in mano.
+**Verificato alle fonti, tramite la CI.** La pagina di Open-Meteo sul mare da
+questa sessione non si raggiunge; `probe_licenze.py` la scarica
+(`api/licenze/open-meteo-mare.txt`) e il giro 494 l'ha pubblicata. Dice due
+cose che l'app ora ripete: l'avvertenza ("Accuracy at coastal areas is limited.
+This is not suitable for coastal navigation and does not replace your nautical
+almanac") e le citazioni dei modelli, copiate parola per parola in
+`Fonti.CITAZIONE_MARE` (MFWAM e temperatura dell'acqua: Copernicus Marine
+Service; ECMWF WAM; NOAA NCEP GFS Wave; DWD EWAM e GWAM). Non provato in mano.
 
 ## 61. Il movimento di schede e comandi
 
@@ -8035,3 +8037,56 @@ si puo' provare su nessun telefono.
 passano; come si sente sotto il dito - quanto ritardo, quanto cede un comando,
 se le barre ondeggiano troppo - lo dice solo il telefono. I numeri da tarare
 stanno in cima a `SalaMovimento.kt`.
+
+## 62. Tedesco, francese e spagnolo
+
+L'11 novembre 2026. Le lingue sono cinque (`Lingua`, `SceltaLingua`), e
+**`tr()` ha cinque argomenti**: i tre nuovi stanno accanto all'italiano e
+all'inglese nella stessa chiamata, facoltativi. Dove uno manca si legge
+l'inglese - un difetto che si vede, non un crash. La nota di §49 diceva che
+alla terza lingua si sarebbe passati alle risorse: non lo si e' fatto, e il
+perche' sta in testa a `Lingua.kt`.
+
+- **711 chiamate, 654 frasi distinte**, tradotte a mano e applicate con uno
+  strumento (censimento delle `tr(it, en)`, espressioni `${...}` rimesse al
+  loro posto senza ricopiarle). Gli elenchi coi nomi nelle lingue (`AlertKind`,
+  `AlertLevel`, `MoonSegment`, `AirBand`, `StatoDelMare`, `SalaRoom`,
+  `WidgetKind`, `TipoPolline`, `Scena`) portano le cinque nel costruttore.
+- **Automatica**: la lingua del telefono se e' una delle cinque, se no inglese.
+  `locales_config.xml` le elenca tutte, quindi da Android 13 si scelgono anche
+  dalle impostazioni di sistema. Nelle impostazioni dell'app la scelta sta su
+  **due binari** (`SceltaSegmentata` ora regge una scelta che non e' fra le sue
+  voci: il cursore sbiadisce).
+- **`inInglese()` vuol dire "non italiano"**, com'e' sempre stato usato.
+- **Tre cose che cambiano forma, non solo parole**:
+  - la O e' l'ovest in italiano, francese e spagnolo e **l'est in tedesco**
+    (`Wmo.windDirection`, e le lettere della rosa in Sala VI);
+  - i nomi in mezzo a una frase si abbassano, **tranne in tedesco**
+    (`String.inMezzoAllaFrase()`, che ha preso il posto di `.lowercase()` in
+    trentatre' punti: "Warnstufe Gelb für Gewitter");
+  - "allerta" (ufficiale) e "avviso" (calcolato) restano due parole diverse:
+    Warnung / Hinweis, alerte / avis, alerta / aviso.
+- Il testo dei bollettini CAP si prende nella lingua dell'app, poi in inglese,
+  poi il primo che c'e'. La ricerca delle localita' chiede i nomi nella lingua.
+- Risorse di sistema (`values-de`, `-fr`, `-es`): nomi dei widget, scorciatoie,
+  riquadro. Scheda dello store in `fastlane/metadata/android/{de-DE,fr-FR,es-ES}`.
+- L'orologio riceve la scelta come testo: una versione vecchia che non conosce
+  "TEDESCO" ripiega sull'automatica.
+
+Prove in `LinguaTest` (parole, punti cardinali, maiuscole tedesche, ripiego
+sull'inglese, una notifica intera per lingua).
+
+**Cosa non e' stato fatto, e si vede.**
+- **Nessuno che parli queste lingue le ha rilette.** Sono traduzioni mie:
+  corrette nell'insieme, ma un madrelingua trovera' frasi rigide. I termini
+  tecnici scelti (bande dell'aria, scala Douglas, fasi lunari) sono quelli in
+  uso, non verificati su una fonte per ciascuno.
+- **Nessuno scatto nelle tre lingue.** La cattura fotografa italiano e inglese;
+  il tedesco ha parole lunghe e in qualche riquadro (le celle da tre per riga,
+  le scelte segmentate) puo' finire coi puntini. Si vede con
+  `--es lingua de`.
+- **Le anteprime dei widget** nel selettore restano quelle italiane per chi ha
+  il telefono in tedesco, francese o spagnolo: `AnteprimeWidgetTest` ora le
+  disegna in tutte e cinque (`anteprima-*-{de,fr,es}.png` in `widget-renders`),
+  ma vanno copiate a mano in `res/drawable-{de,fr,es}-nodpi` (§57).
+- **L'informativa** (`docs/privacy.md`) resta in italiano e inglese.

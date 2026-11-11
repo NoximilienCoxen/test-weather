@@ -75,18 +75,18 @@ object MoonPhase {
  * widget e la pagina della luna nel dettaglio - e la domanda "come si chiama
  * questa fase" e' della luna, non di chi la disegna.
  */
-enum class MoonSegment(private val ita: String, private val eng: String) {
-    NOVILUNIO("NOVILUNIO", "NEW MOON"),
-    CRESCENTE("LUNA CRESCENTE", "WAXING CRESCENT"),
-    PRIMO_QUARTO("PRIMO QUARTO", "FIRST QUARTER"),
-    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE", "WAXING GIBBOUS"),
-    PLENILUNIO("PLENILUNIO", "FULL MOON"),
-    GIBBOSA_CALANTE("GIBBOSA CALANTE", "WANING GIBBOUS"),
-    ULTIMO_QUARTO("ULTIMO QUARTO", "LAST QUARTER"),
-    CALANTE("LUNA CALANTE", "WANING CRESCENT"),
+enum class MoonSegment(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
+    NOVILUNIO("NOVILUNIO", "NEW MOON", "NEUMOND", "NOUVELLE LUNE", "LUNA NUEVA"),
+    CRESCENTE("LUNA CRESCENTE", "WAXING CRESCENT", "ZUNEHMENDE SICHEL", "PREMIER CROISSANT", "LUNA CRECIENTE"),
+    PRIMO_QUARTO("PRIMO QUARTO", "FIRST QUARTER", "ERSTES VIERTEL", "PREMIER QUARTIER", "CUARTO CRECIENTE"),
+    GIBBOSA_CRESCENTE("GIBBOSA CRESCENTE", "WAXING GIBBOUS", "ZUNEHMENDER MOND", "GIBBEUSE CROISSANTE", "GIBOSA CRECIENTE"),
+    PLENILUNIO("PLENILUNIO", "FULL MOON", "VOLLMOND", "PLEINE LUNE", "LUNA LLENA"),
+    GIBBOSA_CALANTE("GIBBOSA CALANTE", "WANING GIBBOUS", "ABNEHMENDER MOND", "GIBBEUSE DÉCROISSANTE", "GIBOSA MENGUANTE"),
+    ULTIMO_QUARTO("ULTIMO QUARTO", "LAST QUARTER", "LETZTES VIERTEL", "DERNIER QUARTIER", "CUARTO MENGUANTE"),
+    CALANTE("LUNA CALANTE", "WANING CRESCENT", "ABNEHMENDE SICHEL", "DERNIER CROISSANT", "LUNA MENGUANTE"),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     companion object {
         /** Il ciclo diviso in otto, con i nomi centrati sul loro istante esatto. */

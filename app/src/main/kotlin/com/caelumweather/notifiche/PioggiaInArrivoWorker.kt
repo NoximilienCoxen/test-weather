@@ -106,9 +106,9 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
-                tr("Pioggia e grandine in arrivo", "Rain and hail on the way"),
+                tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),
                 NotificationManager.IMPORTANCE_HIGH,
-            ).apply { description = tr("Avvisa quando sta per cominciare a piovere, grandinare o nevicare", "Tells you when rain, hail or snow is about to start") }
+            ).apply { description = tr("Avvisa quando sta per cominciare a piovere, grandinare o nevicare", "Tells you when rain, hail or snow is about to start", "Meldet, wenn Regen, Hagel oder Schnee gleich einsetzen", "Prévient quand la pluie, la grêle ou la neige vont commencer", "Avisa cuando está a punto de empezar a llover, granizar o nevar") }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
         }
 
@@ -149,27 +149,30 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
 internal fun testiNotifica(citta: String, evento: PrecipitazioneInArrivo, adesso: LocalDateTime): Pair<String, String> {
     val minuti = Duration.between(adesso, evento.inizio).toMinutes().coerceAtLeast(0)
     val quando = when {
-        minuti < 10 -> tr("a momenti", "any moment now")
-        else -> tr("fra circa ${((minuti + 2) / 5) * 5} minuti", "in about ${((minuti + 2) / 5) * 5} minutes")
+        minuti < 10 -> tr("a momenti", "any moment now", "jeden Moment", "d'un instant à l'autre", "de un momento a otro")
+        else -> tr("fra circa ${((minuti + 2) / 5) * 5} minuti", "in about ${((minuti + 2) / 5) * 5} minutes", "in etwa ${((minuti + 2) / 5) * 5} Minuten", "dans environ ${((minuti + 2) / 5) * 5} minutes", "en unos ${((minuti + 2) / 5) * 5} minutos")
     }
     val ora = String.format(Locale.ITALIAN, "%02d:%02d", evento.inizio.hour, evento.inizio.minute)
     // La virgola in italiano, il punto in inglese.
     val mm = String.format(Lingue.locale, "%.1f", evento.millimetri)
     return when (evento.tipo) {
         TipoPrecipitazione.GRANDINE ->
-            tr("Grandine in arrivo a $citta", "Hail on the way in $citta") to
+            tr("Grandine in arrivo a $citta", "Hail on the way in $citta", "Hagel im Anmarsch in $citta", "Grêle en approche à $citta", "Granizo en camino en $citta") to
                 tr(
                     "Temporale con grandine $quando (verso le $ora). Metti al riparo l'auto e ciò che sta fuori.",
                     "Thunderstorm with hail $quando (around $ora). Shelter the car and anything left outside.",
+                    "Gewitter mit Hagel $quando (gegen $ora). Bring das Auto und alles, was draußen steht, in Sicherheit.",
+                    "Orage avec grêle $quando (vers $ora). Mettez à l'abri la voiture et ce qui reste dehors.",
+                    "Tormenta con granizo $quando (hacia las $ora). Pon a cubierto el coche y lo que esté fuera.",
                 )
         TipoPrecipitazione.TEMPORALE ->
-            tr("Temporale in arrivo a $citta", "Thunderstorm on the way in $citta") to
-                tr("Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.", "Starting $quando (around $ora), with about $mm mm in the first half hour.")
+            tr("Temporale in arrivo a $citta", "Thunderstorm on the way in $citta", "Gewitter im Anmarsch in $citta", "Orage en approche à $citta", "Tormenta en camino en $citta") to
+                tr("Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.", "Starting $quando (around $ora), with about $mm mm in the first half hour.", "Beginn $quando (gegen $ora), mit etwa $mm mm in der ersten halben Stunde.", "Début $quando (vers $ora), avec environ $mm mm dans la première demi-heure.", "Empieza $quando (hacia las $ora), con unos $mm mm en la primera media hora.")
         TipoPrecipitazione.NEVE ->
-            tr("Neve in arrivo a $citta", "Snow on the way in $citta") to
-                tr("Comincia a nevicare $quando (verso le $ora).", "Snow starting $quando (around $ora).")
+            tr("Neve in arrivo a $citta", "Snow on the way in $citta", "Schnee im Anmarsch in $citta", "Neige en approche à $citta", "Nieve en camino en $citta") to
+                tr("Comincia a nevicare $quando (verso le $ora).", "Snow starting $quando (around $ora).", "Der Schneefall beginnt $quando (gegen $ora).", "Il commence à neiger $quando (vers $ora).", "Empieza a nevar $quando (hacia las $ora).")
         TipoPrecipitazione.PIOGGIA ->
-            tr("Pioggia in arrivo a $citta", "Rain on the way in $citta") to
-                tr("Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.", "Starting $quando (around $ora), with about $mm mm in the first half hour.")
+            tr("Pioggia in arrivo a $citta", "Rain on the way in $citta", "Regen im Anmarsch in $citta", "Pluie en approche à $citta", "Lluvia en camino en $citta") to
+                tr("Comincia $quando (verso le $ora), con circa $mm mm nella prima mezz'ora.", "Starting $quando (around $ora), with about $mm mm in the first half hour.", "Beginn $quando (gegen $ora), mit etwa $mm mm in der ersten halben Stunde.", "Début $quando (vers $ora), avec environ $mm mm dans la première demi-heure.", "Empieza $quando (hacia las $ora), con unos $mm mm en la primera media hora.")
     }
 }
