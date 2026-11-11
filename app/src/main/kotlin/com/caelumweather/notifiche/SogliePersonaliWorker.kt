@@ -69,24 +69,34 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
 
         val posto = impostazioni.place
         val modello = impostazioni.model
+        // La localita' dell'app per prima: se lei non risponde si riprova, le
+        // altre no (una citta' salvata che non risponde non vale un giro in piu').
+        val altre = if (soglie.altreLocalita) {
+            impostazioni.favorites.filter { it.key != posto.key }.distinctBy { it.key }
+                .take(SogliePersonali.ALTRE_LOCALITA_MAX)
+        } else {
+            emptyList()
+        }
         val (previsione, testo) = WeatherRepository(posto, modello).loadWithBody().getOrElse { return Result.retry() }
         runCatching { ScortaPrevisioni.conserva(ScortaPrevisioni.file(contesto.noBackupFilesDir, posto, modello), testo) }
 
-        val adesso = previsione.nowThere()
-        val superate = soglieSuperate(previsione.allHours, adesso, soglie)
-        if (superate.isEmpty()) return Result.success()
-
         val memoria = contesto.getSharedPreferences(MEMORIA, Context.MODE_PRIVATE)
         val scritture = memoria.edit()
-        superate.forEach { evento ->
-            // **Un episodio, una notifica**: la stessa gelata si rivede a ogni
-            // giro finche' non e' passata. La chiave porta il giorno in cui
-            // cade, quindi quella della notte dopo e' un episodio nuovo.
-            val chiave = "${posto.key}.${evento.tipo.name}"
-            val giorno = evento.quando.toLocalDate().toString()
-            if (memoria.getString(chiave, null) == giorno) return@forEach
-            notifica(contesto, posto.name, evento, adesso, impostazioni.unit, impostazioni.windUnit)
-            scritture.putString(chiave, giorno)
+        val daControllare = listOf(posto to previsione) + altre.mapNotNull { p ->
+            WeatherRepository(p, modello).load().getOrNull()?.let { p to it }
+        }
+        daControllare.forEach { (luogo, prev) ->
+            val adesso = prev.nowThere()
+            soglieSuperate(prev.allHours, adesso, soglie).forEach { evento ->
+                // **Un episodio, una notifica**: la stessa gelata si rivede a ogni
+                // giro finche' non e' passata. La chiave porta il giorno in cui
+                // cade, quindi quella della notte dopo e' un episodio nuovo.
+                val chiave = "${luogo.key}.${evento.tipo.name}"
+                val giorno = evento.quando.toLocalDate().toString()
+                if (memoria.getString(chiave, null) == giorno) return@forEach
+                notifica(contesto, luogo.name, luogo.key, evento, adesso, impostazioni.unit, impostazioni.windUnit)
+                scritture.putString(chiave, giorno)
+            }
         }
         scritture.apply()
         return Result.success()
@@ -96,7 +106,7 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
         private const val LAVORO = "caelum-soglie-personali"
         private const val MEMORIA = "notifiche_soglie"
         const val CANALE = "soglie_personali"
-        private const val ID_BASE = 4400
+        private const val ID_BASE = 100_000
 
         fun pianifica(context: Context) {
             val richiesta = PeriodicWorkRequestBuilder<SogliePersonaliWorker>(2, TimeUnit.HOURS)
@@ -119,11 +129,11 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
                 NotificationManager.IMPORTANCE_DEFAULT,
             ).apply {
                 description = tr(
-                    "Gelo, caldo e vento forte, quando la previsione passa le soglie che hai scelto tu. Non sono allerte ufficiali",
-                    "Frost, heat and strong wind, when the forecast crosses the thresholds you chose. They are not official warnings",
-                    "Frost, Hitze und starker Wind, wenn die Vorhersage die von dir gewählten Schwellen überschreitet. Es sind keine amtlichen Warnungen",
-                    "Gel, chaleur et vent fort, quand la prévision franchit les seuils que vous avez choisis. Ce ne sont pas des alertes officielles",
-                    "Helada, calor y viento fuerte, cuando la previsión supera los umbrales que has elegido. No son alertas oficiales",
+                    "Gelo, caldo, vento forte, pioggia e UV, quando la previsione passa le soglie che hai scelto tu. Non sono allerte ufficiali",
+                    "Frost, heat, strong wind, rain and UV, when the forecast crosses the thresholds you chose. They are not official warnings",
+                    "Frost, Hitze, starker Wind, Regen und UV, wenn die Vorhersage die von dir gewählten Schwellen überschreitet. Es sind keine amtlichen Warnungen",
+                    "Gel, chaleur, vent fort, pluie et UV, quand la prévision franchit les seuils que vous avez choisis. Ce ne sont pas des alertes officielles",
+                    "Helada, calor, viento fuerte, lluvia y UV, cuando la previsión supera los umbrales que has elegido. No son alertas oficiales",
                 )
             }
             context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(canale)
@@ -134,6 +144,7 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
         private fun notifica(
             context: Context,
             citta: String,
+            chiavePosto: String,
             evento: SogliaSuperata,
             adesso: LocalDateTime,
             unita: TempUnit,
@@ -141,8 +152,15 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
         ) {
             creaCanale(context)
             val (titolo, testo) = testiSoglia(citta, evento, adesso, unita, vento)
-            val idNotifica = ID_BASE + evento.tipo.ordinal
-            val sala = if (evento.tipo == TipoSoglia.VENTO) SalaRoom.VENTO else SalaRoom.OGGI
+            // Un numero per localita' e per tipo, o due citta' con la stessa
+            // soglia si sostituirebbero a vicenda in tendina.
+            val idNotifica = ID_BASE + (chiavePosto.hashCode() and 0x3FFF) * TipoSoglia.entries.size + evento.tipo.ordinal
+            val sala = when (evento.tipo) {
+                TipoSoglia.VENTO -> SalaRoom.VENTO
+                TipoSoglia.PIOGGIA -> SalaRoom.PIOGGIA
+                TipoSoglia.UV -> SalaRoom.UV
+                else -> SalaRoom.OGGI
+            }
             val apri = Intent(context, MainActivity::class.java)
                 .putExtra(MainActivity.EXTRA_SALA_WIDGET, sala.name)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -173,8 +191,9 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
  * Una soglia che la previsione passa.
  *
  * @param valore il numero previsto nell'unita' del dato: gradi Celsius per
- *   gelo e caldo, metri al secondo per le raffiche.
- * @param soglia il numero scelto: gradi Celsius, o km/h.
+ *   gelo e caldo, metri al secondo per le raffiche, millimetri l'ora per la
+ *   pioggia, indice per l'UV.
+ * @param soglia il numero scelto: gradi Celsius, km/h, mm/h o indice UV.
  */
 internal data class SogliaSuperata(
     val tipo: TipoSoglia,
@@ -234,8 +253,28 @@ internal fun soglieSuperate(
             }
         }
     }
+    if (soglie.pioggia) {
+        finestra.filter { it.precipitation != null }.maxByOrNull { it.precipitation!! }?.let { h ->
+            val mm = h.precipitation!!
+            if (mm >= soglie.pioggiaMm) {
+                superate += SogliaSuperata(TipoSoglia.PIOGGIA, h.time, mm, soglie.pioggiaMm)
+            }
+        }
+    }
+    if (soglie.uv) {
+        finestra.filter { it.uvIndex != null }.maxByOrNull { it.uvIndex!! }?.let { h ->
+            val indice = h.uvIndex!!
+            // Si confronta l'indice come si legge, arrotondato, come i gradi.
+            if (indice.roundToInt() >= soglie.uvIndice) {
+                superate += SogliaSuperata(TipoSoglia.UV, h.time, indice, soglie.uvIndice)
+            }
+        }
+    }
     return superate
 }
+
+/** Una soglia di pioggia: "5 mm/h". */
+internal fun pioggiaDiSoglia(mm: Int): String = "$mm mm/h"
 
 /** Una soglia di temperatura, scritta nell'unita' scelta: "0°", "32°". */
 internal fun gradiDiSoglia(celsius: Int, unita: TempUnit): String =
@@ -285,6 +324,17 @@ internal fun testiSoglia(
             val soglia = ventoDiSoglia(evento.soglia, vento)
             tr("Vento forte a $citta: raffiche a $raffica", "Strong wind in $citta: gusts of $raffica", "Starker Wind in $citta: Böen bis $raffica", "Vent fort à $citta : rafales à $raffica", "Viento fuerte en $citta: rachas de $raffica") to
                 tr("Previste $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévues $quando. Votre seuil : $soglia. $coda", "Previstas $quando. Tu umbral: $soglia. $coda")
+        }
+        TipoSoglia.PIOGGIA -> {
+            val mm = String.format(java.util.Locale.ROOT, "%.1f", evento.valore)
+            val soglia = pioggiaDiSoglia(evento.soglia)
+            tr("Pioggia a $citta: fino a $mm mm in un'ora", "Rain in $citta: up to $mm mm in an hour", "Regen in $citta: bis zu $mm mm pro Stunde", "Pluie à $citta : jusqu'à $mm mm en une heure", "Lluvia en $citta: hasta $mm mm en una hora") to
+                tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévue $quando. Votre seuil : $soglia. $coda", "Prevista $quando. Tu umbral: $soglia. $coda")
+        }
+        TipoSoglia.UV -> {
+            val indice = evento.valore.roundToInt()
+            tr("UV alto a $citta: indice $indice", "High UV in $citta: index $indice", "Hoher UV-Index in $citta: $indice", "UV élevés à $citta : indice $indice", "UV alto en $citta: índice $indice") to
+                tr("Previsto $quando. La tua soglia: ${evento.soglia}. $coda", "Expected $quando. Your threshold: ${evento.soglia}. $coda", "Erwartet $quando. Deine Schwelle: ${evento.soglia}. $coda", "Prévu $quando. Votre seuil : ${evento.soglia}. $coda", "Previsto $quando. Tu umbral: ${evento.soglia}. $coda")
         }
     }
 }

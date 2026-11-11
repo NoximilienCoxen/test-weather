@@ -117,4 +117,39 @@ class SogliePersonaliTest {
         assertEquals("Vento forte a Forlì: raffiche a 37 nodi", titoloVento)
         assertTrue(testoVento, testoVento.startsWith("Previste oggi verso le 18. La tua soglia: 32 nodi."))
     }
+
+    private fun oreConPioggiaEUv(mm: (Int) -> Double, uv: (Int) -> Double) =
+        (0..23).map { h -> HourForecast(time = data.atTime(h, 0), precipitation = mm(h), uvIndex = uv(h)) }
+
+    @Test
+    fun `la pioggia forte parte alla soglia, non sotto`() {
+        val mattina = data.atTime(8, 0)
+        val rovescio = oreConPioggiaEUv({ if (it == 17) 5.0 else 0.2 }, { 0.0 })
+        val superate = soglieSuperate(rovescio, mattina, SogliePersonali(pioggia = true, pioggiaMm = 5))
+        assertEquals(listOf(TipoSoglia.PIOGGIA), superate.map { it.tipo })
+        assertEquals(data.atTime(17, 0), superate.single().quando)
+        val leggera = oreConPioggiaEUv({ if (it == 17) 4.9 else 0.2 }, { 0.0 })
+        assertTrue(soglieSuperate(leggera, mattina, SogliePersonali(pioggia = true, pioggiaMm = 5)).isEmpty())
+    }
+
+    @Test
+    fun `l'uv guarda l'indice come si legge`() {
+        val mattina = data.atTime(8, 0)
+        val estate = oreConPioggiaEUv({ 0.0 }, { if (it == 13) 7.6 else 1.0 })
+        // 7,6 si scrive "8": con la soglia a 8 l'avviso parte.
+        assertEquals(1, soglieSuperate(estate, mattina, SogliePersonali(uv = true, uvIndice = 8)).size)
+        assertTrue(soglieSuperate(estate, mattina, SogliePersonali(uv = true, uvIndice = 11)).isEmpty())
+    }
+
+    @Test
+    fun `i nuovi avvisi contano come accesi e hanno testi in cinque lingue`() {
+        assertTrue(SogliePersonali(pioggia = true).qualcunaAccesa)
+        assertTrue(SogliePersonali(uv = true).qualcunaAccesa)
+        val (titolo, testo) = testiSoglia(
+            "Noceto", SogliaSuperata(TipoSoglia.PIOGGIA, data.atTime(17, 0), 6.4, 5),
+            data.atTime(9, 0), TempUnit.CELSIUS, SalaWindUnit.KMH,
+        )
+        assertTrue(titolo, "Noceto" in titolo)
+        assertTrue(testo, "5 mm/h" in testo)
+    }
 }

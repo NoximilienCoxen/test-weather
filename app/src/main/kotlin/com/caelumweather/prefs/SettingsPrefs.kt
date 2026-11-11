@@ -76,14 +76,20 @@ data class AlertToggles(
 
 enum class AlertToggleKind { PIOGGIA, TEMPORALE, UV, VENTO }
 
-/** Le tre cose su cui si puo' chiedere un avviso con una soglia propria. */
-enum class TipoSoglia { GELO, CALDO, VENTO }
+/**
+ * Le cose su cui si puo' chiedere un avviso con una soglia propria.
+ *
+ * **L'ordine e' quello delle righe nelle impostazioni, e `ordinal` entra nel
+ * numero della notifica**: le due nuove stanno in fondo, cosi' quelle di prima
+ * non cambiano numero.
+ */
+enum class TipoSoglia { GELO, CALDO, VENTO, PIOGGIA, UV }
 
 /**
- * Gli avvisi personali: tre soglie che sceglie chi usa l'app, e una notifica
+ * Gli avvisi personali: cinque soglie che sceglie chi usa l'app, e una notifica
  * quando la previsione le passa (`notifiche/SogliePersonaliWorker`).
  *
- * **Spenti di norma, tutti e tre.** Non sono allerte: sono la previsione
+ * **Spenti di norma, tutti.** Non sono allerte: sono la previsione
  * confrontata con un numero che ha scelto la persona, e la notifica lo dice.
  * Le temperature sono in gradi Celsius e il vento in km/h qualunque unita' si
  * mostri: una soglia e' un numero salvato, e cambiare unita' non deve spostarla.
@@ -95,31 +101,52 @@ data class SogliePersonali(
     val caldoGradi: Int = CALDO_PREDEFINITO,
     val vento: Boolean = false,
     val ventoKmh: Int = VENTO_PREDEFINITO,
+    val pioggia: Boolean = false,
+    /** Pioggia da questa intensita' in su, in millimetri l'ora. */
+    val pioggiaMm: Int = PIOGGIA_PREDEFINITA,
+    val uv: Boolean = false,
+    /** Indice UV da questo in su. */
+    val uvIndice: Int = UV_PREDEFINITO,
+    /**
+     * Guardare anche le localita' salvate, non solo quella dell'app.
+     *
+     * Spento di norma: ogni localita' in piu' e' una richiesta in piu' a ogni
+     * giro, e chi ha salvato dieci citta' non vuole dieci notifiche.
+     */
+    val altreLocalita: Boolean = false,
 ) {
-    val qualcunaAccesa: Boolean get() = gelo || caldo || vento
+    val qualcunaAccesa: Boolean get() = gelo || caldo || vento || pioggia || uv
 
     fun accesa(tipo: TipoSoglia): Boolean = when (tipo) {
         TipoSoglia.GELO -> gelo
         TipoSoglia.CALDO -> caldo
         TipoSoglia.VENTO -> vento
+        TipoSoglia.PIOGGIA -> pioggia
+        TipoSoglia.UV -> uv
     }
 
     fun valore(tipo: TipoSoglia): Int = when (tipo) {
         TipoSoglia.GELO -> geloGradi
         TipoSoglia.CALDO -> caldoGradi
         TipoSoglia.VENTO -> ventoKmh
+        TipoSoglia.PIOGGIA -> pioggiaMm
+        TipoSoglia.UV -> uvIndice
     }
 
     fun con(tipo: TipoSoglia, accesa: Boolean): SogliePersonali = when (tipo) {
         TipoSoglia.GELO -> copy(gelo = accesa)
         TipoSoglia.CALDO -> copy(caldo = accesa)
         TipoSoglia.VENTO -> copy(vento = accesa)
+        TipoSoglia.PIOGGIA -> copy(pioggia = accesa)
+        TipoSoglia.UV -> copy(uv = accesa)
     }
 
     fun conValore(tipo: TipoSoglia, valore: Int): SogliePersonali = when (tipo) {
         TipoSoglia.GELO -> copy(geloGradi = valore)
         TipoSoglia.CALDO -> copy(caldoGradi = valore)
         TipoSoglia.VENTO -> copy(ventoKmh = valore)
+        TipoSoglia.PIOGGIA -> copy(pioggiaMm = valore)
+        TipoSoglia.UV -> copy(uvIndice = valore)
     }
 
     companion object {
@@ -135,11 +162,27 @@ data class SogliePersonali(
         val VENTO_POSSIBILI = listOf(40, 60, 80)
         const val VENTO_PREDEFINITO = 60
 
+        /**
+         * Millimetri in un'ora: 2 e' pioggia che si sente (la "moderata" dei
+         * bollettini parte da 2,5), 5 e' forte, 10 e' un rovescio da nubifragio.
+         */
+        val PIOGGIA_POSSIBILI = listOf(2, 5, 10)
+        const val PIOGGIA_PREDEFINITA = 5
+
+        /** 6 e' l'inizio dell'"alto" dell'OMS, 8 il "molto alto", 11 l'"estremo". */
+        val UV_POSSIBILI = listOf(6, 8, 11)
+        const val UV_PREDEFINITO = 8
+
         fun possibili(tipo: TipoSoglia): List<Int> = when (tipo) {
             TipoSoglia.GELO -> GELO_POSSIBILI
             TipoSoglia.CALDO -> CALDO_POSSIBILI
             TipoSoglia.VENTO -> VENTO_POSSIBILI
+            TipoSoglia.PIOGGIA -> PIOGGIA_POSSIBILI
+            TipoSoglia.UV -> UV_POSSIBILI
         }
+
+        /** Quante localita' salvate si guardano oltre a quella dell'app. */
+        const val ALTRE_LOCALITA_MAX = 5
     }
 }
 
@@ -211,7 +254,7 @@ data class Settings(
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
-    /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
+    /** Gli avvisi personali a soglia: gelo, caldo, vento forte, pioggia, UV. */
     val soglie: SogliePersonali = SogliePersonali(),
 )
 
@@ -377,6 +420,13 @@ class SettingsPrefs(private val context: Context) {
                 vento = prefs[KEY_SOGLIA_VENTO] ?: false,
                 ventoKmh = prefs[KEY_SOGLIA_VENTO_KMH]?.takeIf { it in SogliePersonali.VENTO_POSSIBILI }
                     ?: SogliePersonali.VENTO_PREDEFINITO,
+                pioggia = prefs[KEY_SOGLIA_PIOGGIA] ?: false,
+                pioggiaMm = prefs[KEY_SOGLIA_PIOGGIA_MM]?.takeIf { it in SogliePersonali.PIOGGIA_POSSIBILI }
+                    ?: SogliePersonali.PIOGGIA_PREDEFINITA,
+                uv = prefs[KEY_SOGLIA_UV] ?: false,
+                uvIndice = prefs[KEY_SOGLIA_UV_INDICE]?.takeIf { it in SogliePersonali.UV_POSSIBILI }
+                    ?: SogliePersonali.UV_PREDEFINITO,
+                altreLocalita = prefs[KEY_SOGLIE_ALTRE_LOCALITA] ?: false,
             ),
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
@@ -465,6 +515,8 @@ class SettingsPrefs(private val context: Context) {
             TipoSoglia.GELO -> KEY_SOGLIA_GELO
             TipoSoglia.CALDO -> KEY_SOGLIA_CALDO
             TipoSoglia.VENTO -> KEY_SOGLIA_VENTO
+            TipoSoglia.PIOGGIA -> KEY_SOGLIA_PIOGGIA
+            TipoSoglia.UV -> KEY_SOGLIA_UV
         }
         context.settingsDataStore.edit { it[chiave] = accesa }
     }
@@ -474,8 +526,14 @@ class SettingsPrefs(private val context: Context) {
             TipoSoglia.GELO -> KEY_SOGLIA_GELO_GRADI
             TipoSoglia.CALDO -> KEY_SOGLIA_CALDO_GRADI
             TipoSoglia.VENTO -> KEY_SOGLIA_VENTO_KMH
+            TipoSoglia.PIOGGIA -> KEY_SOGLIA_PIOGGIA_MM
+            TipoSoglia.UV -> KEY_SOGLIA_UV_INDICE
         }
         context.settingsDataStore.edit { it[chiave] = valore }
+    }
+
+    suspend fun setSoglieAltreLocalita(accese: Boolean) {
+        context.settingsDataStore.edit { it[KEY_SOGLIE_ALTRE_LOCALITA] = accese }
     }
 
     suspend fun setGuidaVista() {
@@ -543,6 +601,11 @@ class SettingsPrefs(private val context: Context) {
         val KEY_SOGLIA_CALDO_GRADI = intPreferencesKey("soglia_caldo_gradi")
         val KEY_SOGLIA_VENTO = booleanPreferencesKey("soglia_vento")
         val KEY_SOGLIA_VENTO_KMH = intPreferencesKey("soglia_vento_kmh")
+        val KEY_SOGLIA_PIOGGIA = booleanPreferencesKey("soglia_pioggia")
+        val KEY_SOGLIA_PIOGGIA_MM = intPreferencesKey("soglia_pioggia_mm")
+        val KEY_SOGLIA_UV = booleanPreferencesKey("soglia_uv")
+        val KEY_SOGLIA_UV_INDICE = intPreferencesKey("soglia_uv_indice")
+        val KEY_SOGLIE_ALTRE_LOCALITA = booleanPreferencesKey("soglie_altre_localita")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

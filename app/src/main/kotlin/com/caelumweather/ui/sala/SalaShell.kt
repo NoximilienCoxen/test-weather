@@ -973,6 +973,7 @@ fun SalaShell(
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
                         onToggleSoglia = viewModel::setSoglia,
                         onChooseSoglia = viewModel::setValoreSoglia,
+                        onToggleSoglieAltre = viewModel::setSoglieAltreLocalita,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,

@@ -327,6 +327,12 @@ data class UiState(
     val favoritesWeather: Map<String, com.caelumweather.data.CurrentWeather> = emptyMap(),
     /** Le previsioni intere delle salvate, per il confronto fianco a fianco. */
     val favoritesForecast: Map<String, Forecast> = emptyMap(),
+    /**
+     * Il mare delle salvate, per la riga del confronto. **Chiave presente e
+     * valore nullo = "qui non c'e' mare"**, chiave assente = non ancora chiesto:
+     * sono due risposte diverse e la colonna le scrive diverse.
+     */
+    val favoritesMare: Map<String, Mare?> = emptyMap(),
     /** Il confronto fra le salvate, aperto da "Le località". */
     val confrontoOpen: Boolean = false,
 ) {
@@ -1199,6 +1205,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 )
                             }
                         }
+                    // Il mare della stessa salvata, per il confronto. Un
+                    // errore non scrive niente: la colonna resta "in arrivo".
+                    MareRepository(place).load().onSuccess { mare ->
+                        _state.update { it.copy(favoritesMare = it.favoritesMare + (place.key to mare)) }
+                    }
                 }
             }
         }
@@ -1588,6 +1599,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun setValoreSoglia(tipo: TipoSoglia, valore: Int) {
         _state.update { it.copy(soglie = it.soglie.conValore(tipo, valore)) }
         viewModelScope.launch { prefs.setValoreSoglia(tipo, valore) }
+    }
+
+    /** Guardare anche le localita' salvate negli avvisi a soglia. */
+    fun setSoglieAltreLocalita(accese: Boolean) {
+        _state.update { it.copy(soglie = it.soglie.copy(altreLocalita = accese)) }
+        viewModelScope.launch { prefs.setSoglieAltreLocalita(accese) }
     }
 
     fun permessoNotificheChiesto() {
