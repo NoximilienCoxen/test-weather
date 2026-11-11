@@ -425,6 +425,8 @@ private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean,
         WidgetKind.LUNA -> GlifoMeteo.SOLE to true
         WidgetKind.ARIA -> GlifoMeteo.NEBBIA to false
         WidgetKind.SETTIMANA -> GlifoMeteo.PIOGGIA to false
+        WidgetKind.VENTO -> GlifoMeteo.NUVOLE to false
+        WidgetKind.MARE -> GlifoMeteo.PIOGGIA to false
         else -> GlifoMeteo.POCO to false
     }
     Row(

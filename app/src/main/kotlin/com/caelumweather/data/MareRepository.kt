@@ -44,7 +44,21 @@ data class OraMare(
     val livello: Double? = null,
 )
 
-data class Mare(val ore: List<OraMare>) {
+data class Mare(
+    val ore: List<OraMare>,
+    /** Scarto dall'ora universale del posto, in secondi: serve a sapere che ora e' li'. */
+    val utcOffsetSeconds: Int? = null,
+) {
+    /**
+     * L'ora di mare di **adesso, nel posto**: serve ai widget, che non hanno una
+     * previsione da cui prendere l'ora scelta. Senza lo scarto, nulla.
+     */
+    fun adesso(istante: java.time.Instant = java.time.Instant.now()): OraMare? {
+        val scarto = utcOffsetSeconds ?: return null
+        val qui = istante.atOffset(java.time.ZoneOffset.ofTotalSeconds(scarto)).toLocalDateTime()
+        return alle(qui.truncatedTo(java.time.temporal.ChronoUnit.HOURS))
+    }
+
     /** L'ora di mare che corrisponde a un'ora della previsione, se c'e'. */
     fun alle(momento: LocalDateTime?): OraMare? {
         if (momento == null) return null
@@ -92,6 +106,7 @@ enum class StatoDelMare(
 @Serializable
 private data class MareDto(
     val hourly: MareOreDto? = null,
+    @SerialName("utc_offset_seconds") val utcOffsetSeconds: Int? = null,
     val error: Boolean? = null,
     val reason: String? = null,
 )
@@ -135,7 +150,7 @@ internal fun parseMare(body: String): Mare? {
         )
     }
     if (ore.none { it.onda != null || it.acqua != null || it.livello != null }) return null
-    return Mare(ore)
+    return Mare(ore, dto.utcOffsetSeconds)
 }
 
 class MareRepository(private val place: Place) {

@@ -216,6 +216,11 @@ enum class WidgetKind(
     MINI(listOf("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), listOf("MINI", "MINI", "MINI", "MINI", "MINI"), true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
 
     ORE(listOf("PROSSIME ORE", "NEXT HOURS", "NÄCHSTE STUNDEN", "PROCHAINES HEURES", "PRÓXIMAS HORAS"), listOf("ORE", "HOURS", "STUNDEN", "HEURES", "HORAS"), true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
+
+    VENTO(listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), true, VentoWidgetReceiver::class.java, ::VentoWidget, SalaRoom.VENTO),
+
+    // Il mare sta nella sala del vento: e' vento che ha avuto tempo.
+    MARE(listOf("MARE", "SEA", "MEER", "MER", "MAR"), listOf("MARE", "SEA", "MEER", "MER", "MAR"), true, MareWidgetReceiver::class.java, ::MareWidget, SalaRoom.VENTO),
     ;
 
     /** Come si chiama per esteso, nella schermata di configurazione. */

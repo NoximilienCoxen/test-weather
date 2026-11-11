@@ -131,7 +131,7 @@ class WidgetConfigActivity : ComponentActivity() {
         // perche' e' un tocco su SALVA; se non basta, ci pensa il lavoro in
         // background appena c'e' rete.
         val tipo = kind
-        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA) {
+        if (tipo != null && tipo.needsPlace && place != null && tipo != WidgetKind.ARIA && tipo != WidgetKind.MARE) {
             val scaricata = withTimeoutOrNull(DOWNLOAD_TIMEOUT_MS) {
                 WidgetForecast.scarica(this@WidgetConfigActivity, place)
             } ?: false
