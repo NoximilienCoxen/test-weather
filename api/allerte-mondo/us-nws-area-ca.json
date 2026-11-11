@@ -10,6 +10,109 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1",
+                "areaDesc": "Yosemite NP outside of the valley; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
+                "geocode": {
+                    "SAME": [
+                        "006039",
+                        "006043",
+                        "006109",
+                        "006019",
+                        "006107"
+                    ],
+                    "UGC": [
+                        "CAZ323",
+                        "CAZ326",
+                        "CAZ327",
+                        "CAZ328",
+                        "CAZ329",
+                        "CAZ330"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ323",
+                    "https://api.weather.gov/zones/forecast/CAZ326",
+                    "https://api.weather.gov/zones/forecast/CAZ327",
+                    "https://api.weather.gov/zones/forecast/CAZ328",
+                    "https://api.weather.gov/zones/forecast/CAZ329",
+                    "https://api.weather.gov/zones/forecast/CAZ330"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-10T17:31:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T01:19:00-08:00",
+                "effective": "2026-11-11T01:19:00-08:00",
+                "onset": "2026-11-13T16:00:00-08:00",
+                "expires": "2026-11-11T10:30:00-08:00",
+                "ends": "2026-11-17T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Winter Storm Watch issued November 11 at 1:19AM PST until November 17 at 4:00AM PST by NWS Hanford CA",
+                "description": "* WHAT...Heavy snow possible. Snow accumulations between 6 and 12\ninches above 6,000 feet. Winds could gust as high as 50 mph.\n\n* WHERE...Sierra Nevada above 6,000 feet.\n\n* WHEN...From Friday afternoon through late Monday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact weekend travel. Gusty winds could\nbring down tree branches.",
+                "instruction": "Monitor the latest forecasts for updates on this situation.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS46 KHNX 110919"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH LATE MONDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.WS.A.0005.261114T0000Z-261117T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-17T04:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9546df513f9df135046fbc8b643ade53af657d3b.001.1,2026-11-10T09:30:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.febf73a57340cd3b6f415b2a87160c98c0f36083.003.1",
             "type": "Feature",
             "geometry": null,
@@ -1190,106 +1293,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1",
-                "areaDesc": "Yosemite NP outside of the valley; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
-                "geocode": {
-                    "SAME": [
-                        "006039",
-                        "006043",
-                        "006109",
-                        "006019",
-                        "006107"
-                    ],
-                    "UGC": [
-                        "CAZ323",
-                        "CAZ326",
-                        "CAZ327",
-                        "CAZ328",
-                        "CAZ329",
-                        "CAZ330"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ323",
-                    "https://api.weather.gov/zones/forecast/CAZ326",
-                    "https://api.weather.gov/zones/forecast/CAZ327",
-                    "https://api.weather.gov/zones/forecast/CAZ328",
-                    "https://api.weather.gov/zones/forecast/CAZ329",
-                    "https://api.weather.gov/zones/forecast/CAZ330"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9546df513f9df135046fbc8b643ade53af657d3b.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9546df513f9df135046fbc8b643ade53af657d3b.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-10T09:30:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-10T17:31:00-08:00",
-                "effective": "2026-11-10T17:31:00-08:00",
-                "onset": "2026-11-13T16:00:00-08:00",
-                "expires": "2026-11-11T01:45:00-08:00",
-                "ends": "2026-11-17T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Winter Storm Watch issued November 10 at 5:31PM PST until November 17 at 4:00AM PST by NWS Hanford CA",
-                "description": "* WHAT...Heavy snow possible. Snow accumulations between 6 and 12\ninches above 6,000 feet. Winds could gust as high as 50 mph.\n\n* WHERE...Sierra Nevada above 6,000 feet.\n\n* WHEN...From Friday afternoon through late Monday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact weekend travel. Gusty winds could\nbring down tree branches.",
-                "instruction": "Monitor the latest forecasts for updates on this situation.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS46 KHNX 110131"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH LATE MONDAY NIGHT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KHNX.WS.A.0005.261114T0000Z-261117T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-17T04:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.683d97c03149ab5485a9365414b2083dc4b41e2a.001.1",
             "type": "Feature",
             "geometry": null,
@@ -1712,5 +1715,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-11T09:15:06+00:00"
+    "updated": "2026-11-11T09:54:55+00:00"
 }

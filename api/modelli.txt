@@ -27,11 +27,11 @@
     Noceto   48/48 ore  quota 74.0 m  prime [9.5, 9.6, 9.6]
     Forli    48/48 ore  quota 40.0 m  prime [8.4, 7.9, 7.3]
   arpae_cosmo_5m
-    Noceto    HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
-    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [10.2, 10.2, 10.2]
-    Forli    48/48 ore  quota 40.0 m  prime [10.5, 10.4, 10.5]
+    Forli     HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   knmi_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [9.7, 8.7, 8.7]
     Forli    48/48 ore  quota 40.0 m  prime [9.3, 9.0, 9.2]
@@ -43,17 +43,17 @@
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"reason":"No data is available for this location","error":true}
     Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [9.1, 9.0, 8.9]
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [9.4, 9.5, 9.2]
     Bergen   48/48 ore  quota 17.0 m  prime [6.2, 6.1, 6.0]
-    Singapore HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Singapore 48/48 ore  quota 39.0 m  prime [27.1, 27.3, 27.5]
     NewYork  48/48 ore  quota 27.0 m  prime [14.1, 13.3, 12.8]
 
 === chi risponde sotto best_match, nel mondo ===
@@ -61,21 +61,20 @@
   NewYork        best_match = gfs_seamless
   Oslo           best_match = metno_seamless
   Reykjavik      best_match = ? (nessun candidato coincide)
-  Nairobi        best_match = metno_seamless
+  Nairobi        best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   CittaDelCapo   best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Noceto         best_match NON RISPONDE qui
+  Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
   Tokyo          ore    168  assenti=-  tutte nulle=-
   Tokyo          giorni   7  assenti=-  tutte nulle=-
   NewYork        ore    168  assenti=-  tutte nulle=-
   NewYork        giorni   7  assenti=-  tutte nulle=-
-  Oslo           ore    168  assenti=-  tutte nulle=-
-  Oslo           giorni   7  assenti=-  tutte nulle=-
+  Oslo           HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   Reykjavik      ore    168  assenti=-  tutte nulle=-
   Reykjavik      giorni   7  assenti=-  tutte nulle=-
   Nairobi        ore    168  assenti=-  tutte nulle=-
