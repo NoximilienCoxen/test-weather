@@ -53,7 +53,8 @@ dispositivi (Wear OS Data Layer).
   widget di seguire la tua posizione. La posizione precisa non viene mai
   chiesta.
 - **Notifiche** (facoltativo): pioggia o grandine in arrivo, allerte ufficiali,
-  riepilogo del mattino. Ognuna si spegne dalle impostazioni.
+  riepilogo del mattino, avvisi personali a soglia (gelo, caldo, vento forte).
+  Ognuna si spegne dalle impostazioni.
 - **Vibrazione**: il riscontro al tocco.
 
 ### Cancellare i dati
@@ -122,7 +123,8 @@ over the link between the two devices (Wear OS Data Layer).
 - **Approximate location** (optional): only if you ask the app or a widget to
   follow your location. Precise location is never requested.
 - **Notifications** (optional): rain or hail on the way, official warnings,
-  morning summary. Each can be turned off in settings.
+  morning summary, personal threshold notices (frost, heat, strong wind). Each
+  can be turned off in settings.
 - **Vibration**: touch feedback.
 
 ### Deleting your data

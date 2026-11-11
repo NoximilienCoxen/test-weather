@@ -913,6 +913,8 @@ fun SalaShell(
                         onToggleNotificheAllerte = viewModel::setNotificheAllerte,
                         onToggleRiepilogo = viewModel::setRiepilogoMattino,
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
+                        onToggleSoglia = viewModel::setSoglia,
+                        onChooseSoglia = viewModel::setValoreSoglia,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,

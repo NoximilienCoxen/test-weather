@@ -37,6 +37,14 @@ import com.caelumweather.prefs.CaptionStyle
 import com.caelumweather.prefs.CardTheme
 import com.caelumweather.prefs.SalaWindUnit
 import com.caelumweather.prefs.TempUnit
+import com.caelumweather.prefs.SogliePersonali
+import com.caelumweather.prefs.TipoSoglia
+import com.caelumweather.notifiche.gradiDiSoglia
+import com.caelumweather.notifiche.ventoDiSoglia
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.caelumweather.ui.UiState
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -74,6 +82,8 @@ fun SalaImpostazioniScreen(
     onToggleNotificheAllerte: (Boolean) -> Unit,
     onToggleRiepilogo: (Boolean) -> Unit,
     onChooseOraRiepilogo: (Int) -> Unit,
+    onToggleSoglia: (TipoSoglia, Boolean) -> Unit,
+    onChooseSoglia: (TipoSoglia, Int) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -363,6 +373,84 @@ fun SalaImpostazioniScreen(
                         onScegli = onChooseOraRiepilogo,
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
                     )
+                }
+            }
+
+            // ── Gli avvisi personali ─────────────────────────────────────
+            //
+            // **Un gruppo a parte, con la sua nota**: pioggia e allerte qui
+            // sopra dicono una cosa che succede o che un ente ha dichiarato;
+            // questi confrontano la previsione con un numero scelto da chi usa
+            // l'app. La nota lo dice dove si accendono, e la notifica lo ripete.
+            //
+            // Un permesso solo per tutti e tre: si ricorda quale levetta l'ha
+            // chiesto, e se viene negato quella resta giu'.
+            var sogliaInAttesa by remember { mutableStateOf<TipoSoglia?>(null) }
+            val chiediPermessoSoglia = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso ->
+                sogliaInAttesa?.let { onToggleSoglia(it, concesso) }
+                sogliaInAttesa = null
+            }
+            val puoNotificare = PioggiaInArrivoWorker.puoNotificare(contesto)
+            GruppoImpostazioni(
+                titolo = tr("AVVISI PERSONALI", "PERSONAL NOTICES"),
+                palette = palette,
+                nota = tr(
+                    "Una notifica quando la previsione delle prossime ore passa la soglia che scegli tu, " +
+                        "sulla località dell'app. Sono previsioni, non allerte ufficiali, e di notte non suonano.",
+                    "A notification when the forecast for the coming hours crosses the threshold you choose, " +
+                        "for the app's place. They are forecasts, not official warnings, and they stay quiet at night.",
+                ),
+            ) {
+                TipoSoglia.entries.forEachIndexed { indice, tipo ->
+                    if (indice > 0) FiloGruppo(palette)
+                    val accesa = state.soglie.accesa(tipo) && puoNotificare
+                    val scritta: (Int) -> String = { valore ->
+                        if (tipo == TipoSoglia.VENTO) ventoDiSoglia(valore, state.windUnit) else gradiDiSoglia(valore, state.unit)
+                    }
+                    val scelta = scritta(state.soglie.valore(tipo))
+                    VoceInterruttore(
+                        titolo = when (tipo) {
+                            TipoSoglia.GELO -> tr("Gelo", "Frost")
+                            TipoSoglia.CALDO -> tr("Caldo", "Heat")
+                            TipoSoglia.VENTO -> tr("Vento forte", "Strong wind")
+                        },
+                        nota = when (tipo) {
+                            TipoSoglia.GELO ->
+                                if (accesa) tr("quando la minima scende a $scelta o sotto", "when the low drops to $scelta or below")
+                                else tr("quando la minima scende sotto la tua soglia", "when the low drops below your threshold")
+                            TipoSoglia.CALDO ->
+                                if (accesa) tr("quando la massima arriva a $scelta o sopra", "when the high reaches $scelta or above")
+                                else tr("quando la massima passa la tua soglia", "when the high passes your threshold")
+                            TipoSoglia.VENTO ->
+                                if (accesa) tr("quando le raffiche arrivano a $scelta o sopra", "when gusts reach $scelta or above")
+                                else tr("quando le raffiche passano la tua soglia", "when gusts pass your threshold")
+                        },
+                        acceso = accesa,
+                        palette = palette,
+                        onCambia = { vuole ->
+                            when {
+                                !vuole -> onToggleSoglia(tipo, false)
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !puoNotificare -> {
+                                    sogliaInAttesa = tipo
+                                    chiediPermessoSoglia.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                                else -> onToggleSoglia(tipo, true)
+                            }
+                        },
+                    )
+                    // La soglia si sceglie solo ad avviso acceso: spento, tre
+                    // bottoni che non comandano niente (vedi la regola in testa).
+                    if (accesa) {
+                        SceltaSegmentata(
+                            voci = SogliePersonali.possibili(tipo).map { it to scritta(it) },
+                            scelta = state.soglie.valore(tipo),
+                            palette = palette,
+                            onScegli = { onChooseSoglia(tipo, it) },
+                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                        )
+                    }
                 }
             }
 

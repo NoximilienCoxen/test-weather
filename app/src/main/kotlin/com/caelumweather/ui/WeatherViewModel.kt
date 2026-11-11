@@ -4,6 +4,9 @@ import com.caelumweather.lingua.tr
 import com.caelumweather.notifiche.AllerteUfficialiWorker
 import com.caelumweather.notifiche.PioggiaInArrivoWorker
 import com.caelumweather.notifiche.RiepilogoMattinoWorker
+import com.caelumweather.notifiche.SogliePersonaliWorker
+import com.caelumweather.prefs.SogliePersonali
+import com.caelumweather.prefs.TipoSoglia
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -226,6 +229,8 @@ data class UiState(
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
+    /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
+    val soglie: SogliePersonali = SogliePersonali(),
     /**
      * La citta' salvata nell'app, quando se ne sta guardando un'altra da un
      * widget; nulla altrimenti. Vedi [WeatherViewModel.visita].
@@ -630,6 +635,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         riepilogoMattino = settings.riepilogoMattino,
                         oraRiepilogo = settings.oraRiepilogo,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
+                        soglie = settings.soglie,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -1488,6 +1494,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             RiepilogoMattinoWorker.pianifica(getApplication(), minuti, sostituisci = true)
         }
         viewModelScope.launch { prefs.setOraRiepilogo(minuti) }
+    }
+
+    /**
+     * Accende o spegne un avviso personale. Il lavoro in sottofondo gira finche'
+     * ne resta acceso almeno uno. Lo stato subito, il disco dopo: come l'ora del
+     * riepilogo, la levetta si sposta al tocco.
+     */
+    fun setSoglia(tipo: TipoSoglia, accesa: Boolean) {
+        val app = getApplication<Application>()
+        _state.update { it.copy(soglie = it.soglie.con(tipo, accesa)) }
+        if (_state.value.soglie.qualcunaAccesa) SogliePersonaliWorker.pianifica(app) else SogliePersonaliWorker.annulla(app)
+        viewModelScope.launch { prefs.setSoglia(tipo, accesa) }
+    }
+
+    fun setValoreSoglia(tipo: TipoSoglia, valore: Int) {
+        _state.update { it.copy(soglie = it.soglie.conValore(tipo, valore)) }
+        viewModelScope.launch { prefs.setValoreSoglia(tipo, valore) }
     }
 
     fun permessoNotificheChiesto() {

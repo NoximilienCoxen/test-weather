@@ -119,6 +119,16 @@ fun SalaLegaliScreen(
                     ),
                     palette,
                 )
+                Paragrafo(
+                    tr(
+                        "Gli AVVISI PERSONALI (gelo, caldo, vento forte) sono un'altra cosa ancora: " +
+                            "la soglia la scegli tu, e la notifica ti dice soltanto che la previsione " +
+                            "la passa. Una previsione può sbagliare, e l'avviso può arrivare tardi o " +
+                            "non arrivare: non affidargli la sicurezza di persone, animali o cose.",
+                        "PERSONAL NOTICES (frost, heat, strong wind) are something else again: you choose the threshold, and the notification only tells you that the forecast crosses it. A forecast can be wrong, and the notice can arrive late or not at all: do not rely on it for the safety of people, animals or property.",
+                    ),
+                    palette,
+                )
             }
 
             BloccoImpostazioni(etichetta = tr("COSA ESCE DAL TELEFONO", "WHAT LEAVES THE PHONE"), palette = palette) {
@@ -180,10 +190,11 @@ fun SalaLegaliScreen(
                 )
                 Paragrafo(
                     tr(
-                        "Notifiche, per la pioggia o la grandine in arrivo e per le allerte " +
-                            "ufficiali arancioni e rosse sulla località dell'app. Si spengono una " +
-                            "per una dal gruppo \"Notifiche\" delle impostazioni.",
-                        "Notifications, for rain or hail on the way and for orange and red official warnings for the app's place. They are turned off one by one from the \"Notifications\" group in settings.",
+                        "Notifiche, per la pioggia o la grandine in arrivo, per le allerte " +
+                            "ufficiali arancioni e rosse, per il riepilogo del mattino e per gli " +
+                            "avvisi personali, sempre sulla località dell'app. Si spengono una " +
+                            "per una dalle impostazioni.",
+                        "Notifications, for rain or hail on the way, for orange and red official warnings, for the morning summary and for personal notices, always for the app's place. They are turned off one by one in settings.",
                     ),
                     palette,
                 )

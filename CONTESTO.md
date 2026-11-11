@@ -7918,3 +7918,43 @@ store e non piu' il repository.
 di posta dedicato), l'indirizzo dove l'informativa viene pubblicata (GitHub
 Pages mostra il nome del profilo), gli agenti degli script della sonda in CI,
 e il repository stesso se resta pubblico.
+
+## 59. Gli avvisi personali a soglia
+
+L'11 novembre 2026. `notifiche/SogliePersonaliWorker.kt`: gelo, caldo, vento
+forte. Tre levette nel gruppo nuovo AVVISI PERSONALI delle impostazioni, spente
+di norma, ognuna con tre soglie fra cui scegliere (minima -5/0/3 °C, massima
+30/33/36 °C, raffiche 40/60/80 km/h). Si salvano in Celsius e km/h e si
+scrivono nell'unita' scelta.
+
+- **Non contraddice la regola di `AllerteUfficialiWorker`** ("gli avvisi
+  calcolati non passano dalle notifiche"): la' la soglia e' dell'app e una
+  notifica la farebbe sembrare un ente. Qui la soglia la scrive la persona, e
+  la notifica gliela ripete e chiude con "È una previsione, non un'allerta
+  ufficiale". Lo dicono anche la nota del gruppo, la descrizione del canale e
+  un capoverso delle note legali (che dice pure di non affidargli la sicurezza
+  di persone, animali o cose).
+- **Ogni due ore, sulle prossime sedici.** Con ventiquattro, il mattino dopo
+  una gelata si riceverebbe gia' quella della notte seguente. Un episodio una
+  notifica: la memoria (`notifiche_soglie`) tiene, per posto e per tipo, il
+  giorno in cui cade l'ora estrema.
+- **Fra le 22 e le 7 del telefono tace** (`oraDiParlare`): cio' che e' ancora
+  davanti si dice al primo giro del mattino.
+- Si confronta il numero **arrotondato**, quello che si legge: 0,4° e' "0°".
+- Usa il modello dell'app e riempie la scorta su disco, come il riepilogo.
+  Canale `soglie_personali`, importanza normale. Il tocco apre Sala I, o
+  Sala VI per il vento.
+
+Prove JVM in `SogliePersonaliTest`. **Non provato in mano**: la notifica vera,
+e il gruppo nelle impostazioni (tre levette piu' tre scelte segmentate).
+
+**Un controllo dei tipi senza SDK.** Da questa sessione `dl.google.com` si
+raggiunge, ma l'SDK Android vuole una licenza da accettare e non si e'
+installato. Si compila lo stesso, per sapere se il Kotlin regge prima di
+spingere: un progetto Gradle di servizio (plugin `kotlin("jvm")`, Compose e
+serialization) che punta a `app/src/main/kotlin` e `core/src/main/kotlin`, con
+le librerie risolte da Google Maven (i `classes.jar` estratti dagli AAR),
+`org.robolectric:android-all` al posto di `android.jar` e tre classi finte per
+`R` e `BuildConfig`. Fa girare anche le prove che non chiedono Robolectric
+(246 l'11 novembre). **Non sostituisce la CI**: niente risorse, niente lint,
+niente R8, niente modulo `wear`.

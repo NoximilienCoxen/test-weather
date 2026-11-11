@@ -13,6 +13,7 @@ import com.caelumweather.sync.SincronizzaOrologio
 import com.caelumweather.notifiche.AllerteUfficialiWorker
 import com.caelumweather.notifiche.PioggiaInArrivoWorker
 import com.caelumweather.notifiche.RiepilogoMattinoWorker
+import com.caelumweather.notifiche.SogliePersonaliWorker
 import com.caelumweather.prefs.SettingsPrefs
 import kotlinx.coroutines.flow.first
 import android.os.Bundle
@@ -170,6 +171,8 @@ class MainActivity : ComponentActivity() {
             if (impostazioni.riepilogoMattino) {
                 RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
             }
+            // Gli avvisi personali: spenti di norma, e `KEEP` come gli altri.
+            if (impostazioni.soglie.qualcunaAccesa) SogliePersonaliWorker.pianifica(applicationContext)
         }
     }
 
