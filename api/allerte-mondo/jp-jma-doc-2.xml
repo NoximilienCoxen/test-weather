@@ -2,40 +2,32 @@
 <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/">
 <Control>
 <Title>気象警報・注意報（Ｈ２７）</Title>
-<DateTime>2026-11-10T11:16:25Z</DateTime>
+<DateTime>2026-11-11T09:13:50Z</DateTime>
 <Status>通常</Status>
-<EditorialOffice>長崎地方気象台</EditorialOffice>
-<PublishingOffice>長崎地方気象台</PublishingOffice>
+<EditorialOffice>津地方気象台</EditorialOffice>
+<PublishingOffice>津地方気象台</PublishingOffice>
 </Control>
 <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/">
-<Title>長崎県気象警報・注意報</Title>
-<ReportDateTime>2026-11-10T20:16:00+09:00</ReportDateTime>
-<TargetDateTime>2026-11-10T20:16:00+09:00</TargetDateTime>
+<Title>三重県気象警報・注意報</Title>
+<ReportDateTime>2026-11-11T18:13:00+09:00</ReportDateTime>
+<TargetDateTime>2026-11-11T18:13:00+09:00</TargetDateTime>
 <EventID/>
 <InfoType>発表</InfoType>
 <Serial/>
 <InfoKind>気象警報・注意報</InfoKind>
 <InfoKindVersion>1.2_2</InfoKindVersion>
 <Headline>
-<Text>南部では、強風に注意してください。五島では、高波に注意してください。南部、北部では、空気の乾燥した状態が続くため、火の取り扱いに注意してください。</Text>
+<Text>注意報を解除します。</Text>
 <Information type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>長崎県</Name>
-<Code>420000</Code>
+<Name>三重県</Name>
+<Code>240000</Code>
 </Area>
 </Areas>
 </Item>
@@ -43,29 +35,13 @@
 <Information type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>南部</Name>
-<Code>420010</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>北部</Name>
-<Code>420020</Code>
+<Name>北中部</Name>
+<Code>240010</Code>
 </Area>
 </Areas>
 </Item>
@@ -76,20 +52,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>壱岐・対馬</Name>
-<Code>420030</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>五島</Name>
-<Code>420040</Code>
+<Name>南部</Name>
+<Code>240020</Code>
 </Area>
 </Areas>
 </Item>
@@ -97,81 +61,13 @@
 <Information type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>島原半島</Name>
-<Code>420011</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>長崎地区</Name>
-<Code>420012</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>諫早・大村地区</Name>
-<Code>420013</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>西彼杵半島</Name>
-<Code>420014</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>平戸・松浦地区</Name>
-<Code>420021</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>佐世保・東彼地区</Name>
-<Code>420022</Code>
+<Name>中部</Name>
+<Code>240011</Code>
 </Area>
 </Areas>
 </Item>
@@ -182,56 +78,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>壱岐</Name>
-<Code>420031</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>解除</Name>
-<Code>00</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>上対馬</Name>
-<Code>420032</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>解除</Name>
-<Code>00</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>下対馬</Name>
-<Code>420033</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>上五島</Name>
-<Code>420041</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>下五島</Name>
-<Code>420042</Code>
+<Name>伊勢志摩</Name>
+<Code>240021</Code>
 </Area>
 </Areas>
 </Item>
@@ -239,101 +87,13 @@
 <Information type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>長崎市</Name>
-<Code>4220100</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>佐世保市（宇久地域を除く）</Name>
-<Code>4220201</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>佐世保市（宇久地域）</Name>
-<Code>4220202</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>島原市</Name>
-<Code>4220300</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>諫早市</Name>
-<Code>4220400</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>大村市</Name>
-<Code>4220500</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>平戸市</Name>
-<Code>4220700</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>松浦市</Name>
-<Code>4220800</Code>
+<Name>津市東部</Name>
+<Code>2420111</Code>
 </Area>
 </Areas>
 </Item>
@@ -344,8 +104,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>下対馬</Name>
-<Code>4220901</Code>
+<Name>津市中西部</Name>
+<Code>2420112</Code>
 </Area>
 </Areas>
 </Item>
@@ -356,8 +116,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>上対馬</Name>
-<Code>4220902</Code>
+<Name>伊勢市</Name>
+<Code>2420300</Code>
 </Area>
 </Areas>
 </Item>
@@ -368,214 +128,104 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>壱岐市</Name>
-<Code>4221000</Code>
+<Name>松阪市東部</Name>
+<Code>2420411</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>五島市</Name>
-<Code>4221100</Code>
+<Name>松阪市西部</Name>
+<Code>2420412</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>西海市（江島・平島を除く）</Name>
-<Code>4221201</Code>
+<Name>鳥羽市</Name>
+<Code>2421100</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>西海市（江島・平島）</Name>
-<Code>4221202</Code>
+<Name>志摩市</Name>
+<Code>2421500</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>雲仙市</Name>
-<Code>4221300</Code>
+<Name>多気町</Name>
+<Code>2444100</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>南島原市</Name>
-<Code>4221400</Code>
+<Name>明和町</Name>
+<Code>2444200</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>長与町</Name>
-<Code>4230700</Code>
+<Name>玉城町</Name>
+<Code>2446100</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>時津町</Name>
-<Code>4230800</Code>
+<Name>度会町</Name>
+<Code>2447000</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
+<Name>解除</Name>
+<Code>00</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>東彼杵町</Name>
-<Code>4232100</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>川棚町</Name>
-<Code>4232200</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>波佐見町</Name>
-<Code>4232300</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>小値賀町</Name>
-<Code>4238300</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>佐々町</Name>
-<Code>4239100</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象・地震・火山情報／市町村等">
-<Area>
-<Name>新上五島町</Name>
-<Code>4241100</Code>
-</Area>
-</Areas>
-</Item>
-</Information>
-<Information type="気象警報・注意報（警報注意報種別毎）">
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>長崎地区</Name>
-<Code>420012</Code>
-</Area>
-<Area>
-<Name>西彼杵半島</Name>
-<Code>420014</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>五島</Name>
-<Code>420040</Code>
-</Area>
-</Areas>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</Kind>
-<Areas codeType="気象情報／府県予報区・細分区域等">
-<Area>
-<Name>南部</Name>
-<Code>420010</Code>
-</Area>
-<Area>
-<Name>北部</Name>
-<Code>420020</Code>
+<Name>南伊勢町</Name>
+<Code>2447200</Code>
 </Area>
 </Areas>
 </Item>
@@ -584,43 +234,23 @@
 </Head>
 <Body xmlns="http://xml.kishou.go.jp/jmaxml1/body/meteorology1/" xmlns:jmx_eb="http://xml.kishou.go.jp/jmaxml1/elementBasis1/">
 <Notice>［危険警報・氾濫特別警報の発表状況］
-なし
-［お知らせ］
-令和８年熊本地震に伴い、揺れの大きかった南島原市では、土砂災害に関する警報等の発表基準について通常より引き下げた暫定基準で運用しています。</Notice>
+なし</Notice>
 <Warning type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>長崎県</Name>
-<Code>420000</Code>
+<Name>三重県</Name>
+<Code>240000</Code>
 </Area>
-<ChangeStatus>変化無</ChangeStatus>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>一部</FullStatus>
 <EditingMark>0</EditingMark>
 </Item>
@@ -628,18 +258,27 @@
 <Warning type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
 <LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
 </LastKind>
 </Kind>
+<Area>
+<Name>北中部</Name>
+<Code>240010</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>一部</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
 <Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
@@ -647,117 +286,27 @@
 </Kind>
 <Area>
 <Name>南部</Name>
-<Code>420010</Code>
+<Code>240020</Code>
 </Area>
-<ChangeStatus>変化無</ChangeStatus>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>一部</FullStatus>
 <EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>北部</Name>
-<Code>420020</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>一部</FullStatus>
-<EditingMark>1</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>壱岐・対馬</Name>
-<Code>420030</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>1</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>五島</Name>
-<Code>420040</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>1</EditingMark>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>島原半島</Name>
-<Code>420011</Code>
+<Name>中部</Name>
+<Code>240011</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -765,53 +314,35 @@
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
 <Area>
-<Name>長崎地区</Name>
-<Code>420012</Code>
+<Name>北部</Name>
+<Code>240012</Code>
 </Area>
-<ChangeStatus>変化無</ChangeStatus>
-<FullStatus>一部</FullStatus>
-<EditingMark>1</EditingMark>
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
+<Area>
+<Name>伊賀</Name>
+<Code>240013</Code>
+</Area>
+</Item>
+<Item>
 <Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>諫早・大村地区</Name>
-<Code>420013</Code>
+<Name>伊勢志摩</Name>
+<Code>240021</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -819,692 +350,28 @@
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
 <Area>
-<Name>西彼杵半島</Name>
-<Code>420014</Code>
+<Name>紀勢・東紀州</Name>
+<Code>240022</Code>
 </Area>
-<ChangeStatus>変化無</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>1</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>平戸・松浦地区</Name>
-<Code>420021</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>佐世保・東彼地区</Name>
-<Code>420022</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>一部</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>壱岐</Name>
-<Code>420031</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>上対馬</Name>
-<Code>420032</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>下対馬</Name>
-<Code>420033</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>上五島</Name>
-<Code>420041</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>下五島</Name>
-<Code>420042</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>長崎市</Name>
-<Code>4220100</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>佐世保市（宇久地域を除く）</Name>
-<Code>4220201</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>佐世保市（宇久地域）</Name>
-<Code>4220202</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>島原市</Name>
-<Code>4220300</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>諫早市</Name>
-<Code>4220400</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>大村市</Name>
-<Code>4220500</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>平戸市</Name>
-<Code>4220700</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>松浦市</Name>
-<Code>4220800</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>下対馬</Name>
-<Code>4220901</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>上対馬</Name>
-<Code>4220902</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>壱岐市</Name>
-<Code>4221000</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>五島市</Name>
-<Code>4221100</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>西海市（江島・平島を除く）</Name>
-<Code>4221201</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化無、量的予想事項等に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>西海市（江島・平島）</Name>
-<Code>4221202</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>雲仙市</Name>
-<Code>4221300</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>南島原市</Name>
-<Code>4221400</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>長与町</Name>
-<Code>4230700</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>時津町</Name>
-<Code>4230800</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>東彼杵町</Name>
-<Code>4232100</Code>
-</Area>
-<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>川棚町</Name>
-<Code>4232200</Code>
+<Name>津市東部</Name>
+<Code>2420111</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
@@ -1512,1426 +379,349 @@
 <Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>波佐見町</Name>
-<Code>4232300</Code>
-</Area>
-<ChangeStatus>変化無</ChangeStatus>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
-<Area>
-<Name>小値賀町</Name>
-<Code>4238300</Code>
+<Name>津市中西部</Name>
+<Code>2420112</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
+<Area>
+<Name>四日市市</Name>
+<Code>2420200</Code>
+</Area>
+</Item>
+<Item>
 <Kind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
-<Status>継続</Status>
+<Status>解除</Status>
 <LastKind>
 <Name>乾燥注意報</Name>
 <Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>佐々町</Name>
-<Code>4239100</Code>
+<Name>伊勢市</Name>
+<Code>2420300</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
 <Item>
 <Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
 <Status>解除</Status>
 <LastKind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-</LastKind>
-</Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
 </LastKind>
 </Kind>
 <Area>
-<Name>新上五島町</Name>
-<Code>4241100</Code>
+<Name>松阪市東部</Name>
+<Code>2420411</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>松阪市西部</Name>
+<Code>2420412</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>桑名市</Name>
+<Code>2420500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>鈴鹿市</Name>
+<Code>2420700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>名張市</Name>
+<Code>2420800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>尾鷲市</Name>
+<Code>2420900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>亀山市</Name>
+<Code>2421000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>鳥羽市</Name>
+<Code>2421100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>熊野市</Name>
+<Code>2421200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>いなべ市</Name>
+<Code>2421400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>志摩市</Name>
+<Code>2421500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>伊賀市</Name>
+<Code>2421600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>木曽岬町</Name>
+<Code>2430300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>東員町</Name>
+<Code>2432400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>菰野町</Name>
+<Code>2434100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>朝日町</Name>
+<Code>2434300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>川越町</Name>
+<Code>2434400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>多気町</Name>
+<Code>2444100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>明和町</Name>
+<Code>2444200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>大台町</Name>
+<Code>2444300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>玉城町</Name>
+<Code>2446100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>度会町</Name>
+<Code>2447000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>大紀町</Name>
+<Code>2447100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+<Status>解除</Status>
+<LastKind>
+<Name>乾燥注意報</Name>
+<Code>21</Code>
+</LastKind>
+</Kind>
+<Area>
+<Name>南伊勢町</Name>
+<Code>2447200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>紀北町</Name>
+<Code>2454300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>御浜町</Name>
+<Code>2456100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>紀宝町</Name>
+<Code>2456200</Code>
+</Area>
 </Item>
 </Warning>
-<MeteorologicalInfos type="量的予想時系列（市町村等）">
-<TimeSeriesInfo>
-<TimeDefines>
-<TimeDefine timeId="1">
-<DateTime>2026-11-10T18:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１０日夜のはじめ頃</Name>
-</TimeDefine>
-<TimeDefine timeId="2">
-<DateTime>2026-11-10T21:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１０日夜遅く</Name>
-</TimeDefine>
-<TimeDefine timeId="3">
-<DateTime>2026-11-11T00:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日未明</Name>
-</TimeDefine>
-<TimeDefine timeId="4">
-<DateTime>2026-11-11T03:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日明け方</Name>
-</TimeDefine>
-<TimeDefine timeId="5">
-<DateTime>2026-11-11T06:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日朝</Name>
-</TimeDefine>
-<TimeDefine timeId="6">
-<DateTime>2026-11-11T09:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日昼前</Name>
-</TimeDefine>
-<TimeDefine timeId="7">
-<DateTime>2026-11-11T12:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日昼過ぎ</Name>
-</TimeDefine>
-<TimeDefine timeId="8">
-<DateTime>2026-11-11T15:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日夕方</Name>
-</TimeDefine>
-<TimeDefine timeId="9">
-<DateTime>2026-11-11T18:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>１１日夜のはじめ頃</Name>
-</TimeDefine>
-</TimeDefines>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<Significancy refID="1" type="風危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="風危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Local>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>風</Type>
-<WindDirectionPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<jmx_eb:WindDirection description="北の風" refID="1" type="風向" unit="８方位漢字">北</jmx_eb:WindDirection>
-<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
-<jmx_eb:WindDirection condition="値なし" refID="3" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="4" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="5" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="6" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="7" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="8" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="9" type="風向" unit="８方位漢字"/>
-</Local>
-</Base>
-</WindDirectionPart>
-<WindSpeedPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<jmx_eb:WindSpeed description="１０メートル" refID="1" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
-<jmx_eb:WindSpeed description="１０メートル" refID="2" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
-<jmx_eb:WindSpeed condition="値なし" refID="3" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="4" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="5" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="6" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="7" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="8" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="9" type="最大風速" unit="m/s"/>
-</Local>
-</Base>
-</WindSpeedPart>
-</Property>
-</Kind>
-<Area>
-<Name>長崎市</Name>
-<Code>4220100</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>波</Type>
-<WaveHeightPart>
-<Base>
-<jmx_eb:WaveHeight description="２．５メートル" refID="1" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="２．５メートル" refID="2" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight condition="値なし" refID="3" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="4" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="5" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="6" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="7" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="8" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="9" type="波高" unit="m"/>
-</Base>
-</WaveHeightPart>
-</Property>
-</Kind>
-<Area>
-<Name>佐世保市（宇久地域）</Name>
-<Code>4220202</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>波</Type>
-<WaveHeightPart>
-<Base>
-<jmx_eb:WaveHeight description="２．５メートル" refID="1" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="２．５メートル" refID="2" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight condition="値なし" refID="3" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="4" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="5" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="6" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="7" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="8" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="9" type="波高" unit="m"/>
-</Base>
-</WaveHeightPart>
-</Property>
-</Kind>
-<Area>
-<Name>五島市</Name>
-<Code>4221100</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>強風注意報</Name>
-<Code>15</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<Significancy refID="1" type="風危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="風危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="風危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Local>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>風</Type>
-<WindDirectionPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<jmx_eb:WindDirection description="北の風" refID="1" type="風向" unit="８方位漢字">北</jmx_eb:WindDirection>
-<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
-<jmx_eb:WindDirection condition="値なし" refID="3" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="4" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="5" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="6" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="7" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="8" type="風向" unit="８方位漢字"/>
-<jmx_eb:WindDirection condition="値なし" refID="9" type="風向" unit="８方位漢字"/>
-</Local>
-</Base>
-</WindDirectionPart>
-<WindSpeedPart>
-<Base>
-<Local>
-<AreaName>外海</AreaName>
-<jmx_eb:WindSpeed description="１０メートル" refID="1" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
-<jmx_eb:WindSpeed description="１０メートル" refID="2" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
-<jmx_eb:WindSpeed condition="値なし" refID="3" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="4" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="5" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="6" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="7" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="8" type="最大風速" unit="m/s"/>
-<jmx_eb:WindSpeed condition="値なし" refID="9" type="最大風速" unit="m/s"/>
-</Local>
-</Base>
-</WindSpeedPart>
-</Property>
-</Kind>
-<Area>
-<Name>西海市（江島・平島を除く）</Name>
-<Code>4221201</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>波</Type>
-<WaveHeightPart>
-<Base>
-<jmx_eb:WaveHeight description="２．５メートル" refID="1" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="２．５メートル" refID="2" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight condition="値なし" refID="3" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="4" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="5" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="6" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="7" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="8" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="9" type="波高" unit="m"/>
-</Base>
-</WaveHeightPart>
-</Property>
-</Kind>
-<Area>
-<Name>西海市（江島・平島）</Name>
-<Code>4221202</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>波</Type>
-<WaveHeightPart>
-<Base>
-<jmx_eb:WaveHeight description="２．５メートル" refID="1" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="２．５メートル" refID="2" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight condition="値なし" refID="3" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="4" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="5" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="6" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="7" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="8" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="9" type="波高" unit="m"/>
-</Base>
-</WaveHeightPart>
-</Property>
-</Kind>
-<Area>
-<Name>小値賀町</Name>
-<Code>4238300</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="波危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="4" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="5" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="6" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="7" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="8" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-<Significancy refID="9" type="波危険度">
-<Name>注意報級未満</Name>
-<Code>00</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>波</Type>
-<WaveHeightPart>
-<Base>
-<jmx_eb:WaveHeight description="２．５メートル" refID="1" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight description="２．５メートル" refID="2" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
-<jmx_eb:WaveHeight condition="値なし" refID="3" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="4" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="5" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="6" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="7" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="8" type="波高" unit="m"/>
-<jmx_eb:WaveHeight condition="値なし" refID="9" type="波高" unit="m"/>
-</Base>
-</WaveHeightPart>
-</Property>
-</Kind>
-<Area>
-<Name>新上五島町</Name>
-<Code>4241100</Code>
-</Area>
-</Item>
-</TimeSeriesInfo>
-<TimeSeriesInfo>
-<TimeDefines>
-<TimeDefine timeId="1">
-<DateTime>2026-11-10T00:00:00+09:00</DateTime>
-<Duration>P1D</Duration>
-<Name>１０日</Name>
-</TimeDefine>
-<TimeDefine timeId="2">
-<DateTime>2026-11-11T00:00:00+09:00</DateTime>
-<Duration>P1D</Duration>
-<Name>１１日</Name>
-</TimeDefine>
-<TimeDefine timeId="3">
-<DateTime>2026-11-12T00:00:00+09:00</DateTime>
-<Duration>P1D</Duration>
-<Name>１２日</Name>
-</TimeDefine>
-</TimeDefines>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>長崎市</Name>
-<Code>4220100</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>佐世保市（宇久地域を除く）</Name>
-<Code>4220201</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>島原市</Name>
-<Code>4220300</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>諫早市</Name>
-<Code>4220400</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>大村市</Name>
-<Code>4220500</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>平戸市</Name>
-<Code>4220700</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>松浦市</Name>
-<Code>4220800</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>西海市（江島・平島を除く）</Name>
-<Code>4221201</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>雲仙市</Name>
-<Code>4221300</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>南島原市</Name>
-<Code>4221400</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>長与町</Name>
-<Code>4230700</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>時津町</Name>
-<Code>4230800</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>東彼杵町</Name>
-<Code>4232100</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>川棚町</Name>
-<Code>4232200</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>波佐見町</Name>
-<Code>4232300</Code>
-</Area>
-</Item>
-<Item>
-<Kind>
-<Name>乾燥注意報</Name>
-<Code>21</Code>
-<Property>
-<Type>危険度</Type>
-<SignificancyPart>
-<Base>
-<Significancy refID="1" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="2" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-<Significancy refID="3" type="乾燥危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
-</Significancy>
-</Base>
-</SignificancyPart>
-</Property>
-<Property>
-<Type>乾燥</Type>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="６５パーセント" refID="1" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="2" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-<jmx_eb:Humidity description="６５パーセント" refID="3" type="実効湿度" unit="%">65</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-<HumidityPart>
-<Base>
-<jmx_eb:Humidity description="４５パーセント" refID="1" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="2" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-<jmx_eb:Humidity description="４５パーセント" refID="3" type="最小湿度" unit="%">45</jmx_eb:Humidity>
-</Base>
-</HumidityPart>
-</Property>
-</Kind>
-<Area>
-<Name>佐々町</Name>
-<Code>4239100</Code>
-</Area>
-</Item>
-</TimeSeriesInfo>
-</MeteorologicalInfos>
 </Body>
 </Report>
