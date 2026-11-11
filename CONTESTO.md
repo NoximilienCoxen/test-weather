@@ -8108,3 +8108,28 @@ prima. Se nel frattempo e' stata spostata a mano, e' una scelta e resta.
 
 **Non provato in mano.** Resta vero che entrando nella pioggia di giovedi' il
 cielo si fa notte: alle quattro e' notte, e la barra lo dice.
+
+### 63.1 Il difetto vero: si arrivava alla pioggia e si tornava da soli
+
+Lo stesso video, riguardato a dieci fotogrammi al secondo. Toccato PIOGGIA, il
+carosello arriva alla sala, ci resta due decimi di secondo e **torna da solo
+alla settimana**; al secondo tocco resta. La catena:
+
+1. il tocco cambia l'ora (§63), e sulla barra compare "torna all'ora attuale";
+2. la barra si alza, il carosello (che ha `weight(1f)`) si accorcia, e la
+   pagina appena posata si ritrova di qualche pixel fuori posto;
+3. la rete di `SalaShell` lo vede "fermo a mezz'aria" e chiede a
+   `metaDelGesto` dove andare - cioe' all'ultimo gesto, che e' il tocco sul
+   riquadro: fermo, **sulla settimana**. E ce lo riporta.
+
+Al secondo tocco l'ora e' gia' quella, la barra non cambia altezza e non
+succede niente: per questo sembrava capriccioso.
+
+Adesso `vaiA`, `portaA` e l'indietro passano da `metaDaComando`, che riscrive
+la partenza della rete sulla sala comandata; e quando il carosello si posa
+senza un dito sopra, la partenza diventa la sala posata. **Qualunque cosa cambi
+l'altezza della barra o dell'intestazione puo' rifare il punto 2**: la rete ora
+risponde con la sala giusta, ma chi aggiunge una riga che compare e scompare
+sopra o sotto il carosello lo tenga presente.
+
+**Non provato in mano**: e' dedotto dal video e dal codice, e compila.

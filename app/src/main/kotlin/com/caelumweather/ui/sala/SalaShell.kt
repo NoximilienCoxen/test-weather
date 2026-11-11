@@ -292,9 +292,30 @@ fun SalaShell(
     // fianco, i sette trattini, il collegamento di Sala I e i sei riquadri di
     // Sala II, e quattro copie della stessa riga divergono alla prima che
     // qualcuno tara.
-    fun vaiA(sala: SalaRoom) {
+    //
+    // **Chi comanda una sala lo dice anche alla rete.** La rete qui sopra
+    // rimette il carosello su una sala quando lo trova fermo a mezz'aria, e la
+    // sala la chiede a `metaDelGesto`, cioe' all'ultimo gesto del dito. Ma un
+    // tocco su un riquadro della settimana e' anch'esso un gesto - fermo, sulla
+    // sala di partenza - e lo stesso tocco cambia l'ora: sulla barra compare
+    // "torna all'ora attuale", la barra si alza, il carosello si accorcia e si
+    // ritrova di qualche pixel fuori posto. La rete lo vedeva a mezz'aria e lo
+    // riportava **alla sala del tocco**: si arrivava alla pioggia e, un
+    // attimo dopo, si tornava da soli alla settimana (video dell'11 novembre
+    // 2026). Adesso il comando riscrive la partenza: per la rete l'ultima
+    // richiesta e' questa.
+    fun metaDaComando(pagina: Int) {
         metaVoluta = null
-        scope.launch { pagerState.animateScrollToPage(rooms.indexOf(sala)) }
+        paginaAlTocco = pagina
+        posizioneAlTocco = pagina.toFloat()
+        corsaDelDito = 0f
+        lancioDelDito = false
+    }
+
+    fun vaiA(sala: SalaRoom) {
+        val pagina = rooms.indexOf(sala)
+        metaDaComando(pagina)
+        scope.launch { pagerState.animateScrollToPage(pagina) }
     }
 
     // **Il gemello senza molla, per il dito che trascina la colonna.**
@@ -305,15 +326,29 @@ fun SalaShell(
     // attraversata vorrebbe dire che il carosello insegue il dito con mezzo
     // secondo di ritardo e arriva dove era, non dov'e'.
     fun portaA(sala: SalaRoom) {
-        metaVoluta = null
-        scope.launch { pagerState.scrollToPage(rooms.indexOf(sala)) }
+        val pagina = rooms.indexOf(sala)
+        metaDaComando(pagina)
+        scope.launch { pagerState.scrollToPage(pagina) }
     }
 
     // Il tasto indietro torna alla prima sala prima di chiudere l'app: da sei
     // stanze sotto, uscire non e' quasi mai la risposta cercata.
     BackHandler(enabled = pagerState.currentPage != 0) {
-        metaVoluta = null
+        metaDaComando(0)
         scope.launch { pagerState.animateScrollToPage(0) }
+    }
+
+    // E quando il carosello si posa senza un dito sopra, la partenza e' dove
+    // si e' posato: un cambio di misura piu' tardi - una pastiglia che compare,
+    // la barra che cambia altezza - non deve far rileggere un gesto vecchio.
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.settledPage }.collect { pagina ->
+            if (!ditoSulCarosello && metaVoluta == null) {
+                paginaAlTocco = pagina
+                posizioneAlTocco = pagina.toFloat()
+                corsaDelDito = 0f
+            }
+        }
     }
 
     // **L'ora del giorno scelto, non l'ora di oggi.** Toccando una colonna
