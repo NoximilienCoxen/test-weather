@@ -82,11 +82,11 @@ val firmaDiRilascio: Boolean =
     chiaveStore != null && chiaveStorePassword != null && chiaveAlias != null && chiavePassword != null
 
 android {
-    namespace = "io.github.noximiliencoxen.caelumweather"
+    namespace = "com.caelumweather"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.noximiliencoxen.caelumweather"
+        applicationId = "com.caelumweather"
         minSdk = 26
         targetSdk = 36
 

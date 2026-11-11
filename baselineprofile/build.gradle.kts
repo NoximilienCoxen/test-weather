@@ -17,7 +17,7 @@ plugins {
  * altra configurazione.
  */
 android {
-    namespace = "io.github.noximiliencoxen.caelumweather.baselineprofile"
+    namespace = "com.caelumweather.baselineprofile"
     compileSdk = 37
 
     defaultConfig {

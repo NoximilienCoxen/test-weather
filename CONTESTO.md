@@ -49,7 +49,7 @@ git show origin/ci-artifacts:screenshots/scuro-d3-allerta-pallino.png > /tmp/y.p
 git show origin/ci-artifacts:api/hourly.json          # contratto API reale
 ```
 
-**Il nome dell'app e' Caelum**, `io.github.noximiliencoxen.caelumweather`. Era
+**Il nome dell'app e' Caelum**, `com.caelumweather`. Era
 `com.forli.meteo` con l'etichetta `Weather`, e nessuna delle due cose andava:
 l'app cerca qualunque localita' del mondo, quindi una citta' nel nome e' una
 smentita in cima allo schermo, e un'etichetta inglese in un'app tutta italiana
@@ -606,7 +606,7 @@ contenuto, si vede una volta, e si spegne da solo appena si passa oltre.
 ## 6. Agganci di verifica
 
 ```bash
-adb shell am start -n io.github.noximiliencoxen.caelumweather/.MainActivity --ei ora 2 --ei meteo 63
+adb shell am start -n com.caelumweather/.MainActivity --ei ora 2 --ei meteo 63
 ```
 
 | Extra | Effetto |
@@ -663,7 +663,7 @@ espone i testi:
 adb shell uiautomator dump /sdcard/ui.xml; adb shell cat /sdcard/ui.xml
 ```
 
-Per le prestazioni, `dumpsys gfxinfo io.github.noximiliencoxen.caelumweather framestats`. **Attenzione
+Per le prestazioni, `dumpsys gfxinfo com.caelumweather framestats`. **Attenzione
 alle colonne**: su Android 12+ ce ne sono di nuove, e leggere gli indici
 sbagliati fa misurare la scadenza del fotogramma invece del lavoro svolto
 (trappola #9). Le utili sono `DrawStart`(8) → `SyncQueued`(12) per il thread di
@@ -1284,7 +1284,7 @@ pure ci finiva sopra.
 
 **48. La ridenominazione del pacchetto era ferma a meta', e il progetto non
 compilava.** Nell'indice convivevano due alberi sorgente: i 76 file nuovi sotto
-`io/github/noximiliencoxen/caelumweather`, aggiunti, e i 55 vecchi sotto
+`com/caelumweather`, aggiunti, e i 55 vecchi sotto
 `com/forli/meteo`, mai cancellati. `build.gradle.kts` e il manifesto puntavano
 gia' al pacchetto nuovo, quindi i vecchi cercavano una `com.forli.meteo.R` che
 non esisteva piu': dieci errori di compilazione, e niente da installare su un
@@ -1799,7 +1799,7 @@ Le tre regole sul colore che seguono sono costate una passata intera e valgono
 identiche sul feed.
 
 **Nessun colore di testo si sceglie a mano.** Si ricava dal fondo su cui
-cadra', con [`readableOn`](app/src/main/kotlin/io/github/noximiliencoxen/caelumweather/ui/theme/Contrast.kt)
+cadra', con [`readableOn`](app/src/main/kotlin/com/caelumweather/ui/theme/Contrast.kt)
 e la formula di contrasto della WCAG 2.1. Il difetto che questo toglie di mezzo
 era esattamente uno scritto a mano: il titolo del dettaglio era `colors.text`,
 cioe' quasi nero a mezzogiorno, sopra un pannello antracite fisso. E l'etichetta
@@ -7448,7 +7448,7 @@ orologio hanno in comune), `:app` (il telefono, com'era) e `:wear`.
 ### 50.1 `:core`, e cosa ci sta dentro
 
 `data/` e' quasi tutto JVM puro, e si e' spostato **senza cambiare package**
-(`io.github.noximiliencoxen.caelumweather.data`), cosi' nessun import dell'app e'
+(`com.caelumweather.data`), cosi' nessun import dell'app e'
 cambiato. Sono in `core/`: `Http`, `Model`, `OpenMeteoDto`, `WeatherModel`,
 `WeatherRepository`, `ScortaPrevisioni`, `Place`, `Wmo`, `SunClock`, la parte
 pura di `Lingua` (`Lingue`, `tr()`, `inInglese()`), i glifi del tempo
@@ -7550,7 +7550,7 @@ tramonto, in italiano e in inglese.
 **Cosa si e' spostato in `:core`**, senza cambiare package: `ui/sala/SalaTheme.kt`
 (tavole del cielo, fasi, `salaPalette`, `SalaType`), `ui/theme/Contrast.kt` e i
 caratteri Caprasimo e Figtree (`core/src/main/res/font`). `SalaTheme` ora legge
-`io.github.noximiliencoxen.caelumweather.core.R`; `archivo_variable` resta in `app`
+`com.caelumweather.core.R`; `archivo_variable` resta in `app`
 perche' lo usano solo il tema Material e i widget. `core` prende in piu'
 `ui-text`, `ui-util` e `runtime` (per `TextStyle`, `lerp` e `@Immutable`),
 sempre senza compilatore di Compose.
@@ -7593,7 +7593,7 @@ fascia. A mezzogiorno e a mezzanotte vale zero, e una prova lo tiene fermo.
   (con `auto_time 1` torna sbagliata). Per vedere l'alba o il tramonto basta
   spostare l'ora cosi'; le condizioni attuali pero' restano quelle vere.
 - La lingua dell'app si impone senza telefono con `cmd locale
-  set-app-locales io.github.noximiliencoxen.caelumweather --locales it-IT`.
+  set-app-locales com.caelumweather --locales it-IT`.
 - La copia di lavoro su questa macchina aveva nove file di `app/.../data`
   rimasti da prima dello spostamento in `core`: con loro l'app non arrivava al
   dex (`mergeDexDebug`, classi doppie). Tolti; il lavoro sta sul ramo
@@ -7654,7 +7654,7 @@ protolayout 1.4.2, watchface-complications 1.3.0, concurrent-futures-ktx 1.3.0
 **Come si prova sull'emulatore**
 - Tile: `adb shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE
   --es operation add-tile --ecn component
-  io.github.noximiliencoxen.caelumweather/io.github.noximiliencoxen.caelumweather.wear.TileCaelum`,
+  com.caelumweather/com.caelumweather.wear.TileCaelum`,
   poi dal quadrante si scorre verso sinistra (prima `KEYCODE_WAKEUP`, e una
   pausa: lo scorrimento dato mentre si sveglia va perso). `show-tile` non
   esiste.
@@ -7721,11 +7721,11 @@ piu' grave di oggi. Le righe senza niente da dire non ci sono.
 
 Prove JVM in `app/src/test/.../RiepilogoMattinoTest.kt` (testi, ritardo,
 finestra). Un giro si forza con
-`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler io.github.noximiliencoxen.caelumweather <id>`
+`adb shell cmd jobscheduler run -f -n androidx.work.systemjobscheduler com.caelumweather <id>`
 (senza `-n` il comando non trova il lavoro: WorkManager usa uno spazio di nomi
 suo). Il numero e' quello della riga
 `JOB androidx.work.systemjobscheduler:u0aNNN/<id>: ... #RiepilogoMattinoWorker`
-in `adb shell dumpsys jobscheduler io.github.noximiliencoxen.caelumweather`. La
+in `adb shell dumpsys jobscheduler com.caelumweather`. La
 notifica esce solo dentro la finestra: di notte il giro salta e si riprenota,
 ed e' giusto cosi'. Prova sul telefono in §55.
 
@@ -7798,7 +7798,7 @@ provati anch'essi.
 - Scorciatoie: `dumpsys shortcut` le elenca tutte e tre; `--es localita true`
   apre "Le località".
 - Riquadro: aggiunto con `cmd statusbar add-tile
-  io.github.noximiliencoxen.caelumweather/.tile.RiquadroMeteo`. SystemUI lo riporta
+  com.caelumweather/.tile.RiquadroMeteo`. SystemUI lo riporta
   con `label=16° · Coperto, secondaryLabel=Noceto, state=2`. Su Android 17 nella
   tendina compatta e' un tondo con la sola icona; il tocco (app chiusa prima
   con `force-stop`) apre `MainActivity`.
@@ -7852,7 +7852,7 @@ perche' un salto di wrapper si fa da solo, come in §2.
 
 **Il nome visibile e' "Caelum Weather"** (10 novembre): etichetta di telefono e
 orologio (`app_name`), velo d'avvio, firma del testo condiviso, scheda e
-informativa. **Anche il pacchetto e' cambiato**: `io.github.noximiliencoxen.caelumweather`
+informativa. **Anche il pacchetto e' cambiato**: `com.caelumweather`
 (cartelle, `namespace`, `applicationId`, profilo, script; sostituzione meccanica,
 anche in questo file). Chi aveva l'app da `apk-latest` la disinstalla e la
 reinstalla una volta. Classi e tema restano `Caelum*`; il percorso del Data
@@ -7901,3 +7901,20 @@ telefono**: compilate e provate in CI, niente di piu'.
   `anteprima-*-{it,en}.png`. Si copiano in `res/drawable-nodpi` e
   `res/drawable-en-nodpi` e le dichiara `android:previewImage`. **Quando un
   widget cambia faccia vanno ricopiate a mano**: non c'e' un passo che lo fa.
+
+## 58. Il pacchetto e' `com.caelumweather`
+
+L'11 novembre 2026, prima della prima pubblicazione (dopo non si puo' piu').
+Il pacchetto di prima portava il nome del profilo GitHub, e dall'app si
+risaliva a chi l'ha scritta. Cartelle, `namespace`, `applicationId`, profilo
+di base, script e documenti: sostituzione meccanica, anche nelle sezioni piu'
+vecchie di questo file. Chi ha l'app da `apk-latest` la reinstalla una volta.
+
+Per la stessa ragione l'agente HTTP (`data/Http.kt`) dice la scheda dello
+store e non piu' il repository.
+
+**Cio' che porta ancora al profilo, e non e' codice dell'app**: il recapito in
+`docs/privacy.md` (le segnalazioni su GitHub: va sostituito con un indirizzo
+di posta dedicato), l'indirizzo dove l'informativa viene pubblicata (GitHub
+Pages mostra il nome del profilo), gli agenti degli script della sonda in CI,
+e il repository stesso se resta pubblico.

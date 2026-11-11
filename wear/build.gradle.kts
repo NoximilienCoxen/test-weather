@@ -50,11 +50,11 @@ val firmaDiRilascio: Boolean =
     chiaveStore != null && chiaveStorePassword != null && chiaveAlias != null && chiavePassword != null
 
 android {
-    namespace = "io.github.noximiliencoxen.caelumweather.wear"
+    namespace = "com.caelumweather.wear"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.noximiliencoxen.caelumweather"
+        applicationId = "com.caelumweather"
         // Wear OS 3: la prima versione con Compose per Wear stabile.
         minSdk = 30
         targetSdk = 36

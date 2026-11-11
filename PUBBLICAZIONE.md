@@ -110,7 +110,7 @@ adb install app/build/outputs/apk/release/app-release.apk
   molto, serve il loro piano a pagamento **(verifica** le condizioni attuali
   su open-meteo.com/en/terms**)**.
 - **L'`applicationId` non si cambia più** dopo la prima pubblicazione:
-  `io.github.noximiliencoxen.caelumweather` resta per sempre.
+  `com.caelumweather` resta per sempre.
 - **Chi ha l'app da `apk-latest`** dovrà disinstallarla per passare a quella
   dello store: la firma è diversa.
 - **`targetSdk`**: lo store alza il minimo richiesto ogni anno, di solito a fine
@@ -119,6 +119,6 @@ adb install app/build/outputs/apk/release/app-release.apk
   esiste "Caelum - Local AI assistant" (altra categoria) e su iOS "iCaelum"
   (meteo, solo iPhone): nessuna si chiama esattamente cosi', ma in caso di
   contestazione sul nome conviene saperlo. Il pacchetto e'
-  `io.github.noximiliencoxen.caelumweather`. Sotto l'icona compare solo
+  `com.caelumweather`. Sotto l'icona compare solo
   "Caelum" (il nome intero verrebbe troncato); il titolo dello store porta una
   coda descrittiva, entro i 30 caratteri: "Caelum Weather: meteo, allerte".
