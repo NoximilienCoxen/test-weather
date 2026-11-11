@@ -1,6 +1,7 @@
 package com.caelumweather.data
 
-import com.caelumweather.lingua.inInglese
+import com.caelumweather.lingua.Lingua
+import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 
 // **`PrecipKind` non c'e' piu'.** Era la tipologia di precipitazione mostrata
@@ -14,29 +15,35 @@ object Wmo {
 
     fun condition(code: Int?): String = when (code) {
         null -> "--"
-        0 -> tr("SERENO", "CLEAR")
-        1 -> tr("POCO NUVOLOSO", "MOSTLY CLEAR")
-        2 -> tr("PARZ. NUVOLOSO", "PARTLY CLOUDY")
-        3 -> tr("COPERTO", "OVERCAST")
-        45, 48 -> tr("NEBBIA", "FOG")
-        51, 53, 55 -> tr("PIOVIGGINE", "DRIZZLE")
-        56, 57 -> tr("PIOVIGGINE GELATA", "FREEZING DRIZZLE")
-        61, 63, 65 -> tr("PIOGGIA", "RAIN")
-        66, 67 -> tr("PIOGGIA GELATA", "FREEZING RAIN")
-        71, 73, 75 -> tr("NEVE", "SNOW")
-        77 -> tr("GRANULI DI NEVE", "SNOW GRAINS")
-        80, 81, 82 -> tr("ROVESCI", "SHOWERS")
-        85, 86 -> tr("ROVESCI DI NEVE", "SNOW SHOWERS")
-        95 -> tr("TEMPORALE", "THUNDERSTORM")
-        96, 99 -> tr("TEMPORALE E GRANDINE", "THUNDERSTORM, HAIL")
+        0 -> tr("SERENO", "CLEAR", "KLAR", "DÉGAGÉ", "DESPEJADO")
+        1 -> tr("POCO NUVOLOSO", "MOSTLY CLEAR", "MEIST KLAR", "PEU NUAGEUX", "POCO NUBOSO")
+        2 -> tr("PARZ. NUVOLOSO", "PARTLY CLOUDY", "TEILS BEWÖLKT", "PARTIELLEMENT NUAGEUX", "PARCIALMENTE NUBOSO")
+        3 -> tr("COPERTO", "OVERCAST", "BEDECKT", "COUVERT", "CUBIERTO")
+        45, 48 -> tr("NEBBIA", "FOG", "NEBEL", "BROUILLARD", "NIEBLA")
+        51, 53, 55 -> tr("PIOVIGGINE", "DRIZZLE", "NIESELREGEN", "BRUINE", "LLOVIZNA")
+        56, 57 -> tr("PIOVIGGINE GELATA", "FREEZING DRIZZLE", "GEFRIERENDER NIESEL", "BRUINE VERGLAÇANTE", "LLOVIZNA HELADA")
+        61, 63, 65 -> tr("PIOGGIA", "RAIN", "REGEN", "PLUIE", "LLUVIA")
+        66, 67 -> tr("PIOGGIA GELATA", "FREEZING RAIN", "GEFRIERENDER REGEN", "PLUIE VERGLAÇANTE", "LLUVIA HELADA")
+        71, 73, 75 -> tr("NEVE", "SNOW", "SCHNEE", "NEIGE", "NIEVE")
+        77 -> tr("GRANULI DI NEVE", "SNOW GRAINS", "SCHNEEGRIESEL", "NEIGE EN GRAINS", "CINARRA")
+        80, 81, 82 -> tr("ROVESCI", "SHOWERS", "SCHAUER", "AVERSES", "CHUBASCOS")
+        85, 86 -> tr("ROVESCI DI NEVE", "SNOW SHOWERS", "SCHNEESCHAUER", "AVERSES DE NEIGE", "CHUBASCOS DE NIEVE")
+        95 -> tr("TEMPORALE", "THUNDERSTORM", "GEWITTER", "ORAGE", "TORMENTA")
+        96, 99 -> tr("TEMPORALE E GRANDINE", "THUNDERSTORM, HAIL", "GEWITTER MIT HAGEL", "ORAGE ET GRÊLE", "TORMENTA Y GRANIZO")
         else -> "--"
     }
 
     /** Rosa dei venti a 8 settori: ovest e' O in italiano, W in inglese. */
     fun windDirection(degrees: Double?): String {
         if (degrees == null) return "--"
-        val sectors = if (inInglese()) listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
-        else listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
+        // **La O non vuol dire la stessa cosa dappertutto.** In italiano,
+        // francese e spagnolo e' l'ovest; in tedesco e' l'est (Ost), e
+        // l'ovest e' W come in inglese.
+        val sectors = when (Lingue.corrente) {
+            Lingua.INGLESE -> listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+            Lingua.TEDESCO -> listOf("N", "NO", "O", "SO", "S", "SW", "W", "NW")
+            Lingua.ITALIANO, Lingua.FRANCESE, Lingua.SPAGNOLO -> listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
+        }
         val idx = (((degrees % 360.0) + 360.0) % 360.0 / 45.0).toInt() % 8
         return sectors[idx]
     }

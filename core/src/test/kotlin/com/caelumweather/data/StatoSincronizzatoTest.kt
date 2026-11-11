@@ -33,7 +33,7 @@ class StatoSincronizzatoTest {
 
     @Test
     fun `una lingua sconosciuta ripiega sull'automatica`() {
-        val stato = StatoSincronizzato.fromJson("""{"nome":"X","latitudine":1.0,"longitudine":2.0,"lingua":"TEDESCO"}""")
+        val stato = StatoSincronizzato.fromJson("""{"nome":"X","latitudine":1.0,"longitudine":2.0,"lingua":"KLINGON"}""")
         assertEquals(SceltaLingua.AUTOMATICA, stato?.sceltaLingua)
     }
 

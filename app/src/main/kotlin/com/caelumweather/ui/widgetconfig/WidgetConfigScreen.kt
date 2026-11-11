@@ -1,5 +1,6 @@
 package com.caelumweather.ui.widgetconfig
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -210,16 +211,16 @@ fun WidgetConfigScreen(
             if (showLocation) {
                 Column {
                     Text(
-                        text = tr("DA DOVE PRENDERE I DATI", "WHERE TO TAKE THE DATA FROM"),
+                        text = tr("DA DOVE PRENDERE I DATI", "WHERE TO TAKE THE DATA FROM", "WOHER DIE DATEN KOMMEN SOLLEN", "D'OÙ PRENDRE LES DONNÉES", "DE DÓNDE TOMAR LOS DATOS"),
                         style = SalaType.sectionLabel,
                         color = palette.inkFaint,
                         modifier = Modifier.padding(start = 20.dp, bottom = 8.dp),
                     )
                     SceltaSegmentata(
                         voci = listOf(
-                            LocationSource.GPS to tr("Posizione", "Location"),
-                            LocationSource.FAVORITES to tr("Salvate", "Saved"),
-                            LocationSource.SEARCH to tr("Cerca", "Search"),
+                            LocationSource.GPS to tr("Posizione", "Location", "Standort", "Position", "Ubicación"),
+                            LocationSource.FAVORITES to tr("Salvate", "Saved", "Gespeichert", "Enregistrés", "Guardados"),
+                            LocationSource.SEARCH to tr("Cerca", "Search", "Suchen", "Chercher", "Buscar"),
                         ),
                         scelta = source,
                         palette = palette,
@@ -232,13 +233,13 @@ fun WidgetConfigScreen(
                 }
 
                 when (source) {
-                    LocationSource.GPS -> GruppoImpostazioni(titolo = tr("POSIZIONE", "LOCATION"), palette = palette) {
+                    LocationSource.GPS -> GruppoImpostazioni(titolo = tr("POSIZIONE", "LOCATION", "STANDORT", "POSITION", "UBICACIÓN"), palette = palette) {
                         VoceImpostazione(
-                            titolo = tr("Dove si trova il telefono", "Where the phone is"),
+                            titolo = tr("Dove si trova il telefono", "Where the phone is", "Wo sich das Telefon befindet", "Là où se trouve le téléphone", "Donde está el teléfono"),
                             nota = if (locationGranted) {
-                                tr("il widget segue la posizione a ogni aggiornamento", "the widget follows your location at every update")
+                                tr("il widget segue la posizione a ogni aggiornamento", "the widget follows your location at every update", "das Widget folgt deinem Standort bei jeder Aktualisierung", "le widget suit votre position à chaque actualisation", "el widget sigue tu ubicación en cada actualización")
                             } else {
-                                tr("serve il permesso di posizione approssimata", "needs the approximate location permission")
+                                tr("serve il permesso di posizione approssimata", "needs the approximate location permission", "benötigt die Berechtigung für den ungefähren Standort", "nécessite l'autorisation de position approximative", "necesita el permiso de ubicación aproximada")
                             },
                             palette = palette,
                             onClick = if (locationGranted) {
@@ -250,7 +251,7 @@ fun WidgetConfigScreen(
                                 if (locationGranted) {
                                     Spunta(scelta = true, palette = palette)
                                 } else {
-                                    PastigliaAzione(tr("Consenti", "Allow"), palette)
+                                    PastigliaAzione(tr("Consenti", "Allow", "Erlauben", "Autoriser", "Permitir"), palette)
                                 }
                             },
                         )
@@ -258,11 +259,11 @@ fun WidgetConfigScreen(
 
                     LocationSource.FAVORITES -> if (favorites.isEmpty()) {
                         Nota(
-                            tr("Nessuna località salvata. Aggiungile dall'app, in Impostazioni › Località.", "No saved places. Add them in the app, under Settings › Place."),
+                            tr("Nessuna località salvata. Aggiungile dall'app, in Impostazioni › Località.", "No saved places. Add them in the app, under Settings › Place.", "Keine gespeicherten Orte. Füge sie in der App hinzu, unter Einstellungen › Ort.", "Aucun lieu enregistré. Ajoutez-en dans l'app, dans Réglages › Lieu.", "No hay lugares guardados. Añádelos en la app, en Ajustes › Lugar."),
                             palette,
                         )
                     } else {
-                        GruppoImpostazioni(titolo = tr("LOCALITÀ SALVATE", "SAVED PLACES"), palette = palette) {
+                        GruppoImpostazioni(titolo = tr("LOCALITÀ SALVATE", "SAVED PLACES", "GESPEICHERTE ORTE", "LIEUX ENREGISTRÉS", "LUGARES GUARDADOS"), palette = palette) {
                             ElencoPosti(favorites, selectedPlace, palette, scegli)
                         }
                     }
@@ -277,13 +278,13 @@ fun WidgetConfigScreen(
                             if (query.isBlank()) Place.SUGGESTIONS else emptyList()
                         }
                         when {
-                            searching -> Nota(tr("Sto cercando…", "Searching…"), palette)
+                            searching -> Nota(tr("Sto cercando…", "Searching…", "Ich suche…", "Recherche…", "Buscando…"), palette)
                             query.trim().length >= 2 && results.isEmpty() ->
-                                Nota(tr("Nessuna località con questo nome", "No place with this name"), palette)
+                                Nota(tr("Nessuna località con questo nome", "No place with this name", "Kein Ort mit diesem Namen", "Aucun lieu de ce nom", "Ningún lugar con este nombre"), palette)
                         }
                         if (options.isNotEmpty()) {
                             GruppoImpostazioni(
-                                titolo = if (query.isBlank()) tr("OPPURE UNA DI QUESTE", "OR ONE OF THESE") else tr("RISULTATI", "RESULTS"),
+                                titolo = if (query.isBlank()) tr("OPPURE UNA DI QUESTE", "OR ONE OF THESE", "ODER EINER VON DIESEN", "OU L'UN DE CEUX-CI", "O UNO DE ESTOS") else tr("RISULTATI", "RESULTS", "ERGEBNISSE", "RÉSULTATS", "RESULTADOS"),
                                 palette = palette,
                             ) {
                                 ElencoPosti(options, selectedPlace, palette, scegli)
@@ -295,7 +296,7 @@ fun WidgetConfigScreen(
         }
 
         BottoneSalva(
-            testo = if (initial.useLocation || initial.place != null) tr("Salva le modifiche", "Save changes") else tr("Aggiungi il widget", "Add the widget"),
+            testo = if (initial.useLocation || initial.place != null) tr("Salva le modifiche", "Save changes", "Änderungen speichern", "Enregistrer les modifications", "Guardar los cambios") else tr("Aggiungi il widget", "Add the widget", "Widget hinzufügen", "Ajouter le widget", "Añadir el widget"),
             enabled = canSave,
             palette = palette,
             onClick = { onSave(selectedPlace, useLocation) },
@@ -305,7 +306,7 @@ fun WidgetConfigScreen(
 
 /** "METEO" -> "Meteo", "QUALITÀ DELL'ARIA" -> "Qualità dell'aria". */
 private fun nomeDelWidget(kind: WidgetKind?): String =
-    kind?.label?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "Widget"
+    kind?.label?.inMezzoAllaFrase()?.replaceFirstChar { it.uppercase() } ?: "Widget"
 
 @Composable
 private fun Nota(testo: String, palette: SalaPalette) {
@@ -415,10 +416,10 @@ private fun BottoneSalva(testo: String, enabled: Boolean, palette: SalaPalette, 
 @Composable
 private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean, palette: SalaPalette) {
     val dove = when {
-        kind != null && !kind.needsPlace -> tr("Uguale da qualunque parte lo guardi", "The same wherever you look at it from")
-        following -> tr("Seguirà la posizione del telefono", "It will follow the phone's location")
-        place != null -> tr("Mostrerà ${place.name}", "It will show ${place.name}")
-        else -> tr("Scegli qui sotto da dove prendere i dati", "Choose below where to take the data from")
+        kind != null && !kind.needsPlace -> tr("Uguale da qualunque parte lo guardi", "The same wherever you look at it from", "Überall gleich, von wo man auch schaut", "Le même d'où qu'on le regarde", "Igual lo mires desde donde lo mires")
+        following -> tr("Seguirà la posizione del telefono", "It will follow the phone's location", "Es folgt dem Standort des Telefons", "Il suivra la position du téléphone", "Seguirá la ubicación del teléfono")
+        place != null -> tr("Mostrerà ${place.name}", "It will show ${place.name}", "Es zeigt ${place.name}", "Il affichera ${place.name}", "Mostrará ${place.name}")
+        else -> tr("Scegli qui sotto da dove prendere i dati", "Choose below where to take the data from", "Wähle unten, woher die Daten kommen sollen", "Choisissez ci-dessous d'où prendre les données", "Elige abajo de dónde tomar los datos")
     }
     val (glifo, notte) = when (kind) {
         WidgetKind.LUNA -> GlifoMeteo.SOLE to true
@@ -443,7 +444,7 @@ private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean,
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = kind?.let { tr("WIDGET ${it.label}", "${it.label} WIDGET") } ?: tr("NUOVO WIDGET", "NEW WIDGET"),
+                text = kind?.let { tr("WIDGET ${it.label}", "${it.label} WIDGET", "WIDGET ${it.label}", "WIDGET ${it.label}", "WIDGET ${it.label}") } ?: tr("NUOVO WIDGET", "NEW WIDGET", "NEUES WIDGET", "NOUVEAU WIDGET", "NUEVO WIDGET"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
             )

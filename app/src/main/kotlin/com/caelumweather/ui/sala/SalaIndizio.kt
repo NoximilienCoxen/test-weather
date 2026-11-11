@@ -68,7 +68,7 @@ internal fun IndizioSfoglio(
                 modifier = Modifier.offset(y = onda.dp),
             )
             Text(
-                text = tr("  Scorri in su · $prossima", "  Swipe up · $prossima"),
+                text = tr("  Scorri in su · $prossima", "  Swipe up · $prossima", "  Nach oben wischen · $prossima", "  Balayez vers le haut · $prossima", "  Desliza hacia arriba · $prossima"),
                 style = SalaType.sectionLabel,
                 color = palette.inkSoft,
             )

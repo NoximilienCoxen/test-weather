@@ -69,11 +69,11 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
     /** Dove serve, detto per chi legge. */
     val zona: String
         get() = when (this) {
-            METEOALARM -> tr("Europa", "Europe")
-            NWS -> tr("Stati Uniti", "United States")
+            METEOALARM -> tr("Europa", "Europe", "Europa", "Europe", "Europa")
+            NWS -> tr("Stati Uniti", "United States", "USA", "États-Unis", "Estados Unidos")
             ECCC -> "Canada"
-            JMA -> tr("Giappone", "Japan")
-            IFRC -> tr("gli altri paesi", "other countries")
+            JMA -> tr("Giappone", "Japan", "Japan", "Japon", "Japón")
+            IFRC -> tr("gli altri paesi", "other countries", "die übrigen Länder", "les autres pays", "los demás países")
         }
 
     companion object {
@@ -87,24 +87,39 @@ enum class FonteAllerte(val nome: String, val sito: String, val indirizzo: Strin
             METEOALARM -> tr(
                 "Allerte ufficiali: MeteoAlarm, dati dei membri di EUMETNET, licenza CC BY 4.0.",
                 "Official warnings: MeteoAlarm, data provided by EUMETNET members, CC BY 4.0 licence.",
+                "Amtliche Warnungen: MeteoAlarm, Daten der EUMETNET-Mitglieder, Lizenz CC BY 4.0.",
+                "Alertes officielles : MeteoAlarm, données des membres d'EUMETNET, licence CC BY 4.0.",
+                "Alertas oficiales: MeteoAlarm, datos de los miembros de EUMETNET, licencia CC BY 4.0.",
             )
             NWS -> tr(
                 "Allerte ufficiali: National Weather Service (NOAA), dati di pubblico dominio.",
                 "Official warnings: National Weather Service (NOAA), public domain data.",
+                "Amtliche Warnungen: National Weather Service (NOAA), gemeinfreie Daten.",
+                "Alertes officielles : National Weather Service (NOAA), données du domaine public.",
+                "Alertas oficiales: National Weather Service (NOAA), datos de dominio público.",
             )
             ECCC -> tr(
                 "Allerte ufficiali: Environment and Climate Change Canada, Open Government Licence - Canada.",
                 "Official warnings: Environment and Climate Change Canada, Open Government Licence - Canada.",
+                "Amtliche Warnungen: Environment and Climate Change Canada, Open Government Licence - Canada.",
+                "Alertes officielles : Environment and Climate Change Canada, Open Government Licence - Canada.",
+                "Alertas oficiales: Environment and Climate Change Canada, Open Government Licence - Canada.",
             )
             JMA -> tr(
                 "Allerte ufficiali: Japan Meteorological Agency (気象庁), dati riutilizzabili citando la fonte.",
                 "Official warnings: Japan Meteorological Agency (気象庁), reusable with attribution.",
+                "Amtliche Warnungen: Japan Meteorological Agency (気象庁), mit Quellenangabe weiterverwendbar.",
+                "Alertes officielles : Japan Meteorological Agency (気象庁), données réutilisables en citant la source.",
+                "Alertas oficiales: Japan Meteorological Agency (気象庁), datos reutilizables citando la fuente.",
             )
             IFRC -> tr(
                 "Allerte ufficiali: i servizi meteorologici nazionali, raccolte dall'IFRC Alert Hub " +
                     "(Federazione internazionale della Croce Rossa) dai loro feed CAP.",
                 "Official warnings: the national weather services, collected by the IFRC Alert Hub " +
                     "(International Federation of Red Cross) from their CAP feeds.",
+                "Amtliche Warnungen: die nationalen Wetterdienste, vom IFRC Alert Hub (Internationale Föderation der Rotkreuz- und Rothalbmondgesellschaften) aus ihren CAP-Feeds gesammelt.",
+                "Alertes officielles : les services météorologiques nationaux, rassemblées par l'IFRC Alert Hub (Fédération internationale de la Croix-Rouge) à partir de leurs flux CAP.",
+                "Alertas oficiales: los servicios meteorológicos nacionales, recogidas por el IFRC Alert Hub (Federación Internacional de la Cruz Roja) a partir de sus canales CAP.",
             )
         }
 }
@@ -145,9 +160,9 @@ val WeatherAlert.shortBadge: String
     get() = if (official) level.breve else SOGLIA_SHORT
 
 /** Come si chiama un avviso nato da una soglia, per esteso e in breve. */
-val SOGLIA_LABEL: String get() = tr("SOGLIA SUPERATA", "THRESHOLD EXCEEDED")
+val SOGLIA_LABEL: String get() = tr("SOGLIA SUPERATA", "THRESHOLD EXCEEDED", "SCHWELLE ÜBERSCHRITTEN", "SEUIL DÉPASSÉ", "UMBRAL SUPERADO")
 
-val SOGLIA_SHORT: String get() = tr("SOGLIA", "THRESHOLD")
+val SOGLIA_SHORT: String get() = tr("SOGLIA", "THRESHOLD", "SCHWELLE", "SEUIL", "UMBRAL")
 
 /**
  * La gravita', nei tre gradini che l'Italia usa a voce.
@@ -157,18 +172,31 @@ val SOGLIA_SHORT: String get() = tr("SOGLIA", "THRESHOLD")
  * succede niente insegnerebbe a ignorare la fascia. Il verde si scarta alla
  * fonte e qui restano i tre che vale la pena leggere.
  */
-enum class AlertLevel(private val ita: String, private val eng: String, private val itBreve: String, private val enBreve: String, val weight: Int) {
-    GIALLA("ALLERTA GIALLA", "YELLOW WARNING", "GIALLA", "YELLOW", 1),
-    ARANCIONE("ALLERTA ARANCIONE", "ORANGE WARNING", "ARANCIONE", "ORANGE", 2),
-    ROSSA("ALLERTA ROSSA", "RED WARNING", "ROSSA", "RED", 3),
+enum class AlertLevel(private val nomi: List<String>, private val brevi: List<String>, val weight: Int) {
+    // Nell'ordine di sempre: italiano, inglese, tedesco, francese, spagnolo.
+    GIALLA(
+        listOf("ALLERTA GIALLA", "YELLOW WARNING", "WARNSTUFE GELB", "ALERTE JAUNE", "ALERTA AMARILLA"),
+        listOf("GIALLA", "YELLOW", "GELB", "JAUNE", "AMARILLA"),
+        1,
+    ),
+    ARANCIONE(
+        listOf("ALLERTA ARANCIONE", "ORANGE WARNING", "WARNSTUFE ORANGE", "ALERTE ORANGE", "ALERTA NARANJA"),
+        listOf("ARANCIONE", "ORANGE", "ORANGE", "ORANGE", "NARANJA"),
+        2,
+    ),
+    ROSSA(
+        listOf("ALLERTA ROSSA", "RED WARNING", "WARNSTUFE ROT", "ALERTE ROUGE", "ALERTA ROJA"),
+        listOf("ROSSA", "RED", "ROT", "ROUGE", "ROJA"),
+        3,
+    ),
     ;
 
     /** "ALLERTA ARANCIONE", "ORANGE WARNING": il nome per esteso. In inglese
      *  "warning" e' la parola dei servizi meteorologici (Met Office). */
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(nomi[0], nomi[1], nomi[2], nomi[3], nomi[4])
 
     /** Il solo colore, per la pastiglia: "ARANCIONE", "ORANGE". */
-    val breve: String get() = tr(itBreve, enBreve)
+    val breve: String get() = tr(brevi[0], brevi[1], brevi[2], brevi[3], brevi[4])
 }
 
 /**
@@ -179,25 +207,25 @@ enum class AlertLevel(private val ita: String, private val eng: String, private 
  * riconoscerlo pensa `FeedEntry.kind`; qui restano solo le parole che vanno a
  * schermo.
  */
-enum class AlertKind(private val ita: String, private val eng: String) {
-    VENTO("VENTO", "WIND"),
-    PIOGGIA("PIOGGIA", "RAIN"),
-    TEMPORALI("TEMPORALI", "THUNDERSTORMS"),
-    NEVE_GHIACCIO("NEVE E GHIACCIO", "SNOW AND ICE"),
-    CALDO("CALDO", "HEAT"),
-    FREDDO("FREDDO", "COLD"),
+enum class AlertKind(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
+    VENTO("VENTO", "WIND", "WIND", "VENT", "VIENTO"),
+    PIOGGIA("PIOGGIA", "RAIN", "REGEN", "PLUIE", "LLUVIA"),
+    TEMPORALI("TEMPORALI", "THUNDERSTORMS", "GEWITTER", "ORAGES", "TORMENTAS"),
+    NEVE_GHIACCIO("NEVE E GHIACCIO", "SNOW AND ICE", "SCHNEE UND EIS", "NEIGE ET VERGLAS", "NIEVE Y HIELO"),
+    CALDO("CALDO", "HEAT", "HITZE", "CHALEUR", "CALOR"),
+    FREDDO("FREDDO", "COLD", "KÄLTE", "FROID", "FRÍO"),
     /** Nessun ente la emette: e' solo calcolata. Esiste perche' nelle
      *  impostazioni c'era da sempre un interruttore "Raggi UV sopra 6" che non
      *  accendeva e non spegneva niente - dietro non c'era nessun avviso. */
-    UV("RAGGI UV", "UV RAYS"),
-    NEBBIA("NEBBIA", "FOG"),
-    COSTIERO("MAREGGIATE", "COASTAL EVENTS"),
-    INCENDI("INCENDI", "FOREST FIRES"),
-    VALANGHE("VALANGHE", "AVALANCHES"),
-    ALTRO("AVVISO", "WARNING"),
+    UV("RAGGI UV", "UV RAYS", "UV-STRAHLUNG", "RAYONS UV", "RAYOS UV"),
+    NEBBIA("NEBBIA", "FOG", "NEBEL", "BROUILLARD", "NIEBLA"),
+    COSTIERO("MAREGGIATE", "COASTAL EVENTS", "STURMFLUT", "VAGUES-SUBMERSION", "FENÓMENOS COSTEROS"),
+    INCENDI("INCENDI", "FOREST FIRES", "WALDBRÄNDE", "FEUX DE FORÊT", "INCENDIOS"),
+    VALANGHE("VALANGHE", "AVALANCHES", "LAWINEN", "AVALANCHES", "ALUDES"),
+    ALTRO("AVVISO", "WARNING", "WARNUNG", "ALERTE", "ALERTA"),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 }
 
 // **`alertsAreDismissed` non c'e' piu', e la regola che portava merita di

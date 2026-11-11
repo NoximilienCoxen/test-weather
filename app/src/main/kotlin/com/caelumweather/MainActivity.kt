@@ -13,6 +13,7 @@ import com.caelumweather.sync.SincronizzaOrologio
 import com.caelumweather.notifiche.AllerteUfficialiWorker
 import com.caelumweather.notifiche.PioggiaInArrivoWorker
 import com.caelumweather.notifiche.RiepilogoMattinoWorker
+import com.caelumweather.notifiche.SogliePersonaliWorker
 import com.caelumweather.prefs.SettingsPrefs
 import kotlinx.coroutines.flow.first
 import android.os.Bundle
@@ -170,6 +171,8 @@ class MainActivity : ComponentActivity() {
             if (impostazioni.riepilogoMattino) {
                 RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
             }
+            // Gli avvisi personali: spenti di norma, e `KEEP` come gli altri.
+            if (impostazioni.soglie.qualcunaAccesa) SogliePersonaliWorker.pianifica(applicationContext)
         }
     }
 
@@ -268,14 +271,12 @@ class MainActivity : ComponentActivity() {
         // La lingua degli scatti: l'emulatore della CI e' in inglese, e gli
         // scatti di riferimento sono in italiano (CONTESTO §49). Prima di
         // `setContent`, quindi gia' nel primo fotogramma.
-        when (intent.getStringExtra(EXTRA_LINGUA)) {
-            "it" -> Lingue.forzata = Lingua.ITALIANO
-            "en" -> Lingue.forzata = Lingua.INGLESE
-        }
+        Lingua.diCodice(intent.getStringExtra(EXTRA_LINGUA))?.let { Lingue.forzata = it }
         intent.getIntExtra(EXTRA_HOUR, -1).takeIf { it >= 0 }?.let(viewModel::requestHour)
         intent.getIntExtra(EXTRA_WEATHER, -1).takeIf { it >= 0 }?.let(viewModel::forceWeatherCode)
         intent.getIntExtra(EXTRA_CLOUDS, -1).takeIf { it >= 0 }?.let(viewModel::forceCloudCover)
         intent.getIntExtra(EXTRA_POLLINE, -1).takeIf { it >= 0 }?.let(viewModel::forcePolline)
+        intent.getIntExtra(EXTRA_MARE, -1).takeIf { it >= 0 }?.let(viewModel::forceMare)
         intent.getIntExtra(EXTRA_DAY, -1).takeIf { it >= 0 }?.let(viewModel::requestDay)
         intent.getIntExtra(EXTRA_SECTION, -1).takeIf { it >= 0 }?.let(viewModel::requestRoom)
         if (intent.getBooleanExtra(EXTRA_WELCOME, false)) viewModel.showWelcome()
@@ -323,7 +324,7 @@ class MainActivity : ComponentActivity() {
          */
         const val EXTRA_CAPTURE = "cattura"
 
-        /** La lingua imposta per la cattura: `--es lingua it` o `en`. */
+        /** La lingua imposta per la cattura: `--es lingua it`, `en`, `de`, `fr` o `es`. */
         const val EXTRA_LINGUA = "lingua"
 
         const val EXTRA_HOUR = "ora"
@@ -334,6 +335,9 @@ class MainActivity : ComponentActivity() {
 
         /** Il livello del polline, da 0 a 4, per tre giorni e tutte le famiglie. */
         const val EXTRA_POLLINE = "polline"
+
+        /** Il mare, in centimetri d'onda: la sezione in fondo a Sala VI. */
+        const val EXTRA_MARE = "mare"
 
         /**
          * Apre il dettaglio di un giorno. Serve perche' col dito si arriva

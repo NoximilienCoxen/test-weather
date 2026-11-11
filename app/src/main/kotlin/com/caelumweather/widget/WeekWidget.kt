@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidget
@@ -37,11 +38,11 @@ internal class WeekWidget : CaelumWidget(WidgetKind.SETTIMANA) {
         // Chi non vede l'immagine sente la settimana giorno per giorno: la
         // barretta non si legge ad alta voce, i numeri si'.
         val spoken = buildString {
-            append(tr("Settimana a ${where.name}", "Week in ${where.name}"))
+            append(tr("Settimana a ${where.name}", "Week in ${where.name}", "Woche in ${where.name}", "Semaine à ${where.name}", "Semana en ${where.name}"))
             days.take(7).forEach { day ->
-                append(". ${day.label.lowercase()}, ${Wmo.condition(day.weatherCode).lowercase()}")
-                day.tempMax?.roundToInt()?.let { append(tr(", massima $it", ", high $it")) }
-                day.tempMin?.roundToInt()?.let { append(tr(", minima $it", ", low $it")) }
+                append(". ${day.label.lowercase()}, ${Wmo.condition(day.weatherCode).inMezzoAllaFrase()}")
+                day.tempMax?.roundToInt()?.let { append(tr(", massima $it", ", high $it", ", Höchstwert $it", ", maximale $it", ", máxima $it")) }
+                day.tempMin?.roundToInt()?.let { append(tr(", minima $it", ", low $it", ", Tiefstwert $it", ", minimale $it", ", mínima $it")) }
             }
         }
 

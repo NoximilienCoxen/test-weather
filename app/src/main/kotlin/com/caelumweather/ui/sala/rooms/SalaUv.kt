@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.NumeroCheScorre
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
@@ -49,6 +50,7 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.SalaTokens
 import com.caelumweather.ui.sala.SalaType
 import com.caelumweather.ui.sala.oraDueCifre
@@ -101,7 +103,7 @@ fun SalaUvScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = tr("I raggi UV", "UV rays"), style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"), style = SalaType.cardTitle, color = palette.ink)
                 Text(
                     text = nomeUv(corrente),
                     style = SalaType.rowTitle,
@@ -109,8 +111,11 @@ fun SalaUvScreen(
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
-            Text(
-                text = String.format(Lingue.locale, "%.1f", corrente),
+            // In decimi, perche' il verso dello scorrimento segua anche un
+            // passo da 4,2 a 4,6.
+            NumeroCheScorre(
+                testo = String.format(Lingue.locale, "%.1f", corrente),
+                valore = (corrente * 10).roundToInt(),
                 style = SalaType.giant(46),
                 color = palette.ink,
             )
@@ -149,11 +154,11 @@ fun SalaUvScreen(
                         modifier = Modifier
                             .weight(1f)
                             .semantics {
-                                contentDescription = tr("${oraDueCifre(ore[indice].time.hour)}:00, indice UV ", "${oraDueCifre(ore[indice].time.hour)}:00, UV index ") +
-                                    (ore[indice].uvIndex?.roundToInt()?.toString() ?: tr("non disponibile", "unavailable"))
+                                contentDescription = tr("${oraDueCifre(ore[indice].time.hour)}:00, indice UV ", "${oraDueCifre(ore[indice].time.hour)}:00, UV index ", "${oraDueCifre(ore[indice].time.hour)}:00, UV-Index ", "${oraDueCifre(ore[indice].time.hour)}:00, indice UV ", "${oraDueCifre(ore[indice].time.hour)}:00, índice UV ") +
+                                    (ore[indice].uvIndex?.roundToInt()?.toString() ?: tr("non disponibile", "unavailable", "nicht verfügbar", "indisponible", "no disponible"))
                                 selected = indice == scelta
                             }
-                            .clickable(onClickLabel = tr("mostra quest'ora", "show this hour")) { onSelectHour(indice) },
+                            .clickable(onClickLabel = tr("mostra quest'ora", "show this hour", "diese Stunde anzeigen", "afficher cette heure", "mostrar esta hora")) { onSelectHour(indice) },
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
@@ -175,7 +180,7 @@ fun SalaUvScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height((3f + quota * 80f).dp)
+                                .height(misuraCheArriva((3f + quota * 80f).dp))
                                 .clip(CircleShape)
                                 .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
                         )
@@ -282,13 +287,13 @@ fun SalaUvScreen(
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(
-                etichetta = tr("PICCO", "PEAK"),
+                etichetta = tr("PICCO", "PEAK", "SPITZE", "PIC", "PICO"),
                 valore = picco?.let { oraPiena(ore[it].time.hour) } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = tr("AL SOLE", "IN THE SUN"), valore = esposizione(corrente), palette = palette)
+            CellaValore(etichetta = tr("AL SOLE", "IN THE SUN", "IN DER SONNE", "AU SOLEIL", "AL SOL"), valore = esposizione(corrente), palette = palette)
             CellaValore(
-                etichetta = tr("OZONO", "OZONE"),
+                etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
                 valore = ozono?.let { "${it.roundToInt()} µg/m³" } ?: "--",
                 palette = palette,
             )
@@ -305,7 +310,7 @@ fun SalaUvScreen(
                 luceDelGiorno(data, state.place.latitude, state.place.longitude, state.forecast?.utcOffsetSeconds ?: 0)
             }
             Text(
-                text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS"),
+                text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS", "LICHT FÜR FOTOS", "LA LUMIÈRE POUR LES PHOTOS", "LA LUZ PARA LAS FOTOS"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
@@ -315,16 +320,16 @@ fun SalaUvScreen(
                 horizontalArrangement = Arrangement.spacedBy(9.dp),
             ) {
                 ColonnaLuce(
-                    quando = tr("MATTINA", "MORNING"),
+                    quando = tr("MATTINA", "MORNING", "MORGEN", "MATIN", "MAÑANA"),
                     oro = luce.oroMattina,
-                    blu = luce.bluMattina?.let { tr("ora blu dalle ${hhmm(it.inizio)}", "blue hour from ${hhmm(it.inizio)}") },
+                    blu = luce.bluMattina?.let { tr("ora blu dalle ${hhmm(it.inizio)}", "blue hour from ${hhmm(it.inizio)}", "blaue Stunde ab ${hhmm(it.inizio)}", "heure bleue dès ${hhmm(it.inizio)}", "hora azul desde las ${hhmm(it.inizio)}") },
                     cielo = cieloDellaLuce(luce.oroMattina, ore),
                     palette = palette,
                 )
                 ColonnaLuce(
-                    quando = tr("SERA", "EVENING"),
+                    quando = tr("SERA", "EVENING", "ABEND", "SOIR", "TARDE"),
                     oro = luce.oroSera,
-                    blu = luce.bluSera?.let { tr("ora blu fino alle ${hhmm(it.fine)}", "blue hour until ${hhmm(it.fine)}") },
+                    blu = luce.bluSera?.let { tr("ora blu fino alle ${hhmm(it.fine)}", "blue hour until ${hhmm(it.fine)}", "blaue Stunde bis ${hhmm(it.fine)}", "heure bleue jusqu'à ${hhmm(it.fine)}", "hora azul hasta las ${hhmm(it.fine)}") },
                     cielo = cieloDellaLuce(luce.oroSera, ore),
                     palette = palette,
                 )
@@ -367,9 +372,9 @@ private fun RowScope.ColonnaLuce(
         if (cielo != null) {
             Text(
                 text = when (cielo) {
-                    CieloDellaLuce.LIBERO -> tr("cielo libero, luce calda", "clear sky, warm light")
-                    CieloDellaLuce.SPARSO -> tr("nuvole sparse, possibili colori", "scattered clouds, maybe colour")
-                    CieloDellaLuce.COPERTO -> tr("coperto, luce piatta", "overcast, flat light")
+                    CieloDellaLuce.LIBERO -> tr("cielo libero, luce calda", "clear sky, warm light", "freier Himmel, warmes Licht", "ciel dégagé, lumière chaude", "cielo despejado, luz cálida")
+                    CieloDellaLuce.SPARSO -> tr("nuvole sparse, possibili colori", "scattered clouds, maybe colour", "vereinzelte Wolken, vielleicht Farben", "nuages épars, couleurs possibles", "nubes dispersas, posibles colores")
+                    CieloDellaLuce.COPERTO -> tr("coperto, luce piatta", "overcast, flat light", "bedeckt, flaches Licht", "couvert, lumière plate", "cubierto, luz plana")
                 },
                 style = SalaType.rowNote,
                 color = palette.inkFaint,
@@ -418,11 +423,14 @@ private fun ScenaOmbra(
             }
             .semantics {
                 contentDescription = if (lunghezza == null) {
-                    tr("Il sole è sotto l'orizzonte.", "The sun is below the horizon.")
+                    tr("Il sole è sotto l'orizzonte.", "The sun is below the horizon.", "Die Sonne steht unter dem Horizont.", "Le soleil est sous l'horizon.", "El sol está bajo el horizonte.")
                 } else {
                     tr(
                         "Sole a ${altezzaSole.roundToInt()} gradi, ombra lunga ${"%.1f".format(Lingue.locale, lunghezza)} volte la persona. Trascina per cambiare ora.",
                         "Sun at ${altezzaSole.roundToInt()} degrees, shadow ${"%.1f".format(Lingue.locale, lunghezza)} times the person's height. Drag to change the hour.",
+                        "Sonne auf ${altezzaSole.roundToInt()} Grad, Schatten ${"%.1f".format(Lingue.locale, lunghezza)}-mal so lang wie die Person. Ziehen, um die Stunde zu ändern.",
+                        "Soleil à ${altezzaSole.roundToInt()} degrés, ombre ${"%.1f".format(Lingue.locale, lunghezza)} fois la taille de la personne. Faites glisser pour changer l'heure.",
+                        "Sol a ${altezzaSole.roundToInt()} grados, sombra ${"%.1f".format(Lingue.locale, lunghezza)} veces la altura de la persona. Arrastra para cambiar la hora.",
                     )
                 }
             },
@@ -476,14 +484,14 @@ private fun ScenaOmbra(
 /** Quello che la scena dice, in una frase. */
 private fun frase(ora: Int, altezzaSole: Double): String {
     val lunghezza = OmbraSole.lunghezzaRelativa(altezzaSole)
-        ?: return tr("Alle ${oraDueCifre(ora)} il sole è sotto l'orizzonte.", "At ${oraDueCifre(ora)} the sun is below the horizon.")
+        ?: return tr("Alle ${oraDueCifre(ora)} il sole è sotto l'orizzonte.", "At ${oraDueCifre(ora)} the sun is below the horizon.", "Um ${oraDueCifre(ora)} steht die Sonne unter dem Horizont.", "À ${oraDueCifre(ora)} le soleil est sous l'horizon.", "A las ${oraDueCifre(ora)} el sol está bajo el horizonte.")
     val quanto = when {
-        lunghezza < 1.0 -> tr("più corta di te: il sole scotta", "shorter than you: the sun burns")
-        lunghezza < 1.3 -> tr("lunga circa quanto te", "about as long as you are tall")
-        lunghezza >= OmbraSole.MASSIMA -> tr("lunghissima", "very long")
-        else -> tr("${"%.1f".format(Lingue.locale, lunghezza)} volte te", "${"%.1f".format(Lingue.locale, lunghezza)} times your height")
+        lunghezza < 1.0 -> tr("più corta di te: il sole scotta", "shorter than you: the sun burns", "kürzer als du: Die Sonne brennt", "plus courte que vous : le soleil brûle", "más corta que tú: el sol quema")
+        lunghezza < 1.3 -> tr("lunga circa quanto te", "about as long as you are tall", "etwa so lang, wie du groß bist", "à peu près de votre taille", "más o menos tan larga como tú")
+        lunghezza >= OmbraSole.MASSIMA -> tr("lunghissima", "very long", "sehr lang", "très longue", "larguísima")
+        else -> tr("${"%.1f".format(Lingue.locale, lunghezza)} volte te", "${"%.1f".format(Lingue.locale, lunghezza)} times your height", "${"%.1f".format(Lingue.locale, lunghezza)}-mal deine Größe", "${"%.1f".format(Lingue.locale, lunghezza)} fois votre taille", "${"%.1f".format(Lingue.locale, lunghezza)} veces tu altura")
     }
-    return tr("Alle ${oraDueCifre(ora)} sole a ${altezzaSole.roundToInt()}°, l'ombra è $quanto.", "At ${oraDueCifre(ora)} the sun is at ${altezzaSole.roundToInt()}°, your shadow is $quanto.")
+    return tr("Alle ${oraDueCifre(ora)} sole a ${altezzaSole.roundToInt()}°, l'ombra è $quanto.", "At ${oraDueCifre(ora)} the sun is at ${altezzaSole.roundToInt()}°, your shadow is $quanto.", "Um ${oraDueCifre(ora)} steht die Sonne auf ${altezzaSole.roundToInt()}°, dein Schatten ist $quanto.", "À ${oraDueCifre(ora)} le soleil est à ${altezzaSole.roundToInt()}°, votre ombre est $quanto.", "A las ${oraDueCifre(ora)} el sol está a ${altezzaSole.roundToInt()}°, tu sombra es $quanto.")
 }
 
 /**
@@ -499,12 +507,12 @@ private val SPAZIO_COLONNE = 4.dp
 
 /** I nomi della scala mondiale: gli stessi cinque gradini di ogni bollettino. */
 private fun nomeUv(valore: Double): String = when {
-    valore >= 11 -> tr("Estremo", "Extreme")
-    valore >= 8 -> tr("Molto alto", "Very high")
-    valore >= 6 -> tr("Alto", "High")
-    valore >= 3 -> tr("Moderato", "Moderate")
-    valore > 0.2 -> tr("Basso", "Low")
-    else -> tr("Assente", "None")
+    valore >= 11 -> tr("Estremo", "Extreme", "Extrem", "Extrême", "Extremo")
+    valore >= 8 -> tr("Molto alto", "Very high", "Sehr hoch", "Très élevé", "Muy alto")
+    valore >= 6 -> tr("Alto", "High", "Hoch", "Élevé", "Alto")
+    valore >= 3 -> tr("Moderato", "Moderate", "Mäßig", "Modéré", "Moderado")
+    valore > 0.2 -> tr("Basso", "Low", "Niedrig", "Faible", "Bajo")
+    else -> tr("Assente", "None", "Keine", "Nul", "Nulo")
 }
 
 private fun coloreUv(valore: Double, palette: SalaPalette): Color = when {
@@ -523,14 +531,14 @@ private fun coloreUv(valore: Double, palette: SalaPalette): Color = when {
  * come tale - non un timer.
  */
 private fun esposizione(valore: Double): String = when {
-    valore <= 0.2 -> tr("libera", "unlimited")
+    valore <= 0.2 -> tr("libera", "unlimited", "unbegrenzt", "illimitée", "sin límite")
     else -> "~${(200.0 / valore).roundToInt().coerceAtMost(240)} min"
 }
 
 private fun consiglio(valore: Double): String = when {
-    valore >= 8 -> tr("Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'è.", "Very high index: around midday you need a hat, sunglasses, high-factor sunscreen and shade when there is any.")
-    valore >= 6 -> tr("Serve protezione: crema ad alto fattore e pause all'ombra nelle ore centrali.", "Protection needed: high-factor sunscreen and breaks in the shade around midday.")
-    valore >= 3 -> tr("Protezione consigliata se si resta fuori a lungo, soprattutto in quota o sull'acqua.", "Protection advised if you stay out long, especially at altitude or on the water.")
-    valore > 0.2 -> tr("L'esposizione è sicura per tempi lunghi: nessuna protezione necessaria.", "Exposure is safe for long periods: no protection needed.")
-    else -> tr("Sole sotto l'orizzonte: nessuna radiazione ultravioletta.", "Sun below the horizon: no ultraviolet radiation.")
+    valore >= 8 -> tr("Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'è.", "Very high index: around midday you need a hat, sunglasses, high-factor sunscreen and shade when there is any.", "Sehr hoher Index: In den Mittagsstunden braucht es Hut, Sonnenbrille, Sonnencreme mit hohem Schutzfaktor und Schatten, wo es welchen gibt.", "Indice très élevé : en milieu de journée, il faut chapeau, lunettes, crème à indice élevé, et de l'ombre quand il y en a.", "Índice muy alto: en las horas centrales hacen falta sombrero, gafas y crema de alto factor, y sombra cuando la haya.")
+    valore >= 6 -> tr("Serve protezione: crema ad alto fattore e pause all'ombra nelle ore centrali.", "Protection needed: high-factor sunscreen and breaks in the shade around midday.", "Schutz nötig: Sonnencreme mit hohem Schutzfaktor und Pausen im Schatten in den Mittagsstunden.", "Protection nécessaire : crème à indice élevé et pauses à l'ombre en milieu de journée.", "Hace falta protección: crema de alto factor y pausas a la sombra en las horas centrales.")
+    valore >= 3 -> tr("Protezione consigliata se si resta fuori a lungo, soprattutto in quota o sull'acqua.", "Protection advised if you stay out long, especially at altitude or on the water.", "Schutz empfohlen, wenn man lange draußen bleibt, besonders in der Höhe oder auf dem Wasser.", "Protection conseillée si l'on reste longtemps dehors, surtout en altitude ou sur l'eau.", "Protección recomendada si se está mucho tiempo fuera, sobre todo en altura o en el agua.")
+    valore > 0.2 -> tr("L'esposizione è sicura per tempi lunghi: nessuna protezione necessaria.", "Exposure is safe for long periods: no protection needed.", "Der Aufenthalt in der Sonne ist auch länger unbedenklich: kein Schutz nötig.", "L'exposition est sans danger pendant de longues durées : aucune protection nécessaire.", "La exposición es segura durante mucho tiempo: no hace falta protección.")
+    else -> tr("Sole sotto l'orizzonte: nessuna radiazione ultravioletta.", "Sun below the horizon: no ultraviolet radiation.", "Sonne unter dem Horizont: keine ultraviolette Strahlung.", "Soleil sous l'horizon : aucun rayonnement ultraviolet.", "Sol bajo el horizonte: sin radiación ultravioleta.")
 }

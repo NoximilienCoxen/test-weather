@@ -292,9 +292,30 @@ fun SalaShell(
     // fianco, i sette trattini, il collegamento di Sala I e i sei riquadri di
     // Sala II, e quattro copie della stessa riga divergono alla prima che
     // qualcuno tara.
-    fun vaiA(sala: SalaRoom) {
+    //
+    // **Chi comanda una sala lo dice anche alla rete.** La rete qui sopra
+    // rimette il carosello su una sala quando lo trova fermo a mezz'aria, e la
+    // sala la chiede a `metaDelGesto`, cioe' all'ultimo gesto del dito. Ma un
+    // tocco su un riquadro della settimana e' anch'esso un gesto - fermo, sulla
+    // sala di partenza - e lo stesso tocco cambia l'ora: sulla barra compare
+    // "torna all'ora attuale", la barra si alza, il carosello si accorcia e si
+    // ritrova di qualche pixel fuori posto. La rete lo vedeva a mezz'aria e lo
+    // riportava **alla sala del tocco**: si arrivava alla pioggia e, un
+    // attimo dopo, si tornava da soli alla settimana (video dell'11 novembre
+    // 2026). Adesso il comando riscrive la partenza: per la rete l'ultima
+    // richiesta e' questa.
+    fun metaDaComando(pagina: Int) {
         metaVoluta = null
-        scope.launch { pagerState.animateScrollToPage(rooms.indexOf(sala)) }
+        paginaAlTocco = pagina
+        posizioneAlTocco = pagina.toFloat()
+        corsaDelDito = 0f
+        lancioDelDito = false
+    }
+
+    fun vaiA(sala: SalaRoom) {
+        val pagina = rooms.indexOf(sala)
+        metaDaComando(pagina)
+        scope.launch { pagerState.animateScrollToPage(pagina) }
     }
 
     // **Il gemello senza molla, per il dito che trascina la colonna.**
@@ -305,15 +326,29 @@ fun SalaShell(
     // attraversata vorrebbe dire che il carosello insegue il dito con mezzo
     // secondo di ritardo e arriva dove era, non dov'e'.
     fun portaA(sala: SalaRoom) {
-        metaVoluta = null
-        scope.launch { pagerState.scrollToPage(rooms.indexOf(sala)) }
+        val pagina = rooms.indexOf(sala)
+        metaDaComando(pagina)
+        scope.launch { pagerState.scrollToPage(pagina) }
     }
 
     // Il tasto indietro torna alla prima sala prima di chiudere l'app: da sei
     // stanze sotto, uscire non e' quasi mai la risposta cercata.
     BackHandler(enabled = pagerState.currentPage != 0) {
-        metaVoluta = null
+        metaDaComando(0)
         scope.launch { pagerState.animateScrollToPage(0) }
+    }
+
+    // E quando il carosello si posa senza un dito sopra, la partenza e' dove
+    // si e' posato: un cambio di misura piu' tardi - una pastiglia che compare,
+    // la barra che cambia altezza - non deve far rileggere un gesto vecchio.
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.settledPage }.collect { pagina ->
+            if (!ditoSulCarosello && metaVoluta == null) {
+                paginaAlTocco = pagina
+                posizioneAlTocco = pagina.toFloat()
+                corsaDelDito = 0f
+            }
+        }
     }
 
     // **L'ora del giorno scelto, non l'ora di oggi.** Toccando una colonna
@@ -477,8 +512,8 @@ fun SalaShell(
         // ritorno al presente.** "giovedì 18 set" accanto a "13:00" spingeva
         // l'ora contro la pillola sugli schermi stretti; "gio 18" no.
         when {
-            scelto == null -> tr("oggi", "today")
-            scelto.indice == 0 -> tr("oggi", "today")
+            scelto == null -> tr("oggi", "today", "heute", "aujourd'hui", "hoy")
+            scelto.indice == 0 -> tr("oggi", "today", "heute", "aujourd'hui", "hoy")
             else -> "${scelto.breve} ${scelto.giornoDelMese}"
         }
     }
@@ -516,7 +551,12 @@ fun SalaShell(
         !state.legaliOpen && !state.bollettinoAperto
     val guida = state.guidaAperta || guidaDaSola
 
-    CompositionLocalProvider(LocalDidascalie provides state.captionStyle) {
+    CompositionLocalProvider(
+        LocalDidascalie provides state.captionStyle,
+        // Un interruttore solo per tutto cio' che si muove nelle schede e nei
+        // pannelli: vedi `SalaMovimento.kt`.
+        LocalMovimento provides !ferme,
+    ) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
                 palette = palette,
@@ -573,11 +613,20 @@ fun SalaShell(
                 // Fontevivo a chi l'app l'ha impostata su Noceto, senza
                 // spiegare perche'. L'indietro torna a casa anche lui; le
                 // impostazioni e le localita', composte dopo, lo precedono.
+                //
+                // Le due pastiglie qui sotto **aprono il proprio spazio**
+                // comparendo, invece di spingere di colpo la scheda in giu'.
+                // L'ultima casa vista resta ricordata perche' la pastiglia
+                // abbia ancora un nome da scrivere mentre se ne va.
                 val casa = state.casa
-                if (casa != null) {
-                    BackHandler(onBack = viewModel::lasciaVisita)
+                // Un ricordo e non uno stato: scriverlo non deve ricomporre.
+                val ultimaCasa = remember { arrayOfNulls<com.caelumweather.data.Place>(1) }
+                if (casa != null) ultimaCasa[0] = casa
+                if (casa != null) BackHandler(onBack = viewModel::lasciaVisita)
+                ComparsaMorbida(visibile = casa != null) {
+                    val nome = (casa ?: ultimaCasa[0])?.name.orEmpty()
                     PastigliaAccento(
-                        testo = tr("DAL WIDGET · TORNA A ${casa.name.uppercase()}", "FROM THE WIDGET · BACK TO ${casa.name.uppercase()}"),
+                        testo = tr("DAL WIDGET · TORNA A ${nome.uppercase()}", "FROM THE WIDGET · BACK TO ${nome.uppercase()}", "VOM WIDGET · ZURÜCK ZU ${nome.uppercase()}", "DEPUIS LE WIDGET · RETOUR À ${nome.uppercase()}", "DESDE EL WIDGET · VOLVER A ${nome.uppercase()}"),
                         palette = palette,
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
@@ -590,14 +639,14 @@ fun SalaShell(
                 // senza rete l'app mostra l'ultima previsione rimasta su disco;
                 // e' meglio dei trattini solo finche' non passa per quella di
                 // adesso. Toccata, riprova.
-                if (state.previsioneVecchia) {
+                ComparsaMorbida(visibile = state.previsioneVecchia) {
                     PastigliaAccento(
                         testo = etichettaDatiVecchi(state.fetchedAt, senzaRete = state.error != null),
                         palette = palette,
                         modifier = Modifier
                             .padding(start = 22.dp, top = 8.dp)
                             .clip(CircleShape)
-                            .clickable(onClickLabel = tr("riprova ad aggiornare", "try updating again"), onClick = viewModel::aggiornaAMano),
+                            .clickable(onClickLabel = tr("riprova ad aggiornare", "try updating again", "erneut aktualisieren", "réessayer d'actualiser", "volver a intentar actualizar"), onClick = viewModel::aggiornaAMano),
                     )
                 }
 
@@ -726,6 +775,14 @@ fun SalaShell(
                         // di lui: su una scheda lunga il dito la porta in fondo, e
                         // solo li' cambia sala. Vedi la nota sul carosello.
                         val scorrimento = key(page) { rememberScrollState() }
+                        //
+                        // **Lo scarto dal centro, per i pezzi della scheda**: lo
+                        // legge `ColonnaInRitardo` mentre posa i figli. Zero con
+                        // le animazioni ferme, e il carosello resta nudo.
+                        val scartoDellaScheda = remember(page, ferme) {
+                            { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
+                        }
+                        CompositionLocalProvider(LocalScartoSala provides scartoDellaScheda) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -791,6 +848,7 @@ fun SalaShell(
                                     null -> Unit
                                 }
                             }
+                        }
                         }
                     }
                 }
@@ -913,6 +971,8 @@ fun SalaShell(
                         onToggleNotificheAllerte = viewModel::setNotificheAllerte,
                         onToggleRiepilogo = viewModel::setRiepilogoMattino,
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
+                        onToggleSoglia = viewModel::setSoglia,
+                        onChooseSoglia = viewModel::setValoreSoglia,
                         onChooseTheme = viewModel::setCardTheme,
                         onChooseUnit = viewModel::setUnit,
                         onChooseWindUnit = viewModel::setWindUnit,
@@ -1073,14 +1133,14 @@ fun SalaShell(
  * mentre i tentativi girano ancora, si dice solo di quando sono.
  */
 private fun etichettaDatiVecchi(quando: LocalDateTime?, senzaRete: Boolean): String {
-    val prima = if (senzaRete) tr("SENZA RETE · ", "OFFLINE · ") else ""
-    if (quando == null) return prima + tr("DATI NON AGGIORNATI", "DATA NOT UPDATED")
+    val prima = if (senzaRete) tr("SENZA RETE · ", "OFFLINE · ", "OFFLINE · ", "HORS LIGNE · ", "SIN RED · ") else ""
+    if (quando == null) return prima + tr("DATI NON AGGIORNATI", "DATA NOT UPDATED", "DATEN NICHT AKTUALISIERT", "DONNÉES NON ACTUALISÉES", "DATOS SIN ACTUALIZAR")
     val ora = oraMinuto(quando)
     val oggi = LocalDate.now()
     val dati = when (quando.toLocalDate()) {
-        oggi -> tr("DATI DELLE $ora", "DATA FROM $ora")
-        oggi.minusDays(1) -> tr("DATI DI IERI $ora", "DATA FROM YESTERDAY $ora")
-        else -> tr("DATI DEL ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATA FROM ${quando.dayOfMonth}/${quando.monthValue} $ora")
+        oggi -> tr("DATI DELLE $ora", "DATA FROM $ora", "DATEN VON $ora", "DONNÉES DE $ora", "DATOS DE LAS $ora")
+        oggi.minusDays(1) -> tr("DATI DI IERI $ora", "DATA FROM YESTERDAY $ora", "DATEN VON GESTERN $ora", "DONNÉES D'HIER $ora", "DATOS DE AYER $ora")
+        else -> tr("DATI DEL ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATA FROM ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATEN VOM ${quando.dayOfMonth}.${quando.monthValue}. $ora", "DONNÉES DU ${quando.dayOfMonth}/${quando.monthValue} $ora", "DATOS DEL ${quando.dayOfMonth}/${quando.monthValue} $ora")
     }
     return prima + dati
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    I nomi che il sistema legge da solo, in francese: vedi `values-en/strings.xml`.
+    Il resto dei testi sta nel codice, con tr() (CONTESTO §62).
+-->
+<resources>
+    <string name="widget_weather_label">Météo actuelle</string>
+    <string name="widget_moon_label">Lune</string>
+    <string name="widget_air_label">Qualité de l\'air</string>
+    <string name="widget_week_label">Semaine</string>
+    <string name="widget_mini_label">Température</string>
+    <string name="widget_hours_label">Prochaines heures</string>
+
+    <string name="scorciatoia_pioggia">Pluie</string>
+    <string name="scorciatoia_pioggia_lunga">Quand il pleut</string>
+    <string name="scorciatoia_settimana">Semaine</string>
+    <string name="scorciatoia_settimana_lunga">La semaine</string>
+    <string name="scorciatoia_localita">Lieux</string>
+    <string name="scorciatoia_localita_lunga">Changer de lieu</string>
+
+    <string name="riquadro_meteo">Météo</string>
+</resources>

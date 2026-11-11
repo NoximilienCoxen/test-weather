@@ -1,5 +1,6 @@
 package com.caelumweather.data
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -120,7 +121,7 @@ internal data class EcccAllerta(
             id = listOfNotNull(alert_code, feature_id, event_end_datetime).joinToString("|"),
             level = level,
             kind = tipo,
-            headline = "${level.label}: ${tipo.label.lowercase()}",
+            headline = "${level.label}: ${tipo.label.inMezzoAllaFrase()}",
             // Il nome di ECCC in testa, come per il NWS: e' cio' che si
             // ritrova sui canali ufficiali.
             description = listOfNotNull(nome.takeIf { it.isNotBlank() }, alert_text_en?.takeIf { it.isNotBlank() })

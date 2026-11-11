@@ -20,8 +20,8 @@ internal fun ventoRispettoASguardo(provenienza: Float, direzioneSguardo: Float):
 
 /** Lo scarto di [ventoRispettoASguardo], detto a parole. */
 internal fun latoDelVento(scarto: Float): String = when {
-    kotlin.math.abs(scarto) <= 45f -> tr("ti arriva in faccia", "it hits you in the face")
-    kotlin.math.abs(scarto) >= 135f -> tr("ti arriva alle spalle", "it comes from behind you")
-    scarto < 0f -> tr("ti arriva da sinistra", "it comes from your left")
-    else -> tr("ti arriva da destra", "it comes from your right")
+    kotlin.math.abs(scarto) <= 45f -> tr("ti arriva in faccia", "it hits you in the face", "er bläst dir ins Gesicht", "il vous arrive de face", "te da de cara")
+    kotlin.math.abs(scarto) >= 135f -> tr("ti arriva alle spalle", "it comes from behind you", "er kommt von hinten", "il vous arrive dans le dos", "te llega por la espalda")
+    scarto < 0f -> tr("ti arriva da sinistra", "it comes from your left", "er kommt von links", "il vient de votre gauche", "te llega por la izquierda")
+    else -> tr("ti arriva da destra", "it comes from your right", "er kommt von rechts", "il vient de votre droite", "te llega por la derecha")
 }

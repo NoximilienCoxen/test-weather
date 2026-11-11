@@ -1,5 +1,6 @@
 package com.caelumweather.data
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -116,7 +117,7 @@ internal data class NwsAllerta(
             id = id ?: "$event|$ends|$expires",
             level = level,
             kind = tipo,
-            headline = "${level.label}: ${tipo.label.lowercase()}",
+            headline = "${level.label}: ${tipo.label.inMezzoAllaFrase()}",
             // Il nome del NWS in testa: "Extreme Heat Warning" e' cio' che chi
             // legge ritrova sui canali ufficiali, e il colore e' una traduzione.
             description = listOfNotNull(event, description?.takeIf { it.isNotBlank() })

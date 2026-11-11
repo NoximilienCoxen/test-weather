@@ -1,6 +1,7 @@
 package com.caelumweather.data
 
-import com.caelumweather.lingua.inInglese
+import com.caelumweather.lingua.inMezzoAllaFrase
+import com.caelumweather.lingua.Lingue
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -157,7 +158,7 @@ internal object IfrcAlerts {
         senzaPoligonoVale: Boolean = true,
     ): List<WeatherAlert> {
         val voci = json.decodeFromString(IfrcRisposta.serializer(), body).data?.public?.alerts?.items.orEmpty()
-        val lingua = if (inInglese()) "en" else "it"
+        val lingua = Lingue.corrente.codice
         return voci
             .filter { it.status.equals("ACTUAL", ignoreCase = true) && !it.msgType.equals("CANCEL", ignoreCase = true) }
             .flatMap { voce -> voce.infos.map { voce to it } }
@@ -234,7 +235,7 @@ internal data class IfrcInfo(
             id = "ifrc|${voce.id}",
             level = level,
             kind = tipo,
-            headline = "${level.label}: ${tipo.label.lowercase()}",
+            headline = "${level.label}: ${tipo.label.inMezzoAllaFrase()}",
             // Il nome dell'evento come lo scrive l'ente, in testa.
             description = listOfNotNull(event, description?.takeIf { it.isNotBlank() && it != event })
                 .joinToString("\n\n"),

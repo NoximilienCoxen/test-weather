@@ -53,4 +53,4 @@ internal fun DrawScope.setupArt(title: String, type: WidgetType, ink: WidgetInk)
     }
 }
 
-private val INVITO: String get() = tr("TOCCA PER SCEGLIERE LA CITTÀ", "TAP TO CHOOSE THE CITY")
+private val INVITO: String get() = tr("TOCCA PER SCEGLIERE LA CITTÀ", "TAP TO CHOOSE THE CITY", "TIPPEN, UM DIE STADT ZU WÄHLEN", "TOUCHEZ POUR CHOISIR LA VILLE", "TOCA PARA ELEGIR LA CIUDAD")

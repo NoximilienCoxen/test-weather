@@ -186,7 +186,7 @@ class TileCaelum : TileService() {
     }
 
     private fun senzaDati(cielo: CieloOrologio): LayoutElement =
-        testo(tr("Nessun dato. Tocca per riprovare.", "No data. Tap to retry."), 14f, cielo.ink, righe = 2)
+        testo(tr("Nessun dato. Tocca per riprovare.", "No data. Tap to retry.", "Keine Daten. Tippe, um es erneut zu versuchen.", "Aucune donnée. Touchez pour réessayer.", "Sin datos. Toca para reintentar."), 14f, cielo.ink, righe = 2)
 
     private fun testo(s: String, punti: Float, colore: Color, grassetto: Boolean = false, righe: Int = 1): LayoutElement =
         Text.Builder()

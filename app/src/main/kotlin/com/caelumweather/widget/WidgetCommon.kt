@@ -1,5 +1,6 @@
 package com.caelumweather.widget
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver.PendingResult
@@ -190,10 +191,9 @@ internal suspend fun appWidgetIdOf(context: Context, glanceId: GlanceId): Int =
  * distinguere tanti widget sarebbero tante volte lo stesso codice.
  */
 enum class WidgetKind(
-    private val labelIt: String,
-    private val labelEn: String,
-    private val shortIt: String,
-    private val shortEn: String,
+    // Nell'ordine di sempre: italiano, inglese, tedesco, francese, spagnolo.
+    private val nomi: List<String>,
+    private val brevi: List<String>,
     /** Se ha bisogno di sapere dove si trova chi lo guarda. */
     val needsPlace: Boolean,
     /** Il ricevitore che il sistema sveglia per questo widget. */
@@ -202,27 +202,27 @@ enum class WidgetKind(
     /** La sala che il tocco apre. */
     val sala: SalaRoom,
 ) {
-    METEO("METEO", "WEATHER", "METEO", "WEATHER", true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
+    METEO(listOf("METEO", "WEATHER", "WETTER", "MÉTÉO", "TIEMPO"), listOf("METEO", "WEATHER", "WETTER", "MÉTÉO", "TIEMPO"), true, WeatherWidgetReceiver::class.java, ::WeatherWidget, SalaRoom.OGGI),
 
     // La luna e' la stessa da qualunque parte la si guardi: chiederle una
     // citta' sarebbe una domanda senza conseguenze.
-    LUNA("LUNA", "MOON", "LUNA", "MOON", false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
+    LUNA(listOf("LUNA", "MOON", "MOND", "LUNE", "LUNA"), listOf("LUNA", "MOON", "MOND", "LUNE", "LUNA"), false, MoonWidgetReceiver::class.java, ::MoonWidget, SalaRoom.LUNA),
 
-    ARIA("QUALITÀ DELL'ARIA", "AIR QUALITY", "ARIA", "AIR", true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
+    ARIA(listOf("QUALITÀ DELL'ARIA", "AIR QUALITY", "LUFTQUALITÄT", "QUALITÉ DE L'AIR", "CALIDAD DEL AIRE"), listOf("ARIA", "AIR", "LUFT", "AIR", "AIRE"), true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
-    SETTIMANA("SETTIMANA", "WEEK", "SETTIMANA", "WEEK", true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+    SETTIMANA(listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
 
     // Una cella: niente nome, solo tempo e temperatura.
-    MINI("TEMPERATURA", "TEMPERATURE", "MINI", "MINI", true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
+    MINI(listOf("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), listOf("MINI", "MINI", "MINI", "MINI", "MINI"), true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
 
-    ORE("PROSSIME ORE", "NEXT HOURS", "ORE", "HOURS", true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
+    ORE(listOf("PROSSIME ORE", "NEXT HOURS", "NÄCHSTE STUNDEN", "PROCHAINES HEURES", "PRÓXIMAS HORAS"), listOf("ORE", "HOURS", "STUNDEN", "HEURES", "HORAS"), true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
     ;
 
     /** Come si chiama per esteso, nella schermata di configurazione. */
-    val label: String get() = tr(labelIt, labelEn)
+    val label: String get() = tr(nomi[0], nomi[1], nomi[2], nomi[3], nomi[4])
 
     /** Come si chiama sul suo riquadro, dove lo spazio e' due celle. */
-    val shortLabel: String get() = tr(shortIt, shortEn)
+    val shortLabel: String get() = tr(brevi[0], brevi[1], brevi[2], brevi[3], brevi[4])
 
     fun widget(): GlanceAppWidget = make()
 
@@ -348,8 +348,11 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
                 WidgetCanvas.paint(frame, ink.background) { setupArt(kind.shortLabel, type, ink) }
             }
             val spoken = tr(
-                "Widget ${kind.label.lowercase()} da configurare. Tocca per scegliere la città.",
-                "${kind.label.lowercase().replaceFirstChar { it.uppercase() }} widget to set up. Tap to choose the city.",
+                "Widget ${kind.label.inMezzoAllaFrase()} da configurare. Tocca per scegliere la città.",
+                "${kind.label.inMezzoAllaFrase().replaceFirstChar { it.uppercase() }} widget to set up. Tap to choose the city.",
+                "Widget ${kind.label.inMezzoAllaFrase().replaceFirstChar { it.uppercase() }} noch einzurichten. Tippe, um die Stadt zu wählen.",
+                "Widget ${kind.label.inMezzoAllaFrase()} à configurer. Touchez pour choisir la ville.",
+                "Widget ${kind.label.inMezzoAllaFrase()} por configurar. Toca para elegir la ciudad.",
             )
             return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
         }

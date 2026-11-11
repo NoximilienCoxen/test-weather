@@ -60,13 +60,13 @@ fun settimanaDi(forecast: Forecast?): List<GiornoSettimana> {
             indice = i,
             // In inglese i giorni hanno la maiuscola: "Sun", non "sun".
             breve = if (i == 0) {
-                tr("oggi", "Today")
+                tr("oggi", "Today", "Heute", "Aujourd'hui", "Hoy")
             } else if (inInglese()) {
                 giorno.label.lowercase().replaceFirstChar { it.uppercase() }
             } else {
                 giorno.label.lowercase()
             },
-            esteso = if (i == 0) tr("oggi", "Today") else giorno.date.dayOfWeek.italiano(),
+            esteso = if (i == 0) tr("oggi", "Today", "Heute", "Aujourd'hui", "Hoy") else giorno.date.dayOfWeek.italiano(),
             data = "${giorno.date.dayOfMonth} ${giorno.date.monthValue.meseBreve()}",
             giornoDelMese = giorno.date.dayOfMonth,
             max = giorno.tempMax,
@@ -104,33 +104,33 @@ internal fun UiState.diGiorno(data: java.time.LocalDate): String {
     val oggi = forecast?.nowThere()?.toLocalDate() ?: java.time.LocalDate.now()
     return when (data) {
         // In inglese senza la preposizione: "06:00 today", "06:00 on Friday".
-        oggi -> tr("di oggi", "today")
-        oggi.plusDays(1) -> tr("di domani", "tomorrow")
-        else -> tr("di ${data.dayOfWeek.italiano()}", "on ${data.dayOfWeek.italiano()}")
+        oggi -> tr("di oggi", "today", "heute", "aujourd'hui", "de hoy")
+        oggi.plusDays(1) -> tr("di domani", "tomorrow", "morgen", "demain", "de mañana")
+        else -> tr("di ${data.dayOfWeek.italiano()}", "on ${data.dayOfWeek.italiano()}", "am ${data.dayOfWeek.italiano()}", "${data.dayOfWeek.italiano()}", "del ${data.dayOfWeek.italiano()}")
     }
 }
 
 internal fun DayOfWeek.italiano(): String = when (this) {
-    DayOfWeek.MONDAY -> tr("lunedì", "Monday")
-    DayOfWeek.TUESDAY -> tr("martedì", "Tuesday")
-    DayOfWeek.WEDNESDAY -> tr("mercoledì", "Wednesday")
-    DayOfWeek.THURSDAY -> tr("giovedì", "Thursday")
-    DayOfWeek.FRIDAY -> tr("venerdì", "Friday")
-    DayOfWeek.SATURDAY -> tr("sabato", "Saturday")
-    DayOfWeek.SUNDAY -> tr("domenica", "Sunday")
+    DayOfWeek.MONDAY -> tr("lunedì", "Monday", "Montag", "lundi", "lunes")
+    DayOfWeek.TUESDAY -> tr("martedì", "Tuesday", "Dienstag", "mardi", "martes")
+    DayOfWeek.WEDNESDAY -> tr("mercoledì", "Wednesday", "Mittwoch", "mercredi", "miércoles")
+    DayOfWeek.THURSDAY -> tr("giovedì", "Thursday", "Donnerstag", "jeudi", "jueves")
+    DayOfWeek.FRIDAY -> tr("venerdì", "Friday", "Freitag", "vendredi", "viernes")
+    DayOfWeek.SATURDAY -> tr("sabato", "Saturday", "Samstag", "samedi", "sábado")
+    DayOfWeek.SUNDAY -> tr("domenica", "Sunday", "Sonntag", "dimanche", "domingo")
 }
 
 private fun Int.meseBreve(): String = when (this) {
-    1 -> tr("gen", "Jan")
-    2 -> tr("feb", "Feb")
-    3 -> tr("mar", "Mar")
-    4 -> tr("apr", "Apr")
-    5 -> tr("mag", "May")
-    6 -> tr("giu", "Jun")
-    7 -> tr("lug", "Jul")
-    8 -> tr("ago", "Aug")
-    9 -> tr("set", "Sep")
-    10 -> tr("ott", "Oct")
-    11 -> tr("nov", "Nov")
-    else -> tr("dic", "Dec")
+    1 -> tr("gen", "Jan", "Jan.", "janv.", "ene")
+    2 -> tr("feb", "Feb", "Feb.", "févr.", "feb")
+    3 -> tr("mar", "Mar", "März", "mars", "mar")
+    4 -> tr("apr", "Apr", "Apr.", "avr.", "abr")
+    5 -> tr("mag", "May", "Mai", "mai", "may")
+    6 -> tr("giu", "Jun", "Juni", "juin", "jun")
+    7 -> tr("lug", "Jul", "Juli", "juil.", "jul")
+    8 -> tr("ago", "Aug", "Aug.", "août", "ago")
+    9 -> tr("set", "Sep", "Sep.", "sept.", "sep")
+    10 -> tr("ott", "Oct", "Okt.", "oct.", "oct")
+    11 -> tr("nov", "Nov", "Nov.", "nov.", "nov")
+    else -> tr("dic", "Dec", "Dez.", "déc.", "dic")
 }

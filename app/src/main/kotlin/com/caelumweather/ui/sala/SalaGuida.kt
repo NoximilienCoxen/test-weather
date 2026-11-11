@@ -164,7 +164,7 @@ internal fun GuidaSala(
                 .semantics { liveRegion = LiveRegionMode.Polite },
         ) {
             Text(
-                text = tr("${indice + 1} DI ${validi.size}", "${indice + 1} OF ${validi.size}"),
+                text = tr("${indice + 1} DI ${validi.size}", "${indice + 1} OF ${validi.size}", "${indice + 1} VON ${validi.size}", "${indice + 1} SUR ${validi.size}", "${indice + 1} DE ${validi.size}"),
                 style = SalaType.sectionLabel,
                 color = palette.accent,
             )
@@ -189,7 +189,7 @@ internal fun GuidaSala(
                 Spacer(modifier = Modifier.weight(1f))
                 if (!ultimo) {
                     Text(
-                        text = tr("Salta", "Skip"),
+                        text = tr("Salta", "Skip", "Überspringen", "Passer", "Saltar"),
                         style = SalaType.rowTitle,
                         color = palette.inkSoft,
                         modifier = Modifier
@@ -199,7 +199,7 @@ internal fun GuidaSala(
                     )
                 }
                 Text(
-                    text = if (ultimo) tr("Ho capito", "Got it") else tr("Avanti", "Next"),
+                    text = if (ultimo) tr("Ho capito", "Got it", "Verstanden", "Compris", "Entendido") else tr("Avanti", "Next", "Weiter", "Suivant", "Siguiente"),
                     style = SalaType.rowTitle,
                     color = palette.accentInk,
                     modifier = Modifier
@@ -237,7 +237,7 @@ internal fun passiGuida(
     barra: Rect?,
 ): List<PassoGuida> = listOf(
     PassoGuida(
-        titolo = tr("Le schermate", "The screens"),
+        titolo = tr("Le schermate", "The screens", "Die Bildschirme", "Les écrans", "Las pantallas"),
         testo = tr(
             "Scorri in su o in giù sulla scheda per passare da una schermata all'altra: " +
                 "oggi, la settimana, la pioggia, la luna, l'aria, il vento e i raggi UV. " +
@@ -245,31 +245,40 @@ internal fun passiGuida(
             "Swipe up or down on the card to move from one screen to the next: " +
                 "today, the week, rain, the moon, air, wind and UV rays. " +
                 "A light flick is enough.",
+            "Wische auf der Karte nach oben oder unten, um von einem Bildschirm zum nächsten zu wechseln: heute, die Woche, Regen, der Mond, die Luft, der Wind und die UV-Strahlung. Ein leichter Wisch genügt.",
+            "Balayez la carte vers le haut ou vers le bas pour passer d'un écran à l'autre : aujourd'hui, la semaine, la pluie, la lune, l'air, le vent et les rayons UV. Un petit geste suffit.",
+            "Desliza hacia arriba o hacia abajo sobre la tarjeta para pasar de una pantalla a otra: hoy, la semana, la lluvia, la luna, el aire, el viento y los rayos UV. Basta un toque ligero.",
         ),
         dove = scheda,
     ),
     PassoGuida(
-        titolo = tr("Dentro le schede", "Inside the cards"),
+        titolo = tr("Dentro le schede", "Inside the cards", "In den Karten", "Dans les cartes", "Dentro de las tarjetas"),
         testo = tr(
             "Le voci con › si aprono e portano alla loro schermata. " +
                 "Tocca un giorno per vedere quel giorno in tutte le schermate.",
             "Items marked › open and take you to their screen. " +
                 "Tap a day to see that day on every screen.",
+            "Einträge mit › öffnen sich und führen zu ihrem Bildschirm. Tippe auf einen Tag, um diesen Tag auf allen Bildschirmen zu sehen.",
+            "Les éléments marqués › s'ouvrent et mènent à leur écran. Touchez un jour pour voir ce jour sur tous les écrans.",
+            "Los elementos con › se abren y llevan a su pantalla. Toca un día para ver ese día en todas las pantallas.",
         ),
         dove = scheda,
     ),
     PassoGuida(
-        titolo = tr("La colonna delle icone", "The icon column"),
+        titolo = tr("La colonna delle icone", "The icon column", "Die Symbolspalte", "La colonne d'icônes", "La columna de iconos"),
         testo = tr(
             "Tocca un'icona per andare dritto a quella schermata, o fai scorrere il dito " +
                 "lungo la colonna. Dalle impostazioni puoi nasconderla e avere schede più larghe.",
             "Tap an icon to go straight to that screen, or slide your finger " +
                 "along the column. In settings you can hide it and get wider cards.",
+            "Tippe auf ein Symbol, um direkt zu diesem Bildschirm zu gehen, oder fahre mit dem Finger die Spalte entlang. In den Einstellungen kannst du sie ausblenden und breitere Karten bekommen.",
+            "Touchez une icône pour aller directement à cet écran, ou faites glisser le doigt le long de la colonne. Dans les réglages, vous pouvez la masquer et obtenir des cartes plus larges.",
+            "Toca un icono para ir directamente a esa pantalla, o desliza el dedo por la columna. En los ajustes puedes ocultarla y tener tarjetas más anchas.",
         ),
         dove = colonna,
     ),
     PassoGuida(
-        titolo = tr("Cambia ora", "Change the hour"),
+        titolo = tr("Cambia ora", "Change the hour", "Stunde ändern", "Changer l'heure", "Cambiar la hora"),
         testo = tr(
             "Trascina il cerchio lungo la barra: cielo, temperatura e numeri " +
                 "seguono l'ora scelta. Ogni tratto ha il colore del cielo di quell'ora. " +
@@ -277,26 +286,35 @@ internal fun passiGuida(
             "Drag the circle along the bar: sky, temperature and numbers " +
                 "follow the hour you pick. Each stretch has the colour of that hour's sky. " +
                 "To come back to now, tap \"Back to now\".",
+            "Ziehe den Kreis die Leiste entlang: Himmel, Temperatur und Zahlen folgen der gewählten Stunde. Jeder Abschnitt hat die Farbe des Himmels dieser Stunde. Um zu jetzt zurückzukehren, tippe auf «Zurück zu jetzt».",
+            "Faites glisser le cercle le long de la barre : le ciel, la température et les chiffres suivent l'heure choisie. Chaque segment a la couleur du ciel de cette heure. Pour revenir à maintenant, touchez « Retour à maintenant ».",
+            "Arrastra el círculo por la barra: el cielo, la temperatura y los números siguen la hora elegida. Cada tramo tiene el color del cielo de esa hora. Para volver a ahora, toca «Volver a ahora».",
         ),
         dove = barra,
     ),
     PassoGuida(
-        titolo = tr("Il cielo", "The sky"),
+        titolo = tr("Il cielo", "The sky", "Der Himmel", "Le ciel", "El cielo"),
         testo = tr(
             "Il disegno è il tempo dell'ora scelta: sole, nuvole, pioggia e luna " +
                 "seguono la previsione. Inclina il telefono o toccalo, e si muove.",
             "The picture is the weather of the chosen hour: sun, clouds, rain and moon " +
                 "follow the forecast. Tilt the phone or touch it, and it moves.",
+            "Das Bild ist das Wetter der gewählten Stunde: Sonne, Wolken, Regen und Mond folgen der Vorhersage. Neige das Telefon oder berühre es, und es bewegt sich.",
+            "Le dessin est le temps de l'heure choisie : soleil, nuages, pluie et lune suivent la prévision. Inclinez le téléphone ou touchez-le, et il bouge.",
+            "El dibujo es el tiempo de la hora elegida: sol, nubes, lluvia y luna siguen la previsión. Inclina el teléfono o tócalo, y se mueve.",
         ),
         dove = cielo,
     ),
     PassoGuida(
-        titolo = tr("Città e impostazioni", "City and settings"),
+        titolo = tr("Città e impostazioni", "City and settings", "Stadt und Einstellungen", "Ville et réglages", "Ciudad y ajustes"),
         testo = tr(
             "Tocca il nome della città per cambiarla o aggiungerne altre. " +
                 "L'icona a sinistra apre le impostazioni; a destra, gli avvisi del giorno.",
             "Tap the city name to change it or add others. " +
                 "The icon on the left opens settings; on the right, the day's warnings.",
+            "Tippe auf den Stadtnamen, um ihn zu ändern oder weitere hinzuzufügen. Das Symbol links öffnet die Einstellungen; rechts die Warnungen des Tages.",
+            "Touchez le nom de la ville pour en changer ou en ajouter d'autres. L'icône de gauche ouvre les réglages ; à droite, les alertes du jour.",
+            "Toca el nombre de la ciudad para cambiarla o añadir otras. El icono de la izquierda abre los ajustes; a la derecha, los avisos del día.",
         ),
         dove = intestazione,
     ),

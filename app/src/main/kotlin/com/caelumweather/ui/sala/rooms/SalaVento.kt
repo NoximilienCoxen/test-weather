@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import com.caelumweather.data.TendenzaPressione
@@ -30,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.caelumweather.data.Wmo
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.Didascalia
+import com.caelumweather.ui.sala.NumeroCheScorre
+import com.caelumweather.ui.sala.angoloCheGira
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
@@ -134,14 +138,16 @@ fun SalaVentoScreen(
                     .clip(CircleShape)
                     .background(palette.chip)
                     .semantics {
-                        contentDescription = tr("Rosa dei venti. ", "Wind rose. ") + (
-                            if (bussolaAccesa) tr("Segue la bussola del telefono.", "It follows the phone's compass.") else tr("Trascina per girarla.", "Drag to turn it.")
+                        contentDescription = tr("Rosa dei venti. ", "Wind rose. ", "Windrose. ", "Rose des vents. ", "Rosa de los vientos. ") + (
+                            if (bussolaAccesa) tr("Segue la bussola del telefono.", "It follows the phone's compass.", "Sie folgt dem Kompass des Telefons.", "Elle suit la boussole du téléphone.", "Sigue la brújula del teléfono.") else tr("Trascina per girarla.", "Drag to turn it.", "Ziehen, um sie zu drehen.", "Faites glisser pour la tourner.", "Arrastra para girarla.")
                             )
                     },
                 contentAlignment = Alignment.Center,
             ) {
                 listOf("N" to Alignment.TopCenter, "S" to Alignment.BottomCenter,
-                    tr("O", "W") to Alignment.CenterStart, "E" to Alignment.CenterEnd).forEach { (lettera, dove) ->
+                    tr("O", "W", "W", "O", "O") to Alignment.CenterStart,
+                    // In tedesco l'est e' la O di Ost: vedi `Wmo.windDirection`.
+                    tr("E", "E", "O", "E", "E") to Alignment.CenterEnd).forEach { (lettera, dove) ->
                     Text(
                         text = lettera,
                         style = SalaType.microLabel,
@@ -152,7 +158,9 @@ fun SalaVentoScreen(
                 Canvas(
                     modifier = Modifier
                         .size(ROSA)
-                        .rotate((direzione?.toFloat() ?: 0f) + 180f),
+                        // Cambiando ora la lancetta gira fin li', per la via
+                        // piu' corta, invece di saltarci.
+                        .rotate(angoloCheGira((direzione?.toFloat() ?: 0f) + 180f)),
                 ) {
                     // La lancetta parte dal centro e va verso l'alto; la
                     // rotazione la porta dove serve. Mezzo giro in piu' perche'
@@ -169,13 +177,15 @@ fun SalaVentoScreen(
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = tr("Il vento", "Wind"), style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("Il vento", "Wind", "Der Wind", "Le vent", "El viento"), style = SalaType.cardTitle, color = palette.ink)
                 Row(
                     modifier = Modifier.padding(top = 6.dp),
                     verticalAlignment = Alignment.Top,
                 ) {
-                    Text(
-                        text = velocita?.let { unita.from(it).roundToInt().toString() } ?: "--",
+                    val nodi = velocita?.let { unita.from(it).roundToInt() }
+                    NumeroCheScorre(
+                        testo = nodi?.toString() ?: "--",
+                        valore = nodi,
                         style = SalaType.numeroSala,
                         color = palette.ink,
                     )
@@ -212,7 +222,7 @@ fun SalaVentoScreen(
         )
 
         Text(
-            text = tr("LE PROSSIME SEI ORE", "THE NEXT SIX HOURS"),
+            text = tr("LE PROSSIME SEI ORE", "THE NEXT SIX HOURS", "DIE NÄCHSTEN SECHS STUNDEN", "LES SIX PROCHAINES HEURES", "LAS PRÓXIMAS SEIS HORAS"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(top = 18.dp, bottom = 10.dp),
@@ -245,7 +255,7 @@ fun SalaVentoScreen(
                     Box(
                         modifier = Modifier
                             .width(4.dp)
-                            .height((10f + quota * 36f).dp)
+                            .height(misuraCheArriva((10f + quota * 36f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (unita.from(ms) > 24) SalaTokens.accent500 else SalaTokens.verde400,
@@ -270,7 +280,7 @@ fun SalaVentoScreen(
         }
         if (pressione != null) {
             Text(
-                text = tr("LA PRESSIONE", "PRESSURE"),
+                text = tr("LA PRESSIONE", "PRESSURE", "LUFTDRUCK", "LA PRESSION", "LA PRESIÓN"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 18.dp, bottom = 6.dp),
@@ -289,15 +299,23 @@ fun SalaVentoScreen(
                 )
             }
         }
+
+        // ── Il mare ──────────────────────────────────────────────────────────
+        //
+        // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
+        // il resto della sala.
+        state.mareMostrato?.let { oraDiMare ->
+            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento)
+        }
     }
 }
 
 private fun nomeTendenza(t: TendenzaPressione): String = when (t) {
-    TendenzaPressione.SALE_IN_FRETTA -> tr("sale in fretta", "rising fast")
-    TendenzaPressione.SALE -> tr("in salita", "rising")
-    TendenzaPressione.STABILE -> tr("stabile", "steady")
-    TendenzaPressione.SCENDE -> tr("in calo", "falling")
-    TendenzaPressione.SCENDE_IN_FRETTA -> tr("cala in fretta", "falling fast")
+    TendenzaPressione.SALE_IN_FRETTA -> tr("sale in fretta", "rising fast", "steigt schnell", "monte vite", "sube deprisa")
+    TendenzaPressione.SALE -> tr("in salita", "rising", "steigend", "en hausse", "subiendo")
+    TendenzaPressione.STABILE -> tr("stabile", "steady", "stabil", "stable", "estable")
+    TendenzaPressione.SCENDE -> tr("in calo", "falling", "fallend", "en baisse", "bajando")
+    TendenzaPressione.SCENDE_IN_FRETTA -> tr("cala in fretta", "falling fast", "fällt schnell", "baisse vite", "baja deprisa")
 }
 
 /**
@@ -308,17 +326,17 @@ private fun notaPressione(t: TendenzaPressione?, scarto: Double, inAvanti: Boole
     val quanto = String.format(Lingue.locale, "%+.1f", scarto)
     val senso = when (t) {
         TendenzaPressione.SCENDE_IN_FRETTA ->
-            tr("Di solito annuncia vento in rinforzo o un peggioramento.", "Usually a sign of rising wind or worsening weather.")
-        TendenzaPressione.SCENDE -> tr("Il tempo tende a farsi più incerto.", "The weather tends to turn less settled.")
-        TendenzaPressione.SALE -> tr("Il tempo tende a stabilizzarsi.", "The weather tends to settle.")
+            tr("Di solito annuncia vento in rinforzo o un peggioramento.", "Usually a sign of rising wind or worsening weather.", "Meist ein Zeichen für auffrischenden Wind oder eine Verschlechterung.", "Annonce en général un renforcement du vent ou une dégradation.", "Suele anunciar viento en aumento o un empeoramiento.")
+        TendenzaPressione.SCENDE -> tr("Il tempo tende a farsi più incerto.", "The weather tends to turn less settled.", "Das Wetter wird tendenziell unbeständiger.", "Le temps tend à devenir plus incertain.", "El tiempo tiende a volverse más inestable.")
+        TendenzaPressione.SALE -> tr("Il tempo tende a stabilizzarsi.", "The weather tends to settle.", "Das Wetter beruhigt sich tendenziell.", "Le temps tend à se stabiliser.", "El tiempo tiende a estabilizarse.")
         TendenzaPressione.SALE_IN_FRETTA ->
-            tr("Si rasserena, ma spesso con vento teso per qualche ora.", "Clearing, often with a brisk wind for a few hours.")
-        TendenzaPressione.STABILE, null -> tr("Nessun cambio in vista dal barometro.", "No change in sight from the barometer.")
+            tr("Si rasserena, ma spesso con vento teso per qualche ora.", "Clearing, often with a brisk wind for a few hours.", "Es klart auf, oft aber mit frischem Wind für einige Stunden.", "Le ciel se dégage, mais souvent avec un vent soutenu pendant quelques heures.", "Despeja, pero a menudo con viento vivo durante unas horas.")
+        TendenzaPressione.STABILE, null -> tr("Nessun cambio in vista dal barometro.", "No change in sight from the barometer.", "Vom Barometer her keine Änderung in Sicht.", "Aucun changement en vue d'après le baromètre.", "Ningún cambio a la vista según el barómetro.")
     }
     val quando = if (inAvanti) {
-        tr("$quanto hPa nelle prossime tre ore. ", "$quanto hPa over the next three hours. ")
+        tr("$quanto hPa nelle prossime tre ore. ", "$quanto hPa over the next three hours. ", "$quanto hPa in den nächsten drei Stunden. ", "$quanto hPa dans les trois prochaines heures. ", "$quanto hPa en las próximas tres horas. ")
     } else {
-        tr("$quanto hPa nelle ultime tre ore. ", "$quanto hPa over the last three hours. ")
+        tr("$quanto hPa nelle ultime tre ore. ", "$quanto hPa over the last three hours. ", "$quanto hPa in den letzten drei Stunden. ", "$quanto hPa au cours des trois dernières heures. ", "$quanto hPa en las últimas tres horas. ")
     }
     return quando + senso
 }
@@ -343,7 +361,7 @@ private fun RigaBussola(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (bussolaAccesa) tr("GUARDI VERSO ${Wmo.windDirection(sguardo.toDouble())}", "FACING ${Wmo.windDirection(sguardo.toDouble())}") else tr("GIRA LA ROSA COL DITO", "TURN THE ROSE WITH YOUR FINGER"),
+                text = if (bussolaAccesa) tr("GUARDI VERSO ${Wmo.windDirection(sguardo.toDouble())}", "FACING ${Wmo.windDirection(sguardo.toDouble())}", "BLICK NACH ${Wmo.windDirection(sguardo.toDouble())}", "VOUS REGARDEZ VERS ${Wmo.windDirection(sguardo.toDouble())}", "MIRAS HACIA ${Wmo.windDirection(sguardo.toDouble())}") else tr("GIRA LA ROSA COL DITO", "TURN THE ROSE WITH YOUR FINGER", "DREHE DIE ROSE MIT DEM FINGER", "TOURNEZ LA ROSE AVEC LE DOIGT", "GIRA LA ROSA CON EL DEDO"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
             )
@@ -353,7 +371,7 @@ private fun RigaBussola(
                     text = if (bussolaAccesa) {
                         lato.replaceFirstChar { it.uppercase() }
                     } else {
-                        tr("Guardando verso ${Wmo.windDirection(sguardo.toDouble())}, $lato", "Facing ${Wmo.windDirection(sguardo.toDouble())}, $lato")
+                        tr("Guardando verso ${Wmo.windDirection(sguardo.toDouble())}, $lato", "Facing ${Wmo.windDirection(sguardo.toDouble())}, $lato", "Mit Blick nach ${Wmo.windDirection(sguardo.toDouble())}: $lato", "En regardant vers ${Wmo.windDirection(sguardo.toDouble())}, $lato", "Mirando hacia ${Wmo.windDirection(sguardo.toDouble())}, $lato")
                     },
                     style = SalaType.rowTitle,
                     color = palette.ink,
@@ -363,10 +381,11 @@ private fun RigaBussola(
         }
         if (conBussola) {
             Text(
-                text = if (bussolaAccesa) tr("BUSSOLA ACCESA", "COMPASS ON") else tr("USA LA BUSSOLA", "USE THE COMPASS"),
+                text = if (bussolaAccesa) tr("BUSSOLA ACCESA", "COMPASS ON", "KOMPASS AN", "BOUSSOLE ACTIVE", "BRÚJULA ACTIVA") else tr("USA LA BUSSOLA", "USE THE COMPASS", "KOMPASS NUTZEN", "UTILISER LA BOUSSOLE", "USAR LA BRÚJULA"),
                 style = SalaType.sectionLabel,
                 color = if (bussolaAccesa) palette.accentInk else palette.accent,
                 modifier = Modifier
+                    .cedevole()
                     .clip(RoundedCornerShape(16.dp))
                     .background(if (bussolaAccesa) palette.accent else palette.chip)
                     .clickable { onBussola(!bussolaAccesa) }
@@ -386,14 +405,14 @@ private val ROSA = 120.dp
  * cambia col modo di misurarlo.
  */
 private fun nota(kmh: Double?, raffiche: Int?, unita: String): String {
-    val coda = raffiche?.let { tr(" Raffiche fino a $it $unita.", " Gusts up to $it $unita.") } ?: ""
+    val coda = raffiche?.let { tr(" Raffiche fino a $it $unita.", " Gusts up to $it $unita.", " Böen bis $it $unita.", " Rafales jusqu'à $it $unita.", " Rachas de hasta $it $unita.") } ?: ""
     val corpo = when {
-        kmh == null -> tr("Vento non disponibile per quest'ora.", "Wind unavailable for this hour.")
-        kmh < 6 -> tr("Aria quasi ferma: il fumo sale dritto.", "Almost still air: smoke rises straight up.")
-        kmh < 20 -> tr("Brezza leggera: si muovono le foglie, non i rami.", "Light breeze: leaves move, branches do not.")
-        kmh < 39 -> tr("Vento teso: i rami si piegano e l'ombrello diventa scomodo.", "Fresh wind: branches bend and an umbrella gets awkward.")
-        kmh < 62 -> tr("Vento forte: attenzione agli oggetti esposti sui balconi.", "Strong wind: watch out for loose things on balconies.")
-        else -> tr("Burrasca: meglio non stare sotto gli alberi.", "Gale: better not to stand under trees.")
+        kmh == null -> tr("Vento non disponibile per quest'ora.", "Wind unavailable for this hour.", "Wind für diese Stunde nicht verfügbar.", "Vent indisponible pour cette heure.", "Viento no disponible para esta hora.")
+        kmh < 6 -> tr("Aria quasi ferma: il fumo sale dritto.", "Almost still air: smoke rises straight up.", "Fast unbewegte Luft: Rauch steigt gerade auf.", "Air presque immobile : la fumée monte tout droit.", "Aire casi quieto: el humo sube recto.")
+        kmh < 20 -> tr("Brezza leggera: si muovono le foglie, non i rami.", "Light breeze: leaves move, branches do not.", "Leichte Brise: Blätter bewegen sich, Äste nicht.", "Brise légère : les feuilles bougent, pas les branches.", "Brisa ligera: se mueven las hojas, no las ramas.")
+        kmh < 39 -> tr("Vento teso: i rami si piegano e l'ombrello diventa scomodo.", "Fresh wind: branches bend and an umbrella gets awkward.", "Frischer Wind: Äste biegen sich, und der Regenschirm wird unhandlich.", "Vent soutenu : les branches plient et le parapluie devient gênant.", "Viento fresco: las ramas se doblan y el paraguas se vuelve incómodo.")
+        kmh < 62 -> tr("Vento forte: attenzione agli oggetti esposti sui balconi.", "Strong wind: watch out for loose things on balconies.", "Starker Wind: Vorsicht mit losen Gegenständen auf Balkonen.", "Vent fort : attention aux objets exposés sur les balcons.", "Viento fuerte: cuidado con los objetos sueltos en los balcones.")
+        else -> tr("Burrasca: meglio non stare sotto gli alberi.", "Gale: better not to stand under trees.", "Sturm: besser nicht unter Bäumen stehen.", "Coup de vent : mieux vaut ne pas rester sous les arbres.", "Temporal: mejor no quedarse bajo los árboles.")
     }
     return corpo + coda
 }

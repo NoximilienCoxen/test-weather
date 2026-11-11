@@ -1,6 +1,7 @@
 package com.caelumweather.data
 
-import com.caelumweather.lingua.inInglese
+import com.caelumweather.lingua.inMezzoAllaFrase
+import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.util.Log
 import android.util.Xml
@@ -150,7 +151,7 @@ class WeatherAlertsRepository(
 
     /** Il posto non e' fra quelli che le fonti dell'app servono. */
     class OutOfCoverage(val country: String?) :
-        Exception(tr("Nessuna fonte di allerte ufficiali per ", "No official warning source for ") + (country ?: tr("questa località", "this place")))
+        Exception(tr("Nessuna fonte di allerte ufficiali per ", "No official warning source for ", "Keine Quelle für amtliche Warnungen für ", "Aucune source d'alertes officielles pour ", "No hay fuente de alertas oficiales para ") + (country ?: tr("questa località", "this place", "diesen Ort", "ce lieu", "este lugar")))
 
     companion object {
         /**
@@ -364,7 +365,7 @@ internal data class FeedEntry(
             // schermata italiana sarebbe la traduzione mancante piu' visibile
             // dell'app. Il titolo del documento CAP si usa solo se e' gia'
             // nella lingua giusta, cosa che qui non si puo' dare per scontata.
-            headline = "${chosen.label}: ${kind.label.lowercase()}",
+            headline = "${chosen.label}: ${kind.label.inMezzoAllaFrase()}",
             description = detail?.description,
             instruction = detail?.instruction,
             onset = locale(onset),
@@ -550,8 +551,11 @@ internal fun parseDetail(xml: String): CapDetail {
         }
     }
     // Nella lingua dell'app, se l'ente la manda (CONTESTO §49)
-    val lingua = if (inInglese()) "en" else "it"
+    // ... e se no in inglese, prima di ripiegare sul primo blocco: un tedesco
+    // legge piu' volentieri l'inglese del finlandese.
+    val lingua = Lingue.corrente.codice
     val scelto = blocchi.firstOrNull { it.language?.lowercase()?.startsWith(lingua) == true }
+        ?: blocchi.firstOrNull { lingua != "it" && it.language?.lowercase()?.startsWith("en") == true }
         ?: blocchi.firstOrNull()
     return CapDetail(
         description = scelto?.description?.takeIf { it.isNotBlank() },

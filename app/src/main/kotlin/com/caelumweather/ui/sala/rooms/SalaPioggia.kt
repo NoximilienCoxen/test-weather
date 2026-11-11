@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.NumeroCheScorre
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -43,6 +45,7 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.RigaSenzaOre
 import com.caelumweather.ui.sala.SalaPalette
+import com.caelumweather.ui.sala.misuraCheArriva
 import com.caelumweather.ui.sala.SalaTokens
 import com.caelumweather.ui.sala.SalaType
 import com.caelumweather.ui.sala.diGiorno
@@ -99,11 +102,14 @@ fun SalaPioggiaScreen(
     val daQuando = remember(state.selectedDay, scelta, state.nowIndex, ore) {
         val inizio = ore.getOrNull(scelta)?.time
         if (inizio == null || (state.selectedDay == 0 && scelta == state.nowIndex)) {
-            tr("nelle prossime dodici ore", "in the next twelve hours")
+            tr("nelle prossime dodici ore", "in the next twelve hours", "in den nächsten zwölf Stunden", "dans les douze prochaines heures", "en las próximas doce horas")
         } else {
             tr(
                 "nelle dodici ore dalle ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}",
                 "in the twelve hours from ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}",
+                "in den zwölf Stunden ab ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}",
+                "dans les douze heures à partir de ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}",
+                "en las doce horas desde las ${oraDueCifre(inizio.hour)}:00 ${state.diGiorno(inizio.toLocalDate())}",
             )
         }
     }
@@ -115,22 +121,30 @@ fun SalaPioggiaScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = tr("La pioggia", "Rain"), style = SalaType.cardTitle, color = palette.ink)
+                Text(text = tr("La pioggia", "Rain", "Regen", "La pluie", "La lluvia"), style = SalaType.cardTitle, color = palette.ink)
                 Didascalia(
                     if (bagnato) {
                         tr(
                             "Precipitazioni $daQuando, per un totale di ${totale.virgola()} millimetri.",
                             "Precipitation $daQuando, ${totale.virgola()} millimetres in all.",
+                            "Niederschlag $daQuando, insgesamt ${totale.virgola()} Millimeter.",
+                            "Précipitations $daQuando, pour un total de ${totale.virgola()} millimètres.",
+                            "Precipitaciones $daQuando, con un total de ${totale.virgola()} milímetros.",
                         )
                     } else {
-                        tr("Nessuna precipitazione attesa $daQuando.", "No precipitation expected $daQuando.")
+                        tr("Nessuna precipitazione attesa $daQuando.", "No precipitation expected $daQuando.", "Kein Niederschlag erwartet $daQuando.", "Aucune précipitation attendue $daQuando.", "No se esperan precipitaciones $daQuando.")
                     },
                     palette,
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
             Row(verticalAlignment = Alignment.Top) {
-                Text(text = totale.virgola(), style = SalaType.numeroSala, color = palette.ink)
+                NumeroCheScorre(
+                    testo = totale.virgola(),
+                    valore = (totale * 10).roundToInt(),
+                    style = SalaType.numeroSala,
+                    color = palette.ink,
+                )
                 Text(
                     text = "mm",
                     style = SalaType.hourLabel,
@@ -191,10 +205,13 @@ fun SalaPioggiaScreen(
                                 tr(
                                     "${mm.virgola()} millimetri, probabilità ${ore[indice].precipProbability ?: 0} per cento",
                                     "${mm.virgola()} millimetres, ${ore[indice].precipProbability ?: 0} per cent chance",
+                                    "${mm.virgola()} Millimeter, Wahrscheinlichkeit ${ore[indice].precipProbability ?: 0} Prozent",
+                                    "${mm.virgola()} millimètres, probabilité ${ore[indice].precipProbability ?: 0} pour cent",
+                                    "${mm.virgola()} milímetros, probabilidad ${ore[indice].precipProbability ?: 0} por ciento",
                                 )
                             selected = indice == scelta
                         }
-                        .clickable(onClickLabel = tr("mostra quest'ora", "show this hour")) { onSelectHour(indice) },
+                        .clickable(onClickLabel = tr("mostra quest'ora", "show this hour", "diese Stunde anzeigen", "afficher cette heure", "mostrar esta hora")) { onSelectHour(indice) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
@@ -204,7 +221,7 @@ fun SalaPioggiaScreen(
                             // Una colonna a zero resta visibile: una colonna
                             // assente si legge come un dato mancante, non come
                             // un'ora asciutta.
-                            .height((3f + quota * 85f).dp)
+                            .height(misuraCheArriva((3f + quota * 85f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (mm > 0.01) {
@@ -233,12 +250,12 @@ fun SalaPioggiaScreen(
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(
-                etichetta = tr("PROBAB.", "CHANCE"),
+                etichetta = tr("PROBAB.", "CHANCE", "WAHRSCH.", "PROBA.", "PROBAB."),
                 valore = oraScelta?.precipProbability?.let { "$it %" } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY"), valore = intensita(oraScelta?.precipitation), palette = palette)
-            CellaValore(etichetta = tr("SUOLO", "GROUND"), valore = if (totale > 4.0) tr("saturo", "soaked") else tr("asciutto", "dry"), palette = palette)
+            CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY", "INTENSITÄT", "INTENSITÉ", "INTENSIDAD"), valore = intensita(oraScelta?.precipitation), palette = palette)
+            CellaValore(etichetta = tr("SUOLO", "GROUND", "BODEN", "SOL", "SUELO"), valore = if (totale > 4.0) tr("saturo", "soaked", "durchnässt", "détrempé", "empapado") else tr("asciutto", "dry", "trocken", "sec", "seco"), palette = palette)
         }
 
         // **L'acqua che resta sospesa.** Il riquadro dell'umidita' in Sala I
@@ -248,8 +265,8 @@ fun SalaPioggiaScreen(
         if (oraScelta?.humidity != null || rugiada != null) {
             Text(
                 text = listOfNotNull(
-                    oraScelta?.humidity?.let { tr("umidità ${it.roundToInt()} %", "humidity ${it.roundToInt()} %") },
-                    rugiada?.let { tr("rugiada ${state.unit.from(it).roundToInt()}°", "dew point ${state.unit.from(it).roundToInt()}°") },
+                    oraScelta?.humidity?.let { tr("umidità ${it.roundToInt()} %", "humidity ${it.roundToInt()} %", "Luftfeuchte ${it.roundToInt()} %", "humidité ${it.roundToInt()} %", "humedad ${it.roundToInt()} %") },
+                    rugiada?.let { tr("rugiada ${state.unit.from(it).roundToInt()}°", "dew point ${state.unit.from(it).roundToInt()}°", "Taupunkt ${state.unit.from(it).roundToInt()}°", "point de rosée ${state.unit.from(it).roundToInt()}°", "punto de rocío ${state.unit.from(it).roundToInt()}°") },
                     rugiada?.let { nomeAfa(afaDi(it)) },
                 ).joinToString(" · "),
                 style = SalaType.microLabel,
@@ -276,7 +293,7 @@ fun SalaPioggiaScreen(
         // pioggia, e che i dati sanno **sempre** - per tutte le ore e per tutti
         // e sette i giorni: *quando comincia, quanto dura, quanta ne viene*.
         Text(
-            text = tr("QUANDO", "WHEN"),
+            text = tr("QUANDO", "WHEN", "WANN", "QUAND", "CUÁNDO"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
             modifier = Modifier.padding(bottom = 8.dp),
@@ -297,7 +314,7 @@ fun SalaPioggiaScreen(
         val giorni = state.forecast?.days.orEmpty()
         if (giorni.size >= 3) {
             Text(
-                text = tr("LA SETTIMANA", "THE WEEK"),
+                text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
@@ -343,12 +360,13 @@ private fun SettimanaDellaPioggia(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .cedevole()
                     .clip(CircleShape)
                     .semantics {
-                        contentDescription = tr("${giorno.label}, ${mm.virgola()} millimetri", "${giorno.label}, ${mm.virgola()} millimetres")
+                        contentDescription = tr("${giorno.label}, ${mm.virgola()} millimetri", "${giorno.label}, ${mm.virgola()} millimetres", "${giorno.label}, ${mm.virgola()} Millimeter", "${giorno.label}, ${mm.virgola()} millimètres", "${giorno.label}, ${mm.virgola()} milímetros")
                         selected = mio
                     }
-                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day")) { onVai(indice) }
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) { onVai(indice) }
                     .padding(vertical = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -407,9 +425,9 @@ private fun SettimanaDellaPioggia(
  */
 private fun finestraPioggia(state: UiState): String {
     val ore = state.forecast?.allHours.orEmpty()
-    val da = state.detailHour?.time ?: return tr("Non si sa: la previsione oraria non è arrivata.", "Unknown: the hourly forecast has not arrived.")
+    val da = state.detailHour?.time ?: return tr("Non si sa: la previsione oraria non è arrivata.", "Unknown: the hourly forecast has not arrived.", "Unbekannt: Die stündliche Vorhersage ist nicht angekommen.", "On ne sait pas : la prévision horaire n'est pas arrivée.", "No se sabe: la previsión horaria no ha llegado.")
     val avanti = ore.filter { !it.time.isBefore(da) }
-    if (avanti.isEmpty()) return tr("Oltre questo momento la previsione oraria non arriva.", "The hourly forecast does not reach beyond this point.")
+    if (avanti.isEmpty()) return tr("Oltre questo momento la previsione oraria non arriva.", "The hourly forecast does not reach beyond this point.", "Über diesen Zeitpunkt hinaus reicht die stündliche Vorhersage nicht.", "Au-delà de ce moment, la prévision horaire ne va pas plus loin.", "Más allá de este momento la previsión horaria no llega.")
 
     // **"Sta piovendo" e "fra tre ore" valgono solo per adesso.** Con la barra
     // su venerdi' alle sei la sala diceva "sta piovendo" di giovedi'
@@ -423,41 +441,44 @@ private fun finestraPioggia(state: UiState): String {
         val fine = bagnate.last().time.plusHours(1)
         val quanta = bagnate.sumOf { it.precipitation ?: 0.0 }
         return if (adesso) {
-            tr("Sta piovendo: smette verso le %02d:00, ancora %s mm.", "It is raining: it stops around %02d:00, %s mm still to come.")
+            tr("Sta piovendo: smette verso le %02d:00, ancora %s mm.", "It is raining: it stops around %02d:00, %s mm still to come.", "Es regnet: Es hört gegen %02d:00 auf, noch %s mm.", "Il pleut : ça s'arrête vers %02d:00, encore %s mm.", "Está lloviendo: para hacia las %02d:00, aún %s mm.")
                 .format(fine.hour, quanta.virgola())
         } else {
             tr(
                 "Alle %02d:00 %s piove: smette verso le %02d:00, %s mm fino ad allora.",
                 "At %02d:00 %s it is raining: it stops around %02d:00, %s mm until then.",
+                "Um %02d:00 %s regnet es: Es hört gegen %02d:00 auf, %s mm bis dahin.",
+                "À %02d:00 %s il pleut : ça s'arrête vers %02d:00, %s mm d'ici là.",
+                "A las %02d:00 %s llueve: para hacia las %02d:00, %s mm hasta entonces.",
             )
                 .format(da.hour, state.diGiorno(da.toLocalDate()), fine.hour, quanta.virgola())
         }
     }
 
     val inizio = avanti.firstOrNull { (it.precipitation ?: 0.0) >= soglia }
-        ?: return tr("Nelle ore che il modello copre non è prevista pioggia.", "No rain is expected in the hours the model covers.")
+        ?: return tr("Nelle ore che il modello copre non è prevista pioggia.", "No rain is expected in the hours the model covers.", "In den Stunden, die das Modell abdeckt, wird kein Regen erwartet.", "Aucune pluie n'est prévue dans les heures que couvre le modèle.", "En las horas que cubre el modelo no se espera lluvia.")
 
     val finestra = avanti.dropWhile { it.time.isBefore(inizio.time) }
         .takeWhile { (it.precipitation ?: 0.0) >= soglia }
     val quanta = finestra.sumOf { it.precipitation ?: 0.0 }
-    val durata = if (finestra.size <= 1) tr("un'ora scarsa", "under an hour") else tr("circa ${finestra.size} ore", "about ${finestra.size} hours")
+    val durata = if (finestra.size <= 1) tr("un'ora scarsa", "under an hour", "knapp eine Stunde", "une petite heure", "una hora escasa") else tr("circa ${finestra.size} ore", "about ${finestra.size} hours", "etwa ${finestra.size} Stunden", "environ ${finestra.size} heures", "unas ${finestra.size} horas")
     if (!adesso) {
-        return tr("Comincia verso le %02d:00 %s: %s, %s mm in tutto.", "It starts around %02d:00 %s: %s, %s mm in all.")
+        return tr("Comincia verso le %02d:00 %s: %s, %s mm in tutto.", "It starts around %02d:00 %s: %s, %s mm in all.", "Es beginnt gegen %02d:00 %s: %s, insgesamt %s mm.", "Ça commence vers %02d:00 %s : %s, %s mm au total.", "Empieza hacia las %02d:00 %s: %s, %s mm en total.")
             .format(inizio.time.hour, state.diGiorno(inizio.time.toLocalDate()), durata, quanta.virgola())
     }
     val quando = when (val giorni = java.time.Duration.between(da, inizio.time).toHours()) {
-        in 0..1 -> tr("fra poco", "soon")
-        in 2..11 -> tr("fra ${giorni} ore", "in ${giorni} hours")
-        else -> if (inizio.time.toLocalDate() == da.toLocalDate()) tr("oggi", "today") else giornoDi(inizio.time, state)
+        in 0..1 -> tr("fra poco", "soon", "bald", "bientôt", "pronto")
+        in 2..11 -> tr("fra ${giorni} ore", "in ${giorni} hours", "in ${giorni} Stunden", "dans ${giorni} heures", "dentro de ${giorni} horas")
+        else -> if (inizio.time.toLocalDate() == da.toLocalDate()) tr("oggi", "today", "heute", "aujourd'hui", "hoy") else giornoDi(inizio.time, state)
     }
-    return tr("Comincia %s, verso le %02d:00: %s, %s mm in tutto.", "It starts %s, around %02d:00: %s, %s mm in all.")
+    return tr("Comincia %s, verso le %02d:00: %s, %s mm in tutto.", "It starts %s, around %02d:00: %s, %s mm in all.", "Es beginnt %s, gegen %02d:00: %s, insgesamt %s mm.", "Ça commence %s, vers %02d:00 : %s, %s mm au total.", "Empieza %s, hacia las %02d:00: %s, %s mm en total.")
         .format(quando, inizio.time.hour, durata, quanta.virgola())
 }
 
 /** L'etichetta del giorno di un istante, come la scrive la striscia in fondo. */
 private fun giornoDi(quando: java.time.LocalDateTime, state: UiState): String =
     state.forecast?.days?.firstOrNull { it.date == quando.toLocalDate() }?.label?.lowercase()
-        ?: tr("più avanti", "later on")
+        ?: tr("più avanti", "later on", "später", "plus tard", "más adelante")
 
 /**
  * Come si chiama questa quantita' d'acqua.
@@ -466,19 +487,19 @@ private fun giornoDi(quando: java.time.LocalDateTime, state: UiState): String =
  * millimetro e' pioviggine, sopra i quattro e' un rovescio.
  */
 private fun intensita(mm: Double?): String = when {
-    mm == null || mm <= 0.01 -> tr("assente", "none")
-    mm < 0.5 -> tr("debole", "light")
-    mm < 2.0 -> tr("moderata", "moderate")
-    mm < 4.0 -> tr("forte", "heavy")
-    else -> tr("rovescio", "downpour")
+    mm == null || mm <= 0.01 -> tr("assente", "none", "keine", "nulle", "nula")
+    mm < 0.5 -> tr("debole", "light", "schwach", "faible", "débil")
+    mm < 2.0 -> tr("moderata", "moderate", "mäßig", "modérée", "moderada")
+    mm < 4.0 -> tr("forte", "heavy", "stark", "forte", "fuerte")
+    else -> tr("rovescio", "downpour", "Wolkenbruch", "averse", "aguacero")
 }
 
 private fun nomeAfa(afa: Afa): String = when (afa) {
-    Afa.SECCA -> tr("aria secca", "dry air")
-    Afa.GRADEVOLE -> tr("gradevole", "comfortable")
-    Afa.UMIDA -> tr("un po' pesante", "a bit sticky")
-    Afa.AFOSA -> tr("afosa", "muggy")
-    Afa.OPPRIMENTE -> tr("opprimente", "oppressive")
+    Afa.SECCA -> tr("aria secca", "dry air", "trockene Luft", "air sec", "aire seco")
+    Afa.GRADEVOLE -> tr("gradevole", "comfortable", "angenehm", "agréable", "agradable")
+    Afa.UMIDA -> tr("un po' pesante", "a bit sticky", "etwas schwül", "un peu lourd", "algo pesado")
+    Afa.AFOSA -> tr("afosa", "muggy", "schwül", "lourd", "bochornoso")
+    Afa.OPPRIMENTE -> tr("opprimente", "oppressive", "drückend", "étouffant", "sofocante")
 }
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)

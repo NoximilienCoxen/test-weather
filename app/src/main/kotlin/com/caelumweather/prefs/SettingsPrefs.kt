@@ -47,13 +47,13 @@ enum class TempUnit(val symbol: String) {
 enum class CardTheme { AUTO, CHIARO, SCURO }
 
 /** L'unita' di velocita' del vento mostrata in Sala VI. */
-enum class SalaWindUnit(private val ita: String, private val eng: String) {
-    KMH("km/h", "km/h"),
-    MS("m/s", "m/s"),
-    KN("nodi", "kn"),
+enum class SalaWindUnit(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
+    KMH("km/h", "km/h", "km/h", "km/h", "km/h"),
+    MS("m/s", "m/s", "m/s", "m/s", "m/s"),
+    KN("nodi", "kn", "kn", "nœuds", "nudos"),
     ;
 
-    val label: String get() = tr(ita, eng)
+    val label: String get() = tr(ita, eng, ted, fra, spa)
 
     /** Da metri al secondo, che e' l'unita' in cui viaggia il dato. */
     fun from(metresPerSecond: Double): Double = when (this) {
@@ -75,6 +75,73 @@ data class AlertToggles(
 )
 
 enum class AlertToggleKind { PIOGGIA, TEMPORALE, UV, VENTO }
+
+/** Le tre cose su cui si puo' chiedere un avviso con una soglia propria. */
+enum class TipoSoglia { GELO, CALDO, VENTO }
+
+/**
+ * Gli avvisi personali: tre soglie che sceglie chi usa l'app, e una notifica
+ * quando la previsione le passa (`notifiche/SogliePersonaliWorker`).
+ *
+ * **Spenti di norma, tutti e tre.** Non sono allerte: sono la previsione
+ * confrontata con un numero che ha scelto la persona, e la notifica lo dice.
+ * Le temperature sono in gradi Celsius e il vento in km/h qualunque unita' si
+ * mostri: una soglia e' un numero salvato, e cambiare unita' non deve spostarla.
+ */
+data class SogliePersonali(
+    val gelo: Boolean = false,
+    val geloGradi: Int = GELO_PREDEFINITO,
+    val caldo: Boolean = false,
+    val caldoGradi: Int = CALDO_PREDEFINITO,
+    val vento: Boolean = false,
+    val ventoKmh: Int = VENTO_PREDEFINITO,
+) {
+    val qualcunaAccesa: Boolean get() = gelo || caldo || vento
+
+    fun accesa(tipo: TipoSoglia): Boolean = when (tipo) {
+        TipoSoglia.GELO -> gelo
+        TipoSoglia.CALDO -> caldo
+        TipoSoglia.VENTO -> vento
+    }
+
+    fun valore(tipo: TipoSoglia): Int = when (tipo) {
+        TipoSoglia.GELO -> geloGradi
+        TipoSoglia.CALDO -> caldoGradi
+        TipoSoglia.VENTO -> ventoKmh
+    }
+
+    fun con(tipo: TipoSoglia, accesa: Boolean): SogliePersonali = when (tipo) {
+        TipoSoglia.GELO -> copy(gelo = accesa)
+        TipoSoglia.CALDO -> copy(caldo = accesa)
+        TipoSoglia.VENTO -> copy(vento = accesa)
+    }
+
+    fun conValore(tipo: TipoSoglia, valore: Int): SogliePersonali = when (tipo) {
+        TipoSoglia.GELO -> copy(geloGradi = valore)
+        TipoSoglia.CALDO -> copy(caldoGradi = valore)
+        TipoSoglia.VENTO -> copy(ventoKmh = valore)
+    }
+
+    companion object {
+        /** Minima da questa in giu', in gradi Celsius. Tre e' la brina sui prati. */
+        val GELO_POSSIBILI = listOf(-5, 0, 3)
+        const val GELO_PREDEFINITO = 0
+
+        /** Massima da questa in su, in gradi Celsius. */
+        val CALDO_POSSIBILI = listOf(30, 33, 36)
+        const val CALDO_PREDEFINITO = 33
+
+        /** Raffiche da questa in su, in km/h. */
+        val VENTO_POSSIBILI = listOf(40, 60, 80)
+        const val VENTO_PREDEFINITO = 60
+
+        fun possibili(tipo: TipoSoglia): List<Int> = when (tipo) {
+            TipoSoglia.GELO -> GELO_POSSIBILI
+            TipoSoglia.CALDO -> CALDO_POSSIBILI
+            TipoSoglia.VENTO -> VENTO_POSSIBILI
+        }
+    }
+}
 
 /** Tutto cio' che l'utente ha scelto e che deve sopravvivere alla chiusura. */
 data class Settings(
@@ -144,6 +211,8 @@ data class Settings(
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
+    /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
+    val soglie: SogliePersonali = SogliePersonali(),
 )
 
 private val Context.settingsDataStore: DataStore<Preferences> by
@@ -296,6 +365,19 @@ class SettingsPrefs(private val context: Context) {
             riepilogoMattino = prefs[KEY_RIEPILOGO] ?: false,
             oraRiepilogo = prefs[KEY_ORA_RIEPILOGO] ?: RiepilogoMattinoWorker.ORA_PREDEFINITA,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
+            // Un valore salvato che non e' piu' fra quelli offerti torna al
+            // predefinito: la scelta segmentata non saprebbe quale accendere.
+            soglie = SogliePersonali(
+                gelo = prefs[KEY_SOGLIA_GELO] ?: false,
+                geloGradi = prefs[KEY_SOGLIA_GELO_GRADI]?.takeIf { it in SogliePersonali.GELO_POSSIBILI }
+                    ?: SogliePersonali.GELO_PREDEFINITO,
+                caldo = prefs[KEY_SOGLIA_CALDO] ?: false,
+                caldoGradi = prefs[KEY_SOGLIA_CALDO_GRADI]?.takeIf { it in SogliePersonali.CALDO_POSSIBILI }
+                    ?: SogliePersonali.CALDO_PREDEFINITO,
+                vento = prefs[KEY_SOGLIA_VENTO] ?: false,
+                ventoKmh = prefs[KEY_SOGLIA_VENTO_KMH]?.takeIf { it in SogliePersonali.VENTO_POSSIBILI }
+                    ?: SogliePersonali.VENTO_PREDEFINITO,
+            ),
             alertToggles = AlertToggles(
                 pioggiaIntensa = prefs[KEY_ALERT_PIOGGIA] ?: true,
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
@@ -378,6 +460,24 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
     }
 
+    suspend fun setSoglia(tipo: TipoSoglia, accesa: Boolean) {
+        val chiave = when (tipo) {
+            TipoSoglia.GELO -> KEY_SOGLIA_GELO
+            TipoSoglia.CALDO -> KEY_SOGLIA_CALDO
+            TipoSoglia.VENTO -> KEY_SOGLIA_VENTO
+        }
+        context.settingsDataStore.edit { it[chiave] = accesa }
+    }
+
+    suspend fun setValoreSoglia(tipo: TipoSoglia, valore: Int) {
+        val chiave = when (tipo) {
+            TipoSoglia.GELO -> KEY_SOGLIA_GELO_GRADI
+            TipoSoglia.CALDO -> KEY_SOGLIA_CALDO_GRADI
+            TipoSoglia.VENTO -> KEY_SOGLIA_VENTO_KMH
+        }
+        context.settingsDataStore.edit { it[chiave] = valore }
+    }
+
     suspend fun setGuidaVista() {
         context.settingsDataStore.edit { it[KEY_GUIDA_VISTA] = true }
     }
@@ -437,6 +537,12 @@ class SettingsPrefs(private val context: Context) {
         val KEY_RIEPILOGO = booleanPreferencesKey("riepilogo_mattino")
         val KEY_ORA_RIEPILOGO = intPreferencesKey("riepilogo_ora")
         val KEY_PERMESSO_NOTIFICHE =booleanPreferencesKey("permesso_notifiche_chiesto")
+        val KEY_SOGLIA_GELO = booleanPreferencesKey("soglia_gelo")
+        val KEY_SOGLIA_GELO_GRADI = intPreferencesKey("soglia_gelo_gradi")
+        val KEY_SOGLIA_CALDO = booleanPreferencesKey("soglia_caldo")
+        val KEY_SOGLIA_CALDO_GRADI = intPreferencesKey("soglia_caldo_gradi")
+        val KEY_SOGLIA_VENTO = booleanPreferencesKey("soglia_vento")
+        val KEY_SOGLIA_VENTO_KMH = intPreferencesKey("soglia_vento_kmh")
         val KEY_ALERT_PIOGGIA = booleanPreferencesKey("sala_avviso_pioggia")
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")

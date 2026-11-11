@@ -13,17 +13,17 @@ import kotlin.random.Random
  * benvenuto al primo avvio e, per un attimo, a ogni apertura mentre arrivano
  * i dati - li' si vedono davvero, perche' il benvenuto si vede una volta sola.
  */
-enum class Scena(private val ita: String, private val eng: String) {
-    MARE("Sole e mare", "Sun and sea"),
-    CITTA_NATALE("Città innevata", "Snowy town"),
-    TEMPESTA("Nave in tempesta", "Ship in a storm"),
-    FERMATA("Fermata sotto la pioggia", "Bus stop in the rain"),
-    GRANO("Campo di grano", "Wheat field"),
-    ARCOBALENO("Dopo la pioggia", "After the rain"),
-    MONTAGNA("Montagna", "Mountain"),
+enum class Scena(private val ita: String, private val eng: String, private val ted: String, private val fra: String, private val spa: String) {
+    MARE("Sole e mare", "Sun and sea", "Sonne und Meer", "Soleil et mer", "Sol y mar"),
+    CITTA_NATALE("Città innevata", "Snowy town", "Verschneite Stadt", "Ville enneigée", "Ciudad nevada"),
+    TEMPESTA("Nave in tempesta", "Ship in a storm", "Schiff im Sturm", "Navire dans la tempête", "Barco en la tormenta"),
+    FERMATA("Fermata sotto la pioggia", "Bus stop in the rain", "Haltestelle im Regen", "Arrêt de bus sous la pluie", "Parada bajo la lluvia"),
+    GRANO("Campo di grano", "Wheat field", "Weizenfeld", "Champ de blé", "Campo de trigo"),
+    ARCOBALENO("Dopo la pioggia", "After the rain", "Nach dem Regen", "Après la pluie", "Después de la lluvia"),
+    MONTAGNA("Montagna", "Mountain", "Berge", "Montagne", "Montaña"),
     ;
 
-    val nome: String get() = tr(ita, eng)
+    val nome: String get() = tr(ita, eng, ted, fra, spa)
 }
 
 /**

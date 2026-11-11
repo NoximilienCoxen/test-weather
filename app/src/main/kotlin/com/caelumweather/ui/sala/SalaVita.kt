@@ -103,6 +103,67 @@ internal fun sparso(i: Int, sale: Int): Float {
 // Il cielo di notte
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Ogni quanti secondi il cielo ha l'occasione di una stella cadente. */
+private const val GIRO_METEORA = 17f
+
+/** Quanto dura il suo passaggio. */
+private const val DURATA_METEORA = 0.9f
+
+/**
+ * A che punto del giro parte. **Non a zero, apposta**: con le animazioni ferme
+ * e nella cattura l'orologio della scena vale zero per sempre, e li' non deve
+ * esserci una scia congelata a mezz'aria.
+ */
+private const val PARTENZA_METEORA = 6.5f
+
+/**
+ * Una stella cadente, ogni tanto.
+ *
+ * Passa in meno di un secondo e in due giri su cinque non passa affatto: e'
+ * una cosa che si nota con la coda dell'occhio, non uno spettacolo a orario.
+ * Dove nasce, da che parte va e quanto e' lunga dipendono dal numero del giro
+ * ([sparso]): ogni volta diversa, mai casuale.
+ *
+ * Solo con abbastanza cielo libero: [velo] e' quello delle stelle, e sotto un
+ * quarto non se ne vedrebbe la scia.
+ */
+fun DrawScope.stellaCadente(tempo: Float, inchiostro: Color, velo: Float) {
+    if (velo <= 0.25f) return
+    val giro = floor(tempo / GIRO_METEORA).toInt()
+    val dentro = tempo - giro * GIRO_METEORA - PARTENZA_METEORA
+    if (dentro < 0f || dentro > DURATA_METEORA) return
+    if (sparso(giro, 71) > 0.6f) return
+    val q = dentro / DURATA_METEORA
+    // Parte veloce e rallenta, come una cosa che brucia.
+    val corsa = 1f - (1f - q) * (1f - q)
+    val verso = if (sparso(giro, 74) > 0.5f) 1f else -1f
+    val lunga = size.width * (0.24f + sparso(giro, 75) * 0.18f)
+    val nasce = Offset(
+        (0.5f - verso * (0.12f + sparso(giro, 72) * 0.22f)) * size.width,
+        (0.05f + sparso(giro, 73) * 0.20f) * size.height,
+    )
+    val dx = verso * 0.87f
+    val dy = 0.49f
+    val testa = Offset(nasce.x + dx * lunga * corsa, nasce.y + dy * lunga * corsa)
+    // La scia si allunga e poi si ritira dietro la testa.
+    val scia = lunga * 0.36f * sin(q * PI_F)
+    val coda = Offset(testa.x - dx * scia, testa.y - dy * scia)
+    val forza = (velo * sin(q * PI_F)).coerceIn(0f, 1f)
+    drawLine(
+        brush = Brush.linearGradient(
+            0f to inchiostro.copy(alpha = 0f),
+            1f to inchiostro.copy(alpha = 0.9f * forza),
+            start = coda,
+            end = testa,
+        ),
+        start = coda,
+        end = testa,
+        strokeWidth = size.width * 0.0042f,
+        cap = StrokeCap.Round,
+    )
+    drawCircle(color = inchiostro.copy(alpha = forza), radius = size.width * 0.0040f, center = testa)
+}
+
 /** Quante stelle ha il cielo di Sala I. */
 private const val STELLE = 160
 

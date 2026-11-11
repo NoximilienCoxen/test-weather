@@ -177,6 +177,13 @@ fun SalaCielo(
                 inchiostro = SalaTokens.neutral100,
                 velo = scena.notte * (1f - scena.copertura * 0.72f),
             )
+            // Solo a notte abbastanza aperta e asciutta: sotto la pioggia una
+            // scia chiara si confonderebbe con cio' che cade.
+            stellaCadente(
+                tempo = t,
+                inchiostro = SalaTokens.neutral100,
+                velo = scena.notte * (1f - scena.copertura) * (1f - scena.bagnato),
+            )
         }
 
         // Di giorno, a cielo aperto, qualcosa attraversa: senza, un sereno e'
@@ -191,6 +198,11 @@ fun SalaCielo(
                 inchiostro = SalaTokens.neutral100,
                 velo = giorno * (1f - scena.copertura * 0.85f),
             )
+        }
+
+        // Lontano come gli aerei, dietro al sole e alle nuvole.
+        translate(parallasse.x * 0.2f, parallasse.y * 0.2f) {
+            arcobaleno(sx, sy, sky, scena)
         }
 
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
@@ -315,6 +327,52 @@ private class StradaDelSole {
             }
         }
         tratto = PathEffect.dashPathEffect(floatArrayOf(6f * sx, 7f * sx))
+    }
+}
+
+/** Le sei bande dell'arcobaleno, da fuori a dentro. Colori suoi, come la luna: non seguono il tema. */
+private val BandeArcobaleno = listOf(
+    Color(0xFFE5574F),
+    Color(0xFFF29A3F),
+    Color(0xFFF6D95B),
+    Color(0xFF6CC47A),
+    Color(0xFF5AA0E6),
+    Color(0xFF8C72D8),
+)
+
+/**
+ * L'arcobaleno: piove, e il sole c'e'.
+ *
+ * **Compare da solo quando i tre numeri lo permettono, e non ha un
+ * interruttore**: sole sopra l'orizzonte, qualcosa che cade, e un cielo non
+ * del tutto chiuso. Sotto la pioggia la copertura ha un pavimento a 0,80
+ * (`coperturaMinima`); l'arco e' pieno li' e si spegne salendo a 0,94 - cioe'
+ * si vede con i rovesci a cielo rotto, non sotto un fronte. Niente con la neve
+ * e niente col temporale, dove il cielo e' plumbeo per davvero.
+ *
+ * Sta **dalla parte opposta al sole**, com'e' fuori, col centro dietro le
+ * colline: se ne vede il tratto che esce dall'orizzonte. E' tenue apposta - un
+ * arcobaleno acceso su questo cielo dipinto sarebbe un adesivo.
+ */
+private fun DrawScope.arcobaleno(sx: Float, sy: Float, sky: SkyState, scena: Scena) {
+    val aperto = 1f - ((scena.copertura - 0.80f) / 0.14f).coerceIn(0f, 1f)
+    val forza = scena.sole * scena.bagnato * (1f - scena.tempesta) * (1f - scena.neve) * aperto
+    if (forza <= 0.02f) return
+    val soleASinistra = sky.journey < 0.5f
+    val centro = Offset((if (soleASinistra) 330f else 81f) * sx, 600f * sy)
+    val raggio = 330f * sx
+    val banda = 5.2f * sx
+    BandeArcobaleno.forEachIndexed { i, colore ->
+        val r = raggio - i * banda
+        drawArc(
+            color = colore.copy(alpha = 0.26f * forza),
+            startAngle = 180f,
+            sweepAngle = 180f,
+            useCenter = false,
+            topLeft = Offset(centro.x - r, centro.y - r),
+            size = Size(r * 2f, r * 2f),
+            style = Stroke(width = banda),
+        )
     }
 }
 

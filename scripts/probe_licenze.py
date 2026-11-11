@@ -29,6 +29,9 @@ PAGINE = [
     ("open-meteo-termini", "https://open-meteo.com/en/terms"),
     ("open-meteo-aria", "https://open-meteo.com/en/docs/air-quality-api"),
     ("open-meteo-previsione", "https://open-meteo.com/en/docs"),
+    # Il mare (CONTESTO §60): fonti dei modelli d'onda e l'avvertenza sulla
+    # costa, che da dentro la sessione di lavoro non si raggiungono.
+    ("open-meteo-mare", "https://open-meteo.com/en/docs/marine-weather-api"),
     ("cams-licenza", "https://ads.atmosphere.copernicus.eu/cdsapp/#!/terms/licence-to-use-copernicus-products"),
     ("copernicus-licenza", "https://atmosphere.copernicus.eu/sites/default/files/repository/20170117_Copernicus_License_V1.0.pdf"),
     ("cams-come-citare", "https://atmosphere.copernicus.eu/how-cite-cams-products"),

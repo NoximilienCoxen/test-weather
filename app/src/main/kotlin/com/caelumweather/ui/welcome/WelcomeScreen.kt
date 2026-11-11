@@ -115,12 +115,12 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.Bottom,
         ) {
             Text(
-                text = tr("Il cielo,\nora per ora", "The sky,\nhour by hour"),
+                text = tr("Il cielo,\nora per ora", "The sky,\nhour by hour", "Der Himmel,\nStunde für Stunde", "Le ciel,\nheure par heure", "El cielo,\nhora a hora"),
                 style = SalaType.pageTitle,
                 color = inchiostro,
             )
             Text(
-                text = tr("Qui il tempo si guarda, non si legge.", "Here the weather is something you look at, not read."),
+                text = tr("Qui il tempo si guarda, non si legge.", "Here the weather is something you look at, not read.", "Hier schaut man das Wetter an, statt es zu lesen.", "Ici, le temps se regarde, il ne se lit pas.", "Aquí el tiempo se mira, no se lee."),
                 style = SalaType.body,
                 color = inchiostro.copy(alpha = 0.8f),
                 modifier = Modifier.padding(top = 12.dp),
@@ -129,7 +129,7 @@ fun WelcomeScreen(
                 modifier = Modifier.padding(top = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                listOf(tr("Nessun account", "No account"), tr("Dati aperti", "Open data"), tr("Senza pubblicità", "No ads")).forEach { voce ->
+                listOf(tr("Nessun account", "No account", "Kein Konto", "Aucun compte", "Sin cuenta"), tr("Dati aperti", "Open data", "Offene Daten", "Données ouvertes", "Datos abiertos"), tr("Senza pubblicità", "No ads", "Keine Werbung", "Sans publicité", "Sin publicidad")).forEach { voce ->
                     Text(
                         text = voce,
                         style = SalaType.rowNote,
@@ -149,7 +149,7 @@ fun WelcomeScreen(
             // da un'app bloccata.
             if (state.locating) {
                 ScrittaCheRespira(
-                    testo = tr("GUARDANDO IL CIELO…", "LOOKING AT THE SKY…"),
+                    testo = tr("GUARDANDO IL CIELO…", "LOOKING AT THE SKY…", "ICH SCHAUE IN DEN HIMMEL…", "JE REGARDE LE CIEL…", "MIRANDO AL CIELO…"),
                     modifier = Modifier.padding(top = 16.dp),
                 )
             } else {
@@ -167,13 +167,13 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Pulsante(
-                testo = tr("Trovami", "Find me"),
+                testo = tr("Trovami", "Find me", "Finde mich", "Trouve-moi", "Encuéntrame"),
                 fondo = SalaTokens.accent600,
                 inchiostro = SalaTokens.neutral100,
                 onClick = { chiediPermesso.launch(Manifest.permission.ACCESS_COARSE_LOCATION) },
             )
             Pulsante(
-                testo = tr("Scegli prima una località", "Choose a place first"),
+                testo = tr("Scegli prima una località", "Choose a place first", "Wähle zuerst einen Ort", "Choisissez d'abord un lieu", "Elige antes un lugar"),
                 fondo = inchiostro.copy(alpha = if (notte) 0.14f else 0.07f),
                 inchiostro = inchiostro,
                 onClick = onChooseByHand,
@@ -185,9 +185,9 @@ fun WelcomeScreen(
 
 /** Cosa dice la riga in fondo, secondo cosa sta succedendo. */
 private fun cosaDice(state: UiState): String = when {
-    state.followsLocation -> tr("Trovato. Apro il cielo.", "Found you. Opening the sky.")
-    state.locationUnavailable -> tr("Non riesco a trovarti: puoi scegliere la città a mano.", "I can't find you: you can choose the town by hand.")
-    else -> tr("Per aprire il cielo mi serve sapere da dove lo guardi.", "To open the sky I need to know where you are looking from.")
+    state.followsLocation -> tr("Trovato. Apro il cielo.", "Found you. Opening the sky.", "Gefunden. Ich öffne den Himmel.", "Trouvé. J'ouvre le ciel.", "Te encontré. Abro el cielo.")
+    state.locationUnavailable -> tr("Non riesco a trovarti: puoi scegliere la città a mano.", "I can't find you: you can choose the town by hand.", "Ich kann dich nicht finden: Du kannst die Stadt von Hand wählen.", "Je n'arrive pas à vous trouver : vous pouvez choisir la ville à la main.", "No consigo encontrarte: puedes elegir la ciudad a mano.")
+    else -> tr("Per aprire il cielo mi serve sapere da dove lo guardi.", "To open the sky I need to know where you are looking from.", "Um den Himmel zu öffnen, muss ich wissen, von wo aus du ihn ansiehst.", "Pour ouvrir le ciel, j'ai besoin de savoir d'où vous le regardez.", "Para abrir el cielo necesito saber desde dónde lo miras.")
 }
 
 /**

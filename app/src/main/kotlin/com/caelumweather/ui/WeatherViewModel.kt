@@ -4,12 +4,17 @@ import com.caelumweather.lingua.tr
 import com.caelumweather.notifiche.AllerteUfficialiWorker
 import com.caelumweather.notifiche.PioggiaInArrivoWorker
 import com.caelumweather.notifiche.RiepilogoMattinoWorker
+import com.caelumweather.notifiche.SogliePersonaliWorker
+import com.caelumweather.prefs.SogliePersonali
+import com.caelumweather.prefs.TipoSoglia
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.caelumweather.data.AirQuality
 import com.caelumweather.data.AirQualityRepository
+import com.caelumweather.data.Mare
+import com.caelumweather.data.MareRepository
 import com.caelumweather.data.AlertKind
 import com.caelumweather.data.AlertLevel
 import com.caelumweather.data.DeviceLocation
@@ -76,12 +81,12 @@ import kotlinx.serialization.SerializationException
 internal fun failureMessage(failure: Throwable): String = when (failure) {
     // Formato illeggibile: la risposta e' arrivata, ma non e' quello che
     // dichiara di essere. Non c'e' niente che chi guarda possa fare.
-    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer")
+    is SerializationException -> tr("Il servizio meteo ha risposto male", "The weather service sent a bad answer", "Der Wetterdienst hat fehlerhaft geantwortet", "Le service météo a mal répondu", "El servicio meteorológico respondió mal")
     // Tutto cio' che non e' arrivato: host irrisolto, connessione rifiutata,
     // tempo scaduto, TLS. Sono tutte IOException, e per chi guarda sono la
     // stessa cosa.
-    is IOException -> tr("Rete non raggiungibile", "Network unreachable")
-    else -> tr("Previsione non disponibile", "Forecast unavailable")
+    is IOException -> tr("Rete non raggiungibile", "Network unreachable", "Netz nicht erreichbar", "Réseau injoignable", "Red no disponible")
+    else -> tr("Previsione non disponibile", "Forecast unavailable", "Vorhersage nicht verfügbar", "Prévision indisponible", "Previsión no disponible")
 }
 
 /**
@@ -117,6 +122,11 @@ data class UiState(
     val air: AirQuality? = null,
     /** Vero quando l'ultima richiesta di qualita' dell'aria non e' riuscita. */
     val airUnavailable: Boolean = false,
+    /**
+     * Il mare davanti alla localita'; nullo dove non c'e' (o finche' non
+     * arriva). Come l'aria, appartiene al posto da cui viene.
+     */
+    val mare: Mare? = null,
     /**
      * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
      *
@@ -175,6 +185,8 @@ data class UiState(
      * stagione, quando il dato vero e' tutto zero.
      */
     val forcedPolline: Int? = null,
+    /** L'altezza dell'onda imposta dalla cattura, in centimetri: vedi [mareMostrato]. */
+    val forcedMare: Int? = null,
     // **`forcedYawDeg` se n'e' andato, e la CI lo guidava ancora.** Portava
     // l'angolo di `--ei giro` dalla riga di comando fino a qui, e qui si
     // fermava: il lettore era `rememberGiro`, uscito col cielo di Organic. Sei
@@ -226,6 +238,8 @@ data class UiState(
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
+    /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
+    val soglie: SogliePersonali = SogliePersonali(),
     /**
      * La citta' salvata nell'app, quando se ne sta guardando un'altra da un
      * widget; nulla altrimenti. Vedi [WeatherViewModel.visita].
@@ -362,6 +376,26 @@ data class UiState(
         get() = forcedAlert?.let { listOf(it) } ?: alerts
 
     /** Il polline da mostrare: quello vero, o quello imposto da [forcedPolline]. */
+    /**
+     * Il mare da mostrare all'ora scelta: quello imposto dalla cattura, o
+     * quello vero. Imposto in lettura, come il polline: la localita' della
+     * cattura e' Forli', che il mare non lo vede.
+     */
+    val mareMostrato: com.caelumweather.data.OraMare?
+        get() {
+            val quando = (detailHour ?: hour)?.time
+            forcedMare?.let { centimetri ->
+                return com.caelumweather.data.OraMare(
+                    time = quando ?: LocalDateTime.now(),
+                    onda = centimetri / 100.0,
+                    direzione = 135.0,
+                    periodo = 6.0,
+                    acqua = 19.0,
+                )
+            }
+            return mare?.alle(quando)
+        }
+
     val pollineMostrato: List<GiornoPolline>
         get() = forcedPolline?.let { livello ->
             val oggi = java.time.LocalDate.now()
@@ -630,6 +664,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         riepilogoMattino = settings.riepilogoMattino,
                         oraRiepilogo = settings.oraRiepilogo,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
+                        soglie = settings.soglie,
                     )
                 }
                 // Cambiare unita' non deve costare una richiesta: la conversione
@@ -672,6 +707,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 it.copy(
                     air = null,
                     airUnavailable = false,
+                    mare = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
                     // Un fotogramma e' una fotografia di **un posto**, e
@@ -745,6 +781,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 .onFailure {
                                     _state.update { it.copy(airUnavailable = true) }
                                 }
+                        }
+
+                        // Il mare, con la stessa regola dell'aria: un altro
+                        // host, figlio di questo lavoro, e nessuno lo aspetta.
+                        // Se non arriva la sezione non compare, e quella di
+                        // prima - dello stesso posto - resta.
+                        launch {
+                            MareRepository(place).load().onSuccess { mare ->
+                                _state.update { it.copy(mare = mare) }
+                            }
                         }
 
                         // Le allerte: prima i bollettini ufficiali, e le
@@ -997,8 +1043,40 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /**
+     * L'ora a cui un riquadro della settimana ha portato, e quella di prima.
+     *
+     * **Il salto d'ora e' in prestito, non una scelta.** Toccando "Pioggia" su
+     * giovedi' si arriva all'ora in cui comincia a piovere - le quattro del
+     * mattino - perche' li' la sala racconta il numero del riquadro. Ma l'ora
+     * restava quella anche tornando indietro: la settimana si ritrovava di
+     * notte, scura, con "GIO 04:00" sulla barra, e chi aveva solo toccato un
+     * riquadro non aveva mai chiesto le quattro. Visto in mano l'11 novembre
+     * 2026, e a ragione scambiato per un guasto.
+     *
+     * Uscendo dalla sala d'arrivo l'ora torna quella di prima - **a meno che
+     * nel frattempo non sia stata spostata a mano**: allora e' una scelta, e
+     * resta.
+     */
+    private var saltoDaRiquadro: SaltoDOra? = null
+
+    /** Il tocco su un riquadro della settimana che porta anche a un'ora: vedi [saltoDaRiquadro]. */
+    fun apriAllOra(ora: Int, sala: SalaRoom) {
+        val prima = saltoDaRiquadro?.prima ?: _state.value.selectedHour
+        selectHour(ora)
+        saltoDaRiquadro = SaltoDOra(prima = prima, arrivo = _state.value.selectedHour, sala = sala)
+    }
+
     /** Il carosello di Sala ha posato una stanza: da li' si riparte alla prossima apertura. */
-    fun showRoom(room: SalaRoom) = _state.update { it.copy(room = room) }
+    fun showRoom(room: SalaRoom) {
+        saltoDaRiquadro?.let { salto ->
+            if (room != salto.sala) {
+                saltoDaRiquadro = null
+                if (_state.value.selectedHour == salto.arrivo) selectHour(salto.prima)
+            }
+        }
+        _state.update { it.copy(room = room) }
+    }
 
     /** Aggancio per la cattura automatica: porta Sala su una stanza precisa. */
     fun requestRoom(index: Int) {
@@ -1310,7 +1388,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(
                             searching = false,
                             results = emptyList(),
-                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed"),
+                            searchError = failure.message ?: tr("Ricerca non riuscita", "Search failed", "Suche fehlgeschlagen", "La recherche a échoué", "La búsqueda ha fallado"),
                         )
                     }
                 }
@@ -1351,6 +1429,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     /** Impone il livello del polline: vedi [UiState.forcedPolline]. */
     fun forcePolline(livello: Int) {
         _state.update { it.copy(forcedPolline = livello.coerceIn(0, 4)) }
+    }
+
+    /** Impone il mare, in centimetri d'onda: vedi [UiState.mareMostrato]. */
+    fun forceMare(centimetri: Int) {
+        _state.update { it.copy(forcedMare = centimetri.coerceIn(0, 1500)) }
     }
 
     /** Impone la nuvolosita' oraria: vedi [UiState.forcedCloudCover]. */
@@ -1490,6 +1573,23 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.setOraRiepilogo(minuti) }
     }
 
+    /**
+     * Accende o spegne un avviso personale. Il lavoro in sottofondo gira finche'
+     * ne resta acceso almeno uno. Lo stato subito, il disco dopo: come l'ora del
+     * riepilogo, la levetta si sposta al tocco.
+     */
+    fun setSoglia(tipo: TipoSoglia, accesa: Boolean) {
+        val app = getApplication<Application>()
+        _state.update { it.copy(soglie = it.soglie.con(tipo, accesa)) }
+        if (_state.value.soglie.qualcunaAccesa) SogliePersonaliWorker.pianifica(app) else SogliePersonaliWorker.annulla(app)
+        viewModelScope.launch { prefs.setSoglia(tipo, accesa) }
+    }
+
+    fun setValoreSoglia(tipo: TipoSoglia, valore: Int) {
+        _state.update { it.copy(soglie = it.soglie.conValore(tipo, valore)) }
+        viewModelScope.launch { prefs.setValoreSoglia(tipo, valore) }
+    }
+
     fun permessoNotificheChiesto() {
         _state.update { it.copy(permessoNotificheChiesto = true) }
         viewModelScope.launch { prefs.setPermessoNotificheChiesto() }
@@ -1546,6 +1646,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
 }
 
 /** L'ora della previsione piu' vicina a un istante dato. */
+/** Un'ora presa in prestito da un riquadro: vedi `WeatherViewModel.saltoDaRiquadro`. */
+private data class SaltoDOra(val prima: Int, val arrivo: Int, val sala: SalaRoom)
+
 private fun nearestHourIndex(hours: List<HourForecast>, target: LocalDateTime): Int {
     if (hours.isEmpty()) return 0
     var best = 0

@@ -619,6 +619,7 @@ adb shell am start -n com.caelumweather/.MainActivity --ei ora 2 --ei meteo 63
 | `--ez benvenuto` | rimostra la schermata di benvenuto |
 | `--ei allerta` | mette in scena un'allerta finta: 1 gialla, 2 arancione, 3 rossa |
 | `--ei polline` | impone il polline da 0 a 4, per tre giorni e tutte le famiglie: granelli nel cielo da 3 in su, e la sezione in fondo all'aria |
+| `--ei mare` | impone il mare, in centimetri d'onda: la sezione in fondo a Sala VI, che a Forli' non c'e' |
 | `--ez allertaridotta` | riduce subito la fascia al pallino. **Va dopo `--ei allerta`**: ridurre salva gli identificativi di cio' che c'e' in scena, e se l'allerta imposta non ci fosse ancora non ci sarebbe niente da ridurre |
 
 Il benvenuto va imposto perche' si vede **una volta sola nella vita
@@ -7918,3 +7919,217 @@ store e non piu' il repository.
 di posta dedicato), l'indirizzo dove l'informativa viene pubblicata (GitHub
 Pages mostra il nome del profilo), gli agenti degli script della sonda in CI,
 e il repository stesso se resta pubblico.
+
+## 59. Gli avvisi personali a soglia
+
+L'11 novembre 2026. `notifiche/SogliePersonaliWorker.kt`: gelo, caldo, vento
+forte. Tre levette nel gruppo nuovo AVVISI PERSONALI delle impostazioni, spente
+di norma, ognuna con tre soglie fra cui scegliere (minima -5/0/3 °C, massima
+30/33/36 °C, raffiche 40/60/80 km/h). Si salvano in Celsius e km/h e si
+scrivono nell'unita' scelta.
+
+- **Non contraddice la regola di `AllerteUfficialiWorker`** ("gli avvisi
+  calcolati non passano dalle notifiche"): la' la soglia e' dell'app e una
+  notifica la farebbe sembrare un ente. Qui la soglia la scrive la persona, e
+  la notifica gliela ripete e chiude con "È una previsione, non un'allerta
+  ufficiale". Lo dicono anche la nota del gruppo, la descrizione del canale e
+  un capoverso delle note legali (che dice pure di non affidargli la sicurezza
+  di persone, animali o cose).
+- **Ogni due ore, sulle prossime sedici.** Con ventiquattro, il mattino dopo
+  una gelata si riceverebbe gia' quella della notte seguente. Un episodio una
+  notifica: la memoria (`notifiche_soglie`) tiene, per posto e per tipo, il
+  giorno in cui cade l'ora estrema.
+- **Fra le 22 e le 7 del telefono tace** (`oraDiParlare`): cio' che e' ancora
+  davanti si dice al primo giro del mattino.
+- Si confronta il numero **arrotondato**, quello che si legge: 0,4° e' "0°".
+- Usa il modello dell'app e riempie la scorta su disco, come il riepilogo.
+  Canale `soglie_personali`, importanza normale. Il tocco apre Sala I, o
+  Sala VI per il vento.
+
+Prove JVM in `SogliePersonaliTest`. **Non provato in mano**: la notifica vera,
+e il gruppo nelle impostazioni (tre levette piu' tre scelte segmentate).
+
+**Un controllo dei tipi senza SDK.** Da questa sessione `dl.google.com` si
+raggiunge, ma l'SDK Android vuole una licenza da accettare e non si e'
+installato. Si compila lo stesso, per sapere se il Kotlin regge prima di
+spingere: un progetto Gradle di servizio (plugin `kotlin("jvm")`, Compose e
+serialization) che punta a `app/src/main/kotlin` e `core/src/main/kotlin`, con
+le librerie risolte da Google Maven (i `classes.jar` estratti dagli AAR),
+`org.robolectric:android-all` al posto di `android.jar` e tre classi finte per
+`R` e `BuildConfig`. Fa girare anche le prove che non chiedono Robolectric
+(246 l'11 novembre). **Non sostituisce la CI**: niente risorse, niente lint,
+niente R8, niente modulo `wear`.
+
+## 60. Il mare, solo dove c'e'
+
+L'11 novembre 2026. `data/MareRepository.kt` e `ui/sala/rooms/MareVento.kt`:
+altezza, direzione e periodo dell'onda e temperatura dell'acqua, in fondo a
+Sala VI sotto la pressione, all'ora scelta. Il riquadro con l'onda si muove
+(ampiezza dai metri, passo dal periodo) e sta fermo con le animazioni ridotte.
+
+- **E' un quarto indirizzo di Open-Meteo**, `marine-api.open-meteo.com`:
+  aggiunto all'informativa (`docs/privacy.md`, it e en), alle note legali
+  ("quattro di Open-Meteo"), all'attribuzione e alla scheda dello store. La
+  sonda in CI ha un passo suo (`Interroga il mare`, `api/mare-*.json`).
+- **Chi e' di costa lo decidono i dati.** L'API risponde a ogni coordinata: a
+  Forli', Milano, Bologna, Como, Denver lascia nulle tutte le colonne; a
+  Rimini, Genova, Venezia, Honolulu le riempie con la cella di mare piu'
+  vicina (lette l'11 novembre). `parseMare` torna nullo senza nemmeno un
+  numero, e la sezione non esiste. Le due risposte vere stanno in
+  `app/src/test/resources/mare-{rimini,forli}.json`.
+- **Lo stato del mare** e' la scala Douglas (`StatoDelMare`). Chi legge i
+  Fahrenheit legge l'onda in piedi.
+- **L'avvertenza sotto i numeri non e' una `Didascalia`**: con i testi brevi
+  quelle spariscono, e "non usarla per navigare ne' per decidere un bagno"
+  deve restare. Lo ripetono le note legali.
+- Arriva dopo la previsione, come l'aria, figlio dello stesso lavoro; non si
+  conserva su disco: senza rete la sezione manca.
+- `--ei mare 120` lo impone per la cattura (scatto `*-mare-vento`).
+
+**Verificato alle fonti, tramite la CI.** La pagina di Open-Meteo sul mare da
+questa sessione non si raggiunge; `probe_licenze.py` la scarica
+(`api/licenze/open-meteo-mare.txt`) e il giro 494 l'ha pubblicata. Dice due
+cose che l'app ora ripete: l'avvertenza ("Accuracy at coastal areas is limited.
+This is not suitable for coastal navigation and does not replace your nautical
+almanac") e le citazioni dei modelli, copiate parola per parola in
+`Fonti.CITAZIONE_MARE` (MFWAM e temperatura dell'acqua: Copernicus Marine
+Service; ECMWF WAM; NOAA NCEP GFS Wave; DWD EWAM e GWAM). Non provato in mano.
+
+## 61. Il movimento di schede e comandi
+
+L'11 novembre 2026. `ui/sala/SalaMovimento.kt`, accanto a `SalaMolle.kt` (che
+resta delle molle del cielo). **Tutto obbedisce a `LocalMovimento`**, che la
+Shell mette a falso con le animazioni ridotte (app o sistema) e nella cattura:
+li' ogni cosa salta al valore finale e gli scatti non cambiano. Niente resta
+acceso: parte da un gesto o da un dato che cambia, e finisce (trappola #8).
+
+| Cosa | Dove | Come |
+|---|---|---|
+| I pezzi della scheda arrivano uno dopo l'altro | `ColonnaInRitardo`, dentro `PannelloSala` | guidato dal dito (`LocalScartoSala` = scarto del carosello), niente orologio: dal basso resta indietro cio' che sta sotto, dall'alto cio' che sta sopra. Uno strato per figlio, letto mentre si posa |
+| Il comando cede sotto il dito | `Modifier.cedevole()` | va **prima** di `clip`/`background`; guarda il dito senza consumare. Celle-porta, pastiglia degli avvisi, indietro, riquadri della settimana, giorni, localita', confronto, bussola, "torna a ora" |
+| Le barre arrivano | `misuraCheArriva` | pioggia, UV, vento: cambiando ora le colonne si riassestano |
+| La lancetta gira per la via corta | `angoloCheGira` | la rosa di Sala VI |
+| I numeri grandi scorrono | `NumeroCheScorre` | vento, UV, millimetri (Sala I lo faceva gia') |
+| Una riga apre il proprio spazio | `ComparsaMorbida` | le due pastiglie sotto l'intestazione; le scelte sotto un interruttore acceso |
+| Un testo si scambia | `ScambioMorbido` | nome della citta', pastiglia degli avvisi (che passa anche di colore) |
+| Un colore passa | `coloreChePassa` | fondo e bordo del giorno scelto in Sala I |
+
+Nel cielo, due cose nuove (`SalaVita.stellaCadente`, `SalaCielo.arcobaleno`):
+
+- **Una stella cadente** ogni diciassette secondi, in tre giri su cinque, a
+  notte aperta e asciutta. Parte a 6,5 s dentro il giro e **non a zero**: con
+  l'orologio fermo (cattura, animazioni ridotte) non c'e' mai.
+- **L'arcobaleno** quando piove col sole su e il cielo non e' chiuso: pieno a
+  copertura 0,80 (il pavimento della pioggia), spento a 0,94; niente con neve o
+  temporale. Sta dalla parte opposta al sole. **Cambia gli scatti di pioggia
+  diurna** della CI quando la nuvolosita' vera dell'ora e' bassa: e' voluto.
+
+**Le tre proposte vecchie, com'erano scritte, e cosa ne e' stato.** "Il
+cartellino che entra in ritardo" e' `ColonnaInRitardo`. "La dissolvenza del
+fondo quando cambia la condizione" c'era gia' dal §13: i sette numeri della
+scena passano con `mollaScena`, e non c'e' piu' un fondo che scatta. "Il bordo
+irregolare delle macchie d'acquerello" **non si e' fatto**: le macchie sono
+uscite con la carta (§13), e l'unico modo di rifare quel bordo sulle nuvole e'
+uno shader AGSL, che se non compila **fa cadere l'app all'avvio** e da qui non
+si puo' provare su nessun telefono.
+
+**Non provato in mano, niente di tutto questo.** Compila, e le prove JVM
+passano; come si sente sotto il dito - quanto ritardo, quanto cede un comando,
+se le barre ondeggiano troppo - lo dice solo il telefono. I numeri da tarare
+stanno in cima a `SalaMovimento.kt`.
+
+## 62. Tedesco, francese e spagnolo
+
+L'11 novembre 2026. Le lingue sono cinque (`Lingua`, `SceltaLingua`), e
+**`tr()` ha cinque argomenti**: i tre nuovi stanno accanto all'italiano e
+all'inglese nella stessa chiamata, facoltativi. Dove uno manca si legge
+l'inglese - un difetto che si vede, non un crash. La nota di §49 diceva che
+alla terza lingua si sarebbe passati alle risorse: non lo si e' fatto, e il
+perche' sta in testa a `Lingua.kt`.
+
+- **711 chiamate, 654 frasi distinte**, tradotte a mano e applicate con uno
+  strumento (censimento delle `tr(it, en)`, espressioni `${...}` rimesse al
+  loro posto senza ricopiarle). Gli elenchi coi nomi nelle lingue (`AlertKind`,
+  `AlertLevel`, `MoonSegment`, `AirBand`, `StatoDelMare`, `SalaRoom`,
+  `WidgetKind`, `TipoPolline`, `Scena`) portano le cinque nel costruttore.
+- **Automatica**: la lingua del telefono se e' una delle cinque, se no inglese.
+  `locales_config.xml` le elenca tutte, quindi da Android 13 si scelgono anche
+  dalle impostazioni di sistema. Nelle impostazioni dell'app la scelta sta su
+  **due binari** (`SceltaSegmentata` ora regge una scelta che non e' fra le sue
+  voci: il cursore sbiadisce).
+- **`inInglese()` vuol dire "non italiano"**, com'e' sempre stato usato.
+- **Tre cose che cambiano forma, non solo parole**:
+  - la O e' l'ovest in italiano, francese e spagnolo e **l'est in tedesco**
+    (`Wmo.windDirection`, e le lettere della rosa in Sala VI);
+  - i nomi in mezzo a una frase si abbassano, **tranne in tedesco**
+    (`String.inMezzoAllaFrase()`, che ha preso il posto di `.lowercase()` in
+    trentatre' punti: "Warnstufe Gelb für Gewitter");
+  - "allerta" (ufficiale) e "avviso" (calcolato) restano due parole diverse:
+    Warnung / Hinweis, alerte / avis, alerta / aviso.
+- Il testo dei bollettini CAP si prende nella lingua dell'app, poi in inglese,
+  poi il primo che c'e'. La ricerca delle localita' chiede i nomi nella lingua.
+- Risorse di sistema (`values-de`, `-fr`, `-es`): nomi dei widget, scorciatoie,
+  riquadro. Scheda dello store in `fastlane/metadata/android/{de-DE,fr-FR,es-ES}`.
+- L'orologio riceve la scelta come testo: una versione vecchia che non conosce
+  "TEDESCO" ripiega sull'automatica.
+
+Prove in `LinguaTest` (parole, punti cardinali, maiuscole tedesche, ripiego
+sull'inglese, una notifica intera per lingua).
+
+**Cosa non e' stato fatto, e si vede.**
+- **Nessuno che parli queste lingue le ha rilette.** Sono traduzioni mie:
+  corrette nell'insieme, ma un madrelingua trovera' frasi rigide. I termini
+  tecnici scelti (bande dell'aria, scala Douglas, fasi lunari) sono quelli in
+  uso, non verificati su una fonte per ciascuno.
+- **Nessuno scatto nelle tre lingue.** La cattura fotografa italiano e inglese;
+  il tedesco ha parole lunghe e in qualche riquadro (le celle da tre per riga,
+  le scelte segmentate) puo' finire coi puntini. Si vede con
+  `--es lingua de`.
+- **Le anteprime dei widget** nel selettore restano quelle italiane per chi ha
+  il telefono in tedesco, francese o spagnolo: `AnteprimeWidgetTest` ora le
+  disegna in tutte e cinque (`anteprima-*-{de,fr,es}.png` in `widget-renders`),
+  ma vanno copiate a mano in `res/drawable-{de,fr,es}-nodpi` (§57).
+- **L'informativa** (`docs/privacy.md`) resta in italiano e inglese.
+
+## 63. L'ora presa in prestito da un riquadro
+
+L'11 novembre 2026, da un video girato sul telefono (Fontevivo, build di
+`main`). Nella settimana, scelto giovedi' e toccato il riquadro PIOGGIA, la
+sala si apriva alle 04:00 - l'ora in cui comincia a piovere, com'e' voluto
+(§ sui sei riquadri in `SalaSettimana`) - ma **l'ora restava quella anche
+tornando indietro**: la settimana si ritrovava di notte, col tema scuro e
+"GIO 12 04:00" sulla barra. Su oggi lo stesso tocco spostava le 13 alle 15.
+Chi guarda ha toccato un riquadro, non la barra delle ore: sembrava un guasto.
+
+Adesso quell'ora e' **in prestito** (`WeatherViewModel.apriAllOra` e
+`saltoDaRiquadro`): la sala d'arrivo si apre ancora all'ora che il numero
+racconta, e quando il carosello si posa su un'altra sala l'ora torna quella di
+prima. Se nel frattempo e' stata spostata a mano, e' una scelta e resta.
+
+**Non provato in mano.** Resta vero che entrando nella pioggia di giovedi' il
+cielo si fa notte: alle quattro e' notte, e la barra lo dice.
+
+### 63.1 Il difetto vero: si arrivava alla pioggia e si tornava da soli
+
+Lo stesso video, riguardato a dieci fotogrammi al secondo. Toccato PIOGGIA, il
+carosello arriva alla sala, ci resta due decimi di secondo e **torna da solo
+alla settimana**; al secondo tocco resta. La catena:
+
+1. il tocco cambia l'ora (§63), e sulla barra compare "torna all'ora attuale";
+2. la barra si alza, il carosello (che ha `weight(1f)`) si accorcia, e la
+   pagina appena posata si ritrova di qualche pixel fuori posto;
+3. la rete di `SalaShell` lo vede "fermo a mezz'aria" e chiede a
+   `metaDelGesto` dove andare - cioe' all'ultimo gesto, che e' il tocco sul
+   riquadro: fermo, **sulla settimana**. E ce lo riporta.
+
+Al secondo tocco l'ora e' gia' quella, la barra non cambia altezza e non
+succede niente: per questo sembrava capriccioso.
+
+Adesso `vaiA`, `portaA` e l'indietro passano da `metaDaComando`, che riscrive
+la partenza della rete sulla sala comandata; e quando il carosello si posa
+senza un dito sopra, la partenza diventa la sala posata. **Qualunque cosa cambi
+l'altezza della barra o dell'intestazione puo' rifare il punto 2**: la rete ora
+risponde con la sala giusta, ma chi aggiunge una riga che compare e scompare
+sopra o sotto il carosello lo tenga presente.
+
+**Non provato in mano**: e' dedotto dal video e dal codice, e compila.

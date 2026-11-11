@@ -44,6 +44,7 @@ object Fonti {
     const val OPEN_METEO_LICENZA = "https://open-meteo.com/en/licence"
     const val CC_BY_4 = "https://creativecommons.org/licenses/by/4.0/"
     const val CAMS_ARIA = "https://open-meteo.com/en/docs/air-quality-api"
+    const val MARE = "https://open-meteo.com/en/docs/marine-weather-api"
     const val METEOALARM = "https://meteoalarm.org/"
 
     /** La citazione che Open-Meteo chiede per i dati CAMS, parola per parola. */
@@ -58,6 +59,18 @@ object Fonti {
             "(ENEA) and Barcelona Supercomputing Center (BSC) (2022): CAMS European air quality " +
             "forecasts, ENSEMBLE data. Copernicus Atmosphere Monitoring Service (CAMS) Atmosphere " +
             "Data Store (ADS)."
+
+    /**
+     * Le citazioni che la pagina del mare di Open-Meteo chiede per i modelli
+     * d'onda e la temperatura dell'acqua, parola per parola (lette dalla sonda
+     * della CI l'11 novembre 2026, `api/licenze/open-meteo-mare.txt`).
+     */
+    const val CITAZIONE_MARE =
+        "MeteoFrance MFWAM waves and sea surface temperature: generated using E.U. Copernicus " +
+            "Marine Service Information (https://doi.org/10.48670/moi-00017, " +
+            "https://doi.org/10.48670/moi-00016). ECMWF WAM wave forecasts from the European " +
+            "Centre for Medium-Range Weather Forecasts ECMWF. GFS Wave forecasts from NOAA NCEP. " +
+            "EWAM and GWAM wave forecasts from the German Weather Service DWD."
 
     /** La citazione di Open-Meteo, come la propone la sua pagina della licenza. */
     const val CITAZIONE_OPEN_METEO =
@@ -86,7 +99,7 @@ internal fun Collegamento(
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .semantics { role = Role.Button }
-            .clickable(onClickLabel = tr("apri $indirizzo", "open $indirizzo")) { runCatching { apri.openUri(indirizzo) } },
+            .clickable(onClickLabel = tr("apri $indirizzo", "open $indirizzo", "$indirizzo öffnen", "ouvrir $indirizzo", "abrir $indirizzo")) { runCatching { apri.openUri(indirizzo) } },
     )
 }
 
@@ -110,18 +123,18 @@ internal fun RigaCrediti(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(text = tr("Dati", "Data"), style = stile, color = colore, maxLines = 1)
+        Text(text = tr("Dati", "Data", "Daten", "Données", "Datos"), style = stile, color = colore, maxLines = 1)
         Collegamento("Open-Meteo.com", Fonti.OPEN_METEO, stile, colore)
         Text(text = "·", style = stile, color = colore, maxLines = 1)
         Text(
-            text = tr("aria e polline CAMS Copernicus", "air and pollen CAMS Copernicus"),
+            text = tr("aria e polline CAMS Copernicus", "air and pollen CAMS Copernicus", "Luft und Pollen CAMS Copernicus", "air et pollen CAMS Copernicus", "aire y polen CAMS Copernicus"),
             style = stile.copy(textDecoration = TextDecoration.Underline),
             color = colore,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .semantics { role = Role.Button }
-                .clickable(onClickLabel = tr("apri le note legali con le fonti", "open the legal notes with the sources"), onClick = onLicenze),
+                .clickable(onClickLabel = tr("apri le note legali con le fonti", "open the legal notes with the sources", "rechtliche Hinweise mit den Quellen öffnen", "ouvrir les mentions légales avec les sources", "abrir las notas legales con las fuentes"), onClick = onLicenze),
         )
     }
 }

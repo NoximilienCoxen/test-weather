@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.sala.cedevole
+import com.caelumweather.ui.sala.coloreChePassa
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.content.Context
@@ -122,7 +124,7 @@ fun SalaOggiScreen(
             Row(
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier.clearAndSetSemantics {
-                    contentDescription = gradi?.let { tr("$it gradi", "$it degrees") } ?: tr("temperatura non disponibile", "temperature not available")
+                    contentDescription = gradi?.let { tr("$it gradi", "$it degrees", "$it Grad", "$it degrés", "$it grados") } ?: tr("temperatura non disponibile", "temperature not available", "Temperatur nicht verfügbar", "température indisponible", "temperatura no disponible")
                 },
             ) {
                 CifreCheScorrono(
@@ -145,7 +147,7 @@ fun SalaOggiScreen(
             ) {
                 val percepiti = ora?.apparent?.let { state.unit.from(it).roundToInt() }
                 Text(
-                    text = percepiti?.let { tr("percepiti $it°", "feels like $it°") } ?: tr("percepiti --", "feels like --"),
+                    text = percepiti?.let { tr("percepiti $it°", "feels like $it°", "gefühlt $it°", "ressenti $it°", "sensación $it°") } ?: tr("percepiti --", "feels like --", "gefühlt --", "ressenti --", "sensación --"),
                     style = SalaType.rowTitle,
                     color = palette.ink,
                 )
@@ -177,13 +179,13 @@ fun SalaOggiScreen(
                 val contesto = LocalContext.current
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = tr("condividi", "share"),
+                    text = tr("condividi", "share", "teilen", "partager", "compartir"),
                     style = SalaType.pill,
                     color = palette.accent,
                     modifier = Modifier
                         .padding(bottom = 12.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable(onClickLabel = tr("condividi la previsione", "share the forecast")) {
+                        .clickable(onClickLabel = tr("condividi la previsione", "share the forecast", "Vorhersage teilen", "partager la prévision", "compartir la previsión")) {
                             condividi(contesto, testoDaCondividere(state, giornoScelto))
                         }
                         .padding(horizontal = 6.dp, vertical = 6.dp),
@@ -202,7 +204,7 @@ fun SalaOggiScreen(
                     // Il ritorno al presente compare **solo quando serve**: un
                     // comando che non fa niente insegna a non fidarsi degli altri.
                     Text(
-                        text = tr("torna a oggi", "back to today"),
+                        text = tr("torna a oggi", "back to today", "zurück zu heute", "retour à aujourd'hui", "volver a hoy"),
                         style = SalaType.pill,
                         color = palette.accent,
                         modifier = Modifier.clickable(onClick = viewModel::backToNow),
@@ -229,13 +231,13 @@ fun SalaOggiScreen(
                 horizontalArrangement = Arrangement.spacedBy(9.dp),
             ) {
                 CellaValore(
-                    etichetta = tr("VENTO", "WIND"),
+                    etichetta = tr("VENTO", "WIND", "WIND", "VENT", "VIENTO"),
                     valore = ora?.windSpeed?.let { "${state.windUnit.from(it).roundToInt()} ${state.windUnit.label}" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.VENTO) },
                 )
                 CellaValore(
-                    etichetta = tr("UMIDITÀ", "HUMIDITY"),
+                    etichetta = tr("UMIDITÀ", "HUMIDITY", "FEUCHTE", "HUMIDITÉ", "HUMEDAD"),
                     valore = ora?.humidity?.let { "${it.roundToInt()} %" } ?: "--",
                     palette = palette,
                     onVai = { onVai(SalaRoom.PIOGGIA) },
@@ -245,7 +247,7 @@ fun SalaOggiScreen(
                 // la luna, che di notte e' l'unica cosa che cambia.
                 if (sky.moonPresence > 0.5f) {
                     CellaValore(
-                        etichetta = tr("LUNA", "MOON"),
+                        etichetta = tr("LUNA", "MOON", "MOND", "LUNE", "LUNA"),
                         valore = "${(MoonPhase.illumination(faseLunare) * 100f).roundToInt()} %",
                         palette = palette,
                         onVai = { onVai(SalaRoom.LUNA) },
@@ -273,12 +275,12 @@ fun SalaOggiScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY"), style = SalaType.sectionLabel, color = palette.inkFaint)
+                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY", "TIPPE AUF EINEN TAG", "TOUCHEZ UN JOUR", "TOCA UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
                 // **Non dice "apri la sala II".** Chi guarda non chiama queste
                 // schermate "sale" - e' un nome nostro, buono per il codice e
                 // non per chi legge: qui si nomina la cosa, la settimana.
                 Text(
-                    text = tr("apri la settimana", "open the week"),
+                    text = tr("apri la settimana", "open the week", "Woche öffnen", "ouvrir la semaine", "abrir la semana"),
                     style = SalaType.pill,
                     color = palette.accent,
                     modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
@@ -316,7 +318,7 @@ internal fun testoDaCondividere(state: UiState, scelto: GiornoSettimana?): Strin
         unita = state.unit,
         vento = state.windUnit,
         allerte = state.alerts,
-        giornoDetto = if (oggi) tr("oggi", "today") else "${scelto!!.esteso} ${scelto.data}",
+        giornoDetto = if (oggi) tr("oggi", "today", "heute", "aujourd'hui", "hoy") else "${scelto!!.esteso} ${scelto.data}",
         ieri = if (oggi) previsione.ieri else null,
     )
     return "$titolo.\n$corpo\n— Caelum Weather"
@@ -357,11 +359,12 @@ fun StrisciaGiorni(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .cedevole()
                     .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
-                    .background(if (attivo) palette.chip else Color.Transparent)
+                    .background(coloreChePassa(if (attivo) palette.chip else palette.chip.copy(alpha = 0f)))
                     .border(
                         width = 1.5.dp,
-                        color = if (attivo) palette.accent else Color.Transparent,
+                        color = coloreChePassa(if (attivo) palette.accent else palette.accent.copy(alpha = 0f)),
                         shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
                     )
                     // La figuretta e' un disegno, e i due numeri da soli non
@@ -369,15 +372,15 @@ fun StrisciaGiorni(
                     // legge per intero.
                     .semantics {
                         contentDescription = buildString {
-                            append(if (giorno.indice == 0) tr("oggi", "today") else "${giorno.esteso} ${giorno.data}")
+                            append(if (giorno.indice == 0) tr("oggi", "today", "heute", "aujourd'hui", "hoy") else "${giorno.esteso} ${giorno.data}")
                             append(", ").append(giorno.tipo)
-                            giorno.max?.let { append(tr(", massima ${state.unit.from(it).roundToInt()} gradi", ", high ${state.unit.from(it).roundToInt()} degrees")) }
-                            giorno.min?.let { append(tr(", minima ${state.unit.from(it).roundToInt()} gradi", ", low ${state.unit.from(it).roundToInt()} degrees")) }
-                            if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres"))
+                            giorno.max?.let { append(tr(", massima ${state.unit.from(it).roundToInt()} gradi", ", high ${state.unit.from(it).roundToInt()} degrees", ", Höchstwert ${state.unit.from(it).roundToInt()} Grad", ", maximale ${state.unit.from(it).roundToInt()} degrés", ", máxima ${state.unit.from(it).roundToInt()} grados")) }
+                            giorno.min?.let { append(tr(", minima ${state.unit.from(it).roundToInt()} gradi", ", low ${state.unit.from(it).roundToInt()} degrees", ", Tiefstwert ${state.unit.from(it).roundToInt()} Grad", ", minimale ${state.unit.from(it).roundToInt()} degrés", ", mínima ${state.unit.from(it).roundToInt()} grados")) }
+                            if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} Millimeter", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimètres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} milímetros"))
                         }
                         selected = attivo
                     }
-                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day")) { onScegli(giorno.indice) }
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) { onScegli(giorno.indice) }
                     .padding(top = 9.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),

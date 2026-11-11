@@ -73,7 +73,7 @@ adb install app/build/outputs/apk/release/app-release.apk
    tester per 14 giorni** prima di poter pubblicare in produzione **(verifica)**.
 2. **Crea l'app**: nome `Caelum Weather`, lingua predefinita italiano, app, gratuita.
 3. **Scheda dello store**: i testi stanno in `fastlane/metadata/android/`
-   (titolo, descrizione breve, descrizione completa) per `it-IT` e `en-US`.
+   (titolo, descrizione breve, descrizione completa) per `it-IT`, `en-US`, `de-DE`, `fr-FR` e `es-ES`.
    Servono inoltre, e si fanno a mano:
    - icona 512×512 PNG (dal vettoriale `ic_launcher_*`);
    - immagine in evidenza 1024×500;

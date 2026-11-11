@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.lingua.inMezzoAllaFrase
+import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -68,14 +70,14 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
     Column(modifier = modifier.fillMaxWidth().padding(top = 14.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = tr("IL POLLINE", "POLLEN"),
+                text = tr("IL POLLINE", "POLLEN", "POLLEN", "LE POLLEN", "EL POLEN"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
                 modifier = Modifier.weight(1f),
             )
             giorni.forEachIndexed { i, giorno ->
                 Text(
-                    text = if (i == 0) tr("oggi", "today") else giorno.giorno.dayOfWeek.italiano().take(3),
+                    text = if (i == 0) tr("oggi", "today", "heute", "aujourd'hui", "hoy") else giorno.giorno.dayOfWeek.italiano().take(3),
                     style = SalaType.microLabel,
                     color = palette.inkSoft,
                     textAlign = TextAlign.Center,
@@ -90,6 +92,7 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 6.dp)
+                    .cedevole(premuto = 0.98f)
                     .clip(CircleShape)
                     // **Un tocco sceglie, e basta.** Toccare di nuovo la riga
                     // gia' scelta tornava alla famiglia peggiore: da fuori,
@@ -98,8 +101,8 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
                     .clickable { scelto = tipo }
                     .semantics {
                         contentDescription = tipo.nome + ": " + giorni.joinToString(", ") { g ->
-                            g.livelli[tipo]?.let(::nomeLivelloPolline) ?: tr("nessun dato", "no data")
-                        }.lowercase()
+                            g.livelli[tipo]?.let(::nomeLivelloPolline) ?: tr("nessun dato", "no data", "keine Daten", "aucune donnée", "sin datos")
+                        }.inMezzoAllaFrase()
                     },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -119,10 +122,10 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
         Didascalia(
             when {
                 spiegato != null && spiegato == peggiore ->
-                    tr("Oggi il più alto: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. ", "Highest today: ${spiegato.nome.lowercase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).lowercase()}. ") +
+                    tr("Oggi il più alto: ${spiegato.nome.inMezzoAllaFrase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).inMezzoAllaFrase()}. ", "Highest today: ${spiegato.nome.inMezzoAllaFrase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).inMezzoAllaFrase()}. ", "Heute am höchsten: ${spiegato.nome.inMezzoAllaFrase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).inMezzoAllaFrase()}. ", "Le plus élevé aujourd'hui : ${spiegato.nome.inMezzoAllaFrase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).inMezzoAllaFrase()}. ", "Hoy el más alto: ${spiegato.nome.inMezzoAllaFrase()}, ${nomeLivelloPolline(oggi[spiegato] ?: 0).inMezzoAllaFrase()}. ") +
                         spiegato.cosa
                 spiegato != null -> spiegato.cosa
-                else -> tr("Oggi nell'aria non c'è polline che dia fastidio.", "No troublesome pollen in the air today.")
+                else -> tr("Oggi nell'aria non c'è polline che dia fastidio.", "No troublesome pollen in the air today.", "Heute sind keine störenden Pollen in der Luft.", "Aujourd'hui, pas de pollen gênant dans l'air.", "Hoy no hay polen molesto en el aire.")
             },
             palette,
             modifier = Modifier.padding(top = 8.dp),

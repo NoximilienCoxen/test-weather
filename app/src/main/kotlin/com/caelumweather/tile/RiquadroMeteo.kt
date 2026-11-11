@@ -1,5 +1,6 @@
 package com.caelumweather.tile
 
+import com.caelumweather.lingua.inMezzoAllaFrase
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
@@ -109,7 +110,7 @@ class RiquadroMeteo : TileService() {
 internal fun testiRiquadro(gradi: Double?, codice: Int?, citta: String, unita: TempUnit): Pair<String, String> {
     val temperatura = gradi?.let { "${unita.from(it).roundToInt()}°" } ?: "--°"
     val tempo = codice?.let {
-        Wmo.condition(it).lowercase(Lingue.locale).replaceFirstChar { c -> c.titlecase(Lingue.locale) }
+        Wmo.condition(it).inMezzoAllaFrase().replaceFirstChar { c -> c.titlecase(Lingue.locale) }
     }
     return listOfNotNull(temperatura, tempo).joinToString(" · ") to citta
 }

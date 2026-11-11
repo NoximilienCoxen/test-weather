@@ -158,7 +158,7 @@ class WeatherRepository(
                     append(GEOCODING_ENDPOINT)
                     append("?name=").append(URLEncoder.encode(trimmed, "UTF-8"))
                     // I nomi dei posti nella lingua dell'app: "Londra" o "London".
-                    append("&count=8&language=").append(tr("it", "en")).append("&format=json")
+                    append("&count=8&language=").append(tr("it", "en", "de", "fr", "es")).append("&format=json")
                 }
                 // Otto secondi e non dieci: qui si sta scrivendo in una
                 // casella, e chi scrive aspetta meno volentieri di chi ha
@@ -287,7 +287,7 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
         val date = runCatching { LocalDate.parse(iso) }.getOrDefault(today.plusDays(i.toLong()))
         DayForecast(
             date = date,
-            label = if (date == today) tr("OGGI", "TODAY") else date.dayOfWeek.italianShort(),
+            label = if (date == today) tr("OGGI", "TODAY", "HEUTE", "AUJ.", "HOY") else date.dayOfWeek.italianShort(),
             weatherCode = codiceDelGiorno(
                 codice = d.weatherCode.at(i),
                 precipitazione = d.precipitationSum.at(i),
@@ -352,13 +352,13 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
 // Il nome e' rimasto `italianShort` per non spostare i chiamanti: adesso dice
 // la sigla nella lingua dell'app (CONTESTO §49).
 private fun DayOfWeek.italianShort(): String = when (this) {
-    DayOfWeek.MONDAY -> tr("LUN", "MON")
-    DayOfWeek.TUESDAY -> tr("MAR", "TUE")
-    DayOfWeek.WEDNESDAY -> tr("MER", "WED")
-    DayOfWeek.THURSDAY -> tr("GIO", "THU")
-    DayOfWeek.FRIDAY -> tr("VEN", "FRI")
-    DayOfWeek.SATURDAY -> tr("SAB", "SAT")
-    DayOfWeek.SUNDAY -> tr("DOM", "SUN")
+    DayOfWeek.MONDAY -> tr("LUN", "MON", "MO", "LUN", "LUN")
+    DayOfWeek.TUESDAY -> tr("MAR", "TUE", "DI", "MAR", "MAR")
+    DayOfWeek.WEDNESDAY -> tr("MER", "WED", "MI", "MER", "MIÉ")
+    DayOfWeek.THURSDAY -> tr("GIO", "THU", "DO", "JEU", "JUE")
+    DayOfWeek.FRIDAY -> tr("VEN", "FRI", "FR", "VEN", "VIE")
+    DayOfWeek.SATURDAY -> tr("SAB", "SAT", "SA", "SAM", "SÁB")
+    DayOfWeek.SUNDAY -> tr("DOM", "SUN", "SO", "DIM", "DOM")
 }
 
 /**

@@ -124,6 +124,7 @@ fun BarraDelleOre(
             if (spostata) {
                 Row(
                     modifier = Modifier
+                        .cedevole(premuto = 0.92f)
                         .clip(CircleShape)
                         .background(palette.accent)
                         .clickable(onClick = onTornaOra)
@@ -138,11 +139,11 @@ fun BarraDelleOre(
                             style = Stroke(width = 2.dp.toPx()),
                         )
                     }
-                    Text(text = tr("TORNA ALL'ORA ATTUALE", "BACK TO NOW"), style = SalaType.sectionLabel, color = palette.accentInk)
+                    Text(text = tr("TORNA ALL'ORA ATTUALE", "BACK TO NOW", "ZURÜCK ZU JETZT", "RETOUR À MAINTENANT", "VOLVER A AHORA"), style = SalaType.sectionLabel, color = palette.accentInk)
                 }
             } else {
                 Text(
-                    text = tr("TRASCINA PER CAMBIARE ORA", "DRAG TO CHANGE THE HOUR"),
+                    text = tr("TRASCINA PER CAMBIARE ORA", "DRAG TO CHANGE THE HOUR", "ZIEHEN, UM DIE STUNDE ZU ÄNDERN", "FAITES GLISSER POUR CHANGER L'HEURE", "ARRASTRA PARA CAMBIAR LA HORA"),
                     style = SalaType.sectionLabel,
                     // Questa riga **non sta su un pannello**: sta sulle
                     // colline, cioe' su un fondo che cambia con l'ora e che a
@@ -203,7 +204,7 @@ fun BarraDelleOre(
                 // per scalino - la stessa strada di `scegli`, colpetto escluso:
                 // la vibrazione segue il dito, non il lettore.
                 .semantics {
-                    contentDescription = tr("Ora mostrata", "Hour shown")
+                    contentDescription = tr("Ora mostrata", "Hour shown", "Angezeigte Stunde", "Heure affichée", "Hora mostrada")
                     stateDescription = "${oraPiena(ora)}, $giorno"
                     progressBarRangeInfo = ProgressBarRangeInfo(ora.toFloat(), 0f..(ORE - 1).toFloat(), steps = ORE - 2)
                     if (attiva) {

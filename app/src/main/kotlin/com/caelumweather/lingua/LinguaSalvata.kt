@@ -71,17 +71,15 @@ private fun allineaAlSistema(context: Context, prefs: SharedPreferences, salvata
         }
     }
     val delSistema = gestore.applicationLocales
+    // Una lingua che l'app non parla - puo' arrivare solo da fuori
+    // dell'elenco di `locales_config.xml` - si legge in inglese.
     val scelta = when {
         delSistema.isEmpty -> SceltaLingua.AUTOMATICA
-        delSistema[0].language == "it" -> SceltaLingua.ITALIANO
-        else -> SceltaLingua.INGLESE
+        else -> SceltaLingua.di(Lingua.diCodice(delSistema[0].language) ?: Lingua.INGLESE)
     }
     if (scelta != salvata) prefs.edit().putString(CHIAVE, scelta.name).apply()
     return scelta
 }
 
-private fun SceltaLingua.perIlSistema(): LocaleList = when (this) {
-    SceltaLingua.AUTOMATICA -> LocaleList.getEmptyLocaleList()
-    SceltaLingua.ITALIANO -> LocaleList.forLanguageTags("it")
-    SceltaLingua.INGLESE -> LocaleList.forLanguageTags("en")
-}
+private fun SceltaLingua.perIlSistema(): LocaleList =
+    lingua?.let { LocaleList.forLanguageTags(it.codice) } ?: LocaleList.getEmptyLocaleList()

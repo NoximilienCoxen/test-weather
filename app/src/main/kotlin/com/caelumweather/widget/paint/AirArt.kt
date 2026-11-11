@@ -56,7 +56,7 @@ internal fun DrawScope.airArt(
     // a un minimo e li' si fermava, ci stesse o no: in un widget piu' alto che
     // largo "MOLTO SCARSA" arrivava al minimo ancora piu' larga del riquadro e
     // usciva dal bordo. Due righe grandi si leggono meglio di una minuscola.
-    val word = band?.label ?: tr("ARIA", "AIR")
+    val word = band?.label ?: tr("ARIA", "AIR", "LUFT", "AIR", "AIRE")
     val wordTop = indexTop + lineHeight(index) * 0.85f
     val room = box.bottom - wordTop
     var size = box.height * 0.42f
