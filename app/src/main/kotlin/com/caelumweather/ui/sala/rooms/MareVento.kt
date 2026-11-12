@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -65,7 +66,7 @@ internal fun SezioneMare(
             text = tr("IL MARE", "THE SEA", "DAS MEER", "LA MER", "EL MAR"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -96,7 +97,7 @@ internal fun SezioneMare(
                 )
             }
         }
-        mare?.let { SezioneMarea(it, ora.time, unita, palette) }
+        val conMarea = mare?.let { SezioneMarea(it, ora.time, unita, palette) } ?: false
         // **Non e' una `Didascalia`, apposta**: quelle spariscono con i testi
         // brevi, e questa non e' un commento ai numeri - e' cio' che dice a
         // cosa non servono. Resta in tutti e due i modi.
@@ -109,10 +110,22 @@ internal fun SezioneMare(
                 "Schätzung eines Modells für die offene See: In Küstennähe können Wellen und Wasser anders sein. Nicht zum Navigieren und nicht für die Entscheidung über ein Bad verwenden: Es gelten die Seewetterberichte und die Flaggen am Strand.",
                 "Estimation d'un modèle au large : près du rivage, les vagues et l'eau peuvent être différentes. Ne l'utilisez pas pour naviguer ni pour décider d'une baignade : les bulletins et les drapeaux de plage font foi.",
                 "Estimación de un modelo mar adentro: cerca de la orilla las olas y el agua pueden ser distintas. No la uses para navegar ni para decidir un baño: mandan los boletines y las banderas de la playa.",
-            ),
+            ) + if (conMarea) {
+                // Una frase sola per le maree, nella stessa avvertenza: due
+                // paragrafi di cautele uno sotto l'altro non li legge nessuno.
+                " " + tr(
+                    "Le maree vengono da un modello globale: in porti e lagune possono scostarsi di decine di centimetri.",
+                    "Tides come from a global model: in harbours and lagoons they can be off by tens of centimetres.",
+                    "Die Gezeiten stammen aus einem globalen Modell: In Häfen und Lagunen können sie um Dutzende Zentimeter abweichen.",
+                    "Les marées viennent d'un modèle global : dans les ports et les lagunes, elles peuvent s'écarter de plusieurs dizaines de centimètres.",
+                    "Las mareas vienen de un modelo global: en puertos y lagunas pueden desviarse decenas de centímetros.",
+                )
+            } else {
+                ""
+            },
             style = SalaType.rowNote,
             color = palette.inkSoft,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
     }
 }
@@ -212,9 +225,9 @@ private fun SezioneMarea(
     da: java.time.LocalDateTime,
     unita: TempUnit,
     palette: SalaPalette,
-) {
+): Boolean {
     val estremi = remember(mare, da) { prossimiEstremi(mare, da, quanti = 4) }
-    if (estremi.isEmpty()) return
+    if (estremi.isEmpty()) return false
     val finestra = remember(mare, da) {
         mare.ore.filter { !it.time.isBefore(da) && it.time.isBefore(da.plusHours(24)) && it.livello != null }
     }
@@ -223,7 +236,7 @@ private fun SezioneMarea(
             text = tr("LE MAREE", "TIDES", "GEZEITEN", "LES MARÉES", "LAS MAREAS"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
         )
         if (finestra.size >= 3) {
             CurvaDellaMarea(
@@ -233,7 +246,7 @@ private fun SezioneMarea(
                 palette = palette,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp)
+                    .height(40.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .background(palette.chip)
                     // Disegno dei numeri qui sotto: letto ad alta voce sarebbe
@@ -241,30 +254,26 @@ private fun SezioneMarea(
                     .clearAndSetSemantics { },
             )
         }
-        Column(modifier = Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            estremi.forEach { e ->
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(
-                        text = rigaEstremo(e, da, unita),
-                        style = SalaType.rowTitle,
-                        color = palette.ink,
-                    )
+        // Due per riga: quattro righe intere allungavano la scheda del vento
+        // oltre lo schermo.
+        Column(modifier = Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            estremi.chunked(2).forEach { coppia ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    coppia.forEach { e ->
+                        Text(
+                            text = rigaEstremo(e, da, unita),
+                            style = SalaType.rowNote,
+                            color = palette.ink,
+                            maxLines = 2,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    if (coppia.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
-        Text(
-            text = tr(
-                "Maree da un modello globale: nei porti e nelle lagune, e con vento o pressione insoliti, il livello vero può scostarsi di decine di centimetri.",
-                "Tides from a global model: in harbours and lagoons, and with unusual wind or pressure, the real level can differ by tens of centimetres.",
-                "Gezeiten aus einem globalen Modell: in Häfen und Lagunen sowie bei ungewöhnlichem Wind oder Luftdruck kann der echte Pegel um Dutzende Zentimeter abweichen.",
-                "Marées issues d'un modèle global : dans les ports et les lagunes, et par vent ou pression inhabituels, le niveau réel peut différer de plusieurs dizaines de centimètres.",
-                "Mareas de un modelo global: en puertos y lagunas, y con viento o presión inusuales, el nivel real puede diferir en decenas de centímetros.",
-            ),
-            style = SalaType.rowNote,
-            color = palette.inkSoft,
-            modifier = Modifier.padding(top = 8.dp),
-        )
     }
+    return true
 }
 
 /** "Alta alle 14:20 · +0,32 m" (o "domani alle 02:05"): puro, per poterlo provare. */

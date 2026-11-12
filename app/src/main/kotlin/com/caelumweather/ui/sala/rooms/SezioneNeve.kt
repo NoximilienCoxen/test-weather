@@ -23,7 +23,6 @@ import com.caelumweather.data.NeveDelGiorno
 import com.caelumweather.data.PostoSottoLaNeve
 import com.caelumweather.data.nevePrevista
 import com.caelumweather.data.postoRispettoAllaNeve
-import com.caelumweather.data.quotaNeve
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import com.caelumweather.prefs.TempUnit
@@ -61,7 +60,7 @@ internal fun SezioneNeve(
             text = tr("LA NEVE", "SNOW", "SCHNEE", "LA NEIGE", "LA NIEVE"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
         )
         if (giorni.isEmpty()) {
             Text(
@@ -95,65 +94,69 @@ internal fun SezioneNeve(
                     modifier = Modifier.padding(top = 3.dp),
                 )
             }
-            Column(modifier = Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                giorni.forEach { RigaNeve(it, massimo, unita, palette) }
+            // **Una fila di colonnine, non una riga per giorno**: sette righe
+            // in coda alla sala della pioggia la portavano oltre lo schermo.
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                // La quota sotto ogni giorno solo se cambia: quattro volte lo stesso
+                // numero e' gia' nella riga qui sopra.
+                val quoteDiverse = giorni.mapNotNull { it.quota }.distinct().size > 1
+                giorni.take(GIORNI_DI_NEVE_IN_FILA).forEach { ColonnaNeve(it, massimo, unita, palette, quoteDiverse) }
+                repeat(GIORNI_DI_NEVE_IN_FILA - giorni.size.coerceAtMost(GIORNI_DI_NEVE_IN_FILA)) {
+                    Box(modifier = Modifier.weight(1f))
+                }
             }
         }
-        zeroTermicoOra?.let { zero ->
-            Text(
-                text = tr(
-                    "Zero termico ora a ${altezza(zero.roundToInt(), unita)}" +
-                        (quotaNeve(zero)?.let { " · quota neve circa ${altezza(it, unita)}" } ?: ""),
-                    "Freezing level now at ${altezza(zero.roundToInt(), unita)}" +
-                        (quotaNeve(zero)?.let { " · snow line about ${altezza(it, unita)}" } ?: ""),
-                    "Nullgradgrenze jetzt auf ${altezza(zero.roundToInt(), unita)}" +
-                        (quotaNeve(zero)?.let { " · Schneefallgrenze etwa ${altezza(it, unita)}" } ?: ""),
-                    "Isotherme 0 °C maintenant à ${altezza(zero.roundToInt(), unita)}" +
-                        (quotaNeve(zero)?.let { " · limite pluie-neige environ ${altezza(it, unita)}" } ?: ""),
-                    "Isoterma 0 °C ahora a ${altezza(zero.roundToInt(), unita)}" +
-                        (quotaNeve(zero)?.let { " · cota de nieve unos ${altezza(it, unita)}" } ?: ""),
-                ),
-                style = SalaType.microLabel,
-                color = palette.inkSoft,
-                modifier = Modifier.padding(top = 10.dp),
+        // Lo zero termico di adesso e l'avvertenza in un solo paragrafo breve.
+        val zero = zeroTermicoOra?.let { z ->
+            tr(
+                "Zero termico ora a ${altezza(z.roundToInt(), unita)}. ",
+                "Freezing level now at ${altezza(z.roundToInt(), unita)}. ",
+                "Nullgradgrenze jetzt auf ${altezza(z.roundToInt(), unita)}. ",
+                "Isotherme 0 °C maintenant à ${altezza(z.roundToInt(), unita)}. ",
+                "Isoterma 0 °C ahora a ${altezza(z.roundToInt(), unita)}. ",
             )
-        }
+        } ?: ""
         Text(
-            text = tr(
-                "La quota della neve è una stima: lo zero termico meno circa 300 m. Versante, vento e intensità la spostano. Per la montagna valgono i bollettini valanghe.",
-                "The snow line is an estimate: the freezing level minus about 300 m. Slope, wind and intensity move it. For the mountains, avalanche bulletins come first.",
-                "Die Schneefallgrenze ist eine Schätzung: Nullgradgrenze minus etwa 300 m. Hang, Wind und Intensität verschieben sie. In den Bergen gelten die Lawinenlageberichte.",
-                "La limite de la neige est une estimation : l'isotherme 0 °C moins environ 300 m. Versant, vent et intensité la déplacent. En montagne, les bulletins d'avalanches font foi.",
-                "La cota de nieve es una estimación: la isoterma 0 °C menos unos 300 m. La ladera, el viento y la intensidad la mueven. En montaña mandan los boletines de aludes.",
+            text = zero + tr(
+                "Quota neve stimata: zero termico meno circa 300 m. In montagna valgono i bollettini valanghe.",
+                "Estimated snow line: freezing level minus about 300 m. In the mountains, avalanche bulletins come first.",
+                "Geschätzte Schneefallgrenze: Nullgradgrenze minus etwa 300 m. In den Bergen gelten die Lawinenlageberichte.",
+                "Limite de la neige estimée : isotherme 0 °C moins environ 300 m. En montagne, les bulletins d'avalanches font foi.",
+                "Cota de nieve estimada: isoterma 0 °C menos unos 300 m. En montaña mandan los boletines de aludes.",
             ),
             style = SalaType.rowNote,
             color = palette.inkSoft,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
     }
 }
 
+private const val GIORNI_DI_NEVE_IN_FILA = 7
+
 @Composable
-private fun RigaNeve(g: NeveDelGiorno, massimo: Double, unita: TempUnit, palette: SalaPalette) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(text = g.etichetta, style = SalaType.microLabel, color = palette.inkFaint, modifier = Modifier.width(44.dp))
-        Box(modifier = Modifier.weight(1f).height(10.dp).clip(CircleShape).background(palette.maniglia)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth((g.cm / massimo).coerceIn(0.06, 1.0).toFloat())
-                    .height(10.dp)
-                    .clip(CircleShape)
-                    // Bianco-azzurro: la neve su una carta chiara deve avere un
-                    // contorno, e il blu dell'acqua le sta accanto senza
-                    // confondersi con la pioggia.
-                    .background(Color(0xFF9DC3E6)),
-            )
-        }
-        Text(
-            text = "${cm(g.cm)} cm" + (g.quota?.let { " · ${altezza(it, unita)}" } ?: ""),
-            style = SalaType.rowNote,
-            color = palette.inkSoft,
+private fun androidx.compose.foundation.layout.RowScope.ColonnaNeve(g: NeveDelGiorno, massimo: Double, unita: TempUnit, palette: SalaPalette, conQuota: Boolean) {
+    Column(
+        modifier = Modifier.weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .width(14.dp)
+                .height((6f + 34f * (g.cm / massimo).coerceIn(0.0, 1.0).toFloat()).dp)
+                .clip(CircleShape)
+                // Bianco-azzurro: la neve su una carta chiara deve avere un
+                // contorno, e il blu dell'acqua le sta accanto senza
+                // confondersi con la pioggia.
+                .background(Color(0xFF9DC3E6)),
         )
+        Text(text = g.etichetta, style = SalaType.microLabel, color = palette.inkFaint, maxLines = 1)
+        Text(text = "${cm(g.cm)} cm", style = SalaType.microLabel, color = palette.ink, maxLines = 1)
+        g.quota?.takeIf { conQuota }?.let { Text(text = altezza(it, unita), style = SalaType.microLabel, color = palette.inkSoft, maxLines = 1) }
     }
 }
 

@@ -8326,6 +8326,25 @@ echo "sdk.dir=..." > local.properties                                  # ignorat
 - I disegni dei widget si guardano da `app/build/widget-renders/*.png` dopo
   `AnteprimeWidgetTest` e `WidgetOverflowTest`.
 
+### 64.8-bis Le schede si erano allungate troppo
+
+Gli screenshot della CI sul primo giro (run 43035139280) mostravano la sala di
+oggi **oltre lo schermo**: la curva (128 dp) e il riquadro "un anno fa" avevano
+spinto in fondo la fila dei giorni, tagliata a meta'. Corretto cosi':
+
+- curva della giornata alta 80 dp (`ALTEZZA_GRAFICO`), margini interni stretti,
+  "adesso" un tacchetto leggero in fondo;
+- "un anno fa" e' **una riga** (al massimo due) sotto la curva, non un riquadro;
+- maree: curva 40 dp, estremi due per riga, e la loro avvertenza e' **una frase
+  in coda a quella del mare**, non un secondo paragrafo;
+- neve: una fila di colonnine come "la settimana" della pioggia invece di una
+  riga per giorno; la quota sotto ogni giorno solo se cambia; zero termico e
+  avvertenza in un paragrafo breve.
+
+`SchedeCompatteRenderTest` le disegna a larghezza di telefono
+(`build/widget-renders/scheda-*.png`) e mette un tetto all'altezza di ciascuna.
+L'altezza della scheda intera si verifica solo sugli screenshot della CI.
+
 ### 64.9 Cosa NON e' stato fatto
 
 - **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le

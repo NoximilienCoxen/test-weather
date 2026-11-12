@@ -96,7 +96,7 @@ internal fun GraficoGiornata(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -122,7 +122,7 @@ internal fun GraficoGiornata(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(128.dp)
+                .height(ALTEZZA_GRAFICO)
                 .semantics { contentDescription = descrizione }
                 .pointerInput(ore) {
                     fun indiceIn(x: Float): Int = (x / size.width * (altezzaGiorno - 1)).roundToInt().coerceIn(0, altezzaGiorno - 1)
@@ -157,7 +157,7 @@ internal fun GraficoGiornata(
             )
         }
         // Le ore in basso: ogni sei, a coprire la giornata.
-        Row(modifier = Modifier.fillMaxWidth().padding(top = 2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             listOf(0, 6, 12, 18, 23).forEach { h ->
                 Text(text = oraDueCifre(h), style = SalaType.microLabel, color = palette.inkFaint)
             }
@@ -165,9 +165,12 @@ internal fun GraficoGiornata(
     }
 }
 
+/** Alta quanto basta a leggere la forma: la scheda di oggi deve starci intera. */
+internal val ALTEZZA_GRAFICO = 80.dp
+
 /**
  * Il disegno della curva, fuori dalla composizione perche' si possa provare
- * (`GraficoGiornataRenderTest`): solo `DrawScope`, niente stato.
+ * (`AnimazioniRenderTest`, `SchedeCompatteRenderTest`): solo `DrawScope`, niente stato.
  */
 internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
     ore: List<HourForecast>,
@@ -195,8 +198,10 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
     val altezzaGiorno = ore.size.coerceAtLeast(2)
     val sinistra = 6.dp.toPx()
     val destra = size.width - 6.dp.toPx()
-    val alto = 22.dp.toPx()
-    val basso = size.height - 20.dp.toPx()
+    // Margini stretti: la curva sta in una scheda che deve restare corta. I
+    // margini bastano appena ai numeri di minima e massima.
+    val alto = 18.dp.toPx()
+    val basso = size.height - 18.dp.toPx()
     val intervallo = (massimo - minimo).coerceAtLeast(3.0)
     fun x(ora: Float) = sinistra + (destra - sinistra) * (ora / (altezzaGiorno - 1).toFloat())
     fun y(t: Double) = (basso - (basso - alto) * ((t - minimo) / intervallo)).toFloat()
@@ -211,7 +216,7 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
     val area = Path()
     val xy = punti.map { (o, t) -> Offset(x(o.toFloat()), y(t)) }
     tracciato.moveTo(xy[0].x, xy[0].y)
-    area.moveTo(xy[0].x, basso + 8.dp.toPx())
+    area.moveTo(xy[0].x, size.height)
     area.lineTo(xy[0].x, xy[0].y)
     for (i in 0 until xy.size - 1) {
         val p0 = xy.getOrElse(i - 1) { xy[i] }
@@ -223,11 +228,11 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         tracciato.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
         area.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
     }
-    area.lineTo(xy.last().x, basso + 8.dp.toPx())
+    area.lineTo(xy.last().x, size.height)
     area.close()
 
     clipRect(right = size.width * rivelazione) {
-        drawPath(area, Brush.verticalGradient(listOf(accento.copy(alpha = 0.28f), accento.copy(alpha = 0.0f)), startY = alto, endY = basso + 8.dp.toPx()))
+        drawPath(area, Brush.verticalGradient(listOf(accento.copy(alpha = 0.28f), accento.copy(alpha = 0.0f)), startY = alto, endY = size.height))
         drawPath(tracciato, accento, style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
 
@@ -237,7 +242,7 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         drawCircle(accento, radius = 3.dp.toPx(), center = c)
         val testo = misura.measure(gradi(t), stileEtichetta)
         val tx = (c.x - testo.size.width / 2f).coerceIn(0f, size.width - testo.size.width)
-        val ty = if (sopra) c.y - testo.size.height - 4.dp.toPx() else c.y + 4.dp.toPx()
+        val ty = if (sopra) c.y - testo.size.height - 2.dp.toPx() else c.y + 2.dp.toPx()
         drawText(testo, topLeft = Offset(tx, ty.coerceIn(0f, size.height - testo.size.height)))
     }
     if (rivelazione >= 0.98f) {
@@ -249,13 +254,13 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
     // farla confondere col cursore.
     adesso?.let { a ->
         if (a in 0 until altezzaGiorno) {
-            drawLine(debole, Offset(x(a.toFloat()), basso + 10.dp.toPx()), Offset(x(a.toFloat()), basso + 16.dp.toPx()), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(debole.copy(alpha = debole.alpha * 0.6f), Offset(x(a.toFloat()), size.height - 5.dp.toPx()), Offset(x(a.toFloat()), size.height), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
         }
     }
 
     // Il cursore: riga sottile, e un anello sul punto della curva.
     val cx = x(cursore.coerceIn(0f, (altezzaGiorno - 1).toFloat()))
-    drawLine(inchiostro.copy(alpha = 0.28f), Offset(cx, alto - 6.dp.toPx()), Offset(cx, basso + 8.dp.toPx()), strokeWidth = 1.2.dp.toPx())
+    drawLine(inchiostro.copy(alpha = 0.28f), Offset(cx, 0f), Offset(cx, size.height), strokeWidth = 1.2.dp.toPx())
     val sulla = ore.getOrNull(scelta)?.temperature
     if (sulla != null) {
         val cy = y(sulla)

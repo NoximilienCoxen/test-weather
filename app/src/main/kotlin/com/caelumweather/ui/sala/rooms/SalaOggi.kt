@@ -33,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.UiState
@@ -271,35 +274,35 @@ fun SalaOggiScreen(
                 unita = state.unit,
                 palette = palette,
                 onScegli = viewModel::selectHour,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = 12.dp),
             )
 
             // ── Un anno fa, solo per oggi ─────────────────────────────────────
             val storico = state.unAnnoFa
             if (!futuro && storico != null) {
                 val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 14.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(palette.chip)
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
-                    verticalArrangement = Arrangement.spacedBy(3.dp),
-                ) {
-                    Text(
-                        text = tr("UN ANNO FA OGGI", "THIS DAY LAST YEAR", "VOR EINEM JAHR", "IL Y A UN AN", "HACE UN AÑO"),
-                        style = SalaType.sectionLabel,
-                        color = palette.inkFaint,
-                    )
-                    Text(text = righe.cosaEra, style = SalaType.rowTitle, color = palette.ink)
-                    righe.confronto?.let { Text(text = it, style = SalaType.rowNote, color = palette.inkSoft) }
-                }
+                // **Una riga, non un riquadro**: e' una curiosita' accanto
+                // alla curva, e un riquadro suo allungava la scheda fino a
+                // tagliare la fila dei giorni in fondo.
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = palette.inkFaint)) {
+                            append(tr("Un anno fa: ", "A year ago: ", "Vor einem Jahr: ", "Il y a un an : ", "Hace un año: "))
+                        }
+                        withStyle(SpanStyle(color = palette.ink)) { append(righe.cosaEra) }
+                        righe.confronto?.let { append(". "); append(it.trimEnd('.')) }
+                    },
+                    style = SalaType.rowNote,
+                    color = palette.inkSoft,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
             }
 
             Box(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 13.dp)
+                    .padding(top = 12.dp, bottom = 11.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),
