@@ -10,6 +10,376 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3397a4ea1fd2e9d430d167070c8165f1cfe656c8.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3397a4ea1fd2e9d430d167070c8165f1cfe656c8.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.3397a4ea1fd2e9d430d167070c8165f1cfe656c8.001.1",
+                "areaDesc": "Yosemite NP outside of the valley; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
+                "geocode": {
+                    "SAME": [
+                        "006039",
+                        "006043",
+                        "006109",
+                        "006019",
+                        "006107"
+                    ],
+                    "UGC": [
+                        "CAZ323",
+                        "CAZ326",
+                        "CAZ327",
+                        "CAZ328",
+                        "CAZ329",
+                        "CAZ330"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ323",
+                    "https://api.weather.gov/zones/forecast/CAZ326",
+                    "https://api.weather.gov/zones/forecast/CAZ327",
+                    "https://api.weather.gov/zones/forecast/CAZ328",
+                    "https://api.weather.gov/zones/forecast/CAZ329",
+                    "https://api.weather.gov/zones/forecast/CAZ330"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.94b854dd7d47002544cf2809f6652be001f50a1d.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.94b854dd7d47002544cf2809f6652be001f50a1d.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T10:21:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T17:33:00-08:00",
+                "effective": "2026-11-11T17:33:00-08:00",
+                "onset": "2026-11-13T16:00:00-08:00",
+                "expires": "2026-11-12T03:00:00-08:00",
+                "ends": "2026-11-17T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Winter Storm Watch issued November 11 at 5:33PM PST until November 17 at 4:00AM PST by NWS Hanford CA",
+                "description": "* WHAT...Heavy snow possible. Snow accumulations between 6 and 12\ninches above 6,000 feet. Winds could gust as high as 50 mph.\n\n* WHERE...Sierra Nevada above 6,000 feet.\n\n* WHEN...From Friday afternoon through late Monday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact weekend travel. Gusty winds could\nbring down tree branches.",
+                "instruction": "Monitor the latest forecasts for updates on this situation.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS46 KHNX 120133"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH LATE MONDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.WS.A.0005.261114T0000Z-261117T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-17T04:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1,2026-11-11T01:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1,2026-11-10T17:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9546df513f9df135046fbc8b643ade53af657d3b.001.1,2026-11-10T09:30:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.002.1",
+                "areaDesc": "West Side Mountains north of 198",
+                "geocode": {
+                    "SAME": [
+                        "006019",
+                        "006047"
+                    ],
+                    "UGC": [
+                        "CAZ300"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ300"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T09:33:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T17:32:00-08:00",
+                "effective": "2026-11-11T17:32:00-08:00",
+                "onset": "2026-11-12T12:00:00-08:00",
+                "expires": "2026-11-12T02:00:00-08:00",
+                "ends": "2026-11-12T23:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Lake Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Lake Wind Advisory issued November 11 at 5:32PM PST until November 12 at 11:00PM PST by NWS Hanford CA",
+                "description": "* WHAT...Southwest winds 10 to 20 mph with gusts up to 30 mph\nexpected.\n\n* WHERE...San Luis Reservoir.\n\n* WHEN...From noon to 11 PM PST Thursday.\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KHNX 120132"
+                    ],
+                    "NWSheadline": [
+                        "LAKE WIND ADVISORY REMAINS IN EFFECT FROM NOON TO 11 PM PST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.LW.Y.0038.261112T2000Z-261113T0700Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-12T23:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "LWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.003.1",
+                "areaDesc": "Kern River Valley",
+                "geocode": {
+                    "SAME": [
+                        "006029",
+                        "006107"
+                    ],
+                    "UGC": [
+                        "CAZ332"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ332"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T09:29:00-08:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T09:33:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T17:32:00-08:00",
+                "effective": "2026-11-11T17:32:00-08:00",
+                "onset": "2026-11-13T10:00:00-08:00",
+                "expires": "2026-11-12T02:00:00-08:00",
+                "ends": "2026-11-14T10:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Lake Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Lake Wind Advisory issued November 11 at 5:32PM PST until November 14 at 10:00AM PST by NWS Hanford CA",
+                "description": "* WHAT...West winds 15 to 25 mph with gusts up to 45 mph expected.\n\n* WHERE...Kern River Valley including Lake Isabella.\n\n* WHEN...From 10 AM Friday to 10 AM PST Saturday.\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KHNX 120132"
+                    ],
+                    "NWSheadline": [
+                        "LAKE WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 10 AM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.LW.Y.0037.261113T1800Z-261114T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T10:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "LWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.733761d7720b15d7620cc2392d1d6cceb1559cae.001.1",
+                "areaDesc": "Indian Wells Valley; Mojave Desert Slopes; Mojave Desert",
+                "geocode": {
+                    "SAME": [
+                        "006029"
+                    ],
+                    "UGC": [
+                        "CAZ337",
+                        "CAZ338",
+                        "CAZ339"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ337",
+                    "https://api.weather.gov/zones/forecast/CAZ338",
+                    "https://api.weather.gov/zones/forecast/CAZ339"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T09:29:00-08:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T09:33:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T17:32:00-08:00",
+                "effective": "2026-11-11T17:32:00-08:00",
+                "onset": "2026-11-13T10:00:00-08:00",
+                "expires": "2026-11-12T02:00:00-08:00",
+                "ends": "2026-11-14T07:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Wind Advisory issued November 11 at 5:32PM PST until November 14 at 7:00AM PST by NWS Hanford CA",
+                "description": "* WHAT...Southwest winds 20 to 30 mph with gusts up to 55 mph\nexpected.\n\n* WHERE...Indian Wells Valley, Mojave Desert, and Mojave Desert\nSlopes.\n\n* WHEN...From 10 AM Friday to 7 AM PST Saturday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Highways impacted include US Highway 395 and\nState Routes 14, 58, and 178.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KHNX 120132"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 7 AM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.WI.Y.0034.261113T1800Z-261114T1500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T07:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.afb92ed2a33e230e967752bd2b042ef6c98e0e50.002.1",
             "type": "Feature",
             "geometry": null,
@@ -265,92 +635,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
-                "areaDesc": "Mono",
-                "geocode": {
-                    "SAME": [
-                        "006051"
-                    ],
-                    "UGC": [
-                        "CAZ073"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ073"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f79b58c610923076b618e58db88f6bb3528bf376.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f79b58c610923076b618e58db88f6bb3528bf376.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-10T10:37:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T13:43:00-08:00",
-                "effective": "2026-11-11T13:43:00-08:00",
-                "onset": "2026-11-13T13:00:00-08:00",
-                "expires": "2026-11-12T16:00:00-08:00",
-                "ends": "2026-11-14T10:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Reno NV",
-                "headline": "Winter Storm Watch issued November 11 at 1:43PM PST until November 14 at 10:00AM PST by NWS Reno NV",
-                "description": "* CHANGES...Increased snow amounts and wind gusts to reflect the\ncurrent forecast.\n\n* WHAT...Heavy wet snow. Snow accumulations of 1 to 2 feet above 7000\nfeet, up to 6 inches between 6000 and 7000 feet, and little to no\naccumulations below 6000 feet. Wind gusts of 60 to 80 mph over\nridges and gusts of 45 to 55 mph for areas along Highway 395.\n\n* WHERE...Mono County.\n\n* WHEN...From Friday afternoon through Saturday morning.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Friday evening commute. Strong winds and Sierra\ncement snow could cause damage to trees and power lines.\n\n* ADDITIONAL DETAILS...A burst of heavy snow is likely with this\nsystem Friday evening into early Saturday morning with snow levels\nfalling to as low as 6000 feet.",
-                "instruction": "Monitor the latest forecasts for updates on this situation.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWREV"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS45 KREV 112143"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH SATURDAY MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KREV.WS.A.0005.261113T2100Z-261114T1800Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T10:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.001.1",
             "type": "Feature",
             "geometry": null,
@@ -425,6 +709,92 @@
                     ],
                     "VTEC": [
                         "/O.CON.KREV.WS.A.0005.261113T1800Z-261114T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T10:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9e935aa027929e4bd7dfcbc12ee08bfb1e3c2017.002.1",
+                "areaDesc": "Mono",
+                "geocode": {
+                    "SAME": [
+                        "006051"
+                    ],
+                    "UGC": [
+                        "CAZ073"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ073"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f79b58c610923076b618e58db88f6bb3528bf376.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f79b58c610923076b618e58db88f6bb3528bf376.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-10T10:37:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T13:43:00-08:00",
+                "effective": "2026-11-11T13:43:00-08:00",
+                "onset": "2026-11-13T13:00:00-08:00",
+                "expires": "2026-11-12T16:00:00-08:00",
+                "ends": "2026-11-14T10:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Reno NV",
+                "headline": "Winter Storm Watch issued November 11 at 1:43PM PST until November 14 at 10:00AM PST by NWS Reno NV",
+                "description": "* CHANGES...Increased snow amounts and wind gusts to reflect the\ncurrent forecast.\n\n* WHAT...Heavy wet snow. Snow accumulations of 1 to 2 feet above 7000\nfeet, up to 6 inches between 6000 and 7000 feet, and little to no\naccumulations below 6000 feet. Wind gusts of 60 to 80 mph over\nridges and gusts of 45 to 55 mph for areas along Highway 395.\n\n* WHERE...Mono County.\n\n* WHEN...From Friday afternoon through Saturday morning.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Friday evening commute. Strong winds and Sierra\ncement snow could cause damage to trees and power lines.\n\n* ADDITIONAL DETAILS...A burst of heavy snow is likely with this\nsystem Friday evening into early Saturday morning with snow levels\nfalling to as low as 6000 feet.",
+                "instruction": "Monitor the latest forecasts for updates on this situation.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWREV"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS45 KREV 112143"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH SATURDAY MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KREV.WS.A.0005.261113T2100Z-261114T1800Z/"
                     ],
                     "eventEndingTime": [
                         "2026-11-14T10:00:00-08:00"
@@ -1686,109 +2056,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.94b854dd7d47002544cf2809f6652be001f50a1d.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.94b854dd7d47002544cf2809f6652be001f50a1d.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.94b854dd7d47002544cf2809f6652be001f50a1d.001.1",
-                "areaDesc": "Yosemite NP outside of the valley; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
-                "geocode": {
-                    "SAME": [
-                        "006039",
-                        "006043",
-                        "006109",
-                        "006019",
-                        "006107"
-                    ],
-                    "UGC": [
-                        "CAZ323",
-                        "CAZ326",
-                        "CAZ327",
-                        "CAZ328",
-                        "CAZ329",
-                        "CAZ330"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ323",
-                    "https://api.weather.gov/zones/forecast/CAZ326",
-                    "https://api.weather.gov/zones/forecast/CAZ327",
-                    "https://api.weather.gov/zones/forecast/CAZ328",
-                    "https://api.weather.gov/zones/forecast/CAZ329",
-                    "https://api.weather.gov/zones/forecast/CAZ330"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2d42b8b25f6b824995dc38afa3996a3a5aba1265.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T01:19:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T10:21:00-08:00",
-                "effective": "2026-11-11T10:21:00-08:00",
-                "onset": "2026-11-13T16:00:00-08:00",
-                "expires": "2026-11-11T19:00:00-08:00",
-                "ends": "2026-11-17T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Winter Storm Watch issued November 11 at 10:21AM PST until November 17 at 4:00AM PST by NWS Hanford CA",
-                "description": "* WHAT...Heavy snow possible. Snow accumulations between 6 and 12\ninches above 6,000 feet. Winds could gust as high as 50 mph.\n\n* WHERE...Sierra Nevada above 6,000 feet.\n\n* WHEN...From Friday afternoon through late Monday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact weekend travel. Gusty winds could\nbring down tree branches.",
-                "instruction": "Monitor the latest forecasts for updates on this situation.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS46 KHNX 111821"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH REMAINS IN EFFECT FROM FRIDAY AFTERNOON THROUGH LATE MONDAY NIGHT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KHNX.WS.A.0005.261114T0000Z-261117T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-17T04:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ee59ab5326570c4e742c5e6ad50825209be4b03.001.1,2026-11-10T17:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9546df513f9df135046fbc8b643ade53af657d3b.001.1,2026-11-10T09:30:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.002.2",
             "type": "Feature",
             "geometry": null,
@@ -2354,254 +2621,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.003.1",
-                "areaDesc": "Kern River Valley",
-                "geocode": {
-                    "SAME": [
-                        "006029",
-                        "006107"
-                    ],
-                    "UGC": [
-                        "CAZ332"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ332"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T09:29:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T09:33:00-08:00",
-                "effective": "2026-11-11T09:33:00-08:00",
-                "onset": "2026-11-13T10:00:00-08:00",
-                "expires": "2026-11-11T18:00:00-08:00",
-                "ends": "2026-11-14T10:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Lake Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Lake Wind Advisory issued November 11 at 9:33AM PST until November 14 at 10:00AM PST by NWS Hanford CA",
-                "description": "* WHAT...Southwest winds 15 to 25 mph with gusts up to 45 mph\nexpected.\n\n* WHERE...Kern River Valley including Lake Isabella\n\n* WHEN...From 10 AM Friday to 10 AM PST Saturday.\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KHNX 111733"
-                    ],
-                    "NWSheadline": [
-                        "LAKE WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 10 AM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KHNX.LW.Y.0037.261113T1800Z-261114T1800Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T10:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "LWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.002.1",
-                "areaDesc": "Indian Wells Valley; Mojave Desert Slopes; Mojave Desert",
-                "geocode": {
-                    "SAME": [
-                        "006029"
-                    ],
-                    "UGC": [
-                        "CAZ337",
-                        "CAZ338",
-                        "CAZ339"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ337",
-                    "https://api.weather.gov/zones/forecast/CAZ338",
-                    "https://api.weather.gov/zones/forecast/CAZ339"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2fa54b880412363341f0d2ab5e083df87b1ab31c.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T09:29:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T09:33:00-08:00",
-                "effective": "2026-11-11T09:33:00-08:00",
-                "onset": "2026-11-13T10:00:00-08:00",
-                "expires": "2026-11-11T18:00:00-08:00",
-                "ends": "2026-11-14T07:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Wind Advisory issued November 11 at 9:33AM PST until November 14 at 7:00AM PST by NWS Hanford CA",
-                "description": "* WHAT...Southwest winds 25 to 35 mph with gusts up to 55 mph\nexpected.\n\n* WHERE...Indian Wells Valley, Mojave Desert, and Mojave Desert\nSlopes.\n\n* WHEN...From 10 AM Friday to 7 AM PST Saturday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Highways impacted include US Highway 395 and\nState Routes 14, 58, and 178.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KHNX 111733"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 7 AM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KHNX.WI.Y.0034.261113T1800Z-261114T1500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T07:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.67dbe5049faf746507dc950e12e3690ff812ceb9.001.2",
-                "areaDesc": "West Side Mountains north of 198",
-                "geocode": {
-                    "SAME": [
-                        "006019",
-                        "006047"
-                    ],
-                    "UGC": [
-                        "CAZ300"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ300"
-                ],
-                "references": [],
-                "sent": "2026-11-11T09:33:00-08:00",
-                "effective": "2026-11-11T09:33:00-08:00",
-                "onset": "2026-11-12T12:00:00-08:00",
-                "expires": "2026-11-11T18:00:00-08:00",
-                "ends": "2026-11-12T23:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Lake Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Lake Wind Advisory issued November 11 at 9:33AM PST until November 12 at 11:00PM PST by NWS Hanford CA",
-                "description": "* WHAT...South winds 10 to 15 mph with gusts up to 30 mph expected.\n\n* WHERE...San Luis Reservoir\n\n* WHEN...From 10 AM Thursday to 4 PM Thursday\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KHNX 111733"
-                    ],
-                    "NWSheadline": [
-                        "LAKE WIND ADVISORY IS CANCELLED... ...LAKE WIND ADVISORY IN EFFECT FROM 10 AM TO 4 PM PST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KHNX.LW.Y.0038.261112T2000Z-261113T0700Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-12T23:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "LWY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.629dbc36e84a9f9744cef59dbddf1cf57e6c8b12.001.1",
             "type": "Feature",
             "geometry": null,
@@ -2833,5 +2852,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-12T00:57:11+00:00"
+    "updated": "2026-11-12T01:37:24+00:00"
 }
