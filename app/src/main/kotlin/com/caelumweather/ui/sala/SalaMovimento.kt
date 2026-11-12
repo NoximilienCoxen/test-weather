@@ -351,3 +351,6 @@ internal const val GESTI_ACCESI = true
 
 /** ESPERIMENTO temporaneo: falso spegne l'onda dal giorno toccato e i suoi rilevamenti di posizione. */
 internal const val ONDA_ACCESA = false
+
+/** ESPERIMENTO temporaneo: falso spegne le icone dei giorni che reagiscono al tocco. */
+internal const val ICONE_ACCESE = false

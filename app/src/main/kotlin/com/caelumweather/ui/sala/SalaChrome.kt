@@ -413,7 +413,7 @@ fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean 
  */
 @Composable
 fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Modifier, notte: Boolean = false) {
-    if (!GESTI_ACCESI) { IconaMeteo(glifo, modifier, notte); return }
+    if (!GESTI_ACCESI || !ICONE_ACCESE) { IconaMeteo(glifo, modifier, notte); return }
     val movimento = LocalMovimento.current
     val gesto = remember { Animatable(1f) }
     var primo by remember { mutableStateOf(true) }
