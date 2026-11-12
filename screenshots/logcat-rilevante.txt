@@ -1,45 +1,58 @@
-11-12 17:50:51.305 E/TaskWorkerFactory( 1640): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
-11-12 17:50:51.350 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:50:51.560 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:50:51.560 W/Telephony( 1090): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:50:51.638 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:50:51.700 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:50:51.733 E/RkpdPeriodicProvisioner( 2255): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
-11-12 17:50:51.860 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:51.861 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:51.941 I/netd    (  346): networkAddInterface(101, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
-11-12 17:50:51.942 W/ConnectivityService(  528): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:50:51.947 E/WifiStaIfaceAidlImpl(  528): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:51.949 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <7.08ms>
-11-12 17:50:52.007 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
-11-12 17:50:52.007 E/ConnectivityService(  528): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:50:52.007 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
-11-12 17:50:52.007 E/ConnectivityService(  528): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:50:52.010 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:52.102 E/WifiStaIfaceAidlImpl(  528): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
-11-12 17:50:52.336 W/Binder  (  528): Caught a RuntimeException from the binder stub implementation.
-11-12 17:50:52.336 W/Binder  (  528): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10113 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
-11-12 17:50:52.517 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:50:52.709 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:50:52.956 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:52.972 E/WifiStaIfaceAidlImpl(  528): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:50:54.056 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:50:54.056 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:50:54.446 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:50:54.446 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:50:54.447 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:50:54.447 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:50:54.514 W/MediaProvider( 1591): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
-11-12 17:50:54.516 W/MediaProvider( 1591): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
-11-12 17:50:54.536 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:50:54.752 E/BackupHelper(  865): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
-11-12 17:50:54.752 E/BackupHelper(  865): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-11-12 17:50:56.261 I/meteo   ( 2574): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:50:58.083 I/meteo   ( 2574): previsione pronta: 24 ore
-11-12 17:50:59.299 I/meteo   ( 2574): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
-11-12 17:50:59.385 I/meteo   ( 2574): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
-11-12 17:51:00.033 I/meteo   ( 2574): allerte ufficiali: 3 per Forlì
-11-12 17:51:05.007 W/OverlayManager(  528): service 'idmap' died
-11-12 17:51:08.782 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:51:10.491 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:51:14.089 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:03:46.985 E/SystemServiceRegistry( 1039): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 18:03:47.303 E/WifiStaIfaceAidlImpl(  534): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:47.315 E/WifiStaIfaceAidlImpl(  534): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:47.641 I/netd    (  347): networkAddInterface(101, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
+11-12 18:03:47.641 W/ConnectivityService(  534): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 18:03:47.641 I/netd    (  347): networkAddRouteParcel(101, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+11-12 18:03:47.643 E/WifiStaIfaceAidlImpl(  534): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:47.836 I/netd    (  347): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
+11-12 18:03:47.889 E/ConnectivityService(  534): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 18:03:47.889 I/netd    (  347): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.04ms>
+11-12 18:03:47.889 E/ConnectivityService(  534): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 18:03:47.902 E/WifiStaIfaceAidlImpl(  534): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:48.269 E/WifiStaIfaceAidlImpl(  534): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
+11-12 18:03:48.428 E/WifiStaIfaceAidlImpl(  534): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:48.436 E/WifiStaIfaceAidlImpl(  534): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 18:03:48.500 E/RkpdPeriodicProvisioner( 2397): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
+11-12 18:03:49.161 W/Binder  (  534): Caught a RuntimeException from the binder stub implementation.
+11-12 18:03:49.161 W/Binder  (  534): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10112 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
+11-12 18:03:50.196 W/ModernMediaScanner( 1577): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 18:03:50.196 W/ModernMediaScanner( 1577): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 18:03:50.739 E/BackupHelper(  872): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+11-12 18:03:50.739 E/BackupHelper(  872): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-12 18:03:51.042 W/ModernMediaScanner( 1577): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 18:03:51.042 W/ModernMediaScanner( 1577): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 18:03:51.043 W/ModernMediaScanner( 1577): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 18:03:51.043 W/ModernMediaScanner( 1577): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 18:03:51.126 W/MediaProvider( 1577): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+11-12 18:03:51.129 W/MediaProvider( 1577): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+11-12 18:03:51.145 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:03:52.344 I/meteo   ( 2598): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-12 18:03:57.408 W/OverlayManager(  534): service 'idmap' died
+11-12 18:03:57.596 I/meteo   ( 2598): MeteoAlarm italy: 111960 caratteri, 74 voci, 72 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 18:03:57.778 I/meteo   ( 2598): previsione pronta: 24 ore
+11-12 18:03:58.797 I/meteo   ( 2598): MeteoAlarm italy: 111960 caratteri, 74 voci, 72 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 18:04:00.466 I/meteo   ( 2598): allerte ufficiali: 3 per Forlì
+11-12 18:04:05.275 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:04:08.044 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:04:12.113 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:04:16.493 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:04:18.586 I/meteo   ( 2598): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-12 18:04:20.624 W/ActivityTaskManager(  534): Force removing ActivityRecord{c5b8556 u0 com.caelumweather/.MainActivity t8 f}}: app died, no saved state
+11-12 18:04:20.814 I/binder  (    0): undelivered transaction 122629, process died.
+11-12 18:04:21.186 W/WindowManager(  534): android.os.DeadObjectException
+11-12 18:04:21.188 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{7b5a4a7 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-12 18:04:21.188 W/WindowManager(  534): android.os.DeadObjectException
+11-12 18:04:22.073 I/meteo   ( 2817): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-12 18:04:23.975 E/WifiHealthMonitor(  534):  Hit PackageManager exception
+11-12 18:04:23.975 E/WifiHealthMonitor(  534): android.content.pm.PackageManager$NameNotFoundException: No module info for package: com.android.wifi
+11-12 18:04:36.068 I/meteo   ( 2817): previsione pronta: 24 ore
+11-12 18:04:37.324 I/meteo   ( 2817): MeteoAlarm italy: 111960 caratteri, 74 voci, 72 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-12 18:04:37.639 I/meteo   ( 2817): allerte ufficiali: 3 per Forlì
+11-12 18:04:38.385 W/ModernMediaScanner( 1577): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 18:04:38.447 W/ActivityTaskManager(  534): Force removing ActivityRecord{cdb697a u0 com.caelumweather/.MainActivity t9 f}}: app died, no saved state
+11-12 18:04:38.480 W/WindowManager(  534): android.os.DeadObjectException
+11-12 18:04:38.574 W/WindowManager(  534): android.os.DeadObjectException
+11-12 18:04:38.582 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{8ca9fe8 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-12 18:04:38.582 W/WindowManager(  534): android.os.DeadObjectException
+11-12 18:04:39.821 I/meteo   ( 2943): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
