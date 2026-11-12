@@ -74,6 +74,18 @@ class SchedeCompatteRenderTest {
     }
 
     @Test
+    fun `la luna non si appoggia alla massima quando la massima e' di sera`() {
+        // Come Forli' il 12 novembre 2026: piatta la notte, massima alle 22.
+        val ore = (0 until 24).map { h ->
+            HourForecast(time = LocalDateTime.of(2026, 11, 12, h, 0), temperature = 10.0 + 3.0 * (h / 22.0).coerceAtMost(1.0) * (h / 22.0), isDay = h in 7..16)
+        }
+        val palette = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
+        disegna("giornata-massima-di-sera") {
+            GraficoGiornata(ore = ore, scelta = 13, adesso = 1, unita = TempUnit.CELSIUS, palette = palette, onScegli = {})
+        }
+    }
+
+    @Test
     fun `il mare con le maree resta corto`() {
         val mare = parseMare(risorsa("mare-venezia-livello.json"))!!
         val ora = mare.ore[mare.ore.size / 3]

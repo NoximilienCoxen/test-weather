@@ -225,7 +225,17 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
             )
             // Una falce di luna in cima alla fascia: dice "notte" senza legenda.
             if (a - da > 22.dp.toPx()) {
-                val c = Offset((da + a) / 2f, 9.dp.toPx())
+                // Lontana dai numeri di minima e massima: se uno cade in alto
+                // nella fascia, la luna va dall'altra parte.
+                val margineLuna = 10.dp.toPx()
+                val etichette = listOf(indiceMax, indiceMin).map { x(punti[it].first.toFloat()) to y(punti[it].second) }
+                    .filter { (ex, ey) -> ex in da..a && ey < 34.dp.toPx() }
+                val cx = when {
+                    etichette.isEmpty() -> (da + a) / 2f
+                    etichette.first().first > (da + a) / 2f -> da + margineLuna + 4.dp.toPx()
+                    else -> a - margineLuna - 4.dp.toPx()
+                }
+                val c = Offset(cx, 9.dp.toPx())
                 val r = 4.dp.toPx()
                 val falce = Path().apply {
                     op(
