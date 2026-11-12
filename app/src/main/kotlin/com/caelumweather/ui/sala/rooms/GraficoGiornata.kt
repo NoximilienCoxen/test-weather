@@ -193,7 +193,7 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
     val debole = palette.inkFaint
     // La notte e' la fascia piu' scura in tutti e due i temi: con la carta scura
     // l'inchiostro e' chiaro, e un velo d'inchiostro la schiarirebbe.
-    val notte = if (palette.buio > 0.5f) Color.Black.copy(alpha = 0.22f) else palette.ink.copy(alpha = 0.06f)
+    val notte = if (palette.buio > 0.5f) Color.Black.copy(alpha = 0.2f) else palette.ink.copy(alpha = 0.045f)
     val stileEtichetta = SalaType.microLabel.copy(color = palette.inkSoft)
     val altezzaGiorno = ore.size.coerceAtLeast(2)
     val sinistra = 6.dp.toPx()
@@ -208,8 +208,36 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
 
     // La notte: una fascia piu' scura per ogni ora senza sole.
     val passo = (destra - sinistra) / (altezzaGiorno - 1)
-    ore.forEachIndexed { i, h ->
-        if (!h.isDay) drawRect(notte, topLeft = Offset(x(i.toFloat()) - passo / 2f, 0f), size = androidx.compose.ui.geometry.Size(passo, size.height))
+    // Una fascia per ogni tratto di notte, con gli angoli arrotondati: le
+    // fasce ora per ora facevano due rettangoli grigi spigolosi.
+    var inizioNotte = -1
+    for (i in 0..ore.size) {
+        val buio = i < ore.size && !ore[i].isDay
+        if (buio && inizioNotte < 0) inizioNotte = i
+        if (!buio && inizioNotte >= 0) {
+            val da = (x(inizioNotte.toFloat()) - passo / 2f).coerceAtLeast(0f)
+            val a = (x((i - 1).toFloat()) + passo / 2f).coerceAtMost(size.width)
+            drawRoundRect(
+                notte,
+                topLeft = Offset(da, 0f),
+                size = androidx.compose.ui.geometry.Size(a - da, size.height),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(12.dp.toPx()),
+            )
+            // Una falce di luna in cima alla fascia: dice "notte" senza legenda.
+            if (a - da > 22.dp.toPx()) {
+                val c = Offset((da + a) / 2f, 9.dp.toPx())
+                val r = 4.dp.toPx()
+                val falce = Path().apply {
+                    op(
+                        Path().apply { addOval(androidx.compose.ui.geometry.Rect(c, r)) },
+                        Path().apply { addOval(androidx.compose.ui.geometry.Rect(Offset(c.x + r * 0.55f, c.y - r * 0.35f), r * 0.85f)) },
+                        androidx.compose.ui.graphics.PathOperation.Difference,
+                    )
+                }
+                drawPath(falce, debole.copy(alpha = debole.alpha * 0.55f))
+            }
+            inizioNotte = -1
+        }
     }
 
     val tracciato = Path()

@@ -166,7 +166,13 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
 private fun PastigliaLivello(livello: Int?, palette: SalaPalette) {
     val pieno = livello != null && livello > 0
     Text(
-        text = livello?.toString() ?: "–",
+        // Lo zero e' una pastiglia vuota e piu' chiara: la fila si legge
+        // "niente, niente, qualcosa" a colpo d'occhio, senza contare cifre.
+        text = when {
+            livello == null -> "–"
+            livello == 0 -> " "
+            else -> livello.toString()
+        },
         style = SalaType.pill,
         color = when {
             !pieno -> palette.inkSoft
@@ -178,7 +184,13 @@ private fun PastigliaLivello(livello: Int?, palette: SalaPalette) {
             .padding(start = SPAZIO_PASTIGLIE)
             .width(LARGA_PASTIGLIA)
             .clip(CircleShape)
-            .background(if (pieno) coloreLivello(livello) else palette.maniglia)
+            .background(
+                when {
+                    pieno -> coloreLivello(livello)
+                    livello == 0 -> palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.45f)
+                    else -> palette.maniglia
+                },
+            )
             .padding(vertical = 4.dp),
     )
 }

@@ -243,9 +243,9 @@ fun SalaVentoScreen(
                         .weight(1f)
                         .clip(RoundedCornerShape(24.dp))
                         .background(palette.chip)
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 9.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(7.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
                     Text(
                         text = oraDueCifre(ore[indice].time.hour),
@@ -255,7 +255,7 @@ fun SalaVentoScreen(
                     Box(
                         modifier = Modifier
                             .width(4.dp)
-                            .height(misuraCheArriva((10f + quota * 36f).dp))
+                            .height(misuraCheArriva((6f + quota * 26f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (unita.from(ms) > 24) SalaTokens.accent500 else SalaTokens.verde400,

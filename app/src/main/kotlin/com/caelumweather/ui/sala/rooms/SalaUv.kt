@@ -297,11 +297,15 @@ fun SalaUvScreen(
                 palette = palette,
             )
             CellaValore(etichetta = tr("AL SOLE", "IN THE SUN", "IN DER SONNE", "AU SOLEIL", "AL SOL"), valore = esposizione(corrente), palette = palette)
-            CellaValore(
-                etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
-                valore = ozono?.let { "${it.roundToInt()} µg/m³" } ?: "--",
-                palette = palette,
-            )
+            // Senza il dato la cella non c'e': "--" in un riquadro e' spazio
+            // che non dice niente.
+            if (ozono != null) {
+                CellaValore(
+                    etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
+                    valore = "${ozono.roundToInt()} µg/m³",
+                    palette = palette,
+                )
+            }
         }
 
         // ── La luce per le foto ──────────────────────────────────────────────
