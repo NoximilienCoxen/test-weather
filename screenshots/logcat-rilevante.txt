@@ -1,118 +1,45 @@
-11-12 17:37:19.736 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.736 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.892 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.892 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.960 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.961 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:19.979 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:19.981 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:19.981 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.007 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:LayoutInflater which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
-11-12 17:37:20.021 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
-11-12 17:37:20.031 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
-11-12 17:37:20.032 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
-11-12 17:37:20.036 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
-11-12 17:37:20.121 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.122 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.505 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.664 E/AggregateFuture( 1708): java.lang.IllegalStateException: Setup parameters does not exist!
-11-12 17:37:20.714 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:20.717 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:20.817 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.817 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.821 W/MediaProvider( 1575): Exception encountered while reading xattr:user.extdbsessionid0 from path:/data/user/0/com.android.providers.media.module/databases/external.db.
-11-12 17:37:20.821 W/MediaProvider( 1575): Exception encountered while reading xattr:user.extdbsessionid0 from path:/data/media/0.
-11-12 17:37:20.822 E/MediaProvider( 1575): Xattr:user.extdbnextrowid0 not found on external storage: android.system.ErrnoException: getxattr failed: ENODATA (No data available)
-11-12 17:37:20.822 E/MediaProvider( 1575): Xattr:user.extdbnextrowid0 not found on external storage: android.system.ErrnoException: getxattr failed: ENODATA (No data available)
-11-12 17:37:20.850 I/netd    (  345): networkAddInterface(100, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
-11-12 17:37:20.851 E/WifiStaIfaceAidlImpl(  526): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:20.854 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.855 W/ConnectivityService(  526): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:20.855 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
-11-12 17:37:20.860 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.861 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.886 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:20.903 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.903 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:20.954 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
-11-12 17:37:20.954 E/ConnectivityService(  526): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:20.954 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
-11-12 17:37:20.954 E/ConnectivityService(  526): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:20.968 W/AppWidgetServiceImpl(  526): Failed to read state: java.io.FileNotFoundException: /data/system/users/0/appwidgets.xml: open failed: ENOENT (No such file or directory)
-11-12 17:37:20.973 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:21.010 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:21.010 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:21.044 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.067 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.090 E/WifiStaIfaceAidlImpl(  526): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
-11-12 17:37:21.141 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.181 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.190 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.262 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.264 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.280 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.280 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
-11-12 17:37:21.454 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:37:21.514 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:21.514 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:21.634 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:21.952 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:21.967 E/WifiStaIfaceAidlImpl(  526): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:37:22.139 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:37:22.169 W/ModernMediaScanner( 1575): Failed to visit /system/media: java.nio.file.NoSuchFileException: /system/media
-11-12 17:37:22.174 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.174 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.197 W/ModernMediaScanner( 1575): Failed to visit /oem/media: java.nio.file.NoSuchFileException: /oem/media
-11-12 17:37:22.250 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.250 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.367 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.430 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:22.895 E/TaskWorkerFactory( 1708): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
-11-12 17:37:23.139 I/netd    (  345): networkAddInterface(101, eth0) -> ServiceSpecificException(64, "Machine is not on the network") <0.04ms>
-11-12 17:37:23.139 W/ConnectivityService(  526): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:23.140 I/netd    (  345): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: eth0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
-11-12 17:37:23.140 E/ConnectivityService(  526): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:23.140 I/netd    (  345): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: eth0, nextHop: 10.0.2.2, mtu: 1500}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
-11-12 17:37:23.140 E/ConnectivityService(  526): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
-11-12 17:37:23.503 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:23.503 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:23.607 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:23.607 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:23.692 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:24.649 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:37:24.674 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:37:25.114 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:37:25.273 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.273 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.276 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.345 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.737 W/Binder  (  526): Caught a RuntimeException from the binder stub implementation.
-11-12 17:37:25.737 W/Binder  (  526): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10112 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
-11-12 17:37:25.739 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
-11-12 17:37:25.748 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.749 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:25.778 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:26.014 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
-11-12 17:37:26.329 E/BackupHelper(  869): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
-11-12 17:37:26.329 E/BackupHelper(  869): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
-11-12 17:37:26.731 E/RkpdPeriodicProvisioner( 2386): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
-11-12 17:37:27.881 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:37:27.881 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:37:28.123 I/meteo   ( 2542): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:37:29.107 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:37:29.107 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:37:29.107 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
-11-12 17:37:29.107 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
-11-12 17:37:29.271 W/MediaProvider( 1575): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
-11-12 17:37:29.273 W/MediaProvider( 1575): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
-11-12 17:37:32.018 I/meteo   ( 2542): previsione pronta: 24 ore
-11-12 17:37:33.029 I/meteo   ( 2542): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
-11-12 17:37:33.714 I/meteo   ( 2542): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
-11-12 17:37:34.459 I/meteo   ( 2542): allerte ufficiali: 3 per Forlì
-11-12 17:37:36.847 W/OverlayManager(  526): service 'idmap' died
-11-12 17:37:40.835 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:37:42.951 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:37:46.585 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:50:51.305 E/TaskWorkerFactory( 1640): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+11-12 17:50:51.350 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:50:51.560 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:50:51.560 W/Telephony( 1090): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:50:51.638 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:50:51.700 W/Telephony( 1090): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:50:51.733 E/RkpdPeriodicProvisioner( 2255): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
+11-12 17:50:51.860 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:51.861 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:51.941 I/netd    (  346): networkAddInterface(101, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+11-12 17:50:51.942 W/ConnectivityService(  528): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:50:51.947 E/WifiStaIfaceAidlImpl(  528): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:51.949 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <7.08ms>
+11-12 17:50:52.007 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+11-12 17:50:52.007 E/ConnectivityService(  528): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:50:52.007 I/netd    (  346): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+11-12 17:50:52.007 E/ConnectivityService(  528): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:50:52.010 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:52.102 E/WifiStaIfaceAidlImpl(  528): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
+11-12 17:50:52.336 W/Binder  (  528): Caught a RuntimeException from the binder stub implementation.
+11-12 17:50:52.336 W/Binder  (  528): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10113 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
+11-12 17:50:52.517 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:50:52.709 E/SystemServiceRegistry( 1029): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:50:52.956 E/WifiStaIfaceAidlImpl(  528): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:52.972 E/WifiStaIfaceAidlImpl(  528): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:50:54.056 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:50:54.056 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:50:54.446 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:50:54.446 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:50:54.447 W/ModernMediaScanner( 1591): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:50:54.447 W/ModernMediaScanner( 1591): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:50:54.514 W/MediaProvider( 1591): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+11-12 17:50:54.516 W/MediaProvider( 1591): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+11-12 17:50:54.536 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:50:54.752 E/BackupHelper(  865): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+11-12 17:50:54.752 E/BackupHelper(  865): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-12 17:50:56.261 I/meteo   ( 2574): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-12 17:50:58.083 I/meteo   ( 2574): previsione pronta: 24 ore
+11-12 17:50:59.299 I/meteo   ( 2574): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 17:50:59.385 I/meteo   ( 2574): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 17:51:00.033 I/meteo   ( 2574): allerte ufficiali: 3 per Forlì
+11-12 17:51:05.007 W/OverlayManager(  528): service 'idmap' died
+11-12 17:51:08.782 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:51:10.491 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:51:14.089 W/ModernMediaScanner( 1591): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
