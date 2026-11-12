@@ -10,6 +10,289 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.002.1",
+                "areaDesc": "South-Central Shasta County Including Redding Metro; Northern Sacramento Valley in Tehama County; Central Glenn County Including Interstate 5; Eastern Glenn County; Butte County Below 1000 ft",
+                "geocode": {
+                    "SAME": [
+                        "006089",
+                        "006103",
+                        "006021",
+                        "006007"
+                    ],
+                    "UGC": [
+                        "CAZ124",
+                        "CAZ142",
+                        "CAZ144",
+                        "CAZ145",
+                        "CAZ146"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ124",
+                    "https://api.weather.gov/zones/forecast/CAZ142",
+                    "https://api.weather.gov/zones/forecast/CAZ144",
+                    "https://api.weather.gov/zones/forecast/CAZ145",
+                    "https://api.weather.gov/zones/forecast/CAZ146"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bc3b39cf60d17122c867612dd4198674842eaf17.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bc3b39cf60d17122c867612dd4198674842eaf17.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T11:54:00-08:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-12T01:01:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-12T09:09:00-08:00",
+                "effective": "2026-11-12T09:09:00-08:00",
+                "onset": "2026-11-13T04:00:00-08:00",
+                "expires": "2026-11-13T19:00:00-08:00",
+                "ends": "2026-11-13T19:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Sacramento CA",
+                "headline": "Wind Advisory issued November 12 at 9:09AM PST until November 13 at 7:00PM PST by NWS Sacramento CA",
+                "description": "* WHAT...South winds 20 to 30 mph with gusts up to 45 mph expected.\n\n* WHERE...Northern Sacramento Valley and portions of the central\nSacramento Valley.\n\n* WHEN...From 4 AM to 7 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Strongest winds expected Friday late morning\nand afternoon, especially over the northern Sacramento Valley.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWSTO"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KSTO 121709"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT FROM 4 AM TO 7 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KSTO.WI.Y.0007.261113T1200Z-261114T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T19:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a870079961253e8b3701ace7ce721acc17de9322.001.1,2026-11-10T12:03:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.003.1",
+                "areaDesc": "Central Solano County Including Fairfield and Vacaville; Southwestern Solano County Including Vallejo",
+                "geocode": {
+                    "SAME": [
+                        "006095"
+                    ],
+                    "UGC": [
+                        "CAZ155",
+                        "CAZ156"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ155",
+                    "https://api.weather.gov/zones/forecast/CAZ156"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-12T01:01:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-12T09:09:00-08:00",
+                "effective": "2026-11-12T09:09:00-08:00",
+                "onset": "2026-11-13T04:00:00-08:00",
+                "expires": "2026-11-13T19:00:00-08:00",
+                "ends": "2026-11-13T19:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Sacramento CA",
+                "headline": "Wind Advisory issued November 12 at 9:09AM PST until November 13 at 7:00PM PST by NWS Sacramento CA",
+                "description": "* WHAT...South winds 20 to 30 mph with gusts up to 40 mph expected.\n\n* WHERE...Delta and Carquinez Straight.\n\n* WHEN...From 4 AM to 7 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Strongest winds expected Friday morning and\nafternoon.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWSTO"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KSTO 121709"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT FROM 4 AM TO 7 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KSTO.WI.Y.0007.261113T1200Z-261114T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T19:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fc73fea174569f720dfddf81a3340fd9bb43dbd0.001.1",
+                "areaDesc": "Central Colusa County Including Interstate 5; Eastern Colusa County; Sutter and Yuba Counties Below 1000 ft; Western Yolo County Including Capay Valley and Interstate 505; Central Yolo and Northeast Solano Counties Including Woodland and Davis; Sacramento Metro and Western El Dorado and Amador Counties",
+                "geocode": {
+                    "SAME": [
+                        "006011",
+                        "006101",
+                        "006115",
+                        "006057",
+                        "006061",
+                        "006113",
+                        "006095",
+                        "006067",
+                        "006005",
+                        "006017"
+                    ],
+                    "UGC": [
+                        "CAZ148",
+                        "CAZ149",
+                        "CAZ150",
+                        "CAZ152",
+                        "CAZ153",
+                        "CAZ154"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ148",
+                    "https://api.weather.gov/zones/forecast/CAZ149",
+                    "https://api.weather.gov/zones/forecast/CAZ150",
+                    "https://api.weather.gov/zones/forecast/CAZ152",
+                    "https://api.weather.gov/zones/forecast/CAZ153",
+                    "https://api.weather.gov/zones/forecast/CAZ154"
+                ],
+                "references": [],
+                "sent": "2026-11-12T09:09:00-08:00",
+                "effective": "2026-11-12T09:09:00-08:00",
+                "onset": "2026-11-13T04:00:00-08:00",
+                "expires": "2026-11-13T19:00:00-08:00",
+                "ends": "2026-11-13T19:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Sacramento CA",
+                "headline": "Wind Advisory issued November 12 at 9:09AM PST until November 13 at 7:00PM PST by NWS Sacramento CA",
+                "description": "* WHAT...South winds 15 to 25 mph with gusts 35 to 40 mph expected.\n\n* WHERE...Central and Southern Sacramento Valley.\n\n* WHEN...From 4 AM to 7 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Strongest winds expected Friday afternoon.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWSTO"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KSTO 121709"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY IN EFFECT FROM 4 AM TO 7 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXA.KSTO.WI.Y.0007.261113T1200Z-261114T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T19:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.1",
             "type": "Feature",
             "geometry": null,
@@ -1220,181 +1503,6 @@
                     ],
                     "NationalWeatherService": [
                         "LWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.001.1",
-                "areaDesc": "Central Solano County Including Fairfield and Vacaville; Southwestern Solano County Including Vallejo",
-                "geocode": {
-                    "SAME": [
-                        "006095"
-                    ],
-                    "UGC": [
-                        "CAZ155",
-                        "CAZ156"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ155",
-                    "https://api.weather.gov/zones/forecast/CAZ156"
-                ],
-                "references": [],
-                "sent": "2026-11-12T01:01:00-08:00",
-                "effective": "2026-11-12T01:01:00-08:00",
-                "onset": "2026-11-13T04:00:00-08:00",
-                "expires": "2026-11-12T09:15:00-08:00",
-                "ends": "2026-11-13T19:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Sacramento CA",
-                "headline": "Wind Advisory issued November 12 at 1:01AM PST until November 13 at 7:00PM PST by NWS Sacramento CA",
-                "description": "* WHAT...South winds 15 to 25 mph with gusts up to 40 mph expected.\n\n* WHERE...Delta and along Interstate 80, Carquinez Straight, and\nvicinity Valley locations south of Interstate\n\n* WHEN...From 4 AM to 7 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Strongest winds expected Friday late morning\nand afternoon.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWSTO"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KSTO 120901"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY IN EFFECT FROM 4 AM TO 7 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXA.KSTO.WI.Y.0007.261113T1200Z-261114T0300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T19:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.bf466a1926e0691f9669ea178e22af7665cb36bd.002.1",
-                "areaDesc": "South-Central Shasta County Including Redding Metro; Northern Sacramento Valley in Tehama County; Central Glenn County Including Interstate 5; Eastern Glenn County; Butte County Below 1000 ft",
-                "geocode": {
-                    "SAME": [
-                        "006089",
-                        "006103",
-                        "006021",
-                        "006007"
-                    ],
-                    "UGC": [
-                        "CAZ124",
-                        "CAZ142",
-                        "CAZ144",
-                        "CAZ145",
-                        "CAZ146"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ124",
-                    "https://api.weather.gov/zones/forecast/CAZ142",
-                    "https://api.weather.gov/zones/forecast/CAZ144",
-                    "https://api.weather.gov/zones/forecast/CAZ145",
-                    "https://api.weather.gov/zones/forecast/CAZ146"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bc3b39cf60d17122c867612dd4198674842eaf17.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bc3b39cf60d17122c867612dd4198674842eaf17.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T11:54:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-12T01:01:00-08:00",
-                "effective": "2026-11-12T01:01:00-08:00",
-                "onset": "2026-11-13T04:00:00-08:00",
-                "expires": "2026-11-12T09:15:00-08:00",
-                "ends": "2026-11-13T19:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Sacramento CA",
-                "headline": "Wind Advisory issued November 12 at 1:01AM PST until November 13 at 7:00PM PST by NWS Sacramento CA",
-                "description": "* WHAT...South winds 20 to 30 mph with gusts up to 45 mph expected.\n\n* WHERE...Northern Sacramento Valley and portions of the central\nSacramento Valley.\n\n* WHEN...From 4 AM to 7 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...Strongest winds expected Friday late morning\nand afternoon.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWSTO"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KSTO 120901"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY REMAINS IN EFFECT FROM 4 AM TO 7 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KSTO.WI.Y.0007.261113T1200Z-261114T0300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T19:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a870079961253e8b3701ace7ce721acc17de9322.001.1,2026-11-10T12:03:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
                     ]
                 }
             }
@@ -3310,5 +3418,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-12T16:51:39+00:00"
+    "updated": "2026-11-12T17:29:30+00:00"
 }
