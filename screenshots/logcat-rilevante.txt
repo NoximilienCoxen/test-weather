@@ -1,120 +1,118 @@
-11-12 17:25:47.909 W/meteo   (11827): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.caelumweather.data.HttpKt.httpGetGrezzo(Http.kt:114)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.caelumweather.data.HttpKt.httpGet(Http.kt:81)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.caelumweather.data.HttpKt.httpGet$default(Http.kt:76)
-11-12 17:25:47.909 W/meteo   (11827): 	at com.caelumweather.data.WeatherRepository$loadWithBody$2.invokeSuspend(WeatherRepository.kt:59)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
-11-12 17:25:47.909 W/meteo   (11827): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
-11-12 17:25:58.236 E/WifiStaIfaceAidlImpl(  530): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
-11-12 17:25:59.989 I/meteo   (11827): previsione pronta: 24 ore
-11-12 17:26:00.860 I/meteo   (11827): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:26:01.293 I/meteo   (11827): allerte ufficiali: 3 per Forlì
-11-12 17:26:05.037 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:26:05.102 W/ActivityTaskManager(  530): Force removing ActivityRecord{1988f21 u0 com.caelumweather/.MainActivity t84 f}}: app died, no saved state
-11-12 17:26:05.161 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:05.213 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{90f32e7 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:26:05.213 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:06.447 I/meteo   (12019): agganci: ora=2 sezione=4 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:26:28.971 W/meteo   (12019): previsione non arrivata (tentativo 1 di 4): java.net.SocketTimeoutException: Read timed out
-11-12 17:26:28.971 W/meteo   (12019): java.net.SocketTimeoutException: Read timed out
-11-12 17:26:28.971 W/meteo   (12019): 	at java.net.SocketInputStream.socketRead0(Native Method)
-11-12 17:26:28.971 W/meteo   (12019): 	at java.net.SocketInputStream.socketRead(SocketInputStream.java:118)
-11-12 17:26:28.971 W/meteo   (12019): 	at java.net.SocketInputStream.read(SocketInputStream.java:173)
-11-12 17:26:28.971 W/meteo   (12019): 	at java.net.SocketInputStream.read(SocketInputStream.java:143)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.readFromSocket(ConscryptEngineSocket.java:983)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.processDataFromSocket(ConscryptEngineSocket.java:947)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.org.conscrypt.ConscryptEngineSocket$SSLInputStream.-$$Nest$mprocessDataFromSocket(Unknown Source:0)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.org.conscrypt.ConscryptEngineSocket.doHandshake(ConscryptEngineSocket.java:236)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.org.conscrypt.ConscryptEngineSocket.startHandshake(ConscryptEngineSocket.java:218)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.io.RealConnection.connectTls(RealConnection.java:196)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:153)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getResponseCode(DelegatingHttpsURLConnection.java:106)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:30)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.caelumweather.data.HttpKt.httpGetGrezzo(Http.kt:114)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.caelumweather.data.HttpKt.httpGet(Http.kt:81)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.caelumweather.data.HttpKt.httpGet$default(Http.kt:76)
-11-12 17:26:28.971 W/meteo   (12019): 	at com.caelumweather.data.WeatherRepository$loadWithBody$2.invokeSuspend(WeatherRepository.kt:59)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
-11-12 17:26:28.971 W/meteo   (12019): 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
-11-12 17:26:30.842 I/meteo   (12019): previsione pronta: 24 ore
-11-12 17:26:31.712 I/meteo   (12019): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:26:32.139 I/meteo   (12019): allerte ufficiali: 3 per Forlì
-11-12 17:26:36.035 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:26:36.086 W/ActivityTaskManager(  530): Force removing ActivityRecord{9f98584 u0 com.caelumweather/.MainActivity t85 f}}: app died, no saved state
-11-12 17:26:36.107 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:36.107 W/WindowManager(  530): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-12 17:26:36.107 W/WindowManager(  530): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-12 17:26:36.201 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:36.205 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{163902 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:26:36.205 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:37.390 I/meteo   (12180): agganci: ora=2 sezione=5 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:26:41.199 I/meteo   (12180): previsione pronta: 24 ore
-11-12 17:26:42.005 I/meteo   (12180): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:26:42.432 I/meteo   (12180): allerte ufficiali: 3 per Forlì
-11-12 17:26:45.689 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:26:45.743 W/ActivityTaskManager(  530): Force removing ActivityRecord{7d3b341 u0 com.caelumweather/.MainActivity t86 f}}: app died, no saved state
-11-12 17:26:45.780 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:45.848 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{eeb5407 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:26:45.848 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:46.999 I/meteo   (12277): agganci: ora=2 sezione=6 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:26:50.676 I/meteo   (12277): previsione pronta: 24 ore
-11-12 17:26:51.669 I/meteo   (12277): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:26:52.094 I/meteo   (12277): allerte ufficiali: 3 per Forlì
-11-12 17:26:55.313 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:26:55.367 W/ActivityTaskManager(  530): Force removing ActivityRecord{b7af2ea u0 com.caelumweather/.MainActivity t87 f}}: app died, no saved state
-11-12 17:26:55.389 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:55.389 W/WindowManager(  530): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-12 17:26:55.389 W/WindowManager(  530): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-12 17:26:55.470 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:55.480 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{63196d8 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:26:55.480 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:26:56.652 I/meteo   (12374): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-12 17:27:00.415 I/meteo   (12374): previsione pronta: 24 ore
-11-12 17:27:01.420 I/meteo   (12374): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:27:01.853 I/meteo   (12374): allerte ufficiali: 3 per Forlì
-11-12 17:27:06.015 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:27:06.064 W/ActivityTaskManager(  530): Force removing ActivityRecord{e891944 u0 com.caelumweather/.MainActivity t88 f}}: app died, no saved state
-11-12 17:27:06.095 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:27:06.182 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{66b32c2 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:27:06.182 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:27:07.349 I/meteo   (12470): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=true legali=false cattura=true
-11-12 17:27:10.257 I/meteo   (12470): previsione pronta: 24 ore
-11-12 17:27:11.361 I/meteo   (12470): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:27:11.789 I/meteo   (12470): allerte ufficiali: 3 per Forlì
-11-12 17:27:14.614 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-12 17:27:14.654 W/ActivityTaskManager(  530): Force removing ActivityRecord{4c2dea6 u0 com.caelumweather/.MainActivity t89 f}}: app died, no saved state
-11-12 17:27:14.677 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:27:14.677 W/WindowManager(  530): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-12 17:27:14.677 W/WindowManager(  530): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-12 17:27:14.766 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:27:14.769 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{77b72e1 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-12 17:27:14.769 W/WindowManager(  530): android.os.DeadObjectException
-11-12 17:27:15.962 I/meteo   (12562): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=true cattura=true
-11-12 17:27:28.484 I/meteo   (12562): previsione pronta: 24 ore
-11-12 17:27:29.357 I/meteo   (12562): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-12 17:27:29.784 I/meteo   (12562): allerte ufficiali: 3 per Forlì
-11-12 17:27:33.365 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:37:19.736 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.736 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.892 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.892 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.960 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.961 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:19.979 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:19.981 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:19.981 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.007 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:LayoutInflater which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
+11-12 17:37:20.021 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
+11-12 17:37:20.031 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
+11-12 17:37:20.032 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
+11-12 17:37:20.036 E/StrictMode( 1643): java.lang.IllegalAccessException: Tried to access the API:ViewConfiguration which needs to have proper configuration from a non-UI Context:com.android.documentsui.DocumentsApplication@e233d75
+11-12 17:37:20.121 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.122 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.505 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.664 E/AggregateFuture( 1708): java.lang.IllegalStateException: Setup parameters does not exist!
+11-12 17:37:20.714 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:20.717 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:20.817 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.817 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.821 W/MediaProvider( 1575): Exception encountered while reading xattr:user.extdbsessionid0 from path:/data/user/0/com.android.providers.media.module/databases/external.db.
+11-12 17:37:20.821 W/MediaProvider( 1575): Exception encountered while reading xattr:user.extdbsessionid0 from path:/data/media/0.
+11-12 17:37:20.822 E/MediaProvider( 1575): Xattr:user.extdbnextrowid0 not found on external storage: android.system.ErrnoException: getxattr failed: ENODATA (No data available)
+11-12 17:37:20.822 E/MediaProvider( 1575): Xattr:user.extdbnextrowid0 not found on external storage: android.system.ErrnoException: getxattr failed: ENODATA (No data available)
+11-12 17:37:20.850 I/netd    (  345): networkAddInterface(100, wlan0) -> ServiceSpecificException(64, "Machine is not on the network") <0.03ms>
+11-12 17:37:20.851 E/WifiStaIfaceAidlImpl(  526): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:20.854 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.855 W/ConnectivityService(  526): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:20.855 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: fe80::/64, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+11-12 17:37:20.860 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.861 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.886 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:20.903 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.903 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:20.954 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: 10.0.2.0/24, ifName: wlan0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+11-12 17:37:20.954 E/ConnectivityService(  526): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:20.954 I/netd    (  345): networkAddRouteParcel(100, RouteInfoParcel{destination: 0.0.0.0/0, ifName: wlan0, nextHop: 10.0.2.2, mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+11-12 17:37:20.954 E/ConnectivityService(  526): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:20.968 W/AppWidgetServiceImpl(  526): Failed to read state: java.io.FileNotFoundException: /data/system/users/0/appwidgets.xml: open failed: ENOENT (No such file or directory)
+11-12 17:37:20.973 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:21.010 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:21.010 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:21.044 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.067 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.090 E/WifiStaIfaceAidlImpl(  526): stopRssiMonitoring failed with service-specific exception: android.os.ServiceSpecificException:  (code 5)
+11-12 17:37:21.141 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.181 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.190 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.191 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.262 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.264 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.280 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.280 W/BestClock(  526): java.time.DateTimeException: Missing network time fix
+11-12 17:37:21.454 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:37:21.514 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:21.514 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:21.634 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:21.952 E/WifiStaIfaceAidlImpl(  526): installApfPacketFilter failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:21.967 E/WifiStaIfaceAidlImpl(  526): setDtimMultiplier failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-12 17:37:22.139 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:37:22.169 W/ModernMediaScanner( 1575): Failed to visit /system/media: java.nio.file.NoSuchFileException: /system/media
+11-12 17:37:22.174 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.174 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.197 W/ModernMediaScanner( 1575): Failed to visit /oem/media: java.nio.file.NoSuchFileException: /oem/media
+11-12 17:37:22.250 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.250 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.367 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.430 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:22.895 E/TaskWorkerFactory( 1708): java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+11-12 17:37:23.139 I/netd    (  345): networkAddInterface(101, eth0) -> ServiceSpecificException(64, "Machine is not on the network") <0.04ms>
+11-12 17:37:23.139 W/ConnectivityService(  526): Exception adding interface: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:23.140 I/netd    (  345): networkAddRouteParcel(101, RouteInfoParcel{destination: 10.0.2.0/24, ifName: eth0, nextHop: , mtu: 0}) -> ServiceSpecificException(64, "Machine is not on the network") <0.02ms>
+11-12 17:37:23.140 E/ConnectivityService(  526): Exception in networkAddRouteParcel for non-gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:23.140 I/netd    (  345): networkAddRouteParcel(101, RouteInfoParcel{destination: 0.0.0.0/0, ifName: eth0, nextHop: 10.0.2.2, mtu: 1500}) -> ServiceSpecificException(64, "Machine is not on the network") <0.01ms>
+11-12 17:37:23.140 E/ConnectivityService(  526): Exception in networkAddRouteParcel for gateway: android.os.ServiceSpecificException: Machine is not on the network (code 64)
+11-12 17:37:23.503 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:23.503 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:23.607 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:23.607 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:23.692 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:24.649 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:37:24.674 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:37:25.114 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:37:25.273 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.273 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.276 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.345 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.737 W/Binder  (  526): Caught a RuntimeException from the binder stub implementation.
+11-12 17:37:25.737 W/Binder  (  526): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10112 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
+11-12 17:37:25.739 E/SystemServiceRegistry( 1036): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+11-12 17:37:25.748 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.749 W/Telephony( 1092): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:25.778 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:26.014 W/Telephony( 1092): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+11-12 17:37:26.329 E/BackupHelper(  869): java.io.FileNotFoundException: /data/user_de/0/com.android.permissioncontroller/files/delayed_restore_permissions.xml: open failed: ENOENT (No such file or directory)
+11-12 17:37:26.329 E/BackupHelper(  869): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-12 17:37:26.731 E/RkpdPeriodicProvisioner( 2386): com.android.rkpdapp.RkpdException: HTTP error status encountered: 400
+11-12 17:37:27.881 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=10214, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/ringtones/PERSEUS.ogg, _size=112981, album=Unknown, genre=Unknown, is_alarm=0, title=Perseus, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:37:27.881 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:37:28.123 I/meteo   ( 2542): agganci: ora=-1 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-12 17:37:29.107 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=Unknown, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/notifications/Vega.ogg, _size=29310, album=notifications, genre=null, is_alarm=0, title=Vega, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:37:29.107 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:37:29.107 W/ModernMediaScanner( 1575): Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=1000, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1702767290, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=80000, cd_track_number=2dB214a, xmp=[], year=null, _data=/product/media/audio/notifications/arcturus.ogg, _size=7908, album=notifications, genre=null, is_alarm=0, title=Arcturus, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+11-12 17:37:29.107 W/ModernMediaScanner( 1575): android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+11-12 17:37:29.271 W/MediaProvider( 1575): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+11-12 17:37:29.273 W/MediaProvider( 1575): java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+11-12 17:37:32.018 I/meteo   ( 2542): previsione pronta: 24 ore
+11-12 17:37:33.029 I/meteo   ( 2542): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 17:37:33.714 I/meteo   ( 2542): MeteoAlarm italy: 111960 caratteri, 74 voci, 74 valide, 3 per Forlì (regione=Emilia-Romagna, paese=Italia)
+11-12 17:37:34.459 I/meteo   ( 2542): allerte ufficiali: 3 per Forlì
+11-12 17:37:36.847 W/OverlayManager(  526): service 'idmap' died
+11-12 17:37:40.835 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:37:42.951 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-12 17:37:46.585 W/ModernMediaScanner( 1575): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
