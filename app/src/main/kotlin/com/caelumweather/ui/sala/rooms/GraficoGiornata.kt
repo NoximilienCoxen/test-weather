@@ -273,13 +273,17 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
 
     clipRect(right = size.width * rivelazione) {
         drawPath(area, Brush.verticalGradient(listOf(accento.copy(alpha = 0.28f), accento.copy(alpha = 0.0f)), startY = alto, endY = size.height))
-        drawPath(tracciato, accento, style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        // **La linea prende il colore della temperatura**, ora per ora: blu
+        // dove fa freddo, terracotta dove fa caldo. La scala e' assoluta (vedi
+        // [coloreDellaTemperatura]): un giorno freddo resta blu anche se la sua
+        // massima e' "alta" per lui.
+        drawPath(tracciato, pennelloDellaGiornata(punti, unita, palette, ::x), style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
 
     // Minima e massima: un punto e il numero, sopra la massima e sotto la minima.
     fun etichetta(i: Int, t: Double, sopra: Boolean) {
         val c = xy[i]
-        drawCircle(accento, radius = 3.dp.toPx(), center = c)
+        drawCircle(coloreDellaTemperatura(t, palette), radius = 3.dp.toPx(), center = c)
         val testo = misura.measure(gradi(t), stileEtichetta)
         val tx = (c.x - testo.size.width / 2f).coerceIn(0f, size.width - testo.size.width)
         val ty = if (sopra) c.y - testo.size.height - 2.dp.toPx() else c.y + 2.dp.toPx()
@@ -343,9 +347,10 @@ internal fun MiniGiornata(
                 if (t == null) return@forEachIndexed
                 if (!iniziata) { linea.moveTo(x(i), y(t)); iniziata = true } else linea.lineTo(x(i), y(t))
             }
-            drawPath(linea, palette.accent, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            val punti = temperature.mapIndexedNotNull { i, t -> t?.let { i to it } }
+            drawPath(linea, pennelloDellaGiornata(punti, TempUnit.CELSIUS, palette) { x(it.roundToInt()) }, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
             temperature.getOrNull(scelta)?.let { t ->
-                drawCircle(palette.accent, radius = 2.4.dp.toPx(), center = Offset(x(scelta), y(t)))
+                drawCircle(coloreDellaTemperatura(t, palette), radius = 2.4.dp.toPx(), center = Offset(x(scelta), y(t)))
             }
         }
         etichetta?.let {
@@ -358,4 +363,44 @@ internal fun MiniGiornata(
             modifier = Modifier.graphicsLayer { rotationZ = giro },
         )
     }
+}
+
+/**
+ * Il colore di una temperatura, in gradi Celsius, su una scala **assoluta**:
+ * blu acqua fino a 4°, ocra verso i 14°, l'accento della carta dai 24° in su.
+ * Assoluta e non relativa al giorno: con una scala che si stira sulla giornata
+ * un giorno da 2° a 6° avrebbe le ore "calde" in terracotta, e il colore
+ * direbbe una cosa che il termometro smentisce.
+ */
+internal fun coloreDellaTemperatura(celsius: Double, palette: SalaPalette): Color {
+    val freddo = androidx.compose.ui.graphics.lerp(com.caelumweather.ui.sala.SalaTokens.acqua, com.caelumweather.ui.sala.SalaTokens.acquaChiara, palette.buio)
+    val tiepido = Color(0xFFD6A13F)
+    val caldo = palette.accent
+    return when {
+        celsius <= 4.0 -> freddo
+        celsius <= 14.0 -> androidx.compose.ui.graphics.lerp(freddo, tiepido, ((celsius - 4.0) / 10.0).toFloat())
+        celsius <= 24.0 -> androidx.compose.ui.graphics.lerp(tiepido, caldo, ((celsius - 14.0) / 10.0).toFloat())
+        else -> caldo
+    }
+}
+
+/**
+ * Il pennello orizzontale che colora una curva ora per ora con
+ * [coloreDellaTemperatura]. [x] dice dove sta in larghezza ciascuna ora.
+ * [unita] non serve al colore - la scala e' in Celsius - ma resta nella firma
+ * perche' chi chiama non debba convertire.
+ */
+@Suppress("UNUSED_PARAMETER")
+internal fun pennelloDellaGiornata(
+    punti: List<Pair<Int, Double>>,
+    unita: TempUnit,
+    palette: SalaPalette,
+    x: (Float) -> Float,
+): Brush {
+    if (punti.size < 2) return androidx.compose.ui.graphics.SolidColor(palette.accent)
+    val inizio = x(punti.first().first.toFloat())
+    val fine = x(punti.last().first.toFloat())
+    val largo = (fine - inizio).coerceAtLeast(1f)
+    val fermate = punti.map { (ora, t) -> ((x(ora.toFloat()) - inizio) / largo).coerceIn(0f, 1f) to coloreDellaTemperatura(t, palette) }
+    return Brush.horizontalGradient(colorStops = fermate.toTypedArray(), startX = inizio, endX = fine)
 }

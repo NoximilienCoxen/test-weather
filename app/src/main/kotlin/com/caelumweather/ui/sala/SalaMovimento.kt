@@ -323,3 +323,25 @@ fun NumeroCheScorre(
         modifier = modifier,
     )
 }
+
+/**
+ * L'onda che parte da una pastiglia e si allarga sulla scheda: il giorno
+ * toccato "si spande" nella scheda mentre i numeri cambiano. La disegna
+ * [PannelloSala] dentro il proprio ritaglio; chi tocca dice da dove parte, in
+ * coordinate della finestra.
+ */
+class OndaScheda internal constructor() {
+    internal var centro by mutableStateOf(androidx.compose.ui.geometry.Offset.Zero)
+    internal val corsa = androidx.compose.animation.core.Animatable(1f)
+
+    /** Fa partire l'onda da [da] (coordinate della finestra). */
+    suspend fun parti(da: androidx.compose.ui.geometry.Offset) {
+        centro = da
+        corsa.snapTo(0f)
+        corsa.animateTo(1f, tween(durationMillis = 620, easing = androidx.compose.animation.core.FastOutSlowInEasing))
+    }
+}
+
+/** Un'onda per scheda, ricordata. */
+@Composable
+fun rememberOndaScheda(): OndaScheda = remember { OndaScheda() }

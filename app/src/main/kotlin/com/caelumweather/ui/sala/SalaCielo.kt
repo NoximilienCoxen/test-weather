@@ -96,6 +96,8 @@ fun SalaCielo(
      * i granelli (vedi `polline`); sotto, niente.
      */
     pollineOggi: Int = 0,
+    /** Nebbia, vento, caldo, gelo e l'ora dopo la pioggia: vedi [Atmosfera]. */
+    atmosfera: Atmosfera = Atmosfera(),
 ) {
     // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
     //
@@ -123,6 +125,9 @@ fun SalaCielo(
     val tocchi = remember { mutableStateListOf<Tocco>() }
     val scroscio = remember { Animatable(0f) }
     val scenaOra by androidx.compose.runtime.rememberUpdatedState(scena)
+    val atmosferaOra by androidx.compose.runtime.rememberUpdatedState(atmosfera)
+    // I varchi aperti col dito nella nebbia: vedi [VarcoNebbia].
+    val varchi = remember { mutableStateListOf<VarcoNebbia>() }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
 
@@ -176,6 +181,10 @@ fun SalaCielo(
                         Caduta.GRANDINE -> vibrazioni.chicco()
                         Caduta.NEVE -> Unit
                     }
+                } else if (atmosferaOra.nebbia > 0.3f) {
+                    // Nella nebbia il dito apre un varco, che si richiude.
+                    varchi.removeAll { ora - it.nato > DURATA_VARCO }
+                    if (varchi.size < 4) varchi.add(VarcoNebbia(punto, ora))
                 } else {
                     // **Si potano le spente prima di aggiungere.** Una lista che
                     // cresce a ogni tocco e non cala e' una perdita lenta: il
@@ -230,7 +239,7 @@ fun SalaCielo(
 
         // Lontano come gli aerei, dietro al sole e alle nuvole.
         translate(parallasse.x * 0.2f, parallasse.y * 0.2f) {
-            arcobaleno(sx, sy, sky, scena)
+            arcobaleno(sx, sy, sky, scena, atmosfera.dopoPioggia)
         }
 
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
@@ -277,8 +286,27 @@ fun SalaCielo(
             tempo = t,
         )
 
+        // Il caldo fa tremolare l'aria sopra l'orizzonte, dietro le colline.
+        caldoSullOrizzonte(atmosfera.caldo * (1f - scena.notte) * (1f - scena.bagnato), t)
+
         // Le colline sono terra: stanno ferme, o il mondo si stacca dai piedi.
-        colline(sx, sy, palette)
+        // Le chiome degli alberi si piegano col vento, e sul crinale c'e'
+        // l'erba (vedi [erbaAlVento]).
+        val piega = atmosfera.versoVento.let { if (it >= 0f) 1f else -1f } *
+            (atmosfera.vento * 3.2f + sin(t * (1.1f + atmosfera.vento * 2.6f)) * (0.3f + atmosfera.vento * 1.4f))
+        colline(sx, sy, palette, piega)
+        erbaAlVento(
+            vento = atmosfera.vento,
+            verso = atmosfera.versoVento,
+            tempo = t,
+            colline = listOf(
+                palette.collina1 to floatArrayOf(-90f, 484f, 340f, 280f),
+                palette.collina2 to floatArrayOf(131f, 484f, 400f, 300f),
+                palette.collina3 to floatArrayOf(-60f, 678f, 560f, 472f),
+            ),
+        )
+        foglieAlVento(atmosfera.vento * (1f - scena.neve), atmosfera.versoVento, t, palette.fronda)
+        nebbia(atmosfera.nebbia, scena.notte, t, varchi)
         cioCheCade(scena, t, tocchi, scroscio.value)
 
         disegnaIncrespature(onde, t, palette)
@@ -382,9 +410,13 @@ private val BandeArcobaleno = listOf(
  * colline: se ne vede il tratto che esce dall'orizzonte. E' tenue apposta - un
  * arcobaleno acceso su questo cielo dipinto sarebbe un adesivo.
  */
-private fun DrawScope.arcobaleno(sx: Float, sy: Float, sky: SkyState, scena: Scena) {
+private fun DrawScope.arcobaleno(sx: Float, sy: Float, sky: SkyState, scena: Scena, dopoPioggia: Float = 0f) {
     val aperto = 1f - ((scena.copertura - 0.80f) / 0.14f).coerceIn(0f, 1f)
-    val forza = scena.sole * scena.bagnato * (1f - scena.tempesta) * (1f - scena.neve) * aperto
+    // **Anche dopo il rovescio**, non solo durante: nell'ora in cui ha appena
+    // smesso l'aria e' ancora piena di gocce, ed e' li' che l'arcobaleno si vede
+    // meglio. Vale meno di una pioggia in corso e sfuma l'ora dopo.
+    val bagnatoODopo = maxOf(scena.bagnato, dopoPioggia * 0.85f)
+    val forza = scena.sole * bagnatoODopo * (1f - scena.tempesta) * (1f - scena.neve) * aperto
     if (forza <= 0.02f) return
     val soleASinistra = sky.journey < 0.5f
     val centro = Offset((if (soleASinistra) 330f else 81f) * sx, 600f * sy)
@@ -1056,7 +1088,7 @@ private fun DrawScope.nuvole(
  * I due dossi dietro escono dai lati; quello davanti e' una mezza ellisse che
  * poggia sul bordo dello schermo.
  */
-private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
+private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette, piega: Float = 0f) {
     // I due dossi dietro: il fondo resta nascosto da quello davanti, quindi si
     // vedono solo come gobbe.
     drawOval(
@@ -1087,9 +1119,10 @@ private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
             size = Size(tw * sx, th * sy),
             cornerRadius = CornerRadius(tw * sx * 0.5f),
         )
+        // La chioma si sposta col vento di [piega] unita', il tronco resta.
         drawOval(
             color = palette.fronda,
-            topLeft = Offset(fx * sx, fy * sy),
+            topLeft = Offset((fx + piega * fd / 44f) * sx, fy * sy),
             size = Size(fd * sx, fd * sy),
         )
     }

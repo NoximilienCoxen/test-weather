@@ -404,6 +404,30 @@ fun SalaShell(
         notte = animateFloatAsState(bersaglio.notte, m, label = "notte").value,
     )
 
+    // ── L'aria: nebbia, vento, caldo, gelo, dopo la pioggia ─────────────────
+    //
+    // Accanto alla scena e con le stesse molle (vedi [Atmosfera]). Viene
+    // dall'ora mostrata come tutto il resto, quindi trascinando la barra delle
+    // ore la nebbia si alza e il vento cala insieme al cielo.
+    val atmosferaVoluta = remember(state.shownHours, state.selectedHour, codice, hour) {
+        val ore = state.shownHours.ifEmpty { listOfNotNull(hour) }
+        atmosferaBersaglio(ore, if (state.shownHours.isEmpty()) 0 else state.selectedHour, codice)
+    }
+    val atmosfera = Atmosfera(
+        nebbia = animateFloatAsState(atmosferaVoluta.nebbia, m, label = "nebbia").value,
+        vento = animateFloatAsState(atmosferaVoluta.vento, m, label = "vento").value,
+        versoVento = animateFloatAsState(atmosferaVoluta.versoVento, m, label = "verso").value,
+        caldo = animateFloatAsState(atmosferaVoluta.caldo, m, label = "caldo").value,
+        gelo = animateFloatAsState(atmosferaVoluta.gelo, m, label = "gelo").value,
+        dopoPioggia = animateFloatAsState(atmosferaVoluta.dopoPioggia, m, label = "dopo").value,
+    )
+    // Cio' che si posa sul vetro della scheda: la brina col gelo, le gocce con
+    // la pioggia forte (non con neve o grandine, che non scivolano).
+    val vetro = Vetro(
+        gelo = atmosfera.gelo * (1f - scena.bagnato * 0.5f),
+        pioggia = ((scena.bagnato - 0.7f) / 0.3f).coerceIn(0f, 1f) * (1f - scena.neve) * (1f - scena.ghiaccio),
+    )
+
     // Quanto e' chiuso il cielo: un numero solo, da cui dipendono la sfumatura,
     // le colline e l'arco. Viene da valori gia' animati, quindi non ha bisogno
     // di una molla sua.
@@ -555,6 +579,7 @@ fun SalaShell(
 
     CompositionLocalProvider(
         LocalDidascalie provides state.captionStyle,
+        LocalVetro provides vetro,
         // Un interruttore solo per tutto cio' che si muove nelle schede e nei
         // pannelli: vedi `SalaMovimento.kt`.
         LocalMovimento provides !ferme,
@@ -577,6 +602,7 @@ fun SalaShell(
                 // acceso, e la cattura vuole scatti ripetibili.
                 interattivo = !ferme,
                 pollineOggi = state.pollineMostrato.firstOrNull()?.massimo ?: 0,
+                atmosfera = atmosfera,
             )
 
             // **Su uno schermo largo le sale non si allargano con lui.** Dai

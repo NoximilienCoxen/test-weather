@@ -41,6 +41,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.caelumweather.ui.sala.LocalMovimento
+import com.caelumweather.ui.sala.rememberOndaScheda
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.geometry.Offset
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.UiState
 import com.caelumweather.data.MoonPhase
@@ -55,6 +62,7 @@ import com.caelumweather.ui.sala.CifreCheScorrono
 import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.GiornoSettimana
 import com.caelumweather.ui.sala.IconaMeteo
+import com.caelumweather.ui.sala.IconaCheReagisce
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.PastigliaAccento
 import com.caelumweather.ui.sala.SalaPalette
@@ -124,6 +132,10 @@ fun SalaOggiScreen(
     // luna e il loro arco: il cielo e' il punto di questa sala. Da chiusa resta
     // una mini-curva accanto a "min · max", sul cielo, che la apre.
     var giornataAperta by rememberSaveable { mutableStateOf(false) }
+    // Il giorno toccato si spande nella scheda: vedi [OndaScheda].
+    val onda = rememberOndaScheda()
+    val scopeOnda = rememberCoroutineScope()
+    val movimentoOnda = LocalMovimento.current
 
     Column(modifier = modifier.fillMaxWidth()) {
         // ── Il numero, sul cielo ─────────────────────────────────────────────
@@ -234,7 +246,7 @@ fun SalaOggiScreen(
             }
         }
 
-        PannelloSala(palette = palette) {
+        PannelloSala(palette = palette, onda = onda) {
             if (futuro && giornoScelto != null) {
                 Row(
                     modifier = Modifier.padding(bottom = 9.dp),
@@ -375,6 +387,7 @@ fun SalaOggiScreen(
                 state = state,
                 palette = palette,
                 onScegli = viewModel::selectDay,
+                onToccoDa = { da -> if (movimentoOnda) scopeOnda.launch { onda.parti(da) } },
             )
         }
     }
@@ -431,7 +444,10 @@ fun StrisciaGiorni(
     onScegli: (Int) -> Unit,
     modifier: Modifier = Modifier,
     conMillimetri: Boolean = false,
+    /** Dove sta, nella finestra, il centro della pastiglia toccata: fa partire l'onda. */
+    onToccoDa: ((Offset) -> Unit)? = null,
 ) {
+    val centri = remember { mutableMapOf<Int, Offset>() }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -462,7 +478,11 @@ fun StrisciaGiorni(
                         }
                         selected = attivo
                     }
-                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) { onScegli(giorno.indice) }
+                    .onGloballyPositioned { centri[giorno.indice] = it.boundsInWindow().center }
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
+                        if (giorno.indice != scelto) centri[giorno.indice]?.let { onToccoDa?.invoke(it) }
+                        onScegli(giorno.indice)
+                    }
                     .padding(top = 9.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -474,7 +494,7 @@ fun StrisciaGiorni(
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                 )
-                IconaMeteo(giorno.glifo)
+                IconaCheReagisce(giorno.glifo, scelto = attivo)
                 Text(
                     text = giorno.max?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
                     style = SalaType.giornoMax,

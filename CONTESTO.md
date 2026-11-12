@@ -8376,6 +8376,55 @@ anno fa"; toccandola di nuovo si chiude. **Da chiusa la scheda e' alta come
 prima del grafico**, divisore compreso (16/13 dp). Lo stato e'
 `rememberSaveable`, chiuso alla partenza.
 
+### 64.8-quinquies Abbellimenti: l'aria nel cielo, il vetro della scheda, i gesti
+
+Dieci aggiunte, tutte legate a un dato vero e tutte spente da `LocalMovimento`
+(animazioni ridotte, cattura). L'unico movimento continuo resta il cielo, come
+prima; le gocce sul vetro sono continue solo finche' piove forte.
+
+**Nel cielo** - `SalaAtmosfera.kt`, accanto a `Scena` e non dentro:
+`Atmosfera(nebbia, vento, versoVento, caldo, gelo, dopoPioggia)`, calcolata da
+`atmosferaBersaglio` sull'ora mostrata e passata per le stesse molle della
+scena.
+- **Arcobaleno anche dopo il rovescio**: quello che c'era si accendeva solo
+  mentre pioveva; ora anche nell'ora dopo (0,85) e in quella dopo ancora.
+- **Nebbia a banchi** (codici 45/48, o visibilita' sotto 1 km; foschia sotto
+  4 km): un velo sul cielo e sei macchie sfumate in ogni direzione che
+  scivolano fra le colline. Il tocco apre un varco che si richiude
+  (`VarcoNebbia`). Scatto CI: `*-5f-nebbia`.
+- **Vento**: erba sul crinale delle colline (una frangia del colore della
+  collina, nascosta dove la copre una collina davanti, un solo `drawPath` per
+  collina), chiome degli alberi che si piegano, foglie dai ~28 km/h.
+- **Caldo** sopra i 29°: fascia calda e righe che tremolano sull'orizzonte.
+
+**Sul vetro della scheda** - `SalaVetro.kt`, disegnati da `PannelloSala`
+tramite `LocalVetro`:
+- **Brina** sotto zero: velo dai bordi e pochi cristalli **solo negli angoli**
+  (azzurro ghiaccio sulla carta chiara, bianchi sulla scura). Il tocco la
+  scioglie, torna dopo dieci secondi. Il primo tentativo, con i cristalli lungo
+  tutto il bordo, pareva una cornice di adesivi.
+- **Gocce** con pioggia forte (non neve ne' grandine): poche, si fermano e
+  ripartono, lasciano una scia.
+
+**Nelle schede**:
+- **Icone dei giorni che reagiscono al tocco** (`IconaCheReagisce`): giro di
+  raggi, due gocce, fiocco che ruota, lampo, ondeggio. Una volta, solo sul
+  giorno appena scelto.
+- **Curva colorata per temperatura** (`coloreDellaTemperatura`, scala assoluta
+  in Celsius: blu fino a 4°, ocra a 14°, accento dai 24°), anche nella
+  mini-curva e nei punti di minima e massima.
+- **Onda dal giorno toccato** (`OndaScheda`): dalla pastiglia un cerchio del
+  colore d'accento si allarga sulla scheda mentre i numeri cambiano, in Sala I
+  e in Sala II. Non e' una transizione fra pagine: quella c'era gia'.
+- **Filo d'aria nella rosa dei venti**: tratti nel verso del vento, piu' fitti
+  col vento forte, per sette secondi quando cambia l'ora, poi sfumano.
+- **La pastiglia degli avvisi batte una volta** quando arriva un avviso nuovo
+  (chiave: tipo, livello, inizio; `rememberSaveable`).
+
+`AtmosferaRenderTest` rende il cielo vero con ogni effetto
+(`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno
+e i conti di `atmosferaBersaglio`.
+
 ### 64.9 Cosa NON e' stato fatto
 
 - **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le
