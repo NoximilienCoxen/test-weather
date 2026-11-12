@@ -114,7 +114,7 @@ internal class CacheAtmosfera {
     internal var tagliaTrama = Size.Zero
     internal var trama: androidx.compose.ui.graphics.ImageBitmap? = null
     internal var tagliaErba = Size.Zero
-    internal val erbaFerma = mutableListOf<Path>()
+    internal var puntiErba: List<List<Offset>> = emptyList()
     internal var versoErba = 1f
 }
 
@@ -300,62 +300,62 @@ internal fun DrawScope.erbaAlVento(
 ) {
     val sx = size.width / RIF_L
     val sy = size.height / RIF_H
-    // **A vento quasi fermo l'erba non ondeggia, e il tracciato si fa una volta
-    // sola** per taglia dello schermo: e' il caso di quasi tutti i giorni, e
-    // ricostruire centinaia di curve a ogni fotogramma per farle stare ferme
-    // era il pezzo piu' caro del cielo.
+    // **Segmenti, non tracciati.** La prima erba era un `Path` di curve per
+    // collina, largo quanto lo schermo: su un telefono senza scheda grafica un
+    // tracciato cosi' si rasterizza in software a ogni ridisegno del cielo, anche
+    // fermo, e l'emulatore della CI ne e' morto. Ogni filo ora e' due segmenti
+    // dritti (base-meta', meta'-punta) disegnati tutti insieme con `drawPoints`,
+    // che la scheda grafica - vera o emulata - fa senza rasterizzare niente.
+    // A vento quasi fermo i punti si calcolano una volta per taglia.
     val ferma = vento < 0.08f
     val segnoVerso = if (verso >= 0f) 1f else -1f
-    if (ferma && cache.tagliaErba == size && cache.versoErba == segnoVerso && cache.erbaFerma.size == colline.size) {
+    val riusa = ferma && cache.tagliaErba == size && cache.versoErba == segnoVerso && cache.puntiErba.size == colline.size
+    if (!riusa) {
+        val tempoErba = if (ferma) 0f else tempo
+        val piega = segnoVerso * (0.08f + 0.75f * vento) * (0.4f + 0.6f * kotlin.math.abs(verso))
+        val tutti = colline.mapIndexed { indice, (_, ellisse) ->
+            val punti = ArrayList<Offset>(240)
+            val sinistra = ellisse[0]; val alto = ellisse[1]; val largo = ellisse[2]; val altezza = ellisse[3]
+            // Le colline davanti coprono il crinale di quelle dietro: li' l'erba non c'e'.
+            val davanti = colline.drop(indice + 1).map { it.second }
+            var x = maxOf(sinistra + 6f, -4f)
+            var i = 0
+            while (x < minOf(sinistra + largo - 6f, RIF_L + 4f)) {
+                val y = bordoDiEllisse(x, sinistra, alto, largo, altezza)
+                val coperta = y != null && davanti.any { e ->
+                    val bordo = bordoDiEllisse(x, e[0], e[1], e[2], e[3])
+                    bordo != null && bordo < y + 2f
+                }
+                if (y != null && !coperta) {
+                    for (f in 0 until 2) {
+                        val semeFilo = ((i * 7 + f * 3) % 11) / 11f
+                        val lungo = (5.5f + 4.5f * semeFilo) * sy
+                        val ondeggia = sin(tempoErba * (1.3f + 3.2f * vento) + x * 0.09f + f) * (0.05f + 0.22f * vento)
+                        val angolo = piega + ondeggia + (f - 0.5f) * 0.3f
+                        val base = Offset((x + (f - 0.5f) * 2.2f) * sx, y * sy + 1.5f * sy)
+                        val meta = Offset(base.x + sin(angolo * 0.45f) * lungo * 0.5f, base.y - cos(angolo * 0.45f) * lungo * 0.5f)
+                        val punta = Offset(base.x + sin(angolo) * lungo, base.y - cos(angolo) * lungo)
+                        punti.add(base); punti.add(meta)
+                        punti.add(meta); punti.add(punta)
+                    }
+                }
+                x += 12f
+                i++
+            }
+            punti
+        }
+        if (ferma) {
+            cache.puntiErba = tutti
+            cache.tagliaErba = size
+            cache.versoErba = segnoVerso
+        }
         colline.forEachIndexed { i, (colore, _) ->
-            drawPath(cache.erbaFerma[i], colore, style = Stroke(width = 1.5f * sx))
+            drawPoints(tutti[i], androidx.compose.ui.graphics.PointMode.Lines, colore, strokeWidth = 1.5f * sx, cap = StrokeCap.Round)
         }
         return
     }
-    if (ferma) {
-        cache.erbaFerma.clear()
-        cache.tagliaErba = size
-        cache.versoErba = segnoVerso
-    }
-    val tempoErba = if (ferma) 0f else tempo
-    var filo = Path()
-    val segno = if (verso >= 0f) 1f else -1f
-    val piega = segno * (0.08f + 0.75f * vento) * (0.4f + 0.6f * kotlin.math.abs(verso))
-    colline.forEachIndexed { indice, (colore, ellisse) ->
-        // Tutti i fili di una collina in un tracciato solo, disegnato una
-        // volta: il cielo ridisegna a ogni fotogramma, e centinaia di
-        // `drawPath` per l'erba erano il pezzo piu' caro della scena.
-        filo = Path()
-        val (sinistra, alto, largo, altezza) = ellisse.let { listOf(it[0], it[1], it[2], it[3]) }
-        // Le colline davanti coprono il crinale di quelle dietro: lì l'erba non c'e'.
-        val davanti = colline.drop(indice + 1).map { it.second }
-        var x = maxOf(sinistra + 6f, -4f)
-        var i = 0
-        while (x < minOf(sinistra + largo - 6f, RIF_L + 4f)) {
-            val y = bordoDiEllisse(x, sinistra, alto, largo, altezza)
-            val coperta = y != null && davanti.any { e ->
-                val bordo = bordoDiEllisse(x, e[0], e[1], e[2], e[3])
-                bordo != null && bordo < y + 2f
-            }
-            if (y != null && !coperta) {
-                for (f in 0 until 2) {
-                    val semeFilo = ((i * 7 + f * 3) % 11) / 11f
-                    val lungo = (5.5f + 4.5f * semeFilo) * sy
-                    val ondeggia = sin(tempoErba * (1.3f + 3.2f * vento) + x * 0.09f + f) * (0.05f + 0.22f * vento)
-                    val angolo = piega + ondeggia + (f - 0.5f) * 0.3f
-                    val bx = (x + (f - 0.5f) * 2.2f) * sx
-                    val by = y * sy + 1.5f * sy
-                    val px = bx + sin(angolo) * lungo
-                    val py = by - cos(angolo) * lungo
-                    filo.moveTo(bx, by)
-                    filo.quadraticTo(bx + sin(angolo * 0.4f) * lungo * 0.5f, by - lungo * 0.55f, px, py)
-                }
-            }
-            x += 12f
-            i++
-        }
-        if (ferma) cache.erbaFerma.add(filo)
-        drawPath(filo, colore, style = Stroke(width = 1.5f * sx))
+    colline.forEachIndexed { i, (colore, _) ->
+        drawPoints(cache.puntiErba[i], androidx.compose.ui.graphics.PointMode.Lines, colore, strokeWidth = 1.5f * sx, cap = StrokeCap.Round)
     }
 }
 
