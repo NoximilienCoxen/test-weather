@@ -10,6 +10,285 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.002.1",
+                "areaDesc": "Lower Matanuska Valley; Southern Susitna Valley",
+                "geocode": {
+                    "SAME": [
+                        "002170"
+                    ],
+                    "UGC": [
+                        "AKZ711",
+                        "AKZ746"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ711",
+                    "https://api.weather.gov/zones/forecast/AKZ746"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T22:52:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-11T23:02:00-09:00",
+                "effective": "2026-11-11T23:02:00-09:00",
+                "onset": "2026-11-11T23:02:00-09:00",
+                "expires": "2026-11-12T05:00:00-09:00",
+                "ends": "2026-11-12T05:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 11 at 11:02PM AKST until November 12 at 5:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Freezing rain and rain falling on cold surfaces expected.\nTotal ice accumulation of a light glaze.\n\n* WHERE...Lower Matanuska Valley and Southern Susitna Valley from\nsouth and west of Wasilla to Willow.\n\n* WHEN...Until 5 AM AKST Thursday.\n\n* IMPACTS...Travel could be difficult. Some roads will become slick.\n\n* ADDITIONAL DETAILS...Areas of light rain, possibly mixed with snow,\nwill develop and become more widespread tonight. Temperatures will\nhover right around or a few degrees above freezing for locations\nsouth and west of Wasilla and below freezing near Willow. Colder\nareas, including hills, bridges, and overpasses will be the most\nlikely to see freezing rain. Rain will then taper off overnight\ninto Thursday morning, with temperatures cooling to freezing or\nbelow. Thus, any water on roadways will freeze.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 120802"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 5 AM AKST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.WW.Y.0054.000000T0000Z-261112T1400Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-12T05:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.001.1",
+                "areaDesc": "Anchorage",
+                "geocode": {
+                    "SAME": [
+                        "002020"
+                    ],
+                    "UGC": [
+                        "AKZ701"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ701"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T12:29:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T22:52:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T13:08:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-11T23:02:00-09:00",
+                "effective": "2026-11-11T23:02:00-09:00",
+                "onset": "2026-11-11T23:02:00-09:00",
+                "expires": "2026-11-12T05:00:00-09:00",
+                "ends": "2026-11-12T05:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 11 at 11:02PM AKST until November 12 at 5:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Freezing rain expected. Total ice accumulation of a light\nglaze.\n\n* WHERE...Anchorage and Eagle River.\n\n* WHEN...Until 5 AM AKST Thursday.\n\n* IMPACTS...Travel could be difficult. Some roads will become slick.\n\n* ADDITIONAL DETAILS...Areas of light rain will develop by late this\nevening and continue into the overnight hours, mainly from Eagle\nRiver south to the Anchorage Bowl. Air temperatures will be right\naround freezing, leading to a light glaze of ice on area roads.\nRain will taper off by early Thursday morning, but roads will\nremain slick until temperatures warm later in the morning.",
+                "instruction": "Slow down and use caution while traveling. Prepare for possible power\noutages. For the latest road conditions call 5 1 1 or visit\n511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 120802"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 5 AM AKST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.WW.Y.0054.000000T0000Z-261112T1400Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-12T05:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f3f829ffc2f1f8a6b81eb815ada14664890e5b84.003.1",
+                "areaDesc": "SW Kenai Peninsula; NW Kenai Peninsula; Skilak Lake",
+                "geocode": {
+                    "SAME": [
+                        "002122"
+                    ],
+                    "UGC": [
+                        "AKZ722",
+                        "AKZ723",
+                        "AKZ724"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ722",
+                    "https://api.weather.gov/zones/forecast/AKZ723",
+                    "https://api.weather.gov/zones/forecast/AKZ724"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T12:29:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.9f4c919f5d0a213521ca30e01816a706713dffbe.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T22:52:00-09:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T13:08:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-11T23:02:00-09:00",
+                "effective": "2026-11-11T23:02:00-09:00",
+                "onset": "2026-11-11T23:02:00-09:00",
+                "expires": "2026-11-12T05:00:00-09:00",
+                "ends": "2026-11-12T05:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 11 at 11:02PM AKST until November 12 at 5:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Freezing rain and rain falling on cold surfaces expected.\nTotal ice accumulation of a light glaze.\n\n* WHERE...Western Kenai Peninsula.\n\n* WHEN...Until 5 AM AKST Thursday.\n\n* IMPACTS...Travel could be difficult. Some roads will become slick.\n\n* ADDITIONAL DETAILS...Areas of light rain, possibly mixed with snow,\nwill become more widespread tonight. Temperatures will hover right\naround or a few degrees above freezing through this evening. Colder\nareas, including hills, bridges, and overpasses will be the most\nlikely to see freezing rain. Rain will then taper off overnight\ninto Thursday morning, with temperatures cooling to freezing or\nbelow. Thus, any water on roadways will freeze.",
+                "instruction": "Slow down and use caution while traveling. Prepare for possible power\noutages. For the latest road conditions call 5 1 1 or visit\n511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 120802"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 5 AM AKST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.WW.Y.0054.000000T0000Z-261112T1400Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-12T05:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9439f4146f95e6108504c25474f0684867493bb.003.1",
             "type": "Feature",
             "geometry": null,
@@ -256,178 +535,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.002.1",
-                "areaDesc": "SW Kenai Peninsula; NW Kenai Peninsula; Skilak Lake",
-                "geocode": {
-                    "SAME": [
-                        "002122"
-                    ],
-                    "UGC": [
-                        "AKZ722",
-                        "AKZ723",
-                        "AKZ724"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ722",
-                    "https://api.weather.gov/zones/forecast/AKZ723",
-                    "https://api.weather.gov/zones/forecast/AKZ724"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T12:29:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-11T13:08:00-09:00",
-                "effective": "2026-11-11T13:08:00-09:00",
-                "onset": "2026-11-11T17:00:00-09:00",
-                "expires": "2026-11-12T05:00:00-09:00",
-                "ends": "2026-11-12T05:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 11 at 1:08PM AKST until November 12 at 5:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Freezing rain and rain falling on cold surfaces expected.\nTotal ice accumulation of a light glaze.\n\n* WHERE...Western Kenai Peninsula.\n\n* WHEN...From 5 PM this afternoon to 5 AM AKST Thursday.\n\n* IMPACTS...Travel could be difficult. Some roads will become slick.\n\n* ADDITIONAL DETAILS...Areas of light rain, possibly mixed with snow,\nwill develop late this afternoon and become more widespread during\nthe evening. Temperatures will hover right around or a few degrees\nabove freezing through this evening. Colder areas, including hills,\nbridges, and overpasses will be the most likely to see freezing\nrain. Rain will then taper off overnight into Thursday morning,\nwith temperatures cooling to freezing or below. Thus, any water on\nroadways will freeze.",
-                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 112208"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT FROM 5 PM THIS AFTERNOON TO 5 AM AKST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0054.261112T0200Z-261112T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-12T05:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.292ed86ffea135d2a139d3fd0eceff8cc02891bc.003.1",
-                "areaDesc": "Anchorage",
-                "geocode": {
-                    "SAME": [
-                        "002020"
-                    ],
-                    "UGC": [
-                        "AKZ701"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ701"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.8bf4403d5c3d386dbed573457a611ba21f1a0211.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T12:29:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-11T13:08:00-09:00",
-                "effective": "2026-11-11T13:08:00-09:00",
-                "onset": "2026-11-11T21:00:00-09:00",
-                "expires": "2026-11-12T05:00:00-09:00",
-                "ends": "2026-11-12T05:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 11 at 1:08PM AKST until November 12 at 5:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Freezing rain expected. Total ice accumulation of a light\nglaze.\n\n* WHERE...Anchorage and Eagle River.\n\n* WHEN...From 9 PM this evening to 5 AM AKST Thursday.\n\n* IMPACTS...Travel could be difficult. Some roads will become slick.\n\n* ADDITIONAL DETAILS...Areas of light rain will develop by late this\nevening and continue into the overnight hours, mainly from Eagle\nRiver south to the Anchorage Bowl. Air temperatures will be right\naround freezing, leading to a light glaze of ice on area roads.\nRain will taper off by early Tuesday morning, but roads will remain\nslick until temperatures warm later in the morning.",
-                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 112208"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT FROM 9 PM THIS EVENING TO 5 AM AKST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0054.261112T0600Z-261112T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-12T05:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-12T07:31:01+00:00"
+    "updated": "2026-11-12T08:05:32+00:00"
 }
