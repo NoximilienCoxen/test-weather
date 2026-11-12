@@ -134,7 +134,7 @@ fun PannelloSala(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
-            .then(if (onda != null && GESTI_ACCESI) Modifier.onGloballyPositioned { origine = it.positionInWindow() } else Modifier),
+            .then(if (onda != null && ONDA_ACCESA) Modifier.onGloballyPositioned { origine = it.positionInWindow() } else Modifier),
     ) {
         Column(
             modifier = Modifier
@@ -183,7 +183,7 @@ fun PannelloSala(
         val vetro = LocalVetro.current
         if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
-        if (onda != null && GESTI_ACCESI) {
+        if (onda != null && ONDA_ACCESA) {
             val tinta = palette.accent
             Canvas(modifier = Modifier.matchParentSize()) {
                 val p = onda.corsa.value

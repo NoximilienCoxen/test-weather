@@ -478,7 +478,7 @@ fun StrisciaGiorni(
                         }
                         selected = attivo
                     }
-                    .then(if (onToccoDa != null && com.caelumweather.ui.sala.GESTI_ACCESI) Modifier.onGloballyPositioned { centri[giorno.indice] = it.boundsInWindow().center } else Modifier)
+                    .then(if (onToccoDa != null && com.caelumweather.ui.sala.ONDA_ACCESA) Modifier.onGloballyPositioned { centri[giorno.indice] = it.boundsInWindow().center } else Modifier)
                     .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
                         if (giorno.indice != scelto) centri[giorno.indice]?.let { onToccoDa?.invoke(it) }
                         onScegli(giorno.indice)

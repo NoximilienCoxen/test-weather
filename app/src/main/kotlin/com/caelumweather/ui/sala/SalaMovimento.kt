@@ -346,5 +346,8 @@ class OndaScheda internal constructor() {
 @Composable
 fun rememberOndaScheda(): OndaScheda = remember { OndaScheda() }
 
-/** ESPERIMENTO temporaneo: falso spegne icone che reagiscono, onda, battito dell'allerta e colori della curva. */
-internal const val GESTI_ACCESI = false
+/** ESPERIMENTO temporaneo: falso spegne icone che reagiscono, battito dell'allerta e colori della curva. */
+internal const val GESTI_ACCESI = true
+
+/** ESPERIMENTO temporaneo: falso spegne l'onda dal giorno toccato e i suoi rilevamenti di posizione. */
+internal const val ONDA_ACCESA = false
