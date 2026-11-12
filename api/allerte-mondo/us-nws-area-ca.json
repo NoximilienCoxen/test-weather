@@ -458,88 +458,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
-                "areaDesc": "Coastal Del Norte; Northern Coastal Humboldt",
-                "geocode": {
-                    "SAME": [
-                        "006015",
-                        "006023"
-                    ],
-                    "UGC": [
-                        "CAZ101",
-                        "CAZ103"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ101",
-                    "https://api.weather.gov/zones/forecast/CAZ103"
-                ],
-                "references": [],
-                "sent": "2026-11-12T02:47:00-08:00",
-                "effective": "2026-11-12T02:47:00-08:00",
-                "onset": "2026-11-13T13:00:00-08:00",
-                "expires": "2026-11-12T13:00:00-08:00",
-                "ends": "2026-11-15T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "High Surf Warning issued November 12 at 2:47AM PST until November 15 at 4:00AM PST by NWS Eureka CA",
-                "description": "* WHAT...Dangerously large breaking waves 30 to 35 ft.\n\n* WHERE...Coastal Del Norte and Northern Coastal Humboldt\nCounties.\n\n* WHEN...From 1 PM Friday to 4 AM PST Sunday. .\n\n* IMPACTS...Breaking waves can sweep people off jetties and\ndocks, and into dangerous seas. Life-threatening surf\nconditions and significant beach erosion can be expected.\n\n* ADDITIONAL DETAILS...After only brief improvement late\nSaturday through Sunday, a second large swell is forecast late\nSunday through Monday.",
-                "instruction": "Large breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 121047"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF WARNING REMAINS IN EFFECT FROM 1 PM FRIDAY TO 4 AM PST SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.SU.W.0001.261113T2100Z-261115T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-15T04:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.629dbc36e84a9f9744cef59dbddf1cf57e6c8b12.001.1,2026-11-11T05:32:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.002.1",
             "type": "Feature",
             "geometry": null,
@@ -605,6 +523,88 @@
                     ],
                     "expiredReferences": [
                         "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.629dbc36e84a9f9744cef59dbddf1cf57e6c8b12.002.1,2026-11-11T05:32:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.df7d87a43507ebc54c785230d7511de83e8c5ed5.001.1",
+                "areaDesc": "Coastal Del Norte; Northern Coastal Humboldt",
+                "geocode": {
+                    "SAME": [
+                        "006015",
+                        "006023"
+                    ],
+                    "UGC": [
+                        "CAZ101",
+                        "CAZ103"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ101",
+                    "https://api.weather.gov/zones/forecast/CAZ103"
+                ],
+                "references": [],
+                "sent": "2026-11-12T02:47:00-08:00",
+                "effective": "2026-11-12T02:47:00-08:00",
+                "onset": "2026-11-13T13:00:00-08:00",
+                "expires": "2026-11-12T13:00:00-08:00",
+                "ends": "2026-11-15T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "High Surf Warning issued November 12 at 2:47AM PST until November 15 at 4:00AM PST by NWS Eureka CA",
+                "description": "* WHAT...Dangerously large breaking waves 30 to 35 ft.\n\n* WHERE...Coastal Del Norte and Northern Coastal Humboldt\nCounties.\n\n* WHEN...From 1 PM Friday to 4 AM PST Sunday. .\n\n* IMPACTS...Breaking waves can sweep people off jetties and\ndocks, and into dangerous seas. Life-threatening surf\nconditions and significant beach erosion can be expected.\n\n* ADDITIONAL DETAILS...After only brief improvement late\nSaturday through Sunday, a second large swell is forecast late\nSunday through Monday.",
+                "instruction": "Large breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 121047"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF WARNING REMAINS IN EFFECT FROM 1 PM FRIDAY TO 4 AM PST SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.SU.W.0001.261113T2100Z-261115T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-15T04:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.629dbc36e84a9f9744cef59dbddf1cf57e6c8b12.001.1,2026-11-11T05:32:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -3310,5 +3310,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-12T15:39:00+00:00"
+    "updated": "2026-11-12T16:10:35+00:00"
 }
