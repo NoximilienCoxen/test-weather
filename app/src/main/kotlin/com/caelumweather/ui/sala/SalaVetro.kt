@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -150,7 +151,9 @@ internal fun GocceSulVetro(pioggia: Float, modifier: Modifier = Modifier) {
         animationSpec = infiniteRepeatable(tween(600_000, easing = LinearEasing), RepeatMode.Restart),
         label = "tempo-gocce",
     )
-    Canvas(modifier = modifier) { disegnaGocce(pioggia, tempo) }
+    // **Uno strato suo**: senza, ogni fotogramma delle gocce faceva ridisegnare
+    // la scheda intera che sta sotto, testo compreso.
+    Canvas(modifier = modifier.graphicsLayer()) { disegnaGocce(pioggia, tempo) }
 }
 
 /** Le gocce al secondo [tempo], pure: lo provano anche i test. */

@@ -8421,6 +8421,17 @@ tramite `LocalVetro`:
 - **La pastiglia degli avvisi batte una volta** quando arriva un avviso nuovo
   (chiave: tipo, livello, inizio; `rememberSaveable`).
 
+**Il prezzo pagato subito.** Il primo giro della CI con questi effetti e'
+caduto due volte su due - l'emulatore, non l'app - prima a `scuro-guida-1`,
+poi a `00-impostazioni`: il punto piu' presto mai visto. Quel giorno a Forli'
+la visibilita' era sotto il chilometro tutto il giorno, con pioggia, quindi la
+nebbia era accesa e apriva **un livello fuori schermo a tutto schermo a ogni
+fotogramma** (serviva al `DstOut` dei varchi), e le gocce sul vetro facevano
+ridisegnare la scheda intera a ogni fotogramma. Ora il livello si apre solo
+mentre c'e' un varco aperto, e le gocce hanno un `graphicsLayer` loro. Regola
+per chi aggiunge un effetto continuo al cielo: niente `saveLayer` fisso, e
+niente disegno continuo dentro la scheda senza uno strato suo.
+
 `AtmosferaRenderTest` rende il cielo vero con ogni effetto
 (`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno
 e i conti di `atmosferaBersaglio`.

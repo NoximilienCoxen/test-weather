@@ -123,8 +123,16 @@ internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: 
         floatArrayOf(560f, 80f, 520f, 6.2f, 400f),
         floatArrayOf(650f, 100f, 640f, -4.9f, 520f),
     )
+    // **Il livello fuori schermo solo quando serve.** Un varco nella nebbia si
+    // scava con `DstOut`, che vuole un livello suo; ma un livello a tutto
+    // schermo a ogni fotogramma ha fatto cadere l'emulatore della CI due volte
+    // su due (visibilita' sotto il chilometro a Forli', 12 novembre 2026, nebbia
+    // accesa per tutto il giro). Senza varchi aperti i banchi si disegnano
+    // direttamente sul cielo, che e' quasi sempre.
+    val varchiAperti = varchi.filter { tempo - it.nato in 0f..DURATA_VARCO }
+    val conLivello = varchiAperti.isNotEmpty()
     drawIntoCanvas { tela ->
-        tela.saveLayer(Rect(Offset.Zero, size), Paint())
+        if (conLivello) tela.saveLayer(Rect(Offset.Zero, size), Paint())
         banchi.forEachIndexed { i, (alto, spesso, largo, passo, sfaso) ->
             val giro = RIF_L + largo
             val x = (((sfaso + tempo * passo) % giro) + giro) % giro - largo
@@ -153,9 +161,8 @@ internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: 
             if (x + largo > RIF_L) banco(x - giro)
         }
         // I varchi: un buco morbido che si apre e si richiude.
-        varchi.forEach { v ->
+        varchiAperti.forEach { v ->
             val eta = tempo - v.nato
-            if (eta < 0f || eta > DURATA_VARCO) return@forEach
             val apertura = sin(PI.toFloat() * eta / DURATA_VARCO)
             val r = 95f * sx * (0.4f + 0.6f * apertura)
             drawCircle(
@@ -170,7 +177,7 @@ internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: 
                 blendMode = BlendMode.DstOut,
             )
         }
-        tela.restore()
+        if (conLivello) tela.restore()
     }
 }
 
