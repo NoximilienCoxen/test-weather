@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
@@ -173,6 +174,27 @@ fun misuraCheArriva(bersaglio: Dp): Dp {
 }
 
 /**
+ * Da zero a uno **una volta**, quando il pezzo compare: le colonnine che
+ * crescono dal fondo, una curva che si disegna. Poi resta a uno e non disegna
+ * piu' niente. Con le animazioni ridotte e' subito uno.
+ *
+ * [ritardo] sfalsa i pezzi di una fila, perche' arrivino come un'onda.
+ */
+@Composable
+fun crescitaAllArrivo(ritardo: Int = 0): Float {
+    val movimento = LocalMovimento.current
+    val valore = remember { androidx.compose.animation.core.Animatable(if (movimento) 0f else 1f) }
+    androidx.compose.runtime.LaunchedEffect(movimento) {
+        if (movimento) {
+            valore.animateTo(1f, tween(durationMillis = 520, delayMillis = ritardo, easing = androidx.compose.animation.core.FastOutSlowInEasing))
+        } else {
+            valore.snapTo(1f)
+        }
+    }
+    return valore.value
+}
+
+/**
  * Un colore che **passa** invece di scattare: il fondo del giorno scelto, la
  * colonna dell'ora scelta. Due decimi di secondo, e poi fermo.
  */
@@ -213,6 +235,17 @@ fun angoloCheGira(gradi: Float): Float {
         label = "angolo",
     )
     return angolo
+}
+
+/**
+ * Un contenitore che **cambia altezza scivolando** invece che a scatti: la
+ * scheda che si allunga quando arriva "un anno fa", quando compare il giorno
+ * scelto, quando una sezione si apre. Messo una volta in [PannelloSala], vale
+ * per ogni sala.
+ */
+fun Modifier.altezzaMorbida(): Modifier = composed {
+    if (!LocalMovimento.current) return@composed this
+    this.animateContentSize(spring(dampingRatio = 0.9f, stiffness = 380f))
 }
 
 /**

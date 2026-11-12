@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.unit.dp
 import com.caelumweather.data.EstremoMarea
 import com.caelumweather.data.Mare
@@ -97,7 +98,8 @@ internal fun SezioneMare(
                 )
             }
         }
-        val conMarea = mare?.let { SezioneMarea(it, ora.time, unita, palette) } ?: false
+        val conMarea = mare != null && remember(mare, ora.time) { prossimiEstremi(mare, ora.time, quanti = 4).isNotEmpty() }
+        if (conMarea && mare != null) SezioneMarea(mare, ora.time, unita, palette)
         // **Non e' una `Didascalia`, apposta**: quelle spariscono con i testi
         // brevi, e questa non e' un commento ai numeri - e' cio' che dice a
         // cosa non servono. Resta in tutti e due i modi.
@@ -225,9 +227,9 @@ private fun SezioneMarea(
     da: java.time.LocalDateTime,
     unita: TempUnit,
     palette: SalaPalette,
-): Boolean {
+) {
     val estremi = remember(mare, da) { prossimiEstremi(mare, da, quanti = 4) }
-    if (estremi.isEmpty()) return false
+    if (estremi.isEmpty()) return
     val finestra = remember(mare, da) {
         mare.ore.filter { !it.time.isBefore(da) && it.time.isBefore(da.plusHours(24)) && it.livello != null }
     }
@@ -273,7 +275,6 @@ private fun SezioneMarea(
             }
         }
     }
-    return true
 }
 
 /** "Alta alle 14:20 · +0,32 m" (o "domani alle 02:05"): puro, per poterlo provare. */
@@ -306,6 +307,8 @@ private fun CurvaDellaMarea(
     val massimo = livelli.max().coerceAtLeast(minimo + 0.05f)
     val linea = remember { Path() }
     val riempi = remember { Path() }
+    // La curva si disegna da sinistra quando compare, poi sta ferma.
+    val rivela = com.caelumweather.ui.sala.crescitaAllArrivo()
     Canvas(modifier = modifier) {
         val margine = 10.dp.toPx()
         val alto = size.height - margine * 2
@@ -319,12 +322,14 @@ private fun CurvaDellaMarea(
         }
         riempi.lineTo(x((livelli.size - 1).toFloat()), size.height)
         riempi.close()
-        drawPath(riempi, colore.copy(alpha = 0.22f))
-        drawPath(linea, colore, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.2.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        clipRect(right = size.width * rivela) {
+            drawPath(riempi, colore.copy(alpha = 0.22f))
+            drawPath(linea, colore, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.2.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        }
         // I punti di alta e bassa.
         estremi.forEach { e ->
             val ore = java.time.Duration.between(inizio, e.quando).toMinutes() / 60f
-            if (ore < 0f || ore > livelli.size - 1) return@forEach
+            if (ore < 0f || ore > livelli.size - 1 || x(ore) > size.width * rivela) return@forEach
             drawCircle(colore, radius = 4.dp.toPx(), center = androidx.compose.ui.geometry.Offset(x(ore), y(e.metri.toFloat())))
         }
         // L'ora scelta: il primo punto, dove la curva comincia.

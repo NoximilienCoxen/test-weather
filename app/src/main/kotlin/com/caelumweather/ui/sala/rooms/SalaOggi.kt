@@ -46,6 +46,7 @@ import com.caelumweather.data.scartoDaIeriBreve
 import com.caelumweather.ui.WeatherViewModel
 import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import com.caelumweather.ui.sala.CellaValore
+import com.caelumweather.ui.sala.ComparsaMorbida
 import com.caelumweather.ui.sala.CifreCheScorrono
 import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.GiornoSettimana
@@ -278,8 +279,11 @@ fun SalaOggiScreen(
             )
 
             // ── Un anno fa, solo per oggi ─────────────────────────────────────
+            // Arriva dopo la previsione (e' una seconda richiesta): compare
+            // aprendo il suo spazio invece di spingere giu' la fila dei giorni.
             val storico = state.unAnnoFa
-            if (!futuro && storico != null) {
+            ComparsaMorbida(visibile = !futuro && storico != null) {
+                if (storico == null) return@ComparsaMorbida
                 val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
                 // **Una riga, non un riquadro**: e' una curiosita' accanto
                 // alla curva, e un riquadro suo allungava la scheda fino a

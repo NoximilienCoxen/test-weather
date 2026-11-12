@@ -28,6 +28,8 @@ import com.caelumweather.lingua.tr
 import com.caelumweather.prefs.TempUnit
 import com.caelumweather.ui.sala.SalaPalette
 import com.caelumweather.ui.sala.SalaType
+import com.caelumweather.ui.sala.crescitaAllArrivo
+import com.caelumweather.ui.sala.misuraCheArriva
 import kotlin.math.roundToInt
 
 /**
@@ -104,7 +106,7 @@ internal fun SezioneNeve(
                 // La quota sotto ogni giorno solo se cambia: quattro volte lo stesso
                 // numero e' gia' nella riga qui sopra.
                 val quoteDiverse = giorni.mapNotNull { it.quota }.distinct().size > 1
-                giorni.take(GIORNI_DI_NEVE_IN_FILA).forEach { ColonnaNeve(it, massimo, unita, palette, quoteDiverse) }
+                giorni.take(GIORNI_DI_NEVE_IN_FILA).forEachIndexed { i, g -> ColonnaNeve(g, massimo, unita, palette, quoteDiverse, ritardo = i * 60) }
                 repeat(GIORNI_DI_NEVE_IN_FILA - giorni.size.coerceAtMost(GIORNI_DI_NEVE_IN_FILA)) {
                     Box(modifier = Modifier.weight(1f))
                 }
@@ -138,7 +140,8 @@ internal fun SezioneNeve(
 private const val GIORNI_DI_NEVE_IN_FILA = 7
 
 @Composable
-private fun androidx.compose.foundation.layout.RowScope.ColonnaNeve(g: NeveDelGiorno, massimo: Double, unita: TempUnit, palette: SalaPalette, conQuota: Boolean) {
+private fun androidx.compose.foundation.layout.RowScope.ColonnaNeve(g: NeveDelGiorno, massimo: Double, unita: TempUnit, palette: SalaPalette, conQuota: Boolean, ritardo: Int) {
+    val crescita = crescitaAllArrivo(ritardo)
     Column(
         modifier = Modifier.weight(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -147,7 +150,7 @@ private fun androidx.compose.foundation.layout.RowScope.ColonnaNeve(g: NeveDelGi
         Box(
             modifier = Modifier
                 .width(14.dp)
-                .height((6f + 34f * (g.cm / massimo).coerceIn(0.0, 1.0).toFloat()).dp)
+                .height(misuraCheArriva((6f + 34f * (g.cm / massimo).coerceIn(0.0, 1.0).toFloat()).dp) * crescita)
                 .clip(CircleShape)
                 // Bianco-azzurro: la neve su una carta chiara deve avere un
                 // contorno, e il blu dell'acqua le sta accanto senza

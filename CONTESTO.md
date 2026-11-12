@@ -8345,6 +8345,23 @@ spinto in fondo la fila dei giorni, tagliata a meta'. Corretto cosi':
 (`build/widget-renders/scheda-*.png`) e mette un tetto all'altezza di ciascuna.
 L'altezza della scheda intera si verifica solo sugli screenshot della CI.
 
+### 64.8-ter Movimento dove mancava, e una riga invece di nove zeri
+
+- **`altezzaMorbida()`** (`SalaMovimento.kt`) e' in `PannelloSala`: ogni scheda
+  che cambia altezza (arriva "un anno fa", compare il giorno scelto, si apre una
+  sezione) scivola alla misura nuova invece di saltarci. Un posto, tutte le sale.
+- **Il valore di ogni `CellaValore` si scambia** (`ScambioMorbido`) quando cambia
+  l'ora: in tutte le sale, dalla stessa funzione.
+- **`crescitaAllArrivo()`**: da zero a uno una volta, sfalsabile. La usano le
+  colonnine della neve (a onda) e la curva delle maree (si disegna da sinistra).
+- "Un anno fa" compare con `ComparsaMorbida`: e' una seconda richiesta e arriva
+  dopo.
+- **Polline tutto a zero, in tutti i giorni: una riga** ("assente oggi e nei
+  prossimi giorni") al posto della griglia di nove pastiglie con lo zero.
+
+Tutto obbedisce a `LocalMovimento`: con le animazioni ridotte e negli scatti
+della CI si salta al valore finale.
+
 ### 64.9 Cosa NON e' stato fatto
 
 - **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le

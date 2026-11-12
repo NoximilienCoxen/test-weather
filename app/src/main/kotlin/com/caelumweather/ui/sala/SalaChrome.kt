@@ -128,6 +128,9 @@ fun PannelloSala(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(palette.panel)
+                // Quando il contenuto cambia altezza la scheda scivola alla
+                // misura nuova invece di saltarci.
+                .altezzaMorbida()
                 // **Queste misure sono state allargate e poi rimesse, e la nota
                 // resta perche' la prova conta piu' della misura.** Il ragionamento
                 // era: il pannello e' ancorato in basso, si dimensiona sul
@@ -286,13 +289,18 @@ fun RowScope.CellaValore(
                 )
             }
         }
-        Text(
-            text = valore,
-            style = SalaType.value,
-            color = palette.ink,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        // Il valore si scambia quando cambia (trascinando la barra delle ore):
+        // il vecchio sale, il nuovo arriva da sotto. Una cella in ogni sala, un
+        // posto solo.
+        ScambioMorbido(stato = valore) { mostrato ->
+            Text(
+                text = mostrato,
+                style = SalaType.value,
+                color = palette.ink,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
