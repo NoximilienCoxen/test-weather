@@ -327,16 +327,28 @@ fun NumeroCheScorre(
 /**
  * L'onda che parte da una pastiglia e si allarga sulla scheda: il giorno
  * toccato "si spande" nella scheda mentre i numeri cambiano. La disegna
- * [PannelloSala] dentro il proprio ritaglio; chi tocca dice da dove parte, in
- * coordinate della finestra.
+ * [PannelloSala] dentro il proprio ritaglio.
+ *
+ * **Niente stato scritto durante la disposizione.** La prima versione
+ * registrava la posizione del pannello e delle pastiglie con
+ * `onGloballyPositioned`, scrivendo uno stato a ogni passata: sull'emulatore
+ * della CI bastava a farlo cadere nei primi scatti (trovato per esclusione, 12
+ * novembre 2026). Ora pannello e pastiglia lasciano solo il riferimento alle
+ * loro coordinate (`onPlaced`, una variabile semplice), e la posizione si
+ * calcola una volta, al tocco. Il livello che disegna l'onda esiste solo
+ * mentre l'onda corre.
  */
 class OndaScheda internal constructor() {
+    /** Le coordinate del pannello, lasciate da [PannelloSala]. Non e' uno stato. */
+    internal var pannello: androidx.compose.ui.layout.LayoutCoordinates? = null
     internal var centro by mutableStateOf(androidx.compose.ui.geometry.Offset.Zero)
     internal val corsa = androidx.compose.animation.core.Animatable(1f)
 
-    /** Fa partire l'onda da [da] (coordinate della finestra). */
-    suspend fun parti(da: androidx.compose.ui.geometry.Offset) {
-        centro = da
+    /** Fa partire l'onda dal centro di [da] (le coordinate della pastiglia toccata). */
+    suspend fun parti(da: androidx.compose.ui.layout.LayoutCoordinates) {
+        val p = pannello ?: return
+        if (!p.isAttached || !da.isAttached) return
+        centro = p.localPositionOf(da, androidx.compose.ui.geometry.Offset(da.size.width / 2f, da.size.height / 2f))
         corsa.snapTo(0f)
         corsa.animateTo(1f, tween(durationMillis = 620, easing = androidx.compose.animation.core.FastOutSlowInEasing))
     }
@@ -346,11 +358,3 @@ class OndaScheda internal constructor() {
 @Composable
 fun rememberOndaScheda(): OndaScheda = remember { OndaScheda() }
 
-/** ESPERIMENTO temporaneo: falso spegne icone che reagiscono, battito dell'allerta e colori della curva. */
-internal const val GESTI_ACCESI = true
-
-/** ESPERIMENTO temporaneo: falso spegne l'onda dal giorno toccato e i suoi rilevamenti di posizione. */
-internal const val ONDA_ACCESA = false
-
-/** ESPERIMENTO temporaneo: falso spegne le icone dei giorni che reagiscono al tocco. */
-internal const val ICONE_ACCESE = false

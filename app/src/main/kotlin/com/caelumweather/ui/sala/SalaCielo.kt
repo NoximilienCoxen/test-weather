@@ -297,8 +297,7 @@ fun SalaCielo(
         val piega = atmosfera.versoVento.let { if (it >= 0f) 1f else -1f } *
             (atmosfera.vento * 3.2f + sin(t * (1.1f + atmosfera.vento * 2.6f)) * (0.3f + atmosfera.vento * 1.4f))
         colline(sx, sy, palette, piega)
-        // ESPERIMENTO (temporaneo): erba spenta, vedi CONTESTO §64.8-quinquies.
-        if (ERBA_ACCESA) erbaAlVento(
+        erbaAlVento(
             vento = atmosfera.vento,
             verso = atmosfera.versoVento,
             tempo = t,
@@ -1567,6 +1566,3 @@ private fun DrawScope.tracciaCanale(punti: List<Offset>, forza: Float, scala: Fl
         )
     }
 }
-
-/** ESPERIMENTO temporaneo: falso spegne l'erba sulle colline. */
-private const val ERBA_ACCESA = false

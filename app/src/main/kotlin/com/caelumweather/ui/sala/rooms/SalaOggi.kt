@@ -45,8 +45,7 @@ import com.caelumweather.ui.sala.LocalMovimento
 import com.caelumweather.ui.sala.rememberOndaScheda
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.geometry.Offset
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.UiState
@@ -444,10 +443,11 @@ fun StrisciaGiorni(
     onScegli: (Int) -> Unit,
     modifier: Modifier = Modifier,
     conMillimetri: Boolean = false,
-    /** Dove sta, nella finestra, il centro della pastiglia toccata: fa partire l'onda. */
-    onToccoDa: ((Offset) -> Unit)? = null,
+    /** Le coordinate della pastiglia toccata: fanno partire l'onda (vedi `OndaScheda`). */
+    onToccoDa: ((androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null,
 ) {
-    val centri = remember { mutableMapOf<Int, Offset>() }
+    // Solo riferimenti, niente stato e niente conti durante la disposizione.
+    val coordinate = remember { mutableMapOf<Int, androidx.compose.ui.layout.LayoutCoordinates>() }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -478,9 +478,9 @@ fun StrisciaGiorni(
                         }
                         selected = attivo
                     }
-                    .then(if (onToccoDa != null && com.caelumweather.ui.sala.ONDA_ACCESA) Modifier.onGloballyPositioned { centri[giorno.indice] = it.boundsInWindow().center } else Modifier)
+                    .then(if (onToccoDa != null) Modifier.onPlaced { coordinate[giorno.indice] = it } else Modifier)
                     .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
-                        if (giorno.indice != scelto) centri[giorno.indice]?.let { onToccoDa?.invoke(it) }
+                        if (giorno.indice != scelto) coordinate[giorno.indice]?.let { onToccoDa?.invoke(it) }
                         onScegli(giorno.indice)
                     }
                     .padding(top = 9.dp, bottom = 8.dp),

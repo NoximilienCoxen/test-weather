@@ -8441,6 +8441,31 @@ niente grandi sfumature ricalcolate a ogni fotogramma (si disegnano una volta in
 una trama), niente tracciati ricostruiti se non cambiano, e niente disegno
 continuo dentro la scheda senza uno strato suo.
 
+**La caccia, per esclusione** (giro `screenshots` della CI, 12 novembre 2026,
+stesso meteo per tutti: pioggia e visibilita' sotto il chilometro a Forli'):
+
+| giro | cosa c'era | scatti |
+|---|---|---|
+| `8b93f13` (prima degli abbellimenti), rifatto | niente di nuovo | 92, verde |
+| `caddf98` x2, `085e7cc`, `8af07e8` | tutto | 4-10, emulatore morto |
+| `7124db5` | senza atmosfera | 10 |
+| `4488f4d` | senza atmosfera ne' erba | 10 |
+| `1cb44e2` | senza atmosfera, erba, gesti delle schede | **93, verde** |
+| `89ecce2` | come sopra ma con icone, battito, colori (senza onda) | 4 |
+| `a04e107` | solo battito e colori | 4 |
+
+Restavano il battito della pastiglia e i colori della curva. **Il sospetto e'
+la sfumatura della curva a 24 tappe**: oltre le otto il motore grafico non la
+calcola piu' al volo ma ne fa una piccola immagine da mandare alla scheda
+grafica, e sull'emulatore la scheda grafica e' emulata (`swiftshader_indirect`):
+una morte di tutta la macchina, senza un errore nei log dell'app, e' il guasto
+che ci si aspetta da li'. Ora le tappe sono cinque (`pennelloDellaGiornata`),
+con lo stesso aspetto. Le correzioni fatte prima di sapere (nebbia in una
+trama, erba a segmenti, onda senza stato scritto durante la disposizione e col
+suo livello solo mentre corre) restano: sono comunque piu' leggere.
+
+**Regola**: niente sfumature con piu' di otto tappe.
+
 `AtmosferaRenderTest` rende il cielo vero con ogni effetto
 (`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno
 e i conti di `atmosferaBersaglio`.

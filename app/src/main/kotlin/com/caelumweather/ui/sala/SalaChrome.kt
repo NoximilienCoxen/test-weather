@@ -55,8 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -129,12 +128,12 @@ fun PannelloSala(
     onda: OndaScheda? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    var origine by remember { mutableStateOf(Offset.Zero) }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
-            .then(if (onda != null && ONDA_ACCESA) Modifier.onGloballyPositioned { origine = it.positionInWindow() } else Modifier),
+            // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
+            .then(if (onda != null) Modifier.onPlaced { onda.pannello = it } else Modifier),
     ) {
         Column(
             modifier = Modifier
@@ -183,12 +182,13 @@ fun PannelloSala(
         val vetro = LocalVetro.current
         if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
-        if (onda != null && ONDA_ACCESA) {
+        // Il livello dell'onda c'e' solo mentre l'onda corre.
+        if (onda != null && onda.corsa.isRunning) {
             val tinta = palette.accent
             Canvas(modifier = Modifier.matchParentSize()) {
                 val p = onda.corsa.value
                 if (p >= 1f) return@Canvas
-                val c = onda.centro - origine
+                val c = onda.centro
                 // Fin oltre l'angolo piu' lontano, cosi' copre tutta la scheda.
                 val lontano = maxOf(
                     (c - Offset.Zero).getDistance(),
@@ -413,7 +413,6 @@ fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean 
  */
 @Composable
 fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Modifier, notte: Boolean = false) {
-    if (!GESTI_ACCESI || !ICONE_ACCESE) { IconaMeteo(glifo, modifier, notte); return }
     val movimento = LocalMovimento.current
     val gesto = remember { Animatable(1f) }
     var primo by remember { mutableStateOf(true) }
@@ -646,7 +645,7 @@ private fun PastigliaAvviso(
     Row(
         modifier = Modifier
             .minimumInteractiveComponentSize()
-            .then(if (!GESTI_ACCESI) Modifier else Modifier.graphicsLayer {
+            .graphicsLayer {
                 val gonfio = 1f + 0.08f * kotlin.math.sin(PI.toFloat() * (battito.value / 0.45f).coerceIn(0f, 1f))
                 scaleX = gonfio
                 scaleY = gonfio
@@ -662,7 +661,7 @@ private fun PastigliaAvviso(
                         style = Stroke(width = 2.dp.toPx() * (1f - p * 0.6f)),
                     )
                 }
-            })
+            }
             .cedevole()
             .clip(CircleShape)
             .background(fondoMosso)

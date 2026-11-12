@@ -397,10 +397,30 @@ internal fun pennelloDellaGiornata(
     palette: SalaPalette,
     x: (Float) -> Float,
 ): Brush {
-    if (punti.size < 2 || !com.caelumweather.ui.sala.GESTI_ACCESI) return androidx.compose.ui.graphics.SolidColor(palette.accent)
+    if (punti.size < 2) return androidx.compose.ui.graphics.SolidColor(palette.accent)
     val inizio = x(punti.first().first.toFloat())
     val fine = x(punti.last().first.toFloat())
     val largo = (fine - inizio).coerceAtLeast(1f)
-    val fermate = punti.map { (ora, t) -> ((x(ora.toFloat()) - inizio) / largo).coerceIn(0f, 1f) to coloreDellaTemperatura(t, palette) }
+    // **Cinque tappe, non ventiquattro.** Una tappa per ora faceva una sfumatura
+    // di 24 colori, che oltre le otto tappe il motore grafico non calcola piu' al
+    // volo: la mette in una piccola immagine da mandare alla scheda grafica.
+    // Sull'emulatore della CI, con la scheda grafica emulata, e' stato l'unico
+    // pezzo nuovo a farlo cadere (trovato per esclusione, 12 novembre 2026).
+    // Cinque tappe a intervalli regolari, con la temperatura interpolata fra
+    // le ore, bastano a passare dal blu al terracotta senza scalini.
+    val prima = punti.first().first.toFloat()
+    val ultima = punti.last().first.toFloat()
+    fun temperaturaA(ora: Float): Double {
+        val dopo = punti.indexOfFirst { it.first >= ora }.let { if (it < 0) punti.lastIndex else it }
+        if (dopo == 0) return punti[0].second
+        val (o1, t1) = punti[dopo - 1]
+        val (o2, t2) = punti[dopo]
+        val f = if (o2 == o1) 0.0 else ((ora - o1) / (o2 - o1)).toDouble().coerceIn(0.0, 1.0)
+        return t1 + (t2 - t1) * f
+    }
+    val fermate = (0..4).map { k ->
+        val frazione = k / 4f
+        frazione to coloreDellaTemperatura(temperaturaA(prima + (ultima - prima) * frazione), palette)
+    }
     return Brush.horizontalGradient(colorStops = fermate.toTypedArray(), startX = inizio, endX = fine)
 }
