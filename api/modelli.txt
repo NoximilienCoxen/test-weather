@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
@@ -19,7 +19,7 @@
     Forli    48/48 ore  quota 40.0 m  prime [10.5, 10.5, 10.4]
   ecmwf_ifs025
     Noceto   48/48 ore  quota 74.0 m  prime [10.0, 9.9, 9.7]
-    Forli     HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+    Forli    48/48 ore  quota 40.0 m  prime [9.8, 9.5, 9.1]
   ecmwf_aifs025_single
     Noceto   48/48 ore  quota 74.0 m  prime [9.9, 9.8, 9.8]
     Forli    48/48 ore  quota 40.0 m  prime [9.9, 9.6, 9.4]
@@ -42,13 +42,13 @@
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [7.5, 7.0, 6.4]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [8.7, 7.7, 6.7]
@@ -66,7 +66,7 @@
   Sydney         best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   SanPaolo       best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Delhi          best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
-  Singapore      best_match NON RISPONDE qui
+  Singapore      best_match indistinguibile fra metno_seamless, knmi_seamless (stessi valori: qui servono tutti lo stesso modello globale)
   Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
@@ -76,8 +76,7 @@
   NewYork        giorni   7  assenti=-  tutte nulle=-
   Oslo           ore    168  assenti=-  tutte nulle=-
   Oslo           giorni   7  assenti=-  tutte nulle=-
-  Reykjavik      ore    168  assenti=-  tutte nulle=-
-  Reykjavik      giorni   7  assenti=-  tutte nulle=-
+  Reykjavik      HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   Nairobi        ore    168  assenti=-  tutte nulle=-
   Nairobi        giorni   7  assenti=-  tutte nulle=-
   CittaDelCapo   ore    168  assenti=-  tutte nulle=-
