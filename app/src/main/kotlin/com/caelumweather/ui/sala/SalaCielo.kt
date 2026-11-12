@@ -128,6 +128,8 @@ fun SalaCielo(
     val atmosferaOra by androidx.compose.runtime.rememberUpdatedState(atmosfera)
     // I varchi aperti col dito nella nebbia: vedi [VarcoNebbia].
     val varchi = remember { mutableStateListOf<VarcoNebbia>() }
+    // La trama della nebbia e l'erba ferma, calcolate una volta: vedi [CacheAtmosfera].
+    val cacheAtmosfera = remember { CacheAtmosfera() }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
 
@@ -304,9 +306,10 @@ fun SalaCielo(
                 palette.collina2 to floatArrayOf(131f, 484f, 400f, 300f),
                 palette.collina3 to floatArrayOf(-60f, 678f, 560f, 472f),
             ),
+            cache = cacheAtmosfera,
         )
         foglieAlVento(atmosfera.vento * (1f - scena.neve), atmosfera.versoVento, t, palette.fronda)
-        nebbia(atmosfera.nebbia, scena.notte, t, varchi)
+        nebbia(atmosfera.nebbia, scena.notte, t, varchi, cacheAtmosfera)
         cioCheCade(scena, t, tocchi, scroscio.value)
 
         disegnaIncrespature(onde, t, palette)

@@ -8428,9 +8428,18 @@ la visibilita' era sotto il chilometro tutto il giorno, con pioggia, quindi la
 nebbia era accesa e apriva **un livello fuori schermo a tutto schermo a ogni
 fotogramma** (serviva al `DstOut` dei varchi), e le gocce sul vetro facevano
 ridisegnare la scheda intera a ogni fotogramma. Ora il livello si apre solo
-mentre c'e' un varco aperto, e le gocce hanno un `graphicsLayer` loro. Regola
-per chi aggiunge un effetto continuo al cielo: niente `saveLayer` fisso, e
-niente disegno continuo dentro la scheda senza uno strato suo.
+mentre c'e' un varco aperto, e le gocce hanno un `graphicsLayer` loro. **Non e' bastato**: il terzo giro e'
+caduto allo stesso punto (`00-impostazioni`, 4 scatti). Il costo vero su un
+emulatore senza scheda grafica e' il riempimento: sei grandi sfumature di nebbia
+ridipinte a ogni fotogramma e qualche centinaio di curve d'erba ricostruite ogni
+volta. Ora (`CacheAtmosfera`) la nebbia e' **una trama a un quarto di
+risoluzione disegnata una volta e fatta scorrere** (due `drawImage` a
+fotogramma), e l'erba a vento sotto 0,08 e' **un tracciato per collina fatto una
+volta** per taglia; col vento i fili sono 2 ogni 12 unita' invece di 3 ogni 8.
+Regola per chi aggiunge un effetto continuo al cielo: niente `saveLayer` fisso,
+niente grandi sfumature ricalcolate a ogni fotogramma (si disegnano una volta in
+una trama), niente tracciati ricostruiti se non cambiano, e niente disegno
+continuo dentro la scheda senza uno strato suo.
 
 `AtmosferaRenderTest` rende il cielo vero con ogni effetto
 (`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno

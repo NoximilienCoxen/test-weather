@@ -100,54 +100,65 @@ internal data class VarcoNebbia(val centro: Offset, val nato: Float)
 internal const val DURATA_VARCO = 2.8f
 
 /**
- * Banchi di nebbia che scivolano bassi fra le colline, e un velo su tutto il
- * cielo che spegne il sole e le stelle quanto basta.
+ * Cio' che l'atmosfera si calcola una volta e riusa a ogni fotogramma: la trama
+ * della nebbia e i piedi dei fili d'erba. Ricordata da `SalaCielo`.
  *
- * I banchi sono ellissi sfumate in verticale; ognuno ha il suo passo e la sua
- * altezza, e rientra dall'altro lato quando esce. Toccando, si apre un varco
- * che si richiude da solo ([VarcoNebbia]).
+ * **Esiste perche' l'emulatore della CI e' caduto tre volte su tre** il giorno
+ * in cui a Forli' c'era nebbia vera: sei grandi sfumature ridipinte a ogni
+ * fotogramma e qualche centinaio di curve ricostruite ogni volta erano troppo
+ * per un telefono senza scheda grafica. Ora la nebbia e' un'immagine piccola
+ * disegnata una volta e fatta scorrere, e l'erba a vento quasi fermo e' un
+ * tracciato che non si rifa'.
  */
-internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: List<VarcoNebbia>) {
-    if (forza <= 0.02f) return
-    val sx = size.width / RIF_L
-    val sy = size.height / RIF_H
-    val colore = lerp(Color(0xFFF1EFE9), Color(0xFF8E98A4), notte)
-    // Il velo: il cielo intero perde contrasto.
-    drawRect(colore.copy(alpha = 0.32f * forza))
-    val banchi = listOf(
-        // altezza, spessore, larghezza, passo (unita'/s), sfasamento
-        floatArrayOf(455f, 70f, 560f, 5.5f, 0f),
-        floatArrayOf(520f, 90f, 700f, -3.8f, 180f),
-        floatArrayOf(600f, 110f, 760f, 4.4f, 90f),
-        floatArrayOf(700f, 130f, 820f, -2.9f, 300f),
-        floatArrayOf(560f, 80f, 520f, 6.2f, 400f),
-        floatArrayOf(650f, 100f, 640f, -4.9f, 520f),
-    )
-    // **Il livello fuori schermo solo quando serve.** Un varco nella nebbia si
-    // scava con `DstOut`, che vuole un livello suo; ma un livello a tutto
-    // schermo a ogni fotogramma ha fatto cadere l'emulatore della CI due volte
-    // su due (visibilita' sotto il chilometro a Forli', 12 novembre 2026, nebbia
-    // accesa per tutto il giro). Senza varchi aperti i banchi si disegnano
-    // direttamente sul cielo, che e' quasi sempre.
-    val varchiAperti = varchi.filter { tempo - it.nato in 0f..DURATA_VARCO }
-    val conLivello = varchiAperti.isNotEmpty()
-    drawIntoCanvas { tela ->
-        if (conLivello) tela.saveLayer(Rect(Offset.Zero, size), Paint())
-        banchi.forEachIndexed { i, (alto, spesso, largo, passo, sfaso) ->
-            val giro = RIF_L + largo
-            val x = (((sfaso + tempo * passo) % giro) + giro) % giro - largo
-            val respiro = 0.85f + 0.15f * sin(tempo * 0.35f + i * 1.7f)
-            // Una macchia rotonda sfumata, schiacciata in verticale: sfuma da
-            // tutti i lati, mentre un'ellisse sfumata solo in alto e in basso
-            // aveva i fianchi netti e pareva una lente.
-            fun banco(sinistra: Float) {
-                val centro = Offset((sinistra + largo / 2f) * sx, alto * sy)
+internal class CacheAtmosfera {
+    internal var tagliaTrama = Size.Zero
+    internal var trama: androidx.compose.ui.graphics.ImageBitmap? = null
+    internal var tagliaErba = Size.Zero
+    internal val erbaFerma = mutableListOf<Path>()
+    internal var versoErba = 1f
+}
+
+/** Di quanto e' piu' piccola la trama della nebbia rispetto allo schermo: e' sfocata, non si vede. */
+private const val RIDUZIONE_TRAMA = 4f
+
+/** La fascia del cielo dove stanno i banchi, in unita' di riferimento. */
+private const val NEBBIA_ALTO = 360f
+private const val NEBBIA_BASSO = 880f
+
+/** I banchi: altezza, spessore, larghezza, posizione nella trama (da 0 a 1). */
+private val BANCHI = listOf(
+    floatArrayOf(455f, 70f, 560f, 0.00f),
+    floatArrayOf(520f, 90f, 700f, 0.45f),
+    floatArrayOf(560f, 80f, 520f, 0.80f),
+    floatArrayOf(600f, 110f, 760f, 0.20f),
+    floatArrayOf(650f, 100f, 640f, 0.65f),
+    floatArrayOf(700f, 130f, 820f, 0.35f),
+)
+
+/** Disegna una volta la trama dei banchi, bianca, ripetibile in orizzontale. */
+private fun tramaDellaNebbia(larghezza: Float, altezza: Float): androidx.compose.ui.graphics.ImageBitmap {
+    val w = (larghezza / RIDUZIONE_TRAMA).toInt().coerceAtLeast(8)
+    val h = ((NEBBIA_BASSO - NEBBIA_ALTO) / RIF_H * altezza / RIDUZIONE_TRAMA).toInt().coerceAtLeast(8)
+    val immagine = androidx.compose.ui.graphics.ImageBitmap(w, h)
+    val sx = w / RIF_L
+    val sy = h / (NEBBIA_BASSO - NEBBIA_ALTO)
+    androidx.compose.ui.graphics.drawscope.CanvasDrawScope().draw(
+        androidx.compose.ui.unit.Density(1f),
+        androidx.compose.ui.unit.LayoutDirection.Ltr,
+        androidx.compose.ui.graphics.Canvas(immagine),
+        Size(w.toFloat(), h.toFloat()),
+    ) {
+        BANCHI.forEach { (alto, spesso, largo, dove) ->
+            // Ogni banco anche una larghezza prima e dopo: la trama si ripete
+            // senza cucitura quando scorre.
+            for (giro in -1..1) {
+                val centro = Offset((dove * RIF_L + giro * RIF_L) * sx, (alto - NEBBIA_ALTO) * sy)
                 scale(scaleX = 1f, scaleY = spesso / largo * (sy / sx), pivot = centro) {
                     drawCircle(
                         brush = Brush.radialGradient(
-                            0f to colore.copy(alpha = 0.9f * forza * respiro),
-                            0.55f to colore.copy(alpha = 0.6f * forza * respiro),
-                            1f to colore.copy(alpha = 0f),
+                            0f to Color.White.copy(alpha = 0.9f),
+                            0.55f to Color.White.copy(alpha = 0.6f),
+                            1f to Color.White.copy(alpha = 0f),
                             center = centro,
                             radius = largo / 2f * sx,
                         ),
@@ -156,11 +167,57 @@ internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: 
                     )
                 }
             }
-            banco(x)
-            // Il banco esce da un lato e rientra dall'altro: la copia che entra.
-            if (x + largo > RIF_L) banco(x - giro)
         }
-        // I varchi: un buco morbido che si apre e si richiude.
+    }
+    return immagine
+}
+
+/**
+ * Banchi di nebbia che scivolano bassi fra le colline, e un velo su tutto il
+ * cielo che spegne il sole e le stelle quanto basta.
+ *
+ * I banchi sono una trama disegnata una volta ([CacheAtmosfera]) che scorre
+ * lenta; respira appena. Toccando, si apre un varco che si richiude da solo
+ * ([VarcoNebbia]): solo allora serve un livello fuori schermo.
+ */
+internal fun DrawScope.nebbia(forza: Float, notte: Float, tempo: Float, varchi: List<VarcoNebbia>, cache: CacheAtmosfera = CacheAtmosfera()) {
+    if (forza <= 0.02f) return
+    val sx = size.width / RIF_L
+    val sy = size.height / RIF_H
+    val colore = lerp(Color(0xFFF1EFE9), Color(0xFF8E98A4), notte)
+    // Il velo: il cielo intero perde contrasto.
+    drawRect(colore.copy(alpha = 0.32f * forza))
+    if (cache.trama == null || cache.tagliaTrama != size) {
+        cache.trama = tramaDellaNebbia(size.width, size.height)
+        cache.tagliaTrama = size
+    }
+    val trama = cache.trama ?: return
+    val alto = NEBBIA_ALTO * sy
+    val altezza = (NEBBIA_BASSO - NEBBIA_ALTO) * sy
+    val scorre = ((tempo * 4.5f * sx) % size.width + size.width) % size.width
+    val respiro = 0.88f + 0.12f * sin(tempo * 0.35f)
+    val tinta = androidx.compose.ui.graphics.ColorFilter.tint(colore, BlendMode.SrcIn)
+    // **Il livello fuori schermo solo quando serve**: il varco si scava con
+    // `DstOut`, che vuole un livello suo. Senza varchi aperti - quasi sempre -
+    // la trama si disegna direttamente sul cielo.
+    val varchiAperti = varchi.filter { tempo - it.nato in 0f..DURATA_VARCO }
+    val conLivello = varchiAperti.isNotEmpty()
+    drawIntoCanvas { tela ->
+        if (conLivello) tela.saveLayer(Rect(Offset.Zero, size), Paint())
+        for (dx in listOf(scorre - size.width, scorre)) {
+            drawImage(
+                image = trama,
+                srcOffset = androidx.compose.ui.unit.IntOffset.Zero,
+                srcSize = androidx.compose.ui.unit.IntSize(trama.width, trama.height),
+                // Due pixel di sovrapposizione per lato: senza, dove le due copie
+                // si toccano restava una cucitura verticale.
+                dstOffset = androidx.compose.ui.unit.IntOffset(dx.toInt() - 2, alto.toInt()),
+                dstSize = androidx.compose.ui.unit.IntSize(size.width.toInt() + 4, altezza.toInt()),
+                alpha = (forza * respiro).coerceIn(0f, 1f),
+                colorFilter = tinta,
+                filterQuality = androidx.compose.ui.graphics.FilterQuality.Low,
+            )
+        }
         varchiAperti.forEach { v ->
             val eta = tempo - v.nato
             val apertura = sin(PI.toFloat() * eta / DURATA_VARCO)
@@ -239,17 +296,36 @@ internal fun DrawScope.erbaAlVento(
     verso: Float,
     tempo: Float,
     colline: List<Pair<Color, FloatArray>>,
+    cache: CacheAtmosfera = CacheAtmosfera(),
 ) {
     val sx = size.width / RIF_L
     val sy = size.height / RIF_H
-    val filo = Path()
+    // **A vento quasi fermo l'erba non ondeggia, e il tracciato si fa una volta
+    // sola** per taglia dello schermo: e' il caso di quasi tutti i giorni, e
+    // ricostruire centinaia di curve a ogni fotogramma per farle stare ferme
+    // era il pezzo piu' caro del cielo.
+    val ferma = vento < 0.08f
+    val segnoVerso = if (verso >= 0f) 1f else -1f
+    if (ferma && cache.tagliaErba == size && cache.versoErba == segnoVerso && cache.erbaFerma.size == colline.size) {
+        colline.forEachIndexed { i, (colore, _) ->
+            drawPath(cache.erbaFerma[i], colore, style = Stroke(width = 1.5f * sx))
+        }
+        return
+    }
+    if (ferma) {
+        cache.erbaFerma.clear()
+        cache.tagliaErba = size
+        cache.versoErba = segnoVerso
+    }
+    val tempoErba = if (ferma) 0f else tempo
+    var filo = Path()
     val segno = if (verso >= 0f) 1f else -1f
     val piega = segno * (0.08f + 0.75f * vento) * (0.4f + 0.6f * kotlin.math.abs(verso))
     colline.forEachIndexed { indice, (colore, ellisse) ->
         // Tutti i fili di una collina in un tracciato solo, disegnato una
         // volta: il cielo ridisegna a ogni fotogramma, e centinaia di
         // `drawPath` per l'erba erano il pezzo piu' caro della scena.
-        filo.reset()
+        filo = Path()
         val (sinistra, alto, largo, altezza) = ellisse.let { listOf(it[0], it[1], it[2], it[3]) }
         // Le colline davanti coprono il crinale di quelle dietro: lì l'erba non c'e'.
         val davanti = colline.drop(indice + 1).map { it.second }
@@ -262,12 +338,12 @@ internal fun DrawScope.erbaAlVento(
                 bordo != null && bordo < y + 2f
             }
             if (y != null && !coperta) {
-                for (f in 0 until 3) {
+                for (f in 0 until 2) {
                     val semeFilo = ((i * 7 + f * 3) % 11) / 11f
                     val lungo = (5.5f + 4.5f * semeFilo) * sy
-                    val ondeggia = sin(tempo * (1.3f + 3.2f * vento) + x * 0.09f + f) * (0.05f + 0.22f * vento)
-                    val angolo = piega + ondeggia + (f - 1) * 0.22f
-                    val bx = (x + (f - 1) * 1.6f) * sx
+                    val ondeggia = sin(tempoErba * (1.3f + 3.2f * vento) + x * 0.09f + f) * (0.05f + 0.22f * vento)
+                    val angolo = piega + ondeggia + (f - 0.5f) * 0.3f
+                    val bx = (x + (f - 0.5f) * 2.2f) * sx
                     val by = y * sy + 1.5f * sy
                     val px = bx + sin(angolo) * lungo
                     val py = by - cos(angolo) * lungo
@@ -275,10 +351,11 @@ internal fun DrawScope.erbaAlVento(
                     filo.quadraticTo(bx + sin(angolo * 0.4f) * lungo * 0.5f, by - lungo * 0.55f, px, py)
                 }
             }
-            x += 8f
+            x += 12f
             i++
         }
-        drawPath(filo, colore, style = Stroke(width = 1.5f * sx, cap = StrokeCap.Round))
+        if (ferma) cache.erbaFerma.add(filo)
+        drawPath(filo, colore, style = Stroke(width = 1.5f * sx))
     }
 }
 
