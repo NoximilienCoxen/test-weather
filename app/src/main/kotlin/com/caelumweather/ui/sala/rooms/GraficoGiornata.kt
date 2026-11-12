@@ -397,7 +397,7 @@ internal fun pennelloDellaGiornata(
     palette: SalaPalette,
     x: (Float) -> Float,
 ): Brush {
-    if (punti.size < 2) return androidx.compose.ui.graphics.SolidColor(palette.accent)
+    if (punti.size < 2 || !com.caelumweather.ui.sala.GESTI_ACCESI) return androidx.compose.ui.graphics.SolidColor(palette.accent)
     val inizio = x(punti.first().first.toFloat())
     val fine = x(punti.last().first.toFloat())
     val largo = (fine - inizio).coerceAtLeast(1f)

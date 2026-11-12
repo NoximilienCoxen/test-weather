@@ -134,7 +134,7 @@ fun PannelloSala(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(RaggioPannello))
-            .then(if (onda != null) Modifier.onGloballyPositioned { origine = it.positionInWindow() } else Modifier),
+            .then(if (onda != null && GESTI_ACCESI) Modifier.onGloballyPositioned { origine = it.positionInWindow() } else Modifier),
     ) {
         Column(
             modifier = Modifier
@@ -183,7 +183,7 @@ fun PannelloSala(
         val vetro = LocalVetro.current
         if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
-        if (onda != null) {
+        if (onda != null && GESTI_ACCESI) {
             val tinta = palette.accent
             Canvas(modifier = Modifier.matchParentSize()) {
                 val p = onda.corsa.value
@@ -413,6 +413,7 @@ fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean 
  */
 @Composable
 fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Modifier, notte: Boolean = false) {
+    if (!GESTI_ACCESI) { IconaMeteo(glifo, modifier, notte); return }
     val movimento = LocalMovimento.current
     val gesto = remember { Animatable(1f) }
     var primo by remember { mutableStateOf(true) }
@@ -645,12 +646,11 @@ private fun PastigliaAvviso(
     Row(
         modifier = Modifier
             .minimumInteractiveComponentSize()
-            .graphicsLayer {
+            .then(if (!GESTI_ACCESI) Modifier else Modifier.graphicsLayer {
                 val gonfio = 1f + 0.08f * kotlin.math.sin(PI.toFloat() * (battito.value / 0.45f).coerceIn(0f, 1f))
                 scaleX = gonfio
                 scaleY = gonfio
-            }
-            .drawBehind {
+            }.drawBehind {
                 val p = battito.value
                 if (p < 1f) {
                     val allarga = 10.dp.toPx() * p
@@ -662,7 +662,7 @@ private fun PastigliaAvviso(
                         style = Stroke(width = 2.dp.toPx() * (1f - p * 0.6f)),
                     )
                 }
-            }
+            })
             .cedevole()
             .clip(CircleShape)
             .background(fondoMosso)
