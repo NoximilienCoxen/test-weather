@@ -86,6 +86,25 @@ class SchedeCompatteRenderTest {
     }
 
     @Test
+    fun `la mini-curva sta nella riga di min e max`() {
+        val ore = (0 until 24).map { h ->
+            HourForecast(time = LocalDateTime.of(2026, 11, 11, h, 0), temperature = 11.0 - 5.5 * cos((h - 3) / 24.0 * 2 * Math.PI), isDay = h in 7..17)
+        }
+        val palette = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
+        val alta = disegna("mini-giornata") {
+            listOf(false, true).forEach { aperta ->
+                androidx.compose.foundation.layout.Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    androidx.compose.material3.Text("min 6° · max 17°", style = SalaType.rowNote, color = palette.inkFaint)
+                    androidx.compose.foundation.layout.Spacer(Modifier.width(6.dp))
+                    com.caelumweather.ui.sala.rooms.MiniGiornata(ore = ore, scelta = 13, aperta = aperta, palette = palette)
+                }
+            }
+        }
+        // Due righe di testo: la mini-curva non le allunga.
+        assertTrue("righe alte $alta dp", alta - 48f < 52f)
+    }
+
+    @Test
     fun `il mare con le maree resta corto`() {
         val mare = parseMare(risorsa("mare-venezia-livello.json"))!!
         val ora = mare.ore[mare.ore.size / 3]

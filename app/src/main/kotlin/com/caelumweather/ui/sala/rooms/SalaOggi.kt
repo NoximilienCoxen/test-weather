@@ -24,6 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.contentDescription
@@ -115,6 +119,11 @@ fun SalaOggiScreen(
     val giornoScelto = settimana.getOrNull(state.selectedDay)
     val futuro = state.selectedDay > 0
     val giorno = state.detailDay
+    // **La curva della giornata si apre a richiesta.** Sempre aperta allungava
+    // la scheda di un terzo e il numero grande saliva a coprire il sole, la
+    // luna e il loro arco: il cielo e' il punto di questa sala. Da chiusa resta
+    // una mini-curva accanto a "min · max", sul cielo, che la apre.
+    var giornataAperta by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         // ── Il numero, sul cielo ─────────────────────────────────────────────
@@ -158,11 +167,32 @@ fun SalaOggiScreen(
                 )
                 val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
                 val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
-                Text(
-                    text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
-                    style = SalaType.rowNote,
-                    color = palette.inkFaint,
-                )
+                Row(
+                    modifier = Modifier
+                        .cedevole()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable(
+                            onClickLabel = if (giornataAperta) {
+                                tr("chiudi la curva della giornata", "close the day's curve", "Tageskurve schließen", "fermer la courbe de la journée", "cerrar la curva del día")
+                            } else {
+                                tr("apri la curva della giornata", "open the day's curve", "Tageskurve öffnen", "ouvrir la courbe de la journée", "abrir la curva del día")
+                            },
+                        ) { giornataAperta = !giornataAperta },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text(
+                        text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                    )
+                    MiniGiornata(
+                        ore = state.shownHours,
+                        scelta = state.selectedHour,
+                        aperta = giornataAperta,
+                        palette = palette,
+                    )
+                }
                 // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
                 // giorno, e la riga direbbe una cosa per un'altra. La riga
                 // manca del tutto quando ieri non c'e' (scorta vecchia).
@@ -267,46 +297,50 @@ fun SalaOggiScreen(
                 }
             }
 
-            // ── La giornata, in una curva ────────────────────────────────────
-            GraficoGiornata(
-                ore = state.shownHours,
-                scelta = state.selectedHour,
-                adesso = if (state.selectedDay == 0) state.nowIndex else null,
-                unita = state.unit,
-                palette = palette,
-                onScegli = viewModel::selectHour,
-                modifier = Modifier.padding(top = 12.dp),
-            )
+            // ── La giornata, in una curva (a richiesta) ──────────────────────
+            ComparsaMorbida(visibile = giornataAperta) {
+                Column {
+                    GraficoGiornata(
+                        ore = state.shownHours,
+                        scelta = state.selectedHour,
+                        adesso = if (state.selectedDay == 0) state.nowIndex else null,
+                        unita = state.unit,
+                        palette = palette,
+                        onScegli = viewModel::selectHour,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
 
-            // ── Un anno fa, solo per oggi ─────────────────────────────────────
-            // Arriva dopo la previsione (e' una seconda richiesta): compare
-            // aprendo il suo spazio invece di spingere giu' la fila dei giorni.
-            val storico = state.unAnnoFa
-            ComparsaMorbida(visibile = !futuro && storico != null) {
-                if (storico == null) return@ComparsaMorbida
-                val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
-                // **Una riga, non un riquadro**: e' una curiosita' accanto
-                // alla curva, e un riquadro suo allungava la scheda fino a
-                // tagliare la fila dei giorni in fondo.
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = palette.inkFaint)) {
-                            append(tr("Un anno fa: ", "A year ago: ", "Vor einem Jahr: ", "Il y a un an : ", "Hace un año: "))
-                        }
-                        withStyle(SpanStyle(color = palette.ink)) { append(righe.cosaEra) }
-                        righe.confronto?.let { append(". "); append(it.trimEnd('.')) }
-                    },
-                    style = SalaType.rowNote,
-                    color = palette.inkSoft,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
+                    // ── Un anno fa, solo per oggi ─────────────────────────────────────
+                    // Arriva dopo la previsione (e' una seconda richiesta): compare
+                    // aprendo il suo spazio invece di spingere giu' la fila dei giorni.
+                    val storico = state.unAnnoFa
+                    ComparsaMorbida(visibile = !futuro && storico != null) {
+                        if (storico == null) return@ComparsaMorbida
+                        val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
+                        // **Una riga, non un riquadro**: e' una curiosita' accanto
+                        // alla curva, e un riquadro suo allungava la scheda fino a
+                        // tagliare la fila dei giorni in fondo.
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(SpanStyle(color = palette.inkFaint)) {
+                                    append(tr("Un anno fa: ", "A year ago: ", "Vor einem Jahr: ", "Il y a un an : ", "Hace un año: "))
+                                }
+                                withStyle(SpanStyle(color = palette.ink)) { append(righe.cosaEra) }
+                                righe.confronto?.let { append(". "); append(it.trimEnd('.')) }
+                            },
+                            style = SalaType.rowNote,
+                            color = palette.inkSoft,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
+                    }
+                }
             }
 
             Box(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 11.dp)
+                    .padding(top = 16.dp, bottom = 13.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),

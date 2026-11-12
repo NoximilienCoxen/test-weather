@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.contentDescription
@@ -304,5 +306,51 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         val cy = y(sulla)
         drawCircle(palette.chip, radius = 7.dp.toPx(), center = Offset(cx, cy))
         drawCircle(accento, radius = 5.dp.toPx(), center = Offset(cx, cy), style = Stroke(width = 2.4.dp.toPx()))
+    }
+}
+
+/**
+ * La giornata in piccolo, accanto a "min · max": la forma della curva in una
+ * parola di spazio, sul cielo, e il comando che apre quella grande.
+ *
+ * Il punto e' l'ora scelta; la freccetta gira quando la curva e' aperta. Non
+ * dice numeri: quelli sono nella riga accanto e nella curva grande.
+ */
+@Composable
+internal fun MiniGiornata(
+    ore: List<HourForecast>,
+    scelta: Int,
+    aperta: Boolean,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+) {
+    val temperature = remember(ore) { ore.map { it.temperature } }
+    val validi = temperature.filterNotNull()
+    if (validi.size < 3) return
+    val minimo = validi.min()
+    val intervallo = (validi.max() - minimo).coerceAtLeast(2.0)
+    val giro = com.caelumweather.ui.sala.angoloCheGira(if (aperta) 90f else 0f)
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Canvas(modifier = Modifier.size(width = 40.dp, height = 14.dp)) {
+            val n = (temperature.size - 1).coerceAtLeast(1)
+            fun x(i: Int) = size.width * i / n
+            fun y(t: Double) = (size.height - 1.dp.toPx() - (size.height - 2.dp.toPx()) * ((t - minimo) / intervallo)).toFloat()
+            val linea = Path()
+            var iniziata = false
+            temperature.forEachIndexed { i, t ->
+                if (t == null) return@forEachIndexed
+                if (!iniziata) { linea.moveTo(x(i), y(t)); iniziata = true } else linea.lineTo(x(i), y(t))
+            }
+            drawPath(linea, palette.accent, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            temperature.getOrNull(scelta)?.let { t ->
+                drawCircle(palette.accent, radius = 2.4.dp.toPx(), center = Offset(x(scelta), y(t)))
+            }
+        }
+        Text(
+            text = " ›",
+            style = SalaType.rowNote,
+            color = palette.accent,
+            modifier = Modifier.graphicsLayer { rotationZ = giro },
+        )
     }
 }

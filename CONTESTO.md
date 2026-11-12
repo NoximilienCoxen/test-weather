@@ -8362,6 +8362,20 @@ L'altezza della scheda intera si verifica solo sugli screenshot della CI.
 Tutto obbedisce a `LocalMovimento`: con le animazioni ridotte e negli scatti
 della CI si salta al valore finale.
 
+### 64.8-quater La curva si apre a richiesta: il cielo prima di tutto
+
+Anche compatta, la curva sempre aperta allungava la sala di oggi di ~150 dp
+rispetto a `main`: il numero grande saliva nel cielo e copriva **il sole, la
+luna e il loro arco** (confronto fra gli scatti della CI di 1d493b1 e
+b3b8f76, `cielo-mezzogiorno-sereno.png`). Il cielo e' il punto di questa sala.
+
+Adesso accanto a "min · max", sul cielo, c'e' `MiniGiornata`: la forma della
+giornata in 40 x 14 dp, col punto sull'ora scelta e una freccetta che gira.
+Toccandola si apre nella scheda (`ComparsaMorbida`) la curva grande con "un
+anno fa"; toccandola di nuovo si chiude. **Da chiusa la scheda e' alta come
+prima del grafico**, divisore compreso (16/13 dp). Lo stato e'
+`rememberSaveable`, chiuso alla partenza.
+
 ### 64.9 Cosa NON e' stato fatto
 
 - **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le
