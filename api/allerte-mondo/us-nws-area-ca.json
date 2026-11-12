@@ -10,6 +10,172 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.417d7c58fc77879ec0f2be0ec949ec6b6c205fb9.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -122.01,
+                            38.14
+                        ],
+                        [
+                            -122.06,
+                            38.13
+                        ],
+                        [
+                            -122.13,
+                            38.04
+                        ],
+                        [
+                            -122.16,
+                            38.04
+                        ],
+                        [
+                            -122.19,
+                            38.07
+                        ],
+                        [
+                            -122.24,
+                            38.07
+                        ],
+                        [
+                            -122.29,
+                            38.16
+                        ],
+                        [
+                            -122.25,
+                            38.16
+                        ],
+                        [
+                            -122.24,
+                            38.1
+                        ],
+                        [
+                            -122.16,
+                            38.07
+                        ],
+                        [
+                            -122.1,
+                            38.12
+                        ],
+                        [
+                            -122.09,
+                            38.23
+                        ],
+                        [
+                            -121.99,
+                            38.24
+                        ],
+                        [
+                            -121.9,
+                            38.22
+                        ],
+                        [
+                            -121.86,
+                            38.07
+                        ],
+                        [
+                            -121.89,
+                            38.05
+                        ],
+                        [
+                            -121.91,
+                            38.08
+                        ],
+                        [
+                            -121.97,
+                            38.07
+                        ],
+                        [
+                            -122.02,
+                            38.1
+                        ],
+                        [
+                            -121.98,
+                            38.11
+                        ],
+                        [
+                            -122.01,
+                            38.14
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.417d7c58fc77879ec0f2be0ec949ec6b6c205fb9.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.417d7c58fc77879ec0f2be0ec949ec6b6c205fb9.001.1",
+                "areaDesc": "Solano, CA",
+                "geocode": {
+                    "SAME": [
+                        "006095"
+                    ],
+                    "UGC": [
+                        "CAC095"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/CAC095"
+                ],
+                "references": [],
+                "sent": "2026-11-12T09:40:00-08:00",
+                "effective": "2026-11-12T09:40:00-08:00",
+                "onset": "2026-11-12T09:40:00-08:00",
+                "expires": "2026-11-13T16:00:00-08:00",
+                "ends": "2026-11-13T16:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Sacramento CA",
+                "headline": "Flood Advisory issued November 12 at 9:40AM PST until November 13 at 4:00PM PST by NWS Sacramento CA",
+                "description": "* WHAT...Coastal Flooding from abnormally high tides.\n\n* WHERE...Low-lying areas along the San Pablo Bay, Carquinez Strait,\nand Suisun Bay shorelines in Solano County.\n\n* WHEN...Until 400 PM PST Friday.\n\n* IMPACTS...Flooding of low-lying areas including parks, lots,\nroads, marshes, and vulnerable islands. Erosion along levees is\npossible.\n\n* ADDITIONAL DETAILS...\n- At 937 AM PST, NWS meteorologists have determined that\nabnormally high tides will result in Coastal Flooding.\n- The highest tides forecast each day are (all times local\ntime):\n* Port Chicago: 1.2 ft above normal (6.1 ft MLLW) at 2:15 PM\nThu 11/12, 1.0 ft above normal (5.9 ft MLLW) at 2:56 PM Fri\n11/13, 0.7 ft above normal (5.6 ft MLLW) at 3:44 PM Sat\n11/14, and 0.3 ft above normal (5.2 ft MLLW) at 4:39 PM Sun\n11/15.\n* West Sacramento: 1.2 ft above normal (5.5 ft MLLW) at 5:28\nPM Thu 11/12, 1.0 ft above normal (5.4 ft MLLW) at 6:10 PM\nFri 11/13, 0.9 ft above normal (5.2 ft MLLW) at 6:57 PM Sat\n11/14, and 0.6 ft above normal (5.0 ft MLLW) at 7:50 PM Sun\n11/15.\n* Rio Vista (Datum NAVD88): +7.5 ft at 5:00 PM Thu 11/12,\n+7.7 ft at 5:00 PM Fri 11/13, and +7.6 ft at 6:00 PM Sat\n11/14.\n- These predictions include up to +1.1 feet of storm surge that\nwill enhance the astronomical tide and flooding threat.\nTiming of high tide may vary up to an hour throughout the San\nFrancisco Bay and Delta.\n- Real-time water levels and latest forecasts are available at:\n* Port Chicago: https://tidesandcurrents.noaa.gov/noaatidepre\ndictions.html?id=9415144\n* West Sacramento: https://tidesandcurrents.noaa.gov/noaatide\npredictions.html?id=9416131\n* Rio Vista: https://water.noaa.gov/gauges/RVBC1",
+                "instruction": "Some roads that are commonly dry may become inundated during high\ntide. If you encounter flooded roadways: turn around, dont drown.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSSTO"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS86 KSTO 121740"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD ADVISORY IN EFFECT UNTIL 4 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KSTO.FA.Y.0011.261112T1740Z-261114T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T16:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FAY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5395d766e431c5f886e8ea39d0241c93c206560b.001.1",
             "type": "Feature",
             "geometry": {
@@ -661,6 +827,98 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
+                "areaDesc": "Central Siskiyou County",
+                "geocode": {
+                    "SAME": [
+                        "006093"
+                    ],
+                    "UGC": [
+                        "CAZ081"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ081"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28dcfcd49076e7a1045c062f1437f4cd1cf01fe1.003.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.28dcfcd49076e7a1045c062f1437f4cd1cf01fe1.003.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T23:55:00-08:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.91aa508af30e8e583c3cbb067d5b42416d80ef33.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.91aa508af30e8e583c3cbb067d5b42416d80ef33.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-12T00:03:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-12T06:28:00-08:00",
+                "effective": "2026-11-12T06:28:00-08:00",
+                "onset": "2026-11-12T22:00:00-08:00",
+                "expires": "2026-11-12T16:30:00-08:00",
+                "ends": "2026-11-13T13:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Wind Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Medford OR",
+                "headline": "High Wind Warning issued November 12 at 6:28AM PST until November 13 at 1:00PM PST by NWS Medford OR",
+                "description": "* WHAT...For the Wind Advisory, south winds 20 to 35 mph with gusts\nup to 50 mph expected. For the High Wind Warning, south winds 25 to\n40 mph with gusts up to 70 mph expected.\n\n* WHERE...Most of the Shasta Valley in central Siskiyou County. This\nincludes portions of Interstate 5 as well as the communities of\nWeed, Gazelle, Grenada and Montague.\n\n* WHEN...For the Wind Advisory, until 10 PM PST this evening. For the\nHigh Wind Warning, from 10 PM this evening to 1 PM PST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles. Gusty winds will blow around\nunsecured objects. Tree limbs could be blown down and a few power\noutages may result.\n\n* ADDITIONAL DETAILS...Highways running west to east will be exposed\nto tough driving conditions given the strong southerly wind speeds.",
+                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind.\n\nWinds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWMFR"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KMFR 121428"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY NOW IN EFFECT UNTIL 10 PM PST THIS EVENING... ...HIGH WIND WARNING REMAINS IN EFFECT FROM 10 PM THIS EVENING TO 1 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMFR.HW.W.0005.261113T0600Z-261113T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T13:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "HWW"
+                    ],
+                    "NationalWeatherService": [
+                        "HWW"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.004.1",
             "type": "Feature",
             "geometry": null,
@@ -750,98 +1008,6 @@
                     ],
                     "NationalWeatherService": [
                         "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.6334280d1461fe5677e18975a94b47ecd0e33ade.001.2",
-                "areaDesc": "Central Siskiyou County",
-                "geocode": {
-                    "SAME": [
-                        "006093"
-                    ],
-                    "UGC": [
-                        "CAZ081"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ081"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.28dcfcd49076e7a1045c062f1437f4cd1cf01fe1.003.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.28dcfcd49076e7a1045c062f1437f4cd1cf01fe1.003.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T23:55:00-08:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.91aa508af30e8e583c3cbb067d5b42416d80ef33.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.91aa508af30e8e583c3cbb067d5b42416d80ef33.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-12T00:03:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-12T06:28:00-08:00",
-                "effective": "2026-11-12T06:28:00-08:00",
-                "onset": "2026-11-12T22:00:00-08:00",
-                "expires": "2026-11-12T16:30:00-08:00",
-                "ends": "2026-11-13T13:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Wind Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Medford OR",
-                "headline": "High Wind Warning issued November 12 at 6:28AM PST until November 13 at 1:00PM PST by NWS Medford OR",
-                "description": "* WHAT...For the Wind Advisory, south winds 20 to 35 mph with gusts\nup to 50 mph expected. For the High Wind Warning, south winds 25 to\n40 mph with gusts up to 70 mph expected.\n\n* WHERE...Most of the Shasta Valley in central Siskiyou County. This\nincludes portions of Interstate 5 as well as the communities of\nWeed, Gazelle, Grenada and Montague.\n\n* WHEN...For the Wind Advisory, until 10 PM PST this evening. For the\nHigh Wind Warning, from 10 PM this evening to 1 PM PST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles. Gusty winds will blow around\nunsecured objects. Tree limbs could be blown down and a few power\noutages may result.\n\n* ADDITIONAL DETAILS...Highways running west to east will be exposed\nto tough driving conditions given the strong southerly wind speeds.",
-                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind.\n\nWinds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWMFR"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KMFR 121428"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY NOW IN EFFECT UNTIL 10 PM PST THIS EVENING... ...HIGH WIND WARNING REMAINS IN EFFECT FROM 10 PM THIS EVENING TO 1 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMFR.HW.W.0005.261113T0600Z-261113T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T13:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "HWW"
-                    ],
-                    "NationalWeatherService": [
-                        "HWW"
                     ]
                 }
             }
@@ -1011,6 +1177,84 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
+                "areaDesc": "Southwestern Lake; Eastern Lake",
+                "geocode": {
+                    "SAME": [
+                        "006033"
+                    ],
+                    "UGC": [
+                        "CAZ119",
+                        "CAZ120"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ119",
+                    "https://api.weather.gov/zones/forecast/CAZ120"
+                ],
+                "references": [],
+                "sent": "2026-11-12T02:44:00-08:00",
+                "effective": "2026-11-12T02:44:00-08:00",
+                "onset": "2026-11-13T07:00:00-08:00",
+                "expires": "2026-11-12T13:00:00-08:00",
+                "ends": "2026-11-13T14:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "Wind Advisory issued November 12 at 2:44AM PST until November 13 at 2:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...South winds 20 to 25 mph with gusts up to 45 mph expected.\n\n* WHERE...Southeastern Lake.\n\n* WHEN...From 7 AM to 2 PM PST Friday.\n\n* IMPACTS...Wind gusts will be particularly strong along windward\nridges and exposed coastal headlands.\n\n* ADDITIONAL DETAILS...Winds will be strong aloft and may mix down to\nthe surface, resulting in wind advisory conditions.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS76 KEKA 121044"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY IN EFFECT FROM 7 AM TO 2 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.KEKA.WI.Y.0007.261113T1500Z-261113T2200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T14:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.003.1",
             "type": "Feature",
             "geometry": null,
@@ -1080,84 +1324,6 @@
                     ],
                     "expiredReferences": [
                         "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.afb92ed2a33e230e967752bd2b042ef6c98e0e50.002.1,2026-11-11T14:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.32334cac37476b9ed7b74fdc798f70d7512e2123.001.1,2026-11-11T06:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b9d418c38f392544f39e5c2b73217dec3d3f6ba0.001.1,2026-11-10T22:22:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.6aef641b3a845f5e6992f4e14155f0ef93adad43.002.1",
-                "areaDesc": "Southwestern Lake; Eastern Lake",
-                "geocode": {
-                    "SAME": [
-                        "006033"
-                    ],
-                    "UGC": [
-                        "CAZ119",
-                        "CAZ120"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ119",
-                    "https://api.weather.gov/zones/forecast/CAZ120"
-                ],
-                "references": [],
-                "sent": "2026-11-12T02:44:00-08:00",
-                "effective": "2026-11-12T02:44:00-08:00",
-                "onset": "2026-11-13T07:00:00-08:00",
-                "expires": "2026-11-12T13:00:00-08:00",
-                "ends": "2026-11-13T14:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "Wind Advisory issued November 12 at 2:44AM PST until November 13 at 2:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...South winds 20 to 25 mph with gusts up to 45 mph expected.\n\n* WHERE...Southeastern Lake.\n\n* WHEN...From 7 AM to 2 PM PST Friday.\n\n* IMPACTS...Wind gusts will be particularly strong along windward\nridges and exposed coastal headlands.\n\n* ADDITIONAL DETAILS...Winds will be strong aloft and may mix down to\nthe surface, resulting in wind advisory conditions.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS76 KEKA 121044"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY IN EFFECT FROM 7 AM TO 2 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KEKA.WI.Y.0007.261113T1500Z-261113T2200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T14:00:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -1614,85 +1780,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
-                "areaDesc": "Mono",
-                "geocode": {
-                    "SAME": [
-                        "006051"
-                    ],
-                    "UGC": [
-                        "CAZ073"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ073"
-                ],
-                "references": [],
-                "sent": "2026-11-12T00:33:00-08:00",
-                "effective": "2026-11-12T00:33:00-08:00",
-                "onset": "2026-11-13T13:00:00-08:00",
-                "expires": "2026-11-13T00:45:00-08:00",
-                "ends": "2026-11-14T10:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Storm Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Reno NV",
-                "headline": "Winter Storm Warning issued November 12 at 12:33AM PST until November 14 at 10:00AM PST by NWS Reno NV",
-                "description": "* WHAT...Heavy wet snow. Snow accumulations of 1 to 2 feet above 7000\nfeet, up to 6 inches between 6000 and 7000 feet, and little to no\naccumulations below 6000 feet. Wind gusts of 60 to 80 mph over\nridges and gusts of 45 to 55 mph for areas along Highway 395.\n\n* WHERE...Mono County.\n\n* WHEN...From 1 PM Friday to 10 AM PST Saturday.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Friday evening commute. Strong winds and Sierra\ncement snow could cause damage to trees and power lines.\n\n* ADDITIONAL DETAILS...A burst of heavy snow is likely with this\nsystem Friday evening into early Saturday morning with snow levels\nfalling to as low as 6000 feet.",
-                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency. The latest road conditions for the\nstate you are calling from can be obtained by calling 5 1 1.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWREV"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS45 KREV 120833"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WARNING IN EFFECT FROM 1 PM FRIDAY TO 10 AM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KREV.WS.W.0004.261113T2100Z-261114T1800Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T10:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSW"
-                    ],
-                    "NationalWeatherService": [
-                        "WSW"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.001.2",
             "type": "Feature",
             "geometry": null,
@@ -1760,6 +1847,85 @@
                     ],
                     "VTEC": [
                         "/O.NEW.KREV.WS.W.0004.261113T1800Z-261114T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T10:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSW"
+                    ],
+                    "NationalWeatherService": [
+                        "WSW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.0e46de464708a8211a1f979b4629df14bae2f4ab.002.2",
+                "areaDesc": "Mono",
+                "geocode": {
+                    "SAME": [
+                        "006051"
+                    ],
+                    "UGC": [
+                        "CAZ073"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ073"
+                ],
+                "references": [],
+                "sent": "2026-11-12T00:33:00-08:00",
+                "effective": "2026-11-12T00:33:00-08:00",
+                "onset": "2026-11-13T13:00:00-08:00",
+                "expires": "2026-11-13T00:45:00-08:00",
+                "ends": "2026-11-14T10:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Storm Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Reno NV",
+                "headline": "Winter Storm Warning issued November 12 at 12:33AM PST until November 14 at 10:00AM PST by NWS Reno NV",
+                "description": "* WHAT...Heavy wet snow. Snow accumulations of 1 to 2 feet above 7000\nfeet, up to 6 inches between 6000 and 7000 feet, and little to no\naccumulations below 6000 feet. Wind gusts of 60 to 80 mph over\nridges and gusts of 45 to 55 mph for areas along Highway 395.\n\n* WHERE...Mono County.\n\n* WHEN...From 1 PM Friday to 10 AM PST Saturday.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Friday evening commute. Strong winds and Sierra\ncement snow could cause damage to trees and power lines.\n\n* ADDITIONAL DETAILS...A burst of heavy snow is likely with this\nsystem Friday evening into early Saturday morning with snow levels\nfalling to as low as 6000 feet.",
+                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency. The latest road conditions for the\nstate you are calling from can be obtained by calling 5 1 1.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWREV"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS45 KREV 120833"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WARNING IN EFFECT FROM 1 PM FRIDAY TO 10 AM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KREV.WS.W.0004.261113T2100Z-261114T1800Z/"
                     ],
                     "eventEndingTime": [
                         "2026-11-14T10:00:00-08:00"
@@ -1876,6 +2042,82 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
+                "areaDesc": "Owens Valley North",
+                "geocode": {
+                    "SAME": [
+                        "006027"
+                    ],
+                    "UGC": [
+                        "CAZ582"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ582"
+                ],
+                "references": [],
+                "sent": "2026-11-12T00:05:00-08:00",
+                "effective": "2026-11-12T00:05:00-08:00",
+                "onset": "2026-11-13T10:00:00-08:00",
+                "expires": "2026-11-12T13:00:00-08:00",
+                "ends": "2026-11-13T16:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Las Vegas NV",
+                "headline": "Wind Advisory issued November 12 at 12:05AM PST until November 13 at 4:00PM PST by NWS Las Vegas NV",
+                "description": "* WHAT...Southeast winds 20 to 30 mph with gusts up to 45 mph\nexpected.\n\n* WHERE...Northern Owens Valley.\n\n* WHEN...From 10 AM to 4 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWVEF"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS75 KVEF 120805"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY IN EFFECT FROM 10 AM TO 4 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.KVEF.WI.Y.0022.261113T1800Z-261114T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T16:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.002.1",
             "type": "Feature",
             "geometry": null,
@@ -1945,82 +2187,6 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-14T10:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1",
-                "areaDesc": "Owens Valley North",
-                "geocode": {
-                    "SAME": [
-                        "006027"
-                    ],
-                    "UGC": [
-                        "CAZ582"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ582"
-                ],
-                "references": [],
-                "sent": "2026-11-12T00:05:00-08:00",
-                "effective": "2026-11-12T00:05:00-08:00",
-                "onset": "2026-11-13T10:00:00-08:00",
-                "expires": "2026-11-12T13:00:00-08:00",
-                "ends": "2026-11-13T16:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Las Vegas NV",
-                "headline": "Wind Advisory issued November 12 at 12:05AM PST until November 13 at 4:00PM PST by NWS Las Vegas NV",
-                "description": "* WHAT...Southeast winds 20 to 30 mph with gusts up to 45 mph\nexpected.\n\n* WHERE...Northern Owens Valley.\n\n* WHEN...From 10 AM to 4 PM PST Friday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWVEF"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS75 KVEF 120805"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY IN EFFECT FROM 10 AM TO 4 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KVEF.WI.Y.0022.261113T1800Z-261114T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T16:00:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -2112,6 +2278,533 @@
                     ],
                     "NationalWeatherService": [
                         "WSW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
+                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast; Northern Monterey Bay",
+                "geocode": {
+                    "SAME": [
+                        "006041",
+                        "006097",
+                        "006081",
+                        "006087"
+                    ],
+                    "UGC": [
+                        "CAZ505",
+                        "CAZ509",
+                        "CAZ529"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ505",
+                    "https://api.weather.gov/zones/forecast/CAZ509",
+                    "https://api.weather.gov/zones/forecast/CAZ529"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T18:09:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-11T22:48:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-13T18:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Beach Hazards Statement issued November 11 at 10:48PM PST until November 13 at 6:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...For the Beach Hazards Statement, An increased risk for\nsneaker waves and strong rip currents with breaking waves of 15\nto 20 ft expected. For the High Surf Warning, Dangerously large\nbreaking waves of 25 to 35 ft, with occasional sets of 40 to 50\nft at favored breakpoints. For the Coastal Flood Advisory, large\nbreaking waves will run up beaches and crash over seawalls,\ninundating adjacent, low-lying infrastructure.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore, San Francisco Peninsula Coast and Northern Monterey\nBay.\n\n* WHEN...For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the Coastal Flood Advisory, from midnight\nFriday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...The Coastal Flood Advisory on Saturday is\nspecifically for the Pacific Coast, where large breaking waves\nwill spill over sea walls and run up beaches onto adjacent\ninfrastructure.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.BH.S.0024.000000T0000Z-261114T0200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T18:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.002.2,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.002.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.002.2,2026-11-11T00:14:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
+                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
+                "geocode": {
+                    "SAME": [
+                        "006075",
+                        "006053"
+                    ],
+                    "UGC": [
+                        "CAZ006",
+                        "CAZ530"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ006",
+                    "https://api.weather.gov/zones/forecast/CAZ530"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T18:09:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-11T22:48:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-13T18:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Beach Hazards Statement issued November 11 at 10:48PM PST until November 13 at 6:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.BH.S.0024.000000T0000Z-261114T0200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T18:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.001.3,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.001.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.001.2,2026-11-11T00:14:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
+                "areaDesc": "North Bay Interior Valleys; San Francisco Bay Shoreline",
+                "geocode": {
+                    "SAME": [
+                        "006041",
+                        "006055",
+                        "006097",
+                        "006001",
+                        "006013",
+                        "006081",
+                        "006085"
+                    ],
+                    "UGC": [
+                        "CAZ506",
+                        "CAZ508"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ506",
+                    "https://api.weather.gov/zones/forecast/CAZ508"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.003.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T18:09:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-11T22:48:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-13T16:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 13 at 4:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...Up to 1.5 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...North Bay Interior Valleys and San Francisco Bay\nShoreline.\n\n* WHEN...Until 4 PM Friday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal areas.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high\ntide is expected to be: 1.3 ft above normal (7.1 ft MLLW) at\n12:10 PM Thursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at\n12:49 PM Friday 11/13. These predictions include up to 1.8 ft\nof surge that will enhance the astronomical tide and flooding\nthreat. High tide varies up to 90 minutes earlier or later\nalong the Pacific Coast and through the San Francisco Bay,\nrespectively.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.CF.Y.0015.000000T0000Z-261114T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T16:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.003.1,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.003.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.003.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.003.1,2026-11-11T00:14:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.002.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.002.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.004.1,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.004.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.004.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.004.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.004.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.004.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.004.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.004.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.004.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.004.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.004.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.003.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.003.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.003.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.003.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.003.1,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.074aba57a1be2427d3c5e8a62f7bf8116dc8ddd8.003.1,2026-11-03T19:51:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9f4618937fa09e3f130bac1fce97026e8c1fb0e9.002.1,2026-11-03T11:25:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
+                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast; Northern Monterey Bay",
+                "geocode": {
+                    "SAME": [
+                        "006041",
+                        "006097",
+                        "006081",
+                        "006087"
+                    ],
+                    "UGC": [
+                        "CAZ505",
+                        "CAZ509",
+                        "CAZ529"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ505",
+                    "https://api.weather.gov/zones/forecast/CAZ509",
+                    "https://api.weather.gov/zones/forecast/CAZ529"
+                ],
+                "references": [],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-14T00:00:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-14T18:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 14 at 6:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...For the Beach Hazards Statement, An increased risk for\nsneaker waves and strong rip currents with breaking waves of 15\nto 20 ft expected. For the High Surf Warning, Dangerously large\nbreaking waves of 25 to 35 ft, with occasional sets of 40 to 50\nft at favored breakpoints. For the Coastal Flood Advisory, large\nbreaking waves will run up beaches and crash over seawalls,\ninundating adjacent, low-lying infrastructure.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore, San Francisco Peninsula Coast and Northern Monterey\nBay.\n\n* WHEN...For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the Coastal Flood Advisory, from midnight\nFriday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...The Coastal Flood Advisory on Saturday is\nspecifically for the Pacific Coast, where large breaking waves\nwill spill over sea walls and run up beaches onto adjacent\ninfrastructure.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KMTR.CF.Y.0016.261114T0800Z-261115T0200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T18:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
+                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
+                "geocode": {
+                    "SAME": [
+                        "006075",
+                        "006053"
+                    ],
+                    "UGC": [
+                        "CAZ006",
+                        "CAZ530"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ006",
+                    "https://api.weather.gov/zones/forecast/CAZ530"
+                ],
+                "references": [],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-14T00:00:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-14T18:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 14 at 6:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KMTR.CF.Y.0016.261114T0800Z-261115T0200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T18:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
+                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
+                "geocode": {
+                    "SAME": [
+                        "006075",
+                        "006053"
+                    ],
+                    "UGC": [
+                        "CAZ006",
+                        "CAZ530"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ006",
+                    "https://api.weather.gov/zones/forecast/CAZ530"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-11T18:09:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-11T22:48:00-08:00",
+                "effective": "2026-11-11T22:48:00-08:00",
+                "onset": "2026-11-11T22:48:00-08:00",
+                "expires": "2026-11-12T15:00:00-08:00",
+                "ends": "2026-11-13T16:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 13 at 4:00PM PST by NWS San Francisco CA",
+                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KMTR 120648"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMTR.CF.Y.0015.000000T0000Z-261114T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T16:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.001.2,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.001.3,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.003.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.002.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.001.3,2026-11-11T00:14:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.002.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.001.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.002.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.001.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.002.2,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.001.2,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.002.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.001.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.002.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.001.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.002.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.001.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.002.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.001.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.002.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.001.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.002.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.001.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.002.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.001.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.002.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.001.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.002.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.001.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.003.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.002.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.002.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.001.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.002.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.001.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.002.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.001.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.002.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.001.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.002.2,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.001.2,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.074aba57a1be2427d3c5e8a62f7bf8116dc8ddd8.001.2,2026-11-03T19:51:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9f4618937fa09e3f130bac1fce97026e8c1fb0e9.001.1,2026-11-03T11:25:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
                     ]
                 }
             }
@@ -2294,533 +2987,6 @@
                     ],
                     "NationalWeatherService": [
                         "SUW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.4",
-                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
-                "geocode": {
-                    "SAME": [
-                        "006075",
-                        "006053"
-                    ],
-                    "UGC": [
-                        "CAZ006",
-                        "CAZ530"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ006",
-                    "https://api.weather.gov/zones/forecast/CAZ530"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.3",
-                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.3",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T18:09:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-11T22:48:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-13T18:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Beach Hazards Statement issued November 11 at 10:48PM PST until November 13 at 6:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.BH.S.0024.000000T0000Z-261114T0200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T18:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.001.3,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.001.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.001.2,2026-11-11T00:14:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.1",
-                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
-                "geocode": {
-                    "SAME": [
-                        "006075",
-                        "006053"
-                    ],
-                    "UGC": [
-                        "CAZ006",
-                        "CAZ530"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ006",
-                    "https://api.weather.gov/zones/forecast/CAZ530"
-                ],
-                "references": [],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-14T00:00:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-14T18:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 14 at 6:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMTR.CF.Y.0016.261114T0800Z-261115T0200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T18:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.1",
-                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast; Northern Monterey Bay",
-                "geocode": {
-                    "SAME": [
-                        "006041",
-                        "006097",
-                        "006081",
-                        "006087"
-                    ],
-                    "UGC": [
-                        "CAZ505",
-                        "CAZ509",
-                        "CAZ529"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ505",
-                    "https://api.weather.gov/zones/forecast/CAZ509",
-                    "https://api.weather.gov/zones/forecast/CAZ529"
-                ],
-                "references": [],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-14T00:00:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-14T18:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 14 at 6:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...For the Beach Hazards Statement, An increased risk for\nsneaker waves and strong rip currents with breaking waves of 15\nto 20 ft expected. For the High Surf Warning, Dangerously large\nbreaking waves of 25 to 35 ft, with occasional sets of 40 to 50\nft at favored breakpoints. For the Coastal Flood Advisory, large\nbreaking waves will run up beaches and crash over seawalls,\ninundating adjacent, low-lying infrastructure.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore, San Francisco Peninsula Coast and Northern Monterey\nBay.\n\n* WHEN...For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the Coastal Flood Advisory, from midnight\nFriday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...The Coastal Flood Advisory on Saturday is\nspecifically for the Pacific Coast, where large breaking waves\nwill spill over sea walls and run up beaches onto adjacent\ninfrastructure.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMTR.CF.Y.0016.261114T0800Z-261115T0200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T18:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.001.3",
-                "areaDesc": "San Francisco; Southern Monterey Bay and Big Sur Coast",
-                "geocode": {
-                    "SAME": [
-                        "006075",
-                        "006053"
-                    ],
-                    "UGC": [
-                        "CAZ006",
-                        "CAZ530"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ006",
-                    "https://api.weather.gov/zones/forecast/CAZ530"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T18:09:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-11T22:48:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-13T16:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 13 at 4:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...For the first Coastal Flood Advisory, Up to 1.5 ft of\ninundation above ground level is possible in low-lying areas\nnear shorelines and tidal waterways. For the Beach Hazards\nStatement, An increased risk for sneaker waves and strong rip\ncurrents with breaking waves of 15 to 20 ft expected. For the\nHigh Surf Warning, Dangerously large breaking waves of 25 to 35\nft, with occasional sets of 40 to 50 ft at favored breakpoints.\nFor the second Coastal Flood Advisory, large breaking waves will\nrun up beaches and crash over seawalls, inundating adjacent,\nlow-lying infrastructure.\n\n* WHERE...San Francisco and Southern Monterey Bay and Big Sur\nCoast.\n\n* WHEN...For the first Coastal Flood Advisory, until 4 PM PST\nFriday. For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the second Coastal Flood Advisory, from\nmidnight Friday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high tide\nis expected to be: 1.3 ft above normal (7.1 ft MLLW) at 12:10 PM\nThursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at 12:49 PM\nFriday 11/13. These predictions include up to 1.8 ft of surge\nthat will enhance the astronomical tide and flooding threat.\nHigh tide varies up to 90 minutes earlier or later along the\nPacific Coast and through the San Francisco Bay, respectively.\nThe Coastal Flood Advisory on Saturday is specifically for the\nPacific Coast, where large breaking waves will spill over sea\nwalls and run up beaches onto adjacent infrastructure.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY... ...BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.CF.Y.0015.000000T0000Z-261114T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T16:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.001.2,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.001.3,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.003.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.002.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.001.3,2026-11-11T00:14:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.002.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.001.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.002.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.001.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.002.2,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.001.2,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.002.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.001.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.002.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.001.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.002.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.001.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.002.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.001.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.002.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.001.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.002.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.001.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.002.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.001.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.002.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.001.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.002.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.001.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.003.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.002.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.002.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.001.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.002.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.001.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.002.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.001.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.002.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.001.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.002.2,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.001.2,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.074aba57a1be2427d3c5e8a62f7bf8116dc8ddd8.001.2,2026-11-03T19:51:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9f4618937fa09e3f130bac1fce97026e8c1fb0e9.001.1,2026-11-03T11:25:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.003.1",
-                "areaDesc": "North Bay Interior Valleys; San Francisco Bay Shoreline",
-                "geocode": {
-                    "SAME": [
-                        "006041",
-                        "006055",
-                        "006097",
-                        "006001",
-                        "006013",
-                        "006081",
-                        "006085"
-                    ],
-                    "UGC": [
-                        "CAZ506",
-                        "CAZ508"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ506",
-                    "https://api.weather.gov/zones/forecast/CAZ508"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T18:09:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-11T22:48:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-13T16:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Coastal Flood Advisory issued November 11 at 10:48PM PST until November 13 at 4:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...Up to 1.5 ft of inundation above ground level is\npossible in low-lying areas near shorelines and tidal\nwaterways.\n\n* WHERE...North Bay Interior Valleys and San Francisco Bay\nShoreline.\n\n* WHEN...Until 4 PM Friday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal areas.\n\n* ADDITIONAL DETAILS...At the San Francisco tide gauge, high\ntide is expected to be: 1.3 ft above normal (7.1 ft MLLW) at\n12:10 PM Thursday 11/12, 1.5 ft above normal (7.3 ft MLLW) at\n12:49 PM Friday 11/13. These predictions include up to 1.8 ft\nof surge that will enhance the astronomical tide and flooding\nthreat. High tide varies up to 90 minutes earlier or later\nalong the Pacific Coast and through the San Francisco Bay,\nrespectively.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 4 PM PST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.CF.Y.0015.000000T0000Z-261114T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T16:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.003.1,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.003.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63a06783ef18cc805f1d31a27afcb6fd026b5b07.003.1,2026-11-10T12:11:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.003.1,2026-11-11T00:14:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a18da11f78713cf023510e336355a780981e2364.002.1,2026-11-10T11:15:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.863a5bb8f453b4254cd1f62100528b3c170da4b2.002.1,2026-11-10T00:19:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.70965ab233bc0c973bf4ccc95a4608d846df76ef.004.1,2026-11-09T21:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.62177873ab9e8b6fc2a0fae9012e002ad14c1131.004.1,2026-11-09T20:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.389d5c2ae072b376512809abac60c71e0da2d540.004.1,2026-11-09T12:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e889d33d961907c9df3e0d80f5b6e6f6be76d07d.004.1,2026-11-08T19:50:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ba36ac2bca153a2684f01dfe039d537b5725774d.004.1,2026-11-08T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3c58a388809168e237c34f6a15a488a1f392ab8a.004.1,2026-11-07T20:09:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7562da39f5aecf504ec03b974e8a5b5eb304fbca.004.1,2026-11-07T11:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c3b4e300188941abc31debb51d09228cb7d2f9e3.004.1,2026-11-06T18:31:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.0c744f26c6c8069909441f74be41128ad917d4f5.004.1,2026-11-06T10:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6b273a50aad1cecc4612ca25c0bb22cfade11350.004.1,2026-11-05T11:25:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f3a7c5f2bb67edb2c1297fd1fc94d8b57e2af0c5.004.1,2026-11-05T02:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.63e7614461c237744485de0a817d2d1afa2bd8cb.003.1,2026-11-05T00:41:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f27bbf06d1dcce652c52c1ca786490511d334c5c.003.1,2026-11-05T00:43:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54c8c85dc80a3544394231e7fc39829a8dc53d21.003.1,2026-11-04T17:48:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f363aa7e0b294fd91347802480c69b9a91f1035b.003.1,2026-11-04T10:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.14e0032f56192abc92e3a30dd780fd6c1d03496b.003.1,2026-11-04T00:33:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.074aba57a1be2427d3c5e8a62f7bf8116dc8ddd8.003.1,2026-11-03T19:51:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9f4618937fa09e3f130bac1fce97026e8c1fb0e9.002.1,2026-11-03T11:25:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f24acdc8bab05264fb6a2dc1481bf8cf8e0da56e.002.3",
-                "areaDesc": "Coastal North Bay Including Point Reyes National Seashore; San Francisco Peninsula Coast; Northern Monterey Bay",
-                "geocode": {
-                    "SAME": [
-                        "006041",
-                        "006097",
-                        "006081",
-                        "006087"
-                    ],
-                    "UGC": [
-                        "CAZ505",
-                        "CAZ509",
-                        "CAZ529"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ505",
-                    "https://api.weather.gov/zones/forecast/CAZ509",
-                    "https://api.weather.gov/zones/forecast/CAZ529"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.dcd2d95d071b65ff14157dcba880a1162d3288fc.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-11T18:09:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-11T22:48:00-08:00",
-                "effective": "2026-11-11T22:48:00-08:00",
-                "onset": "2026-11-11T22:48:00-08:00",
-                "expires": "2026-11-12T15:00:00-08:00",
-                "ends": "2026-11-13T18:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Francisco CA",
-                "headline": "Beach Hazards Statement issued November 11 at 10:48PM PST until November 13 at 6:00PM PST by NWS San Francisco CA",
-                "description": "* WHAT...For the Beach Hazards Statement, An increased risk for\nsneaker waves and strong rip currents with breaking waves of 15\nto 20 ft expected. For the High Surf Warning, Dangerously large\nbreaking waves of 25 to 35 ft, with occasional sets of 40 to 50\nft at favored breakpoints. For the Coastal Flood Advisory, large\nbreaking waves will run up beaches and crash over seawalls,\ninundating adjacent, low-lying infrastructure.\n\n* WHERE...Coastal North Bay Including Point Reyes National\nSeashore, San Francisco Peninsula Coast and Northern Monterey\nBay.\n\n* WHEN...For the Beach Hazards Statement, through Friday\nafternoon. For the High Surf Warning, from 6 PM Friday to 4 AM\nPST Sunday. For the Coastal Flood Advisory, from midnight\nFriday night to 6 PM PST Saturday.\n\n* IMPACTS...High tides will result in flooding of low-lying\ninfrastructure, isolated road closures, and coastal erosion.\nRising tides will bring water and waves farther up the beach\nthan normal, restricting escape from beaches and coastal\nareas. Dangerously large breaking waves can overpower\nswimmers, pulling people into the sea from beaches, jetties,\nand rocks resulting in significant physical injury and\nincreasing the risk of drowning. Waves can sweep across the\nshoreline without warning, pulling people into the sea from\nbeaches, jetties, and rocks.\n\n* ADDITIONAL DETAILS...The Coastal Flood Advisory on Saturday is\nspecifically for the Pacific Coast, where large breaking waves\nwill spill over sea walls and run up beaches onto adjacent\ninfrastructure.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nEveryone should remain out of the water due to life-threatening\nsurf conditions. Stay off of jetties, piers, and other waterside\ninfrastructure.\n\nStay off of jetties, piers, rocks, and other waterside\ninfrastructure. Remain out of the water to avoid hazardous surf\nand NEVER turn your back on the ocean. Monitor local weather,\nsurf and tide forecasts at www.weather.gov/mtr.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMTR"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KMTR 120648"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH FRIDAY AFTERNOON... ...HIGH SURF WARNING REMAINS IN EFFECT FROM 6 PM FRIDAY TO 4 AM PST SUNDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM MIDNIGHT FRIDAY NIGHT TO 6 PM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMTR.BH.S.0024.000000T0000Z-261114T0200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T18:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b5be439c18dd1d2d8f62b3a64cbb95f0f6a1b66.002.2,2026-11-11T08:08:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3b178227abcba8935da903554eef89daded876da.002.1,2026-11-11T10:17:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.750f043d2e3232d94baf2bf959b68cf64bfe15dd.002.2,2026-11-11T00:14:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
                     ]
                 }
             }
@@ -3186,90 +3352,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
-                "areaDesc": "Greater Lake Tahoe Area; Greater Lake Tahoe Area",
-                "geocode": {
-                    "SAME": [
-                        "006003",
-                        "006017",
-                        "006057",
-                        "006061",
-                        "032005",
-                        "032031",
-                        "032510"
-                    ],
-                    "UGC": [
-                        "CAZ072",
-                        "NVZ002"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ072",
-                    "https://api.weather.gov/zones/forecast/NVZ002"
-                ],
-                "references": [],
-                "sent": "2026-11-11T11:52:00-08:00",
-                "effective": "2026-11-11T11:52:00-08:00",
-                "onset": "2026-11-12T22:00:00-08:00",
-                "expires": "2026-11-12T16:15:00-08:00",
-                "ends": "2026-11-13T10:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Lake Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Reno NV",
-                "headline": "Lake Wind Advisory issued November 11 at 11:52AM PST until November 13 at 10:00AM PST by NWS Reno NV",
-                "description": "* WHAT...Southwest winds 15 to 25 mph with gusts up to 35 mph and\nwaves 2 to 5 feet for Lake Tahoe.\n\n* WHERE...Greater Lake Tahoe Area.\n\n* WHEN...From 10 PM Thursday to 10 AM PST Friday.\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
-                "instruction": "Check lake conditions before heading out and be prepared for a sudden\nincrease in winds and wave heights. Consider postponing boating\nactivities on the lake until a day with less wind.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWREV"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS75 KREV 111952"
-                    ],
-                    "NWSheadline": [
-                        "LAKE WIND ADVISORY IN EFFECT FROM 10 PM THURSDAY TO 10 AM PST FRIDAY FOR LAKE TAHOE"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KREV.LW.Y.0032.261113T0600Z-261113T1800Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T10:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "LWY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.002.1",
             "type": "Feature",
             "geometry": null,
@@ -3451,6 +3533,90 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d08ae2ffb1401125073f838e67f1452d9692ce94.001.1",
+                "areaDesc": "Greater Lake Tahoe Area; Greater Lake Tahoe Area",
+                "geocode": {
+                    "SAME": [
+                        "006003",
+                        "006017",
+                        "006057",
+                        "006061",
+                        "032005",
+                        "032031",
+                        "032510"
+                    ],
+                    "UGC": [
+                        "CAZ072",
+                        "NVZ002"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ072",
+                    "https://api.weather.gov/zones/forecast/NVZ002"
+                ],
+                "references": [],
+                "sent": "2026-11-11T11:52:00-08:00",
+                "effective": "2026-11-11T11:52:00-08:00",
+                "onset": "2026-11-12T22:00:00-08:00",
+                "expires": "2026-11-12T16:15:00-08:00",
+                "ends": "2026-11-13T10:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Lake Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Reno NV",
+                "headline": "Lake Wind Advisory issued November 11 at 11:52AM PST until November 13 at 10:00AM PST by NWS Reno NV",
+                "description": "* WHAT...Southwest winds 15 to 25 mph with gusts up to 35 mph and\nwaves 2 to 5 feet for Lake Tahoe.\n\n* WHERE...Greater Lake Tahoe Area.\n\n* WHEN...From 10 PM Thursday to 10 AM PST Friday.\n\n* IMPACTS...Strong winds and rough waves on area lakes will create\nhazardous conditions for small craft.",
+                "instruction": "Check lake conditions before heading out and be prepared for a sudden\nincrease in winds and wave heights. Consider postponing boating\nactivities on the lake until a day with less wind.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWREV"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS75 KREV 111952"
+                    ],
+                    "NWSheadline": [
+                        "LAKE WIND ADVISORY IN EFFECT FROM 10 PM THURSDAY TO 10 AM PST FRIDAY FOR LAKE TAHOE"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KREV.LW.Y.0032.261113T0600Z-261113T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-13T10:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "LWY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3f51a15a0b5f1af6a1dea1d0d1333b8731b4c9a2.001.1",
             "type": "Feature",
             "geometry": null,
@@ -3524,5 +3690,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-12T17:39:30+00:00"
+    "updated": "2026-11-12T17:54:35+00:00"
 }
