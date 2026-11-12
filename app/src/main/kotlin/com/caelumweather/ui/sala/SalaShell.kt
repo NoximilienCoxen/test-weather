@@ -410,6 +410,9 @@ fun SalaShell(
     // dall'ora mostrata come tutto il resto, quindi trascinando la barra delle
     // ore la nebbia si alza e il vento cala insieme al cielo.
     val atmosferaVoluta = remember(state.shownHours, state.selectedHour, codice, hour) {
+        // ESPERIMENTO (temporaneo): atmosfera spenta, per capire se e' lei a
+        // far cadere l'emulatore della CI. Vedi CONTESTO §64.8-quinquies.
+        if (!ATMOSFERA_ACCESA) return@remember Atmosfera()
         val ore = state.shownHours.ifEmpty { listOfNotNull(hour) }
         atmosferaBersaglio(ore, if (state.shownHours.isEmpty()) 0 else state.selectedHour, codice)
     }
@@ -423,7 +426,7 @@ fun SalaShell(
     )
     // Cio' che si posa sul vetro della scheda: la brina col gelo, le gocce con
     // la pioggia forte (non con neve o grandine, che non scivolano).
-    val vetro = Vetro(
+    val vetro = if (!ATMOSFERA_ACCESA) Vetro() else Vetro(
         gelo = atmosfera.gelo * (1f - scena.bagnato * 0.5f),
         pioggia = ((scena.bagnato - 0.7f) / 0.3f).coerceIn(0f, 1f) * (1f - scena.neve) * (1f - scena.ghiaccio),
     )
@@ -1292,3 +1295,6 @@ internal fun List<WeatherAlert>.prossimaUfficiale(momento: LocalDateTime): Weath
  * tramonto - `tingiCielo` ne mette di meno da se'.
  */
 private const val FORZA_TINTA = 0.5f
+
+/** ESPERIMENTO temporaneo: falso spegne nebbia, vento, caldo, brina e gocce. */
+private const val ATMOSFERA_ACCESA = false
