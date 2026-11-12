@@ -167,6 +167,26 @@ fun SalaOggiScreen(
                 )
                 val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
                 val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
+                Text(
+                    text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
+                    style = SalaType.rowNote,
+                    color = palette.inkFaint,
+                )
+                // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
+                // giorno, e la riga direbbe una cosa per un'altra. La riga
+                // manca del tutto quando ieri non c'e' (scorta vecchia).
+                val suIeri = if (futuro) null else scartoDaIeri(giorno, state.forecast?.ieri) { state.unit.from(it) }
+                if (suIeri != null) {
+                    Text(
+                        text = scartoDaIeriBreve(suIeri),
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                        maxLines = 1,
+                    )
+                }
+                // La mini-curva su una riga sua: accanto a min e max toglieva
+                // spazio a "condividi", che andava a capo. La colonna resta piu'
+                // bassa del numero grande, quindi l'altezza non cambia.
                 Row(
                     modifier = Modifier
                         .cedevole()
@@ -181,28 +201,12 @@ fun SalaOggiScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Text(
-                        text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
-                        style = SalaType.rowNote,
-                        color = palette.inkFaint,
-                    )
                     MiniGiornata(
                         ore = state.shownHours,
                         scelta = state.selectedHour,
                         aperta = giornataAperta,
                         palette = palette,
-                    )
-                }
-                // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
-                // giorno, e la riga direbbe una cosa per un'altra. La riga
-                // manca del tutto quando ieri non c'e' (scorta vecchia).
-                val suIeri = if (futuro) null else scartoDaIeri(giorno, state.forecast?.ieri) { state.unit.from(it) }
-                if (suIeri != null) {
-                    Text(
-                        text = scartoDaIeriBreve(suIeri),
-                        style = SalaType.rowNote,
-                        color = palette.inkFaint,
-                        maxLines = 1,
+                        etichetta = tr("giornata", "the day", "Tag", "journée", "el día"),
                     )
                 }
             }
@@ -217,6 +221,8 @@ fun SalaOggiScreen(
                     text = tr("condividi", "share", "teilen", "partager", "compartir"),
                     style = SalaType.pill,
                     color = palette.accent,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier = Modifier
                         .padding(bottom = 12.dp)
                         .clip(RoundedCornerShape(16.dp))

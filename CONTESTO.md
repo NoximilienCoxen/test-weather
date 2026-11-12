@@ -8369,7 +8369,7 @@ rispetto a `main`: il numero grande saliva nel cielo e copriva **il sole, la
 luna e il loro arco** (confronto fra gli scatti della CI di 1d493b1 e
 b3b8f76, `cielo-mezzogiorno-sereno.png`). Il cielo e' il punto di questa sala.
 
-Adesso accanto a "min · max", sul cielo, c'e' `MiniGiornata`: la forma della
+Adesso sotto "min · max", su una riga sua, c'e' `MiniGiornata` ("giornata ›"): la forma della
 giornata in 40 x 14 dp, col punto sull'ora scelta e una freccetta che gira.
 Toccandola si apre nella scheda (`ComparsaMorbida`) la curva grande con "un
 anno fa"; toccandola di nuovo si chiude. **Da chiusa la scheda e' alta come

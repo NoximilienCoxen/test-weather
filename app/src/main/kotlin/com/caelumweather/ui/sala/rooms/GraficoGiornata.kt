@@ -323,6 +323,8 @@ internal fun MiniGiornata(
     aperta: Boolean,
     palette: SalaPalette,
     modifier: Modifier = Modifier,
+    /** La parola fra la curva e la freccetta, che dice cosa si apre. */
+    etichetta: String? = null,
 ) {
     val temperature = remember(ore) { ore.map { it.temperature } }
     val validi = temperature.filterNotNull()
@@ -345,6 +347,9 @@ internal fun MiniGiornata(
             temperature.getOrNull(scelta)?.let { t ->
                 drawCircle(palette.accent, radius = 2.4.dp.toPx(), center = Offset(x(scelta), y(t)))
             }
+        }
+        etichetta?.let {
+            Text(text = " $it", style = SalaType.rowNote, color = palette.accent, maxLines = 1)
         }
         Text(
             text = " ›",
