@@ -8454,8 +8454,17 @@ stesso meteo per tutti: pioggia e visibilita' sotto il chilometro a Forli'):
 | `89ecce2` | come sopra ma con icone, battito, colori (senza onda) | 4 |
 | `a04e107` | solo battito e colori | 4 |
 
-Restavano il battito della pastiglia e i colori della curva. **Il sospetto e'
-la sfumatura della curva a 24 tappe**: oltre le otto il motore grafico non la
+| `5e941cf` | tutto, curva con sfumatura a 5 tappe | 6 |
+
+**Il battito era inerte in tutti questi giri**: quel giorno l'avviso era solo
+"in arrivo", e la pastiglia batte solo per un avviso in corso. Quindi nel giro
+`a04e107` l'unica aggiunta attiva era **la sfumatura sul tratto della curva**,
+e bastava; a cinque tappe cadeva lo stesso. Ora la curva (e la mini-curva) e'
+fatta di tratti a tinta unita, uno per ora, col colore della temperatura media
+del tratto: all'occhio e' identica. Il ragionamento che segue, sulle otto tappe,
+era la prima ipotesi ed e' stato smentito: lo si lascia perche' non lo si rifaccia.
+
+Prima ipotesi (smentita): **la sfumatura della curva a 24 tappe**: oltre le otto il motore grafico non la
 calcola piu' al volo ma ne fa una piccola immagine da mandare alla scheda
 grafica, e sull'emulatore la scheda grafica e' emulata (`swiftshader_indirect`):
 una morte di tutta la macchina, senza un errore nei log dell'app, e' il guasto
@@ -8464,7 +8473,9 @@ con lo stesso aspetto. Le correzioni fatte prima di sapere (nebbia in una
 trama, erba a segmenti, onda senza stato scritto durante la disposizione e col
 suo livello solo mentre corre) restano: sono comunque piu' leggere.
 
-**Regola**: niente sfumature con piu' di otto tappe.
+**Regola**: niente sfumature sui tratti (`Stroke` con un `Brush`): sull'emulatore
+della CI fanno cadere la macchina. Sulle aree piene (`drawRect`, `drawPath` pieno)
+le sfumature a due tappe ci sono da sempre e non danno problemi.
 
 `AtmosferaRenderTest` rende il cielo vero con ogni effetto
 (`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno

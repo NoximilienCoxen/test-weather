@@ -252,10 +252,10 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         }
     }
 
-    val tracciato = Path()
     val area = Path()
+    // Un tratto per ora, ciascuno a tinta unita: vedi sotto.
+    val tratti = ArrayList<Path>(punti.size)
     val xy = punti.map { (o, t) -> Offset(x(o.toFloat()), y(t)) }
-    tracciato.moveTo(xy[0].x, xy[0].y)
     area.moveTo(xy[0].x, size.height)
     area.lineTo(xy[0].x, xy[0].y)
     for (i in 0 until xy.size - 1) {
@@ -265,8 +265,8 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         val p3 = xy.getOrElse(i + 2) { xy[i + 1] }
         val c1 = Offset(p1.x + (p2.x - p0.x) / 6f, p1.y + (p2.y - p0.y) / 6f)
         val c2 = Offset(p2.x - (p3.x - p1.x) / 6f, p2.y - (p3.y - p1.y) / 6f)
-        tracciato.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
         area.cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y)
+        tratti.add(Path().apply { moveTo(p1.x, p1.y); cubicTo(c1.x, c1.y, c2.x, c2.y, p2.x, p2.y) })
     }
     area.lineTo(xy.last().x, size.height)
     area.close()
@@ -277,7 +277,18 @@ internal fun androidx.compose.ui.graphics.drawscope.DrawScope.disegnaGiornata(
         // dove fa freddo, terracotta dove fa caldo. La scala e' assoluta (vedi
         // [coloreDellaTemperatura]): un giorno freddo resta blu anche se la sua
         // massima e' "alta" per lui.
-        drawPath(tracciato, pennelloDellaGiornata(punti, unita, palette, ::x), style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        //
+        // **A tratti di tinta unita, non con una sfumatura.** La sfumatura sul
+        // tratto - prima a 24 tappe, poi a 5 - faceva cadere l'emulatore della
+        // CI ogni volta, ed era l'unica aggiunta accesa nel giro che l'ha
+        // provato (CONTESTO §64.8-quinquies). Un tratto per ora col colore della
+        // sua temperatura media: fra un'ora e l'altra il colore cambia di poco,
+        // e all'occhio resta continuo.
+        val tratto = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
+        tratti.forEachIndexed { i, pezzo ->
+            val media = (punti[i].second + punti[i + 1].second) / 2.0
+            drawPath(pezzo, coloreDellaTemperatura(media, palette), style = tratto)
+        }
     }
 
     // Minima e massima: un punto e il numero, sopra la massima e sotto la minima.
@@ -341,14 +352,17 @@ internal fun MiniGiornata(
             val n = (temperature.size - 1).coerceAtLeast(1)
             fun x(i: Int) = size.width * i / n
             fun y(t: Double) = (size.height - 1.dp.toPx() - (size.height - 2.dp.toPx()) * ((t - minimo) / intervallo)).toFloat()
-            val linea = Path()
-            var iniziata = false
-            temperature.forEachIndexed { i, t ->
-                if (t == null) return@forEachIndexed
-                if (!iniziata) { linea.moveTo(x(i), y(t)); iniziata = true } else linea.lineTo(x(i), y(t))
-            }
+            // Tratti di tinta unita, come nella curva grande: niente sfumature.
             val punti = temperature.mapIndexedNotNull { i, t -> t?.let { i to it } }
-            drawPath(linea, pennelloDellaGiornata(punti, TempUnit.CELSIUS, palette) { x(it.roundToInt()) }, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            for (k in 0 until punti.size - 1) {
+                val (i1, t1) = punti[k]
+                val (i2, t2) = punti[k + 1]
+                drawLine(
+                    coloreDellaTemperatura((t1 + t2) / 2.0, palette),
+                    Offset(x(i1), y(t1)), Offset(x(i2), y(t2)),
+                    strokeWidth = 1.6.dp.toPx(), cap = StrokeCap.Round,
+                )
+            }
             temperature.getOrNull(scelta)?.let { t ->
                 drawCircle(coloreDellaTemperatura(t, palette), radius = 2.4.dp.toPx(), center = Offset(x(scelta), y(t)))
             }
@@ -382,45 +396,4 @@ internal fun coloreDellaTemperatura(celsius: Double, palette: SalaPalette): Colo
         celsius <= 24.0 -> androidx.compose.ui.graphics.lerp(tiepido, caldo, ((celsius - 14.0) / 10.0).toFloat())
         else -> caldo
     }
-}
-
-/**
- * Il pennello orizzontale che colora una curva ora per ora con
- * [coloreDellaTemperatura]. [x] dice dove sta in larghezza ciascuna ora.
- * [unita] non serve al colore - la scala e' in Celsius - ma resta nella firma
- * perche' chi chiama non debba convertire.
- */
-@Suppress("UNUSED_PARAMETER")
-internal fun pennelloDellaGiornata(
-    punti: List<Pair<Int, Double>>,
-    unita: TempUnit,
-    palette: SalaPalette,
-    x: (Float) -> Float,
-): Brush {
-    if (punti.size < 2) return androidx.compose.ui.graphics.SolidColor(palette.accent)
-    val inizio = x(punti.first().first.toFloat())
-    val fine = x(punti.last().first.toFloat())
-    val largo = (fine - inizio).coerceAtLeast(1f)
-    // **Cinque tappe, non ventiquattro.** Una tappa per ora faceva una sfumatura
-    // di 24 colori, che oltre le otto tappe il motore grafico non calcola piu' al
-    // volo: la mette in una piccola immagine da mandare alla scheda grafica.
-    // Sull'emulatore della CI, con la scheda grafica emulata, e' stato l'unico
-    // pezzo nuovo a farlo cadere (trovato per esclusione, 12 novembre 2026).
-    // Cinque tappe a intervalli regolari, con la temperatura interpolata fra
-    // le ore, bastano a passare dal blu al terracotta senza scalini.
-    val prima = punti.first().first.toFloat()
-    val ultima = punti.last().first.toFloat()
-    fun temperaturaA(ora: Float): Double {
-        val dopo = punti.indexOfFirst { it.first >= ora }.let { if (it < 0) punti.lastIndex else it }
-        if (dopo == 0) return punti[0].second
-        val (o1, t1) = punti[dopo - 1]
-        val (o2, t2) = punti[dopo]
-        val f = if (o2 == o1) 0.0 else ((ora - o1) / (o2 - o1)).toDouble().coerceIn(0.0, 1.0)
-        return t1 + (t2 - t1) * f
-    }
-    val fermate = (0..4).map { k ->
-        val frazione = k / 4f
-        frazione to coloreDellaTemperatura(temperaturaA(prima + (ultima - prima) * frazione), palette)
-    }
-    return Brush.horizontalGradient(colorStops = fermate.toTypedArray(), startX = inizio, endX = fine)
 }
