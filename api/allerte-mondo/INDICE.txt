@@ -55,7 +55,7 @@
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=35606
+   HTTP 200  tipo=application/ld+json  byte=35543
    nessun segno noto
    inizio: { "total": 534, "land": 159, "marine": 375, "regions": { "AL": 253, "AT": 36, "GL": 32, "GM": 1, "PA": 51, "PI": 2 }, "areas": { "AK": 5, "AL": 5, "AM": 9, "AN": 27, "AR": 4, "AZ": 1, "CA": 47, "CO": 2, "CT": 1, "FL": 7, "FM": 1, "G
 
@@ -146,14 +146,14 @@
 == geo-sapporo
    https://geocoding-api.open-meteo.com/v1/search?name=Sapporo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=664
+   HTTP 200  tipo=application/json; charset=utf-8  byte=665
    nessun segno noto
    inizio: {"results":[{"id":2128295,"name":"Sapporo","latitude":43.06667,"longitude":141.35,"elevation":26.0,"feature_code":"PPLA","country_code":"JP","admin1_id":2130037,"admin2_id":2128291,"timezone":"Asia/Tokyo","population":1973832,"country_id":1861060,"country":"Giappone","admin1":"Hokkaido","admin2":"Sapporo-shi"},{"id":2128294,"name":"Sapporo-dake","latitude":42.9,"longitude":141.2,"elevation":1264.0
 
 == geo-toronto
    https://geocoding-api.open-meteo.com/v1/search?name=Toronto&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=697
+   HTTP 200  tipo=application/json; charset=utf-8  byte=698
    nessun segno noto
    inizio: {"results":[{"id":6167865,"name":"Toronto","latitude":43.70643,"longitude":-79.39864,"elevation":161.0,"feature_code":"PPLA","country_code":"CA","admin1_id":6093943,"timezone":"America/Toronto","population":2794356,"country_id":6251999,"country":"Canada","admin1":"Ontario"},{"id":5174095,"name":"Toronto","latitude":40.46423,"longitude":-80.60091,"elevation":214.0,"feature_code":"PPL","country_code
 
@@ -188,8 +188,8 @@
 == ar-smn
    https://ssl.smn.gob.ar/CAP/AR.php
    Accept: application/rss+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/rss+xml; charset=UTF-8  byte=141917
-   <item=199
+   HTTP 200  tipo=application/rss+xml; charset=UTF-8  byte=142406
+   <item=200
    inizio: <?xml version="1.0" encoding="UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/CAP/estilo_ar.xsl"?> <rss xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"> <channel> <title>Ultimos Avisos publicados por el Servicio Meteorologico Nacional (SMN) de Argentina</title> <link>h
 
 == jp-jma-feed-lungo
@@ -224,7 +224,7 @@
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1385
+   HTTP 403  tipo=text/html  byte=1383
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
@@ -238,9 +238,9 @@
 == br-inmet-doc: https://apiprevmet3.inmet.gov.br/avisos/rss/56399  HTTP 200  tipo=text/xml  byte=136788
    <alert=1  <info=1  <event>=1  <severity>=1  <polygon>=1  <areaDesc>=1  <onset>=1  <expires>=1  <geocode>=0
    <?xml version="1.0" encoding="UTF-8" standalone="no"?><alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>urn:oid:2.49.0.0.76.0.2026.28698.1</identifier><sender>info.aviso@inmet.gov.br</sender><sent>2026-11-13T12:38:06-03:00</sent><status>Actual</status><msgType>Alert</msgType><scope>Public</scope><info><language>pt-BR</language><category>Met</category><event>Tempestade</event><responseType>Prepare</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-11-15T00:00:00-03:00</onset><expires>2026-11-15T23:59:00-03:00</expires><senderName>Instituto Nacional de Meteorologia</senderName><headline>Aviso de Tempestade. Severidade Grau: Moderate</headline><description>INMET publica aviso iniciando em: 15/11/2026 00:00. Chuva entre 20 e 30 mm/h ou até 50 mm/dia, ventos intensos (40-60 km/h), e queda de granizo. Baixo risco de corte 
-== ar-smn-doc: https://ssl.smn.gob.ar/feeds/CAP/avisocortoplazo/2026_11_13_1242_cap_es.xml  HTTP 200  tipo=text/xml  byte=2138
+== ar-smn-doc: https://ssl.smn.gob.ar/feeds/CAP/avisocortoplazo/2026_11_13_1255_cap_es.xml  HTTP 200  tipo=text/xml  byte=2170
    <alert=0  <info=0  <event>=0  <severity>=0  <polygon>=0  <areaDesc>=0  <onset>=0  <expires>=0  <geocode>=0
-   <?xml version = "1.0" encoding = "UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/feeds/alerta_cap_es.xsl"?> <cap:alert xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2"> <cap:identifier>urn:oid:2.49.0.1.32.0.2026.11.13.12.42.00</cap:identifier><cap:sender>smn@smn.gov.ar</cap:sender><cap:sent>2026-11-13T12:42:00-03:00</cap:sent><cap:status>Actual</cap:status><cap:msgType>Alert</cap:msgType><cap:scope>Public</cap:scope><cap:info> <cap:category>Met</cap:category><cap:event>TORMENTAS FUERTES</cap:event><cap:urgency>Immediate</cap:urgency><cap:severity>Severe</cap:severity><cap:certainty>Observed</cap:certainty><cap:expires>2026-11-13T14:42:00-03:00</cap:expires><cap:senderName>SERVICIO METEOROLOGICO NACIONAL - ARGENTINA</cap:senderName><cap:headline>AVISO NARANJA POR TORMENTAS FUERTES CON LLUVIAS INTENSAS, RAFAGAS Y OCASIONAL CAIDA DE GRANIZO</cap:headline
+   <?xml version = "1.0" encoding = "UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/feeds/alerta_cap_es.xsl"?> <cap:alert xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2"> <cap:identifier>urn:oid:2.49.0.1.32.0.2026.11.13.12.55.00</cap:identifier><cap:sender>smn@smn.gov.ar</cap:sender><cap:sent>2026-11-13T12:55:00-03:00</cap:sent><cap:status>Actual</cap:status><cap:msgType>Alert</cap:msgType><cap:scope>Public</cap:scope><cap:info> <cap:category>Met</cap:category><cap:event>TORMENTAS FUERTES</cap:event><cap:urgency>Immediate</cap:urgency><cap:severity>Severe</cap:severity><cap:certainty>Observed</cap:certainty><cap:expires>2026-11-13T14:55:00-03:00</cap:expires><cap:senderName>SERVICIO METEOROLOGICO NACIONAL - ARGENTINA</cap:senderName><cap:headline>AVISO NARANJA POR TORMENTAS FUERTES CON LLUVIAS INTENSAS, RAFAGAS Y OCASIONAL CAIDA DE GRANIZO</cap:headline
 == nz-metservice-doc: nessuna voce
 == jp-jma-feed-lungo: 1833261 caratteri, aggiornamenti da 2026-11-06T12:48:38Z a 2026-11-13T21:47:44+09:00, 1441 VPWW53 per 57 uffici
 == ifrc-alerthub: script ['https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV', '/assets/index-DNItz1Iz.js']
