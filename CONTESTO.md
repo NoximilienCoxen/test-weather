@@ -8520,3 +8520,13 @@ widget unico allargato a 4x2 e la SETTIMANA.
 
 **Da guardare in mano**: allargare e stringere il widget unico (deve cambiare
 faccia subito, senza stirarsi), e ruotare il telefono con un widget sulla Home.
+
+### 65.1 Le forme estreme del widget unico
+
+Il test nuovo `widget unico, le forme estreme` (WidgetOverflowTest) al primo
+giro ha trovato tre uscite dal bordo, tutte di numeri dimensionati
+sull'altezza e mai sulla larghezza: la cifra del tempo adesso in 65x410 e
+100x250 ("-12°" largo tre volte il riquadro), e i massimi e minimi della
+settimana in 370x400 ("-14°" oltre il bordo, numeri vicini che si toccano). Ora
+i due corpi passano da `fittingBrush` sulla larghezza della colonna, e sotto i
+100 dp di larghezza il widget unico mostra la cella (MINI) a qualunque altezza.

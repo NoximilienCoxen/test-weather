@@ -13,6 +13,8 @@ class UnicoWidgetTest {
     fun `una cella e' la temperatura`() {
         assertEquals(VistaWidget.MINI, vistaDaForma(70f, 70f))
         assertEquals(VistaWidget.MINI, vistaDaForma(57f, 110f))
+        // Una colonna tirata in verticale resta la cella, non il tempo adesso.
+        assertEquals(VistaWidget.MINI, vistaDaForma(65f, 410f))
     }
 
     @Test

@@ -80,8 +80,10 @@ private fun DrawScope.columns(
         days.map { it.label }, step * 0.92f, area.height * 0.105f, type,
         weight = 600, width = 78, letterSpacingEm = 0.08f,
     )
-    val high = type.brush(area.height * 0.125f, weight = 700, width = 82)
-    val low = type.brush(area.height * 0.115f, weight = 500, width = 82)
+    // Il corpo segue l'altezza, ma non oltre la colonna: nel 4x4 del widget
+    // unico "-14°" a corpo pieno usciva dal bordo e toccava il vicino.
+    val high = fittingBrush(days.map { d -> d.tempMax?.roundToInt()?.let { "$it°" } ?: "--" }, step * 0.90f, area.height * 0.125f, type, weight = 700, width = 82)
+    val low = fittingBrush(days.map { d -> d.tempMin?.roundToInt()?.let { "$it°" } ?: "--" }, step * 0.90f, area.height * 0.115f, type, weight = 500, width = 82)
 
     val glyphTop = area.top + lineHeight(label) * 1.05f
     val glyphSize = minOf(step * 0.56f, area.height * 0.20f)
