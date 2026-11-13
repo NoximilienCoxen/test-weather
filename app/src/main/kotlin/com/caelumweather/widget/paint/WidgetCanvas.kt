@@ -88,11 +88,7 @@ internal object WidgetCanvas {
         val pixels = wDp * scale * hDp * scale
         if (pixels > PIXEL_MAX) scale *= sqrt(PIXEL_MAX / pixels)
 
-        val cut = when {
-            wDp >= LARGO_DA.value && hDp >= ALTO_DA.value -> Cut.GRANDE
-            wDp >= LARGO_DA.value -> Cut.MEDIO
-            else -> Cut.PICCOLO
-        }
+        val cut = taglio(wDp, hDp)
 
         return Frame(
             widthPx = (wDp * scale).roundToInt().coerceAtLeast(1),
@@ -132,6 +128,13 @@ internal object WidgetCanvas {
             body()
         }
         return bitmap
+    }
+
+    /** Il taglio per una misura in dp. Separato per i test delle forme. */
+    fun taglio(wDp: Float, hDp: Float): Cut = when {
+        wDp >= LARGO_DA.value && hDp >= ALTO_DA.value -> Cut.GRANDE
+        wDp >= LARGO_DA.value -> Cut.MEDIO
+        else -> Cut.PICCOLO
     }
 
     /** La misura del riquadro in dp, come la conosce il sistema. */
