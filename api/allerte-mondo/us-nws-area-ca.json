@@ -120,157 +120,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5e8ca90a6ce41851221da95be058c252a4be3dfc.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -117.9,
-                            33.62
-                        ],
-                        [
-                            -117.62,
-                            33.82
-                        ],
-                        [
-                            -116.97,
-                            33.06
-                        ],
-                        [
-                            -116.73,
-                            32.57
-                        ],
-                        [
-                            -117.17,
-                            32.53
-                        ],
-                        [
-                            -117.17,
-                            32.6
-                        ],
-                        [
-                            -117.27,
-                            32.68
-                        ],
-                        [
-                            -117.31,
-                            32.85
-                        ],
-                        [
-                            -117.28,
-                            32.99
-                        ],
-                        [
-                            -117.39,
-                            33.16
-                        ],
-                        [
-                            -117.63,
-                            33.43
-                        ],
-                        [
-                            -117.72,
-                            33.46
-                        ],
-                        [
-                            -117.78,
-                            33.54
-                        ],
-                        [
-                            -117.9,
-                            33.62
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5e8ca90a6ce41851221da95be058c252a4be3dfc.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.5e8ca90a6ce41851221da95be058c252a4be3dfc.001.1",
-                "areaDesc": "Orange, CA; Riverside, CA; San Diego, CA",
-                "geocode": {
-                    "SAME": [
-                        "006059",
-                        "006065",
-                        "006073"
-                    ],
-                    "UGC": [
-                        "CAC059",
-                        "CAC065",
-                        "CAC073"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/CAC059",
-                    "https://api.weather.gov/zones/county/CAC065",
-                    "https://api.weather.gov/zones/county/CAC073"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1eea6b5a708d3f5682d1b6f909a4202eaec1c1c6.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.1eea6b5a708d3f5682d1b6f909a4202eaec1c1c6.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-13T04:14:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-13T05:17:00-08:00",
-                "effective": "2026-11-13T05:17:00-08:00",
-                "onset": "2026-11-13T05:17:00-08:00",
-                "expires": "2026-11-13T06:15:00-08:00",
-                "ends": "2026-11-13T06:15:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS San Diego CA",
-                "headline": "Flood Advisory issued November 13 at 5:17AM PST until November 13 at 6:15AM PST by NWS San Diego CA",
-                "description": "* WHAT...Urban area and small stream flooding caused by excessive\nrainfall continues.\n\n* WHERE...Riverside County in southern California...\nSoutheastern Orange County in southwestern California...\nWestern San Diego County in southwestern California...\n\n* WHEN...Until 615 AM PST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\nWater over roadways.\n\n* ADDITIONAL DETAILS...\n- At 516 AM PST, Doppler radar indicated heavy rain. This  will\ncause urban and small stream flooding. Between 0.25 and 0.75\ninches of rain have fallen.\n- Additional rainfall amounts up to 0.25 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nChula Vista, Irvine, Oceanside, Carlsbad, El Cajon, Vista,\nMission Viejo, San Clemente, Encinitas and National City.\n- https://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe especially cautious at night when it is harder to recognize the\ndangers of flooding.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSSGX"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS86 KSGX 131317"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD ADVISORY REMAINS IN EFFECT UNTIL 615 AM PST THIS MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KSGX.FA.Y.0077.000000T0000Z-261113T1415Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-13T06:15:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FAY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dce93db644d9d6e669f76e3001252320af0caa63.001.1",
             "type": "Feature",
             "geometry": {
@@ -2017,89 +1866,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
-                "areaDesc": "Owens Valley South",
-                "geocode": {
-                    "SAME": [
-                        "006027"
-                    ],
-                    "UGC": [
-                        "CAZ581"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ581"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.693e9d9df5917a57676224ca9e6b8c828aef8b6b.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.693e9d9df5917a57676224ca9e6b8c828aef8b6b.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-12T10:02:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-12T23:06:00-08:00",
-                "effective": "2026-11-12T23:06:00-08:00",
-                "onset": "2026-11-13T10:00:00-08:00",
-                "expires": "2026-11-13T10:30:00-08:00",
-                "ends": "2026-11-14T01:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Las Vegas NV",
-                "headline": "Wind Advisory issued November 12 at 11:06PM PST until November 14 at 1:00AM PST by NWS Las Vegas NV",
-                "description": "* WHAT...South winds 20 to 30 mph with gusts up to 45 mph expected.\n\n* WHERE...Southern Owens Valley.\n\n* WHEN...From 10 AM Friday to 1 AM PST Saturday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
-                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWVEF"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS75 KVEF 130706"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 1 AM PST SATURDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KVEF.WI.Y.0022.261113T1800Z-261114T0900Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T01:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.002.1",
             "type": "Feature",
             "geometry": null,
@@ -2169,6 +1935,89 @@
                     ],
                     "expiredReferences": [
                         "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.42f202c34883f189aa0b12181dd09cf7adac747e.001.1,2026-11-12T00:05:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.4ef0a7cc5a55f50b03ea69e9dad118618af68b1b.001.1",
+                "areaDesc": "Owens Valley South",
+                "geocode": {
+                    "SAME": [
+                        "006027"
+                    ],
+                    "UGC": [
+                        "CAZ581"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ581"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.693e9d9df5917a57676224ca9e6b8c828aef8b6b.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.693e9d9df5917a57676224ca9e6b8c828aef8b6b.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-12T10:02:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-12T23:06:00-08:00",
+                "effective": "2026-11-12T23:06:00-08:00",
+                "onset": "2026-11-13T10:00:00-08:00",
+                "expires": "2026-11-13T10:30:00-08:00",
+                "ends": "2026-11-14T01:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Las Vegas NV",
+                "headline": "Wind Advisory issued November 12 at 11:06PM PST until November 14 at 1:00AM PST by NWS Las Vegas NV",
+                "description": "* WHAT...South winds 20 to 30 mph with gusts up to 45 mph expected.\n\n* WHERE...Southern Owens Valley.\n\n* WHEN...From 10 AM Friday to 1 AM PST Saturday.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
+                "instruction": "Winds this strong can make driving difficult, especially for high\nprofile vehicles. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWVEF"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS75 KVEF 130706"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT FROM 10 AM FRIDAY TO 1 AM PST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KVEF.WI.Y.0022.261113T1800Z-261114T0900Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-14T01:00:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -4504,5 +4353,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-13T14:05:06+00:00"
+    "updated": "2026-11-13T14:32:14+00:00"
 }
