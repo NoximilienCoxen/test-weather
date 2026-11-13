@@ -61,7 +61,10 @@ internal fun DrawScope.hoursArt(
     val box = Rect(pad, pad, size.width - pad, size.height - pad)
     val shown = hours.take(if (frame.cut == Cut.PICCOLO) 4 else 6)
 
-    val nameSize = box.height * 0.095f
+    // Il corpo della testata segue l'altezza fino a 4x2; oltre, nel 4x4 del
+    // widget unico, "SETTIMANA" diventava cosi' grande da ridurre il nome a
+    // "FONT…". Oltre i 16 dp non serve: e' un'etichetta, non un titolo.
+    val nameSize = minOf(box.height * 0.095f, 16.dp.toPx())
     val tag = type.brush(nameSize, weight = 600, width = 78, letterSpacingEm = 0.10f)
     val tagWidth = type.widthOf(TITOLO_ORE, tag)
     val name = fitText(
