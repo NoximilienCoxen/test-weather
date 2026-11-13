@@ -112,13 +112,34 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p /tmp/ciout
-          MARE="https://marine-api.open-meteo.com/v1/marine?timezone=auto&forecast_days=1&hourly=wave_height,wave_direction,wave_period,sea_surface_temperature"
-          for punto in "rimini:44.06:12.57" "forli:44.2226:12.0407"; do
+          MARE="https://marine-api.open-meteo.com/v1/marine?timezone=auto&forecast_days=1&hourly=wave_height,wave_direction,wave_period,sea_surface_temperature,sea_level_height_msl"
+          for punto in "rimini:44.06:12.57" "venezia:45.43:12.33" "forli:44.2226:12.0407"; do
             nome="${punto%%:*}"; resto="${punto#*:}"
             curl -sS -w "\nHTTP %{http_code}\n" "$MARE&latitude=${resto%%:*}&longitude=${resto#*:}" \
               -o "/tmp/ciout/mare-$nome.json" || true
             head -c 500 "/tmp/ciout/mare-$nome.json"; echo
           done
+
+      # L'archivio, per "un anno fa oggi" (CONTESTO §64.4): un giorno, una
+      # localita'. **E' il solo posto da cui il formato si e' potuto vedere**:
+      # dal container in cui il codice e' stato scritto l'host era bloccato,
+      # quindi `parseStorico` e' provato solo su un esempio fatto a mano. Se qui
+      # la forma di `daily` non e' quella attesa, la riga "un anno fa" non
+      # comparira' e nessuno lo dira'. La neve (zero termico e quota) si guarda
+      # sulle Dolomiti, dove ce n'e' piu' spesso.
+      - name: Interroga archivio e quota neve
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/ciout
+          ANNO_FA=$(date -d '1 year ago' +%F)
+          curl -sS -w "\nHTTP %{http_code}\n" \
+            "https://archive-api.open-meteo.com/v1/archive?latitude=44.2226&longitude=12.0407&start_date=$ANNO_FA&end_date=$ANNO_FA&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=auto" \
+            -o /tmp/ciout/archivio-un-giorno.json || true
+          head -c 600 /tmp/ciout/archivio-un-giorno.json; echo
+          curl -sS -w "\nHTTP %{http_code}\n" \
+            "https://api.open-meteo.com/v1/forecast?latitude=46.5&longitude=11.9&forecast_days=3&timezone=auto&hourly=temperature_2m,snowfall,freezing_level_height&daily=snowfall_sum" \
+            -o /tmp/ciout/neve-dolomiti.json || true
+          head -c 600 /tmp/ciout/neve-dolomiti.json; echo
 
       # Le allerte vengono da MeteoAlarm, che e' l'unica fonte pubblica e senza
       # accordi su cui i servizi nazionali - per l'Italia la Protezione Civile e

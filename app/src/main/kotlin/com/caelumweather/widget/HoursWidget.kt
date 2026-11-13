@@ -25,6 +25,7 @@ internal class HoursWidget : CaelumWidget(WidgetKind.ORE) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
         val hours = prossimeOre(WidgetForecast.load(context, where))

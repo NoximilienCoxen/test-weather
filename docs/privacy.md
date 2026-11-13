@@ -25,8 +25,9 @@ IP da cui arriva la richiesta.
 ### A chi vengono inviate
 
 - Open-Meteo (`api.open-meteo.com`, `air-quality-api.open-meteo.com`,
-  `marine-api.open-meteo.com`, `geocoding-api.open-meteo.com`): previsioni,
-  qualità dell'aria e polline, onde e temperatura del mare, ricerca delle
+  `marine-api.open-meteo.com`, `archive-api.open-meteo.com`,
+  `geocoding-api.open-meteo.com`): previsioni, qualità dell'aria e polline, onde,
+  maree e temperatura del mare, com'era il tempo un anno fa, ricerca delle
   località.
 - I servizi di allerta meteo ufficiali, a seconda del Paese della località:
   MeteoAlarm (`feeds.meteoalarm.org`), National Weather Service
@@ -98,8 +99,9 @@ request comes from.
 ### Who receives it
 
 - Open-Meteo (`api.open-meteo.com`, `air-quality-api.open-meteo.com`,
-  `marine-api.open-meteo.com`, `geocoding-api.open-meteo.com`): forecasts, air
-  quality and pollen, waves and sea temperature, place search.
+  `marine-api.open-meteo.com`, `archive-api.open-meteo.com`,
+  `geocoding-api.open-meteo.com`): forecasts, air quality and pollen, waves,
+  tides and sea temperature, the weather a year ago, place search.
 - Official weather warning services, depending on the country of the place:
   MeteoAlarm (`feeds.meteoalarm.org`), National Weather Service
   (`api.weather.gov`), Environment and Climate Change Canada

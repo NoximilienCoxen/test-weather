@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Il widget unico: si ridimensiona in tutti e due i versi, da una cella a
+    un'intera schermata, e cambia faccia con la forma (vedi UnicoWidget.kt).
+    Parte da due celle per due, come il meteo.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:resizeMode="horizontal|vertical"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="400dp"
+    android:maxResizeHeight="400dp"
+    android:widgetCategory="home_screen"
+    android:configure="com.caelumweather.widget.WidgetConfigActivity"
+    android:widgetFeatures="reconfigurable"
+    android:previewImage="@drawable/widget_anteprima_unico"
+    android:initialLayout="@layout/widget_loading" />

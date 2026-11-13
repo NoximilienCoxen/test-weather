@@ -33,6 +33,7 @@ internal class MoonWidget : CaelumWidget(WidgetKind.LUNA) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         val phase = MoonPhase.at(LocalDate.now())
         val illuminated = MoonPhase.illumination(phase)

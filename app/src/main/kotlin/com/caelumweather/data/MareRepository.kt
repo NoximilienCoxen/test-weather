@@ -23,7 +23,7 @@ import java.time.LocalDateTime
  * scritto nell'informativa (`docs/privacy.md`) e nelle note legali, che vanno
  * tenute al passo con questo file.
  *
- * **E' una stima al largo.** Il modello d'onda lavora su celle di chilometri e
+ * **E' una stima al largo, e vale anche per le maree.** Il modello d'onda lavora su celle di chilometri e
  * non vede moli, secche e risacca: la sala lo dice sotto i numeri, e dice di
  * non usarli per navigare ne' per decidere un bagno.
  */
@@ -37,9 +37,28 @@ data class OraMare(
     val periodo: Double? = null,
     /** Temperatura dell'acqua in superficie, in gradi Celsius. */
     val acqua: Double? = null,
+    /**
+     * Livello del mare sul livello medio, in metri, **maree comprese**. Da qui
+     * si ricavano alte e basse (`Marea.kt`); nullo dove il modello non lo da'.
+     */
+    val livello: Double? = null,
 )
 
-data class Mare(val ore: List<OraMare>) {
+data class Mare(
+    val ore: List<OraMare>,
+    /** Scarto dall'ora universale del posto, in secondi: serve a sapere che ora e' li'. */
+    val utcOffsetSeconds: Int? = null,
+) {
+    /**
+     * L'ora di mare di **adesso, nel posto**: serve ai widget, che non hanno una
+     * previsione da cui prendere l'ora scelta. Senza lo scarto, nulla.
+     */
+    fun adesso(istante: java.time.Instant = java.time.Instant.now()): OraMare? {
+        val scarto = utcOffsetSeconds ?: return null
+        val qui = istante.atOffset(java.time.ZoneOffset.ofTotalSeconds(scarto)).toLocalDateTime()
+        return alle(qui.truncatedTo(java.time.temporal.ChronoUnit.HOURS))
+    }
+
     /** L'ora di mare che corrisponde a un'ora della previsione, se c'e'. */
     fun alle(momento: LocalDateTime?): OraMare? {
         if (momento == null) return null
@@ -87,6 +106,7 @@ enum class StatoDelMare(
 @Serializable
 private data class MareDto(
     val hourly: MareOreDto? = null,
+    @SerialName("utc_offset_seconds") val utcOffsetSeconds: Int? = null,
     val error: Boolean? = null,
     val reason: String? = null,
 )
@@ -98,6 +118,7 @@ private data class MareOreDto(
     @SerialName("wave_direction") val direzione: List<Double?> = emptyList(),
     @SerialName("wave_period") val periodo: List<Double?> = emptyList(),
     @SerialName("sea_surface_temperature") val acqua: List<Double?> = emptyList(),
+    @SerialName("sea_level_height_msl") val livello: List<Double?> = emptyList(),
 )
 
 private val mareJson = Json {
@@ -125,10 +146,11 @@ internal fun parseMare(body: String): Mare? {
             direzione = h.direzione.getOrNull(i),
             periodo = h.periodo.getOrNull(i),
             acqua = h.acqua.getOrNull(i),
+            livello = h.livello.getOrNull(i),
         )
     }
-    if (ore.none { it.onda != null || it.acqua != null }) return null
-    return Mare(ore)
+    if (ore.none { it.onda != null || it.acqua != null || it.livello != null }) return null
+    return Mare(ore, dto.utcOffsetSeconds)
 }
 
 class MareRepository(private val place: Place) {
@@ -155,6 +177,6 @@ class MareRepository(private val place: Place) {
 
     companion object {
         const val MARE_ENDPOINT = "https://marine-api.open-meteo.com/v1/marine"
-        const val MARE_VARS = "wave_height,wave_direction,wave_period,sea_surface_temperature"
+        const val MARE_VARS = "wave_height,wave_direction,wave_period,sea_surface_temperature,sea_level_height_msl"
     }
 }

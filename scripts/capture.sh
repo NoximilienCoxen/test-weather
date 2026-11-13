@@ -708,6 +708,11 @@ session() {
     restart_with "--ei meteo 95"
     shoot "${slug}-5e-fulmine"
 
+    # La nebbia a banchi fra le colline (codice 45): i veli si giudicano a
+    # occhio, che sfumino da tutti i lati e che il sole resti appena velato.
+    restart_with "--ei ora 9 --ei meteo 45"
+    shoot "${slug}-5f-nebbia"
+
     # Il quarto e il mezzo giro. E' li' che le matrici della base e dell'ombra
     # degenerano e che le pareti dei vuoti si scavalcano, ed e' proprio li' che
     # ── Qui stavano cinque scatti col giro, e il giro non lo legge piu' nessuno ─

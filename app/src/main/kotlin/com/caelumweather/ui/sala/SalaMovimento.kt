@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
@@ -173,6 +174,27 @@ fun misuraCheArriva(bersaglio: Dp): Dp {
 }
 
 /**
+ * Da zero a uno **una volta**, quando il pezzo compare: le colonnine che
+ * crescono dal fondo, una curva che si disegna. Poi resta a uno e non disegna
+ * piu' niente. Con le animazioni ridotte e' subito uno.
+ *
+ * [ritardo] sfalsa i pezzi di una fila, perche' arrivino come un'onda.
+ */
+@Composable
+fun crescitaAllArrivo(ritardo: Int = 0): Float {
+    val movimento = LocalMovimento.current
+    val valore = remember { androidx.compose.animation.core.Animatable(if (movimento) 0f else 1f) }
+    androidx.compose.runtime.LaunchedEffect(movimento) {
+        if (movimento) {
+            valore.animateTo(1f, tween(durationMillis = 520, delayMillis = ritardo, easing = androidx.compose.animation.core.FastOutSlowInEasing))
+        } else {
+            valore.snapTo(1f)
+        }
+    }
+    return valore.value
+}
+
+/**
  * Un colore che **passa** invece di scattare: il fondo del giorno scelto, la
  * colonna dell'ora scelta. Due decimi di secondo, e poi fermo.
  */
@@ -213,6 +235,17 @@ fun angoloCheGira(gradi: Float): Float {
         label = "angolo",
     )
     return angolo
+}
+
+/**
+ * Un contenitore che **cambia altezza scivolando** invece che a scatti: la
+ * scheda che si allunga quando arriva "un anno fa", quando compare il giorno
+ * scelto, quando una sezione si apre. Messo una volta in [PannelloSala], vale
+ * per ogni sala.
+ */
+fun Modifier.altezzaMorbida(): Modifier = composed {
+    if (!LocalMovimento.current) return@composed this
+    this.animateContentSize(spring(dampingRatio = 0.9f, stiffness = 380f))
 }
 
 /**
@@ -290,3 +323,38 @@ fun NumeroCheScorre(
         modifier = modifier,
     )
 }
+
+/**
+ * L'onda che parte da una pastiglia e si allarga sulla scheda: il giorno
+ * toccato "si spande" nella scheda mentre i numeri cambiano. La disegna
+ * [PannelloSala] dentro il proprio ritaglio.
+ *
+ * **Niente stato scritto durante la disposizione.** La prima versione
+ * registrava la posizione del pannello e delle pastiglie con
+ * `onGloballyPositioned`, scrivendo uno stato a ogni passata: sull'emulatore
+ * della CI bastava a farlo cadere nei primi scatti (trovato per esclusione, 12
+ * novembre 2026). Ora pannello e pastiglia lasciano solo il riferimento alle
+ * loro coordinate (`onPlaced`, una variabile semplice), e la posizione si
+ * calcola una volta, al tocco. Il livello che disegna l'onda esiste solo
+ * mentre l'onda corre.
+ */
+class OndaScheda internal constructor() {
+    /** Le coordinate del pannello, lasciate da [PannelloSala]. Non e' uno stato. */
+    internal var pannello: androidx.compose.ui.layout.LayoutCoordinates? = null
+    internal var centro by mutableStateOf(androidx.compose.ui.geometry.Offset.Zero)
+    internal val corsa = androidx.compose.animation.core.Animatable(1f)
+
+    /** Fa partire l'onda dal centro di [da] (le coordinate della pastiglia toccata). */
+    suspend fun parti(da: androidx.compose.ui.layout.LayoutCoordinates) {
+        val p = pannello ?: return
+        if (!p.isAttached || !da.isAttached) return
+        centro = p.localPositionOf(da, androidx.compose.ui.geometry.Offset(da.size.width / 2f, da.size.height / 2f))
+        corsa.snapTo(0f)
+        corsa.animateTo(1f, tween(durationMillis = 620, easing = androidx.compose.animation.core.FastOutSlowInEasing))
+    }
+}
+
+/** Un'onda per scheda, ricordata. */
+@Composable
+fun rememberOndaScheda(): OndaScheda = remember { OndaScheda() }
+

@@ -67,6 +67,34 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
     val peggiore = oggi.maxByOrNull { it.value }?.takeIf { it.value > 0 }?.key
     var scelto by rememberSaveable(giorni.first().giorno) { mutableStateOf(peggiore) }
 
+    // **Tutto a zero, in tutti i giorni: una riga sola.** La griglia di nove
+    // pastiglie con lo zero occupava mezza scheda per dire "niente".
+    val tuttoAZero = giorni.all { g -> g.livelli.isNotEmpty() && g.livelli.values.all { it == 0 } }
+    if (tuttoAZero) {
+        Row(
+            modifier = modifier.fillMaxWidth().padding(top = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = tr("IL POLLINE", "POLLEN", "POLLEN", "LE POLLEN", "EL POLEN"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(end = 12.dp),
+            )
+            Text(
+                text = if (giorni.size > 1) {
+                    tr("assente oggi e nei prossimi giorni", "none today or in the coming days", "heute und in den nächsten Tagen keine", "absent aujourd'hui et les jours suivants", "ausente hoy y los próximos días")
+                } else {
+                    tr("assente oggi", "none today", "heute keine", "absent aujourd'hui", "ausente hoy")
+                },
+                style = SalaType.rowNote,
+                color = palette.ink,
+                maxLines = 2,
+            )
+        }
+        return
+    }
+
     Column(modifier = modifier.fillMaxWidth().padding(top = 14.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -138,7 +166,13 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
 private fun PastigliaLivello(livello: Int?, palette: SalaPalette) {
     val pieno = livello != null && livello > 0
     Text(
-        text = livello?.toString() ?: "–",
+        // Lo zero e' una pastiglia vuota e piu' chiara: la fila si legge
+        // "niente, niente, qualcosa" a colpo d'occhio, senza contare cifre.
+        text = when {
+            livello == null -> "–"
+            livello == 0 -> " "
+            else -> livello.toString()
+        },
         style = SalaType.pill,
         color = when {
             !pieno -> palette.inkSoft
@@ -150,7 +184,13 @@ private fun PastigliaLivello(livello: Int?, palette: SalaPalette) {
             .padding(start = SPAZIO_PASTIGLIE)
             .width(LARGA_PASTIGLIA)
             .clip(CircleShape)
-            .background(if (pieno) coloreLivello(livello) else palette.maniglia)
+            .background(
+                when {
+                    pieno -> coloreLivello(livello)
+                    livello == 0 -> palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.45f)
+                    else -> palette.maniglia
+                },
+            )
             .padding(vertical = 4.dp),
     )
 }

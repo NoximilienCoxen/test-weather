@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,8 +23,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.unit.dp
+import com.caelumweather.data.EstremoMarea
+import com.caelumweather.data.Mare
 import com.caelumweather.data.OraMare
+import com.caelumweather.data.TipoMarea
+import com.caelumweather.data.prossimiEstremi
 import com.caelumweather.data.StatoDelMare
 import com.caelumweather.data.Wmo
 import com.caelumweather.lingua.Lingue
@@ -53,13 +59,15 @@ internal fun SezioneMare(
     palette: SalaPalette,
     movimento: Boolean,
     modifier: Modifier = Modifier,
+    /** Tutte le ore del mare, per le maree; nullo nelle catture che impongono l'onda. */
+    mare: Mare? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = tr("IL MARE", "THE SEA", "DAS MEER", "LA MER", "EL MAR"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -90,6 +98,8 @@ internal fun SezioneMare(
                 )
             }
         }
+        val conMarea = mare != null && remember(mare, ora.time) { prossimiEstremi(mare, ora.time, quanti = 4).isNotEmpty() }
+        if (conMarea && mare != null) SezioneMarea(mare, ora.time, unita, palette)
         // **Non e' una `Didascalia`, apposta**: quelle spariscono con i testi
         // brevi, e questa non e' un commento ai numeri - e' cio' che dice a
         // cosa non servono. Resta in tutti e due i modi.
@@ -102,10 +112,22 @@ internal fun SezioneMare(
                 "Schätzung eines Modells für die offene See: In Küstennähe können Wellen und Wasser anders sein. Nicht zum Navigieren und nicht für die Entscheidung über ein Bad verwenden: Es gelten die Seewetterberichte und die Flaggen am Strand.",
                 "Estimation d'un modèle au large : près du rivage, les vagues et l'eau peuvent être différentes. Ne l'utilisez pas pour naviguer ni pour décider d'une baignade : les bulletins et les drapeaux de plage font foi.",
                 "Estimación de un modelo mar adentro: cerca de la orilla las olas y el agua pueden ser distintas. No la uses para navegar ni para decidir un baño: mandan los boletines y las banderas de la playa.",
-            ),
+            ) + if (conMarea) {
+                // Una frase sola per le maree, nella stessa avvertenza: due
+                // paragrafi di cautele uno sotto l'altro non li legge nessuno.
+                " " + tr(
+                    "Le maree vengono da un modello globale: in porti e lagune possono scostarsi di decine di centimetri.",
+                    "Tides come from a global model: in harbours and lagoons they can be off by tens of centimetres.",
+                    "Die Gezeiten stammen aus einem globalen Modell: In Häfen und Lagunen können sie um Dutzende Zentimeter abweichen.",
+                    "Les marées viennent d'un modèle global : dans les ports et les lagunes, elles peuvent s'écarter de plusieurs dizaines de centimètres.",
+                    "Las mareas vienen de un modelo global: en puertos y lagunas pueden desviarse decenas de centímetros.",
+                )
+            } else {
+                ""
+            },
             style = SalaType.rowNote,
             color = palette.inkSoft,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
     }
 }
@@ -187,5 +209,130 @@ private fun OndaDisegnata(
         }
         strato(dietro, livello = 0.52f, sfasamento = 1.9f, scala = 0.8f)
         strato(davanti.copy(alpha = 0.85f), livello = 0.64f, sfasamento = 0f, scala = 1f)
+    }
+}
+
+/**
+ * Le maree: la curva del livello nelle ventiquattro ore dall'ora scelta, con
+ * alte e basse segnate, e sotto le prossime in parole.
+ *
+ * Compare solo se la localita' ha una marea da dire ([prossimiEstremi] torna
+ * vuota nei mari chiusi e sui laghi, dove il livello si muove di pochi
+ * centimetri). Il punto sulla curva e' l'ora scelta, quindi trascinando la
+ * barra delle ore si vede dove sta la marea in quel momento.
+ */
+@Composable
+private fun SezioneMarea(
+    mare: Mare,
+    da: java.time.LocalDateTime,
+    unita: TempUnit,
+    palette: SalaPalette,
+) {
+    val estremi = remember(mare, da) { prossimiEstremi(mare, da, quanti = 4) }
+    if (estremi.isEmpty()) return
+    val finestra = remember(mare, da) {
+        mare.ore.filter { !it.time.isBefore(da) && it.time.isBefore(da.plusHours(24)) && it.livello != null }
+    }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = tr("LE MAREE", "TIDES", "GEZEITEN", "LES MARÉES", "LAS MAREAS"),
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
+        )
+        if (finestra.size >= 3) {
+            CurvaDellaMarea(
+                livelli = finestra.map { it.livello!!.toFloat() },
+                estremi = estremi.filter { it.quando.isBefore(da.plusHours(24)) },
+                inizio = da,
+                palette = palette,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(palette.chip)
+                    // Disegno dei numeri qui sotto: letto ad alta voce sarebbe
+                    // una ripetizione.
+                    .clearAndSetSemantics { },
+            )
+        }
+        // Due per riga: quattro righe intere allungavano la scheda del vento
+        // oltre lo schermo.
+        Column(modifier = Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            estremi.chunked(2).forEach { coppia ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    coppia.forEach { e ->
+                        Text(
+                            text = rigaEstremo(e, da, unita),
+                            style = SalaType.rowNote,
+                            color = palette.ink,
+                            maxLines = 2,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    if (coppia.size == 1) Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+/** "Alta alle 14:20 · +0,32 m" (o "domani alle 02:05"): puro, per poterlo provare. */
+internal fun rigaEstremo(e: EstremoMarea, da: java.time.LocalDateTime, unita: TempUnit): String {
+    val tipo = if (e.tipo == TipoMarea.ALTA) tr("Alta", "High", "Hochwasser", "Pleine mer", "Pleamar") else tr("Bassa", "Low", "Niedrigwasser", "Basse mer", "Bajamar")
+    val ora = String.format(Lingue.locale, "%02d:%02d", e.quando.hour, e.quando.minute)
+    val giorno = when (java.time.temporal.ChronoUnit.DAYS.between(da.toLocalDate(), e.quando.toLocalDate()).toInt()) {
+        0 -> ""
+        1 -> tr(" domani", " tomorrow", " morgen", " demain", " mañana")
+        else -> " +${java.time.temporal.ChronoUnit.DAYS.between(da.toLocalDate(), e.quando.toLocalDate())}"
+    }
+    val livello = if (unita == TempUnit.FAHRENHEIT) {
+        String.format(Lingue.locale, "%+.1f ft", e.metri * 3.28084)
+    } else {
+        String.format(Lingue.locale, "%+.2f m", e.metri)
+    }.replace('-', '\u2212')
+    return "$tipo $ora$giorno · $livello"
+}
+
+@Composable
+private fun CurvaDellaMarea(
+    livelli: List<Float>,
+    estremi: List<EstremoMarea>,
+    inizio: java.time.LocalDateTime,
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+) {
+    val colore = SalaTokens.acqua
+    val minimo = livelli.min()
+    val massimo = livelli.max().coerceAtLeast(minimo + 0.05f)
+    val linea = remember { Path() }
+    val riempi = remember { Path() }
+    // La curva si disegna da sinistra quando compare, poi sta ferma.
+    val rivela = com.caelumweather.ui.sala.crescitaAllArrivo()
+    Canvas(modifier = modifier) {
+        val margine = 10.dp.toPx()
+        val alto = size.height - margine * 2
+        fun x(i: Float) = margine + (size.width - margine * 2) * (i / (livelli.size - 1).toFloat())
+        fun y(v: Float) = margine + alto * (1f - (v - minimo) / (massimo - minimo))
+        linea.rewind(); riempi.rewind()
+        riempi.moveTo(x(0f), size.height)
+        livelli.forEachIndexed { i, v ->
+            if (i == 0) linea.moveTo(x(0f), y(v)) else linea.lineTo(x(i.toFloat()), y(v))
+            riempi.lineTo(x(i.toFloat()), y(v))
+        }
+        riempi.lineTo(x((livelli.size - 1).toFloat()), size.height)
+        riempi.close()
+        clipRect(right = size.width * rivela) {
+            drawPath(riempi, colore.copy(alpha = 0.22f))
+            drawPath(linea, colore, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.2.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round))
+        }
+        // I punti di alta e bassa.
+        estremi.forEach { e ->
+            val ore = java.time.Duration.between(inizio, e.quando).toMinutes() / 60f
+            if (ore < 0f || ore > livelli.size - 1 || x(ore) > size.width * rivela) return@forEach
+            drawCircle(colore, radius = 4.dp.toPx(), center = androidx.compose.ui.geometry.Offset(x(ore), y(e.metri.toFloat())))
+        }
+        // L'ora scelta: il primo punto, dove la curva comincia.
+        drawCircle(palette.ink, radius = 3.dp.toPx(), center = androidx.compose.ui.geometry.Offset(x(0f), y(livelli.first())))
     }
 }

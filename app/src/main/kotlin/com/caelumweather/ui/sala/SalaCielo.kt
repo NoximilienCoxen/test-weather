@@ -96,6 +96,8 @@ fun SalaCielo(
      * i granelli (vedi `polline`); sotto, niente.
      */
     pollineOggi: Int = 0,
+    /** Nebbia, vento, caldo, gelo e l'ora dopo la pioggia: vedi [Atmosfera]. */
+    atmosfera: Atmosfera = Atmosfera(),
 ) {
     // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
     //
@@ -117,6 +119,17 @@ fun SalaCielo(
     // cielo **fermo**, che e' come sta quasi sempre.
     val fondo = remember(stops) { cieloBrush(stops) }
     val fiamma = remember { Animatable(0f) }
+    // **Toccare cio' che cade**: schizzi di pioggia, soffio sulla neve, rimbalzi
+    // di grandine (vedi `Tocco`). Lo scroscio e' la pioggia che per un momento
+    // si infittisce, come quando si da' un colpo a una grondaia.
+    val tocchi = remember { mutableStateListOf<Tocco>() }
+    val scroscio = remember { Animatable(0f) }
+    val scenaOra by androidx.compose.runtime.rememberUpdatedState(scena)
+    val atmosferaOra by androidx.compose.runtime.rememberUpdatedState(atmosfera)
+    // I varchi aperti col dito nella nebbia: vedi [VarcoNebbia].
+    val varchi = remember { mutableStateListOf<VarcoNebbia>() }
+    // La trama della nebbia e l'erba ferma, calcolate una volta: vedi [CacheAtmosfera].
+    val cacheAtmosfera = remember { CacheAtmosfera() }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
 
@@ -148,6 +161,32 @@ fun SalaCielo(
                         fiamma.snapTo(1f)
                         fiamma.animateTo(0f, tween(durationMillis = 1100))
                     }
+                } else if (scenaOra.bagnato > 0.05f) {
+                    // Cade qualcosa: il tocco lo sente, e lo dice col tipo di
+                    // cio' che cade. Si potano le spente prima di aggiungere,
+                    // come per le increspature.
+                    tocchi.removeAll { ora - it.nata > DURATA_TOCCO }
+                    val tipo = when {
+                        scenaOra.ghiaccio > 0.5f -> Caduta.GRANDINE
+                        scenaOra.neve > 0.5f -> Caduta.NEVE
+                        else -> Caduta.PIOGGIA
+                    }
+                    if (tocchi.size < 5) tocchi.add(Tocco(punto, ora, tipo, (ora * 1000f).toInt()))
+                    when (tipo) {
+                        Caduta.PIOGGIA -> {
+                            vibrazioni.goccia()
+                            scope.launch {
+                                scroscio.snapTo(1f)
+                                scroscio.animateTo(0f, tween(durationMillis = 1900))
+                            }
+                        }
+                        Caduta.GRANDINE -> vibrazioni.chicco()
+                        Caduta.NEVE -> Unit
+                    }
+                } else if (atmosferaOra.nebbia > 0.3f) {
+                    // Nella nebbia il dito apre un varco, che si richiude.
+                    varchi.removeAll { ora - it.nato > DURATA_VARCO }
+                    if (varchi.size < 4) varchi.add(VarcoNebbia(punto, ora))
                 } else {
                     // **Si potano le spente prima di aggiungere.** Una lista che
                     // cresce a ogni tocco e non cala e' una perdita lenta: il
@@ -202,7 +241,7 @@ fun SalaCielo(
 
         // Lontano come gli aerei, dietro al sole e alle nuvole.
         translate(parallasse.x * 0.2f, parallasse.y * 0.2f) {
-            arcobaleno(sx, sy, sky, scena)
+            arcobaleno(sx, sy, sky, scena, atmosfera.dopoPioggia)
         }
 
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
@@ -249,9 +288,29 @@ fun SalaCielo(
             tempo = t,
         )
 
+        // Il caldo fa tremolare l'aria sopra l'orizzonte, dietro le colline.
+        caldoSullOrizzonte(atmosfera.caldo * (1f - scena.notte) * (1f - scena.bagnato), t)
+
         // Le colline sono terra: stanno ferme, o il mondo si stacca dai piedi.
-        colline(sx, sy, palette)
-        cioCheCade(scena, t)
+        // Le chiome degli alberi si piegano col vento, e sul crinale c'e'
+        // l'erba (vedi [erbaAlVento]).
+        val piega = atmosfera.versoVento.let { if (it >= 0f) 1f else -1f } *
+            (atmosfera.vento * 3.2f + sin(t * (1.1f + atmosfera.vento * 2.6f)) * (0.3f + atmosfera.vento * 1.4f))
+        colline(sx, sy, palette, piega)
+        erbaAlVento(
+            vento = atmosfera.vento,
+            verso = atmosfera.versoVento,
+            tempo = t,
+            colline = listOf(
+                palette.collina1 to floatArrayOf(-90f, 484f, 340f, 280f),
+                palette.collina2 to floatArrayOf(131f, 484f, 400f, 300f),
+                palette.collina3 to floatArrayOf(-60f, 678f, 560f, 472f),
+            ),
+            cache = cacheAtmosfera,
+        )
+        foglieAlVento(atmosfera.vento * (1f - scena.neve), atmosfera.versoVento, t, palette.fronda)
+        nebbia(atmosfera.nebbia, scena.notte, t, varchi, cacheAtmosfera)
+        cioCheCade(scena, t, tocchi, scroscio.value)
 
         disegnaIncrespature(onde, t, palette)
 
@@ -354,9 +413,13 @@ private val BandeArcobaleno = listOf(
  * colline: se ne vede il tratto che esce dall'orizzonte. E' tenue apposta - un
  * arcobaleno acceso su questo cielo dipinto sarebbe un adesivo.
  */
-private fun DrawScope.arcobaleno(sx: Float, sy: Float, sky: SkyState, scena: Scena) {
+private fun DrawScope.arcobaleno(sx: Float, sy: Float, sky: SkyState, scena: Scena, dopoPioggia: Float = 0f) {
     val aperto = 1f - ((scena.copertura - 0.80f) / 0.14f).coerceIn(0f, 1f)
-    val forza = scena.sole * scena.bagnato * (1f - scena.tempesta) * (1f - scena.neve) * aperto
+    // **Anche dopo il rovescio**, non solo durante: nell'ora in cui ha appena
+    // smesso l'aria e' ancora piena di gocce, ed e' li' che l'arcobaleno si vede
+    // meglio. Vale meno di una pioggia in corso e sfuma l'ora dopo.
+    val bagnatoODopo = maxOf(scena.bagnato, dopoPioggia * 0.85f)
+    val forza = scena.sole * bagnatoODopo * (1f - scena.tempesta) * (1f - scena.neve) * aperto
     if (forza <= 0.02f) return
     val soleASinistra = sky.journey < 0.5f
     val centro = Offset((if (soleASinistra) 330f else 81f) * sx, 600f * sy)
@@ -1028,7 +1091,7 @@ private fun DrawScope.nuvole(
  * I due dossi dietro escono dai lati; quello davanti e' una mezza ellisse che
  * poggia sul bordo dello schermo.
  */
-private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
+private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette, piega: Float = 0f) {
     // I due dossi dietro: il fondo resta nascosto da quello davanti, quindi si
     // vedono solo come gobbe.
     drawOval(
@@ -1059,9 +1122,10 @@ private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
             size = Size(tw * sx, th * sy),
             cornerRadius = CornerRadius(tw * sx * 0.5f),
         )
+        // La chioma si sposta col vento di [piega] unita', il tronco resta.
         drawOval(
             color = palette.fronda,
-            topLeft = Offset(fx * sx, fy * sy),
+            topLeft = Offset((fx + piega * fd / 44f) * sx, fy * sy),
             size = Size(fd * sx, fd * sy),
         )
     }
@@ -1106,9 +1170,13 @@ private fun DrawScope.colline(sx: Float, sy: Float, palette: SalaPalette) {
  * sotto di lui. Una cosa dipinta dove nessuno la vede e' peggio di una cosa
  * che manca, perche' costa e non si nota se si rompe.
  */
-private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
+internal fun DrawScope.cioCheCade(scena: Scena, tempo: Float, tocchi: List<Tocco>, scroscio: Float) {
     if (scena.bagnato <= 0.01f) return
-    val pioggia = scena.bagnato * (1f - scena.neve) * (1f - scena.ghiaccio)
+    // Lo scroscio infittisce **solo la pioggia**: neve e grandine non si
+    // addensano a un colpo di dito, e non devono sembrare pioggia.
+    val soloPioggia = (1f - scena.neve) * (1f - scena.ghiaccio)
+    val bagnato = (scena.bagnato + 0.55f * scroscio * soloPioggia).coerceAtMost(1f)
+    val pioggia = bagnato * (1f - scena.neve) * (1f - scena.ghiaccio)
     val neve = scena.bagnato * scena.neve
     val grandine = scena.bagnato * scena.ghiaccio
 
@@ -1131,7 +1199,7 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
         if (presenza <= 0.01f) return
         val quante = Corsie.ripetizioni(tipo)
         for (i in 0 until Corsie.QUANTE) {
-            val quota = Corsie.accesa(i, scena.bagnato)
+            val quota = Corsie.accesa(i, bagnato)
             if (quota <= 0.01f) continue
             // Le corsie del modello vanno da -0,65 a 0,65: riportate su 0..1
             // coprono la larghezza intera invece di stringersi attorno a un
@@ -1220,7 +1288,21 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
             size.width * (0.025f + 0.040f * prof)
         val r = size.width * (0.0042f + 0.0072f * prof)
         val a = (quota * neve * (0.42f + 0.58f * prof)).coerceIn(0f, 1f)
-        val centro = Offset(x + deriva, y)
+        val libero = Offset(x + deriva, y)
+        // **Il soffio**: un tocco spinge i fiocchi vicini lontano dal dito e li
+        // fa girare un poco, poi la spinta svanisce e tornano a cadere.
+        var spinta = Offset.Zero
+        for (t in tocchi) {
+            if (t.tipo != Caduta.NEVE) continue
+            val eta = ((tempo - t.nata) / DURATA_TOCCO).coerceIn(0f, 1f)
+            if (eta >= 1f) continue
+            val d = libero - t.centro
+            val raggio = size.width * 0.42f
+            val dist = d.getDistance().coerceAtLeast(1f)
+            val forza = (1f - eta) * (1f - eta) * kotlin.math.exp(-(dist * dist) / (raggio * raggio)) * raggio * 0.6f
+            spinta += Offset(d.x / dist, d.y / dist) * forza + Offset(-d.y / dist, d.x / dist) * (forza * 0.5f)
+        }
+        val centro = libero + spinta
         // I fiocchi vicini hanno un alone: e' il modo in cui l'occhio legge
         // "fuori fuoco", e senza, cinquanta dischi tutti nitidi si leggono come
         // coriandoli.
@@ -1238,7 +1320,92 @@ private fun DrawScope.cioCheCade(scena: Scena, tempo: Float) {
         }
         drawCircle(color = SalaTokens.neutral100.copy(alpha = a), radius = r, center = centro)
     }
+
+    // ── Cio' che il tocco lascia ─────────────────────────────────────────────
+    for (t in tocchi) {
+        val eta = ((tempo - t.nata) / DURATA_TOCCO).coerceIn(0f, 1f)
+        if (eta >= 1f) continue
+        val svanire = (1f - eta) * (1f - eta)
+        val l = size.width
+        when (t.tipo) {
+            Caduta.PIOGGIA -> {
+                // Due anelli schiacciati, come l'acqua vista di sbieco, e una
+                // corona di gocce che salta e ricade.
+                for (anello in 0..1) {
+                    val e = (eta - anello * 0.16f).coerceIn(0f, 1f)
+                    if (e <= 0f) continue
+                    val r = l * 0.24f * (1f - (1f - e) * (1f - e))
+                    drawOval(
+                        color = tintaPioggia.copy(alpha = 0.95f * (1f - e) * (1f - e)),
+                        topLeft = Offset(t.centro.x - r, t.centro.y - r * 0.32f),
+                        size = Size(r * 2f, r * 0.64f),
+                        style = Stroke(width = l * 0.0065f),
+                    )
+                }
+                val secondi = eta * DURATA_TOCCO
+                for (j in 0 until 15) {
+                    val angolo = (-PI / 2).toFloat() + (j - 7) * 0.20f + (sparso(j, t.seme) - 0.5f) * 0.16f
+                    val v = l * (0.42f + 0.34f * sparso(j + 40, t.seme))
+                    val gx = t.centro.x + cos(angolo) * v * secondi
+                    val gy = t.centro.y + sin(angolo) * v * secondi + 0.5f * l * 2.2f * secondi * secondi
+                    drawCircle(
+                        color = tintaPioggia.copy(alpha = 0.85f * svanire),
+                        radius = l * (0.0070f + 0.0040f * sparso(j + 80, t.seme)) * (1f - eta * 0.5f),
+                        center = Offset(gx, gy),
+                    )
+                }
+            }
+            Caduta.NEVE -> {
+                // Un cristallo a sei braccia che gira piano e si scioglie: e'
+                // il fiocco che si ingrandisce quando lo si guarda da vicino.
+                val crescita = 1f - (1f - minOf(1f, eta * 3f)) * (1f - minOf(1f, eta * 3f))
+                val braccio = l * 0.115f * (0.5f + 0.5f * crescita)
+                val giro = eta * 0.9f
+                val tinta = SalaTokens.neutral100.copy(alpha = svanire.coerceIn(0f, 1f))
+                for (b in 0 until 6) {
+                    val a = giro + b * (PI.toFloat() / 3f)
+                    val punta = Offset(t.centro.x + cos(a) * braccio, t.centro.y + sin(a) * braccio)
+                    drawLine(tinta, t.centro, punta, strokeWidth = l * 0.0060f, cap = StrokeCap.Round)
+                    // I due rametti, a un terzo dalla punta.
+                    val base = Offset(t.centro.x + cos(a) * braccio * 0.62f, t.centro.y + sin(a) * braccio * 0.62f)
+                    for (lato in intArrayOf(-1, 1)) {
+                        val ar = a + lato * 0.62f
+                        drawLine(
+                            tinta,
+                            base,
+                            Offset(base.x + cos(ar) * braccio * 0.34f, base.y + sin(ar) * braccio * 0.34f),
+                            strokeWidth = l * 0.0044f,
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                }
+                drawCircle(tinta, radius = l * 0.0090f, center = t.centro)
+            }
+            Caduta.GRANDINE -> {
+                // I chicchi rimbalzano: salgono, ricadono, risalgono piu' bassi.
+                for (j in 0 until 9) {
+                    val dx = (sparso(j, t.seme) - 0.5f) * l * 0.58f * eta
+                    val fase = eta * (2.6f + sparso(j + 20, t.seme))
+                    val rimbalzo = kotlin.math.abs(sin(fase * PI.toFloat())) * (1f - eta) * l * 0.26f
+                    val c = Offset(t.centro.x + dx, t.centro.y - rimbalzo)
+                    val r = l * (0.0115f + 0.0060f * sparso(j + 60, t.seme))
+                    drawCircle(SalaTokens.ghiaccioChiaro.copy(alpha = (1f - eta * 0.8f).coerceIn(0f, 1f)), radius = r, center = c)
+                    drawCircle(Color.White.copy(alpha = 0.8f * svanire), radius = r * 0.34f, center = Offset(c.x - r * 0.3f, c.y - r * 0.34f))
+                }
+            }
+        }
+    }
 }
+
+/**
+ * Un tocco su cio' che cade: dove, quando e su cosa. Come [Increspatura], ma il
+ * disegno dipende dal tipo (schizzi, cristallo, rimbalzi).
+ */
+@Immutable
+internal data class Tocco(val centro: Offset, val nata: Float, val tipo: Caduta, val seme: Int)
+
+/** Quanto dura il segno di un tocco sulla pioggia, la neve o la grandine, in secondi. */
+internal const val DURATA_TOCCO = 1.6f
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Il fulmine

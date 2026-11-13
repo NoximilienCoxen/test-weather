@@ -12,6 +12,8 @@ data class OpenMeteoResponse(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val timezone: String? = null,
+    /** Quota del punto, in metri: Open-Meteo la ricava dal suo modello del terreno. */
+    val elevation: Double? = null,
     /**
      * Scarto dall'ora universale della localita' richiesta. Serve a sapere che
      * ore sono *li'*: con una citta' scelta dall'utente l'orologio del telefono
@@ -127,4 +129,6 @@ data class HourlyDto(
     val rain: List<Double?> = emptyList(),
     /** Centimetri di neve, non millimetri: e' l'unita' che usa Open-Meteo. */
     val snowfall: List<Double?> = emptyList(),
+    /** Quota dello zero termico, in metri sul mare: da qui si stima dove nevica. */
+    @SerialName("freezing_level_height") val freezingLevel: List<Double?> = emptyList(),
 )

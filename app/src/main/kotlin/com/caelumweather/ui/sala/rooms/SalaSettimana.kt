@@ -24,6 +24,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.caelumweather.ui.sala.LocalMovimento
+import com.caelumweather.ui.sala.rememberOndaScheda
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.WeatherViewModel
 import com.caelumweather.data.HourForecast
@@ -71,7 +75,11 @@ fun SalaSettimanaScreen(
     val settimana = remember(state.forecast) { settimanaDi(state.forecast) }
     val scelto = settimana.getOrNull(state.selectedDay)
 
-    PannelloSala(palette = palette, modifier = modifier) {
+    // Il giorno toccato si spande nella scheda: vedi [OndaScheda].
+    val onda = rememberOndaScheda()
+    val scopeOnda = rememberCoroutineScope()
+    val movimentoOnda = LocalMovimento.current
+    PannelloSala(palette = palette, modifier = modifier, onda = onda) {
         Text(text = tr("La settimana", "The week", "Die Woche", "La semaine", "La semana"), style = SalaType.cardTitle, color = palette.ink)
         Text(
             text = remember(settimana, state.unit) { sommarioDella(settimana, state) },
@@ -139,6 +147,7 @@ fun SalaSettimanaScreen(
             palette = palette,
             onScegli = viewModel::selectDay,
             conMillimetri = true,
+            onToccoDa = { da -> if (movimentoOnda) scopeOnda.launch { onda.parti(da) } },
         )
     }
 }

@@ -42,6 +42,7 @@ import com.caelumweather.prefs.TempUnit
 import com.caelumweather.prefs.SogliePersonali
 import com.caelumweather.prefs.TipoSoglia
 import com.caelumweather.notifiche.gradiDiSoglia
+import com.caelumweather.notifiche.pioggiaDiSoglia
 import com.caelumweather.notifiche.ventoDiSoglia
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,6 +79,7 @@ fun SalaImpostazioniScreen(
     state: UiState,
     palette: SalaPalette,
     onToggleAnimazioni: (Boolean) -> Unit,
+    onToggleWidgetColori: (Boolean) -> Unit,
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
     onToggleNotifichePioggia: (Boolean) -> Unit,
@@ -86,6 +88,7 @@ fun SalaImpostazioniScreen(
     onChooseOraRiepilogo: (Int) -> Unit,
     onToggleSoglia: (TipoSoglia, Boolean) -> Unit,
     onChooseSoglia: (TipoSoglia, Int) -> Unit,
+    onToggleSoglieAltre: (Boolean) -> Unit,
     onChooseTheme: (CardTheme) -> Unit,
     onChooseUnit: (TempUnit) -> Unit,
     onChooseWindUnit: (SalaWindUnit) -> Unit,
@@ -232,6 +235,18 @@ fun SalaImpostazioniScreen(
                     palette = palette,
                     onCambia = onToggleSchedeLarghe,
                 )
+                // I colori dinamici esistono da Android 12: prima, la voce
+                // sarebbe una levetta che non cambia niente.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    FiloGruppo(palette)
+                    VoceInterruttore(
+                        titolo = tr("Widget coi colori del telefono", "Widgets in phone colours", "Widgets in Telefonfarben", "Widgets aux couleurs du téléphone", "Widgets con los colores del teléfono"),
+                        nota = tr("Material You: sfondo e testo prendono la tinta dello sfondo del telefono", "Material You: background and text take the tint of the phone's wallpaper", "Material You: Hintergrund und Text übernehmen die Tönung des Hintergrundbilds", "Material You : le fond et le texte prennent la teinte du fond d'écran", "Material You: el fondo y el texto toman el tono del fondo de pantalla"),
+                        acceso = state.widgetColoriTelefono,
+                        palette = palette,
+                        onCambia = onToggleWidgetColori,
+                    )
+                }
             }
 
             // Le unita' stanno sulla riga del loro nome: due o tre voci corte
@@ -424,19 +439,24 @@ fun SalaImpostazioniScreen(
                 palette = palette,
                 nota = tr(
                     "Una notifica quando la previsione delle prossime ore passa la soglia che scegli tu, " +
-                        "sulla località dell'app. Sono previsioni, non allerte ufficiali, e di notte non suonano.",
+                        "sulla località dell'app e, se vuoi, su quelle salvate. Sono previsioni, non allerte ufficiali, e di notte non suonano.",
                     "A notification when the forecast for the coming hours crosses the threshold you choose, " +
-                        "for the app's place. They are forecasts, not official warnings, and they stay quiet at night.",
-                    "Eine Benachrichtigung, wenn die Vorhersage der nächsten Stunden die von dir gewählte Schwelle überschreitet, für den Ort der App. Es sind Vorhersagen, keine amtlichen Warnungen, und nachts bleiben sie still.",
-                    "Une notification quand la prévision des prochaines heures franchit le seuil que vous choisissez, pour le lieu de l'app. Ce sont des prévisions, pas des alertes officielles, et la nuit elles restent silencieuses.",
-                    "Una notificación cuando la previsión de las próximas horas supera el umbral que tú eliges, para el lugar de la app. Son previsiones, no alertas oficiales, y de noche no suenan.",
+                        "for the app's place and, if you like, your saved ones. They are forecasts, not official warnings, and they stay quiet at night.",
+                    "Eine Benachrichtigung, wenn die Vorhersage der nächsten Stunden die von dir gewählte Schwelle überschreitet, für den Ort der App und, wenn du willst, die gespeicherten. Es sind Vorhersagen, keine amtlichen Warnungen, und nachts bleiben sie still.",
+                    "Une notification quand la prévision des prochaines heures franchit le seuil que vous choisissez, pour le lieu de l'app et, si vous voulez, les lieux enregistrés. Ce sont des prévisions, pas des alertes officielles, et la nuit elles restent silencieuses.",
+                    "Una notificación cuando la previsión de las próximas horas supera el umbral que tú eliges, para el lugar de la app y, si quieres, los guardados. Son previsiones, no alertas oficiales, y de noche no suenan.",
                 ),
             ) {
                 TipoSoglia.entries.forEachIndexed { indice, tipo ->
                     if (indice > 0) FiloGruppo(palette)
                     val accesa = state.soglie.accesa(tipo) && puoNotificare
                     val scritta: (Int) -> String = { valore ->
-                        if (tipo == TipoSoglia.VENTO) ventoDiSoglia(valore, state.windUnit) else gradiDiSoglia(valore, state.unit)
+                        when (tipo) {
+                            TipoSoglia.VENTO -> ventoDiSoglia(valore, state.windUnit)
+                            TipoSoglia.PIOGGIA -> pioggiaDiSoglia(valore)
+                            TipoSoglia.UV -> "UV $valore"
+                            else -> gradiDiSoglia(valore, state.unit)
+                        }
                     }
                     val scelta = scritta(state.soglie.valore(tipo))
                     VoceInterruttore(
@@ -444,6 +464,8 @@ fun SalaImpostazioniScreen(
                             TipoSoglia.GELO -> tr("Gelo", "Frost", "Frost", "Gel", "Helada")
                             TipoSoglia.CALDO -> tr("Caldo", "Heat", "Hitze", "Chaleur", "Calor")
                             TipoSoglia.VENTO -> tr("Vento forte", "Strong wind", "Starker Wind", "Vent fort", "Viento fuerte")
+                            TipoSoglia.PIOGGIA -> tr("Pioggia forte", "Heavy rain", "Starkregen", "Pluie forte", "Lluvia fuerte")
+                            TipoSoglia.UV -> tr("UV alto", "High UV", "Hoher UV-Index", "UV élevés", "UV alto")
                         },
                         nota = when (tipo) {
                             TipoSoglia.GELO ->
@@ -455,6 +477,12 @@ fun SalaImpostazioniScreen(
                             TipoSoglia.VENTO ->
                                 if (accesa) tr("quando le raffiche arrivano a $scelta o sopra", "when gusts reach $scelta or above", "wenn die Böen $scelta oder mehr erreichen", "quand les rafales atteignent $scelta ou plus", "cuando las rachas llegan a $scelta o más")
                                 else tr("quando le raffiche passano la tua soglia", "when gusts pass your threshold", "wenn die Böen deine Schwelle überschreiten", "quand les rafales dépassent votre seuil", "cuando las rachas superan tu umbral")
+                            TipoSoglia.PIOGGIA ->
+                                if (accesa) tr("quando piove $scelta o più", "when it rains $scelta or more", "wenn es $scelta oder mehr regnet", "quand il pleut $scelta ou plus", "cuando llueve $scelta o más")
+                                else tr("quando la pioggia passa la tua soglia", "when rain passes your threshold", "wenn der Regen deine Schwelle überschreitet", "quand la pluie dépasse votre seuil", "cuando la lluvia supera tu umbral")
+                            TipoSoglia.UV ->
+                                if (accesa) tr("quando l'indice UV arriva a ${state.soglie.valore(tipo)} o sopra", "when the UV index reaches ${state.soglie.valore(tipo)} or above", "wenn der UV-Index ${state.soglie.valore(tipo)} oder mehr erreicht", "quand l'indice UV atteint ${state.soglie.valore(tipo)} ou plus", "cuando el índice UV llega a ${state.soglie.valore(tipo)} o más")
+                                else tr("quando l'indice UV passa la tua soglia", "when the UV index passes your threshold", "wenn der UV-Index deine Schwelle überschreitet", "quand l'indice UV dépasse votre seuil", "cuando el índice UV supera tu umbral")
                         },
                         acceso = accesa,
                         palette = palette,
@@ -478,6 +506,25 @@ fun SalaImpostazioniScreen(
                             palette = palette,
                             onScegli = { onChooseSoglia(tipo, it) },
                             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                        )
+                    }
+                }
+                // Ha senso solo con almeno un avviso acceso.
+                ComparsaMorbida(visibile = state.soglie.qualcunaAccesa && puoNotificare) {
+                    Column {
+                        FiloGruppo(palette)
+                        VoceInterruttore(
+                            titolo = tr("Anche le località salvate", "Saved places too", "Auch gespeicherte Orte", "Aussi les lieux enregistrés", "También los lugares guardados"),
+                            nota = tr(
+                                "controlla fino a ${SogliePersonali.ALTRE_LOCALITA_MAX} località di «Le località», non solo quella dell'app",
+                                "checks up to ${SogliePersonali.ALTRE_LOCALITA_MAX} places from «Places», not just the app's",
+                                "prüft bis zu ${SogliePersonali.ALTRE_LOCALITA_MAX} Orte aus «Orte», nicht nur den der App",
+                                "surveille jusqu'à ${SogliePersonali.ALTRE_LOCALITA_MAX} lieux de « Les lieux », pas seulement celui de l'app",
+                                "vigila hasta ${SogliePersonali.ALTRE_LOCALITA_MAX} lugares de «Lugares», no solo el de la app",
+                            ),
+                            acceso = state.soglie.altreLocalita,
+                            palette = palette,
+                            onCambia = onToggleSoglieAltre,
                         )
                     }
                 }

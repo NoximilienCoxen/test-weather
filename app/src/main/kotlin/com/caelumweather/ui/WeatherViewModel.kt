@@ -15,6 +15,7 @@ import com.caelumweather.data.AirQuality
 import com.caelumweather.data.AirQualityRepository
 import com.caelumweather.data.Mare
 import com.caelumweather.data.MareRepository
+import com.caelumweather.data.StoricoRepository
 import com.caelumweather.data.AlertKind
 import com.caelumweather.data.AlertLevel
 import com.caelumweather.data.DeviceLocation
@@ -128,6 +129,11 @@ data class UiState(
      */
     val mare: Mare? = null,
     /**
+     * Com'era questo giorno un anno fa, dall'archivio. Nullo finche' non
+     * arriva, e per sempre se non arriva: la riga allora non compare.
+     */
+    val unAnnoFa: com.caelumweather.data.GiornoStorico? = null,
+    /**
      * Le allerte in corso per la localita' mostrata, la piu' grave per prima.
      *
      * Come [air], sono un arricchimento che arriva dopo la previsione e per
@@ -219,6 +225,8 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
+    val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
     val schedeLarghe: Boolean = false,
     /**
@@ -327,6 +335,12 @@ data class UiState(
     val favoritesWeather: Map<String, com.caelumweather.data.CurrentWeather> = emptyMap(),
     /** Le previsioni intere delle salvate, per il confronto fianco a fianco. */
     val favoritesForecast: Map<String, Forecast> = emptyMap(),
+    /**
+     * Il mare delle salvate, per la riga del confronto. **Chiave presente e
+     * valore nullo = "qui non c'e' mare"**, chiave assente = non ancora chiesto:
+     * sono due risposte diverse e la colonna le scrive diverse.
+     */
+    val favoritesMare: Map<String, Mare?> = emptyMap(),
     /** Il confronto fra le salvate, aperto da "Le località". */
     val confrontoOpen: Boolean = false,
 ) {
@@ -657,6 +671,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
                         animazioniRidotte = settings.animazioniRidotte,
+                        widgetColoriTelefono = settings.widgetColoriTelefono,
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
                         notifichePioggia = settings.notifichePioggia,
@@ -708,6 +723,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     mare = null,
+                    unAnnoFa = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
                     // Un fotogramma e' una fotografia di **un posto**, e
@@ -790,6 +806,25 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         launch {
                             MareRepository(place).load().onSuccess { mare ->
                                 _state.update { it.copy(mare = mare) }
+                            }
+                        }
+
+                        // Un anno fa, dall'archivio: **una** richiesta, e solo
+                        // se questa localita' e questa data non ce l'hanno gia'
+                        // in memoria. Stessa regola del mare: figlio di questo
+                        // lavoro, nessuno lo aspetta, se non arriva la riga
+                        // non compare.
+                        launch {
+                            val oggi = forecast.nowThere().toLocalDate()
+                            val chiave = "${place.key}|$oggi"
+                            val noto = storicoInMemoria[chiave]
+                            if (noto != null) {
+                                _state.update { it.copy(unAnnoFa = noto.orElse(null)) }
+                            } else {
+                                StoricoRepository(place).unAnnoFa(oggi).onSuccess { giorno ->
+                                    storicoInMemoria[chiave] = java.util.Optional.ofNullable(giorno)
+                                    _state.update { it.copy(unAnnoFa = giorno) }
+                                }
                             }
                         }
 
@@ -1090,6 +1125,19 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun roomRequestHonoured() = _state.update { it.copy(roomRequest = null) }
 
+    /**
+     * Colori del telefono nei widget. Le immagini gia' dipinte non si
+     * ricolorano da sole: dopo la scrittura si ridisegnano tutti.
+     */
+    fun setWidgetColoriTelefono(accesi: Boolean) {
+        _state.update { it.copy(widgetColoriTelefono = accesi) }
+        val app = getApplication<Application>()
+        viewModelScope.launch {
+            prefs.setWidgetColoriTelefono(accesi)
+            runCatching { com.caelumweather.widget.repaintWidgets(app) }
+        }
+    }
+
     fun setCardTheme(theme: CardTheme) {
         viewModelScope.launch { prefs.setCardTheme(theme) }
     }
@@ -1158,6 +1206,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
      */
     private var favoritesJob: Job? = null
 
+    /** L'archivio gia' chiesto, per localita' e data; `Optional` perche' "nessun dato" e' una risposta. */
+    private val storicoInMemoria = mutableMapOf<String, java.util.Optional<com.caelumweather.data.GiornoStorico>>()
+
     /** Quando l'ultima richiesta per una salvata e' stata fatta. */
     private val favoritesFetchedAt = mutableMapOf<String, Long>()
 
@@ -1199,6 +1250,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                 )
                             }
                         }
+                    // Il mare della stessa salvata, per il confronto. Un
+                    // errore non scrive niente: la colonna resta "in arrivo".
+                    MareRepository(place).load().onSuccess { mare ->
+                        _state.update { it.copy(favoritesMare = it.favoritesMare + (place.key to mare)) }
+                    }
                 }
             }
         }
@@ -1588,6 +1644,12 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun setValoreSoglia(tipo: TipoSoglia, valore: Int) {
         _state.update { it.copy(soglie = it.soglie.conValore(tipo, valore)) }
         viewModelScope.launch { prefs.setValoreSoglia(tipo, valore) }
+    }
+
+    /** Guardare anche le localita' salvate negli avvisi a soglia. */
+    fun setSoglieAltreLocalita(accese: Boolean) {
+        _state.update { it.copy(soglie = it.soglie.copy(altreLocalita = accese)) }
+        viewModelScope.launch { prefs.setSoglieAltreLocalita(accese) }
     }
 
     fun permessoNotificheChiesto() {

@@ -216,6 +216,14 @@ enum class WidgetKind(
     MINI(listOf("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), listOf("MINI", "MINI", "MINI", "MINI", "MINI"), true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),
 
     ORE(listOf("PROSSIME ORE", "NEXT HOURS", "NÄCHSTE STUNDEN", "PROCHAINES HEURES", "PRÓXIMAS HORAS"), listOf("ORE", "HOURS", "STUNDEN", "HEURES", "HORAS"), true, HoursWidgetReceiver::class.java, ::HoursWidget, SalaRoom.OGGI),
+
+    // Il widget unico: una faccia sola che si ridimensiona, al posto di sei.
+    UNICO(listOf("CAELUM", "CAELUM", "CAELUM", "CAELUM", "CAELUM"), listOf("CAELUM", "CAELUM", "CAELUM", "CAELUM", "CAELUM"), true, UnicoWidgetReceiver::class.java, ::UnicoWidget, SalaRoom.OGGI),
+
+    VENTO(listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), true, VentoWidgetReceiver::class.java, ::VentoWidget, SalaRoom.VENTO),
+
+    // Il mare sta nella sala del vento: e' vento che ha avuto tempo.
+    MARE(listOf("MARE", "SEA", "MEER", "MER", "MAR"), listOf("MARE", "SEA", "MEER", "MER", "MAR"), true, MareWidgetReceiver::class.java, ::MareWidget, SalaRoom.VENTO),
     ;
 
     /** Come si chiama per esteso, nella schermata di configurazione. */
@@ -273,12 +281,14 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
      * caso "non configurato" e' gia' stato intercettato prima di arrivare qui,
      * quindi qui non c'e' nessun ripiego da inventare.
      */
-    protected abstract suspend fun paint(
+    internal abstract suspend fun paint(
         context: Context,
         frame: Frame,
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        /** Cosa mostrare, per il widget unico; gli altri non la leggono. */
+        vista: VistaWidget,
     ): Drawn
 
     /**
@@ -335,7 +345,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
 
     private suspend fun draw(context: Context, appWidgetId: Int, config: WidgetConfig): Face {
         val frame = WidgetCanvas.plan(context, appWidgetId)
-        val ink = WidgetInk.of(context)
+        val ink = WidgetInk.of(context, SettingsPrefs(context).settings.first().widgetColoriTelefono)
         val type = WidgetType(context)
 
         val place = if (kind.needsPlace) config.resolvePlace(context, appWidgetId) else null
@@ -360,7 +370,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
         // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
         // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
         // saperne di piu', non lo stesso numero ridisegnato.
-        return Face(paint(context, frame, place, type, ink), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
+        return Face(paint(context, frame, place, type, ink, config.vista), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
     }
 }
 

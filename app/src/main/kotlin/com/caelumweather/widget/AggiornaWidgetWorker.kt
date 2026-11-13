@@ -44,7 +44,7 @@ class AggiornaWidgetWorker(contesto: Context, parametri: WorkerParameters) : Cor
                 // L'aria non ha scorta (un indice di ore fa non e' quello di
                 // adesso): il ridisegno qui sotto la riprova comunque, e
                 // mentre questo lavoro gira la rete c'e'.
-                if (kind == WidgetKind.ARIA) return@forEach
+                if (kind == WidgetKind.ARIA || kind == WidgetKind.MARE) return@forEach
                 tentati++
                 if (WidgetForecast.scarica(contesto, posto)) riusciti++
             }

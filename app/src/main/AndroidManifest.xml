@@ -152,6 +152,42 @@
         </receiver>
 
         <receiver
+            android:name=".widget.UnicoWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_unico_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/unico_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.VentoWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_vento_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/vento_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.MareWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_mare_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/mare_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".widget.WeekWidgetReceiver"
             android:exported="true"
             android:label="@string/widget_week_label">

@@ -10,7 +10,12 @@ import com.caelumweather.data.CurrentWeather
 import com.caelumweather.data.DayForecast
 import com.caelumweather.data.Forecast
 import com.caelumweather.data.HourForecast
+import com.caelumweather.data.Mare
 import com.caelumweather.data.MoonSegment
+import com.caelumweather.data.OraMare
+import com.caelumweather.data.prossimiEstremi
+import com.caelumweather.prefs.SalaWindUnit
+import com.caelumweather.prefs.TempUnit
 import com.caelumweather.data.Place
 import com.caelumweather.lingua.Lingua
 import com.caelumweather.lingua.Lingue
@@ -27,6 +32,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Le anteprime dei widget per il selettore del lanciatore.
@@ -71,6 +77,35 @@ class AnteprimeWidgetTest {
             scatta("anteprima-settimana-$sigla", 340f, 170f, Cut.MEDIO) { weekArt(it, posto.name, previsione.days, type, ink) }
             scatta("anteprima-ore-$sigla", 340f, 170f, Cut.MEDIO) { hoursArt(it, posto.name, previsione.hours.drop(10), type, ink) }
             scatta("anteprima-mini-$sigla", 70f, 70f, Cut.PICCOLO) { miniArt(previsione, type, ink) }
+
+            // Vento e mare: una giornata ventilata da ESE e un mare poco mosso
+            // con la marea che gira ogni dodici ore e venticinque minuti.
+            val adesso = LocalDateTime.of(2026, 5, 14, 10, 0)
+            val ventose = (10 until 34).map { h ->
+                HourForecast(
+                    time = LocalDateTime.of(2026, 5, 14, 0, 0).plusHours(h.toLong()),
+                    windSpeed = 4.5 + 2.5 * sin(h / 24.0 * 2 * PI),
+                    windGusts = 9.0 + 3.0 * sin(h / 24.0 * 2 * PI),
+                    windDirection = 112.0,
+                )
+            }
+            scatta("anteprima-vento-$sigla", 150f, 150f, Cut.PICCOLO) { ventoArt(it, posto.name, ventose, SalaWindUnit.KMH, type, ink) }
+            scatta("anteprima-vento-largo-$sigla", 340f, 170f, Cut.MEDIO) { ventoArt(it, posto.name, ventose, SalaWindUnit.KMH, type, ink) }
+            val marea = Mare(
+                (0 until 72).map { h ->
+                    OraMare(
+                        time = LocalDateTime.of(2026, 5, 14, 0, 0).plusHours(h.toLong()),
+                        onda = 0.4, direzione = 112.0, periodo = 5.0, acqua = 17.0,
+                        livello = 0.35 * cos((h - 9) / 12.42 * 2 * PI),
+                    )
+                },
+                utcOffsetSeconds = 7200,
+            )
+            val oraMare = marea.alle(adesso)
+            val prossima = prossimiEstremi(marea, adesso, 1).firstOrNull()
+            scatta("anteprima-mare-$sigla", 150f, 150f, Cut.PICCOLO) { mareArt(it, "RIMINI", oraMare, marea, false, prossima, adesso, TempUnit.CELSIUS, type, ink) }
+            scatta("anteprima-mare-largo-$sigla", 340f, 170f, Cut.MEDIO) { mareArt(it, "RIMINI", oraMare, marea, false, prossima, adesso, TempUnit.CELSIUS, type, ink) }
+            scatta("anteprima-mare-nessuno-$sigla", 150f, 150f, Cut.PICCOLO) { mareArt(it, "BOLOGNA", null, null, true, null, null, TempUnit.CELSIUS, type, ink) }
         }
     }
 

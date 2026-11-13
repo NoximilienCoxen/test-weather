@@ -24,6 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.contentDescription
@@ -33,19 +37,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.caelumweather.ui.sala.LocalMovimento
+import com.caelumweather.ui.sala.rememberOndaScheda
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.geometry.Offset
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.UiState
 import com.caelumweather.data.MoonPhase
+import com.caelumweather.data.righeUnAnnoFa
 import com.caelumweather.data.scartoDaIeri
 import com.caelumweather.data.scartoDaIeriBreve
 import com.caelumweather.ui.WeatherViewModel
 import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import com.caelumweather.ui.sala.CellaValore
+import com.caelumweather.ui.sala.ComparsaMorbida
 import com.caelumweather.ui.sala.CifreCheScorrono
 import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.GiornoSettimana
 import com.caelumweather.ui.sala.IconaMeteo
+import com.caelumweather.ui.sala.IconaCheReagisce
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.PastigliaAccento
 import com.caelumweather.ui.sala.SalaPalette
@@ -110,6 +126,15 @@ fun SalaOggiScreen(
     val giornoScelto = settimana.getOrNull(state.selectedDay)
     val futuro = state.selectedDay > 0
     val giorno = state.detailDay
+    // **La curva della giornata si apre a richiesta.** Sempre aperta allungava
+    // la scheda di un terzo e il numero grande saliva a coprire il sole, la
+    // luna e il loro arco: il cielo e' il punto di questa sala. Da chiusa resta
+    // una mini-curva accanto a "min · max", sul cielo, che la apre.
+    var giornataAperta by rememberSaveable { mutableStateOf(false) }
+    // Il giorno toccato si spande nella scheda: vedi [OndaScheda].
+    val onda = rememberOndaScheda()
+    val scopeOnda = rememberCoroutineScope()
+    val movimentoOnda = LocalMovimento.current
 
     Column(modifier = modifier.fillMaxWidth()) {
         // ── Il numero, sul cielo ─────────────────────────────────────────────
@@ -170,6 +195,31 @@ fun SalaOggiScreen(
                         maxLines = 1,
                     )
                 }
+                // La mini-curva su una riga sua: accanto a min e max toglieva
+                // spazio a "condividi", che andava a capo. La colonna resta piu'
+                // bassa del numero grande, quindi l'altezza non cambia.
+                Row(
+                    modifier = Modifier
+                        .cedevole()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable(
+                            onClickLabel = if (giornataAperta) {
+                                tr("chiudi la curva della giornata", "close the day's curve", "Tageskurve schließen", "fermer la courbe de la journée", "cerrar la curva del día")
+                            } else {
+                                tr("apri la curva della giornata", "open the day's curve", "Tageskurve öffnen", "ouvrir la courbe de la journée", "abrir la curva del día")
+                            },
+                        ) { giornataAperta = !giornataAperta },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    MiniGiornata(
+                        ore = state.shownHours,
+                        scelta = state.selectedHour,
+                        aperta = giornataAperta,
+                        palette = palette,
+                        etichetta = tr("giornata", "the day", "Tag", "journée", "el día"),
+                    )
+                }
             }
             // **Condividere il giorno mostrato**, non quello di oggi: se si e'
             // toccato sabato e' sabato che si vuole mandare a chi viene al mare.
@@ -182,6 +232,8 @@ fun SalaOggiScreen(
                     text = tr("condividi", "share", "teilen", "partager", "compartir"),
                     style = SalaType.pill,
                     color = palette.accent,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier = Modifier
                         .padding(bottom = 12.dp)
                         .clip(RoundedCornerShape(16.dp))
@@ -193,7 +245,7 @@ fun SalaOggiScreen(
             }
         }
 
-        PannelloSala(palette = palette) {
+        PannelloSala(palette = palette, onda = onda) {
             if (futuro && giornoScelto != null) {
                 Row(
                     modifier = Modifier.padding(bottom = 9.dp),
@@ -262,6 +314,47 @@ fun SalaOggiScreen(
                 }
             }
 
+            // ── La giornata, in una curva (a richiesta) ──────────────────────
+            ComparsaMorbida(visibile = giornataAperta) {
+                Column {
+                    GraficoGiornata(
+                        ore = state.shownHours,
+                        scelta = state.selectedHour,
+                        adesso = if (state.selectedDay == 0) state.nowIndex else null,
+                        unita = state.unit,
+                        palette = palette,
+                        onScegli = viewModel::selectHour,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+
+                    // ── Un anno fa, solo per oggi ─────────────────────────────────────
+                    // Arriva dopo la previsione (e' una seconda richiesta): compare
+                    // aprendo il suo spazio invece di spingere giu' la fila dei giorni.
+                    val storico = state.unAnnoFa
+                    ComparsaMorbida(visibile = !futuro && storico != null) {
+                        if (storico == null) return@ComparsaMorbida
+                        val righe = remember(storico, giorno, state.unit) { righeUnAnnoFa(storico, giorno, state.unit) }
+                        // **Una riga, non un riquadro**: e' una curiosita' accanto
+                        // alla curva, e un riquadro suo allungava la scheda fino a
+                        // tagliare la fila dei giorni in fondo.
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(SpanStyle(color = palette.inkFaint)) {
+                                    append(tr("Un anno fa: ", "A year ago: ", "Vor einem Jahr: ", "Il y a un an : ", "Hace un año: "))
+                                }
+                                withStyle(SpanStyle(color = palette.ink)) { append(righe.cosaEra) }
+                                righe.confronto?.let { append(". "); append(it.trimEnd('.')) }
+                            },
+                            style = SalaType.rowNote,
+                            color = palette.inkSoft,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
+                    }
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 13.dp)
@@ -293,6 +386,7 @@ fun SalaOggiScreen(
                 state = state,
                 palette = palette,
                 onScegli = viewModel::selectDay,
+                onToccoDa = { da -> if (movimentoOnda) scopeOnda.launch { onda.parti(da) } },
             )
         }
     }
@@ -349,7 +443,11 @@ fun StrisciaGiorni(
     onScegli: (Int) -> Unit,
     modifier: Modifier = Modifier,
     conMillimetri: Boolean = false,
+    /** Le coordinate della pastiglia toccata: fanno partire l'onda (vedi `OndaScheda`). */
+    onToccoDa: ((androidx.compose.ui.layout.LayoutCoordinates) -> Unit)? = null,
 ) {
+    // Solo riferimenti, niente stato e niente conti durante la disposizione.
+    val coordinate = remember { mutableMapOf<Int, androidx.compose.ui.layout.LayoutCoordinates>() }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -380,7 +478,11 @@ fun StrisciaGiorni(
                         }
                         selected = attivo
                     }
-                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) { onScegli(giorno.indice) }
+                    .then(if (onToccoDa != null) Modifier.onPlaced { coordinate[giorno.indice] = it } else Modifier)
+                    .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
+                        if (giorno.indice != scelto) coordinate[giorno.indice]?.let { onToccoDa?.invoke(it) }
+                        onScegli(giorno.indice)
+                    }
                     .padding(top = 9.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
@@ -392,7 +494,7 @@ fun StrisciaGiorni(
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                 )
-                IconaMeteo(giorno.glifo)
+                IconaCheReagisce(giorno.glifo, scelto = attivo)
                 Text(
                     text = giorno.max?.let { "${state.unit.from(it).roundToInt()}°" } ?: "--",
                     style = SalaType.giornoMax,

@@ -8133,3 +8133,363 @@ risponde con la sala giusta, ma chi aggiunge una riga che compare e scompare
 sopra o sotto il carosello lo tenga presente.
 
 **Non provato in mano**: e' dedotto dal video e dal codice, e compila.
+
+## 64. Le novita' del 11 novembre 2026: soglie, neve, maree, storico, grafico, widget
+
+Scritte e provate **da un container con l'SDK Android scaricato a mano** (vedi
+§64.8: `dl.google.com` si raggiunge, e basta quello). Compilano, i test JVM
+passano - compresi quelli Robolectric, che disegnano i widget - e i disegni nuovi
+si sono guardati come immagine. **Nessuna e' stata provata su un telefono**:
+quello che segue dice, per ogni punto, cosa resta da guardare in mano.
+
+### 64.1 Avvisi a soglia: pioggia, UV, e piu' localita'
+
+`TipoSoglia` ha due voci in piu' in **fondo** (`PIOGGIA`, `UV`: `ordinal` entra
+nel numero di notifica, quindi l'ordine non si tocca). Pioggia da 2/5/10 mm
+l'ora, UV da 6/8/11. Il confronto e' sul numero che si leggera': l'UV si
+arrotonda come i gradi, la pioggia no (il millimetro e' gia' un decimale).
+
+**Piu' localita'** (`SogliePersonali.altreLocalita`, spenta di norma): il giro
+guarda la localita' dell'app e fino a `ALTRE_LOCALITA_MAX` = 5 salvate. La
+localita' dell'app e' l'unica per cui si riprova se la rete manca; le altre
+no. La chiave di "un episodio, una notifica" gia' conteneva il posto
+(`posto.key`); il **numero** della notifica adesso lo contiene anche (hash del
+posto x numero di tipi), se no due citta' con la stessa soglia si
+sostituirebbero in tendina. `ID_BASE` e' passato da 4400 a 100000 per non
+cozzare con le allerte ufficiali (4300 + 10 bit).
+
+Il tocco su una notifica di una localita' salvata apre la sala giusta **ma non
+cambia localita'**: l'app mostra la sua. Un extra `EXTRA_LOCALITA` per portarci
+la localita' della notifica e' il passo logico, non fatto.
+
+Prove: `SogliePersonaliTest` (pioggia alla soglia, UV arrotondato, testi).
+**Non provato in mano**: il giro con tre localita' vere, e il permesso delle
+notifiche chiesto dalle due levette nuove.
+
+### 64.2 La neve
+
+`freezing_level_height` e' entrato in `HOURLY_VARS`, e `elevation` (la quota
+del posto, nella risposta) in `Forecast`. `core/data/Neve.kt`:
+**quota neve = zero termico - 300 m**, a passi di 50. E' la regola dei
+bollettini di montagna, non un dato dell'API, e la sala lo scrive ("circa" e
+una nota). `nevePrevista` da' i giorni con >= 0,1 cm e, per ciascuno, la
+quota **piu' bassa** fra le ore in cui nevica (e' la domanda di chi risale
+una valle). `postoRispettoAllaNeve` confronta la quota del posto: da +200 m in
+su "da te nevica", entro 200 m "al limite", sotto "la neve resta piu' in alto".
+
+`SezioneNeve` sta in fondo a Sala III e compare solo con neve in arrivo o su un
+posto sopra i mille metri (`serveLaNeve`). I metri si danno in piedi per chi ha
+i gradi Fahrenheit, come le onde.
+
+Prove: `NeveTest` (core) e `app/src/test/resources/neve-dolomiti.json`, una
+risposta **vera** (Dolomiti, 11 novembre: zero termico a 2900 m, nessuna neve:
+e' la prova che la colonna nuova si legge, non che la neve funzioni).
+**Non provato**: una nevicata vera. L'11 novembre sulle Dolomiti non nevicava.
+
+### 64.3 Le maree
+
+`sea_level_height_msl` entra in `MARE_VARS` e in `OraMare.livello`. Le alte e le
+basse **non sono nell'API**: `data/Marea.kt` le ricava dalla curva con un filtro a
+isteresi - un massimo e' tale solo se poi la curva **scende** di 10 cm
+(`ESCURSIONE_MINIMA_M`), e viceversa. La prima stesura cercava "un'ora piu'
+alta delle due accanto" e a Venezia trovava come marea gli scalini da 1 cm
+(0,09 - 0,09 - 0,10): `MareTest` la teneva fuori per un soffio, ed e' la
+ragione dell'isteresi. Il primo punto della serie non si dichiara mai un
+estremo (non si sa cosa facesse prima); l'ora si raffina al minuto con una
+parabola per tre punti. Le ore senza livello spezzano la curva.
+
+Dentro `SezioneMare` (Sala VI): curva delle 24 ore dall'ora scelta, le
+prossime quattro alte/basse in parole, e **la stessa avvertenza** del mare
+(modello globale, porti e lagune diversi di decine di centimetri, non per
+navigare). Dove la marea e' sotto i 10 cm (mari chiusi, laghi) la sezione non
+compare.
+
+Il **confronto fra localita'** (`SalaConfronto`) ha due righe in piu' - ONDE
+(vince la piu' bassa) e ACQUA - solo se almeno una colonna e' di costa;
+`UiState.favoritesMare` distingue "qui non c'e' mare" (chiave presente, valore
+nullo) da "non ancora chiesto" (chiave assente). Verificato contro risposte
+vere di Venezia, Rimini, Honolulu (con livello) e Forli', Milano, Denver (tutto
+nullo: il mare resta "solo dove c'e'" anche con la colonna nuova).
+
+Prove: `MareTest` + `mare-venezia-livello.json` (risposta vera dell'11
+novembre).
+
+### 64.4 Un anno fa oggi
+
+`data/Storico.kt`: **una** richiesta a `archive-api.open-meteo.com` per
+localita' e data, tenuta in `WeatherViewModel.storicoInMemoria` (`Optional`
+perche' "nessun dato" e' una risposta). E' il **quinto indirizzo** di
+Open-Meteo: informativa (`docs/privacy.md`) e note legali l'hanno. L'archivio
+stava nell'app per la "norma storica" (§ sul perche' e' stata tolta: dieci
+richieste a previsione, un campo che nessuno leggeva); qui si chiede un
+giorno, quando serve.
+
+Il riquadro "UN ANNO FA OGGI" sta in Sala I sotto la curva e solo su oggi.
+Confronto sulle **massime mostrate**, come per "ieri"; sotto i due gradi "quasi
+come allora".
+
+**Non e' stato provato contro l'archivio vero**: da questo container l'host e'
+bloccato dal proxy (403 al CONNECT). `archivio-un-giorno.json` e' scritto a
+mano nel formato documentato. **E' la prima cosa da guardare sul telefono**:
+se la risposta ha un'altra forma, `parseStorico` torna nullo e la riga non
+compare - non rompe niente, ma non si vede nemmeno.
+
+### 64.5 La curva della giornata
+
+`ui/sala/rooms/GraficoGiornata.kt`, in Sala I sotto i tre riquadri: la
+temperatura sulle ore del giorno mostrato, minima e massima segnate, la notte
+in fascia piu' scura, un tacchetto sull'ora di adesso, un cursore agganciato a
+`selectHour` (tocco e trascinamento, con colpetto). Si rivela da sinistra in
+900 ms quando compare; il cursore va a molla. Con `LocalMovimento` falso: niente
+rivelazione ne' molla ne' colpetto. Un giorno senza ore (oltre il quarto con
+ICON-2I) non disegna niente.
+
+**Non provato in mano**: il trascinamento sulla curva dentro il carosello
+verticale (come la colonna della pioggia, `detectHorizontalDragGestures` con
+`consume`, ma li' e' una fila, qui e' un'area alta 128 dp), e quanto la sala
+sia piu' alta di uno schermo piccolo - Sala I ha adesso una curva e un riquadro
+in piu'.
+
+### 64.6 Cio' che si muove e si tocca
+
+- **Pioggia/neve/grandine al tocco** (`SalaCielo.Tocco`). Il cielo aveva gia'
+  le increspature e la fiammata del sole; quando cade qualcosa, il tocco fuori
+  dal disco fa altro: pioggia = anelli schiacciati, corona di gocce balistiche e
+  uno **scroscio** (la pioggia si infittisce per due secondi: `bagnato`
+  aumentato solo per le corsie accese, non per neve e grandine) con colpetto
+  `goccia()`; neve = un soffio che spinge i fiocchi vicini lontano dal dito e li
+  fa girare, e un cristallo a sei bracci che si scioglie; grandine = chicchi che
+  rimbalzano e `chicco()`. Il tocco legge la scena con `rememberUpdatedState`
+  (il gestore e' chiavato su `interattivo`, vedrebbe sempre la scena di
+  quando e' nato).
+- **L'astro di attesa** (`IndicatoreCielo`): sole con raggi che girano, luna
+  che dondola con due stelline, fiocco che gira, al posto del cerchio di
+  Material nel tiro per aggiornare e **sotto il nome nel velo d'apertura**
+  mentre i dati non ci sono. L'animazione infinita parte solo con `caricando`
+  e solo se il movimento e' consentito. **Non provato in mano**: la corsa
+  dell'indicatore col tiro (`distanceFraction`, si sposta con `graphicsLayer`
+  invece che col posizionamento di Material).
+
+### 64.7 I widget
+
+- **Vento** e **mare** (`widget/VentoWidget`, `MareWidget`, `paint/VentoArt`,
+  `MareArt`): ridimensionabili, con anteprima nelle due lingue di
+  `drawable(-en)-nodpi`. Il vento usa l'unita' scelta nell'app; la freccia
+  della bussola punta **dove il vento va** (la scritta dice "da"). Il mare
+  distingue "qui non c'e'" (risposta riuscita e vuota: scritto) da "non so"
+  (rete: trattini). `Mare.adesso()` legge l'ora del posto da
+  `utc_offset_seconds`. Il mare non scarica la previsione
+  (`AggiornaWidgetWorker` e `WidgetConfigActivity` lo saltano come l'aria).
+- **Colori del telefono** (Material You): `WidgetInk.of(context, coloriTelefono)`
+  prende sfondo, testo e accento da `android.R.color.system_*` su Android 12+.
+  E' una scelta **dell'app, non del singolo widget**
+  (`Settings.widgetColoriTelefono`, **accesa di norma**), con una levetta in
+  Impostazioni solo da Android 12; cambiarla ridisegna tutti i widget. Accesa
+  di norma vuol dire che chi aggiorna vede i suoi widget cambiare colore: se
+  non va bene, e' una riga (`?: true` -> `?: false` in `SettingsPrefs`).
+- **Widget unico** (`WidgetKind.UNICO`, "Caelum · ridimensionabile"): resize
+  in tutti e due i versi, `VistaWidget.AUTO` sceglie dalla forma (`vistaDaForma`:
+  cella -> temperatura, due per due -> tempo adesso, largo -> ore, alto ->
+  settimana) oppure la faccia fissata in configurazione (anche aria, luna, vento,
+  mare). **Non ridipinge niente**: `CaelumWidget.paint` e' diventato
+  `internal` e prende `vista`, e `UnicoWidget` chiama il widget giusto. **I sei
+  vecchi non sono stati tolti**: chi li ha sulla Home li perderebbe. Toglierli
+  dal selettore del lanciatore (senza disinstallare quelli piazzati) e'
+  possibile mettendo `android:enabled="false"` ai ricevitori nel manifesto - non
+  fatto, lo decide chi usa l'app.
+  L'anteprima nel selettore e' ancora **quella del meteo**, copiata: la va
+  rifatta con `AnteprimeWidgetTest`.
+  **Non provato in mano**: il ridimensionamento vero, e che `maxResizeWidth`
+  e' rispettato da ogni lanciatore.
+
+### 64.8 Compilare e provare in questo container
+
+Il container **non e' piu'** quello descritto in §1, ma neanche l'ambiente
+della macchina con il telefono: c'e' la rete, non l'SDK. Come si e' fatto:
+
+```
+curl -O https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+sdkmanager --install "platforms;android-37.0" "build-tools;36.0.0"   # android-37 e' "37.0"
+echo "sdk.dir=..." > local.properties                                  # ignorato da git
+```
+
+- **Maven Central risponde 429** a ondate (e ad `android-all-instrumented`, 150
+  MB, sempre): una build ne mette in cache un pezzo a ogni tentativo, quindi si
+  ripete finche' arriva in fondo. Il jar di Robolectric (`14-robolectric-10818077-i7`)
+  si scarica da `maven-central.storage-download.googleapis.com/maven2/...`, che
+  non limita, e si passa con
+  `-Drobolectric.offline=true -Drobolectric.dependency.dir=<cartella>` in
+  `JAVA_TOOL_OPTIONS`: i test girano senza toccare il repository.
+- **Raggiungibili**: `api.open-meteo.com`, `marine-api.open-meteo.com`,
+  `dl.google.com`, `maven-central.storage-download.googleapis.com`.
+  **Bloccato**: `archive-api.open-meteo.com` (403).
+- I disegni dei widget si guardano da `app/build/widget-renders/*.png` dopo
+  `AnteprimeWidgetTest` e `WidgetOverflowTest`.
+
+### 64.8-bis Le schede si erano allungate troppo
+
+Gli screenshot della CI sul primo giro (run 43035139280) mostravano la sala di
+oggi **oltre lo schermo**: la curva (128 dp) e il riquadro "un anno fa" avevano
+spinto in fondo la fila dei giorni, tagliata a meta'. Corretto cosi':
+
+- curva della giornata alta 80 dp (`ALTEZZA_GRAFICO`), margini interni stretti,
+  "adesso" un tacchetto leggero in fondo;
+- "un anno fa" e' **una riga** (al massimo due) sotto la curva, non un riquadro;
+- maree: curva 40 dp, estremi due per riga, e la loro avvertenza e' **una frase
+  in coda a quella del mare**, non un secondo paragrafo;
+- neve: una fila di colonnine come "la settimana" della pioggia invece di una
+  riga per giorno; la quota sotto ogni giorno solo se cambia; zero termico e
+  avvertenza in un paragrafo breve.
+
+`SchedeCompatteRenderTest` le disegna a larghezza di telefono
+(`build/widget-renders/scheda-*.png`) e mette un tetto all'altezza di ciascuna.
+L'altezza della scheda intera si verifica solo sugli screenshot della CI.
+
+### 64.8-ter Movimento dove mancava, e una riga invece di nove zeri
+
+- **`altezzaMorbida()`** (`SalaMovimento.kt`) e' in `PannelloSala`: ogni scheda
+  che cambia altezza (arriva "un anno fa", compare il giorno scelto, si apre una
+  sezione) scivola alla misura nuova invece di saltarci. Un posto, tutte le sale.
+- **Il valore di ogni `CellaValore` si scambia** (`ScambioMorbido`) quando cambia
+  l'ora: in tutte le sale, dalla stessa funzione.
+- **`crescitaAllArrivo()`**: da zero a uno una volta, sfalsabile. La usano le
+  colonnine della neve (a onda) e la curva delle maree (si disegna da sinistra).
+- "Un anno fa" compare con `ComparsaMorbida`: e' una seconda richiesta e arriva
+  dopo.
+- **Polline tutto a zero, in tutti i giorni: una riga** ("assente oggi e nei
+  prossimi giorni") al posto della griglia di nove pastiglie con lo zero.
+
+Tutto obbedisce a `LocalMovimento`: con le animazioni ridotte e negli scatti
+della CI si salta al valore finale.
+
+### 64.8-quater La curva si apre a richiesta: il cielo prima di tutto
+
+Anche compatta, la curva sempre aperta allungava la sala di oggi di ~150 dp
+rispetto a `main`: il numero grande saliva nel cielo e copriva **il sole, la
+luna e il loro arco** (confronto fra gli scatti della CI di 1d493b1 e
+b3b8f76, `cielo-mezzogiorno-sereno.png`). Il cielo e' il punto di questa sala.
+
+Adesso sotto "min · max", su una riga sua, c'e' `MiniGiornata` ("giornata ›"): la forma della
+giornata in 40 x 14 dp, col punto sull'ora scelta e una freccetta che gira.
+Toccandola si apre nella scheda (`ComparsaMorbida`) la curva grande con "un
+anno fa"; toccandola di nuovo si chiude. **Da chiusa la scheda e' alta come
+prima del grafico**, divisore compreso (16/13 dp). Lo stato e'
+`rememberSaveable`, chiuso alla partenza.
+
+### 64.8-quinquies Abbellimenti: l'aria nel cielo, il vetro della scheda, i gesti
+
+Dieci aggiunte, tutte legate a un dato vero e tutte spente da `LocalMovimento`
+(animazioni ridotte, cattura). L'unico movimento continuo resta il cielo, come
+prima; le gocce sul vetro sono continue solo finche' piove forte.
+
+**Nel cielo** - `SalaAtmosfera.kt`, accanto a `Scena` e non dentro:
+`Atmosfera(nebbia, vento, versoVento, caldo, gelo, dopoPioggia)`, calcolata da
+`atmosferaBersaglio` sull'ora mostrata e passata per le stesse molle della
+scena.
+- **Arcobaleno anche dopo il rovescio**: quello che c'era si accendeva solo
+  mentre pioveva; ora anche nell'ora dopo (0,85) e in quella dopo ancora.
+- **Nebbia a banchi** (codici 45/48, o visibilita' sotto 1 km; foschia sotto
+  4 km): un velo sul cielo e sei macchie sfumate in ogni direzione che
+  scivolano fra le colline. Il tocco apre un varco che si richiude
+  (`VarcoNebbia`). Scatto CI: `*-5f-nebbia`.
+- **Vento**: erba sul crinale delle colline (una frangia del colore della
+  collina, nascosta dove la copre una collina davanti, un solo `drawPath` per
+  collina), chiome degli alberi che si piegano, foglie dai ~28 km/h.
+- **Caldo** sopra i 29°: fascia calda e righe che tremolano sull'orizzonte.
+
+**Sul vetro della scheda** - `SalaVetro.kt`, disegnati da `PannelloSala`
+tramite `LocalVetro`:
+- **Brina** sotto zero: velo dai bordi e pochi cristalli **solo negli angoli**
+  (azzurro ghiaccio sulla carta chiara, bianchi sulla scura). Il tocco la
+  scioglie, torna dopo dieci secondi. Il primo tentativo, con i cristalli lungo
+  tutto il bordo, pareva una cornice di adesivi.
+- **Gocce** con pioggia forte (non neve ne' grandine): poche, si fermano e
+  ripartono, lasciano una scia.
+
+**Nelle schede**:
+- **Icone dei giorni che reagiscono al tocco** (`IconaCheReagisce`): giro di
+  raggi, due gocce, fiocco che ruota, lampo, ondeggio. Una volta, solo sul
+  giorno appena scelto.
+- **Curva colorata per temperatura** (`coloreDellaTemperatura`, scala assoluta
+  in Celsius: blu fino a 4°, ocra a 14°, accento dai 24°), anche nella
+  mini-curva e nei punti di minima e massima.
+- **Onda dal giorno toccato** (`OndaScheda`): dalla pastiglia un cerchio del
+  colore d'accento si allarga sulla scheda mentre i numeri cambiano, in Sala I
+  e in Sala II. Non e' una transizione fra pagine: quella c'era gia'.
+- **Filo d'aria nella rosa dei venti**: tratti nel verso del vento, piu' fitti
+  col vento forte, per sette secondi quando cambia l'ora, poi sfumano.
+- **La pastiglia degli avvisi batte una volta** quando arriva un avviso nuovo
+  (chiave: tipo, livello, inizio; `rememberSaveable`).
+
+**Il prezzo pagato subito.** Il primo giro della CI con questi effetti e'
+caduto due volte su due - l'emulatore, non l'app - prima a `scuro-guida-1`,
+poi a `00-impostazioni`: il punto piu' presto mai visto. Quel giorno a Forli'
+la visibilita' era sotto il chilometro tutto il giorno, con pioggia, quindi la
+nebbia era accesa e apriva **un livello fuori schermo a tutto schermo a ogni
+fotogramma** (serviva al `DstOut` dei varchi), e le gocce sul vetro facevano
+ridisegnare la scheda intera a ogni fotogramma. Ora il livello si apre solo
+mentre c'e' un varco aperto, e le gocce hanno un `graphicsLayer` loro. **Non e' bastato**: il terzo giro e'
+caduto allo stesso punto (`00-impostazioni`, 4 scatti). Il costo vero su un
+emulatore senza scheda grafica e' il riempimento: sei grandi sfumature di nebbia
+ridipinte a ogni fotogramma e qualche centinaio di curve d'erba ricostruite ogni
+volta. Ora (`CacheAtmosfera`) la nebbia e' **una trama a un quarto di
+risoluzione disegnata una volta e fatta scorrere** (due `drawImage` a
+fotogramma), e l'erba a vento sotto 0,08 e' **un tracciato per collina fatto una
+volta** per taglia; col vento i fili sono 2 ogni 12 unita' invece di 3 ogni 8.
+Regola per chi aggiunge un effetto continuo al cielo: niente `saveLayer` fisso,
+niente grandi sfumature ricalcolate a ogni fotogramma (si disegnano una volta in
+una trama), niente tracciati ricostruiti se non cambiano, e niente disegno
+continuo dentro la scheda senza uno strato suo.
+
+**La caccia, per esclusione** (giro `screenshots` della CI, 12 novembre 2026,
+stesso meteo per tutti: pioggia e visibilita' sotto il chilometro a Forli'):
+
+| giro | cosa c'era | scatti |
+|---|---|---|
+| `8b93f13` (prima degli abbellimenti), rifatto | niente di nuovo | 92, verde |
+| `caddf98` x2, `085e7cc`, `8af07e8` | tutto | 4-10, emulatore morto |
+| `7124db5` | senza atmosfera | 10 |
+| `4488f4d` | senza atmosfera ne' erba | 10 |
+| `1cb44e2` | senza atmosfera, erba, gesti delle schede | **93, verde** |
+| `89ecce2` | come sopra ma con icone, battito, colori (senza onda) | 4 |
+| `a04e107` | solo battito e colori | 4 |
+
+| `5e941cf` | tutto, curva con sfumatura a 5 tappe | 6 |
+
+**Il battito era inerte in tutti questi giri**: quel giorno l'avviso era solo
+"in arrivo", e la pastiglia batte solo per un avviso in corso. Quindi nel giro
+`a04e107` l'unica aggiunta attiva era **la sfumatura sul tratto della curva**,
+e bastava; a cinque tappe cadeva lo stesso. Ora la curva (e la mini-curva) e'
+fatta di tratti a tinta unita, uno per ora, col colore della temperatura media
+del tratto: all'occhio e' identica. Il ragionamento che segue, sulle otto tappe,
+era la prima ipotesi ed e' stato smentito: lo si lascia perche' non lo si rifaccia.
+
+Prima ipotesi (smentita): **la sfumatura della curva a 24 tappe**: oltre le otto il motore grafico non la
+calcola piu' al volo ma ne fa una piccola immagine da mandare alla scheda
+grafica, e sull'emulatore la scheda grafica e' emulata (`swiftshader_indirect`):
+una morte di tutta la macchina, senza un errore nei log dell'app, e' il guasto
+che ci si aspetta da li'. Ora le tappe sono cinque (`pennelloDellaGiornata`),
+con lo stesso aspetto. Le correzioni fatte prima di sapere (nebbia in una
+trama, erba a segmenti, onda senza stato scritto durante la disposizione e col
+suo livello solo mentre corre) restano: sono comunque piu' leggere.
+
+**Regola**: niente sfumature sui tratti (`Stroke` con un `Brush`): sull'emulatore
+della CI fanno cadere la macchina. Sulle aree piene (`drawRect`, `drawPath` pieno)
+le sfumature a due tappe ci sono da sempre e non danno problemi.
+
+`AtmosferaRenderTest` rende il cielo vero con ogni effetto
+(`build/widget-renders/atmosfera-*.png`), controlla che ognuno cambi il disegno
+e i conti di `atmosferaBersaglio`.
+
+### 64.9 Cosa NON e' stato fatto
+
+- **L'orologio** (come detto nella richiesta): ne' soglie, ne' mare, ne' le
+  novita' di oggi. Il modulo `wear` condivide `core`, quindi `Forecast` ha
+  adesso `elevation` e `freezingLevel` (con valore di default): compila lo
+  stesso, ma non e' stato provato.
+- Il tocco su una notifica di soglia non porta alla localita' della notifica
+  (§64.1).
+- Le maree non entrano negli avvisi a soglia ("alta marea sopra X"): serve una
+  soglia sul livello, e il livello e' un modello globale di cui l'app stessa
+  dice di non fidarsi sotto costa.
+- Nessuna anteprima propria per il widget unico (§64.7).

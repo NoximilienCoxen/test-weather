@@ -20,6 +20,11 @@ internal class WidgetInk(
     val secondary: Color,
     /** Vero col tema scuro: i corpi celesti cambiano di conseguenza. */
     val night: Boolean,
+    /**
+     * Il colore che dice "questo e' il dato": col tema del telefono e' il suo
+     * accento, senza e' il blu d'acqua. Lo usano i widget di mare e vento.
+     */
+    val accent: Color = Color(0xFF3C8DF5),
 ) {
     // La nuvola bianca su fondo bianco non esiste: col tema chiaro le masse si
     // scuriscono, invece di sparire.
@@ -36,9 +41,27 @@ internal class WidgetInk(
     val bolt: Color get() = Color(0xFFFFC83D)
 
     companion object {
-        fun of(context: Context): WidgetInk {
+        /**
+         * @param coloriTelefono Material You: sfondo, testo e accento dai colori
+         *   dinamici del telefono (Android 12+). Dove non ci sono, o spento,
+         *   restano il bianco e il nero di `colors.xml`.
+         */
+        fun of(context: Context, coloriTelefono: Boolean = false): WidgetInk {
             val night = context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            if (coloriTelefono && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                // I colori `system_*` sono tavolozze di dieci gradini: dal chiaro
+                // (10) allo scuro (900). Di giorno lo sfondo e' il piu' chiaro
+                // del grigio-tinta e il testo il piu' scuro; di notte il contrario.
+                fun c(id: Int) = ContextCompat.getColor(context, id)
+                return WidgetInk(
+                    background = if (night) c(android.R.color.system_neutral1_900) else c(android.R.color.system_neutral1_10),
+                    primary = Color(if (night) c(android.R.color.system_neutral1_50) else c(android.R.color.system_neutral1_900)),
+                    secondary = Color(if (night) c(android.R.color.system_neutral2_300) else c(android.R.color.system_neutral2_600)),
+                    night = night,
+                    accent = Color(if (night) c(android.R.color.system_accent1_200) else c(android.R.color.system_accent1_600)),
+                )
+            }
             return WidgetInk(
                 background = ContextCompat.getColor(context, R.color.widget_background),
                 primary = Color(ContextCompat.getColor(context, R.color.widget_primary)),

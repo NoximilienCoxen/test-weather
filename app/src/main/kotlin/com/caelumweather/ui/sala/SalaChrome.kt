@@ -44,6 +44,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -121,13 +124,24 @@ fun PannelloSala(
      * luccicasse sempre non direbbe piu' niente.
      */
     bagliore: Boolean = false,
+    /** L'onda di un giorno toccato: vedi [OndaScheda]. */
+    onda: OndaScheda? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(RaggioPannello))) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(RaggioPannello))
+            // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
+            .then(if (onda != null) Modifier.onPlaced { onda.pannello = it } else Modifier),
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(palette.panel)
+                // Quando il contenuto cambia altezza la scheda scivola alla
+                // misura nuova invece di saltarci.
+                .altezzaMorbida()
                 // **Queste misure sono state allargate e poi rimesse, e la nota
                 // resta perche' la prova conta piu' della misura.** Il ragionamento
                 // era: il pannello e' ancorato in basso, si dimensiona sul
@@ -164,6 +178,28 @@ fun PannelloSala(
         // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
         if (bagliore) BaglioreDorato(Modifier.matchParentSize())
+        // Brina e gocce sul vetro della scheda, dentro il ritaglio: vedi [Vetro].
+        val vetro = LocalVetro.current
+        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
+        if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
+        // Il livello dell'onda c'e' solo mentre l'onda corre.
+        if (onda != null && onda.corsa.isRunning) {
+            val tinta = palette.accent
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val p = onda.corsa.value
+                if (p >= 1f) return@Canvas
+                val c = onda.centro
+                // Fin oltre l'angolo piu' lontano, cosi' copre tutta la scheda.
+                val lontano = maxOf(
+                    (c - Offset.Zero).getDistance(),
+                    (c - Offset(size.width, 0f)).getDistance(),
+                    (c - Offset(0f, size.height)).getDistance(),
+                    (c - Offset(size.width, size.height)).getDistance(),
+                )
+                drawCircle(tinta.copy(alpha = 0.14f * (1f - p)), radius = lontano * p, center = c)
+                drawCircle(tinta.copy(alpha = 0.35f * (1f - p)), radius = lontano * p, center = c, style = Stroke(width = 2.dp.toPx()))
+            }
+        }
     }
 }
 
@@ -286,13 +322,18 @@ fun RowScope.CellaValore(
                 )
             }
         }
-        Text(
-            text = valore,
-            style = SalaType.value,
-            color = palette.ink,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        // Il valore si scambia quando cambia (trascinando la barra delle ore):
+        // il vecchio sale, il nuovo arriva da sotto. Una cella in ogni sala, un
+        // posto solo.
+        ScambioMorbido(stato = valore) { mostrato ->
+            Text(
+                text = mostrato,
+                style = SalaType.value,
+                color = palette.ink,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -358,6 +399,72 @@ fun PastigliaAccento(
 @Composable
 fun IconaMeteo(glifo: GlifoMeteo, modifier: Modifier = Modifier, notte: Boolean = false) {
     Canvas(modifier = modifier.size(22.dp)) { disegnaGlifo(glifo, notte) }
+}
+
+/**
+ * La figuretta di un giorno che **reagisce quando lo si sceglie**: una volta
+ * sola, poi sta ferma.
+ *
+ * Il gesto dice il tempo di quel giorno: il sole fa un giro di raggi, la
+ * nuvola di pioggia lascia cadere due gocce, il fiocco ruota, il temporale
+ * lampeggia, nuvole e nebbia ondeggiano di lato. Alla prima composizione non
+ * succede niente - si anima il giorno toccato, non quello che c'era gia' - e
+ * con le animazioni ridotte resta la figuretta di sempre.
+ */
+@Composable
+fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Modifier, notte: Boolean = false) {
+    val movimento = LocalMovimento.current
+    val gesto = remember { Animatable(1f) }
+    var primo by remember { mutableStateOf(true) }
+    LaunchedEffect(scelto, movimento) {
+        if (primo) { primo = false; return@LaunchedEffect }
+        if (scelto && movimento) {
+            gesto.snapTo(0f)
+            gesto.animateTo(1f, tween(durationMillis = 760, easing = LinearOutSlowInEasing))
+        }
+    }
+    val goccia = SalaTokens.acqua
+    Canvas(
+        modifier = modifier
+            .size(22.dp)
+            .graphicsLayer {
+                val p = gesto.value
+                if (p >= 1f) return@graphicsLayer
+                val campana = kotlin.math.sin(PI.toFloat() * p)
+                when (glifo) {
+                    GlifoMeteo.SOLE, GlifoMeteo.POCO -> {
+                        rotationZ = 90f * p
+                        scaleX = 1f + 0.18f * campana
+                        scaleY = scaleX
+                    }
+                    GlifoMeteo.NEVE -> {
+                        rotationZ = 120f * p
+                        scaleX = 1f + 0.12f * campana
+                        scaleY = scaleX
+                    }
+                    GlifoMeteo.TEMPORALE -> alpha = 0.45f + 0.55f * kotlin.math.abs(kotlin.math.cos(PI.toFloat() * 3f * p))
+                    GlifoMeteo.PIOGGIA -> {
+                        scaleY = 1f - 0.08f * campana
+                        translationY = 1.5.dp.toPx() * campana
+                    }
+                    GlifoMeteo.NUVOLE, GlifoMeteo.NEBBIA ->
+                        translationX = 3.dp.toPx() * kotlin.math.sin(PI.toFloat() * 3f * p) * (1f - p)
+                }
+            },
+    ) {
+        disegnaGlifo(glifo, notte)
+        // Le due gocce della pioggia escono da sotto la nuvola e cadono fuori
+        // dalla figuretta, sbiadendo.
+        val p = gesto.value
+        if (glifo == GlifoMeteo.PIOGGIA && p < 1f) {
+            listOf(0.38f to 0f, 0.64f to 0.18f).forEach { (fx, ritardo) ->
+                val q = ((p - ritardo) / (1f - ritardo)).coerceIn(0f, 1f)
+                if (q <= 0f) return@forEach
+                val cy = size.height * (0.78f + 0.55f * q)
+                drawCircle(goccia.copy(alpha = 1f - q), radius = 1.6.dp.toPx(), center = Offset(size.width * fx, cy))
+            }
+        }
+    }
 }
 
 // ── L'intestazione ──────────────────────────────────────────────────────────
@@ -517,9 +624,44 @@ private fun PastigliaAvviso(
     val fondoMosso by animateColorAsState(fondo, passaggio, label = "avviso-fondo")
     val inchiostroMosso by animateColorAsState(inchiostro, passaggio, label = "avviso-inchiostro")
     val pallinoMosso by animateColorAsState(pallino, passaggio, label = "avviso-pallino")
+    // **Un battito solo quando arriva un avviso nuovo**: la pastiglia si gonfia
+    // appena e un anello le si allarga intorno e sparisce. Poi sta ferma: un
+    // avviso che pulsa sempre diventa arredo. La chiave e' l'avviso, non il
+    // testo, cosi' trascinare la barra delle ore dentro lo stesso avviso non
+    // ribatte; `rememberSaveable` perche' girare il telefono non e' una novita'.
+    val chiaveBattito = peggiore?.let { "${it.kind}-${it.level}-${it.onset}" }
+    var ultimoBattito by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<String?>(null) }
+    val battito = remember { Animatable(1f) }
+    LaunchedEffect(chiaveBattito, movimento) {
+        if (chiaveBattito != null && chiaveBattito != ultimoBattito) {
+            ultimoBattito = chiaveBattito
+            if (movimento) {
+                battito.snapTo(0f)
+                battito.animateTo(1f, tween(durationMillis = 1100, easing = LinearOutSlowInEasing))
+            }
+        }
+    }
+    val coloreAnello = SalaTokens.accent500
     Row(
         modifier = Modifier
             .minimumInteractiveComponentSize()
+            .graphicsLayer {
+                val gonfio = 1f + 0.08f * kotlin.math.sin(PI.toFloat() * (battito.value / 0.45f).coerceIn(0f, 1f))
+                scaleX = gonfio
+                scaleY = gonfio
+            }.drawBehind {
+                val p = battito.value
+                if (p < 1f) {
+                    val allarga = 10.dp.toPx() * p
+                    drawRoundRect(
+                        color = coloreAnello.copy(alpha = 0.55f * (1f - p)),
+                        topLeft = Offset(-allarga, -allarga),
+                        size = Size(size.width + allarga * 2f, size.height + allarga * 2f),
+                        cornerRadius = CornerRadius(size.height / 2f + allarga),
+                        style = Stroke(width = 2.dp.toPx() * (1f - p * 0.6f)),
+                    )
+                }
+            }
             .cedevole()
             .clip(CircleShape)
             .background(fondoMosso)

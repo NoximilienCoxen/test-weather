@@ -10,7 +10,12 @@ import com.caelumweather.data.CurrentWeather
 import com.caelumweather.data.DayForecast
 import com.caelumweather.data.Forecast
 import com.caelumweather.data.HourForecast
+import com.caelumweather.data.Mare
 import com.caelumweather.data.MoonSegment
+import com.caelumweather.data.OraMare
+import com.caelumweather.data.prossimiEstremi
+import com.caelumweather.prefs.SalaWindUnit
+import com.caelumweather.prefs.TempUnit
 import com.caelumweather.data.Place
 import org.junit.After
 import org.junit.Assert.assertTrue
@@ -99,6 +104,59 @@ class WidgetOverflowTest {
         names.forEach { name ->
             check("ore-${name.take(8)}", wide.first, wide.second, Cut.MEDIO) { hoursArt(it, name, forecast().hours, type, ink) }
             check("ore-stretta-${name.take(8)}", 200f, 150f, Cut.PICCOLO) { hoursArt(it, name, forecast().hours, type, ink) }
+        }
+    }
+
+    private fun ventose() = (0 until 8).map { h ->
+        HourForecast(
+            time = LocalDateTime.of(2026, 5, 14, 10 + h, 0),
+            windSpeed = 12.0 + h, windGusts = 25.0 + h, windDirection = 247.0 + h * 10,
+        )
+    }
+
+    @Test
+    fun `vento, in tutte le forme e con un'unita' larga`() {
+        names.forEach { name ->
+            small.forEach { (w, h) ->
+                check("vento-${w.toInt()}x${h.toInt()}-${name.take(8)}", w, h, Cut.PICCOLO) {
+                    ventoArt(it, name, ventose(), SalaWindUnit.KN, type, ink)
+                }
+            }
+            check("vento-largo-${name.take(8)}", wide.first, wide.second, Cut.MEDIO) { ventoArt(it, name, ventose(), SalaWindUnit.KMH, type, ink) }
+            check("vento-alto-${name.take(8)}", tall.first, tall.second, Cut.GRANDE) { ventoArt(it, name, ventose(), SalaWindUnit.MS, type, ink) }
+            check("vento-vuoto-${name.take(8)}", 150f, 150f, Cut.PICCOLO) { ventoArt(it, name, emptyList(), SalaWindUnit.KMH, type, ink) }
+        }
+    }
+
+    private fun maree(): Mare {
+        val inizio = LocalDateTime.of(2026, 5, 14, 0, 0)
+        return Mare(
+            (0 until 72).map { h ->
+                OraMare(inizio.plusHours(h.toLong()), onda = 2.8, direzione = 90.0, periodo = 7.0, acqua = 14.0, livello = 0.5 * kotlin.math.cos((h - 9) / 12.42 * 2 * Math.PI))
+            },
+            utcOffsetSeconds = 7200,
+        )
+    }
+
+    @Test
+    fun `mare, con marea, senza marea e dove non c'e'`() {
+        val adesso = LocalDateTime.of(2026, 5, 14, 10, 0)
+        val mare = maree()
+        names.forEach { name ->
+            small.forEach { (w, h) ->
+                check("mare-${w.toInt()}x${h.toInt()}-${name.take(8)}", w, h, Cut.PICCOLO) {
+                    mareArt(it, name, mare.alle(adesso), mare, false, prossimiEstremi(mare, adesso, 1).firstOrNull(), adesso, TempUnit.CELSIUS, type, ink)
+                }
+                check("mare-nessuno-${w.toInt()}x${h.toInt()}-${name.take(8)}", w, h, Cut.PICCOLO) {
+                    mareArt(it, name, null, null, true, null, null, TempUnit.CELSIUS, type, ink)
+                }
+            }
+            check("mare-largo-${name.take(8)}", wide.first, wide.second, Cut.MEDIO) {
+                mareArt(it, name, mare.alle(adesso), mare, false, prossimiEstremi(mare, adesso, 1).firstOrNull(), adesso, TempUnit.FAHRENHEIT, type, ink)
+            }
+            check("mare-alto-${name.take(8)}", tall.first, tall.second, Cut.GRANDE) {
+                mareArt(it, name, mare.alle(adesso), mare, false, null, adesso, TempUnit.CELSIUS, type, ink)
+            }
         }
     }
 

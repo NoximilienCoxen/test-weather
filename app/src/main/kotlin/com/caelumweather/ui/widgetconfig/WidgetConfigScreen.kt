@@ -61,6 +61,7 @@ import com.caelumweather.ui.sala.SalaType
 import com.caelumweather.ui.sala.SceltaSegmentata
 import com.caelumweather.ui.sala.VoceImpostazione
 import com.caelumweather.ui.sala.salaPalette
+import com.caelumweather.widget.VistaWidget
 import com.caelumweather.widget.WidgetConfig
 import com.caelumweather.widget.WidgetKind
 import kotlinx.coroutines.delay
@@ -86,7 +87,7 @@ private const val SEARCH_DEBOUNCE_MS = 320L
  */
 @Composable
 fun WidgetConfigScreen(
-    onSave: (place: Place?, useLocation: Boolean) -> Unit,
+    onSave: (place: Place?, useLocation: Boolean, vista: VistaWidget) -> Unit,
     modifier: Modifier = Modifier,
     /** Quale widget si sta configurando, per l'anteprima e la localita'. */
     kind: WidgetKind? = null,
@@ -127,6 +128,8 @@ fun WidgetConfigScreen(
     var locationGranted by remember { mutableStateOf(DeviceLocation.granted(context)) }
     var useLocation by remember { mutableStateOf(initial.useLocation && locationGranted) }
     var selectedPlace by remember { mutableStateOf(initial.place) }
+    // Cosa mostra il widget unico: gli altri non la leggono e salvano AUTO.
+    var vista by remember { mutableStateOf(initial.vista) }
     // La scheda che si apre e' quella da cui viene la scelta gia' fatta: chi
     // riapre per cambiare citta' trova sotto il dito quel che aveva usato.
     var source by remember {
@@ -207,6 +210,22 @@ fun WidgetConfigScreen(
             // aggancia tre uguali di aspetto deve sapere a quale stia
             // rispondendo.
             WidgetIdentity(kind = kind, place = selectedPlace, following = useLocation, palette = palette)
+
+            // ── Cosa mostra: solo per il widget unico ────────────────────────────
+            if (kind == WidgetKind.UNICO) {
+                GruppoImpostazioni(titolo = tr("COSA MOSTRA", "WHAT IT SHOWS", "WAS ES ZEIGT", "CE QU'IL MONTRE", "QUÉ MUESTRA"), palette = palette) {
+                    VistaWidget.entries.forEachIndexed { i, v ->
+                        if (i > 0) FiloGruppo(palette)
+                        VoceImpostazione(
+                            titolo = nomeVista(v),
+                            nota = notaVista(v),
+                            palette = palette,
+                            onClick = { vista = v },
+                            coda = { Spunta(scelta = vista == v, palette = palette) },
+                        )
+                    }
+                }
+            }
 
             if (showLocation) {
                 Column {
@@ -299,9 +318,26 @@ fun WidgetConfigScreen(
             testo = if (initial.useLocation || initial.place != null) tr("Salva le modifiche", "Save changes", "Änderungen speichern", "Enregistrer les modifications", "Guardar los cambios") else tr("Aggiungi il widget", "Add the widget", "Widget hinzufügen", "Ajouter le widget", "Añadir el widget"),
             enabled = canSave,
             palette = palette,
-            onClick = { onSave(selectedPlace, useLocation) },
+            onClick = { onSave(selectedPlace, useLocation, if (kind == WidgetKind.UNICO) vista else VistaWidget.AUTO) },
         )
     }
+}
+
+private fun nomeVista(v: VistaWidget): String = when (v) {
+    VistaWidget.AUTO -> tr("Automatica", "Automatic", "Automatisch", "Automatique", "Automática")
+    VistaWidget.METEO -> tr("Meteo attuale", "Current weather", "Aktuelles Wetter", "Météo actuelle", "Tiempo actual")
+    VistaWidget.MINI -> tr("Temperatura", "Temperature", "Temperatur", "Température", "Temperatura")
+    VistaWidget.ORE -> tr("Prossime ore", "Next hours", "Nächste Stunden", "Prochaines heures", "Próximas horas")
+    VistaWidget.SETTIMANA -> tr("Settimana", "Week", "Woche", "Semaine", "Semana")
+    VistaWidget.ARIA -> tr("Qualità dell'aria", "Air quality", "Luftqualität", "Qualité de l'air", "Calidad del aire")
+    VistaWidget.LUNA -> tr("Luna", "Moon", "Mond", "Lune", "Luna")
+    VistaWidget.VENTO -> tr("Vento", "Wind", "Wind", "Vent", "Viento")
+    VistaWidget.MARE -> tr("Mare", "Sea", "Meer", "Mer", "Mar")
+}
+
+private fun notaVista(v: VistaWidget): String? = when (v) {
+    VistaWidget.AUTO -> tr("cambia da sola con la forma: una cella, il tempo, le ore, la settimana", "changes with its shape: one cell, the weather, the hours, the week", "wechselt mit der Form: eine Zelle, das Wetter, die Stunden, die Woche", "change avec sa forme : une cellule, le temps, les heures, la semaine", "cambia con su forma: una celda, el tiempo, las horas, la semana")
+    else -> null
 }
 
 /** "METEO" -> "Meteo", "QUALITÀ DELL'ARIA" -> "Qualità dell'aria". */
@@ -425,6 +461,8 @@ private fun WidgetIdentity(kind: WidgetKind?, place: Place?, following: Boolean,
         WidgetKind.LUNA -> GlifoMeteo.SOLE to true
         WidgetKind.ARIA -> GlifoMeteo.NEBBIA to false
         WidgetKind.SETTIMANA -> GlifoMeteo.PIOGGIA to false
+        WidgetKind.VENTO -> GlifoMeteo.NUVOLE to false
+        WidgetKind.MARE -> GlifoMeteo.PIOGGIA to false
         else -> GlifoMeteo.POCO to false
     }
     Row(

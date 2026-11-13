@@ -167,8 +167,13 @@ fun SalaUvScreen(
                         // giornata, ma "a che ora scende sotto il 3" si legge solo
                         // coi numeri. Una cifra sta in una colonna; le due cifre
                         // del 10 e dell'11 sbordano centrate, come le ore sotto.
+                        //
+                        // **Lo zero non si scrive**, tranne sull'ora scelta: una
+                        // fila di "0" sopra barrette grigie ripeteva quello che
+                        // le barrette dicono gia', e la scheda pareva una tabella.
+                        val numero = ore[indice].uvIndex?.roundToInt()
                         Text(
-                            text = ore[indice].uvIndex?.roundToInt()?.toString() ?: "",
+                            text = numero?.takeIf { it > 0 || indice == scelta }?.toString() ?: "",
                             style = EtichettaGrafico,
                             color = if (indice == scelta) palette.accent else palette.inkSoft,
                             maxLines = 1,
@@ -292,11 +297,15 @@ fun SalaUvScreen(
                 palette = palette,
             )
             CellaValore(etichetta = tr("AL SOLE", "IN THE SUN", "IN DER SONNE", "AU SOLEIL", "AL SOL"), valore = esposizione(corrente), palette = palette)
-            CellaValore(
-                etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
-                valore = ozono?.let { "${it.roundToInt()} µg/m³" } ?: "--",
-                palette = palette,
-            )
+            // Senza il dato la cella non c'e': "--" in un riquadro e' spazio
+            // che non dice niente.
+            if (ozono != null) {
+                CellaValore(
+                    etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
+                    valore = "${ozono.roundToInt()} µg/m³",
+                    palette = palette,
+                )
+            }
         }
 
         // ── La luce per le foto ──────────────────────────────────────────────

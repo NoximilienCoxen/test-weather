@@ -155,6 +155,16 @@ fun SalaVentoScreen(
                         modifier = Modifier.align(dove).padding(8.dp),
                     )
                 }
+                // **Un filo d'aria** che attraversa il disco nel verso del vento,
+                // piu' fitto e veloce quanto piu' soffia. Gira per qualche
+                // secondo quando la sala si apre o cambia l'ora, poi sfuma: il
+                // movimento continuo resta al cielo.
+                FiloDAria(
+                    direzione = direzione,
+                    ms = velocita,
+                    colore = palette.inkFaint,
+                    modifier = Modifier.size(ROSA),
+                )
                 Canvas(
                     modifier = Modifier
                         .size(ROSA)
@@ -243,9 +253,9 @@ fun SalaVentoScreen(
                         .weight(1f)
                         .clip(RoundedCornerShape(24.dp))
                         .background(palette.chip)
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 9.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(7.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
                     Text(
                         text = oraDueCifre(ore[indice].time.hour),
@@ -255,7 +265,7 @@ fun SalaVentoScreen(
                     Box(
                         modifier = Modifier
                             .width(4.dp)
-                            .height(misuraCheArriva((10f + quota * 36f).dp))
+                            .height(misuraCheArriva((6f + quota * 26f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (unita.from(ms) > 24) SalaTokens.accent500 else SalaTokens.verde400,
@@ -305,7 +315,7 @@ fun SalaVentoScreen(
         // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
         // il resto della sala.
         state.mareMostrato?.let { oraDiMare ->
-            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento)
+            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento, mare = state.mare.takeIf { state.forcedMare == null })
         }
     }
 }
@@ -415,4 +425,46 @@ private fun nota(kmh: Double?, raffiche: Int?, unita: String): String {
         else -> tr("Burrasca: meglio non stare sotto gli alberi.", "Gale: better not to stand under trees.", "Sturm: besser nicht unter Bäumen stehen.", "Coup de vent : mieux vaut ne pas rester sous les arbres.", "Temporal: mejor no quedarse bajo los árboles.")
     }
     return corpo + coda
+}
+
+/** Quanto dura il filo d'aria della rosa prima di sfumare. */
+private const val DURATA_FILO_MS = 7000
+
+/**
+ * I tratti che scorrono nella rosa, nel verso in cui va il vento (lo stesso
+ * della lancetta). Deterministici: ogni tratto ha la sua corsia e il suo
+ * anticipo. Con le animazioni ridotte, o senza vento, non c'e' niente.
+ */
+@Composable
+private fun FiloDAria(direzione: Double?, ms: Double?, colore: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
+    val movimento = com.caelumweather.ui.sala.LocalMovimento.current
+    if (!movimento || direzione == null || ms == null || ms < 0.5) return
+    val corsa = remember { androidx.compose.animation.core.Animatable(0f) }
+    LaunchedEffect(direzione.roundToInt() / 10, (ms * 2).roundToInt()) {
+        corsa.snapTo(0f)
+        corsa.animateTo(1f, androidx.compose.animation.core.tween(DURATA_FILO_MS, easing = androidx.compose.animation.core.LinearEasing))
+    }
+    val forza = (ms / 12.0).coerceIn(0.0, 1.0).toFloat()
+    val giri = 0.25f + forza * 1.1f
+    val quanti = 5 + (forza * 7).roundToInt()
+    Canvas(modifier = modifier.rotate(angoloCheGira(direzione.toFloat() + 180f))) {
+        val p = corsa.value
+        if (p >= 1f) return@Canvas
+        val secondi = p * DURATA_FILO_MS / 1000f
+        val velo = (p / 0.08f).coerceAtMost(1f) * ((1f - p) / 0.25f).coerceAtMost(1f)
+        val lungo = size.height * (0.08f + 0.12f * forza)
+        repeat(quanti) { i ->
+            val corsia = ((i * 0.618f) % 1f) * 0.8f + 0.1f
+            val anticipo = (i * 0.37f) % 1f
+            val y = size.height * (1.1f - ((anticipo + secondi * giri * (0.8f + 0.4f * ((i * 0.29f) % 1f))) % 1f) * 1.2f)
+            val x = size.width * corsia
+            drawLine(
+                color = colore.copy(alpha = colore.alpha * 0.7f * velo),
+                start = Offset(x, y),
+                end = Offset(x, y + lungo),
+                strokeWidth = 1.6.dp.toPx(),
+                cap = androidx.compose.ui.graphics.StrokeCap.Round,
+            )
+        }
+    }
 }

@@ -24,6 +24,7 @@ internal class WeatherWidget : CaelumWidget(WidgetKind.METEO) {
         place: Place?,
         type: WidgetType,
         ink: WidgetInk,
+        vista: VistaWidget,
     ): Drawn {
         // Non-null per costruzione: METEO dichiara `needsPlace`, e il caso
         // senza citta' non arriva fin qui.
