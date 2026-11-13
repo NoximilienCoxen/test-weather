@@ -8493,3 +8493,30 @@ e i conti di `atmosferaBersaglio`.
   soglia sul livello, e il livello e' un modello globale di cui l'app stessa
   dice di non fidarsi sotto costa.
 - Nessuna anteprima propria per il widget unico (§64.7).
+
+## 65. I widget provati in mano: uno stirato, uno accavallato, due troncati
+
+Scatti dell'utente, 13 novembre 2026, Home con METEO, VENTO, MARE (2x2), il
+widget unico allargato a 4x2 e la SETTIMANA.
+
+- **Il widget unico stirato.** Disegnato 2x2 e poi allargato, mostrava lo
+  stesso disegno schiacciato in orizzontale (nome, 14°, sole, credito). La
+  sessione Glance resta aperta dopo il ridimensionamento e il disegno si
+  rifaceva solo se cambiavano configurazione o contatore (§ di `provideGlance`):
+  la misura nuova non la guardava nessuno, e `ContentScale.FillBounds` stirava
+  la bitmap vecchia. Ora la composizione legge `LocalSize` (in `SizeMode.Exact`
+  e' la misura vera, una per forma) e ridisegna quando si scosta di 2 dp o piu'
+  (`stessaMisura`, provata in `UnicoWidgetTest`); `WidgetCanvas.plan` la usa al
+  posto delle opzioni quando c'e'. Vale per tutti i ridimensionabili: unico,
+  vento, mare.
+- **MARE, "acqua 19°" sopra "bassa 04:50 dom…".** Nel quadrato la riga della
+  marea si scriveva a un'altezza fissa sopra l'onda, dentro lo spazio del corpo.
+  Ora il corpo finisce sopra di lei, e la riga si rimpicciolisce (fino al 70%)
+  prima di troncare "domani".
+- **VENTO, "raffi…".** "raffiche N" accanto alla bussola non ci stava e il
+  numero spariva. Se non ci sta nemmeno stretta, "raff. N".
+- **"FON…", "MON…".** Nome della localita' troncato accanto all'etichetta
+  VENTO / MARE. Se il nome non ci sta nemmeno stretto, l'etichetta non si scrive.
+
+**Da guardare in mano**: allargare e stringere il widget unico (deve cambiare
+faccia subito, senza stirarsi), e ruotare il telefono con un widget sulla Home.

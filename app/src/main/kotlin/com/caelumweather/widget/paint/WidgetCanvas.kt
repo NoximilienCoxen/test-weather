@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -70,8 +71,17 @@ internal object WidgetCanvas {
     private val LARGO_DA = 240.dp
     private val ALTO_DA = 240.dp
 
-    fun plan(context: Context, appWidgetId: Int): Frame {
-        val (wDp, hDp) = boxDp(context, appWidgetId)
+    /**
+     * @param misura la misura che Glance passa alla composizione, se c'e'. E'
+     *   la piu' fedele: segue il ridimensionamento a sessione aperta e da' a
+     *   ciascuna forma (verticale, orizzontale) la sua. Senza, si leggono le
+     *   opzioni del widget.
+     */
+    fun plan(context: Context, appWidgetId: Int, misura: DpSize? = null): Frame {
+        val (wDp, hDp) = misura
+            ?.takeIf { it.width.value > 0f && it.height.value > 0f }
+            ?.let { it.width.value to it.height.value }
+            ?: boxDp(context, appWidgetId)
 
         var scale = context.resources.displayMetrics.density
             .coerceIn(SCALA_MIN, SCALA_MAX)

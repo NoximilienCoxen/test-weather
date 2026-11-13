@@ -52,16 +52,21 @@ internal fun DrawScope.mareArt(
     val tag = type.brush(nameSize, weight = 600, width = 78, letterSpacingEm = 0.10f)
     val titolo = tr("MARE", "SEA", "MEER", "MER", "MAR")
     val tagWidth = type.widthOf(titolo, tag)
+    // Nel quadrato "FONTEVIVO" accanto all'etichetta diventava "FON…": un nome
+    // irriconoscibile. Se il nome non ci sta nemmeno stretto, l'etichetta cede
+    // il posto - il disegno sotto dice gia' di che widget si tratta.
+    val accantoAlNome = box.width - tagWidth - box.height * 0.10f
+    val conEtichetta = type.widthOf(place, type.brush(nameSize, weight = 600, width = 58, letterSpacingEm = 0.10f)) <= accantoAlNome
     val name = fitText(
         value = place,
         x = box.left,
         y = box.top,
-        maxWidth = box.width - tagWidth - box.height * 0.10f,
+        maxWidth = if (conEtichetta) accantoAlNome else box.width,
         sizePx = nameSize,
         type = type,
         color = ink.secondary,
     )
-    text(titolo, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
+    if (conEtichetta) text(titolo, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
     val top = box.top + lineHeight(name) * 1.35f
 
     if (senzaMare) {
@@ -89,7 +94,13 @@ internal fun DrawScope.mareArt(
 
     // La zona alta: il numero, la sigla e lo stato; sotto, l'onda disegnata e le righe.
     val zonaOnde = box.height * (if (grande) 0.20f else 0.19f)
-    val corpo = Rect(box.left, top, box.right, box.bottom - zonaOnde - box.height * 0.02f)
+    // Nel quadrato la riga della marea sta sopra l'onda, e il corpo deve finire
+    // sopra di lei. Prima il corpo arrivava fino all'onda e la riga ci veniva
+    // scritta dentro: "acqua 19°" e "bassa 04:50" uno sopra l'altro.
+    val rigaMareaInBasso = !(grande && mare != null && adesso != null) && prossima != null && adesso != null
+    val pennelloMarea = type.brush(box.height * 0.10f, weight = 600, width = 82)
+    val spazioMarea = if (rigaMareaInBasso) lineHeight(pennelloMarea) * 1.15f else 0f
+    val corpo = Rect(box.left, top, box.right, box.bottom - zonaOnde - box.height * 0.02f - spazioMarea)
     val larghezzaNumero = if (grande) corpo.width * 0.50f else corpo.width
     val cifre = fittingBrush(listOf(altezza), larghezzaNumero * 0.72f, corpo.height * 0.55f, type, weight = 700, width = 72)
     val unitaPennello = type.brush(cifre.textSize * 0.36f, weight = 600, width = 82)
@@ -111,11 +122,12 @@ internal fun DrawScope.mareArt(
     if (grande && mare != null && adesso != null) {
         val destra = Rect(corpo.left + larghezzaNumero + box.height * 0.04f, corpo.top, corpo.right, corpo.bottom)
         curvaMarea(destra, mare, adesso, prossima, type, ink)
-    } else if (prossima != null && adesso != null) {
-        // Nel quadrato la marea sta in una riga, sopra l'onda disegnata.
-        val p = type.brush(box.height * 0.10f, weight = 600, width = 82)
+    } else if (rigaMareaInBasso && prossima != null && adesso != null) {
+        // Nel quadrato la marea sta in una riga, sopra l'onda disegnata, nello
+        // spazio tenuto libero qui sopra. Si rimpicciolisce prima di troncare:
+        // "bassa 04:50 dom…" non dice se e' oggi o domani.
         val riga = rigaMarea(prossima, adesso)
-        fitText(riga, box.left, box.bottom - zonaOnde - lineHeight(p) * 1.25f, box.width, p.textSize, type, ink.secondary, weight = 600, letterSpacingEm = 0.02f)
+        fitText(riga, box.left, corpo.bottom + box.height * 0.01f, box.width, pennelloMarea.textSize, type, ink.secondary, weight = 600, letterSpacingEm = 0.02f, minScale = 0.7f)
     }
 
     // L'onda disegnata in fondo: l'ampiezza segue i metri.
