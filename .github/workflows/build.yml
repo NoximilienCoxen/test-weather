@@ -661,6 +661,33 @@ jobs:
             exit 1
           }
 
+      # **La release, firmata con la chiave di debug, solo per provarla.**
+      # Nessuno aveva mai aperto la build che passa da R8: compilava e basta, e
+      # una regola di keep mancante rompe la lettura della previsione in
+      # silenzio, a runtime. Firmata con la stessa chiave di debug della build
+      # di debug, si installa sopra di lei sull'emulatore (`prova_release.sh`)
+      # e ne eredita i dati. Non finisce in nessun rilascio: e' un artefatto a
+      # parte, `apk-release-prova`, e lo store riceve il bundle qui sotto.
+      - name: Release firmata per la prova
+        run: |
+          set -e
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          IN=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          mkdir -p apk-release
+          "$BT/zipalign" -p -f 4 "$IN" apk-release/allineato.apk
+          "$BT/apksigner" sign --ks app/debug.keystore --ks-pass pass:android \
+            --ks-key-alias androiddebugkey --key-pass pass:android \
+            --out apk-release/caelum-release-prova.apk apk-release/allineato.apk
+          rm apk-release/allineato.apk
+          "$BT/apksigner" verify apk-release/caelum-release-prova.apk
+          ls -la apk-release
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: apk-release-prova
+          path: apk-release/*.apk
+          if-no-files-found: error
+
       # **Cio' che lo store vuole: un bundle (.aab), non un APK.** Telefono e
       # orologio, uno per ciascuno. Si compila a ogni giro per la stessa
       # ragione di `assembleRelease`: un percorso che gira solo il giorno della
@@ -863,6 +890,12 @@ jobs:
           name: apk
           path: apk
 
+      # Fuori da `apk/`: `capture.sh` installa "il primo .apk" che trova li'.
+      - uses: actions/download-artifact@v7
+        with:
+          name: apk-release-prova
+          path: apk-release
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -888,7 +921,11 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
-          script: bash scripts/capture.sh
+          # Una riga sola: l'azione esegue ogni riga per conto suo e si ferma
+          # alla prima che fallisce, e la prova della release deve girare anche
+          # se la galleria ha perso uno scatto. Fallisce il passo se fallisce
+          # una delle due.
+          script: bash scripts/capture.sh; c=$?; bash scripts/prova_release.sh; r=$?; [ $c -eq 0 ] && [ $r -eq 0 ]
 
       - name: Pubblica
         if: always()

@@ -8530,3 +8530,24 @@ sull'altezza e mai sulla larghezza: la cifra del tempo adesso in 65x410 e
 settimana in 370x400 ("-14°" oltre il bordo, numeri vicini che si toccano). Ora
 i due corpi passano da `fittingBrush` sulla larghezza della colonna, e sotto i
 100 dp di larghezza il widget unico mostra la cella (MINI) a qualunque altezza.
+
+## 66. Verso lo store: la release provata in CI, la grafica, il tocco sulle soglie
+
+- **La release (R8) aperta sull'emulatore a ogni giro.** Il passo "Release
+  firmata per la prova" del job `build` firma l'APK di release con la chiave di
+  debug (artefatto `apk-release-prova`, mai pubblicato). `scripts/prova_release.sh`
+  gira dopo `capture.sh` sullo stesso emulatore: la installa sopra la debug (ne
+  eredita i dati), la avvia due volte e fallisce se l'app cade, se il processo
+  muore, o se la debug ha letto la previsione e la release no - il segno di una
+  regola di keep mancante per kotlinx.serialization. Se nemmeno la debug ha
+  avuto la previsione (Open-Meteo in timeout dal runner, successo il 13
+  novembre) avvisa invece di fallire. Scatti `release-freddo.png`,
+  `release-dacapo.png` e i due logcat nella galleria. Resta da fare in mano:
+  widget, notifiche e orologio sulla release.
+- **La grafica dello store** si disegna in `GraficaStoreTest`: `store-icona-512.png`
+  (quadrata, senza maschera) e `store-in-evidenza-it/en.png` (1024x500, il
+  campo di grano con l'icona e il nome). Dalla galleria si copiano in
+  `fastlane/metadata/android/<lingua>/images/` (`icon.png`, `featureGraphic.png`).
+- **Il tocco su una notifica di soglia** di una localita' salvata ora porta a
+  quella localita' (gli stessi extra del widget; §64.1 lo dava per non fatto).
+  La localita' dell'app non li porta: l'app la mostra gia'.
