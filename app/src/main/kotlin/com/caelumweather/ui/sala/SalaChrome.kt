@@ -17,6 +17,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -610,8 +611,19 @@ private fun PastigliaAvviso(
     } else {
         palette.ink
     }
-    val pallino = if (acceso || inArrivo != null) {
-        SalaTokens.accent500
+    // **Il pallino dice chi parla e quanto e' grave.** Era terracotta per
+    // tutto: "ALLERTA TEMPORALI" arancione di un ente e "AVVISO VENTO"
+    // calcolato da una soglia nostra avevano lo stesso segno (galleria del 15
+    // novembre), e il livello non si leggeva da nessuna parte fuori dal
+    // bollettino. Ora l'allerta di un ente ha il colore del suo livello - gli
+    // stessi tre del bollettino - e l'avviso calcolato un anello vuoto,
+    // neutro: giallo, arancione e rosso appartengono a chi li dirama.
+    val ufficiale = (peggiore ?: inArrivo)?.official == true
+    val vuoto = acceso && !ufficiale
+    val pallino = if (ufficiale) {
+        coloreLivello((peggiore ?: inArrivo)!!.level)
+    } else if (acceso) {
+        inchiostro
     } else if (ufficialiNonVerificate) {
         palette.inkSoft
     } else {
@@ -670,7 +682,18 @@ private fun PastigliaAvviso(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(pallinoMosso))
+        Box(
+            modifier = Modifier
+                .size(if (vuoto) 8.dp else 7.dp)
+                .clip(CircleShape)
+                .then(
+                    if (vuoto) Modifier.border(1.5.dp, pallinoMosso, CircleShape)
+                    // Un filo dell'inchiostro attorno: il giallo sul fondo pesca
+                    // del tema chiaro, da solo, quasi non si vede.
+                    else if (ufficiale) Modifier.background(pallinoMosso).border(1.dp, inchiostroMosso.copy(alpha = 0.35f), CircleShape)
+                    else Modifier.background(pallinoMosso),
+                ),
+        )
         ScambioMorbido(stato = testo) { scritta ->
             Text(text = scritta, style = SalaType.sectionLabel, color = inchiostroMosso, maxLines = 1)
         }

@@ -864,15 +864,18 @@ session() {
     avvio_vivo "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
-    # E il confronto: la **quinta** sala, l'aria. Il carosello tiene composta
-    # anche la pagina accanto, quindi Sala I resta viva nella composizione ma
-    # fuori vista - che e' esattamente il caso per cui la guardia esiste. Se
-    # leggesse fotogrammi anche li', il cielo si muoverebbe per nessuno.
-    avvio_vivo "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
+    # E il confronto: **l'app in secondo piano**. Prima era la quinta sala,
+    # l'aria, ma da quando il cielo sta dietro tutte e sette (vedi l'orologio
+    # della scena in SalaShell) si muove su ognuna per scelta: misurata davvero,
+    # dava 36 contro 37, e la soglia protestava contro il progetto. La cosa che
+    # conta per la batteria e' un'altra: col telefono sulla Home, l'app non
+    # deve disegnare niente.
+    adbt shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
+    sleep 2
     accanto=$(conta_fotogrammi)
     adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
-    echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
+    echo "    fotogrammi in 4s con l'app sulla Home:     ${accanto:-?}"
     # **La soglia non e' lo zero esatto, ed e' una correzione, non uno sconto.**
     # La prima volta pretendeva zero e leggeva uno: la guardia teneva benissimo -
     # 55 fotogrammi contro 1 - ma il criterio era sbagliato. Un **orologio** che
@@ -884,7 +887,7 @@ session() {
     # Quindi si chiede quello che si vuole davvero sapere: che di la' un
     # orologio giri, e che di qua non ne giri nessuno.
     if [ "${guardata:-0}" -gt 10 ] 2>/dev/null && [ "${accanto:-99}" -le 3 ] 2>/dev/null; then
-      esito="la guardia tiene: si muove solo mentre la si guarda"
+      esito="la guardia tiene: si muove solo mentre la si guarda, ferma in secondo piano"
     else
       esito="ATTENZIONE: la guardia non si comporta come dichiarato"
     fi
@@ -895,7 +898,7 @@ session() {
     {
       echo "la guardia della scheda della pioggia"
       echo "  fotogrammi in 4s, pioggia in scena:  ${guardata:-?}"
-      echo "  fotogrammi in 4s, pioggia accanto:   ${accanto:-?}"
+      echo "  fotogrammi in 4s, app sulla Home:    ${accanto:-?}"
       echo "  $esito"
       echo
       echo "Il primo numero non dice niente sul costo per fotogramma: qui rende"

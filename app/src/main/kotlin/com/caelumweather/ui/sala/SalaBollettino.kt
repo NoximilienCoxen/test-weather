@@ -367,7 +367,7 @@ private fun SegnoAvviso(avviso: WeatherAlert, palette: SalaPalette) {
  * Solo per gli avvisi di un ente. Tenuti riconoscibili e non saturi fino al
  * neon, come il resto dell'app; il testo sopra lo sceglie [onColor].
  */
-private fun coloreLivello(livello: AlertLevel): Color = when (livello) {
+internal fun coloreLivello(livello: AlertLevel): Color = when (livello) {
     AlertLevel.GIALLA -> Color(0xFFF4C542)
     AlertLevel.ARANCIONE -> Color(0xFFEE8A2A)
     AlertLevel.ROSSA -> Color(0xFFD23C33)

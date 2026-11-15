@@ -8615,3 +8615,18 @@ masse in moto la ricalcolerebbero a ogni fotogramma (§64.8).
 E il colore: col tema scelto a mano `SalaCielo` riceveva la palette delle
 schede, quindi col tema chiaro di notte le nuvole restavano grigio giorno.
 Ora riceve `paletteCielo`, come intestazione e numero grande (§68).
+
+## 71. Le allerte, viste per la prima volta in galleria
+
+Con gli scatti non piu' neri (§69) si e' visto che la pastiglia in cima aveva
+lo stesso pallino terracotta per "ALLERTA TEMPORALI" di un ente (arancione) e
+per "AVVISO VENTO" calcolato da una soglia: la differenza stava solo nella
+parola, e il livello non si leggeva fuori dal bollettino. Ora il pallino di
+un'allerta ufficiale (in corso o in arrivo) ha il colore del suo livello,
+`coloreLivello` del bollettino, con un filo d'inchiostro attorno perche' il
+giallo sul pesca del tema chiaro si veda; l'avviso calcolato ha un anello
+vuoto nel colore dell'inchiostro.
+
+La guardia della scena, misurata davvero, dava 36 contro 37: corretto, perche'
+il cielo sta dietro tutte le sale e si muove su ognuna per scelta. La misura
+ora confronta Sala I in vista con l'app sulla Home, dove non deve disegnare.
