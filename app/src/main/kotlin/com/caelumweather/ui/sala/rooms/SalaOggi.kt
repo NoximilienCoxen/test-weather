@@ -62,6 +62,7 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.GiornoSettimana
 import com.caelumweather.ui.sala.IconaMeteo
 import com.caelumweather.ui.sala.IconaCheReagisce
+import com.caelumweather.ui.sala.LocalPaletteCielo
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.PastigliaAccento
 import com.caelumweather.ui.sala.SalaPalette
@@ -137,6 +138,9 @@ fun SalaOggiScreen(
     val movimentoOnda = LocalMovimento.current
 
     Column(modifier = modifier.fillMaxWidth()) {
+        // Il numero sta sul cielo, non sulla scheda: col tema scelto a mano
+        // prende l'inchiostro del cielo (vedi `LocalPaletteCielo`).
+        val cielo = LocalPaletteCielo.current ?: palette
         // ── Il numero, sul cielo ─────────────────────────────────────────────
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
@@ -156,13 +160,13 @@ fun SalaOggiScreen(
                     testo = gradi?.toString() ?: "--",
                     valore = gradi,
                     style = SalaType.giant(104),
-                    color = palette.ink,
+                    color = cielo.ink,
                     ferme = state.animazioniRidotte || sistemaSenzaAnimazioni(),
                 )
                 Text(
                     text = "°",
                     style = SalaType.giant(38),
-                    color = palette.accent,
+                    color = cielo.accent,
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
@@ -174,14 +178,14 @@ fun SalaOggiScreen(
                 Text(
                     text = percepiti?.let { tr("percepiti $it°", "feels like $it°", "gefühlt $it°", "ressenti $it°", "sensación $it°") } ?: tr("percepiti --", "feels like --", "gefühlt --", "ressenti --", "sensación --"),
                     style = SalaType.rowTitle,
-                    color = palette.ink,
+                    color = cielo.ink,
                 )
                 val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
                 val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
                 Text(
                     text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
                     style = SalaType.rowNote,
-                    color = palette.inkFaint,
+                    color = cielo.inkFaint,
                 )
                 // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
                 // giorno, e la riga direbbe una cosa per un'altra. La riga
@@ -191,7 +195,7 @@ fun SalaOggiScreen(
                     Text(
                         text = scartoDaIeriBreve(suIeri),
                         style = SalaType.rowNote,
-                        color = palette.inkFaint,
+                        color = cielo.inkFaint,
                         maxLines = 1,
                     )
                 }
@@ -216,7 +220,7 @@ fun SalaOggiScreen(
                         ore = state.shownHours,
                         scelta = state.selectedHour,
                         aperta = giornataAperta,
-                        palette = palette,
+                        palette = cielo,
                         etichetta = tr("giornata", "the day", "Tag", "journée", "el día"),
                     )
                 }
@@ -231,7 +235,7 @@ fun SalaOggiScreen(
                 Text(
                     text = tr("condividi", "share", "teilen", "partager", "compartir"),
                     style = SalaType.pill,
-                    color = palette.accent,
+                    color = cielo.accent,
                     maxLines = 1,
                     softWrap = false,
                     modifier = Modifier

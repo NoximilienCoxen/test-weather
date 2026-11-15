@@ -454,12 +454,18 @@ fun SalaShell(
     // Lo scalino di `temaScuro` non si tocca: e' la garanzia che nessun cielo
     // porti l'interfaccia nella fascia in cui nessun inchiostro regge. La cura
     // non e' appianarlo, e' attraversarlo nel tempo.
+    // Il buio del cielo, a qualunque tema: decide cio' che sta sul cielo.
+    val dkCieloBersaglio = if (temaScuroPerTempesta(condition)) 1f else temaScuro(sky)
     val dkBersaglio = when (state.cardTheme) {
         CardTheme.CHIARO -> 0f
         CardTheme.SCURO -> 1f
-        CardTheme.AUTO ->
-            if (temaScuroPerTempesta(condition)) 1f else temaScuro(sky)
+        CardTheme.AUTO -> dkCieloBersaglio
     }
+    val dkCielo by animateFloatAsState(
+        targetValue = dkCieloBersaglio,
+        animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
+        label = "temaCielo",
+    )
     val dk by animateFloatAsState(
         targetValue = dkBersaglio,
         animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
@@ -470,7 +476,13 @@ fun SalaShell(
         animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
         label = "crepuscolo",
     )
-    val palette = remember(dk, crepuscolo, chiusura) { salaPalette(dk, crepuscolo, chiusura) }
+    // **Due palette quando il tema e' scelto a mano.** Le schede seguono la
+    // scelta; cio' che sta sul cielo - intestazione, numero grande, colline,
+    // barra delle ore, crediti - segue il cielo. In automatico sono la stessa.
+    val paletteCielo = remember(dkCielo, crepuscolo, chiusura) { salaPalette(dkCielo, crepuscolo, chiusura) }
+    val palette = remember(dk, crepuscolo, chiusura, paletteCielo) {
+        salaPalette(dk, crepuscolo, chiusura).conCieloDi(paletteCielo)
+    }
 
     // ── Le icone delle barre di sistema ──────────────────────────────────────
     //
@@ -583,6 +595,7 @@ fun SalaShell(
         // Un interruttore solo per tutto cio' che si muove nelle schede e nei
         // pannelli: vedi `SalaMovimento.kt`.
         LocalMovimento provides !ferme,
+        LocalPaletteCielo provides paletteCielo,
     ) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
@@ -627,7 +640,7 @@ fun SalaShell(
                     momento = hour?.time ?: LocalDateTime.now(),
                     ufficialiNonVerificate = state.statoUfficiali == StatoAllerteUfficiali.NON_ARRIVATE &&
                         state.forcedAlert == null,
-                    palette = palette,
+                    palette = paletteCielo,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
                     onAvvisi = viewModel::apriBollettino,
@@ -911,7 +924,7 @@ fun SalaShell(
                 IndizioSfoglio(
                     visibile = !sfogliate && pagerState.currentPage == 0,
                     prossima = rooms.getOrNull(1)?.heading ?: "",
-                    palette = palette,
+                    palette = paletteCielo,
                     movimento = !ferme,
                     modifier = Modifier.fillMaxWidth().padding(end = riservaColonna, bottom = 6.dp),
                 )
@@ -1292,3 +1305,12 @@ internal fun List<WeatherAlert>.prossimaUfficiale(momento: LocalDateTime): Weath
  * tramonto - `tingiCielo` ne mette di meno da se'.
  */
 private const val FORZA_TINTA = 0.5f
+
+
+/**
+ * La palette di cio' che sta sul cielo, per chi disegna sia sul cielo sia su
+ * un pannello (il numero grande di Sala I sta sopra la sua scheda). Uguale a
+ * quella dei pannelli col tema automatico; diversa col tema scelto a mano.
+ * Nulla fuori dalla Shell: chi la legge ripiega sulla sua.
+ */
+val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?> { null }

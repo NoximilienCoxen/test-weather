@@ -8570,3 +8570,20 @@ senza nuvolosita' coperto; mai sereno). Si applica a ogni ora e al blocco
 `current`, con le nuvole dell'ora in corso. Il codice del giorno, quando lo
 corregge, ora sceglie fra ore gia' corrette. Prove: `CodiceDellOraTest`.
 Vale per telefono, widget e orologio (e' in `core`).
+
+## 68. Tema chiaro di notte: il cielo non ha un tema, ha un'ora
+
+Scatto dell'utente, Noceto, 15 novembre, 00:56, tema fissato a **chiaro**: il
+nome della citta', "Nessun avviso", l'icona delle impostazioni, il numero
+grande, "percepiti" e min/max erano quasi invisibili - inchiostro scuro di
+mezzogiorno su un cielo blu notte - e le colline verde chiaro sotto le stelle.
+
+Causa: con `CardTheme.CHIARO` il `dk` della Shell era 0 fisso, e da quel solo
+numero veniva **tutta** la palette, anche cio' che sta sul cielo. Ora la Shell
+fa due palette: `palette` segue il tema scelto (pannelli, schede, chip) ma
+prende da `paletteCielo` gli inchiostri fuori dai pannelli e le colline
+(`conCieloDi`, SalaTheme.kt); `paletteCielo` segue sempre il cielo (la stessa
+formula del tema automatico) e va all'intestazione, all'indizio dello
+sfoglio e, tramite `LocalPaletteCielo`, al numero grande di Sala I e alla sua
+colonna. Col tema automatico le due coincidono. Prova:
+`PaletteLeggibileTest` "tema chiaro di notte".

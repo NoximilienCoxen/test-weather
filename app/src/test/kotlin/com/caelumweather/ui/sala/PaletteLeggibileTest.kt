@@ -82,4 +82,18 @@ class PaletteLeggibileTest {
             assertTrue("accentInk $r su buio ${p.buio}", r >= CONTRAST_AA_LARGE - 0.05f)
         }
     }
+
+    @Test
+    fun `tema chiaro di notte - le schede restano chiare, il cielo no`() {
+        // Noceto, 15 novembre, tema fissato a chiaro, le 00:56: nome, numero e
+        // colline erano quelli di mezzogiorno su un cielo blu notte.
+        val notte = salaPalette(dk = 1f, crepuscolo = 0f, chiusura = 3f)
+        val schede = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 3f).conCieloDi(notte)
+        assertTrue("le schede restano chiare", schede.buio < 0.1f)
+        assertTrue("collina notturna", schede.collina3 == notte.collina3)
+        val suCollina = schede.inkSuCielo.contrastRatio(schede.collina3)
+        assertTrue("inkSuCielo $suCollina sulla collina di notte", suCollina >= CONTRAST_AA_LARGE - 0.05f)
+        // Col tema automatico le due coincidono e non cambia niente.
+        assertTrue(notte.conCieloDi(notte) == notte)
+    }
 }
