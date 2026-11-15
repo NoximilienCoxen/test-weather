@@ -8587,3 +8587,17 @@ formula del tema automatico) e va all'intestazione, all'indizio dello
 sfoglio e, tramite `LocalPaletteCielo`, al numero grande di Sala I e alla sua
 colonna. Col tema automatico le due coincidono. Prova:
 `PaletteLeggibileTest` "tema chiaro di notte".
+
+## 69. Le allerte nere e la guardia che diceva zero: due difetti della cattura
+
+- **`d1`, `d2`, `d4b` neri in tutti e due i temi** (17 KB l'uno). Il logcat del
+  giro del 15 novembre: lanciata alle 11:09:57.4, primo fotogramma di 1,9 s
+  ("Davey"), uccisa alle 11:09:59.9 - lo scatto cadeva due secondi dopo
+  l'avvio. Davanti a quei tre avvii mancava il `logcat -c` che `restart_with`
+  e il giro delle sale hanno da tempo: `attendi_previsione` trovava la riga
+  dell'avvio precedente e tornava subito. Aggiunto.
+- **"ATTENZIONE: la guardia non si comporta come dichiarato", 0 e 0.** La
+  misura avviava con `--ez cattura true`, che spegne apposta il movimento, su
+  un emulatore con `animator_duration_scale` 0, che l'app legge come
+  animazioni ridotte: Sala I non poteva muoversi. Ora `avvio_vivo` avvia senza
+  `cattura` e con la scala a 1, e la rimette a 0 dopo.

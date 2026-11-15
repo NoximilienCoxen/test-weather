@@ -363,6 +363,11 @@ session() {
   # ridotta a pallino; e il ritorno al bollettino toccandolo.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -378,6 +383,11 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 2 \
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
@@ -410,6 +420,11 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto dell'avviso calcolato"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 0 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -830,15 +845,32 @@ session() {
     # si guarda - stelle di notte, uccelli e pulviscolo di giorno, cio' che cade
     # quando cade. Quindi si misura lei, con la pioggia imposta perche' il giorno
     # dello scatto e' quasi sempre asciutto.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
+    # **Senza `--ez cattura` e con le animazioni di sistema accese**, a
+    # differenza di ogni altro avvio del giro. La cattura spegne apposta il
+    # movimento della scena, e l'emulatore parte con `animator_duration_scale`
+    # a zero, che l'app legge come "animazioni ridotte": cosi' Sala I non si
+    # muoveva mai e la misura diceva zero e zero, protestando a ogni giro
+    # contro una guardia che non poteva vedere (giro del 15 novembre).
+    avvio_vivo() {
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
+      # shellcheck disable=SC2086
+      adbt shell am start $1 -n "$ACT" --es lingua "$LINGUA" >/dev/null 2>&1 || true
+      attendi_previsione
+      sleep 2
+    }
+    avvio_vivo "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
     # E il confronto: la **quinta** sala, l'aria. Il carosello tiene composta
     # anche la pagina accanto, quindi Sala I resta viva nella composizione ma
     # fuori vista - che e' esattamente il caso per cui la guardia esiste. Se
     # leggesse fotogrammi anche li', il cielo si muoverebbe per nessuno.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
+    avvio_vivo "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
     accanto=$(conta_fotogrammi)
+    adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
     echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
     # **La soglia non e' lo zero esatto, ed e' una correzione, non uno sconto.**
