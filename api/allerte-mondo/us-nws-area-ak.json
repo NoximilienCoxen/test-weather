@@ -85,93 +85,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
-                "areaDesc": "Skilak Lake; Interior Kenai Peninsula; Turnagain Pass",
-                "geocode": {
-                    "SAME": [
-                        "002122"
-                    ],
-                    "UGC": [
-                        "AKZ724",
-                        "AKZ726",
-                        "AKZ727"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ724",
-                    "https://api.weather.gov/zones/forecast/AKZ726",
-                    "https://api.weather.gov/zones/forecast/AKZ727"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.60d5501d0964b0acc64c08a405f9900902dc988d.005.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.60d5501d0964b0acc64c08a405f9900902dc988d.005.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-14T05:50:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-14T14:48:00-09:00",
-                "effective": "2026-11-14T14:48:00-09:00",
-                "onset": "2026-11-14T19:00:00-09:00",
-                "expires": "2026-11-15T06:00:00-09:00",
-                "ends": "2026-11-16T13:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Winter Weather Advisory issued November 14 at 2:48PM AKST until November 16 at 1:00PM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations\nbetween 6 and 12 inches and ice accumulations around a light glaze\nto a few hundredths of an inch.\n\n* WHERE...Interior Kenai Peninsula, Skilak Lake, and Turnagain Pass.\n\n* WHEN...From 7 PM this evening to 1 PM AKST Monday.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\nwill impact the Monday morning commute. Roads, and especially\nbridges and overpasses, will likely become slick and hazardous.\nHeavy wet snow and ice accumulations could lead to power outages.\n\n* ADDITIONAL DETAILS...Snow will develop across the interior Kenai\nPeninsula by late this evening. Snow will continue through Sunday\nevening before warmer air begins to move over the region. Snow will\nlikely change to rain. However, pockets of freezing rain are\npossible in typically colder areas along the Seward Highway from\nTurnagain Pass to Primrose.",
-                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.\n\nBe prepared for slippery roads. Slow down and use caution while\ndriving. If you are going outside, watch your first few steps taken\non stairs, sidewalks, and driveways. These surfaces could be icy and\nslippery, increasing your risk of a fall and injury.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFC 142348"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT FROM 7 PM THIS EVENING TO 1 PM AKST MONDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFC.WW.Y.0056.261115T0400Z-261116T2200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-16T13:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.005.1",
             "type": "Feature",
             "geometry": null,
@@ -491,6 +404,93 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-15T23:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.9d5c93524dd79b2b40d8b5bec58f5a734f15cad0.003.1",
+                "areaDesc": "Skilak Lake; Interior Kenai Peninsula; Turnagain Pass",
+                "geocode": {
+                    "SAME": [
+                        "002122"
+                    ],
+                    "UGC": [
+                        "AKZ724",
+                        "AKZ726",
+                        "AKZ727"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ724",
+                    "https://api.weather.gov/zones/forecast/AKZ726",
+                    "https://api.weather.gov/zones/forecast/AKZ727"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.60d5501d0964b0acc64c08a405f9900902dc988d.005.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.60d5501d0964b0acc64c08a405f9900902dc988d.005.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-14T05:50:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-14T14:48:00-09:00",
+                "effective": "2026-11-14T14:48:00-09:00",
+                "onset": "2026-11-14T19:00:00-09:00",
+                "expires": "2026-11-15T06:00:00-09:00",
+                "ends": "2026-11-16T13:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 14 at 2:48PM AKST until November 16 at 1:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Mixed precipitation expected. Total snow accumulations\nbetween 6 and 12 inches and ice accumulations around a light glaze\nto a few hundredths of an inch.\n\n* WHERE...Interior Kenai Peninsula, Skilak Lake, and Turnagain Pass.\n\n* WHEN...From 7 PM this evening to 1 PM AKST Monday.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\nwill impact the Monday morning commute. Roads, and especially\nbridges and overpasses, will likely become slick and hazardous.\nHeavy wet snow and ice accumulations could lead to power outages.\n\n* ADDITIONAL DETAILS...Snow will develop across the interior Kenai\nPeninsula by late this evening. Snow will continue through Sunday\nevening before warmer air begins to move over the region. Snow will\nlikely change to rain. However, pockets of freezing rain are\npossible in typically colder areas along the Seward Highway from\nTurnagain Pass to Primrose.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.\n\nBe prepared for slippery roads. Slow down and use caution while\ndriving. If you are going outside, watch your first few steps taken\non stairs, sidewalks, and driveways. These surfaces could be icy and\nslippery, increasing your risk of a fall and injury.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 142348"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT FROM 7 PM THIS EVENING TO 1 PM AKST MONDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFC.WW.Y.0056.261115T0400Z-261116T2200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-16T13:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -1099,85 +1099,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb6ad732f57b8f1e36094f6b8ccb563c23159323.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb6ad732f57b8f1e36094f6b8ccb563c23159323.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.cb6ad732f57b8f1e36094f6b8ccb563c23159323.001.2",
-                "areaDesc": "Anchorage; Lower Matanuska Valley",
-                "geocode": {
-                    "SAME": [
-                        "002020",
-                        "002170"
-                    ],
-                    "UGC": [
-                        "AKZ701",
-                        "AKZ711"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ701",
-                    "https://api.weather.gov/zones/forecast/AKZ711"
-                ],
-                "references": [],
-                "sent": "2026-11-14T12:03:00-09:00",
-                "effective": "2026-11-14T12:03:00-09:00",
-                "onset": "2026-11-14T12:03:00-09:00",
-                "expires": "2026-11-14T18:00:00-09:00",
-                "ends": "2026-11-14T18:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Dense Fog Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "Dense Fog Advisory issued November 14 at 12:03PM AKST until November 14 at 6:00PM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Visibility one quarter mile or less in dense fog.\n\n* WHERE...Along Glenn Highway from downtown Anchorage to Knik River\nBridge.\n\n* WHEN...Until 6 PM AKST this evening.\n\n* IMPACTS...Hazardous driving conditions due to low visibility. Below\nfreezing temperatures may lead to frost on bridges and roadways.\n\n* ADDITIONAL DETAILS...Areas of locally dense fog have developed\naround Knik Arm and along parts of the Glenn and Parks Highway\novernight. Areas of dense fog beginning to lift across portions of\nthe area, but some particularly patchy dense fog linger across the\nAnchorage Bowl and Mat-Su Valleys. Visibility could quickly change\nalong the Glenn Highway.",
-                "instruction": "A dense fog advisory means visibilities will frequently be reduced to\nless than one quarter mile. If driving, slow down, use your\nheadlights, and leave plenty of distance ahead of you.\n\nA dense fog advisory means visibilities will frequently be reduced to\nless than one quarter mile. If driving, slow down, use your\nheadlights, and leave plenty of distance ahead of you. Also, be alert\nfor frost on bridge decks and roadways causing slippery conditions.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWAER"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK71 PAFC 142103"
-                    ],
-                    "NWSheadline": [
-                        "DENSE FOG ADVISORY IN EFFECT UNTIL 6 PM AKST THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.PAFC.FG.Y.0024.261114T2103Z-261115T0300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T18:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FGY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ca2edf904e4ecf990e95122ae003b8f8944edef1.003.1",
             "type": "Feature",
             "geometry": null,
@@ -1776,5 +1697,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-15T00:35:06+00:00"
+    "updated": "2026-11-15T01:15:07+00:00"
 }
