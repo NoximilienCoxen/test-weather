@@ -10,6 +10,109 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
+                "areaDesc": "Escambia; Covington; Mobile Inland; Baldwin Inland; Escambia Inland; Santa Rosa Inland; Okaloosa Inland; Perry; Greene",
+                "geocode": {
+                    "SAME": [
+                        "001053",
+                        "001039",
+                        "001097",
+                        "001003",
+                        "012033",
+                        "012113",
+                        "012091",
+                        "028111",
+                        "028041"
+                    ],
+                    "UGC": [
+                        "ALZ059",
+                        "ALZ060",
+                        "ALZ261",
+                        "ALZ262",
+                        "FLZ201",
+                        "FLZ203",
+                        "FLZ205",
+                        "MSZ075",
+                        "MSZ076"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/ALZ059",
+                    "https://api.weather.gov/zones/forecast/ALZ060",
+                    "https://api.weather.gov/zones/forecast/ALZ261",
+                    "https://api.weather.gov/zones/forecast/ALZ262",
+                    "https://api.weather.gov/zones/forecast/FLZ201",
+                    "https://api.weather.gov/zones/forecast/FLZ203",
+                    "https://api.weather.gov/zones/forecast/FLZ205",
+                    "https://api.weather.gov/zones/forecast/MSZ075",
+                    "https://api.weather.gov/zones/forecast/MSZ076"
+                ],
+                "references": [],
+                "sent": "2026-11-14T18:18:00-06:00",
+                "effective": "2026-11-14T18:18:00-06:00",
+                "onset": "2026-11-15T00:00:00-06:00",
+                "expires": "2026-11-15T08:00:00-06:00",
+                "ends": "2026-11-15T08:00:00-06:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Frost Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Mobile AL",
+                "headline": "Frost Advisory issued November 14 at 6:18PM CST until November 15 at 8:00AM CST by NWS Mobile AL",
+                "description": "* WHAT...Temperatures as low as 33 to 37 will result in frost\nformation.\n\n* WHERE...In Alabama, Covington, Escambia, Baldwin Inland, and Mobile\nInland Counties. In Florida, Escambia Inland, Okaloosa Inland, and\nSanta Rosa Inland Counties. In Mississippi, Greene and Perry\nCounties.\n\n* WHEN...From midnight tonight to 8 AM CST Sunday.\n\n* IMPACTS...Frost could harm sensitive outdoor vegetation. Sensitive\noutdoor plants may be killed if left uncovered.",
+                "instruction": "Take steps now to protect tender plants from the cold.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWMOB"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS74 KMOB 150018"
+                    ],
+                    "NWSheadline": [
+                        "FROST ADVISORY REMAINS IN EFFECT FROM MIDNIGHT TONIGHT TO 8 AM CST SUNDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMOB.FR.Y.0004.261115T0600Z-261115T1400Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-15T08:00:00-06:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.492b9d9741e2b3e5bd4af069f40ff3a9701b7a74.002.1,2026-11-14T09:28:00-06:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FRY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9bede3cbbc8559852385d41970275ef22add6d40.002.1",
             "type": "Feature",
             "geometry": null,
@@ -401,106 +504,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.492b9d9741e2b3e5bd4af069f40ff3a9701b7a74.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.492b9d9741e2b3e5bd4af069f40ff3a9701b7a74.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.492b9d9741e2b3e5bd4af069f40ff3a9701b7a74.002.1",
-                "areaDesc": "Escambia; Covington; Mobile Inland; Baldwin Inland; Escambia Inland; Santa Rosa Inland; Okaloosa Inland; Perry; Greene",
-                "geocode": {
-                    "SAME": [
-                        "001053",
-                        "001039",
-                        "001097",
-                        "001003",
-                        "012033",
-                        "012113",
-                        "012091",
-                        "028111",
-                        "028041"
-                    ],
-                    "UGC": [
-                        "ALZ059",
-                        "ALZ060",
-                        "ALZ261",
-                        "ALZ262",
-                        "FLZ201",
-                        "FLZ203",
-                        "FLZ205",
-                        "MSZ075",
-                        "MSZ076"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/ALZ059",
-                    "https://api.weather.gov/zones/forecast/ALZ060",
-                    "https://api.weather.gov/zones/forecast/ALZ261",
-                    "https://api.weather.gov/zones/forecast/ALZ262",
-                    "https://api.weather.gov/zones/forecast/FLZ201",
-                    "https://api.weather.gov/zones/forecast/FLZ203",
-                    "https://api.weather.gov/zones/forecast/FLZ205",
-                    "https://api.weather.gov/zones/forecast/MSZ075",
-                    "https://api.weather.gov/zones/forecast/MSZ076"
-                ],
-                "references": [],
-                "sent": "2026-11-14T09:28:00-06:00",
-                "effective": "2026-11-14T09:28:00-06:00",
-                "onset": "2026-11-15T00:00:00-06:00",
-                "expires": "2026-11-14T18:00:00-06:00",
-                "ends": "2026-11-15T08:00:00-06:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Frost Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Mobile AL",
-                "headline": "Frost Advisory issued November 14 at 9:28AM CST until November 15 at 8:00AM CST by NWS Mobile AL",
-                "description": "* WHAT...Temperatures as low as 33 to 37 will result in frost\nformation.\n\n* WHERE...In Alabama, Covington, Escambia, Baldwin Inland, and Mobile\nInland Counties. In Florida, Escambia Inland, Okaloosa Inland, and\nSanta Rosa Inland Counties. In Mississippi, Greene and Perry\nCounties.\n\n* WHEN...From midnight tonight to 8 AM CST Sunday.\n\n* IMPACTS...Frost could harm sensitive outdoor vegetation. Sensitive\noutdoor plants may be killed if left uncovered.",
-                "instruction": "Take steps now to protect tender plants from the cold.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWMOB"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS74 KMOB 141528"
-                    ],
-                    "NWSheadline": [
-                        "FROST ADVISORY IN EFFECT FROM MIDNIGHT TONIGHT TO 8 AM CST SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMOB.FR.Y.0004.261115T0600Z-261115T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-15T08:00:00-06:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FRY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bec63c30ca2aef1914061195bebb9a26e519d8bd.001.1",
             "type": "Feature",
             "geometry": {
@@ -862,99 +865,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.da14d8e2d4187a833143cc20b34c5feb2a21d83a.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.da14d8e2d4187a833143cc20b34c5feb2a21d83a.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.da14d8e2d4187a833143cc20b34c5feb2a21d83a.001.1",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
-                "geocode": {
-                    "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
-                    ],
-                    "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
-                ],
-                "references": [],
-                "sent": "2026-11-14T01:37:00-05:00",
-                "effective": "2026-11-14T01:37:00-05:00",
-                "onset": "2026-11-14T07:00:00-05:00",
-                "expires": "2026-11-14T19:00:00-05:00",
-                "ends": "2026-11-14T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Rip Current Statement issued November 14 at 1:37AM EST until November 14 at 7:00PM EST by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...From 7 AM EST this morning through this evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 140637"
-                    ],
-                    "NWSheadline": [
-                        "HIGH RIP CURRENT RISK IN EFFECT FROM 7 AM EST THIS MORNING THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KTBW.RP.S.0019.261114T1200Z-261115T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-14T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-14T23:55:08+00:00"
+    "updated": "2026-11-15T00:35:06+00:00"
 }

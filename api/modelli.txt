@@ -3,58 +3,58 @@
 
 === copertura reale sui due punti ===
   best_match
-    Noceto   48/48 ore  quota 74.0 m  prime [8.8, 8.1, 7.6]
-    Forli    48/48 ore  quota 40.0 m  prime [9.6, 8.7, 7.5]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.6, 6.6, 6.5]
+    Forli    48/48 ore  quota 40.0 m  prime [5.7, 6.3, 6.5]
   italia_meteo_arpae_icon_2i
-    Noceto   48/48 ore  quota 74.0 m  prime [8.3, 7.9, 7.2]
-    Forli    48/48 ore  quota 40.0 m  prime [9.5, 8.8, 7.9]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.5, 6.6, 6.7]
+    Forli    48/48 ore  quota 40.0 m  prime [5.5, 6.3, 6.5]
   icon_d2
-    Noceto   48/48 ore  quota 74.0 m  prime [8.8, 8.1, 7.6]
-    Forli    48/48 ore  quota 40.0 m  prime [9.6, 8.7, 7.5]
+    Noceto   46/48 ore  quota 74.0 m  prime [6.6, 6.6, 6.5]
+    Forli    46/48 ore  quota 40.0 m  prime [5.7, 6.3, 6.5]
   icon_eu
-    Noceto   48/48 ore  quota 74.0 m  prime [7.8, 6.9, 6.5]
-    Forli    48/48 ore  quota 40.0 m  prime [8.5, 7.3, 6.7]
+    Noceto   48/48 ore  quota 74.0 m  prime [5.9, 6.3, 6.3]
+    Forli    48/48 ore  quota 40.0 m  prime [3.9, 4.9, 5.4]
   icon_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [8.8, 8.1, 7.6]
-    Forli    48/48 ore  quota 40.0 m  prime [9.6, 8.7, 7.5]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.6, 6.6, 6.5]
+    Forli    48/48 ore  quota 40.0 m  prime [5.7, 6.3, 6.5]
   ecmwf_ifs025
-    Noceto   48/48 ore  quota 74.0 m  prime [7.3, 7.0, 6.8]
-    Forli    48/48 ore  quota 40.0 m  prime [8.0, 7.5, 6.8]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.8, 6.9, 6.8]
+    Forli    48/48 ore  quota 40.0 m  prime [6.8, 6.9, 6.8]
   ecmwf_aifs025_single
-    Noceto   48/48 ore  quota 74.0 m  prime [7.7, 7.2, 6.7]
-    Forli    48/48 ore  quota 40.0 m  prime [8.4, 7.8, 6.9]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.1, 6.0, 5.9]
+    Forli    48/48 ore  quota 40.0 m  prime [6.6, 6.6, 6.7]
   meteofrance_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [8.2, 7.3, 6.5]
-    Forli    48/48 ore  quota 40.0 m  prime [10.3, 9.1, 8.0]
+    Noceto   48/48 ore  quota 74.0 m  prime [5.0, 4.7, 4.8]
+    Forli    48/48 ore  quota 40.0 m  prime [5.4, 5.0, 5.8]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
     Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
   gfs_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [10.0, 9.8, 8.9]
-    Forli    48/48 ore  quota 40.0 m  prime [10.5, 10.4, 9.1]
+    Noceto   48/48 ore  quota 74.0 m  prime [7.2, 7.4, 7.1]
+    Forli    48/48 ore  quota 40.0 m  prime [7.3, 7.5, 7.4]
   knmi_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [8.0, 6.7, 8.1]
-    Forli    48/48 ore  quota 40.0 m  prime [10.5, 9.2, 7.3]
+    Noceto   48/48 ore  quota 74.0 m  prime [6.8, 6.6, 6.4]
+    Forli    48/48 ore  quota 40.0 m  prime [6.5, 6.8, 6.9]
   ukmo_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [8.6, 8.1, 7.8]
-    Forli    48/48 ore  quota 40.0 m  prime [9.3, 7.3, 6.7]
+    Noceto   48/48 ore  quota 74.0 m  prime [7.0, 6.8, 7.1]
+    Forli    48/48 ore  quota 40.0 m  prime [6.2, 6.3, 6.2]
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
-    Londra   48/48 ore  quota 29.0 m  prime [1.2, 0.3, -0.4]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    Londra   46/48 ore  quota 29.0 m  prime [3.0, 2.7, 2.6]
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
-    Londra   48/48 ore  quota 29.0 m  prime [2.0, 2.1, 2.0]
-    Bergen   48/48 ore  quota 17.0 m  prime [3.6, 3.9, 4.3]
-    Singapore 48/48 ore  quota 39.0 m  prime [27.4, 27.2, 27.4]
-    NewYork  48/48 ore  quota 27.0 m  prime [4.5, 4.6, 4.7]
+    Londra   48/48 ore  quota 29.0 m  prime [4.6, 4.3, 3.8]
+    Bergen   48/48 ore  quota 17.0 m  prime [8.8, 8.6, 8.6]
+    Singapore 48/48 ore  quota 39.0 m  prime [27.6, 27.9, 28.1]
+    NewYork  48/48 ore  quota 27.0 m  prime [5.0, 5.0, 4.9]
 
 === chi risponde sotto best_match, nel mondo ===
   Tokyo          best_match = jma_seamless
@@ -76,7 +76,8 @@
   NewYork        giorni   7  assenti=-  tutte nulle=-
   Oslo           ore    168  assenti=-  tutte nulle=-
   Oslo           giorni   7  assenti=-  tutte nulle=-
-  Reykjavik      HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
+  Reykjavik      ore    168  assenti=-  tutte nulle=-
+  Reykjavik      giorni   7  assenti=-  tutte nulle=-
   Nairobi        ore    168  assenti=-  tutte nulle=-
   Nairobi        giorni   7  assenti=-  tutte nulle=-
   CittaDelCapo   ore    168  assenti=-  tutte nulle=-
