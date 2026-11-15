@@ -8601,3 +8601,17 @@ colonna. Col tema automatico le due coincidono. Prova:
   un emulatore con `animator_duration_scale` 0, che l'app legge come
   animazioni ridotte: Sala I non poteva muoversi. Ora `avvio_vivo` avvia senza
   `cattura` e con la scala a 1, e la rimette a 0 dopo.
+
+## 70. Le nuvole senza cerchi, e del colore dell'ora
+
+Negli scatti (Forli' di giorno, Noceto di notte) ogni nuvola mostrava i
+contorni dei suoi gonfiori e un disco piu' chiaro in mezzo. I pezzi - una
+pillola e tre tondi - erano disegnati uno per uno con la loro alfa, che si
+sommava dove si sovrapponevano, e il "tocco di luce" era un quarto tondo.
+Ora `nuvole()` fa un tracciato unico (pillola + tre ovali) dipinto una volta,
+piatto; l'ombra sotto resta. Niente sfumatura al posto della luce: cinque
+masse in moto la ricalcolerebbero a ogni fotogramma (§64.8).
+
+E il colore: col tema scelto a mano `SalaCielo` riceveva la palette delle
+schede, quindi col tema chiaro di notte le nuvole restavano grigio giorno.
+Ora riceve `paletteCielo`, come intestazione e numero grande (§68).

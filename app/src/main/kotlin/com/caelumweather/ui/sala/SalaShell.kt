@@ -599,7 +599,8 @@ fun SalaShell(
     ) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
-                palette = palette,
+                // Il cielo e' tutto sul cielo: nuvole e colline seguono l'ora, non il tema.
+                palette = paletteCielo,
                 stops = stops,
                 scena = scena,
                 sky = sky,

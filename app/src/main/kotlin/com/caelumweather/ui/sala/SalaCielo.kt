@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -1003,11 +1005,6 @@ private fun DrawScope.nuvole(
         val chiara = lerp(Color(0xFFFDFAF4), Color(0xFF9A9994), ((scena.copertura - 0.55f) / 0.45f).coerceIn(0f, 1f))
         val scura = lerp(Color(0xFF3F4653), Color(0xFF2A2F37), ((scena.copertura - 0.35f) / 0.65f).coerceIn(0f, 1f))
         val corpo = lerp(chiara, scura, palette.buio)
-        // **Il tocco di luce e' il corpo schiarito, non il bianco.** Era un
-        // bianco fisso al settantadue per cento: sulla nuvola panna non si
-        // vedeva, su quella grigia diventava un pallino bianco appiccicato,
-        // uno per nuvola, che sembrava un difetto (e lo era).
-        val luce = lerp(corpo, Color.White, lerp(0.35f, 0.08f, palette.buio)).copy(alpha = 0.9f)
         val ombra = lerp(SalaTokens.neutral900.copy(alpha = 0.07f), Color(0xFF121824).copy(alpha = 0.18f), palette.buio)
 
         // **L'evaporazione delle ore calde.** Quando il sole e' alto sopra un
@@ -1050,28 +1047,31 @@ private fun DrawScope.nuvole(
         // Il fondo della nuvola, da cui tutti i pezzi si misurano verso l'alto.
         val fondo = n.y * sy + h + dy
 
-        fun tondo(d: Float, dx: Float, su: Float, tinta: Color) {
-            drawCircle(
-                color = tinta,
-                radius = d / 2f,
-                center = Offset(x + dx + d / 2f, fondo - su - d / 2f),
-                alpha = alfa,
-            )
-        }
-
-        // Il corpo: una pillola col fondo piatto appoggiato sulla linea.
+        // **Una forma sola, non quattro pezzi.** Corpo e gonfiori erano
+        // disegnati uno per uno, ciascuno con la sua trasparenza: dove si
+        // sovrapponevano l'alfa si sommava, e ogni nuvola mostrava i contorni
+        // dei suoi cerchi. In mezzo c'era il "tocco di luce", un disco piu'
+        // chiaro che sulle nuvole grigie si leggeva come un buco (scatti del
+        // 15 novembre, di giorno e di notte). Adesso i pezzi sono un tracciato
+        // unico, dipinto una volta con una sola alfa e piatto come il resto
+        // delle illustrazioni (l'icona, le scene): niente sfumatura, che qui
+        // si ricalcolerebbe a ogni fotogramma su cinque masse in moto (§64.8).
         val corpoH = h * 0.46f
-        drawRoundRect(
-            color = corpo,
-            topLeft = Offset(x, fondo - corpoH),
-            size = Size(w, corpoH),
-            cornerRadius = CornerRadius(corpoH / 2f),
-            alpha = alfa,
-        )
-        tondo(w * 0.33f, w * 0.04f, h * 0.10f, corpo)
-        tondo(w * 0.48f, w * 0.25f, h * 0.16f, corpo)
-        tondo(w * 0.30f, w * 0.62f, h * 0.12f, corpo)
-        tondo(w * 0.16f, w * 0.31f, h * 0.44f, luce)
+        val sagoma = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    left = x, top = fondo - corpoH, right = x + w, bottom = fondo,
+                    cornerRadius = CornerRadius(corpoH / 2f),
+                ),
+            )
+            fun tondo(d: Float, dx: Float, su: Float) {
+                addOval(Rect(Offset(x + dx, fondo - su - d), Size(d, d)))
+            }
+            tondo(w * 0.33f, w * 0.04f, h * 0.10f)
+            tondo(w * 0.48f, w * 0.25f, h * 0.16f)
+            tondo(w * 0.30f, w * 0.62f, h * 0.12f)
+        }
+        drawPath(path = sagoma, color = corpo, alpha = alfa)
         val ombraH = h * 0.10f
         drawRoundRect(
             color = ombra,
