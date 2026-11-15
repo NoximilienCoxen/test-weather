@@ -24,34 +24,34 @@
     Noceto   48/48 ore  quota 74.0 m  prime [6.1, 6.0, 5.9]
     Forli    48/48 ore  quota 40.0 m  prime [6.6, 6.6, 6.7]
   meteofrance_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [5.0, 4.7, 4.8]
-    Forli    48/48 ore  quota 40.0 m  prime [5.4, 5.0, 5.8]
+    Noceto   48/48 ore  quota 74.0 m  prime [5.0, 4.9, 4.8]
+    Forli    48/48 ore  quota 40.0 m  prime [5.3, 5.1, 5.3]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
-    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [7.2, 7.4, 7.1]
     Forli    48/48 ore  quota 40.0 m  prime [7.3, 7.5, 7.4]
   knmi_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [6.8, 6.6, 6.4]
-    Forli    48/48 ore  quota 40.0 m  prime [6.5, 6.8, 6.9]
+    Noceto   48/48 ore  quota 74.0 m  prime [5.9, 6.5, 6.4]
+    Forli    48/48 ore  quota 40.0 m  prime [6.5, 7.0, 7.1]
   ukmo_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [7.0, 6.8, 7.1]
     Forli    48/48 ore  quota 40.0 m  prime [6.2, 6.3, 6.2]
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    Londra    HTTP 400  {"reason":"No data is available for this location","error":true}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   icon_d2
     Londra   46/48 ore  quota 29.0 m  prime [3.0, 2.7, 2.6]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
-    Londra   48/48 ore  quota 29.0 m  prime [4.6, 4.3, 3.8]
+    Londra   48/48 ore  quota 29.0 m  prime [4.3, 4.2, 3.7]
     Bergen   48/48 ore  quota 17.0 m  prime [8.8, 8.6, 8.6]
     Singapore 48/48 ore  quota 39.0 m  prime [27.6, 27.9, 28.1]
     NewYork  48/48 ore  quota 27.0 m  prime [5.0, 5.0, 4.9]
