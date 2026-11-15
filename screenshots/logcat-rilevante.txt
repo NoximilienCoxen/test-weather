@@ -1,120 +1,120 @@
-11-15 11:18:21.278 I/meteo   ( 9446): allerte ufficiali: 0 per Forlì
-11-15 11:18:24.775 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:18:24.821 W/ActivityTaskManager(  532): Force removing ActivityRecord{ee2fb04 u0 com.caelumweather/.MainActivity t79 f}}: app died, no saved state
-11-15 11:18:24.839 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:24.839 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:18:24.839 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:18:24.899 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{7d2a82 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:18:24.899 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:26.083 I/meteo   ( 9538): agganci: ora=12 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=true cattura=true
-11-15 11:18:28.158 I/meteo   ( 9538): previsione pronta: 24 ore
-11-15 11:18:28.800 I/meteo   ( 9538): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:18:28.800 I/meteo   ( 9538): allerte ufficiali: 0 per Forlì
-11-15 11:18:33.288 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:18:33.333 W/ActivityTaskManager(  532): Force removing ActivityRecord{616abbc u0 com.caelumweather/.MainActivity t80 f}}: app died, no saved state
-11-15 11:18:33.361 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:33.447 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{d7a71fa u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:18:33.447 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:34.584 I/meteo   ( 9631): agganci: ora=2 sezione=0 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:18:37.481 I/meteo   ( 9631): previsione pronta: 24 ore
-11-15 11:18:37.979 I/meteo   ( 9631): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:18:37.979 I/meteo   ( 9631): allerte ufficiali: 0 per Forlì
-11-15 11:18:42.002 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:18:42.044 W/ActivityTaskManager(  532): Force removing ActivityRecord{6bcf05e u0 com.caelumweather/.MainActivity t81 f}}: app died, no saved state
-11-15 11:18:42.077 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:42.138 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{7d42d6c u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:18:42.138 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:43.363 I/meteo   ( 9725): agganci: ora=2 sezione=1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:18:45.541 I/m.caelumweather( 9725): Compiler allocated 4642KB to compile kotlin.Unit com.caelumweather.ui.sala.rooms.SalaPioggiaKt.SalaPioggiaScreen$lambda$9(java.util.List, com.caelumweather.ui.sala.SalaPalette, java.util.List, com.caelumweather.data.HourForecast, com.caelumweather.ui.UiState, kotlin.jvm.functions.Function1, boolean, java.lang.String, double, androidx.compose.runtime.MutableIntState, boolean, com.caelumweather.ui.motion.VibrazioniMeteo, java.util.List, double, int, kotlin.jvm.functions.Function1, androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, int)
-11-15 11:18:46.165 I/meteo   ( 9725): previsione pronta: 24 ore
-11-15 11:18:46.694 I/meteo   ( 9725): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:18:46.781 I/meteo   ( 9725): allerte ufficiali: 0 per Forlì
-11-15 11:18:50.531 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:18:50.572 W/ActivityTaskManager(  532): Force removing ActivityRecord{5ba7918 u0 com.caelumweather/.MainActivity t82 f}}: app died, no saved state
-11-15 11:18:50.598 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:50.598 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:18:50.598 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:18:50.668 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{315a442 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:18:50.668 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:51.791 I/meteo   ( 9819): agganci: ora=2 sezione=2 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:18:53.978 I/m.caelumweather( 9819): Compiler allocated 4642KB to compile kotlin.Unit com.caelumweather.ui.sala.rooms.SalaPioggiaKt.SalaPioggiaScreen$lambda$9(java.util.List, com.caelumweather.ui.sala.SalaPalette, java.util.List, com.caelumweather.data.HourForecast, com.caelumweather.ui.UiState, kotlin.jvm.functions.Function1, boolean, java.lang.String, double, androidx.compose.runtime.MutableIntState, boolean, com.caelumweather.ui.motion.VibrazioniMeteo, java.util.List, double, int, kotlin.jvm.functions.Function1, androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, int)
-11-15 11:18:54.591 I/meteo   ( 9819): previsione pronta: 24 ore
-11-15 11:18:55.148 I/meteo   ( 9819): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:18:55.152 I/meteo   ( 9819): allerte ufficiali: 0 per Forlì
-11-15 11:18:58.998 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:18:59.043 W/ActivityTaskManager(  532): Force removing ActivityRecord{9c2d28b u0 com.caelumweather/.MainActivity t83 f}}: app died, no saved state
-11-15 11:18:59.077 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:18:59.133 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{bf96261 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:18:59.133 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:00.263 I/meteo   ( 9914): agganci: ora=2 sezione=3 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:19:04.066 I/meteo   ( 9914): previsione pronta: 24 ore
-11-15 11:19:04.648 I/meteo   ( 9914): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:05.051 I/meteo   ( 9914): allerte ufficiali: 0 per Forlì
-11-15 11:19:08.582 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:08.625 W/ActivityTaskManager(  532): Force removing ActivityRecord{c088ba3 u0 com.caelumweather/.MainActivity t84 f}}: app died, no saved state
-11-15 11:19:08.673 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:08.753 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:08.756 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{cf89d00 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:08.756 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:09.848 I/meteo   (10010): agganci: ora=2 sezione=4 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:19:12.822 I/meteo   (10010): previsione pronta: 24 ore
-11-15 11:19:13.414 I/meteo   (10010): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:13.588 I/meteo   (10010): allerte ufficiali: 0 per Forlì
-11-15 11:19:17.215 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:17.310 W/ActivityTaskManager(  532): Force removing ActivityRecord{a393097 u0 com.caelumweather/.MainActivity t85 f}}: app died, no saved state
-11-15 11:19:17.344 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:17.416 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:17.421 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{ed9134d u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:17.421 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:18.543 I/meteo   (10106): agganci: ora=2 sezione=5 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:19:21.560 I/meteo   (10106): previsione pronta: 24 ore
-11-15 11:19:22.091 I/meteo   (10106): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:22.170 I/meteo   (10106): allerte ufficiali: 0 per Forlì
-11-15 11:19:26.775 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:26.818 W/ActivityTaskManager(  532): Force removing ActivityRecord{a733509 u0 com.caelumweather/.MainActivity t86 f}}: app died, no saved state
-11-15 11:19:26.833 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:26.833 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:19:26.833 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:19:26.904 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:26.919 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{48c030f u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:26.919 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:28.146 I/meteo   (10202): agganci: ora=2 sezione=6 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:19:31.076 I/meteo   (10202): previsione pronta: 24 ore
-11-15 11:19:32.145 I/meteo   (10202): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:32.145 I/meteo   (10202): allerte ufficiali: 0 per Forlì
-11-15 11:19:35.507 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:35.568 W/ActivityTaskManager(  532): Force removing ActivityRecord{9e36e1d u0 com.caelumweather/.MainActivity t87 f}}: app died, no saved state
-11-15 11:19:35.586 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:35.586 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:19:35.586 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:19:35.685 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:35.690 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{57a1e43 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:35.690 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:36.843 I/meteo   (10296): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
-11-15 11:19:39.892 I/meteo   (10296): previsione pronta: 24 ore
-11-15 11:19:40.417 I/meteo   (10296): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:40.574 I/meteo   (10296): allerte ufficiali: 0 per Forlì
-11-15 11:19:46.080 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:46.137 W/ActivityTaskManager(  532): Force removing ActivityRecord{6e03f5f u0 com.caelumweather/.MainActivity t88 f}}: app died, no saved state
-11-15 11:19:46.159 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:46.159 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:19:46.159 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:19:46.235 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{50ab137 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:46.235 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:46.236 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:47.495 I/meteo   (10392): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=true legali=false cattura=true
-11-15 11:19:49.503 I/meteo   (10392): previsione pronta: 24 ore
-11-15 11:19:50.210 I/meteo   (10392): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:50.210 I/meteo   (10392): allerte ufficiali: 0 per Forlì
-11-15 11:19:54.542 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
-11-15 11:19:54.601 W/ActivityTaskManager(  532): Force removing ActivityRecord{6ac6193 u0 com.caelumweather/.MainActivity t89 f}}: app died, no saved state
-11-15 11:19:54.621 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:54.621 W/WindowManager(  532): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
-11-15 11:19:54.621 W/WindowManager(  532): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
-11-15 11:19:54.695 W/WindowManager(  532): Exception thrown during dispatchAppVisibility Window{9aa0a9 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
-11-15 11:19:54.695 W/WindowManager(  532): android.os.DeadObjectException
-11-15 11:19:55.833 I/meteo   (10487): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=true cattura=true
-11-15 11:19:57.629 I/meteo   (10487): previsione pronta: 24 ore
-11-15 11:19:58.206 I/meteo   (10487): MeteoAlarm italy: 38387 caratteri, 25 voci, 23 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
-11-15 11:19:58.207 I/meteo   (10487): allerte ufficiali: 0 per Forlì
-11-15 11:20:01.994 W/ModernMediaScanner( 1548): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:17:15.916 I/meteo   ( 9768): agganci: ora=12 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=true legali=false cattura=true
+11-15 22:17:18.050 I/meteo   ( 9768): previsione pronta: 24 ore
+11-15 22:17:18.932 I/meteo   ( 9768): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:17:18.932 I/meteo   ( 9768): allerte ufficiali: 0 per Forlì
+11-15 22:17:23.128 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:17:23.185 W/ActivityTaskManager(  534): Force removing ActivityRecord{b9f5172 u0 com.caelumweather/.MainActivity t79 f}}: app died, no saved state
+11-15 22:17:23.222 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:23.316 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:23.335 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{53f7534 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:17:23.335 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:24.609 I/meteo   ( 9861): agganci: ora=12 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=true cattura=true
+11-15 22:17:26.716 I/meteo   ( 9861): previsione pronta: 24 ore
+11-15 22:17:27.561 I/meteo   ( 9861): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:17:27.561 I/meteo   ( 9861): allerte ufficiali: 0 per Forlì
+11-15 22:17:31.660 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:17:31.720 W/ActivityTaskManager(  534): Force removing ActivityRecord{b6cf6d5 u0 com.caelumweather/.MainActivity t80 f}}: app died, no saved state
+11-15 22:17:31.754 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:31.845 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:31.856 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{b0c746d u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:17:31.856 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:33.099 I/meteo   ( 9955): agganci: ora=2 sezione=0 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:17:36.140 I/meteo   ( 9955): previsione pronta: 24 ore
+11-15 22:17:36.852 I/meteo   ( 9955): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:17:36.928 I/meteo   ( 9955): allerte ufficiali: 0 per Forlì
+11-15 22:17:41.384 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:17:41.430 W/ActivityTaskManager(  534): Force removing ActivityRecord{1e147ae u0 com.caelumweather/.MainActivity t81 f}}: app died, no saved state
+11-15 22:17:41.458 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:41.458 W/WindowManager(  534): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+11-15 22:17:41.458 W/WindowManager(  534): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+11-15 22:17:41.558 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{bf6453c u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:17:41.558 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:42.821 I/meteo   (10052): agganci: ora=2 sezione=1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:17:45.882 I/meteo   (10052): previsione pronta: 24 ore
+11-15 22:17:45.954 I/m.caelumweather(10052): Compiler allocated 4663KB to compile kotlin.Unit com.caelumweather.ui.sala.rooms.SalaPioggiaKt.SalaPioggiaScreen$lambda$9(java.util.List, com.caelumweather.ui.sala.SalaPalette, java.util.List, com.caelumweather.data.HourForecast, com.caelumweather.ui.UiState, kotlin.jvm.functions.Function1, boolean, java.lang.String, double, androidx.compose.runtime.MutableIntState, boolean, com.caelumweather.ui.motion.VibrazioniMeteo, java.util.List, double, int, kotlin.jvm.functions.Function1, androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, int)
+11-15 22:17:46.580 I/meteo   (10052): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:17:46.580 I/meteo   (10052): allerte ufficiali: 0 per Forlì
+11-15 22:17:51.063 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:17:51.107 W/ActivityTaskManager(  534): Force removing ActivityRecord{85c3200 u0 com.caelumweather/.MainActivity t82 f}}: app died, no saved state
+11-15 22:17:51.132 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:51.132 W/WindowManager(  534): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+11-15 22:17:51.132 W/WindowManager(  534): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+11-15 22:17:51.255 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{cc62dde u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:17:51.255 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:17:52.417 I/meteo   (10148): agganci: ora=2 sezione=2 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:17:55.259 I/m.caelumweather(10148): Compiler allocated 4642KB to compile kotlin.Unit com.caelumweather.ui.sala.rooms.SalaPioggiaKt.SalaPioggiaScreen$lambda$9(java.util.List, com.caelumweather.ui.sala.SalaPalette, java.util.List, com.caelumweather.data.HourForecast, com.caelumweather.ui.UiState, kotlin.jvm.functions.Function1, boolean, java.lang.String, double, androidx.compose.runtime.MutableIntState, boolean, com.caelumweather.ui.motion.VibrazioniMeteo, java.util.List, double, int, kotlin.jvm.functions.Function1, androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, int)
+11-15 22:17:56.253 I/meteo   (10148): previsione pronta: 24 ore
+11-15 22:17:56.965 I/meteo   (10148): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:17:57.668 I/meteo   (10148): allerte ufficiali: 0 per Forlì
+11-15 22:18:00.733 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:00.794 W/ActivityTaskManager(  534): Force removing ActivityRecord{70b749b u0 com.caelumweather/.MainActivity t83 f}}: app died, no saved state
+11-15 22:18:00.837 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:00.937 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:00.957 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{cd20a98 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:00.957 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:02.203 I/meteo   (10245): agganci: ora=2 sezione=3 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:18:06.192 I/meteo   (10245): previsione pronta: 24 ore
+11-15 22:18:06.905 I/meteo   (10245): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:07.609 I/meteo   (10245): allerte ufficiali: 0 per Forlì
+11-15 22:18:11.473 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:11.519 W/ActivityTaskManager(  534): Force removing ActivityRecord{d21fe88 u0 com.caelumweather/.MainActivity t84 f}}: app died, no saved state
+11-15 22:18:11.555 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:11.671 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:11.696 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{65665a6 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:11.696 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:12.925 I/meteo   (10346): agganci: ora=2 sezione=4 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:18:16.211 I/meteo   (10346): previsione pronta: 24 ore
+11-15 22:18:16.923 I/meteo   (10346): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:16.926 I/meteo   (10346): allerte ufficiali: 0 per Forlì
+11-15 22:18:21.153 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:21.218 W/ActivityTaskManager(  534): Force removing ActivityRecord{69289ec u0 com.caelumweather/.MainActivity t85 f}}: app died, no saved state
+11-15 22:18:21.254 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:21.382 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:21.387 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{3940baa u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:21.387 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:22.580 I/meteo   (10442): agganci: ora=2 sezione=5 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:18:25.941 I/meteo   (10442): previsione pronta: 24 ore
+11-15 22:18:26.764 I/meteo   (10442): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:26.765 I/meteo   (10442): allerte ufficiali: 0 per Forlì
+11-15 22:18:30.857 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:30.922 W/ActivityTaskManager(  534): Force removing ActivityRecord{7d49e10 u0 com.caelumweather/.MainActivity t86 f}}: app died, no saved state
+11-15 22:18:30.949 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:31.081 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{818a86e u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:31.081 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:32.269 I/meteo   (10538): agganci: ora=2 sezione=6 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:18:35.607 I/meteo   (10538): previsione pronta: 24 ore
+11-15 22:18:36.365 I/meteo   (10538): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:36.375 I/meteo   (10538): allerte ufficiali: 0 per Forlì
+11-15 22:18:40.559 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:40.609 W/ActivityTaskManager(  534): Force removing ActivityRecord{1aff8eb u0 com.caelumweather/.MainActivity t87 f}}: app died, no saved state
+11-15 22:18:40.630 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:40.630 W/WindowManager(  534): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+11-15 22:18:40.630 W/WindowManager(  534): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+11-15 22:18:40.741 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{45e0fc1 u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:40.741 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:42.104 I/meteo   (10635): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=false cattura=true
+11-15 22:18:45.224 I/meteo   (10635): previsione pronta: 24 ore
+11-15 22:18:45.922 I/meteo   (10635): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:46.065 I/meteo   (10635): allerte ufficiali: 0 per Forlì
+11-15 22:18:51.218 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:51.273 W/ActivityTaskManager(  534): Force removing ActivityRecord{63b65ac u0 com.caelumweather/.MainActivity t88 f}}: app died, no saved state
+11-15 22:18:51.294 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:51.294 W/WindowManager(  534): 	at com.android.server.wm.WindowState$DeathRecipient.binderDied(WindowState.java:2929)
+11-15 22:18:51.294 W/WindowManager(  534): 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:319)
+11-15 22:18:51.393 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{67b8d6a u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:18:51.393 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:18:52.656 I/meteo   (10732): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=true legali=false cattura=true
+11-15 22:18:54.913 I/meteo   (10732): previsione pronta: 24 ore
+11-15 22:18:55.789 I/meteo   (10732): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:18:55.790 I/meteo   (10732): allerte ufficiali: 0 per Forlì
+11-15 22:18:59.860 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
+11-15 22:18:59.915 W/ActivityTaskManager(  534): Force removing ActivityRecord{6edb1c9 u0 com.caelumweather/.MainActivity t89 f}}: app died, no saved state
+11-15 22:18:59.955 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:19:00.024 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:19:00.025 W/WindowManager(  534): Exception thrown during dispatchAppVisibility Window{3810dcf u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-15 22:19:00.025 W/WindowManager(  534): android.os.DeadObjectException
+11-15 22:19:01.335 I/meteo   (10826): agganci: ora=2 sezione=-1 meteo=-1 nuvolosita=-1 polline=-1 allerta=-1 impostazioni=false legali=true cattura=true
+11-15 22:19:03.597 I/meteo   (10826): previsione pronta: 24 ore
+11-15 22:19:04.463 I/meteo   (10826): MeteoAlarm italy: 38387 caratteri, 25 voci, 22 valide, 0 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-15 22:19:04.608 I/meteo   (10826): allerte ufficiali: 0 per Forlì
+11-15 22:19:08.479 W/ModernMediaScanner( 1564): Failed to visit /data/local/tmp/shot.png: java.nio.file.AccessDeniedException: /data/local/tmp/shot.png
