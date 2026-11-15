@@ -73,20 +73,28 @@ class GraficaStoreTest {
     private fun inEvidenza(motto: String): Bitmap {
         val w = 1024
         val h = 500
-        val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         // Il campo di grano, di giorno, fermo: e' la scena che l'icona riassume.
+        // Disegnata piu' larga e tagliata a sinistra: la scena mette il mulino
+        // al 70% della larghezza, e a 1024 cadeva dietro "Weather". A 1300 sta
+        // a destra della scritta, libero.
+        val largo = 1300
+        val scena = Bitmap.createBitmap(largo, h, Bitmap.Config.ARGB_8888)
         CanvasDrawScope().draw(
             Density(1.6f), LayoutDirection.Ltr,
-            androidx.compose.ui.graphics.Canvas(out.asImageBitmap()), Size(w.toFloat(), h.toFloat()),
+            androidx.compose.ui.graphics.Canvas(scena.asImageBitmap()), Size(largo.toFloat(), h.toFloat()),
         ) { disegnaScena(Scena.GRANO, 0f, false) }
+        val out = Bitmap.createBitmap(scena, 0, 0, w, h).copy(Bitmap.Config.ARGB_8888, true)
 
         val tela = Canvas(out)
-        // Un velo chiaro a sinistra, dove sta la scritta: la scena sotto ha il
-        // sole e il campo, e il testo ci deve stare sopra leggibile.
+        // Un velo chiaro sotto icona e scritta, pieno fin oltre il titolo e poi
+        // a sfumare: copre il sole della scena, che dietro l'icona la
+        // confondeva, e lascia il mulino e il campo a destra.
+        val crema = Color.rgb(0xFB, 0xEE, 0xE0)
         val velo = Paint().apply {
             shader = android.graphics.LinearGradient(
-                0f, 0f, w * 0.72f, 0f,
-                Color.argb(215, 0xFB, 0xEE, 0xE0), Color.argb(0, 0xFB, 0xEE, 0xE0),
+                0f, 0f, w.toFloat(), 0f,
+                intArrayOf(Color.argb(238, 0xFB, 0xEE, 0xE0), Color.argb(238, 0xFB, 0xEE, 0xE0), Color.argb(0, Color.red(crema), Color.green(crema), Color.blue(crema))),
+                floatArrayOf(0f, 0.58f, 0.84f),
                 android.graphics.Shader.TileMode.CLAMP,
             )
         }
