@@ -2,32 +2,36 @@
 <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/">
 <Control>
 <Title>気象警報・注意報（Ｈ２７）</Title>
-<DateTime>2026-11-15T10:57:42Z</DateTime>
+<DateTime>2026-11-15T21:43:18Z</DateTime>
 <Status>通常</Status>
-<EditorialOffice>南大東島地方気象台</EditorialOffice>
-<PublishingOffice>南大東島地方気象台</PublishingOffice>
+<EditorialOffice>長崎地方気象台</EditorialOffice>
+<PublishingOffice>長崎地方気象台</PublishingOffice>
 </Control>
 <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/">
-<Title>大東島地方気象警報・注意報</Title>
-<ReportDateTime>2026-11-15T19:57:00+09:00</ReportDateTime>
-<TargetDateTime>2026-11-15T19:57:00+09:00</TargetDateTime>
+<Title>長崎県気象警報・注意報</Title>
+<ReportDateTime>2026-11-16T06:43:00+09:00</ReportDateTime>
+<TargetDateTime>2026-11-16T06:43:00+09:00</TargetDateTime>
 <EventID/>
 <InfoType>発表</InfoType>
 <Serial/>
 <InfoKind>気象警報・注意報</InfoKind>
 <InfoKindVersion>1.2_2</InfoKindVersion>
 <Headline>
-<Text>注意報を解除します。</Text>
+<Text>北部、壱岐・対馬では、強風に注意してください。壱岐・対馬では、高波に注意してください。</Text>
 <Information type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>解除</Name>
-<Code>00</Code>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長崎県</Name>
+<Code>420000</Code>
 </Area>
 </Areas>
 </Item>
@@ -35,13 +39,29 @@
 <Information type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>解除</Name>
-<Code>00</Code>
+<Name>強風注意報</Name>
+<Code>15</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>北部</Name>
+<Code>420020</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>壱岐・対馬</Name>
+<Code>420030</Code>
 </Area>
 </Areas>
 </Item>
@@ -49,13 +69,61 @@
 <Information type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>解除</Name>
-<Code>00</Code>
+<Name>強風注意報</Name>
+<Code>15</Code>
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>平戸・松浦地区</Name>
+<Code>420021</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>壱岐</Name>
+<Code>420031</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>上対馬</Name>
+<Code>420032</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>下対馬</Name>
+<Code>420033</Code>
 </Area>
 </Areas>
 </Item>
@@ -63,25 +131,103 @@
 <Information type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>解除</Name>
-<Code>00</Code>
+<Name>強風注意報</Name>
+<Code>15</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>南大東村</Name>
-<Code>4735700</Code>
+<Name>平戸市</Name>
+<Code>4220700</Code>
 </Area>
 </Areas>
 </Item>
 <Item>
 <Kind>
-<Name>解除</Name>
-<Code>00</Code>
+<Name>強風注意報</Name>
+<Code>15</Code>
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>北大東村</Name>
-<Code>4735800</Code>
+<Name>松浦市</Name>
+<Code>4220800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>下対馬</Name>
+<Code>4220901</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>上対馬</Name>
+<Code>4220902</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>壱岐市</Name>
+<Code>4221000</Code>
+</Area>
+</Areas>
+</Item>
+</Information>
+<Information type="気象警報・注意報（警報注意報種別毎）">
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>平戸・松浦地区</Name>
+<Code>420021</Code>
+</Area>
+<Area>
+<Name>壱岐・対馬</Name>
+<Code>420030</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>壱岐・対馬</Name>
+<Code>420030</Code>
 </Area>
 </Areas>
 </Item>
@@ -90,100 +236,1248 @@
 </Head>
 <Body xmlns="http://xml.kishou.go.jp/jmaxml1/body/meteorology1/" xmlns:jmx_eb="http://xml.kishou.go.jp/jmaxml1/elementBasis1/">
 <Notice>［危険警報・氾濫特別警報の発表状況］
-なし</Notice>
+なし
+［お知らせ］
+令和８年熊本地震に伴い、揺れの大きかった南島原市では、土砂災害に関する警報等の発表基準について通常より引き下げた暫定基準で運用しています。</Notice>
 <Warning type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>長崎県</Name>
+<Code>420000</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
-<FullStatus>全域</FullStatus>
-<EditingMark>1</EditingMark>
+<FullStatus>一部</FullStatus>
+<EditingMark>0</EditingMark>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（一次細分区域等）">
 <Item>
 <Kind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>南部</Name>
+<Code>420010</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>北部</Name>
+<Code>420020</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>一部</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>壱岐・対馬</Name>
+<Code>420030</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
-<EditingMark>0</EditingMark>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>五島</Name>
+<Code>420040</Code>
+</Area>
 </Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等をまとめた地域等）">
 <Item>
 <Kind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
 <Area>
-<Name>大東島地方</Name>
-<Code>472000</Code>
+<Name>島原半島</Name>
+<Code>420011</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>長崎地区</Name>
+<Code>420012</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>諫早・大村地区</Name>
+<Code>420013</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>西彼杵半島</Name>
+<Code>420014</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>平戸・松浦地区</Name>
+<Code>420021</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>1</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>佐世保・東彼地区</Name>
+<Code>420022</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>壱岐</Name>
+<Code>420031</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
 <EditingMark>0</EditingMark>
 </Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>上対馬</Name>
+<Code>420032</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>下対馬</Name>
+<Code>420033</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>上五島</Name>
+<Code>420041</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>下五島</Name>
+<Code>420042</Code>
+</Area>
+</Item>
 </Warning>
 <Warning type="気象警報・注意報（市町村等）">
 <Item>
 <Kind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表警報・注意報はなし</Status>
 </Kind>
 <Area>
-<Name>南大東村</Name>
-<Code>4735700</Code>
+<Name>長崎市</Name>
+<Code>4220100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>佐世保市（宇久地域を除く）</Name>
+<Code>4220201</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>佐世保市（宇久地域）</Name>
+<Code>4220202</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>島原市</Name>
+<Code>4220300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>諫早市</Name>
+<Code>4220400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>大村市</Name>
+<Code>4220500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>平戸市</Name>
+<Code>4220700</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
 <Item>
 <Kind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
 </Kind>
 <Area>
-<Name>北大東村</Name>
-<Code>4735800</Code>
+<Name>松浦市</Name>
+<Code>4220800</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>下対馬</Name>
+<Code>4220901</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>上対馬</Name>
+<Code>4220902</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Status>発表</Status>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Status>発表</Status>
+</Kind>
+<Area>
+<Name>壱岐市</Name>
+<Code>4221000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>五島市</Name>
+<Code>4221100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>西海市（江島・平島を除く）</Name>
+<Code>4221201</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>西海市（江島・平島）</Name>
+<Code>4221202</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>雲仙市</Name>
+<Code>4221300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>南島原市</Name>
+<Code>4221400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>長与町</Name>
+<Code>4230700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>時津町</Name>
+<Code>4230800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>東彼杵町</Name>
+<Code>4232100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>川棚町</Name>
+<Code>4232200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>波佐見町</Name>
+<Code>4232300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>小値賀町</Name>
+<Code>4238300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>佐々町</Name>
+<Code>4239100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Status>発表警報・注意報はなし</Status>
+</Kind>
+<Area>
+<Name>新上五島町</Name>
+<Code>4241100</Code>
+</Area>
+</Item>
 </Warning>
+<MeteorologicalInfos type="量的予想時系列（市町村等）">
+<TimeSeriesInfo>
+<TimeDefines>
+<TimeDefine timeId="1">
+<DateTime>2026-11-16T06:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日朝</Name>
+</TimeDefine>
+<TimeDefine timeId="2">
+<DateTime>2026-11-16T09:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日昼前</Name>
+</TimeDefine>
+<TimeDefine timeId="3">
+<DateTime>2026-11-16T12:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日昼過ぎ</Name>
+</TimeDefine>
+<TimeDefine timeId="4">
+<DateTime>2026-11-16T15:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日夕方</Name>
+</TimeDefine>
+<TimeDefine timeId="5">
+<DateTime>2026-11-16T18:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日夜のはじめ頃</Name>
+</TimeDefine>
+<TimeDefine timeId="6">
+<DateTime>2026-11-16T21:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１６日夜遅く</Name>
+</TimeDefine>
+<TimeDefine timeId="7">
+<DateTime>2026-11-17T00:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１７日未明</Name>
+</TimeDefine>
+<TimeDefine timeId="8">
+<DateTime>2026-11-17T03:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１７日明け方</Name>
+</TimeDefine>
+<TimeDefine timeId="9">
+<DateTime>2026-11-17T06:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>１７日朝</Name>
+</TimeDefine>
+</TimeDefines>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy refID="1" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="風危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Local>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Local>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>風</Type>
+<WindDirectionPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindDirection description="北東の風" refID="1" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="3" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="4" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="5" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="6" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="7" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="8" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="9" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+</Local>
+</Base>
+</WindDirectionPart>
+<WindSpeedPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindSpeed description="７メートル" refID="1" type="最大風速" unit="m/s">7</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="７メートル" refID="2" type="最大風速" unit="m/s">7</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="3" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="4" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="5" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="6" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="7" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="8" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="9" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+</Local>
+</Base>
+</WindSpeedPart>
+</Property>
+</Kind>
+<Area>
+<Name>平戸市</Name>
+<Code>4220700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy refID="1" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="風危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Local>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Local>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>風</Type>
+<WindDirectionPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindDirection description="北東の風" refID="1" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="3" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="4" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="5" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="6" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="7" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="8" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="9" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+</Local>
+</Base>
+</WindDirectionPart>
+<WindSpeedPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindSpeed description="７メートル" refID="1" type="最大風速" unit="m/s">7</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="７メートル" refID="2" type="最大風速" unit="m/s">7</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="3" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="4" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="5" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="6" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="7" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="8" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="9" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+</Local>
+</Base>
+</WindSpeedPart>
+</Property>
+</Kind>
+<Area>
+<Name>松浦市</Name>
+<Code>4220800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy refID="1" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="風危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Local>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Local>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>風</Type>
+<WindDirectionPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindDirection description="北東の風" refID="1" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="3" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="4" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="5" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="6" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="7" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="8" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="9" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+</Local>
+</Base>
+</WindDirectionPart>
+<WindSpeedPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindSpeed description="１０メートル" refID="1" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="2" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="3" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="4" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="5" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="6" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="7" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="8" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="9" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+</Local>
+</Base>
+</WindSpeedPart>
+</Property>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>波</Type>
+<WaveHeightPart>
+<Base>
+<jmx_eb:WaveHeight description="２メートル" refID="1" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２メートル" refID="2" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="3" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="4" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="5" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="6" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="7" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="8" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="9" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+</Base>
+</WaveHeightPart>
+</Property>
+</Kind>
+<Area>
+<Name>下対馬</Name>
+<Code>4220901</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy refID="1" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="風危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Local>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Local>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>風</Type>
+<WindDirectionPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindDirection description="北東の風" refID="1" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="3" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="4" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="5" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="6" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="7" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="8" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="9" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+</Local>
+</Base>
+</WindDirectionPart>
+<WindSpeedPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindSpeed description="１０メートル" refID="1" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="2" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="3" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="4" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="5" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="6" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="7" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="8" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="9" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+</Local>
+</Base>
+</WindSpeedPart>
+</Property>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>波</Type>
+<WaveHeightPart>
+<Base>
+<jmx_eb:WaveHeight description="２メートル" refID="1" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２メートル" refID="2" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="3" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="4" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="5" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="6" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="7" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="8" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="9" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+</Base>
+</WaveHeightPart>
+</Property>
+</Kind>
+<Area>
+<Name>上対馬</Name>
+<Code>4220902</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>強風注意報</Name>
+<Code>15</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy refID="1" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="2" type="風危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Local>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<Significancy type="風危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Local>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>風</Type>
+<WindDirectionPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindDirection description="北東の風" refID="1" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="2" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="3" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="4" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="北東の風" refID="5" type="風向" unit="８方位漢字">北東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="6" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="7" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="8" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+<jmx_eb:WindDirection description="東の風" refID="9" type="風向" unit="８方位漢字">東</jmx_eb:WindDirection>
+</Local>
+</Base>
+</WindDirectionPart>
+<WindSpeedPart>
+<Base>
+<Local>
+<AreaName>海上</AreaName>
+<jmx_eb:WindSpeed description="１０メートル" refID="1" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１０メートル" refID="2" type="最大風速" unit="m/s">10</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="3" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="4" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="5" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="6" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="7" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="8" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+<jmx_eb:WindSpeed description="１２メートル" refID="9" type="最大風速" unit="m/s">12</jmx_eb:WindSpeed>
+</Local>
+</Base>
+</WindSpeedPart>
+</Property>
+</Kind>
+<Kind>
+<Name>波浪注意報</Name>
+<Code>16</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="波危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="4" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="波危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+<Property>
+<Type>波</Type>
+<WaveHeightPart>
+<Base>
+<jmx_eb:WaveHeight description="２メートル" refID="1" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２メートル" refID="2" type="波高" unit="m">2</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="3" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="4" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="5" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="6" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="３メートル" refID="7" type="波高" unit="m">3</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="8" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+<jmx_eb:WaveHeight description="２．５メートル" refID="9" type="波高" unit="m">2.5</jmx_eb:WaveHeight>
+</Base>
+</WaveHeightPart>
+</Property>
+</Kind>
+<Area>
+<Name>壱岐市</Name>
+<Code>4221000</Code>
+</Area>
+</Item>
+</TimeSeriesInfo>
+</MeteorologicalInfos>
 </Body>
 </Report>

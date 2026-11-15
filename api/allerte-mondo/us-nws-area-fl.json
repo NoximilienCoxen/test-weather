@@ -10,61 +10,60 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5c81b479fb1d010cef21526b27a87469cf7c6d28.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5c81b479fb1d010cef21526b27a87469cf7c6d28.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.5c81b479fb1d010cef21526b27a87469cf7c6d28.002.1",
-                "areaDesc": "Monroe Upper Keys",
+                "id": "urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1",
+                "areaDesc": "Coastal Palm Beach County; Coastal Broward County; Coastal Miami Dade County",
                 "geocode": {
                     "SAME": [
-                        "012087"
+                        "012099",
+                        "012011",
+                        "012086"
                     ],
                     "UGC": [
-                        "FLZ076"
+                        "FLZ168",
+                        "FLZ172",
+                        "FLZ173"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ076"
+                    "https://api.weather.gov/zones/forecast/FLZ168",
+                    "https://api.weather.gov/zones/forecast/FLZ172",
+                    "https://api.weather.gov/zones/forecast/FLZ173"
                 ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0e842104a36b1c2ec28e8ef8d45a2999d6603a2c.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.0e842104a36b1c2ec28e8ef8d45a2999d6603a2c.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-14T21:20:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-15T04:13:00-05:00",
-                "effective": "2026-11-15T04:13:00-05:00",
-                "onset": "2026-11-15T04:13:00-05:00",
-                "expires": "2026-11-15T12:15:00-05:00",
-                "ends": "2026-11-15T17:00:00-05:00",
+                "references": [],
+                "sent": "2026-11-15T14:21:00-05:00",
+                "effective": "2026-11-15T14:21:00-05:00",
+                "onset": "2026-11-16T07:00:00-05:00",
+                "expires": "2026-11-16T03:00:00-05:00",
+                "ends": "2026-11-17T19:00:00-05:00",
                 "status": "Actual",
-                "messageType": "Update",
+                "messageType": "Alert",
                 "category": "Met",
-                "severity": "Minor",
+                "severity": "Moderate",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Coastal Flood Statement",
+                "event": "Rip Current Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Key West FL",
-                "headline": "Coastal Flood Statement issued November 15 at 4:13AM EST until November 15 at 5:00PM EST by NWS Key West FL",
-                "description": "* WHAT...Minor saltwater flooding.\n\n* WHERE...Upper Keys.\n\n* WHEN...Through this afternoon.\n\n* IMPACTS...Minor saltwater flooding of low elevation streets\nand lots is likely. Some storm drains will overflow, and some\nseawalls and docks will be overtopped. Boaters can expect less\nclearance under fixed bridges. Motorists should remember that\npersistent puddles around the times of high tide are almost\ncertain to contain a mix of saltwater.",
-                "instruction": "Do not drive through flooded roadways.",
-                "response": "Monitor",
+                "senderName": "NWS Miami FL",
+                "headline": "Rip Current Statement issued November 15 at 2:21PM EST until November 17 at 7:00PM EST by NWS Miami FL",
+                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Coastal Palm Beach County, Coastal Broward County and\nCoastal Miami Dade County.\n\n* WHEN...From Monday morning through Tuesday evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "CFWKEY"
+                        "CFWMFL"
                     ],
                     "WMOidentifier": [
-                        "WHUS42 KKEY 150913"
+                        "WHUS42 KMFL 151921"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT REMAINS IN EFFECT"
+                        "HIGH RIP CURRENT RISK IN EFFECT FROM MONDAY MORNING THROUGH TUESDAY EVENING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -72,13 +71,10 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.EXT.KKEY.CF.S.0013.000000T0000Z-261115T2200Z/"
+                        "/O.NEW.KMFL.RP.S.0033.261116T1200Z-261118T0000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-15T17:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.452ab4783bd24609cfb5392e6eef1c767aea2b76.001.1,2026-11-14T15:00:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23081a6167b521198d46697646dadfcd050ae7ec.001.1,2026-11-14T04:05:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3707404184e68dc9725d91bc170714a4ffe8e774.002.1,2026-11-14T00:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.81fb5fd3f07549cdbfcd2d7bca91a1de22d46fc2.001.1,2026-11-13T20:37:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fc76153f3b7ae68c955c4f6380530e0b44de5435.001.1,2026-11-13T12:44:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.07f5fc45ac8c8af58af937d75117545b3c52b8a8.001.1,2026-11-13T06:35:00-05:00"
+                        "2026-11-17T19:00:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -90,170 +86,78 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "CFS"
+                        "RPS"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fa57f21f0aaccd3a1e8beadaf87cb9038b67de53.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.891c9e9c2edf2ce2bf313d0b1399f7943c91d873.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fa57f21f0aaccd3a1e8beadaf87cb9038b67de53.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.891c9e9c2edf2ce2bf313d0b1399f7943c91d873.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.fa57f21f0aaccd3a1e8beadaf87cb9038b67de53.002.1",
-                "areaDesc": "Geneva; Houston; North Walton; Central Walton; Holmes; Washington; Jackson; Inland Bay; Calhoun; Inland Gulf; Inland Franklin; Gadsden; Leon; Inland Jefferson; Madison; Inland Wakulla; Inland Taylor; Lafayette; Inland Dixie; Northern Liberty; Southern Liberty; Worth; Turner; Tift; Ben Hill; Irwin; Colquitt; Cook; Berrien; Seminole; Decatur; Grady; Thomas; Brooks; Lowndes; Lanier",
+                "id": "urn:oid:2.49.0.1.840.0.891c9e9c2edf2ce2bf313d0b1399f7943c91d873.001.1",
+                "areaDesc": "Coastal Volusia; Coastal Indian River; Coastal St. Lucie; Coastal Martin; Mainland Northern Brevard; Northern Brevard Barrier Islands; Mainland Southern Brevard; Southern Brevard Barrier Islands",
                 "geocode": {
                     "SAME": [
-                        "001061",
-                        "001069",
-                        "012131",
-                        "012059",
-                        "012133",
-                        "012063",
-                        "012005",
-                        "012013",
-                        "012045",
-                        "012037",
-                        "012039",
-                        "012073",
-                        "012065",
-                        "012079",
-                        "012129",
-                        "012123",
-                        "012067",
-                        "012029",
-                        "012077",
-                        "013321",
-                        "013287",
-                        "013277",
-                        "013017",
-                        "013155",
-                        "013071",
-                        "013075",
-                        "013019",
-                        "013253",
-                        "013087",
-                        "013131",
-                        "013275",
-                        "013027",
-                        "013185",
-                        "013173"
+                        "012127",
+                        "012061",
+                        "012111",
+                        "012085",
+                        "012009"
                     ],
                     "UGC": [
-                        "ALZ068",
-                        "ALZ069",
-                        "FLZ007",
-                        "FLZ008",
-                        "FLZ009",
-                        "FLZ010",
-                        "FLZ011",
-                        "FLZ012",
-                        "FLZ013",
-                        "FLZ014",
-                        "FLZ015",
-                        "FLZ016",
-                        "FLZ017",
-                        "FLZ018",
-                        "FLZ019",
-                        "FLZ027",
-                        "FLZ028",
-                        "FLZ029",
-                        "FLZ034",
-                        "FLZ326",
-                        "FLZ426",
-                        "GAZ127",
-                        "GAZ128",
-                        "GAZ129",
-                        "GAZ130",
-                        "GAZ131",
-                        "GAZ146",
-                        "GAZ147",
-                        "GAZ148",
-                        "GAZ155",
-                        "GAZ156",
-                        "GAZ157",
-                        "GAZ158",
-                        "GAZ159",
-                        "GAZ160",
-                        "GAZ161"
+                        "FLZ141",
+                        "FLZ154",
+                        "FLZ159",
+                        "FLZ164",
+                        "FLZ347",
+                        "FLZ447",
+                        "FLZ647",
+                        "FLZ747"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/ALZ068",
-                    "https://api.weather.gov/zones/forecast/ALZ069",
-                    "https://api.weather.gov/zones/forecast/FLZ007",
-                    "https://api.weather.gov/zones/forecast/FLZ008",
-                    "https://api.weather.gov/zones/forecast/FLZ009",
-                    "https://api.weather.gov/zones/forecast/FLZ010",
-                    "https://api.weather.gov/zones/forecast/FLZ011",
-                    "https://api.weather.gov/zones/forecast/FLZ012",
-                    "https://api.weather.gov/zones/forecast/FLZ013",
-                    "https://api.weather.gov/zones/forecast/FLZ014",
-                    "https://api.weather.gov/zones/forecast/FLZ015",
-                    "https://api.weather.gov/zones/forecast/FLZ016",
-                    "https://api.weather.gov/zones/forecast/FLZ017",
-                    "https://api.weather.gov/zones/forecast/FLZ018",
-                    "https://api.weather.gov/zones/forecast/FLZ019",
-                    "https://api.weather.gov/zones/forecast/FLZ027",
-                    "https://api.weather.gov/zones/forecast/FLZ028",
-                    "https://api.weather.gov/zones/forecast/FLZ029",
-                    "https://api.weather.gov/zones/forecast/FLZ034",
-                    "https://api.weather.gov/zones/forecast/FLZ326",
-                    "https://api.weather.gov/zones/forecast/FLZ426",
-                    "https://api.weather.gov/zones/forecast/GAZ127",
-                    "https://api.weather.gov/zones/forecast/GAZ128",
-                    "https://api.weather.gov/zones/forecast/GAZ129",
-                    "https://api.weather.gov/zones/forecast/GAZ130",
-                    "https://api.weather.gov/zones/forecast/GAZ131",
-                    "https://api.weather.gov/zones/forecast/GAZ146",
-                    "https://api.weather.gov/zones/forecast/GAZ147",
-                    "https://api.weather.gov/zones/forecast/GAZ148",
-                    "https://api.weather.gov/zones/forecast/GAZ155",
-                    "https://api.weather.gov/zones/forecast/GAZ156",
-                    "https://api.weather.gov/zones/forecast/GAZ157",
-                    "https://api.weather.gov/zones/forecast/GAZ158",
-                    "https://api.weather.gov/zones/forecast/GAZ159",
-                    "https://api.weather.gov/zones/forecast/GAZ160",
-                    "https://api.weather.gov/zones/forecast/GAZ161"
+                    "https://api.weather.gov/zones/forecast/FLZ141",
+                    "https://api.weather.gov/zones/forecast/FLZ154",
+                    "https://api.weather.gov/zones/forecast/FLZ159",
+                    "https://api.weather.gov/zones/forecast/FLZ164",
+                    "https://api.weather.gov/zones/forecast/FLZ347",
+                    "https://api.weather.gov/zones/forecast/FLZ447",
+                    "https://api.weather.gov/zones/forecast/FLZ647",
+                    "https://api.weather.gov/zones/forecast/FLZ747"
                 ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3de3ec9923a43c3838185ed8d654938f4829183.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.f3de3ec9923a43c3838185ed8d654938f4829183.003.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-14T12:49:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-15T01:39:00-05:00",
-                "effective": "2026-11-15T01:39:00-05:00",
-                "onset": "2026-11-15T01:39:00-05:00",
-                "expires": "2026-11-15T09:00:00-05:00",
-                "ends": "2026-11-15T09:00:00-05:00",
+                "references": [],
+                "sent": "2026-11-15T13:49:00-05:00",
+                "effective": "2026-11-15T13:49:00-05:00",
+                "onset": "2026-11-16T03:00:00-05:00",
+                "expires": "2026-11-18T03:00:00-05:00",
+                "ends": "2026-11-18T03:00:00-05:00",
                 "status": "Actual",
-                "messageType": "Update",
+                "messageType": "Alert",
                 "category": "Met",
-                "severity": "Minor",
+                "severity": "Moderate",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Frost Advisory",
+                "event": "Rip Current Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tallahassee FL",
-                "headline": "Frost Advisory issued November 15 at 1:39AM EST until November 15 at 9:00AM EST by NWS Tallahassee FL",
-                "description": "* WHAT...Temperatures as low as 33 will result in frost formation.\n\n* WHERE...Portions of southeast Alabama, the Big Bend and Panhandle\nof Florida, and south central and southwest Georgia.\n\n* WHEN...Until 9 AM EST /8 AM CST/ this morning.\n\n* IMPACTS...Frost could harm sensitive outdoor vegetation. Sensitive\noutdoor plants may be killed if left uncovered.",
-                "instruction": "Take steps now to protect tender plants from the cold.",
-                "response": "Prepare",
+                "senderName": "NWS Melbourne FL",
+                "headline": "Rip Current Statement issued November 15 at 1:49PM EST until November 18 at 3:00AM EST by NWS Melbourne FL",
+                "description": "* WHAT...Dangerous rip currents and rough surf expected.\n\n* WHERE...Coastal Volusia, Coastal Indian River, Coastal Saint\nLucie, Coastal Martin, Mainland Northern Brevard, Northern\nBrevard Barrier Islands, Mainland Southern Brevard and\nSouthern Brevard Barrier Islands Counties.\n\n* WHEN...From late tonight through late Tuesday night.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Rip currents are powerful channels of water flowing quickly away\nfrom shore, which occur most often at low spots or breaks in the\nsandbar and in the vicinity of structures such as jetties and\npiers. Heed the advice of lifeguards, beach patrol flags and\nsigns.\n\nEntering the surf is strongly discouraged. If caught in a rip\ncurrent, relax and float. Don't swim against the current. If\nable, swim in a direction following the shoreline. If unable to\nescape, face the shore and call or wave for help.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "NPWTAE"
+                        "CFWMLB"
                     ],
                     "WMOidentifier": [
-                        "WWUS72 KTAE 150639"
+                        "WHUS42 KMLB 151849"
                     ],
                     "NWSheadline": [
-                        "FROST ADVISORY REMAINS IN EFFECT UNTIL 9 AM EST /8 AM CST/ THIS MORNING"
+                        "HIGH RIP CURRENT RISK IN EFFECT FROM LATE TONIGHT THROUGH LATE TUESDAY NIGHT"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -261,13 +165,10 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KTAE.FR.Y.0003.000000T0000Z-261115T1400Z/"
+                        "/O.NEW.KMLB.RP.S.0039.261116T0800Z-261118T0800Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-15T09:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3a47ab2d34e6fb4385d34784a0a940757c770d2c.003.1,2026-11-14T09:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3a47ab2d34e6fb4385d34784a0a940757c770d2c.002.2,2026-11-14T09:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.776f40aa624110cda88b90c62c5b5f8237c714c5.003.1,2026-11-14T01:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.776f40aa624110cda88b90c62c5b5f8237c714c5.002.1,2026-11-14T01:29:00-05:00"
+                        "2026-11-18T03:00:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -279,13 +180,100 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "FRY"
+                        "RPS"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5d79f5282eb06b9d68b98cc24d9448871b81d67c.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
+                "areaDesc": "Coastal Nassau; Coastal Duval; Coastal Flagler; Northeast Coastal St. Johns; Southeast Coastal St. Johns",
+                "geocode": {
+                    "SAME": [
+                        "012089",
+                        "012031",
+                        "012035",
+                        "012109"
+                    ],
+                    "UGC": [
+                        "FLZ124",
+                        "FLZ125",
+                        "FLZ138",
+                        "FLZ233",
+                        "FLZ333"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ124",
+                    "https://api.weather.gov/zones/forecast/FLZ125",
+                    "https://api.weather.gov/zones/forecast/FLZ138",
+                    "https://api.weather.gov/zones/forecast/FLZ233",
+                    "https://api.weather.gov/zones/forecast/FLZ333"
+                ],
+                "references": [],
+                "sent": "2026-11-15T13:23:00-05:00",
+                "effective": "2026-11-15T13:23:00-05:00",
+                "onset": "2026-11-16T07:00:00-05:00",
+                "expires": "2026-11-16T04:00:00-05:00",
+                "ends": "2026-11-19T14:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Rip Current Statement issued November 15 at 1:23PM EST until November 19 at 2:00PM EST by NWS Jacksonville FL",
+                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Northeast Florida Beaches.\n\n* WHEN...From Monday morning through Thursday afternoon.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 151823"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK IN EFFECT FROM MONDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KJAX.RP.S.0035.261116T1200Z-261119T1900Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T14:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fbece4660c2b24276cbd045a4895026df6811c79.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
@@ -315,9 +303,9 @@
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5d79f5282eb06b9d68b98cc24d9448871b81d67c.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fbece4660c2b24276cbd045a4895026df6811c79.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.5d79f5282eb06b9d68b98cc24d9448871b81d67c.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.fbece4660c2b24276cbd045a4895026df6811c79.001.1",
                 "areaDesc": "Seminole, FL",
                 "geocode": {
                     "SAME": [
@@ -336,12 +324,18 @@
                         "identifier": "urn:oid:2.49.0.1.840.0.14836443068437129e4b39e457685a5ecd1237e4.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-14T09:44:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5d79f5282eb06b9d68b98cc24d9448871b81d67c.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.5d79f5282eb06b9d68b98cc24d9448871b81d67c.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-14T19:51:00-05:00"
                     }
                 ],
-                "sent": "2026-11-14T19:51:00-05:00",
-                "effective": "2026-11-14T19:51:00-05:00",
-                "onset": "2026-11-14T19:51:00-05:00",
-                "expires": "2026-11-15T11:00:00-05:00",
+                "sent": "2026-11-15T09:24:00-05:00",
+                "effective": "2026-11-15T09:24:00-05:00",
+                "onset": "2026-11-15T09:24:00-05:00",
+                "expires": "2026-11-16T11:30:00-05:00",
                 "ends": null,
                 "status": "Actual",
                 "messageType": "Update",
@@ -352,9 +346,9 @@
                 "event": "Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Melbourne FL",
-                "headline": "Flood Warning issued November 14 at 7:51PM EST by NWS Melbourne FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Above Lake Harney affecting Seminole County.\n\n.Heavy rainfall has caused river levels on the St. Johns near Geneva\nAbove Lake Harney to reach Moderate Flood Stage. River levels are\nexpected to remain steady into next week.\n\nFor the St. Johns River...including Above Lake Harney...Moderate\nflooding is forecast.\n\n* WHAT...Moderate flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...St Johns River near Above Lake Harney.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 9.0 feet, Water enters the first story of homes on\nWhitcomb Drive between Crossover Lane and Lake Harney Road. Water\ncovers Mullet Lake Park.\n\n* ADDITIONAL DETAILS...\n- At 7:30 PM EST Saturday the stage was 9.0 feet.\n- Bankfull stage is 6.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 7:30 PM EST Saturday was 9.1 feet.\n- Forecast...The river is expected to remain steady above flood\nstage at 9.0 feet.\n- Flood stage is 8.0 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday morning at 1100 AM EST.",
+                "headline": "Flood Warning issued November 15 at 9:24AM EST by NWS Melbourne FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Above Lake Harney affecting Seminole County.\n\n.Heavy rainfall over recent weeks has caused river levels on the St.\nJohns near Geneva Above Lake Harney to reach Moderate Flood Stage.\nRiver levels are expected to remain nearly steady this week.\n\nFor the St. Johns River...including Above Lake Harney...Moderate\nflooding is forecast.\n\n* WHAT...Moderate flooding is occurring and moderate flooding is\nforecast.\n\n* WHERE...St Johns River near Above Lake Harney.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 9.0 feet, Water enters the first story of homes on\nWhitcomb Drive between Crossover Lane and Lake Harney Road. Water\ncovers Mullet Lake Park.\n\n* ADDITIONAL DETAILS...\n- At 8:30 AM EST Sunday the stage was 9.0 feet.\n- Bankfull stage is 6.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:30 AM EST Sunday was 9.0 feet.\n- Forecast...The river is expected to rise to a crest of 9.0 feet\nthis afternoon.\n- Flood stage is 8.0 feet.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Monday morning at 1130 AM EST.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
@@ -362,7 +356,7 @@
                         "FLSMLB"
                     ],
                     "WMOidentifier": [
-                        "WGUS82 KMLB 150051"
+                        "WGUS82 KMLB 151424"
                     ],
                     "NWSheadline": [
                         "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
@@ -397,7 +391,7 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eea3065f50e2dbd4e6f3d7a9c915972f7eb47a09.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1caba9b7d187bc9dc3abe9a264be394af9b3ec6c.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
@@ -427,9 +421,9 @@
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eea3065f50e2dbd4e6f3d7a9c915972f7eb47a09.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1caba9b7d187bc9dc3abe9a264be394af9b3ec6c.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.eea3065f50e2dbd4e6f3d7a9c915972f7eb47a09.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.1caba9b7d187bc9dc3abe9a264be394af9b3ec6c.001.1",
                 "areaDesc": "Brevard, FL",
                 "geocode": {
                     "SAME": [
@@ -448,12 +442,18 @@
                         "identifier": "urn:oid:2.49.0.1.840.0.8b8a68aad3b0f7423b28caf680ab84bd82eba464.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-14T09:42:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eea3065f50e2dbd4e6f3d7a9c915972f7eb47a09.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.eea3065f50e2dbd4e6f3d7a9c915972f7eb47a09.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-14T19:49:00-05:00"
                     }
                 ],
-                "sent": "2026-11-14T19:49:00-05:00",
-                "effective": "2026-11-14T19:49:00-05:00",
-                "onset": "2026-11-14T19:49:00-05:00",
-                "expires": "2026-11-15T11:00:00-05:00",
+                "sent": "2026-11-15T09:19:00-05:00",
+                "effective": "2026-11-15T09:19:00-05:00",
+                "onset": "2026-11-15T09:19:00-05:00",
+                "expires": "2026-11-16T11:30:00-05:00",
                 "ends": null,
                 "status": "Actual",
                 "messageType": "Update",
@@ -464,9 +464,9 @@
                 "event": "Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Melbourne FL",
-                "headline": "Flood Warning issued November 14 at 7:49PM EST by NWS Melbourne FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Cocoa 9w affecting Brevard County.\n\n.Recent extreme rainfall over the headwaters of the St. Johns River\nhas caused the river near Cocoa to rise to Major Flood Stage. The\nriver is forecast to continue remain steady with slight deviations in\nriver levels through at least early next week.\n\nFor the St. Johns River...including Cocoa 9w...Major flooding is\nforecast.\n\n* WHAT...Major flooding is occurring and major flooding is forecast.\n\n* WHERE...St Johns River near Cocoa 9w.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 17.2 feet, Water enters homes along the St Johns River\nin the Lake Poinsett area west of Cocoa, also low lying homes in\nthe Silver Pines subdivision in Rockledge and the Shakespeare Park\narea of Cocoa. Providence Road area west of Cocoa becomes\nimpassable, cutting off access to homes in the Mullet Lane and Bass\nRoad area. Docks flooded and water in parking lot at Lone Cabbage\nFish Camp.\n\n* ADDITIONAL DETAILS...\n- At 7:15 PM EST Saturday the stage was 17.0 feet.\n- Bankfull stage is 15.8 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 7:15 PM EST Saturday was 17.1 feet.\n- Forecast...The river is expected to rise to a crest of 17.1 feet\njust after midnight tonight.\n- Flood stage is 16.0 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday morning at 1100 AM EST.",
+                "headline": "Flood Warning issued November 15 at 9:19AM EST by NWS Melbourne FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Cocoa 9w affecting Brevard County.\n\n.Recent extreme rainfall over the headwaters of the St. Johns River\nhas caused the river near Cocoa to rise to Major Flood Stage. The\nriver is forecast to continue remain steady with slight deviations in\nriver levels through at least midweek.\n\nFor the St. Johns River...including Cocoa 9w...Major flooding is\nforecast.\n\n* WHAT...Major flooding is occurring and major flooding is forecast.\n\n* WHERE...St Johns River near Cocoa 9w.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 17.2 feet, Water enters homes along the St Johns River\nin the Lake Poinsett area west of Cocoa, also low lying homes in\nthe Silver Pines subdivision in Rockledge and the Shakespeare Park\narea of Cocoa. Providence Road area west of Cocoa becomes\nimpassable, cutting off access to homes in the Mullet Lane and Bass\nRoad area. Docks flooded and water in parking lot at Lone Cabbage\nFish Camp.\n\n* ADDITIONAL DETAILS...\n- At 8:15 AM EST Sunday the stage was 17.0 feet.\n- Bankfull stage is 15.8 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:15 AM EST Sunday was 17.1 feet.\n- Forecast...The river is expected to rise to a crest of 17.1 feet\nthis afternoon.\n- Flood stage is 16.0 feet.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Monday morning at 1130 AM EST.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
@@ -474,7 +474,7 @@
                         "FLSMLB"
                     ],
                     "WMOidentifier": [
-                        "WGUS82 KMLB 150049"
+                        "WGUS82 KMLB 151419"
                     ],
                     "NWSheadline": [
                         "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
@@ -509,7 +509,7 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0d52bada16a8405bb381d74d48b5f47124abb83b.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.194f0307be2477777e3ffa1e9a3b715c814ba275.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
@@ -539,9 +539,9 @@
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0d52bada16a8405bb381d74d48b5f47124abb83b.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.194f0307be2477777e3ffa1e9a3b715c814ba275.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.0d52bada16a8405bb381d74d48b5f47124abb83b.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.194f0307be2477777e3ffa1e9a3b715c814ba275.001.1",
                 "areaDesc": "Lake, FL; Volusia, FL",
                 "geocode": {
                     "SAME": [
@@ -569,12 +569,18 @@
                         "identifier": "urn:oid:2.49.0.1.840.0.bec63c30ca2aef1914061195bebb9a26e519d8bd.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-14T10:14:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0d52bada16a8405bb381d74d48b5f47124abb83b.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.0d52bada16a8405bb381d74d48b5f47124abb83b.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-14T19:47:00-05:00"
                     }
                 ],
-                "sent": "2026-11-14T19:47:00-05:00",
-                "effective": "2026-11-14T19:47:00-05:00",
-                "onset": "2026-11-14T19:47:00-05:00",
-                "expires": "2026-11-15T11:00:00-05:00",
+                "sent": "2026-11-15T09:17:00-05:00",
+                "effective": "2026-11-15T09:17:00-05:00",
+                "onset": "2026-11-15T09:17:00-05:00",
+                "expires": "2026-11-16T11:30:00-05:00",
                 "ends": null,
                 "status": "Actual",
                 "messageType": "Update",
@@ -585,9 +591,9 @@
                 "event": "Flood Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Melbourne FL",
-                "headline": "Flood Warning issued November 14 at 7:47PM EST by NWS Melbourne FL",
-                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Astor affecting Lake and Volusia Counties.\n\n.On the St Johns River at Astor, slight rises within Minor Flood\nStage are forecast early next week due to a combination of northerly\nwinds, downstream tidal effects, and water from upstream heavy\nrainfall working north through the basin.\n\nFor the St. Johns River...including Astor...Minor flooding is\nforecast.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...St Johns River near Astor.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 2.8 feet, Docks and boat ramps covered at South Moon\nFish Camp and approaching sea wall at Blair's Jungle Den. Water\napproaching sites closest to the river at Fish Tales RV Resort and\nAstor Landing Campground. Portion of Clair Street covered by river\nwater south of the Butler Boat Ramp. Docks underwater at the Astor\nBridge Marina and along Riveredge Drive. Portions of Fox Road are\ncovered with water nearest to the river. Acorn, Hazelnut and Redbud\nroads are underwater with yards inundated.\n\n* ADDITIONAL DETAILS...\n- At 6:30 PM EST Saturday the stage was 2.6 feet.\n- Bankfull stage is 2.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 6:30 PM EST Saturday was 2.7 feet.\n- Forecast...The river is expected to remain steady above flood\nstage at 2.6 feet.\n- Flood stage is 2.3 feet.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Sunday morning at 1100 AM EST.",
+                "headline": "Flood Warning issued November 15 at 9:17AM EST by NWS Melbourne FL",
+                "description": "...The Flood Warning continues for the following rivers in Florida...\n\nSt Johns River Near Astor affecting Volusia and Lake Counties.\n\n.On the St Johns River at Astor, slight rises within Minor Flood\nStage are forecast through at least midweek due to a combination of\nnortherly winds and water from upstream heavy rainfall working north\nthrough the basin.\n\nFor the St. Johns River...including Astor...Minor flooding is\nforecast.\n\n* WHAT...Minor flooding is occurring and minor flooding is forecast.\n\n* WHERE...St Johns River near Astor.\n\n* WHEN...Until further notice.\n\n* IMPACTS...At 2.8 feet, Docks and boat ramps covered at South Moon\nFish Camp and approaching sea wall at Blair's Jungle Den. Water\napproaching sites closest to the river at Fish Tales RV Resort and\nAstor Landing Campground. Portion of Clair Street covered by river\nwater south of the Butler Boat Ramp. Docks underwater at the Astor\nBridge Marina and along Riveredge Drive. Portions of Fox Road are\ncovered with water nearest to the river. Acorn, Hazelnut and Redbud\nroads are underwater with yards inundated.\n\n* ADDITIONAL DETAILS...\n- At 8:30 AM EST Sunday the stage was 2.6 feet.\n- Bankfull stage is 2.0 feet.\n- Recent Activity...The maximum river stage in the 24 hours ending\nat 8:30 AM EST Sunday was 2.6 feet.\n- Forecast...The river is expected to remain steady above flood\nstage at 2.6 feet.\n- Flood stage is 2.3 feet.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Motorists should not attempt to drive around barricades or drive cars\nthrough flooded areas.\n\nCaution is urged when walking near riverbanks.\n\nAdditional information is available at www.weather.gov.\n\nThe next statement will be issued Monday morning at 1130 AM EST.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
@@ -595,7 +601,7 @@
                         "FLSMLB"
                     ],
                     "WMOidentifier": [
-                        "WGUS82 KMLB 150047"
+                        "WGUS82 KMLB 151417"
                     ],
                     "NWSheadline": [
                         "FLOOD WARNING REMAINS IN EFFECT UNTIL FURTHER NOTICE"
@@ -612,7 +618,7 @@
                         "/O.CON.KMLB.FL.W.0003.000000T0000Z-000000T0000Z/"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.186f04232826ecc706470a21f19efb20ca82f35f.001.1,2026-11-13T20:21:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c257a163ba9a34435b3a2682162c0d586ebd35d1.001.1,2026-11-13T10:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ef59d32457f355844009fc6a804489f4a4901b9.001.1,2026-11-12T20:58:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c0218479c9cb47f9409b0644c9e2600ae039c28c.001.1,2026-11-12T08:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.77e928eff45837bf21c2096869d876897004b858.001.1,2026-11-11T20:34:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.565ab76ad642c089ac96855029c39f195a976025.001.1,2026-11-11T08:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.505e8f7bcdba7736f6bbdd92a1fa13719b15a01e.001.1,2026-11-10T19:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e107256a42b0530b65688e8f07bafebc7c640d16.001.1,2026-11-10T09:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c9cf3f462f33a5e4d6ad2b4caef1b80879d8052b.001.1,2026-11-09T09:16:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b285fc635ac6e22d5ca2389fc92c65dc81f18f7.001.1,2026-11-09T20:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d2563c5250d1a21cbb48c4c8dde087f4dd19803.001.1,2026-11-09T11:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bf12750626b19b1d585cde97c9dd269cb2998e09.001.1,2026-11-08T10:53:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ace757809a48184dd60d7f2d82ec84e07516b042.001.1,2026-11-08T20:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c4e9b7463180799828820dc656b2b7a979cd1513.001.1,2026-11-07T10:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae16e0acc6f7b0eefa87e795d94c4f9a2baf9977.001.1,2026-11-07T20:42:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e89dd61a97e75f450780dba59e2cac0bcf868493.001.1,2026-11-06T20:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.162954d898c229455ab1f4ac58f4b1fdb9c473bd.001.1,2026-11-06T09:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9ecb9e6c280bf32b944c45968e810b6c816e8b98.001.1,2026-11-05T20:59:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b9ddac0abc544c5a3f9ff043039cf44978303462.001.1,2026-11-05T15:03:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3d2f33dac715712aa491c823d6305ab099ad6b07.001.1,2026-11-05T09:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.db9bdc5fd81c4b5838a223e872a9220db91c3825.001.1,2026-11-04T21:03:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8f84b85442684db395295908316fde5610af5667.001.1,2026-11-04T09:57:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2a72816b2975ab58fbc41f054843b24ac4a83920.001.1,2026-11-03T21:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.87ac43a33574157b63ede1f130aea45940a46b3c.001.1,2026-11-03T10:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.34a9ab10be66f3a40e2c3ca149ad6163585d4eb3.001.1,2026-11-02T20:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec317b9486e571e57082f1a859faa28220b37152.001.1,2026-11-02T10:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ef5e30e54315aa6aa5d98a6b49241930aee1f0a.001.1,2026-11-02T14:50:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.53db955f2314fcdb090b663e551509b3021077db.001.1,2026-11-01T21:44:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d055dd89f421b15d29332f3f4559dad8c8575760.001.1,2026-11-01T08:49:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89bcf371cc80d4686ebf034dfb617f23d925a01b.001.1,2026-10-31T20:42:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b573f3b6024e8eedf76c067f272e3b93357ea3a2.001.1,2026-10-31T10:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.847a1488c7b13091f639b46dbc0d2074ce9c067f.001.1,2026-10-30T21:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b17471914b8565dfa339052a1a87ce08a6538769.001.1,2026-10-30T11:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2a9e7fac7b5c5ad78bd2e1cf1fc774708f767f2.002.1,2026-10-29T21:03:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1840da910b02e49f40570094c2ce4d840da0f7e7.002.1,2026-10-29T09:16:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c7fdda2979f0f8f25569f6cde0da27cc8358a302.001.1,2026-10-28T21:31:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9aeb600074fc600db94b853bee79670c058b0e1e.001.1,2026-10-28T08:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ac5f73e45906a0316f1b511e8afe3a3e5231ec2.001.1,2026-10-27T21:00:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.32a6624b03ca4bdc3923c468120fbeec7a6da027.002.1,2026-10-27T10:04:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.773baaf5fa5d14abca39f5240afdf228afff977d.001.1,2026-10-26T21:20:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6395ac22474085b0afc80efae484acd913f69a78.001.1,2026-10-26T09:55:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.216e8d1b705d46993d7c471c0b3a234344c7fb99.001.1,2026-10-25T21:25:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.15287a9048d637138112ab20fdb0596b03366bc8.001.1,2026-10-25T14:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.872c21e2071687af6bec24926666b78ae53500e9.001.1,2026-10-25T09:53:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4d219ec4da7afb70c15f06a098ffeafd908e065f.001.1,2026-10-24T20:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e654399ab6d3d3a1bec50bbcb60034d0ed66f1cf.001.1,2026-10-24T09:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a86e36f7665671f8448c151681cfe66cfa60777.001.1,2026-10-23T21:27:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.773a119d76ff68fe774ba5c55884ee488b9b7674.001.1,2026-10-23T08:43:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.521f99544156044a319562a1dd43fdc776ad1874.001.1,2026-10-22T21:03:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4349c6b86ca16ae4a20ad3093a9f92ff4bf52ad2.001.1,2026-10-22T09:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8dd3f7895f7084e9084bb38db419a134bf762f66.001.1,2026-10-21T21:21:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.22100c82ccb39acca4161f78436881e4db931fd8.001.1,2026-10-21T09:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.39187c959e1ea92fa56dbf484ba09e62ca224e14.001.1,2026-10-21T09:31:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.618703ea42c670ac0df6f5923c48ad9bb3177cd6.001.1,2026-10-20T21:12:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f6c8fb7899420246ca55eea8b2ea3ed0f72eccd1.001.1,2026-10-20T09:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3dd4ca02f5afb40ec48a484954d4ab0d335d2468.001.1,2026-10-20T15:52:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8944d0486c60629f43c570c623ffecd303459fe1.001.1,2026-10-19T21:33:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.658dc4e5dae666306649f395305d42ff37cae055.001.1,2026-10-19T09:56:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae8e54e11e9105fc7e4866ee9a809176c3d3d8bf.001.1,2026-10-18T20:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e267454960d05028ffb17d918dbfe239270f59aa.001.1,2026-10-18T09:11:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec86a5b25822e52f8e371f554242bdd67483342f.001.1,2026-10-17T20:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7f1892302e6e287d1231cf4d12f60f419868b375.001.1,2026-10-17T09:04:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8aa4ca8f0a91b6616676b40340c36ef2b6f9788d.001.1,2026-10-16T21:21:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dfc8045564b49517706a7715d068ca72ead6ebb3.001.1,2026-10-16T10:44:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7e5a6b135466609b1033d13cc0d52d1891c646cf.001.1,2026-10-15T21:36:00-04:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.186f04232826ecc706470a21f19efb20ca82f35f.001.1,2026-11-13T20:21:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c257a163ba9a34435b3a2682162c0d586ebd35d1.001.1,2026-11-13T10:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ef59d32457f355844009fc6a804489f4a4901b9.001.1,2026-11-12T20:58:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c0218479c9cb47f9409b0644c9e2600ae039c28c.001.1,2026-11-12T08:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.77e928eff45837bf21c2096869d876897004b858.001.1,2026-11-11T20:34:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.565ab76ad642c089ac96855029c39f195a976025.001.1,2026-11-11T08:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.505e8f7bcdba7736f6bbdd92a1fa13719b15a01e.001.1,2026-11-10T19:47:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e107256a42b0530b65688e8f07bafebc7c640d16.001.1,2026-11-10T09:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c9cf3f462f33a5e4d6ad2b4caef1b80879d8052b.001.1,2026-11-09T09:16:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4b285fc635ac6e22d5ca2389fc92c65dc81f18f7.001.1,2026-11-09T20:01:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9d2563c5250d1a21cbb48c4c8dde087f4dd19803.001.1,2026-11-09T11:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bf12750626b19b1d585cde97c9dd269cb2998e09.001.1,2026-11-08T10:53:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ace757809a48184dd60d7f2d82ec84e07516b042.001.1,2026-11-08T20:02:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c4e9b7463180799828820dc656b2b7a979cd1513.001.1,2026-11-07T10:46:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae16e0acc6f7b0eefa87e795d94c4f9a2baf9977.001.1,2026-11-07T20:42:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e89dd61a97e75f450780dba59e2cac0bcf868493.001.1,2026-11-06T20:18:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.162954d898c229455ab1f4ac58f4b1fdb9c473bd.001.1,2026-11-06T09:06:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9ecb9e6c280bf32b944c45968e810b6c816e8b98.001.1,2026-11-05T20:59:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b9ddac0abc544c5a3f9ff043039cf44978303462.001.1,2026-11-05T15:03:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3d2f33dac715712aa491c823d6305ab099ad6b07.001.1,2026-11-05T09:29:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.db9bdc5fd81c4b5838a223e872a9220db91c3825.001.1,2026-11-04T21:03:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8f84b85442684db395295908316fde5610af5667.001.1,2026-11-04T09:57:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2a72816b2975ab58fbc41f054843b24ac4a83920.001.1,2026-11-03T21:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.87ac43a33574157b63ede1f130aea45940a46b3c.001.1,2026-11-03T10:56:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.34a9ab10be66f3a40e2c3ca149ad6163585d4eb3.001.1,2026-11-02T20:33:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec317b9486e571e57082f1a859faa28220b37152.001.1,2026-11-02T10:07:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3ef5e30e54315aa6aa5d98a6b49241930aee1f0a.001.1,2026-11-02T14:50:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.53db955f2314fcdb090b663e551509b3021077db.001.1,2026-11-01T21:44:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d055dd89f421b15d29332f3f4559dad8c8575760.001.1,2026-11-01T08:49:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.89bcf371cc80d4686ebf034dfb617f23d925a01b.001.1,2026-10-31T20:42:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b573f3b6024e8eedf76c067f272e3b93357ea3a2.001.1,2026-10-31T10:46:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.847a1488c7b13091f639b46dbc0d2074ce9c067f.001.1,2026-10-30T21:02:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.b17471914b8565dfa339052a1a87ce08a6538769.001.1,2026-10-30T11:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e2a9e7fac7b5c5ad78bd2e1cf1fc774708f767f2.002.1,2026-10-29T21:03:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1840da910b02e49f40570094c2ce4d840da0f7e7.002.1,2026-10-29T09:16:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c7fdda2979f0f8f25569f6cde0da27cc8358a302.001.1,2026-10-28T21:31:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9aeb600074fc600db94b853bee79670c058b0e1e.001.1,2026-10-28T08:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ac5f73e45906a0316f1b511e8afe3a3e5231ec2.001.1,2026-10-27T21:00:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.32a6624b03ca4bdc3923c468120fbeec7a6da027.002.1,2026-10-27T10:04:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.773baaf5fa5d14abca39f5240afdf228afff977d.001.1,2026-10-26T21:20:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6395ac22474085b0afc80efae484acd913f69a78.001.1,2026-10-26T09:55:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.216e8d1b705d46993d7c471c0b3a234344c7fb99.001.1,2026-10-25T21:25:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.15287a9048d637138112ab20fdb0596b03366bc8.001.1,2026-10-25T14:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.872c21e2071687af6bec24926666b78ae53500e9.001.1,2026-10-25T09:53:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4d219ec4da7afb70c15f06a098ffeafd908e065f.001.1,2026-10-24T20:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e654399ab6d3d3a1bec50bbcb60034d0ed66f1cf.001.1,2026-10-24T09:15:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8a86e36f7665671f8448c151681cfe66cfa60777.001.1,2026-10-23T21:27:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.773a119d76ff68fe774ba5c55884ee488b9b7674.001.1,2026-10-23T08:43:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.521f99544156044a319562a1dd43fdc776ad1874.001.1,2026-10-22T21:03:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4349c6b86ca16ae4a20ad3093a9f92ff4bf52ad2.001.1,2026-10-22T09:36:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8dd3f7895f7084e9084bb38db419a134bf762f66.001.1,2026-10-21T21:21:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.22100c82ccb39acca4161f78436881e4db931fd8.001.1,2026-10-21T09:34:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.39187c959e1ea92fa56dbf484ba09e62ca224e14.001.1,2026-10-21T09:31:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.618703ea42c670ac0df6f5923c48ad9bb3177cd6.001.1,2026-10-20T21:12:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f6c8fb7899420246ca55eea8b2ea3ed0f72eccd1.001.1,2026-10-20T09:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.3dd4ca02f5afb40ec48a484954d4ab0d335d2468.001.1,2026-10-20T15:52:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8944d0486c60629f43c570c623ffecd303459fe1.001.1,2026-10-19T21:33:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.658dc4e5dae666306649f395305d42ff37cae055.001.1,2026-10-19T09:56:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ae8e54e11e9105fc7e4866ee9a809176c3d3d8bf.001.1,2026-10-18T20:58:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e267454960d05028ffb17d918dbfe239270f59aa.001.1,2026-10-18T09:11:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ec86a5b25822e52f8e371f554242bdd67483342f.001.1,2026-10-17T20:54:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.7f1892302e6e287d1231cf4d12f60f419868b375.001.1,2026-10-17T09:04:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8aa4ca8f0a91b6616676b40340c36ef2b6f9788d.001.1,2026-10-16T21:21:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.dfc8045564b49517706a7715d068ca72ead6ebb3.001.1,2026-10-16T10:44:00-04:00"
                     ]
                 },
                 "scope": "Public",
@@ -628,217 +634,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.17970d9b4e14aa6013e4da034c3a7a31ae1ba1ca.002.1",
-                "areaDesc": "Escambia; Covington; Mobile Inland; Baldwin Inland; Escambia Inland; Santa Rosa Inland; Okaloosa Inland; Perry; Greene",
-                "geocode": {
-                    "SAME": [
-                        "001053",
-                        "001039",
-                        "001097",
-                        "001003",
-                        "012033",
-                        "012113",
-                        "012091",
-                        "028111",
-                        "028041"
-                    ],
-                    "UGC": [
-                        "ALZ059",
-                        "ALZ060",
-                        "ALZ261",
-                        "ALZ262",
-                        "FLZ201",
-                        "FLZ203",
-                        "FLZ205",
-                        "MSZ075",
-                        "MSZ076"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/ALZ059",
-                    "https://api.weather.gov/zones/forecast/ALZ060",
-                    "https://api.weather.gov/zones/forecast/ALZ261",
-                    "https://api.weather.gov/zones/forecast/ALZ262",
-                    "https://api.weather.gov/zones/forecast/FLZ201",
-                    "https://api.weather.gov/zones/forecast/FLZ203",
-                    "https://api.weather.gov/zones/forecast/FLZ205",
-                    "https://api.weather.gov/zones/forecast/MSZ075",
-                    "https://api.weather.gov/zones/forecast/MSZ076"
-                ],
-                "references": [],
-                "sent": "2026-11-14T18:18:00-06:00",
-                "effective": "2026-11-14T18:18:00-06:00",
-                "onset": "2026-11-15T00:00:00-06:00",
-                "expires": "2026-11-15T08:00:00-06:00",
-                "ends": "2026-11-15T08:00:00-06:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Frost Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Mobile AL",
-                "headline": "Frost Advisory issued November 14 at 6:18PM CST until November 15 at 8:00AM CST by NWS Mobile AL",
-                "description": "* WHAT...Temperatures as low as 33 to 37 will result in frost\nformation.\n\n* WHERE...In Alabama, Covington, Escambia, Baldwin Inland, and Mobile\nInland Counties. In Florida, Escambia Inland, Okaloosa Inland, and\nSanta Rosa Inland Counties. In Mississippi, Greene and Perry\nCounties.\n\n* WHEN...From midnight tonight to 8 AM CST Sunday.\n\n* IMPACTS...Frost could harm sensitive outdoor vegetation. Sensitive\noutdoor plants may be killed if left uncovered.",
-                "instruction": "Take steps now to protect tender plants from the cold.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWMOB"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS74 KMOB 150018"
-                    ],
-                    "NWSheadline": [
-                        "FROST ADVISORY REMAINS IN EFFECT FROM MIDNIGHT TONIGHT TO 8 AM CST SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMOB.FR.Y.0004.261115T0600Z-261115T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-15T08:00:00-06:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.492b9d9741e2b3e5bd4af069f40ff3a9701b7a74.002.1,2026-11-14T09:28:00-06:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FRY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9bede3cbbc8559852385d41970275ef22add6d40.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9bede3cbbc8559852385d41970275ef22add6d40.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.9bede3cbbc8559852385d41970275ef22add6d40.002.1",
-                "areaDesc": "Suwannee; Baker; Inland Nassau; Union; Gilchrist; Eastern Hamilton; Western Hamilton; Northern Columbia; Southeastern Columbia; Southwestern Columbia; Inland Glynn; Inland Camden",
-                "geocode": {
-                    "SAME": [
-                        "012121",
-                        "012003",
-                        "012089",
-                        "012125",
-                        "012041",
-                        "012047",
-                        "012023",
-                        "013127",
-                        "013039"
-                    ],
-                    "UGC": [
-                        "FLZ021",
-                        "FLZ023",
-                        "FLZ024",
-                        "FLZ030",
-                        "FLZ035",
-                        "FLZ120",
-                        "FLZ220",
-                        "FLZ322",
-                        "FLZ422",
-                        "FLZ522",
-                        "GAZ153",
-                        "GAZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ021",
-                    "https://api.weather.gov/zones/forecast/FLZ023",
-                    "https://api.weather.gov/zones/forecast/FLZ024",
-                    "https://api.weather.gov/zones/forecast/FLZ030",
-                    "https://api.weather.gov/zones/forecast/FLZ035",
-                    "https://api.weather.gov/zones/forecast/FLZ120",
-                    "https://api.weather.gov/zones/forecast/FLZ220",
-                    "https://api.weather.gov/zones/forecast/FLZ322",
-                    "https://api.weather.gov/zones/forecast/FLZ422",
-                    "https://api.weather.gov/zones/forecast/FLZ522",
-                    "https://api.weather.gov/zones/forecast/GAZ153",
-                    "https://api.weather.gov/zones/forecast/GAZ165"
-                ],
-                "references": [],
-                "sent": "2026-11-14T15:42:00-05:00",
-                "effective": "2026-11-14T15:42:00-05:00",
-                "onset": "2026-11-15T02:00:00-05:00",
-                "expires": "2026-11-15T09:00:00-05:00",
-                "ends": "2026-11-15T09:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Frost Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Frost Advisory issued November 14 at 3:42PM EST until November 15 at 9:00AM EST by NWS Jacksonville FL",
-                "description": "* WHAT...Temperatures as low as 34 will result in frost formation.\n\n* WHERE...Portions of northeast and northern Florida and southeast\nGeorgia.\n\n* WHEN...From 2 AM to 9 AM EST Sunday.\n\n* IMPACTS...Frost could harm sensitive outdoor vegetation. Sensitive\noutdoor plants may be killed if left uncovered.",
-                "instruction": "Take steps now to protect tender plants from the cold.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS72 KJAX 142042"
-                    ],
-                    "NWSheadline": [
-                        "FROST ADVISORY IN EFFECT FROM 2 AM TO 9 AM EST SUNDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXA.KJAX.FR.Y.0012.261115T0700Z-261115T1400Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-15T09:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FRY"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-15T10:58:40+00:00"
+    "updated": "2026-11-15T21:58:09+00:00"
 }
