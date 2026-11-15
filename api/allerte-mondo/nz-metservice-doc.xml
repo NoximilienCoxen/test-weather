@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>2.49.0.0.554.0.severeweather.nz.20261114203602393.6</identifier><sender>https://www.metservice.com</sender><sent>2026-11-15T09:36:02+13:00</sent><status>Actual</status><msgType>Alert</msgType><scope>Public</scope><info><category>Met</category><event>rain</event><responseType>Monitor</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-11-16T15:00:00+13:00</onset><expires>2026-11-17T04:00:00+13:00</expires><senderName>Meteorological Service of New Zealand Limited</senderName><headline>Heavy Rain Warning - Orange</headline><description>Expect 100 to 150 mm of rain. Peak rates of 20 to 30 mm/h expected Monday evening. Impact: Streams and rivers may rise rapidly. Surface flooding, slips, and difficult driving conditions possible. Chance of upgrading to a Red Warning: Minimal.</description><instruction>Action: Clear your drains and gutters to prepare for heavy rain. Avoid low-lying areas and drive cautiously.</instruction><web>https://metservice.com/warnings/home</web><parameter><valueName>ChanceOfUpgrade</valueName><value>Minimal</value></parameter><parameter><valueName>ColourCode</valueName><value>Orange</value></parameter><parameter><valueName>ColourCodeHex</valueName><value>#FF8918</value></parameter><parameter><valueName>NextUpdate</valueName><value>2026-11-15T21:00:00+13:00</value></parameter><area><areaDesc>Tararua Range</areaDesc><polygon>-40.977,175.264 -40.972,175.263 -40.971,175.261 -40.972,175.246 -40.969,175.239 -40.971,175.237 -40.966,175.226 -40.927,175.199 -40.880,175.203 -40.825,175.226 -40.718,175.291 -40.609,175.417 -40.559,175.465 -40.536,175.525 -40.542,175.590 -40.544,175.606 -40.565,175.634 -40.578,175.636 -40.591,175.632 -40.606,175.628 -40.638,175.626 -40.703,175.611 -40.739,175.593 -40.762,175.583 -40.899,175.487 -40.959,175.425 -40.986,175.346 -40.984,175.297 -40.983,175.269 -40.977,175.264</polygon></area></info><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>zWVlw6UJMYtOwFt3ltcGqbHTgNm2WUV6t9kPXGxvQc8=</DigestValue></Reference></SignedInfo><SignatureValue>aq96vIvZ/4lE67n2QG2I08hjhqofnr96XG5/6ZVRqDOSVW3inHh7kRsg/BrC+5mrQM9vnWNP9XWw&#13;
+PH9zdlDIySBtA8cmW546e4rHHHXb50uzVSTc3+Sdo8o8G9tiv+8v+eKqQHluZ/tB1IZnykggeBab&#13;
+dfk7xRMpKf0cfeR+FTPKYjQQu9Emw6cGNDuq9HwKOCaCelMgKifliDsW9whADLyPT6DzYx1CvyKv&#13;
+wck2EjALvGz6gNoUkdst0ol+1LhofoZnCa4fSvxKa0t7rFbwXDDwd6atayh+x4+MnT3K3l1H8qiB&#13;
+BQ2RPcJQCq8Num639ugk/Sq94cL83OqFWkzCEw==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIID+zCCAuOgAwIBAgIEQXDSuTANBgkqhkiG9w0BAQsFADCBrTELMAkGA1UEBhMCTloxEzARBgNV&#13;
+BAgTCldlbGxpbmd0b24xEzARBgNVBAcTCldlbGxpbmd0b24xNjA0BgNVBAoTLU1FVEVPUk9MT0dJ&#13;
+Q0FMIFNFUlZJQ0UgT0YgTkVXIFpFQUxBTkQgTElNSVRFRDEfMB0GA1UECxMWSW5mb3JtYXRpb24g&#13;
+VGVjaG5vbG9neTEbMBkGA1UEAxMSY2FwLm1ldHNlcnZpY2UuY29tMB4XDTI1MTAyMDIyNDU1NloX&#13;
+DTI2MTAyMDIyNDU1Nlowga0xCzAJBgNVBAYTAk5aMRMwEQYDVQQIEwpXZWxsaW5ndG9uMRMwEQYD&#13;
+VQQHEwpXZWxsaW5ndG9uMTYwNAYDVQQKEy1NRVRFT1JPTE9HSUNBTCBTRVJWSUNFIE9GIE5FVyBa&#13;
+RUFMQU5EIExJTUlURUQxHzAdBgNVBAsTFkluZm9ybWF0aW9uIFRlY2hub2xvZ3kxGzAZBgNVBAMT&#13;
+EmNhcC5tZXRzZXJ2aWNlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOtYoScZ&#13;
+w+ucewOrHmJLm0jtfWRqYQzN22od96kr1ruHroKyUWfP9ckX0qaewA51m8gZEC+cms3+U9tFELWL&#13;
+xvMfCw1vqexbyQbudu6jf9BIBx9FpZtxIjVuJL/6bLlqyDJhBH8Dq9A5Z5aK0Wc6GHoBijDH9O1H&#13;
+Z/vZsPVqVoBKVby3vvMeMdDPPomVpYZdRpQy4ApLUsmiYoqiQeEDIb5EQ/HrX2WjK9iuwfp+eOn7&#13;
+Mz5v4b0Kl7PuSzqAzIdyJePiibmhEu+o6MWQOl34qXH4cPo/SJD9lHM0j3ZoAQoIVqEXY2Jg2QJc&#13;
+/zd96n1qXPm+Gp0zeed5G0HCU4epXX0CAwEAAaMhMB8wHQYDVR0OBBYEFKxsISH42wf950TylFDE&#13;
+xkSCqq52MA0GCSqGSIb3DQEBCwUAA4IBAQAjS+EC5034C1JjYxFeej/9E4/0F1lrshbX5dEkKUNy&#13;
+fbSxv6+UeES51P01lUp4qBRMZGLOQJtla1b9haumYxzOg83vw4HIFP1dK71P5bh5RapKBxnGLo7z&#13;
+Xstq1dyBgAC9F6ztgSEMAeLEKImQOmV0Rfzsu9PdiUv7YMU6MIkCMr7Nqz5kqN49Lb1RrneHw2be&#13;
+UyQUUh6GL0SOx19p1NpzDr2uFlEI7UXR6RzrI1fOaceR3q6EhoPy7YGil3VRe/e6OhnHbpOfxUeE&#13;
+xqYPOKJ8bXTA8aBVGIpRz4RAqr8e1KqtrQeMpy8fPkmtJefUeiltRfUdUDOHvCqbgtItoPpQ</X509Certificate></X509Data></KeyInfo></Signature></alert>
