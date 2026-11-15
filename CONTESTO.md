@@ -8551,3 +8551,22 @@ i due corpi passano da `fittingBrush` sulla larghezza della colonna, e sotto i
 - **Il tocco su una notifica di soglia** di una localita' salvata ora porta a
   quella localita' (gli stessi extra del widget; §64.1 lo dava per non fatto).
   La localita' dell'app non li porta: l'app la mostra gia'.
+
+## 67. "Pioggia in corso" con zero millimetri
+
+Galleria del 15 novembre, ora 13 imposta, dati veri di Forli': Sala I diceva
+"Rovescio di meta' pomeriggio - Pioggia in corso" e faceva piovere il cielo,
+la sala della pioggia alla stessa ora "0,0 mm, 18 %, nessuna precipitazione
+nelle prossime dodici ore". Stessa risposta, due grandezze: il `weather_code`
+dell'ora (rovesci) e la sua `precipitation` (zero). Era il difetto di §
+`codiceDelGiorno` (Noceto, 5 ottobre) un gradino piu' giu': il codice del
+giorno era gia' corretto, quello dell'ora e quello di adesso no - e sono loro
+a decidere titolo, corpo, scena, barra delle ore e widget.
+
+`codiceDellOra` (WeatherRepository.kt) fa la stessa correzione: codice di
+pioggia, neve o temporale con millimetri **zero esatto** diventa il cielo
+delle nuvole (coperto da 85 %, molto nuvoloso da 40 %, poco nuvoloso sotto;
+senza nuvolosita' coperto; mai sereno). Si applica a ogni ora e al blocco
+`current`, con le nuvole dell'ora in corso. Il codice del giorno, quando lo
+corregge, ora sceglie fra ore gia' corrette. Prove: `CodiceDellOraTest`.
+Vale per telefono, widget e orologio (e' in `core`).
