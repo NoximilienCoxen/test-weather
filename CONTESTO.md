@@ -8741,3 +8741,10 @@ cielo, gli si restituisce il posto.
   indietro. Con le animazioni ridotte il gesto funziona lo stesso.
 - Cattura: `d12b-solo-cielo` (pressione lunga al 20% dell'altezza) e
   `d12c-dati-tornati` (indietro).
+
+## 79. Una build da provare senza passare da main
+
+Job `prova` in `build.yml`: su ogni push di un ramo che non e' `main` pubblica
+l'APK di debug nella prerelease `apk-prova` (file `weather-prova.apk`). Stessa
+firma di `apk-latest`: si installa sopra senza perdere i dati, e si torna a
+main reinstallando `weather.apk`. `apk-latest` resta solo di `main`.

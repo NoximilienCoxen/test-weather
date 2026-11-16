@@ -865,6 +865,46 @@ jobs:
               --repo "$GITHUB_REPOSITORY" --yes
           done
 
+  # **La build da provare, da un ramo di lavoro.** `apk-latest` resta di
+  # `main` (vedi sopra); questa e' un'altra release, `apk-prova`, che porta
+  # l'ultimo push di un ramo. Stessa firma di debug, quindi si installa sopra
+  # `apk-latest` senza perdere le localita', e si torna indietro reinstallando
+  # quella. CONTESTO §79.
+  prova:
+    needs: build
+    if: github.event_name == 'push' && github.ref != 'refs/heads/main'
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: apk
+          path: apk
+
+      - name: Prepara il file
+        run: |
+          mkdir -p prova
+          cp "$(find apk -name '*.apk' | head -1)" prova/weather-prova.apk
+          ls -la prova
+
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: apk-prova
+          name: Weather — build da provare
+          prerelease: true
+          files: prova/weather-prova.apk
+          body: |
+            Build di prova da un ramo di lavoro, **non** ancora su main.
+
+            Tocca `weather-prova.apk` per scaricarla e installala come la
+            solita: ha la stessa firma di `apk-latest`, quindi va sopra senza
+            perdere le localita'. Per tornare alla versione di main basta
+            reinstallare `weather.apk` da `apk-latest`.
+
+            Ramo: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+
   screenshots:
     needs: build
     runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
