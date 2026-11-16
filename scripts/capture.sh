@@ -481,6 +481,10 @@ session() {
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
     sleep 1
+    # L'aria arriva da un'altra richiesta, che parte solo dopo la previsione:
+    # sulla sua sala un secondo non basta, e lo scatto usciva "In arrivo" con
+    # tutti i valori a trattini (giro del 15 novembre).
+    [ "$sala" = "aria" ] && sleep 4
     shoot "${slug}-d${n}-${sala}"
     n=$(( n + 1 ))
     i=$(( i + 1 ))

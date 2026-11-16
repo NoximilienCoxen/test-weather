@@ -8655,3 +8655,17 @@ Soglia della pioggia 0,1 mm/h e parole d'intensita' come la sala della
 pioggia, cosi' le due non si contraddicono. I testi fissi restano per il meteo
 imposto dalla cattura (`forcedWeatherCode`), che disegna un cielo diverso dai
 dati. Prove: `RaccontoTest`.
+
+## 73. L'aria "In arrivo" per sempre
+
+Galleria del 15 novembre: la sala dell'aria in tema chiaro diceva "In arrivo"
+con tutti i valori a trattini, mentre nella serie scura la settimana mostrava
+"AQI 45". Due cose diverse:
+- **la cattura**: l'aria e' una richiesta a parte che parte dopo la
+  previsione, e lo scatto cadeva un secondo dopo "previsione pronta". Sulla
+  sala dell'aria ora si aspettano quattro secondi in piu';
+- **un difetto vero**: l'aria si chiede solo dentro il ramo di successo della
+  previsione. Senza rete (o con la previsione fallita) non partiva mai, e
+  `airUnavailable` restava falso: la sala diceva "sta arrivando" per sempre,
+  anche con la previsione salvata in vista. Ora all'ultimo tentativo fallito,
+  se l'aria non c'e', si segna come non disponibile.

@@ -949,6 +949,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     null
                                 },
                                 aggiornandoAMano = it.aggiornandoAMano && !lastAttempt,
+                                // **L'aria si chiede solo dopo una previsione
+                                // arrivata**: se la previsione non arriva, non
+                                // parte nemmeno lei, e la sala dell'aria restava
+                                // su "In arrivo" per sempre - anche con la
+                                // previsione salvata in vista, senza rete.
+                                // All'ultimo tentativo si dice che non c'e'.
+                                airUnavailable = it.airUnavailable || (lastAttempt && it.air == null),
                             )
                         }
                     }
