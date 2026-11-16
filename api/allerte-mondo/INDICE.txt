@@ -1,9 +1,9 @@
 == uk-meteoalarm
    https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-united-kingdom
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/atom+xml; charset=utf-8  byte=9732
-   <entry=1  cap:event=2  cap:severity=2  areaDesc=2
-   eventi: Yellow ice warning
+   HTTP 200  tipo=application/atom+xml; charset=utf-8  byte=23276
+   <entry=2  cap:event=4  cap:severity=4  areaDesc=4
+   eventi: Yellow snow warning | Yellow ice warning
    inizio: <?xml version="1.0" encoding="UTF-8"?> <feed xmlns="http://www.w3.org/2005/Atom" xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2"> <link rel="hub" href="https://pubsubhubbub.appspot.com/"/> <link type="application/atom+xml" rel="self" href="https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-united-kingdom"/> <link type="text/html" rel="alternate" href="https://meteoalarm.org"/> <rig
 
 == uk-metoffice-rss
@@ -18,14 +18,14 @@
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1  voci=0
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-11-15T22:25:00+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-11-16T00:16:08+00:00" }
 
 == us-nws-punto-cap
    https://api.weather.gov/alerts/active?point=40.7128,-74.0060
    Accept: application/cap+xml, application/xml;q=0.9, */*;q=0.8
    HTTP 200  tipo=application/geo+json  byte=232
    "features"=1
-   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-11-15T22:25:00+00:00" }
+   inizio: { "@context": { "@version": "1.1" }, "type": "FeatureCollection", "features": [], "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W", "updated": "2026-11-16T00:16:08+00:00" }
 
 == us-nws-area-fl
    https://api.weather.gov/alerts/active?area=FL
@@ -38,46 +38,46 @@
 == us-nws-area-ca
    https://api.weather.gov/alerts/active?area=CA
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/geo+json  byte=123271
-   areaDesc=24  "features"=1  "event"=24  "severity"=24  "areaDesc"=24  "onset"=24  "expires"=24  senderName=24  "senderName"=24  voci=24
-   eventi: High Surf Advisory | High Surf Advisory | High Surf Advisory | Wind Advisory | Winter Storm Watch
-   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.69f8a72cca
+   HTTP 200  tipo=application/geo+json  byte=118291
+   areaDesc=23  "features"=1  "event"=23  "severity"=23  "areaDesc"=23  "onset"=23  "expires"=23  senderName=23  "senderName"=23  voci=23
+   eventi: High Surf Advisory | High Surf Advisory | Beach Hazards Statement | Beach Hazards Statement | High Surf Advisory
+   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c
 
 == us-nws-area-ak
    https://api.weather.gov/alerts/active?area=AK
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/geo+json  byte=121959
-   areaDesc=27  "features"=1  "event"=27  "severity"=27  "areaDesc"=27  "onset"=27  "expires"=27  senderName=27  "senderName"=27  voci=27
-   eventi: High Surf Advisory | High Surf Advisory | Coastal Flood Watch | High Surf Advisory | High Surf Advisory
-   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b08c699ba
+   HTTP 200  tipo=application/geo+json  byte=134923
+   areaDesc=30  "features"=1  "event"=30  "severity"=30  "areaDesc"=30  "onset"=30  "expires"=30  senderName=30  "senderName"=30  voci=30
+   eventi: Winter Weather Advisory | Winter Weather Advisory | Winter Weather Advisory | Winter Weather Advisory | Winter Weather Advisory
+   inizio: { "@context": [ "https://geojson.org/geojson-ld/geojson-context.jsonld", { "@version": "1.1", "wx": "https://api.weather.gov/ontology#", "@vocab": "https://api.weather.gov/ontology#" } ], "type": "FeatureCollection", "features": [ { "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a934b06228
 
 == us-nws-conteggio
    https://api.weather.gov/alerts/active/count
    Accept: application/json, */*;q=0.8
-   HTTP 200  tipo=application/ld+json  byte=12953
+   HTTP 200  tipo=application/ld+json  byte=13369
    nessun segno noto
-   inizio: { "total": 504, "land": 83, "marine": 421, "regions": { "AL": 339, "AT": 9, "GL": 14, "GM": 25, "PA": 30, "PI": 4 }, "areas": { "AK": 27, "AM": 5, "AN": 4, "AZ": 1, "CA": 24, "FL": 6, "GA": 1, "GM": 25, "HI": 1, "ID": 2, "LA": 1, "L
+   inizio: { "total": 524, "land": 83, "marine": 441, "regions": { "AL": 361, "AT": 7, "GL": 14, "GM": 23, "PA": 32, "PI": 4 }, "areas": { "AK": 30, "AM": 5, "AN": 2, "AZ": 1, "CA": 23, "FL": 6, "GA": 1, "GM": 23, "HI": 1, "ID": 2, "LA": 1, "L
 
 == ca-eccc-ogc
    https://api.weather.gc.ca/collections/weather-alerts/items?f=json&limit=3
    Accept: application/geo+json, application/json;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/json  byte=4441
+   HTTP 200  tipo=application/json  byte=18290
    "features"=1  voci=3
-   inizio: {"type":"FeatureCollection","features":[{"id":"210150059509435778202611120518_fea1-3564","type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-123.61082336,48.44395821],[-123.5729599,48.39170456],[-123.50914058,48.27089895],[-123.35314448,48.35329728],[-123.14630656,48.39337013],[-123.20209539,48.53693255],[-123.42191773,48.5201442],[-123.61082336,48.44395821]]]},"properties":{"alert_cod
+   inizio: {"type":"FeatureCollection","features":[{"id":"513321951920580416202611130519_fea1-2226","type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-116.43499756,55.46166229],[-116.43499756,55.63670349],[-116.43499756,55.66669846],[-116.50678253,55.66666412],[-116.50640869,55.89786148],[-116.66188812,55.89802551],[-116.97144318,55.89853668],[-116.97238922,55.81175232],[-116.94340298,55.8111131
 
 == nz-metservice-cap
    https://alerts.metservice.com/cap/rss
    Accept: application/rss+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/rss+xml;charset=UTF-8  byte=5226
-   <item=7
+   HTTP 200  tipo=application/rss+xml;charset=UTF-8  byte=3771
+   <item=5
    inizio: <?xml version="1.0" encoding="UTF-8" ?> <rss version="2.0"> <channel> <title>Metservice Public CAP Alerts</title> <link>https://www.metservice.com</link> <description>Current Watches, Warnings and Advisories for New Zealand issued by MetService</description> <copyright>Copyright Meteorological Service of New Zealand Limited, 2026. Licensed under Creative Commons BY 4.0.</copyrigh
 
 == jp-jma-feed
    https://www.data.jma.go.jp/developer/xml/feed/extra.xml
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=text/xml  byte=164909
-   <entry=281
-   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-11-16T07:10:14+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1794780614</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
+   HTTP 200  tipo=text/xml  byte=131757
+   <entry=225
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>高頻度（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-11-16T09:15:00+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1794788100</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/
 
 == jp-jma-tokyo
    https://www.jma.go.jp/bosai/warning/data/warning/130000.json
@@ -131,7 +131,7 @@
 == geo-tokyo
    https://geocoding-api.open-meteo.com/v1/search?name=Tokyo&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=559
+   HTTP 200  tipo=application/json; charset=utf-8  byte=560
    nessun segno noto
    inizio: {"results":[{"id":1850147,"name":"Tokyo","latitude":35.6895,"longitude":139.69171,"elevation":44.0,"feature_code":"PPLC","country_code":"JP","admin1_id":1850144,"timezone":"Asia/Tokyo","population":9733276,"country_id":1861060,"country":"Giappone","admin1":"Tokyo"},{"id":2085290,"name":"Tokyo","latitude":-8.4,"longitude":147.15,"elevation":2047.0,"feature_code":"PPL","country_code":"PG","admin1_id
 
@@ -152,7 +152,7 @@
 == geo-toronto
    https://geocoding-api.open-meteo.com/v1/search?name=Toronto&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=698
+   HTTP 200  tipo=application/json; charset=utf-8  byte=699
    nessun segno noto
    inizio: {"results":[{"id":6167865,"name":"Toronto","latitude":43.70643,"longitude":-79.39864,"elevation":161.0,"feature_code":"PPLA","country_code":"CA","admin1_id":6093943,"timezone":"America/Toronto","population":2794356,"country_id":6251999,"country":"Canada","admin1":"Ontario"},{"id":5174095,"name":"Toronto","latitude":40.46423,"longitude":-80.60091,"elevation":214.0,"feature_code":"PPL","country_code
 
@@ -180,28 +180,28 @@
 == br-inmet
    https://apiprevmet3.inmet.gov.br/avisos/rss
    Accept: application/rss+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/rss+xml  byte=171066
-   <item=96
+   HTTP 200  tipo=application/rss+xml  byte=153165
+   <item=85
    inizio: <?xml version="1.0" encoding="UTF-8" ?> <rss version="2.0"> <channel> <title>Avisos</title> <link>https://avisos.inmet.gov.br</link> <description>Avisos atuais na América do Sul</description> <!-- About Copyright: Licenca de Uso: O conteudo deste site, podera ser reproduzido desde que citada a fonte, excetuando os casos especificados em contrario e os conteudos replicados de outras fontes. O INMET
 
 == ar-smn
    https://ssl.smn.gob.ar/CAP/AR.php
    Accept: application/rss+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=application/rss+xml; charset=UTF-8  byte=106536
-   <item=149
+   HTTP 200  tipo=application/rss+xml; charset=UTF-8  byte=138310
+   <item=193
    inizio: <?xml version="1.0" encoding="UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/CAP/estilo_ar.xsl"?> <rss xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"> <channel> <title>Ultimos Avisos publicados por el Servicio Meteorologico Nacional (SMN) de Argentina</title> <link>h
 
 == jp-jma-feed-lungo
    https://www.data.jma.go.jp/developer/xml/feed/extra_l.xml
    Accept: application/atom+xml, application/xml;q=0.9, */*;q=0.8
-   HTTP 200  tipo=text/xml  byte=2097240
-   <entry=3604
-   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>長期（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-11-16T07:25:56+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794781556</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/de
+   HTTP 200  tipo=text/xml  byte=2106055
+   <entry=3620
+   inizio: <?xml version="1.0" encoding="utf-8"?> <feed xmlns="http://www.w3.org/2005/Atom" lang="ja"> <title>長期（随時）</title> <subtitle>JMAXML publishing feed</subtitle> <updated>2026-11-16T09:15:00+09:00</updated> <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794788100</id> <link rel="related" href="https://www.jma.go.jp/"/> <link rel="self" href="https://www.data.jma.go.jp/de
 
 == ru-meteoinfo
    https://meteoinfo.ru/
    Accept: text/html, */*;q=0.8
-   HTTP 200  tipo=text/html; charset=utf-8  byte=73801
+   HTTP 200  tipo=text/html; charset=utf-8  byte=73707
    "event"=1
    eventi: mouseenter
    inizio: <!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru" dir="ltr"> <head> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <meta charset="utf-8" /> <base href="https://meteoinfo.ru/" /> <meta name="keywords" content="прогноз погоды, официальный прогноз, гидрологическая обстанов
@@ -223,27 +223,27 @@
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1387
+   HTTP 403  tipo=text/html  byte=1388
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
 ######## secondo passo
-== jp-jma-documenti: 281 voci nel feed, 2 sugli avvisi
-   titoli nel feed: 府県気象情報 | 府県気象解説情報 | 気象特別警報・警報・注意報 | 気象警報・注意報（Ｈ２７） | 気象警報・注意報（Ｒ０６）（その他注意報） | 気象警報・注意報（Ｒ０６）（土砂） | 気象警報・注意報（Ｒ０６）（暴風） | 気象警報・注意報（Ｒ０６）（波浪） | 高頻度（随時）
-   doc 1: https://www.data.jma.go.jp/developer/xml/data/20261115220958_0_VPWW54_016000.xml  HTTP 200  byte=109188
-   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象警報・注意報（Ｈ２７）</Title> <DateTime>2026-11-15T22:09:56Z</DateTime> <Status>通常</Status> <EditorialOffice>札幌管区気象台</EditorialOffice> <PublishingOffice>札幌管区気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>石狩・空知・後志地方気象警報・注意報</Title> <ReportDateTime>2026-11-16T07:09:00+09:00</ReportDateTime> <TargetDateTime>2026-11-16T07:09:00+09:00</Targe
-   doc 2: https://www.data.jma.go.jp/developer/xml/data/20261115220958_0_VPWW53_016000.xml  HTTP 200  byte=46395
-   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象特別警報・警報・注意報</Title> <DateTime>2026-11-15T22:09:56Z</DateTime> <Status>通常</Status> <EditorialOffice>札幌管区気象台</EditorialOffice> <PublishingOffice>札幌管区気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>石狩・空知・後志地方気象警報・注意報</Title> <ReportDateTime>2026-11-16T07:09:00+09:00</ReportDateTime> <TargetDateTime>2026-11-16T07:09:00+09:00</Targe
+== jp-jma-documenti: 225 voci nel feed, 2 sugli avvisi
+   titoli nel feed: 気象特別警報・警報・注意報 | 気象警報・注意報（Ｈ２７） | 気象警報・注意報（Ｒ０６）（その他注意報） | 気象警報・注意報（Ｒ０６）（土砂） | 気象警報・注意報（Ｒ０６）（大雨） | 気象警報・注意報（Ｒ０６）（暴風） | 気象警報・注意報（Ｒ０６）（波浪） | 高頻度（随時）
+   doc 1: https://www.data.jma.go.jp/developer/xml/data/20261116001455_0_VPWW54_050000.xml  HTTP 200  byte=104888
+   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象警報・注意報（Ｈ２７）</Title> <DateTime>2026-11-16T00:14:54Z</DateTime> <Status>通常</Status> <EditorialOffice>秋田地方気象台</EditorialOffice> <PublishingOffice>秋田地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>秋田県気象警報・注意報</Title> <ReportDateTime>2026-11-16T09:14:00+09:00</ReportDateTime> <TargetDateTime>2026-11-16T09:14:00+09:00</TargetDateTi
+   doc 2: https://www.data.jma.go.jp/developer/xml/data/20261116001455_0_VPWW53_050000.xml  HTTP 200  byte=30875
+   <?xml version="1.0" encoding="UTF-8"?> <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/"> <Control> <Title>気象特別警報・警報・注意報</Title> <DateTime>2026-11-16T00:14:54Z</DateTime> <Status>通常</Status> <EditorialOffice>秋田地方気象台</EditorialOffice> <PublishingOffice>秋田地方気象台</PublishingOffice> </Control> <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/"> <Title>秋田県気象警報・注意報</Title> <ReportDateTime>2026-11-16T09:14:00+09:00</ReportDateTime> <TargetDateTime>2026-11-16T09:14:00+09:00</TargetDateTi
 == br-inmet-doc: https://apiprevmet3.inmet.gov.br/avisos/rss/56420  HTTP 200  tipo=text/xml  byte=3163
    <alert=1  <info=1  <event>=1  <severity>=1  <polygon>=1  <areaDesc>=1  <onset>=1  <expires>=1  <geocode>=0
    <?xml version="1.0" encoding="UTF-8" standalone="no"?><alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>urn:oid:2.49.0.0.76.0.2026.28710.1</identifier><sender>info.aviso@inmet.gov.br</sender><sent>2026-11-15T13:14:59-03:00</sent><status>Actual</status><msgType>Alert</msgType><scope>Public</scope><info><language>pt-BR</language><category>Met</category><event>Ventos Costeiros</event><responseType>Prepare</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-11-16T09:00:00-03:00</onset><expires>2026-11-17T23:59:00-03:00</expires><senderName>Instituto Nacional de Meteorologia</senderName><headline>Aviso de Ventos Costeiros. Severidade Grau: Moderate</headline><description>INMET publica aviso iniciando em: 16/11/2026 09:00. Intensificação dos ventos nas regiões litorâneas, movimentando dunas de areia sobre construções na orl
-== ar-smn-doc: https://ssl.smn.gob.ar/feeds/CAP/avisocortoplazo/2026_11_15_2222_cap_es.xml  HTTP 200  tipo=text/xml  byte=2109
+== ar-smn-doc: https://ssl.smn.gob.ar/feeds/CAP/avisocortoplazo/2026_11_15_2316_cap_es.xml  HTTP 200  tipo=text/xml  byte=2089
    <alert=0  <info=0  <event>=0  <severity>=0  <polygon>=0  <areaDesc>=0  <onset>=0  <expires>=0  <geocode>=0
-   <?xml version = "1.0" encoding = "UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/feeds/alerta_cap_es.xsl"?> <cap:alert xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2"> <cap:identifier>urn:oid:2.49.0.1.32.0.2026.11.15.22.22.00</cap:identifier><cap:sender>smn@smn.gov.ar</cap:sender><cap:sent>2026-11-15T22:22:00-03:00</cap:sent><cap:status>Actual</cap:status><cap:msgType>Alert</cap:msgType><cap:scope>Public</cap:scope><cap:info> <cap:category>Met</cap:category><cap:event>TORMENTAS FUERTES</cap:event><cap:urgency>Immediate</cap:urgency><cap:severity>Severe</cap:severity><cap:certainty>Observed</cap:certainty><cap:expires>2026-11-15T23:22:00-03:00</cap:expires><cap:senderName>SERVICIO METEOROLOGICO NACIONAL - ARGENTINA</cap:senderName><cap:headline>AVISO NARANJA POR TORMENTAS FUERTES CON LLUVIAS INTENSAS, RAFAGAS Y OCASIONAL CAIDA DE GRANIZO</cap:headline
+   <?xml version = "1.0" encoding = "UTF-8"?> <?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/feeds/alerta_cap_es.xsl"?> <cap:alert xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2"> <cap:identifier>urn:oid:2.49.0.1.32.0.2026.11.15.23.16.00</cap:identifier><cap:sender>smn@smn.gov.ar</cap:sender><cap:sent>2026-11-15T23:16:00-03:00</cap:sent><cap:status>Actual</cap:status><cap:msgType>Alert</cap:msgType><cap:scope>Public</cap:scope><cap:info> <cap:category>Met</cap:category><cap:event>TORMENTAS FUERTES</cap:event><cap:urgency>Immediate</cap:urgency><cap:severity>Severe</cap:severity><cap:certainty>Observed</cap:certainty><cap:expires>2026-11-16T01:16:00-03:00</cap:expires><cap:senderName>SERVICIO METEOROLOGICO NACIONAL - ARGENTINA</cap:senderName><cap:headline>AVISO NARANJA POR TORMENTAS FUERTES CON LLUVIAS INTENSAS, RAFAGAS Y OCASIONAL CAIDA DE GRANIZO</cap:headline
 == nz-metservice-doc: https://alerts.metservice.com/cap/alert?id=2.49.0.0.554.0.severeweather.nz.20261115202107359.9  HTTP 200  tipo=application/xml;charset=UTF-8  byte=4738
    <alert=1  <info=1  <event>=1  <severity>=1  <polygon>=1  <areaDesc>=1  <onset>=1  <expires>=1  <geocode>=0
    <?xml version="1.0" encoding="UTF-8" standalone="no"?><alert xmlns="urn:oasis:names:tc:emergency:cap:1.2"><identifier>2.49.0.0.554.0.severeweather.nz.20261115202107359.9</identifier><sender>https://www.metservice.com</sender><sent>2026-11-16T09:21:07+13:00</sent><status>Actual</status><msgType>Update</msgType><scope>Public</scope><references>https://www.metservice.com,2.49.0.0.554.0.severeweather.nz.20261115072818278.6,2026-11-15T20:28:18+13:00</references><info><category>Met</category><event>rain</event><responseType>Monitor</responseType><urgency>Future</urgency><severity>Moderate</severity><certainty>Likely</certainty><onset>2026-11-16T16:00:00+13:00</onset><expires>2026-11-17T06:00:00+13:00</expires><senderName>Meteorological Service of New Zealand Limited</senderName><headline>Heavy Rain Warning - Orange</headline><description>Expect 100 to 150 mm of rain. Peak rates of 20 to 30 mm/
-== jp-jma-feed-lungo: 1624554 caratteri, aggiornamenti da 2026-11-08T22:26:38Z a 2026-11-16T07:25:56+09:00, 1278 VPWW53 per 58 uffici
+== jp-jma-feed-lungo: 1631599 caratteri, aggiornamenti da 2026-11-09T00:38:28Z a 2026-11-16T09:15:00+09:00, 1284 VPWW53 per 58 uffici
 == ifrc-alerthub: script ['https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV', '/assets/index-DNItz1Iz.js']
    https://www.googletagmanager.com/gtag/js?id=G-PZFCBMTDPV  HTTP 200  byte=541914  indirizzi: []
    https://alerthub.ifrc.org/assets/index-DNItz1Iz.js  HTTP 200  byte=664302  indirizzi: ['https://alerthub-api.ifrc.org/graphql/']
@@ -256,9 +256,9 @@
 == ifrc-CountryFilter: {"data": {"__type": {"inputFields": [{"name": "id", "type": {"name": "IDBaseFilterLookup", "kind": "INPUT_OBJECT", "ofType": null}}, {"name": "AND", "type": {"name": "CountryFilter", "kind": "INPUT_OBJECT", "ofType": null}}, {"name": "OR", "type": {"name": "CountryFilter", "kind": "INPUT_OBJECT", "ofType": null}}, {"name": "NOT", "type": {"name": "CountryFilter", "kind": "INPUT_OBJECT", "ofType": null}}, {"name": "DISTINCT", "type": {"name": "Boolean", "kind": "SCALAR", "ofType": null}}]}}}
 == ifrc-OffsetPaginationInput: {"data": {"__type": {"inputFields": [{"name": "offset", "type": {"name": null, "kind": "NON_NULL", "ofType": {"name": "Int", "kind": "SCALAR"}}}, {"name": "limit", "type": {"name": null, "kind": "NON_NULL", "ofType": {"name": "Int", "kind": "SCALAR"}}}]}}}
 == ifrc-paesi: 196 paesi, 48 con allerte ora
-   FRA:750 | FIN:742 | USA:409 | CHN:375 | RUS:360 | KAZ:302 | COL:212 | EST:118 | ESP:117 | KGZ:84 | SVK:80 | SWE:68 | DEU:64 | SAU:64 | ITA:62 | NLD:58 | AUS:43 | NOR:35 | UKR:35 | UZB:32 | POL:32 | IRL:30 | NZL:28 | LVA:25 | BLR:22 | SRB:11 | CHL:9 | SVN:9 | HRV:8 | GRC:6 | BRA:6 | IDN:6 | GBR:5 | THA:4 | ISR:4 | KOR:4 | PRT:4 | MNE:4 | BIH:3 | PRY:2 | LTU:2 | IRN:2 | ZWE:1 | BDI:1 | GIN:1 | ROU:1 | PAN:1 | MWI:1
+   FIN:772 | USA:386 | CHN:374 | RUS:366 | KAZ:292 | COL:212 | FRA:154 | ESP:130 | EST:123 | SVK:110 | KGZ:84 | DEU:68 | SWE:66 | SAU:64 | NLD:58 | ITA:55 | IRL:43 | AUS:42 | HRV:36 | UKR:35 | POL:32 | LVA:25 | NOR:24 | BLR:22 | NZL:21 | UZB:16 | BIH:11 | CHL:10 | SRB:8 | SVN:7 | GRC:6 | BRA:6 | IDN:6 | GBR:5 | KOR:4 | PRT:4 | DOM:4 | ISR:3 | THA:2 | LTU:2 | IRN:2 | MNE:2 | ZWE:1 | BDI:1 | GIN:1 | ROU:1 | PAN:1 | MWI:1
    tutti: AFG AGO ALB AND ARE ARG ARM ATG AUS AUT AZE BDI BEL BEN BFA BGD BGR BHR BHS BIH BLR BLZ BOL BRA BRB BRN BTN BWA CAF CAN CHE CHL CHN CIV CMR COD COG COK COL COM CPV CRI CUB CYP CZE DEU DJI DMA DNK DOM DZA ECU EGY ERI ESP EST ETH FIN FJI FLK FRA FSM GAB GBR GEO GHA GIN GMB GNB GNQ GRC GRD GTM GUY HND HRV HTI HUN IDN IND IRL IRN IRQ ISL ISR ITA JAM JOR JPN KAZ KEN KGZ KHM KIR KNA KOR KWT LAO LBN LBR LBY LCA LIE LKA LSO LTU LUX LVA MAR MCO MDA MDG MDV MEX MHL MKD MLI MLT MMR MNE MNG MOZ MRT MUS MWI MYS NAM NER NFK NGA NIC NLD NOR NPL NZL OMN PAK PAN PER PHL PLW PNG POL PRK PRT PRY PSE QAT ROU RUS RWA SAU SDN SEN SGP SLB SLE SLV SMR SOM SRB SSD STP SUR SVK SVN SWE SWZ SYC SYR TCD TGO THA TJK TKM TLS TON TTO TUN TUR TUV TZA UGA UKR URY USA UZB VCT VEN VNM VUT WSM YEM ZAF ZMB ZWE
-== ifrc-prova: {"data": {"public": {"alerts": {"count": 4242, "items": [{"id": "8252198", "sent": "2026-11-15T22:09:58+00:00", "status": "ACTUAL", "msgType": "UPDATE", "country": {"iso3": "FIN", "name": "Finland"}, "info": {"event": "Liikennes\u00e4\u00e4", "severity": "MODERATE", "onset": "2026-11-15T22:09:58+00:00", "expires": "2026-11-16T16:00:00+00:00", "language": "fi-FI", "headline": null, "areas": [{"areaDesc": "Pudasj\u00e4rvi, Taivalkoski, Kuusamo, Ranua, Posio, Salla, Kemij\u00e4rvi", "polygons": []}]}}, {"id": "8252197", "sent": "2026-11-15T22:09:58+00:00", "status": "ACTUAL", "msgType": "UPDATE", "country": {"iso3": "FIN", "name": "Finland"}, "info": {"event": "Liikennes\u00e4\u00e4", "severity": "MODERATE", "onset": "2026-11-15T22:09:58+00:00", "expires": "2026-11-16T16:00:00+00:00", "language": "fi-FI", "headline": null, "areas": [{"areaDesc": "Pudasj\u00e4rvi, Taivalkoski, Kuusamo, Ranua, Posio, Salla, Kemij\u00e4rvi", "polygons": []}]}}]}}}}
+== ifrc-prova: {"data": {"public": {"alerts": {"count": 3698, "items": [{"id": "8252471", "sent": "2026-11-15T23:55:52+00:00", "status": "ACTUAL", "msgType": "ALERT", "country": {"iso3": "CHN", "name": "China"}, "info": {"event": "gale", "severity": "MINOR", "onset": "2026-11-15T23:55:52+00:00", "expires": "2026-11-16T23:55:52+00:00", "language": "en-US", "headline": "Guyuan County Meteorological Observatory issues a blue warning for strong winds [Level IV/General]", "areas": [{"areaDesc": "Guyuan County", "polygons": []}]}}, {"id": "8252470", "sent": "2026-11-15T23:55:00+00:00", "status": "ACTUAL", "msgType": "ALERT", "country": {"iso3": "CHN", "name": "China"}, "info": {"event": "Blizzard", "severity": "MINOR", "onset": null, "expires": "2026-11-16T11:55:00+00:00", "language": "en-US", "headline": "Henan County Meteorological Observatory issues blue blizzard warning signal [IV/General]", "areas": [{"areaDesc": "Henan Mongolian Autonomous County", "polygons": []}]}}]}}}}
 == ifrc-bbox: [{"id": "1", "iso3": "AFG", "name": "Afghanistan", "bbox": {"type": "Polygon", "coordinates": [[[60.503889000065236, 29.377476867128088], [74.87943118675915, 29.377476867128088], [74.87943118675915, 38.48893683918417], [60.503889000065236, 38.48893683918417], [60.503889000065236, 29.377476867128088]]]}}, {"id": "3", "iso3": "DZA", "name": "Algeria", "bbox": {"type": "Polygon", "coordinates": [[[-8.673867225939055, 18.960027694391847], [11.979548454605217, 18.960027694391847], [11.979548454605217, 37.093734740935304], [-8.673867225939055, 37.093734740935304], [-8.673867225939055, 18.960027694391847]]]}}, {"id": "5", "iso3": "AND", "name": "Andorra", "bbox": {"type": "Polygon", "coordinates": [[[1.422104001481532, 42.43508911114202], [1.780385970935241, 42.43508911114202], [1.780385970935241, 42.65870666529616], [1.422104001481532, 42.65870666529616], [1.422104001481532, 42.43508911114202]
 == ifrc-regioni-rus: 90 regioni, 80 con allerte; esempio [{"id": "-161", "name": "Unknown", "bbox": null, "alertCount": 8}, {"id": "1089", "name": "Chukotskiy Okrug", "bbox": {"type": "Polygon", "coordinates": [[[157.2902351208018, 71.63748893168176], [157.2902351208018, 61.69631188546927], [191.45828382322276, 61.69631188546927], [191.45828382322276, 71.63748893168176], [157.2902351208018, 71.63748893168176]]]}, "alertCount": 0}]
 == ifrc-allerte-rus-unknown: {"data": {"public": {"alerts": {"count": 8, "items": [{"id": "8249186", "sent": "2026-11-15T08:05:36+00:00", "status": "ACTUAL", "msgType": "ALERT", "url": "https://meteoinfo.ru/hmc-output/cap/cap-feed/ru/20261115080536-0273226.xml", "sender": "web@mecom.ru", "source": null, "country": {"iso3": "RUS"}, "admin1s": [{"id": "-161", "name": "Unknown"}], "infos": [{"language": "ru", "event": "\u0412\u0435\u0442\u0435\u0440", "severity": "MODERATE", "urgency": "IMMEDIATE", "certainty": "LIKELY", "onset": "2026-11-16T09:00:00+00:00", "expires": "2026-11-16T18:00:00+00:00", "senderName": null, "headline": "\u0412\u0435\u0442\u0435\u0440", "description": "\u0432\u0435\u0442\u0435\u0440 \u0432\u043e\u0441\u0442\u043e\u0447\u043d\u044b\u0439 \u043c\u0435\u0441\u0442\u0430\u043c\u0438 \u0434\u043e 15 \u043c/\u0441", "instruction": null, "web": "https://meteoinfo.ru", "areas": [{"areaDesc": "\u041a\u0440\u044b\u043c, \u043f\u0440\u0435\u0434\u0433\u043e\u0440\u043d\u044b\u0435 \u0440\u0430\u0439\u043e\u043d\u044b", "polygons": [{"value": "44.383,33.741 44.424,33.899 44.437,33.955 44.474,33.955 44.528,33.982 44.596,34.081 44.679,34.123 44.772,34.203 44.842,34.318 44.864,34.459 44.876,34.663 44.866,34.731 44.841,34.733 44.84,34.827 44.809,34.863 44.809,34.91 44.825,34.954 44.814,35.02 44.778,35.067 44.804,35.144 44.879,35.166 44.915,35.258 44.957,35.271 44.955,35.312 44.94,35.399 44.976,35.377 45.008,35.435 45.037,35.393 45.05,35.397 45.136,35.173 45.217,34.835 45.227,34.588 45.251,34.331 45.219,34.093 45.179,33.943 45.058,33.822 44.957,33.737 44.926,33.591 44.865,33.586 44.828,33.532 44.697,33.528 44.629,33.489 44.586,33.358 44.493,33.486 44.481,33.604 44.422,33.642 44.383,33.741"}], "circles": [], "geocodes": []}]}]}, {"id": "8249185", "sent": "2026-11-15T08:05:36+00:00", "status": "ACTUAL", "msgType": "ALERT", "url": "https://meteoinfo.ru/hmc-output/cap/cap-feed/ru/20261115080536-0273223.xml", "sender": "web@mecom.ru", "source": null, "country": {"iso3": "RUS"}, "admin1s": [{"id": "-161", "name": "Unknown"}], "infos": [{"language": "ru", "event": "\u0412\u0435\u0442\u0435\u0440", "severity": "MODERATE", "urgency": "IMMEDIATE", "certainty": "LIKELY", "onset": "2026-11-16T09:00:00+00:00", "expires": "2026-11-16T18:00:00+00:00", "senderName": null, "headline": "\u0412\u0435\u0442\u0435\u0440", "description": "\u0432\u0435\u0442\u0435\u0440 \u0432\u043e\u0441\u0442\u043e\u0447\u043d\u044b\u0439 \u043c\u0435\u0441\u0442\u0430\u043c\u0438 \u0434\u043e 15 \u043c/\u0441", "in
