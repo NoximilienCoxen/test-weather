@@ -699,6 +699,91 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
+                "areaDesc": "Shishmaref; Bering Strait Coast",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ820",
+                        "AKZ821"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ820",
+                    "https://api.weather.gov/zones/forecast/AKZ821"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T13:14:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-15T22:06:00-09:00",
+                "effective": "2026-11-15T22:06:00-09:00",
+                "onset": "2026-11-18T03:00:00-09:00",
+                "expires": "2026-11-16T15:00:00-09:00",
+                "ends": "2026-11-19T13:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "High Surf Advisory issued November 15 at 10:06PM AKST until November 19 at 1:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Water levels of 2 to 3 feet above the normal high tide\npossible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Shishmaref and Bering Strait Coast.\n\n* WHEN...From 3 AM Wednesday to 1 PM AKST Thursday.\n\n* IMPACTS...Localized beach erosion may occur.",
+                "instruction": "Precautions should be taken to protect property.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWAFG"
+                    ],
+                    "WMOidentifier": [
+                        "WHAK49 PAFG 160706"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 3 AM WEDNESDAY TO 1 PM AKST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFG.SU.Y.0012.261118T1200Z-261119T2200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T13:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.005.1",
             "type": "Feature",
             "geometry": null,
@@ -780,89 +865,6 @@
                     ],
                     "NationalWeatherService": [
                         "CFA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
-                "areaDesc": "Southern Seward Peninsula Coast",
-                "geocode": {
-                    "SAME": [
-                        "002180"
-                    ],
-                    "UGC": [
-                        "AKZ822"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ822"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T13:14:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-15T22:06:00-09:00",
-                "effective": "2026-11-15T22:06:00-09:00",
-                "onset": "2026-11-18T03:00:00-09:00",
-                "expires": "2026-11-16T15:00:00-09:00",
-                "ends": "2026-11-19T13:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "High Surf Advisory issued November 15 at 10:06PM AKST until November 19 at 1:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Water levels of 3 to 5 feet above the normal high tide\npossible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Southern Seward Peninsula Coast.\n\n* WHEN...From 3 AM Wednesday to 1 PM AKST Thursday.\n\n* IMPACTS...Localized beach erosion may occur.",
-                "instruction": "Precautions should be taken to protect property.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWAFG"
-                    ],
-                    "WMOidentifier": [
-                        "WHAK49 PAFG 160706"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 3 AM WEDNESDAY TO 1 PM AKST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFG.SU.Y.0012.261118T1200Z-261119T2200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-19T13:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
                     ]
                 }
             }
@@ -951,91 +953,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.001.1",
-                "areaDesc": "Shishmaref; Bering Strait Coast",
-                "geocode": {
-                    "SAME": [
-                        "002180"
-                    ],
-                    "UGC": [
-                        "AKZ820",
-                        "AKZ821"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ820",
-                    "https://api.weather.gov/zones/forecast/AKZ821"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T13:14:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-15T22:06:00-09:00",
-                "effective": "2026-11-15T22:06:00-09:00",
-                "onset": "2026-11-18T03:00:00-09:00",
-                "expires": "2026-11-16T15:00:00-09:00",
-                "ends": "2026-11-19T13:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "High Surf Advisory issued November 15 at 10:06PM AKST until November 19 at 1:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Water levels of 2 to 3 feet above the normal high tide\npossible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Shishmaref and Bering Strait Coast.\n\n* WHEN...From 3 AM Wednesday to 1 PM AKST Thursday.\n\n* IMPACTS...Localized beach erosion may occur.",
-                "instruction": "Precautions should be taken to protect property.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWAFG"
-                    ],
-                    "WMOidentifier": [
-                        "WHAK49 PAFG 160706"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 3 AM WEDNESDAY TO 1 PM AKST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFG.SU.Y.0012.261118T1200Z-261119T2200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-19T13:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.003.1",
             "type": "Feature",
             "geometry": null,
@@ -1079,6 +996,89 @@
                 "senderName": "NWS Fairbanks AK",
                 "headline": "High Surf Advisory issued November 15 at 10:06PM AKST until November 19 at 1:00PM AKST by NWS Fairbanks AK",
                 "description": "* WHAT...Water levels of 3 to 5 feet above the normal high tide\npossible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Eastern Norton Sound Coast.\n\n* WHEN...From 3 AM Wednesday to 1 PM AKST Thursday.\n\n* IMPACTS...Localized beach erosion may occur.",
+                "instruction": "Precautions should be taken to protect property.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWAFG"
+                    ],
+                    "WMOidentifier": [
+                        "WHAK49 PAFG 160706"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 3 AM WEDNESDAY TO 1 PM AKST THURSDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFG.SU.Y.0012.261118T1200Z-261119T2200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T13:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.eb96c702fbf1cecc9be7653b1f9da0d74650263e.002.1",
+                "areaDesc": "Southern Seward Peninsula Coast",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ822"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ822"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.0b08c699ba7df70e6acd75fac7d6e459ce487c62.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T13:14:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-15T22:06:00-09:00",
+                "effective": "2026-11-15T22:06:00-09:00",
+                "onset": "2026-11-18T03:00:00-09:00",
+                "expires": "2026-11-16T15:00:00-09:00",
+                "ends": "2026-11-19T13:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "High Surf Advisory issued November 15 at 10:06PM AKST until November 19 at 1:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Water levels of 3 to 5 feet above the normal high tide\npossible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Southern Seward Peninsula Coast.\n\n* WHEN...From 3 AM Wednesday to 1 PM AKST Thursday.\n\n* IMPACTS...Localized beach erosion may occur.",
                 "instruction": "Precautions should be taken to protect property.",
                 "response": "Avoid",
                 "note": null,
@@ -2330,5 +2330,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-16T13:13:07+00:00"
+    "updated": "2026-11-16T13:26:16+00:00"
 }
