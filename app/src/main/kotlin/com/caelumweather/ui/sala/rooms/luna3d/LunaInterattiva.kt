@@ -154,8 +154,10 @@ internal fun LunaInterattiva(
                 pitchDeg = pitch.value + inclinazione.y * 6f,
                 alone = Color(colori.alone).copy(alpha = 0.22f * frazione),
                 tessitura = tessitura,
-                // La sfera sta sul cielo: vedi `ombraTrasparente`.
-                ombraTrasparente = true,
+                // **Non trasparente**: provata il 16 novembre, sul telefono
+                // il lato in ombra diventava un fantasma grigio con il sole
+                // dietro, e la luna si leggeva al rovescio. Vedi CONTESTO §81.
+                ombraTrasparente = false,
             )
         }
 

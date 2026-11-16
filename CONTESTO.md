@@ -8780,3 +8780,9 @@ l'abbia avviata (il job `prova` poi e' stato tolto, §79).
   nero** sull'azzurro. `disegnaGlobo(ombraTrasparente = true)` disegna la sfera
   in un livello con una `ColorMatrix` che ricava l'alfa dalla luminosita': il
   lato in ombra lascia vedere il cielo, la luce cinerea resta un velo.
+
+Provata sul telefono lo stesso giorno: **non funziona**. La luce cinerea del
+lato in ombra e' un grigio medio, non il nero dell'ombra pura, e con l'alfa
+dalla luminosita' restava un fantasma grigio semitrasparente con sole e nuvole
+dietro: la meta' buia sembrava piu' chiara di quella accesa. Spenta
+(`ombraTrasparente = false`); il parametro resta per un'altra prova.
