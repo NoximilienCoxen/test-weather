@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -19,7 +20,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -60,7 +61,6 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import com.caelumweather.data.SkyState
 import com.caelumweather.data.StatoAllerteUfficiali
 import com.caelumweather.data.WeatherAlert
@@ -815,7 +815,7 @@ fun SalaShell(
                         }
                     },
                 ) {
-                    VerticalPager(
+                    HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
                             .fillMaxSize()
@@ -842,14 +842,14 @@ fun SalaShell(
                                         do {
                                             val evento = awaitPointerEvent(PointerEventPass.Initial)
                                             evento.changes.firstOrNull { it.id == giu.id }?.let {
-                                                corsaDelDito = it.position.y - giu.position.y
+                                                corsaDelDito = it.position.x - giu.position.x
                                                 tracciatore.addPosition(it.uptimeMillis, it.position)
                                             }
                                         } while (evento.changes.any { it.pressed })
                                         // Si decide qui, sull'alzata, prima che il
                                         // carosello (passaggio principale, dopo
                                         // questo) chieda dove posarsi.
-                                        lancioDelDito = abs(tracciatore.calculateVelocity().y) >
+                                        lancioDelDito = abs(tracciatore.calculateVelocity().x) >
                                             VELOCITA_COLPETTO.toPx()
                                         metaVoluta = metaDelGesto()
                                     } finally {
@@ -929,25 +929,28 @@ fun SalaShell(
                         val scartoDellaScheda = remember(page, ferme) {
                             { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
                         }
-                        // **Almeno il 40 per cento dello schermo resta cielo**:
-                        // vedi `LocalAltezzaPannello`. Sotto i 260 punti non si
-                        // scende, o su uno schermo basso il pannello sarebbe
-                        // una feritoia.
-                        val tetto = run {
+                        // **Il cielo all'apertura, e tutto il resto scorrendo.**
+                        // La scheda comincia almeno al 40 per cento dello
+                        // schermo (`QUOTA_CIELO`); quella che non ci sta
+                        // continua sotto, e la pagina intera scorre in
+                        // verticale: la scheda sale sopra il cielo e si legge
+                        // tutta, senza tagli. Era un tetto con lo scorrimento
+                        // dentro il pannello, e le informazioni restavano
+                        // nascoste in una finestrella (CONTESTO §82).
+                        val cieloSopra = run {
                             val c = rCarosello
                             if (c == null || altezzaRadice <= 0f) {
-                                Dp.Unspecified
+                                0.dp
                             } else {
                                 with(LocalDensity.current) {
-                                    (c.bottom - 14.dp.toPx() - QUOTA_CIELO * altezzaRadice).toDp()
-                                }.coerceAtLeast(260.dp)
+                                    (QUOTA_CIELO * altezzaRadice - c.top).toDp()
+                                }.coerceAtLeast(0.dp)
                             }
                         }
                         CompositionLocalProvider(
                             LocalScartoSala provides scartoDellaScheda,
-                            LocalAltezzaPannello provides tetto,
                         ) {
-                        Box(
+                        androidx.compose.foundation.layout.BoxWithConstraints(
                             modifier = Modifier
                                 .fillMaxSize()
                                 // **Il passaggio da una schermata all'altra.** La
@@ -969,10 +972,16 @@ fun SalaShell(
                                 }
                                 .padding(start = margineSinistro, end = margineDestro, bottom = 14.dp),
                         ) {
+                            val altaPagina = maxHeight
+                            // La pagina scorre tutta. Dentro, un riquadro alto
+                            // almeno quanto la pagina tiene le schede corte
+                            // appoggiate in fondo, come sono sempre state.
+                            Column(modifier = Modifier.fillMaxSize().verticalScroll(scorrimento)) {
+                            Box(modifier = Modifier.fillMaxWidth().heightIn(min = altaPagina)) {
                             Column(
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
-                                    .verticalScroll(scorrimento)
+                                    .padding(top = cieloSopra)
                                     .onGloballyPositioned {
                                         if (page == pagerState.currentPage) rScheda = it.boundsInRoot()
                                     },
@@ -1011,6 +1020,8 @@ fun SalaShell(
                                     )
                                     null -> Unit
                                 }
+                            }
+                            }
                             }
                         }
                         }
