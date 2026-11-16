@@ -68,6 +68,7 @@ import com.caelumweather.ui.sala.PastigliaAccento
 import com.caelumweather.ui.sala.SalaPalette
 import com.caelumweather.ui.sala.SalaRoom
 import com.caelumweather.ui.sala.SalaType
+import com.caelumweather.ui.sala.raccontoDellOra
 import com.caelumweather.ui.sala.salaBody
 import com.caelumweather.ui.sala.salaConditionOf
 import com.caelumweather.ui.sala.salaPhaseOf
@@ -271,13 +272,22 @@ fun SalaOggiScreen(
             // Senza previsione la condizione ripiega su SERENO, e il titolo
             // del sereno sopra i trattini era un tempo inventato.
             val senzaPrevisione = state.forecast == null
+            // Il racconto dalle ore vere (`Racconto.kt`). I testi fissi restano
+            // solo quando il meteo e' imposto dalla cattura, che disegna un
+            // cielo diverso da quello dei dati, o quando dall'ora mostrata in
+            // avanti non c'e' nessuna ora da raccontare.
+            val racconto = remember(state.forecast, ora?.time, state.unit, state.windUnit, state.forcedWeatherCode) {
+                val da = ora?.time
+                if (state.forcedWeatherCode != null || da == null) null
+                else raccontoDellOra(state.forecast?.allHours.orEmpty(), da, state.unit, state.windUnit)
+            }
             Text(
-                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else salaTitle(condizione, fase),
+                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else racconto?.titolo ?: salaTitle(condizione, fase),
                 style = SalaType.cardTitle,
                 color = palette.ink,
             )
             Didascalia(
-                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else salaBody(condizione, fase),
+                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else racconto?.corpo ?: salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )

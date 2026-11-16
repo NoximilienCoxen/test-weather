@@ -8630,3 +8630,28 @@ vuoto nel colore dell'inchiostro.
 La guardia della scena, misurata davvero, dava 36 contro 37: corretto, perche'
 il cielo sta dietro tutte le sale e si muove su ognuna per scelta. La misura
 ora confronta Sala I in vista con l'app sulla Home, dove non deve disegnare.
+
+## 72. Il titolo di Sala I dalle ore vere
+
+Le didascalie di Sala I erano 24 frasi fisse (condizione x fase): "Rovescio
+di meta' pomeriggio" alle 13 come alle 10, "Nuvole di passaggio" su un cielo
+coperto, "il fumo sale dritto" a ogni vento debole. Suonavano precise e non lo
+erano - il segno piu' riconoscibile di testo fatto a stampo.
+
+`raccontoDellOra` (ui/sala/Racconto.kt), pura, prende le ore dall'ora mostrata
+in avanti e scrive:
+- **piove adesso**: "Pioggia moderata fino alle 16:00" / "..., ancora a lungo";
+  corpo "3,6 mm fino ad allora, poi nuvoloso." (temporali senza aggettivo,
+  neve col suo nome);
+- **pioggia entro 18 ore**: "Coperto, pioggia dalle 02:00 di domani";
+  corpo "Circa 2 ore, 0,8 mm in tutto.";
+- **asciutto**: il cielo dalla nuvolosita' visibile (non dal codice), e se
+  cambia per almeno due ore di fila entro 12: "Coperto, si apre verso le 17:00";
+  se no "Coperto e asciutto"; corpo "Nessuna pioggia nelle prossime 18 ore.";
+- poi sempre la temperatura (massima ancora da venire, o la minima, se a 2° o
+  piu'; se no "ferma intorno a") e le raffiche solo da 50 km/h.
+
+Soglia della pioggia 0,1 mm/h e parole d'intensita' come la sala della
+pioggia, cosi' le due non si contraddicono. I testi fissi restano per il meteo
+imposto dalla cattura (`forcedWeatherCode`), che disegna un cielo diverso dai
+dati. Prove: `RaccontoTest`.
