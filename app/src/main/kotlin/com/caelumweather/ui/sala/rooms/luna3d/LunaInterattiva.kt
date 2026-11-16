@@ -154,6 +154,8 @@ internal fun LunaInterattiva(
                 pitchDeg = pitch.value + inclinazione.y * 6f,
                 alone = Color(colori.alone).copy(alpha = 0.22f * frazione),
                 tessitura = tessitura,
+                // La sfera sta sul cielo: vedi `ombraTrasparente`.
+                ombraTrasparente = true,
             )
         }
 
@@ -337,6 +339,18 @@ internal fun DrawScope.disegnaGlobo(
     alone: Color,
     /** La carta della fase, se e' pronta: senza, i colori dei vertici. */
     tessitura: TessituraGlobo? = null,
+    /**
+     * La parte in ombra lascia vedere il cielo, invece di essere un disco nero.
+     *
+     * **Sul cielo di giorno la luna girata era un buco nero.** Disegnata sulla
+     * carta del pannello il lato al buio passava per "spazio"; da quando la
+     * sfera sta sul cielo (CONTESTO §78) quel nero era un foro nell'azzurro, e
+     * una luna vera di giorno non e' cosi': la parte non illuminata non si
+     * vede, si vede il cielo. L'alfa viene dalla luminosita' (vedi
+     * [OmbraTrasparente]): il lato acceso resta pieno, il terminatore sfuma,
+     * il lato in ombra resta appena un'ombra di luce cinerea.
+     */
+    ombraTrasparente: Boolean = false,
 ) {
     val r = size.minDimension * 0.40f
     val centro = Offset(size.width / 2f, size.height / 2f)
@@ -382,7 +396,9 @@ internal fun DrawScope.disegnaGlobo(
     }
     if (n == 0) return
 
-    drawContext.canvas.nativeCanvas.drawVertices(
+    val tela = drawContext.canvas.nativeCanvas
+    if (ombraTrasparente) tela.saveLayer(null, OmbraTrasparente)
+    tela.drawVertices(
         AndroidCanvas.VertexMode.TRIANGLES,
         buffer.posizioni.size,
         buffer.posizioni,
@@ -395,6 +411,25 @@ internal fun DrawScope.disegnaGlobo(
         0,
         n,
         tessitura?.pennello ?: buffer.pennello,
+    )
+    if (ombraTrasparente) tela.restore()
+}
+
+/**
+ * Il colore resta, l'alfa viene dalla luminosita': 4,5 volte, meno 75 su 255.
+ * L'ombra (`#151A24`, luminosita' 26) esce al 16 per cento, un velo di luce
+ * cinerea; i mari in luce (luminosita' 95) e tutto cio' che sta sopra 72 sono
+ * pieni; in mezzo il terminatore sfuma.
+ */
+private val OmbraTrasparente = android.graphics.Paint().apply {
+    val k = 4.5f
+    colorFilter = android.graphics.ColorMatrixColorFilter(
+        floatArrayOf(
+            1f, 0f, 0f, 0f, 0f,
+            0f, 1f, 0f, 0f, 0f,
+            0f, 0f, 1f, 0f, 0f,
+            0.30f * k, 0.59f * k, 0.11f * k, 0f, -75f,
+        ),
     )
 }
 

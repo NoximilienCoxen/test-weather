@@ -8766,3 +8766,17 @@ app chiusa. Adesso scorrimento e sfumatura si mettono solo quando il tetto c'e'.
 della release sull'emulatore l'avrebbe preso, ma gira dopo la pubblicazione di
 `apk-prova`: lezione, nessuna APK va data a qualcuno prima che un emulatore
 l'abbia avviata (il job `prova` poi e' stato tolto, §79).
+
+## 81. Build in sessione, e la luna che era un buco nero
+
+- **APK compilato nella sessione cloud**: SDK in `/opt/android-sdk`, `local.properties`
+  locale, `./gradlew :app:assembleDebug` (prima volta 4m49s, poi meno di 2
+  minuti), file mandato in chat. Firmato con `app/debug.keystore`, la stessa
+  chiave di `apk-latest`. Niente emulatore (nessuna KVM). I test Robolectric qui
+  non partono: il proxy blocca `gcp.mirrors.maven.org`, da cui arriva
+  `nativeruntime-dist-compat`.
+- Il video dell'utente (16 novembre) conferma: l'app si apre, il tetto al 40%
+  regge, la luna sta nel cielo. Ma **girata, di giorno, la luna era un disco
+  nero** sull'azzurro. `disegnaGlobo(ombraTrasparente = true)` disegna la sfera
+  in un livello con una `ColorMatrix` che ricava l'alfa dalla luminosita': il
+  lato in ombra lascia vedere il cielo, la luce cinerea resta un velo.
