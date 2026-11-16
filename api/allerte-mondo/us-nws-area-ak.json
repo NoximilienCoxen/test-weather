@@ -1369,50 +1369,43 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
-                "areaDesc": "Shemya and Attu Islands",
+                "id": "urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
+                "areaDesc": "Pribilof Islands",
                 "geocode": {
                     "SAME": [
                         "002016"
                     ],
                     "UGC": [
-                        "AKZ791"
+                        "AKZ795"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ791"
+                    "https://api.weather.gov/zones/forecast/AKZ795"
                 ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.26be13e126cf8c987524b94749beb41a3f0ffcea.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.26be13e126cf8c987524b94749beb41a3f0ffcea.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T03:58:00-09:00"
-                    }
-                ],
+                "references": [],
                 "sent": "2026-11-15T12:40:00-09:00",
                 "effective": "2026-11-15T12:40:00-09:00",
-                "onset": "2026-11-16T21:00:00-09:00",
+                "onset": "2026-11-17T03:00:00-09:00",
                 "expires": "2026-11-16T06:30:00-09:00",
-                "ends": "2026-11-17T06:00:00-09:00",
+                "ends": "2026-11-17T09:00:00-09:00",
                 "status": "Actual",
-                "messageType": "Update",
+                "messageType": "Alert",
                 "category": "Met",
                 "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "High Wind Watch",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Wind Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Anchorage AK",
-                "headline": "High Wind Watch issued November 15 at 12:40PM AKST until November 17 at 6:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...West winds 45 to 55 mph with gusts up to 75 mph possible.\n\n* WHERE...Shemya and Attu Islands.\n\n* WHEN...From Monday evening through late Monday night.\n\n* IMPACTS...High winds could move loose debris, damage property, and\ncause power outages. Travel could be difficult.\n\n* ADDITIONAL DETAILS...Winds rapidly increase in strength late Monday\nevening and peak early Tuesday morning as a strong low pressure\nsystem moves through the Bering. Winds will lighten through Tuesday\nafternoon.",
-                "instruction": "A high wind watch means there is potential for a hazardous high wind\nevent. Monitor the latest forecasts and warnings for updates on this\nsituation. Fasten loose objects or shelter objects in a safe location\nprior to the onset of winds.",
+                "headline": "High Wind Warning issued November 15 at 12:40PM AKST until November 17 at 9:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Southeast winds 45 to 55 mph with gusts up to 75 mph\npossible.\n\n* WHERE...Pribilof Islands.\n\n* WHEN...From 3 AM to 9 AM AKST Tuesday.\n\n* IMPACTS...High winds may move loose debris, damage property, and\ncause power outages. Travel will be difficult.\n\n* ADDITIONAL DETAILS...Winds rapidly increase in strength Monday\nnight/early Tuesday morning and peak late Tuesday morning as a\nstrong low pressure system moves through the Bering. Winds shift\nwest-southwesterly by Wednesday morning, and strong westerly winds\npersist over the Pribilofs through midweek. A second peak in winds\noccurs Tuesday evening through Wednesday morning with winds\npotentially gusting to 60 to 70 mph. As a result of the long\nduration of westerly winds, wave heights of 20 to 30 ft within 15\nto 20 nautical miles of Saint Paul are expected through Thursday\nmorning.",
+                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind. Prepare for the possibility of widespread\npower outages. Use caution if you must drive.",
                 "response": "Prepare",
                 "note": null,
                 "parameters": {
@@ -1423,7 +1416,7 @@
                         "WWAK72 PAFC 152140"
                     ],
                     "NWSheadline": [
-                        "HIGH WIND WATCH REMAINS IN EFFECT FROM MONDAY EVENING THROUGH LATE MONDAY NIGHT"
+                        "HIGH WIND WARNING IN EFFECT FROM 3 AM TO 9 AM AKST TUESDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -1434,13 +1427,10 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.CON.PAFC.HW.A.0011.261117T0600Z-261117T1500Z/"
+                        "/O.EXB.PAFC.HW.W.0015.261117T1200Z-261117T1800Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-17T06:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.680bbf1e781a90a7c7cdbd357b23ea929fc43bd5.001.1,2026-11-14T12:31:00-09:00"
+                        "2026-11-17T09:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -1449,10 +1439,10 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "HWA"
+                        "HWW"
                     ],
                     "NationalWeatherService": [
-                        "HWA"
+                        "HWW"
                     ]
                 }
             }
@@ -1544,43 +1534,50 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.001.2",
-                "areaDesc": "Pribilof Islands",
+                "id": "urn:oid:2.49.0.1.840.0.65db32746839047914079adfdc6f015d0442e13b.003.1",
+                "areaDesc": "Shemya and Attu Islands",
                 "geocode": {
                     "SAME": [
                         "002016"
                     ],
                     "UGC": [
-                        "AKZ795"
+                        "AKZ791"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ795"
+                    "https://api.weather.gov/zones/forecast/AKZ791"
                 ],
-                "references": [],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.26be13e126cf8c987524b94749beb41a3f0ffcea.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.26be13e126cf8c987524b94749beb41a3f0ffcea.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T03:58:00-09:00"
+                    }
+                ],
                 "sent": "2026-11-15T12:40:00-09:00",
                 "effective": "2026-11-15T12:40:00-09:00",
-                "onset": "2026-11-17T03:00:00-09:00",
+                "onset": "2026-11-16T21:00:00-09:00",
                 "expires": "2026-11-16T06:30:00-09:00",
-                "ends": "2026-11-17T09:00:00-09:00",
+                "ends": "2026-11-17T06:00:00-09:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
                 "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Wind Warning",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "High Wind Watch",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Anchorage AK",
-                "headline": "High Wind Warning issued November 15 at 12:40PM AKST until November 17 at 9:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Southeast winds 45 to 55 mph with gusts up to 75 mph\npossible.\n\n* WHERE...Pribilof Islands.\n\n* WHEN...From 3 AM to 9 AM AKST Tuesday.\n\n* IMPACTS...High winds may move loose debris, damage property, and\ncause power outages. Travel will be difficult.\n\n* ADDITIONAL DETAILS...Winds rapidly increase in strength Monday\nnight/early Tuesday morning and peak late Tuesday morning as a\nstrong low pressure system moves through the Bering. Winds shift\nwest-southwesterly by Wednesday morning, and strong westerly winds\npersist over the Pribilofs through midweek. A second peak in winds\noccurs Tuesday evening through Wednesday morning with winds\npotentially gusting to 60 to 70 mph. As a result of the long\nduration of westerly winds, wave heights of 20 to 30 ft within 15\nto 20 nautical miles of Saint Paul are expected through Thursday\nmorning.",
-                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind. Prepare for the possibility of widespread\npower outages. Use caution if you must drive.",
+                "headline": "High Wind Watch issued November 15 at 12:40PM AKST until November 17 at 6:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...West winds 45 to 55 mph with gusts up to 75 mph possible.\n\n* WHERE...Shemya and Attu Islands.\n\n* WHEN...From Monday evening through late Monday night.\n\n* IMPACTS...High winds could move loose debris, damage property, and\ncause power outages. Travel could be difficult.\n\n* ADDITIONAL DETAILS...Winds rapidly increase in strength late Monday\nevening and peak early Tuesday morning as a strong low pressure\nsystem moves through the Bering. Winds will lighten through Tuesday\nafternoon.",
+                "instruction": "A high wind watch means there is potential for a hazardous high wind\nevent. Monitor the latest forecasts and warnings for updates on this\nsituation. Fasten loose objects or shelter objects in a safe location\nprior to the onset of winds.",
                 "response": "Prepare",
                 "note": null,
                 "parameters": {
@@ -1591,7 +1588,7 @@
                         "WWAK72 PAFC 152140"
                     ],
                     "NWSheadline": [
-                        "HIGH WIND WARNING IN EFFECT FROM 3 AM TO 9 AM AKST TUESDAY"
+                        "HIGH WIND WATCH REMAINS IN EFFECT FROM MONDAY EVENING THROUGH LATE MONDAY NIGHT"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -1602,10 +1599,13 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.EXB.PAFC.HW.W.0015.261117T1200Z-261117T1800Z/"
+                        "/O.CON.PAFC.HW.A.0011.261117T0600Z-261117T1500Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-17T09:00:00-09:00"
+                        "2026-11-17T06:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.680bbf1e781a90a7c7cdbd357b23ea929fc43bd5.001.1,2026-11-14T12:31:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -1614,10 +1614,10 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "HWW"
+                        "HWA"
                     ],
                     "NationalWeatherService": [
-                        "HWW"
+                        "HWA"
                     ]
                 }
             }
@@ -1682,87 +1682,6 @@
                     ],
                     "VTEC": [
                         "/O.NEW.PAFG.WS.A.0036.261118T0000Z-261120T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-19T15:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
-                "areaDesc": "Yukon Delta Coast; Lower Yukon River",
-                "geocode": {
-                    "SAME": [
-                        "002158"
-                    ],
-                    "UGC": [
-                        "AKZ825",
-                        "AKZ826"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ825",
-                    "https://api.weather.gov/zones/forecast/AKZ826"
-                ],
-                "references": [],
-                "sent": "2026-11-15T12:37:00-09:00",
-                "effective": "2026-11-15T12:37:00-09:00",
-                "onset": "2026-11-17T21:00:00-09:00",
-                "expires": "2026-11-16T07:00:00-09:00",
-                "ends": "2026-11-19T15:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Storm Watch issued November 15 at 12:37PM AKST until November 19 at 3:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Snow and gusty winds possible. Total snow accumulations of 3\nto 6 inches possible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Lower Yukon River and Yukon Delta Coast.\n\n* WHEN...From Tuesday evening through Thursday afternoon.\n\n* IMPACTS...Travel could be very difficult. Snow and blowing snow\ncould reduce visibility below one half mile at times. Periods of\nblizzard conditions will be intermittently possible.\n\n* ADDITIONAL DETAILS...Strong winds will steadily ramp up Tuesday\ninto Tuesday night, with snow arriving Tuesday night into Wednesday\nas winds peak. Rain may mix with snow at times Wednesday and\nThursday as warmer air builds in out of the south.",
-                "instruction": "Monitor the latest forecasts for updates on this situation.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWWCZ"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK42 PAFG 152137"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH IN EFFECT FROM TUESDAY EVENING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.PAFG.WS.A.0036.261118T0600Z-261120T0000Z/"
                     ],
                     "eventEndingTime": [
                         "2026-11-19T15:00:00-09:00"
@@ -1853,6 +1772,87 @@
                     ],
                     "VTEC": [
                         "/O.NEW.PAFG.WS.A.0036.261118T1800Z-261120T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T15:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.cb3e7b88b917cec3937c854d7cba05c9ad6611f2.002.1",
+                "areaDesc": "Yukon Delta Coast; Lower Yukon River",
+                "geocode": {
+                    "SAME": [
+                        "002158"
+                    ],
+                    "UGC": [
+                        "AKZ825",
+                        "AKZ826"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ825",
+                    "https://api.weather.gov/zones/forecast/AKZ826"
+                ],
+                "references": [],
+                "sent": "2026-11-15T12:37:00-09:00",
+                "effective": "2026-11-15T12:37:00-09:00",
+                "onset": "2026-11-17T21:00:00-09:00",
+                "expires": "2026-11-16T07:00:00-09:00",
+                "ends": "2026-11-19T15:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Storm Watch issued November 15 at 12:37PM AKST until November 19 at 3:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Snow and gusty winds possible. Total snow accumulations of 3\nto 6 inches possible. Southeast winds could gust as high as 55 mph.\n\n* WHERE...Lower Yukon River and Yukon Delta Coast.\n\n* WHEN...From Tuesday evening through Thursday afternoon.\n\n* IMPACTS...Travel could be very difficult. Snow and blowing snow\ncould reduce visibility below one half mile at times. Periods of\nblizzard conditions will be intermittently possible.\n\n* ADDITIONAL DETAILS...Strong winds will steadily ramp up Tuesday\ninto Tuesday night, with snow arriving Tuesday night into Wednesday\nas winds peak. Rain may mix with snow at times Wednesday and\nThursday as warmer air builds in out of the south.",
+                "instruction": "Monitor the latest forecasts for updates on this situation.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK42 PAFG 152137"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH IN EFFECT FROM TUESDAY EVENING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFG.WS.A.0036.261118T0600Z-261120T0000Z/"
                     ],
                     "eventEndingTime": [
                         "2026-11-19T15:00:00-09:00"
@@ -2471,107 +2471,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a78a46fd5670b54f54b30f18659feb26719f91f3.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a78a46fd5670b54f54b30f18659feb26719f91f3.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a78a46fd5670b54f54b30f18659feb26719f91f3.001.1",
-                "areaDesc": "South Slopes of the Western Brooks Range; Noatak Valley; Kivalina and Red Dog Dock; Lower Kobuk Valley; Baldwin Peninsula; Northern Seward Peninsula; Upper Kobuk Valleys; Shishmaref; Bering Strait Coast; Southern Seward Peninsula Coast; Interior Seward Peninsula; Eastern Norton Sound and Nulato Hills; Yukon Delta Coast",
-                "geocode": {
-                    "SAME": [
-                        "002188",
-                        "002180",
-                        "002158"
-                    ],
-                    "UGC": [
-                        "AKZ813",
-                        "AKZ814",
-                        "AKZ815",
-                        "AKZ816",
-                        "AKZ817",
-                        "AKZ818",
-                        "AKZ819",
-                        "AKZ820",
-                        "AKZ821",
-                        "AKZ822",
-                        "AKZ823",
-                        "AKZ824",
-                        "AKZ825"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ813",
-                    "https://api.weather.gov/zones/forecast/AKZ814",
-                    "https://api.weather.gov/zones/forecast/AKZ815",
-                    "https://api.weather.gov/zones/forecast/AKZ816",
-                    "https://api.weather.gov/zones/forecast/AKZ817",
-                    "https://api.weather.gov/zones/forecast/AKZ818",
-                    "https://api.weather.gov/zones/forecast/AKZ819",
-                    "https://api.weather.gov/zones/forecast/AKZ820",
-                    "https://api.weather.gov/zones/forecast/AKZ821",
-                    "https://api.weather.gov/zones/forecast/AKZ822",
-                    "https://api.weather.gov/zones/forecast/AKZ823",
-                    "https://api.weather.gov/zones/forecast/AKZ824",
-                    "https://api.weather.gov/zones/forecast/AKZ825"
-                ],
-                "references": [],
-                "sent": "2026-11-15T04:40:00-09:00",
-                "effective": "2026-11-15T04:40:00-09:00",
-                "onset": "2026-11-15T04:40:00-09:00",
-                "expires": "2026-11-15T16:00:00-09:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Special Weather Statement issued November 15 at 4:40AM AKST by NWS Fairbanks AK",
-                "description": "Confidence is growing in the potential for a strong coastal storm\nto take a more northerly track through the Bering Sea mid-week.\nDepending on the final track of the system, minor to moderate\ncoastal flooding impacts may be a possible for parts of the West\nCoast, with sea level rises between 3 to 7 ft possible. In\naddition to the coastal impact potential, periods of moderate to\nheavy snow and strong winds could begin as early as Tuesday night\nand last into Friday. The combination of winds and heavy snow\ncould lead to reduced visibilities at times. We will continue to\nmonitor this system closely and provide updates as additional\ninformation becomes available.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSWCZ"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK82 PAFG 151340"
-                    ],
-                    "NWSheadline": [
-                        "MID-WEEK BERING SEA LOW COULD BRING COASTAL IMPACTS, SNOW, AND WIND"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-16T00:50:25+00:00"
+    "updated": "2026-11-16T01:35:00+00:00"
 }

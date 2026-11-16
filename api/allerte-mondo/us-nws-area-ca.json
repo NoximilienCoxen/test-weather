@@ -10,31 +10,142 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4631a65aa88e61869473d4b18d42b3c5bb0cefc7.001.1",
             "type": "Feature",
-            "geometry": null,
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -122.49,
+                            37.71
+                        ],
+                        [
+                            -122.49,
+                            37.75
+                        ],
+                        [
+                            -122.44,
+                            37.75
+                        ],
+                        [
+                            -122.42,
+                            37.72
+                        ],
+                        [
+                            -122.43,
+                            37.69
+                        ],
+                        [
+                            -122.47,
+                            37.67
+                        ],
+                        [
+                            -122.49,
+                            37.71
+                        ]
+                    ]
+                ]
+            },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4631a65aa88e61869473d4b18d42b3c5bb0cefc7.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
-                "areaDesc": "Malibu Coast; Los Angeles County Beaches",
+                "id": "urn:oid:2.49.0.1.840.0.4631a65aa88e61869473d4b18d42b3c5bb0cefc7.001.1",
+                "areaDesc": "San Francisco, CA; San Mateo, CA",
                 "geocode": {
                     "SAME": [
-                        "006037"
+                        "006075",
+                        "006081"
                     ],
                     "UGC": [
-                        "CAZ362",
-                        "CAZ366"
+                        "CAC075",
+                        "CAC081"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ362",
-                    "https://api.weather.gov/zones/forecast/CAZ366"
+                    "https://api.weather.gov/zones/county/CAC075",
+                    "https://api.weather.gov/zones/county/CAC081"
+                ],
+                "references": [],
+                "sent": "2026-11-15T17:24:00-08:00",
+                "effective": "2026-11-15T17:24:00-08:00",
+                "onset": "2026-11-15T17:24:00-08:00",
+                "expires": "2026-11-15T20:30:00-08:00",
+                "ends": "2026-11-15T20:30:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS San Francisco CA",
+                "headline": "Flood Advisory issued November 15 at 5:24PM PST until November 15 at 8:30PM PST by NWS San Francisco CA",
+                "description": "* WHAT...Flooding caused by excessive rainfall is occurring.\n\n* WHERE...Southeastern San Francisco County in northern California...\nNorthern San Mateo County in northern California...\n\n* WHEN...Until 830 PM PST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\nWater over roadways.\n\n* ADDITIONAL DETAILS...\n- At 524 PM PST, local law enforcement reported flooding in the\nadvisory area. Overflowing poor drainage areas have already\ncaused minor flooding in the advisory area. Between 0.2 and 0.5\ninches of rain have fallen.\n- Additional rainfall amounts of 0.2 to 0.5 inches are expected\nover the area. This additional rain will result in minor\nflooding.\n- Some locations that will experience flooding include...\nSan Francisco, Daly City, Colma and Broadmoor.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe especially cautious at night when it is harder to recognize the\ndangers of flooding.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSMTR"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS86 KMTR 160124"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD ADVISORY IN EFFECT UNTIL 830 PM PST THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KMTR.FA.Y.0036.261116T0124Z-261116T0430Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-15T20:30:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FAY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
+                "areaDesc": "Ventura County Beaches",
+                "geocode": {
+                    "SAME": [
+                        "006111"
+                    ],
+                    "UGC": [
+                        "CAZ354"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ354"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.003.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.003.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.002.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-15T11:44:00-08:00"
                     }
@@ -54,7 +165,7 @@
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Los Angeles/Oxnard CA",
                 "headline": "High Surf Advisory issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...Large breaking waves of 6 to 8 feet. Dangerous rip\ncurrents expected.\n\n* WHERE...Malibu Coast and Los Angeles County Beaches.\n\n* WHEN...Until 3 PM PST Tuesday.\n\n* IMPACTS...There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore. Minor tidal\noverflow during morning high tides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Some of these\nimpacts may be moderate to significant beach erosion and\nshallow flooding of normally dry beaches and walkways.",
+                "description": "* WHAT...Large breaking waves of 6 to 8 feet. Occasional larger\nsets may occur near Ventura Harbor. Dangerous rip currents\nexpected.\n\n* WHERE...Ventura County Beaches.\n\n* WHEN...Until 3 PM PST Tuesday.\n\n* IMPACTS...There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore. Minor tidal\noverflow during morning high tides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Some of these\nimpacts may be moderate to significant beach erosion and\nshallow flooding of normally dry beaches and walkways.",
                 "instruction": "Remain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
                 "response": "Avoid",
                 "note": null,
@@ -80,7 +191,7 @@
                         "2026-11-17T15:00:00-08:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.004.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.004.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.003.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.004.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.003.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.001.3,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.002.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.002.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.003.1,2026-11-12T11:49:00-08:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.003.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.003.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.002.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.003.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.002.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.003.2,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.003.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.003.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.002.1,2026-11-12T11:49:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -93,6 +204,180 @@
                     ],
                     "NationalWeatherService": [
                         "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
+                "areaDesc": "Catalina and Santa Barbara Islands",
+                "geocode": {
+                    "SAME": [
+                        "006037"
+                    ],
+                    "UGC": [
+                        "CAZ087"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ087"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.004.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.004.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T11:44:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-15T15:55:00-08:00",
+                "effective": "2026-11-15T15:55:00-08:00",
+                "onset": "2026-11-15T15:55:00-08:00",
+                "expires": "2026-11-16T09:00:00-08:00",
+                "ends": "2026-11-17T15:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Beach Hazards Statement issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...Dangerous rip currents and breaking waves due to\nelevated surf. Minor tidal overflows are possible during\nmorning high tides.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...Through Tuesday afternoon.\n\n* IMPACTS...There is an increased risk of ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Waves can\nwash people off beaches and rocks, and capsize small boats\nnearshore. Minor tidal overflows are possible during high\ntides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Minor tidal\noverflows are possible in areas with largest surf, especially\nduring morning high tide.",
+                "instruction": "Remain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 152355"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.BH.S.0025.000000T0000Z-261117T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-17T15:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.005.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.005.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.005.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.005.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.005.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.005.1,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.004.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.004.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.004.1,2026-11-12T11:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1578ac3427a7e4d58e934077f0833c2dbb484f01.002.1,2026-11-11T18:06:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.98557eccc99607f2444692d9236df2d4f2c31436.002.1,2026-11-11T12:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.88ab3211b8a99b081c33c72cc54b1e38609a35fe.002.1,2026-11-10T20:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2c884d62c5233906bc7ab164d44b2cef98b53668.002.1,2026-11-10T12:55:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
+                "areaDesc": "Santa Barbara County Southwestern Coast; Santa Barbara County Southeastern Coast",
+                "geocode": {
+                    "SAME": [
+                        "006083"
+                    ],
+                    "UGC": [
+                        "CAZ349",
+                        "CAZ350"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ349",
+                    "https://api.weather.gov/zones/forecast/CAZ350"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.005.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.005.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T11:44:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-15T15:55:00-08:00",
+                "effective": "2026-11-15T15:55:00-08:00",
+                "onset": "2026-11-15T15:55:00-08:00",
+                "expires": "2026-11-16T09:00:00-08:00",
+                "ends": "2026-11-17T15:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Beach Hazards Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Los Angeles/Oxnard CA",
+                "headline": "Beach Hazards Statement issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
+                "description": "* WHAT...Dangerous rip currents and breaking waves due to\nelevated surf. Minor tidal overflows are possible during high\ntides.\n\n* WHERE...Santa Barbara County Southwestern Coast and Santa\nBarbara County Southeastern Coast.\n\n* WHEN...Through Tuesday afternoon.\n\n* IMPACTS...There is an increased risk of ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Waves can\nwash people off beaches and rocks, and capsize small boats\nnearshore.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Minor tidal\noverflows are possible in areas with largest surf, especially\nduring morning high tide.",
+                "instruction": "Remain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWLOX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KLOX 152355"
+                    ],
+                    "NWSheadline": [
+                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KLOX.BH.S.0025.000000T0000Z-261117T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-17T15:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.002.2,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.002.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.001.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.004.2,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.004.2,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.004.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.004.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.004.1,2026-11-12T11:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1578ac3427a7e4d58e934077f0833c2dbb484f01.002.1,2026-11-11T18:06:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.98557eccc99607f2444692d9236df2d4f2c31436.002.1,2026-11-11T12:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.88ab3211b8a99b081c33c72cc54b1e38609a35fe.002.1,2026-11-10T20:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2c884d62c5233906bc7ab164d44b2cef98b53668.002.1,2026-11-10T12:55:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "BHS"
                     ]
                 }
             }
@@ -187,203 +472,31 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.005.1",
-                "areaDesc": "Santa Barbara County Southwestern Coast; Santa Barbara County Southeastern Coast",
-                "geocode": {
-                    "SAME": [
-                        "006083"
-                    ],
-                    "UGC": [
-                        "CAZ349",
-                        "CAZ350"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ349",
-                    "https://api.weather.gov/zones/forecast/CAZ350"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.005.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.005.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T11:44:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-15T15:55:00-08:00",
-                "effective": "2026-11-15T15:55:00-08:00",
-                "onset": "2026-11-15T15:55:00-08:00",
-                "expires": "2026-11-16T09:00:00-08:00",
-                "ends": "2026-11-17T15:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Beach Hazards Statement issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...Dangerous rip currents and breaking waves due to\nelevated surf. Minor tidal overflows are possible during high\ntides.\n\n* WHERE...Santa Barbara County Southwestern Coast and Santa\nBarbara County Southeastern Coast.\n\n* WHEN...Through Tuesday afternoon.\n\n* IMPACTS...There is an increased risk of ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Waves can\nwash people off beaches and rocks, and capsize small boats\nnearshore.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Minor tidal\noverflows are possible in areas with largest surf, especially\nduring morning high tide.",
-                "instruction": "Remain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 152355"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.BH.S.0025.000000T0000Z-261117T2300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-17T15:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.002.2,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.002.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.001.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.004.2,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.004.2,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.004.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.004.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.004.1,2026-11-12T11:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1578ac3427a7e4d58e934077f0833c2dbb484f01.002.1,2026-11-11T18:06:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.98557eccc99607f2444692d9236df2d4f2c31436.002.1,2026-11-11T12:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.88ab3211b8a99b081c33c72cc54b1e38609a35fe.002.1,2026-11-10T20:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2c884d62c5233906bc7ab164d44b2cef98b53668.002.1,2026-11-10T12:55:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.004.1",
-                "areaDesc": "Catalina and Santa Barbara Islands",
+                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.003.1",
+                "areaDesc": "Malibu Coast; Los Angeles County Beaches",
                 "geocode": {
                     "SAME": [
                         "006037"
                     ],
                     "UGC": [
-                        "CAZ087"
+                        "CAZ362",
+                        "CAZ366"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ087"
+                    "https://api.weather.gov/zones/forecast/CAZ362",
+                    "https://api.weather.gov/zones/forecast/CAZ366"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.004.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.004.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T11:44:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-15T15:55:00-08:00",
-                "effective": "2026-11-15T15:55:00-08:00",
-                "onset": "2026-11-15T15:55:00-08:00",
-                "expires": "2026-11-16T09:00:00-08:00",
-                "ends": "2026-11-17T15:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Beach Hazards Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Los Angeles/Oxnard CA",
-                "headline": "Beach Hazards Statement issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...Dangerous rip currents and breaking waves due to\nelevated surf. Minor tidal overflows are possible during\nmorning high tides.\n\n* WHERE...Catalina and Santa Barbara Islands.\n\n* WHEN...Through Tuesday afternoon.\n\n* IMPACTS...There is an increased risk of ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Waves can\nwash people off beaches and rocks, and capsize small boats\nnearshore. Minor tidal overflows are possible during high\ntides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Minor tidal\noverflows are possible in areas with largest surf, especially\nduring morning high tide.",
-                "instruction": "Remain out of the water due to hazardous swimming conditions, or\nstay near occupied lifeguard towers. Rock jetties can be deadly\nin such conditions, stay off the rocks.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWLOX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KLOX 152355"
-                    ],
-                    "NWSheadline": [
-                        "BEACH HAZARDS STATEMENT REMAINS IN EFFECT THROUGH TUESDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KLOX.BH.S.0025.000000T0000Z-261117T2300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-17T15:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.005.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.005.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.005.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.005.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.005.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.005.1,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.004.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.004.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.004.1,2026-11-12T11:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1578ac3427a7e4d58e934077f0833c2dbb484f01.002.1,2026-11-11T18:06:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.98557eccc99607f2444692d9236df2d4f2c31436.002.1,2026-11-11T12:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.88ab3211b8a99b081c33c72cc54b1e38609a35fe.002.1,2026-11-10T20:13:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2c884d62c5233906bc7ab164d44b2cef98b53668.002.1,2026-11-10T12:55:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "BHS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a32cf3713c07638377c4bc50ae0bd5c2fe58b562.002.1",
-                "areaDesc": "Ventura County Beaches",
-                "geocode": {
-                    "SAME": [
-                        "006111"
-                    ],
-                    "UGC": [
-                        "CAZ354"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ354"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.002.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.003.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.d4174fe930e84d0785b48b165ea6dd46478e740f.003.1",
                         "sender": "w-nws.webmaster@noaa.gov",
                         "sent": "2026-11-15T11:44:00-08:00"
                     }
@@ -403,7 +516,7 @@
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Los Angeles/Oxnard CA",
                 "headline": "High Surf Advisory issued November 15 at 3:55PM PST until November 17 at 3:00PM PST by NWS Los Angeles/Oxnard CA",
-                "description": "* WHAT...Large breaking waves of 6 to 8 feet. Occasional larger\nsets may occur near Ventura Harbor. Dangerous rip currents\nexpected.\n\n* WHERE...Ventura County Beaches.\n\n* WHEN...Until 3 PM PST Tuesday.\n\n* IMPACTS...There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore. Minor tidal\noverflow during morning high tides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Some of these\nimpacts may be moderate to significant beach erosion and\nshallow flooding of normally dry beaches and walkways.",
+                "description": "* WHAT...Large breaking waves of 6 to 8 feet. Dangerous rip\ncurrents expected.\n\n* WHERE...Malibu Coast and Los Angeles County Beaches.\n\n* WHEN...Until 3 PM PST Tuesday.\n\n* IMPACTS...There is an increased risk for ocean drowning. Rip\ncurrents can pull swimmers and surfers out to sea. Large\nbreaking waves can cause injury, wash people off beaches and\nrocks, and capsize small boats near shore. Minor tidal\noverflow during morning high tides.\n\n* ADDITIONAL DETAILS...A series of significant west-\nnorthwesterly swells are expected to produce large surf this\nweek with highest surf and greatest impacts potentially\npeaking again Monday, Wednesday and Thursday. Some of these\nimpacts may be moderate to significant beach erosion and\nshallow flooding of normally dry beaches and walkways.",
                 "instruction": "Remain out of the water due to dangerous surf conditions, or stay\nnear occupied lifeguard towers. Rock jetties can be deadly in\nsuch conditions, stay off the rocks.",
                 "response": "Avoid",
                 "note": null,
@@ -429,7 +542,7 @@
                         "2026-11-17T15:00:00-08:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.003.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.003.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.002.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.003.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.002.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.003.2,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.003.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.003.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.002.1,2026-11-12T11:49:00-08:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ca32e446ad296567057f9b76ed8d3698ffe493c9.004.1,2026-11-15T03:24:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c6968f0de53997f3c1c3653cc95153438cc602bf.004.1,2026-11-14T20:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.4ace4d0f38aaf9d505d0be4f8ef5d22576865faa.003.1,2026-11-14T18:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.23e2632c41b8a812adeaffc0dd96c84ff5e8f0c1.004.1,2026-11-14T04:02:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a511b79eef9e40c20b5e31f137aae53f00caeaed.003.1,2026-11-13T17:35:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.675a494808a43fed225a9a9482bf4a210fafc816.001.3,2026-11-13T12:05:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.082b3f827ff558b13bbd93ae6bc34fa52dcdb8b2.002.1,2026-11-13T08:12:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.20f63b115ddf5e3203e05514961b1f2b9cb1c088.002.1,2026-11-12T18:38:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.e551052e39bdf7255693559f067f965836dc7347.003.1,2026-11-12T11:49:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -791,6 +904,85 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
+                "areaDesc": "Mono",
+                "geocode": {
+                    "SAME": [
+                        "006051"
+                    ],
+                    "UGC": [
+                        "CAZ073"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ073"
+                ],
+                "references": [],
+                "sent": "2026-11-15T11:46:00-08:00",
+                "effective": "2026-11-15T11:46:00-08:00",
+                "onset": "2026-11-18T04:00:00-08:00",
+                "expires": "2026-11-16T12:15:00-08:00",
+                "ends": "2026-11-20T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Reno NV",
+                "headline": "Winter Storm Watch issued November 15 at 11:46AM PST until November 20 at 4:00AM PST by NWS Reno NV",
+                "description": "* WHAT...Heavy snow. Snow accumulations between 2 to 3 feet west of\nUS-395, 10 to 20 inches along US-395, and 2 to 8 inches east of\nUS-395. Ridgetop winds as high as 80 mph.\n\n* WHERE...Mono County.\n\n* WHEN...From late Tuesday night through late Thursday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact the Wednesday morning and evening\ncommutes. Strong winds could cause damage to trees and power lines.",
+                "instruction": "Slow down and use caution while traveling. The latest road conditions\nfor the state you are calling from can be obtained by calling 5 1 1.\nCheck with Caltrans and NDOT for the latest road conditions.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWREV"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS45 KREV 151946"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH IN EFFECT FROM LATE TUESDAY NIGHT THROUGH LATE THURSDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KREV.WS.A.0006.261118T1200Z-261120T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-20T04:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.001.2",
             "type": "Feature",
             "geometry": null,
@@ -883,85 +1075,6 @@
                     ],
                     "NationalWeatherService": [
                         "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.23e8c17b27c37a4e4af233d3a09666c860908307.003.1",
-                "areaDesc": "Mono",
-                "geocode": {
-                    "SAME": [
-                        "006051"
-                    ],
-                    "UGC": [
-                        "CAZ073"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ073"
-                ],
-                "references": [],
-                "sent": "2026-11-15T11:46:00-08:00",
-                "effective": "2026-11-15T11:46:00-08:00",
-                "onset": "2026-11-18T04:00:00-08:00",
-                "expires": "2026-11-16T12:15:00-08:00",
-                "ends": "2026-11-20T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Reno NV",
-                "headline": "Winter Storm Watch issued November 15 at 11:46AM PST until November 20 at 4:00AM PST by NWS Reno NV",
-                "description": "* WHAT...Heavy snow. Snow accumulations between 2 to 3 feet west of\nUS-395, 10 to 20 inches along US-395, and 2 to 8 inches east of\nUS-395. Ridgetop winds as high as 80 mph.\n\n* WHERE...Mono County.\n\n* WHEN...From late Tuesday night through late Thursday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions could impact the Wednesday morning and evening\ncommutes. Strong winds could cause damage to trees and power lines.",
-                "instruction": "Slow down and use caution while traveling. The latest road conditions\nfor the state you are calling from can be obtained by calling 5 1 1.\nCheck with Caltrans and NDOT for the latest road conditions.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWREV"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS45 KREV 151946"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH IN EFFECT FROM LATE TUESDAY NIGHT THROUGH LATE THURSDAY NIGHT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KREV.WS.A.0006.261118T1200Z-261120T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-20T04:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
                     ]
                 }
             }
@@ -1325,94 +1438,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
-                "areaDesc": "Western Shasta County Mountains Above 3000 ft; Eastern Shasta County Mountains and Southern Cascades Above 3000 ft; Tehama County Coast Range Above 3000 ft; Glenn and Colusa County Coast Range Above 3000 ft",
-                "geocode": {
-                    "SAME": [
-                        "006089",
-                        "006103",
-                        "006021",
-                        "006011"
-                    ],
-                    "UGC": [
-                        "CAZ121",
-                        "CAZ126",
-                        "CAZ140",
-                        "CAZ143"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ121",
-                    "https://api.weather.gov/zones/forecast/CAZ126",
-                    "https://api.weather.gov/zones/forecast/CAZ140",
-                    "https://api.weather.gov/zones/forecast/CAZ143"
-                ],
-                "references": [],
-                "sent": "2026-11-15T11:40:00-08:00",
-                "effective": "2026-11-15T11:40:00-08:00",
-                "onset": "2026-11-17T19:00:00-08:00",
-                "expires": "2026-11-16T16:30:00-08:00",
-                "ends": "2026-11-19T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Winter Storm Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Sacramento CA",
-                "headline": "Winter Storm Watch issued November 15 at 11:40AM PST until November 19 at 4:00AM PST by NWS Sacramento CA",
-                "description": "* WHAT...Heavy snow possible above 4000 feet. Total snow\naccumulations 8 to 12 inches, with up to 2 feet possible over the\nhighest peaks. Winds could gust as high as 40 mph.\n\n* WHERE...Coast Range above 4000 ft and Shasta County mountains above\n4000 feet.\n\n* WHEN...From Tuesday evening through early Thursday morning.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Wednesday morning and evening commutes. Gusty\nwinds could bring down tree branches and significant reductions in\nvisibilities.\n\n* ADDITIONAL DETAILS...Snow levels around 4500-5000 feet Tuesday\nnight, lowering to 4000-4500 feet by Wednesday morning. Heaviest\nsnow Tuesday night into Wednesday, with snowfall rates 1-2+ inches\nper hour.",
-                "instruction": "Check the latest road conditions from Caltrans online at\nquickmap.dot.ca.gov or dial 5 1 1.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWSTO"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS46 KSTO 151940"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH IN EFFECT FROM TUESDAY EVENING THROUGH EARLY THURSDAY MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KSTO.WS.A.0005.261118T0300Z-261119T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-19T04:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "WSA"
-                    ],
-                    "NationalWeatherService": [
-                        "WSA"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.001.2",
             "type": "Feature",
             "geometry": null,
@@ -1502,6 +1527,196 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-16T22:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.71f922528695b39a4563f43fad1d7cb51abeb6a8.002.1",
+                "areaDesc": "Western Shasta County Mountains Above 3000 ft; Eastern Shasta County Mountains and Southern Cascades Above 3000 ft; Tehama County Coast Range Above 3000 ft; Glenn and Colusa County Coast Range Above 3000 ft",
+                "geocode": {
+                    "SAME": [
+                        "006089",
+                        "006103",
+                        "006021",
+                        "006011"
+                    ],
+                    "UGC": [
+                        "CAZ121",
+                        "CAZ126",
+                        "CAZ140",
+                        "CAZ143"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ121",
+                    "https://api.weather.gov/zones/forecast/CAZ126",
+                    "https://api.weather.gov/zones/forecast/CAZ140",
+                    "https://api.weather.gov/zones/forecast/CAZ143"
+                ],
+                "references": [],
+                "sent": "2026-11-15T11:40:00-08:00",
+                "effective": "2026-11-15T11:40:00-08:00",
+                "onset": "2026-11-17T19:00:00-08:00",
+                "expires": "2026-11-16T16:30:00-08:00",
+                "ends": "2026-11-19T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Winter Storm Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Sacramento CA",
+                "headline": "Winter Storm Watch issued November 15 at 11:40AM PST until November 19 at 4:00AM PST by NWS Sacramento CA",
+                "description": "* WHAT...Heavy snow possible above 4000 feet. Total snow\naccumulations 8 to 12 inches, with up to 2 feet possible over the\nhighest peaks. Winds could gust as high as 40 mph.\n\n* WHERE...Coast Range above 4000 ft and Shasta County mountains above\n4000 feet.\n\n* WHEN...From Tuesday evening through early Thursday morning.\n\n* IMPACTS...Travel could be very difficult. The hazardous conditions\ncould impact the Wednesday morning and evening commutes. Gusty\nwinds could bring down tree branches and significant reductions in\nvisibilities.\n\n* ADDITIONAL DETAILS...Snow levels around 4500-5000 feet Tuesday\nnight, lowering to 4000-4500 feet by Wednesday morning. Heaviest\nsnow Tuesday night into Wednesday, with snowfall rates 1-2+ inches\nper hour.",
+                "instruction": "Check the latest road conditions from Caltrans online at\nquickmap.dot.ca.gov or dial 5 1 1.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWSTO"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS46 KSTO 151940"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH IN EFFECT FROM TUESDAY EVENING THROUGH EARLY THURSDAY MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KSTO.WS.A.0005.261118T0300Z-261119T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T04:00:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSA"
+                    ],
+                    "NationalWeatherService": [
+                        "WSA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
+                "areaDesc": "Yosemite NP outside of the valley; San Joaquin River Canyon; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
+                "geocode": {
+                    "SAME": [
+                        "006039",
+                        "006043",
+                        "006109",
+                        "006019",
+                        "006107"
+                    ],
+                    "UGC": [
+                        "CAZ323",
+                        "CAZ325",
+                        "CAZ326",
+                        "CAZ327",
+                        "CAZ328",
+                        "CAZ329",
+                        "CAZ330"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ323",
+                    "https://api.weather.gov/zones/forecast/CAZ325",
+                    "https://api.weather.gov/zones/forecast/CAZ326",
+                    "https://api.weather.gov/zones/forecast/CAZ327",
+                    "https://api.weather.gov/zones/forecast/CAZ328",
+                    "https://api.weather.gov/zones/forecast/CAZ329",
+                    "https://api.weather.gov/zones/forecast/CAZ330"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1cc1426ed3580aa901b74ced2bc7ae34202fc4f0.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.1cc1426ed3580aa901b74ced2bc7ae34202fc4f0.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T08:42:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-15T11:19:00-08:00",
+                "effective": "2026-11-15T11:19:00-08:00",
+                "onset": "2026-11-15T11:19:00-08:00",
+                "expires": "2026-11-15T20:00:00-08:00",
+                "ends": "2026-11-17T04:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Hanford CA",
+                "headline": "Winter Weather Advisory issued November 15 at 11:19AM PST until November 17 at 4:00AM PST by NWS Hanford CA",
+                "description": "* WHAT...For the Winter Weather Advisory, snow accumulations up to 6\ninches. For the Winter Storm Watch Above 5, 000 feet, heavy snow\npossible. Total snow accumulations between 1 to 2 feet expected\nabove this elevation; accumulations around 4 feet above 8,000 feet.\nWinds could gust as high as 45 mph.\n\n* WHERE...Sierra Nevada above 5,000 feet.\n\n* WHEN...For the Winter Weather Advisory, until 4 AM PST Tuesday. For\nthe Winter Storm Watch, from late Tuesday night through late\nThursday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions will impact daily travel. Gusty winds could\nbring down tree branches. Roads, and especially bridges and\noverpasses, will likely become slick and hazardous.",
+                "instruction": "Monitor the latest forecasts for updates on this situation.\n\nPersons are urged to stay indoors until conditions improve. If you\nmust go outside, dress in layers. Several layers of clothes will keep\nyou warmer than a single heavy coat. Cover exposed skin to reduce\nyour risk of frostbite or hypothermia. Gloves, a scarf, and a hat\nwill keep you from losing your body heat.\n\nPersons should consider delaying all travel. If travel is absolutely\nnecessary, drive with extreme caution. Consider taking a winter storm\nkit along with you, including such items as tire chains, booster\ncables, flashlight, shovel, blankets and extra clothing. Also take\nwater, a first aid kit, and anything else that would help you survive\nin case you become stranded.\n\nSlow down and use caution while traveling. The latest road conditions\nfor the state you are calling from can be obtained by calling 5 1 1.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWHNX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS46 KHNX 151919"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WATCH IN EFFECT FROM LATE TUESDAY NIGHT THROUGH LATE THURSDAY NIGHT ABOVE 5,000 FEET... ...WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 4 AM PST TUESDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KHNX.WW.Y.0007.000000T0000Z-261117T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-17T04:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49ecfc2bcb8a03e7f35fa4dcea2614dffd754803.001.1,2026-11-15T00:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.68e592b4b7065e874d26c2784cc332ecdbf7b89a.001.1,2026-11-14T16:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1642be4d5166cb64428b0bedf17aa2fd4a658ecf.001.2,2026-11-14T08:50:00-08:00"
                     ]
                 },
                 "scope": "Public",
@@ -1689,108 +1904,6 @@
                     ],
                     "NationalWeatherService": [
                         "WSA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f3b56e92f70250f520f4e94e579b3fb12b5d95af.001.2",
-                "areaDesc": "Yosemite NP outside of the valley; San Joaquin River Canyon; Upper San Joaquin River; Kaiser to Rodgers Ridge; Kings Canyon NP; Grant Grove Area; Sequoia NP",
-                "geocode": {
-                    "SAME": [
-                        "006039",
-                        "006043",
-                        "006109",
-                        "006019",
-                        "006107"
-                    ],
-                    "UGC": [
-                        "CAZ323",
-                        "CAZ325",
-                        "CAZ326",
-                        "CAZ327",
-                        "CAZ328",
-                        "CAZ329",
-                        "CAZ330"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ323",
-                    "https://api.weather.gov/zones/forecast/CAZ325",
-                    "https://api.weather.gov/zones/forecast/CAZ326",
-                    "https://api.weather.gov/zones/forecast/CAZ327",
-                    "https://api.weather.gov/zones/forecast/CAZ328",
-                    "https://api.weather.gov/zones/forecast/CAZ329",
-                    "https://api.weather.gov/zones/forecast/CAZ330"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1cc1426ed3580aa901b74ced2bc7ae34202fc4f0.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.1cc1426ed3580aa901b74ced2bc7ae34202fc4f0.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T08:42:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-15T11:19:00-08:00",
-                "effective": "2026-11-15T11:19:00-08:00",
-                "onset": "2026-11-15T11:19:00-08:00",
-                "expires": "2026-11-15T20:00:00-08:00",
-                "ends": "2026-11-17T04:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Hanford CA",
-                "headline": "Winter Weather Advisory issued November 15 at 11:19AM PST until November 17 at 4:00AM PST by NWS Hanford CA",
-                "description": "* WHAT...For the Winter Weather Advisory, snow accumulations up to 6\ninches. For the Winter Storm Watch Above 5, 000 feet, heavy snow\npossible. Total snow accumulations between 1 to 2 feet expected\nabove this elevation; accumulations around 4 feet above 8,000 feet.\nWinds could gust as high as 45 mph.\n\n* WHERE...Sierra Nevada above 5,000 feet.\n\n* WHEN...For the Winter Weather Advisory, until 4 AM PST Tuesday. For\nthe Winter Storm Watch, from late Tuesday night through late\nThursday night.\n\n* IMPACTS...Travel could be very difficult to impossible. The\nhazardous conditions will impact daily travel. Gusty winds could\nbring down tree branches. Roads, and especially bridges and\noverpasses, will likely become slick and hazardous.",
-                "instruction": "Monitor the latest forecasts for updates on this situation.\n\nPersons are urged to stay indoors until conditions improve. If you\nmust go outside, dress in layers. Several layers of clothes will keep\nyou warmer than a single heavy coat. Cover exposed skin to reduce\nyour risk of frostbite or hypothermia. Gloves, a scarf, and a hat\nwill keep you from losing your body heat.\n\nPersons should consider delaying all travel. If travel is absolutely\nnecessary, drive with extreme caution. Consider taking a winter storm\nkit along with you, including such items as tire chains, booster\ncables, flashlight, shovel, blankets and extra clothing. Also take\nwater, a first aid kit, and anything else that would help you survive\nin case you become stranded.\n\nSlow down and use caution while traveling. The latest road conditions\nfor the state you are calling from can be obtained by calling 5 1 1.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWHNX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS46 KHNX 151919"
-                    ],
-                    "NWSheadline": [
-                        "WINTER STORM WATCH IN EFFECT FROM LATE TUESDAY NIGHT THROUGH LATE THURSDAY NIGHT ABOVE 5,000 FEET... ...WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 4 AM PST TUESDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KHNX.WW.Y.0007.000000T0000Z-261117T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-17T04:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.49ecfc2bcb8a03e7f35fa4dcea2614dffd754803.001.1,2026-11-15T00:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.68e592b4b7065e874d26c2784cc332ecdbf7b89a.001.1,2026-11-14T16:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.1642be4d5166cb64428b0bedf17aa2fd4a658ecf.001.2,2026-11-14T08:50:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
                     ]
                 }
             }
@@ -2051,5 +2164,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-16T00:50:25+00:00"
+    "updated": "2026-11-16T01:35:00+00:00"
 }
