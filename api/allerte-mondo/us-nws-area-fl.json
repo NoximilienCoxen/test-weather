@@ -10,6 +10,98 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5121b2661fe9e3d87d633f5bb0585839f17926ba.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.5121b2661fe9e3d87d633f5bb0585839f17926ba.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.5121b2661fe9e3d87d633f5bb0585839f17926ba.001.1",
+                "areaDesc": "Coastal Palm Beach County; Coastal Broward County; Coastal Miami Dade County",
+                "geocode": {
+                    "SAME": [
+                        "012099",
+                        "012011",
+                        "012086"
+                    ],
+                    "UGC": [
+                        "FLZ168",
+                        "FLZ172",
+                        "FLZ173"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ168",
+                    "https://api.weather.gov/zones/forecast/FLZ172",
+                    "https://api.weather.gov/zones/forecast/FLZ173"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.277a1c7682f936432757ccb6e36143cb349d329c.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.277a1c7682f936432757ccb6e36143cb349d329c.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T22:48:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-16T05:18:00-05:00",
+                "effective": "2026-11-16T05:18:00-05:00",
+                "onset": "2026-11-16T07:00:00-05:00",
+                "expires": "2026-11-16T13:30:00-05:00",
+                "ends": "2026-11-18T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Miami FL",
+                "headline": "Rip Current Statement issued November 16 at 5:18AM EST until November 18 at 7:00PM EST by NWS Miami FL",
+                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Coastal Palm Beach County, Coastal Broward County and\nCoastal Miami Dade County.\n\n* WHEN...From 7 AM EST Monday through Wednesday evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMFL"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KMFL 161018"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH WEDNESDAY EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMFL.RP.S.0033.261116T1200Z-261119T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-18T19:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1,2026-11-15T14:21:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f42a75029320c76172cde71a3f207e772c3c1a90.002.1",
             "type": "Feature",
             "geometry": null,
@@ -370,95 +462,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.277a1c7682f936432757ccb6e36143cb349d329c.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.277a1c7682f936432757ccb6e36143cb349d329c.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.277a1c7682f936432757ccb6e36143cb349d329c.001.1",
-                "areaDesc": "Coastal Palm Beach County; Coastal Broward County; Coastal Miami Dade County",
-                "geocode": {
-                    "SAME": [
-                        "012099",
-                        "012011",
-                        "012086"
-                    ],
-                    "UGC": [
-                        "FLZ168",
-                        "FLZ172",
-                        "FLZ173"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ168",
-                    "https://api.weather.gov/zones/forecast/FLZ172",
-                    "https://api.weather.gov/zones/forecast/FLZ173"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.af63bf6d621f37e7d58fb3ec8abb7aa20d84d7aa.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-15T14:21:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-15T22:48:00-05:00",
-                "effective": "2026-11-15T22:48:00-05:00",
-                "onset": "2026-11-16T07:00:00-05:00",
-                "expires": "2026-11-16T07:00:00-05:00",
-                "ends": "2026-11-18T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Rip Current Statement issued November 15 at 10:48PM EST until November 18 at 7:00PM EST by NWS Miami FL",
-                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Coastal Palm Beach County, Coastal Broward County and\nCoastal Miami Dade County.\n\n* WHEN...From 7 AM EST Monday through Wednesday evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KMFL 160348"
-                    ],
-                    "NWSheadline": [
-                        "HIGH RIP CURRENT RISK NOW IN EFFECT FROM 7 AM EST MONDAY THROUGH WEDNESDAY EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KMFL.RP.S.0033.261116T1200Z-261119T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-18T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8a512d3c2eec81849723016cc064ff03caa5e74c.001.1",
             "type": "Feature",
             "geometry": {
@@ -799,5 +802,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-16T10:05:18+00:00"
+    "updated": "2026-11-16T10:55:07+00:00"
 }

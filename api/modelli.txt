@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
@@ -28,7 +28,7 @@
     Forli    48/48 ore  quota 40.0 m  prime [7.1, 7.2, 6.7]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
-    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [7.0, 6.9, 6.7]
     Forli    48/48 ore  quota 40.0 m  prime [7.5, 7.8, 7.8]
@@ -47,9 +47,9 @@
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [7.7, 7.8, 7.7]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [7.6, 7.9, 7.6]
     Bergen   48/48 ore  quota 17.0 m  prime [2.5, 3.5, 4.1]
@@ -70,8 +70,7 @@
   Noceto         best_match = icon_seamless
 
 === cosa torna e cosa manca, con le variabili che l'app chiede ===
-  Tokyo          ore    168  assenti=-  tutte nulle=-
-  Tokyo          giorni   7  assenti=-  tutte nulle=-
+  Tokyo          HTTP 0  URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>
   NewYork        ore    168  assenti=-  tutte nulle=-
   NewYork        giorni   7  assenti=-  tutte nulle=-
   Oslo           ore    168  assenti=-  tutte nulle=-

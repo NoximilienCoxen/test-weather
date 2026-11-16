@@ -2,8 +2,8 @@
 <feed xmlns="http://www.w3.org/2005/Atom" lang="ja">
   <title>長期（随時）</title>
   <subtitle>JMAXML publishing feed</subtitle>
-  <updated>2026-11-16T18:52:41+09:00</updated>
-  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794822761</id>
+  <updated>2026-11-16T19:26:40+09:00</updated>
+  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#long_1794824800</id>
   <link rel="related" href="https://www.jma.go.jp/"/>
   <link rel="self" href="https://www.data.jma.go.jp/developer/xml/feed/extra.xml"/>
   <link rel="hub" href="http://alert-hub.appspot.com/"/>
@@ -11,6 +11,36 @@
 <a href="https://www.jma.go.jp/jma/kishou/info/coment.html">利用規約</a>,
 <a href="https://www.jma.go.jp/jma/en/copyright.html">Terms of Use</a>
 ]]></rights>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261116102624_0_VPWW53_250000.xml</id>
+    <updated>2026-11-16T10:26:23Z</updated>
+    <author>
+      <name>彦根地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261116102624_0_VPWW53_250000.xml"/>
+    <content type="text">【滋賀県気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261116102624_0_VPWW54_250000.xml</id>
+    <updated>2026-11-16T10:26:23Z</updated>
+    <author>
+      <name>彦根地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261116102624_0_VPWW54_250000.xml"/>
+    <content type="text">【滋賀県気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261116102610_0_VPWW58_250000.xml</id>
+    <updated>2026-11-16T10:26:09Z</updated>
+    <author>
+      <name>彦根地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261116102610_0_VPWW58_250000.xml"/>
+    <content type="text">【滋賀県暴風（雪）警報・注意報】注意報を解除します。</content>
+  </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261116095222_0_VPWW53_460040.xml</id>
@@ -36190,45 +36220,5 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261109104511_0_VPWW58_220000.xml"/>
     <content type="text">【静岡県暴風（雪）警報・注意報】伊豆では、強風に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261109101221_0_VPWW54_300000.xml</id>
-    <updated>2026-11-09T10:12:20Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261109101221_0_VPWW54_300000.xml"/>
-    <content type="text">【和歌山県気象警報・注意報】和歌山県では、強風に注意してください。南部では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261109101221_0_VPWW53_300000.xml</id>
-    <updated>2026-11-09T10:12:20Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261109101221_0_VPWW53_300000.xml"/>
-    <content type="text">【和歌山県気象警報・注意報】和歌山県では、強風に注意してください。南部では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261109101216_0_VPWW59_300000.xml</id>
-    <updated>2026-11-09T10:12:15Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261109101216_0_VPWW59_300000.xml"/>
-    <content type="text">【和歌山県波浪警報・注意報】南部では、高波に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261109101216_0_VPWW58_300000.xml</id>
-    <updated>2026-11-09T10:12:15Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261109101216_0_VPWW58_300000.xml"/>
-    <content type="text">【和歌山県暴風（雪）警報・注意報】和歌山県では、強風に注意してください。</content>
   </entry>
 </feed>
