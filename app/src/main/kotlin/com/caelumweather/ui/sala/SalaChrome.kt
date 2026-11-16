@@ -208,8 +208,18 @@ fun PannelloSala(
                 // Quando il contenuto cambia altezza la scheda scivola alla
                 // misura nuova invece di saltarci.
                 .altezzaMorbida()
-                .sfumaAiBordi(scorrimento)
-                .verticalScroll(scorrimento)
+                // **Lo scorrimento interno solo con un tetto.** Senza, il
+                // pannello sta dentro lo scorrimento della Shell, che gli da'
+                // altezza infinita: due scorrimenti verticali annidati senza
+                // misura fanno chiudere l'app all'avvio (il primo fotogramma,
+                // prima che la Shell conosca il carosello, e' proprio cosi').
+                .then(
+                    if (tetto != Dp.Unspecified) {
+                        Modifier.sfumaAiBordi(scorrimento).verticalScroll(scorrimento)
+                    } else {
+                        Modifier
+                    },
+                )
                 // **Queste misure sono state allargate e poi rimesse, e la nota
                 // resta perche' la prova conta piu' della misura.** Il ragionamento
                 // era: il pannello e' ancorato in basso, si dimensiona sul

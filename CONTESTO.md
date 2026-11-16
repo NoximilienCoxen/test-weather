@@ -8748,3 +8748,14 @@ Job `prova` in `build.yml`: su ogni push di un ramo che non e' `main` pubblica
 l'APK di debug nella prerelease `apk-prova` (file `weather-prova.apk`). Stessa
 firma di `apk-latest`: si installa sopra senza perdere i dati, e si torna a
 main reinstallando `weather.apk`. `apk-latest` resta solo di `main`.
+
+## 80. La build di prova si chiudeva all'avvio
+
+Causa: `PannelloSala` metteva sempre il proprio `verticalScroll`, ma sta dentro
+lo scorrimento della Shell. Al primo fotogramma la Shell non conosce ancora il
+carosello, il tetto e' `Dp.Unspecified`, il pannello riceve altezza infinita e
+Compose rifiuta due scorrimenti verticali annidati senza misura: eccezione,
+app chiusa. Adesso scorrimento e sfumatura si mettono solo quando il tetto c'e'.
+`PannelloTettoTest` prova i due casi dentro una colonna che scorre. La prova
+della release sull'emulatore l'avrebbe preso, ma gira dopo la pubblicazione di
+`apk-prova`: lezione, il job `prova` deve aspettare `screenshots`.
