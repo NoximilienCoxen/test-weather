@@ -3,51 +3,52 @@ w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/c
 w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:123:22 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
 w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:15 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
 w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:25 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt:1045:38 Unresolved label.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:818:21 No value passed for parameter 'pageContent'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:25 Syntax error: Expecting an argument.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:25 Syntax error: Expecting ')'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:26 'fun Modifier.pointerInput(block: suspend PointerInputScope.() -> Unit): Modifier' is deprecated. Modifier.pointerInput must provide one or more 'key' parameters that define the identity of the modifier and determine when its previous input processing coroutine should be cancelled and a new effect launched for the new key.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:26 Candidate 'fun Modifier.pointerInput(block: suspend PointerInputScope.() -> Unit): Modifier' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:39 Unresolved reference 'invoke'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:865:29 Suspend function 'suspend fun PointerInputScope.awaitEachGesture(block: suspend AwaitPointerEventScope.() -> Unit): Unit' can only be called from a coroutine or another suspend function.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:865:29 Candidate 'suspend fun PointerInputScope.awaitEachGesture(block: suspend AwaitPointerEventScope.() -> Unit): Unit' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:884:26 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:895:25 Unresolved reference 'flingBehavior'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:903:26 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:904:21 Syntax error: Expecting an element.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:904:25 An explicit type is required on a value parameter.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:924:43 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:929:49 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:941:51 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:946:25 @Composable invocations can only happen from the context of a @Composable function
 
 === ultime 120 righe del log ===
-> Task :baselineprofile:processDebugManifest
-> Task :baselineprofile:processDebugResources FROM-CACHE
-> Task :baselineprofile:mergeDebugNativeLibs
-> Task :baselineprofile:dexBuilderDebug FROM-CACHE
-> Task :baselineprofile:mergeProjectDexDebug FROM-CACHE
-> Task :app:optimizeDebugResources
-> Task :baselineprofile:writeDebugSigningConfigVersions
-
-> Task :baselineprofile:stripDebugDebugSymbols
-Unable to strip the following libraries, packaging them as they are: libbenchmarkNative.so, libtracing_perfetto.so. Run with --info option to learn more.
-
-> Task :wear:preBuild UP-TO-DATE
-> Task :wear:preDebugBuild UP-TO-DATE
-> Task :core:stripDebugDebugSymbols NO-SOURCE
-> Task :wear:mergeDebugJniLibFolders
-> Task :core:copyDebugJniLibsProjectAndLocalJars
+> Task :wear:mergeDebugNativeLibs
 > Task :wear:mergeDebugArtProfile
 > Task :wear:desugarDebugFileDependencies FROM-CACHE
-> Task :wear:mergeDebugNativeLibs
 
 > Task :wear:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
 
-> Task :wear:generateDebugResources FROM-CACHE
 > Task :wear:extractDebugNativeSymbolTables FROM-CACHE
 > Task :wear:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :wear:generateDebugResources FROM-CACHE
 > Task :wear:packageDebugResources FROM-CACHE
 > Task :wear:javaPreCompileDebug FROM-CACHE
 > Task :wear:processDebugNavigationResources FROM-CACHE
 > Task :wear:parseDebugLocalResources FROM-CACHE
-> Task :wear:checkDebugAarMetadata
-> Task :wear:mapDebugSourceSetPaths
-> Task :wear:compileDebugNavigationResources FROM-CACHE
 > Task :wear:generateDebugRFile FROM-CACHE
+> Task :wear:mapDebugSourceSetPaths
+> Task :wear:checkDebugAarMetadata
+> Task :wear:compileDebugNavigationResources FROM-CACHE
 > Task :wear:createDebugCompatibleScreenManifests
 > Task :wear:extractDeepLinksDebug FROM-CACHE
 > Task :wear:mergeDebugResources FROM-CACHE
+> Task :wear:checkDebugDuplicateClasses
 > Task :wear:processDebugMainManifest
+> Task :wear:mergeDebugStartupProfile
 > Task :wear:processDebugManifest
 > Task :wear:processDebugManifestForPackage
-> Task :wear:checkDebugDuplicateClasses
-> Task :wear:mergeDebugStartupProfile
+> Task :baselineprofile:validateSigningDebug
 > Task :wear:mergeExtDexDebug FROM-CACHE
 > Task :wear:generateDebugAssets UP-TO-DATE
 > Task :wear:mergeDebugAssets
@@ -60,16 +61,15 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :wear:validateSigningDebug
 > Task :wear:writeDebugAppMetadata
 > Task :wear:writeDebugSigningConfigVersions
-> Task :baselineprofile:validateSigningDebug
-> Task :wear:optimizeDebugResources
 > Task :baselineprofile:packageDebug
 > Task :baselineprofile:assembleDebug
 > Task :baselineprofile:createDebugApkListingFileRedirect
+> Task :wear:optimizeDebugResources
 > Task :core:compileDebugKotlin
 > Task :core:compileDebugJavaWithJavac NO-SOURCE
 > Task :core:compressDebugJavaRes FROM-CACHE
-> Task :core:bundleLibCompileToJarDebug
 > Task :core:bundleLibRuntimeToJarDebug
+> Task :core:bundleLibCompileToJarDebug
 > Task :core:bundleLibRuntimeToDirDebug
 > Task :core:generateDebugLintModel
 > Task :core:createFullJarDebug
@@ -88,22 +88,38 @@ w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/c
 w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:15 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
 w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:25 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
 
-> Task :wear:compileDebugJavaWithJavac NO-SOURCE
 > Task :wear:compressDebugJavaRes FROM-CACHE
+> Task :wear:compileDebugJavaWithJavac NO-SOURCE
 > Task :wear:dexBuilderDebug FROM-CACHE
 > Task :wear:mergeDebugGlobalSynthetics FROM-CACHE
-> Task :wear:generateDebugLintVitalReportModel
 > Task :wear:mergeDebugJavaResource
+> Task :wear:generateDebugLintVitalReportModel
 > Task :app:compileDebugKotlin
 > Task :core:lintVitalAnalyzeDebug
 
 > Task :app:compileDebugKotlin
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt:1045:38 Unresolved label.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:818:21 No value passed for parameter 'pageContent'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:25 Syntax error: Expecting an argument.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:25 Syntax error: Expecting ')'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:26 'fun Modifier.pointerInput(block: suspend PointerInputScope.() -> Unit): Modifier' is deprecated. Modifier.pointerInput must provide one or more 'key' parameters that define the identity of the modifier and determine when its previous input processing coroutine should be cancelled and a new effect launched for the new key.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:26 Candidate 'fun Modifier.pointerInput(block: suspend PointerInputScope.() -> Unit): Modifier' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:864:39 Unresolved reference 'invoke'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:865:29 Suspend function 'suspend fun PointerInputScope.awaitEachGesture(block: suspend AwaitPointerEventScope.() -> Unit): Unit' can only be called from a coroutine or another suspend function.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:865:29 Candidate 'suspend fun PointerInputScope.awaitEachGesture(block: suspend AwaitPointerEventScope.() -> Unit): Unit' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:884:26 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:895:25 Unresolved reference 'flingBehavior'.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:903:26 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:904:21 Syntax error: Expecting an element.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:904:25 An explicit type is required on a value parameter.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:924:43 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:929:49 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:941:51 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt:946:25 @Composable invocations can only happen from the context of a @Composable function
 
 > Task :app:compileDebugKotlin FAILED
 > Task :wear:mergeDexDebug
 > Task :wear:lintVitalAnalyzeDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794788548401.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794818238777.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/test-weather/test-weather/build/reports/problems/problems-report.html
 
@@ -112,10 +128,10 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
 > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
-   > Kotlin compiler: UNRESOLVED_LABEL
+   > Kotlin compiler: NO_VALUE_FOR_PARAMETER
        Kotlin compiler error
-         Unresolved label.
-         Location: /home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt line 1045
+         No value passed for parameter 'pageContent'.
+         Location: /home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaShell.kt line 818
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -123,6 +139,6 @@ Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.a
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 32s
+BUILD FAILED in 1m 7s
 150 actionable tasks: 92 executed, 58 from cache
 Configuration cache entry stored.
