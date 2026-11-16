@@ -8698,3 +8698,19 @@ sala, mentre previsione e allerte dello stesso avvio arrivavano. Un fallimento
 restava "Non disponibile" fino all'aggiornamento dopo, e la causa non era
 scritta da nessuna parte. Ora la richiesta si ripete una volta dopo due
 secondi, e ogni fallimento finisce nel log ("aria non arrivata").
+
+## 77. Via la colonna di icone: sette puntini sopra la barra delle ore
+
+Scelta dell'utente fra tre proposte (A colonna che sbiadisce, B puntini, C
+barra delle ore a richiesta): **B**. La colonna di sette dischi sul bordo
+destro si mangiava 40 punti di scheda e un pezzo di cielo.
+- `schedeLarghe` e' ora **vera di serie** (SettingsPrefs, UiState): chi non
+  l'aveva mai toccata perde la colonna; chi l'aveva spenta a mano la tiene. La
+  voce delle impostazioni si chiama "Colonna delle icone" e dice cosa aggiunge
+  (accesa = colonna), invertendo la levetta.
+- `PuntiniSale` (SalaIndizio.kt): sette puntini, quello della sala in scena un
+  trattino allungato nell'accento-sul-cielo, bersagli da 32x28 punti, nome della
+  sala per TalkBack e `selected`. Stanno dove sta l'indizio "scorri in su", che
+  sparisce al primo sfoglio: nessuna riga in piu'.
+- La cattura non trascina piu' la colonna (d11b): tocca il quarto puntino e
+  fotografa la luna (`d11b-puntini-luna`).

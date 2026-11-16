@@ -922,13 +922,25 @@ fun SalaShell(
                     }
                 }
 
+                // L'indizio "scorri in su" finche' non si e' sfogliato; poi, senza
+                // la colonna, i puntini delle sale nello stesso posto: nessuna
+                // riga in piu' sotto le schede.
+                val indizio = !sfogliate && pagerState.currentPage == 0
                 IndizioSfoglio(
-                    visibile = !sfogliate && pagerState.currentPage == 0,
+                    visibile = indizio,
                     prossima = rooms.getOrNull(1)?.heading ?: "",
                     palette = paletteCielo,
                     movimento = !ferme,
                     modifier = Modifier.fillMaxWidth().padding(end = riservaColonna, bottom = 6.dp),
                 )
+                if (larghe && !indizio) {
+                    PuntiniSale(
+                        sale = rooms,
+                        corrente = pagerState.currentPage,
+                        palette = palette,
+                        onVai = ::vaiA,
+                    )
+                }
 
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era

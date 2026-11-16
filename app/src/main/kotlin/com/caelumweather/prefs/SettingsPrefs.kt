@@ -247,7 +247,8 @@ data class Settings(
      * Schede larghe: la colonna delle sale sparisce e le schede prendono
      * tutta la larghezza. Le sale si sfogliano comunque col dito.
      */
-    val schedeLarghe: Boolean = false,
+    /** Senza la colonna delle icone: di serie dal 16 novembre (CONTESTO §77). */
+    val schedeLarghe: Boolean = true,
     /** Vero da quando la guida all'uso e' stata vista fino in fondo o saltata. */
     val guidaVista: Boolean = false,
     /** Le notifiche di pioggia e grandine in arrivo. Accese di norma. */
@@ -408,7 +409,7 @@ class SettingsPrefs(private val context: Context) {
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
             widgetColoriTelefono = prefs[KEY_WIDGET_COLORI_TELEFONO] ?: true,
             saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
-            schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: false,
+            schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: true,
             guidaVista = prefs[KEY_GUIDA_VISTA] ?: false,
             notifichePioggia = prefs[KEY_NOTIFICHE_PIOGGIA] ?: true,
             notificheAllerte = prefs[KEY_NOTIFICHE_ALLERTE] ?: true,

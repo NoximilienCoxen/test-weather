@@ -543,35 +543,23 @@ session() {
   sleep 2
   shoot "${slug}-sfoglio-breve-dopo-oggi"
 
-  # ── La colonna si trascina ──────────────────────────────────────────────────
+  # ── I puntini delle sale ────────────────────────────────────────────────────
   #
-  # **Il gesto nuovo, fotografato mentre e' in corso.** Tenere premuta la
-  # colonna e scorrere attraversa le sale con la sala sotto il dito, e accanto
-  # al dito compare il cartellino col nome: due cose che uno scatto a dito
-  # alzato non puo' mostrare, perche' a dito alzato il cartellino non c'e' piu'.
+  # Al posto della colonna di icone, che di serie non c'e' piu' (CONTESTO §77),
+  # sette puntini sopra la barra delle ore. Dopo lo sfoglio qui sopra
+  # l'indizio "scorri in su" e' sparito e i puntini sono al suo posto. Si tocca
+  # il quarto - la luna - e lo scatto deve mostrare la luna, col trattino
+  # allungato sul quarto puntino.
   #
-  # `input motionevent` tiene premuto fra un comando e l'altro - la stessa
-  # tecnica della rotazione della luna, e la ragione per cui li' non si usa una
-  # swipe: quella finisce prima dello scatto.
-  #
-  # I conti: la colonna e' centrata in verticale sullo schermo **intero** - sta
-  # fuori dal riquadro che tiene conto delle barre di sistema - ed e' fatta di
-  # sette bersagli da 48dp, quindi alta 336dp. Il suo asse sta a mezzo bersaglio
-  # piu' sei punti di margine dal bordo destro: trenta punti.
-  local passo=$(( 48 * PXDP / 100 ))
-  local asse=$(( W - 30 * PXDP / 100 ))
-  local cima=$(( H / 2 - 7 * passo / 2 ))
-  # Il centro del bersaglio numero $1, dal primo (0) al settimo (6).
-  bersaglio_y() { echo $(( cima + $1 * passo + passo / 2 )); }
-
-  echo "  -- colonna trascinata (asse $asse, passo $passo) --"
-  adbt shell input motionevent DOWN "$asse" "$(bersaglio_y 6)" >/dev/null 2>&1 || true
-  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 3)" >/dev/null 2>&1 || true
-  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
-  sleep 1
-  shoot "${slug}-d11b-colonna-trascinata"
-  adbt shell input motionevent UP "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
-  sleep 1
+  # I conti: sette bersagli da 32 punti centrati sullo schermo, quindi la luna
+  # (il quarto) sta al centro. In altezza la riga prende il posto dell'indizio,
+  # che negli scatti sta all'84,5% dello schermo.
+  local x_luna=$(( W / 2 ))
+  local y_puntini=$(( H * 845 / 1000 ))
+  echo "  -- puntini: tocco sulla luna ($x_luna, $y_puntini) --"
+  adbt shell input tap "$x_luna" "$y_puntini" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d11b-puntini-luna"
 
   # L'indietro da una scheda qualunque riporta alla prima, invece di chiudere
   # l'app: da sei schede sotto, uscire non e' quasi mai la risposta cercata.

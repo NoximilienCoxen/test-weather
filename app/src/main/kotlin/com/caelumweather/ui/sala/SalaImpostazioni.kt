@@ -229,11 +229,13 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = tr("Schede larghe", "Wide cards", "Breite Karten", "Cartes larges", "Tarjetas anchas"),
-                    nota = tr("toglie la colonna delle icone: si passa da una schermata all'altra col dito", "hides the icon column: swipe from one screen to the next", "blendet die Symbolspalte aus: Du wechselst mit dem Finger von einem Bildschirm zum nächsten", "masque la colonne d'icônes : on passe d'un écran à l'autre avec le doigt", "oculta la columna de iconos: se pasa de una pantalla a otra con el dedo"),
-                    acceso = state.schedeLarghe,
+                    // Era "Schede larghe", accesa toglieva la colonna. Ora la
+                    // colonna e' spenta di serie e la voce dice cosa aggiunge.
+                    titolo = tr("Colonna delle icone", "Icon column", "Symbolspalte", "Colonne d'icônes", "Columna de iconos"),
+                    nota = tr("le sette schermate in una colonna a destra, invece dei puntini in basso", "the seven screens in a column on the right, instead of the dots at the bottom", "die sieben Bildschirme in einer Spalte rechts statt der Punkte unten", "les sept écrans dans une colonne à droite, au lieu des points en bas", "las siete pantallas en una columna a la derecha, en lugar de los puntos abajo"),
+                    acceso = !state.schedeLarghe,
                     palette = palette,
-                    onCambia = onToggleSchedeLarghe,
+                    onCambia = { colonna -> onToggleSchedeLarghe(!colonna) },
                 )
                 // I colori dinamici esistono da Android 12: prima, la voce
                 // sarebbe una levetta che non cambia niente.

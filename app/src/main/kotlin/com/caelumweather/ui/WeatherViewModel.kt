@@ -228,7 +228,7 @@ data class UiState(
     /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
     val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
-    val schedeLarghe: Boolean = false,
+    val schedeLarghe: Boolean = true,
     /**
      * Se la guida all'uso e' gia' stata vista. Vero finche' le impostazioni
      * non sono lette: meglio non mostrarla un fotogramma che mostrarla a chi
