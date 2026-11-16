@@ -10,6 +10,176 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.281230b43448aa6df96f8efbfb09f1b975191d42.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.281230b43448aa6df96f8efbfb09f1b975191d42.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.281230b43448aa6df96f8efbfb09f1b975191d42.002.1",
+                "areaDesc": "Coastal Nassau; Coastal Duval; Coastal Flagler; Northeast Coastal St. Johns; Southeast Coastal St. Johns",
+                "geocode": {
+                    "SAME": [
+                        "012089",
+                        "012031",
+                        "012035",
+                        "012109"
+                    ],
+                    "UGC": [
+                        "FLZ124",
+                        "FLZ125",
+                        "FLZ138",
+                        "FLZ233",
+                        "FLZ333"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ124",
+                    "https://api.weather.gov/zones/forecast/FLZ125",
+                    "https://api.weather.gov/zones/forecast/FLZ138",
+                    "https://api.weather.gov/zones/forecast/FLZ233",
+                    "https://api.weather.gov/zones/forecast/FLZ333"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T13:23:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-16T03:35:00-05:00",
+                "effective": "2026-11-16T03:35:00-05:00",
+                "onset": "2026-11-16T07:00:00-05:00",
+                "expires": "2026-11-17T03:45:00-05:00",
+                "ends": "2026-11-19T14:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Rip Current Statement issued November 16 at 3:35AM EST until November 19 at 2:00PM EST by NWS Jacksonville FL",
+                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Northeast Florida Beaches.\n\n* WHEN...From 7 AM EST this morning through Thursday afternoon.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 160835"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT FROM 7 AM EST THIS MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KJAX.RP.S.0035.261116T1200Z-261119T1900Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-19T14:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e0045d155a68a876c2d192026ca4979aea5489ee.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e0045d155a68a876c2d192026ca4979aea5489ee.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.e0045d155a68a876c2d192026ca4979aea5489ee.001.1",
+                "areaDesc": "Coastal Franklin",
+                "geocode": {
+                    "SAME": [
+                        "012037"
+                    ],
+                    "UGC": [
+                        "FLZ115"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ115"
+                ],
+                "references": [],
+                "sent": "2026-11-16T01:59:00-05:00",
+                "effective": "2026-11-16T01:59:00-05:00",
+                "onset": "2026-11-16T01:59:00-05:00",
+                "expires": "2026-11-17T04:00:00-05:00",
+                "ends": "2026-11-20T01:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tallahassee FL",
+                "headline": "Rip Current Statement issued November 16 at 1:59AM EST until November 20 at 1:00AM EST by NWS Tallahassee FL",
+                "description": "* WHAT...Dangerous rip currents.\n\n* WHERE...Franklin County Beaches.\n\n* WHEN...Through late Thursday night.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTAE"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTAE 160659"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK IN EFFECT THROUGH LATE THURSDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KTAE.RP.S.0079.261116T0659Z-261120T0600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-20T01:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3e1742fb10cde3aae5797008dd2b82ace4ea0375.001.1",
             "type": "Feature",
             "geometry": null,
@@ -625,95 +795,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.39070d22ebe759a75fcfe4661f746f196d7e9233.001.1",
-                "areaDesc": "Coastal Nassau; Coastal Duval; Coastal Flagler; Northeast Coastal St. Johns; Southeast Coastal St. Johns",
-                "geocode": {
-                    "SAME": [
-                        "012089",
-                        "012031",
-                        "012035",
-                        "012109"
-                    ],
-                    "UGC": [
-                        "FLZ124",
-                        "FLZ125",
-                        "FLZ138",
-                        "FLZ233",
-                        "FLZ333"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ124",
-                    "https://api.weather.gov/zones/forecast/FLZ125",
-                    "https://api.weather.gov/zones/forecast/FLZ138",
-                    "https://api.weather.gov/zones/forecast/FLZ233",
-                    "https://api.weather.gov/zones/forecast/FLZ333"
-                ],
-                "references": [],
-                "sent": "2026-11-15T13:23:00-05:00",
-                "effective": "2026-11-15T13:23:00-05:00",
-                "onset": "2026-11-16T07:00:00-05:00",
-                "expires": "2026-11-16T04:00:00-05:00",
-                "ends": "2026-11-19T14:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Rip Current Statement issued November 15 at 1:23PM EST until November 19 at 2:00PM EST by NWS Jacksonville FL",
-                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Northeast Florida Beaches.\n\n* WHEN...From Monday morning through Thursday afternoon.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 151823"
-                    ],
-                    "NWSheadline": [
-                        "HIGH RIP CURRENT RISK IN EFFECT FROM MONDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KJAX.RP.S.0035.261116T1200Z-261119T1900Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-19T14:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-16T06:29:08+00:00"
+    "updated": "2026-11-16T08:36:31+00:00"
 }

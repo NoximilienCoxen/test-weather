@@ -18,8 +18,8 @@
     Noceto   48/48 ore  quota 74.0 m  prime [7.3, 7.3, 7.3]
     Forli    48/48 ore  quota 40.0 m  prime [7.5, 7.2, 7.0]
   ecmwf_ifs025
-    Noceto   48/48 ore  quota 74.0 m  prime [7.0, 7.0, 7.1]
-    Forli    48/48 ore  quota 40.0 m  prime [7.3, 7.1, 6.9]
+    Noceto   48/48 ore  quota 74.0 m  prime [7.5, 7.4, 7.3]
+    Forli    48/48 ore  quota 40.0 m  prime [7.3, 7.0, 6.7]
   ecmwf_aifs025_single
     Noceto   48/48 ore  quota 74.0 m  prime [6.5, 6.4, 6.3]
     Forli    48/48 ore  quota 40.0 m  prime [7.2, 7.1, 7.0]
@@ -43,13 +43,13 @@
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
     Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [7.7, 7.8, 7.7]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [7.6, 7.9, 7.6]
     Bergen   48/48 ore  quota 17.0 m  prime [2.5, 3.5, 4.1]
