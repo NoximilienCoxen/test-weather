@@ -33,7 +33,7 @@ import org.robolectric.shadows.ShadowLooper
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PannelloTettoTest {
 
-    private fun altezzaDelPannello(tetto: Dp): Float {
+    private fun altezzaDelPannello(tetto: Dp, alto: Dp = 600.dp): Float {
         val palette = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
         val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
         attivita.setContent {
@@ -41,7 +41,7 @@ class PannelloTettoTest {
                 // Come la Shell: una colonna che scorre, e il pannello dentro.
                 Column(modifier = Modifier.verticalScroll(rememberScrollState()).width(360.dp)) {
                     PannelloSala(palette = palette) {
-                        Spacer(Modifier.height(900.dp))
+                        Spacer(Modifier.height(alto))
                     }
                 }
             }
@@ -54,8 +54,11 @@ class PannelloTettoTest {
 
     @Test
     fun `senza tetto il pannello non si chiude e cresce col contenuto`() {
+        // Il contenuto (600 dp) sta nella finestra di prova (891 dp): oltre,
+        // la vista si fermerebbe all'altezza della finestra e il conto non
+        // direbbe niente sul pannello.
         val alto = altezzaDelPannello(Dp.Unspecified)
-        assertTrue("alto $alto dp", alto > 900f)
+        assertTrue("alto $alto dp", alto > 600f)
     }
 
     @Test
