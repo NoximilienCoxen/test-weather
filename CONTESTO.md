@@ -8786,28 +8786,3 @@ lato in ombra e' un grigio medio, non il nero dell'ombra pura, e con l'alfa
 dalla luminosita' restava un fantasma grigio semitrasparente con sole e nuvole
 dietro: la meta' buia sembrava piu' chiara di quella accesa. Spenta
 (`ombraTrasparente = false`); il parametro resta per un'altra prova.
-
-## 82. Le sale di lato, la pagina in verticale
-
-Video dell'utente del 16 novembre: con il tetto ai pannelli (§78) pioggia,
-vento e aria si leggevano solo scorrendo dentro una finestrella, e lo stesso
-gesto verticale poi cambiava sala. Il cielo era libero, le informazioni no.
-Il nodo era un gesto solo per due cose. Adesso:
-- **Le sale si sfogliano di lato** (`HorizontalPager`), come dicono i puntini,
-  che sono orizzontali. Erano andate in verticale per la colonna di icone, che
-  di serie non c'e' piu' (§77). La logica del colpetto (`metaDelGesto`, la rete)
-  e' la stessa, sull'asse x: dito verso sinistra, sala dopo.
-- **Ogni pagina scorre tutta in verticale.** La scheda comincia almeno al 40%
-  dello schermo (`cieloSopra`, da `QUOTA_CIELO`); un riquadro alto almeno
-  quanto la pagina tiene le schede corte appoggiate in fondo come prima;
-  quelle lunghe continuano sotto e, scorrendo, salgono sopra il cielo e si
-  leggono intere.
-- Niente piu' tetto: `LocalAltezzaPannello` non viene piu' fornito, il pannello
-  non scorre dentro di se'.
-- Tirare in giu' in cima aggiorna da ogni sala, non solo dalla prima: lo
-  scorrimento verticale non torna piu' alla sala prima.
-- I cursori e i grafici dentro le schede (la luna, il cursore dei giorni)
-  prendono il trascinamento orizzontale prima del carosello: sopra di loro non
-  si sfoglia, si sfoglia sul resto della scheda e sul cielo.
-- L'indizio diventa "← Scorri di lato"; la cattura sfoglia con un colpetto
-  orizzontale al 30% dell'altezza.

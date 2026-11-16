@@ -527,11 +527,11 @@ session() {
   sleep 1
   shoot "${slug}-mare-vento"
 
-  # ── Un colpetto di lato cambia sala ──────────────────────────────────────
+  # ── Un colpetto in verticale cambia sala ─────────────────────────────────
   #
-  # Le sale si sfogliano di lato (CONTESTO §82), e deve bastare poco: un sesto
-  # di schermo, veloce, sul cielo sopra la scheda. Si parte da Oggi; se lo
-  # scatto mostra ancora Oggi, la soglia e' troppo alta per un dito vero.
+  # Le sale si sfogliano in su e in giu', e deve bastare poco: un decimo di
+  # schermo, veloce. Si parte da Oggi; se lo scatto mostra ancora Oggi, la
+  # soglia e' troppo alta per un dito vero.
   alive || return
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
@@ -539,7 +539,7 @@ session() {
   avvia --ei ora "$ora_dettaglio" --ei sezione 0 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
-  adbt shell input swipe $(( W * 60 / 100 )) $(( H * 30 / 100 )) $(( W * 43 / 100 )) $(( H * 30 / 100 )) 120 >/dev/null 2>&1 || true
+  adbt shell input swipe $(( W * 2 / 5 )) $(( H * 60 / 100 )) $(( W * 2 / 5 )) $(( H * 50 / 100 )) 120 >/dev/null 2>&1 || true
   sleep 2
   shoot "${slug}-sfoglio-breve-dopo-oggi"
 

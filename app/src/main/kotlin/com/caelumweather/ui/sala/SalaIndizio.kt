@@ -73,13 +73,13 @@ internal fun IndizioSfoglio(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "←",
+                text = "↑",
                 style = SalaType.rowTitle,
                 color = palette.accent,
-                modifier = Modifier.offset(x = onda.dp),
+                modifier = Modifier.offset(y = onda.dp),
             )
             Text(
-                text = tr("  Scorri di lato · $prossima", "  Swipe sideways · $prossima", "  Zur Seite wischen · $prossima", "  Balayez sur le côté · $prossima", "  Desliza hacia el lado · $prossima"),
+                text = tr("  Scorri in su · $prossima", "  Swipe up · $prossima", "  Nach oben wischen · $prossima", "  Balayez vers le haut · $prossima", "  Desliza hacia arriba · $prossima"),
                 style = SalaType.sectionLabel,
                 color = palette.inkSoft,
             )
