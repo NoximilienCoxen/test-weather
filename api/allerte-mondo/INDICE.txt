@@ -138,7 +138,7 @@
 == geo-osaka
    https://geocoding-api.open-meteo.com/v1/search?name=Osaka&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=701
+   HTTP 200  tipo=application/json; charset=utf-8  byte=700
    nessun segno noto
    inizio: {"results":[{"id":1853909,"name":"Osaka","latitude":34.69379,"longitude":135.50107,"elevation":4.0,"feature_code":"PPLA","country_code":"JP","admin1_id":1853904,"admin2_id":1853897,"admin3_id":1859310,"timezone":"Asia/Tokyo","population":2753862,"country_id":1861060,"country":"Giappone","admin1":"prefettura di Osaka","admin2":"Osaka-shi","admin3":"Kita Ku"},{"id":4777537,"name":"Osaka","latitude":
 
@@ -152,7 +152,7 @@
 == geo-toronto
    https://geocoding-api.open-meteo.com/v1/search?name=Toronto&count=2&language=it
    Accept: application/json
-   HTTP 200  tipo=application/json; charset=utf-8  byte=699
+   HTTP 200  tipo=application/json; charset=utf-8  byte=698
    nessun segno noto
    inizio: {"results":[{"id":6167865,"name":"Toronto","latitude":43.70643,"longitude":-79.39864,"elevation":161.0,"feature_code":"PPLA","country_code":"CA","admin1_id":6093943,"timezone":"America/Toronto","population":2794356,"country_id":6251999,"country":"Canada","admin1":"Ontario"},{"id":5174095,"name":"Toronto","latitude":40.46423,"longitude":-80.60091,"elevation":214.0,"feature_code":"PPL","country_code
 
@@ -223,7 +223,7 @@
 == au-bom-vic
    https://www.bom.gov.au/fwo/IDZ00059.warnings_vic.xml
    Accept: application/xml, */*;q=0.8
-   HTTP 403  tipo=text/html  byte=1388
+   HTTP 403  tipo=text/html  byte=1384
    nessun segno noto
    inizio: <p>Your access is blocked due to the detection of a potential automated access request. The Bureau of Meteorology website does not support web scraping: if you are trying to access Bureau data through automated means, you should stop. You may like to consider the following options:</p> <ul> <li>An anonymous FTP channel: <a href="http://www.bom.gov.au/catalogue/anon-ftp.shtml">http://www.bom.gov
 
