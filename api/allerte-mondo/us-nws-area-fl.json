@@ -10,6 +10,95 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f42a75029320c76172cde71a3f207e772c3c1a90.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f42a75029320c76172cde71a3f207e772c3c1a90.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.f42a75029320c76172cde71a3f207e772c3c1a90.002.1",
+                "areaDesc": "Escambia Coastal; Santa Rosa Coastal; Okaloosa Coastal",
+                "geocode": {
+                    "SAME": [
+                        "012033",
+                        "012113",
+                        "012091"
+                    ],
+                    "UGC": [
+                        "FLZ202",
+                        "FLZ204",
+                        "FLZ206"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ202",
+                    "https://api.weather.gov/zones/forecast/FLZ204",
+                    "https://api.weather.gov/zones/forecast/FLZ206"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dc7d82f69dac119ad9e159437de3b807aa5ee0cc.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.dc7d82f69dac119ad9e159437de3b807aa5ee0cc.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-15T23:37:00-06:00"
+                    }
+                ],
+                "sent": "2026-11-16T03:01:00-06:00",
+                "effective": "2026-11-16T03:01:00-06:00",
+                "onset": "2026-11-17T06:00:00-06:00",
+                "expires": "2026-11-16T12:00:00-06:00",
+                "ends": "2026-11-20T06:00:00-06:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Mobile AL",
+                "headline": "Rip Current Statement issued November 16 at 3:01AM CST until November 20 at 6:00AM CST by NWS Mobile AL",
+                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...Escambia Coastal, Santa Rosa Coastal and Okaloosa\nCoastal Counties.\n\n* WHEN...From Tuesday morning through late Thursday night.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMOB"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS44 KMOB 160901"
+                    ],
+                    "NWSheadline": [
+                        "HIGH RIP CURRENT RISK REMAINS IN EFFECT FROM TUESDAY MORNING THROUGH LATE THURSDAY NIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMOB.RP.S.0031.261117T1200Z-261120T1200Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-20T06:00:00-06:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.281230b43448aa6df96f8efbfb09f1b975191d42.002.1",
             "type": "Feature",
             "geometry": null,
@@ -264,94 +353,6 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-18T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dc7d82f69dac119ad9e159437de3b807aa5ee0cc.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dc7d82f69dac119ad9e159437de3b807aa5ee0cc.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.dc7d82f69dac119ad9e159437de3b807aa5ee0cc.001.1",
-                "areaDesc": "Mobile Coastal; Baldwin Coastal; Escambia Coastal; Santa Rosa Coastal; Okaloosa Coastal",
-                "geocode": {
-                    "SAME": [
-                        "001097",
-                        "001003",
-                        "012033",
-                        "012113",
-                        "012091"
-                    ],
-                    "UGC": [
-                        "ALZ265",
-                        "ALZ266",
-                        "FLZ202",
-                        "FLZ204",
-                        "FLZ206"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/ALZ265",
-                    "https://api.weather.gov/zones/forecast/ALZ266",
-                    "https://api.weather.gov/zones/forecast/FLZ202",
-                    "https://api.weather.gov/zones/forecast/FLZ204",
-                    "https://api.weather.gov/zones/forecast/FLZ206"
-                ],
-                "references": [],
-                "sent": "2026-11-15T23:37:00-06:00",
-                "effective": "2026-11-15T23:37:00-06:00",
-                "onset": "2026-11-17T06:00:00-06:00",
-                "expires": "2026-11-16T12:00:00-06:00",
-                "ends": "2026-11-20T06:00:00-06:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Mobile AL",
-                "headline": "Rip Current Statement issued November 15 at 11:37PM CST until November 20 at 6:00AM CST by NWS Mobile AL",
-                "description": "* WHAT...Dangerous rip currents expected.\n\n* WHERE...In Alabama, Mobile Coastal and Baldwin Coastal\nCounties. In Florida, Escambia Coastal, Santa Rosa Coastal and\nOkaloosa Coastal Counties.\n\n* WHEN...From Tuesday morning through late Thursday night.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Swim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMOB"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS44 KMOB 160537"
-                    ],
-                    "NWSheadline": [
-                        "HIGH RIP CURRENT RISK IN EFFECT FROM TUESDAY MORNING THROUGH LATE THURSDAY NIGHT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMOB.RP.S.0031.261117T1200Z-261120T1200Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-20T06:00:00-06:00"
                     ]
                 },
                 "scope": "Public",
@@ -798,5 +799,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-16T08:36:31+00:00"
+    "updated": "2026-11-16T09:05:06+00:00"
 }
