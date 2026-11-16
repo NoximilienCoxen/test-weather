@@ -1,108 +1,109 @@
 === righe e: / w: ===
-w: file:///home/runner/work/test-weather/test-weather/app/build.gradle.kts:159:9: 'var textReport: Boolean' is deprecated. Lint reports are now always generated. Use SingleArtifact.LINT_TEXT_REPORT or SingleArtifact.AGGREGATED_LINT_TEXT_REPORT to consume lint report artifacts.
-w: file:///home/runner/work/test-weather/test-weather/core/build.gradle.kts:24:9: 'var textReport: Boolean' is deprecated. Lint reports are now always generated. Use SingleArtifact.LINT_TEXT_REPORT or SingleArtifact.AGGREGATED_LINT_TEXT_REPORT to consume lint report artifacts.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/widget/WidgetPrefs.kt:207:67 Smart cast to 'TypeVariable(T)' is impossible, because 'admin' is a public API property declared in different module.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/widget/WidgetPrefs.kt:208:69 Smart cast to 'TypeVariable(T)' is impossible, because 'country' is a public API property declared in different module.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:122:23 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:123:22 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:15 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:25 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt:1045:38 Unresolved label.
 
 === ultime 120 righe del log ===
-> Task :core:copyDebugJniLibsProjectOnly
-> Task :core:processDebugNavigationResources
-> Task :core:packageDebugResources
-> Task :core:javaPreCompileDebug
-> Task :app:desugarDebugFileDependencies
-> Task :app:generateDebugBuildConfig
-> Task :app:generateDebugResources
-> Task :app:packageDebugResources
-> Task :app:mergeDebugNativeLibs
-> Task :app:mergeDebugArtProfile
-> Task :app:javaPreCompileDebug FROM-CACHE
-> Task :core:parseDebugLocalResources
-> Task :app:processDebugNavigationResources
-> Task :app:stripDebugDebugSymbols
-> Task :core:writeDebugAarMetadata
-> Task :core:generateDebugRFile
-> Task :app:parseDebugLocalResources
-> Task :app:generateDebugRFile
-> Task :app:mapDebugSourceSetPaths
-> Task :app:extractDebugNativeSymbolTables
-> Task :app:compileDebugNavigationResources
-> Task :app:mergeDebugNativeDebugMetadata
-> Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug
-> Task :core:extractDeepLinksDebug
-> Task :app:checkDebugAarMetadata
-> Task :core:mapDebugSourceSetPaths
-> Task :core:processDebugManifest
-> Task :app:processDebugMainManifest
-> Task :app:processDebugManifest
-> Task :core:compileDebugLibraryResources
-> Task :app:processDebugManifestForPackage
-> Task :app:mergeDebugStartupProfile
-> Task :core:mergeDebugAssets
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets
-> Task :app:extractDebugVersionControlInfo
-> Task :app:extractProguardFiles
-> Task :core:extractProguardFiles
-> Task :core:prepareLintJarForPublish
-> Task :core:checkDebugAarMetadata
-> Task :app:mergeDebugResources
-> Task :app:checkDebugDuplicateClasses
-> Task :core:extractDebugAnnotations
-> Task :core:extractDeepLinksForAarDebug
-> Task :core:writeDebugLintModelMetadata
-> Task :app:collectDebugDependencies
-> Task :app:sdkDebugDependencyData
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :baselineprofile:preBuild UP-TO-DATE
-> Task :baselineprofile:preDebugBuild UP-TO-DATE
-> Task :baselineprofile:checkTestedAppObfuscationDebug
-> Task :baselineprofile:generateDebugResources FROM-CACHE
-> Task :baselineprofile:packageDebugResources
-> Task :baselineprofile:processDebugNavigationResources
-> Task :baselineprofile:parseDebugLocalResources FROM-CACHE
-> Task :baselineprofile:generateDebugRFile
-> Task :baselineprofile:compileDebugKotlin
-> Task :baselineprofile:javaPreCompileDebug FROM-CACHE
-> Task :baselineprofile:compileDebugJavaWithJavac NO-SOURCE
-> Task :baselineprofile:generateDebugAssets UP-TO-DATE
-> Task :baselineprofile:mergeDebugAssets
-> Task :app:processDebugResources
+> Task :baselineprofile:processDebugManifest
+> Task :baselineprofile:processDebugResources FROM-CACHE
+> Task :baselineprofile:mergeDebugNativeLibs
+> Task :baselineprofile:dexBuilderDebug FROM-CACHE
+> Task :baselineprofile:mergeProjectDexDebug FROM-CACHE
 > Task :app:optimizeDebugResources
+> Task :baselineprofile:writeDebugSigningConfigVersions
+
+> Task :baselineprofile:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libbenchmarkNative.so, libtracing_perfetto.so. Run with --info option to learn more.
+
+> Task :wear:preBuild UP-TO-DATE
+> Task :wear:preDebugBuild UP-TO-DATE
+> Task :core:stripDebugDebugSymbols NO-SOURCE
+> Task :wear:mergeDebugJniLibFolders
+> Task :core:copyDebugJniLibsProjectAndLocalJars
+> Task :wear:mergeDebugArtProfile
+> Task :wear:desugarDebugFileDependencies FROM-CACHE
+> Task :wear:mergeDebugNativeLibs
+
+> Task :wear:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :wear:generateDebugResources FROM-CACHE
+> Task :wear:extractDebugNativeSymbolTables FROM-CACHE
+> Task :wear:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :wear:packageDebugResources FROM-CACHE
+> Task :wear:javaPreCompileDebug FROM-CACHE
+> Task :wear:processDebugNavigationResources FROM-CACHE
+> Task :wear:parseDebugLocalResources FROM-CACHE
+> Task :wear:checkDebugAarMetadata
+> Task :wear:mapDebugSourceSetPaths
+> Task :wear:compileDebugNavigationResources FROM-CACHE
+> Task :wear:generateDebugRFile FROM-CACHE
+> Task :wear:createDebugCompatibleScreenManifests
+> Task :wear:extractDeepLinksDebug FROM-CACHE
+> Task :wear:mergeDebugResources FROM-CACHE
+> Task :wear:processDebugMainManifest
+> Task :wear:processDebugManifest
+> Task :wear:processDebugManifestForPackage
+> Task :wear:checkDebugDuplicateClasses
+> Task :wear:mergeDebugStartupProfile
+> Task :wear:mergeExtDexDebug FROM-CACHE
+> Task :wear:generateDebugAssets UP-TO-DATE
+> Task :wear:mergeDebugAssets
+> Task :wear:compressDebugAssets FROM-CACHE
+> Task :wear:extractDebugVersionControlInfo
+> Task :wear:extractProguardFiles
+> Task :wear:processDebugResources
+> Task :wear:collectDebugDependencies
+> Task :wear:sdkDebugDependencyData
+> Task :wear:validateSigningDebug
+> Task :wear:writeDebugAppMetadata
+> Task :wear:writeDebugSigningConfigVersions
+> Task :baselineprofile:validateSigningDebug
+> Task :wear:optimizeDebugResources
+> Task :baselineprofile:packageDebug
+> Task :baselineprofile:assembleDebug
+> Task :baselineprofile:createDebugApkListingFileRedirect
 > Task :core:compileDebugKotlin
 > Task :core:compileDebugJavaWithJavac NO-SOURCE
-> Task :baselineprofile:generateDebugGlobalSynthetics
-> Task :core:bundleLibRuntimeToJarDebug
+> Task :core:compressDebugJavaRes FROM-CACHE
 > Task :core:bundleLibCompileToJarDebug
-> Task :baselineprofile:compressDebugAssets
-> Task :core:processDebugJavaRes
-> Task :core:createFullJarDebug
+> Task :core:bundleLibRuntimeToJarDebug
+> Task :core:bundleLibRuntimeToDirDebug
 > Task :core:generateDebugLintModel
+> Task :core:createFullJarDebug
 > Task :core:mergeDebugGeneratedProguardFiles
 > Task :core:mergeDebugConsumerProguardFiles
-> Task :core:bundleLibRuntimeToDirDebug
 > Task :core:mergeDebugJavaResource
 > Task :core:syncDebugLibJars
 > Task :core:bundleDebugLocalLintAar
 > Task :core:generateDebugLintVitalModel
-> Task :baselineprofile:processDebugJavaRes
-> Task :baselineprofile:mergeDebugJavaResource
-> Task :app:mergeExtDexDebug
+> Task :core:bundleDebugAar
+> Task :core:assembleDebug
+
+> Task :wear:compileDebugKotlin
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:122:23 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:123:22 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:15 'constructor(): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/test-weather/test-weather/wear/src/main/kotlin/com/caelumweather/wear/TileCaelum.kt:207:25 'fun setResourceId(p0: String): LayoutElementBuilders.Image.Builder' is deprecated. Deprecated in Java.
+
+> Task :wear:compileDebugJavaWithJavac NO-SOURCE
+> Task :wear:compressDebugJavaRes FROM-CACHE
+> Task :wear:dexBuilderDebug FROM-CACHE
+> Task :wear:mergeDebugGlobalSynthetics FROM-CACHE
+> Task :wear:generateDebugLintVitalReportModel
+> Task :wear:mergeDebugJavaResource
 > Task :app:compileDebugKotlin
 > Task :core:lintVitalAnalyzeDebug
-> Task :baselineprofile:checkDebugDuplicateClasses
-> Task :baselineprofile:desugarDebugFileDependencies
 
 > Task :app:compileDebugKotlin
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/widget/WidgetPrefs.kt:207:67 Smart cast to 'TypeVariable(T)' is impossible, because 'admin' is a public API property declared in different module.
-e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/widget/WidgetPrefs.kt:208:69 Smart cast to 'TypeVariable(T)' is impossible, because 'country' is a public API property declared in different module.
+e: file:///home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt:1045:38 Unresolved label.
 
 > Task :app:compileDebugKotlin FAILED
-> Task :baselineprofile:mergeLibDexDebug
-> Task :baselineprofile:mergeExtDexDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1791673250105.json
+> Task :wear:mergeDexDebug
+> Task :wear:lintVitalAnalyzeDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1794788548401.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/test-weather/test-weather/build/reports/problems/problems-report.html
 
@@ -111,10 +112,10 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
 > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
-   > Kotlin compiler: SMARTCAST_IMPOSSIBLE
+   > Kotlin compiler: UNRESOLVED_LABEL
        Kotlin compiler error
-         Smart cast to 'TypeVariable(T)' is impossible, because 'admin' is a public API property declared in different module.
-         Location: /home/runner/work/test-weather/test-weather/app/src/main/kotlin/io/github/noximiliencoxen/caelum/widget/WidgetPrefs.kt line 207
+         Unresolved label.
+         Location: /home/runner/work/test-weather/test-weather/app/src/main/kotlin/com/caelumweather/ui/sala/SalaCielo.kt line 1045
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -122,6 +123,6 @@ Execution failed for task ':app:compileDebugKotlin' (registered by plugin 'com.a
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 59s
-90 actionable tasks: 86 executed, 4 from cache
+BUILD FAILED in 1m 32s
+150 actionable tasks: 92 executed, 58 from cache
 Configuration cache entry stored.
