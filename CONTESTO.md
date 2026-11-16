@@ -8680,3 +8680,12 @@ disegnano dal fondo (`NuvoleDalFondo`). Le cinque di sempre restano (due
 vicine, tre di mezzo); le tre in piu' sono velature lontane che entrano solo
 sopra il 65% di copertura. I tre gonfiori variano da una massa all'altra
 (`gonfi`). Tutto piatto, senza sfumature (§64.8, §70).
+
+## 75. Meno pillole: le celle dei valori senza fondo
+
+`CellaValore` (14 usi: Oggi, pioggia, UV, luna...) era una pillola piena, tre
+per riga, accanto a pastiglie e comandi tondi: tutto arrotondato e uguale.
+Ora non ha fondo: etichetta e valore stanno su un filo verticale di 1,5 dp nel
+colore `maniglia`, con margini piu' stretti. La freccetta "›" e il cedimento
+al tocco restano i segni delle celle che portano a un'altra sala. Le sei
+caselle di Sala II e le pastiglie restano com'erano: prima si guarda questa.

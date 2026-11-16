@@ -280,8 +280,23 @@ fun RowScope.CellaValore(
         modifier = modifier
             .weight(1f)
             .then(if (onVai != null) Modifier.cedevole() else Modifier)
+            // **Niente fondo: un filo a sinistra.** Ogni cella era una pillola
+            // piena, tre per riga in quasi ogni sala, accanto alle pastiglie e
+            // ai comandi tondi: tutto arrotondato, tutto uguale, il segno piu'
+            // riconoscibile delle interfacce fatte a stampo. Etichetta e
+            // valore restano, legati da un filo verticale del grigio
+            // dell'interfaccia; la freccetta e il cedimento dicono ancora
+            // quali celle portano altrove.
+            .drawBehind {
+                val spessore = 1.5.dp.toPx()
+                drawLine(
+                    color = palette.maniglia,
+                    start = Offset(spessore / 2f, 2.dp.toPx()),
+                    end = Offset(spessore / 2f, size.height - 2.dp.toPx()),
+                    strokeWidth = spessore,
+                )
+            }
             .clip(RoundedCornerShape(RaggioCella))
-            .background(palette.chip)
             // `then` e non due rami di `Column`: il corpo della cella e' lo
             // stesso, e duplicarlo per un modificatore vorrebbe dire che alla
             // prima rifinitura una delle due copie resta indietro.
@@ -292,7 +307,7 @@ fun RowScope.CellaValore(
             // nessuno l'aveva notato perche' troncata sembra un'abbreviazione
             // voluta. Tre celle per riga, undici caratteri la piu' lunga: il
             // margine era la cosa da stringere, non la parola da accorciare.
-            .padding(horizontal = 10.dp, vertical = 11.dp),
+            .padding(start = 11.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         // **I puntini sono la cosa piu' importante di questa riga.** Senza,
