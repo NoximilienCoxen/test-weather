@@ -790,7 +790,21 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // cui viene. Figlio del job giusto, si annulla con lui.
 
                         launch {
-                            AirQualityRepository(place).load()
+                            // **Due tentativi, non uno.** Nella galleria del 16
+                            // novembre la richiesta dell'aria falliva in cinque
+                            // avvii su dodici, a caso, mentre le altre richieste
+                            // dello stesso avvio arrivavano: un host diverso, con
+                            // i suoi singhiozzi. Un fallimento restava "Non
+                            // disponibile" fino al giro dopo, mezz'ora. Ora si
+                            // riprova una volta dopo due secondi, e la causa
+                            // finisce nel log, dove prima non c'era.
+                            var risultato = AirQualityRepository(place).load()
+                            if (risultato.isFailure) {
+                                Log.w(TAG, "aria non arrivata, riprovo: ${risultato.exceptionOrNull()}")
+                                delay(2_000)
+                                risultato = AirQualityRepository(place).load()
+                            }
+                            risultato
                                 .onSuccess { air ->
                                     // Come "previsione pronta": la cattura in CI
                                     // aspetta questa riga prima di fotografare la
@@ -799,7 +813,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     Log.i(TAG, "aria pronta")
                                     _state.update { it.copy(air = air, airUnavailable = false) }
                                 }
-                                .onFailure {
+                                .onFailure { failure ->
+                                    Log.w(TAG, "aria non arrivata: $failure")
                                     _state.update { it.copy(airUnavailable = true) }
                                 }
                         }

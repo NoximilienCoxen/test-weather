@@ -8689,3 +8689,12 @@ Ora non ha fondo: etichetta e valore stanno su un filo verticale di 1,5 dp nel
 colore `maniglia`, con margini piu' stretti. La freccetta "›" e il cedimento
 al tocco restano i segni delle celle che portano a un'altra sala. Le sei
 caselle di Sala II e le pastiglie restano com'erano: prima si guarda questa.
+
+## 76. L'aria che singhiozza
+
+Con la riga "aria pronta" nel log (§73) si e' visto che su dodici avvii della
+galleria del 16 novembre cinque non ricevevano l'aria, a caso e su qualunque
+sala, mentre previsione e allerte dello stesso avvio arrivavano. Un fallimento
+restava "Non disponibile" fino all'aggiornamento dopo, e la causa non era
+scritta da nessuna parte. Ora la richiesta si ripete una volta dopo due
+secondi, e ogni fallimento finisce nel log ("aria non arrivata").
