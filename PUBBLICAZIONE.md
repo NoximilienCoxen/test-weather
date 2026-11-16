@@ -16,6 +16,8 @@ segnati **(verifica)** vanno riletti nella Play Console il giorno in cui si fa.
 | Informativa sulla privacy, italiano e inglese | `docs/privacy.md` |
 | Testi della scheda, italiano e inglese | `fastlane/metadata/android/` |
 | Scatti dell'app nei due temi | ramo `ci-artifacts`, cartella `screenshots/` |
+| Icona e immagine in evidenza per la scheda | `fastlane/metadata/android/*/images/` |
+| La release (R8) avviata sull'emulatore a ogni giro | job `screenshots`, `scripts/prova_release.sh` |
 
 ## 2. La chiave di caricamento (una volta sola)
 
@@ -52,7 +54,9 @@ CAELUM_KEYSTORE=/percorso/caelum-caricamento.jks CAELUM_KEYSTORE_PASSWORD=... CA
 ## 3. Prima di caricare: provare la release in mano
 
 **La build che è sempre andata sul telefono è quella di debug, non minificata.**
-La release passa da R8 e la CI la compila, ma nessuno l'ha mai aperta. Prima di
+La release passa da R8; dal 15 novembre la CI la avvia anche sull'emulatore e
+controlla che legga la previsione (`scripts/prova_release.sh`), ma widget,
+notifiche e orologio sulla release non li ha mai provati nessuno. Prima di
 mandarla a qualcuno va installata sul telefono e girata tutta: previsione,
 allerte, widget, notifiche, orologio. Dato che la firma cambia, la build di
 `apk-latest` va disinstallata prima (le località salvate si perdono, a meno del
@@ -74,9 +78,11 @@ adb install app/build/outputs/apk/release/app-release.apk
 2. **Crea l'app**: nome `Caelum Weather`, lingua predefinita italiano, app, gratuita.
 3. **Scheda dello store**: i testi stanno in `fastlane/metadata/android/`
    (titolo, descrizione breve, descrizione completa) per `it-IT`, `en-US`, `de-DE`, `fr-FR` e `es-ES`.
-   Servono inoltre, e si fanno a mano:
-   - icona 512×512 PNG (dal vettoriale `ic_launcher_*`);
-   - immagine in evidenza 1024×500;
+   Icona 512×512 (`images/icon.png`) e immagine in evidenza 1024×500
+   (`images/featureGraphic.png`, italiana in `it-IT`, inglese nelle altre) sono
+   gia' nelle stesse cartelle: le disegna `GraficaStoreTest` dalle risorse
+   dell'app, e si ricopiano dalla galleria (`ci-artifacts/widget-renders/store-*`)
+   se l'icona cambia. Servono ancora, a mano:
    - almeno 2 scatti del telefono (quelli di `ci-artifacts` vanno bene) e, per
      l'orologio, almeno uno scatto Wear OS senza cornice.
 4. **Norme sulla privacy**: l'indirizzo pubblico di `docs/privacy.md`. Il modo

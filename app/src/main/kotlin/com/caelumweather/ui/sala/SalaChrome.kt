@@ -17,6 +17,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -78,6 +79,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.unit.sp
 import com.caelumweather.data.WeatherAlert
 import com.caelumweather.ui.theme.MinTouchTarget
@@ -110,6 +120,56 @@ private val RaggioCella = 22.dp
  * ed e' quello il punto della direzione scelta - il tempo si guarda, e i numeri
  * gli stanno davanti senza coprirlo.
  */
+/**
+ * L'altezza massima di un pannello di sala, decisa dalla Shell.
+ *
+ * **Il cielo e' il punto forte dell'app, e i pannelli se lo mangiavano.** "La
+ * luna" copriva lo schermo dall'intestazione alla barra delle ore, "La
+ * settimana" lasciava un quarto di cielo. La Shell calcola quanto puo' salire
+ * un pannello perche' sopra resti almeno il 40 per cento dello schermo, e lo
+ * passa qui; oltre, il pannello scorre dentro di se'. Fuori dalla Shell
+ * (anteprime, prove) non c'e' tetto.
+ */
+val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
+
+/**
+ * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
+ * il pannello continua, senza una barra di scorrimento. Sfuma il **contenuto**
+ * e non ci dipinge sopra il colore della carta, che in certi temi e' velata e
+ * farebbe una fascia.
+ */
+internal fun Modifier.sfumaAiBordi(stato: ScrollState): Modifier = this
+    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+    .drawWithContent {
+        drawContent()
+        val fascia = 28.dp.toPx()
+        if (stato.canScrollForward) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.Black,
+                    1f to Color.Transparent,
+                    startY = size.height - fascia,
+                    endY = size.height,
+                ),
+                topLeft = Offset(0f, size.height - fascia),
+                size = Size(size.width, fascia),
+                blendMode = BlendMode.DstIn,
+            )
+        }
+        if (stato.canScrollBackward) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.Transparent,
+                    1f to Color.Black,
+                    startY = 0f,
+                    endY = fascia,
+                ),
+                size = Size(size.width, fascia),
+                blendMode = BlendMode.DstIn,
+            )
+        }
+    }
+
 @Composable
 fun PannelloSala(
     palette: SalaPalette,
@@ -128,9 +188,15 @@ fun PannelloSala(
     onda: OndaScheda? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    // **Il cielo ha diritto al suo spazio** (vedi [LocalAltezzaPannello]): oltre
+    // il tetto il pannello non cresce, scorre dentro di se'. Gli angoli restano
+    // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
+    val tetto = LocalAltezzaPannello.current
+    val scorrimento = rememberScrollState()
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .then(if (tetto != Dp.Unspecified) Modifier.heightIn(max = tetto) else Modifier)
             .clip(RoundedCornerShape(RaggioPannello))
             // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
             .then(if (onda != null) Modifier.onPlaced { onda.pannello = it } else Modifier),
@@ -142,6 +208,18 @@ fun PannelloSala(
                 // Quando il contenuto cambia altezza la scheda scivola alla
                 // misura nuova invece di saltarci.
                 .altezzaMorbida()
+                // **Lo scorrimento interno solo con un tetto.** Senza, il
+                // pannello sta dentro lo scorrimento della Shell, che gli da'
+                // altezza infinita: due scorrimenti verticali annidati senza
+                // misura fanno chiudere l'app all'avvio (il primo fotogramma,
+                // prima che la Shell conosca il carosello, e' proprio cosi').
+                .then(
+                    if (tetto != Dp.Unspecified) {
+                        Modifier.sfumaAiBordi(scorrimento).verticalScroll(scorrimento)
+                    } else {
+                        Modifier
+                    },
+                )
                 // **Queste misure sono state allargate e poi rimesse, e la nota
                 // resta perche' la prova conta piu' della misura.** Il ragionamento
                 // era: il pannello e' ancorato in basso, si dimensiona sul
@@ -279,8 +357,23 @@ fun RowScope.CellaValore(
         modifier = modifier
             .weight(1f)
             .then(if (onVai != null) Modifier.cedevole() else Modifier)
+            // **Niente fondo: un filo a sinistra.** Ogni cella era una pillola
+            // piena, tre per riga in quasi ogni sala, accanto alle pastiglie e
+            // ai comandi tondi: tutto arrotondato, tutto uguale, il segno piu'
+            // riconoscibile delle interfacce fatte a stampo. Etichetta e
+            // valore restano, legati da un filo verticale del grigio
+            // dell'interfaccia; la freccetta e il cedimento dicono ancora
+            // quali celle portano altrove.
+            .drawBehind {
+                val spessore = 1.5.dp.toPx()
+                drawLine(
+                    color = palette.maniglia,
+                    start = Offset(spessore / 2f, 2.dp.toPx()),
+                    end = Offset(spessore / 2f, size.height - 2.dp.toPx()),
+                    strokeWidth = spessore,
+                )
+            }
             .clip(RoundedCornerShape(RaggioCella))
-            .background(palette.chip)
             // `then` e non due rami di `Column`: il corpo della cella e' lo
             // stesso, e duplicarlo per un modificatore vorrebbe dire che alla
             // prima rifinitura una delle due copie resta indietro.
@@ -291,7 +384,7 @@ fun RowScope.CellaValore(
             // nessuno l'aveva notato perche' troncata sembra un'abbreviazione
             // voluta. Tre celle per riga, undici caratteri la piu' lunga: il
             // margine era la cosa da stringere, non la parola da accorciare.
-            .padding(horizontal = 10.dp, vertical = 11.dp),
+            .padding(start = 11.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         // **I puntini sono la cosa piu' importante di questa riga.** Senza,
@@ -610,8 +703,19 @@ private fun PastigliaAvviso(
     } else {
         palette.ink
     }
-    val pallino = if (acceso || inArrivo != null) {
-        SalaTokens.accent500
+    // **Il pallino dice chi parla e quanto e' grave.** Era terracotta per
+    // tutto: "ALLERTA TEMPORALI" arancione di un ente e "AVVISO VENTO"
+    // calcolato da una soglia nostra avevano lo stesso segno (galleria del 15
+    // novembre), e il livello non si leggeva da nessuna parte fuori dal
+    // bollettino. Ora l'allerta di un ente ha il colore del suo livello - gli
+    // stessi tre del bollettino - e l'avviso calcolato un anello vuoto,
+    // neutro: giallo, arancione e rosso appartengono a chi li dirama.
+    val ufficiale = (peggiore ?: inArrivo)?.official == true
+    val vuoto = acceso && !ufficiale
+    val pallino = if (ufficiale) {
+        coloreLivello((peggiore ?: inArrivo)!!.level)
+    } else if (acceso) {
+        inchiostro
     } else if (ufficialiNonVerificate) {
         palette.inkSoft
     } else {
@@ -670,7 +774,18 @@ private fun PastigliaAvviso(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Box(modifier = Modifier.size(7.dp).clip(CircleShape).background(pallinoMosso))
+        Box(
+            modifier = Modifier
+                .size(if (vuoto) 8.dp else 7.dp)
+                .clip(CircleShape)
+                .then(
+                    if (vuoto) Modifier.border(1.5.dp, pallinoMosso, CircleShape)
+                    // Un filo dell'inchiostro attorno: il giallo sul fondo pesca
+                    // del tema chiaro, da solo, quasi non si vede.
+                    else if (ufficiale) Modifier.background(pallinoMosso).border(1.dp, inchiostroMosso.copy(alpha = 0.35f), CircleShape)
+                    else Modifier.background(pallinoMosso),
+                ),
+        )
         ScambioMorbido(stato = testo) { scritta ->
             Text(text = scritta, style = SalaType.sectionLabel, color = inchiostroMosso, maxLines = 1)
         }

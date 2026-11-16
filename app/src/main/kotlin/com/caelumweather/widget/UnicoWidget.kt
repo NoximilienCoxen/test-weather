@@ -51,6 +51,9 @@ internal class UnicoWidget : CaelumWidget(WidgetKind.UNICO) {
  * largo e alto le prossime ore, e da 230 in su la settimana.
  */
 internal fun vistaDaForma(larghezzaDp: Float, altezzaDp: Float): VistaWidget = when {
+    // Una colonna sola, anche alta: il tempo adesso in 65 dp di larghezza e'
+    // un nome troncato a una lettera. Ci sta solo la cifra con la figuretta.
+    larghezzaDp < 100f -> VistaWidget.MINI
     larghezzaDp < 120f && altezzaDp < 120f -> VistaWidget.MINI
     larghezzaDp < 240f -> VistaWidget.METEO
     altezzaDp < 130f -> VistaWidget.METEO

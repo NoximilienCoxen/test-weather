@@ -63,7 +63,9 @@ private fun DrawScope.small(
         color = ink.secondary,
     )
 
-    val digits = type.brush(box.height * 0.30f, weight = 700, width = 72)
+    // Alto e stretto (il widget unico tirato in verticale) la cifra a misura
+    // d'altezza usciva di lato: "-12°" largo il triplo del riquadro.
+    val digits = fittingBrush(listOf(degrees), box.width, box.height * 0.30f, type, weight = 700, width = 72)
     val digitsTop = box.top + lineHeight(name) * 0.95f
     text(degrees, box.left, digitsTop, digits, ink.primary)
 

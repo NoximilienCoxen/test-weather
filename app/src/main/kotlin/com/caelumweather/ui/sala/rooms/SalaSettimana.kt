@@ -34,6 +34,7 @@ import com.caelumweather.data.HourForecast
 import com.caelumweather.data.MoonPhase
 import com.caelumweather.ui.sala.GiornoSettimana
 import com.caelumweather.ui.sala.PannelloSala
+import com.caelumweather.ui.sala.CellaValore
 import com.caelumweather.ui.sala.SalaPalette
 import com.caelumweather.ui.sala.SalaRoom
 import com.caelumweather.ui.sala.SalaTokens
@@ -286,48 +287,25 @@ private fun RiepilogoGiorno(
         ),
     )
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        voci.chunked(2).forEach { riga ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // **Tre per riga, senza pillola.** Erano sei pillole piene con un bollo
+    // colorato, due per riga: tre righe alte quanto un dito, l'ultima cosa
+    // "fatta a stampo" rimasta, e la ragione per cui la settimana lasciava al
+    // cielo un quarto di schermo. Sono le stesse celle di Sala I - etichetta,
+    // valore, filo a sinistra, freccetta per chi porta altrove - e stanno in
+    // due righe basse.
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        voci.chunked(3).forEach { riga ->
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 riga.forEach { voce ->
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .cedevole()
-                            .clip(RoundedCornerShape(26.dp))
-                            .background(palette.chip)
-                            .clickable {
-                                voce.ora?.let { onOra(it, voce.sala) }
-                                onVai(voce.sala)
-                            }
-                            .padding(horizontal = 13.dp, vertical = 11.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
-                        Box(modifier = Modifier.size(26.dp).clip(CircleShape).background(voce.tinta))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = voce.nome,
-                                style = SalaType.microLabel,
-                                color = palette.inkFaint,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            // **Una riga sola, e l'unita' nel valore.** Su due
-                            // righe i sei riquadri uscivano di altezze diverse,
-                            // e sei cose che dicono la stessa cosa devono avere
-                            // la stessa forma.
-                            Text(
-                                text = voce.valore,
-                                style = SalaType.rowTitle,
-                                color = palette.ink,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(top = 3.dp),
-                            )
-                        }
-                        Text(text = "›", style = SalaType.rowTitle, color = palette.accent)
-                    }
+                    CellaValore(
+                        etichetta = voce.nome,
+                        valore = voce.valore,
+                        palette = palette,
+                        onVai = {
+                            voce.ora?.let { onOra(it, voce.sala) }
+                            onVai(voce.sala)
+                        },
+                    )
                 }
             }
         }
@@ -337,9 +315,9 @@ private fun RiepilogoGiorno(
 /**
  * Un riquadro del riepilogo.
  *
- * **I nomi sono corti per forza, non per gusto.** La cella e' meta' pannello
- * meno l'icona, la freccia e i margini: restano una sessantina di punti, cioe'
- * otto caratteri a questo corpo. "ESCURSIONE" e "VENTO MASSIMO" ci uscivano
+ * **I nomi sono corti per forza, non per gusto.** La cella e' un terzo di
+ * pannello meno la freccia e i margini: restano una settantina di punti, cioe'
+ * una decina di caratteri a questo corpo. "ESCURSIONE" e "VENTO MASSIMO" ci uscivano
  * troncati con i puntini, che e' il modo peggiore di dire una parola - si legge
  * come un guasto. Il valore sotto dice comunque di cosa si tratta.
  */

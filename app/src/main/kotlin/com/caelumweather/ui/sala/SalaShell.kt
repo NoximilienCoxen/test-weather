@@ -55,6 +55,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.layout.findRootCoordinates
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import com.caelumweather.data.SkyState
 import com.caelumweather.data.StatoAllerteUfficiali
 import com.caelumweather.data.WeatherAlert
@@ -454,12 +460,18 @@ fun SalaShell(
     // Lo scalino di `temaScuro` non si tocca: e' la garanzia che nessun cielo
     // porti l'interfaccia nella fascia in cui nessun inchiostro regge. La cura
     // non e' appianarlo, e' attraversarlo nel tempo.
+    // Il buio del cielo, a qualunque tema: decide cio' che sta sul cielo.
+    val dkCieloBersaglio = if (temaScuroPerTempesta(condition)) 1f else temaScuro(sky)
     val dkBersaglio = when (state.cardTheme) {
         CardTheme.CHIARO -> 0f
         CardTheme.SCURO -> 1f
-        CardTheme.AUTO ->
-            if (temaScuroPerTempesta(condition)) 1f else temaScuro(sky)
+        CardTheme.AUTO -> dkCieloBersaglio
     }
+    val dkCielo by animateFloatAsState(
+        targetValue = dkCieloBersaglio,
+        animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
+        label = "temaCielo",
+    )
     val dk by animateFloatAsState(
         targetValue = dkBersaglio,
         animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
@@ -470,7 +482,13 @@ fun SalaShell(
         animationSpec = mollaCarta(state.animazioniIstantanee, ridotte),
         label = "crepuscolo",
     )
-    val palette = remember(dk, crepuscolo, chiusura) { salaPalette(dk, crepuscolo, chiusura) }
+    // **Due palette quando il tema e' scelto a mano.** Le schede seguono la
+    // scelta; cio' che sta sul cielo - intestazione, numero grande, colline,
+    // barra delle ore, crediti - segue il cielo. In automatico sono la stessa.
+    val paletteCielo = remember(dkCielo, crepuscolo, chiusura) { salaPalette(dkCielo, crepuscolo, chiusura) }
+    val palette = remember(dk, crepuscolo, chiusura, paletteCielo) {
+        salaPalette(dk, crepuscolo, chiusura).conCieloDi(paletteCielo)
+    }
 
     // ── Le icone delle barre di sistema ──────────────────────────────────────
     //
@@ -566,6 +584,10 @@ fun SalaShell(
     var rScheda by remember { mutableStateOf<Rect?>(null) }
     var rColonna by remember { mutableStateOf<Rect?>(null) }
     var rBarra by remember { mutableStateOf<Rect?>(null) }
+    // Il carosello nella radice, per il tetto dei pannelli e per sapere se un
+    // dito appoggiato sta sul cielo o sulla scheda.
+    var rCarosello by remember { mutableStateOf<Rect?>(null) }
+    var altezzaRadice by remember { mutableStateOf(0f) }
     var attesaFinita by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(ATTESA_GUIDA_MS)
@@ -577,16 +599,43 @@ fun SalaShell(
         !state.legaliOpen && !state.bollettinoAperto
     val guida = state.guidaAperta || guidaDaSola
 
+    // ── Solo il cielo ────────────────────────────────────────────────────────
+    //
+    // Un dito tenuto premuto sul cielo libero fa scendere via schede, barra e
+    // intestazione: resta la scena a tutto schermo, da guardare e da toccare.
+    // Si torna con lo stesso gesto, con l'indietro o con la pastiglia in basso.
+    // Il trascinamento in giu' non poteva essere il gesto: sulla prima sala
+    // aggiorna, sulle altre torna alla sala prima.
+    var soloCielo by rememberSaveable { mutableStateOf(false) }
+    val viaDati by animateFloatAsState(
+        targetValue = if (soloCielo) 1f else 0f,
+        animationSpec = if (ferme) snap() else tween(durationMillis = 420),
+        label = "soloCielo",
+    )
+    BackHandler(enabled = soloCielo) { soloCielo = false }
+    // La luna di Sala IV sta nel cielo: mentre la si guarda, quella piccola
+    // dell'arco si fa da parte, perche' due lune nello stesso cielo sono una
+    // di troppo.
+    val indiceLuna = rooms.indexOf(SalaRoom.LUNA)
+    val lunaVelata = remember(pagerState) {
+        {
+            val pos = pagerState.currentPage + pagerState.currentPageOffsetFraction
+            (1f - abs(pos - indiceLuna)).coerceIn(0f, 1f)
+        }
+    }
+
     CompositionLocalProvider(
         LocalDidascalie provides state.captionStyle,
         LocalVetro provides vetro,
         // Un interruttore solo per tutto cio' che si muove nelle schede e nei
         // pannelli: vedi `SalaMovimento.kt`.
         LocalMovimento provides !ferme,
+        LocalPaletteCielo provides paletteCielo,
     ) {
         Box(modifier = modifier.fillMaxSize()) {
             SalaCielo(
-                palette = palette,
+                // Il cielo e' tutto sul cielo: nuvole e colline seguono l'ora, non il tema.
+                palette = paletteCielo,
                 stops = stops,
                 scena = scena,
                 sky = sky,
@@ -603,6 +652,12 @@ fun SalaShell(
                 interattivo = !ferme,
                 pollineOggi = state.pollineMostrato.firstOrNull()?.massimo ?: 0,
                 atmosfera = atmosfera,
+                lunaVelata = lunaVelata,
+                onPressioneLunga = if (soloCielo) {
+                    { soloCielo = false }
+                } else {
+                    null
+                },
             )
 
             // **Su uno schermo largo le sale non si allargano con lui.** Dai
@@ -613,11 +668,17 @@ fun SalaShell(
             // a bordo; schede, intestazione, barra delle ore e colonna stanno
             // in una colonna centrata. Su un telefono il tetto non si
             // raggiunge e non cambia un punto.
-            Column(
+            // Uscita del tutto, la colonna non si compone: cosi' il cielo sotto
+            // riceve ogni tocco. Il carosello ricorda la sala da solo.
+            if (viaDati < 0.999f) Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize()
+                    .graphicsLayer {
+                        alpha = 1f - viaDati
+                        translationY = viaDati * 56.dp.toPx()
+                    }
                     .systemBarsPadding(),
             ) {
                 IntestazioneCaelum(
@@ -627,7 +688,7 @@ fun SalaShell(
                     momento = hour?.time ?: LocalDateTime.now(),
                     ufficialiNonVerificate = state.statoUfficiali == StatoAllerteUfficiali.NON_ARRIVATE &&
                         state.forcedAlert == null,
-                    palette = palette,
+                    palette = paletteCielo,
                     onImpostazioni = viewModel::openSettings,
                     onCitta = viewModel::openLocations,
                     onAvvisi = viewModel::apriBollettino,
@@ -710,7 +771,13 @@ fun SalaShell(
                     isRefreshing = state.aggiornandoAMano,
                     onRefresh = viewModel::aggiornaAMano,
                     state = tiro,
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .onGloballyPositioned {
+                            rCarosello = it.boundsInRoot()
+                            altezzaRadice = it.findRootCoordinates().size.height.toFloat()
+                        },
                     indicator = {
                         // **Non il cerchio di Material**: un sole, una luna o
                         // un fiocco, secondo il cielo che c'e' (vedi
@@ -789,7 +856,32 @@ fun SalaShell(
                                         ditoSulCarosello = false
                                     }
                                 }
-                            },
+                            }
+                        // **Il dito tenuto sul cielo libero**, sopra la scheda:
+                        // vedi `soloCielo`. Solo guarda, come il blocco qui
+                        // sopra, finche' il tempo non scade; un dito che si
+                        // muove e' uno sfoglio e lascia stare.
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                val giu = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                                val cima = rScheda?.top ?: return@awaitEachGesture
+                                val origine = rCarosello?.top ?: return@awaitEachGesture
+                                if (origine + giu.position.y >= cima) return@awaitEachGesture
+                                val lasciato = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
+                                    while (true) {
+                                        val e = awaitPointerEvent(PointerEventPass.Initial)
+                                        val c = e.changes.firstOrNull { it.id == giu.id } ?: break
+                                        if (!c.pressed) break
+                                        if ((c.position - giu.position).getDistance() > viewConfiguration.touchSlop) break
+                                    }
+                                    true
+                                }
+                                if (lasciato == null) {
+                                    if (!ridotte) vibrazioni.scatto()
+                                    soloCielo = true
+                                }
+                            }
+                        },
                         // Tre centesimi di pagina, la stessa soglia della rete
                         // (`SOGLIA_COLPETTO`): un tocco che trema non cambia
                         // sala, un colpetto si'. Era un dodicesimo, e chi usa
@@ -837,7 +929,24 @@ fun SalaShell(
                         val scartoDellaScheda = remember(page, ferme) {
                             { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
                         }
-                        CompositionLocalProvider(LocalScartoSala provides scartoDellaScheda) {
+                        // **Almeno il 40 per cento dello schermo resta cielo**:
+                        // vedi `LocalAltezzaPannello`. Sotto i 260 punti non si
+                        // scende, o su uno schermo basso il pannello sarebbe
+                        // una feritoia.
+                        val tetto = run {
+                            val c = rCarosello
+                            if (c == null || altezzaRadice <= 0f) {
+                                Dp.Unspecified
+                            } else {
+                                with(LocalDensity.current) {
+                                    (c.bottom - 14.dp.toPx() - QUOTA_CIELO * altezzaRadice).toDp()
+                                }.coerceAtLeast(260.dp)
+                            }
+                        }
+                        CompositionLocalProvider(
+                            LocalScartoSala provides scartoDellaScheda,
+                            LocalAltezzaPannello provides tetto,
+                        ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -908,13 +1017,25 @@ fun SalaShell(
                     }
                 }
 
+                // L'indizio "scorri in su" finche' non si e' sfogliato; poi, senza
+                // la colonna, i puntini delle sale nello stesso posto: nessuna
+                // riga in piu' sotto le schede.
+                val indizio = !sfogliate && pagerState.currentPage == 0
                 IndizioSfoglio(
-                    visibile = !sfogliate && pagerState.currentPage == 0,
+                    visibile = indizio,
                     prossima = rooms.getOrNull(1)?.heading ?: "",
-                    palette = palette,
+                    palette = paletteCielo,
                     movimento = !ferme,
                     modifier = Modifier.fillMaxWidth().padding(end = riservaColonna, bottom = 6.dp),
                 )
+                if (larghe && !indizio) {
+                    PuntiniSale(
+                        sale = rooms,
+                        corrente = pagerState.currentPage,
+                        palette = palette,
+                        onVai = ::vaiA,
+                    )
+                }
 
                 BarraDelleOre(
                     // **Le ore del giorno mostrato, senza ripieghi.** Qui c'era
@@ -949,6 +1070,21 @@ fun SalaShell(
                 )
             }
 
+            // La via del ritorno, l'unica cosa sopra il cielo intero.
+            if (viaDati > 0.001f) {
+                PastigliaAccento(
+                    testo = tr("TORNA AI DATI", "BACK TO THE DATA", "ZURÜCK ZU DEN DATEN", "RETOUR AUX DONNÉES", "VOLVER A LOS DATOS"),
+                    palette = palette,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .systemBarsPadding()
+                        .padding(bottom = 28.dp)
+                        .graphicsLayer { alpha = viaDati }
+                        .clip(CircleShape)
+                        .clickable { soloCielo = false },
+                )
+            }
+
             // **I sette trattini qui sotto non ci sono piu'.** Facevano lo
             // stesso mestiere di questa colonna - dire dove sei, e portartici -
             // a due bordi diversi dello schermo, e lo facevano **in
@@ -959,7 +1095,7 @@ fun SalaShell(
             // sessanta punti che da qui in poi sono delle schede, che erano
             // strette. La colonna ha preso la cosa che i trattini facevano
             // meglio - seguire il dito in continuo - tramite `posizione`.
-            if (!larghe) Box(
+            if (!larghe && viaDati < 0.999f) Box(
                 // Lo stesso tetto della colonna qui sopra: la colonna delle
                 // sale sta accanto alle schede, non sul bordo di un tablet.
                 modifier = Modifier
@@ -1292,3 +1428,15 @@ internal fun List<WeatherAlert>.prossimaUfficiale(momento: LocalDateTime): Weath
  * tramonto - `tingiCielo` ne mette di meno da se'.
  */
 private const val FORZA_TINTA = 0.5f
+
+
+/**
+ * La palette di cio' che sta sul cielo, per chi disegna sia sul cielo sia su
+ * un pannello (il numero grande di Sala I sta sopra la sua scheda). Uguale a
+ * quella dei pannelli col tema automatico; diversa col tema scelto a mano.
+ * Nulla fuori dalla Shell: chi la legge ripiega sulla sua.
+ */
+val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?> { null }
+
+/** La parte dello schermo che resta sempre al cielo, in ogni sala. */
+private const val QUOTA_CIELO = 0.40f

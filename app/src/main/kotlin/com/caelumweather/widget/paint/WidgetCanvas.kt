@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -70,19 +71,24 @@ internal object WidgetCanvas {
     private val LARGO_DA = 240.dp
     private val ALTO_DA = 240.dp
 
-    fun plan(context: Context, appWidgetId: Int): Frame {
-        val (wDp, hDp) = boxDp(context, appWidgetId)
+    /**
+     * @param misura la misura che Glance passa alla composizione, se c'e'. E'
+     *   la piu' fedele: segue il ridimensionamento a sessione aperta e da' a
+     *   ciascuna forma (verticale, orizzontale) la sua. Senza, si leggono le
+     *   opzioni del widget.
+     */
+    fun plan(context: Context, appWidgetId: Int, misura: DpSize? = null): Frame {
+        val (wDp, hDp) = misura
+            ?.takeIf { it.width.value > 0f && it.height.value > 0f }
+            ?.let { it.width.value to it.height.value }
+            ?: boxDp(context, appWidgetId)
 
         var scale = context.resources.displayMetrics.density
             .coerceIn(SCALA_MIN, SCALA_MAX)
         val pixels = wDp * scale * hDp * scale
         if (pixels > PIXEL_MAX) scale *= sqrt(PIXEL_MAX / pixels)
 
-        val cut = when {
-            wDp >= LARGO_DA.value && hDp >= ALTO_DA.value -> Cut.GRANDE
-            wDp >= LARGO_DA.value -> Cut.MEDIO
-            else -> Cut.PICCOLO
-        }
+        val cut = taglio(wDp, hDp)
 
         return Frame(
             widthPx = (wDp * scale).roundToInt().coerceAtLeast(1),
@@ -122,6 +128,13 @@ internal object WidgetCanvas {
             body()
         }
         return bitmap
+    }
+
+    /** Il taglio per una misura in dp. Separato per i test delle forme. */
+    fun taglio(wDp: Float, hDp: Float): Cut = when {
+        wDp >= LARGO_DA.value && hDp >= ALTO_DA.value -> Cut.GRANDE
+        wDp >= LARGO_DA.value -> Cut.MEDIO
+        else -> Cut.PICCOLO
     }
 
     /** La misura del riquadro in dp, come la conosce il sistema. */

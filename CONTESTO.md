@@ -8493,3 +8493,276 @@ e i conti di `atmosferaBersaglio`.
   soglia sul livello, e il livello e' un modello globale di cui l'app stessa
   dice di non fidarsi sotto costa.
 - Nessuna anteprima propria per il widget unico (§64.7).
+
+## 65. I widget provati in mano: uno stirato, uno accavallato, due troncati
+
+Scatti dell'utente, 13 novembre 2026, Home con METEO, VENTO, MARE (2x2), il
+widget unico allargato a 4x2 e la SETTIMANA.
+
+- **Il widget unico stirato.** Disegnato 2x2 e poi allargato, mostrava lo
+  stesso disegno schiacciato in orizzontale (nome, 14°, sole, credito). La
+  sessione Glance resta aperta dopo il ridimensionamento e il disegno si
+  rifaceva solo se cambiavano configurazione o contatore (§ di `provideGlance`):
+  la misura nuova non la guardava nessuno, e `ContentScale.FillBounds` stirava
+  la bitmap vecchia. Ora la composizione legge `LocalSize` (in `SizeMode.Exact`
+  e' la misura vera, una per forma) e ridisegna quando si scosta di 2 dp o piu'
+  (`stessaMisura`, provata in `UnicoWidgetTest`); `WidgetCanvas.plan` la usa al
+  posto delle opzioni quando c'e'. Vale per tutti i ridimensionabili: unico,
+  vento, mare.
+- **MARE, "acqua 19°" sopra "bassa 04:50 dom…".** Nel quadrato la riga della
+  marea si scriveva a un'altezza fissa sopra l'onda, dentro lo spazio del corpo.
+  Ora il corpo finisce sopra di lei, e la riga si rimpicciolisce (fino al 70%)
+  prima di troncare "domani".
+- **VENTO, "raffi…".** "raffiche N" accanto alla bussola non ci stava e il
+  numero spariva. Se non ci sta nemmeno stretta, "raff. N".
+- **"FON…", "MON…".** Nome della localita' troncato accanto all'etichetta
+  VENTO / MARE. Se il nome non ci sta nemmeno stretto, l'etichetta non si scrive.
+
+**Da guardare in mano**: allargare e stringere il widget unico (deve cambiare
+faccia subito, senza stirarsi), e ruotare il telefono con un widget sulla Home.
+
+### 65.1 Le forme estreme del widget unico
+
+Il test nuovo `widget unico, le forme estreme` (WidgetOverflowTest) al primo
+giro ha trovato tre uscite dal bordo, tutte di numeri dimensionati
+sull'altezza e mai sulla larghezza: la cifra del tempo adesso in 65x410 e
+100x250 ("-12°" largo tre volte il riquadro), e i massimi e minimi della
+settimana in 370x400 ("-14°" oltre il bordo, numeri vicini che si toccano). Ora
+i due corpi passano da `fittingBrush` sulla larghezza della colonna, e sotto i
+100 dp di larghezza il widget unico mostra la cella (MINI) a qualunque altezza.
+
+## 66. Verso lo store: la release provata in CI, la grafica, il tocco sulle soglie
+
+- **La release (R8) aperta sull'emulatore a ogni giro.** Il passo "Release
+  firmata per la prova" del job `build` firma l'APK di release con la chiave di
+  debug (artefatto `apk-release-prova`, mai pubblicato). `scripts/prova_release.sh`
+  gira dopo `capture.sh` sullo stesso emulatore: la installa sopra la debug (ne
+  eredita i dati), la avvia due volte e fallisce se l'app cade, se il processo
+  muore, o se la debug ha letto la previsione e la release no - il segno di una
+  regola di keep mancante per kotlinx.serialization. Se nemmeno la debug ha
+  avuto la previsione (Open-Meteo in timeout dal runner, successo il 13
+  novembre) avvisa invece di fallire. Scatti `release-freddo.png`,
+  `release-dacapo.png` e i due logcat nella galleria. Resta da fare in mano:
+  widget, notifiche e orologio sulla release.
+- **La grafica dello store** si disegna in `GraficaStoreTest`: `store-icona-512.png`
+  (quadrata, senza maschera) e `store-in-evidenza-it/en.png` (1024x500, il
+  campo di grano con l'icona e il nome). Dalla galleria si copiano in
+  `fastlane/metadata/android/<lingua>/images/` (`icon.png`, `featureGraphic.png`).
+- **Il tocco su una notifica di soglia** di una localita' salvata ora porta a
+  quella localita' (gli stessi extra del widget; §64.1 lo dava per non fatto).
+  La localita' dell'app non li porta: l'app la mostra gia'.
+
+## 67. "Pioggia in corso" con zero millimetri
+
+Galleria del 15 novembre, ora 13 imposta, dati veri di Forli': Sala I diceva
+"Rovescio di meta' pomeriggio - Pioggia in corso" e faceva piovere il cielo,
+la sala della pioggia alla stessa ora "0,0 mm, 18 %, nessuna precipitazione
+nelle prossime dodici ore". Stessa risposta, due grandezze: il `weather_code`
+dell'ora (rovesci) e la sua `precipitation` (zero). Era il difetto di §
+`codiceDelGiorno` (Noceto, 5 ottobre) un gradino piu' giu': il codice del
+giorno era gia' corretto, quello dell'ora e quello di adesso no - e sono loro
+a decidere titolo, corpo, scena, barra delle ore e widget.
+
+`codiceDellOra` (WeatherRepository.kt) fa la stessa correzione: codice di
+pioggia, neve o temporale con millimetri **zero esatto** diventa il cielo
+delle nuvole (coperto da 85 %, molto nuvoloso da 40 %, poco nuvoloso sotto;
+senza nuvolosita' coperto; mai sereno). Si applica a ogni ora e al blocco
+`current`, con le nuvole dell'ora in corso. Il codice del giorno, quando lo
+corregge, ora sceglie fra ore gia' corrette. Prove: `CodiceDellOraTest`.
+Vale per telefono, widget e orologio (e' in `core`).
+
+## 68. Tema chiaro di notte: il cielo non ha un tema, ha un'ora
+
+Scatto dell'utente, Noceto, 15 novembre, 00:56, tema fissato a **chiaro**: il
+nome della citta', "Nessun avviso", l'icona delle impostazioni, il numero
+grande, "percepiti" e min/max erano quasi invisibili - inchiostro scuro di
+mezzogiorno su un cielo blu notte - e le colline verde chiaro sotto le stelle.
+
+Causa: con `CardTheme.CHIARO` il `dk` della Shell era 0 fisso, e da quel solo
+numero veniva **tutta** la palette, anche cio' che sta sul cielo. Ora la Shell
+fa due palette: `palette` segue il tema scelto (pannelli, schede, chip) ma
+prende da `paletteCielo` gli inchiostri fuori dai pannelli e le colline
+(`conCieloDi`, SalaTheme.kt); `paletteCielo` segue sempre il cielo (la stessa
+formula del tema automatico) e va all'intestazione, all'indizio dello
+sfoglio e, tramite `LocalPaletteCielo`, al numero grande di Sala I e alla sua
+colonna. Col tema automatico le due coincidono. Prova:
+`PaletteLeggibileTest` "tema chiaro di notte".
+
+## 69. Le allerte nere e la guardia che diceva zero: due difetti della cattura
+
+- **`d1`, `d2`, `d4b` neri in tutti e due i temi** (17 KB l'uno). Il logcat del
+  giro del 15 novembre: lanciata alle 11:09:57.4, primo fotogramma di 1,9 s
+  ("Davey"), uccisa alle 11:09:59.9 - lo scatto cadeva due secondi dopo
+  l'avvio. Davanti a quei tre avvii mancava il `logcat -c` che `restart_with`
+  e il giro delle sale hanno da tempo: `attendi_previsione` trovava la riga
+  dell'avvio precedente e tornava subito. Aggiunto.
+- **"ATTENZIONE: la guardia non si comporta come dichiarato", 0 e 0.** La
+  misura avviava con `--ez cattura true`, che spegne apposta il movimento, su
+  un emulatore con `animator_duration_scale` 0, che l'app legge come
+  animazioni ridotte: Sala I non poteva muoversi. Ora `avvio_vivo` avvia senza
+  `cattura` e con la scala a 1, e la rimette a 0 dopo.
+
+## 70. Le nuvole senza cerchi, e del colore dell'ora
+
+Negli scatti (Forli' di giorno, Noceto di notte) ogni nuvola mostrava i
+contorni dei suoi gonfiori e un disco piu' chiaro in mezzo. I pezzi - una
+pillola e tre tondi - erano disegnati uno per uno con la loro alfa, che si
+sommava dove si sovrapponevano, e il "tocco di luce" era un quarto tondo.
+Ora `nuvole()` fa un tracciato unico (pillola + tre ovali) dipinto una volta,
+piatto; l'ombra sotto resta. Niente sfumatura al posto della luce: cinque
+masse in moto la ricalcolerebbero a ogni fotogramma (§64.8).
+
+E il colore: col tema scelto a mano `SalaCielo` riceveva la palette delle
+schede, quindi col tema chiaro di notte le nuvole restavano grigio giorno.
+Ora riceve `paletteCielo`, come intestazione e numero grande (§68).
+
+## 71. Le allerte, viste per la prima volta in galleria
+
+Con gli scatti non piu' neri (§69) si e' visto che la pastiglia in cima aveva
+lo stesso pallino terracotta per "ALLERTA TEMPORALI" di un ente (arancione) e
+per "AVVISO VENTO" calcolato da una soglia: la differenza stava solo nella
+parola, e il livello non si leggeva fuori dal bollettino. Ora il pallino di
+un'allerta ufficiale (in corso o in arrivo) ha il colore del suo livello,
+`coloreLivello` del bollettino, con un filo d'inchiostro attorno perche' il
+giallo sul pesca del tema chiaro si veda; l'avviso calcolato ha un anello
+vuoto nel colore dell'inchiostro.
+
+La guardia della scena, misurata davvero, dava 36 contro 37: corretto, perche'
+il cielo sta dietro tutte le sale e si muove su ognuna per scelta. La misura
+ora confronta Sala I in vista con l'app sulla Home, dove non deve disegnare.
+
+## 72. Il titolo di Sala I dalle ore vere
+
+Le didascalie di Sala I erano 24 frasi fisse (condizione x fase): "Rovescio
+di meta' pomeriggio" alle 13 come alle 10, "Nuvole di passaggio" su un cielo
+coperto, "il fumo sale dritto" a ogni vento debole. Suonavano precise e non lo
+erano - il segno piu' riconoscibile di testo fatto a stampo.
+
+`raccontoDellOra` (ui/sala/Racconto.kt), pura, prende le ore dall'ora mostrata
+in avanti e scrive:
+- **piove adesso**: "Pioggia moderata fino alle 16:00" / "..., ancora a lungo";
+  corpo "3,6 mm fino ad allora, poi nuvoloso." (temporali senza aggettivo,
+  neve col suo nome);
+- **pioggia entro 18 ore**: "Coperto, pioggia dalle 02:00 di domani";
+  corpo "Circa 2 ore, 0,8 mm in tutto.";
+- **asciutto**: il cielo dalla nuvolosita' visibile (non dal codice), e se
+  cambia per almeno due ore di fila entro 12: "Coperto, si apre verso le 17:00";
+  se no "Coperto e asciutto"; corpo "Nessuna pioggia nelle prossime 18 ore.";
+- poi sempre la temperatura (massima ancora da venire, o la minima, se a 2° o
+  piu'; se no "ferma intorno a") e le raffiche solo da 50 km/h.
+
+Soglia della pioggia 0,1 mm/h e parole d'intensita' come la sala della
+pioggia, cosi' le due non si contraddicono. I testi fissi restano per il meteo
+imposto dalla cattura (`forcedWeatherCode`), che disegna un cielo diverso dai
+dati. Prove: `RaccontoTest`.
+
+## 73. L'aria "In arrivo" per sempre
+
+Galleria del 15 novembre: la sala dell'aria in tema chiaro diceva "In arrivo"
+con tutti i valori a trattini, mentre nella serie scura la settimana mostrava
+"AQI 45". Due cose diverse:
+- **la cattura**: l'aria e' una richiesta a parte che parte dopo la
+  previsione, e lo scatto cadeva un secondo dopo "previsione pronta". Sulla
+  sala dell'aria ora si aspettano quattro secondi in piu';
+- **un difetto vero**: l'aria si chiede solo dentro il ramo di successo della
+  previsione. Senza rete (o con la previsione fallita) non partiva mai, e
+  `airUnavailable` restava falso: la sala diceva "sta arrivando" per sempre,
+  anche con la previsione salvata in vista. Ora all'ultimo tentativo fallito,
+  se l'aria non c'e', si segna come non disponibile.
+
+## 74. Il cielo coperto su tre piani
+
+Coi giorni coperti il cielo erano tre grandi sagome grigie piatte, tutte
+uguali. Ora `Nuvole` sono otto, su tre piani (`piano`): le lontane piu'
+piccole, alte, schiarite verso il cielo, al 60% d'opacita' e a meta'
+velocita'; le vicine 8% piu' grandi, un filo piu' cupe, piu' veloci. Si
+disegnano dal fondo (`NuvoleDalFondo`). Le cinque di sempre restano (due
+vicine, tre di mezzo); le tre in piu' sono velature lontane che entrano solo
+sopra il 65% di copertura. I tre gonfiori variano da una massa all'altra
+(`gonfi`). Tutto piatto, senza sfumature (§64.8, §70).
+
+## 75. Meno pillole: le celle dei valori senza fondo
+
+`CellaValore` (14 usi: Oggi, pioggia, UV, luna...) era una pillola piena, tre
+per riga, accanto a pastiglie e comandi tondi: tutto arrotondato e uguale.
+Ora non ha fondo: etichetta e valore stanno su un filo verticale di 1,5 dp nel
+colore `maniglia`, con margini piu' stretti. La freccetta "›" e il cedimento
+al tocco restano i segni delle celle che portano a un'altra sala. Le sei
+caselle di Sala II e le pastiglie restano com'erano: prima si guarda questa.
+
+## 76. L'aria che singhiozza
+
+Con la riga "aria pronta" nel log (§73) si e' visto che su dodici avvii della
+galleria del 16 novembre cinque non ricevevano l'aria, a caso e su qualunque
+sala, mentre previsione e allerte dello stesso avvio arrivavano. Un fallimento
+restava "Non disponibile" fino all'aggiornamento dopo, e la causa non era
+scritta da nessuna parte. Ora la richiesta si ripete una volta dopo due
+secondi, e ogni fallimento finisce nel log ("aria non arrivata").
+
+## 77. Via la colonna di icone: sette puntini sopra la barra delle ore
+
+Scelta dell'utente fra tre proposte (A colonna che sbiadisce, B puntini, C
+barra delle ore a richiesta): **B**. La colonna di sette dischi sul bordo
+destro si mangiava 40 punti di scheda e un pezzo di cielo.
+- `schedeLarghe` e' ora **vera di serie** (SettingsPrefs, UiState): chi non
+  l'aveva mai toccata perde la colonna; chi l'aveva spenta a mano la tiene. La
+  voce delle impostazioni si chiama "Colonna delle icone" e dice cosa aggiunge
+  (accesa = colonna), invertendo la levetta.
+- `PuntiniSale` (SalaIndizio.kt): sette puntini, quello della sala in scena un
+  trattino allungato nell'accento-sul-cielo, bersagli da 32x28 punti, nome della
+  sala per TalkBack e `selected`. Stanno dove sta l'indizio "scorri in su", che
+  sparisce al primo sfoglio: nessuna riga in piu'.
+- La cattura non trascina piu' la colonna (d11b): tocca il quarto puntino e
+  fotografa la luna (`d11b-puntini-luna`).
+
+## 78. Il cielo si riprende lo spazio
+
+Osservazione dell'utente: il cielo animato e' il punto forte, ma i pannelli lo
+coprono ("il pannello della luna occupa spazio"). Negli scatti Sala IV lasciava
+una striscia di cielo, Sala II un quarto di schermo. Prima di arricchire il
+cielo, gli si restituisce il posto.
+- **Tetto ai pannelli** (`LocalAltezzaPannello`, SalaChrome): la Shell calcola
+  quanto puo' salire un pannello perche' sopra resti almeno il 40% dello
+  schermo (`QUOTA_CIELO`), mai sotto 260 dp. Oltre, `PannelloSala` scorre dentro
+  di se' (angoli interi) e sfuma il contenuto sul bordo da cui c'e' altro
+  (`sfumaAiBordi`, maschera DstIn sul contenuto, non una fascia di colore).
+- **Sala II**: le sei pillole con bollo colorato diventano `CellaValore`, tre
+  per riga, due righe basse. Stesse destinazioni e stesse ore in prestito.
+- **Sala IV**: la sfera (`LunaInterattiva`) esce dal pannello e galleggia sul
+  cielo sopra la scheda, didascalia in `inkSuCielo`. Mentre si e' in Sala IV la
+  luna piccola dell'arco si vela (`lunaVelata`, letta al disegno): due lune
+  nello stesso cielo erano una di troppo.
+- **Solo il cielo**: un dito tenuto premuto sul cielo libero sopra la scheda
+  (rilevato nel carosello, passaggio Initial, senza consumare) fa uscire
+  intestazione, schede, puntini e barra; la colonna non si compone piu', cosi'
+  il cielo riceve ogni tocco. Si torna con l'indietro, con una nuova pressione
+  lunga sul cielo o con la pastiglia "TORNA AI DATI". Il trascinamento in giu'
+  non poteva essere il gesto: sulla prima sala aggiorna, sulle altre torna
+  indietro. Con le animazioni ridotte il gesto funziona lo stesso.
+- Cattura: `d12b-solo-cielo` (pressione lunga al 20% dell'altezza) e
+  `d12c-dati-tornati` (indietro).
+
+## 79. Una build da provare senza passare da main (tolta)
+
+**Tolta lo stesso giorno**, su richiesta dell'utente: un'APK con lo stesso
+pacchetto di `apk-latest` non aggiungeva niente, e si torna indietro con git.
+Le novita' vanno su `main` con una pull request. Per provare piu' in fretta
+della CI, l'APK si compila nella sessione e si manda in chat (§81). Nota
+storica:
+
+Job `prova` in `build.yml`: su ogni push di un ramo che non e' `main` pubblica
+l'APK di debug nella prerelease `apk-prova` (file `weather-prova.apk`). Stessa
+firma di `apk-latest`: si installa sopra senza perdere i dati, e si torna a
+main reinstallando `weather.apk`. `apk-latest` resta solo di `main`.
+
+## 80. La build di prova si chiudeva all'avvio
+
+Causa: `PannelloSala` metteva sempre il proprio `verticalScroll`, ma sta dentro
+lo scorrimento della Shell. Al primo fotogramma la Shell non conosce ancora il
+carosello, il tetto e' `Dp.Unspecified`, il pannello riceve altezza infinita e
+Compose rifiuta due scorrimenti verticali annidati senza misura: eccezione,
+app chiusa. Adesso scorrimento e sfumatura si mettono solo quando il tetto c'e'.
+`PannelloTettoTest` prova i due casi dentro una colonna che scorre. La prova
+della release sull'emulatore l'avrebbe preso, ma gira dopo la pubblicazione di
+`apk-prova`: lezione, nessuna APK va data a qualcuno prima che un emulatore
+l'abbia avviata (il job `prova` poi e' stato tolto, §79).

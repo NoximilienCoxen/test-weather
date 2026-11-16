@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -98,6 +100,14 @@ fun SalaCielo(
     pollineOggi: Int = 0,
     /** Nebbia, vento, caldo, gelo e l'ora dopo la pioggia: vedi [Atmosfera]. */
     atmosfera: Atmosfera = Atmosfera(),
+    /**
+     * Quanto la luna dell'arco si fa da parte, da 0 a 1: in Sala IV la luna
+     * grande sta nel cielo, e una seconda piu' piccola sarebbe di troppo. Una
+     * funzione, letta al disegno: segue lo sfoglio senza ricomporre.
+     */
+    lunaVelata: () -> Float = { 0f },
+    /** Il dito tenuto premuto sul cielo, se qualcuno lo ascolta. */
+    onPressioneLunga: (() -> Unit)? = null,
 ) {
     // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
     //
@@ -132,6 +142,10 @@ fun SalaCielo(
     val cacheAtmosfera = remember { CacheAtmosfera() }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
+    // Il gesto si riavvia solo quando qualcuno comincia o smette di ascoltare,
+    // non a ogni lambda nuova della Shell: un riavvio taglia il dito a meta'.
+    val pressioneLunga by androidx.compose.runtime.rememberUpdatedState(onPressioneLunga)
+    val ascoltaPressione = onPressioneLunga != null
 
     // **Da -1 a 1 su ogni asse**, gia' smorzato e con la linea di base che
     // insegue la posa: restituisce al centro se si resta fermi, quindi non
@@ -142,9 +156,18 @@ fun SalaCielo(
     val parallasse = Offset(inclinazione.x * ampiezza, inclinazione.y * ampiezza)
 
     Canvas(
-        modifier = modifier.pointerInput(interattivo) {
-            if (!interattivo) return@pointerInput
-            detectTapGestures { punto ->
+        modifier = modifier.pointerInput(interattivo, ascoltaPressione) {
+            if (!interattivo && !ascoltaPressione) return@pointerInput
+            detectTapGestures(
+                onLongPress = if (ascoltaPressione) {
+                    { _: Offset -> pressioneLunga?.invoke() }
+                } else {
+                    null
+                },
+            ) { punto ->
+                // Con le animazioni ridotte il cielo non risponde al dito:
+                // resta solo la pressione lunga, che e' un comando.
+                if (!interattivo) return@detectTapGestures
                 val ora = tempo()
                 // Il disco sta dove lo mette l'arco: stesso conto del disegno.
                 val centro = arco(
@@ -247,7 +270,7 @@ fun SalaCielo(
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
             fasciDiLuce(sx, sy, dy, sky, scena, t, fiamma.value, fascio)
             arcoDelCielo(sx, sy, dy, palette, scena, stradaDelSole)
-            soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value)
+            soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value, 1f - lunaVelata())
         }
 
         translate(parallasse.x * 0.52f, parallasse.y * 0.52f) {
@@ -517,6 +540,8 @@ private fun DrawScope.soleEluna(
     faseLunare: Float,
     tempo: Float,
     fiamma: Float,
+    /** Quanto resta della luna: vedi `lunaVelata` in [SalaCielo]. */
+    lunaPresente: Float = 1f,
 ) {
     // **Il cielo chiuso li vela, non li cancella.**
     //
@@ -631,9 +656,9 @@ private fun DrawScope.soleEluna(
         )
     }
 
-    if (scena.notte > 0.01f) {
+    if (scena.notte > 0.01f && lunaPresente > 0.01f) {
         val r = 35f * sx
-        val alpha = (scena.notte * velo).coerceIn(0f, 1f)
+        val alpha = (scena.notte * velo * lunaPresente).coerceIn(0f, 1f)
         // Anche la luna ha il suo bagliore a due strati, e cresce col tocco.
         AloniLuna.forEach { (quanto, opacita) ->
             val raggio = r * quanto * respiroAlone * (1f + 0.22f * fiamma)
@@ -920,21 +945,68 @@ private fun DrawScope.disegnaIncrespature(
     }
 }
 
-/** Quante masse di nuvola ci sono, e dove. Le taglie sono quelle del prototipo. */
-private data class Nuvola(val x: Float, val y: Float, val w: Float, val passo: Float)
+/**
+ * Quante masse di nuvola ci sono, e dove.
+ *
+ * **Tre piani, non uno.** Erano cinque masse della stessa forma alla stessa
+ * distanza: nei giorni coperti diventavano tre grandi sagome grigie piatte che
+ * coprivano un terzo dello schermo, la parte piu' bella dell'app ridotta alla
+ * piu' povera (scatti del 15 novembre). Adesso ogni massa ha un [piano]:
+ * 0 lontano (piu' piccola, piu' alta, piu' tenue e piu' lenta), 1 di mezzo,
+ * 2 vicino (piu' grande, un filo piu' scura e piu' veloce). Le prime cinque
+ * sono quelle di sempre; le tre in piu' sono velature lontane che entrano solo
+ * col cielo chiuso, perche' la presenza sale con l'indice.
+ *
+ * E ogni sagoma e' sua: i tre gonfiori cambiano misura e posto da una massa
+ * all'altra ([gonfi]), invece di ripetere lo stesso profilo cinque volte.
+ */
+private data class Nuvola(
+    val x: Float,
+    val y: Float,
+    val w: Float,
+    val passo: Float,
+    val piano: Int,
+    /** Diametro e posto dei tre gonfiori, in frazioni della larghezza. */
+    val gonfi: List<Triple<Float, Float, Float>>,
+)
 
-private val Nuvole: List<Nuvola> = List(5) { i ->
-    val w = 150f + rnd(i + 11) * 110f
+private val Nuvole: List<Nuvola> = List(8) { i ->
+    val piano = when (i) {
+        0, 3 -> 2
+        1, 2, 4 -> 1
+        else -> 0
+    }
+    val lontana = piano == 0
+    val w = (150f + rnd(i + 11) * 110f) * if (lontana) 1.25f else 1f
+    fun varia(k: Int) = 0.85f + rnd(i * 7 + k) * 0.3f
     Nuvola(
         x = -50f + rnd(i + 5) * 340f,
-        y = 74f + rnd(i + 33) * 210f,
+        y = if (lontana) 40f + rnd(i + 33) * 90f else 74f + rnd(i + 33) * 210f,
         w = w,
         // Ognuna va per conto suo, fra il settanta e il centotrenta per cento
         // della velocita' di base: cinque masse alla stessa identica velocita'
         // sono un fondale che scorre, non cinque nuvole.
         passo = 0.7f + rnd(i + 90) * 0.6f,
+        piano = piano,
+        // Le lontane sono velature: gonfiori bassi, la massa resta stesa.
+        gonfi = if (lontana) {
+            listOf(
+                Triple(0.22f * varia(1), 0.08f, 0.06f),
+                Triple(0.30f * varia(2), 0.34f, 0.08f),
+                Triple(0.20f * varia(3), 0.66f, 0.05f),
+            )
+        } else {
+            listOf(
+                Triple(0.33f * varia(1), 0.04f + 0.04f * rnd(i + 51), 0.10f),
+                Triple(0.48f * varia(2), 0.22f + 0.08f * rnd(i + 52), 0.16f),
+                Triple(0.30f * varia(3), 0.58f + 0.08f * rnd(i + 53), 0.12f),
+            )
+        },
     )
 }
+
+/** L'ordine di disegno, calcolato una volta: dal piano lontano al vicino. */
+private val NuvoleDalFondo = Nuvole.withIndex().sortedBy { it.value.piano }
 
 /**
  * Quanto scorre una nuvola in un secondo, col cielo aperto, in punti del
@@ -989,10 +1061,11 @@ private fun DrawScope.nuvole(
     // Le cinque entrano in fila e non tutte insieme: con una soglia sola
     // comparirebbero nello stesso istante, che e' lo scatto di prima con una
     // rampa davanti.
-    Nuvole.forEachIndexed { i, n ->
+    // Dal fondo in avanti: le vicine coprono le lontane.
+    NuvoleDalFondo.forEach { (i, n) ->
         val presenza = (((scena.copertura - i * 0.13f) / 0.24f).coerceIn(0f, 1f))
             .coerceAtLeast(if (i < 2) scena.tempesta else 0f)
-        if (presenza <= 0.01f) return@forEachIndexed
+        if (presenza <= 0.01f) return@forEach
 
         // Il corpo si schiarisce o si incupisce col cielo: bianco panna su un
         // cielo aperto, ardesia sotto un fronte.
@@ -1002,12 +1075,17 @@ private fun DrawScope.nuvole(
         // "nuvole di passaggio" non ne porta.
         val chiara = lerp(Color(0xFFFDFAF4), Color(0xFF9A9994), ((scena.copertura - 0.55f) / 0.45f).coerceIn(0f, 1f))
         val scura = lerp(Color(0xFF3F4653), Color(0xFF2A2F37), ((scena.copertura - 0.35f) / 0.65f).coerceIn(0f, 1f))
-        val corpo = lerp(chiara, scura, palette.buio)
-        // **Il tocco di luce e' il corpo schiarito, non il bianco.** Era un
-        // bianco fisso al settantadue per cento: sulla nuvola panna non si
-        // vedeva, su quella grigia diventava un pallino bianco appiccicato,
-        // uno per nuvola, che sembrava un difetto (e lo era).
-        val luce = lerp(corpo, Color.White, lerp(0.35f, 0.08f, palette.buio)).copy(alpha = 0.9f)
+        val corpoBase = lerp(chiara, scura, palette.buio)
+        // La distanza si legge dal tono: le lontane schiarite verso il cielo
+        // (di notte appena), le vicine un filo piu' cupe.
+        val corpo = when (n.piano) {
+            0 -> lerp(corpoBase, Color.White, lerp(0.22f, 0.06f, palette.buio))
+            2 -> lerp(corpoBase, Color.Black, 0.05f)
+            else -> corpoBase
+        }
+        val pianoScala = when (n.piano) { 0 -> 0.8f; 2 -> 1.08f; else -> 1f }
+        val pianoAlfa = when (n.piano) { 0 -> 0.6f; else -> 1f }
+        val pianoPasso = when (n.piano) { 0 -> 0.5f; 2 -> 1.3f; else -> 1f }
         val ombra = lerp(SalaTokens.neutral900.copy(alpha = 0.07f), Color(0xFF121824).copy(alpha = 0.18f), palette.buio)
 
         // **L'evaporazione delle ore calde.** Quando il sole e' alto sopra un
@@ -1028,10 +1106,11 @@ private fun DrawScope.nuvole(
         val evaporazione = SunClock.smoothstep(0.62f, 0.88f, sky.altitude) *
             (1f - scena.copertura).coerceIn(0f, 1f)
 
-        val scala = lerp(0.55f, 1f, presenza) * lerp(1f, 1.03f, evaporazione)
+        val scala = lerp(0.55f, 1f, presenza) * lerp(1f, 1.03f, evaporazione) * pianoScala
         val alfa = presenza * presenza *
             lerp(0.92f, 0.96f, scena.copertura) *
-            lerp(1f, 0.8f, evaporazione)
+            lerp(1f, 0.8f, evaporazione) *
+            pianoAlfa
         val w = n.w * sx * scala
         val h = w * 0.46f
         // **La deriva scorre, e non torna indietro.** La velocita' e' quella
@@ -1043,35 +1122,36 @@ private fun DrawScope.nuvole(
         // sarebbe vuoto. La corsa e' larga quanto lo schermo piu' la nuvola
         // piu' larga, cosi' rientra da sinistra **dopo** essere sparita del
         // tutto, e non a meta'.
-        val velocita = lerp(DERIVA_SERENO, DERIVA_FRONTE, scena.copertura) * n.passo
+        val velocita = lerp(DERIVA_SERENO, DERIVA_FRONTE, scena.copertura) * n.passo * pianoPasso
         val corsa = RIF_L + 260f
         val spostamento = ((n.x + tempo * velocita) % corsa + corsa) % corsa - 130f
         val x = spostamento * sx
         // Il fondo della nuvola, da cui tutti i pezzi si misurano verso l'alto.
         val fondo = n.y * sy + h + dy
 
-        fun tondo(d: Float, dx: Float, su: Float, tinta: Color) {
-            drawCircle(
-                color = tinta,
-                radius = d / 2f,
-                center = Offset(x + dx + d / 2f, fondo - su - d / 2f),
-                alpha = alfa,
-            )
-        }
-
-        // Il corpo: una pillola col fondo piatto appoggiato sulla linea.
+        // **Una forma sola, non quattro pezzi.** Corpo e gonfiori erano
+        // disegnati uno per uno, ciascuno con la sua trasparenza: dove si
+        // sovrapponevano l'alfa si sommava, e ogni nuvola mostrava i contorni
+        // dei suoi cerchi. In mezzo c'era il "tocco di luce", un disco piu'
+        // chiaro che sulle nuvole grigie si leggeva come un buco (scatti del
+        // 15 novembre, di giorno e di notte). Adesso i pezzi sono un tracciato
+        // unico, dipinto una volta con una sola alfa e piatto come il resto
+        // delle illustrazioni (l'icona, le scene): niente sfumatura, che qui
+        // si ricalcolerebbe a ogni fotogramma su cinque masse in moto (§64.8).
         val corpoH = h * 0.46f
-        drawRoundRect(
-            color = corpo,
-            topLeft = Offset(x, fondo - corpoH),
-            size = Size(w, corpoH),
-            cornerRadius = CornerRadius(corpoH / 2f),
-            alpha = alfa,
-        )
-        tondo(w * 0.33f, w * 0.04f, h * 0.10f, corpo)
-        tondo(w * 0.48f, w * 0.25f, h * 0.16f, corpo)
-        tondo(w * 0.30f, w * 0.62f, h * 0.12f, corpo)
-        tondo(w * 0.16f, w * 0.31f, h * 0.44f, luce)
+        val sagoma = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    left = x, top = fondo - corpoH, right = x + w, bottom = fondo,
+                    cornerRadius = CornerRadius(corpoH / 2f),
+                ),
+            )
+            fun tondo(d: Float, dx: Float, su: Float) {
+                addOval(Rect(Offset(x + dx, fondo - su - d), Size(d, d)))
+            }
+            n.gonfi.forEach { (d, dx, su) -> tondo(w * d, w * dx, h * su) }
+        }
+        drawPath(path = sagoma, color = corpo, alpha = alfa)
         val ombraH = h * 0.10f
         drawRoundRect(
             color = ombra,

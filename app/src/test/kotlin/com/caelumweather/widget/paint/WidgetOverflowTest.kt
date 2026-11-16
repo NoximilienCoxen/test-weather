@@ -17,6 +17,8 @@ import com.caelumweather.data.prossimiEstremi
 import com.caelumweather.prefs.SalaWindUnit
 import com.caelumweather.prefs.TempUnit
 import com.caelumweather.data.Place
+import com.caelumweather.widget.VistaWidget
+import com.caelumweather.widget.vistaDaForma
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -182,6 +184,31 @@ class WidgetOverflowTest {
         }
         // Il MINI da configurare sta in una cella sola.
         check("setup-MINI-70", 70f, 70f, Cut.PICCOLO) { setupArt("MINI", type, ink) }
+    }
+
+    /**
+     * Il widget unico nelle forme in cui lo si trascina davvero (scatti del 13
+     * novembre): una colonna per quattro righe, una cella e mezza, quattro
+     * colonne per una riga, quattro per quattro fino al massimo di 400 dp. Per
+     * ciascuna si disegna la faccia che [vistaDaForma] sceglie, col taglio che
+     * le darebbe [WidgetCanvas.plan].
+     */
+    @Test
+    fun `widget unico, le forme estreme`() {
+        val forme = listOf(65f to 410f, 65f to 95f, 100f to 250f, 370f to 95f, 370f to 120f, 370f to 400f, 400f to 400f)
+        names.forEach { name ->
+            forme.forEach { (w, h) ->
+                val vista = vistaDaForma(w, h)
+                val cut = WidgetCanvas.taglio(w, h)
+                val nome = "unico-${vista.name.lowercase()}-${w.toInt()}x${h.toInt()}-${name.take(8)}"
+                when (vista) {
+                    VistaWidget.MINI -> check(nome, w, h, cut, edgeDp = 8f) { miniArt(forecast(), type, ink) }
+                    VistaWidget.ORE -> check(nome, w, h, cut) { hoursArt(it, name, forecast().hours, type, ink) }
+                    VistaWidget.SETTIMANA -> check(nome, w, h, cut) { weekArt(it, name, forecast().days, type, ink) }
+                    else -> check(nome, w, h, cut) { currentArt(it, place(name), forecast(), type, ink) }
+                }
+            }
+        }
     }
 
     // ---------------------------------------------------------------------

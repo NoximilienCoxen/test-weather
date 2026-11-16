@@ -48,16 +48,21 @@ internal fun DrawScope.ventoArt(
     val tag = type.brush(nameSize, weight = 600, width = 78, letterSpacingEm = 0.10f)
     val titolo = TITOLO_VENTO
     val tagWidth = type.widthOf(titolo, tag)
+    // Nel quadrato "FONTEVIVO" accanto all'etichetta diventava "FON…": un nome
+    // irriconoscibile. Se il nome non ci sta nemmeno stretto, l'etichetta cede
+    // il posto - il disegno sotto dice gia' di che widget si tratta.
+    val accantoAlNome = box.width - tagWidth - box.height * 0.10f
+    val conEtichetta = type.widthOf(place, type.brush(nameSize, weight = 600, width = 58, letterSpacingEm = 0.10f)) <= accantoAlNome
     val name = fitText(
         value = place,
         x = box.left,
         y = box.top,
-        maxWidth = box.width - tagWidth - box.height * 0.10f,
+        maxWidth = if (conEtichetta) accantoAlNome else box.width,
         sizePx = nameSize,
         type = type,
         color = ink.secondary,
     )
-    text(titolo, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
+    if (conEtichetta) text(titolo, box.right - tagWidth, box.top, tag, ink.secondary, alpha = 0.7f)
 
     val top = box.top + lineHeight(name) * 1.35f
     val ora = ore.firstOrNull()
@@ -88,7 +93,16 @@ internal fun DrawScope.ventoArt(
     val da = ora.windDirection?.let { tr("da ${Wmo.windDirection(it)}", "from ${Wmo.windDirection(it)}", "aus ${Wmo.windDirection(it)}", "de ${Wmo.windDirection(it)}", "del ${Wmo.windDirection(it)}") }
     val righe = listOfNotNull(
         da,
-        raffica?.let { tr("raffiche ${unita.from(it).roundToInt()}", "gusts ${unita.from(it).roundToInt()}", "Böen ${unita.from(it).roundToInt()}", "rafales ${unita.from(it).roundToInt()}", "rachas ${unita.from(it).roundToInt()}") },
+        raffica?.let {
+            val n = unita.from(it).roundToInt()
+            val intera = tr("raffiche $n", "gusts $n", "Böen $n", "rafales $n", "rachas $n")
+            // Nel quadrato, accanto alla bussola, "raffiche 25" non ci sta e
+            // usciva "raffi…": il numero, cioe' l'unica cosa che conta, spariva.
+            // Se non ci sta nemmeno stretta, la forma breve.
+            val stretta = type.brush(piccola.textSize * 0.8f, weight = 600, width = 58, letterSpacingEm = 0.02f)
+            if (type.widthOf(intera, stretta) <= larghezzaNumero) intera
+            else tr("raff. $n", "gust $n", "Böen $n", "raf. $n", "rach. $n")
+        },
     )
 
     val blocco = lineHeight(cifre) * 0.92f + lineHeight(sigla) + righe.size * lineHeight(piccola) * 0.95f
@@ -106,7 +120,7 @@ internal fun DrawScope.ventoArt(
         y += lineHeight(sigla)
     }
     righe.forEach { riga ->
-        fitText(riga, principale.left, y, larghezzaNumero, piccola.textSize, type, ink.secondary, weight = 600, letterSpacingEm = 0.02f)
+        fitText(riga, principale.left, y, larghezzaNumero, piccola.textSize, type, ink.secondary, weight = 600, letterSpacingEm = 0.02f, minScale = 0.8f)
         y += lineHeight(piccola) * 0.95f
     }
 

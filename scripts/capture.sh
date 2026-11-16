@@ -363,6 +363,11 @@ session() {
   # ridotta a pallino; e il ritorno al bollettino toccandolo.
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 2 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -378,6 +383,11 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto delle allerte"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 2 \
     --ei sezione 1 >/dev/null 2>&1 || true
   attendi_previsione
@@ -410,6 +420,11 @@ session() {
   alive || { echo "dispositivo caduto prima dello scatto dell'avviso calcolato"; return; }
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
+  # Il buffer si svuota anche qui (vedi `restart_with`): senza, l'attesa
+  # trovava la "previsione pronta" dell'avvio prima, scattava dopo due
+  # secondi sul primo fotogramma non ancora composto, e le tre allerte
+  # uscivano nere in tutti e due i temi (17 KB, giro del 15 novembre).
+  adbt shell logcat -c >/dev/null 2>&1 || true
   avvia --ei ora "$ora_dettaglio" --ei allerta 0 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
@@ -466,6 +481,17 @@ session() {
       --ei sezione "$i" >/dev/null 2>&1 || true
     attendi_previsione
     sleep 1
+    # L'aria arriva da un'altra richiesta, che parte solo dopo la previsione:
+    # sulla sua sala un secondo non basta, e lo scatto usciva "In arrivo" con
+    # tutti i valori a trattini (giro del 15 novembre). Quattro secondi in piu'
+    # non bastavano nemmeno: si aspetta la riga "aria pronta", fino a venti.
+    if [ "$sala" = "aria" ]; then
+      for _ in $(seq 1 20); do
+        adbt shell logcat -d -s meteo:I 2>/dev/null | grep -q "aria pronta" && break
+        sleep 1
+      done
+      sleep 1
+    fi
     shoot "${slug}-d${n}-${sala}"
     n=$(( n + 1 ))
     i=$(( i + 1 ))
@@ -517,35 +543,23 @@ session() {
   sleep 2
   shoot "${slug}-sfoglio-breve-dopo-oggi"
 
-  # ── La colonna si trascina ──────────────────────────────────────────────────
+  # ── I puntini delle sale ────────────────────────────────────────────────────
   #
-  # **Il gesto nuovo, fotografato mentre e' in corso.** Tenere premuta la
-  # colonna e scorrere attraversa le sale con la sala sotto il dito, e accanto
-  # al dito compare il cartellino col nome: due cose che uno scatto a dito
-  # alzato non puo' mostrare, perche' a dito alzato il cartellino non c'e' piu'.
+  # Al posto della colonna di icone, che di serie non c'e' piu' (CONTESTO §77),
+  # sette puntini sopra la barra delle ore. Dopo lo sfoglio qui sopra
+  # l'indizio "scorri in su" e' sparito e i puntini sono al suo posto. Si tocca
+  # il quarto - la luna - e lo scatto deve mostrare la luna, col trattino
+  # allungato sul quarto puntino.
   #
-  # `input motionevent` tiene premuto fra un comando e l'altro - la stessa
-  # tecnica della rotazione della luna, e la ragione per cui li' non si usa una
-  # swipe: quella finisce prima dello scatto.
-  #
-  # I conti: la colonna e' centrata in verticale sullo schermo **intero** - sta
-  # fuori dal riquadro che tiene conto delle barre di sistema - ed e' fatta di
-  # sette bersagli da 48dp, quindi alta 336dp. Il suo asse sta a mezzo bersaglio
-  # piu' sei punti di margine dal bordo destro: trenta punti.
-  local passo=$(( 48 * PXDP / 100 ))
-  local asse=$(( W - 30 * PXDP / 100 ))
-  local cima=$(( H / 2 - 7 * passo / 2 ))
-  # Il centro del bersaglio numero $1, dal primo (0) al settimo (6).
-  bersaglio_y() { echo $(( cima + $1 * passo + passo / 2 )); }
-
-  echo "  -- colonna trascinata (asse $asse, passo $passo) --"
-  adbt shell input motionevent DOWN "$asse" "$(bersaglio_y 6)" >/dev/null 2>&1 || true
-  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 3)" >/dev/null 2>&1 || true
-  adbt shell input motionevent MOVE "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
-  sleep 1
-  shoot "${slug}-d11b-colonna-trascinata"
-  adbt shell input motionevent UP "$asse" "$(bersaglio_y 1)" >/dev/null 2>&1 || true
-  sleep 1
+  # I conti: sette bersagli da 32 punti centrati sullo schermo, quindi la luna
+  # (il quarto) sta al centro. In altezza la riga prende il posto dell'indizio,
+  # che negli scatti sta all'84,5% dello schermo.
+  local x_luna=$(( W / 2 ))
+  local y_puntini=$(( H * 845 / 1000 ))
+  echo "  -- puntini: tocco sulla luna ($x_luna, $y_puntini) --"
+  adbt shell input tap "$x_luna" "$y_puntini" >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d11b-puntini-luna"
 
   # L'indietro da una scheda qualunque riporta alla prima, invece di chiudere
   # l'app: da sei schede sotto, uscire non e' quasi mai la risposta cercata.
@@ -554,6 +568,20 @@ session() {
   adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
   sleep 2
   shoot "${slug}-d12-tornato-alla-prima"
+
+  # ── Solo il cielo ───────────────────────────────────────────────────────────
+  #
+  # Un dito tenuto sul cielo libero, sopra la scheda, fa scendere via tutto il
+  # resto (CONTESTO §78). Il cielo libero di Sala I sta fra l'intestazione e il
+  # numero grande: il 20% dell'altezza. Una trascinata ferma di 900 ms e' la
+  # pressione lunga di `input`. Poi l'indietro deve riportare i dati.
+  echo "  -- solo il cielo: pressione lunga ($(( W / 2 )), $(( H * 20 / 100 ))) --"
+  adbt shell input swipe $(( W / 2 )) $(( H * 20 / 100 )) $(( W / 2 )) $(( H * 20 / 100 )) 900 >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d12b-solo-cielo"
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d12c-dati-tornati"
 
   # ── Una scheda letta su un altro giorno ─────────────────────────────────────
   #
@@ -830,17 +858,37 @@ session() {
     # si guarda - stelle di notte, uccelli e pulviscolo di giorno, cio' che cade
     # quando cade. Quindi si misura lei, con la pioggia imposta perche' il giorno
     # dello scatto e' quasi sempre asciutto.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
+    # **Senza `--ez cattura` e con le animazioni di sistema accese**, a
+    # differenza di ogni altro avvio del giro. La cattura spegne apposta il
+    # movimento della scena, e l'emulatore parte con `animator_duration_scale`
+    # a zero, che l'app legge come "animazioni ridotte": cosi' Sala I non si
+    # muoveva mai e la misura diceva zero e zero, protestando a ogni giro
+    # contro una guardia che non poteva vedere (giro del 15 novembre).
+    avvio_vivo() {
+      adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+      sleep 1
+      adbt shell logcat -c >/dev/null 2>&1 || true
+      adbt shell settings put global animator_duration_scale 1 >/dev/null 2>&1 || true
+      # shellcheck disable=SC2086
+      adbt shell am start $1 -n "$ACT" --es lingua "$LINGUA" >/dev/null 2>&1 || true
+      attendi_previsione
+      sleep 2
+    }
+    avvio_vivo "--ei ora $ora_dettaglio --ei sezione 0 --ei meteo 63"
     echo "  -- la guardia della scena --"
     guardata=$(conta_fotogrammi)
-    # E il confronto: la **quinta** sala, l'aria. Il carosello tiene composta
-    # anche la pagina accanto, quindi Sala I resta viva nella composizione ma
-    # fuori vista - che e' esattamente il caso per cui la guardia esiste. Se
-    # leggesse fotogrammi anche li', il cielo si muoverebbe per nessuno.
-    restart_with "--ei ora $ora_dettaglio --ei sezione 4 --ei meteo 63"
+    # E il confronto: **l'app in secondo piano**. Prima era la quinta sala,
+    # l'aria, ma da quando il cielo sta dietro tutte e sette (vedi l'orologio
+    # della scena in SalaShell) si muove su ognuna per scelta: misurata davvero,
+    # dava 36 contro 37, e la soglia protestava contro il progetto. La cosa che
+    # conta per la batteria e' un'altra: col telefono sulla Home, l'app non
+    # deve disegnare niente.
+    adbt shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
+    sleep 2
     accanto=$(conta_fotogrammi)
+    adbt shell settings put global animator_duration_scale 0 >/dev/null 2>&1 || true
     echo "    fotogrammi in 4s con la pioggia in scena:   ${guardata:-?}"
-    echo "    fotogrammi in 4s con la pioggia accanto:    ${accanto:-?}"
+    echo "    fotogrammi in 4s con l'app sulla Home:     ${accanto:-?}"
     # **La soglia non e' lo zero esatto, ed e' una correzione, non uno sconto.**
     # La prima volta pretendeva zero e leggeva uno: la guardia teneva benissimo -
     # 55 fotogrammi contro 1 - ma il criterio era sbagliato. Un **orologio** che
@@ -852,7 +900,7 @@ session() {
     # Quindi si chiede quello che si vuole davvero sapere: che di la' un
     # orologio giri, e che di qua non ne giri nessuno.
     if [ "${guardata:-0}" -gt 10 ] 2>/dev/null && [ "${accanto:-99}" -le 3 ] 2>/dev/null; then
-      esito="la guardia tiene: si muove solo mentre la si guarda"
+      esito="la guardia tiene: si muove solo mentre la si guarda, ferma in secondo piano"
     else
       esito="ATTENZIONE: la guardia non si comporta come dichiarato"
     fi
@@ -863,7 +911,7 @@ session() {
     {
       echo "la guardia della scheda della pioggia"
       echo "  fotogrammi in 4s, pioggia in scena:  ${guardata:-?}"
-      echo "  fotogrammi in 4s, pioggia accanto:   ${accanto:-?}"
+      echo "  fotogrammi in 4s, app sulla Home:    ${accanto:-?}"
       echo "  $esito"
       echo
       echo "Il primo numero non dice niente sul costo per fotogramma: qui rende"

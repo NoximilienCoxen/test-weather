@@ -19,6 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.LocalSize
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
@@ -272,7 +276,7 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
     data class Drawn(val bitmap: Bitmap, val spoken: String)
 
     /** Quel che finisce sulla Home: il disegno e dove porta toccarlo. */
-    private class Face(val drawn: Drawn, val onClick: Action)
+    private class Face(val drawn: Drawn, val onClick: Action, val misura: DpSize)
 
     /**
      * Il disegno di questo widget.
@@ -330,12 +334,19 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
             val config by remember { prefs.watch(appWidgetId) }.collectAsState(firstConfig)
             val redraw = currentState(RedrawKey) ?: 0L
 
+            // La misura vera del riquadro, come la passa Glance in `SizeMode.Exact`.
+            // Prima non la guardava nessuno: allargando il widget unico (o il
+            // vento, o il mare) la sessione restava aperta, il disegno restava
+            // quello di 2x2 e `ContentScale.FillBounds` lo stirava sul riquadro
+            // nuovo - scritte e sole schiacciati - fino al ridisegno successivo.
+            val misura = LocalSize.current
+
             var face by remember { mutableStateOf(first) }
             var faceOf by remember { mutableStateOf(firstConfig to firstRedraw) }
-            LaunchedEffect(config, redraw) {
+            LaunchedEffect(config, redraw, misura) {
                 val wanted = config to redraw
-                if (wanted == faceOf) return@LaunchedEffect
-                face = draw(context, appWidgetId, config)
+                if (wanted == faceOf && stessaMisura(face.misura, misura)) return@LaunchedEffect
+                face = draw(context, appWidgetId, config, misura)
                 faceOf = wanted
             }
 
@@ -343,8 +354,9 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
         }
     }
 
-    private suspend fun draw(context: Context, appWidgetId: Int, config: WidgetConfig): Face {
-        val frame = WidgetCanvas.plan(context, appWidgetId)
+    private suspend fun draw(context: Context, appWidgetId: Int, config: WidgetConfig, misura: DpSize? = null): Face {
+        val frame = WidgetCanvas.plan(context, appWidgetId, misura)
+        val disegnata = DpSize((frame.widthPx / frame.scale).dp, (frame.heightPx / frame.scale).dp)
         val ink = WidgetInk.of(context, SettingsPrefs(context).settings.first().widgetColoriTelefono)
         val type = WidgetType(context)
 
@@ -364,13 +376,13 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
                 "Widget ${kind.label.inMezzoAllaFrase()} à configurer. Touchez pour choisir la ville.",
                 "Widget ${kind.label.inMezzoAllaFrase()} por configurar. Toca para elegir la ciudad.",
             )
-            return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)))
+            return Face(Drawn(bitmap, spoken), actionStartActivity(configureIntent(context, appWidgetId)), disegnata)
         }
 
         // Il tocco apre l'app sulla sala del widget. Prima riscaricava e
         // basta: il widget si aggiorna gia' da solo, e chi lo tocca vuole
         // saperne di piu', non lo stesso numero ridisegnato.
-        return Face(paint(context, frame, place, type, ink, config.vista), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)))
+        return Face(paint(context, frame, place, type, ink, config.vista), actionStartActivity(apriSalaIntent(context, appWidgetId, kind, place)), disegnata)
     }
 }
 
@@ -382,6 +394,17 @@ internal abstract class CaelumWidget(private val kind: WidgetKind) : GlanceAppWi
  * di dirle "rifai il disegno" invece di "ricomponi quello che hai".
  */
 private val RedrawKey = longPreferencesKey("caelum_ridisegno")
+
+/**
+ * Se un disegno fatto per [disegnata] va bene per [voluta]. Una misura nulla
+ * (Glance a volte da' zero prima di conoscerla) non chiede di ridisegnare; sotto
+ * i due dp di scarto e' arrotondamento, non un riquadro diverso.
+ */
+internal fun stessaMisura(disegnata: DpSize, voluta: DpSize): Boolean {
+    if (voluta.width.value <= 0f || voluta.height.value <= 0f) return true
+    return abs(disegnata.width.value - voluta.width.value) < 2f &&
+        abs(disegnata.height.value - voluta.height.value) < 2f
+}
 
 /**
  * Ridisegna davvero, riscaricando: fa avanzare [RedrawKey] e poi aggiorna.

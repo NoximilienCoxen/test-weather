@@ -62,11 +62,13 @@ import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.GiornoSettimana
 import com.caelumweather.ui.sala.IconaMeteo
 import com.caelumweather.ui.sala.IconaCheReagisce
+import com.caelumweather.ui.sala.LocalPaletteCielo
 import com.caelumweather.ui.sala.PannelloSala
 import com.caelumweather.ui.sala.PastigliaAccento
 import com.caelumweather.ui.sala.SalaPalette
 import com.caelumweather.ui.sala.SalaRoom
 import com.caelumweather.ui.sala.SalaType
+import com.caelumweather.ui.sala.raccontoDellOra
 import com.caelumweather.ui.sala.salaBody
 import com.caelumweather.ui.sala.salaConditionOf
 import com.caelumweather.ui.sala.salaPhaseOf
@@ -137,6 +139,9 @@ fun SalaOggiScreen(
     val movimentoOnda = LocalMovimento.current
 
     Column(modifier = modifier.fillMaxWidth()) {
+        // Il numero sta sul cielo, non sulla scheda: col tema scelto a mano
+        // prende l'inchiostro del cielo (vedi `LocalPaletteCielo`).
+        val cielo = LocalPaletteCielo.current ?: palette
         // ── Il numero, sul cielo ─────────────────────────────────────────────
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
@@ -156,13 +161,13 @@ fun SalaOggiScreen(
                     testo = gradi?.toString() ?: "--",
                     valore = gradi,
                     style = SalaType.giant(104),
-                    color = palette.ink,
+                    color = cielo.ink,
                     ferme = state.animazioniRidotte || sistemaSenzaAnimazioni(),
                 )
                 Text(
                     text = "°",
                     style = SalaType.giant(38),
-                    color = palette.accent,
+                    color = cielo.accent,
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
@@ -174,14 +179,14 @@ fun SalaOggiScreen(
                 Text(
                     text = percepiti?.let { tr("percepiti $it°", "feels like $it°", "gefühlt $it°", "ressenti $it°", "sensación $it°") } ?: tr("percepiti --", "feels like --", "gefühlt --", "ressenti --", "sensación --"),
                     style = SalaType.rowTitle,
-                    color = palette.ink,
+                    color = cielo.ink,
                 )
                 val min = giorno?.tempMin?.let { state.unit.from(it).roundToInt() }
                 val max = giorno?.tempMax?.let { state.unit.from(it).roundToInt() }
                 Text(
                     text = "min ${min ?: "--"}° · max ${max ?: "--"}°",
                     style = SalaType.rowNote,
-                    color = palette.inkFaint,
+                    color = cielo.inkFaint,
                 )
                 // Solo su oggi: di un giorno futuro "ieri" sarebbe un altro
                 // giorno, e la riga direbbe una cosa per un'altra. La riga
@@ -191,7 +196,7 @@ fun SalaOggiScreen(
                     Text(
                         text = scartoDaIeriBreve(suIeri),
                         style = SalaType.rowNote,
-                        color = palette.inkFaint,
+                        color = cielo.inkFaint,
                         maxLines = 1,
                     )
                 }
@@ -216,7 +221,7 @@ fun SalaOggiScreen(
                         ore = state.shownHours,
                         scelta = state.selectedHour,
                         aperta = giornataAperta,
-                        palette = palette,
+                        palette = cielo,
                         etichetta = tr("giornata", "the day", "Tag", "journée", "el día"),
                     )
                 }
@@ -231,7 +236,7 @@ fun SalaOggiScreen(
                 Text(
                     text = tr("condividi", "share", "teilen", "partager", "compartir"),
                     style = SalaType.pill,
-                    color = palette.accent,
+                    color = cielo.accent,
                     maxLines = 1,
                     softWrap = false,
                     modifier = Modifier
@@ -267,13 +272,22 @@ fun SalaOggiScreen(
             // Senza previsione la condizione ripiega su SERENO, e il titolo
             // del sereno sopra i trattini era un tempo inventato.
             val senzaPrevisione = state.forecast == null
+            // Il racconto dalle ore vere (`Racconto.kt`). I testi fissi restano
+            // solo quando il meteo e' imposto dalla cattura, che disegna un
+            // cielo diverso da quello dei dati, o quando dall'ora mostrata in
+            // avanti non c'e' nessuna ora da raccontare.
+            val racconto = remember(state.forecast, ora?.time, state.unit, state.windUnit, state.forcedWeatherCode) {
+                val da = ora?.time
+                if (state.forcedWeatherCode != null || da == null) null
+                else raccontoDellOra(state.forecast?.allHours.orEmpty(), da, state.unit, state.windUnit)
+            }
             Text(
-                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else salaTitle(condizione, fase),
+                text = if (senzaPrevisione) titoloSenzaPrevisione(state.error) else racconto?.titolo ?: salaTitle(condizione, fase),
                 style = SalaType.cardTitle,
                 color = palette.ink,
             )
             Didascalia(
-                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else salaBody(condizione, fase),
+                if (senzaPrevisione) corpoSenzaPrevisione(state.error) else racconto?.corpo ?: salaBody(condizione, fase),
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )

@@ -18,6 +18,7 @@ import androidx.work.WorkerParameters
 import com.caelumweather.MainActivity
 import com.caelumweather.R
 import com.caelumweather.data.HourForecast
+import com.caelumweather.data.Place
 import com.caelumweather.data.ScortaPrevisioni
 import com.caelumweather.data.WeatherRepository
 import com.caelumweather.data.key
@@ -94,7 +95,7 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
                 val chiave = "${luogo.key}.${evento.tipo.name}"
                 val giorno = evento.quando.toLocalDate().toString()
                 if (memoria.getString(chiave, null) == giorno) return@forEach
-                notifica(contesto, luogo.name, luogo.key, evento, adesso, impostazioni.unit, impostazioni.windUnit)
+                notifica(contesto, luogo, luogo.key != posto.key, evento, adesso, impostazioni.unit, impostazioni.windUnit)
                 scritture.putString(chiave, giorno)
             }
         }
@@ -143,14 +144,17 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
         @SuppressLint("MissingPermission")
         private fun notifica(
             context: Context,
-            citta: String,
-            chiavePosto: String,
+            luogo: Place,
+            /** Una localita' salvata e non quella dell'app: il tocco ci deve portare. */
+            altraLocalita: Boolean,
             evento: SogliaSuperata,
             adesso: LocalDateTime,
             unita: TempUnit,
             vento: SalaWindUnit,
         ) {
             creaCanale(context)
+            val citta = luogo.name
+            val chiavePosto = luogo.key
             val (titolo, testo) = testiSoglia(citta, evento, adesso, unita, vento)
             // Un numero per localita' e per tipo, o due citta' con la stessa
             // soglia si sostituirebbero a vicenda in tendina.
@@ -163,6 +167,19 @@ class SogliePersonaliWorker(contesto: Context, parametri: WorkerParameters) : Co
             }
             val apri = Intent(context, MainActivity::class.java)
                 .putExtra(MainActivity.EXTRA_SALA_WIDGET, sala.name)
+                .apply {
+                    // Il tocco su "Gelata a Bologna" apriva la sala giusta ma
+                    // sulla localita' dell'app. Si porta la localita' della
+                    // notifica con gli stessi extra del widget: l'app la mostra
+                    // senza farla sua (`MainActivity`, `visita`).
+                    if (altraLocalita) {
+                        putExtra(MainActivity.EXTRA_WIDGET_NOME, luogo.name)
+                        putExtra(MainActivity.EXTRA_WIDGET_REGIONE, luogo.admin)
+                        putExtra(MainActivity.EXTRA_WIDGET_PAESE, luogo.country)
+                        putExtra(MainActivity.EXTRA_WIDGET_LAT, luogo.latitude)
+                        putExtra(MainActivity.EXTRA_WIDGET_LON, luogo.longitude)
+                    }
+                }
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             val tocco = PendingIntent.getActivity(
                 context,

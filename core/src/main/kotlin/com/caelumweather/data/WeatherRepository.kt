@@ -247,6 +247,36 @@ fun codiceDelGiorno(codice: Int?, precipitazione: Double?, codiciOrari: List<Int
         ?: 3
 }
 
+/**
+ * Il codice di un'ora (o di adesso), corretto quando dice precipitazione e i
+ * millimetri di quell'ora sono zero esatto. E' [codiceDelGiorno] un gradino
+ * piu' giu', e serviva per la stessa ragione.
+ *
+ * **Il caso vero**: Forli', 15 novembre 2026, ore 13. Sala I scriveva
+ * "Rovescio di meta' pomeriggio - Pioggia in corso" e faceva piovere il cielo;
+ * la sala della pioggia, alla stessa ora, "0,0 mm, probabilita' 18 %, nessuna
+ * precipitazione nelle prossime dodici ore". Le due leggevano due grandezze
+ * diverse della stessa risposta: il `weather_code` dell'ora (rovesci) e la sua
+ * `precipitation` (zero). Il codice giornaliero era gia' corretto dal 6
+ * ottobre; quello orario no, ed e' lui che decidono titolo, scena, barra delle
+ * ore e widget.
+ *
+ * Solo con zero esatto, come per il giorno: un decimo di millimetro e' una
+ * pioggerella vera, e un valore che manca non autorizza a correggere. Al posto
+ * del codice va il cielo che le nuvole dicono: coperto, molto nuvoloso o
+ * poco nuvoloso; senza nuvolosita', coperto. Mai sereno: un modello che
+ * vedeva instabilita' non vedeva un cielo limpido.
+ */
+fun codiceDellOra(codice: Int?, precipitazione: Double?, nuvolosita: Int?): Int? {
+    val bagnato = Wmo.family(codice) in setOf(Wmo.Family.PIOGGIA, Wmo.Family.NEVE, Wmo.Family.TEMPORALE)
+    if (!bagnato || precipitazione == null || precipitazione > 0.0) return codice
+    return when {
+        nuvolosita == null || nuvolosita >= 85 -> 3
+        nuvolosita >= 40 -> 2
+        else -> 1
+    }
+}
+
 private fun String?.asDateTime(): LocalDateTime? =
     this?.let { runCatching { LocalDateTime.parse(it) }.getOrNull() }
 
@@ -256,11 +286,17 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
 
     val allHours = hourly?.time?.mapIndexedNotNull { i, iso ->
         val at = iso.asDateTime() ?: return@mapIndexedNotNull null
+        val nuvole = nuvolositaVisibile(
+            totale = hourly.cloudCover.at(i),
+            bassa = hourly.cloudCoverLow.at(i),
+            media = hourly.cloudCoverMid.at(i),
+            alta = hourly.cloudCoverHigh.at(i),
+        )
         HourForecast(
             time = at,
             temperature = hourly.temperature.at(i),
             apparent = hourly.apparent.at(i),
-            weatherCode = hourly.weatherCode.at(i),
+            weatherCode = codiceDellOra(hourly.weatherCode.at(i), hourly.precipitation.at(i), nuvole),
             precipitation = hourly.precipitation.at(i),
             precipProbability = hourly.precipProbability.at(i),
             isDay = (hourly.isDay.at(i) ?: 1) == 1,
@@ -270,12 +306,7 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             windGusts = hourly.windGusts.at(i),
             windDirection = hourly.windDirection.at(i),
             uvIndex = hourly.uvIndex.at(i),
-            cloudCover = nuvolositaVisibile(
-                totale = hourly.cloudCover.at(i),
-                bassa = hourly.cloudCoverLow.at(i),
-                media = hourly.cloudCoverMid.at(i),
-                alta = hourly.cloudCoverHigh.at(i),
-            ),
+            cloudCover = nuvole,
             pressure = hourly.pressure.at(i),
             visibility = hourly.visibility.at(i),
             rain = hourly.rain.at(i),
@@ -339,7 +370,12 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             humidity = current?.humidity,
             dewPoint = current?.dewPoint,
             precipitation = current?.precipitation,
-            weatherCode = current?.weatherCode,
+            // Adesso come le ore: le nuvole sono quelle dell'ora in corso.
+            weatherCode = codiceDellOra(
+                current?.weatherCode,
+                current?.precipitation,
+                current?.time?.take(13)?.let { h -> allHours.firstOrNull { it.time.toString().startsWith(h) }?.cloudCover },
+            ),
             windSpeed = current?.windSpeed,
             windDirection = current?.windDirection,
             windGusts = current?.windGusts,

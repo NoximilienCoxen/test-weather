@@ -550,6 +550,27 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
 }
 
 /**
+ * Questa palette per i pannelli, con tutto cio' che sta **sul cielo** preso da
+ * [cielo]: gli inchiostri fuori dai pannelli, le colline, l'albero.
+ *
+ * Serve al tema scelto a mano. "Chiaro" decide le schede, non la notte: col
+ * tema fissato a chiaro, alle undici di sera il nome della citta', il numero
+ * grande e le colline restavano quelli di mezzogiorno - inchiostro scuro su un
+ * cielo blu notte, colline verde chiaro sotto le stelle (Noceto, 15 novembre).
+ * Il cielo non ha un tema: ha un'ora.
+ */
+fun SalaPalette.conCieloDi(cielo: SalaPalette): SalaPalette =
+    if (cielo == this) this else copy(
+        inkSuCielo = cielo.inkSuCielo,
+        accentSuCielo = cielo.accentSuCielo,
+        collina1 = cielo.collina1,
+        collina2 = cielo.collina2,
+        collina3 = cielo.collina3,
+        tronco = cielo.tronco,
+        fronda = cielo.fronda,
+    )
+
+/**
  * La tipografia di Sala: Caprasimo per cio' che si guarda, Figtree per cio'
  * che si legge.
  *

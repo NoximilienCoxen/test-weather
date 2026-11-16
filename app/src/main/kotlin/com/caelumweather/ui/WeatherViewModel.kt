@@ -228,7 +228,7 @@ data class UiState(
     /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
     val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
-    val schedeLarghe: Boolean = false,
+    val schedeLarghe: Boolean = true,
     /**
      * Se la guida all'uso e' gia' stata vista. Vero finche' le impostazioni
      * non sono lette: meglio non mostrarla un fotogramma che mostrarla a chi
@@ -790,11 +790,31 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // cui viene. Figlio del job giusto, si annulla con lui.
 
                         launch {
-                            AirQualityRepository(place).load()
+                            // **Due tentativi, non uno.** Nella galleria del 16
+                            // novembre la richiesta dell'aria falliva in cinque
+                            // avvii su dodici, a caso, mentre le altre richieste
+                            // dello stesso avvio arrivavano: un host diverso, con
+                            // i suoi singhiozzi. Un fallimento restava "Non
+                            // disponibile" fino al giro dopo, mezz'ora. Ora si
+                            // riprova una volta dopo due secondi, e la causa
+                            // finisce nel log, dove prima non c'era.
+                            var risultato = AirQualityRepository(place).load()
+                            if (risultato.isFailure) {
+                                Log.w(TAG, "aria non arrivata, riprovo: ${risultato.exceptionOrNull()}")
+                                delay(2_000)
+                                risultato = AirQualityRepository(place).load()
+                            }
+                            risultato
                                 .onSuccess { air ->
+                                    // Come "previsione pronta": la cattura in CI
+                                    // aspetta questa riga prima di fotografare la
+                                    // sala dell'aria, invece di indovinare quanto
+                                    // ci mette l'altro host.
+                                    Log.i(TAG, "aria pronta")
                                     _state.update { it.copy(air = air, airUnavailable = false) }
                                 }
-                                .onFailure {
+                                .onFailure { failure ->
+                                    Log.w(TAG, "aria non arrivata: $failure")
                                     _state.update { it.copy(airUnavailable = true) }
                                 }
                         }
@@ -949,6 +969,13 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                                     null
                                 },
                                 aggiornandoAMano = it.aggiornandoAMano && !lastAttempt,
+                                // **L'aria si chiede solo dopo una previsione
+                                // arrivata**: se la previsione non arriva, non
+                                // parte nemmeno lei, e la sala dell'aria restava
+                                // su "In arrivo" per sempre - anche con la
+                                // previsione salvata in vista, senza rete.
+                                // All'ultimo tentativo si dice che non c'e'.
+                                airUnavailable = it.airUnavailable || (lastAttempt && it.air == null),
                             )
                         }
                     }
