@@ -8786,3 +8786,23 @@ lato in ombra e' un grigio medio, non il nero dell'ombra pura, e con l'alfa
 dalla luminosita' restava un fantasma grigio semitrasparente con sole e nuvole
 dietro: la meta' buia sembrava piu' chiara di quella accesa. Spenta
 (`ombraTrasparente = false`); il parametro resta per un'altra prova.
+
+**Bocciata in mano lo stesso giorno** ("scorrere di lato non mi piace per
+niente"): revert, le sale tornano in verticale.
+
+## 83. Prima la risposta, i dettagli a richiesta
+
+Scelta dell'utente dopo §78 e §82: le schede lunghe vanno compresse con
+eleganza, non tagliate ne' messe di lato.
+- `Dettagli` (SalaChrome): una riga "DETTAGLI ›" in fondo alla scheda; toccata
+  si apre verso l'alto (expandVertically, senza animazione con le animazioni
+  ridotte), la freccetta gira. Lo stato vive con la pagina: lasciando la sala
+  si richiude.
+- **Tolto il tetto** di §78: la Shell non fornisce piu' `LocalAltezzaPannello`;
+  una scheda che non ci sta fa scorrere la colonna intera come prima di §78.
+- **Pioggia** per prima: subito titolo, millimetri, frase, la striscia delle
+  dodici ore (colonne da 62 dp al massimo invece di 85) e, appena sotto, la
+  frase del "quando" (prima stava in fondo dopo una riga e un'etichetta).
+  Nei dettagli: probabilita'/intensita'/suolo, umidita' e rugiada, le colonne
+  della settimana, la neve.
+- Le altre sale aspettano il giudizio dell'utente sulla Pioggia.

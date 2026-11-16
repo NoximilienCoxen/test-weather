@@ -1666,3 +1666,63 @@ fun BloccoImpostazioni(
         content()
     }
 }
+
+/**
+ * **Prima la risposta, i dettagli a richiesta** (CONTESTO §83).
+ *
+ * Una scheda di sala mostra subito cio' che serve - titolo, numero, una frase,
+ * un grafico - e sta sotto la linea del cielo. Il resto sta qui dentro, dietro
+ * una riga discreta: toccata, la scheda si allarga verso l'alto e copre il
+ * cielo solo perche' lo si e' chiesto. Lasciando la sala si richiude: lo stato
+ * vive con la pagina del carosello, che fuori scena si scompone.
+ *
+ * Era un tetto all'altezza con lo scorrimento dentro il pannello (§78): il
+ * cielo restava libero ma le informazioni finivano in una finestrella da
+ * scorrere, e lo stesso gesto poi cambiava sala.
+ */
+@Composable
+fun ColumnScope.Dettagli(
+    palette: SalaPalette,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    var aperti by remember { mutableStateOf(false) }
+    val movimento = LocalMovimento.current
+    val giro by animateFloatAsState(
+        targetValue = if (aperti) 90f else 0f,
+        animationSpec = if (movimento) spring(stiffness = 500f) else snap(),
+        label = "dettagli",
+    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .toggleable(value = aperti, role = Role.Switch, onValueChange = { aperti = it })
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = if (aperti) {
+                tr("MENO DETTAGLI", "FEWER DETAILS", "WENIGER DETAILS", "MOINS DE DÉTAILS", "MENOS DETALLES")
+            } else {
+                tr("DETTAGLI", "DETAILS", "DETAILS", "DÉTAILS", "DETALLES")
+            },
+            style = SalaType.sectionLabel,
+            color = palette.accent,
+        )
+        Text(
+            text = "›",
+            style = SalaType.rowTitle,
+            color = palette.accent,
+            modifier = Modifier.padding(start = 6.dp).graphicsLayer { rotationZ = giro },
+        )
+    }
+    androidx.compose.animation.AnimatedVisibility(
+        visible = aperti,
+        enter = if (movimento) androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn() else androidx.compose.animation.EnterTransition.None,
+        exit = if (movimento) androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut() else androidx.compose.animation.ExitTransition.None,
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) { content() }
+    }
+}

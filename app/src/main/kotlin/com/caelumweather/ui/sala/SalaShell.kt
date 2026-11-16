@@ -929,23 +929,12 @@ fun SalaShell(
                         val scartoDellaScheda = remember(page, ferme) {
                             { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
                         }
-                        // **Almeno il 40 per cento dello schermo resta cielo**:
-                        // vedi `LocalAltezzaPannello`. Sotto i 260 punti non si
-                        // scende, o su uno schermo basso il pannello sarebbe
-                        // una feritoia.
-                        val tetto = run {
-                            val c = rCarosello
-                            if (c == null || altezzaRadice <= 0f) {
-                                Dp.Unspecified
-                            } else {
-                                with(LocalDensity.current) {
-                                    (c.bottom - 14.dp.toPx() - QUOTA_CIELO * altezzaRadice).toDp()
-                                }.coerceAtLeast(260.dp)
-                            }
-                        }
+                        // **Niente tetto ai pannelli** (era §78): le schede si
+                        // accorciano da sole, col resto dietro `Dettagli`
+                        // (§83). Quella che ancora non ci sta fa scorrere la
+                        // colonna intera, come sempre.
                         CompositionLocalProvider(
                             LocalScartoSala provides scartoDellaScheda,
-                            LocalAltezzaPannello provides tetto,
                         ) {
                         Box(
                             modifier = Modifier
@@ -1437,6 +1426,3 @@ private const val FORZA_TINTA = 0.5f
  * Nulla fuori dalla Shell: chi la legge ripiega sulla sua.
  */
 val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?> { null }
-
-/** La parte dello schermo che resta sempre al cielo, in ogni sala. */
-private const val QUOTA_CIELO = 0.40f
