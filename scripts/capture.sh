@@ -483,8 +483,15 @@ session() {
     sleep 1
     # L'aria arriva da un'altra richiesta, che parte solo dopo la previsione:
     # sulla sua sala un secondo non basta, e lo scatto usciva "In arrivo" con
-    # tutti i valori a trattini (giro del 15 novembre).
-    [ "$sala" = "aria" ] && sleep 4
+    # tutti i valori a trattini (giro del 15 novembre). Quattro secondi in piu'
+    # non bastavano nemmeno: si aspetta la riga "aria pronta", fino a venti.
+    if [ "$sala" = "aria" ]; then
+      for _ in $(seq 1 20); do
+        adbt shell logcat -d -s meteo:I 2>/dev/null | grep -q "aria pronta" && break
+        sleep 1
+      done
+      sleep 1
+    fi
     shoot "${slug}-d${n}-${sala}"
     n=$(( n + 1 ))
     i=$(( i + 1 ))

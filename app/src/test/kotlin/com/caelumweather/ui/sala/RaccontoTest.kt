@@ -101,4 +101,11 @@ class RaccontoTest {
     fun `senza ore da raccontare si ripiega`() {
         assertNull(raccontoDellOra(emptyList(), t0, TempUnit.CELSIUS, SalaWindUnit.KMH))
     }
+
+    @Test
+    fun `la mezzanotte si dice mezzanotte`() {
+        // Alle 13 la minima arriva a mezzanotte: non "00:00 di domani".
+        val r = racconta(ore(temp = { if (it == 11) 5.0 else 9.0 }))
+        assertTrue(r.corpo, r.corpo.contains("Scende a 5° verso mezzanotte."))
+    }
 }

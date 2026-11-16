@@ -792,6 +792,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         launch {
                             AirQualityRepository(place).load()
                                 .onSuccess { air ->
+                                    // Come "previsione pronta": la cattura in CI
+                                    // aspetta questa riga prima di fotografare la
+                                    // sala dell'aria, invece di indovinare quanto
+                                    // ci mette l'altro host.
+                                    Log.i(TAG, "aria pronta")
                                     _state.update { it.copy(air = air, airUnavailable = false) }
                                 }
                                 .onFailure {

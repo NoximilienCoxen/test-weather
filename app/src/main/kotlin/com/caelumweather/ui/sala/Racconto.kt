@@ -93,18 +93,18 @@ fun raccontoDellOra(
             val cambio = cambioDelCielo(dodici)
             titolo = when {
                 cambio != null && cambio.second -> tr(
-                    "$adesso, si apre verso le ${orario(cambio.first, da)}",
-                    "$adesso, clearing around ${orario(cambio.first, da)}",
-                    "$adesso, klart gegen ${orario(cambio.first, da)} auf",
-                    "$adesso, éclaircies vers ${orario(cambio.first, da)}",
-                    "$adesso, abre hacia las ${orario(cambio.first, da)}",
+                    "$adesso, si apre ${versoLe(cambio.first, da)}",
+                    "$adesso, clearing ${versoLe(cambio.first, da)}",
+                    "$adesso, klart ${versoLe(cambio.first, da)} auf",
+                    "$adesso, éclaircies ${versoLe(cambio.first, da)}",
+                    "$adesso, abre ${versoLe(cambio.first, da)}",
                 )
                 cambio != null -> tr(
-                    "$adesso, si copre verso le ${orario(cambio.first, da)}",
-                    "$adesso, clouding over around ${orario(cambio.first, da)}",
-                    "$adesso, zieht gegen ${orario(cambio.first, da)} zu",
-                    "$adesso, se couvre vers ${orario(cambio.first, da)}",
-                    "$adesso, se cubre hacia las ${orario(cambio.first, da)}",
+                    "$adesso, si copre ${versoLe(cambio.first, da)}",
+                    "$adesso, clouding over ${versoLe(cambio.first, da)}",
+                    "$adesso, zieht ${versoLe(cambio.first, da)} zu",
+                    "$adesso, se couvre ${versoLe(cambio.first, da)}",
+                    "$adesso, se cubre ${versoLe(cambio.first, da)}",
                 )
                 else -> tr("$adesso e asciutto", "$adesso and dry", "$adesso und trocken", "$adesso et sec", "$adesso y seco")
             }
@@ -194,18 +194,18 @@ private fun temperatura(ora: HourForecast, ore: List<HourForecast>, da: LocalDat
     fun g(c: Double) = "${unita.from(c).roundToInt()}°"
     return when {
         massima != null && massima.temperature!! - t0 >= 2.0 && massima.time.isAfter(ora.time) -> tr(
-            "Massima di ${g(massima.temperature!!)} verso le ${orario(massima.time, da)}.",
-            "High of ${g(massima.temperature!!)} around ${orario(massima.time, da)}.",
-            "Höchstwert ${g(massima.temperature!!)} gegen ${orario(massima.time, da)}.",
-            "Maximale de ${g(massima.temperature!!)} vers ${orario(massima.time, da)}.",
-            "Máxima de ${g(massima.temperature!!)} hacia las ${orario(massima.time, da)}.",
+            "Massima di ${g(massima.temperature!!)} ${versoLe(massima.time, da)}.",
+            "High of ${g(massima.temperature!!)} ${versoLe(massima.time, da)}.",
+            "Höchstwert ${g(massima.temperature!!)} ${versoLe(massima.time, da)}.",
+            "Maximale de ${g(massima.temperature!!)} ${versoLe(massima.time, da)}.",
+            "Máxima de ${g(massima.temperature!!)} ${versoLe(massima.time, da)}.",
         )
         minima != null && t0 - minima.temperature!! >= 2.0 -> tr(
-            "Scende a ${g(minima.temperature!!)} verso le ${orario(minima.time, da)}.",
-            "Down to ${g(minima.temperature!!)} around ${orario(minima.time, da)}.",
-            "Fällt auf ${g(minima.temperature!!)} gegen ${orario(minima.time, da)}.",
-            "Descend à ${g(minima.temperature!!)} vers ${orario(minima.time, da)}.",
-            "Baja a ${g(minima.temperature!!)} hacia las ${orario(minima.time, da)}.",
+            "Scende a ${g(minima.temperature!!)} ${versoLe(minima.time, da)}.",
+            "Down to ${g(minima.temperature!!)} ${versoLe(minima.time, da)}.",
+            "Fällt auf ${g(minima.temperature!!)} ${versoLe(minima.time, da)}.",
+            "Descend à ${g(minima.temperature!!)} ${versoLe(minima.time, da)}.",
+            "Baja a ${g(minima.temperature!!)} ${versoLe(minima.time, da)}.",
         )
         else -> tr(
             "Temperatura ferma intorno a ${g(t0)}.",
@@ -223,13 +223,13 @@ private fun raffiche(ore: List<HourForecast>, da: LocalDateTime, vento: SalaWind
     // Le grandezze del vento arrivano in metri al secondo: 50 km/h = 13,9 m/s.
     if (picco.windGusts!! < 13.9) return null
     val n = vento.from(picco.windGusts!!).roundToInt()
-    val quando = orario(picco.time, da)
+    val quando = versoLe(picco.time, da)
     return tr(
-        "Raffiche fino a $n ${vento.label} verso le $quando.",
-        "Gusts up to $n ${vento.label} around $quando.",
-        "Böen bis $n ${vento.label} gegen $quando.",
-        "Rafales jusqu'à $n ${vento.label} vers $quando.",
-        "Rachas de hasta $n ${vento.label} hacia las $quando.",
+        "Raffiche fino a $n ${vento.label} $quando.",
+        "Gusts up to $n ${vento.label} $quando.",
+        "Böen bis $n ${vento.label} $quando.",
+        "Rafales jusqu'à $n ${vento.label} $quando.",
+        "Rachas de hasta $n ${vento.label} $quando.",
     )
 }
 
@@ -238,8 +238,8 @@ private fun raffiche(ore: List<HourForecast>, da: LocalDateTime, vento: SalaWind
  * giorno solo quando non e' quello dell'ora mostrata.
  */
 private fun orario(t: LocalDateTime, da: LocalDateTime): String {
-    val ore = "%02d:00".format(t.hour)
     val giorni = java.time.temporal.ChronoUnit.DAYS.between(da.toLocalDate(), t.toLocalDate())
+    val ore = "%02d:00".format(t.hour)
     return when (giorni) {
         0L -> ore
         1L -> tr("$ore di domani", "$ore tomorrow", "$ore morgen", "$ore demain", "$ore de mañana")
@@ -248,6 +248,18 @@ private fun orario(t: LocalDateTime, da: LocalDateTime): String {
             tr("$ore di $giorno", "$ore on $giorno", "$ore am $giorno", "$ore $giorno", "$ore del $giorno")
         }
     }
+}
+
+/**
+ * "verso le 15:00", e "verso mezzanotte" invece di "verso le 00:00 di domani":
+ * quello e' un orario dei treni, non come si dice. La preposizione sta qui
+ * perche' con mezzanotte cambia ("verso le" diventa "verso").
+ */
+private fun versoLe(t: LocalDateTime, da: LocalDateTime): String {
+    val mezzanotte = t.hour == 0 && java.time.temporal.ChronoUnit.DAYS.between(da.toLocalDate(), t.toLocalDate()) == 1L
+    if (mezzanotte) return tr("verso mezzanotte", "around midnight", "gegen Mitternacht", "vers minuit", "hacia medianoche")
+    val o = orario(t, da)
+    return tr("verso le $o", "around $o", "gegen $o", "vers $o", "hacia las $o")
 }
 
 private fun mm(v: Double): String = String.format(Lingue.locale, "%.1f", v)
