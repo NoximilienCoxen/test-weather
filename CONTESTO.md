@@ -8714,3 +8714,30 @@ destro si mangiava 40 punti di scheda e un pezzo di cielo.
   sparisce al primo sfoglio: nessuna riga in piu'.
 - La cattura non trascina piu' la colonna (d11b): tocca il quarto puntino e
   fotografa la luna (`d11b-puntini-luna`).
+
+## 78. Il cielo si riprende lo spazio
+
+Osservazione dell'utente: il cielo animato e' il punto forte, ma i pannelli lo
+coprono ("il pannello della luna occupa spazio"). Negli scatti Sala IV lasciava
+una striscia di cielo, Sala II un quarto di schermo. Prima di arricchire il
+cielo, gli si restituisce il posto.
+- **Tetto ai pannelli** (`LocalAltezzaPannello`, SalaChrome): la Shell calcola
+  quanto puo' salire un pannello perche' sopra resti almeno il 40% dello
+  schermo (`QUOTA_CIELO`), mai sotto 260 dp. Oltre, `PannelloSala` scorre dentro
+  di se' (angoli interi) e sfuma il contenuto sul bordo da cui c'e' altro
+  (`sfumaAiBordi`, maschera DstIn sul contenuto, non una fascia di colore).
+- **Sala II**: le sei pillole con bollo colorato diventano `CellaValore`, tre
+  per riga, due righe basse. Stesse destinazioni e stesse ore in prestito.
+- **Sala IV**: la sfera (`LunaInterattiva`) esce dal pannello e galleggia sul
+  cielo sopra la scheda, didascalia in `inkSuCielo`. Mentre si e' in Sala IV la
+  luna piccola dell'arco si vela (`lunaVelata`, letta al disegno): due lune
+  nello stesso cielo erano una di troppo.
+- **Solo il cielo**: un dito tenuto premuto sul cielo libero sopra la scheda
+  (rilevato nel carosello, passaggio Initial, senza consumare) fa uscire
+  intestazione, schede, puntini e barra; la colonna non si compone piu', cosi'
+  il cielo riceve ogni tocco. Si torna con l'indietro, con una nuova pressione
+  lunga sul cielo o con la pastiglia "TORNA AI DATI". Il trascinamento in giu'
+  non poteva essere il gesto: sulla prima sala aggiorna, sulle altre torna
+  indietro. Con le animazioni ridotte il gesto funziona lo stesso.
+- Cattura: `d12b-solo-cielo` (pressione lunga al 20% dell'altezza) e
+  `d12c-dati-tornati` (indietro).

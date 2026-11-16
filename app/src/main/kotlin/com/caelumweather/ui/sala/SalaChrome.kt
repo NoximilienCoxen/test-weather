@@ -79,6 +79,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.unit.sp
 import com.caelumweather.data.WeatherAlert
 import com.caelumweather.ui.theme.MinTouchTarget
@@ -111,6 +120,56 @@ private val RaggioCella = 22.dp
  * ed e' quello il punto della direzione scelta - il tempo si guarda, e i numeri
  * gli stanno davanti senza coprirlo.
  */
+/**
+ * L'altezza massima di un pannello di sala, decisa dalla Shell.
+ *
+ * **Il cielo e' il punto forte dell'app, e i pannelli se lo mangiavano.** "La
+ * luna" copriva lo schermo dall'intestazione alla barra delle ore, "La
+ * settimana" lasciava un quarto di cielo. La Shell calcola quanto puo' salire
+ * un pannello perche' sopra resti almeno il 40 per cento dello schermo, e lo
+ * passa qui; oltre, il pannello scorre dentro di se'. Fuori dalla Shell
+ * (anteprime, prove) non c'e' tetto.
+ */
+val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
+
+/**
+ * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
+ * il pannello continua, senza una barra di scorrimento. Sfuma il **contenuto**
+ * e non ci dipinge sopra il colore della carta, che in certi temi e' velata e
+ * farebbe una fascia.
+ */
+internal fun Modifier.sfumaAiBordi(stato: ScrollState): Modifier = this
+    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+    .drawWithContent {
+        drawContent()
+        val fascia = 28.dp.toPx()
+        if (stato.canScrollForward) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.Black,
+                    1f to Color.Transparent,
+                    startY = size.height - fascia,
+                    endY = size.height,
+                ),
+                topLeft = Offset(0f, size.height - fascia),
+                size = Size(size.width, fascia),
+                blendMode = BlendMode.DstIn,
+            )
+        }
+        if (stato.canScrollBackward) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.Transparent,
+                    1f to Color.Black,
+                    startY = 0f,
+                    endY = fascia,
+                ),
+                size = Size(size.width, fascia),
+                blendMode = BlendMode.DstIn,
+            )
+        }
+    }
+
 @Composable
 fun PannelloSala(
     palette: SalaPalette,
@@ -129,9 +188,15 @@ fun PannelloSala(
     onda: OndaScheda? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    // **Il cielo ha diritto al suo spazio** (vedi [LocalAltezzaPannello]): oltre
+    // il tetto il pannello non cresce, scorre dentro di se'. Gli angoli restano
+    // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
+    val tetto = LocalAltezzaPannello.current
+    val scorrimento = rememberScrollState()
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .then(if (tetto != Dp.Unspecified) Modifier.heightIn(max = tetto) else Modifier)
             .clip(RoundedCornerShape(RaggioPannello))
             // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
             .then(if (onda != null) Modifier.onPlaced { onda.pannello = it } else Modifier),
@@ -143,6 +208,8 @@ fun PannelloSala(
                 // Quando il contenuto cambia altezza la scheda scivola alla
                 // misura nuova invece di saltarci.
                 .altezzaMorbida()
+                .sfumaAiBordi(scorrimento)
+                .verticalScroll(scorrimento)
                 // **Queste misure sono state allargate e poi rimesse, e la nota
                 // resta perche' la prova conta piu' della misura.** Il ragionamento
                 // era: il pannello e' ancorato in basso, si dimensiona sul

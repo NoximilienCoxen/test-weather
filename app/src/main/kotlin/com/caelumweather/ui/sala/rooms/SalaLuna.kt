@@ -37,6 +37,7 @@ import com.caelumweather.data.MoonSegment
 import com.caelumweather.ui.sala.CellaValore
 import com.caelumweather.ui.sala.Didascalia
 import com.caelumweather.ui.sala.PannelloSala
+import com.caelumweather.ui.sala.LocalPaletteCielo
 import com.caelumweather.ui.sala.SalaPalette
 import com.caelumweather.ui.sala.SalaType
 import java.time.LocalDate
@@ -78,20 +79,27 @@ fun SalaLunaScreen(
     val eta = MoonPhase.ageDays(fase)
     val prossimaPiena = MoonPhase.nextDate(oggi, 0.5f)
 
-    PannelloSala(palette = palette, modifier = modifier) {
-        LunaInterattiva(
-            fase = fase,
-            descrizione = tr("${segmento.label.inMezzoAllaFrase()}, ${(illuminata * 100f).roundToInt()} per cento illuminata", "${segmento.label.inMezzoAllaFrase()}, ${(illuminata * 100f).roundToInt()} per cent lit", "${segmento.label.inMezzoAllaFrase()}, zu ${(illuminata * 100f).roundToInt()} Prozent beleuchtet", "${segmento.label.inMezzoAllaFrase()}, éclairée à ${(illuminata * 100f).roundToInt()} pour cent", "${segmento.label.inMezzoAllaFrase()}, iluminada al ${(illuminata * 100f).roundToInt()} por ciento"),
-            palette = palette,
-            movimento = movimento,
-            modifier = Modifier.fillMaxWidth(),
-        )
+    // **La luna sta nel cielo, non sulla carta.** Era disegnata dentro il
+    // pannello, su fondo crema, mentre il pannello copriva il cielo dove la
+    // luna vera sta: adesso galleggia sopra la scheda, sulla scena, e il
+    // cielo intanto vela quella piccola dell'arco (`lunaVelata`). La riga sotto
+    // prende l'inchiostro del cielo, come l'intestazione.
+    val cielo = LocalPaletteCielo.current ?: palette
+    LunaInterattiva(
+        fase = fase,
+        descrizione = tr("${segmento.label.inMezzoAllaFrase()}, ${(illuminata * 100f).roundToInt()} per cento illuminata", "${segmento.label.inMezzoAllaFrase()}, ${(illuminata * 100f).roundToInt()} per cent lit", "${segmento.label.inMezzoAllaFrase()}, zu ${(illuminata * 100f).roundToInt()} Prozent beleuchtet", "${segmento.label.inMezzoAllaFrase()}, éclairée à ${(illuminata * 100f).roundToInt()} pour cent", "${segmento.label.inMezzoAllaFrase()}, iluminada al ${(illuminata * 100f).roundToInt()} por ciento"),
+        palette = palette,
+        movimento = movimento,
+        coloreDidascalia = cielo.inkSuCielo,
+        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+    )
 
+    PannelloSala(palette = palette, modifier = modifier) {
         CursoreGiorni(
             spostamento = spostamento,
             onCambia = { spostamento = it },
             palette = palette,
-            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+            modifier = Modifier.padding(bottom = 6.dp),
         )
 
         Row(

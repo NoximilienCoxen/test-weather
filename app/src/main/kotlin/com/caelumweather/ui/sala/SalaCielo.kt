@@ -100,6 +100,14 @@ fun SalaCielo(
     pollineOggi: Int = 0,
     /** Nebbia, vento, caldo, gelo e l'ora dopo la pioggia: vedi [Atmosfera]. */
     atmosfera: Atmosfera = Atmosfera(),
+    /**
+     * Quanto la luna dell'arco si fa da parte, da 0 a 1: in Sala IV la luna
+     * grande sta nel cielo, e una seconda piu' piccola sarebbe di troppo. Una
+     * funzione, letta al disegno: segue lo sfoglio senza ricomporre.
+     */
+    lunaVelata: () -> Float = { 0f },
+    /** Il dito tenuto premuto sul cielo, se qualcuno lo ascolta. */
+    onPressioneLunga: (() -> Unit)? = null,
 ) {
     // ── Cio' che il cielo si tiene per se' ───────────────────────────────────
     //
@@ -134,6 +142,10 @@ fun SalaCielo(
     val cacheAtmosfera = remember { CacheAtmosfera() }
     val vibrazioni = rememberVibrazioniMeteo()
     val scope = rememberCoroutineScope()
+    // Il gesto si riavvia solo quando qualcuno comincia o smette di ascoltare,
+    // non a ogni lambda nuova della Shell: un riavvio taglia il dito a meta'.
+    val pressioneLunga by androidx.compose.runtime.rememberUpdatedState(onPressioneLunga)
+    val ascoltaPressione = onPressioneLunga != null
 
     // **Da -1 a 1 su ogni asse**, gia' smorzato e con la linea di base che
     // insegue la posa: restituisce al centro se si resta fermi, quindi non
@@ -144,9 +156,18 @@ fun SalaCielo(
     val parallasse = Offset(inclinazione.x * ampiezza, inclinazione.y * ampiezza)
 
     Canvas(
-        modifier = modifier.pointerInput(interattivo) {
-            if (!interattivo) return@pointerInput
-            detectTapGestures { punto ->
+        modifier = modifier.pointerInput(interattivo, ascoltaPressione) {
+            if (!interattivo && !ascoltaPressione) return@pointerInput
+            detectTapGestures(
+                onLongPress = if (ascoltaPressione) {
+                    { _: Offset -> pressioneLunga?.invoke() }
+                } else {
+                    null
+                },
+            ) { punto ->
+                // Con le animazioni ridotte il cielo non risponde al dito:
+                // resta solo la pressione lunga, che e' un comando.
+                if (!interattivo) return@detectTapGestures
                 val ora = tempo()
                 // Il disco sta dove lo mette l'arco: stesso conto del disegno.
                 val centro = arco(
@@ -249,7 +270,7 @@ fun SalaCielo(
         translate(parallasse.x * 0.34f, parallasse.y * 0.34f) {
             fasciDiLuce(sx, sy, dy, sky, scena, t, fiamma.value, fascio)
             arcoDelCielo(sx, sy, dy, palette, scena, stradaDelSole)
-            soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value)
+            soleEluna(sx, sy, dy, sky, scena, faseLunare, t, fiamma.value, 1f - lunaVelata())
         }
 
         translate(parallasse.x * 0.52f, parallasse.y * 0.52f) {
@@ -519,6 +540,8 @@ private fun DrawScope.soleEluna(
     faseLunare: Float,
     tempo: Float,
     fiamma: Float,
+    /** Quanto resta della luna: vedi `lunaVelata` in [SalaCielo]. */
+    lunaPresente: Float = 1f,
 ) {
     // **Il cielo chiuso li vela, non li cancella.**
     //
@@ -633,9 +656,9 @@ private fun DrawScope.soleEluna(
         )
     }
 
-    if (scena.notte > 0.01f) {
+    if (scena.notte > 0.01f && lunaPresente > 0.01f) {
         val r = 35f * sx
-        val alpha = (scena.notte * velo).coerceIn(0f, 1f)
+        val alpha = (scena.notte * velo * lunaPresente).coerceIn(0f, 1f)
         // Anche la luna ha il suo bagliore a due strati, e cresce col tocco.
         AloniLuna.forEach { (quanto, opacita) ->
             val raggio = r * quanto * respiroAlone * (1f + 0.22f * fiamma)

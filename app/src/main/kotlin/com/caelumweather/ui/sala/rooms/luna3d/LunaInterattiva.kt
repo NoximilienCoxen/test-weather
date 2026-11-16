@@ -72,6 +72,8 @@ internal fun LunaInterattiva(
     palette: SalaPalette,
     movimento: Boolean,
     modifier: Modifier = Modifier,
+    /** La riga sotto la sfera: sul cielo, e non sulla carta, prende l'inchiostro del cielo. */
+    coloreDidascalia: Color = palette.inkSoft,
 ) {
     val globo = GLOBO
     val colori = remember(fase) { coloriPer(globo, fase) }
@@ -162,7 +164,7 @@ internal fun LunaInterattiva(
                 tr("Da qui è illuminato il ${(frazione * 100f).roundToInt()} % del disco", "From here ${(frazione * 100f).roundToInt()} % of the disc is lit", "Von hier aus sind ${(frazione * 100f).roundToInt()} % der Scheibe beleuchtet", "D'ici, ${(frazione * 100f).roundToInt()} % du disque est éclairé", "Desde aquí está iluminado el ${(frazione * 100f).roundToInt()} % del disco")
             },
             style = SalaType.body,
-            color = palette.inkSoft,
+            color = coloreDidascalia,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 6.dp),
         )

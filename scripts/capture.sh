@@ -569,6 +569,20 @@ session() {
   sleep 2
   shoot "${slug}-d12-tornato-alla-prima"
 
+  # ── Solo il cielo ───────────────────────────────────────────────────────────
+  #
+  # Un dito tenuto sul cielo libero, sopra la scheda, fa scendere via tutto il
+  # resto (CONTESTO §78). Il cielo libero di Sala I sta fra l'intestazione e il
+  # numero grande: il 20% dell'altezza. Una trascinata ferma di 900 ms e' la
+  # pressione lunga di `input`. Poi l'indietro deve riportare i dati.
+  echo "  -- solo il cielo: pressione lunga ($(( W / 2 )), $(( H * 20 / 100 ))) --"
+  adbt shell input swipe $(( W / 2 )) $(( H * 20 / 100 )) $(( W / 2 )) $(( H * 20 / 100 )) 900 >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d12b-solo-cielo"
+  adbt shell input keyevent KEYCODE_BACK >/dev/null 2>&1 || true
+  sleep 2
+  shoot "${slug}-d12c-dati-tornati"
+
   # ── Una scheda letta su un altro giorno ─────────────────────────────────────
   #
   # **Il giorno e' un asse, non una schermata.** Era una schermata a se' che
