@@ -8742,7 +8742,13 @@ cielo, gli si restituisce il posto.
 - Cattura: `d12b-solo-cielo` (pressione lunga al 20% dell'altezza) e
   `d12c-dati-tornati` (indietro).
 
-## 79. Una build da provare senza passare da main
+## 79. Una build da provare senza passare da main (tolta)
+
+**Tolta lo stesso giorno**, su richiesta dell'utente: un'APK con lo stesso
+pacchetto di `apk-latest` non aggiungeva niente, e si torna indietro con git.
+Le novita' vanno su `main` con una pull request. Per provare piu' in fretta
+della CI, l'APK si compila nella sessione e si manda in chat (§81). Nota
+storica:
 
 Job `prova` in `build.yml`: su ogni push di un ramo che non e' `main` pubblica
 l'APK di debug nella prerelease `apk-prova` (file `weather-prova.apk`). Stessa
@@ -8758,4 +8764,5 @@ Compose rifiuta due scorrimenti verticali annidati senza misura: eccezione,
 app chiusa. Adesso scorrimento e sfumatura si mettono solo quando il tetto c'e'.
 `PannelloTettoTest` prova i due casi dentro una colonna che scorre. La prova
 della release sull'emulatore l'avrebbe preso, ma gira dopo la pubblicazione di
-`apk-prova`: lezione, il job `prova` deve aspettare `screenshots`.
+`apk-prova`: lezione, nessuna APK va data a qualcuno prima che un emulatore
+l'abbia avviata (il job `prova` poi e' stato tolto, §79).
