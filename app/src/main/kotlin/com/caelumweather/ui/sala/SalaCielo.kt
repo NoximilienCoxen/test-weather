@@ -1042,7 +1042,7 @@ private fun DrawScope.nuvole(
     NuvoleDalFondo.forEach { (i, n) ->
         val presenza = (((scena.copertura - i * 0.13f) / 0.24f).coerceIn(0f, 1f))
             .coerceAtLeast(if (i < 2) scena.tempesta else 0f)
-        if (presenza <= 0.01f) return@forEachIndexed
+        if (presenza <= 0.01f) return@forEach
 
         // Il corpo si schiarisce o si incupisce col cielo: bianco panna su un
         // cielo aperto, ardesia sotto un fronte.
