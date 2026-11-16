@@ -856,7 +856,7 @@ fun SalaShell(
                                         ditoSulCarosello = false
                                     }
                                 }
-                            },
+                            }
                         // **Il dito tenuto sul cielo libero**, sopra la scheda:
                         // vedi `soloCielo`. Solo guarda, come il blocco qui
                         // sopra, finche' il tempo non scade; un dito che si
