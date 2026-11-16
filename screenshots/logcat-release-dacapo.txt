@@ -1,0 +1,254 @@
+--------- beginning of system
+11-16 10:02:21.584 V/WindowManager(  530):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-16 10:02:21.584 V/WindowManager(  530):     info={id=174 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{a6ffe23 Task{accb69 #90 type=standard A=10141:com.caelumweather}}} m=CLOSE f=NONE leash=Surface(name=Task=90)/@0xece63dd sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{c513d9e Task{c080e40 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x735aa70 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{7756912 token=android.os.Binder@772374})/@0x493634f sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.584 V/WindowManagerShell(  867):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@8c01e44, appThread = android.app.IApplicationThread$Stub$Proxy@f9dcb2d, debugName = QuickstepLaunchHome }}
+11-16 10:02:21.584 V/WindowManagerShell(  867):  Delegate animation for #174 to null
+11-16 10:02:21.584 V/WindowManagerShell(  867):  try handler com.android.wm.shell.transition.DefaultTransitionHandler@c0f90b0
+11-16 10:02:21.584 V/WindowManagerShell(  867): start default transition animation, info = {id=174 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@1bef876} m=CLOSE f=NONE leash=Surface(name=Task=90)/@0xdd7cbaa sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@f47ee77} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x46bb39b sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{7756912 token=android.os.Binder@772374})/@0x776e338 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.584 V/WindowManagerShell(  867): loadAnimation: anim=android.view.animation.AnimationSet@31e7b4d animAttr=0x10 type=CLOSE isEntrance=true
+11-16 10:02:21.584 V/WindowManagerShell(  867): loadAnimation: anim=android.view.animation.AnimationSet@2b6e150 animAttr=0x11 type=CLOSE isEntrance=false
+11-16 10:02:21.586 V/WindowManagerShell(  867):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@c0f90b0
+11-16 10:02:21.595 V/WindowManagerShell(  867): Transition animation finished (aborted=false), notifying core (#174)android.os.BinderProxy@55f2e4c@0
+11-16 10:02:21.596 W/WindowManager(  530): Exception thrown during dispatchAppVisibility Window{bddd74e u0 com.caelumweather/com.caelumweather.MainActivity EXITING}
+11-16 10:02:21.596 W/WindowManager(  530): android.os.DeadObjectException
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.os.BinderProxy.transactNative(Native Method)
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.os.BinderProxy.transact(BinderProxy.java:584)
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.view.IWindow$Stub$Proxy.dispatchAppVisibility(IWindow.java:546)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.WindowState.sendAppVisibilityToClients(WindowState.java:3271)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.WindowContainer.sendAppVisibilityToClients(WindowContainer.java:1221)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.WindowToken.setClientVisible(WindowToken.java:409)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.ActivityRecord.setClientVisible(ActivityRecord.java:6946)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.ActivityRecord.postApplyAnimation(ActivityRecord.java:5637)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.ActivityRecord.commitVisibility(ActivityRecord.java:5580)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.Transition.finishTransition(Transition.java:1151)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.TransitionController.finishTransition(TransitionController.java:868)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.WindowOrganizerController.finishTransition(WindowOrganizerController.java:396)
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.window.IWindowOrganizerController$Stub.onTransact(IWindowOrganizerController.java:286)
+11-16 10:02:21.596 W/WindowManager(  530): 	at com.android.server.wm.WindowOrganizerController.onTransact(WindowOrganizerController.java:181)
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.os.Binder.execTransactInternal(Binder.java:1339)
+11-16 10:02:21.596 W/WindowManager(  530): 	at android.os.Binder.execTransact(Binder.java:1275)
+--------- beginning of main
+11-16 10:02:21.596 I/Process (  530): Sending signal. PID: 11582 SIG: 9
+11-16 10:02:21.601 V/WindowManagerShell(  867): Track 0 became idle
+11-16 10:02:21.601 V/WindowManagerShell(  867): All active transition animations finished
+11-16 10:02:21.604 V/WindowManager(  530): Finish Transition #174: created at 11-16 10:02:21.505 collect-started=0.025ms request-sent=0.094ms started=4.603ms ready=4.593ms sent=71.898ms finished=90.039ms
+11-16 10:02:21.604 I/ImeTracker(  530): com.android.launcher3:1b3e0010: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-16 10:02:21.604 I/ImeTracker(  530): com.android.launcher3:1b3e0010: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-16 10:02:21.605 W/ActivityManager(  530): setHasOverlayUi called on unknown pid: 11582
+11-16 10:02:21.637 D/EGL_emulation(  867): app_time_stats: avg=1834.74ms min=1.01ms max=5414.15ms count=3
+11-16 10:02:21.643 E/BpTransactionCompletedListener(  411): Failed to transact (-32)
+11-16 10:02:21.648 D/CompatibilityChangeReporter(  530): Compat change id reported: 161252188; UID 10141; state: DISABLED
+11-16 10:02:21.648 W/ActivityTaskManager(  530): callingPackage for (uid=2000, pid=11675) has no WPC
+11-16 10:02:21.655 I/ActivityTaskManager(  530): START u0 {flg=0x10000000 cmp=com.caelumweather/.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-16 10:02:21.655 D/CompatibilityChangeReporter(  530): Compat change id reported: 135634846; UID 10141; state: DISABLED
+11-16 10:02:21.656 V/WindowManagerShell(  867): Transition requested: android.os.BinderProxy@346b26 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=91 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.caelumweather/.MainActivity } baseActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} topActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} origActivity=null realActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} numActivities=1 lastActiveTime=1037748 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@45b6367} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{bdce514 com.caelumweather.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-16 10:02:21.660 D/CompatibilityChangeReporter(  530): Compat change id reported: 143937733; UID 10141; state: ENABLED
+11-16 10:02:21.667 D/Zygote  (  350): Forked child process 11678
+11-16 10:02:21.668 I/ActivityManager(  530): Start proc 11678:com.caelumweather/u0a141 for next-top-activity {com.caelumweather/com.caelumweather.MainActivity}
+11-16 10:02:21.670 D/SplashScreenView(  867): Build android.window.SplashScreenView{d30cf03 V.E...... ......ID 0,0-0,0}
+11-16 10:02:21.670 D/SplashScreenView(  867): Icon: view: android.widget.ImageView{c2d3e80 V.ED..... ......I. 0,0-0,0 #10204f0 android:id/splashscreen_icon_view} drawable: com.android.wm.shell.startingsurface.SplashscreenIconDrawableFactory$ImmobileIconDrawable@f4eccb9 size: 420
+11-16 10:02:21.670 D/SplashScreenView(  867): Branding: view: android.view.View{703b8fe G.ED..... ......I. 0,0-0,0 #10204ef android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+11-16 10:02:21.679 D/CoreBackPreview(  530): Window{2db34d4 u0 Splash Screen com.caelumweather}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@25031c3, mPriority=0, mIsAnimationCallback=false}
+11-16 10:02:21.706 I/m.caelumweather(11678): Using CollectorTypeCC GC.
+11-16 10:02:21.709 W/m.caelumweather(11678): Unexpected CPU variant for x86: x86_64.
+11-16 10:02:21.709 W/m.caelumweather(11678): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+11-16 10:02:21.716 E/m.caelumweather(11678): Not starting debugger since process cannot load the jdwp agent.
+11-16 10:02:21.716 I/BpBinder(  411): onLastStrongRef automatically unlinking death recipients: 
+11-16 10:02:21.742 D/CompatibilityChangeReporter(11678): Compat change id reported: 171979766; UID 10141; state: ENABLED
+11-16 10:02:21.745 D/CompatibilityChangeReporter(11678): Compat change id reported: 242716250; UID 10141; state: ENABLED
+11-16 10:02:21.748 D/ApplicationLoaders(11678): Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-16 10:02:21.748 D/ApplicationLoaders(11678): Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-16 10:02:21.756 D/nativeloader(11678): Configuring clns-6 for other apk /data/app/~~gJFu45vL9jpzBL6WWSIPbg==/com.caelumweather-kmKvemVjO5r6TymL2Y3BlA==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~gJFu45vL9jpzBL6WWSIPbg==/com.caelumweather-kmKvemVjO5r6TymL2Y3BlA==/lib/x86_64:/data/app/~~gJFu45vL9jpzBL6WWSIPbg==/com.caelumweather-kmKvemVjO5r6TymL2Y3BlA==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.caelumweather
+11-16 10:02:21.783 V/GraphicsEnvironment(11678): Currently set values for:
+11-16 10:02:21.783 V/GraphicsEnvironment(11678):   angle_gl_driver_selection_pkgs=[]
+11-16 10:02:21.783 V/GraphicsEnvironment(11678):   angle_gl_driver_selection_values=[]
+11-16 10:02:21.784 V/GraphicsEnvironment(11678): ANGLE GameManagerService for com.caelumweather: false
+11-16 10:02:21.784 V/GraphicsEnvironment(11678): com.caelumweather is not listed in per-application setting
+11-16 10:02:21.785 V/GraphicsEnvironment(11678): Neither updatable production driver nor prerelease driver is supported.
+11-16 10:02:21.789 D/WM-WrkMgrInitializer(11678): Initializing WorkManager with default configuration.
+11-16 10:02:21.789 W/ActivityTaskManager(  530): takeTaskSnapshot: taskId=91 not found or not visible
+11-16 10:02:21.795 D/WM-Schedulers(11678): Created SystemJobScheduler and enabled SystemJobService
+11-16 10:02:21.801 V/WindowManager(  530): Sent Transition #175 createdAt=11-16 10:02:21.649 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=91 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.caelumweather/.MainActivity } baseActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} topActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} origActivity=null realActivity=ComponentInfo{com.caelumweather/com.caelumweather.MainActivity} numActivities=1 lastActiveTime=1037748 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{8bf94ca Task{2a5e28 #91 type=standard A=10141:com.caelumweather}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{724163b com.caelumweather.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-16 10:02:21.801 V/WindowManager(  530):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-16 10:02:21.801 V/WindowManagerShell(  867): onTransitionReady android.os.BinderProxy@346b26: {id=175 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@c6df457} m=OPEN f=NONE leash=Surface(name=Task=91)/@0xce45d98 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@d8dbb44} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xd5059f1 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.801 V/WindowManagerShell(  867): Playing animation for (#175)android.os.BinderProxy@346b26@0
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.transition.DefaultMixedHandler@3a4487b
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@52a8698
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@9adcef1
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.recents.RecentsTransitionHandler@374bad6
+11-16 10:02:21.801 V/ShellRecents(  867): RecentsTransitionHandler.startAnimation: no controller found
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.pip.PipTransition@124f157
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.splitscreen.StageCoordinator@e8d7444
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.transition.RemoteTransitionHandler@c3f692d
+11-16 10:02:21.801 V/WindowManagerShell(  867): Transition doesn't have explicit remote, search filters for match for {id=175 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@c6df457} m=OPEN f=NONE leash=Surface(name=Task=91)/@0xce45d98 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@d8dbb44} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xd5059f1 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.801 V/WindowManagerShell(  867):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@8c01e44, appThread = android.app.IApplicationThread$Stub$Proxy@f9dcb2d, debugName = QuickstepLaunchHome }}
+11-16 10:02:21.801 V/WindowManagerShell(  867):  Delegate animation for #175 to null
+11-16 10:02:21.801 V/WindowManagerShell(  867):  try handler com.android.wm.shell.transition.DefaultTransitionHandler@c0f90b0
+11-16 10:02:21.801 V/WindowManagerShell(  867): start default transition animation, info = {id=175 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@c6df457} m=OPEN f=NONE leash=Surface(name=Task=91)/@0xce45d98 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@d8dbb44} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xd5059f1 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.802 V/WindowManagerShell(  867): loadAnimation: anim=android.view.animation.AnimationSet@eaccd62 animAttr=0x13 type=OPEN isEntrance=false
+11-16 10:02:21.802 V/WindowManagerShell(  867): loadAnimation: anim=android.view.animation.AnimationSet@60e5dae animAttr=0x12 type=OPEN isEntrance=true
+11-16 10:02:21.802 V/WindowManagerShell(  867):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@c0f90b0
+11-16 10:02:21.805 V/WindowManager(  530):     info={id=175 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{8bf94ca Task{2a5e28 #91 type=standard A=10141:com.caelumweather}}} m=OPEN f=NONE leash=Surface(name=Task=91)/@0x5684a6c sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{c513d9e Task{c080e40 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x735aa70 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-16 10:02:21.806 D/WM-ForceStopRunnable(11678): The default process name was not specified.
+11-16 10:02:21.806 D/CompatibilityChangeReporter(11678): Compat change id reported: 183155436; UID 10141; state: ENABLED
+11-16 10:02:21.806 D/WM-ForceStopRunnable(11678): Performing cleanup operations.
+11-16 10:02:21.834 V/WindowManagerShell(  867): Transition animation finished (aborted=false), notifying core (#175)android.os.BinderProxy@346b26@0
+11-16 10:02:21.835 V/WindowManager(  530): Finish Transition #175: created at 11-16 10:02:21.649 collect-started=0.014ms request-sent=5.638ms started=19.525ms ready=86.775ms sent=151.505ms finished=186.038ms
+11-16 10:02:21.839 D/WM-SystemJobScheduler(11678): Reconciling jobs
+11-16 10:02:21.843 W/PackageConfigPersister(  530): App-specific configuration not found for packageName: com.caelumweather and userId: 0
+11-16 10:02:21.844 V/WindowManagerShell(  867): Track 0 became idle
+11-16 10:02:21.844 V/WindowManagerShell(  867): All active transition animations finished
+11-16 10:02:21.845 I/ActivityManager(  530): Flag disabled. Ignoring finishAttachApplication from uid: 10141. pid: 11678
+11-16 10:02:21.848 D/libEGL  (11678): loaded /vendor/lib64/egl/libEGL_emulation.so
+11-16 10:02:21.849 D/libEGL  (11678): loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+11-16 10:02:21.850 D/libEGL  (11678): loaded /vendor/lib64/egl/libGLESv2_emulation.so
+11-16 10:02:21.875 D/CompatibilityChangeReporter(11678): Compat change id reported: 160794467; UID 10141; state: ENABLED
+11-16 10:02:21.884 D/WM-ForceStopRunnable(11678): Application was force-stopped, rescheduling.
+11-16 10:02:21.913 W/PackageConfigPersister(  530): App-specific configuration not found for packageName: com.caelumweather and userId: 0
+11-16 10:02:21.926 D/CompatibilityChangeReporter(11678): Compat change id reported: 237531167; UID 10141; state: DISABLED
+11-16 10:02:21.927 W/OpenGLRenderer(11678): Unknown dataspace 0
+11-16 10:02:21.934 D/CoreBackPreview(  530): Window{181160f u0 com.caelumweather/com.caelumweather.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@c9128a5, mPriority=-1, mIsAnimationCallback=false}
+11-16 10:02:21.936 D/StatusBarIconController(  867): ignoring old pipeline callbacks, because the new mobile icons are enabled
+11-16 10:02:21.937 D/CompatibilityChangeReporter(11678): Compat change id reported: 193247900; UID 10141; state: ENABLED
+11-16 10:02:21.959 W/GooglePlayServicesUtil(11678): com.caelumweather requires the Google Play Store, but it is missing.
+11-16 10:02:21.959 W/GoogleApiManager(11678): The service for me3 is not available: pt{statusCode=SERVICE_INVALID, resolution=null, message=null, clientMethodKey=null}
+11-16 10:02:21.967 W/GooglePlayServicesUtil(11678): com.caelumweather requires the Google Play Store, but it is missing.
+11-16 10:02:21.967 W/GoogleApiManager(11678): The service for me3 is not available: pt{statusCode=SERVICE_INVALID, resolution=null, message=null, clientMethodKey=null}
+11-16 10:02:22.016 D/CompatibilityChangeReporter(11678): Compat change id reported: 194532703; UID 10141; state: ENABLED
+11-16 10:02:22.016 D/CompatibilityChangeReporter(11678): Compat change id reported: 253665015; UID 10141; state: ENABLED
+11-16 10:02:22.017 D/WM-SystemJobScheduler(11678): Scheduling work ID b70f95aa-9878-48af-8912-8386fd95078b (com.caelumweather.widget.AggiornaWidgetWorker), Job ID 3
+11-16 10:02:22.018 D/WM-SystemJobScheduler(11678): Scheduling work ID 1394d0e7-452b-463d-90d8-15f18421301d (com.caelumweather.notifiche.AllerteUfficialiWorker), Job ID 4
+11-16 10:02:22.021 D/WM-SystemJobScheduler(11678): Scheduling work ID ba35ce5b-589f-4242-8f0a-423dac8b2a9a (com.caelumweather.notifiche.PioggiaInArrivoWorker), Job ID 6
+11-16 10:02:22.048 D/EGL_emulation(  867): app_time_stats: avg=6038.90ms min=6038.90ms max=6038.90ms count=1
+11-16 10:02:22.050 D/CompatibilityChangeReporter(11678): Compat change id reported: 289878283; UID 10141; state: ENABLED
+11-16 10:02:22.107 W/OpenGLRenderer(11678): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-16 10:02:22.136 I/hwservicemanager(  158): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+11-16 10:02:22.136 I/Gralloc4(11678): mapper 4.x is not supported
+--------- beginning of kernel
+11-16 10:02:22.332 I/servicemanager(    0): Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+11-16 10:02:23.080 E/SurfaceSyncGroup(11678): Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(wmsSync-VRI[MainActivity]#0) as ready
+11-16 10:02:23.081 E/SurfaceSyncGroup(11678): Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(VRI[MainActivity]#1) as ready
+11-16 10:02:23.086 I/ActivityTaskManager(  530): Displayed com.caelumweather/.MainActivity for user 0: +1s434ms
+11-16 10:02:23.102 W/WindowOnBackDispatcher(  867): sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@167585f
+11-16 10:02:23.102 D/CoreBackPreview(  530): Window{2db34d4 u0 Splash Screen com.caelumweather EXITING}: Setting back callback null
+11-16 10:02:23.102 W/InputManager-JNI(  530): Input channel object '2db34d4 Splash Screen com.caelumweather (client)' was disposed without first being removed with the input manager!
+11-16 10:02:23.314 I/logd    (    0): logdr: UID=2000 GID=2000 PID=11715 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-16 10:02:23.184 I/ImeTracker( 1140): com.android.launcher3:696ab5b9: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+11-16 10:02:23.185 I/ImeTracker(  530): com.android.launcher3:696ab5b9: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-16 10:02:23.187 D/EGL_emulation(  867): app_time_stats: avg=380.60ms min=3.20ms max=1104.04ms count=4
+11-16 10:02:23.189 D/EGL_emulation(  867): app_time_stats: avg=1140.48ms min=1140.48ms max=1140.48ms count=1
+11-16 10:02:24.407 I/logd    (    0): logdr: UID=2000 GID=2000 PID=11718 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-16 10:02:24.284 I/Choreographer(11678): Skipped 140 frames!  The application may be doing too much work on its main thread.
+11-16 10:02:24.291 I/resolv  (  349): GetAddrInfoHandler::run: {101 101 101 983141 10141 0}
+11-16 10:02:24.291 I/resolv  (  349): res_nmkquery: (QUERY, IN, AAAA)
+11-16 10:02:24.292 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x7504017898d0
+11-16 10:02:24.292 I/resolv  (  349): doQuery: rcode=0, ancount=0, return value=86
+11-16 10:02:24.294 I/resolv  (  349): res_nmkquery: (QUERY, IN, A)
+11-16 10:02:24.294 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750531789b10
+11-16 10:02:24.294 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=52
+11-16 10:02:24.297 D/TrafficStats(11678): tagSocket(95) with statsTag=0xffffffff, statsUid=-1
+11-16 10:02:24.301 D/CompatibilityChangeReporter(  530): Compat change id reported: 214016041; UID 10141; state: ENABLED
+11-16 10:02:24.302 I/ImeTracker(  530): com.caelumweather:93279185: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-16 10:02:24.302 I/ImeTracker(  530): com.caelumweather:93279185: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-16 10:02:24.377 I/keystore2(  176): system/security/keystore2/src/watchdog.rs:319 - Watchdog thread idle -> terminating. Have a great day.
+11-16 10:02:24.474 I/OpenGLRenderer(11678): Davey! duration=2466ms; Flags=1, FrameTimelineVsyncId=58054, IntendedVsync=1037921478717, Vsync=1038021478713, InputEventId=0, HandleInputStart=1038028704747, AnimationStart=1038028705258, PerformTraversalsStart=1038028718377, DrawStart=1038261917580, FrameDeadline=1037938145383, FrameInterval=1038028607032, FrameStartTime=16666666, SyncQueued=1038275973150, SyncStart=1038276206716, IssueDrawCommandsStart=1038276717674, SwapBuffers=1040293168735, FrameCompleted=1040388399002, DequeueBufferDuration=2654, QueueBufferDuration=184363, GpuCompleted=1040388399002, SwapBuffersCompleted=1040369072847, DisplayPresentTime=0, CommandSubmissionCompleted=1040293168735, 
+11-16 10:02:25.078 I/OpenGLRenderer(11678): Davey! duration=2664ms; Flags=0, FrameTimelineVsyncId=58105, IntendedVsync=1038038145379, Vsync=1040371478619, InputEventId=0, HandleInputStart=1040379763834, AnimationStart=1040379764434, PerformTraversalsStart=1040382196360, DrawStart=1040382237241, FrameDeadline=1040421478617, FrameInterval=1040379576105, FrameStartTime=16666666, SyncQueued=1040384176817, SyncStart=1040384311827, IssueDrawCommandsStart=1040384430252, SwapBuffers=1040568611211, FrameCompleted=1040702538639, DequeueBufferDuration=2904, QueueBufferDuration=196010, GpuCompleted=1040702474484, SwapBuffersCompleted=1040702538639, DisplayPresentTime=0, CommandSubmissionCompleted=1040568611211, 
+11-16 10:02:25.228 I/Choreographer(11678): Skipped 36 frames!  The application may be doing too much work on its main thread.
+11-16 10:02:25.442 I/logd    (    0): logdr: UID=2000 GID=2000 PID=11729 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-16 10:02:25.560 I/meteo   (11678): previsione pronta: 24 ore
+11-16 10:02:25.565 I/resolv  (  349): GetAddrInfoHandler::run: {101 101 101 983141 10141 0}
+11-16 10:02:25.565 I/resolv  (  349): GetAddrInfoHandler::run: {101 101 101 983141 10141 0}
+11-16 10:02:25.566 I/resolv  (  349): res_nmkquery: (QUERY, IN, AAAA)
+11-16 10:02:25.566 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750401789e10
+11-16 10:02:25.566 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=76
+11-16 10:02:25.566 I/resolv  (  349): res_nmkquery: (QUERY, IN, A)
+11-16 10:02:25.566 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x75040178b230
+11-16 10:02:25.566 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=64
+11-16 10:02:25.566 D/TrafficStats(11678): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+11-16 10:02:25.568 I/resolv  (  349): res_nmkquery: (QUERY, IN, AAAA)
+11-16 10:02:25.568 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750401789470
+11-16 10:02:25.568 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=71
+11-16 10:02:25.569 I/resolv  (  349): res_nmkquery: (QUERY, IN, A)
+11-16 10:02:25.569 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750401789390
+11-16 10:02:25.569 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=59
+11-16 10:02:25.569 I/resolv  (  349): GetAddrInfoHandler::run: {101 101 101 983141 10141 0}
+11-16 10:02:25.569 I/resolv  (  349): GetAddrInfoHandler::run: {101 101 101 983141 10141 0}
+11-16 10:02:25.569 I/resolv  (  349): res_nmkquery: (QUERY, IN, AAAA)
+11-16 10:02:25.569 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750511790eb0
+11-16 10:02:25.569 I/resolv  (  349): doQuery: rcode=0, ancount=0, return value=104
+11-16 10:02:25.570 D/TrafficStats(11678): tagSocket(109) with statsTag=0xffffffff, statsUid=-1
+11-16 10:02:25.570 I/resolv  (  349): res_nmkquery: (QUERY, IN, A)
+11-16 10:02:25.570 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x75040178acf0
+11-16 10:02:25.570 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=60
+11-16 10:02:25.570 D/TrafficStats(11678): tagSocket(112) with statsTag=0xffffffff, statsUid=-1
+11-16 10:02:25.589 I/resolv  (  349): res_nmkquery: (QUERY, IN, AAAA)
+11-16 10:02:25.589 I/resolv  (  349): res_nmkquery: (QUERY, IN, A)
+11-16 10:02:25.589 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750531788d90
+11-16 10:02:25.589 I/resolv  (  349): doQuery: rcode=0, ancount=1, return value=54
+11-16 10:02:25.589 I/resolv  (  349): resolv_cache_lookup: FOUND IN CACHE entry=0x750511791210
+11-16 10:02:25.589 I/resolv  (  349): doQuery: rcode=0, ancount=0, return value=100
+11-16 10:02:25.592 D/TrafficStats(11678): tagSocket(110) with statsTag=0xffffffff, statsUid=-1
+11-16 10:02:25.603 E/TaskPersister(  530): File error accessing recents directory (directory doesn't exist?).
+11-16 10:02:25.765 D/EGL_emulation(11678): app_time_stats: avg=372.77ms min=206.64ms max=563.39ms count=4
+11-16 10:02:25.766 I/OpenGLRenderer(11678): Davey! duration=726ms; Flags=0, FrameTimelineVsyncId=58323, IntendedVsync=1040438145283, Vsync=1040704811939, InputEventId=0, HandleInputStart=1040712059606, AnimationStart=1040712060177, PerformTraversalsStart=1040753161082, DrawStart=1040755050714, FrameDeadline=1041304811915, FrameInterval=1040711986648, FrameStartTime=16666666, SyncQueued=1040758485737, SyncStart=1041265932554, IssueDrawCommandsStart=1041266004361, SwapBuffers=1041459739956, FrameCompleted=1041671596864, DequeueBufferDuration=2754, QueueBufferDuration=157694, GpuCompleted=1041671596864, SwapBuffersCompleted=1041653547823, DisplayPresentTime=0, CommandSubmissionCompleted=1041459739956, 
+11-16 10:02:25.776 I/ActivityManager(  530): Killing 1740:com.android.printspooler/u0a78 (adj 985): empty #17
+11-16 10:02:25.794 I/libprocessgroup(  530): Successfully killed process cgroup uid 10078 pid 1740 in 0ms
+11-16 10:02:25.796 I/OpenGLRenderer(11678): Davey! duration=822ms; Flags=0, FrameTimelineVsyncId=58346, IntendedVsync=1040721478605, Vsync=1041321478581, InputEventId=0, HandleInputStart=1041323223784, AnimationStart=1041323224355, PerformTraversalsStart=1041324212700, DrawStart=1041324288633, FrameDeadline=1041704811899, FrameInterval=1041323017939, FrameStartTime=16666666, SyncQueued=1041324569439, SyncStart=1041653561653, IssueDrawCommandsStart=1041653622624, SwapBuffers=1041662127429, FrameCompleted=1041872689278, DequeueBufferDuration=881416, QueueBufferDuration=244102, GpuCompleted=1041872689278, SwapBuffersCompleted=1041861136413, DisplayPresentTime=0, CommandSubmissionCompleted=1041662127429, 
+11-16 10:02:25.800 I/Zygote  (  350): Process 1740 exited due to signal 9 (Killed)
+11-16 10:02:25.800 D/DisplayManagerService(  530): Drop pending events for gone uid 10078
+11-16 10:02:25.995 I/binder  (    0): undelivered transaction 298920, process died.
+11-16 10:02:25.996 I/binder  (    0): undelivered transaction 298893, process died.
+11-16 10:02:26.478 I/logd    (    0): logdr: UID=2000 GID=2000 PID=11745 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-16 10:02:26.468 I/meteo   (11678): aria pronta
+11-16 10:02:26.635 I/meteo   (11678): MeteoAlarm italy: 41382 caratteri, 27 voci, 24 valide, 1 per Forlì (regione=Emilia-Romagna, paese=Italy)
+11-16 10:02:26.778 I/meteo   (11678): allerte ufficiali: 1 per Forlì
+11-16 10:02:26.945 D/EGL_emulation(11678): app_time_stats: avg=232.73ms min=123.11ms max=342.91ms count=5
+11-16 10:02:27.463 D/ProfileInstaller(11678): Skipping profile installation for com.caelumweather
+11-16 10:02:27.688 D/WM-DelayedWorkTracker(11678): Scheduling work ba35ce5b-589f-4242-8f0a-423dac8b2a9a
+11-16 10:02:27.688 D/WM-GreedyScheduler(11678): Starting tracking for ba35ce5b-589f-4242-8f0a-423dac8b2a9a
+11-16 10:02:27.688 D/CompatibilityChangeReporter(  530): Compat change id reported: 271850009; UID 10141; state: ENABLED
+11-16 10:02:27.689 D/WM-WorkConstraintsTrack(11678): NetworkRequestConstraintController register shared callback
+11-16 10:02:27.689 D/CompatibilityChangeReporter(  530): Compat change id reported: 261072174; UID 1000; state: ENABLED
+11-16 10:02:27.690 D/ConnectivityService(  530): requestNetwork for uid/pid:10141/11678 activeRequest: null callbackRequest: 59 [NetworkRequest [ REQUEST id=60, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10141 RequestorUid: 10141 RequestorPkg: com.caelumweather UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-16 10:02:27.691 D/WifiNetworkFactory(  530): got request NetworkRequest [ REQUEST id=60, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10141 RequestorUid: 10141 RequestorPkg: com.caelumweather UnderlyingNetworks: Null] ]
+11-16 10:02:27.691 D/UntrustedWifiNetworkFactory(  530): got request NetworkRequest [ REQUEST id=60, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10141 RequestorUid: 10141 RequestorPkg: com.caelumweather UnderlyingNetworks: Null] ]
+11-16 10:02:27.691 D/OemPaidWifiNetworkFactory(  530): got request NetworkRequest [ REQUEST id=60, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10141 RequestorUid: 10141 RequestorPkg: com.caelumweather UnderlyingNetworks: Null] ]
+11-16 10:02:27.691 D/MultiInternetWifiNetworkFactory(  530): got request NetworkRequest [ REQUEST id=60, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10141 RequestorUid: 10141 RequestorPkg: com.caelumweather UnderlyingNetworks: Null] ]
+11-16 10:02:27.691 D/ConnectivityService(  530): NetReassign [60 : null → 101] [c 0] [a 0] [i 0]
+11-16 10:02:27.691 D/WM-WorkConstraintsTrack(11678): NetworkRequestConstraintController onCapabilitiesChanged callback
+11-16 10:02:27.691 D/WM-WorkConstraintsTrack(11678): Not dispatching constraint state yet: isBlocked=null, capabilitiesInitialized=true
+11-16 10:02:27.691 D/WM-WorkConstraintsTrack(11678): NetworkRequestConstraintController onBlockedStatusChanged callback false
+11-16 10:02:27.691 D/WM-SystemJobService(11678): onStartJob for WorkGenerationalId(workSpecId=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, generation=0)
+11-16 10:02:27.691 D/WM-GreedyScheduler(11678): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, generation=0)
+11-16 10:02:27.692 D/WM-Processor(11678): ru1: processing WorkGenerationalId(workSpecId=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, generation=0)
+11-16 10:02:27.693 D/WM-Processor(11678): Work WorkGenerationalId(workSpecId=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, generation=0) is already enqueued for processing
+11-16 10:02:27.693 D/CompatibilityChangeReporter(11678): Compat change id reported: 263076149; UID 10141; state: ENABLED
+11-16 10:02:27.694 D/WM-WorkerWrapper(11678): Starting work for com.caelumweather.notifiche.PioggiaInArrivoWorker
+11-16 10:02:27.729 I/WM-WorkerWrapper(11678): Worker result SUCCESS for Work [ id=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, class=com.caelumweather.notifiche.PioggiaInArrivoWorker, tags={ com.caelumweather.notifiche.PioggiaInArrivoWorker } ]
+11-16 10:02:27.730 D/WM-Processor(11678): ru1 ba35ce5b-589f-4242-8f0a-423dac8b2a9a executed; reschedule = false
+11-16 10:02:27.730 D/WM-GreedyScheduler(11678): Stopping tracking for WorkGenerationalId(workSpecId=ba35ce5b-589f-4242-8f0a-423dac8b2a9a, generation=0)
+11-16 10:02:27.730 D/WM-SystemJobService(11678): ba35ce5b-589f-4242-8f0a-423dac8b2a9a executed on JobScheduler
+11-16 10:02:27.731 D/WM-GreedyScheduler(11678): Cancelling work ID ba35ce5b-589f-4242-8f0a-423dac8b2a9a
+11-16 10:02:27.732 D/WM-SystemJobScheduler(11678): Scheduling work ID ba35ce5b-589f-4242-8f0a-423dac8b2a9a (com.caelumweather.notifiche.PioggiaInArrivoWorker), Job ID 6
+11-16 10:02:27.733 D/CompatibilityChangeReporter(  530): Compat change id reported: 253665015; UID 10141; state: ENABLED
+11-16 10:02:27.733 D/CompatibilityChangeReporter(  530): Compat change id reported: 194532703; UID 10141; state: ENABLED
+11-16 10:02:27.733 D/WM-WorkConstraintsTrack(11678): NetworkRequestConstraintController unregister shared callback
+11-16 10:02:29.342 W/BpBinder(11751): Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+11-16 10:02:29.342 W/ProcessState(11751): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+11-16 10:02:29.351 I/hwservicemanager(  158): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+11-16 10:02:29.351 I/Gralloc4(11751): mapper 4.x is not supported
+11-16 10:02:29.547 I/servicemanager(    0): Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+11-16 10:02:29.589 I/ActivityManager(  530): Broadcasting: Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }
+11-16 10:02:29.589 I/ActivityManager(  530): Enqueued broadcast Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x400000 }: 0
+11-16 10:02:29.592 I/ActivityManager(  530): Broadcast completed: result=0
+11-16 10:02:29.593 I/MediaProvider( 1592): Begin Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x1400010 cmp=com.android.providers.media.module/com.android.providers.media.MediaService }
+11-16 10:02:29.589 W/com.android.providers.media.module( 1592): type=1400 audit(0.0:806): avc:  denied  { search } for  comm=4173796E635461736B202331 name="tmp" dev="dm-38" ino=65538 scontext=u:r:mediaprovider_app:s0:c128,c256,c512,c768 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=0 app=com.android.providers.media.module
+11-16 10:02:29.792 W/audit   (    0): audit_lost=300 audit_rate_limit=5 audit_backlog_limit=64
+11-16 10:02:29.798 E/audit   (    0): rate limit exceeded
+11-16 10:02:29.589 W/com.android.providers.media.module( 1592): type=1400 audit(0.0:807): avc:  denied  { getattr } for  comm=4173796E635461736B202331 path="/data/local/tmp" dev="dm-38" ino=65538 scontext=u:r:mediaprovider_app:s0:c128,c256,c512,c768 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=0 app=com.android.providers.media.module
+11-16 10:02:29.605 W/ModernMediaScanner( 1592): Failed to visit /data/local/tmp/rel.png: java.nio.file.AccessDeniedException: /data/local/tmp/rel.png
+11-16 10:02:29.606 I/MediaProvider( 1592): Scanned internal due to REASON_DEMAND, found 0 items in 13ms, 0 inserts 0 updates 0 deletes
+11-16 10:02:29.606 I/MediaProvider( 1592): End Intent { act=android.intent.action.MEDIA_SCANNER_SCAN_FILE dat=file:///... flg=0x1400010 cmp=com.android.providers.media.module/com.android.providers.media.MediaService }
+11-16 10:02:29.593 W/com.android.providers.media.module( 1592): type=1400 audit(0.0:808): avc:  denied  { search } for  comm=4173796E635461736B202331 name="tmp" dev="dm-38" ino=65538 scontext=u:r:mediaprovider_app:s0:c128,c256,c512,c768 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=0 app=com.android.providers.media.module
+11-16 10:02:29.593 W/com.android.providers.media.module( 1592): type=1400 audit(0.0:809): avc:  denied  { getattr } for  comm=4173796E635461736B202331 path="/data/local/tmp" dev="dm-38" ino=65538 scontext=u:r:mediaprovider_app:s0:c128,c256,c512,c768 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=0 app=com.android.providers.media.module
+11-16 10:02:29.593 W/com.android.providers.media.module( 1592): type=1400 audit(0.0:810): avc:  denied  { search } for  comm=4173796E635461736B202331 name="tmp" dev="dm-38" ino=65538 scontext=u:r:mediaprovider_app:s0:c128,c256,c512,c768 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=0 app=com.android.providers.media.module
