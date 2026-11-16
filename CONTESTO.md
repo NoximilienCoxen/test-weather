@@ -8669,3 +8669,14 @@ con tutti i valori a trattini, mentre nella serie scura la settimana mostrava
   `airUnavailable` restava falso: la sala diceva "sta arrivando" per sempre,
   anche con la previsione salvata in vista. Ora all'ultimo tentativo fallito,
   se l'aria non c'e', si segna come non disponibile.
+
+## 74. Il cielo coperto su tre piani
+
+Coi giorni coperti il cielo erano tre grandi sagome grigie piatte, tutte
+uguali. Ora `Nuvole` sono otto, su tre piani (`piano`): le lontane piu'
+piccole, alte, schiarite verso il cielo, al 60% d'opacita' e a meta'
+velocita'; le vicine 8% piu' grandi, un filo piu' cupe, piu' veloci. Si
+disegnano dal fondo (`NuvoleDalFondo`). Le cinque di sempre restano (due
+vicine, tre di mezzo); le tre in piu' sono velature lontane che entrano solo
+sopra il 65% di copertura. I tre gonfiori variano da una massa all'altra
+(`gonfi`). Tutto piatto, senza sfumature (§64.8, §70).

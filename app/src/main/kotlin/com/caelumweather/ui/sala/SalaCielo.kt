@@ -922,21 +922,68 @@ private fun DrawScope.disegnaIncrespature(
     }
 }
 
-/** Quante masse di nuvola ci sono, e dove. Le taglie sono quelle del prototipo. */
-private data class Nuvola(val x: Float, val y: Float, val w: Float, val passo: Float)
+/**
+ * Quante masse di nuvola ci sono, e dove.
+ *
+ * **Tre piani, non uno.** Erano cinque masse della stessa forma alla stessa
+ * distanza: nei giorni coperti diventavano tre grandi sagome grigie piatte che
+ * coprivano un terzo dello schermo, la parte piu' bella dell'app ridotta alla
+ * piu' povera (scatti del 15 novembre). Adesso ogni massa ha un [piano]:
+ * 0 lontano (piu' piccola, piu' alta, piu' tenue e piu' lenta), 1 di mezzo,
+ * 2 vicino (piu' grande, un filo piu' scura e piu' veloce). Le prime cinque
+ * sono quelle di sempre; le tre in piu' sono velature lontane che entrano solo
+ * col cielo chiuso, perche' la presenza sale con l'indice.
+ *
+ * E ogni sagoma e' sua: i tre gonfiori cambiano misura e posto da una massa
+ * all'altra ([gonfi]), invece di ripetere lo stesso profilo cinque volte.
+ */
+private data class Nuvola(
+    val x: Float,
+    val y: Float,
+    val w: Float,
+    val passo: Float,
+    val piano: Int,
+    /** Diametro e posto dei tre gonfiori, in frazioni della larghezza. */
+    val gonfi: List<Triple<Float, Float, Float>>,
+)
 
-private val Nuvole: List<Nuvola> = List(5) { i ->
-    val w = 150f + rnd(i + 11) * 110f
+private val Nuvole: List<Nuvola> = List(8) { i ->
+    val piano = when (i) {
+        0, 3 -> 2
+        1, 2, 4 -> 1
+        else -> 0
+    }
+    val lontana = piano == 0
+    val w = (150f + rnd(i + 11) * 110f) * if (lontana) 1.25f else 1f
+    fun varia(k: Int) = 0.85f + rnd(i * 7 + k) * 0.3f
     Nuvola(
         x = -50f + rnd(i + 5) * 340f,
-        y = 74f + rnd(i + 33) * 210f,
+        y = if (lontana) 40f + rnd(i + 33) * 90f else 74f + rnd(i + 33) * 210f,
         w = w,
         // Ognuna va per conto suo, fra il settanta e il centotrenta per cento
         // della velocita' di base: cinque masse alla stessa identica velocita'
         // sono un fondale che scorre, non cinque nuvole.
         passo = 0.7f + rnd(i + 90) * 0.6f,
+        piano = piano,
+        // Le lontane sono velature: gonfiori bassi, la massa resta stesa.
+        gonfi = if (lontana) {
+            listOf(
+                Triple(0.22f * varia(1), 0.08f, 0.06f),
+                Triple(0.30f * varia(2), 0.34f, 0.08f),
+                Triple(0.20f * varia(3), 0.66f, 0.05f),
+            )
+        } else {
+            listOf(
+                Triple(0.33f * varia(1), 0.04f + 0.04f * rnd(i + 51), 0.10f),
+                Triple(0.48f * varia(2), 0.22f + 0.08f * rnd(i + 52), 0.16f),
+                Triple(0.30f * varia(3), 0.58f + 0.08f * rnd(i + 53), 0.12f),
+            )
+        },
     )
 }
+
+/** L'ordine di disegno, calcolato una volta: dal piano lontano al vicino. */
+private val NuvoleDalFondo = Nuvole.withIndex().sortedBy { it.value.piano }
 
 /**
  * Quanto scorre una nuvola in un secondo, col cielo aperto, in punti del
@@ -991,7 +1038,8 @@ private fun DrawScope.nuvole(
     // Le cinque entrano in fila e non tutte insieme: con una soglia sola
     // comparirebbero nello stesso istante, che e' lo scatto di prima con una
     // rampa davanti.
-    Nuvole.forEachIndexed { i, n ->
+    // Dal fondo in avanti: le vicine coprono le lontane.
+    NuvoleDalFondo.forEach { (i, n) ->
         val presenza = (((scena.copertura - i * 0.13f) / 0.24f).coerceIn(0f, 1f))
             .coerceAtLeast(if (i < 2) scena.tempesta else 0f)
         if (presenza <= 0.01f) return@forEachIndexed
@@ -1004,7 +1052,17 @@ private fun DrawScope.nuvole(
         // "nuvole di passaggio" non ne porta.
         val chiara = lerp(Color(0xFFFDFAF4), Color(0xFF9A9994), ((scena.copertura - 0.55f) / 0.45f).coerceIn(0f, 1f))
         val scura = lerp(Color(0xFF3F4653), Color(0xFF2A2F37), ((scena.copertura - 0.35f) / 0.65f).coerceIn(0f, 1f))
-        val corpo = lerp(chiara, scura, palette.buio)
+        val corpoBase = lerp(chiara, scura, palette.buio)
+        // La distanza si legge dal tono: le lontane schiarite verso il cielo
+        // (di notte appena), le vicine un filo piu' cupe.
+        val corpo = when (n.piano) {
+            0 -> lerp(corpoBase, Color.White, lerp(0.22f, 0.06f, palette.buio))
+            2 -> lerp(corpoBase, Color.Black, 0.05f)
+            else -> corpoBase
+        }
+        val pianoScala = when (n.piano) { 0 -> 0.8f; 2 -> 1.08f; else -> 1f }
+        val pianoAlfa = when (n.piano) { 0 -> 0.6f; else -> 1f }
+        val pianoPasso = when (n.piano) { 0 -> 0.5f; 2 -> 1.3f; else -> 1f }
         val ombra = lerp(SalaTokens.neutral900.copy(alpha = 0.07f), Color(0xFF121824).copy(alpha = 0.18f), palette.buio)
 
         // **L'evaporazione delle ore calde.** Quando il sole e' alto sopra un
@@ -1025,10 +1083,11 @@ private fun DrawScope.nuvole(
         val evaporazione = SunClock.smoothstep(0.62f, 0.88f, sky.altitude) *
             (1f - scena.copertura).coerceIn(0f, 1f)
 
-        val scala = lerp(0.55f, 1f, presenza) * lerp(1f, 1.03f, evaporazione)
+        val scala = lerp(0.55f, 1f, presenza) * lerp(1f, 1.03f, evaporazione) * pianoScala
         val alfa = presenza * presenza *
             lerp(0.92f, 0.96f, scena.copertura) *
-            lerp(1f, 0.8f, evaporazione)
+            lerp(1f, 0.8f, evaporazione) *
+            pianoAlfa
         val w = n.w * sx * scala
         val h = w * 0.46f
         // **La deriva scorre, e non torna indietro.** La velocita' e' quella
@@ -1040,7 +1099,7 @@ private fun DrawScope.nuvole(
         // sarebbe vuoto. La corsa e' larga quanto lo schermo piu' la nuvola
         // piu' larga, cosi' rientra da sinistra **dopo** essere sparita del
         // tutto, e non a meta'.
-        val velocita = lerp(DERIVA_SERENO, DERIVA_FRONTE, scena.copertura) * n.passo
+        val velocita = lerp(DERIVA_SERENO, DERIVA_FRONTE, scena.copertura) * n.passo * pianoPasso
         val corsa = RIF_L + 260f
         val spostamento = ((n.x + tempo * velocita) % corsa + corsa) % corsa - 130f
         val x = spostamento * sx
@@ -1067,9 +1126,7 @@ private fun DrawScope.nuvole(
             fun tondo(d: Float, dx: Float, su: Float) {
                 addOval(Rect(Offset(x + dx, fondo - su - d), Size(d, d)))
             }
-            tondo(w * 0.33f, w * 0.04f, h * 0.10f)
-            tondo(w * 0.48f, w * 0.25f, h * 0.16f)
-            tondo(w * 0.30f, w * 0.62f, h * 0.12f)
+            n.gonfi.forEach { (d, dx, su) -> tondo(w * d, w * dx, h * su) }
         }
         drawPath(path = sagoma, color = corpo, alpha = alfa)
         val ombraH = h * 0.10f
