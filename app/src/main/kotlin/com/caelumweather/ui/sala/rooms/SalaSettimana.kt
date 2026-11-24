@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,7 +81,51 @@ fun SalaSettimanaScreen(
     val onda = rememberOndaScheda()
     val scopeOnda = rememberCoroutineScope()
     val movimentoOnda = LocalMovimento.current
-    PannelloSala(palette = palette, modifier = modifier, onda = onda) {
+    // **Due facce** (vedi `PannelloSala`): davanti il giorno scelto in tre
+    // numeri e la striscia per sceglierlo; dietro UV, luna, aria e la luce.
+    val dettagli: @Composable ColumnScope.() -> Unit = {
+        if (scelto != null) {
+            Text(
+                text = "${scelto.esteso} · ${scelto.data}",
+                style = SalaType.rowTitle,
+                color = palette.ink,
+                modifier = Modifier.padding(bottom = 9.dp),
+            )
+        }
+        RiepilogoGiorno(
+            giorno = scelto,
+            state = state,
+            faseLunare = faseLunare,
+            palette = palette,
+            onVai = onVai,
+            onOra = viewModel::apriAllOra,
+            riga = 1,
+        )
+        if (scelto != null) {
+            // Alba e tramonto non sono riquadri: sono due istanti, non quantita'
+            // da confrontare fra giorni, e non portano a nessuna sala. Le ore di
+            // sole stanno con loro perche' sono la stessa domanda: quanta luce,
+            // e quanta di quella arriva davvero.
+            Text(
+                text = tr("alba", "sunrise", "Sonnenaufgang", "lever", "amanecer") + " ${scelto.alba?.format(OraMinuto) ?: "--:--"} · " +
+                    tr("tramonto", "sunset", "Sonnenuntergang", "coucher du soleil", "atardecer") + " ${scelto.tramonto?.format(OraMinuto) ?: "--:--"}" +
+                    (scelto.sole?.let { " · " + oreDiSole(it) } ?: ""),
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+                modifier = Modifier.padding(top = 10.dp),
+            )
+        }
+
+    }
+
+    PannelloSala(
+        palette = palette,
+        modifier = modifier,
+        onda = onda,
+        dettagli = dettagli,
+        sommarioDettagli = tr("UV, luna, aria, alba", "UV, moon, air, sunrise", "UV, Mond, Luft, Sonnenaufgang", "UV, lune, air, lever", "UV, luna, aire, amanecer"),
+        titoloSala = tr("La settimana", "The week", "Die Woche", "La semaine", "La semana"),
+    ) {
         Text(text = tr("La settimana", "The week", "Die Woche", "La semaine", "La semana"), style = SalaType.cardTitle, color = palette.ink)
         Text(
             text = remember(settimana, state.unit) { sommarioDella(settimana, state) },
@@ -115,22 +160,8 @@ fun SalaSettimanaScreen(
             onVai = onVai,
             onOra = viewModel::apriAllOra,
             modifier = Modifier.padding(top = 9.dp),
+            riga = 0,
         )
-
-        if (scelto != null) {
-            // Alba e tramonto non sono riquadri: sono due istanti, non quantita'
-            // da confrontare fra giorni, e non portano a nessuna sala. Le ore di
-            // sole stanno con loro perche' sono la stessa domanda: quanta luce,
-            // e quanta di quella arriva davvero.
-            Text(
-                text = tr("alba", "sunrise", "Sonnenaufgang", "lever", "amanecer") + " ${scelto.alba?.format(OraMinuto) ?: "--:--"} · " +
-                    tr("tramonto", "sunset", "Sonnenuntergang", "coucher du soleil", "atardecer") + " ${scelto.tramonto?.format(OraMinuto) ?: "--:--"}" +
-                    (scelto.sole?.let { " · " + oreDiSole(it) } ?: ""),
-                style = SalaType.microLabel,
-                color = palette.inkSoft,
-                modifier = Modifier.padding(top = 10.dp),
-            )
-        }
 
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 15.dp, bottom = 9.dp),
@@ -221,6 +252,8 @@ private fun RiepilogoGiorno(
     onVai: (SalaRoom) -> Unit,
     onOra: (Int, SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /** Solo una riga di tre riquadri (0 la prima, 1 la seconda), o tutte con null. */
+    riga: Int? = null,
 ) {
     val ore = state.shownHours
     fun oraDelMassimo(valore: (HourForecast) -> Double?): Int? =
@@ -294,7 +327,7 @@ private fun RiepilogoGiorno(
     // valore, filo a sinistra, freccetta per chi porta altrove - e stanno in
     // due righe basse.
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        voci.chunked(3).forEach { riga ->
+        voci.chunked(3).filterIndexed { i, _ -> riga == null || i == riga }.forEach { riga ->
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 riga.forEach { voce ->
                     CellaValore(

@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -96,7 +97,85 @@ fun SalaUvScreen(
     // la barra fino alle tre di notte il riflesso deve spegnersi, perche' li'
     // l'indice e' zero e un avviso di sole alle tre di notte e' un avviso che
     // insegna a ignorare gli avvisi.
-    PannelloSala(palette = palette, modifier = modifier, bagliore = corrente >= 5.0 && movimento) {
+    val dettagli: @Composable ColumnScope.() -> Unit = {
+        ore.getOrNull(scelta)?.let { oraMostrata ->
+            val altezzaSole = remember(oraMostrata.time, state.place, state.forecast?.utcOffsetSeconds) {
+                OmbraSole.altezza(
+                    oraMostrata.time,
+                    state.place.latitude,
+                    state.place.longitude,
+                    state.forecast?.utcOffsetSeconds ?: 0,
+                )
+            }
+            ScenaOmbra(
+                altezzaSole = altezzaSole,
+                mattina = oraMostrata.time.hour < 13,
+                palette = palette,
+                onTrascina = { frazione ->
+                    // Il dito sulla scena scorre le stesse ore del grafico:
+                    // la barra in fondo e questa scena restano allineate
+                    // perche' scelgono la stessa cosa.
+                    if (finestra.isNotEmpty()) {
+                        val i = (frazione * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
+                        if (finestra[i] != scelta) onSelectHour(finestra[i])
+                    }
+                },
+                modifier = Modifier.padding(top = 0.dp),
+            )
+            Text(
+                text = frase(oraMostrata.time.hour, altezzaSole),
+                style = SalaType.rowTitle,
+                color = palette.ink,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+
+        // ── La luce per le foto ──────────────────────────────────────────────
+        //
+        // Sta qui perche' questa e' la sala del sole: l'ombra sopra dice quanto
+        // e' alto, e queste due colonne quando e' abbastanza basso da fare la
+        // luce che si fotografa. Del giorno mostrato, come tutto il resto.
+        val data = ore.firstOrNull()?.time?.toLocalDate()
+        if (data != null) {
+            val luce = remember(data, state.place, state.forecast?.utcOffsetSeconds) {
+                luceDelGiorno(data, state.place.latitude, state.place.longitude, state.forecast?.utcOffsetSeconds ?: 0)
+            }
+            Text(
+                text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS", "LICHT FÜR FOTOS", "LA LUMIÈRE POUR LES PHOTOS", "LA LUZ PARA LAS FOTOS"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+            ) {
+                ColonnaLuce(
+                    quando = tr("MATTINA", "MORNING", "MORGEN", "MATIN", "MAÑANA"),
+                    oro = luce.oroMattina,
+                    blu = luce.bluMattina?.let { tr("ora blu dalle ${hhmm(it.inizio)}", "blue hour from ${hhmm(it.inizio)}", "blaue Stunde ab ${hhmm(it.inizio)}", "heure bleue dès ${hhmm(it.inizio)}", "hora azul desde las ${hhmm(it.inizio)}") },
+                    cielo = cieloDellaLuce(luce.oroMattina, ore),
+                    palette = palette,
+                )
+                ColonnaLuce(
+                    quando = tr("SERA", "EVENING", "ABEND", "SOIR", "TARDE"),
+                    oro = luce.oroSera,
+                    blu = luce.bluSera?.let { tr("ora blu fino alle ${hhmm(it.fine)}", "blue hour until ${hhmm(it.fine)}", "blaue Stunde bis ${hhmm(it.fine)}", "heure bleue jusqu'à ${hhmm(it.fine)}", "hora azul hasta las ${hhmm(it.fine)}") },
+                    cielo = cieloDellaLuce(luce.oroSera, ore),
+                    palette = palette,
+                )
+            }
+        }
+    }
+
+    PannelloSala(
+        palette = palette,
+        modifier = modifier,
+        bagliore = corrente >= 5.0 && movimento,
+        dettagli = dettagli,
+        sommarioDettagli = tr("ombra, luce per foto", "shadow, photo light", "Schatten, Fotolicht", "ombre, lumière photo", "sombra, luz para fotos"),
+        titoloSala = tr("I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
@@ -249,42 +328,10 @@ fun SalaUvScreen(
             }
         }
 
-        ore.getOrNull(scelta)?.let { oraMostrata ->
-            val altezzaSole = remember(oraMostrata.time, state.place, state.forecast?.utcOffsetSeconds) {
-                OmbraSole.altezza(
-                    oraMostrata.time,
-                    state.place.latitude,
-                    state.place.longitude,
-                    state.forecast?.utcOffsetSeconds ?: 0,
-                )
-            }
-            ScenaOmbra(
-                altezzaSole = altezzaSole,
-                mattina = oraMostrata.time.hour < 13,
-                palette = palette,
-                onTrascina = { frazione ->
-                    // Il dito sulla scena scorre le stesse ore del grafico:
-                    // la barra in fondo e questa scena restano allineate
-                    // perche' scelgono la stessa cosa.
-                    if (finestra.isNotEmpty()) {
-                        val i = (frazione * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
-                        if (finestra[i] != scelta) onSelectHour(finestra[i])
-                    }
-                },
-                modifier = Modifier.padding(top = 16.dp),
-            )
-            Text(
-                text = frase(oraMostrata.time.hour, altezzaSole),
-                style = SalaType.rowTitle,
-                color = palette.ink,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
-
         Didascalia(
             consiglio(corrente),
             palette,
-            modifier = Modifier.padding(top = 15.dp),
+            modifier = Modifier.padding(top = 12.dp),
         )
 
         Row(
@@ -308,42 +355,6 @@ fun SalaUvScreen(
             }
         }
 
-        // ── La luce per le foto ──────────────────────────────────────────────
-        //
-        // Sta qui perche' questa e' la sala del sole: l'ombra sopra dice quanto
-        // e' alto, e queste due colonne quando e' abbastanza basso da fare la
-        // luce che si fotografa. Del giorno mostrato, come tutto il resto.
-        val data = ore.firstOrNull()?.time?.toLocalDate()
-        if (data != null) {
-            val luce = remember(data, state.place, state.forecast?.utcOffsetSeconds) {
-                luceDelGiorno(data, state.place.latitude, state.place.longitude, state.forecast?.utcOffsetSeconds ?: 0)
-            }
-            Text(
-                text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS", "LICHT FÜR FOTOS", "LA LUMIÈRE POUR LES PHOTOS", "LA LUZ PARA LAS FOTOS"),
-                style = SalaType.sectionLabel,
-                color = palette.inkFaint,
-                modifier = Modifier.padding(top = 18.dp, bottom = 8.dp),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(9.dp),
-            ) {
-                ColonnaLuce(
-                    quando = tr("MATTINA", "MORNING", "MORGEN", "MATIN", "MAÑANA"),
-                    oro = luce.oroMattina,
-                    blu = luce.bluMattina?.let { tr("ora blu dalle ${hhmm(it.inizio)}", "blue hour from ${hhmm(it.inizio)}", "blaue Stunde ab ${hhmm(it.inizio)}", "heure bleue dès ${hhmm(it.inizio)}", "hora azul desde las ${hhmm(it.inizio)}") },
-                    cielo = cieloDellaLuce(luce.oroMattina, ore),
-                    palette = palette,
-                )
-                ColonnaLuce(
-                    quando = tr("SERA", "EVENING", "ABEND", "SOIR", "TARDE"),
-                    oro = luce.oroSera,
-                    blu = luce.bluSera?.let { tr("ora blu fino alle ${hhmm(it.fine)}", "blue hour until ${hhmm(it.fine)}", "blaue Stunde bis ${hhmm(it.fine)}", "heure bleue jusqu'à ${hhmm(it.fine)}", "hora azul hasta las ${hhmm(it.fine)}") },
-                    cielo = cieloDellaLuce(luce.oroSera, ore),
-                    palette = palette,
-                )
-            }
-        }
     }
 }
 

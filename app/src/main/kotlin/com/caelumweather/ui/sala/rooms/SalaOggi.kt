@@ -371,7 +371,7 @@ fun SalaOggiScreen(
 
             Box(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 13.dp)
+                    .padding(top = 12.dp, bottom = 10.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),

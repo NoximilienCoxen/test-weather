@@ -26,6 +26,7 @@ import com.caelumweather.ui.sala.discoLunare
 import com.caelumweather.ui.sala.rooms.luna3d.LunaInterattiva
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -94,50 +95,12 @@ fun SalaLunaScreen(
         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
     )
 
-    PannelloSala(palette = palette, modifier = modifier) {
-        CursoreGiorni(
-            spostamento = spostamento,
-            onCambia = { spostamento = it },
-            palette = palette,
-            modifier = Modifier.padding(bottom = 6.dp),
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(18.dp),
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = tr("La luna", "The moon", "Der Mond", "La lune", "La luna"), style = SalaType.cardTitle, color = palette.ink)
-                Text(
-                    text = "${segmento.label.inMezzoAllaFrase().replaceFirstChar { it.uppercase() }} · " +
-                        "${(illuminata * 100f).roundToInt()} %",
-                    style = SalaType.rowTitle,
-                    color = palette.accent,
-                    modifier = Modifier.padding(top = 6.dp),
-                )
-                Didascalia(
-                    descrizione(segmento),
-                    palette,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(9.dp),
-        ) {
-            CellaValore(tr("ILLUMINATA", "LIT", "BELEUCHTET", "ÉCLAIRÉE", "ILUMINADA"), "${(illuminata * 100f).roundToInt()} %", palette)
-            CellaValore(tr("ETÀ", "AGE", "ALTER", "ÂGE", "EDAD"), tr("${eta.roundToInt()} giorni", "${eta.roundToInt()} days", "${eta.roundToInt()} Tage", "${eta.roundToInt()} jours", "${eta.roundToInt()} días"), palette)
-            CellaValore(tr("PIENA", "FULL", "VOLL", "PLEINE", "LLENA"), "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
-        }
-
+    val dettagli: @Composable ColumnScope.() -> Unit = {
         Text(
             text = tr("LE PROSSIME FASI", "THE NEXT PHASES", "DIE NÄCHSTEN PHASEN", "LES PROCHAINES PHASES", "LAS PRÓXIMAS FASES"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 16.dp, bottom = 10.dp),
+            modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -180,6 +143,53 @@ fun SalaLunaScreen(
                     }
                 }
         }
+    }
+
+    PannelloSala(
+        palette = palette,
+        modifier = modifier,
+        dettagli = dettagli,
+        sommarioDettagli = tr("le prossime fasi", "the next phases", "die nächsten Phasen", "les prochaines phases", "las próximas fases"),
+        titoloSala = tr("La luna", "The moon", "Der Mond", "La lune", "La luna"),
+    ) {
+        CursoreGiorni(
+            spostamento = spostamento,
+            onCambia = { spostamento = it },
+            palette = palette,
+            modifier = Modifier.padding(bottom = 6.dp),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = tr("La luna", "The moon", "Der Mond", "La lune", "La luna"), style = SalaType.cardTitle, color = palette.ink)
+                Text(
+                    text = "${segmento.label.inMezzoAllaFrase().replaceFirstChar { it.uppercase() }} · " +
+                        "${(illuminata * 100f).roundToInt()} %",
+                    style = SalaType.rowTitle,
+                    color = palette.accent,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+                Didascalia(
+                    descrizione(segmento),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            CellaValore(tr("ILLUMINATA", "LIT", "BELEUCHTET", "ÉCLAIRÉE", "ILUMINADA"), "${(illuminata * 100f).roundToInt()} %", palette)
+            CellaValore(tr("ETÀ", "AGE", "ALTER", "ÂGE", "EDAD"), tr("${eta.roundToInt()} giorni", "${eta.roundToInt()} days", "${eta.roundToInt()} Tage", "${eta.roundToInt()} jours", "${eta.roundToInt()} días"), palette)
+            CellaValore(tr("PIENA", "FULL", "VOLL", "PLEINE", "LLENA"), "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
+        }
+
     }
 }
 

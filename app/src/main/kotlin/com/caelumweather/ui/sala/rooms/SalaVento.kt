@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
@@ -101,7 +102,62 @@ fun SalaVentoScreen(
         quadrantePrima = quadrante
     }
 
-    PannelloSala(palette = palette, modifier = modifier) {
+    val dettagli: @Composable ColumnScope.() -> Unit = {
+        RigaBussola(
+            sguardo = sguardo,
+            direzione = direzione,
+            conBussola = conBussola,
+            bussolaAccesa = bussolaAccesa,
+            onBussola = { bussolaAccesa = it },
+            palette = palette,
+            modifier = Modifier.padding(bottom = 16.dp),
+        )
+        // ── La pressione ─────────────────────────────────────────────────────
+        //
+        // Sta col vento perche' il vento e' la pressione che si muove: e' la
+        // differenza fra due barometri a far correre l'aria. Il numero da solo
+        // dice poco, quindi la riga lo accompagna sempre con dove sta andando.
+        val pressione = remember(state.forecast, ora?.time) {
+            ora?.time?.let { pressioneAlle(state.forecast?.allHours.orEmpty(), it) }
+        }
+        if (pressione != null) {
+            Text(
+                text = tr("LA PRESSIONE", "PRESSURE", "LUFTDRUCK", "LA PRESSION", "LA PRESIÓN"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 2.dp, bottom = 6.dp),
+            )
+            Text(
+                text = "${pressione.hPa.roundToInt()} hPa" +
+                    (pressione.tendenza?.let { " · " + nomeTendenza(it) } ?: ""),
+                style = SalaType.rowTitle,
+                color = palette.ink,
+            )
+            pressione.scarto?.let { scarto ->
+                Didascalia(
+                    notaPressione(pressione.tendenza, scarto, pressione.inAvanti),
+                    palette,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
+
+        // ── Il mare ──────────────────────────────────────────────────────────
+        //
+        // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
+        // il resto della sala.
+        state.mareMostrato?.let { oraDiMare ->
+            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento, mare = state.mare.takeIf { state.forcedMare == null })
+        }
+    }
+
+    PannelloSala(
+        palette = palette,
+        modifier = modifier,
+        dettagli = dettagli,
+        sommarioDettagli = if (state.mareMostrato != null) tr("bussola, pressione, mare", "compass, pressure, sea", "Kompass, Luftdruck, Meer", "boussole, pression, mer", "brújula, presión, mar") else tr("bussola, pressione", "compass, pressure", "Kompass, Luftdruck", "boussole, pression", "brújula, presión"),
+        titoloSala = tr("Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -221,15 +277,6 @@ fun SalaVentoScreen(
             }
         }
 
-        RigaBussola(
-            sguardo = sguardo,
-            direzione = direzione,
-            conBussola = conBussola,
-            bussolaAccesa = bussolaAccesa,
-            onBussola = { bussolaAccesa = it },
-            palette = palette,
-            modifier = Modifier.padding(top = 14.dp),
-        )
 
         Text(
             text = tr("LE PROSSIME SEI ORE", "THE NEXT SIX HOURS", "DIE NÄCHSTEN SECHS STUNDEN", "LES SIX PROCHAINES HEURES", "LAS PRÓXIMAS SEIS HORAS"),
@@ -280,43 +327,6 @@ fun SalaVentoScreen(
             }
         }
 
-        // ── La pressione ─────────────────────────────────────────────────────
-        //
-        // Sta col vento perche' il vento e' la pressione che si muove: e' la
-        // differenza fra due barometri a far correre l'aria. Il numero da solo
-        // dice poco, quindi la riga lo accompagna sempre con dove sta andando.
-        val pressione = remember(state.forecast, ora?.time) {
-            ora?.time?.let { pressioneAlle(state.forecast?.allHours.orEmpty(), it) }
-        }
-        if (pressione != null) {
-            Text(
-                text = tr("LA PRESSIONE", "PRESSURE", "LUFTDRUCK", "LA PRESSION", "LA PRESIÓN"),
-                style = SalaType.sectionLabel,
-                color = palette.inkFaint,
-                modifier = Modifier.padding(top = 18.dp, bottom = 6.dp),
-            )
-            Text(
-                text = "${pressione.hPa.roundToInt()} hPa" +
-                    (pressione.tendenza?.let { " · " + nomeTendenza(it) } ?: ""),
-                style = SalaType.rowTitle,
-                color = palette.ink,
-            )
-            pressione.scarto?.let { scarto ->
-                Didascalia(
-                    notaPressione(pressione.tendenza, scarto, pressione.inAvanti),
-                    palette,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-            }
-        }
-
-        // ── Il mare ──────────────────────────────────────────────────────────
-        //
-        // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
-        // il resto della sala.
-        state.mareMostrato?.let { oraDiMare ->
-            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento, mare = state.mare.takeIf { state.forcedMare == null })
-        }
     }
 }
 

@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -132,6 +133,9 @@ private val RaggioCella = 22.dp
  */
 val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
 
+/** Vero per aprire le schede gia' girate sui dettagli: lo usano le prove che misurano il retro. */
+val LocalDettagliIniziali = compositionLocalOf { false }
+
 /**
  * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
  * il pannello continua, senza una barra di scorrimento. Sfuma il **contenuto**
@@ -186,8 +190,34 @@ fun PannelloSala(
     bagliore: Boolean = false,
     /** L'onda di un giorno toccato: vedi [OndaScheda]. */
     onda: OndaScheda? = null,
+    /**
+     * **La seconda faccia della scheda**: cio' che si legge meno spesso.
+     *
+     * Le schede scorrevano dentro di se' quasi tutte, e col carosello
+     * verticale vuol dire due gesti per cambiare sala: il primo porta in fondo
+     * la scheda, solo il secondo sfoglia. Adesso la faccia principale dice
+     * l'essenziale e sta sotto il tetto, e il resto e' a un tocco, sulla riga
+     * "altri dettagli" in fondo: la scheda si gira sul posto, senza scorrere,
+     * e "indietro" la rimette com'era. Nullo, la scheda ha una faccia sola.
+     */
+    dettagli: (@Composable ColumnScope.() -> Unit)? = null,
+    /** Cosa c'e' sull'altra faccia, in poche parole: "quando, la settimana". */
+    sommarioDettagli: String? = null,
+    /** Il nome della sala, per la riga che riporta indietro. */
+    titoloSala: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val dettagliIniziali = LocalDettagliIniziali.current
+    var dettagliAperti by rememberSaveable { mutableStateOf(dettagliIniziali) }
+    // Sparisce e torna in un soffio quando la scheda si gira: la faccia nuova
+    // sale di poco mentre compare, come una pagina che si posa.
+    val giro = remember { Animatable(1f) }
+    val movimentoGiro = LocalMovimento.current
+    LaunchedEffect(dettagliAperti) {
+        if (!movimentoGiro || giro.value < 1f && !giro.isRunning) { giro.snapTo(1f); return@LaunchedEffect }
+        giro.snapTo(0f)
+        giro.animateTo(1f, tween(durationMillis = 260, easing = LinearOutSlowInEasing))
+    }
     // **Il cielo ha diritto al suo spazio** (vedi [LocalAltezzaPannello]): oltre
     // il tetto il pannello non cresce, scorre dentro di se'. Gli angoli restano
     // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
@@ -228,7 +258,10 @@ fun PannelloSala(
                 // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
                 // e ogni punto in piu' non la fa salire, le taglia una riga in
                 // fondo. Lo scatto della CI l'ha mostrato subito.
-                .padding(start = 22.dp, end = 22.dp, top = 24.dp, bottom = 18.dp),
+                // **Stretti di qualche punto** (erano 24 sopra e 18 sotto): con
+                // la seconda faccia le schede stanno sotto il tetto, e ogni
+                // punto qui e' una riga in meno da scorrere.
+                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 14.dp),
         ) {
             // **Qui c'era una maniglia, ed e' stata tolta.** Cinquantadue punti
             // per cinque, in cima al pannello: voleva dire "questa cosa sta
@@ -251,7 +284,33 @@ fun PannelloSala(
             // il contenuto chiedesse a questo livello non avrebbero effetto;
             // le sale non ne usano.
             val colonna = this
-            ColonnaInRitardo(modifier = Modifier.fillMaxWidth()) { colonna.content() }
+            ColonnaInRitardo(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        val g = giro.value
+                        alpha = g
+                        translationY = (1f - g) * 14.dp.toPx()
+                    },
+            ) {
+                if (dettagli != null && dettagliAperti) {
+                    RigaIndietroDettagli(
+                        titolo = titoloSala ?: tr("indietro", "back", "zurück", "retour", "atrás"),
+                        palette = palette,
+                        onClick = { dettagliAperti = false },
+                    )
+                    colonna.dettagli()
+                } else {
+                    colonna.content()
+                    if (dettagli != null) {
+                        RigaAltriDettagli(
+                            sommario = sommarioDettagli,
+                            palette = palette,
+                            onClick = { dettagliAperti = true },
+                        )
+                    }
+                }
+            }
         }
         // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
@@ -278,6 +337,82 @@ fun PannelloSala(
                 drawCircle(tinta.copy(alpha = 0.35f * (1f - p)), radius = lontano * p, center = c, style = Stroke(width = 2.dp.toPx()))
             }
         }
+    }
+}
+
+/**
+ * La riga in fondo alla faccia principale: "altri dettagli", e cosa c'e'.
+ *
+ * Una riga intera e non un'icona: in questa app i comandi si leggono ("apri la
+ * settimana", "condividi"). Il filo sopra la stacca dal contenuto, il sommario
+ * dice cosa si trova girando la scheda, la freccia dice da che parte si va.
+ */
+@Composable
+private fun RigaAltriDettagli(sommario: String?, palette: SalaPalette, onClick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(palette.maniglia.copy(alpha = 0.5f)),
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 6.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .cedevole(premuto = 0.97f)
+                .clickable(
+                    onClickLabel = tr("mostra altri dettagli", "show more details", "weitere Details zeigen", "afficher plus de détails", "mostrar más detalles"),
+                    role = Role.Button,
+                    onClick = onClick,
+                )
+                .heightIn(min = MinTouchTarget)
+                .padding(horizontal = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = tr("altri dettagli", "more details", "weitere Details", "plus de détails", "más detalles"),
+                style = SalaType.pill,
+                color = palette.accent,
+                maxLines = 1,
+                softWrap = false,
+            )
+            if (sommario != null) {
+                Text(
+                    text = " · $sommario",
+                    style = SalaType.microLabel,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = "›", style = SalaType.pill, color = palette.accent)
+        }
+    }
+}
+
+/** In cima alla seconda faccia: la freccia e il nome della sala, per tornare. */
+@Composable
+private fun RigaIndietroDettagli(titolo: String, palette: SalaPalette, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .padding(bottom = 6.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .cedevole(premuto = 0.97f)
+            .clickable(
+                onClickLabel = tr("torna alla scheda", "back to the card", "zurück zur Karte", "retour à la fiche", "volver a la ficha"),
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .heightIn(min = 36.dp)
+            .padding(end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = "‹  ", style = SalaType.pill, color = palette.accent)
+        Text(text = titolo, style = SalaType.pill, color = palette.accent, maxLines = 1)
     }
 }
 

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -84,7 +85,46 @@ fun SalaAriaScreen(
     val fuoriModello = !adesso && aria != null && indice == null
     val tinta = coloreBanda(banda)
 
-    PannelloSala(palette = palette, modifier = modifier) {
+    val dettagli: @Composable ColumnScope.() -> Unit = {
+        val dominante = aria?.dominante
+        // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
+        // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
+        Text(
+            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CellaInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25, Modifier.weight(1f))
+                CellaInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10, Modifier.weight(1f))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CellaInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone, Modifier.weight(1f))
+                CellaInquinante(
+                    "NO₂",
+                    aria?.nitrogenDioxide,
+                    25.0,
+                    palette,
+                    dominante?.valore == aria?.nitrogenDioxide,
+                    Modifier.weight(1f),
+                )
+            }
+        }
+
+        // ── Il polline ───────────────────────────────────────────────────────
+        // Dallo stesso endpoint e dalla stessa richiesta: vedi `Polline.kt`.
+        SezionePolline(giorni = state.pollineMostrato, palette = palette)
+    }
+
+    PannelloSala(
+        palette = palette,
+        modifier = modifier,
+        dettagli = dettagli,
+        sommarioDettagli = tr("inquinanti, polline", "pollutants, pollen", "Schadstoffe, Pollen", "polluants, pollen", "contaminantes, polen"),
+        titoloSala = tr("L'aria", "Air", "Die Luft", "L'air", "El aire"),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -222,36 +262,6 @@ fun SalaAriaScreen(
         // Il confronto col dominante e' sul **valore**, non sul nome: due
         // stringhe uguali scritte in due file diversi si scollano al primo che
         // le ritocca.
-        val dominante = aria?.dominante
-        // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
-        // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
-        Text(
-            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CellaInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25, Modifier.weight(1f))
-                CellaInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10, Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CellaInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone, Modifier.weight(1f))
-                CellaInquinante(
-                    "NO₂",
-                    aria?.nitrogenDioxide,
-                    25.0,
-                    palette,
-                    dominante?.valore == aria?.nitrogenDioxide,
-                    Modifier.weight(1f),
-                )
-            }
-        }
-
-        // ── Il polline ───────────────────────────────────────────────────────
-        // Dallo stesso endpoint e dalla stessa richiesta: vedi `Polline.kt`.
-        SezionePolline(giorni = state.pollineMostrato, palette = palette)
     }
 }
 
