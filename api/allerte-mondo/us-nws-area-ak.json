@@ -10,6 +10,258 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.002.1",
+                "areaDesc": "Prince of Wales Island; Ketchikan Gateway Borough; Annette Island",
+                "geocode": {
+                    "SAME": [
+                        "002198",
+                        "002130"
+                    ],
+                    "UGC": [
+                        "AKZ328",
+                        "AKZ330",
+                        "AKZ332"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ328",
+                    "https://api.weather.gov/zones/forecast/AKZ330",
+                    "https://api.weather.gov/zones/forecast/AKZ332"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6e195acc2cf4c07a9ce5d2e5112dbf30ba863d34.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.6e195acc2cf4c07a9ce5d2e5112dbf30ba863d34.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T01:40:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-24T08:50:00-09:00",
+                "effective": "2026-11-24T08:50:00-09:00",
+                "onset": "2026-11-24T08:50:00-09:00",
+                "expires": "2026-11-24T15:00:00-09:00",
+                "ends": "2026-11-24T15:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Juneau AK",
+                "headline": "Wind Advisory issued November 24 at 8:50AM AKST until November 24 at 3:00PM AKST by NWS Juneau AK",
+                "description": "* WHAT...Southeast winds 15 to 25 mph with gusts up to 45 mph.\n\n* WHERE...Annette Island, Ketchikan Gateway Borough, and Prince of\nWales Island.\n\n* WHEN...Until 3 PM AKST this afternoon.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.\n\n* ADDITIONAL DETAILS...East to northeast winds will shift southeast\nduring the late morning as the front moves north of the area.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWAJK"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK77 PAJK 241750"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST THIS AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAJK.WI.Y.0066.000000T0000Z-261125T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-24T15:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9817e01bba731f7cb20316b182fb74da3cd3566c.002.1,2026-11-23T19:58:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a94f131072deaa32124348c7876dd27f845035d1.001.1,2026-11-23T16:00:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.348e6a77eaaf381a3508546a9c4d4d205a7a7ff3.002.1,2026-11-23T10:25:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.348e6a77eaaf381a3508546a9c4d4d205a7a7ff3.001.1,2026-11-23T10:25:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.244ee1fa4a5463886b004f9f6609695f26ef4f02.002.1,2026-11-23T07:56:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a0a7ad6c6771cd3c73db0a5d423690743afdb4a1.002.1,2026-11-23T06:34:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.628d34b15c2e26d0b0f43ad2c59a8369e43a6e73.001.1,2026-11-23T04:02:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.727b13d33056c340c79364cfed1da46433ba03aa.001.1",
+                "areaDesc": "City and Borough of Sitka",
+                "geocode": {
+                    "SAME": [
+                        "002220"
+                    ],
+                    "UGC": [
+                        "AKZ323"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ323"
+                ],
+                "references": [],
+                "sent": "2026-11-24T08:50:00-09:00",
+                "effective": "2026-11-24T08:50:00-09:00",
+                "onset": "2026-11-24T08:50:00-09:00",
+                "expires": "2026-11-24T17:00:00-09:00",
+                "ends": "2026-11-24T18:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Wind Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Juneau AK",
+                "headline": "Wind Advisory issued November 24 at 8:50AM AKST until November 24 at 6:00PM AKST by NWS Juneau AK",
+                "description": "* WHAT...East winds 15 to 25 mph with gusts up to 45 mph.\n\n* WHERE...City and Borough of Sitka.\n\n* WHEN...Until 6 PM AKST this evening.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
+                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWAJK"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK77 PAJK 241750"
+                    ],
+                    "NWSheadline": [
+                        "WIND ADVISORY IN EFFECT UNTIL 6 PM AKST THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXB.PAJK.WI.Y.0066.000000T0000Z-261125T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-24T18:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WIY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1",
+                "areaDesc": "Central Beaufort Sea Coast; Eastern Beaufort Sea Coast",
+                "geocode": {
+                    "SAME": [
+                        "002185"
+                    ],
+                    "UGC": [
+                        "AKZ804",
+                        "AKZ805"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ804",
+                    "https://api.weather.gov/zones/forecast/AKZ805"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-23T12:00:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-24T06:33:00-09:00",
+                "effective": "2026-11-24T06:33:00-09:00",
+                "onset": "2026-11-24T06:33:00-09:00",
+                "expires": "2026-11-24T16:00:00-09:00",
+                "ends": "2026-11-27T15:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Weather Advisory issued November 24 at 6:33AM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central and Eastern Beaufort Sea Coast.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. A brief decrease in winds is expected\nWednesday before winds strengthen once more Thursday.",
+                "instruction": "Use caution while traveling, especially in open areas.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWNSB"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFG 241533"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFG.WW.Y.0100.000000T0000Z-261128T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T15:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3e7965afb477e48c0fa1b32c6c8a1813a3ce5974.001.1",
             "type": "Feature",
             "geometry": null,
@@ -89,97 +341,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6e195acc2cf4c07a9ce5d2e5112dbf30ba863d34.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6e195acc2cf4c07a9ce5d2e5112dbf30ba863d34.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.6e195acc2cf4c07a9ce5d2e5112dbf30ba863d34.002.1",
-                "areaDesc": "Prince of Wales Island; Ketchikan Gateway Borough; Annette Island",
-                "geocode": {
-                    "SAME": [
-                        "002198",
-                        "002130"
-                    ],
-                    "UGC": [
-                        "AKZ328",
-                        "AKZ330",
-                        "AKZ332"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ328",
-                    "https://api.weather.gov/zones/forecast/AKZ330",
-                    "https://api.weather.gov/zones/forecast/AKZ332"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9817e01bba731f7cb20316b182fb74da3cd3566c.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.9817e01bba731f7cb20316b182fb74da3cd3566c.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-23T19:58:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-24T01:40:00-09:00",
-                "effective": "2026-11-24T01:40:00-09:00",
-                "onset": "2026-11-24T01:40:00-09:00",
-                "expires": "2026-11-24T09:45:00-09:00",
-                "ends": "2026-11-24T15:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Wind Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Juneau AK",
-                "headline": "Wind Advisory issued November 24 at 1:40AM AKST until November 24 at 3:00PM AKST by NWS Juneau AK",
-                "description": "* WHAT...East winds 10 to 20 mph with gusts up to 40 mph.\n\n* WHERE...Annette Island, Ketchikan Gateway Borough, and Prince of\nWales Island.\n\n* WHEN...Until 3 PM AKST this afternoon.\n\n* IMPACTS...Gusty winds will blow around unsecured objects. Tree\nlimbs could be blown down and a few power outages may result.",
-                "instruction": "Winds this strong can make travel difficult. Use extra caution.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWAJK"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK77 PAJK 241040"
-                    ],
-                    "NWSheadline": [
-                        "WIND ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST THIS AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAJK.WI.Y.0066.000000T0000Z-261125T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-24T15:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a94f131072deaa32124348c7876dd27f845035d1.001.1,2026-11-23T16:00:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.348e6a77eaaf381a3508546a9c4d4d205a7a7ff3.002.1,2026-11-23T10:25:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.348e6a77eaaf381a3508546a9c4d4d205a7a7ff3.001.1,2026-11-23T10:25:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.244ee1fa4a5463886b004f9f6609695f26ef4f02.002.1,2026-11-23T07:56:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a0a7ad6c6771cd3c73db0a5d423690743afdb4a1.002.1,2026-11-23T06:34:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.628d34b15c2e26d0b0f43ad2c59a8369e43a6e73.001.1,2026-11-23T04:02:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WIY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6c46d42dee43db36f62ada80e8fc1d039ff94609.001.1",
             "type": "Feature",
             "geometry": null,
@@ -248,86 +409,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1",
-                "areaDesc": "Central Beaufort Sea Coast; Eastern Beaufort Sea Coast",
-                "geocode": {
-                    "SAME": [
-                        "002185"
-                    ],
-                    "UGC": [
-                        "AKZ804",
-                        "AKZ805"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ804",
-                    "https://api.weather.gov/zones/forecast/AKZ805"
-                ],
-                "references": [],
-                "sent": "2026-11-23T12:00:00-09:00",
-                "effective": "2026-11-23T12:00:00-09:00",
-                "onset": "2026-11-24T00:00:00-09:00",
-                "expires": "2026-11-24T07:00:00-09:00",
-                "ends": "2026-11-27T15:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Weather Advisory issued November 23 at 12:00PM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central and Eastern Beaufort Sea Coast.\n\n* WHEN...From midnight tonight to 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. A brief decrease in winds is expected\nWednesday before winds strengthen once more Thursday.",
-                "instruction": "Use caution while traveling, especially in open areas.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWNSB"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFG 232100"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY IN EFFECT FROM MIDNIGHT TONIGHT TO 3 PM AKST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.PAFG.WW.Y.0100.261124T0900Z-261128T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T15:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-24T14:52:31+00:00"
+    "updated": "2026-11-24T19:55:11+00:00"
 }

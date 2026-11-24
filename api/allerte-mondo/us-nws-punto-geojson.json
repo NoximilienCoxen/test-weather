@@ -10,13 +10,13 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
                 "areaDesc": "Hudson; Eastern Essex; Eastern Union; New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northwest Suffolk; Northeast Suffolk; Southwest Suffolk; Southeast Suffolk; Northern Queens; Northern Nassau; Southern Queens; Southern Nassau",
                 "geocode": {
                     "SAME": [
@@ -66,14 +66,21 @@
                     "https://api.weather.gov/zones/forecast/NYZ178",
                     "https://api.weather.gov/zones/forecast/NYZ179"
                 ],
-                "references": [],
-                "sent": "2026-11-24T01:20:00-05:00",
-                "effective": "2026-11-24T01:20:00-05:00",
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T01:20:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-24T13:11:00-05:00",
+                "effective": "2026-11-24T13:11:00-05:00",
                 "onset": "2026-11-26T10:00:00-05:00",
-                "expires": "2026-11-24T15:00:00-05:00",
+                "expires": "2026-11-25T04:00:00-05:00",
                 "ends": "2026-11-27T01:00:00-05:00",
                 "status": "Actual",
-                "messageType": "Alert",
+                "messageType": "Update",
                 "category": "Met",
                 "severity": "Severe",
                 "certainty": "Possible",
@@ -81,8 +88,8 @@
                 "event": "High Wind Watch",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Upton NY",
-                "headline": "High Wind Watch issued November 24 at 1:20AM EST until November 27 at 1:00AM EST by NWS Upton NY",
-                "description": "* WHAT...East winds 25 to 35 mph with gusts up to 60 mph possible.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...10 am Thursday Through 1 am Friday.\n\n* IMPACTS...Damaging winds could blow down trees and power lines.\nWidespread power outages are possible. Travel could be difficult,\nespecially for high profile vehicles.",
+                "headline": "High Wind Watch issued November 24 at 1:11PM EST until November 27 at 1:00AM EST by NWS Upton NY",
+                "description": "* WHAT...East winds 25 to 35 mph with gusts up to 60 mph possible.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From Thursday morning through late Thursday night.\n\n* IMPACTS...Damaging winds could blow down trees and power lines.\nWidespread power outages are possible. Travel could be difficult,\nespecially for high profile vehicles.",
                 "instruction": "Monitor the latest forecasts and warnings for updates.\n\nFasten loose objects or shelter objects in a safe location prior to\nthe onset of winds.",
                 "response": "Prepare",
                 "note": null,
@@ -91,10 +98,10 @@
                         "NPWOKX"
                     ],
                     "WMOidentifier": [
-                        "WWUS71 KOKX 240620"
+                        "WWUS71 KOKX 241811"
                     ],
                     "NWSheadline": [
-                        "HIGH WIND WATCH IN EFFECT FROM THURSDAY MORNING THROUGH LATE THURSDAY NIGHT"
+                        "HIGH WIND WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH LATE THURSDAY NIGHT"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -105,7 +112,7 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.NEW.KOKX.HW.A.0001.261126T1500Z-261127T0600Z/"
+                        "/O.CON.KOKX.HW.A.0001.261126T1500Z-261127T0600Z/"
                     ],
                     "eventEndingTime": [
                         "2026-11-27T01:00:00-05:00"
@@ -127,5 +134,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W",
-    "updated": "2026-11-24T14:52:31+00:00"
+    "updated": "2026-11-24T19:55:11+00:00"
 }

@@ -22,13 +22,13 @@
     Forli    48/48 ore  quota 40.0 m  prime [3.4, 3.0, 3.1]
   ecmwf_aifs025_single
     Noceto   48/48 ore  quota 74.0 m  prime [5.7, 5.6, 5.6]
-    Forli    48/48 ore  quota 40.0 m  prime [3.7, 3.8, 4.0]
+    Forli    48/48 ore  quota 40.0 m  prime [3.7, 3.8, 4.1]
   meteofrance_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [5.7, 5.4, 5.3]
     Forli    48/48 ore  quota 40.0 m  prime [2.7, 2.6, 4.4]
   arpae_cosmo_5m
-    Noceto    HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
-    Forli     HTTP 400  {"error":true,"reason":"ARPAE COSMO models are not available anymore"}
+    Noceto    HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
+    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
   gfs_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [7.0, 7.7, 7.8]
     Forli    48/48 ore  quota 40.0 m  prime [8.3, 8.0, 7.8]
@@ -42,13 +42,13 @@
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
     Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [0.9, 0.7, 0.9]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [3.3, 2.9, 3.0]
