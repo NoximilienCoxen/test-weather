@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,10 @@ import com.caelumweather.data.OraAria
 import com.caelumweather.data.TipoPolline
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.rooms.SalaAriaScreen
+import com.caelumweather.ui.sala.rooms.SalaOggiScreen
+import com.caelumweather.ui.sala.rooms.SalaSettimanaScreen
+import com.caelumweather.ui.WeatherViewModel
+import com.caelumweather.data.SkyState
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
 import com.caelumweather.ui.sala.rooms.SalaPioggiaScreen
 import com.caelumweather.ui.sala.rooms.SalaUvScreen
@@ -46,11 +49,11 @@ import kotlin.math.sin
  * **Le schede stanno sotto il tetto, senza scorrere dentro di se'.**
  *
  * Su un telefono da 411 x 891 punti la Shell lascia al pannello circa 400
- * punti (`LocalAltezzaPannello`: il 40 per cento resta cielo). Oltre, il
+ * punti (`LocalAltezzaPannello`: il 30 per cento resta cielo). Oltre, il
  * pannello scorre dentro di se', e col carosello verticale vuol dire due
  * gesti per passare alla sala dopo: uno porta in fondo la scheda, il secondo
- * cambia sala. Le sale che si dividono in due facce (`PannelloSala` con i
- * dettagli) devono starci con la faccia principale.
+ * cambia sala. Tutto resta visibile: si sta nel tetto con schede piu' dense,
+ * non nascondendo pezzi.
  *
  * Disegna ogni sala a larghezza di telefono in `build/widget-renders`
  * (`tetto-*.png`) con una giornata inventata ma piena - pioggia, vento, UV,
@@ -148,42 +151,40 @@ class SchedeNelTettoRenderTest {
     @Test
     fun `le sale stanno sotto il tetto`() {
         val s = stato()
-        File("build/widget-renders").apply { mkdirs() }
+        File("build/widget-renders").apply { mkdirs() }.resolve("tetto-misure.txt").writeText("")
+        val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val vm = WeatherViewModel(attivita.application)
+        val cielo = SkyState(altitude = -10f, dayness = 0f, sunPresence = 0f, moonPresence = 1f, redness = 0f)
         val altezze = mapOf(
+            "oggi" to misura("oggi") { SalaOggiScreen(state = s, sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}) },
+            "oggi-giornata" to misura("oggi-giornata") { SalaOggiScreen(state = s, sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}, giornataApertaIniziale = true) },
+            // Il caso dello screenshot: un giorno futuro (la pastiglia del giorno
+            // e "torna a oggi" in cima) con la giornata aperta.
+            "oggi-domani-giornata" to misura("oggi-domani-giornata") { SalaOggiScreen(state = s.copy(selectedDay = 1), sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}, giornataApertaIniziale = true) },
+            "settimana" to misura("settimana") { SalaSettimanaScreen(state = s, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}) },
             "pioggia" to misura("pioggia") { SalaPioggiaScreen(state = s, palette = palette, onSelectHour = {}, onSelectDay = {}, movimento = false) },
             "luna" to misura("luna") { SalaLunaScreen(palette = palette, giorno = oggi, movimento = false) },
             "aria" to misura("aria") { SalaAriaScreen(state = s, palette = palette) },
             "vento" to misura("vento") { SalaVentoScreen(state = s, palette = palette, movimento = false) },
             "uv" to misura("uv") { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) },
         )
-        // La luna ha la sfera sopra la scheda, nel cielo: conta solo il pannello.
-        val fuori = altezze.filter { (nome, alta) -> alta - (if (nome == "luna") SFERA_LUNA else 0f) > TETTO_TELEFONO }
-        assertTrue("schede oltre il tetto di $TETTO_TELEFONO dp: $fuori", fuori.isEmpty())
-    }
-
-    @Test
-    fun `anche il retro delle schede sta sotto il tetto`() {
-        val s = stato()
-        File("build/widget-renders").apply { mkdirs() }
-        val retro: @Composable (@Composable () -> Unit) -> Unit = { sala ->
-            CompositionLocalProvider(LocalDettagliIniziali provides true) { sala() }
+        // Oggi e la luna hanno sopra la scheda il numero grande e la sfera: per
+        // loro conta l'altezza della pagina intera, per le altre il tetto.
+        val fuori = altezze.filter { (nome, alta) ->
+            alta > if (nome.startsWith("oggi") || nome == "luna") PAGINA_TELEFONO else TETTO_TELEFONO
         }
-        val altezze = mapOf(
-            "pioggia" to misura("retro-pioggia") { retro { SalaPioggiaScreen(state = s, palette = palette, onSelectHour = {}, onSelectDay = {}, movimento = false) } },
-            "luna" to misura("retro-luna") { retro { SalaLunaScreen(palette = palette, giorno = oggi, movimento = false) } },
-            "aria" to misura("retro-aria") { retro { SalaAriaScreen(state = s, palette = palette) } },
-            "vento" to misura("retro-vento") { retro { SalaVentoScreen(state = s, palette = palette, movimento = false) } },
-            "uv" to misura("retro-uv") { retro { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) } },
-        )
-        val fuori = altezze.filter { (nome, alta) -> alta - (if (nome == "luna") SFERA_LUNA else 0f) > TETTO_TELEFONO }
-        assertTrue("retro oltre il tetto di $TETTO_TELEFONO dp: $fuori", fuori.isEmpty())
+        assertTrue("schede che non stanno: $fuori", fuori.isEmpty())
     }
 
     private companion object {
-        /** Il tetto della Shell su un telefono da 891 punti (misurato sugli scatti della CI). */
-        const val TETTO_TELEFONO = 400f
+        /**
+         * Il tetto della Shell su un telefono da 891 punti, con il 30 per cento
+         * dello schermo lasciato al cielo (`QUOTA_CIELO`), meno un margine.
+         */
+        const val TETTO_TELEFONO = 480f
 
-        /** La sfera della luna e la sua didascalia, che stanno sopra il pannello. */
-        const val SFERA_LUNA = 260f
+        /** L'altezza della pagina del carosello, fra l'intestazione e i puntini. */
+        const val PAGINA_TELEFONO = 620f
+
     }
 }

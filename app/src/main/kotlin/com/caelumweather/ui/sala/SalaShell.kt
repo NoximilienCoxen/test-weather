@@ -1,5 +1,8 @@
 package com.caelumweather.ui.sala
 
+import android.os.Build
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import com.caelumweather.lingua.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
@@ -485,9 +488,26 @@ fun SalaShell(
     // **Due palette quando il tema e' scelto a mano.** Le schede seguono la
     // scelta; cio' che sta sul cielo - intestazione, numero grande, colline,
     // barra delle ore, crediti - segue il cielo. In automatico sono la stessa.
-    val paletteCielo = remember(dkCielo, crepuscolo, chiusura) { salaPalette(dkCielo, crepuscolo, chiusura) }
-    val palette = remember(dk, crepuscolo, chiusura, paletteCielo) {
-        salaPalette(dk, crepuscolo, chiusura).conCieloDi(paletteCielo)
+    // **I colori del telefono**, se chiesti (Android 12+): il primario delle
+    // due tinte che il telefono ricava dallo sfondo prende il posto
+    // dell'arancione. Vedi `SalaPalette.conAccento`.
+    val contestoColori = LocalContext.current
+    val accentiTelefono = remember(state.coloriTelefono) {
+        if (state.coloriTelefono && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            dynamicLightColorScheme(contestoColori).primary to dynamicDarkColorScheme(contestoColori).primary
+        } else {
+            null
+        }
+    }
+    val paletteCielo = remember(dkCielo, crepuscolo, chiusura, accentiTelefono) {
+        salaPalette(dkCielo, crepuscolo, chiusura).let { p ->
+            accentiTelefono?.let { (chiaro, scuro) -> p.conAccento(chiaro, scuro) } ?: p
+        }
+    }
+    val palette = remember(dk, crepuscolo, chiusura, paletteCielo, accentiTelefono) {
+        salaPalette(dk, crepuscolo, chiusura).let { p ->
+            accentiTelefono?.let { (chiaro, scuro) -> p.conAccento(chiaro, scuro) } ?: p
+        }.conCieloDi(paletteCielo)
     }
 
     // ── Le icone delle barre di sistema ──────────────────────────────────────
@@ -934,7 +954,7 @@ fun SalaShell(
                         val scartoDellaScheda = remember(page, ferme) {
                             { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
                         }
-                        // **Almeno il 40 per cento dello schermo resta cielo**:
+                        // **Almeno il 30 per cento dello schermo resta cielo**:
                         // vedi `LocalAltezzaPannello`. Sotto i 260 punti non si
                         // scende, o su uno schermo basso il pannello sarebbe
                         // una feritoia.
@@ -1039,6 +1059,7 @@ fun SalaShell(
                         corrente = pagerState.currentPage,
                         palette = palette,
                         onVai = ::vaiA,
+                        posizione = { pagerState.currentPage + pagerState.currentPageOffsetFraction },
                     )
                 }
 
@@ -1161,6 +1182,7 @@ fun SalaShell(
                         state = state,
                         palette = palette,
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onToggleColoriTelefono = viewModel::setColoriTelefono,
                         onToggleWidgetColori = viewModel::setWidgetColoriTelefono,
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
@@ -1443,5 +1465,12 @@ private const val FORZA_TINTA = 0.5f
  */
 val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?> { null }
 
-/** La parte dello schermo che resta sempre al cielo, in ogni sala. */
-private const val QUOTA_CIELO = 0.40f
+/**
+ * La parte dello schermo che resta sempre al cielo, in ogni sala.
+ *
+ * Era il 40 per cento, e le schede piene scorrevano dentro di se': col
+ * carosello verticale voleva dire due gesti per cambiare sala. Al 30 per
+ * cento il cielo resta una fascia ampia sopra la scheda, e le schede - rese
+ * piu' dense - ci stanno intere senza nascondere niente.
+ */
+private const val QUOTA_CIELO = 0.30f

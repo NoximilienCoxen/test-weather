@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -559,6 +560,20 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
  * cielo blu notte, colline verde chiaro sotto le stelle (Noceto, 15 novembre).
  * Il cielo non ha un tema: ha un'ora.
  */
+/**
+ * **L'accento preso dal telefono** (Material You, Android 12+): l'arancione
+ * di Caelum lascia il posto al colore primario che il telefono ricava dallo
+ * sfondo. [chiaro] e [scuro] sono il primario delle due tinte del telefono:
+ * si passa dall'uno all'altro con lo stesso `buio` che muove la carta, cosi'
+ * di notte l'accento e' quello pensato per il fondo scuro. L'inchiostro sopra
+ * l'accento si sceglie per contrasto, chiaro o scuro.
+ */
+fun SalaPalette.conAccento(chiaro: Color, scuro: Color): SalaPalette {
+    val accento = lerp(chiaro, scuro, buio)
+    val inchiostro = if (accento.luminance() > 0.45f) SalaTokens.neutral900 else SalaTokens.neutral100
+    return copy(accent = accento, accentInk = inchiostro, accentSuCielo = lerp(chiaro, scuro, buio.coerceAtLeast(0.5f)))
+}
+
 fun SalaPalette.conCieloDi(cielo: SalaPalette): SalaPalette =
     if (cielo == this) this else copy(
         inkSuCielo = cielo.inkSuCielo,
@@ -582,10 +597,14 @@ object SalaType {
     val citta = TextStyle(fontFamily = Caprasimo, fontSize = 22.sp, lineHeight = 24.sp)
 
     /** Il titolo di ogni sala, in cima al pannello. */
+    // Due punti in piu' (era 26 su 28), alla maniera dei titoli enfatizzati
+    // di Material 3 Expressive: la riga che si legge per prima pesa di piu'.
+    // Non oltre: ogni punto qui si moltiplica per le righe di titolo di sette
+    // schede, e le schede devono stare intere sotto il tetto.
     val cardTitle = TextStyle(
         fontFamily = Caprasimo,
-        fontSize = 26.sp,
-        lineHeight = 28.sp,
+        fontSize = 28.sp,
+        lineHeight = 30.sp,
         letterSpacing = (-0.015).em,
     )
 

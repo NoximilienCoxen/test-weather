@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.snap
 import com.caelumweather.lingua.tr
@@ -50,7 +51,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -128,14 +128,11 @@ private val RaggioCella = 22.dp
  * **Il cielo e' il punto forte dell'app, e i pannelli se lo mangiavano.** "La
  * luna" copriva lo schermo dall'intestazione alla barra delle ore, "La
  * settimana" lasciava un quarto di cielo. La Shell calcola quanto puo' salire
- * un pannello perche' sopra resti almeno il 40 per cento dello schermo, e lo
+ * un pannello perche' sopra resti almeno il 30 per cento dello schermo, e lo
  * passa qui; oltre, il pannello scorre dentro di se'. Fuori dalla Shell
  * (anteprime, prove) non c'e' tetto.
  */
 val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
-
-/** Vero per aprire le schede gia' girate sui dettagli: lo usano le prove che misurano il retro. */
-val LocalDettagliIniziali = compositionLocalOf { false }
 
 /**
  * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
@@ -191,34 +188,8 @@ fun PannelloSala(
     bagliore: Boolean = false,
     /** L'onda di un giorno toccato: vedi [OndaScheda]. */
     onda: OndaScheda? = null,
-    /**
-     * **La seconda faccia della scheda**: cio' che si legge meno spesso.
-     *
-     * Le schede scorrevano dentro di se' quasi tutte, e col carosello
-     * verticale vuol dire due gesti per cambiare sala: il primo porta in fondo
-     * la scheda, solo il secondo sfoglia. Adesso la faccia principale dice
-     * l'essenziale e sta sotto il tetto, e il resto e' a un tocco, sulla riga
-     * "altri dettagli" in fondo: la scheda si gira sul posto, senza scorrere,
-     * e "indietro" la rimette com'era. Nullo, la scheda ha una faccia sola.
-     */
-    dettagli: (@Composable ColumnScope.() -> Unit)? = null,
-    /** Cosa c'e' sull'altra faccia, in poche parole: "quando, la settimana". */
-    sommarioDettagli: String? = null,
-    /** Il nome della sala, per la riga che riporta indietro. */
-    titoloSala: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val dettagliIniziali = LocalDettagliIniziali.current
-    var dettagliAperti by rememberSaveable { mutableStateOf(dettagliIniziali) }
-    // Sparisce e torna in un soffio quando la scheda si gira: la faccia nuova
-    // sale di poco mentre compare, come una pagina che si posa.
-    val giro = remember { Animatable(1f) }
-    val movimentoGiro = LocalMovimento.current
-    LaunchedEffect(dettagliAperti) {
-        if (!movimentoGiro || giro.value < 1f && !giro.isRunning) { giro.snapTo(1f); return@LaunchedEffect }
-        giro.snapTo(0f)
-        giro.animateTo(1f, tween(durationMillis = 260, easing = LinearOutSlowInEasing))
-    }
     // **Il cielo ha diritto al suo spazio** (vedi [LocalAltezzaPannello]): oltre
     // il tetto il pannello non cresce, scorre dentro di se'. Gli angoli restano
     // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
@@ -259,9 +230,8 @@ fun PannelloSala(
                 // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
                 // e ogni punto in piu' non la fa salire, le taglia una riga in
                 // fondo. Lo scatto della CI l'ha mostrato subito.
-                // **Stretti di qualche punto** (erano 24 sopra e 18 sotto): con
-                // la seconda faccia le schede stanno sotto il tetto, e ogni
-                // punto qui e' una riga in meno da scorrere.
+                // **Stretti di qualche punto** (erano 24 sopra e 18 sotto):
+                // ogni punto qui e' una riga in meno da scorrere.
                 .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 14.dp),
         ) {
             // **Qui c'era una maniglia, ed e' stata tolta.** Cinquantadue punti
@@ -285,33 +255,7 @@ fun PannelloSala(
             // il contenuto chiedesse a questo livello non avrebbero effetto;
             // le sale non ne usano.
             val colonna = this
-            ColonnaInRitardo(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .graphicsLayer {
-                        val g = giro.value
-                        alpha = g
-                        translationY = (1f - g) * 14.dp.toPx()
-                    },
-            ) {
-                if (dettagli != null && dettagliAperti) {
-                    RigaIndietroDettagli(
-                        titolo = titoloSala ?: tr("indietro", "back", "zurück", "retour", "atrás"),
-                        palette = palette,
-                        onClick = { dettagliAperti = false },
-                    )
-                    colonna.dettagli()
-                } else {
-                    colonna.content()
-                    if (dettagli != null) {
-                        RigaAltriDettagli(
-                            sommario = sommarioDettagli,
-                            palette = palette,
-                            onClick = { dettagliAperti = true },
-                        )
-                    }
-                }
-            }
+            ColonnaInRitardo(modifier = Modifier.fillMaxWidth()) { colonna.content() }
         }
         // Sopra il contenuto e dentro il ritaglio del `Box`, cosi' il riflesso
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
@@ -338,88 +282,6 @@ fun PannelloSala(
                 drawCircle(tinta.copy(alpha = 0.35f * (1f - p)), radius = lontano * p, center = c, style = Stroke(width = 2.dp.toPx()))
             }
         }
-    }
-}
-
-/**
- * La riga in fondo alla faccia principale: "altri dettagli", e cosa c'e'.
- *
- * Una riga intera e non un'icona: in questa app i comandi si leggono ("apri la
- * settimana", "condividi"). Il filo sopra la stacca dal contenuto, il sommario
- * dice cosa si trova girando la scheda, la freccia dice da che parte si va.
- */
-@Composable
-private fun RigaAltriDettagli(sommario: String?, palette: SalaPalette, onClick: () -> Unit) {
-    // **Una pillola tonale**, alla maniera dei bottoni Expressive: piena,
-    // tutta tonda a riposo, si squadra sotto il dito e torna su a molla.
-    val pressione = rememberPressione()
-    val forma = formaCheCede(pressione, riposo = 26.dp, premuto = 12.dp)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 14.dp)
-            .cedevole(premuto = 0.97f, pressione = pressione)
-            .clip(forma)
-            .background(palette.chip)
-            .clickable(
-                onClickLabel = tr("mostra altri dettagli", "show more details", "weitere Details zeigen", "afficher plus de détails", "mostrar más detalles"),
-                role = Role.Button,
-                onClick = onClick,
-            )
-            .heightIn(min = MinTouchTarget)
-            .padding(start = 16.dp, end = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = tr("altri dettagli", "more details", "weitere Details", "plus de détails", "más detalles"),
-            style = SalaType.pill,
-            color = palette.accent,
-            maxLines = 1,
-            softWrap = false,
-        )
-        if (sommario != null) {
-            Text(
-                text = " · $sommario",
-                style = SalaType.microLabel,
-                color = palette.inkFaint,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        // La freccia in un tondino d'accento: il punto da toccare si vede.
-        Box(
-            modifier = Modifier.size(28.dp).clip(CircleShape).background(palette.accent),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(text = "›", style = SalaType.pill, color = palette.panelSolido)
-        }
-    }
-}
-
-/** In cima alla seconda faccia: la freccia e il nome della sala, per tornare. */
-@Composable
-private fun RigaIndietroDettagli(titolo: String, palette: SalaPalette, onClick: () -> Unit) {
-    val pressione = rememberPressione()
-    val forma = formaCheCede(pressione, riposo = 20.dp, premuto = 9.dp)
-    Row(
-        modifier = Modifier
-            .padding(bottom = 10.dp)
-            .cedevole(premuto = 0.95f, pressione = pressione)
-            .clip(forma)
-            .background(palette.chip)
-            .clickable(
-                onClickLabel = tr("torna alla scheda", "back to the card", "zurück zur Karte", "retour à la fiche", "volver a la ficha"),
-                role = Role.Button,
-                onClick = onClick,
-            )
-            .heightIn(min = 40.dp)
-            .padding(start = 12.dp, end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(text = "‹  ", style = SalaType.pill, color = palette.accent)
-        Text(text = titolo, style = SalaType.pill, color = palette.accent, maxLines = 1)
     }
 }
 
@@ -1639,9 +1501,11 @@ fun VoceInterruttore(
     onCambia: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val pressione = rememberPressione()
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .cedevole(premuto = 0.99f, pressione = pressione)
             .toggleable(value = acceso, role = Role.Switch, onValueChange = onCambia)
             .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -1658,7 +1522,7 @@ fun VoceInterruttore(
                 )
             }
         }
-        InterruttoreSala(acceso = acceso, palette = palette)
+        InterruttoreSala(acceso = acceso, palette = palette, premuto = pressione.giu)
     }
 }
 
@@ -1687,29 +1551,64 @@ fun FrecciaAvanti(palette: SalaPalette, testo: String? = null) {
  * una che resta accesa.
  */
 @Composable
-fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier = Modifier) {
+fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier = Modifier, premuto: Boolean = false) {
+    // **L'interruttore di Material 3 Expressive**, nei colori della sala: da
+    // spento il pallino e' piccolo e il binario ha solo il bordo; acceso il
+    // pallino cresce e porta la spunta; sotto il dito si gonfia ancora. Le
+    // misure corrono sulla molla dello schema Expressive (`MeteoTheme`).
+    val movimento = LocalMovimento.current
+    val spec = if (movimento) MaterialTheme.motionScheme.fastSpatialSpec<Dp>() else snap()
+    val diametro by animateDpAsState(
+        targetValue = when {
+            premuto -> 28.dp
+            acceso -> 24.dp
+            else -> 16.dp
+        },
+        animationSpec = spec,
+        label = "interruttore-pallino",
+    )
     val corsa by animateDpAsState(
-        targetValue = if (acceso) 20.dp else 0.dp,
-        animationSpec = spring(dampingRatio = 0.8f, stiffness = 700f),
+        targetValue = if (acceso) 24.dp else 4.dp,
+        animationSpec = spec,
         label = "interruttore",
     )
     val binario by animateColorAsState(
-        targetValue = if (acceso) palette.accent else palette.maniglia,
+        targetValue = if (acceso) palette.accent else palette.chip,
         label = "binario",
+    )
+    val pallino by animateColorAsState(
+        targetValue = if (acceso) palette.accentInk else palette.inkFaint,
+        label = "pallino",
     )
     Box(
         modifier = modifier
-            .size(48.dp, 28.dp)
+            .size(52.dp, 32.dp)
             .clip(CircleShape)
-            .background(binario),
+            .background(binario)
+            .border(2.dp, if (acceso) palette.accent else palette.inkFaint, CircleShape),
     ) {
+        // Il centro del pallino scorre fra 16 e 36 punti; il diametro cambia
+        // attorno a quel centro.
         Box(
             modifier = Modifier
-                .padding(start = 3.dp + corsa, top = 3.dp)
-                .size(22.dp)
+                .offset(x = corsa + 12.dp - diametro / 2f + 0.dp, y = 16.dp - diametro / 2f)
+                .size(diametro)
                 .clip(CircleShape)
-                .background(if (acceso) palette.accentInk else SalaTokens.neutral100),
-        )
+                .background(pallino),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (acceso && diametro > 20.dp) {
+                Canvas(modifier = Modifier.size(12.dp)) {
+                    val tratto = 2.dp.toPx()
+                    val spunta = Path().apply {
+                        moveTo(size.width * 0.12f, size.height * 0.52f)
+                        lineTo(size.width * 0.40f, size.height * 0.78f)
+                        lineTo(size.width * 0.88f, size.height * 0.24f)
+                    }
+                    drawPath(spunta, palette.accent, style = Stroke(width = tratto, cap = StrokeCap.Round, join = StrokeJoin.Round))
+                }
+            }
+        }
     }
 }
 

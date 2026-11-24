@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.foundation.layout.size
 import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.ui.sala.coloreChePassa
 import com.caelumweather.lingua.Lingue
@@ -122,6 +123,8 @@ fun SalaOggiScreen(
      *  settimana e i tre riquadri dei valori. */
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /** Se la curva della giornata parte aperta: lo usano le prove che misurano la sala. */
+    giornataApertaIniziale: Boolean = false,
 ) {
     val fase = salaPhaseOf(sky)
     val ora = state.detailHour ?: state.hour
@@ -134,7 +137,7 @@ fun SalaOggiScreen(
     // la scheda di un terzo e il numero grande saliva a coprire il sole, la
     // luna e il loro arco: il cielo e' il punto di questa sala. Da chiusa resta
     // una mini-curva accanto a "min · max", sul cielo, che la apre.
-    var giornataAperta by rememberSaveable { mutableStateOf(false) }
+    var giornataAperta by rememberSaveable { mutableStateOf(giornataApertaIniziale) }
     // Il giorno toccato si spande nella scheda: vedi [OndaScheda].
     val onda = rememberOndaScheda()
     val scopeOnda = rememberCoroutineScope()
@@ -293,6 +296,11 @@ fun SalaOggiScreen(
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )
+            // Mentre la previsione arriva, l'indicatore di caricamento di
+            // Material 3 Expressive: forme che si trasformano una nell'altra.
+            if (senzaPrevisione && state.error == null && LocalMovimento.current) {
+                IndicatoreExpressive(colore = palette.accent, modifier = Modifier.padding(top = 10.dp).size(40.dp))
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
@@ -561,4 +569,10 @@ fun StrisciaGiorni(
             }
         }
     }
+}
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun IndicatoreExpressive(colore: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
+    androidx.compose.material3.LoadingIndicator(modifier = modifier, color = colore)
 }

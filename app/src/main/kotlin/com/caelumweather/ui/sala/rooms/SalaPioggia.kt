@@ -25,12 +25,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
@@ -115,74 +117,7 @@ fun SalaPioggiaScreen(
         }
     }
 
-    // **Due facce** (vedi `PannelloSala`): davanti la finestra di dodici ore
-    // e quando comincia; dietro l'umidita', la settimana e la neve.
-    val dettagli: @Composable ColumnScope.() -> Unit = {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(9.dp),
-        ) {
-            CellaValore(
-                etichetta = tr("PROBAB.", "CHANCE", "WAHRSCH.", "PROBA.", "PROBAB."),
-                valore = oraScelta?.precipProbability?.let { "$it %" } ?: "--",
-                palette = palette,
-            )
-            CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY", "INTENSITÄT", "INTENSITÉ", "INTENSIDAD"), valore = intensita(oraScelta?.precipitation), palette = palette)
-            CellaValore(etichetta = tr("SUOLO", "GROUND", "BODEN", "SOL", "SUELO"), valore = if (totale > 4.0) tr("saturo", "soaked", "durchnässt", "détrempé", "empapado") else tr("asciutto", "dry", "trocken", "sec", "seco"), palette = palette)
-        }
-        // **L'acqua che resta sospesa.** Il riquadro dell'umidita' in Sala I
-        // porta qui, e qui l'umidita' non c'era. Accanto il punto di rugiada,
-        // che e' il numero che dice davvero se l'aria e' pesante: vedi `afaDi`.
-        val rugiada = oraScelta?.dewPoint
-        if (oraScelta?.humidity != null || rugiada != null) {
-            Text(
-                text = listOfNotNull(
-                    oraScelta?.humidity?.let { tr("umidità ${it.roundToInt()} %", "humidity ${it.roundToInt()} %", "Luftfeuchte ${it.roundToInt()} %", "humidité ${it.roundToInt()} %", "humedad ${it.roundToInt()} %") },
-                    rugiada?.let { tr("rugiada ${state.unit.from(it).roundToInt()}°", "dew point ${state.unit.from(it).roundToInt()}°", "Taupunkt ${state.unit.from(it).roundToInt()}°", "point de rosée ${state.unit.from(it).roundToInt()}°", "punto de rocío ${state.unit.from(it).roundToInt()}°") },
-                    rugiada?.let { nomeAfa(afaDi(it)) },
-                ).joinToString(" · "),
-                style = SalaType.microLabel,
-                color = palette.inkSoft,
-                modifier = Modifier.padding(top = 2.dp),
-            )
-        }
-
-        // ── I sette giorni ───────────────────────────────────────────────────
-        val giorni = state.forecast?.days.orEmpty()
-        if (giorni.size >= 3) {
-            Text(
-                text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
-                style = SalaType.sectionLabel,
-                color = palette.inkFaint,
-                modifier = Modifier.padding(top = 14.dp, bottom = 10.dp),
-            )
-            SettimanaDellaPioggia(
-                giorni = giorni,
-                scelto = state.selectedDay,
-                palette = palette,
-                onVai = onSelectDay,
-            )
-        }
-
-        // ── La neve, per chi sta in montagna ─────────────────────────────────
-        val prev = state.forecast
-        if (prev != null && serveLaNeve(prev)) {
-            SezioneNeve(
-                previsione = prev,
-                zeroTermicoOra = oraScelta?.freezingLevel,
-                unita = state.unit,
-                palette = palette,
-            )
-        }
-    }
-
-    PannelloSala(
-        palette = palette,
-        modifier = modifier,
-        dettagli = dettagli,
-        sommarioDettagli = tr("umidità, settimana", "humidity, week", "Feuchte, Woche", "humidité, semaine", "humedad, semana"),
-        titoloSala = tr("La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
-    ) {
+    PannelloSala(palette = palette, modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom,
@@ -231,7 +166,7 @@ fun SalaPioggiaScreen(
                     "${fuoco.precipProbability ?: 0} %",
                 style = SalaType.sectionLabel,
                 color = if (sottoIlDito >= 0) palette.accent else palette.inkFaint,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = 10.dp),
             )
         }
         Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
@@ -289,7 +224,7 @@ fun SalaPioggiaScreen(
                             // Una colonna a zero resta visibile: una colonna
                             // assente si legge come un dato mancante, non come
                             // un'ora asciutta.
-                            .height(misuraCheArriva((3f + quota * 57f).dp))
+                            .height(misuraCheArriva((3f + quota * 54f).dp))
                             .clip(CircleShape)
                             .background(
                                 if (mm > 0.01) {
@@ -313,6 +248,40 @@ fun SalaPioggiaScreen(
         }
         }
 
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            CellaValore(
+                etichetta = tr("PROBAB.", "CHANCE", "WAHRSCH.", "PROBA.", "PROBAB."),
+                valore = oraScelta?.precipProbability?.let { "$it %" } ?: "--",
+                palette = palette,
+            )
+            CellaValore(etichetta = tr("INTENSITÀ", "INTENSITY", "INTENSITÄT", "INTENSITÉ", "INTENSIDAD"), valore = intensita(oraScelta?.precipitation), palette = palette)
+            CellaValore(etichetta = tr("SUOLO", "GROUND", "BODEN", "SOL", "SUELO"), valore = if (totale > 4.0) tr("saturo", "soaked", "durchnässt", "détrempé", "empapado") else tr("asciutto", "dry", "trocken", "sec", "seco"), palette = palette)
+        }
+
+        // **L'acqua che resta sospesa.** Il riquadro dell'umidita' in Sala I
+        // porta qui, e qui l'umidita' non c'era. Accanto il punto di rugiada,
+        // che e' il numero che dice davvero se l'aria e' pesante: vedi `afaDi`.
+        val rugiada = oraScelta?.dewPoint
+        if (oraScelta?.humidity != null || rugiada != null) {
+            Text(
+                text = listOfNotNull(
+                    oraScelta?.humidity?.let { tr("umidità ${it.roundToInt()} %", "humidity ${it.roundToInt()} %", "Luftfeuchte ${it.roundToInt()} %", "humidité ${it.roundToInt()} %", "humedad ${it.roundToInt()} %") },
+                    rugiada?.let { tr("rugiada ${state.unit.from(it).roundToInt()}°", "dew point ${state.unit.from(it).roundToInt()}°", "Taupunkt ${state.unit.from(it).roundToInt()}°", "point de rosée ${state.unit.from(it).roundToInt()}°", "punto de rocío ${state.unit.from(it).roundToInt()}°") },
+                    rugiada?.let { nomeAfa(afaDi(it)) },
+                ).joinToString(" · "),
+                style = SalaType.microLabel,
+                color = palette.inkSoft,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+
+        HorizontalDivider(
+            color = palette.maniglia.copy(alpha = 0.5f),
+            modifier = Modifier.padding(top = 12.dp, bottom = 10.dp),
+        )
 
         // ── La domanda, e la risposta ────────────────────────────────────────
         //
@@ -326,24 +295,53 @@ fun SalaPioggiaScreen(
         // Al suo posto c'e' la domanda che uno si fa davvero guardando la
         // pioggia, e che i dati sanno **sempre** - per tutte le ore e per tutti
         // e sette i giorni: *quando comincia, quanto dura, quanta ne viene*.
-        Text(
-            text = tr("QUANDO", "WHEN", "WANN", "QUAND", "CUÁNDO"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
-        )
         // Tre o quattro filtri su tutte le ore della settimana e quattro
         // `String.format`: a ogni fotogramma, finche' questa sala e' composta.
         // La chiave e' la coppia da cui dipende davvero la frase.
         val quando = remember(state.forecast, state.detailHour?.time, state.selectedDay, state.nowIndex) {
             finestraPioggia(state)
         }
+        // L'etichetta sta in testa alla frase invece che su una riga sua: una
+        // riga in meno, e si legge lo stesso come una voce.
         Text(
-            text = quando,
+            text = buildAnnotatedString {
+                withStyle(SalaType.sectionLabel.toSpanStyle().copy(color = palette.inkFaint)) {
+                    append(tr("QUANDO", "WHEN", "WANN", "QUAND", "CUÁNDO"))
+                }
+                append("  ")
+                append(quando)
+            },
             style = SalaType.rowTitle,
             color = palette.ink,
         )
 
+        // ── I sette giorni ───────────────────────────────────────────────────
+        val giorni = state.forecast?.days.orEmpty()
+        if (giorni.size >= 3) {
+            Text(
+                text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
+            )
+            SettimanaDellaPioggia(
+                giorni = giorni,
+                scelto = state.selectedDay,
+                palette = palette,
+                onVai = onSelectDay,
+            )
+        }
+
+        // ── La neve, per chi sta in montagna ─────────────────────────────────
+        val prev = state.forecast
+        if (prev != null && serveLaNeve(prev)) {
+            SezioneNeve(
+                previsione = prev,
+                zeroTermicoOra = oraScelta?.freezingLevel,
+                unita = state.unit,
+                palette = palette,
+            )
+        }
     }
 }
 
@@ -389,7 +387,7 @@ private fun SettimanaDellaPioggia(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(
-                    modifier = Modifier.height(46.dp).fillMaxWidth(),
+                    modifier = Modifier.height(34.dp).fillMaxWidth(),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
                     Box(

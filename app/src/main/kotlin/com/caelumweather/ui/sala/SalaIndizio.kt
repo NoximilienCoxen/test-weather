@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.lerp
 import com.caelumweather.lingua.tr
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -118,8 +122,17 @@ internal fun PuntiniSale(
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * Dove sta il carosello, in pagine con la frazione (2,4 = fra la terza e
+     * la quarta). Se c'e', il trattino **segue il dito**: si allunga verso la
+     * sala che arriva e si accorcia su quella che se ne va, invece di saltare
+     * a gesto finito. Si legge solo nel disegno, niente ricomposizioni.
+     */
+    posizione: (() -> Float)? = null,
 ) {
     val movimento = LocalMovimento.current
+    val coloreAcceso = palette.accentSuCielo
+    val colorePiano = palette.inkSuCielo.copy(alpha = 0.45f)
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -172,18 +185,30 @@ internal fun PuntiniSale(
                 contentAlignment = Alignment.Center,
             ) {
                 val c = comparsa.value
-                Box(
+                Canvas(
                     modifier = Modifier
-                        .size(width = larghezza, height = 6.dp)
+                        .size(width = 18.dp, height = 6.dp)
                         .graphicsLayer {
                             val via = c.coerceIn(0f, 1f)
                             alpha = 1f - via
                             scaleX = 1f - 0.6f * via
                             scaleY = 1f - 0.6f * via
-                        }
-                        .clip(CircleShape)
-                        .background(colore),
-                )
+                        },
+                ) {
+                    val pos = posizione
+                    val (w, tinta) = if (pos != null && movimento) {
+                        val vicino = (1f - kotlin.math.abs(i - pos())).coerceIn(0f, 1f)
+                        (6.dp.toPx() + 12.dp.toPx() * vicino) to lerp(colorePiano, coloreAcceso, vicino)
+                    } else {
+                        larghezza.toPx() to colore
+                    }
+                    drawRoundRect(
+                        color = tinta,
+                        topLeft = Offset((size.width - w) / 2f, 0f),
+                        size = Size(w, size.height),
+                        cornerRadius = CornerRadius(size.height / 2f),
+                    )
+                }
                 if (c > 0.01f) {
                     Canvas(
                         modifier = Modifier

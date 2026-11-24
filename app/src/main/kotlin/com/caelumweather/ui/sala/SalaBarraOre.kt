@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.MaterialTheme
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -191,6 +195,17 @@ fun BarraDelleOre(
             }
         }
 
+        // **La maniglia si stringe mentre la si trascina**, come i cursori di
+        // Material 3 Expressive: da disco diventa una pillola verticale, il
+        // dito vede di nuovo le ore ai lati, e lasciandola torna tonda sulla
+        // molla dello schema Expressive. Con le animazioni ridotte resta tonda.
+        var trascinando by remember { mutableStateOf(false) }
+        val movimentoManiglia = LocalMovimento.current
+        val stretta by animateFloatAsState(
+            targetValue = if (trascinando && movimentoManiglia) 1f else 0f,
+            animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+            label = "maniglia",
+        )
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -228,13 +243,17 @@ fun BarraDelleOre(
                 }
                 .pointerInput(attiva) {
                     if (!attiva) return@pointerInput
-                    detectHorizontalDragGestures { change, _ ->
+                    detectHorizontalDragGestures(
+                        onDragStart = { trascinando = true },
+                        onDragEnd = { trascinando = false },
+                        onDragCancel = { trascinando = false },
+                    ) { change, _ ->
                         val i = indiceDa(change.position.x, size.width.toFloat())
                         if (i != sceltaOra) { colpetto(); scegli(i) }
                     }
                 },
         ) {
-            disegnaBarra(tinte, ora, palette, attiva)
+            disegnaBarra(tinte, ora, palette, attiva, stretta)
         }
     }
 }
@@ -288,6 +307,8 @@ private fun DrawScope.disegnaBarra(
     selected: Int,
     palette: SalaPalette,
     attiva: Boolean,
+    /** Da 0 (disco) a 1 (pillola stretta): vedi la nota sulla maniglia. */
+    stretta: Float = 0f,
 ) {
     val w = size.width
     val cy = size.height / 2f
@@ -325,11 +346,33 @@ private fun DrawScope.disegnaBarra(
     if (!attiva) return
     val x = (selected.toFloat() / (ORE - 1) * w).coerceIn(17.dp.toPx(), w - 17.dp.toPx())
     val rManiglia = 17.dp.toPx()
-    drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))
-    drawCircle(
+    if (stretta <= 0.001f) {
+        drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))
+        drawCircle(
+            color = palette.accent,
+            radius = 11.dp.toPx() - 2.5.dp.toPx(),
+            center = Offset(x, cy),
+            style = Stroke(width = 5.dp.toPx()),
+        )
+        return
+    }
+    // Da disco a pillola: la larghezza scende, l'altezza resta quella del disco.
+    val larga = rManiglia * 2f + (14.dp.toPx() - rManiglia * 2f) * stretta
+    val alta = rManiglia * 2f
+    drawRoundRect(
+        color = palette.panelSolido,
+        topLeft = Offset(x - larga / 2f, cy - alta / 2f),
+        size = Size(larga, alta),
+        cornerRadius = CornerRadius(larga / 2f),
+    )
+    // Dentro, l'anello si chiude in un'asta d'accento.
+    val dentroLarga = larga - 8.dp.toPx() * (1f - stretta) - 6.dp.toPx() * stretta
+    val dentroAlta = alta - 12.dp.toPx() - 2.dp.toPx() * stretta
+    drawRoundRect(
         color = palette.accent,
-        radius = 11.dp.toPx() - 2.5.dp.toPx(),
-        center = Offset(x, cy),
-        style = Stroke(width = 5.dp.toPx()),
+        topLeft = Offset(x - dentroLarga / 2f, cy - dentroAlta / 2f),
+        size = Size(dentroLarga, dentroAlta),
+        cornerRadius = CornerRadius(dentroLarga / 2f),
+        style = if (stretta < 0.5f) Stroke(width = 5.dp.toPx()) else androidx.compose.ui.graphics.drawscope.Fill,
     )
 }

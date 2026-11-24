@@ -69,6 +69,17 @@ class ExpressiveRenderTest {
     }
 
     @Test
+    fun `l'interruttore cresce acceso e sotto il dito`() {
+        disegna("interruttori") {
+            Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                InterruttoreSala(acceso = false, palette = palette)
+                InterruttoreSala(acceso = true, palette = palette)
+                InterruttoreSala(acceso = true, palette = palette, premuto = true)
+            }
+        }
+    }
+
+    @Test
     fun `il guscio dell'indicatore cambia forma tirando`() {
         disegna("guscio") {
             Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {

@@ -79,6 +79,7 @@ fun SalaImpostazioniScreen(
     state: UiState,
     palette: SalaPalette,
     onToggleAnimazioni: (Boolean) -> Unit,
+    onToggleColoriTelefono: (Boolean) -> Unit = {},
     onToggleWidgetColori: (Boolean) -> Unit,
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
@@ -240,6 +241,14 @@ fun SalaImpostazioniScreen(
                 // I colori dinamici esistono da Android 12: prima, la voce
                 // sarebbe una levetta che non cambia niente.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    FiloGruppo(palette)
+                    VoceInterruttore(
+                        titolo = tr("Colori del telefono", "Phone colours", "Telefonfarben", "Couleurs du téléphone", "Colores del teléfono"),
+                        nota = tr("l'accento dell'app prende la tinta dello sfondo del telefono invece dell'arancione", "the app's accent takes the tint of the phone's wallpaper instead of orange", "der Akzent der App übernimmt die Tönung des Hintergrundbilds statt Orange", "l'accent de l'appli prend la teinte du fond d'écran au lieu de l'orange", "el acento de la app toma el tono del fondo de pantalla en lugar del naranja"),
+                        acceso = state.coloriTelefono,
+                        palette = palette,
+                        onCambia = onToggleColoriTelefono,
+                    )
                     FiloGruppo(palette)
                     VoceInterruttore(
                         titolo = tr("Widget coi colori del telefono", "Widgets in phone colours", "Widgets in Telefonfarben", "Widgets aux couleurs du téléphone", "Widgets con los colores del teléfono"),

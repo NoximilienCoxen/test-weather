@@ -225,6 +225,8 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** L'accento preso dai colori del telefono: vedi `SalaPalette.conAccento`. */
+    val coloriTelefono: Boolean = false,
     /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
     val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
@@ -671,6 +673,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
                         animazioniRidotte = settings.animazioniRidotte,
+                        coloriTelefono = settings.coloriTelefono,
                         widgetColoriTelefono = settings.widgetColoriTelefono,
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
@@ -1697,6 +1700,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun chiudiGuida() {
         _state.update { it.copy(guidaAperta = false, guidaVista = true) }
         viewModelScope.launch { prefs.setGuidaVista() }
+    }
+
+    fun setColoriTelefono(acceso: Boolean) {
+        viewModelScope.launch { prefs.setColoriTelefono(acceso) }
     }
 
     fun setAnimazioniRidotte(ridotte: Boolean) {

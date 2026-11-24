@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.SliderState
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
@@ -26,7 +30,6 @@ import com.caelumweather.ui.sala.discoLunare
 import com.caelumweather.ui.sala.rooms.luna3d.LunaInterattiva
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -95,63 +98,7 @@ fun SalaLunaScreen(
         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
     )
 
-    val dettagli: @Composable ColumnScope.() -> Unit = {
-        Text(
-            text = tr("LE PROSSIME FASI", "THE NEXT PHASES", "DIE NÄCHSTEN PHASEN", "LES PROCHAINES PHASES", "LAS PRÓXIMAS FASES"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            // Le quattro tappe del ciclo, ognuna alla sua prossima data. Sono
-            // quattro **calcoli**, non quattro date scritte a mano.
-            listOf(
-                0.25f to tr("Primo q.", "First q.", "Erstes V.", "Premier q.", "C. creciente"),
-                0.5f to tr("Piena", "Full", "Voll", "Pleine", "Llena"),
-                0.75f to tr("Ultimo q.", "Last q.", "Letztes V.", "Dernier q.", "C. menguante"),
-                0f to tr("Nuova", "New", "Neu", "Nouvelle", "Nueva"),
-            ).sortedBy { (obiettivo, _) -> MoonPhase.daysUntil(oggi, obiettivo) }
-                .forEach { (obiettivo, nome) ->
-                    val quando = MoonPhase.nextDate(oggi, obiettivo)
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(palette.chip)
-                            .padding(top = 12.dp, bottom = 10.dp, start = 4.dp, end = 4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(7.dp),
-                    ) {
-                        Canvas(modifier = Modifier.size(26.dp)) { disegnaLuna(obiettivo, 1f) }
-                        Text(
-                            text = nome,
-                            style = SalaType.giornoMax,
-                            color = palette.ink,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Text(
-                            text = "${quando.dayOfMonth} ${quando.monthValue.mese()}",
-                            style = SalaType.giornoMin,
-                            color = palette.inkFaint,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-        }
-    }
-
-    PannelloSala(
-        palette = palette,
-        modifier = modifier,
-        dettagli = dettagli,
-        sommarioDettagli = tr("le prossime fasi", "the next phases", "die nächsten Phasen", "les prochaines phases", "las próximas fases"),
-        titoloSala = tr("La luna", "The moon", "Der Mond", "La lune", "La luna"),
-    ) {
+    PannelloSala(palette = palette, modifier = modifier) {
         CursoreGiorni(
             spostamento = spostamento,
             onCambia = { spostamento = it },
@@ -182,7 +129,7 @@ fun SalaLunaScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(tr("ILLUMINATA", "LIT", "BELEUCHTET", "ÉCLAIRÉE", "ILUMINADA"), "${(illuminata * 100f).roundToInt()} %", palette)
@@ -190,6 +137,53 @@ fun SalaLunaScreen(
             CellaValore(tr("PIENA", "FULL", "VOLL", "PLEINE", "LLENA"), "${prossimaPiena.dayOfMonth} ${prossimaPiena.monthValue.mese()}", palette)
         }
 
+        Text(
+            text = tr("LE PROSSIME FASI", "THE NEXT PHASES", "DIE NÄCHSTEN PHASEN", "LES PROCHAINES PHASES", "LAS PRÓXIMAS FASES"),
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Le quattro tappe del ciclo, ognuna alla sua prossima data. Sono
+            // quattro **calcoli**, non quattro date scritte a mano.
+            listOf(
+                0.25f to tr("Primo q.", "First q.", "Erstes V.", "Premier q.", "C. creciente"),
+                0.5f to tr("Piena", "Full", "Voll", "Pleine", "Llena"),
+                0.75f to tr("Ultimo q.", "Last q.", "Letztes V.", "Dernier q.", "C. menguante"),
+                0f to tr("Nuova", "New", "Neu", "Nouvelle", "Nueva"),
+            ).sortedBy { (obiettivo, _) -> MoonPhase.daysUntil(oggi, obiettivo) }
+                .forEach { (obiettivo, nome) ->
+                    val quando = MoonPhase.nextDate(oggi, obiettivo)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(palette.chip)
+                            .padding(top = 8.dp, bottom = 7.dp, start = 4.dp, end = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Canvas(modifier = Modifier.size(26.dp)) { disegnaLuna(obiettivo, 1f) }
+                        Text(
+                            text = nome,
+                            style = SalaType.giornoMax,
+                            color = palette.ink,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = "${quando.dayOfMonth} ${quando.monthValue.mese()}",
+                            style = SalaType.giornoMin,
+                            color = palette.inkFaint,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+        }
     }
 }
 
@@ -200,6 +194,7 @@ fun SalaLunaScreen(
  * il modo piu' diretto di vedere un ciclo che dal vero dura un mese. I numeri
  * del pannello seguono, perche' vengono tutti dallo stesso giorno.
  */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CursoreGiorni(
     spostamento: Int,
@@ -236,18 +231,50 @@ private fun CursoreGiorni(
                 )
             }
         }
+        // **Il cursore di Material 3 Expressive**: binario spesso staccato
+        // dalla maniglia, e una maniglia ad asta che si assottiglia sotto il
+        // dito. I colori restano quelli della sala.
+        val coloriCursore = SliderDefaults.colors(
+            thumbColor = palette.accent,
+            activeTrackColor = palette.accent,
+            inactiveTrackColor = palette.chip,
+            activeTickColor = Color.Transparent,
+            inactiveTickColor = Color.Transparent,
+        )
+        val toccoCursore = remember { MutableInteractionSource() }
+        val statoCursore = remember {
+            SliderState(
+                spostamento.toFloat(),
+                GIORNI_CURSORE * 2 - 1,
+                -GIORNI_CURSORE.toFloat()..GIORNI_CURSORE.toFloat(),
+            )
+        }
+        // Il giorno puo' cambiare anche da fuori ("torna a oggi"): il cursore segue.
+        LaunchedEffect(spostamento) {
+            if (statoCursore.value.roundToInt() != spostamento) statoCursore.value = spostamento.toFloat()
+        }
         Slider(
-            value = spostamento.toFloat(),
-            onValueChange = { onCambia(it.roundToInt()) },
-            valueRange = -GIORNI_CURSORE.toFloat()..GIORNI_CURSORE.toFloat(),
-            steps = GIORNI_CURSORE * 2 - 1,
-            colors = SliderDefaults.colors(
-                thumbColor = palette.accent,
-                activeTrackColor = palette.accent,
-                inactiveTrackColor = palette.chip,
-                activeTickColor = Color.Transparent,
-                inactiveTickColor = Color.Transparent,
-            ),
+            state = statoCursore,
+            onValueChange = { v: Float ->
+                statoCursore.value = v
+                onCambia(v.roundToInt())
+            },
+            colors = coloriCursore,
+            interactionSource = toccoCursore,
+            thumb = { _: SliderState ->
+                SliderDefaults.Thumb(interactionSource = toccoCursore, colors = coloriCursore)
+            },
+            track = { stato: SliderState ->
+                SliderDefaults.Track(
+                    sliderState = stato,
+                    colors = coloriCursore,
+                    drawStopIndicator = null,
+                    drawTick = { _, _ -> },
+                    thumbTrackGapSize = 5.dp,
+                    trackInsideCornerSize = 3.dp,
+                    modifier = Modifier.height(14.dp),
+                )
+            },
             modifier = Modifier.semantics { contentDescription = tr("Giorno della luna", "Day of the moon", "Tag des Mondes", "Jour de la lune", "Día de la luna") },
         )
     }

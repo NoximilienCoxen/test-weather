@@ -231,6 +231,8 @@ data class Settings(
      * meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** L'accento dell'app preso dai colori del telefono (Material You), invece dell'arancione. */
+    val coloriTelefono: Boolean = false,
     /**
      * I widget prendono i colori dal telefono (Material You, Android 12+)
      * invece del bianco e nero di sempre. Acceso di norma: dove il telefono
@@ -407,6 +409,7 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
                 ?: CaptionStyle.COMPLETE,
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
+            coloriTelefono = prefs[KEY_COLORI_TELEFONO] ?: false,
             widgetColoriTelefono = prefs[KEY_WIDGET_COLORI_TELEFONO] ?: true,
             saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
             schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: true,
@@ -556,6 +559,10 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
     }
 
+    suspend fun setColoriTelefono(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_COLORI_TELEFONO] = acceso }
+    }
+
     suspend fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
         val key = when (kind) {
             AlertToggleKind.PIOGGIA -> KEY_ALERT_PIOGGIA
@@ -599,6 +606,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
+        val KEY_COLORI_TELEFONO = booleanPreferencesKey("sala_colori_telefono")
         val KEY_WIDGET_COLORI_TELEFONO = booleanPreferencesKey("widget_colori_telefono")
         val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
         val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")

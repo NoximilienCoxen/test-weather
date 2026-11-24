@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -85,46 +85,7 @@ fun SalaAriaScreen(
     val fuoriModello = !adesso && aria != null && indice == null
     val tinta = coloreBanda(banda)
 
-    val dettagli: @Composable ColumnScope.() -> Unit = {
-        val dominante = aria?.dominante
-        // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
-        // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
-        Text(
-            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CellaInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25, Modifier.weight(1f))
-                CellaInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10, Modifier.weight(1f))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CellaInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone, Modifier.weight(1f))
-                CellaInquinante(
-                    "NO₂",
-                    aria?.nitrogenDioxide,
-                    25.0,
-                    palette,
-                    dominante?.valore == aria?.nitrogenDioxide,
-                    Modifier.weight(1f),
-                )
-            }
-        }
-
-        // ── Il polline ───────────────────────────────────────────────────────
-        // Dallo stesso endpoint e dalla stessa richiesta: vedi `Polline.kt`.
-        SezionePolline(giorni = state.pollineMostrato, palette = palette)
-    }
-
-    PannelloSala(
-        palette = palette,
-        modifier = modifier,
-        dettagli = dettagli,
-        sommarioDettagli = tr("inquinanti, polline", "pollutants, pollen", "Schadstoffe, Pollen", "polluants, pollen", "contaminantes, polen"),
-        titoloSala = tr("L'aria", "Air", "Die Luft", "L'air", "El aire"),
-    ) {
+    PannelloSala(palette = palette, modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -227,7 +188,7 @@ fun SalaAriaScreen(
                 text = tr("NELLA GIORNATA", "THROUGH THE DAY", "IM TAGESVERLAUF", "DANS LA JOURNÉE", "A LO LARGO DEL DÍA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 14.dp, bottom = 8.dp),
+                modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
             )
             AndamentoAria(
                 ore = ore,
@@ -262,6 +223,25 @@ fun SalaAriaScreen(
         // Il confronto col dominante e' sul **valore**, non sul nome: due
         // stringhe uguali scritte in due file diversi si scollano al primo che
         // le ritocca.
+        val dominante = aria?.dominante
+        // Gli inquinanti arrivano solo come misura di adesso: lontano da adesso
+        // lo si dice, invece di lasciarli passare per quelli dell'ora mostrata.
+        Text(
+            text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
+            style = SalaType.sectionLabel,
+            color = palette.inkFaint,
+            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+        )
+        // **Quattro in una fila**, non due per due: una riga intera in meno, e
+        // i quattro si confrontano a colpo d'occhio sulla stessa linea.
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            CellaInquinante("PM 2.5", aria?.pm25, 15.0, palette, dominante?.valore == aria?.pm25, Modifier.weight(1f))
+            CellaInquinante("PM 10", aria?.pm10, 45.0, palette, dominante?.valore == aria?.pm10, Modifier.weight(1f))
+            CellaInquinante("O₃", aria?.ozone, 100.0, palette, dominante?.valore == aria?.ozone, Modifier.weight(1f))
+            CellaInquinante("NO₂", aria?.nitrogenDioxide, 25.0, palette, dominante?.valore == aria?.nitrogenDioxide, Modifier.weight(1f))
+        }
+
+        SezionePolline(giorni = state.pollineMostrato, palette = palette)
     }
 }
 
@@ -300,7 +280,7 @@ private fun AndamentoAria(
             .firstOrNull { n -> colonna * n + 3.dp * (n - 1) >= largaEtichetta + 3.dp } ?: 6
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(58.dp),
+                modifier = Modifier.fillMaxWidth().height(44.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
@@ -399,26 +379,25 @@ private fun CellaInquinante(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .background(palette.chip)
-            .padding(horizontal = 12.dp, vertical = 9.dp),
+            .padding(horizontal = 10.dp, vertical = 8.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = nome,
-                style = if (dominante) SalaType.rowTitle else SalaType.hourLabel,
-                color = palette.ink,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = when {
-                    valore == null -> "--"
-                    dominante -> "${(valore / soglia * 100).roundToInt()}%"
-                    else -> "${valore.roundToInt()} µg/m³"
-                },
-                style = SalaType.rowNote,
-                color = if (dominante) palette.ink else palette.inkSoft,
-                maxLines = 1,
-            )
-        }
+        Text(
+            text = nome,
+            style = if (dominante) SalaType.rowTitle else SalaType.hourLabel,
+            color = palette.ink,
+            maxLines = 1,
+        )
+        Text(
+            text = when {
+                valore == null -> "--"
+                dominante -> "${(valore / soglia * 100).roundToInt()}%"
+                else -> "${valore.roundToInt()} µg/m³"
+            },
+            style = SalaType.microLabel,
+            color = if (dominante) palette.ink else palette.inkSoft,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
