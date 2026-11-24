@@ -34,6 +34,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.caelumweather.ui.sala.formaCheCede
+import com.caelumweather.ui.sala.rememberPressione
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -468,16 +470,22 @@ fun StrisciaGiorni(
     ) {
         settimana.forEach { giorno ->
             val attivo = giorno.indice == scelto
+            // Il giorno scelto si squadra un poco oltre a cambiare colore, e
+            // premuto si squadra di piu': la forma dice quale e', anche a chi
+            // il bordo d'accento non lo distingue (vedi `formaCheCede`).
+            val pressione = rememberPressione()
+            val riposo = if (conMillimetri) 22.dp else 20.dp
+            val forma = formaCheCede(pressione, riposo = riposo, premuto = 10.dp, scelto = attivo, sceltoRaggio = 15.dp)
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .cedevole()
-                    .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
+                    .cedevole(pressione = pressione)
+                    .clip(forma)
                     .background(coloreChePassa(if (attivo) palette.chip else palette.chip.copy(alpha = 0f)))
                     .border(
                         width = 1.5.dp,
                         color = coloreChePassa(if (attivo) palette.accent else palette.accent.copy(alpha = 0f)),
-                        shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
+                        shape = forma,
                     )
                     // La figuretta e' un disegno, e i due numeri da soli non
                     // dicono quale e' la massima: per TalkBack il giorno si

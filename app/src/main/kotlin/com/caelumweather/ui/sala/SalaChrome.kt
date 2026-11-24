@@ -10,7 +10,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
@@ -22,14 +21,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -37,11 +34,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -349,47 +350,50 @@ fun PannelloSala(
  */
 @Composable
 private fun RigaAltriDettagli(sommario: String?, palette: SalaPalette, onClick: () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(palette.maniglia.copy(alpha = 0.5f)),
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 6.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .cedevole(premuto = 0.97f)
-                .clickable(
-                    onClickLabel = tr("mostra altri dettagli", "show more details", "weitere Details zeigen", "afficher plus de détails", "mostrar más detalles"),
-                    role = Role.Button,
-                    onClick = onClick,
-                )
-                .heightIn(min = MinTouchTarget)
-                .padding(horizontal = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = tr("altri dettagli", "more details", "weitere Details", "plus de détails", "más detalles"),
-                style = SalaType.pill,
-                color = palette.accent,
-                maxLines = 1,
-                softWrap = false,
+    // **Una pillola tonale**, alla maniera dei bottoni Expressive: piena,
+    // tutta tonda a riposo, si squadra sotto il dito e torna su a molla.
+    val pressione = rememberPressione()
+    val forma = formaCheCede(pressione, riposo = 26.dp, premuto = 12.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 14.dp)
+            .cedevole(premuto = 0.97f, pressione = pressione)
+            .clip(forma)
+            .background(palette.chip)
+            .clickable(
+                onClickLabel = tr("mostra altri dettagli", "show more details", "weitere Details zeigen", "afficher plus de détails", "mostrar más detalles"),
+                role = Role.Button,
+                onClick = onClick,
             )
-            if (sommario != null) {
-                Text(
-                    text = " · $sommario",
-                    style = SalaType.microLabel,
-                    color = palette.inkFaint,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = "›", style = SalaType.pill, color = palette.accent)
+            .heightIn(min = MinTouchTarget)
+            .padding(start = 16.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = tr("altri dettagli", "more details", "weitere Details", "plus de détails", "más detalles"),
+            style = SalaType.pill,
+            color = palette.accent,
+            maxLines = 1,
+            softWrap = false,
+        )
+        if (sommario != null) {
+            Text(
+                text = " · $sommario",
+                style = SalaType.microLabel,
+                color = palette.inkFaint,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        // La freccia in un tondino d'accento: il punto da toccare si vede.
+        Box(
+            modifier = Modifier.size(28.dp).clip(CircleShape).background(palette.accent),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "›", style = SalaType.pill, color = palette.panelSolido)
         }
     }
 }
@@ -397,18 +401,21 @@ private fun RigaAltriDettagli(sommario: String?, palette: SalaPalette, onClick: 
 /** In cima alla seconda faccia: la freccia e il nome della sala, per tornare. */
 @Composable
 private fun RigaIndietroDettagli(titolo: String, palette: SalaPalette, onClick: () -> Unit) {
+    val pressione = rememberPressione()
+    val forma = formaCheCede(pressione, riposo = 20.dp, premuto = 9.dp)
     Row(
         modifier = Modifier
-            .padding(bottom = 6.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .cedevole(premuto = 0.97f)
+            .padding(bottom = 10.dp)
+            .cedevole(premuto = 0.95f, pressione = pressione)
+            .clip(forma)
+            .background(palette.chip)
             .clickable(
                 onClickLabel = tr("torna alla scheda", "back to the card", "zurück zur Karte", "retour à la fiche", "volver a la ficha"),
                 role = Role.Button,
                 onClick = onClick,
             )
-            .heightIn(min = 36.dp)
-            .padding(end = 10.dp),
+            .heightIn(min = 40.dp)
+            .padding(start = 12.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = "‹  ", style = SalaType.pill, color = palette.accent)
@@ -487,11 +494,18 @@ fun RowScope.CellaValore(
     onVai: (() -> Unit)? = null,
 ) {
     // La cella che porta altrove cede sotto il dito: e' il secondo segno, dopo
-    // la freccetta, che la distingue da una che si limita a dire.
+    // la freccetta, che la distingue da una che si limita a dire. Premuta si
+    // riempie e si squadra (vedi [formaCheCede]); a riposo resta il filo.
+    val pressione = rememberPressione()
+    val forma = formaCheCede(pressione, riposo = RaggioCella, premuto = 10.dp)
+    val fondo by animateColorAsState(
+        if (pressione.giu) palette.chip else palette.chip.copy(alpha = 0f),
+        label = "cella-fondo",
+    )
     Column(
         modifier = modifier
             .weight(1f)
-            .then(if (onVai != null) Modifier.cedevole() else Modifier)
+            .then(if (onVai != null) Modifier.cedevole(pressione = pressione) else Modifier)
             // **Niente fondo: un filo a sinistra.** Ogni cella era una pillola
             // piena, tre per riga in quasi ogni sala, accanto alle pastiglie e
             // ai comandi tondi: tutto arrotondato, tutto uguale, il segno piu'
@@ -508,7 +522,8 @@ fun RowScope.CellaValore(
                     strokeWidth = spessore,
                 )
             }
-            .clip(RoundedCornerShape(RaggioCella))
+            .clip(forma)
+            .background(fondo)
             // `then` e non due rami di `Column`: il corpo della cella e' lo
             // stesso, e duplicarlo per un modificatore vorrebbe dire che alla
             // prima rifinitura una delle due copie resta indietro.
@@ -1710,6 +1725,7 @@ private val StileSegmento = SalaType.rowNote.copy(fontSize = 13.sp, fontWeight =
  * Un binario unico dice "se ne sceglie una", e il cursore che scorre dice
  * quale e' cambiata.
  */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> SceltaSegmentata(
     voci: List<Pair<T, String>>,
@@ -1718,64 +1734,47 @@ fun <T> SceltaSegmentata(
     onScegli: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // **La scelta puo' non essere fra queste voci**: le lingue sono sei e
-    // stanno su due binari, e in uno dei due il cursore non c'e'. Li' sbiadisce
-    // restando dov'era, invece di saltare sulla prima voce a dire il falso.
-    val trovata = voci.indexOfFirst { it.first == scelta }
-    val indice = trovata
-    val posizione by animateFloatAsState(
-        targetValue = trovata.coerceAtLeast(0).toFloat(),
-        animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f),
-        label = "segmento",
-    )
-    val presente by animateFloatAsState(
-        targetValue = if (trovata >= 0) 1f else 0f,
-        animationSpec = spring(dampingRatio = 1f, stiffness = 500f),
-        label = "segmento-presente",
-    )
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .clip(CircleShape)
-            .background(palette.maniglia)
-            .padding(3.dp),
+    // **Un gruppo di bottoni collegati, alla maniera di Material 3 Expressive.**
+    // Era un binario unico con un cursore che scivolava; adesso ogni voce e'
+    // un bottone suo, staccato dagli altri da un filo d'aria. Gli angoli
+    // esterni del gruppo sono tondi, quelli interni appena smussati; la voce
+    // scelta diventa una pillola intera e quella premuta si squadra, con la
+    // molla dello schema Expressive (`MeteoTheme`). I colori restano quelli
+    // della sala.
+    Row(
+        modifier = modifier.fillMaxWidth().height(44.dp),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
     ) {
-        val larga = maxWidth / voci.size
-        Box(
-            modifier = Modifier
-                .offset(x = larga * posizione)
-                .width(larga)
-                .fillMaxHeight()
-                .graphicsLayer { alpha = presente }
-                .clip(CircleShape)
-                .background(palette.accent),
-        )
-        Row(modifier = Modifier.fillMaxSize()) {
-            voci.forEachIndexed { i, (valore, nome) ->
-                val attiva = i == indice
-                val colore by animateColorAsState(
-                    targetValue = if (attiva) palette.accentInk else palette.ink,
-                    label = "segmento-testo",
+        voci.forEachIndexed { i, (valore, nome) ->
+            val attiva = valore == scelta
+            val forme = when (i) {
+                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                voci.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+            }
+            ToggleButton(
+                checked = attiva,
+                onCheckedChange = { onScegli(valore) },
+                shapes = forme,
+                colors = ToggleButtonDefaults.colors(
+                    containerColor = palette.maniglia,
+                    contentColor = palette.ink,
+                    checkedContainerColor = palette.accent,
+                    checkedContentColor = palette.accentInk,
+                ),
+                contentPadding = PaddingValues(horizontal = 6.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .semantics { role = Role.RadioButton },
+            ) {
+                Text(
+                    text = nome,
+                    style = StileSegmento,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
                 )
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(CircleShape)
-                        .selectable(selected = attiva, role = Role.RadioButton) { onScegli(valore) },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = nome,
-                        style = StileSegmento,
-                        color = colore,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                    )
-                }
             }
         }
     }

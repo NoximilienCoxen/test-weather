@@ -4,6 +4,10 @@ robolectric = "4.17"
 agp = "9.5.1"
 kotlin = "2.4.21"
 composeBom = "2026.09.00"
+# Fuori dalla BOM, che porta la 1.4: le API Expressive (MaterialExpressiveTheme,
+# MotionScheme.expressive, LoadingIndicator, ButtonGroup) sono pubbliche dalla 1.5.
+# Vuole ui e foundation 1.12, quelle della BOM qui sopra.
+material3 = "1.5.0"
 coreKtx = "1.19.1"
 activityCompose = "1.13.0"
 lifecycle = "2.11.0"
@@ -48,7 +52,7 @@ compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
 compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 wear-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "wearCompose" }
 wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }

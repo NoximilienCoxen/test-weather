@@ -802,7 +802,12 @@ fun SalaShell(
                                     scaleY = scaleX
                                 }
                                 .size(46.dp)
-                                .background(palette.panelSolido, CircleShape),
+                                // Il guscio cambia forma, alla maniera Expressive:
+                                // vedi `formaDellIndicatore`.
+                                .background(
+                                    palette.panelSolido,
+                                    formaDellIndicatore(state.aggiornandoAMano, frazione, movimento = !ferme),
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
                             IndicatoreCielo(
