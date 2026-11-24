@@ -38,11 +38,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.LinearEasing
+import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.coroutines.launch
 
@@ -135,25 +133,33 @@ internal fun PuntiniSale(
                 label = "puntino",
             )
             val colore by animateColorAsState(if (attiva) palette.accentSuCielo else palette.inkSuCielo.copy(alpha = 0.45f), label = "puntino-colore")
-            // **L'arrivo si vede.** Quando una sala entra in scena il suo
-            // trattino fa un piccolo balzo e lascia un'onda che si allarga e
-            // svanisce: l'occhio corre li' senza cercare. Solo al cambio, non
+            // **L'arrivo si vede, e dice dove.** Quando una sala entra in
+            // scena il suo trattino si scioglie nella figuretta della sala,
+            // viva - la nuvola che lascia cadere le gocce, il sole che gira,
+            // la manica che sventola - per poco piu' di un secondo, e poi
+            // torna trattino (`disegnaIconaViva`). Solo al cambio, non
             // all'apertura dell'app; con le animazioni ridotte niente.
-            val onda = remember { Animatable(1f) }
-            val balzo = remember { Animatable(1f) }
+            val comparsa = remember { Animatable(0f) }
+            val fase = remember { Animatable(0f) }
             var eraAttiva by remember { mutableStateOf(attiva) }
             LaunchedEffect(attiva) {
                 val arrivata = attiva && !eraAttiva
                 eraAttiva = attiva
-                if (!arrivata || !movimento) return@LaunchedEffect
-                launch {
-                    onda.snapTo(0f)
-                    onda.animateTo(1f, tween(durationMillis = 620, easing = FastOutSlowInEasing))
+                if (!attiva) {
+                    comparsa.animateTo(0f, tween(durationMillis = 140))
+                    return@LaunchedEffect
                 }
-                balzo.snapTo(1.7f)
-                balzo.animateTo(1f, spring(dampingRatio = 0.35f, stiffness = 380f))
+                if (!arrivata || !movimento) return@LaunchedEffect
+                val giro = launch {
+                    fase.snapTo(0f)
+                    fase.animateTo(2f, tween(durationMillis = 2000, easing = LinearEasing))
+                }
+                comparsa.animateTo(1f, spring(dampingRatio = 0.55f, stiffness = 500f))
+                delay(1250)
+                comparsa.animateTo(0f, tween(durationMillis = 280, easing = FastOutSlowInEasing))
+                giro.cancel()
             }
-            val coloreOnda = palette.accentSuCielo
+            val coloreIcona = palette.accentSuCielo
             Box(
                 modifier = Modifier
                     .size(width = 32.dp, height = 28.dp)
@@ -162,31 +168,35 @@ internal fun PuntiniSale(
                     .semantics {
                         contentDescription = sala.heading
                         selected = attiva
-                    }
-                    .drawBehind {
-                        val t = onda.value
-                        if (t < 1f) {
-                            val alfa = (1f - t) * 0.55f
-                            val w = 18.dp.toPx() + 12.dp.toPx() * t
-                            val h = 6.dp.toPx() + 18.dp.toPx() * t
-                            drawRoundRect(
-                                color = coloreOnda.copy(alpha = alfa),
-                                topLeft = Offset((size.width - w) / 2f, (size.height - h) / 2f),
-                                size = Size(w, h),
-                                cornerRadius = CornerRadius(h / 2f),
-                                style = Stroke(width = 1.5.dp.toPx()),
-                            )
-                        }
                     },
                 contentAlignment = Alignment.Center,
             ) {
+                val c = comparsa.value
                 Box(
                     modifier = Modifier
                         .size(width = larghezza, height = 6.dp)
-                        .graphicsLayer { scaleY = balzo.value; scaleX = 1f + (balzo.value - 1f) * 0.25f }
+                        .graphicsLayer {
+                            val via = c.coerceIn(0f, 1f)
+                            alpha = 1f - via
+                            scaleX = 1f - 0.6f * via
+                            scaleY = 1f - 0.6f * via
+                        }
                         .clip(CircleShape)
                         .background(colore),
                 )
+                if (c > 0.01f) {
+                    Canvas(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .graphicsLayer {
+                                alpha = c.coerceIn(0f, 1f)
+                                scaleX = 0.4f + 0.6f * c
+                                scaleY = 0.4f + 0.6f * c
+                            },
+                    ) {
+                        disegnaIconaViva(sala, coloreIcona, fase.value, c.coerceIn(0f, 1f))
+                    }
+                }
             }
         }
     }
