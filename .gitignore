@@ -39,3 +39,6 @@ local.properties
 # probe_deps.py) quando li si prova da qui. E' cache compilata, cambia a ogni
 # versione dell'interprete e non descrive niente.
 __pycache__/
+
+# Cache di compilazione di Kotlin 2.x, generata a ogni build.
+.kotlin/
