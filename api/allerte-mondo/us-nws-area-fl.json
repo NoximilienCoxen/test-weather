@@ -10,6 +10,112 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -80.14,
+                            26.96
+                        ],
+                        [
+                            -80.08,
+                            26.97
+                        ],
+                        [
+                            -80,
+                            26.72
+                        ],
+                        [
+                            -80.16,
+                            26.68
+                        ],
+                        [
+                            -80.16,
+                            26.96
+                        ],
+                        [
+                            -80.14,
+                            26.96
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
+                "areaDesc": "Palm Beach, FL",
+                "geocode": {
+                    "SAME": [
+                        "012099"
+                    ],
+                    "UGC": [
+                        "FLC099"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/county/FLC099"
+                ],
+                "references": [],
+                "sent": "2026-11-25T05:38:00-05:00",
+                "effective": "2026-11-25T05:38:00-05:00",
+                "onset": "2026-11-25T05:38:00-05:00",
+                "expires": "2026-11-25T07:45:00-05:00",
+                "ends": "2026-11-25T07:45:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Miami FL",
+                "headline": "Flood Advisory issued November 25 at 5:38AM EST until November 25 at 7:45AM EST by NWS Miami FL",
+                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Northeastern Palm Beach County in southeastern Florida...\n\n* WHEN...Until 745 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 537 AM EST, Doppler radar indicated heavy rain due to\nthunderstorms. Minor flooding is ongoing or expected to begin\nshortly in the advisory area. Between 1 and 2 inches of rain have\nfallen.\n- Additional rainfall amounts of 1 to 2 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nWest Palm Beach, Jupiter, Palm Beach Gardens, Riviera Beach, Palm\nBeach, Tequesta, Juno Beach, North Palm Beach, Lake Park,\nHaverhill, Juno Ridge, Port Of Palm Beach, Schall Circle,\nDowntown West Palm Beach, Lake Belvedere Estates, Golden Lakes,\nMangonia Park, Fau North Campus and Lakeside Green.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "FLSMFL"
+                    ],
+                    "WMOidentifier": [
+                        "WGUS82 KMFL 251038"
+                    ],
+                    "NWSheadline": [
+                        "FLOOD ADVISORY IN EFFECT UNTIL 745 AM EST THIS MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.KMFL.FA.Y.0222.261125T1038Z-261125T1245Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-25T07:45:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "FAY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8e75206e1291c19803f1a5666c671c8e4e4f3d1e.001.1",
             "type": "Feature",
             "geometry": {
@@ -3597,5 +3703,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-25T10:24:46+00:00"
+    "updated": "2026-11-25T10:54:48+00:00"
 }
