@@ -1200,6 +1200,8 @@ fun SalaShell(
                         onToggleNotificheAllerte = viewModel::setNotificheAllerte,
                         onToggleRiepilogo = viewModel::setRiepilogoMattino,
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
+                        onToggleOmbrello = viewModel::setAvvisoOmbrello,
+                        onChooseOraOmbrello = viewModel::setOraOmbrello,
                         onToggleSoglia = viewModel::setSoglia,
                         onChooseSoglia = viewModel::setValoreSoglia,
                         onToggleSoglieAltre = viewModel::setSoglieAltreLocalita,

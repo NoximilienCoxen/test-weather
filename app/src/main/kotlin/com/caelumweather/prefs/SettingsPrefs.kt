@@ -261,6 +261,9 @@ data class Settings(
     val riepilogoMattino: Boolean = false,
     /** A che ora arriva, in minuti dalla mezzanotte del telefono. */
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
+    /** "Porta l'ombrello": al mattino, solo nei giorni di pioggia. Spento di norma: vedi `OmbrelloWorker`. */
+    val avvisoOmbrello: Boolean = false,
+    val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte, pioggia, UV. */
@@ -418,6 +421,8 @@ class SettingsPrefs(private val context: Context) {
             notificheAllerte = prefs[KEY_NOTIFICHE_ALLERTE] ?: true,
             riepilogoMattino = prefs[KEY_RIEPILOGO] ?: false,
             oraRiepilogo = prefs[KEY_ORA_RIEPILOGO] ?: RiepilogoMattinoWorker.ORA_PREDEFINITA,
+            avvisoOmbrello = prefs[KEY_OMBRELLO] ?: false,
+            oraOmbrello = prefs[KEY_ORA_OMBRELLO]?.takeIf { it in com.caelumweather.notifiche.OmbrelloWorker.ORE_POSSIBILI } ?: com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             // Un valore salvato che non e' piu' fra quelli offerti torna al
             // predefinito: la scelta segmentata non saprebbe quale accendere.
@@ -515,6 +520,14 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setOraRiepilogo(minuti: Int) {
         context.settingsDataStore.edit { it[KEY_ORA_RIEPILOGO] = minuti }
+    }
+
+    suspend fun setAvvisoOmbrello(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_OMBRELLO] = acceso }
+    }
+
+    suspend fun setOraOmbrello(minuti: Int) {
+        context.settingsDataStore.edit { it[KEY_ORA_OMBRELLO] = minuti }
     }
 
     suspend fun setPermessoNotificheChiesto() {
@@ -615,6 +628,8 @@ class SettingsPrefs(private val context: Context) {
         val KEY_NOTIFICHE_ALLERTE = booleanPreferencesKey("notifiche_allerte")
         val KEY_RIEPILOGO = booleanPreferencesKey("riepilogo_mattino")
         val KEY_ORA_RIEPILOGO = intPreferencesKey("riepilogo_ora")
+        val KEY_OMBRELLO = booleanPreferencesKey("avviso_ombrello")
+        val KEY_ORA_OMBRELLO = intPreferencesKey("ombrello_ora")
         val KEY_PERMESSO_NOTIFICHE =booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_SOGLIA_GELO = booleanPreferencesKey("soglia_gelo")
         val KEY_SOGLIA_GELO_GRADI = intPreferencesKey("soglia_gelo_gradi")

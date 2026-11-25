@@ -87,6 +87,8 @@ fun SalaImpostazioniScreen(
     onToggleNotificheAllerte: (Boolean) -> Unit,
     onToggleRiepilogo: (Boolean) -> Unit,
     onChooseOraRiepilogo: (Int) -> Unit,
+    onToggleOmbrello: (Boolean) -> Unit = {},
+    onChooseOraOmbrello: (Int) -> Unit = {},
     onToggleSoglia: (TipoSoglia, Boolean) -> Unit,
     onChooseSoglia: (TipoSoglia, Int) -> Unit,
     onToggleSoglieAltre: (Boolean) -> Unit,
@@ -357,6 +359,9 @@ fun SalaImpostazioniScreen(
             val chiediPermessoRiepilogo = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleRiepilogo(concesso) }
+            val chiediPermessoOmbrello = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleOmbrello(concesso) }
             GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS", "BENACHRICHTIGUNGEN", "NOTIFICATIONS", "NOTIFICACIONES"), palette = palette) {
                 VoceInterruttore(
                     titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),
@@ -389,6 +394,44 @@ fun SalaImpostazioniScreen(
                         }
                     },
                 )
+                FiloGruppo(palette)
+                // **"Porta l'ombrello"**: tace nei giorni asciutti, e quando
+                // parla dice solo da che ora e quanta (vedi `OmbrelloWorker`).
+                val ombrelloAcceso = state.avvisoOmbrello && PioggiaInArrivoWorker.puoNotificare(contesto)
+                VoceInterruttore(
+                    titolo = tr("Porta l'ombrello", "Take an umbrella", "Schirm mitnehmen", "Prends un parapluie", "Lleva paraguas"),
+                    nota = if (ombrelloAcceso) {
+                        tr(
+                            "alle ${oraRiepilogo(state.oraOmbrello)}, solo nei giorni in cui piove",
+                            "at ${oraRiepilogo(state.oraOmbrello)}, only on days with rain",
+                            "um ${oraRiepilogo(state.oraOmbrello)}, nur an Regentagen",
+                            "à ${oraRiepilogo(state.oraOmbrello)}, seulement les jours de pluie",
+                            "a las ${oraRiepilogo(state.oraOmbrello)}, solo los días de lluvia",
+                        )
+                    } else {
+                        tr("al mattino, solo se in giornata piove: da che ora e quanta", "in the morning, only if it rains during the day: from when and how much", "morgens, nur wenn es tagsüber regnet: ab wann und wie viel", "le matin, seulement s'il pleut dans la journée : à partir de quand et combien", "por la mañana, solo si llueve durante el día: desde cuándo y cuánta")
+                    },
+                    acceso = ombrelloAcceso,
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleOmbrello(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoOmbrello.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleOmbrello(true)
+                        }
+                    },
+                )
+                ComparsaMorbida(visibile = ombrelloAcceso) {
+                    SceltaSegmentata(
+                        voci = com.caelumweather.notifiche.OmbrelloWorker.ORE_POSSIBILI.map { it to oraRiepilogo(it) },
+                        scelta = state.oraOmbrello,
+                        palette = palette,
+                        onScegli = onChooseOraOmbrello,
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                    )
+                }
                 FiloGruppo(palette)
                 VoceInterruttore(
                     titolo = tr("Riepilogo del mattino", "Morning summary", "Morgenüberblick", "Résumé du matin", "Resumen de la mañana"),

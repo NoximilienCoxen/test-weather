@@ -254,6 +254,8 @@ data class UiState(
     /** Il riepilogo del mattino, e a che ora (minuti dalla mezzanotte). */
     val riepilogoMattino: Boolean = false,
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
+    val avvisoOmbrello: Boolean = false,
+    val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
@@ -689,6 +691,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         notificheAllerte = settings.notificheAllerte,
                         riepilogoMattino = settings.riepilogoMattino,
                         oraRiepilogo = settings.oraRiepilogo,
+                        avvisoOmbrello = settings.avvisoOmbrello,
+                        oraOmbrello = settings.oraOmbrello,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                         soglie = settings.soglie,
                     )
@@ -1667,6 +1671,24 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             RiepilogoMattinoWorker.annulla(app)
         }
         viewModelScope.launch { prefs.setRiepilogoMattino(acceso) }
+    }
+
+    fun setAvvisoOmbrello(acceso: Boolean) {
+        val app = getApplication<Application>()
+        if (acceso) {
+            com.caelumweather.notifiche.OmbrelloWorker.pianifica(app, _state.value.oraOmbrello, sostituisci = true)
+        } else {
+            com.caelumweather.notifiche.OmbrelloWorker.annulla(app)
+        }
+        viewModelScope.launch { prefs.setAvvisoOmbrello(acceso) }
+    }
+
+    fun setOraOmbrello(minuti: Int) {
+        _state.update { it.copy(oraOmbrello = minuti) }
+        if (_state.value.avvisoOmbrello) {
+            com.caelumweather.notifiche.OmbrelloWorker.pianifica(getApplication(), minuti, sostituisci = true)
+        }
+        viewModelScope.launch { prefs.setOraOmbrello(minuti) }
     }
 
     fun setOraRiepilogo(minuti: Int) {
