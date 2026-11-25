@@ -1,9 +1,0 @@
-<?xml version = "1.0" encoding = "UTF-8"?>
-		<?xml-stylesheet type="text/xsl"  href="https://ssl.smn.gob.ar/feeds/alerta_cap_es.xsl"?>
-		
-<cap:alert xmlns:cap="urn:oasis:names:tc:emergency:cap:1.2">
-	<cap:identifier>urn:oid:2.49.0.1.32.0.2026.11.25.10.50.00</cap:identifier><cap:sender>smn@smn.gov.ar</cap:sender><cap:sent>2026-11-25T10:50:00-03:00</cap:sent><cap:status>Actual</cap:status><cap:msgType>Alert</cap:msgType><cap:scope>Public</cap:scope><cap:info>
-						<cap:category>Met</cap:category><cap:event>TORMENTAS FUERTES</cap:event><cap:urgency>Immediate</cap:urgency><cap:severity>Severe</cap:severity><cap:certainty>Observed</cap:certainty><cap:expires>2026-11-25T12:50:00-03:00</cap:expires><cap:senderName>SERVICIO METEOROLOGICO NACIONAL - ARGENTINA</cap:senderName><cap:headline>AVISO NARANJA POR TORMENTAS FUERTES CON LLUVIAS INTENSAS Y OCASIONAL CAIDA DE GRANIZO</cap:headline><cap:description>TORMENTAS FUERTES CON LLUVIAS INTENSAS Y OCASIONAL CAIDA DE GRANIZO</cap:description><cap:instruction>Permanecé en construcciones cerradas como casas, escuelas o edificios públicos. Desconectá los electrodomésticos y cortá el suministro eléctrico si ingresa agua. Alejate de zonas inundables y no ingreses en calles anegadas. Mantenete alejado de artefactos eléctricos y evitá el uso de teléfonos con cable. Si estás al aire libre, buscá refugio inmediato en un edificio, casa o vehículo cerrado. Para minimizar el riesgo de ser alcanzado por un rayo, no permanezcas en playas, ríos, lagunas o piletas.</cap:instruction><cap:web>https://ssl.smn.gob.ar/feeds/CAP/avisocortoplazo/2026_11_25_1050_cap_es.xml</cap:web><cap:area><cap:areaDesc>MENDOZA: LA PAZ - LAVALLE. SAN LUIS: BELGRANO - CNEL PRINGLES - JUAN M.  DE PUEYRREDON. </cap:areaDesc><cap:polygon>-33.56,-66.20 -33.42,-67.37 -32.88,-67.34 -33.05,-65.97 -33.56,-66.20</cap:polygon>
-	   </cap:area>
-	</cap:info>
-</cap:alert>

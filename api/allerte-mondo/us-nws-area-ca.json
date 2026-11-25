@@ -10,6 +10,552 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.1",
+                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
+                "geocode": {
+                    "SAME": [
+                        "006015",
+                        "006023",
+                        "006045"
+                    ],
+                    "UGC": [
+                        "CAZ101",
+                        "CAZ104",
+                        "CAZ109"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ101",
+                    "https://api.weather.gov/zones/forecast/CAZ104",
+                    "https://api.weather.gov/zones/forecast/CAZ109"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-25T09:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-25T13:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "Coastal Flood Warning issued November 25 at 4:50AM PST until November 25 at 1:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low\nlying areas near shorelines and tidal waterways. For the\nCoastal Flood Watch, High astronomical tides and large surf\nmay cause major flooding in low lying areas along the Redwood\nCoast. Up to 1.0 foot of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. For the High Surf Advisory, large breaking waves up\nto 25 feet. Surf may worsen coastal flooding along exposed\nbeaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous\nsurf conditions and localized beach erosion. Beachcombing is\nhighly discouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.CF.W.0007.261125T1700Z-261125T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-25T13:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.1,2026-11-24T20:44:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.1",
+                "areaDesc": "Northern Coastal Humboldt",
+                "geocode": {
+                    "SAME": [
+                        "006023"
+                    ],
+                    "UGC": [
+                        "CAZ103"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ103"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-25T09:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-25T13:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "Coastal Flood Warning issued November 25 at 4:50AM PST until November 25 at 1:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above\nground level is possible in low lying areas near shorelines\nand tidal waterways. Between 10.0 and 10.4 feet above MLLW at\nthe North Spit tide gauge is predicted. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 2.5\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf\nmay worsen coastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in\nKing Salmon and the Arcata bottoms and sections of Highway\n101. Shoreline erosion will occur. Dangerous surf conditions\nand localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.CF.W.0007.261125T1700Z-261125T2100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-25T13:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.1,2026-11-24T20:44:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.2",
+                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
+                "geocode": {
+                    "SAME": [
+                        "006015",
+                        "006023",
+                        "006045"
+                    ],
+                    "UGC": [
+                        "CAZ101",
+                        "CAZ104",
+                        "CAZ109"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ101",
+                    "https://api.weather.gov/zones/forecast/CAZ104",
+                    "https://api.weather.gov/zones/forecast/CAZ109"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-25T07:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-25T19:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "High Surf Advisory issued November 25 at 4:50AM PST until November 25 at 7:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low\nlying areas near shorelines and tidal waterways. For the\nCoastal Flood Watch, High astronomical tides and large surf\nmay cause major flooding in low lying areas along the Redwood\nCoast. Up to 1.0 foot of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. For the High Surf Advisory, large breaking waves up\nto 25 feet. Surf may worsen coastal flooding along exposed\nbeaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous\nsurf conditions and localized beach erosion. Beachcombing is\nhighly discouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.SU.Y.0005.261125T1500Z-261126T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-25T19:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.2,2026-11-24T20:44:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.2",
+                "areaDesc": "Northern Coastal Humboldt",
+                "geocode": {
+                    "SAME": [
+                        "006023"
+                    ],
+                    "UGC": [
+                        "CAZ103"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ103"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-25T07:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-25T19:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "High Surf Advisory issued November 25 at 4:50AM PST until November 25 at 7:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above\nground level is possible in low lying areas near shorelines\nand tidal waterways. Between 10.0 and 10.4 feet above MLLW at\nthe North Spit tide gauge is predicted. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 2.5\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf\nmay worsen coastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in\nKing Salmon and the Arcata bottoms and sections of Highway\n101. Shoreline erosion will occur. Dangerous surf conditions\nand localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.SU.Y.0005.261125T1500Z-261126T0300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-25T19:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.2,2026-11-24T20:44:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.001.3",
+                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
+                "geocode": {
+                    "SAME": [
+                        "006015",
+                        "006023",
+                        "006045"
+                    ],
+                    "UGC": [
+                        "CAZ101",
+                        "CAZ104",
+                        "CAZ109"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ101",
+                    "https://api.weather.gov/zones/forecast/CAZ104",
+                    "https://api.weather.gov/zones/forecast/CAZ109"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.4",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.4",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-26T08:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-26T15:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Coastal Flood Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "Coastal Flood Watch issued November 25 at 4:50AM PST until November 26 at 3:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low\nlying areas near shorelines and tidal waterways. For the\nCoastal Flood Watch, High astronomical tides and large surf\nmay cause major flooding in low lying areas along the Redwood\nCoast. Up to 1.0 foot of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. For the High Surf Advisory, large breaking waves up\nto 25 feet. Surf may worsen coastal flooding along exposed\nbeaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous\nsurf conditions and localized beach erosion. Beachcombing is\nhighly discouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.CF.A.0001.261126T1600Z-261126T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T15:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.3,2026-11-24T20:44:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2519536893535fc46a4250d6e811b3cf54fb7a66.002.2,2026-11-24T05:00:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ee3e62a752fcd1636bfa5982c4e802cc2a42325.002.2,2026-11-23T21:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.653469f13fa543848c6ee132a8d0485686b9b615.002.2,2026-11-23T14:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8fc792c50f88522c5e1561e6591e0e34bba6861d.002.1,2026-11-23T11:54:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.61912a87a8f607ca967cde8abf533b5866682c86.002.1,2026-11-22T22:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fbd037c36110921d978e35fc33f522465cc69076.002.1,2026-11-22T14:27:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d5372f24080570d0330457c696ac9389960c1ab5.002.1,2026-11-22T11:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82312975a089a23f51d2728192d94b7069c88dca.002.1,2026-11-22T08:58:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fba98b43074467375f0819f938bdfe4c3be26e50.002.1,2026-11-22T05:37:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31df28e8ef3d1f4ee5e4e9d03a101b15d6fdd191.002.1,2026-11-21T21:39:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9773847e162ebb17d52c52db944279534509b489.002.1,2026-11-21T17:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d10258662f04c638d207af1123f45906b294ed8e.002.1,2026-11-21T09:57:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5e2f569fb94c12181d220656cbb7760e7157fa18.002.1,2026-11-20T20:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bcc6cc3030d72cc55ecdb8a54a18e93a8cbff602.002.1,2026-11-20T12:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a6459fca83ca4a079e6b83009259b1ba2208e364.002.1,2026-11-20T11:50:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFA"
+                    ],
+                    "NationalWeatherService": [
+                        "CFA"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.fd969fb8483e3f68589012b0fc32f80279bfe5dd.002.3",
+                "areaDesc": "Northern Coastal Humboldt",
+                "geocode": {
+                    "SAME": [
+                        "006023"
+                    ],
+                    "UGC": [
+                        "CAZ103"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/CAZ103"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.4",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.4",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-24T13:27:00-08:00"
+                    }
+                ],
+                "sent": "2026-11-25T04:50:00-08:00",
+                "effective": "2026-11-25T04:50:00-08:00",
+                "onset": "2026-11-26T08:00:00-08:00",
+                "expires": "2026-11-25T13:00:00-08:00",
+                "ends": "2026-11-26T15:00:00-08:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Possible",
+                "urgency": "Future",
+                "event": "Coastal Flood Watch",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Eureka CA",
+                "headline": "Coastal Flood Watch issued November 25 at 4:50AM PST until November 26 at 3:00PM PST by NWS Eureka CA",
+                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above\nground level is possible in low lying areas near shorelines\nand tidal waterways. Between 10.0 and 10.4 feet above MLLW at\nthe North Spit tide gauge is predicted. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 2.5\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf\nmay worsen coastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in\nKing Salmon and the Arcata bottoms and sections of Highway\n101. Shoreline erosion will occur. Dangerous surf conditions\nand localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected\nto rival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
+                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWEKA"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS46 KEKA 251250"
+                    ],
+                    "NWSheadline": [
+                        "HIGH SURF ADVISORY REMAINS IN EFFECT UNTIL 7 PM PST THIS EVENING... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM THIS MORNING TO 1 PM PST THIS AFTERNOON... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KEKA.CF.A.0002.261126T1600Z-261126T2300Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T15:00:00-08:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.3,2026-11-24T20:44:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2519536893535fc46a4250d6e811b3cf54fb7a66.001.2,2026-11-24T05:00:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ee3e62a752fcd1636bfa5982c4e802cc2a42325.001.2,2026-11-23T21:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.653469f13fa543848c6ee132a8d0485686b9b615.001.3,2026-11-23T14:34:00-08:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFA"
+                    ],
+                    "NationalWeatherService": [
+                        "CFA"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0b1c584322d23ab88ff17e82b2b535d5dd4673fc.001.1",
             "type": "Feature",
             "geometry": null,
@@ -406,540 +952,6 @@
                     ],
                     "NationalWeatherService": [
                         "WIY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.1",
-                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
-                "geocode": {
-                    "SAME": [
-                        "006015",
-                        "006023",
-                        "006045"
-                    ],
-                    "UGC": [
-                        "CAZ101",
-                        "CAZ104",
-                        "CAZ109"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ101",
-                    "https://api.weather.gov/zones/forecast/CAZ104",
-                    "https://api.weather.gov/zones/forecast/CAZ109"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-25T09:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-25T13:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "Coastal Flood Warning issued November 24 at 8:44PM PST until November 25 at 1:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 1.0\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf may\nworsen coastal flooding along exposed beaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous surf\nconditions and localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.CF.W.0007.261125T1700Z-261125T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-25T13:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.1",
-                "areaDesc": "Northern Coastal Humboldt",
-                "geocode": {
-                    "SAME": [
-                        "006023"
-                    ],
-                    "UGC": [
-                        "CAZ103"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ103"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-25T09:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-25T13:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "Coastal Flood Warning issued November 24 at 8:44PM PST until November 25 at 1:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. Between 10.0 and 10.4 feet above MLLW at the North\nSpit tide gauge is predicted. For the Coastal Flood Watch, High\nastronomical tides and large surf may cause major flooding in\nlow lying areas along the Redwood Coast. Up to 2.5 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the High Surf\nAdvisory, large breaking waves up to 25 feet. Surf may worsen\ncoastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in King\nSalmon and the Arcata bottoms and sections of Highway 101.\nShoreline erosion will occur. Dangerous surf conditions and\nlocalized beach erosion. Beachcombing is highly discouraged!.\n\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.CF.W.0007.261125T1700Z-261125T2100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-25T13:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.2",
-                "areaDesc": "Northern Coastal Humboldt",
-                "geocode": {
-                    "SAME": [
-                        "006023"
-                    ],
-                    "UGC": [
-                        "CAZ103"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ103"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.3",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.3",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-25T07:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-25T19:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "High Surf Advisory issued November 24 at 8:44PM PST until November 25 at 7:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. Between 10.0 and 10.4 feet above MLLW at the North\nSpit tide gauge is predicted. For the Coastal Flood Watch, High\nastronomical tides and large surf may cause major flooding in\nlow lying areas along the Redwood Coast. Up to 2.5 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the High Surf\nAdvisory, large breaking waves up to 25 feet. Surf may worsen\ncoastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in King\nSalmon and the Arcata bottoms and sections of Highway 101.\nShoreline erosion will occur. Dangerous surf conditions and\nlocalized beach erosion. Beachcombing is highly discouraged!.\n\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.SU.Y.0005.261125T1500Z-261126T0300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-25T19:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.2",
-                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
-                "geocode": {
-                    "SAME": [
-                        "006015",
-                        "006023",
-                        "006045"
-                    ],
-                    "UGC": [
-                        "CAZ101",
-                        "CAZ104",
-                        "CAZ109"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ101",
-                    "https://api.weather.gov/zones/forecast/CAZ104",
-                    "https://api.weather.gov/zones/forecast/CAZ109"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.3",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.3",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-25T07:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-25T19:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "High Surf Advisory issued November 24 at 8:44PM PST until November 25 at 7:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 1.0\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf may\nworsen coastal flooding along exposed beaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous surf\nconditions and localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.SU.Y.0005.261125T1500Z-261126T0300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-25T19:00:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.002.3",
-                "areaDesc": "Northern Coastal Humboldt",
-                "geocode": {
-                    "SAME": [
-                        "006023"
-                    ],
-                    "UGC": [
-                        "CAZ103"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ103"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.4",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.002.4",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-26T08:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-26T15:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Coastal Flood Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "Coastal Flood Watch issued November 24 at 8:44PM PST until November 26 at 3:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas mainly around\nHumboldt Bay. Up to 2 feet of saltwater inundation above ground\nlevel is possible in low lying areas near shorelines and tidal\nwaterways. Between 10.0 and 10.4 feet above MLLW at the North\nSpit tide gauge is predicted. For the Coastal Flood Watch, High\nastronomical tides and large surf may cause major flooding in\nlow lying areas along the Redwood Coast. Up to 2.5 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the High Surf\nAdvisory, large breaking waves up to 25 feet. Surf may worsen\ncoastal flooding along exposed beaches.\n\n* WHERE...Northern Coastal Humboldt County.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to, roadways in King\nSalmon and the Arcata bottoms and sections of Highway 101.\nShoreline erosion will occur. Dangerous surf conditions and\nlocalized beach erosion. Beachcombing is highly discouraged!.\n\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant flooding in King Salmon.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.CF.A.0002.261126T1600Z-261126T2300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T15:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2519536893535fc46a4250d6e811b3cf54fb7a66.001.2,2026-11-24T05:00:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ee3e62a752fcd1636bfa5982c4e802cc2a42325.001.2,2026-11-23T21:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.653469f13fa543848c6ee132a8d0485686b9b615.001.3,2026-11-23T14:34:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFA"
-                    ],
-                    "NationalWeatherService": [
-                        "CFA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.c48ef39b1147122c7ad9f964c22a9691d011f82e.001.3",
-                "areaDesc": "Coastal Del Norte; Southwestern Humboldt; Coastal Mendocino",
-                "geocode": {
-                    "SAME": [
-                        "006015",
-                        "006023",
-                        "006045"
-                    ],
-                    "UGC": [
-                        "CAZ101",
-                        "CAZ104",
-                        "CAZ109"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/CAZ101",
-                    "https://api.weather.gov/zones/forecast/CAZ104",
-                    "https://api.weather.gov/zones/forecast/CAZ109"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.4",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2b4c9d5f0cef1d14dcc7d893b16813ac145de428.001.4",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:27:00-08:00"
-                    }
-                ],
-                "sent": "2026-11-24T20:44:00-08:00",
-                "effective": "2026-11-24T20:44:00-08:00",
-                "onset": "2026-11-26T08:00:00-08:00",
-                "expires": "2026-11-25T04:45:00-08:00",
-                "ends": "2026-11-26T15:00:00-08:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "Coastal Flood Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Eureka CA",
-                "headline": "Coastal Flood Watch issued November 24 at 8:44PM PST until November 26 at 3:00PM PST by NWS Eureka CA",
-                "description": "* WHAT...For the Coastal Flood Warning, High astronomical tides\nwill cause major flooding in low lying areas. Up to 1 foot of\nsaltwater inundation above ground level is possible in low lying\nareas near shorelines and tidal waterways. For the Coastal Flood\nWatch, High astronomical tides and large surf may cause major\nflooding in low lying areas along the Redwood Coast. Up to 1.0\nfoot of saltwater inundation above ground level is possible in\nlow lying areas near shorelines and tidal waterways. For the\nHigh Surf Advisory, large breaking waves up to 25 feet. Surf may\nworsen coastal flooding along exposed beaches.\n\n* WHERE...Coastal Del Norte, Southwestern Humboldt and Coastal\nMendocino Counties.\n\n* WHEN...For the Coastal Flood Warning, from 9 AM to 1 PM PST\nWednesday. For the High Surf Advisory, from 7 AM to 7 PM PST\nWednesday. For the Coastal Flood Watch, from Thursday morning\nthrough Thursday afternoon.\n\n* IMPACTS...Several coastal roads may be closed. Low lying\nproperty and some critical infrastructure will be inundated.\nThese impacts will include, but not limited to sections of\nHighways 101 and 1. Shoreline erosion will occur. Dangerous surf\nconditions and localized beach erosion. Beachcombing is highly\ndiscouraged!.\n\n* ADDITIONAL DETAILS...The water levels from this are expected to\nrival the water levels seen in January of 2026 that caused\nsignificant coastal impacts.",
-                "instruction": "A Coastal Flood Warning means that flooding is occurring or\nimminent. Coastal residents in the warned area should be alert\nfor rising water and take appropriate action to protect life and\nproperty.\n\nFeet Above Ground is locally defined as feet above the Highest\nAstronomical Tide or HAT.\n\nLarge breaking waves along the coast will lead to increased wave\nrun-up on beaches with waves topping and washing over large rocks\nand jetties. These large waves can be erratic and unpredictable.\nUse extra caution near the surf zone as these large waves will be\ncapable of sweeping people into the frigid and turbulent ocean\nwater. Mariners traversing the bar are urged to exercise extreme\ncaution or stay in port until the threat subsides. Please contact\nthe U.S. Coast Guard for information regarding harbor and bar\nclosures.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWEKA"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS46 KEKA 250444"
-                    ],
-                    "NWSheadline": [
-                        "HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM TO 7 PM PST WEDNESDAY... ...COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 9 AM TO 1 PM PST WEDNESDAY... ...COASTAL FLOOD WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH THURSDAY AFTERNOON"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KEKA.CF.A.0001.261126T1600Z-261126T2300Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T15:00:00-08:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2519536893535fc46a4250d6e811b3cf54fb7a66.002.2,2026-11-24T05:00:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ee3e62a752fcd1636bfa5982c4e802cc2a42325.002.2,2026-11-23T21:16:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.653469f13fa543848c6ee132a8d0485686b9b615.002.2,2026-11-23T14:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8fc792c50f88522c5e1561e6591e0e34bba6861d.002.1,2026-11-23T11:54:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.61912a87a8f607ca967cde8abf533b5866682c86.002.1,2026-11-22T22:49:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fbd037c36110921d978e35fc33f522465cc69076.002.1,2026-11-22T14:27:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d5372f24080570d0330457c696ac9389960c1ab5.002.1,2026-11-22T11:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82312975a089a23f51d2728192d94b7069c88dca.002.1,2026-11-22T08:58:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.fba98b43074467375f0819f938bdfe4c3be26e50.002.1,2026-11-22T05:37:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.31df28e8ef3d1f4ee5e4e9d03a101b15d6fdd191.002.1,2026-11-21T21:39:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.9773847e162ebb17d52c52db944279534509b489.002.1,2026-11-21T17:32:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d10258662f04c638d207af1123f45906b294ed8e.002.1,2026-11-21T09:57:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5e2f569fb94c12181d220656cbb7760e7157fa18.002.1,2026-11-20T20:34:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.bcc6cc3030d72cc55ecdb8a54a18e93a8cbff602.002.1,2026-11-20T12:26:00-08:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.a6459fca83ca4a079e6b83009259b1ba2208e364.002.1,2026-11-20T11:50:00-08:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFA"
-                    ],
-                    "NationalWeatherService": [
-                        "CFA"
                     ]
                 }
             }
@@ -3286,5 +3298,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for California",
-    "updated": "2026-11-25T11:04:46+00:00"
+    "updated": "2026-11-25T13:47:54+00:00"
 }

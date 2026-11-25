@@ -10,61 +10,65 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e0b41eef8ec04d4f72c6615d7cff5d050c81e8b6.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
                     [
                         [
-                            -80.14,
-                            26.96
+                            -80.28,
+                            27.18
                         ],
                         [
-                            -80.08,
+                            -80.15,
+                            27.2
+                        ],
+                        [
+                            -80.07,
                             26.97
                         ],
                         [
-                            -80,
-                            26.72
-                        ],
-                        [
-                            -80.16,
-                            26.68
-                        ],
-                        [
-                            -80.16,
-                            26.96
+                            -80.14,
+                            26.97
                         ],
                         [
                             -80.14,
                             26.96
+                        ],
+                        [
+                            -80.2,
+                            26.96
+                        ],
+                        [
+                            -80.28,
+                            27.18
                         ]
                     ]
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e0b41eef8ec04d4f72c6615d7cff5d050c81e8b6.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.cdd969aa8755974730b199c67a414dd998da9770.001.1",
-                "areaDesc": "Palm Beach, FL",
+                "id": "urn:oid:2.49.0.1.840.0.e0b41eef8ec04d4f72c6615d7cff5d050c81e8b6.001.1",
+                "areaDesc": "Martin, FL",
                 "geocode": {
                     "SAME": [
-                        "012099"
+                        "012085"
                     ],
                     "UGC": [
-                        "FLC099"
+                        "FLC085"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC099"
+                    "https://api.weather.gov/zones/county/FLC085"
                 ],
                 "references": [],
-                "sent": "2026-11-25T05:38:00-05:00",
-                "effective": "2026-11-25T05:38:00-05:00",
-                "onset": "2026-11-25T05:38:00-05:00",
-                "expires": "2026-11-25T07:45:00-05:00",
-                "ends": "2026-11-25T07:45:00-05:00",
+                "sent": "2026-11-25T08:41:00-05:00",
+                "effective": "2026-11-25T08:41:00-05:00",
+                "onset": "2026-11-25T08:41:00-05:00",
+                "expires": "2026-11-25T10:45:00-05:00",
+                "ends": "2026-11-25T10:45:00-05:00",
                 "status": "Actual",
                 "messageType": "Alert",
                 "category": "Met",
@@ -73,21 +77,21 @@
                 "urgency": "Expected",
                 "event": "Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Flood Advisory issued November 25 at 5:38AM EST until November 25 at 7:45AM EST by NWS Miami FL",
-                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Northeastern Palm Beach County in southeastern Florida...\n\n* WHEN...Until 745 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 537 AM EST, Doppler radar indicated heavy rain due to\nthunderstorms. Minor flooding is ongoing or expected to begin\nshortly in the advisory area. Between 1 and 2 inches of rain have\nfallen.\n- Additional rainfall amounts of 1 to 2 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nWest Palm Beach, Jupiter, Palm Beach Gardens, Riviera Beach, Palm\nBeach, Tequesta, Juno Beach, North Palm Beach, Lake Park,\nHaverhill, Juno Ridge, Port Of Palm Beach, Schall Circle,\nDowntown West Palm Beach, Lake Belvedere Estates, Golden Lakes,\nMangonia Park, Fau North Campus and Lakeside Green.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
+                "senderName": "NWS Melbourne FL",
+                "headline": "Flood Advisory issued November 25 at 8:41AM EST until November 25 at 10:45AM EST by NWS Melbourne FL",
+                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Eastern Martin County in east central Florida...\n\n* WHEN...Until 1045 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 841 AM EST, Doppler radar indicated heavy rain. Minor flooding\nis ongoing or expected to begin shortly in the advisory area.\nBetween 1 and 2 inches of rain have fallen.\n- Additional rainfall amounts of 1 to 2 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nStuart, Jupiter Island, Hobe Sound, Port Salerno, Palm City,\nSewall's Point, Hobe Sound Beach, Jonathan Dickinson State Park,\nWitham Field and Hobe Sound Wildlife Refuge.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe aware of your surroundings and do not drive on flooded roads.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "FLSMFL"
+                        "FLSMLB"
                     ],
                     "WMOidentifier": [
-                        "WGUS82 KMFL 251038"
+                        "WGUS82 KMLB 251341"
                     ],
                     "NWSheadline": [
-                        "FLOOD ADVISORY IN EFFECT UNTIL 745 AM EST THIS MORNING"
+                        "FLOOD ADVISORY IN EFFECT UNTIL 1045 AM EST THIS MORNING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -95,10 +99,10 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.NEW.KMFL.FA.Y.0222.261125T1038Z-261125T1245Z/"
+                        "/O.NEW.KMLB.FA.Y.0181.261125T1341Z-261125T1545Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-25T07:45:00-05:00"
+                        "2026-11-25T10:45:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -116,57 +120,65 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8e75206e1291c19803f1a5666c671c8e4e4f3d1e.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.217b146472ddab9041653fefe87eef7eb929862f.001.1",
             "type": "Feature",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
                     [
                         [
-                            -80.18,
-                            26.34
+                            -80.46,
+                            25.57
                         ],
                         [
-                            -80.13,
-                            26.69
+                            -80.39,
+                            25.56
                         ],
                         [
-                            -80.04,
-                            26.71
+                            -80.41,
+                            25.4
                         ],
                         [
-                            -80.05,
-                            26.34
+                            -80.52,
+                            25.4
                         ],
                         [
-                            -80.18,
-                            26.34
+                            -80.51,
+                            25.52
+                        ],
+                        [
+                            -80.5,
+                            25.57
+                        ],
+                        [
+                            -80.46,
+                            25.57
                         ]
                     ]
                 ]
             },
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.8e75206e1291c19803f1a5666c671c8e4e4f3d1e.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.217b146472ddab9041653fefe87eef7eb929862f.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.8e75206e1291c19803f1a5666c671c8e4e4f3d1e.001.1",
-                "areaDesc": "Palm Beach, FL",
+                "id": "urn:oid:2.49.0.1.840.0.217b146472ddab9041653fefe87eef7eb929862f.001.1",
+                "areaDesc": "Miami-Dade, FL",
                 "geocode": {
                     "SAME": [
-                        "012099"
+                        "012086"
                     ],
                     "UGC": [
-                        "FLC099"
+                        "FLC086"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC099"
+                    "https://api.weather.gov/zones/county/FLC086"
                 ],
                 "references": [],
-                "sent": "2026-11-25T05:08:00-05:00",
-                "effective": "2026-11-25T05:08:00-05:00",
-                "onset": "2026-11-25T05:08:00-05:00",
-                "expires": "2026-11-25T07:15:00-05:00",
-                "ends": "2026-11-25T07:15:00-05:00",
+                "sent": "2026-11-25T08:29:00-05:00",
+                "effective": "2026-11-25T08:29:00-05:00",
+                "onset": "2026-11-25T08:29:00-05:00",
+                "expires": "2026-11-25T10:00:00-05:00",
+                "ends": "2026-11-25T10:00:00-05:00",
                 "status": "Actual",
                 "messageType": "Alert",
                 "category": "Met",
@@ -176,9 +188,9 @@
                 "event": "Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Miami FL",
-                "headline": "Flood Advisory issued November 25 at 5:08AM EST until November 25 at 7:15AM EST by NWS Miami FL",
-                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Southeastern Palm Beach County in southeastern Florida...\n\n* WHEN...Until 715 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 508 AM EST, Doppler radar indicated heavy rain due to\nthunderstorms. Minor flooding is ongoing or expected to begin\nshortly in the advisory area. Between 1 and 2 inches of rain have\nfallen.\n- Additional rainfall amounts up to 1 inch are expected over the\narea. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nWest Palm Beach, Boca Raton, Boynton Beach, Delray Beach, Lake\nWorth, Palm Beach, Highland Beach, Ocean Ridge, Greenacres, Palm\nSprings, Lantana, Atlantis, Haverhill, Cloud Lake, Village Of\nGolf, Dunes Road, Kings Point and Gun Club Estates.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
+                "headline": "Flood Advisory issued November 25 at 8:29AM EST until November 25 at 10:00AM EST by NWS Miami FL",
+                "description": "* WHAT...Flooding caused by excessive rainfall continues.\n\n* WHERE...Central Miami-Dade County in southeastern Florida...\n\n* WHEN...Until 1000 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\nOverflowing poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 829 AM EST, Doppler radar indicated heavy rain due to\nthunderstorms. Minor flooding is ongoing in the advisory area.\nBetween 1 and 2 inches of rain have fallen.\n- Additional rainfall amounts of 2 to 3 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nHomestead, Homestead Miami Speedway, The Redland, Florida City,\nLeisure City, Naranja, Homestead Base, Princeton and Goulds.\n- http://www.weather.gov/safety/flood",
+                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe aware of your surroundings and do not drive on flooded roads.\n\nPlease report observed flooding to local emergency services or law\nenforcement and request they pass this information to the National\nWeather Service when you can do so safely.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
@@ -186,10 +198,10 @@
                         "FLSMFL"
                     ],
                     "WMOidentifier": [
-                        "WGUS82 KMFL 251008"
+                        "WGUS82 KMFL 251329"
                     ],
                     "NWSheadline": [
-                        "FLOOD ADVISORY IN EFFECT UNTIL 715 AM EST THIS MORNING"
+                        "FLOOD ADVISORY NOW IN EFFECT UNTIL 10 AM EST THIS MORNING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -197,10 +209,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.NEW.KMFL.FA.Y.0221.261125T1008Z-261125T1215Z/"
+                        "/O.EXT.KMFL.FA.Y.0220.000000T0000Z-261125T1500Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-25T07:15:00-05:00"
+                        "2026-11-25T10:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.45da3855382a9c76e18e4603120eb20f39979f0c.001.1,2026-11-25T06:22:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f02d04191e3adecac2db55f1393930596dbf50cf.001.1,2026-11-25T03:26:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -488,116 +503,6 @@
                     ],
                     "NationalWeatherService": [
                         "FAA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f02d04191e3adecac2db55f1393930596dbf50cf.001.1",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [
-                            -80.46,
-                            25.57
-                        ],
-                        [
-                            -80.39,
-                            25.56
-                        ],
-                        [
-                            -80.41,
-                            25.4
-                        ],
-                        [
-                            -80.52,
-                            25.4
-                        ],
-                        [
-                            -80.51,
-                            25.52
-                        ],
-                        [
-                            -80.5,
-                            25.57
-                        ],
-                        [
-                            -80.46,
-                            25.57
-                        ]
-                    ]
-                ]
-            },
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f02d04191e3adecac2db55f1393930596dbf50cf.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f02d04191e3adecac2db55f1393930596dbf50cf.001.1",
-                "areaDesc": "Miami-Dade, FL",
-                "geocode": {
-                    "SAME": [
-                        "012086"
-                    ],
-                    "UGC": [
-                        "FLC086"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/county/FLC086"
-                ],
-                "references": [],
-                "sent": "2026-11-25T03:26:00-05:00",
-                "effective": "2026-11-25T03:26:00-05:00",
-                "onset": "2026-11-25T03:26:00-05:00",
-                "expires": "2026-11-25T06:30:00-05:00",
-                "ends": "2026-11-25T06:30:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Flood Advisory issued November 25 at 3:26AM EST until November 25 at 6:30AM EST by NWS Miami FL",
-                "description": "* WHAT...Flooding caused by excessive rainfall is expected.\n\n* WHERE...Central Miami-Dade County in southeastern Florida...\n\n* WHEN...Until 630 AM EST.\n\n* IMPACTS...Minor flooding in low-lying and poor drainage areas.\nOverflowing poor drainage areas.\n\n* ADDITIONAL DETAILS...\n- At 326 AM EST, Doppler radar indicated heavy rain due to\nthunderstorms. Minor flooding is ongoing or expected to begin\nshortly in the advisory area. Between 1 and 3 inches of rain have\nfallen.\n- Additional rainfall amounts of 2 to 3 inches are expected over\nthe area. This additional rain will result in minor flooding.\n- Some locations that will experience flooding include...\nHomestead, Homestead Miami Speedway, The Redland, Florida City,\nLeisure City, Naranja, Homestead Base, Princeton and Goulds.\n- http://www.weather.gov/safety/flood",
-                "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "FLSMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WGUS82 KMFL 250826"
-                    ],
-                    "NWSheadline": [
-                        "FLOOD ADVISORY IN EFFECT UNTIL 630 AM EST THIS MORNING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KMFL.FA.Y.0220.261125T0826Z-261125T1130Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-25T06:30:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "FAY"
                     ]
                 }
             }
@@ -3703,5 +3608,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-25T11:04:46+00:00"
+    "updated": "2026-11-25T13:47:54+00:00"
 }
