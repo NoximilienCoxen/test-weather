@@ -200,9 +200,13 @@ fun PannelloSala(
     val scorrimento = rememberScrollState()
     val misura = LocalMisuraPannello.current
     val densitaMisura = androidx.compose.ui.platform.LocalDensity.current
+    // La brina si scioglie al tocco: lo ascolta la scheda, non la brina (vedi `scioglieBrina`).
+    val vetro = LocalVetro.current
+    val brina = rememberStatoBrina()
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .scioglieBrina(brina, attiva = vetro.gelo > 0.02f && LocalMovimento.current)
             .then(if (misura != null) Modifier.onPlaced { misura(it.size.height / densitaMisura.density) } else Modifier)
             .then(if (tetto != Dp.Unspecified) Modifier.heightIn(max = tetto) else Modifier)
             .clip(RoundedCornerShape(RaggioPannello))
@@ -267,8 +271,7 @@ fun PannelloSala(
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
         if (bagliore) BaglioreDorato(Modifier.matchParentSize())
         // Brina e gocce sul vetro della scheda, dentro il ritaglio: vedi [Vetro].
-        val vetro = LocalVetro.current
-        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
+        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f, presenza = brina.presenza.value)
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
         // Il livello dell'onda c'e' solo mentre l'onda corre.
         if (onda != null && onda.corsa.isRunning) {
@@ -531,7 +534,17 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
         if (primo) { primo = false; return@LaunchedEffect }
         if (scelto && movimento) {
             gesto.snapTo(0f)
-            gesto.animateTo(1f, tween(durationMillis = 760, easing = LinearOutSlowInEasing))
+            // **Il gesto finisce sempre dritto.** Interrotto a meta' - un altro
+            // giorno toccato prima della fine, la scheda sfogliata - il valore
+            // restava dov'era, e la figuretta restava girata di sbieco per
+            // sempre: nella striscia le icone sembravano ruotate a caso.
+            try {
+                gesto.animateTo(1f, tween(durationMillis = 760, easing = LinearOutSlowInEasing))
+            } finally {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) { gesto.snapTo(1f) }
+            }
+        } else {
+            gesto.snapTo(1f)
         }
     }
     val goccia = SalaTokens.acqua
@@ -543,8 +556,15 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
                 if (p >= 1f) return@graphicsLayer
                 val campana = kotlin.math.sin(PI.toFloat() * p)
                 when (glifo) {
-                    GlifoMeteo.SOLE, GlifoMeteo.POCO -> {
+                    // Solo il sole fa il giro di raggi: con la nuvola davanti
+                    // ("poco nuvoloso") girava anche la nuvola, e da ferma in
+                    // un fotogramma qualunque sembrava storta.
+                    GlifoMeteo.SOLE -> {
                         rotationZ = 90f * p
+                        scaleX = 1f + 0.18f * campana
+                        scaleY = scaleX
+                    }
+                    GlifoMeteo.POCO -> {
                         scaleX = 1f + 0.18f * campana
                         scaleY = scaleX
                     }

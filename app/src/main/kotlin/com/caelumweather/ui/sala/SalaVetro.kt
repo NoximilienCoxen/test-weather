@@ -50,32 +50,58 @@ data class Vetro(
 val LocalVetro = compositionLocalOf { Vetro() }
 
 /**
- * La brina sui bordi della scheda, e il tocco che la scioglie.
+ * Quanta brina resta sul vetro (1 piena, 0 sciolta), e il tocco che la
+ * scioglie: vedi [scioglieBrina].
+ */
+internal class StatoBrina(val presenza: Animatable<Float, androidx.compose.animation.core.AnimationVector1D>, private val scope: kotlinx.coroutines.CoroutineScope) {
+    private var giro: kotlinx.coroutines.Job? = null
+
+    /** Si scioglie in meno di un secondo e torna a formarsi piano dopo una decina di secondi. */
+    fun sciogli() {
+        giro?.cancel()
+        giro = scope.launch {
+            presenza.animateTo(0f, tween(900))
+            delay(10_000)
+            presenza.animateTo(1f, tween(6000, easing = LinearEasing))
+        }
+    }
+}
+
+@Composable
+internal fun rememberStatoBrina(): StatoBrina {
+    val scope = rememberCoroutineScope()
+    return remember { StatoBrina(Animatable(1f), scope) }
+}
+
+/**
+ * **Il tocco che scioglie la brina, ascoltato dalla scheda e non dalla brina.**
  *
- * Un velo bianco che entra dai bordi e qualche cristallo a sei bracci lungo il
- * perimetro. Toccando la scheda si scioglie in meno di un secondo e torna a
- * formarsi piano dopo una decina di secondi, come su un vetro vero. Il tocco
- * si ascolta senza prenderlo: i comandi sotto funzionano come sempre.
+ * La brina era un livello disegnato sopra la scheda con il suo ascoltatore di
+ * tocchi, e il commento diceva che ascoltava "senza prenderlo". Ma fra due
+ * fratelli sovrapposti Compose consegna il tocco **solo a quello in cima**:
+ * sotto lo zero la brina si prendeva ogni tocco, e giorni, celle e
+ * collegamenti della scheda non rispondevano piu' (visto a Sapporo, a meno
+ * due, il 25 novembre 2026). Adesso ascolta il contenitore della scheda, nel
+ * passaggio che viene prima dei figli e senza consumare niente: i comandi
+ * sotto ricevono il tocco come sempre.
+ */
+internal fun Modifier.scioglieBrina(stato: StatoBrina, attiva: Boolean): Modifier =
+    if (!attiva) this else pointerInput(stato) {
+        awaitEachGesture {
+            awaitFirstDown(requireUnconsumed = false, pass = androidx.compose.ui.input.pointer.PointerEventPass.Initial)
+            stato.sciogli()
+        }
+    }
+
+/**
+ * La brina sui bordi della scheda: un velo bianco che entra dai bordi e
+ * qualche cristallo negli angoli. **Solo disegno**: non ascolta tocchi, vedi
+ * [scioglieBrina].
  */
 @Composable
-internal fun BrinaSulVetro(gelo: Float, modifier: Modifier = Modifier, cartaScura: Boolean = false) {
-    val movimento = LocalMovimento.current
-    val presenza = remember { Animatable(1f) }
-    val scope = rememberCoroutineScope()
-    Canvas(
-        modifier = modifier.pointerInput(movimento) {
-            if (!movimento) return@pointerInput
-            awaitEachGesture {
-                awaitFirstDown(requireUnconsumed = false)
-                scope.launch {
-                    presenza.animateTo(0f, tween(900))
-                    delay(10_000)
-                    presenza.animateTo(1f, tween(6000, easing = LinearEasing))
-                }
-            }
-        },
-    ) {
-        disegnaBrina(gelo * presenza.value, cartaScura)
+internal fun BrinaSulVetro(gelo: Float, modifier: Modifier = Modifier, cartaScura: Boolean = false, presenza: Float = 1f) {
+    Canvas(modifier = modifier) {
+        disegnaBrina(gelo * presenza, cartaScura)
     }
 }
 
