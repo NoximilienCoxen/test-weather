@@ -41,15 +41,15 @@
 
 === modelli regionali fuori dal loro dominio ===
   italia_meteo_arpae_icon_2i
-    Londra    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
-    Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
+    Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Singapore HTTP 400  {"error":true,"reason":"No data is available for this location"}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [4.7, 4.7, 4.5]
-    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
     Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
-    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
+    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
   meteofrance_seamless
     Londra   48/48 ore  quota 29.0 m  prime [3.5, 3.3, 3.7]
     Bergen   48/48 ore  quota 17.0 m  prime [-3.2, -3.1, -2.5]
