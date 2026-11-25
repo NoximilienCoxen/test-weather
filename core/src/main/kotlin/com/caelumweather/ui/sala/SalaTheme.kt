@@ -561,17 +561,62 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
  * Il cielo non ha un tema: ha un'ora.
  */
 /**
- * **L'accento preso dal telefono** (Material You, Android 12+): l'arancione
- * di Caelum lascia il posto al colore primario che il telefono ricava dallo
- * sfondo. [chiaro] e [scuro] sono il primario delle due tinte del telefono:
- * si passa dall'uno all'altro con lo stesso `buio` che muove la carta, cosi'
- * di notte l'accento e' quello pensato per il fondo scuro. L'inchiostro sopra
- * l'accento si sceglie per contrasto, chiaro o scuro.
+ * I colori di una tinta del telefono (Material You, Android 12+), quelli che
+ * servono alle sale: [chiaro] e [scuro] di [conTelefono] sono le due tinte,
+ * prese dagli schemi dinamici chiaro e scuro del telefono.
  */
-fun SalaPalette.conAccento(chiaro: Color, scuro: Color): SalaPalette {
-    val accento = lerp(chiaro, scuro, buio)
-    val inchiostro = if (accento.luminance() > 0.45f) SalaTokens.neutral900 else SalaTokens.neutral100
-    return copy(accent = accento, accentInk = inchiostro, accentSuCielo = lerp(chiaro, scuro, buio.coerceAtLeast(0.5f)))
+data class TintaTelefono(
+    /** Il primario: l'accento. */
+    val primario: Color,
+    /** L'inchiostro sopra il primario. */
+    val suPrimario: Color,
+    /** Il fondo delle schede (surfaceContainerLow). */
+    val carta: Color,
+    /** Il fondo delle schermate a tutta pagina (surface). */
+    val pagina: Color,
+    /** Il fondo di pastiglie e celle (surfaceContainerHighest). */
+    val chip: Color,
+    /** I fili e i binari spenti (outlineVariant). */
+    val filo: Color,
+    /** L'inchiostro (onSurface). */
+    val inchiostro: Color,
+    /** L'inchiostro secondario (onSurfaceVariant). */
+    val inchiostroSecondario: Color,
+)
+
+/**
+ * **I colori del telefono, su tutta la sala e non solo sull'accento.**
+ *
+ * La prima stesura cambiava solo l'accento: un viola o un verde del telefono
+ * sopra la carta calda di Caelum, che e' color crema, e la scheda sembrava
+ * fatta da due mani diverse. Adesso la tinta del telefono arriva anche alla
+ * carta, alle celle, ai fili e agli inchiostri, come in un'app Material You;
+ * restano di Caelum il cielo, le colline e le scritte che ci stanno sopra.
+ *
+ * Fra la tinta chiara e la scura si passa con lo stesso `buio` che muove la
+ * carta. L'accento scritto sul cielo si scurisce o si schiarisce finche' si
+ * legge sul fondo delle colline: il primario della tinta scura, un viola
+ * chiaro, sul cielo di mezzogiorno spariva.
+ */
+fun SalaPalette.conTelefono(chiaro: TintaTelefono, scuro: TintaTelefono): SalaPalette {
+    fun t(a: Color, b: Color) = lerp(a, b, buio)
+    val carta = t(chiaro.carta, scuro.carta)
+    val inchiostro = t(chiaro.inchiostro, scuro.inchiostro)
+    val secondario = t(chiaro.inchiostroSecondario, scuro.inchiostroSecondario)
+    val accento = t(chiaro.primario, scuro.primario)
+    return copy(
+        ink = inchiostro,
+        inkSoft = secondario.readableOn(carta),
+        inkFaint = secondario.copy(alpha = 0.82f).readableOn(carta),
+        accent = accento.readableOn(carta, CONTRAST_AA_LARGE),
+        accentInk = t(chiaro.suPrimario, scuro.suPrimario),
+        chip = t(chiaro.chip, scuro.chip),
+        maniglia = t(chiaro.filo, scuro.filo),
+        panel = carta.copy(alpha = lerp(0.94f, 0.88f, buio)),
+        panelSolido = carta,
+        schermoPieno = t(chiaro.pagina, scuro.pagina),
+        accentSuCielo = accento.readableOn(collina3, CONTRAST_AA_LARGE),
+    )
 }
 
 fun SalaPalette.conCieloDi(cielo: SalaPalette): SalaPalette =

@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.caelumweather.ui.sala.NumeroCheScorre
 import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
@@ -218,24 +219,43 @@ fun SalaPioggiaScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    // **Due grandezze in una colonna, e nessun pallino.** Le
+                    // colonne erano pillole tonde: un'ora con un millimetro
+                    // diventava un pallino, una con niente un trattino, e la
+                    // probabilita' non si vedeva. Adesso ogni ora ha un binario
+                    // chiaro alto quanto la **probabilita'** e, dentro, il
+                    // riempimento d'acqua dal basso quanto i **millimetri**:
+                    // tondo solo in cima, come un bicchiere. Un'ora probabile ma
+                    // scarsa e' un binario alto quasi vuoto; una asciutta e
+                    // certa non ha niente.
+                    val probabilita = ((ore[indice].precipProbability ?: 0) / 100f).coerceIn(0f, 1f)
+                    val evidenziata = i == sottoIlDito || (sottoIlDito < 0 && indice == scelta)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            // Una colonna a zero resta visibile: una colonna
-                            // assente si legge come un dato mancante, non come
-                            // un'ora asciutta.
-                            .height(misuraCheArriva((3f + quota * 54f).dp))
-                            .clip(CircleShape)
-                            .background(
-                                if (mm > 0.01) {
-                                    Brush.verticalGradient(
-                                        listOf(SalaTokens.acquaChiara, SalaTokens.acquaScura),
-                                    )
-                                } else {
-                                    Brush.verticalGradient(listOf(palette.maniglia, palette.maniglia))
-                                },
-                            ),
-                    )
+                            .height(ALTEZZA_COLONNA),
+                        contentAlignment = Alignment.BottomCenter,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(misuraCheArriva(ALTEZZA_COLONNA * probabilita.coerceAtLeast(0.06f)))
+                                .clip(RoundedCornerShape(topStart = 7.dp, topEnd = 7.dp, bottomStart = 3.dp, bottomEnd = 3.dp))
+                                .background(
+                                    if (evidenziata) SalaTokens.acquaChiara.copy(alpha = 0.40f)
+                                    else SalaTokens.acquaChiara.copy(alpha = 0.22f),
+                                ),
+                        )
+                        if (mm > 0.01) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(misuraCheArriva(ALTEZZA_COLONNA * quota.coerceAtLeast(0.08f)))
+                                    .clip(RoundedCornerShape(topStart = 7.dp, topEnd = 7.dp, bottomStart = 3.dp, bottomEnd = 3.dp))
+                                    .background(Brush.verticalGradient(listOf(SalaTokens.acquaChiara, SalaTokens.acquaScura))),
+                            )
+                        }
+                    }
                     Text(
                         text = oraDueCifre(ore[indice].time.hour),
                         style = SalaType.microLabel,
@@ -517,5 +537,8 @@ private fun nomeAfa(afa: Afa): String = when (afa) {
     Afa.AFOSA -> tr("afosa", "muggy", "schwül", "lourd", "bochornoso")
     Afa.OPPRIMENTE -> tr("opprimente", "oppressive", "drückend", "étouffant", "sofocante")
 }
+
+/** L'altezza di una colonna della pioggia: il cento per cento di probabilita'. */
+private val ALTEZZA_COLONNA = 58.dp
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)

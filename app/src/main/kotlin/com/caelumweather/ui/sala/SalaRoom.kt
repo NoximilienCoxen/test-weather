@@ -34,6 +34,14 @@ enum class SalaRoom(
     ARIA("IV", "L'aria", "Air", "Die Luft", "L'air", "El aire"),
     VENTO("V", "Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
     UV("VI", "I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
+
+    /**
+     * Solo dove c'e' il mare (`UiState.mareMostrato`): altrove la scheda non
+     * esiste. Sta in fondo apposta: i dati del mare arrivano dopo la
+     * previsione, e una scheda che spuntasse in mezzo sposterebbe sotto il
+     * dito quella che si sta guardando.
+     */
+    MARE("VII", "Il mare", "The sea", "Das Meer", "La mer", "El mar"),
     ;
 
     /** Come si chiama, nella lingua dell'app. */

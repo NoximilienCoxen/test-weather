@@ -233,7 +233,7 @@ fun SalaImpostazioniScreen(
                     // Era "Schede larghe", accesa toglieva la colonna. Ora la
                     // colonna e' spenta di serie e la voce dice cosa aggiunge.
                     titolo = tr("Colonna delle icone", "Icon column", "Symbolspalte", "Colonne d'icônes", "Columna de iconos"),
-                    nota = tr("le sette schermate in una colonna a destra, invece dei puntini in basso", "the seven screens in a column on the right, instead of the dots at the bottom", "die sieben Bildschirme in einer Spalte rechts statt der Punkte unten", "les sept écrans dans une colonne à droite, au lieu des points en bas", "las siete pantallas en una columna a la derecha, en lugar de los puntos abajo"),
+                    nota = tr("le schermate in una colonna a destra, invece dei puntini in basso", "the screens in a column on the right, instead of the dots at the bottom", "die Bildschirme in einer Spalte rechts statt der Punkte unten", "les écrans dans une colonne à droite, au lieu des points en bas", "las pantallas en una columna a la derecha, en lugar de los puntos abajo"),
                     acceso = !state.schedeLarghe,
                     palette = palette,
                     onCambia = { colonna -> onToggleSchedeLarghe(!colonna) },
@@ -244,7 +244,7 @@ fun SalaImpostazioniScreen(
                     FiloGruppo(palette)
                     VoceInterruttore(
                         titolo = tr("Colori del telefono", "Phone colours", "Telefonfarben", "Couleurs du téléphone", "Colores del teléfono"),
-                        nota = tr("l'accento dell'app prende la tinta dello sfondo del telefono invece dell'arancione", "the app's accent takes the tint of the phone's wallpaper instead of orange", "der Akzent der App übernimmt die Tönung des Hintergrundbilds statt Orange", "l'accent de l'appli prend la teinte du fond d'écran au lieu de l'orange", "el acento de la app toma el tono del fondo de pantalla en lugar del naranja"),
+                        nota = tr("schede, celle e accento prendono la tinta dello sfondo del telefono; il cielo resta quello vero", "cards, cells and accent take the tint of the phone's wallpaper; the sky stays the real one", "Karten, Zellen und Akzent übernehmen die Tönung des Hintergrundbilds; der Himmel bleibt echt", "fiches, cases et accent prennent la teinte du fond d'écran ; le ciel reste le vrai", "fichas, celdas y acento toman el tono del fondo de pantalla; el cielo sigue siendo el real"),
                         acceso = state.coloriTelefono,
                         palette = palette,
                         onCambia = onToggleColoriTelefono,

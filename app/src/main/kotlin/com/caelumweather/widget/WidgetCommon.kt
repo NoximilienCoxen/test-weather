@@ -227,7 +227,7 @@ enum class WidgetKind(
     VENTO(listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), listOf("VENTO", "WIND", "WIND", "VENT", "VIENTO"), true, VentoWidgetReceiver::class.java, ::VentoWidget, SalaRoom.VENTO),
 
     // Il mare sta nella sala del vento: e' vento che ha avuto tempo.
-    MARE(listOf("MARE", "SEA", "MEER", "MER", "MAR"), listOf("MARE", "SEA", "MEER", "MER", "MAR"), true, MareWidgetReceiver::class.java, ::MareWidget, SalaRoom.VENTO),
+    MARE(listOf("MARE", "SEA", "MEER", "MER", "MAR"), listOf("MARE", "SEA", "MEER", "MER", "MAR"), true, MareWidgetReceiver::class.java, ::MareWidget, SalaRoom.MARE),
     ;
 
     /** Come si chiama per esteso, nella schermata di configurazione. */

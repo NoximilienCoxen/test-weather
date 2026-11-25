@@ -80,6 +80,7 @@ import com.caelumweather.ui.motion.rememberVibrazioniMeteo
 import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import com.caelumweather.ui.sala.rooms.SalaAriaScreen
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
+import com.caelumweather.ui.sala.rooms.SalaMareScreen
 import com.caelumweather.ui.sala.rooms.SalaOggiScreen
 import com.caelumweather.ui.sala.rooms.SalaPioggiaScreen
 import com.caelumweather.ui.sala.rooms.SalaUvScreen
@@ -135,7 +136,10 @@ fun SalaShell(
     /** La scena del velo d'apertura: il cielo ne prende la tinta. Vedi [tingiCielo]. */
     scenaDAvvio: ScenaDAvvio? = null,
 ) {
-    val rooms = SalaRoom.entries
+    // Il mare c'e' solo dove c'e': la sua scheda, in fondo, compare quando
+    // arrivano i dati del mare e sparisce cambiando localita'.
+    val conMare = state.mareMostrato != null
+    val rooms = remember(conMare) { SalaRoom.entries.filter { it != SalaRoom.MARE || conMare } }
     val scope = rememberCoroutineScope()
 
     // Se l'indizio "scorri in su" serve ancora: vedi `IndizioSfoglio`.
@@ -489,23 +493,33 @@ fun SalaShell(
     // barra delle ore, crediti - segue il cielo. In automatico sono la stessa.
     // **I colori del telefono**, se chiesti (Android 12+): il primario delle
     // due tinte che il telefono ricava dallo sfondo prende il posto
-    // dell'arancione. Vedi `SalaPalette.conAccento`.
+    // dell'arancione. Vedi `SalaPalette.conTelefono`.
     val contestoColori = LocalContext.current
     val accentiTelefono = remember(state.coloriTelefono) {
         if (state.coloriTelefono && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            dynamicLightColorScheme(contestoColori).primary to dynamicDarkColorScheme(contestoColori).primary
+            fun tinta(c: androidx.compose.material3.ColorScheme) = TintaTelefono(
+                primario = c.primary,
+                suPrimario = c.onPrimary,
+                carta = c.surfaceContainerLow,
+                pagina = c.surface,
+                chip = c.surfaceContainerHighest,
+                filo = c.outlineVariant,
+                inchiostro = c.onSurface,
+                inchiostroSecondario = c.onSurfaceVariant,
+            )
+            tinta(dynamicLightColorScheme(contestoColori)) to tinta(dynamicDarkColorScheme(contestoColori))
         } else {
             null
         }
     }
     val paletteCielo = remember(dkCielo, crepuscolo, chiusura, accentiTelefono) {
         salaPalette(dkCielo, crepuscolo, chiusura).let { p ->
-            accentiTelefono?.let { (chiaro, scuro) -> p.conAccento(chiaro, scuro) } ?: p
+            accentiTelefono?.let { (chiaro, scuro) -> p.conTelefono(chiaro, scuro) } ?: p
         }
     }
     val palette = remember(dk, crepuscolo, chiusura, paletteCielo, accentiTelefono) {
         salaPalette(dk, crepuscolo, chiusura).let { p ->
-            accentiTelefono?.let { (chiaro, scuro) -> p.conAccento(chiaro, scuro) } ?: p
+            accentiTelefono?.let { (chiaro, scuro) -> p.conTelefono(chiaro, scuro) } ?: p
         }.conCieloDi(paletteCielo)
     }
 
@@ -1026,6 +1040,7 @@ fun SalaShell(
                                         onSelectHour = viewModel::selectHour,
                                         movimento = !ferme,
                                     )
+                                    SalaRoom.MARE -> SalaMareScreen(state = state, palette = palette, movimento = !ferme)
                                     null -> Unit
                                 }
                             }

@@ -120,6 +120,20 @@ internal fun DrawScope.disegnaIconaViva(sala: SalaRoom, ink: Color, fase: Float,
             linea(9f, 5.8f + dy * 0.33f, 9f, 13.2f + dy * 0.33f)
             linea(14f, 6.5f + dy * 0.66f, 14f, 12.5f + dy * 0.66f)
         }
+        // Il mare: le onde scorrono, ciascuna col suo passo.
+        SalaRoom.MARE -> {
+            for ((k, y) in listOf(7f, 12f, 17f).withIndex()) {
+                val scarto = ((fase * (1.2f + k * 0.3f)) % 1f) * 6f
+                val onda = Path().apply {
+                    moveTo((3f - scarto) * u, y * u)
+                    for (i in 0 until 4) {
+                        val x = 3f - scarto + i * 6f
+                        cubicTo((x + 1.5f) * u, (y - 2.4f) * u, (x + 4.5f) * u, (y - 2.4f) * u, (x + 6f) * u, y * u)
+                    }
+                }
+                clipRect(left = 2f * u, right = 22f * u) { drawPath(onda, ink, style = tratto) }
+            }
+        }
         // Il sole che sale sull'orizzonte e apre i raggi.
         SalaRoom.UV -> {
             val salita = 3f * (1f - comparsa)

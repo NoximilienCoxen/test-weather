@@ -171,6 +171,7 @@ class SchedeNelTettoRenderTest {
             "luna" to misura("luna") { SalaLunaScreen(palette = palette, giorno = oggi, movimento = false) },
             "aria" to misura("aria") { SalaAriaScreen(state = s, palette = palette) },
             "vento" to misura("vento") { SalaVentoScreen(state = s, palette = palette, movimento = false) },
+            "mare" to misura("mare") { com.caelumweather.ui.sala.rooms.SalaMareScreen(state = s.copy(forcedMare = 110), palette = palette, movimento = false) },
             "uv" to misura("uv") { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) },
         )
         // **La riga della pioggia nei prossimi minuti** compare solo per oggi
@@ -209,6 +210,16 @@ class SchedeNelTettoRenderTest {
                 com.caelumweather.ui.sala.rooms.ContenutoAnteprima(settimana[2], s, palette)
             }
         }
+    }
+
+    @Test
+    fun `i colori del telefono tingono tutta la scheda`() {
+        val s = stato()
+        val viola = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f).conTelefono(
+            TintaTelefono(Color(0xFF65558F), Color.White, Color(0xFFF7F2FA), Color(0xFFFEF7FF), Color(0xFFE6E0E9), Color(0xFFCAC4D0), Color(0xFF1D1B20), Color(0xFF49454F)),
+            TintaTelefono(Color(0xFFD0BCFE), Color(0xFF381E72), Color(0xFF1D1B20), Color(0xFF141218), Color(0xFF36343B), Color(0xFF49454F), Color(0xFFE6E0E9), Color(0xFFCAC4D0)),
+        )
+        misura("telefono-pioggia") { com.caelumweather.ui.sala.rooms.SalaPioggiaScreen(state = s, palette = viola, onSelectHour = {}, onSelectDay = {}, movimento = false) }
     }
 
     private companion object {

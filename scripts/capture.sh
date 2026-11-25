@@ -514,7 +514,7 @@ session() {
     shoot "${slug}-polline-${coppia#*:}"
   done
 
-  # ── Il mare, in fondo alla sala del vento ────────────────────────────────
+  # ── Il mare, nella sua scheda (solo dove c'e' il mare) ──────────────────
   #
   # Forli' il mare non lo vede, e la sezione esiste solo dove l'API lo porta:
   # `--ei mare 120` impone un'onda di un metro e venti (CONTESTO §60).
@@ -522,10 +522,10 @@ session() {
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
-  avvia --ei ora "$ora_dettaglio" --ei mare 120 --ei sezione 4 >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei mare 120 --ei sezione 6 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
-  shoot "${slug}-mare-vento"
+  shoot "${slug}-mare"
 
   # ── Un colpetto in verticale cambia sala ─────────────────────────────────
   #

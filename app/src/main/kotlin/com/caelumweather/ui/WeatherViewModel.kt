@@ -233,7 +233,7 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
-    /** L'accento preso dai colori del telefono: vedi `SalaPalette.conAccento`. */
+    /** L'accento preso dai colori del telefono: vedi `SalaPalette.conTelefono`. */
     val coloriTelefono: Boolean = false,
     /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
     val widgetColoriTelefono: Boolean = true,

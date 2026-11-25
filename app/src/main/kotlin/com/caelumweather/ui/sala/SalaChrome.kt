@@ -1300,6 +1300,19 @@ internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
             linea(9f, 5.8f, 9f, 13.2f)
             linea(14f, 6.5f, 14f, 12.5f)
         }
+        // Il mare: tre onde una sopra l'altra.
+        SalaRoom.MARE -> {
+            for ((k, y) in listOf(7f, 12f, 17f).withIndex()) {
+                val onda = Path().apply {
+                    moveTo(3f * u, y * u)
+                    for (i in 0 until 3) {
+                        val x = 3f + i * 6f
+                        cubicTo((x + 1.5f) * u, (y - 2.4f) * u, (x + 4.5f) * u, (y - 2.4f) * u, (x + 6f) * u, y * u)
+                    }
+                }
+                drawPath(onda, ink, style = tratto, alpha = if (k == 1) 1f else 0.85f)
+            }
+        }
         // I raggi UV: il sole che sale sull'orizzonte.
         SalaRoom.UV -> {
             linea(3f, 18f, 21f, 18f)
