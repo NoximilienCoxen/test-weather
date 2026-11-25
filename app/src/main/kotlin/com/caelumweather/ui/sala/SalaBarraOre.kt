@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.animation.core.snap
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.core.animateFloatAsState
@@ -206,6 +207,12 @@ fun BarraDelleOre(
             animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
             label = "maniglia",
         )
+        // E scivola da un'ora all'altra invece di saltare, sulla stessa molla.
+        val posizioneManiglia by animateFloatAsState(
+            targetValue = ora.toFloat(),
+            animationSpec = if (movimentoManiglia) MaterialTheme.motionScheme.fastSpatialSpec() else snap(),
+            label = "maniglia-posizione",
+        )
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -253,7 +260,7 @@ fun BarraDelleOre(
                     }
                 },
         ) {
-            disegnaBarra(tinte, ora, palette, attiva, stretta)
+            disegnaBarra(tinte, ora, palette, attiva, stretta, posizioneManiglia)
         }
     }
 }
@@ -302,13 +309,15 @@ private fun coloriDelleOre(
     }
 }
 
-private fun DrawScope.disegnaBarra(
+internal fun DrawScope.disegnaBarra(
     tinte: List<Color>,
     selected: Int,
     palette: SalaPalette,
     attiva: Boolean,
     /** Da 0 (disco) a 1 (pillola stretta): vedi la nota sulla maniglia. */
     stretta: Float = 0f,
+    /** Dove sta la maniglia, in ore con la frazione: scorre fra un'ora e l'altra. */
+    posizione: Float = selected.toFloat(),
 ) {
     val w = size.width
     val cy = size.height / 2f
@@ -344,20 +353,16 @@ private fun DrawScope.disegnaBarra(
     // tessere chiare del mezzogiorno sia da quelle blu della notte, che un
     // pallino di un colore solo non farebbe.
     if (!attiva) return
-    val x = (selected.toFloat() / (ORE - 1) * w).coerceIn(17.dp.toPx(), w - 17.dp.toPx())
     val rManiglia = 17.dp.toPx()
-    if (stretta <= 0.001f) {
-        drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))
-        drawCircle(
-            color = palette.accent,
-            radius = 11.dp.toPx() - 2.5.dp.toPx(),
-            center = Offset(x, cy),
-            style = Stroke(width = 5.dp.toPx()),
-        )
-        return
-    }
-    // Da disco a pillola: la larghezza scende, l'altezza resta quella del disco.
-    val larga = rManiglia * 2f + (14.dp.toPx() - rManiglia * 2f) * stretta
+    val x = (posizione / (ORE - 1) * w).coerceIn(rManiglia, w - rManiglia)
+    // **Una forma sola che si trasforma**, senza scatti di stile a meta'
+    // strada: il disco si stringe in pillola, l'anello d'accento si allunga in
+    // un'asta e il foro al centro si chiude fino a sparire. La molla Expressive
+    // puo' oltrepassare di poco lo zero e l'uno: e' il piccolo schiacciamento
+    // che si vede, e le misure restano positive.
+    val t = stretta.coerceIn(-0.2f, 1.2f)
+    fun tra(a: Float, b: Float) = a + (b - a) * t
+    val larga = tra(rManiglia * 2f, 16.dp.toPx()).coerceAtLeast(10.dp.toPx())
     val alta = rManiglia * 2f
     drawRoundRect(
         color = palette.panelSolido,
@@ -365,14 +370,16 @@ private fun DrawScope.disegnaBarra(
         size = Size(larga, alta),
         cornerRadius = CornerRadius(larga / 2f),
     )
-    // Dentro, l'anello si chiude in un'asta d'accento.
-    val dentroLarga = larga - 8.dp.toPx() * (1f - stretta) - 6.dp.toPx() * stretta
-    val dentroAlta = alta - 12.dp.toPx() - 2.dp.toPx() * stretta
+    val dentroLarga = tra(22.dp.toPx(), 6.dp.toPx()).coerceAtLeast(4.dp.toPx())
+    val dentroAlta = tra(22.dp.toPx(), 24.dp.toPx())
     drawRoundRect(
         color = palette.accent,
         topLeft = Offset(x - dentroLarga / 2f, cy - dentroAlta / 2f),
         size = Size(dentroLarga, dentroAlta),
         cornerRadius = CornerRadius(dentroLarga / 2f),
-        style = if (stretta < 0.5f) Stroke(width = 5.dp.toPx()) else androidx.compose.ui.graphics.drawscope.Fill,
     )
+    val foro = tra(12.dp.toPx(), 0f)
+    if (foro > 0.5f) {
+        drawCircle(color = palette.panelSolido, radius = foro / 2f, center = Offset(x, cy))
+    }
 }

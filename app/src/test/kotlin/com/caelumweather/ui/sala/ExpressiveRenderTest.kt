@@ -80,6 +80,19 @@ class ExpressiveRenderTest {
     }
 
     @Test
+    fun `la maniglia della barra si stringe senza scatti`() {
+        disegna("maniglia") {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                listOf(0f, 0.25f, 0.5f, 0.75f, 1f, 1.1f).forEach { stretta ->
+                    androidx.compose.foundation.Canvas(modifier = Modifier.width(379.dp).size(width = 379.dp, height = 34.dp)) {
+                        disegnaBarra(List(24) { Color(0xFF9AA7B4) }, 12, palette, attiva = true, stretta = stretta, posizione = 12f)
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun `il guscio dell'indicatore cambia forma tirando`() {
         disegna("guscio") {
             Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
