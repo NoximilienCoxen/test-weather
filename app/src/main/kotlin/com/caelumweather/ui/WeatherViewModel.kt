@@ -837,7 +837,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // Se non arriva la sezione non compare, e quella di
                         // prima - dello stesso posto - resta.
                         launch {
-                            MareRepository(place).load().onSuccess { mare ->
+                            MareRepository(place).loadConScorta(getApplication(), freschezzaMinuti = 15).onSuccess { mare ->
                                 _state.update { it.copy(mare = mare) }
                             }
                         }

@@ -165,6 +165,40 @@ class MareRepository(private val place: Place) {
         }
     }
 
+    /**
+     * Come [load], ma con **una scorta su disco**: il mare dell'ultima
+     * risposta buona di questa localita'.
+     *
+     * Il widget del mare si ridisegna a ogni ridimensionamento, e ogni
+     * ridisegno chiedeva il mare alla rete: se la richiesta non riusciva in
+     * quel momento - l'app chiusa, la rete addormentata - il widget restava
+     * senza dati finche' non si apriva l'app. Adesso una scorta piu' giovane
+     * di [freschezzaMinuti] vale come una risposta appena arrivata e non si
+     * chiede niente; piu' vecchia, si chiede, e se la rete non risponde si usa
+     * lo stesso, fino a un giorno.
+     */
+    suspend fun loadConScorta(context: android.content.Context, freschezzaMinuti: Long = 60): Result<Mare?> = withContext(Dispatchers.IO) {
+        val file = java.io.File(java.io.File(context.filesDir, "mare").apply { mkdirs() }, "${place.latitude}_${place.longitude}.json")
+        val eta = if (file.exists()) (System.currentTimeMillis() - file.lastModified()) / 60_000 else Long.MAX_VALUE
+        fun scorta(): Mare? = runCatching { parseMare(file.readText()) }.getOrNull()
+        if (eta < freschezzaMinuti) {
+            scorta()?.let { return@withContext Result.success(it) }
+        }
+        val fresca = runCatching {
+            require(place.hasFiniteCoordinates) {
+                "Coordinate non utilizzabili per ${place.name}: ${place.latitude}, ${place.longitude}"
+            }
+            val corpo = httpGet(buildUrl(), fonte = "Open-Meteo (mare)")
+            val mare = parseMare(corpo)
+            runCatching { file.writeText(corpo) }
+            mare
+        }
+        if (fresca.isFailure && eta < 24 * 60) {
+            scorta()?.let { return@withContext Result.success(it) }
+        }
+        fresca
+    }
+
     private fun buildUrl(): String = buildString {
         append(MARE_ENDPOINT)
         append("?latitude=").append(place.latitude)

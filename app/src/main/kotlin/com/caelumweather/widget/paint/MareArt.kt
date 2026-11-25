@@ -146,19 +146,32 @@ private fun DrawScope.curvaMarea(area: Rect, mare: Mare, adesso: LocalDateTime, 
     val ore = mare.ore.filter { it.livello != null && !it.time.isBefore(adesso.minusHours(1)) && it.time.isBefore(adesso.plusHours(25)) }
     if (ore.size < 4) return
     val riga = prossima?.let { rigaMarea(it, adesso) }
-    val p = type.brush(area.height * 0.15f, weight = 600, width = 82)
+    // **La curva non e' piu' alta di meta' della sua larghezza.** Nel taglio
+    // alto l'area era quasi quadrata e due maree in ventiquattro ore
+    // diventavano una "W" ripida: la marea e' un'onda lunga e bassa, e deve
+    // sembrarlo. L'altezza in avanzo resta sopra, vuota.
+    val altezzaCurva = minOf(area.height, area.width * 0.5f)
+    val p = type.brush(altezzaCurva * 0.15f, weight = 600, width = 82)
     val fondo = if (riga != null) area.bottom - lineHeight(p) * 1.2f else area.bottom
-    val alto = area.top + area.height * 0.06f
+    val alto = fondo - altezzaCurva * 0.80f
     val min = ore.minOf { it.livello!! }
     val max = ore.maxOf { it.livello!! }.coerceAtLeast(min + 0.05)
     fun x(o: OraMare) = area.left + area.width * (Duration.between(ore.first().time, o.time).toMinutes() / (24f * 60f)).coerceIn(0f, 1f)
     fun y(v: Double) = (fondo - (fondo - alto) * ((v - min) / (max - min))).toFloat()
     val tracciato = Path()
     ore.forEachIndexed { i, o -> if (i == 0) tracciato.moveTo(x(o), y(o.livello!!)) else tracciato.lineTo(x(o), y(o.livello!!)) }
-    drawPath(tracciato, ink.accent, style = Stroke(width = area.height * 0.045f, cap = StrokeCap.Round, join = StrokeJoin.Round))
+    // Sotto la curva l'acqua, appena accennata: si legge come livello, non come linea.
+    val acqua = Path().apply {
+        addPath(tracciato)
+        lineTo(x(ore.last()), fondo)
+        lineTo(x(ore.first()), fondo)
+        close()
+    }
+    drawPath(acqua, ink.accent.copy(alpha = 0.16f))
+    drawPath(tracciato, ink.accent, style = Stroke(width = altezzaCurva * 0.045f, cap = StrokeCap.Round, join = StrokeJoin.Round))
     // Il punto di adesso.
     ore.minByOrNull { Duration.between(it.time, adesso).abs() }?.let {
-        drawCircle(ink.primary, radius = area.height * 0.05f, center = Offset(x(it), y(it.livello!!)))
+        drawCircle(ink.primary, radius = altezzaCurva * 0.05f, center = Offset(x(it), y(it.livello!!)))
     }
     riga?.let { fitText(it, area.left, fondo + lineHeight(p) * 0.2f, area.width, p.textSize, type, ink.secondary, weight = 600, letterSpacingEm = 0.02f) }
 }

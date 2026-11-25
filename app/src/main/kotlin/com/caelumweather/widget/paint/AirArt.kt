@@ -32,7 +32,8 @@ internal fun DrawScope.airArt(
         value = place,
         x = box.left,
         y = box.top,
-        maxWidth = box.width - dotRadius * 2f - box.height * 0.04f,
+        // Il pallino ha un alone attorno: il nome si ferma prima di quello, non del disco.
+        maxWidth = box.width - dotRadius * 3.4f - box.height * 0.04f,
         sizePx = box.height * 0.095f,
         type = type,
         color = ink.secondary,

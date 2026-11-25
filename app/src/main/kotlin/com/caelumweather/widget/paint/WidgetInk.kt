@@ -36,7 +36,8 @@ internal class WidgetInk(
     val sunCore: Color get() = Color(0xFFFFDE59)
     val sunShade: Color get() = Color(0xFFE39A0C)
     val moonCore: Color get() = if (night) Color(0xFFF6F7F9) else Color(0xFFC9CDD4)
-    val rain: Color get() = Color(0xFF3C8DF5)
+    // Il blu dell'acqua delle schede, non un blu di sistema.
+    val rain: Color get() = if (night) Color(0xFF7EA7BD) else Color(0xFF4F7D97)
     val snow: Color get() = if (night) Color(0xFFDCE6F2) else Color(0xFF8FB4DA)
     val bolt: Color get() = Color(0xFFFFC83D)
 
@@ -62,11 +63,17 @@ internal class WidgetInk(
                     accent = Color(if (night) c(android.R.color.system_accent1_200) else c(android.R.color.system_accent1_600)),
                 )
             }
+            // **I colori di Caelum, non il bianco e nero di sistema.** Erano
+            // fondo bianco o nero puro con un blu acceso per gli accenti: un
+            // aspetto da widget di serie, che con l'app non c'entrava. Adesso
+            // la carta calda e l'inchiostro delle schede, e l'arancione
+            // dell'app come accento (`colors.xml`).
             return WidgetInk(
                 background = ContextCompat.getColor(context, R.color.widget_background),
                 primary = Color(ContextCompat.getColor(context, R.color.widget_primary)),
                 secondary = Color(ContextCompat.getColor(context, R.color.widget_secondary)),
                 night = night,
+                accent = if (night) Color(0xFFF2A273) else Color(0xFFB2622D),
             )
         }
     }
