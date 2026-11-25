@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import com.caelumweather.ui.theme.readableOn
 import com.caelumweather.ui.sala.NumeroCheScorre
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
@@ -96,6 +97,21 @@ fun SalaUvScreen(
     // la barra fino alle tre di notte il riflesso deve spegnersi, perche' li'
     // l'indice e' zero e un avviso di sole alle tre di notte e' un avviso che
     // insegna a ignorare gli avvisi.
+    // **Rifatta da capo.** La prima versione metteva insieme un'ombra
+    // disegnata, una frase geometrica ("alle 12 sole a 24 gradi, l'ombra e' 2,3
+    // volte te") e un consiglio che, con il cielo coperto e l'indice a zero,
+    // diceva "sole sotto l'orizzonte" a mezzogiorno. Adesso la scheda risponde
+    // a due domande sole: **quanto e' forte adesso** (il numero, la parola e la
+    // scala colorata dell'OMS) e **quando proteggersi oggi** (la frase e le
+    // colonne della giornata, ciascuna nel colore della sua fascia).
+    val massimo = picco?.let { ore[it].uvIndex } ?: 0.0
+    val sopraTre = remember(ore) { ore.filter { (it.uvIndex ?: 0.0) >= 3.0 } }
+    val altezzaSole = ore.getOrNull(scelta)?.let { o ->
+        remember(o.time, state.place, state.forecast?.utcOffsetSeconds) {
+            OmbraSole.altezza(o.time, state.place.latitude, state.place.longitude, state.forecast?.utcOffsetSeconds ?: 0)
+        }
+    }
+    val notte = altezzaSole != null && altezzaSole <= 0.0
     PannelloSala(palette = palette, modifier = modifier, bagliore = corrente >= 5.0 && movimento) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -105,14 +121,12 @@ fun SalaUvScreen(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = tr("I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"), style = SalaType.cardTitle, color = palette.ink)
                 Text(
-                    text = nomeUv(corrente),
+                    text = if (notte) tr("Sole tramontato", "Sun down", "Sonne untergegangen", "Soleil couché", "Sol puesto") else nomeUv(corrente),
                     style = SalaType.rowTitle,
-                    color = palette.accent,
+                    color = if (notte) palette.inkSoft else coloreScala(corrente).readableOn(palette.panelSolido, com.caelumweather.ui.theme.CONTRAST_AA_LARGE),
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
-            // In decimi, perche' il verso dello scorrimento segua anche un
-            // passo da 4,2 a 4,6.
             NumeroCheScorre(
                 testo = String.format(Lingue.locale, "%.1f", corrente),
                 valore = (corrente * 10).roundToInt(),
@@ -121,168 +135,27 @@ fun SalaUvScreen(
             )
         }
 
-        if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 16.dp))
-        val misura = rememberTextMeasurer()
-        val densita = LocalDensity.current
-        val largaEtichetta = remember(misura, densita) {
-            with(densita) { misura.measure("00", EtichettaGrafico).size.width.toDp() }
-        }
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-            // **Ogni ora ha la sua etichetta, quando ci sta.** Con sedici colonne
-            // su un telefono largo ogni colonna fa sedici punti e "00" ne vuole
-            // tredici: la scala a una tacca ogni tre ore lasciava dei buchi che si
-            // leggevano come numeri mancanti. Se lo schermo e' stretto e le
-            // etichette si toccherebbero, si ripiega su una ogni due.
-            val colonna = if (finestra.isEmpty()) {
-                maxWidth
-            } else {
-                (maxWidth - SPAZIO_COLONNE * (finestra.size - 1)) / finestra.size
-            }
-            val ogni = if (colonna >= largaEtichetta + 2.dp) 1 else 2
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(SPAZIO_COLONNE),
-            ) {
-                finestra.forEach { indice ->
-                    val valore = ore[indice].uvIndex ?: 0.0
-                    // La scala e' l'indice stesso, non il massimo di giornata: un
-                    // 2 che tocca il soffitto perche' oggi non si va oltre
-                    // racconterebbe un sole che non c'e'.
-                    val quota = (valore / 11.0).coerceIn(0.0, 1.0).toFloat()
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .semantics {
-                                contentDescription = tr("${oraDueCifre(ore[indice].time.hour)}:00, indice UV ", "${oraDueCifre(ore[indice].time.hour)}:00, UV index ", "${oraDueCifre(ore[indice].time.hour)}:00, UV-Index ", "${oraDueCifre(ore[indice].time.hour)}:00, indice UV ", "${oraDueCifre(ore[indice].time.hour)}:00, índice UV ") +
-                                    (ore[indice].uvIndex?.roundToInt()?.toString() ?: tr("non disponibile", "unavailable", "nicht verfügbar", "indisponible", "no disponible"))
-                                selected = indice == scelta
-                            }
-                            .clickable(onClickLabel = tr("mostra quest'ora", "show this hour", "diese Stunde anzeigen", "afficher cette heure", "mostrar esta hora")) { onSelectHour(indice) },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        // **Il valore sopra ogni colonna**, arrotondato all'intero
-                        // come lo scrive l'OMS: la barra dice la forma della
-                        // giornata, ma "a che ora scende sotto il 3" si legge solo
-                        // coi numeri. Una cifra sta in una colonna; le due cifre
-                        // del 10 e dell'11 sbordano centrate, come le ore sotto.
-                        //
-                        // **Lo zero non si scrive**, tranne sull'ora scelta: una
-                        // fila di "0" sopra barrette grigie ripeteva quello che
-                        // le barrette dicono gia', e la scheda pareva una tabella.
-                        val numero = ore[indice].uvIndex?.roundToInt()
-                        Text(
-                            text = numero?.takeIf { it > 0 || indice == scelta }?.toString() ?: "",
-                            style = EtichettaGrafico,
-                            color = if (indice == scelta) palette.accent else palette.inkSoft,
-                            maxLines = 1,
-                            modifier = Modifier.wrapContentWidth(
-                                align = Alignment.CenterHorizontally,
-                                unbounded = true,
-                            ),
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(misuraCheArriva((3f + quota * 56f).dp))
-                                .clip(CircleShape)
-                                .background(if (indice == scelta) palette.accent else coloreUv(valore, palette)),
-                        )
-                        // **Tutte le ore quando c'e' posto, se no una ogni due.**
-                        //
-                        // La larghezza delle colonne si misura (sopra) invece di
-                        // supporla: la prima versione mostrava tutte e sedici le
-                        // ore su una scheda da duecento punti, dove "05" non ci
-                        // stava e la scala si leggeva "0 0 0 0 0 10 11 12"; la
-                        // seconda, una tacca ogni tre ore, lasciava buchi che
-                        // sembravano numeri mancanti su un telefono dove ci
-                        // stavano tutte.
-                        //
-                        // Nel ripiego a una ogni due l'ora scelta resta sempre,
-                        // perche' risponde a "dove sono"; quando cade **accanto**
-                        // a una tacca, a spostarsi e' la tacca, se no due numeri
-                        // finirebbero uno addosso all'altro.
-                        //
-                        // **La stringa vuota non e' pigrizia: e' la correzione.**
-                        // Scritto con un `if` attorno al `Text`, il grafico si e'
-                        // rotto sul telefono e non in nessuno scatto precedente:
-                        // la riga qui sopra allinea le colonne **in basso**, e una
-                        // colonna senza etichetta e' piu' corta di una con
-                        // etichetta. Allineate in basso, le barre con l'etichetta
-                        // salivano di tutta l'altezza dell'etichetta, e
-                        // l'istogramma diventava una fila di barre a quote
-                        // alternate - un grafico che mente sui propri valori.
-                        //
-                        // Un `Text` vuoto occupa comunque la propria interlinea,
-                        // quindi tutte e sedici le colonne restano alte uguale.
-                        // L'alternativa - una casella d'altezza fissa - sarebbe
-                        // l'interlinea copiata a mano in un secondo posto, e le
-                        // due copie divergerebbero al primo che tocca il corpo.
-                        val ora = ore[indice].time.hour
-                        val mostra = ogni == 1 || indice == scelta ||
-                            (ora % ogni == 0 && abs(indice - scelta) >= 2)
-                        // **L'etichetta puo' uscire dalla propria colonna.** Nel
-                        // ripiego la colonna e' piu' stretta di "00": `unbounded`
-                        // le lascia misurare la propria larghezza vera e sbordare,
-                        // centrata, nello spazio della colonna accanto - che
-                        // un'etichetta non ce l'ha.
-                        Text(
-                            text = if (mostra) oraDueCifre(ora) else "",
-                            style = EtichettaGrafico,
-                            // **L'inchiostro tenue era la meta' del difetto.**
-                            // `inkFaint` e' il grigio delle etichette dentro una
-                            // cella, dove sopra c'e' sempre un valore nero a fare
-                            // da appiglio; qui sotto le colonne non c'e' nient'altro
-                            // da leggere, e dieci punti di corpo in grigio chiaro
-                            // su carta chiara si guardano senza vederli. Una scala
-                            // e' fatta per essere letta.
-                            color = if (indice == scelta) palette.accent else palette.inkSoft,
-                            maxLines = 1,
-                            modifier = Modifier.wrapContentWidth(
-                                align = Alignment.CenterHorizontally,
-                                unbounded = true,
-                            ),
-                        )
-                    }
-                }
-            }
-        }
+        ScalaUv(valore = corrente, palette = palette, modifier = Modifier.padding(top = 12.dp))
 
-        ore.getOrNull(scelta)?.let { oraMostrata ->
-            val altezzaSole = remember(oraMostrata.time, state.place, state.forecast?.utcOffsetSeconds) {
-                OmbraSole.altezza(
-                    oraMostrata.time,
-                    state.place.latitude,
-                    state.place.longitude,
-                    state.forecast?.utcOffsetSeconds ?: 0,
-                )
-            }
-            ScenaOmbra(
-                altezzaSole = altezzaSole,
-                mattina = oraMostrata.time.hour < 13,
+        if (ore.isEmpty()) RigaSenzaOre(palette, Modifier.padding(top = 16.dp))
+        if (finestra.isNotEmpty()) {
+            ColonneUv(
+                ore = ore,
+                finestra = finestra,
+                scelta = scelta,
                 palette = palette,
-                onTrascina = { frazione ->
-                    // Il dito sulla scena scorre le stesse ore del grafico:
-                    // la barra in fondo e questa scena restano allineate
-                    // perche' scelgono la stessa cosa.
-                    if (finestra.isNotEmpty()) {
-                        val i = (frazione * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
-                        if (finestra[i] != scelta) onSelectHour(finestra[i])
-                    }
-                },
-                modifier = Modifier.padding(top = 10.dp),
-            )
-            Text(
-                text = frase(oraMostrata.time.hour, altezzaSole),
-                style = SalaType.rowTitle,
-                color = palette.ink,
-                modifier = Modifier.padding(top = 8.dp),
+                onSelectHour = onSelectHour,
+                modifier = Modifier.padding(top = 14.dp),
             )
         }
 
         Didascalia(
-            consiglio(corrente),
+            consiglioDelGiorno(
+                oggi = state.selectedDay == 0,
+                massimo = massimo,
+                daOra = sopraTre.firstOrNull()?.time?.hour,
+                aOra = sopraTre.lastOrNull()?.time?.hour?.plus(1),
+            ),
             palette,
             modifier = Modifier.padding(top = 10.dp),
         )
@@ -293,12 +166,14 @@ fun SalaUvScreen(
         ) {
             CellaValore(
                 etichetta = tr("PICCO", "PEAK", "SPITZE", "PIC", "PICO"),
-                valore = picco?.let { oraPiena(ore[it].time.hour) } ?: "--",
+                valore = picco?.takeIf { massimo > 0.2 }?.let { "${oraPiena(ore[it].time.hour)} · ${String.format(Lingue.locale, "%.1f", massimo)}" } ?: "--",
                 palette = palette,
             )
-            CellaValore(etichetta = tr("AL SOLE", "IN THE SUN", "IN DER SONNE", "AU SOLEIL", "AL SOL"), valore = esposizione(corrente), palette = palette)
-            // Senza il dato la cella non c'e': "--" in un riquadro e' spazio
-            // che non dice niente.
+            CellaValore(
+                etichetta = tr("AL SOLE", "IN THE SUN", "IN DER SONNE", "AU SOLEIL", "AL SOL"),
+                valore = if (notte) "--" else esposizione(corrente),
+                palette = palette,
+            )
             if (ozono != null) {
                 CellaValore(
                     etichetta = tr("OZONO", "OZONE", "OZON", "OZONE", "OZONO"),
@@ -396,112 +271,7 @@ private fun RowScope.ColonnaLuce(
 private fun hhmm(t: java.time.LocalDateTime): String =
     String.format(java.util.Locale.ROOT, "%02d:%02d", t.hour, t.minute)
 
-/**
- * Una persona e la sua ombra, con il sole all'altezza vera di quell'ora.
- *
- * L'indice UV e' un numero astratto; l'ombra no. **La regola dell'ombra** -
- * quando l'ombra e' piu' corta di chi la fa, il sole scotta - e' la stessa che
- * insegnano i dermatologi, e qui la si vede allungarsi e accorciarsi
- * trascinando il dito sulla scena da mattina a sera.
- *
- * Il sole sta a sinistra la mattina e a destra il pomeriggio - guardando a sud,
- * come si guarda il sole dall'Italia - e l'ombra va dalla parte opposta.
- */
-@Composable
-private fun ScenaOmbra(
-    altezzaSole: Double,
-    mattina: Boolean,
-    palette: SalaPalette,
-    onTrascina: (Float) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val lunghezza = OmbraSole.lunghezzaRelativa(altezzaSole)
-    Canvas(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(palette.chip)
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragStart = { onTrascina(it.x / size.width) },
-                ) { cambio, _ ->
-                    cambio.consume()
-                    onTrascina(cambio.position.x / size.width)
-                }
-            }
-            .semantics {
-                contentDescription = if (lunghezza == null) {
-                    tr("Il sole è sotto l'orizzonte.", "The sun is below the horizon.", "Die Sonne steht unter dem Horizont.", "Le soleil est sous l'horizon.", "El sol está bajo el horizonte.")
-                } else {
-                    tr(
-                        "Sole a ${altezzaSole.roundToInt()} gradi, ombra lunga ${"%.1f".format(Lingue.locale, lunghezza)} volte la persona. Trascina per cambiare ora.",
-                        "Sun at ${altezzaSole.roundToInt()} degrees, shadow ${"%.1f".format(Lingue.locale, lunghezza)} times the person's height. Drag to change the hour.",
-                        "Sonne auf ${altezzaSole.roundToInt()} Grad, Schatten ${"%.1f".format(Lingue.locale, lunghezza)}-mal so lang wie die Person. Ziehen, um die Stunde zu ändern.",
-                        "Soleil à ${altezzaSole.roundToInt()} degrés, ombre ${"%.1f".format(Lingue.locale, lunghezza)} fois la taille de la personne. Faites glisser pour changer l'heure.",
-                        "Sol a ${altezzaSole.roundToInt()} grados, sombra ${"%.1f".format(Lingue.locale, lunghezza)} veces la altura de la persona. Arrastra para cambiar la hora.",
-                    )
-                }
-            },
-    ) {
-        val terra = size.height * 0.80f
-        val altezzaPersona = size.height * 0.52f
-        val xPersona = size.width * 0.5f
-        drawLine(
-            color = palette.maniglia,
-            start = Offset(16.dp.toPx(), terra),
-            end = Offset(size.width - 16.dp.toPx(), terra),
-            strokeWidth = 2.dp.toPx(),
-        )
 
-        // Il sole, su un quarto di cerchio: alto col sole alto.
-        if (lunghezza != null) {
-            val angolo = Math.toRadians(altezzaSole.coerceIn(0.0, 90.0))
-            val raggio = size.width * 0.42f
-            val lato = if (mattina) -1f else 1f
-            val sole = Offset(
-                xPersona + lato * (raggio * cos(angolo)).toFloat(),
-                terra - (size.height * 0.72f * sin(angolo)).toFloat(),
-            )
-            drawCircle(SalaTokens.accent400, radius = 9.dp.toPx(), center = sole)
-
-            // L'ombra, dalla parte opposta, lunga quanto dice il conto e
-            // tagliata al bordo della scena.
-            val fine = (xPersona - lato * (altezzaPersona * lunghezza).toFloat())
-                .coerceIn(16.dp.toPx(), size.width - 16.dp.toPx())
-            drawLine(
-                color = palette.ink.copy(alpha = 0.28f),
-                start = Offset(xPersona, terra),
-                end = Offset(fine, terra),
-                strokeWidth = 7.dp.toPx(),
-                cap = StrokeCap.Round,
-            )
-        }
-
-        // La persona: corpo e testa, due tratti pieni.
-        drawLine(
-            color = palette.ink,
-            start = Offset(xPersona, terra),
-            end = Offset(xPersona, terra - altezzaPersona * 0.78f),
-            strokeWidth = 6.dp.toPx(),
-            cap = StrokeCap.Round,
-        )
-        drawCircle(palette.ink, radius = altezzaPersona * 0.11f, center = Offset(xPersona, terra - altezzaPersona * 0.92f))
-    }
-}
-
-/** Quello che la scena dice, in una frase. */
-private fun frase(ora: Int, altezzaSole: Double): String {
-    val lunghezza = OmbraSole.lunghezzaRelativa(altezzaSole)
-        ?: return tr("Alle ${oraDueCifre(ora)} il sole è sotto l'orizzonte.", "At ${oraDueCifre(ora)} the sun is below the horizon.", "Um ${oraDueCifre(ora)} steht die Sonne unter dem Horizont.", "À ${oraDueCifre(ora)} le soleil est sous l'horizon.", "A las ${oraDueCifre(ora)} el sol está bajo el horizonte.")
-    val quanto = when {
-        lunghezza < 1.0 -> tr("più corta di te: il sole scotta", "shorter than you: the sun burns", "kürzer als du: Die Sonne brennt", "plus courte que vous : le soleil brûle", "más corta que tú: el sol quema")
-        lunghezza < 1.3 -> tr("lunga circa quanto te", "about as long as you are tall", "etwa so lang, wie du groß bist", "à peu près de votre taille", "más o menos tan larga como tú")
-        lunghezza >= OmbraSole.MASSIMA -> tr("lunghissima", "very long", "sehr lang", "très longue", "larguísima")
-        else -> tr("${"%.1f".format(Lingue.locale, lunghezza)} volte te", "${"%.1f".format(Lingue.locale, lunghezza)} times your height", "${"%.1f".format(Lingue.locale, lunghezza)}-mal deine Größe", "${"%.1f".format(Lingue.locale, lunghezza)} fois votre taille", "${"%.1f".format(Lingue.locale, lunghezza)} veces tu altura")
-    }
-    return tr("Alle ${oraDueCifre(ora)} sole a ${altezzaSole.roundToInt()}°, l'ombra è $quanto.", "At ${oraDueCifre(ora)} the sun is at ${altezzaSole.roundToInt()}°, your shadow is $quanto.", "Um ${oraDueCifre(ora)} steht die Sonne auf ${altezzaSole.roundToInt()}°, dein Schatten ist $quanto.", "À ${oraDueCifre(ora)} le soleil est à ${altezzaSole.roundToInt()}°, votre ombre est $quanto.", "A las ${oraDueCifre(ora)} el sol está a ${altezzaSole.roundToInt()}°, tu sombra es $quanto.")
-}
 
 /**
  * Le cifre sopra e sotto le colonne: il corpo delle etichette, senza la loro
@@ -524,14 +294,6 @@ private fun nomeUv(valore: Double): String = when {
     else -> tr("Assente", "None", "Keine", "Nul", "Nulo")
 }
 
-private fun coloreUv(valore: Double, palette: SalaPalette): Color = when {
-    valore >= 8 -> SalaTokens.accent700
-    valore >= 6 -> SalaTokens.accent500
-    valore >= 3 -> SalaTokens.accent400
-    valore > 0.2 -> SalaTokens.verde400
-    else -> palette.maniglia
-}
-
 /**
  * Quanto si sta al sole prima di scottarsi.
  *
@@ -544,10 +306,183 @@ private fun esposizione(valore: Double): String = when {
     else -> "~${(200.0 / valore).roundToInt().coerceAtMost(240)} min"
 }
 
-private fun consiglio(valore: Double): String = when {
-    valore >= 8 -> tr("Indice molto alto: nelle ore centrali servono cappello, occhiali e crema ad alto fattore, e l'ombra quando c'è.", "Very high index: around midday you need a hat, sunglasses, high-factor sunscreen and shade when there is any.", "Sehr hoher Index: In den Mittagsstunden braucht es Hut, Sonnenbrille, Sonnencreme mit hohem Schutzfaktor und Schatten, wo es welchen gibt.", "Indice très élevé : en milieu de journée, il faut chapeau, lunettes, crème à indice élevé, et de l'ombre quand il y en a.", "Índice muy alto: en las horas centrales hacen falta sombrero, gafas y crema de alto factor, y sombra cuando la haya.")
-    valore >= 6 -> tr("Serve protezione: crema ad alto fattore e pause all'ombra nelle ore centrali.", "Protection needed: high-factor sunscreen and breaks in the shade around midday.", "Schutz nötig: Sonnencreme mit hohem Schutzfaktor und Pausen im Schatten in den Mittagsstunden.", "Protection nécessaire : crème à indice élevé et pauses à l'ombre en milieu de journée.", "Hace falta protección: crema de alto factor y pausas a la sombra en las horas centrales.")
-    valore >= 3 -> tr("Protezione consigliata se si resta fuori a lungo, soprattutto in quota o sull'acqua.", "Protection advised if you stay out long, especially at altitude or on the water.", "Schutz empfohlen, wenn man lange draußen bleibt, besonders in der Höhe oder auf dem Wasser.", "Protection conseillée si l'on reste longtemps dehors, surtout en altitude ou sur l'eau.", "Protección recomendada si se está mucho tiempo fuera, sobre todo en altura o en el agua.")
-    valore > 0.2 -> tr("L'esposizione è sicura per tempi lunghi: nessuna protezione necessaria.", "Exposure is safe for long periods: no protection needed.", "Der Aufenthalt in der Sonne ist auch länger unbedenklich: kein Schutz nötig.", "L'exposition est sans danger pendant de longues durées : aucune protection nécessaire.", "La exposición es segura durante mucho tiempo: no hace falta protección.")
-    else -> tr("Sole sotto l'orizzonte: nessuna radiazione ultravioletta.", "Sun below the horizon: no ultraviolet radiation.", "Sonne unter dem Horizont: keine ultraviolette Strahlung.", "Soleil sous l'horizon : aucun rayonnement ultraviolet.", "Sol bajo el horizonte: sin radiación ultravioleta.")
+/**
+ * I colori della scala UV dell'OMS: verde, giallo, arancio, rosso, viola. Sono
+ * quelli che si vedono sui cartelli delle spiagge e nei bollettini, e per
+ * questo restano questi in ogni tema: un colore della scala che cambiasse con
+ * la carta non direbbe piu' la stessa cosa.
+ */
+private val FasceUv = listOf(
+    0.0 to Color(0xFF6BA368),
+    3.0 to Color(0xFFE2B93B),
+    6.0 to Color(0xFFE8873A),
+    8.0 to Color(0xFFD9483B),
+    11.0 to Color(0xFF8E5BB5),
+)
+
+private fun coloreScala(valore: Double): Color = FasceUv.last { valore >= it.first }.second
+
+/**
+ * La scala dell'OMS in una barra: cinque fasce colorate, larghe quanto i loro
+ * valori fino a 12, e un segnaposto sul valore mostrato.
+ */
+@Composable
+private fun ScalaUv(valore: Double, palette: SalaPalette, modifier: Modifier = Modifier) {
+    val posizione = (valore / 12.0).coerceIn(0.0, 1.0).toFloat()
+    val anello = palette.panelSolido
+    val inchiostro = palette.ink
+    Column(modifier = modifier.fillMaxWidth()) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(16.dp)) {
+            val alto = 8.dp.toPx()
+            val cima = (size.height - alto) / 2f
+            val spazio = 2.dp.toPx()
+            val limiti = FasceUv.map { it.first } + 12.0
+            for (i in FasceUv.indices) {
+                val x0 = (limiti[i] / 12.0 * size.width).toFloat() + if (i > 0) spazio / 2f else 0f
+                val x1 = (limiti[i + 1] / 12.0 * size.width).toFloat() - if (i < FasceUv.lastIndex) spazio / 2f else 0f
+                drawRoundRect(
+                    color = FasceUv[i].second,
+                    topLeft = Offset(x0, cima),
+                    size = androidx.compose.ui.geometry.Size(x1 - x0, alto),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(alto / 2f),
+                )
+            }
+            val x = (posizione * size.width).coerceIn(size.height / 2f, size.width - size.height / 2f)
+            drawCircle(color = anello, radius = size.height / 2f, center = Offset(x, size.height / 2f))
+            drawCircle(color = inchiostro, radius = size.height / 2f - 3.dp.toPx(), center = Offset(x, size.height / 2f))
+        }
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 3.dp)) {
+            listOf(
+                3f to tr("basso", "low", "niedrig", "faible", "bajo"),
+                3f to tr("moderato", "moderate", "mäßig", "modéré", "moderado"),
+                2f to tr("alto", "high", "hoch", "élevé", "alto"),
+                3f to tr("molto alto", "very high", "sehr hoch", "très élevé", "muy alto"),
+                1f to "11+",
+            ).forEach { (peso, nome) ->
+                Text(
+                    text = nome,
+                    style = EtichettaGrafico,
+                    color = palette.inkFaint,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Clip,
+                    modifier = Modifier.weight(peso),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Le ore di luce in colonne, ciascuna nel colore della sua fascia e alta
+ * quanto l'indice (su una scala che arriva almeno a 8, cosi' un giorno basso
+ * resta basso). Sopra le colonne che contano, il valore; sotto, l'ora ogni
+ * tre. Si tocca o si trascina per scegliere l'ora, come la barra in basso.
+ */
+@Composable
+private fun ColonneUv(
+    ore: List<com.caelumweather.data.HourForecast>,
+    finestra: List<Int>,
+    scelta: Int,
+    palette: SalaPalette,
+    onSelectHour: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val tetto = (finestra.maxOfOrNull { ore[it].uvIndex ?: 0.0 } ?: 0.0).coerceAtLeast(8.0)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .pointerInput(finestra) {
+                detectHorizontalDragGestures { cambio, _ ->
+                    cambio.consume()
+                    val i = (cambio.position.x / size.width * finestra.size).toInt().coerceIn(0, finestra.lastIndex)
+                    if (finestra[i] != scelta) onSelectHour(finestra[i])
+                }
+            },
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        finestra.forEach { indice ->
+            val uv = ore[indice].uvIndex ?: 0.0
+            val evidenziata = indice == scelta
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics {
+                        contentDescription = "${oraDueCifre(ore[indice].time.hour)}:00, UV ${String.format(Lingue.locale, "%.1f", uv)}"
+                        selected = evidenziata
+                    }
+                    .clickable { onSelectHour(indice) },
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = if (uv >= 0.95) uv.roundToInt().toString() else "",
+                    style = EtichettaGrafico,
+                    color = if (evidenziata) palette.ink else palette.inkFaint,
+                    maxLines = 1,
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .fillMaxWidth()
+                        .height(misuraCheArriva((4f + (uv / tetto).toFloat().coerceIn(0f, 1f) * 40f).dp))
+                        .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp, bottomStart = 2.dp, bottomEnd = 2.dp))
+                        .background(if (uv > 0.2) coloreScala(uv) else palette.maniglia),
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 3.dp)
+                        .size(width = 14.dp, height = 3.dp)
+                        .clip(CircleShape)
+                        .background(if (evidenziata) palette.accent else Color.Transparent),
+                )
+                Text(
+                    text = if (ore[indice].time.hour % 3 == 0 || evidenziata) oraDueCifre(ore[indice].time.hour) else "",
+                    style = EtichettaGrafico,
+                    color = if (evidenziata) palette.accent else palette.inkSoft,
+                    maxLines = 1,
+                    modifier = Modifier.wrapContentWidth(unbounded = true),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Quando proteggersi, **dalla giornata intera e non dall'ora mostrata**: e'
+ * la domanda che si fa uscendo di casa. Non parla mai del sole sotto
+ * l'orizzonte - quella e' la parola "Sole tramontato" in testa, che viene
+ * dall'altezza vera del sole e non da un indice a zero sotto le nuvole.
+ */
+private fun consiglioDelGiorno(oggi: Boolean, massimo: Double, daOra: Int?, aOra: Int?): String {
+    val quando = if (oggi) tr("Oggi", "Today", "Heute", "Aujourd'hui", "Hoy") else tr("Quel giorno", "That day", "An dem Tag", "Ce jour-là", "Ese día")
+    return when {
+        daOra != null && aOra != null && massimo >= 8 -> tr(
+            "$quando indice molto alto: dalle ${oraDueCifre(daOra)} alle ${oraDueCifre(aOra)} cappello, occhiali, crema ad alto fattore e ombra quando c'è.",
+            "$quando a very high index: from ${oraDueCifre(daOra)} to ${oraDueCifre(aOra)} a hat, sunglasses, high-factor sunscreen and shade when there is any.",
+            "$quando sehr hoher Index: von ${oraDueCifre(daOra)} bis ${oraDueCifre(aOra)} Uhr Hut, Sonnenbrille, Sonnencreme mit hohem Schutz und Schatten.",
+            "$quando indice très élevé : de ${oraDueCifre(daOra)} h à ${oraDueCifre(aOra)} h chapeau, lunettes, crème à indice élevé et ombre.",
+            "$quando índice muy alto: de ${oraDueCifre(daOra)} a ${oraDueCifre(aOra)} sombrero, gafas, crema de alto factor y sombra.",
+        )
+        daOra != null && aOra != null -> tr(
+            "Proteggiti dalle ${oraDueCifre(daOra)} alle ${oraDueCifre(aOra)}: crema, occhiali e cappello se resti fuori a lungo.",
+            "Protect yourself from ${oraDueCifre(daOra)} to ${oraDueCifre(aOra)}: sunscreen, sunglasses and a hat if you stay out long.",
+            "Schütze dich von ${oraDueCifre(daOra)} bis ${oraDueCifre(aOra)} Uhr: Sonnencreme, Sonnenbrille und Hut, wenn du lange draußen bleibst.",
+            "Protège-toi de ${oraDueCifre(daOra)} h à ${oraDueCifre(aOra)} h : crème, lunettes et chapeau si tu restes longtemps dehors.",
+            "Protégete de ${oraDueCifre(daOra)} a ${oraDueCifre(aOra)}: crema, gafas y sombrero si estás mucho tiempo fuera.",
+        )
+        massimo > 0.2 -> tr(
+            "$quando l'indice resta sotto 3: non serve protezione, nemmeno nelle ore centrali.",
+            "$quando the index stays below 3: no protection needed, even around midday.",
+            "$quando bleibt der Index unter 3: kein Schutz nötig, auch mittags nicht.",
+            "$quando l'indice reste sous 3 : aucune protection nécessaire, même à midi.",
+            "$quando el índice se queda por debajo de 3: no hace falta protección, ni a mediodía.",
+        )
+        else -> tr(
+            "$quando i raggi UV restano a zero: niente da cui proteggersi.",
+            "$quando UV stays at zero: nothing to protect yourself from.",
+            "$quando bleibt die UV-Strahlung bei null: kein Schutz nötig.",
+            "$quando les UV restent à zéro : rien dont se protéger.",
+            "$quando los rayos UV se quedan en cero: nada de qué protegerse.",
+        )
+    }
 }
