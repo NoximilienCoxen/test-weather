@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -170,6 +172,8 @@ internal fun FumettoAnteprima(
                     transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 1f)
                 }
                 .width(236.dp)
+                // TalkBack legge il fumetto appena compare o cambia giorno.
+                .semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite }
                 .shadow(14.dp, RoundedCornerShape(28.dp), clip = false)
                 .clip(RoundedCornerShape(28.dp))
                 .background(palette.panelSolido),

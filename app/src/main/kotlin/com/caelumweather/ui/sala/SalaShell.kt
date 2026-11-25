@@ -977,7 +977,7 @@ fun SalaShell(
                                 Dp.Unspecified
                             } else {
                                 with(LocalDensity.current) {
-                                    (c.bottom - 14.dp.toPx() - QUOTA_CIELO * altezzaRadice).toDp()
+                                    (c.bottom - 14.dp.toPx() - quotaCielo(this.fontScale) * altezzaRadice).toDp()
                                 }.coerceAtLeast(260.dp)
                             }
                         }
@@ -1486,3 +1486,15 @@ val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?
  * piu' dense - ci stanno intere senza nascondere niente.
  */
 private const val QUOTA_CIELO = 0.30f
+
+/**
+ * **Col testo grande il cielo cede il posto.** Chi ingrandisce i caratteri
+ * dalle impostazioni del telefono ha bisogno di leggere prima che di guardare
+ * il cielo: a 1,3 le schede piene superavano il tetto di un centinaio di
+ * punti e tornavano a scorrere dentro di se'. La quota del cielo scende col
+ * crescere dei caratteri - un sesto dello schermo a 1,3, un dodicesimo da
+ * 1,5 in su - e le schede salgono quanto serve. Oltre, a ingrandimenti
+ * estremi, una scheda puo' ancora scorrere: meglio che tagliare il testo.
+ */
+internal fun quotaCielo(fontScale: Float): Float =
+    (QUOTA_CIELO - (fontScale - 1f).coerceAtLeast(0f) * 0.45f).coerceIn(0.08f, QUOTA_CIELO)

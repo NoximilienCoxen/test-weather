@@ -1,5 +1,7 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.foundation.layout.size
 import com.caelumweather.ui.sala.cedevole
@@ -488,6 +490,15 @@ fun StrisciaGiorni(
     // giorno sotto il dito, e il centro di ogni giorno per mettergli sopra il
     // fumetto. Un colpetto a ogni giorno nuovo, come sulla barra delle ore.
     var anteprima by remember { mutableStateOf<Int?>(null) }
+    // Aperta da TalkBack l'anteprima non ha un dito da staccare: si chiude da sola.
+    var anteprimaDaAccessibilita by remember { mutableStateOf(false) }
+    LaunchedEffect(anteprima, anteprimaDaAccessibilita) {
+        if (anteprima != null && anteprimaDaAccessibilita) {
+            kotlinx.coroutines.delay(6_000)
+            anteprima = null
+            anteprimaDaAccessibilita = false
+        }
+    }
     val centri = remember { androidx.compose.runtime.mutableStateMapOf<Int, Float>() }
     val vibrazioni = com.caelumweather.ui.motion.rememberVibrazioniMeteo()
     val movimentoAnteprima = LocalMovimento.current
@@ -534,6 +545,13 @@ fun StrisciaGiorni(
                             if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} Millimeter", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimètres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} milímetros"))
                         }
                         selected = attivo
+                        // Con TalkBack la pressione lunga arriva come azione,
+                        // non come dito appoggiato: apre la stessa anteprima.
+                        onLongClick(label = tr("anteprima del giorno", "preview the day", "Vorschau des Tages", "aperçu du jour", "vista previa del día")) {
+                            anteprimaDaAccessibilita = true
+                            anteprima = giorno.indice
+                            true
+                        }
                     }
                     .onPlaced {
                         if (onToccoDa != null) coordinate[giorno.indice] = it

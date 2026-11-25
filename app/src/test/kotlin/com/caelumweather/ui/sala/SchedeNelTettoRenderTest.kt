@@ -222,6 +222,47 @@ class SchedeNelTettoRenderTest {
         misura("telefono-pioggia") { com.caelumweather.ui.sala.rooms.SalaPioggiaScreen(state = s, palette = viola, onSelectHour = {}, onSelectDay = {}, movimento = false) }
     }
 
+    /** Le sale con i caratteri ingranditi dalle impostazioni del telefono. */
+    private fun misuraIngrandita(scala: Float, nome: String, sala: @Composable () -> Unit): Float = misura("$nome-x$scala") {
+        val d = androidx.compose.ui.platform.LocalDensity.current
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(d.density, scala),
+        ) { sala() }
+    }
+
+    @Test
+    fun `con i caratteri ingranditi`() {
+        val s = stato()
+        val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val vm = WeatherViewModel(attivita.application)
+        val cielo = SkyState(altitude = -10f, dayness = 0f, sunPresence = 0f, moonPresence = 1f, redness = 0f)
+        val fuori = mutableListOf<String>()
+        listOf(1.3f, 1.6f).forEach { scala ->
+            // Il tetto e la pagina crescono quanto cede il cielo (`quotaCielo`).
+            val guadagno = (quotaCielo(1f) - quotaCielo(scala)) * ALTEZZA_TELEFONO
+            val tetto = TETTO_TELEFONO + guadagno
+            val pagina = PAGINA_TELEFONO
+            fun conta(nome: String, sala: @Composable () -> Unit) {
+                val alta = misuraIngrandita(scala, nome, sala)
+                val pannello = pannelli["$nome-x$scala"] ?: 0f
+                // A 1,3 tutto deve stare; a 1,6 si tollera lo scorrimento
+                // interno del pannello, ma non la pagina che esce.
+                val pannelloFuori = scala <= 1.3f && pannello > tetto
+                // La pagina del carosello non cresce col cielo che cede: a 1,3
+                // anche lei deve contenere tutto.
+                val paginaFuori = scala <= 1.3f && alta - pannello + minOf(pannello, tetto) > pagina
+                if (pannelloFuori || paginaFuori) fuori += "$nome x$scala: ${alta.toInt()} (pannello ${pannello.toInt()}, tetto ${tetto.toInt()})"
+            }
+            conta("oggi") { SalaOggiScreen(state = s, sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}) }
+            conta("pioggia") { SalaPioggiaScreen(state = s, palette = palette, onSelectHour = {}, onSelectDay = {}, movimento = false) }
+            conta("luna") { SalaLunaScreen(palette = palette, giorno = oggi, movimento = false) }
+            conta("aria") { SalaAriaScreen(state = s, palette = palette) }
+            conta("vento") { SalaVentoScreen(state = s, palette = palette, movimento = false) }
+            conta("uv") { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) }
+        }
+        assertTrue("col testo grande non stanno: $fuori", fuori.isEmpty())
+    }
+
     private companion object {
         /**
          * Il tetto della Shell su un telefono da 891 punti, con il 30 per cento
@@ -229,6 +270,9 @@ class SchedeNelTettoRenderTest {
          * meno la riga del bottone "torna all'ora attuale", alta 38 punti.
          */
         const val TETTO_TELEFONO = 462f
+
+        /** L'altezza del telefono delle misure, in punti. */
+        const val ALTEZZA_TELEFONO = 891f
 
         /** L'altezza della pagina del carosello, fra l'intestazione e i puntini. */
         const val PAGINA_TELEFONO = 602f

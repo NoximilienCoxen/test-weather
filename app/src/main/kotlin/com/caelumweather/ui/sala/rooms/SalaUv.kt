@@ -331,7 +331,20 @@ private fun ScalaUv(valore: Double, palette: SalaPalette, modifier: Modifier = M
     val posizione = (valore / 12.0).coerceIn(0.0, 1.0).toFloat()
     val anello = palette.panelSolido
     val inchiostro = palette.ink
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            // Per TalkBack la scala e' un disegno muto: si dice cosa mostra.
+            .semantics {
+                contentDescription = tr(
+                    "Scala UV: ${String.format(Lingue.locale, "%.1f", valore)}, ${nomeUv(valore).lowercase()}",
+                    "UV scale: ${String.format(Lingue.locale, "%.1f", valore)}, ${nomeUv(valore).lowercase()}",
+                    "UV-Skala: ${String.format(Lingue.locale, "%.1f", valore)}, ${nomeUv(valore).lowercase()}",
+                    "Échelle UV : ${String.format(Lingue.locale, "%.1f", valore)}, ${nomeUv(valore).lowercase()}",
+                    "Escala UV: ${String.format(Lingue.locale, "%.1f", valore)}, ${nomeUv(valore).lowercase()}",
+                )
+            },
+    ) {
         Canvas(modifier = Modifier.fillMaxWidth().height(16.dp)) {
             val alto = 8.dp.toPx()
             val cima = (size.height - alto) / 2f
