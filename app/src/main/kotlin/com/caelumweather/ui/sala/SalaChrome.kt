@@ -271,7 +271,7 @@ fun PannelloSala(
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
         if (bagliore) BaglioreDorato(Modifier.matchParentSize())
         // Brina e gocce sul vetro della scheda, dentro il ritaglio: vedi [Vetro].
-        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f, presenza = brina.presenza.value)
+        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f, presenza = { brina.presenza.value })
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
         // Il livello dell'onda c'e' solo mentre l'onda corre.
         if (onda != null && onda.corsa.isRunning) {

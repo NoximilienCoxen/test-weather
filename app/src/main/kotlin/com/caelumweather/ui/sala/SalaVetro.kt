@@ -99,9 +99,14 @@ internal fun Modifier.scioglieBrina(stato: StatoBrina, attiva: Boolean): Modifie
  * [scioglieBrina].
  */
 @Composable
-internal fun BrinaSulVetro(gelo: Float, modifier: Modifier = Modifier, cartaScura: Boolean = false, presenza: Float = 1f) {
+internal fun BrinaSulVetro(gelo: Float, modifier: Modifier = Modifier, cartaScura: Boolean = false, presenza: () -> Float = { 1f }) {
+    // **La presenza si legge nel disegno, non nella composizione.** Letta fuori,
+    // ogni fotogramma dello scioglimento (un secondo) e del ritorno (sei)
+    // ricomponeva l'intera scheda, sopra un cielo di neve gia' pesante: proprio
+    // nei secondi dopo un tocco l'interfaccia rallentava e il tocco seguente
+    // arrivava tardi o andava perso. Qui ridisegna solo la brina.
     Canvas(modifier = modifier) {
-        disegnaBrina(gelo * presenza, cartaScura)
+        disegnaBrina(gelo * presenza(), cartaScura)
     }
 }
 
