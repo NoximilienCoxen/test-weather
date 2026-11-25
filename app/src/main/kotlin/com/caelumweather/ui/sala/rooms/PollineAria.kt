@@ -72,7 +72,7 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
     val tuttoAZero = giorni.all { g -> g.livelli.isNotEmpty() && g.livelli.values.all { it == 0 } }
     if (tuttoAZero) {
         Row(
-            modifier = modifier.fillMaxWidth().padding(top = 10.dp),
+            modifier = modifier.fillMaxWidth().padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -95,7 +95,7 @@ internal fun SezionePolline(giorni: List<GiornoPolline>, palette: SalaPalette, m
         return
     }
 
-    Column(modifier = modifier.fillMaxWidth().padding(top = 10.dp)) {
+    Column(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = tr("IL POLLINE", "POLLEN", "POLLEN", "LE POLLEN", "EL POLEN"),

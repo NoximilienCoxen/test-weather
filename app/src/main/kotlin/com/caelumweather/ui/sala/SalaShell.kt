@@ -1060,6 +1060,9 @@ fun SalaShell(
                         palette = palette,
                         onVai = ::vaiA,
                         posizione = { pagerState.currentPage + pagerState.currentPageOffsetFraction },
+                        // Un filo d'aria fra i puntini e il bottone "torna all'ora
+                        // attuale": mirando l'uno non si prende l'altro.
+                        modifier = Modifier.padding(bottom = 4.dp),
                     )
                 }
 

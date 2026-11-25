@@ -1,5 +1,8 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.animation.core.snap
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -121,30 +124,50 @@ fun BarraDelleOre(
     val spostata = ora != oraAttuale.coerceIn(0, ORE - 1)
 
     Column(modifier = modifier.fillMaxWidth()) {
+        // **Riga alta quanto il bottone, sempre**: se crescesse solo quando il
+        // bottone compare, tutta la galleria sobbalzerebbe a ogni ora spostata.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth().height(RIGA_ORA).padding(bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             if (spostata) {
+                // **Un bottone vero, non un'etichetta.** Era una pastiglia alta
+                // ventidue punti subito sotto i puntini delle sale: mirandola si
+                // prendeva un puntino e si cambiava sala. Adesso e' un bottone
+                // tonale di Material 3 Expressive - alto, con l'icona, scritto in
+                // chiaro - che si squadra sotto il dito (`formaCheCede`).
+                val pressione = rememberPressione()
+                val forma = formaCheCede(pressione, riposo = 18.dp, premuto = 8.dp)
                 Row(
                     modifier = Modifier
-                        .cedevole(premuto = 0.92f)
-                        .clip(CircleShape)
+                        .fillMaxHeight()
+                        .cedevole(premuto = 0.94f, pressione = pressione)
+                        .clip(forma)
                         .background(palette.accent)
-                        .clickable(onClick = onTornaOra)
-                        .padding(horizontal = 12.dp, vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Canvas(modifier = Modifier.size(11.dp)) {
-                        drawCircle(
-                            color = palette.accentInk,
-                            radius = size.width / 2f - 1.dp.toPx(),
-                            style = Stroke(width = 2.dp.toPx()),
+                        .clickable(
+                            onClickLabel = tr("torna all'ora attuale", "back to now", "zurück zu jetzt", "retour à maintenant", "volver a ahora"),
+                            role = Role.Button,
+                            onClick = onTornaOra,
                         )
+                        .padding(start = 12.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    // Un orologio: il quadrante e le due lancette.
+                    Canvas(modifier = Modifier.size(18.dp)) {
+                        val tratto = 2.dp.toPx()
+                        val c = Offset(size.width / 2f, size.height / 2f)
+                        drawCircle(color = palette.accentInk, radius = size.width / 2f - tratto / 2f, style = Stroke(width = tratto))
+                        drawLine(palette.accentInk, c, Offset(c.x, c.y - size.height * 0.28f), strokeWidth = tratto, cap = StrokeCap.Round)
+                        drawLine(palette.accentInk, c, Offset(c.x + size.width * 0.22f, c.y), strokeWidth = tratto, cap = StrokeCap.Round)
                     }
-                    Text(text = tr("TORNA ALL'ORA ATTUALE", "BACK TO NOW", "ZURÜCK ZU JETZT", "RETOUR À MAINTENANT", "VOLVER A AHORA"), style = SalaType.sectionLabel, color = palette.accentInk)
+                    Text(
+                        text = tr("Torna all'ora attuale", "Back to now", "Zurück zu jetzt", "Retour à maintenant", "Volver a ahora"),
+                        style = SalaType.pill,
+                        color = palette.accentInk,
+                        maxLines = 1,
+                    )
                 }
             } else {
                 Text(
@@ -270,6 +293,9 @@ fun BarraDelleOre(
 private const val ORE = 24
 
 private val ALTEZZA = 34.dp
+
+/** La riga sopra la barra: l'invito a trascinare, o il bottone per tornare a adesso. */
+private val RIGA_ORA = 38.dp
 
 private fun indiceDa(x: Float, larghezza: Float): Int =
     (x / larghezza.coerceAtLeast(1f) * (ORE - 1)).roundToInt().coerceIn(0, ORE - 1)

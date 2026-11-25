@@ -322,7 +322,7 @@ fun SalaPioggiaScreen(
                 text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
+                modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
             )
             SettimanaDellaPioggia(
                 giorni = giorni,
@@ -387,7 +387,7 @@ private fun SettimanaDellaPioggia(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(
-                    modifier = Modifier.height(34.dp).fillMaxWidth(),
+                    modifier = Modifier.height(28.dp).fillMaxWidth(),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
                     Box(

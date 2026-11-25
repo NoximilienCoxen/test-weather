@@ -179,12 +179,13 @@ class SchedeNelTettoRenderTest {
     private companion object {
         /**
          * Il tetto della Shell su un telefono da 891 punti, con il 30 per cento
-         * dello schermo lasciato al cielo (`QUOTA_CIELO`), meno un margine.
+         * dello schermo lasciato al cielo (`QUOTA_CIELO`), meno un margine e
+         * meno la riga del bottone "torna all'ora attuale", alta 38 punti.
          */
-        const val TETTO_TELEFONO = 480f
+        const val TETTO_TELEFONO = 462f
 
         /** L'altezza della pagina del carosello, fra l'intestazione e i puntini. */
-        const val PAGINA_TELEFONO = 620f
+        const val PAGINA_TELEFONO = 602f
 
     }
 }

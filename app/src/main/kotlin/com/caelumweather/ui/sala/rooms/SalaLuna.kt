@@ -95,7 +95,7 @@ fun SalaLunaScreen(
         palette = palette,
         movimento = movimento,
         coloreDidascalia = cielo.inkSuCielo,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
     )
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -129,7 +129,7 @@ fun SalaLunaScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(tr("ILLUMINATA", "LIT", "BELEUCHTET", "ÉCLAIRÉE", "ILUMINADA"), "${(illuminata * 100f).roundToInt()} %", palette)
@@ -141,7 +141,7 @@ fun SalaLunaScreen(
             text = tr("LE PROSSIME FASI", "THE NEXT PHASES", "DIE NÄCHSTEN PHASEN", "LES PROCHAINES PHASES", "LAS PRÓXIMAS FASES"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -162,11 +162,11 @@ fun SalaLunaScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(24.dp))
                             .background(palette.chip)
-                            .padding(top = 8.dp, bottom = 7.dp, start = 4.dp, end = 4.dp),
+                            .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        Canvas(modifier = Modifier.size(26.dp)) { disegnaLuna(obiettivo, 1f) }
+                        Canvas(modifier = Modifier.size(22.dp)) { disegnaLuna(obiettivo, 1f) }
                         Text(
                             text = nome,
                             style = SalaType.giornoMax,

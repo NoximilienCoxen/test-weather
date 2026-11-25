@@ -322,7 +322,7 @@ fun SalaUvScreen(
                 text = tr("LA LUCE PER LE FOTO", "LIGHT FOR PHOTOS", "LICHT FÜR FOTOS", "LA LUMIÈRE POUR LES PHOTOS", "LA LUZ PARA LAS FOTOS"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
+                modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -364,7 +364,7 @@ private fun RowScope.ColonnaLuce(
             .weight(1f)
             .clip(RoundedCornerShape(22.dp))
             .background(palette.chip)
-            .padding(horizontal = 13.dp, vertical = 8.dp),
+            .padding(horizontal = 13.dp, vertical = 6.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(text = quando, style = SalaType.microLabel, color = palette.inkFaint)
@@ -419,7 +419,7 @@ private fun ScenaOmbra(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(62.dp)
+            .height(56.dp)
             .clip(RoundedCornerShape(24.dp))
             .background(palette.chip)
             .pointerInput(Unit) {

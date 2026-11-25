@@ -188,7 +188,7 @@ fun SalaAriaScreen(
                 text = tr("NELLA GIORNATA", "THROUGH THE DAY", "IM TAGESVERLAUF", "DANS LA JOURNÉE", "A LO LARGO DEL DÍA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+                modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
             )
             AndamentoAria(
                 ore = ore,
@@ -203,7 +203,7 @@ fun SalaAriaScreen(
             Didascalia(
                 consiglioOrario(ore, state.detailHour?.time?.hour),
                 palette,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 5.dp),
             )
         }
 
@@ -230,7 +230,7 @@ fun SalaAriaScreen(
             text = if (adesso) tr("RISPETTO AL LIMITE OMS", "AGAINST THE WHO LIMIT", "GEMESSEN AM WHO-GRENZWERT", "PAR RAPPORT À LA LIMITE OMS", "FRENTE AL LÍMITE DE LA OMS") else tr("RISPETTO AL LIMITE OMS · ADESSO", "AGAINST THE WHO LIMIT · NOW", "GEMESSEN AM WHO-GRENZWERT · JETZT", "PAR RAPPORT À LA LIMITE OMS · MAINTENANT", "FRENTE AL LÍMITE DE LA OMS · AHORA"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
+            modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
         )
         // **Quattro in una fila**, non due per due: una riga intera in meno, e
         // i quattro si confrontano a colpo d'occhio sulla stessa linea.
@@ -280,7 +280,7 @@ private fun AndamentoAria(
             .firstOrNull { n -> colonna * n + 3.dp * (n - 1) >= largaEtichetta + 3.dp } ?: 6
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth().height(44.dp),
+                modifier = Modifier.fillMaxWidth().height(36.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
