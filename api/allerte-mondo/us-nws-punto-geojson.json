@@ -10,6 +10,129 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1",
+                "areaDesc": "Hudson; Eastern Essex; Eastern Union; New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northwest Suffolk; Northeast Suffolk; Southwest Suffolk; Southeast Suffolk; Northern Queens; Northern Nassau; Southern Queens; Southern Nassau",
+                "geocode": {
+                    "SAME": [
+                        "034017",
+                        "034013",
+                        "034039",
+                        "036061",
+                        "036005",
+                        "036085",
+                        "036047",
+                        "036103",
+                        "036081",
+                        "036059"
+                    ],
+                    "UGC": [
+                        "NJZ006",
+                        "NJZ106",
+                        "NJZ108",
+                        "NYZ072",
+                        "NYZ073",
+                        "NYZ074",
+                        "NYZ075",
+                        "NYZ078",
+                        "NYZ079",
+                        "NYZ080",
+                        "NYZ081",
+                        "NYZ176",
+                        "NYZ177",
+                        "NYZ178",
+                        "NYZ179"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/NJZ006",
+                    "https://api.weather.gov/zones/forecast/NJZ106",
+                    "https://api.weather.gov/zones/forecast/NJZ108",
+                    "https://api.weather.gov/zones/forecast/NYZ072",
+                    "https://api.weather.gov/zones/forecast/NYZ073",
+                    "https://api.weather.gov/zones/forecast/NYZ074",
+                    "https://api.weather.gov/zones/forecast/NYZ075",
+                    "https://api.weather.gov/zones/forecast/NYZ078",
+                    "https://api.weather.gov/zones/forecast/NYZ079",
+                    "https://api.weather.gov/zones/forecast/NYZ080",
+                    "https://api.weather.gov/zones/forecast/NYZ081",
+                    "https://api.weather.gov/zones/forecast/NYZ176",
+                    "https://api.weather.gov/zones/forecast/NYZ177",
+                    "https://api.weather.gov/zones/forecast/NYZ178",
+                    "https://api.weather.gov/zones/forecast/NYZ179"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T03:22:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-25T03:38:00-05:00",
+                "effective": "2026-11-25T03:38:00-05:00",
+                "onset": "2026-11-26T10:00:00-05:00",
+                "expires": "2026-11-25T18:00:00-05:00",
+                "ends": "2026-11-27T01:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Wind Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Upton NY",
+                "headline": "High Wind Warning issued November 25 at 3:38AM EST until November 27 at 1:00AM EST by NWS Upton NY",
+                "description": "* WHAT...East winds 25 to 35 mph with gusts up to 60 mph expected.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From 10 AM Thursday to 1 AM EST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles.",
+                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "NPWOKX"
+                    ],
+                    "WMOidentifier": [
+                        "WWUS71 KOKX 250838"
+                    ],
+                    "NWSheadline": [
+                        "HIGH WIND WARNING REMAINS IN EFFECT FROM 10 AM THURSDAY TO 1 AM EST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KOKX.HW.W.0002.261126T1500Z-261127T0600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T01:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "HWW"
+                    ],
+                    "NationalWeatherService": [
+                        "HWW"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dd0d34e9ca87973b01bedbc103b4a96e079abe8d.006.1",
             "type": "Feature",
             "geometry": null,
@@ -100,131 +223,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.1e32c53481854d17324a5db29dd6cb10fdef134d.002.1",
-                "areaDesc": "Hudson; Eastern Essex; Eastern Union; New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northwest Suffolk; Northeast Suffolk; Southwest Suffolk; Southeast Suffolk; Northern Queens; Northern Nassau; Southern Queens; Southern Nassau",
-                "geocode": {
-                    "SAME": [
-                        "034017",
-                        "034013",
-                        "034039",
-                        "036061",
-                        "036005",
-                        "036085",
-                        "036047",
-                        "036103",
-                        "036081",
-                        "036059"
-                    ],
-                    "UGC": [
-                        "NJZ006",
-                        "NJZ106",
-                        "NJZ108",
-                        "NYZ072",
-                        "NYZ073",
-                        "NYZ074",
-                        "NYZ075",
-                        "NYZ078",
-                        "NYZ079",
-                        "NYZ080",
-                        "NYZ081",
-                        "NYZ176",
-                        "NYZ177",
-                        "NYZ178",
-                        "NYZ179"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/NJZ006",
-                    "https://api.weather.gov/zones/forecast/NJZ106",
-                    "https://api.weather.gov/zones/forecast/NJZ108",
-                    "https://api.weather.gov/zones/forecast/NYZ072",
-                    "https://api.weather.gov/zones/forecast/NYZ073",
-                    "https://api.weather.gov/zones/forecast/NYZ074",
-                    "https://api.weather.gov/zones/forecast/NYZ075",
-                    "https://api.weather.gov/zones/forecast/NYZ078",
-                    "https://api.weather.gov/zones/forecast/NYZ079",
-                    "https://api.weather.gov/zones/forecast/NYZ080",
-                    "https://api.weather.gov/zones/forecast/NYZ081",
-                    "https://api.weather.gov/zones/forecast/NYZ176",
-                    "https://api.weather.gov/zones/forecast/NYZ177",
-                    "https://api.weather.gov/zones/forecast/NYZ178",
-                    "https://api.weather.gov/zones/forecast/NYZ179"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.a23b4062f67a074cdbc0913b11cd9ed6bf3737b2.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T01:20:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-24T13:11:00-05:00",
-                "effective": "2026-11-24T13:11:00-05:00",
-                "onset": "2026-11-26T10:00:00-05:00",
-                "expires": "2026-11-25T04:00:00-05:00",
-                "ends": "2026-11-27T01:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Possible",
-                "urgency": "Future",
-                "event": "High Wind Watch",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Upton NY",
-                "headline": "High Wind Watch issued November 24 at 1:11PM EST until November 27 at 1:00AM EST by NWS Upton NY",
-                "description": "* WHAT...East winds 25 to 35 mph with gusts up to 60 mph possible.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From Thursday morning through late Thursday night.\n\n* IMPACTS...Damaging winds could blow down trees and power lines.\nWidespread power outages are possible. Travel could be difficult,\nespecially for high profile vehicles.",
-                "instruction": "Monitor the latest forecasts and warnings for updates.\n\nFasten loose objects or shelter objects in a safe location prior to\nthe onset of winds.",
-                "response": "Prepare",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "NPWOKX"
-                    ],
-                    "WMOidentifier": [
-                        "WWUS71 KOKX 241811"
-                    ],
-                    "NWSheadline": [
-                        "HIGH WIND WATCH REMAINS IN EFFECT FROM THURSDAY MORNING THROUGH LATE THURSDAY NIGHT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KOKX.HW.A.0001.261126T1500Z-261127T0600Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T01:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "HWA"
-                    ],
-                    "NationalWeatherService": [
-                        "HWA"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W",
-    "updated": "2026-11-24T23:15:58+00:00"
+    "updated": "2026-11-25T09:07:21+00:00"
 }
