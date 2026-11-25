@@ -137,7 +137,7 @@ fun SalaSettimanaScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = tr("TOCCA UN GIORNO", "TAP A DAY", "TIPPE AUF EINEN TAG", "TOUCHEZ UN JOUR", "TOCA UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
+            Text(text = tr("TOCCA O TIENI PREMUTO", "TAP OR HOLD A DAY", "TIPPEN ODER HALTEN", "TOUCHEZ OU MAINTENEZ", "TOCA O MANTÉN UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
             Text(text = tr("MAX · MIN · MM", "HIGH · LOW · MM", "MAX · MIN · MM", "MAX · MIN · MM", "MÁX · MÍN · MM"), style = SalaType.sectionLabel, color = palette.inkFaint)
         }
 

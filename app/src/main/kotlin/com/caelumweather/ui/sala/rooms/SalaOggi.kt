@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.foundation.layout.size
 import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.ui.sala.coloreChePassa
@@ -392,7 +393,7 @@ fun SalaOggiScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY", "TIPPE AUF EINEN TAG", "TOUCHEZ UN JOUR", "TOCA UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
+                Text(text = tr("TOCCA O TIENI PREMUTO", "TAP OR HOLD A DAY", "TIPPEN ODER HALTEN", "TOUCHEZ OU MAINTENEZ", "TOCA O MANTÉN UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
                 // **Non dice "apri la sala II".** Chi guarda non chiama queste
                 // schermate "sale" - e' un nome nostro, buono per il codice e
                 // non per chi legge: qui si nomina la cosa, la settimana.
@@ -472,8 +473,23 @@ fun StrisciaGiorni(
 ) {
     // Solo riferimenti, niente stato e niente conti durante la disposizione.
     val coordinate = remember { mutableMapOf<Int, androidx.compose.ui.layout.LayoutCoordinates>() }
+    // **L'anteprima a tenere premuto** (vedi `anteprimaATenerePremuto`): il
+    // giorno sotto il dito, e il centro di ogni giorno per mettergli sopra il
+    // fumetto. Un colpetto a ogni giorno nuovo, come sulla barra delle ore.
+    var anteprima by remember { mutableStateOf<Int?>(null) }
+    val centri = remember { androidx.compose.runtime.mutableStateMapOf<Int, Float>() }
+    val vibrazioni = com.caelumweather.ui.motion.rememberVibrazioniMeteo()
+    val movimentoAnteprima = LocalMovimento.current
+    androidx.compose.foundation.layout.Box(modifier = modifier.fillMaxWidth()) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .anteprimaATenerePremuto(settimana.size) { i ->
+                if (i != anteprima) {
+                    if (i != null && movimentoAnteprima) vibrazioni.scatto()
+                    anteprima = i
+                }
+            },
         horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
     ) {
         settimana.forEach { giorno ->
@@ -508,7 +524,10 @@ fun StrisciaGiorni(
                         }
                         selected = attivo
                     }
-                    .then(if (onToccoDa != null) Modifier.onPlaced { coordinate[giorno.indice] = it } else Modifier)
+                    .onPlaced {
+                        if (onToccoDa != null) coordinate[giorno.indice] = it
+                        centri[giorno.indice] = it.positionInParent().x + it.size.width / 2f
+                    }
                     .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
                         if (giorno.indice != scelto) coordinate[giorno.indice]?.let { onToccoDa?.invoke(it) }
                         onScegli(giorno.indice)
@@ -568,6 +587,8 @@ fun StrisciaGiorni(
                 }
             }
         }
+    }
+    FumettoAnteprima(indice = anteprima, settimana = settimana, centri = centri, state = state, palette = palette)
     }
 }
 

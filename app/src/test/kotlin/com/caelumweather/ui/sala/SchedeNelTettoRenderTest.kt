@@ -176,6 +176,21 @@ class SchedeNelTettoRenderTest {
         assertTrue("schede che non stanno: $fuori", fuori.isEmpty())
     }
 
+    @Test
+    fun `l'anteprima di un giorno a tenere premuto`() {
+        val s = stato()
+        val settimana = settimanaDi(s.forecast)
+        misura("anteprima") {
+            androidx.compose.foundation.layout.Column(
+                modifier = Modifier
+                    .width(236.dp)
+                    .background(palette.panelSolido, androidx.compose.foundation.shape.RoundedCornerShape(28.dp)),
+            ) {
+                com.caelumweather.ui.sala.rooms.ContenutoAnteprima(settimana[2], s, palette)
+            }
+        }
+    }
+
     private companion object {
         /**
          * Il tetto della Shell su un telefono da 891 punti, con il 30 per cento
