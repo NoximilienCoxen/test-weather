@@ -40,16 +40,15 @@ internal fun DrawScope.disegnaIconaViva(sala: SalaRoom, ink: Color, fase: Float,
     val tau = 2f * PI.toFloat()
 
     when (sala) {
-        // Il sole che gira piano, coi raggi che respirano.
+        // Il sole coi raggi che respirano. **Fermo**: nessuna icona gira (vedi
+        // `IconaCheReagisce`), anche qui.
         SalaRoom.OGGI -> {
             drawCircle(ink, 4.2f * u, p(12f, 12f))
-            rotate(degrees = fase * 90f, pivot = p(12f, 12f)) {
-                for (k in 0 until 8) {
-                    val a = k * PI.toFloat() / 4f
-                    val respiro = 0.8f * sin(fase * tau + k * 0.8f)
-                    val r1 = 9.2f + respiro
-                    linea(12f + cos(a) * 7f, 12f + sin(a) * 7f, 12f + cos(a) * r1, 12f + sin(a) * r1)
-                }
+            for (k in 0 until 8) {
+                val a = k * PI.toFloat() / 4f
+                val respiro = 0.8f * sin(fase * tau + k * 0.8f)
+                val r1 = 9.2f + respiro
+                linea(12f + cos(a) * 7f, 12f + sin(a) * 7f, 12f + cos(a) * r1, 12f + sin(a) * r1)
             }
         }
         // La nuvola, e le gocce che cadono e spariscono sotto.
@@ -69,13 +68,11 @@ internal fun DrawScope.disegnaIconaViva(sala: SalaRoom, ink: Color, fase: Float,
             }
             drawPath(nuvola, ink, style = tratto)
         }
-        // La falce che dondola, e la stellina che brilla.
+        // La falce ferma, e la stellina che brilla.
         SalaRoom.LUNA -> {
-            rotate(degrees = 8f * sin(fase * tau), pivot = p(11f, 13f)) {
-                val disco = Path().apply { addOval(Rect(p(3f, 5f), p(19f, 21f))) }
-                val morso = Path().apply { addOval(Rect(p(8.6f, 2.4f), p(23f, 16.8f))) }
-                drawPath(Path().apply { op(disco, morso, PathOperation.Difference) }, ink)
-            }
+            val disco = Path().apply { addOval(Rect(p(3f, 5f), p(19f, 21f))) }
+            val morso = Path().apply { addOval(Rect(p(8.6f, 2.4f), p(23f, 16.8f))) }
+            drawPath(Path().apply { op(disco, morso, PathOperation.Difference) }, ink)
             val brillio = 0.55f + 0.45f * sin(fase * tau * 2f)
             val stella = Path().apply {
                 for (k in 0..8) {

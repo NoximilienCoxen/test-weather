@@ -559,8 +559,11 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
                     // Solo il sole fa il giro di raggi: con la nuvola davanti
                     // ("poco nuvoloso") girava anche la nuvola, e da ferma in
                     // un fotogramma qualunque sembrava storta.
+                    // **Nessuna figuretta gira.** Il sole faceva un quarto di
+                    // giro e la neve un terzo: a Sapporo, sette giorni di neve,
+                    // ogni tocco faceva girare un'icona e pareva un difetto
+                    // ("le icone ruotano"). Adesso il gesto e' un rimbalzo.
                     GlifoMeteo.SOLE -> {
-                        rotationZ = 90f * p
                         scaleX = 1f + 0.18f * campana
                         scaleY = scaleX
                     }
@@ -569,7 +572,7 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
                         scaleY = scaleX
                     }
                     GlifoMeteo.NEVE -> {
-                        rotationZ = 120f * p
+                        translationY = 1.5.dp.toPx() * campana
                         scaleX = 1f + 0.12f * campana
                         scaleY = scaleX
                     }
