@@ -459,13 +459,13 @@ session() {
   # della cifra invece che accanto.
   echo "  -- sale (ora $ora_dettaglio) --"
 
-  # Le sale sono sette e non sei, e in un ordine loro: `--ei sezione` conta
+  # Le sale sono sei (la settimana e' dentro Oggi), in un ordine loro: `--ei sezione` conta
   # sull'ordine di `SalaRoom`, non su quello che aveva il feed. Tenere i vecchi
   # nomi avrebbe dato scatti con l'etichetta di una scheda e il contenuto di
   # un'altra - un referto che mente e' peggio di uno che manca.
   local n=5
   local i=0
-  for sala in oggi settimana pioggia luna aria vento uv; do
+  for sala in oggi pioggia luna aria vento uv; do
     alive || { echo "dispositivo caduto alla sala $sala"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
@@ -502,7 +502,7 @@ session() {
   # `--ei polline 4` lo impone a "molto alto" per tre giorni e tutte le
   # famiglie: fuori stagione il dato vero e' zero, e ne' i granelli nel cielo
   # di Oggi ne' la sezione in fondo all'aria si vedrebbero mai.
-  for coppia in "0:oggi" "4:aria"; do
+  for coppia in "0:oggi" "3:aria"; do
     alive || { echo "dispositivo caduto al polline"; return; }
     adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
     sleep 1
@@ -522,7 +522,7 @@ session() {
   adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
   sleep 1
   adbt shell logcat -c >/dev/null 2>&1 || true
-  avvia --ei ora "$ora_dettaglio" --ei mare 120 --ei sezione 5 >/dev/null 2>&1 || true
+  avvia --ei ora "$ora_dettaglio" --ei mare 120 --ei sezione 4 >/dev/null 2>&1 || true
   attendi_previsione
   sleep 1
   shoot "${slug}-mare-vento"
@@ -770,7 +770,7 @@ session() {
     # La luna in tema chiaro: prima la parte illuminata era dipinta col nero del
     # testo e il disco in ombra spariva nella carta. Al novilunio non doveva
     # restare un disco pieno.
-    restart_with "--ei ora 12 --ei sezione 3"
+    restart_with "--ei ora 12 --ei sezione 2"
     shoot "${slug}-14-luna-chiara"
 
     # Notte coperta: le stelle si devono vedere **attraverso**. Prima c'erano
@@ -810,10 +810,10 @@ session() {
     # e' quasi sempre asciutta: senza, la sala della pioggia resterebbe vuota in
     # ogni scatto della galleria.
 
-    restart_with "--ei ora $ora_dettaglio --ei sezione 2"
+    restart_with "--ei ora $ora_dettaglio --ei sezione 1"
     shoot "${slug}-12-pioggia"
 
-    restart_with "--ei ora $ora_dettaglio --ei sezione 2 --ei meteo 63"
+    restart_with "--ei ora $ora_dettaglio --ei sezione 1 --ei meteo 63"
     shoot "${slug}-13-pioggia-imposta"
 
     # ── La guardia della scheda che si muove sempre ──────────────────────────
@@ -960,7 +960,7 @@ inglese() {
     attendi_previsione
   }
 
-  for sala in 0 1 2 3 4 5 6; do
+  for sala in 0 1 2 3 4 5; do
     da_capo --ei sezione "$sala"
     sleep 3
     shoot "$slug-sala-$sala"

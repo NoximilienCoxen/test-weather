@@ -340,6 +340,9 @@ fun SalaOggiScreen(
             }
 
             // ── La giornata, in una curva (a richiesta) ──────────────────────
+            // La pioggia dei prossimi minuti, quando c'e': vedi `ProssimaOra`.
+            ProssimaOra(state = state, palette = palette, modifier = Modifier.padding(top = 8.dp))
+
             ComparsaMorbida(visibile = giornataAperta) {
                 Column {
                     GraficoGiornata(
@@ -382,28 +385,36 @@ fun SalaOggiScreen(
 
             Box(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 10.dp)
+                    .padding(top = 10.dp, bottom = 8.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(text = tr("TOCCA O TIENI PREMUTO", "TAP OR HOLD A DAY", "TIPPEN ODER HALTEN", "TOUCHEZ OU MAINTENEZ", "TOCA O MANTÉN UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
-                // **Non dice "apri la sala II".** Chi guarda non chiama queste
-                // schermate "sale" - e' un nome nostro, buono per il codice e
-                // non per chi legge: qui si nomina la cosa, la settimana.
-                Text(
-                    text = tr("apri la settimana", "open the week", "Woche öffnen", "ouvrir la semaine", "abrir la semana"),
-                    style = SalaType.pill,
-                    color = palette.accent,
-                    modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
-                )
-            }
+            // ── La settimana ─────────────────────────────────────────────────
+            //
+            // **Era una scheda a parte, ed e' tornata qui.** "La settimana"
+            // ripeteva la striscia di questa scheda e, nei riquadri, i numeri
+            // delle celle qui sopra: chi la apriva trovava quasi la stessa
+            // pagina. Ne resta cio' che diceva di nuovo - la settimana in una
+            // riga - e i giorni si guardano tenendoli premuti (vedi
+            // `anteprimaATenerePremuto`), senza cambiare quello mostrato.
+            // Etichetta e riassunto sulla stessa riga: una riga in meno, e la
+            // settimana si legge come una voce col suo valore.
+            Text(
+                text = androidx.compose.ui.text.buildAnnotatedString {
+                    withStyle(SalaType.sectionLabel.toSpanStyle().copy(color = palette.inkFaint)) {
+                        append(tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"))
+                    }
+                    append("  ")
+                    append(remember(settimana, state.unit) { sommarioDella(settimana, state) })
+                },
+                style = SalaType.rowNote,
+                color = palette.inkSoft,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
 
             StrisciaGiorni(
                 settimana = settimana,
@@ -532,7 +543,7 @@ fun StrisciaGiorni(
                         if (giorno.indice != scelto) coordinate[giorno.indice]?.let { onToccoDa?.invoke(it) }
                         onScegli(giorno.indice)
                     }
-                    .padding(top = 9.dp, bottom = 8.dp),
+                    .padding(top = 6.dp, bottom = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
             ) {

@@ -52,19 +52,6 @@ internal fun DrawScope.disegnaIconaViva(sala: SalaRoom, ink: Color, fase: Float,
                 }
             }
         }
-        // Il calendario: i giorni si accendono uno dopo l'altro.
-        SalaRoom.SETTIMANA -> {
-            drawRoundRect(ink, p(3.5f, 5f), Size(17f * u, 15.5f * u), CornerRadius(3f * u), style = tratto)
-            linea(3.5f, 10f, 20.5f, 10f)
-            linea(8f, 3f, 8f, 6.5f)
-            linea(16f, 3f, 16f, 6.5f)
-            val giorni = listOf(8f to 14f, 12f to 14f, 16f to 14f, 8f to 17.3f, 12f to 17.3f, 16f to 17.3f)
-            val accesi = (giro * 7f)
-            giorni.forEachIndexed { k, (x, y) ->
-                val a = (accesi - k).coerceIn(0f, 1f)
-                drawCircle(ink, 1.1f * u * (0.4f + 0.6f * a), p(x, y), alpha = 0.25f + 0.75f * a)
-            }
-        }
         // La nuvola, e le gocce che cadono e spariscono sotto.
         SalaRoom.PIOGGIA -> {
             val nuvola = Path().apply {

@@ -214,7 +214,7 @@ enum class WidgetKind(
 
     ARIA(listOf("QUALITÀ DELL'ARIA", "AIR QUALITY", "LUFTQUALITÄT", "QUALITÉ DE L'AIR", "CALIDAD DEL AIRE"), listOf("ARIA", "AIR", "LUFT", "AIR", "AIRE"), true, AirQualityWidgetReceiver::class.java, ::AirQualityWidget, SalaRoom.ARIA),
 
-    SETTIMANA(listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.SETTIMANA),
+    SETTIMANA(listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), listOf("SETTIMANA", "WEEK", "WOCHE", "SEMAINE", "SEMANA"), true, WeekWidgetReceiver::class.java, ::WeekWidget, SalaRoom.OGGI),
 
     // Una cella: niente nome, solo tempo e temperatura.
     MINI(listOf("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), listOf("MINI", "MINI", "MINI", "MINI", "MINI"), true, MiniWidgetReceiver::class.java, ::MiniWidget, SalaRoom.OGGI),

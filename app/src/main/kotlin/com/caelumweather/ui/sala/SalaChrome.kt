@@ -134,6 +134,9 @@ private val RaggioCella = 22.dp
  */
 val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
 
+/** Chi vuole sapere quanto e' alto il pannello, in punti: lo usano le prove che misurano le sale. */
+val LocalMisuraPannello = compositionLocalOf<((Float) -> Unit)?> { null }
+
 /**
  * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
  * il pannello continua, senza una barra di scorrimento. Sfuma il **contenuto**
@@ -195,9 +198,12 @@ fun PannelloSala(
     // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
     val tetto = LocalAltezzaPannello.current
     val scorrimento = rememberScrollState()
+    val misura = LocalMisuraPannello.current
+    val densitaMisura = androidx.compose.ui.platform.LocalDensity.current
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .then(if (misura != null) Modifier.onPlaced { misura(it.size.height / densitaMisura.density) } else Modifier)
             .then(if (tetto != Dp.Unspecified) Modifier.heightIn(max = tetto) else Modifier)
             .clip(RoundedCornerShape(RaggioPannello))
             // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
@@ -1243,14 +1249,6 @@ internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
                 val a = k * PI.toFloat() / 4f
                 linea(12f + cos(a) * 7f, 12f + sin(a) * 7f, 12f + cos(a) * 9.6f, 12f + sin(a) * 9.6f)
             }
-        }
-        // Il calendario: la cornice, la testata, gli anelli, sei giorni.
-        SalaRoom.SETTIMANA -> {
-            drawRoundRect(ink, p(3.5f, 5f), Size(17f * u, 15.5f * u), CornerRadius(3f * u), style = tratto)
-            linea(3.5f, 10f, 20.5f, 10f)
-            linea(8f, 3f, 8f, 6.5f)
-            linea(16f, 3f, 16f, 6.5f)
-            for (x in listOf(8f, 12f, 16f)) for (y in listOf(14f, 17.3f)) drawCircle(ink, 1.1f * u, p(x, y))
         }
         // La nuvola a tratto, e tre righe di pioggia oblique.
         SalaRoom.PIOGGIA -> {

@@ -129,6 +129,14 @@ data class UiState(
      */
     val mare: Mare? = null,
     /**
+     * La pioggia a quarti d'ora per le prossime due ore e mezza (Open-Meteo
+     * `minutely_15`), e l'ora di adesso **nel fuso della localita'**: la legge
+     * la riga "prossima ora" di Oggi. Vuota finche' non arriva, e per sempre
+     * se non arriva: allora la riga non compare.
+     */
+    val quarti: List<com.caelumweather.data.QuartoDOra> = emptyList(),
+    val quartiAdesso: java.time.LocalDateTime? = null,
+    /**
      * Com'era questo giorno un anno fa, dall'archivio. Nullo finche' non
      * arriva, e per sempre se non arriva: la riga allora non compare.
      */
@@ -726,6 +734,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     mare = null,
+                    quarti = emptyList(),
+                    quartiAdesso = null,
                     unAnnoFa = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
@@ -829,6 +839,16 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         launch {
                             MareRepository(place).load().onSuccess { mare ->
                                 _state.update { it.copy(mare = mare) }
+                            }
+                        }
+
+                        // La pioggia dei prossimi minuti, a quarti d'ora: la
+                        // stessa richiesta della notifica "pioggia in arrivo"
+                        // (`PrevisioneABreve`), qui per la riga di Oggi. Stessa
+                        // regola del mare: se non arriva, la riga non c'e'.
+                        launch {
+                            com.caelumweather.data.PrevisioneABreve.carica(place).onSuccess { r ->
+                                _state.update { it.copy(quarti = r.quarti, quartiAdesso = r.adesso) }
                             }
                         }
 

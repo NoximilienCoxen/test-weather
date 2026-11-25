@@ -3,7 +3,12 @@ package com.caelumweather.ui.sala
 import com.caelumweather.lingua.tr
 
 /**
- * Le sette schermate del tempo, nell'ordine in cui si sfogliano.
+ * Le sei schermate del tempo, nell'ordine in cui si sfogliano.
+ *
+ * **Erano sette.** "La settimana" ripeteva quasi tutta la prima: la stessa
+ * striscia dei giorni e, nei riquadri, gli stessi numeri delle celle di Oggi.
+ * Adesso la settimana sta dentro Oggi (il riassunto, la striscia, l'anteprima
+ * a tenere premuto) e chi sfoglia trova solo schermate che dicono cose nuove.
  *
  * **Non portano piu' con se' il proprio fondo.** Finche' ogni schermata si
  * disegnava la propria carta, qui dentro c'erano anche le macchie d'acquerello
@@ -24,12 +29,11 @@ enum class SalaRoom(
     private val headingEs: String,
 ) {
     OGGI("I", "Oggi", "Today", "Heute", "Aujourd'hui", "Hoy"),
-    SETTIMANA("II", "La settimana", "The week", "Die Woche", "La semaine", "La semana"),
-    PIOGGIA("III", "La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
-    LUNA("IV", "La luna", "The moon", "Der Mond", "La lune", "La luna"),
-    ARIA("V", "L'aria", "Air", "Die Luft", "L'air", "El aire"),
-    VENTO("VI", "Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
-    UV("VII", "I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
+    PIOGGIA("II", "La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
+    LUNA("III", "La luna", "The moon", "Der Mond", "La lune", "La luna"),
+    ARIA("IV", "L'aria", "Air", "Die Luft", "L'air", "El aire"),
+    VENTO("V", "Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
+    UV("VI", "I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
     ;
 
     /** Come si chiama, nella lingua dell'app. */

@@ -25,7 +25,6 @@ import com.caelumweather.data.TipoPolline
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.rooms.SalaAriaScreen
 import com.caelumweather.ui.sala.rooms.SalaOggiScreen
-import com.caelumweather.ui.sala.rooms.SalaSettimanaScreen
 import com.caelumweather.ui.WeatherViewModel
 import com.caelumweather.data.SkyState
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
@@ -140,11 +139,18 @@ class SchedeNelTettoRenderTest {
 
     private val palette = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
 
+    /** L'altezza del solo pannello di ogni sala misurata, in punti. */
+    private val pannelli = mutableMapOf<String, Float>()
+
     /** L'altezza naturale di ogni sala, senza tetto: quella che servirebbe per non scorrere. */
     private fun misura(nome: String, sala: @Composable () -> Unit): Float {
-        val alta = disegna(nome, sala)
+        var pannello = 0f
+        val alta = disegna(nome) {
+            androidx.compose.runtime.CompositionLocalProvider(LocalMisuraPannello provides { pannello = it }) { sala() }
+        }
+        pannelli[nome] = pannello
         println("SCHEDA $nome: ${alta.toInt()} dp")
-        File("build/widget-renders").resolve("tetto-misure.txt").appendText("$nome ${alta.toInt()}\n")
+        File("build/widget-renders").resolve("tetto-misure.txt").appendText("$nome ${alta.toInt()} (pannello ${pannello.toInt()})\n")
         return alta
     }
 
@@ -155,23 +161,37 @@ class SchedeNelTettoRenderTest {
         val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
         val vm = WeatherViewModel(attivita.application)
         val cielo = SkyState(altitude = -10f, dayness = 0f, sunPresence = 0f, moonPresence = 1f, redness = 0f)
-        val altezze = mapOf(
+        val altezze = mutableMapOf(
             "oggi" to misura("oggi") { SalaOggiScreen(state = s, sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}) },
             "oggi-giornata" to misura("oggi-giornata") { SalaOggiScreen(state = s, sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}, giornataApertaIniziale = true) },
             // Il caso dello screenshot: un giorno futuro (la pastiglia del giorno
             // e "torna a oggi" in cima) con la giornata aperta.
             "oggi-domani-giornata" to misura("oggi-domani-giornata") { SalaOggiScreen(state = s.copy(selectedDay = 1), sky = cielo, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}, giornataApertaIniziale = true) },
-            "settimana" to misura("settimana") { SalaSettimanaScreen(state = s, palette = palette, viewModel = vm, faseLunare = 0.5f, onVai = {}) },
             "pioggia" to misura("pioggia") { SalaPioggiaScreen(state = s, palette = palette, onSelectHour = {}, onSelectDay = {}, movimento = false) },
             "luna" to misura("luna") { SalaLunaScreen(palette = palette, giorno = oggi, movimento = false) },
             "aria" to misura("aria") { SalaAriaScreen(state = s, palette = palette) },
             "vento" to misura("vento") { SalaVentoScreen(state = s, palette = palette, movimento = false) },
             "uv" to misura("uv") { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) },
         )
+        // **La riga della pioggia nei prossimi minuti** compare solo per oggi
+        // e all'ora di adesso: qui la si misura da sola e la si somma al caso
+        // peggiore di Oggi, la giornata aperta (sul giorno futuro la riga non c'e').
+        val adesso = oggi.atTime(12, 50)
+        val quarti = (0 until 10).map { q ->
+            com.caelumweather.data.QuartoDOra(oggi.atTime(12, 45).plusMinutes(15L * q), if (q in 2..6) 0.8 else 0.0, if (q in 2..6) 61 else 3)
+        }
+        val riga = misura("prossima-ora") {
+            com.caelumweather.ui.sala.rooms.ProssimaOraVista(com.caelumweather.ui.sala.rooms.raccontoProssimaOra(quarti, adesso)!!, palette)
+        }
+        altezze["oggi-giornata-pioggia"] = (altezze["oggi-giornata"] ?: 0f) + riga + 8f
+        pannelli["oggi-giornata-pioggia"] = (pannelli["oggi-giornata"] ?: 0f) + riga + 8f
+
         // Oggi e la luna hanno sopra la scheda il numero grande e la sfera: per
         // loro conta l'altezza della pagina intera, per le altre il tetto.
+        // Due conti: la pagina intera non deve uscire dal carosello, e il
+        // pannello non deve superare il tetto (oltre, scorrerebbe dentro di se').
         val fuori = altezze.filter { (nome, alta) ->
-            alta > if (nome.startsWith("oggi") || nome == "luna") PAGINA_TELEFONO else TETTO_TELEFONO
+            alta > PAGINA_TELEFONO || (pannelli[nome] ?: 0f) > TETTO_TELEFONO
         }
         assertTrue("schede che non stanno: $fuori", fuori.isEmpty())
     }

@@ -168,7 +168,7 @@ internal fun GraficoGiornata(
 }
 
 /** Alta quanto basta a leggere la forma: la scheda di oggi deve starci intera. */
-internal val ALTEZZA_GRAFICO = 80.dp
+internal val ALTEZZA_GRAFICO = 52.dp
 
 /**
  * Il disegno della curva, fuori dalla composizione perche' si possa provare

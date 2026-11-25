@@ -82,7 +82,6 @@ import com.caelumweather.ui.sala.rooms.SalaAriaScreen
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
 import com.caelumweather.ui.sala.rooms.SalaOggiScreen
 import com.caelumweather.ui.sala.rooms.SalaPioggiaScreen
-import com.caelumweather.ui.sala.rooms.SalaSettimanaScreen
 import com.caelumweather.ui.sala.rooms.SalaUvScreen
 import com.caelumweather.ui.sala.rooms.SalaVentoScreen
 import com.caelumweather.ui.scene.Scena as ScenaDAvvio
@@ -1006,13 +1005,6 @@ fun SalaShell(
                                     SalaRoom.OGGI -> SalaOggiScreen(
                                         state = state,
                                         sky = sky,
-                                        palette = palette,
-                                        viewModel = viewModel,
-                                        faseLunare = faseLunare,
-                                        onVai = ::vaiA,
-                                    )
-                                    SalaRoom.SETTIMANA -> SalaSettimanaScreen(
-                                        state = state,
                                         palette = palette,
                                         viewModel = viewModel,
                                         faseLunare = faseLunare,
