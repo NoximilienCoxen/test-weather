@@ -19,6 +19,10 @@ tracciamento e non invia rapporti d'errore automatici.
   geocodifica di Open-Meteo.
 - **Un'etichetta tecnica** (User-Agent) che dice quale programma sta chiedendo.
 
+Il nome della località che segue la tua posizione lo chiede prima al servizio
+di geocodifica del sistema (su molti telefoni è di Google); se non risponde lo
+cerca in un elenco dentro l'app (GeoNames, CC BY 4.0), senza rete.
+
 Come per ogni connessione a Internet, i servizi contattati vedono l'indirizzo
 IP da cui arriva la richiesta.
 
@@ -95,6 +99,11 @@ crash reports.
 - **The text you type in place search**, sent to the Open-Meteo geocoding
   service.
 - **A technical label** (User-Agent) saying which program is asking.
+
+The name of the place that follows your location is first asked of the
+system's geocoding service (on many phones it is Google's); if that does not
+answer, it is looked up in a list inside the app (GeoNames, CC BY 4.0),
+offline.
 
 As with any Internet connection, the services contacted see the IP address the
 request comes from.

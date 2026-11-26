@@ -274,6 +274,21 @@ fun SalaLegaliScreen(
                 Collegamento(tr("Licenza e fonti di Open-Meteo", "Open-Meteo licence and sources", "Lizenz und Quellen von Open-Meteo", "Licence et sources d'Open-Meteo", "Licencia y fuentes de Open-Meteo"), Fonti.OPEN_METEO_LICENZA, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
                 Paragrafo(Fonti.CITAZIONE_OPEN_METEO, palette)
 
+                // L'elenco delle localita' dentro l'app (`LocalitaVicine`): dove
+                // il telefono non sa dare un nome alla posizione. CC BY 4.0.
+                Paragrafo(
+                    tr(
+                        "Nomi delle località vicine alla tua posizione, senza rete: GeoNames (geonames.org), " +
+                            "località con almeno mille abitanti, sotto licenza CC BY 4.0. L'app ne tiene " +
+                            "nome, regione, paese e coordinate.",
+                        "Names of places near your location, offline: GeoNames (geonames.org), places with at least a thousand inhabitants, under the CC BY 4.0 licence. The app keeps their name, region, country and coordinates.",
+                        "Namen der Orte in deiner Nähe, ohne Netz: GeoNames (geonames.org), Orte mit mindestens tausend Einwohnern, unter der Lizenz CC BY 4.0. Die App behält Name, Region, Land und Koordinaten.",
+                        "Noms des lieux proches de votre position, hors ligne : GeoNames (geonames.org), lieux d'au moins mille habitants, sous licence CC BY 4.0. L'app en garde le nom, la région, le pays et les coordonnées.",
+                        "Nombres de los lugares cercanos a tu ubicación, sin red: GeoNames (geonames.org), lugares con al menos mil habitantes, bajo la licencia CC BY 4.0. La app conserva nombre, región, país y coordenadas.",
+                    ),
+                    palette,
+                )
+
                 Paragrafo(
                     tr(
                         "Qualità dell'aria e polline: CAMS European air quality forecasts, ENSEMBLE " +

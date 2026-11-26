@@ -141,13 +141,17 @@ object DeviceLocation {
     private suspend fun describe(context: Context, fix: Location): Place? {
         if (!fix.latitude.isFinite() || !fix.longitude.isFinite()) return null
         val address = indirizzo(context, fix.latitude, fix.longitude)
-        return Place(
+        val dalTelefono = Place(
             name = nomeDelPosto(address?.locality, address?.subAdminArea, address?.adminArea),
             admin = address?.adminArea,
             country = address?.countryName,
             latitude = fix.latitude,
             longitude = fix.longitude,
         )
+        if (dalTelefono.name != FALLBACK_NAME) return dalTelefono
+        // Il telefono non sa dare un nome (senza servizi Google non risponde
+        // mai): la localita' piu' vicina dall'elenco dentro l'app.
+        return LocalitaVicine.piuVicina(context, fix.latitude, fix.longitude) ?: dalTelefono
     }
 
     /**

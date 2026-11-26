@@ -8913,3 +8913,11 @@ sincrona e' deprecata e su alcuni telefoni torna vuota), 4 s per tentativo, due
 tentativi; e `conNomeTenuto` tiene il nome del posto di prima se il nuovo non ne
 ha uno ed e' entro 10 km (app e widget). Controllo: `NomeDelPostoTest`. La CI
 non lo vede mai: l'emulatore AOSP non ha geocoder.
+- **Non bastava.** Sul telefono dell'utente il geocoder non risponde mai
+  (probabilmente senza servizi Google). Ora `LocalitaVicine`: le localita'
+  GeoNames con almeno mille abitanti (cities1000, CC BY 4.0, dal pacchetto npm
+  `cities.json` 1.1.66; GeoNames diretto da qui da' 403) in
+  `assets/localita.tsv.gz` (2,4 MB, 171 737 righe ordinate per latitudine),
+  rigenerabile con `scripts/comuni_geonames.py`. Si prende la piu' vicina entro
+  25 km, senza rete. Attribuzione in note legali e informativa. Controllo:
+  `LocalitaVicineTest` legge il file vero.
