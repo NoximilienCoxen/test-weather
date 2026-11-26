@@ -113,7 +113,10 @@ internal suspend fun WidgetConfig.resolvePlace(context: Context, appWidgetId: In
     val prefs = WidgetPrefs(context)
     suspend fun fromApp(): Place = SettingsPrefs(context).settings.first().place
     suspend fun fromGps(): Place? =
-        DeviceLocation.current(context)?.also { prefs.rememberFix(appWidgetId, it) }
+        // Come nell'app: un nome vero gia' noto non cede al ripiego.
+        DeviceLocation.current(context)
+            ?.let { com.caelumweather.data.conNomeTenuto(it, prefs.lastFix(appWidgetId) ?: fromApp()) }
+            ?.also { prefs.rememberFix(appWidgetId, it) }
 
     return when {
         // REGOLA 1: GPS richiesto

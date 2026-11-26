@@ -8904,3 +8904,12 @@ dati veri, la disposizione affiancata su un tablet vero.
   questo giro: nove widget, ombrello, previsione cambiata, conto alla
   rovescia, avvisi a soglia anche per pioggia e UV, mare con scheda sua,
   anteprima dei giorni, cosa mettersi, tablet.
+
+### 82.5 "POSIZIONE" in testa invece del paese
+Visto in mano: seguendo la posizione, l'intestazione diceva "POSIZIONE"
+(`DeviceLocation.FALLBACK_NAME`) perche' la geocodifica inversa non aveva
+risposto. Ora: da Android 13 `Geocoder.getFromLocation` col richiamo (la
+sincrona e' deprecata e su alcuni telefoni torna vuota), 4 s per tentativo, due
+tentativi; e `conNomeTenuto` tiene il nome del posto di prima se il nuovo non ne
+ha uno ed e' entro 10 km (app e widget). Controllo: `NomeDelPostoTest`. La CI
+non lo vede mai: l'emulatore AOSP non ha geocoder.

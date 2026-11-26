@@ -1612,7 +1612,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                 // applicata, e l'aggancio non spostava niente nemmeno a freddo.
                 // Una localita' scelta a mano e' un'altra cosa - li' chi
                 // guarda ha cambiato idea, e l'ora vecchia non vale piu'.
-                prefs.setPlace(found, following = true)
+                // Se stavolta il geocoder non ha dato un nome, si tiene quello
+                // del posto in cui si era, se e' vicino (`conNomeTenuto`).
+                prefs.setPlace(com.caelumweather.data.conNomeTenuto(found, _state.value.place), following = true)
             } catch (e: CancellationException) {
                 // Un tentativo nuovo ha appena cancellato questo (vedi
                 // `locating?.cancel()` sopra): non e' un fallimento, e va
