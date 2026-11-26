@@ -352,18 +352,37 @@ fun SalaImpostazioniScreen(
             // fino ad andare a capo, ed e' stata scelta la campanella.
             fun nellApp(testo: String) = tr("Nell'app", "In the app", "In der App", "Dans l'app", "En la app") + " · " + testo
 
+            // Come si scrive il valore di una soglia, nell'unita' scelta.
+            fun scritta(tipo: TipoSoglia, valore: Int): String = when (tipo) {
+                TipoSoglia.VENTO -> ventoDiSoglia(valore, state.windUnit)
+                TipoSoglia.PIOGGIA -> pioggiaDiSoglia(valore)
+                TipoSoglia.UV -> "UV $valore"
+                else -> gradiDiSoglia(valore, state.unit)
+            }
+
+            // **Il selettore di una soglia, uno per argomento** (§84): per vento,
+            // UV e caldo lo stesso numero vale per l'avviso nell'app e per la
+            // notifica, e si vede se almeno una delle due e' accesa.
+            @Composable
+            fun SelettoreSoglia(tipo: TipoSoglia, visibile: Boolean) {
+                ComparsaMorbida(visibile = visibile) {
+                    SceltaSegmentata(
+                        voci = SogliePersonali.possibili(tipo).map { it to scritta(tipo, it) },
+                        scelta = state.soglie.valore(tipo),
+                        palette = palette,
+                        onScegli = { onChooseSoglia(tipo, it) },
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                    )
+                }
+            }
+
+            /** Per vento, UV e caldo il selettore sta sotto le due voci, non qui. */
+            fun condivisa(tipo: TipoSoglia) = tipo == TipoSoglia.VENTO || tipo == TipoSoglia.UV || tipo == TipoSoglia.CALDO
+
             @Composable
             fun VoceSoglia(tipo: TipoSoglia) {
                 val accesa = state.soglie.accesa(tipo) && puoNotificare
-                val scritta: (Int) -> String = { valore ->
-                    when (tipo) {
-                        TipoSoglia.VENTO -> ventoDiSoglia(valore, state.windUnit)
-                        TipoSoglia.PIOGGIA -> pioggiaDiSoglia(valore)
-                        TipoSoglia.UV -> "UV $valore"
-                        else -> gradiDiSoglia(valore, state.unit)
-                    }
-                }
-                val s = scritta(state.soglie.valore(tipo))
+                val s = scritta(tipo, state.soglie.valore(tipo))
                 VoceInterruttore(
                     titolo = when (tipo) {
                         TipoSoglia.GELO -> tr("Gelo", "Frost", "Frost", "Gel", "Helada")
@@ -377,18 +396,12 @@ fun SalaImpostazioniScreen(
                             TipoSoglia.GELO ->
                                 if (accesa) tr("minima a $s o sotto", "low of $s or below", "Tiefstwert $s oder darunter", "minimale à $s ou moins", "mínima de $s o menos")
                                 else tr("quando la minima scende sotto una soglia tua", "when the low drops below your threshold", "wenn der Tiefstwert unter deine Schwelle fällt", "quand la minimale passe sous votre seuil", "cuando la mínima baja de tu umbral")
-                            TipoSoglia.CALDO ->
-                                if (accesa) tr("massima a $s o sopra", "high of $s or above", "Höchstwert $s oder darüber", "maximale à $s ou plus", "máxima de $s o más")
-                                else tr("quando la massima passa una soglia tua", "when the high passes your threshold", "wenn der Höchstwert deine Schwelle überschreitet", "quand la maximale dépasse votre seuil", "cuando la máxima supera tu umbral")
-                            TipoSoglia.VENTO ->
-                                if (accesa) tr("raffiche da $s", "gusts from $s", "Böen ab $s", "rafales dès $s", "rachas desde $s")
-                                else tr("quando le raffiche passano una soglia tua", "when gusts pass your threshold", "wenn die Böen deine Schwelle überschreiten", "quand les rafales dépassent votre seuil", "cuando las rachas superan tu umbral")
+                            TipoSoglia.CALDO -> tr("percepiti da $s", "feels like $s or more", "gefühlt ab $s", "ressenti dès $s", "sensación desde $s")
+                            TipoSoglia.VENTO -> tr("raffiche da $s", "gusts from $s", "Böen ab $s", "rafales dès $s", "rachas desde $s")
                             TipoSoglia.PIOGGIA ->
                                 if (accesa) tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
                                 else tr("quando la pioggia di un'ora passa una soglia tua", "when an hour's rain passes your threshold", "wenn der Regen einer Stunde deine Schwelle überschreitet", "quand la pluie d'une heure dépasse votre seuil", "cuando la lluvia de una hora supera tu umbral")
-                            TipoSoglia.UV ->
-                                if (accesa) tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
-                                else tr("quando l'indice UV passa una soglia tua", "when the UV index passes your threshold", "wenn der UV-Index deine Schwelle überschreitet", "quand l'indice UV dépasse votre seuil", "cuando el índice UV supera tu umbral")
+                            TipoSoglia.UV -> tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
                         }
                     ),
                     acceso = accesa,
@@ -402,16 +415,9 @@ fun SalaImpostazioniScreen(
                         }) { onToggleSoglia(tipo, it) }
                     },
                 )
-                // Il valore si sceglie solo a voce accesa (vedi la regola in testa).
-                ComparsaMorbida(visibile = accesa) {
-                    SceltaSegmentata(
-                        voci = SogliePersonali.possibili(tipo).map { it to scritta(it) },
-                        scelta = state.soglie.valore(tipo),
-                        palette = palette,
-                        onScegli = { onChooseSoglia(tipo, it) },
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
-                    )
-                }
+                // Gelo e pioggia forte hanno il valore solo per la notifica: si
+                // sceglie a voce accesa (vedi la regola in testa).
+                if (!condivisa(tipo)) SelettoreSoglia(tipo, visibile = accesa)
             }
 
             GruppoImpostazioni(
@@ -422,22 +428,34 @@ fun SalaImpostazioniScreen(
                 // arrivo, le allerte o la previsione cambiata, che girano a ogni
                 // ora; ombrello e riepilogo arrivano all'ora scelta.
                 nota = tr(
-                    "Le voci con la campanella arrivano come notifica. Pioggia forte, Raffiche, UV alto, Gelo e Caldo tacciono fra le 22 e le 7. Sono previsioni: allerte ufficiali sono solo «Arancioni e rosse».",
-                    "Items with the bell arrive as notifications. Heavy rain, Gusts, High UV, Frost and Heat stay quiet from 10 pm to 7 am. They are forecasts: only «Orange and red» are official warnings.",
-                    "Einträge mit der Glocke kommen als Benachrichtigung. Starkregen, Böen, Hoher UV-Index, Frost und Hitze schweigen von 22 bis 7 Uhr. Es sind Vorhersagen: amtliche Warnungen sind nur «Orange und rot».",
-                    "Les éléments avec la cloche arrivent en notification. Pluie forte, Rafales, UV élevés, Gel et Chaleur se taisent de 22 h à 7 h. Ce sont des prévisions : seules « Orange et rouges » sont des alertes officielles.",
-                    "Las opciones con la campana llegan como notificación. Lluvia fuerte, Rachas, UV alto, Helada y Calor callan de 22 a 7 h. Son previsiones: solo «Naranjas y rojas» son alertas oficiales.",
+                    "Le voci con la campanella arrivano come notifica. Per vento, UV e caldo il numero scelto vale anche nell'app. Pioggia forte, Raffiche, UV alto, Gelo e Caldo tacciono fra le 22 e le 7. Sono previsioni: allerte ufficiali sono solo «Arancioni e rosse».",
+                    "Items with the bell arrive as notifications. For wind, UV and heat the number you choose applies in the app too. Heavy rain, Gusts, High UV, Frost and Heat stay quiet from 10 pm to 7 am. They are forecasts: only «Orange and red» are official warnings.",
+                    "Einträge mit der Glocke kommen als Benachrichtigung. Für Wind, UV und Hitze gilt die gewählte Zahl auch in der App. Starkregen, Böen, Hoher UV-Index, Frost und Hitze schweigen von 22 bis 7 Uhr. Es sind Vorhersagen: amtliche Warnungen sind nur «Orange und rot».",
+                    "Les éléments avec la cloche arrivent en notification. Pour le vent, les UV et la chaleur, le seuil choisi vaut aussi dans l'app. Pluie forte, Rafales, UV élevés, Gel et Chaleur se taisent de 22 h à 7 h. Ce sont des prévisions : seules « Orange et rouges » sont des alertes officielles.",
+                    "Las opciones con la campana llegan como notificación. Para viento, UV y calor el número elegido vale también en la app. Lluvia fuerte, Rachas, UV alto, Helada y Calor callan de 22 a 7 h. Son previsiones: solo «Naranjas y rojas» son alertas oficiales.",
                 ),
             ) {
                 // ── Pioggia ──
-                SottotitoloGruppo(tr("PIOGGIA", "RAIN", "REGEN", "PLUIE", "LLUVIA"), palette, primo = true)
+                // La pioggia ha due misure e due nomi (§84): "abbondante" sono i
+                // millimetri del giorno, nell'app; "forte" quelli di un'ora, in
+                // notifica. Non si fingono un numero solo.
+                SottotitoloGruppo(tr("PIOGGIA E NEVE", "RAIN AND SNOW", "REGEN UND SCHNEE", "PLUIE ET NEIGE", "LLUVIA Y NIEVE"), palette, primo = true)
                 VoceInterruttore(
-                    titolo = tr("Pioggia intensa", "Lots of rain", "Viel Regen", "Beaucoup de pluie", "Mucha lluvia"),
+                    titolo = tr("Pioggia abbondante", "Lots of rain", "Ergiebiger Regen", "Pluie abondante", "Lluvia abundante"),
                     nota = nellApp(tr("da 40 mm nel giorno", "from 40 mm in a day", "ab 40 mm am Tag", "dès 40 mm dans la journée", "desde 40 mm en el día")),
                     acceso = state.alertToggles.pioggiaIntensa,
                     palette = palette,
                     compatta = true,
                     onCambia = { onToggleAlert(AlertToggleKind.PIOGGIA, it) },
+                )
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = tr("Neve", "Snow", "Schnee", "Neige", "Nieve"),
+                    nota = nellApp(tr("da 5 cm nel giorno", "from 5 cm in a day", "ab 5 cm am Tag", "dès 5 cm dans la journée", "desde 5 cm en el día")),
+                    acceso = state.alertToggles.neve,
+                    palette = palette,
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.NEVE, it) },
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
@@ -492,8 +510,8 @@ fun SalaImpostazioniScreen(
                 SottotitoloGruppo(tr("VENTO", "WIND", "WIND", "VENT", "VIENTO"), palette)
                 VoceInterruttore(
                     titolo = tr("Vento forte", "Strong wind", "Starker Wind", "Vent fort", "Viento fuerte"),
-                    // 20 m/s, la soglia gialla di `DerivedAlerts`, nell'unita' scelta.
-                    nota = nellApp(ventoDiSoglia(72, state.windUnit).let { v -> tr("raffiche da $v", "gusts from $v", "Böen ab $v", "rafales dès $v", "rachas desde $v") }),
+                    // La stessa soglia della notifica qui sotto (`SoglieAvvisi`).
+                    nota = nellApp(scritta(TipoSoglia.VENTO, state.soglie.ventoKmh).let { v -> tr("raffiche da $v", "gusts from $v", "Böen ab $v", "rafales dès $v", "rachas desde $v") }),
                     acceso = state.alertToggles.ventoForte,
                     palette = palette,
                     compatta = true,
@@ -501,12 +519,13 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceSoglia(TipoSoglia.VENTO)
+                SelettoreSoglia(TipoSoglia.VENTO, state.alertToggles.ventoForte || (state.soglie.vento && puoNotificare))
 
                 // ── Raggi UV ──
                 SottotitoloGruppo(tr("RAGGI UV", "UV", "UV", "UV", "UV"), palette)
                 VoceInterruttore(
                     titolo = tr("Raggi UV alti", "Strong UV", "Starke UV-Strahlung", "UV forts", "UV fuertes"),
-                    nota = nellApp(tr("da UV 6", "from UV 6", "ab UV 6", "dès UV 6", "desde UV 6")),
+                    nota = nellApp(scritta(TipoSoglia.UV, state.soglie.uvIndice).let { u -> tr("da $u", "from $u", "ab $u", "dès $u", "desde $u") }),
                     acceso = state.alertToggles.uvAlto,
                     palette = palette,
                     compatta = true,
@@ -514,12 +533,35 @@ fun SalaImpostazioniScreen(
                 )
                 FiloGruppo(palette)
                 VoceSoglia(TipoSoglia.UV)
+                SelettoreSoglia(TipoSoglia.UV, state.alertToggles.uvAlto || (state.soglie.uv && puoNotificare))
 
                 // ── Temperatura ──
                 SottotitoloGruppo(tr("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), palette)
-                VoceSoglia(TipoSoglia.GELO)
+                // Caldo: un numero solo, sulla percepita, per l'app e per la
+                // notifica. Freddo intenso e gelo restano due cose: il freddo
+                // percepito a -5° e la brina sotto 0° reali (§84).
+                VoceInterruttore(
+                    titolo = tr("Caldo intenso", "Intense heat", "Große Hitze", "Forte chaleur", "Calor intenso"),
+                    nota = nellApp(scritta(TipoSoglia.CALDO, state.soglie.caldoGradi).let { g -> tr("percepiti da $g", "feels like $g or more", "gefühlt ab $g", "ressenti dès $g", "sensación desde $g") }),
+                    acceso = state.alertToggles.caldo,
+                    palette = palette,
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.CALDO, it) },
+                )
                 FiloGruppo(palette)
                 VoceSoglia(TipoSoglia.CALDO)
+                SelettoreSoglia(TipoSoglia.CALDO, state.alertToggles.caldo || (state.soglie.caldo && puoNotificare))
+                FiloGruppo(palette)
+                VoceInterruttore(
+                    titolo = tr("Freddo intenso", "Intense cold", "Strenge Kälte", "Froid intense", "Frío intenso"),
+                    nota = nellApp(gradiDiSoglia(-5, state.unit).let { g -> tr("percepiti da $g in giù", "feels like $g or less", "gefühlt ab $g abwärts", "ressenti dès $g et moins", "sensación desde $g hacia abajo") }),
+                    acceso = state.alertToggles.freddo,
+                    palette = palette,
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.FREDDO, it) },
+                )
+                FiloGruppo(palette)
+                VoceSoglia(TipoSoglia.GELO)
                 // Vale solo per le cinque soglie, e lo dice: compare quando
                 // almeno una e' accesa, subito sotto l'ultima.
                 ComparsaMorbida(visibile = state.soglie.qualcunaAccesa && puoNotificare) {

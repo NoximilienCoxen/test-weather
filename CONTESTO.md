@@ -8984,3 +8984,38 @@ dicevano quale compariva nell'app e quale suonava.
   riscrive: prima un tag di backup, poi va risistemato cio' che punta ai commit
   vecchi (il corpo della release `apk-latest`, gli `INFO.txt` su
   `ci-artifacts`, ogni altro clone del repository).
+
+## 84. Le soglie allineate: un numero per argomento
+
+Il giro dopo il §83 (26 novembre 2026). Dove l'avviso nell'app e la notifica
+misurano la stessa cosa, il numero ora e' uno solo, scelto in un selettore
+sotto l'argomento (`SelettoreSoglia`, visibile se almeno una delle due voci e'
+accesa); gli interruttori dicono solo dove compare. `derivedAlerts(forecast,
+SoglieAvvisi)` riceve i numeri da `SogliePersonali` (`SoglieAvvisi.da`).
+
+- **Vento**: gialla nell'app dalla soglia scelta (40/60/80 km/h, di norma 60;
+  prima 72 fissi), arancione da 100 o dalla soglia se piu' alta.
+- **UV**: gialla dalla soglia (6/8/11, **di norma 8**; nell'app prima era 6),
+  arancione dal gradino OMS dopo (6->8, 8->11). **Con la soglia a 11 non c'e'
+  un gradino dopo**: l'estremo e' la cima della scala, e l'avviso nasce
+  direttamente arancione, senza gialla (`arancioneUv`).
+- **Caldo**: sulla **percepita** sia nell'app sia in notifica (prima la
+  notifica guardava la massima reale): "Caldo · percepiti da 33°". Gialla dalla
+  soglia (30/33/36), arancione quattro gradi sopra. Dove la percepita manca si
+  usa la temperatura. Controindicazione nota: con aria secca e vento la
+  percepita puo' stare sotto la reale, e un 34° secco non fa partire la soglia
+  a 33 (`SogliePersonaliTest` lo prova).
+- **Pioggia**: non si allinea, sono due domande. "Pioggia abbondante" (nell'app,
+  40 mm nel giorno) e "Pioggia forte" (notifica, mm in un'ora). Niente
+  "Rovesci": a 2 mm/h non lo sono.
+- **Freddo intenso** (percepita <= -5°) e **Gelo** (minima reale) restano
+  distinti.
+- **Tre interruttori nuovi**, accesi di norma: Caldo intenso, Freddo intenso,
+  Neve (nell'app). Prima comparivano senza interruttore. Chiavi nuove
+  `sala_avviso_caldo`, `sala_avviso_freddo`, `sala_avviso_neve`; quelle
+  esistenti non cambiano.
+- Gli avvisi nell'app si ricalcolano alla lettura della previsione, come prima:
+  una soglia cambiata nelle impostazioni si vede dal prossimo aggiornamento.
+- La schermata delle impostazioni, nello stato del test, passa da 2717 a 3012
+  dp: tre righe nuove e, di norma, i selettori di UV e caldo aperti perche'
+  i loro avvisi nell'app sono accesi.

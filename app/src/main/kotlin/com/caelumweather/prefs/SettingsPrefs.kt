@@ -72,9 +72,17 @@ data class AlertToggles(
     val temporali: Boolean = true,
     val uvAlto: Boolean = true,
     val ventoForte: Boolean = false,
+    /**
+     * Caldo, freddo intenso e neve calcolati comparivano sempre, senza
+     * interruttore. Adesso ce l'hanno, **accesi di norma**: chi aggiorna
+     * l'app non perde niente di cio' che vedeva (CONTESTO §84).
+     */
+    val caldo: Boolean = true,
+    val freddo: Boolean = true,
+    val neve: Boolean = true,
 )
 
-enum class AlertToggleKind { PIOGGIA, TEMPORALE, UV, VENTO }
+enum class AlertToggleKind { PIOGGIA, TEMPORALE, UV, VENTO, CALDO, FREDDO, NEVE }
 
 /**
  * Le cose su cui si puo' chiedere un avviso con una soglia propria.
@@ -452,6 +460,9 @@ class SettingsPrefs(private val context: Context) {
                 temporali = prefs[KEY_ALERT_TEMPORALE] ?: true,
                 uvAlto = prefs[KEY_ALERT_UV] ?: true,
                 ventoForte = prefs[KEY_ALERT_VENTO] ?: false,
+                caldo = prefs[KEY_ALERT_CALDO] ?: true,
+                freddo = prefs[KEY_ALERT_FREDDO] ?: true,
+                neve = prefs[KEY_ALERT_NEVE] ?: true,
             ),
         )
     }
@@ -589,6 +600,9 @@ class SettingsPrefs(private val context: Context) {
             AlertToggleKind.TEMPORALE -> KEY_ALERT_TEMPORALE
             AlertToggleKind.UV -> KEY_ALERT_UV
             AlertToggleKind.VENTO -> KEY_ALERT_VENTO
+            AlertToggleKind.CALDO -> KEY_ALERT_CALDO
+            AlertToggleKind.FREDDO -> KEY_ALERT_FREDDO
+            AlertToggleKind.NEVE -> KEY_ALERT_NEVE
         }
         context.settingsDataStore.edit { it[key] = value }
     }
@@ -654,5 +668,10 @@ class SettingsPrefs(private val context: Context) {
         val KEY_ALERT_TEMPORALE = booleanPreferencesKey("sala_avviso_temporale")
         val KEY_ALERT_UV = booleanPreferencesKey("sala_avviso_uv")
         val KEY_ALERT_VENTO = booleanPreferencesKey("sala_avviso_vento")
+        // Nuove (§84): le tre che prima non avevano interruttore. Le chiavi
+        // vecchie restano tutte com'erano.
+        val KEY_ALERT_CALDO = booleanPreferencesKey("sala_avviso_caldo")
+        val KEY_ALERT_FREDDO = booleanPreferencesKey("sala_avviso_freddo")
+        val KEY_ALERT_NEVE = booleanPreferencesKey("sala_avviso_neve")
     }
 }
