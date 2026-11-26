@@ -10,13 +10,13 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f75ee67500475be6b6afa2cdd01a1605f4716733.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f75ee67500475be6b6afa2cdd01a1605f4716733.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.f75ee67500475be6b6afa2cdd01a1605f4716733.001.1",
                 "areaDesc": "Hudson; Eastern Essex; Eastern Union; New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northwest Suffolk; Northeast Suffolk; Southwest Suffolk; Southeast Suffolk; Northern Queens; Northern Nassau; Southern Queens; Southern Nassau",
                 "geocode": {
                     "SAME": [
@@ -68,16 +68,16 @@
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T13:50:00-05:00"
+                        "sent": "2026-11-25T19:46:00-05:00"
                     }
                 ],
-                "sent": "2026-11-25T19:46:00-05:00",
-                "effective": "2026-11-25T19:46:00-05:00",
+                "sent": "2026-11-26T03:32:00-05:00",
+                "effective": "2026-11-26T03:32:00-05:00",
                 "onset": "2026-11-26T10:00:00-05:00",
-                "expires": "2026-11-26T20:00:00-05:00",
+                "expires": "2026-11-27T01:00:00-05:00",
                 "ends": "2026-11-27T01:00:00-05:00",
                 "status": "Actual",
                 "messageType": "Update",
@@ -88,8 +88,8 @@
                 "event": "High Wind Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Upton NY",
-                "headline": "High Wind Warning issued November 25 at 7:46PM EST until November 27 at 1:00AM EST by NWS Upton NY",
-                "description": "* WHAT...East winds 25 to 40 mph with gusts up to 65 mph expected.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From 10 AM Thursday to 1 AM EST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles.",
+                "headline": "High Wind Warning issued November 26 at 3:32AM EST until November 27 at 1:00AM EST by NWS Upton NY",
+                "description": "* WHAT...Northeast winds 30 to 40 mph with gusts up to 65 mph\nexpected.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From 10 AM this morning to 1 AM EST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles.",
                 "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind.",
                 "response": "Prepare",
                 "note": null,
@@ -98,10 +98,10 @@
                         "NPWOKX"
                     ],
                     "WMOidentifier": [
-                        "WWUS71 KOKX 260046"
+                        "WWUS71 KOKX 260832"
                     ],
                     "NWSheadline": [
-                        "HIGH WIND WARNING REMAINS IN EFFECT FROM 10 AM THURSDAY TO 1 AM EST FRIDAY"
+                        "HIGH WIND WARNING REMAINS IN EFFECT FROM 10 AM THIS MORNING TO 1 AM EST FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -118,7 +118,7 @@
                         "2026-11-27T01:00:00-05:00"
                     ],
                     "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1,2026-11-25T03:38:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2,2026-11-25T03:22:00-05:00"
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1,2026-11-25T13:50:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1,2026-11-25T03:38:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2,2026-11-25T03:22:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -321,5 +321,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W",
-    "updated": "2026-11-26T08:08:05+00:00"
+    "updated": "2026-11-26T09:15:41+00:00"
 }
