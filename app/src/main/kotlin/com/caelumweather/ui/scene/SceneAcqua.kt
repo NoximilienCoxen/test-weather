@@ -16,7 +16,7 @@ internal fun DrawScope.scenaMare(t: Float, notte: Boolean) {
         cielo(Scena.MARE, notte, orizzonte)
         stelle(t, orizzonte * 0.9f)
         val c = Offset(W * 0.68f, orizzonte * 0.42f)
-        luna(c, W * 0.07f, Colori.cieloNotteAlto)
+        luna(c, W * 0.07f)
     } else {
         cielo(Scena.MARE, notte, orizzonte)
         sole(Offset(W * 0.62f, orizzonte * 0.62f), W * 0.11f)

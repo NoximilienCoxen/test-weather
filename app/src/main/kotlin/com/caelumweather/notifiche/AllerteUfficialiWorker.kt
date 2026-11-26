@@ -1,5 +1,6 @@
 package com.caelumweather.notifiche
 
+import androidx.core.content.edit
 import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
@@ -9,7 +10,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Constraints
@@ -71,7 +71,7 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
         val adesso = LocalDateTime.now()
         val daDire = allerteDaNotificare(allerte, gia, adesso)
         daDire.forEach { notifica(contesto, posto.name, it, adesso) }
-        memoria.edit().putStringSet(CHIAVE_DETTE, memoriaAggiornata(allerte, gia, adesso)).apply()
+        memoria.edit { putStringSet(CHIAVE_DETTE, memoriaAggiornata(allerte, gia, adesso)) }
         return Result.success()
     }
 
@@ -94,7 +94,6 @@ class AllerteUfficialiWorker(contesto: Context, parametri: WorkerParameters) : C
         }
 
         fun creaCanale(context: Context) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
                 tr("Allerte ufficiali", "Official warnings", "Amtliche Warnungen", "Alertes officielles", "Alertas oficiales"),

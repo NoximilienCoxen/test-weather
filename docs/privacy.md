@@ -19,6 +19,10 @@ tracciamento e non invia rapporti d'errore automatici.
   geocodifica di Open-Meteo.
 - **Un'etichetta tecnica** (User-Agent) che dice quale programma sta chiedendo.
 
+Il nome della località che segue la tua posizione lo chiede prima al servizio
+di geocodifica del sistema (su molti telefoni è di Google); se non risponde lo
+cerca in un elenco dentro l'app (GeoNames, CC BY 4.0), senza rete.
+
 Come per ogni connessione a Internet, i servizi contattati vedono l'indirizzo
 IP da cui arriva la richiesta.
 
@@ -55,8 +59,11 @@ dispositivi (Wear OS Data Layer).
   widget di seguire la tua posizione. La posizione precisa non viene mai
   chiesta.
 - **Notifiche** (facoltativo): pioggia o grandine in arrivo, allerte ufficiali,
-  riepilogo del mattino, avvisi personali a soglia (gelo, caldo, vento forte).
-  Ognuna si spegne dalle impostazioni.
+  riepilogo del mattino, "porta l'ombrello", previsione cambiata, avvisi
+  personali a soglia (gelo, caldo, vento forte, pioggia, UV). Ognuna si spegne
+  dalle impostazioni. Su Android 16 la pioggia in arrivo può comparire fra gli
+  aggiornamenti in tempo reale (permesso "notifiche in evidenza"); anche questo
+  si toglie dalle impostazioni di Android.
 - **Vibrazione**: il riscontro al tocco.
 
 ### Cancellare i dati
@@ -93,6 +100,11 @@ crash reports.
   service.
 - **A technical label** (User-Agent) saying which program is asking.
 
+The name of the place that follows your location is first asked of the
+system's geocoding service (on many phones it is Google's); if that does not
+answer, it is looked up in a list inside the app (GeoNames, CC BY 4.0),
+offline.
+
 As with any Internet connection, the services contacted see the IP address the
 request comes from.
 
@@ -126,8 +138,11 @@ over the link between the two devices (Wear OS Data Layer).
 - **Approximate location** (optional): only if you ask the app or a widget to
   follow your location. Precise location is never requested.
 - **Notifications** (optional): rain or hail on the way, official warnings,
-  morning summary, personal threshold notices (frost, heat, strong wind). Each
-  can be turned off in settings.
+  morning summary, "take an umbrella", forecast changed, personal threshold
+  notices (frost, heat, strong wind, rain, UV). Each can be turned off in
+  settings. On Android 16 rain on the way can appear among live updates
+  ("promoted notifications" permission); that too can be turned off in
+  Android settings.
 - **Vibration**: touch feedback.
 
 ### Deleting your data

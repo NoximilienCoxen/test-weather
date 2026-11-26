@@ -830,6 +830,3 @@ private fun forzaDelle(quali: List<Scarica>, tempo: Float): Float {
  */
 fun indiceLampo(tempo: Float): Int = floor(tempo / CICLO_LAMPO).toInt()
 
-/** Quanto e' lontano dallo zero e dall'uno: serve a sapere se una transizione
- *  e' in volo, e quindi se l'orologio deve restare acceso. */
-internal fun inMezzo(valore: Float): Boolean = valore > 0.01f && abs(valore - 1f) > 0.01f

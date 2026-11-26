@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.snap
@@ -81,6 +82,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
@@ -1534,6 +1538,9 @@ fun VoceInterruttore(
     palette: SalaPalette,
     onCambia: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    campanella: Boolean = false,
+    /** Righe piu' basse, per i gruppi lunghi ("Avvisi e notifiche"). */
+    compatta: Boolean = false,
 ) {
     val pressione = rememberPressione()
     Row(
@@ -1541,19 +1548,47 @@ fun VoceInterruttore(
             .fillMaxWidth()
             .cedevole(premuto = 0.99f, pressione = pressione)
             .toggleable(value = acceso, role = Role.Switch, onValueChange = onCambia)
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+            .padding(horizontal = 20.dp, vertical = if (compatta) 10.dp else 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = titolo, style = SalaType.rowTitle, color = palette.ink)
             if (!nota.isNullOrEmpty()) {
-                Text(
-                    text = nota,
-                    style = SalaType.rowNote,
-                    color = palette.inkFaint,
-                    modifier = Modifier.padding(top = 3.dp),
-                )
+                if (campanella) {
+                    // **La campanella sta dentro il testo**, come una lettera:
+                    // va a capo con la nota invece di spingerla. Per TalkBack ha
+                    // la sua descrizione, "Notifica" (`Campanella`).
+                    Text(
+                        text = androidx.compose.ui.text.buildAnnotatedString {
+                            // Uno spazio a larghezza zero: il ripiego non puo' essere
+                            // vuoto, e "Notifica" qui si sentirebbe due volte
+                            // (`ImpostazioniRenderTest` lo conta).
+                            appendInlineContent(CAMPANELLA, "\u200B")
+                            append(" ")
+                            append(nota)
+                        },
+                        inlineContent = mapOf(
+                            CAMPANELLA to androidx.compose.foundation.text.InlineTextContent(
+                                androidx.compose.ui.text.Placeholder(
+                                    width = 1.em,
+                                    height = 1.em,
+                                    placeholderVerticalAlign = androidx.compose.ui.text.PlaceholderVerticalAlign.TextCenter,
+                                ),
+                            ) { Campanella(palette.inkFaint) },
+                        ),
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                        modifier = Modifier.padding(top = 3.dp),
+                    )
+                } else {
+                    Text(
+                        text = nota,
+                        style = SalaType.rowNote,
+                        color = palette.inkFaint,
+                        modifier = Modifier.padding(top = 3.dp),
+                    )
+                }
             }
         }
         InterruttoreSala(acceso = acceso, palette = palette, premuto = pressione.giu)
@@ -1625,7 +1660,14 @@ fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier =
         // attorno a quel centro.
         Box(
             modifier = Modifier
-                .offset(x = corsa + 12.dp - diametro / 2f + 0.dp, y = 16.dp - diametro / 2f)
+                // Nel disegno, non nella composizione: `corsa` e `diametro`
+                // sono animati, e l'offset coi valori ricomporrebbe a ogni passo.
+                .offset {
+                    IntOffset(
+                        (corsa + 12.dp - diametro / 2f).roundToPx(),
+                        (16.dp - diametro / 2f).roundToPx(),
+                    )
+                }
                 .size(diametro)
                 .clip(CircleShape)
                 .background(pallino),
@@ -1731,5 +1773,32 @@ fun BloccoImpostazioni(
         Text(text = etichetta, style = SalaType.sectionLabel, color = palette.inkFaint)
         Spacer(modifier = Modifier.height(11.dp))
         content()
+    }
+}
+
+private const val CAMPANELLA = "campanella"
+
+/**
+ * La campanella delle notifiche, della stessa famiglia delle altre icone:
+ * tratto pieno, angoli tondi. Una cupola, il bordo e il batacchio.
+ */
+@Composable
+private fun Campanella(colore: Color) {
+    val descrizione = tr("Notifica", "Notification", "Benachrichtigung", "Notification", "Notificación")
+    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize().semantics { contentDescription = descrizione }) {
+        val u = size.minDimension / 24f
+        val corpo = Path().apply {
+            moveTo(12f * u, 3f * u)
+            cubicTo(8f * u, 3f * u, 6f * u, 6f * u, 6f * u, 10f * u)
+            lineTo(6f * u, 15f * u)
+            lineTo(4f * u, 18f * u)
+            lineTo(20f * u, 18f * u)
+            lineTo(18f * u, 15f * u)
+            lineTo(18f * u, 10f * u)
+            cubicTo(18f * u, 6f * u, 16f * u, 3f * u, 12f * u, 3f * u)
+            close()
+        }
+        drawPath(corpo, colore)
+        drawCircle(colore, radius = 2.2f * u, center = Offset(12f * u, 20.5f * u))
     }
 }

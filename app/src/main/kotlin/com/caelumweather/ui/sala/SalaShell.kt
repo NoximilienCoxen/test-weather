@@ -610,7 +610,9 @@ fun SalaShell(
     // scena si vede intera e il pannello puo' salire quasi fino in cima: il
     // cielo non gli sta piu' sopra ma accanto. Sotto gli 840 punti non cambia
     // niente.
-    val affiancato = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >= 840
+    val affiancato = with(LocalDensity.current) {
+        androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.width.toDp()
+    } >= 840.dp
     val allineamentoSale = if (affiancato) Alignment.TopEnd else Alignment.TopCenter
     val margineAffiancato = if (affiancato) 24.dp else 0.dp
     val riservaColonna = if (larghe) 0.dp else 40.dp
@@ -622,7 +624,6 @@ fun SalaShell(
     // Si ricordano i riquadri dei pezzi che la guida illumina. Da sola parte
     // una volta, dopo il velo d'apertura e quando ci sono i dati; a mano,
     // dalle impostazioni. La cattura non la vede mai da sola: la chiede.
-    var rCielo by remember { mutableStateOf<Rect?>(null) }
     var rIntestazione by remember { mutableStateOf<Rect?>(null) }
     var rScheda by remember { mutableStateOf<Rect?>(null) }
     var rColonna by remember { mutableStateOf<Rect?>(null) }
@@ -630,7 +631,7 @@ fun SalaShell(
     // Il carosello nella radice, per il tetto dei pannelli e per sapere se un
     // dito appoggiato sta sul cielo o sulla scheda.
     var rCarosello by remember { mutableStateOf<Rect?>(null) }
-    var altezzaRadice by remember { mutableStateOf(0f) }
+    var altezzaRadice by remember { mutableFloatStateOf(0f) }
     var attesaFinita by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(ATTESA_GUIDA_MS)

@@ -11,6 +11,7 @@ segnati **(verifica)** vanno riletti nella Play Console il giorno in cui si fa.
 | Bundle di rilascio (`.aab`) per telefono e orologio, a ogni giro di CI | job `build`, artifact `bundle` |
 | Firma di rilascio letta da variabili, mai dal repository | `app/build.gradle.kts`, `wear/build.gradle.kts` (`segreto`) |
 | `versionCode` che cresce da solo (telefono: numero di commit; orologio: un milione in più) | idem |
+| `versionName` pulito per lo store (`1.0.0`, costante `VERSIONE`); lo SHA del commit solo sulla debug | idem |
 | R8 e riduzione delle risorse sulla release del telefono | `app/build.gradle.kts` |
 | `targetSdk` 36, icona adattiva con livello monocromatico, regole di backup | manifest |
 | Informativa sulla privacy, italiano e inglese | `docs/privacy.md` |

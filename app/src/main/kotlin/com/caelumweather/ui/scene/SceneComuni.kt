@@ -59,7 +59,7 @@ internal fun DrawScope.sole(centro: Offset, r: Float, colore: Color = Colori.sol
  * coperto da un altro del colore del cielo: coprendo, l'alone restava visibile
  * sotto il disco "invisibile" come un buco grigio.
  */
-internal fun DrawScope.luna(centro: Offset, r: Float, @Suppress("UNUSED_PARAMETER") cielo: Color, falce: Boolean = false) {
+internal fun DrawScope.luna(centro: Offset, r: Float, falce: Boolean = false) {
     drawCircle(
         Brush.radialGradient(listOf(Colori.lunaAlone.copy(alpha = 0.22f), Colori.lunaAlone.copy(alpha = 0f)), centro, r * 2.4f),
         r * 2.4f,
@@ -212,11 +212,9 @@ internal object Colori {
 
     val mare = Color(0xFF5B8AA5)
     val mareScuro = Color(0xFF3E6A85)
-    val mareChiaro = Color(0xFF7EA7BD)
     val mareNotte = Color(0xFF1C2A40)
     val mareNotteScuro = Color(0xFF142034)
 
-    val verdeChiaro = Color(0xFFAEBF92)
     val verde = Color(0xFF8FA073)
     val verdeScuro = Color(0xFF728157)
     val verdeNotte = Color(0xFF2C3627)

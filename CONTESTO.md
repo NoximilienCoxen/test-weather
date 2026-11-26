@@ -8895,3 +8895,92 @@ kotlinx-serialization 1.13.0.
 ### 82.3 Non provato in mano
 Il chip nella barra di stato di Android 16, l'avviso di cambio previsione con
 dati veri, la disposizione affiancata su un tablet vero.
+
+### 82.4 Verso la release (26 novembre)
+- `versionName` = `VERSIONE` ("1.0.0") in `app/build.gradle.kts`, "1.0.0" in
+  `wear/`; la debug aggiunge `-<sha>` (`versionNameSuffix`). A ogni rilascio
+  si alza a mano; il `versionCode` resta il conto dei commit.
+- Testi dello store (5 lingue), `docs/privacy.md` e note legali allineati a
+  questo giro: nove widget, ombrello, previsione cambiata, conto alla
+  rovescia, avvisi a soglia anche per pioggia e UV, mare con scheda sua,
+  anteprima dei giorni, cosa mettersi, tablet.
+
+### 82.5 "POSIZIONE" in testa invece del paese
+Visto in mano: seguendo la posizione, l'intestazione diceva "POSIZIONE"
+(`DeviceLocation.FALLBACK_NAME`) perche' la geocodifica inversa non aveva
+risposto. Ora: da Android 13 `Geocoder.getFromLocation` col richiamo (la
+sincrona e' deprecata e su alcuni telefoni torna vuota), 4 s per tentativo, due
+tentativi; e `conNomeTenuto` tiene il nome del posto di prima se il nuovo non ne
+ha uno ed e' entro 10 km (app e widget). Controllo: `NomeDelPostoTest`. La CI
+non lo vede mai: l'emulatore AOSP non ha geocoder.
+- **Non bastava.** Sul telefono dell'utente il geocoder non risponde mai
+  (probabilmente senza servizi Google). Ora `LocalitaVicine`: le localita'
+  GeoNames con almeno mille abitanti (cities1000, CC BY 4.0, dal pacchetto npm
+  `cities.json` 1.1.66; GeoNames diretto da qui da' 403) in
+  `assets/localita.tsv.gz` (2,4 MB, 171 737 righe ordinate per latitudine),
+  rigenerabile con `scripts/comuni_geonames.py`. Si prende la piu' vicina entro
+  25 km, senza rete. Attribuzione in note legali e informativa. Controllo:
+  `LocalitaVicineTest` legge il file vero.
+
+### 82.6 Pulizia del codice (26 novembre)
+Misurato, non a occhio: avvisi del compilatore (4, tutti nel Tile
+dell'orologio), lint (54 avvisi, 0 errori), dichiarazioni mai nominate (28).
+- **Tolto il codice morto**: `apriAllOra` e il salto d'ora dei riquadri della
+  settimana (`SaltoDOra`, uscito con la sala Settimana), `oreDiSole`,
+  `haMarea`, `inMezzo`, `SPAZIO_COLONNE`, `rCielo`, `WindTint`, `MoonTint`,
+  `mareChiaro`, `verdeChiaro`, `WidgetInk.bolt`, il numero romano di
+  `SalaRoom`, il parametro inutile di `luna`.
+- **Un doppione**: la regola "ora da ombrello" (0,3 mm e 40%) era in due posti;
+  ora `oraDaOmbrello` in `OmbrelloWorker.kt`, usata anche da `CosaMettersi`.
+- **Lint**: controlli `SDK_INT < O` inutili con minSdk 26
+  (`mipmap-anydpi-v26` resta: senza qualificatore aapt perde le icone
+  adattive, provato), `SharedPreferences.edit {}` e `createBitmap` di core-ktx,
+  `mutableFloatStateOf`, offset dell'interruttore letto nel disegno,
+  `LocalWindowInfo` invece di `screenWidthDp`, `app_name` non traducibile.
+- **Lasciato, con il perche'**: `Image.Builder()` deprecato nel Tile (la via
+  nuova cambia le risorse, da provare su un orologio); i rami per le versioni
+  vecchie di Android con `@Suppress("DEPRECATION")` (corretti); la scala
+  completa di `SalaTokens` (e' la copia del sistema di design, i gradini non
+  usati non costano); il blocco in verticale; `targetSdk` 36 (37 cambia
+  comportamenti, lo store chiede 36).
+
+## 83. Avvisi e notifiche in un riquadro solo, per argomento
+
+Revisione UX del 26 novembre 2026. Le Impostazioni avevano tre gruppi che si
+sovrapponevano ("Avvisi nelle schermate", "Notifiche", "Avvisi personali"):
+"Vento forte" due volte, l'UV due volte, la pioggia quattro. **Nessuna coppia
+faceva la stessa cosa** (mappa nel messaggio della revisione: avvisi nell'app
+da `DerivedAlerts` su oggi e domani; notifiche dai worker), ma i nomi uguali non
+dicevano quale compariva nell'app e quale suonava.
+
+- **Un riquadro "Avvisi e notifiche"** con sottotitoli d'accento: Pioggia,
+  Vento, Raggi UV, Temperatura, Allerte ufficiali, Riepiloghi
+  (`SottotitoloGruppo`). Dentro ogni argomento prima "Nell'app ·", poi le
+  notifiche, segnate da una campanella dentro il testo (`VoceInterruttore(
+  campanella = true)`). **Scelta la campanella** sulla parola "Notifica ·", che
+  mandava a capo le note. L'icona ha `contentDescription` "Notifica"; il
+  segnaposto del testo ha come ripiego uno spazio a larghezza zero, se no
+  TalkBack direbbe "Notifica" due volte (`ImpostazioniRenderTest` lo conta
+  nell'albero di accessibilita' unito). La nota in fondo comincia con "Le voci
+  con la campanella arrivano come notifica".
+- **Le chiavi DataStore non sono cambiate**: solo posizione, titoli e note.
+  Le soglie si chiamano Pioggia forte, Raffiche, UV alto, Gelo, Caldo.
+- **La nota in fondo dice solo il vero**: tacciono di notte (22-7) solo le
+  cinque soglie (`SogliePersonaliWorker.oraDiParlare`); pioggia in arrivo,
+  allerte e previsione cambiata girano a ogni ora, ombrello e riepilogo
+  all'ora scelta. "Soglie anche sulle località salvate" elenca le cinque voci a
+  cui si applica e compare sotto l'ultima, solo se una e' accesa.
+- Righe piu' basse in questo riquadro (`compatta`, 10 dp invece di 14): la
+  schermata intera passa da 2842 a 2702 dp (`ImpostazioniRenderTest`, che
+  disegna tutta la schermata chiara e scura in `build/widget-renders`).
+- **Rimandato al giro dopo**: allineare le soglie dello stesso argomento
+  (vento nell'app a 72 km/h fissi contro la notifica a soglia scelta), e un
+  interruttore per caldo, freddo e neve calcolati.
+- `.claude/settings.json`: `attribution` vuota e `sessionUrl: false`, piu'
+  `includeCoAuthoredBy: false` per le versioni vecchie: Claude Code non
+  aggiunge piu' trailer ne' link di sessione (§9, §11.2). I commit di questo
+  ramo sono stati spolverati prima dell'unione; **`main` no, per scelta**
+  (contiene ancora le firme delle sessioni passate). Se un giorno lo si
+  riscrive: prima un tag di backup, poi va risistemato cio' che punta ai commit
+  vecchi (il corpo della release `apk-latest`, gli `INFO.txt` su
+  `ci-artifacts`, ogni altro clone del repository).

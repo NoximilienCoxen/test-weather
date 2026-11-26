@@ -112,6 +112,3 @@ private fun estremo(tratto: List<OraMare>, y: List<Double>, i: Int, tipo: TipoMa
 /** I prossimi [quanti] estremi da [da] in avanti. */
 fun prossimiEstremi(mare: Mare, da: LocalDateTime, quanti: Int = 4): List<EstremoMarea> =
     estremiDiMarea(mare.ore).filter { !it.quando.isBefore(da) }.take(quanti)
-
-/** Vero se il mare di questa localita' ha una marea da raccontare. */
-fun haMarea(mare: Mare): Boolean = estremiDiMarea(mare.ore).isNotEmpty()

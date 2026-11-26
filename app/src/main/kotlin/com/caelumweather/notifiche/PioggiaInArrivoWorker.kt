@@ -1,5 +1,6 @@
 package com.caelumweather.notifiche
 
+import androidx.core.content.edit
 import com.caelumweather.lingua.Lingue
 import com.caelumweather.lingua.tr
 import android.Manifest
@@ -70,10 +71,10 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
         if (recente && !peggiorata) return Result.success()
 
         notifica(contesto, posto.name, evento, risposta.adesso)
-        memoria.edit()
-            .putLong("$chiave.il", oraMs)
-            .putString("$chiave.tipo", evento.tipo.name)
-            .apply()
+        memoria.edit {
+            putLong("$chiave.il", oraMs)
+            putString("$chiave.tipo", evento.tipo.name)
+        }
         return Result.success()
     }
 
@@ -105,7 +106,6 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
 
         /** Il canale, con un nome che si capisce nelle impostazioni di sistema. */
         fun creaCanale(context: Context) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val canale = NotificationChannel(
                 CANALE,
                 tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),

@@ -61,7 +61,7 @@ internal fun DrawScope.scenaCittaNatale(t: Float, notte: Boolean) {
     if (notte) {
         cielo(Scena.CITTA_NATALE, notte)
         stelle(t, H * 0.35f)
-        luna(Offset(W * 0.8f, H * 0.14f), W * 0.05f, Color(0xFF101A30), falce = true)
+        luna(Offset(W * 0.8f, H * 0.14f), W * 0.05f, falce = true)
     } else {
         cielo(Scena.CITTA_NATALE, notte)
     }
@@ -204,7 +204,7 @@ internal fun DrawScope.scenaArcobaleno(t: Float, notte: Boolean) {
     if (notte) {
         cielo(Scena.ARCOBALENO, notte)
         stelle(t, H * 0.55f)
-        luna(Offset(W * 0.5f, H * 0.26f), W * 0.075f, Colori.cieloNotteAlto)
+        luna(Offset(W * 0.5f, H * 0.26f), W * 0.075f)
         // Le nuvole si scostano, lente, da una parte e dall'altra.
         val apre = 0.5f + 0.5f * oscilla(t, 18f)
         nuvola(Offset(W * (0.28f - apre * 0.12f), H * 0.32f), W * 0.4f, Color(0xFF3A4462))

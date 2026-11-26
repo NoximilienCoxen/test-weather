@@ -137,14 +137,14 @@ fun SalaLegaliScreen(
                 )
                 Paragrafo(
                     tr(
-                        "Gli AVVISI PERSONALI (gelo, caldo, vento forte) sono un'altra cosa ancora: " +
+                        "Gli AVVISI PERSONALI (gelo, caldo, vento forte, pioggia, UV) sono un'altra cosa ancora: " +
                             "la soglia la scegli tu, e la notifica ti dice soltanto che la previsione " +
                             "la passa. Una previsione può sbagliare, e l'avviso può arrivare tardi o " +
                             "non arrivare: non affidargli la sicurezza di persone, animali o cose.",
-                        "PERSONAL NOTICES (frost, heat, strong wind) are something else again: you choose the threshold, and the notification only tells you that the forecast crosses it. A forecast can be wrong, and the notice can arrive late or not at all: do not rely on it for the safety of people, animals or property.",
-                        "PERSÖNLICHE HINWEISE (Frost, Hitze, starker Wind) sind noch einmal etwas anderes: Die Schwelle wählst du, und die Benachrichtigung sagt dir nur, dass die Vorhersage sie überschreitet. Eine Vorhersage kann falsch sein, und der Hinweis kann zu spät oder gar nicht kommen: Verlasse dich für die Sicherheit von Menschen, Tieren oder Sachen nicht darauf.",
-                        "Les AVIS PERSONNELS (gel, chaleur, vent fort) sont encore autre chose : c'est vous qui choisissez le seuil, et la notification vous dit seulement que la prévision le franchit. Une prévision peut se tromper, et l'avis peut arriver tard ou ne pas arriver : ne lui confiez pas la sécurité de personnes, d'animaux ou de biens.",
-                        "Los AVISOS PERSONALES (helada, calor, viento fuerte) son otra cosa distinta: el umbral lo eliges tú, y la notificación solo te dice que la previsión lo supera. Una previsión puede equivocarse, y el aviso puede llegar tarde o no llegar: no le confíes la seguridad de personas, animales o cosas.",
+                        "PERSONAL NOTICES (frost, heat, strong wind, rain, UV) are something else again: you choose the threshold, and the notification only tells you that the forecast crosses it. A forecast can be wrong, and the notice can arrive late or not at all: do not rely on it for the safety of people, animals or property.",
+                        "PERSÖNLICHE HINWEISE (Frost, Hitze, starker Wind, Regen, UV) sind noch einmal etwas anderes: Die Schwelle wählst du, und die Benachrichtigung sagt dir nur, dass die Vorhersage sie überschreitet. Eine Vorhersage kann falsch sein, und der Hinweis kann zu spät oder gar nicht kommen: Verlasse dich für die Sicherheit von Menschen, Tieren oder Sachen nicht darauf.",
+                        "Les AVIS PERSONNELS (gel, chaleur, vent fort, pluie, UV) sont encore autre chose : c'est vous qui choisissez le seuil, et la notification vous dit seulement que la prévision le franchit. Une prévision peut se tromper, et l'avis peut arriver tard ou ne pas arriver : ne lui confiez pas la sécurité de personnes, d'animaux ou de biens.",
+                        "Los AVISOS PERSONALES (helada, calor, viento fuerte, lluvia, UV) son otra cosa distinta: el umbral lo eliges tú, y la notificación solo te dice que la previsión lo supera. Una previsión puede equivocarse, y el aviso puede llegar tarde o no llegar: no le confíes la seguridad de personas, animales o cosas.",
                     ),
                     palette,
                 )
@@ -273,6 +273,21 @@ fun SalaLegaliScreen(
                 Collegamento("Weather data by Open-Meteo.com", Fonti.OPEN_METEO, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
                 Collegamento(tr("Licenza e fonti di Open-Meteo", "Open-Meteo licence and sources", "Lizenz und Quellen von Open-Meteo", "Licence et sources d'Open-Meteo", "Licencia y fuentes de Open-Meteo"), Fonti.OPEN_METEO_LICENZA, SalaType.body, palette.accent, Modifier.padding(bottom = 8.dp))
                 Paragrafo(Fonti.CITAZIONE_OPEN_METEO, palette)
+
+                // L'elenco delle localita' dentro l'app (`LocalitaVicine`): dove
+                // il telefono non sa dare un nome alla posizione. CC BY 4.0.
+                Paragrafo(
+                    tr(
+                        "Nomi delle località vicine alla tua posizione, senza rete: GeoNames (geonames.org), " +
+                            "località con almeno mille abitanti, sotto licenza CC BY 4.0. L'app ne tiene " +
+                            "nome, regione, paese e coordinate.",
+                        "Names of places near your location, offline: GeoNames (geonames.org), places with at least a thousand inhabitants, under the CC BY 4.0 licence. The app keeps their name, region, country and coordinates.",
+                        "Namen der Orte in deiner Nähe, ohne Netz: GeoNames (geonames.org), Orte mit mindestens tausend Einwohnern, unter der Lizenz CC BY 4.0. Die App behält Name, Region, Land und Koordinaten.",
+                        "Noms des lieux proches de votre position, hors ligne : GeoNames (geonames.org), lieux d'au moins mille habitants, sous licence CC BY 4.0. L'app en garde le nom, la région, le pays et les coordonnées.",
+                        "Nombres de los lugares cercanos a tu ubicación, sin red: GeoNames (geonames.org), lugares con al menos mil habitantes, bajo la licencia CC BY 4.0. La app conserva nombre, región, país y coordenadas.",
+                    ),
+                    palette,
+                )
 
                 Paragrafo(
                     tr(

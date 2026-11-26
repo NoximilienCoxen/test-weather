@@ -138,28 +138,100 @@ object DeviceLocation {
      * torna nulla come tutti gli altri modi di non riuscire, e chi ha chiamato
      * resta dov'era invece di guardare una previsione di nessun posto.
      */
-    private fun describe(context: Context, fix: Location): Place? {
+    private suspend fun describe(context: Context, fix: Location): Place? {
         if (!fix.latitude.isFinite() || !fix.longitude.isFinite()) return null
-
-        val address = runCatching {
-            @Suppress("DEPRECATION")
-            Geocoder(context, Lingue.locale)
-                .getFromLocation(fix.latitude, fix.longitude, 1)
-                ?.firstOrNull()
-        }.getOrNull()
-
-        return Place(
-            name = address?.locality
-                ?: address?.subAdminArea
-                ?: address?.adminArea
-                ?: FALLBACK_NAME,
+        val address = indirizzo(context, fix.latitude, fix.longitude)
+        val dalTelefono = Place(
+            name = nomeDelPosto(address?.locality, address?.subAdminArea, address?.adminArea),
             admin = address?.adminArea,
             country = address?.countryName,
             latitude = fix.latitude,
             longitude = fix.longitude,
         )
+        if (dalTelefono.name != FALLBACK_NAME) return dalTelefono
+        // Il telefono non sa dare un nome (senza servizi Google non risponde
+        // mai): la localita' piu' vicina dall'elenco dentro l'app.
+        return LocalitaVicine.piuVicina(context, fix.latitude, fix.longitude) ?: dalTelefono
+    }
+
+    /**
+     * La geocodifica inversa, **fatta come la piattaforma vuole**.
+     *
+     * La chiamata sincrona e' deprecata da Android 13 e su alcuni telefoni
+     * torna vuota o lancia `IOException` anche con la rete accesa: l'app
+     * restava con "POSIZIONE" in testa invece del nome del paese (visto in mano
+     * il 26 novembre 2026). Da Android 13 si usa quella col richiamo, con un
+     * tempo massimo; prima si riprova una volta dopo un secondo, perche' il
+     * primo tentativo a freddo e' quello che fallisce piu' spesso.
+     */
+    private suspend fun indirizzo(context: Context, lat: Double, lon: Double): android.location.Address? {
+        if (!Geocoder.isPresent()) return null
+        val geocoder = Geocoder(context, Lingue.locale)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            repeat(2) { tentativo ->
+                val trovato = withTimeoutOrNull(GEOCODIFICA_MS) {
+                    suspendCancellableCoroutine<android.location.Address?> { c ->
+                        runCatching {
+                            geocoder.getFromLocation(lat, lon, 1, object : Geocoder.GeocodeListener {
+                                override fun onGeocode(addresses: MutableList<android.location.Address>) {
+                                    if (c.isActive) c.resume(addresses.firstOrNull())
+                                }
+
+                                override fun onError(errorMessage: String?) {
+                                    if (c.isActive) c.resume(null)
+                                }
+                            })
+                        }.onFailure { if (c.isActive) c.resume(null) }
+                    }
+                }
+                if (trovato != null) return trovato
+                if (tentativo == 0) kotlinx.coroutines.delay(1_000)
+            }
+            return null
+        }
+        repeat(2) { tentativo ->
+            val trovato = runCatching {
+                @Suppress("DEPRECATION")
+                geocoder.getFromLocation(lat, lon, 1)?.firstOrNull()
+            }.getOrNull()
+            if (trovato != null) return trovato
+            if (tentativo == 0) kotlinx.coroutines.delay(1_000)
+        }
+        return null
     }
 
     /** Oltre questo, un rilevamento non sta arrivando. */
     private const val FIX_TIMEOUT_MS = 8_000L
+
+    /** Quanto si aspetta un nome, per tentativo. */
+    private const val GEOCODIFICA_MS = 4_000L
+}
+
+/** Il nome da mostrare: il comune, se no la provincia, se no la regione, se no il ripiego. */
+internal fun nomeDelPosto(comune: String?, provincia: String?, regione: String?): String =
+    listOf(comune, provincia, regione).firstOrNull { !it.isNullOrBlank() }?.trim() ?: DeviceLocation.FALLBACK_NAME
+
+/**
+ * **Un nome vero non si perde per una geocodifica andata male.** Se il posto
+ * appena trovato non ha un nome (e' il ripiego) ma quello in cui si era sta a
+ * meno di [RAGGIO_KM], si tiene il nome di prima con le coordinate nuove: chi
+ * apre l'app a casa sua non deve leggere "POSIZIONE" solo perche' stavolta il
+ * geocoder non ha risposto.
+ */
+fun conNomeTenuto(trovato: Place, prima: Place?): Place {
+    if (trovato.name != DeviceLocation.FALLBACK_NAME || prima == null) return trovato
+    if (prima.name == DeviceLocation.FALLBACK_NAME || prima.name.isBlank()) return trovato
+    if (distanzaKm(trovato.latitude, trovato.longitude, prima.latitude, prima.longitude) > RAGGIO_KM) return trovato
+    return trovato.copy(name = prima.name, admin = prima.admin, country = prima.country)
+}
+
+private const val RAGGIO_KM = 10.0
+
+internal fun distanzaKm(la1: Double, lo1: Double, la2: Double, lo2: Double): Double {
+    val r = 6371.0
+    val dLa = Math.toRadians(la2 - la1)
+    val dLo = Math.toRadians(lo2 - lo1)
+    val a = kotlin.math.sin(dLa / 2).let { it * it } +
+        kotlin.math.cos(Math.toRadians(la1)) * kotlin.math.cos(Math.toRadians(la2)) * kotlin.math.sin(dLo / 2).let { it * it }
+    return 2 * r * kotlin.math.asin(kotlin.math.sqrt(a.coerceIn(0.0, 1.0)))
 }

@@ -295,62 +295,26 @@ fun SalaImpostazioniScreen(
                 )
             }
 
-            // **Gli avvisi filtrano solo quelli calcolati.** Un'allerta del
-            // servizio meteorologico non la si nasconde perche' un interruttore e'
-            // giu': la scelta e' su cio' che questa applicazione deduce dalle
-            // soglie, non su cio' che un ente dichiara. La nota sotto il gruppo
-            // lo dice, perche' prima lo sapeva solo questo commento.
-            GruppoImpostazioni(
-                titolo = tr("AVVISI NELLE SCHERMATE", "NOTICES ON THE SCREENS", "HINWEISE AUF DEN BILDSCHIRMEN", "AVIS SUR LES ÉCRANS", "AVISOS EN LAS PANTALLAS"),
-                palette = palette,
-                nota = tr(
-                    "Le allerte ufficiali dei servizi meteorologici si vedono sempre: qui scegli solo " +
-                        "gli avvisi che l'app ricava dalla previsione.",
-                    "Official weather service warnings always show: here you only choose " +
-                        "the notices the app works out from the forecast.",
-                    "Amtliche Warnungen der Wetterdienste werden immer angezeigt: Hier wählst du nur die Hinweise, die die App aus der Vorhersage ableitet.",
-                    "Les alertes officielles des services météorologiques s'affichent toujours : ici, vous choisissez seulement les avis que l'app déduit de la prévision.",
-                    "Las alertas oficiales de los servicios meteorológicos se muestran siempre: aquí solo eliges los avisos que la app deduce de la previsión.",
-                ),
-            ) {
-                VoceInterruttore(
-                    titolo = tr("Pioggia intensa", "Heavy rain", "Starkregen", "Fortes pluies", "Lluvia intensa"),
-                    nota = tr("quando sono attesi molti millimetri", "when a lot of millimetres are expected", "wenn viele Millimeter erwartet werden", "quand beaucoup de millimètres sont attendus", "cuando se esperan muchos milímetros"),
-                    acceso = state.alertToggles.pioggiaIntensa,
-                    palette = palette,
-                    onCambia = { onToggleAlert(AlertToggleKind.PIOGGIA, it) },
-                )
-                FiloGruppo(palette)
-                VoceInterruttore(
-                    titolo = tr("Temporali", "Thunderstorms", "Gewitter", "Orages", "Tormentas"),
-                    nota = tr("quando la previsione dà temporale", "when the forecast gives thunderstorms", "wenn die Vorhersage Gewitter meldet", "quand la prévision annonce de l'orage", "cuando la previsión da tormenta"),
-                    acceso = state.alertToggles.temporali,
-                    palette = palette,
-                    onCambia = { onToggleAlert(AlertToggleKind.TEMPORALE, it) },
-                )
-                FiloGruppo(palette)
-                VoceInterruttore(
-                    titolo = tr("Raggi UV alti", "High UV", "Hohe UV-Strahlung", "UV élevés", "Rayos UV altos"),
-                    nota = tr("indice sopra 6, dove la scala mondiale passa ad alto", "index above 6, where the world scale turns to high", "Index über 6, wo die weltweite Skala auf hoch wechselt", "indice supérieur à 6, là où l'échelle mondiale passe à élevé", "índice por encima de 6, donde la escala mundial pasa a alto"),
-                    acceso = state.alertToggles.uvAlto,
-                    palette = palette,
-                    onCambia = { onToggleAlert(AlertToggleKind.UV, it) },
-                )
-                FiloGruppo(palette)
-                VoceInterruttore(
-                    titolo = tr("Vento forte", "Strong wind", "Starker Wind", "Vent fort", "Viento fuerte"),
-                    nota = tr("quando sono attese raffiche forti", "when strong gusts are expected", "wenn starke Böen erwartet werden", "quand de fortes rafales sont attendues", "cuando se esperan rachas fuertes"),
-                    acceso = state.alertToggles.ventoForte,
-                    palette = palette,
-                    onCambia = { onToggleAlert(AlertToggleKind.VENTO, it) },
-                )
-            }
-
-            // Accenderle senza il permesso non accenderebbe niente: su Android
-            // 13 e oltre l'interruttore lo chiede, e se viene negato le
-            // notifiche restano spente, perche' un interruttore acceso che non
-            // fa niente e' peggio di uno spento.
+            // ── Avvisi e notifiche, per argomento ────────────────────────────
+            //
+            // **Erano tre gruppi che si sovrapponevano** ("Avvisi nelle
+            // schermate", "Notifiche", "Avvisi personali"): "Vento forte" due
+            // volte, l'UV due volte, la pioggia quattro, e nessun titolo diceva
+            // quale voce faceva comparire qualcosa nell'app e quale suonava. Ora
+            // un riquadro solo, diviso per argomento; dentro, prima cio' che si
+            // vede nell'app, poi le notifiche, segnate tutte allo stesso modo
+            // (`segno`). **Le chiavi DataStore sono quelle di prima**: cambia
+            // solo dove stanno le righe e cosa dicono (CONTESTO §83).
+            //
+            // Gli avvisi nell'app filtrano solo quelli calcolati: un'allerta di
+            // un ente si vede sempre, e la riga "Arancioni e rosse" lo dice.
+            //
+            // Accendere una notifica senza il permesso non accenderebbe niente:
+            // su Android 13 e oltre l'interruttore lo chiede, e se viene negato
+            // la voce resta spenta, perche' un interruttore acceso che non fa
+            // niente e' peggio di uno spento.
             val contesto = LocalContext.current
+            val puoNotificare = PioggiaInArrivoWorker.puoNotificare(contesto)
             val chiediPermesso = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleNotifichePioggia(concesso) }
@@ -366,66 +330,151 @@ fun SalaImpostazioniScreen(
             val chiediPermessoCambio = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleCambioPrevisione(concesso) }
-            GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS", "BENACHRICHTIGUNGEN", "NOTIFICATIONS", "NOTIFICACIONES"), palette = palette) {
+            // Un permesso solo per le cinque soglie: si ricorda quale levetta
+            // l'ha chiesto, e se viene negato quella resta giu'.
+            var sogliaInAttesa by remember { mutableStateOf<TipoSoglia?>(null) }
+            val chiediPermessoSoglia = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso ->
+                sogliaInAttesa?.let { onToggleSoglia(it, concesso) }
+                sogliaInAttesa = null
+            }
+            val serveIlPermesso = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !puoNotificare
+            fun notifica(vuole: Boolean, chiedi: () -> Unit, cambia: (Boolean) -> Unit) = when {
+                !vuole -> cambia(false)
+                serveIlPermesso -> chiedi()
+                else -> cambia(true)
+            }
+
+            // Le note dicono tutte di che cosa si tratta: "Nell'app ·" per cio'
+            // che compare nelle schermate, la campanella per cio' che suona.
+            // Si era provata anche la parola "Notifica ·": allungava le note
+            // fino ad andare a capo, ed e' stata scelta la campanella.
+            fun nellApp(testo: String) = tr("Nell'app", "In the app", "In der App", "Dans l'app", "En la app") + " · " + testo
+
+            @Composable
+            fun VoceSoglia(tipo: TipoSoglia) {
+                val accesa = state.soglie.accesa(tipo) && puoNotificare
+                val scritta: (Int) -> String = { valore ->
+                    when (tipo) {
+                        TipoSoglia.VENTO -> ventoDiSoglia(valore, state.windUnit)
+                        TipoSoglia.PIOGGIA -> pioggiaDiSoglia(valore)
+                        TipoSoglia.UV -> "UV $valore"
+                        else -> gradiDiSoglia(valore, state.unit)
+                    }
+                }
+                val s = scritta(state.soglie.valore(tipo))
                 VoceInterruttore(
-                    titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),
-                    nota = tr("un avviso poco prima che cominci, sulla località dell'app", "a heads-up shortly before it starts, for the app's place", "ein Hinweis kurz bevor es losgeht, für den Ort der App", "un avis peu avant que ça commence, pour le lieu de l'app", "un aviso poco antes de que empiece, para el lugar de la app"),
-                    acceso = state.notifichePioggia && PioggiaInArrivoWorker.puoNotificare(contesto),
-                    palette = palette,
-                    onCambia = { vuole ->
-                        when {
-                            !vuole -> onToggleNotifichePioggia(false)
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
-                                chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            else -> onToggleNotifichePioggia(true)
-                        }
+                    titolo = when (tipo) {
+                        TipoSoglia.GELO -> tr("Gelo", "Frost", "Frost", "Gel", "Helada")
+                        TipoSoglia.CALDO -> tr("Caldo", "Heat", "Hitze", "Chaleur", "Calor")
+                        TipoSoglia.VENTO -> tr("Raffiche", "Gusts", "Böen", "Rafales", "Rachas")
+                        TipoSoglia.PIOGGIA -> tr("Pioggia forte", "Heavy rain", "Starkregen", "Pluie forte", "Lluvia fuerte")
+                        TipoSoglia.UV -> tr("UV alto", "High UV", "Hoher UV-Index", "UV élevés", "UV alto")
                     },
+                    nota = (
+                        when (tipo) {
+                            TipoSoglia.GELO ->
+                                if (accesa) tr("minima a $s o sotto", "low of $s or below", "Tiefstwert $s oder darunter", "minimale à $s ou moins", "mínima de $s o menos")
+                                else tr("quando la minima scende sotto una soglia tua", "when the low drops below your threshold", "wenn der Tiefstwert unter deine Schwelle fällt", "quand la minimale passe sous votre seuil", "cuando la mínima baja de tu umbral")
+                            TipoSoglia.CALDO ->
+                                if (accesa) tr("massima a $s o sopra", "high of $s or above", "Höchstwert $s oder darüber", "maximale à $s ou plus", "máxima de $s o más")
+                                else tr("quando la massima passa una soglia tua", "when the high passes your threshold", "wenn der Höchstwert deine Schwelle überschreitet", "quand la maximale dépasse votre seuil", "cuando la máxima supera tu umbral")
+                            TipoSoglia.VENTO ->
+                                if (accesa) tr("raffiche da $s", "gusts from $s", "Böen ab $s", "rafales dès $s", "rachas desde $s")
+                                else tr("quando le raffiche passano una soglia tua", "when gusts pass your threshold", "wenn die Böen deine Schwelle überschreiten", "quand les rafales dépassent votre seuil", "cuando las rachas superan tu umbral")
+                            TipoSoglia.PIOGGIA ->
+                                if (accesa) tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
+                                else tr("quando la pioggia di un'ora passa una soglia tua", "when an hour's rain passes your threshold", "wenn der Regen einer Stunde deine Schwelle überschreitet", "quand la pluie d'une heure dépasse votre seuil", "cuando la lluvia de una hora supera tu umbral")
+                            TipoSoglia.UV ->
+                                if (accesa) tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
+                                else tr("quando l'indice UV passa una soglia tua", "when the UV index passes your threshold", "wenn der UV-Index deine Schwelle überschreitet", "quand l'indice UV dépasse votre seuil", "cuando el índice UV supera tu umbral")
+                        }
+                    ),
+                    acceso = accesa,
+                    palette = palette,
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { vuole ->
+                        notifica(vuole, chiedi = {
+                            sogliaInAttesa = tipo
+                            chiediPermessoSoglia.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }) { onToggleSoglia(tipo, it) }
+                    },
+                )
+                // Il valore si sceglie solo a voce accesa (vedi la regola in testa).
+                ComparsaMorbida(visibile = accesa) {
+                    SceltaSegmentata(
+                        voci = SogliePersonali.possibili(tipo).map { it to scritta(it) },
+                        scelta = state.soglie.valore(tipo),
+                        palette = palette,
+                        onScegli = { onChooseSoglia(tipo, it) },
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                    )
+                }
+            }
+
+            GruppoImpostazioni(
+                titolo = tr("AVVISI E NOTIFICHE", "NOTICES AND NOTIFICATIONS", "HINWEISE UND BENACHRICHTIGUNGEN", "AVIS ET NOTIFICATIONS", "AVISOS Y NOTIFICACIONES"),
+                palette = palette,
+                // **Solo cio' che e' vero**: tacciono di notte le cinque soglie
+                // (`SogliePersonaliWorker.oraDiParlare`), non la pioggia in
+                // arrivo, le allerte o la previsione cambiata, che girano a ogni
+                // ora; ombrello e riepilogo arrivano all'ora scelta.
+                nota = tr(
+                    "Le voci con la campanella arrivano come notifica. Pioggia forte, Raffiche, UV alto, Gelo e Caldo tacciono fra le 22 e le 7. Sono previsioni: allerte ufficiali sono solo «Arancioni e rosse».",
+                    "Items with the bell arrive as notifications. Heavy rain, Gusts, High UV, Frost and Heat stay quiet from 10 pm to 7 am. They are forecasts: only «Orange and red» are official warnings.",
+                    "Einträge mit der Glocke kommen als Benachrichtigung. Starkregen, Böen, Hoher UV-Index, Frost und Hitze schweigen von 22 bis 7 Uhr. Es sind Vorhersagen: amtliche Warnungen sind nur «Orange und rot».",
+                    "Les éléments avec la cloche arrivent en notification. Pluie forte, Rafales, UV élevés, Gel et Chaleur se taisent de 22 h à 7 h. Ce sont des prévisions : seules « Orange et rouges » sont des alertes officielles.",
+                    "Las opciones con la campana llegan como notificación. Lluvia fuerte, Rachas, UV alto, Helada y Calor callan de 22 a 7 h. Son previsiones: solo «Naranjas y rojas» son alertas oficiales.",
+                ),
+            ) {
+                // ── Pioggia ──
+                SottotitoloGruppo(tr("PIOGGIA", "RAIN", "REGEN", "PLUIE", "LLUVIA"), palette, primo = true)
+                VoceInterruttore(
+                    titolo = tr("Pioggia intensa", "Lots of rain", "Viel Regen", "Beaucoup de pluie", "Mucha lluvia"),
+                    nota = nellApp(tr("da 40 mm nel giorno", "from 40 mm in a day", "ab 40 mm am Tag", "dès 40 mm dans la journée", "desde 40 mm en el día")),
+                    acceso = state.alertToggles.pioggiaIntensa,
+                    palette = palette,
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.PIOGGIA, it) },
                 )
                 FiloGruppo(palette)
                 VoceInterruttore(
-                    titolo = tr("Allerte ufficiali", "Official warnings", "Amtliche Warnungen", "Alertes officielles", "Alertas oficiales"),
-                    nota = tr("arancioni e rosse, diramate dagli enti; le gialle restano nel bollettino", "orange and red, issued by the authorities; yellow ones stay in the bulletin", "orange und rot, von den Behörden herausgegeben; gelbe bleiben im Warnbericht", "orange et rouges, émises par les organismes ; les jaunes restent dans le bulletin", "naranjas y rojas, emitidas por los organismos; las amarillas se quedan en el boletín"),
-                    acceso = state.notificheAllerte && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    titolo = tr("Temporali", "Thunderstorms", "Gewitter", "Orages", "Tormentas"),
+                    nota = nellApp(tr("da 2 ore di temporale nel giorno", "from 2 hours of thunderstorms in a day", "ab 2 Gewitterstunden am Tag", "dès 2 heures d'orage dans la journée", "desde 2 horas de tormenta en el día")),
+                    acceso = state.alertToggles.temporali,
                     palette = palette,
-                    onCambia = { vuole ->
-                        when {
-                            !vuole -> onToggleNotificheAllerte(false)
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
-                                chiediPermessoAllerte.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            else -> onToggleNotificheAllerte(true)
-                        }
-                    },
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.TEMPORALE, it) },
                 )
                 FiloGruppo(palette)
-                // **"Porta l'ombrello"**: tace nei giorni asciutti, e quando
-                // parla dice solo da che ora e quanta (vedi `OmbrelloWorker`).
-                val ombrelloAcceso = state.avvisoOmbrello && PioggiaInArrivoWorker.puoNotificare(contesto)
+                VoceInterruttore(
+                    titolo = tr("Pioggia in arrivo", "Rain on the way", "Regen im Anmarsch", "Pluie en approche", "Lluvia en camino"),
+                    nota = (tr("nella prossima ora: pioggia, grandine o neve", "in the next hour: rain, hail or snow", "in der nächsten Stunde: Regen, Hagel oder Schnee", "dans l'heure : pluie, grêle ou neige", "en la próxima hora: lluvia, granizo o nieve")),
+                    acceso = state.notifichePioggia && puoNotificare,
+                    palette = palette,
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { notifica(it, { chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleNotifichePioggia) },
+                )
+                FiloGruppo(palette)
+                val ombrelloAcceso = state.avvisoOmbrello && puoNotificare
                 VoceInterruttore(
                     titolo = tr("Porta l'ombrello", "Take an umbrella", "Schirm mitnehmen", "Prends un parapluie", "Lleva paraguas"),
-                    nota = if (ombrelloAcceso) {
-                        tr(
-                            "alle ${oraRiepilogo(state.oraOmbrello)}, solo nei giorni in cui piove",
-                            "at ${oraRiepilogo(state.oraOmbrello)}, only on days with rain",
-                            "um ${oraRiepilogo(state.oraOmbrello)}, nur an Regentagen",
-                            "à ${oraRiepilogo(state.oraOmbrello)}, seulement les jours de pluie",
-                            "a las ${oraRiepilogo(state.oraOmbrello)}, solo los días de lluvia",
-                        )
-                    } else {
-                        tr("al mattino, solo se in giornata piove: da che ora e quanta", "in the morning, only if it rains during the day: from when and how much", "morgens, nur wenn es tagsüber regnet: ab wann und wie viel", "le matin, seulement s'il pleut dans la journée : à partir de quand et combien", "por la mañana, solo si llueve durante el día: desde cuándo y cuánta")
-                    },
+                    nota = (
+                        if (ombrelloAcceso) {
+                            val ora = oraRiepilogo(state.oraOmbrello)
+                            tr("alle $ora, nei giorni di pioggia", "at $ora, on rainy days", "um $ora, an Regentagen", "à $ora, les jours de pluie", "a las $ora, los días de lluvia")
+                        } else {
+                            tr("al mattino, nei giorni di pioggia", "in the morning, on rainy days", "morgens, an Regentagen", "le matin, les jours de pluie", "por la mañana, los días de lluvia")
+                        }
+                    ),
                     acceso = ombrelloAcceso,
                     palette = palette,
-                    onCambia = { vuole ->
-                        when {
-                            !vuole -> onToggleOmbrello(false)
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
-                                chiediPermessoOmbrello.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            else -> onToggleOmbrello(true)
-                        }
-                    },
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { notifica(it, { chiediPermessoOmbrello.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleOmbrello) },
                 )
                 ComparsaMorbida(visibile = ombrelloAcceso) {
                     SceltaSegmentata(
@@ -437,59 +486,94 @@ fun SalaImpostazioniScreen(
                     )
                 }
                 FiloGruppo(palette)
-                // **"La previsione e' cambiata"**: domani e dopodomani, solo
-                // per la pioggia che compare o sparisce e per 4 gradi di
-                // massima (vedi `CambioPrevisioneWorker`).
+                VoceSoglia(TipoSoglia.PIOGGIA)
+
+                // ── Vento ──
+                SottotitoloGruppo(tr("VENTO", "WIND", "WIND", "VENT", "VIENTO"), palette)
                 VoceInterruttore(
-                    titolo = tr("Previsione cambiata", "Forecast changed", "Vorhersage geändert", "Prévision modifiée", "Previsión cambiada"),
-                    nota = tr(
-                        "se per domani o dopodomani compare o sparisce la pioggia, o la massima cambia di 4°",
-                        "if rain appears or disappears for tomorrow or the day after, or the high moves by 4°",
-                        "wenn für morgen oder übermorgen Regen auftaucht oder verschwindet oder der Höchstwert sich um 4° ändert",
-                        "si la pluie apparaît ou disparaît pour demain ou après-demain, ou si la max bouge de 4°",
-                        "si para mañana o pasado aparece o desaparece la lluvia, o la máxima cambia 4°",
-                    ),
-                    acceso = state.avvisoCambioPrevisione && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    titolo = tr("Vento forte", "Strong wind", "Starker Wind", "Vent fort", "Viento fuerte"),
+                    // 20 m/s, la soglia gialla di `DerivedAlerts`, nell'unita' scelta.
+                    nota = nellApp(ventoDiSoglia(72, state.windUnit).let { v -> tr("raffiche da $v", "gusts from $v", "Böen ab $v", "rafales dès $v", "rachas desde $v") }),
+                    acceso = state.alertToggles.ventoForte,
                     palette = palette,
-                    onCambia = { vuole ->
-                        when {
-                            !vuole -> onToggleCambioPrevisione(false)
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
-                                chiediPermessoCambio.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            else -> onToggleCambioPrevisione(true)
-                        }
-                    },
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.VENTO, it) },
                 )
                 FiloGruppo(palette)
+                VoceSoglia(TipoSoglia.VENTO)
+
+                // ── Raggi UV ──
+                SottotitoloGruppo(tr("RAGGI UV", "UV", "UV", "UV", "UV"), palette)
+                VoceInterruttore(
+                    titolo = tr("Raggi UV alti", "Strong UV", "Starke UV-Strahlung", "UV forts", "UV fuertes"),
+                    nota = nellApp(tr("da UV 6", "from UV 6", "ab UV 6", "dès UV 6", "desde UV 6")),
+                    acceso = state.alertToggles.uvAlto,
+                    palette = palette,
+                    compatta = true,
+                    onCambia = { onToggleAlert(AlertToggleKind.UV, it) },
+                )
+                FiloGruppo(palette)
+                VoceSoglia(TipoSoglia.UV)
+
+                // ── Temperatura ──
+                SottotitoloGruppo(tr("TEMPERATURA", "TEMPERATURE", "TEMPERATUR", "TEMPÉRATURE", "TEMPERATURA"), palette)
+                VoceSoglia(TipoSoglia.GELO)
+                FiloGruppo(palette)
+                VoceSoglia(TipoSoglia.CALDO)
+                // Vale solo per le cinque soglie, e lo dice: compare quando
+                // almeno una e' accesa, subito sotto l'ultima.
+                ComparsaMorbida(visibile = state.soglie.qualcunaAccesa && puoNotificare) {
+                    Column {
+                        FiloGruppo(palette)
+                        VoceInterruttore(
+                            titolo = tr("Soglie anche sulle località salvate", "Thresholds for saved places too", "Schwellen auch für gespeicherte Orte", "Seuils aussi pour les lieux enregistrés", "Umbrales también para los lugares guardados"),
+                            nota = tr(
+                                "Pioggia forte, Raffiche, UV alto, Gelo e Caldo, fino a ${SogliePersonali.ALTRE_LOCALITA_MAX} località",
+                                "Heavy rain, Gusts, High UV, Frost and Heat, up to ${SogliePersonali.ALTRE_LOCALITA_MAX} places",
+                                "Starkregen, Böen, Hoher UV-Index, Frost und Hitze, bis zu ${SogliePersonali.ALTRE_LOCALITA_MAX} Orte",
+                                "Pluie forte, Rafales, UV élevés, Gel et Chaleur, jusqu'à ${SogliePersonali.ALTRE_LOCALITA_MAX} lieux",
+                                "Lluvia fuerte, Rachas, UV alto, Helada y Calor, hasta ${SogliePersonali.ALTRE_LOCALITA_MAX} lugares",
+                            ),
+                            acceso = state.soglie.altreLocalita,
+                            palette = palette,
+                            compatta = true,
+                            onCambia = onToggleSoglieAltre,
+                        )
+                    }
+                }
+
+                // ── Allerte ufficiali ──
+                SottotitoloGruppo(tr("ALLERTE UFFICIALI", "OFFICIAL WARNINGS", "AMTLICHE WARNUNGEN", "ALERTES OFFICIELLES", "ALERTAS OFICIALES"), palette)
+                VoceInterruttore(
+                    titolo = tr("Arancioni e rosse", "Orange and red", "Orange und rot", "Orange et rouges", "Naranjas y rojas"),
+                    nota = (tr("degli enti; nell'app si vedono tutte, anche le gialle", "from the authorities; in the app you see them all, yellow too", "der Behörden; in der App siehst du alle, auch gelbe", "des organismes ; dans l'app on les voit toutes, même les jaunes", "de los organismos; en la app se ven todas, también las amarillas")),
+                    acceso = state.notificheAllerte && puoNotificare,
+                    palette = palette,
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { notifica(it, { chiediPermessoAllerte.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleNotificheAllerte) },
+                )
+
+                // ── Riepiloghi ──
+                SottotitoloGruppo(tr("RIEPILOGHI", "SUMMARIES", "ÜBERSICHTEN", "RÉSUMÉS", "RESÚMENES"), palette)
+                val riepilogoAcceso = state.riepilogoMattino && puoNotificare
                 VoceInterruttore(
                     titolo = tr("Riepilogo del mattino", "Morning summary", "Morgenüberblick", "Résumé du matin", "Resumen de la mañana"),
-                    nota = if (state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
-                        tr(
-                            "ogni giorno alle ${oraRiepilogo(state.oraRiepilogo)}: temperature, pioggia, UV e allerte",
-                            "every day at ${oraRiepilogo(state.oraRiepilogo)}: temperatures, rain, UV and warnings",
-                            "jeden Tag um ${oraRiepilogo(state.oraRiepilogo)}: Temperaturen, Regen, UV und Warnungen",
-                            "chaque jour à ${oraRiepilogo(state.oraRiepilogo)} : températures, pluie, UV et alertes",
-                            "cada día a las ${oraRiepilogo(state.oraRiepilogo)}: temperaturas, lluvia, UV y alertas",
-                        )
-                    } else {
-                        tr("la giornata in tre righe, una volta al giorno", "the day in three lines, once a day", "der Tag in drei Zeilen, einmal täglich", "la journée en trois lignes, une fois par jour", "el día en tres líneas, una vez al día")
-                    },
-                    acceso = state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto),
-                    palette = palette,
-                    onCambia = { vuole ->
-                        when {
-                            !vuole -> onToggleRiepilogo(false)
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
-                                chiediPermessoRiepilogo.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            else -> onToggleRiepilogo(true)
+                    nota = (
+                        if (riepilogoAcceso) {
+                            val ora = oraRiepilogo(state.oraRiepilogo)
+                            tr("ogni giorno alle $ora", "every day at $ora", "jeden Tag um $ora", "chaque jour à $ora", "cada día a las $ora")
+                        } else {
+                            tr("ogni mattina, la giornata in tre righe", "every morning, the day in three lines", "jeden Morgen, der Tag in drei Zeilen", "chaque matin, la journée en trois lignes", "cada mañana, el día en tres líneas")
                         }
-                    },
+                    ),
+                    acceso = riepilogoAcceso,
+                    palette = palette,
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { notifica(it, { chiediPermessoRiepilogo.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleRiepilogo) },
                 )
-                // L'ora si sceglie solo a riepilogo acceso: spento, quattro
-                // bottoni che non comandano niente (vedi la regola in testa).
-                ComparsaMorbida(visibile = state.riepilogoMattino && PioggiaInArrivoWorker.puoNotificare(contesto)) {
+                ComparsaMorbida(visibile = riepilogoAcceso) {
                     SceltaSegmentata(
                         voci = RiepilogoMattinoWorker.ORE_POSSIBILI.map { it to oraRiepilogo(it) },
                         scelta = state.oraRiepilogo,
@@ -498,119 +582,26 @@ fun SalaImpostazioniScreen(
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
                     )
                 }
-            }
-
-            // ── Gli avvisi personali ─────────────────────────────────────
-            //
-            // **Un gruppo a parte, con la sua nota**: pioggia e allerte qui
-            // sopra dicono una cosa che succede o che un ente ha dichiarato;
-            // questi confrontano la previsione con un numero scelto da chi usa
-            // l'app. La nota lo dice dove si accendono, e la notifica lo ripete.
-            //
-            // Un permesso solo per tutti e tre: si ricorda quale levetta l'ha
-            // chiesto, e se viene negato quella resta giu'.
-            var sogliaInAttesa by remember { mutableStateOf<TipoSoglia?>(null) }
-            val chiediPermessoSoglia = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestPermission(),
-            ) { concesso ->
-                sogliaInAttesa?.let { onToggleSoglia(it, concesso) }
-                sogliaInAttesa = null
-            }
-            val puoNotificare = PioggiaInArrivoWorker.puoNotificare(contesto)
-            GruppoImpostazioni(
-                titolo = tr("AVVISI PERSONALI", "PERSONAL NOTICES", "PERSÖNLICHE HINWEISE", "AVIS PERSONNELS", "AVISOS PERSONALES"),
-                palette = palette,
-                nota = tr(
-                    "Una notifica quando la previsione delle prossime ore passa la soglia che scegli tu, " +
-                        "sulla località dell'app e, se vuoi, su quelle salvate. Sono previsioni, non allerte ufficiali, e di notte non suonano.",
-                    "A notification when the forecast for the coming hours crosses the threshold you choose, " +
-                        "for the app's place and, if you like, your saved ones. They are forecasts, not official warnings, and they stay quiet at night.",
-                    "Eine Benachrichtigung, wenn die Vorhersage der nächsten Stunden die von dir gewählte Schwelle überschreitet, für den Ort der App und, wenn du willst, die gespeicherten. Es sind Vorhersagen, keine amtlichen Warnungen, und nachts bleiben sie still.",
-                    "Une notification quand la prévision des prochaines heures franchit le seuil que vous choisissez, pour le lieu de l'app et, si vous voulez, les lieux enregistrés. Ce sont des prévisions, pas des alertes officielles, et la nuit elles restent silencieuses.",
-                    "Una notificación cuando la previsión de las próximas horas supera el umbral que tú eliges, para el lugar de la app y, si quieres, los guardados. Son previsiones, no alertas oficiales, y de noche no suenan.",
-                ),
-            ) {
-                TipoSoglia.entries.forEachIndexed { indice, tipo ->
-                    if (indice > 0) FiloGruppo(palette)
-                    val accesa = state.soglie.accesa(tipo) && puoNotificare
-                    val scritta: (Int) -> String = { valore ->
-                        when (tipo) {
-                            TipoSoglia.VENTO -> ventoDiSoglia(valore, state.windUnit)
-                            TipoSoglia.PIOGGIA -> pioggiaDiSoglia(valore)
-                            TipoSoglia.UV -> "UV $valore"
-                            else -> gradiDiSoglia(valore, state.unit)
-                        }
-                    }
-                    val scelta = scritta(state.soglie.valore(tipo))
-                    VoceInterruttore(
-                        titolo = when (tipo) {
-                            TipoSoglia.GELO -> tr("Gelo", "Frost", "Frost", "Gel", "Helada")
-                            TipoSoglia.CALDO -> tr("Caldo", "Heat", "Hitze", "Chaleur", "Calor")
-                            TipoSoglia.VENTO -> tr("Vento forte", "Strong wind", "Starker Wind", "Vent fort", "Viento fuerte")
-                            TipoSoglia.PIOGGIA -> tr("Pioggia forte", "Heavy rain", "Starkregen", "Pluie forte", "Lluvia fuerte")
-                            TipoSoglia.UV -> tr("UV alto", "High UV", "Hoher UV-Index", "UV élevés", "UV alto")
-                        },
-                        nota = when (tipo) {
-                            TipoSoglia.GELO ->
-                                if (accesa) tr("quando la minima scende a $scelta o sotto", "when the low drops to $scelta or below", "wenn das Minimum auf $scelta oder darunter fällt", "quand la minimale descend à $scelta ou en dessous", "cuando la mínima baja a $scelta o menos")
-                                else tr("quando la minima scende sotto la tua soglia", "when the low drops below your threshold", "wenn das Minimum unter deine Schwelle fällt", "quand la minimale descend sous votre seuil", "cuando la mínima baja de tu umbral")
-                            TipoSoglia.CALDO ->
-                                if (accesa) tr("quando la massima arriva a $scelta o sopra", "when the high reaches $scelta or above", "wenn das Maximum $scelta oder mehr erreicht", "quand la maximale atteint $scelta ou plus", "cuando la máxima llega a $scelta o más")
-                                else tr("quando la massima passa la tua soglia", "when the high passes your threshold", "wenn das Maximum deine Schwelle überschreitet", "quand la maximale dépasse votre seuil", "cuando la máxima supera tu umbral")
-                            TipoSoglia.VENTO ->
-                                if (accesa) tr("quando le raffiche arrivano a $scelta o sopra", "when gusts reach $scelta or above", "wenn die Böen $scelta oder mehr erreichen", "quand les rafales atteignent $scelta ou plus", "cuando las rachas llegan a $scelta o más")
-                                else tr("quando le raffiche passano la tua soglia", "when gusts pass your threshold", "wenn die Böen deine Schwelle überschreiten", "quand les rafales dépassent votre seuil", "cuando las rachas superan tu umbral")
-                            TipoSoglia.PIOGGIA ->
-                                if (accesa) tr("quando piove $scelta o più", "when it rains $scelta or more", "wenn es $scelta oder mehr regnet", "quand il pleut $scelta ou plus", "cuando llueve $scelta o más")
-                                else tr("quando la pioggia passa la tua soglia", "when rain passes your threshold", "wenn der Regen deine Schwelle überschreitet", "quand la pluie dépasse votre seuil", "cuando la lluvia supera tu umbral")
-                            TipoSoglia.UV ->
-                                if (accesa) tr("quando l'indice UV arriva a ${state.soglie.valore(tipo)} o sopra", "when the UV index reaches ${state.soglie.valore(tipo)} or above", "wenn der UV-Index ${state.soglie.valore(tipo)} oder mehr erreicht", "quand l'indice UV atteint ${state.soglie.valore(tipo)} ou plus", "cuando el índice UV llega a ${state.soglie.valore(tipo)} o más")
-                                else tr("quando l'indice UV passa la tua soglia", "when the UV index passes your threshold", "wenn der UV-Index deine Schwelle überschreitet", "quand l'indice UV dépasse votre seuil", "cuando el índice UV supera tu umbral")
-                        },
-                        acceso = accesa,
-                        palette = palette,
-                        onCambia = { vuole ->
-                            when {
-                                !vuole -> onToggleSoglia(tipo, false)
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !puoNotificare -> {
-                                    sogliaInAttesa = tipo
-                                    chiediPermessoSoglia.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                }
-                                else -> onToggleSoglia(tipo, true)
-                            }
-                        },
-                    )
-                    // La soglia si sceglie solo ad avviso acceso: spento, tre
-                    // bottoni che non comandano niente (vedi la regola in testa).
-                    ComparsaMorbida(visibile = accesa) {
-                        SceltaSegmentata(
-                            voci = SogliePersonali.possibili(tipo).map { it to scritta(it) },
-                            scelta = state.soglie.valore(tipo),
-                            palette = palette,
-                            onScegli = { onChooseSoglia(tipo, it) },
-                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                FiloGruppo(palette)
+                // ±4 gradi Celsius (`CambioPrevisioneWorker`), detti nella scala di chi legge.
+                val scarto = if (state.unit == TempUnit.FAHRENHEIT) 7 else 4
+                VoceInterruttore(
+                    titolo = tr("Previsione cambiata", "Forecast changed", "Vorhersage geändert", "Prévision modifiée", "Previsión cambiada"),
+                    nota = (
+                        tr(
+                            "domani e dopodomani: pioggia che compare o sparisce, massima ±$scarto°",
+                            "tomorrow and the day after: rain appearing or vanishing, high ±$scarto°",
+                            "morgen und übermorgen: Regen kommt oder geht, Höchstwert ±$scarto°",
+                            "demain et après-demain : pluie qui apparaît ou disparaît, max ±$scarto°",
+                            "mañana y pasado: lluvia que aparece o desaparece, máxima ±$scarto°",
                         )
-                    }
-                }
-                // Ha senso solo con almeno un avviso acceso.
-                ComparsaMorbida(visibile = state.soglie.qualcunaAccesa && puoNotificare) {
-                    Column {
-                        FiloGruppo(palette)
-                        VoceInterruttore(
-                            titolo = tr("Anche le località salvate", "Saved places too", "Auch gespeicherte Orte", "Aussi les lieux enregistrés", "También los lugares guardados"),
-                            nota = tr(
-                                "controlla fino a ${SogliePersonali.ALTRE_LOCALITA_MAX} località di «Le località», non solo quella dell'app",
-                                "checks up to ${SogliePersonali.ALTRE_LOCALITA_MAX} places from «Places», not just the app's",
-                                "prüft bis zu ${SogliePersonali.ALTRE_LOCALITA_MAX} Orte aus «Orte», nicht nur den der App",
-                                "surveille jusqu'à ${SogliePersonali.ALTRE_LOCALITA_MAX} lieux de « Les lieux », pas seulement celui de l'app",
-                                "vigila hasta ${SogliePersonali.ALTRE_LOCALITA_MAX} lugares de «Lugares», no solo el de la app",
-                            ),
-                            acceso = state.soglie.altreLocalita,
-                            palette = palette,
-                            onCambia = onToggleSoglieAltre,
-                        )
-                    }
-                }
+                    ),
+                    acceso = state.avvisoCambioPrevisione && puoNotificare,
+                    palette = palette,
+                    compatta = true,
+                    campanella = true,
+                    onCambia = { notifica(it, { chiediPermessoCambio.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleCambioPrevisione) },
+                )
             }
 
             GruppoImpostazioni(titolo = tr("AIUTO", "HELP", "HILFE", "AIDE", "AYUDA"), palette = palette) {
@@ -762,4 +753,16 @@ private fun fusoOrario(secondi: Int): String {
     val ore = minuti / 60
     val resto = minuti % 60
     return if (resto == 0) "UTC$segno$ore" else "UTC$segno$ore:%02d".format(resto)
+}
+
+/** Il sottotitolo di un argomento dentro il riquadro "Avvisi e notifiche". */
+@Composable
+private fun SottotitoloGruppo(testo: String, palette: SalaPalette, primo: Boolean = false) {
+    if (!primo) FiloGruppo(palette)
+    Text(
+        text = testo,
+        style = SalaType.sectionLabel,
+        color = palette.accent,
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp),
+    )
 }
