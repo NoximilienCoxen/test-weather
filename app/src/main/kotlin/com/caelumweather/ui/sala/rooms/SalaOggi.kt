@@ -365,7 +365,11 @@ fun SalaOggiScreen(
                 if (state.forcedWeatherCode != null || da == null) null
                 else cosaMettersi(state.forecast?.allHours.orEmpty(), da)
             }
-            if (vestito != null) {
+            // Con la curva della giornata aperta si stanno guardando le ore, e
+            // la riga allungava la scheda oltre il tetto (SchedeNelTettoRenderTest):
+            // compare di nuovo chiudendola.
+            ComparsaMorbida(visibile = vestito != null && !giornataAperta) {
+                if (vestito == null) return@ComparsaMorbida
                 Text(
                     text = buildAnnotatedString {
                         withStyle(SpanStyle(color = palette.inkFaint)) {
