@@ -10,187 +10,13 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.3",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.3",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.3",
-                "areaDesc": "New York (Manhattan); Richmond (Staten Is.); Kings (Brooklyn)",
-                "geocode": {
-                    "SAME": [
-                        "036061",
-                        "036085",
-                        "036047"
-                    ],
-                    "UGC": [
-                        "NYZ072",
-                        "NYZ074",
-                        "NYZ075"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/NYZ072",
-                    "https://api.weather.gov/zones/forecast/NYZ074",
-                    "https://api.weather.gov/zones/forecast/NYZ075"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.357dad86fab348f2e4cb5f69acc329eb27b87cce.005.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.357dad86fab348f2e4cb5f69acc329eb27b87cce.005.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T04:21:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-25T16:06:00-05:00",
-                "effective": "2026-11-25T16:06:00-05:00",
-                "onset": "2026-11-26T07:00:00-05:00",
-                "expires": "2026-11-26T22:30:00-05:00",
-                "ends": "2026-11-27T06:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Upton NY",
-                "headline": "Coastal Flood Warning issued November 25 at 4:06PM EST until November 27 at 6:00AM EST by NWS Upton NY",
-                "description": "* WHAT...For the Coastal Flood Warning, 1 1/2 to 2 1/2 ft of\ninundation above ground level expected in vulnerable areas\nnear the waterfront and shoreline. For the Coastal Flood\nAdvisory, 1 to 1 1/2 feet of inundation above ground level\npossible in vulnerable areas near the waterfront and shoreline.\n\n* WHERE...New York (Manhattan), Richmond (Staten Island) and\nKings (Brooklyn) Counties.\n\n* WHEN...For the Coastal Flood Warning, from 7 AM Thursday to 6\nAM EST Friday. For the Coastal Flood Advisory, from 8 AM to\nnoon EST Friday.\n\n* COASTAL FLOOD IMPACTS...Widespread minor to moderate flooding of\nvulnerable areas near the waterfront and shoreline, including\nroads, parking lots, parks, lawns, and homes and businesses with\nbasements near the waterfront. Numerous road closures are\nlikely, and vehicles parked in vulnerable areas near the\nwaterfront will likely become flooded. Flooding will also extend\ninland from the waterfront along tidal rivers and bays,\nincluding the Hudson River.\n\n* ADDITIONAL DETAILS...The highest water levels are likely with\nthe Thursday morning and evening high tides. The forecast has\nbeen leaned towards a higher end water level scenario to provide\na bit of safety margin. If the timing of strongest winds is\nquicker than currently forecast the peak water level forecast\ncould be increased by a few tenths for Thursday morning. if\nslower the Thursday morning forecast could be lowered slightly.\nSimilarly if strongest winds linger later into the evening, the\nThursday evening water level forecast could be a few tenths\nhigher.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWOKX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS41 KOKX 252106"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 7 AM THURSDAY TO 6 AM EST FRIDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 8 AM TO NOON EST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KOKX.CF.W.0003.261126T1200Z-261127T1100Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T06:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.2",
-                "areaDesc": "New York (Manhattan); Richmond (Staten Is.); Kings (Brooklyn)",
-                "geocode": {
-                    "SAME": [
-                        "036061",
-                        "036085",
-                        "036047"
-                    ],
-                    "UGC": [
-                        "NYZ072",
-                        "NYZ074",
-                        "NYZ075"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/NYZ072",
-                    "https://api.weather.gov/zones/forecast/NYZ074",
-                    "https://api.weather.gov/zones/forecast/NYZ075"
-                ],
-                "references": [],
-                "sent": "2026-11-25T16:06:00-05:00",
-                "effective": "2026-11-25T16:06:00-05:00",
-                "onset": "2026-11-27T08:00:00-05:00",
-                "expires": "2026-11-26T22:30:00-05:00",
-                "ends": "2026-11-27T12:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Upton NY",
-                "headline": "Coastal Flood Advisory issued November 25 at 4:06PM EST until November 27 at 12:00PM EST by NWS Upton NY",
-                "description": "* WHAT...For the Coastal Flood Warning, 1 1/2 to 2 1/2 ft of\ninundation above ground level expected in vulnerable areas\nnear the waterfront and shoreline. For the Coastal Flood\nAdvisory, 1 to 1 1/2 feet of inundation above ground level\npossible in vulnerable areas near the waterfront and shoreline.\n\n* WHERE...New York (Manhattan), Richmond (Staten Island) and\nKings (Brooklyn) Counties.\n\n* WHEN...For the Coastal Flood Warning, from 7 AM Thursday to 6\nAM EST Friday. For the Coastal Flood Advisory, from 8 AM to\nnoon EST Friday.\n\n* COASTAL FLOOD IMPACTS...Widespread minor to moderate flooding of\nvulnerable areas near the waterfront and shoreline, including\nroads, parking lots, parks, lawns, and homes and businesses with\nbasements near the waterfront. Numerous road closures are\nlikely, and vehicles parked in vulnerable areas near the\nwaterfront will likely become flooded. Flooding will also extend\ninland from the waterfront along tidal rivers and bays,\nincluding the Hudson River.\n\n* ADDITIONAL DETAILS...The highest water levels are likely with\nthe Thursday morning and evening high tides. The forecast has\nbeen leaned towards a higher end water level scenario to provide\na bit of safety margin. If the timing of strongest winds is\nquicker than currently forecast the peak water level forecast\ncould be increased by a few tenths for Thursday morning. if\nslower the Thursday morning forecast could be lowered slightly.\nSimilarly if strongest winds linger later into the evening, the\nThursday evening water level forecast could be a few tenths\nhigher.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWOKX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS41 KOKX 252106"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 7 AM THURSDAY TO 6 AM EST FRIDAY... ...COASTAL FLOOD ADVISORY IN EFFECT FROM 8 AM TO NOON EST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXB.KOKX.CF.Y.0015.261127T1300Z-261127T1700Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T12:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.79e96ae6df2289a3359ceba6b09546c1dab07f8a.001.1",
                 "areaDesc": "Hudson; Eastern Essex; Eastern Union; New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northwest Suffolk; Northeast Suffolk; Southwest Suffolk; Southeast Suffolk; Northern Queens; Northern Nassau; Southern Queens; Southern Nassau",
                 "geocode": {
                     "SAME": [
@@ -242,22 +68,16 @@
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.ed10a724ae76443e3e1c490ed3928de0e3197b8a.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T03:22:00-05:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T03:38:00-05:00"
+                        "sent": "2026-11-25T13:50:00-05:00"
                     }
                 ],
-                "sent": "2026-11-25T13:50:00-05:00",
-                "effective": "2026-11-25T13:50:00-05:00",
+                "sent": "2026-11-25T19:46:00-05:00",
+                "effective": "2026-11-25T19:46:00-05:00",
                 "onset": "2026-11-26T10:00:00-05:00",
-                "expires": "2026-11-25T22:00:00-05:00",
+                "expires": "2026-11-26T20:00:00-05:00",
                 "ends": "2026-11-27T01:00:00-05:00",
                 "status": "Actual",
                 "messageType": "Update",
@@ -268,8 +88,8 @@
                 "event": "High Wind Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Upton NY",
-                "headline": "High Wind Warning issued November 25 at 1:50PM EST until November 27 at 1:00AM EST by NWS Upton NY",
-                "description": "* WHAT...East winds 25 to 35 mph with gusts up to 60 mph expected.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From 10 AM Thursday to 1 AM EST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles.",
+                "headline": "High Wind Warning issued November 25 at 7:46PM EST until November 27 at 1:00AM EST by NWS Upton NY",
+                "description": "* WHAT...East winds 25 to 40 mph with gusts up to 65 mph expected.\n\n* WHERE...Portions of northeast New Jersey and southeast New York.\n\n* WHEN...From 10 AM Thursday to 1 AM EST Friday.\n\n* IMPACTS...Damaging winds will blow down trees and power lines.\nWidespread power outages are expected. Travel will be difficult,\nespecially for high profile vehicles.",
                 "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind.",
                 "response": "Prepare",
                 "note": null,
@@ -278,7 +98,7 @@
                         "NPWOKX"
                     ],
                     "WMOidentifier": [
-                        "WWUS71 KOKX 251850"
+                        "WWUS71 KOKX 260046"
                     ],
                     "NWSheadline": [
                         "HIGH WIND WARNING REMAINS IN EFFECT FROM 10 AM THURSDAY TO 1 AM EST FRIDAY"
@@ -296,6 +116,9 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-27T01:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.22663c65fb6d144d9b3b42a741f410b18c4e8cb5.001.1,2026-11-25T03:38:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.99a7c282dd074015acab00f6f56ff48545f0be2f.001.2,2026-11-25T03:22:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -311,8 +134,192 @@
                     ]
                 }
             }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.1",
+                "areaDesc": "New York (Manhattan); Richmond (Staten Is.); Kings (Brooklyn)",
+                "geocode": {
+                    "SAME": [
+                        "036061",
+                        "036085",
+                        "036047"
+                    ],
+                    "UGC": [
+                        "NYZ072",
+                        "NYZ074",
+                        "NYZ075"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/NYZ072",
+                    "https://api.weather.gov/zones/forecast/NYZ074",
+                    "https://api.weather.gov/zones/forecast/NYZ075"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T16:06:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-25T19:40:00-05:00",
+                "effective": "2026-11-25T19:40:00-05:00",
+                "onset": "2026-11-26T07:00:00-05:00",
+                "expires": "2026-11-27T02:00:00-05:00",
+                "ends": "2026-11-27T06:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Upton NY",
+                "headline": "Coastal Flood Warning issued November 25 at 7:40PM EST until November 27 at 6:00AM EST by NWS Upton NY",
+                "description": "* WHAT...For the Coastal Flood Warning, 1 1/2 to 2 1/2 ft of\ninundation above ground level expected in vulnerable areas\nnear the waterfront and shoreline. For the Coastal Flood\nAdvisory, 1 to 1 1/2 feet of inundation above ground level\npossible in vulnerable areas near the waterfront and shoreline.\n\n* WHERE...New York (Manhattan), Richmond (Staten Island) and\nKings (Brooklyn) Counties.\n\n* WHEN...For the Coastal Flood Warning, from 7 AM Thursday to 6\nAM EST Friday. For the Coastal Flood Advisory, from 8 AM to\nnoon EST Friday.\n\n* COASTAL FLOOD IMPACTS...Widespread minor to moderate flooding\nof vulnerable areas near the waterfront and shoreline,\nincluding roads, parking lots, parks, lawns, and homes and\nbusinesses with basements near the waterfront. Numerous road\nclosures are likely, and vehicles parked in vulnerable areas\nnear the waterfront will likely become flooded. Flooding will\nalso extend inland from the waterfront along tidal rivers and\nbays, including the Hudson River.\n\n* ADDITIONAL DETAILS...The highest water levels are likely with\nthe Thursday morning and evening high tides. The forecast has\nbeen leaned towards a higher end water level scenario to\nprovide a bit of safety margin. If the timing of strongest\nwinds is quicker than currently forecast the peak water level\nforecast could be increased by a few tenths for Thursday\nmorning, and if slower the Thursday morning forecast could be\nlowered slightly. Similarly if strongest winds linger later\ninto the evening, the Thursday evening water level forecast\ncould be a few tenths higher.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWOKX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS41 KOKX 260040"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 7 AM THURSDAY TO 6 AM EST FRIDAY... ...COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 AM TO NOON EST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KOKX.CF.W.0003.261126T1200Z-261127T1100Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T06:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.357dad86fab348f2e4cb5f69acc329eb27b87cce.005.1,2026-11-25T04:21:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.cf75eaeec4cb20baf8cc6dd4af2f31a106e2f5c0.002.2",
+                "areaDesc": "New York (Manhattan); Richmond (Staten Is.); Kings (Brooklyn)",
+                "geocode": {
+                    "SAME": [
+                        "036061",
+                        "036085",
+                        "036047"
+                    ],
+                    "UGC": [
+                        "NYZ072",
+                        "NYZ074",
+                        "NYZ075"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/NYZ072",
+                    "https://api.weather.gov/zones/forecast/NYZ074",
+                    "https://api.weather.gov/zones/forecast/NYZ075"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.b90723afe052311ba87bfcbd5d46e56539cb6a94.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T16:06:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-25T19:40:00-05:00",
+                "effective": "2026-11-25T19:40:00-05:00",
+                "onset": "2026-11-27T08:00:00-05:00",
+                "expires": "2026-11-27T02:00:00-05:00",
+                "ends": "2026-11-27T12:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Upton NY",
+                "headline": "Coastal Flood Advisory issued November 25 at 7:40PM EST until November 27 at 12:00PM EST by NWS Upton NY",
+                "description": "* WHAT...For the Coastal Flood Warning, 1 1/2 to 2 1/2 ft of\ninundation above ground level expected in vulnerable areas\nnear the waterfront and shoreline. For the Coastal Flood\nAdvisory, 1 to 1 1/2 feet of inundation above ground level\npossible in vulnerable areas near the waterfront and shoreline.\n\n* WHERE...New York (Manhattan), Richmond (Staten Island) and\nKings (Brooklyn) Counties.\n\n* WHEN...For the Coastal Flood Warning, from 7 AM Thursday to 6\nAM EST Friday. For the Coastal Flood Advisory, from 8 AM to\nnoon EST Friday.\n\n* COASTAL FLOOD IMPACTS...Widespread minor to moderate flooding\nof vulnerable areas near the waterfront and shoreline,\nincluding roads, parking lots, parks, lawns, and homes and\nbusinesses with basements near the waterfront. Numerous road\nclosures are likely, and vehicles parked in vulnerable areas\nnear the waterfront will likely become flooded. Flooding will\nalso extend inland from the waterfront along tidal rivers and\nbays, including the Hudson River.\n\n* ADDITIONAL DETAILS...The highest water levels are likely with\nthe Thursday morning and evening high tides. The forecast has\nbeen leaned towards a higher end water level scenario to\nprovide a bit of safety margin. If the timing of strongest\nwinds is quicker than currently forecast the peak water level\nforecast could be increased by a few tenths for Thursday\nmorning, and if slower the Thursday morning forecast could be\nlowered slightly. Similarly if strongest winds linger later\ninto the evening, the Thursday evening water level forecast\ncould be a few tenths higher.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWOKX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS41 KOKX 260040"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING REMAINS IN EFFECT FROM 7 AM THURSDAY TO 6 AM EST FRIDAY... ...COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 AM TO NOON EST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KOKX.CF.Y.0015.261127T1300Z-261127T1700Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T12:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
         }
     ],
     "title": "Current watches, warnings, and advisories for 40.7128 N, 74.006 W",
-    "updated": "2026-11-26T00:32:44+00:00"
+    "updated": "2026-11-26T07:04:49+00:00"
 }
