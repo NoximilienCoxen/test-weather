@@ -8943,3 +8943,35 @@ dell'orologio), lint (54 avvisi, 0 errori), dichiarazioni mai nominate (28).
   completa di `SalaTokens` (e' la copia del sistema di design, i gradini non
   usati non costano); il blocco in verticale; `targetSdk` 36 (37 cambia
   comportamenti, lo store chiede 36).
+
+## 83. Avvisi e notifiche in un riquadro solo, per argomento
+
+Revisione UX del 26 novembre 2026. Le Impostazioni avevano tre gruppi che si
+sovrapponevano ("Avvisi nelle schermate", "Notifiche", "Avvisi personali"):
+"Vento forte" due volte, l'UV due volte, la pioggia quattro. **Nessuna coppia
+faceva la stessa cosa** (mappa nel messaggio della revisione: avvisi nell'app
+da `DerivedAlerts` su oggi e domani; notifiche dai worker), ma i nomi uguali non
+dicevano quale compariva nell'app e quale suonava.
+
+- **Un riquadro "Avvisi e notifiche"** con sottotitoli d'accento: Pioggia,
+  Vento, Raggi UV, Temperatura, Allerte ufficiali, Riepiloghi
+  (`SottotitoloGruppo`). Dentro ogni argomento prima "Nell'app ·", poi le
+  notifiche, segnate da una campanella dentro il testo (`VoceInterruttore(
+  campanella = true)`, letta "Notifica" da TalkBack) o dalla parola
+  "Notifica ·" (`SegnoNotifica`, da scegliere).
+- **Le chiavi DataStore non sono cambiate**: solo posizione, titoli e note.
+  Le soglie si chiamano Pioggia forte, Raffiche, UV alto, Gelo, Caldo.
+- **La nota in fondo dice solo il vero**: tacciono di notte (22-7) solo le
+  cinque soglie (`SogliePersonaliWorker.oraDiParlare`); pioggia in arrivo,
+  allerte e previsione cambiata girano a ogni ora, ombrello e riepilogo
+  all'ora scelta. "Soglie anche sulle località salvate" elenca le cinque voci a
+  cui si applica e compare sotto l'ultima, solo se una e' accesa.
+- Righe piu' basse in questo riquadro (`compatta`, 10 dp invece di 14): la
+  schermata intera passa da 2842 a 2702 dp (`ImpostazioniRenderTest`, che
+  disegna tutta la schermata chiara e scura in `build/widget-renders`).
+- **Rimandato al giro dopo**: allineare le soglie dello stesso argomento
+  (vento nell'app a 72 km/h fissi contro la notifica a soglia scelta), e un
+  interruttore per caldo, freddo e neve calcolati.
+- `.claude/settings.json`: `attribution` vuota e `sessionUrl: false`, piu'
+  `includeCoAuthoredBy: false` per le versioni vecchie: Claude Code non
+  aggiunge piu' trailer ne' link di sessione (§9, §11.2).
