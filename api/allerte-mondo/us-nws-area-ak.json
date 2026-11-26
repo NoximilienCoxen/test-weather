@@ -258,88 +258,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
-                "areaDesc": "City and Borough of Sitka; Western Kupreanof and Kuiu Island; City and Borough of Wrangell; Ketchikan Gateway Borough",
-                "geocode": {
-                    "SAME": [
-                        "002220",
-                        "002198",
-                        "002275",
-                        "002130"
-                    ],
-                    "UGC": [
-                        "AKZ323",
-                        "AKZ327",
-                        "AKZ329",
-                        "AKZ330"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ323",
-                    "https://api.weather.gov/zones/forecast/AKZ327",
-                    "https://api.weather.gov/zones/forecast/AKZ329",
-                    "https://api.weather.gov/zones/forecast/AKZ330"
-                ],
-                "references": [],
-                "sent": "2026-11-25T13:41:00-09:00",
-                "effective": "2026-11-25T13:41:00-09:00",
-                "onset": "2026-11-25T13:41:00-09:00",
-                "expires": "2026-11-26T01:45:00-09:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Juneau AK",
-                "headline": "Special Weather Statement issued November 25 at 1:41PM AKST by NWS Juneau AK",
-                "description": "Tidal levels across the panhandle are expected to be running high\nfor the next few days. These high tides combined with passing low\npressures and their associated fronts could create some\npotentially higher than normal water levels. Confidence has\nincreased for a slightly weaker system moving into the panhandle\nduring peak tides. Tides may exceed astronomical high tide, though\nthe likelihood of exceeding a foot has been reduced significantly.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSAJK"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK87 PAJK 252241"
-                    ],
-                    "NWSheadline": [
-                        "HIGH TIDAL WATER LEVELS THROUGH THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
             "type": "Feature",
             "geometry": null,
@@ -417,5 +335,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-26T10:31:48+00:00"
+    "updated": "2026-11-26T11:01:28+00:00"
 }
