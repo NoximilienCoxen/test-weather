@@ -10,6 +10,410 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.3",
+                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
+                "geocode": {
+                    "SAME": [
+                        "012103",
+                        "012057",
+                        "012081",
+                        "012115",
+                        "012015",
+                        "012071"
+                    ],
+                    "UGC": [
+                        "FLZ050",
+                        "FLZ151",
+                        "FLZ155",
+                        "FLZ160",
+                        "FLZ162",
+                        "FLZ165"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ050",
+                    "https://api.weather.gov/zones/forecast/FLZ151",
+                    "https://api.weather.gov/zones/forecast/FLZ155",
+                    "https://api.weather.gov/zones/forecast/FLZ160",
+                    "https://api.weather.gov/zones/forecast/FLZ162",
+                    "https://api.weather.gov/zones/forecast/FLZ165"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T03:01:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T13:23:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T02:53:00-05:00",
+                "effective": "2026-11-26T02:53:00-05:00",
+                "onset": "2026-11-26T02:53:00-05:00",
+                "expires": "2026-11-27T19:00:00-05:00",
+                "ends": "2026-11-27T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Rip Current Statement issued November 26 at 2:53AM EST until November 27 at 7:00PM EST by NWS Tampa Bay Ruskin FL",
+                "description": "* WHAT...For the Coastal Flood Advisory, minor coastal flooding.\nFor the High Rip Current Risk, dangerous rip currents. For the\nHigh Surf Advisory, large breaking waves of 3 to 7 feet\nexpected in the surf zone.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 5 AM EST early\nthis morning. For the High Rip Current Risk, through Friday\nevening. For the High Surf Advisory, from 7 AM this morning to\n7 PM EST this evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Dangerous swimming and\nsurfing conditions and localized beach erosion. Rip currents\ncan sweep even the best swimmers away from shore into deeper\nwater.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nInexperienced swimmers should remain out of the water due to\ndangerous surf conditions.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTBW 260753"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 AM EST EARLY THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM THIS MORNING TO 7 PM EST THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.RP.S.0020.000000T0000Z-261128T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T19:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.002.1",
+                "areaDesc": "Coastal Levy; Coastal Citrus; Coastal Hernando; Coastal Pasco",
+                "geocode": {
+                    "SAME": [
+                        "012075",
+                        "012017",
+                        "012053",
+                        "012101"
+                    ],
+                    "UGC": [
+                        "FLZ139",
+                        "FLZ142",
+                        "FLZ148",
+                        "FLZ149"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ139",
+                    "https://api.weather.gov/zones/forecast/FLZ142",
+                    "https://api.weather.gov/zones/forecast/FLZ148",
+                    "https://api.weather.gov/zones/forecast/FLZ149"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T03:01:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T13:23:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T02:53:00-05:00",
+                "effective": "2026-11-26T02:53:00-05:00",
+                "onset": "2026-11-26T02:53:00-05:00",
+                "expires": "2026-11-26T05:00:00-05:00",
+                "ends": "2026-11-26T05:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Coastal Flood Advisory issued November 26 at 2:53AM EST until November 26 at 5:00AM EST by NWS Tampa Bay Ruskin FL",
+                "description": "* WHAT...Minor coastal flooding.\n\n* WHERE...Coastal Levy, Coastal Citrus, Coastal Hernando and\nCoastal Pasco Counties.\n\n* WHEN...Until 5 AM EST early this morning.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTBW 260753"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 AM EST EARLY THIS MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.CF.Y.0002.000000T0000Z-261126T1000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T05:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.1",
+                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
+                "geocode": {
+                    "SAME": [
+                        "012103",
+                        "012057",
+                        "012081",
+                        "012115",
+                        "012015",
+                        "012071"
+                    ],
+                    "UGC": [
+                        "FLZ050",
+                        "FLZ151",
+                        "FLZ155",
+                        "FLZ160",
+                        "FLZ162",
+                        "FLZ165"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ050",
+                    "https://api.weather.gov/zones/forecast/FLZ151",
+                    "https://api.weather.gov/zones/forecast/FLZ155",
+                    "https://api.weather.gov/zones/forecast/FLZ160",
+                    "https://api.weather.gov/zones/forecast/FLZ162",
+                    "https://api.weather.gov/zones/forecast/FLZ165"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T03:01:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.3",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.3",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T13:23:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T02:53:00-05:00",
+                "effective": "2026-11-26T02:53:00-05:00",
+                "onset": "2026-11-26T02:53:00-05:00",
+                "expires": "2026-11-27T19:00:00-05:00",
+                "ends": "2026-11-26T05:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "Coastal Flood Advisory issued November 26 at 2:53AM EST until November 26 at 5:00AM EST by NWS Tampa Bay Ruskin FL",
+                "description": "* WHAT...For the Coastal Flood Advisory, minor coastal flooding.\nFor the High Rip Current Risk, dangerous rip currents. For the\nHigh Surf Advisory, large breaking waves of 3 to 7 feet\nexpected in the surf zone.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 5 AM EST early\nthis morning. For the High Rip Current Risk, through Friday\nevening. For the High Surf Advisory, from 7 AM this morning to\n7 PM EST this evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Dangerous swimming and\nsurfing conditions and localized beach erosion. Rip currents\ncan sweep even the best swimmers away from shore into deeper\nwater.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nInexperienced swimmers should remain out of the water due to\ndangerous surf conditions.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTBW 260753"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 AM EST EARLY THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM THIS MORNING TO 7 PM EST THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.CF.Y.0002.000000T0000Z-261126T1000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T05:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d028ef85fd16995560309d4a3e6ac5583667e1ef.001.2",
+                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
+                "geocode": {
+                    "SAME": [
+                        "012103",
+                        "012057",
+                        "012081",
+                        "012115",
+                        "012015",
+                        "012071"
+                    ],
+                    "UGC": [
+                        "FLZ050",
+                        "FLZ151",
+                        "FLZ155",
+                        "FLZ160",
+                        "FLZ162",
+                        "FLZ165"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ050",
+                    "https://api.weather.gov/zones/forecast/FLZ151",
+                    "https://api.weather.gov/zones/forecast/FLZ155",
+                    "https://api.weather.gov/zones/forecast/FLZ160",
+                    "https://api.weather.gov/zones/forecast/FLZ162",
+                    "https://api.weather.gov/zones/forecast/FLZ165"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T13:23:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T02:53:00-05:00",
+                "effective": "2026-11-26T02:53:00-05:00",
+                "onset": "2026-11-26T07:00:00-05:00",
+                "expires": "2026-11-27T19:00:00-05:00",
+                "ends": "2026-11-26T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "High Surf Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Tampa Bay Ruskin FL",
+                "headline": "High Surf Advisory issued November 26 at 2:53AM EST until November 26 at 7:00PM EST by NWS Tampa Bay Ruskin FL",
+                "description": "* WHAT...For the Coastal Flood Advisory, minor coastal flooding.\nFor the High Rip Current Risk, dangerous rip currents. For the\nHigh Surf Advisory, large breaking waves of 3 to 7 feet\nexpected in the surf zone.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 5 AM EST early\nthis morning. For the High Rip Current Risk, through Friday\nevening. For the High Surf Advisory, from 7 AM this morning to\n7 PM EST this evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Dangerous swimming and\nsurfing conditions and localized beach erosion. Rip currents\ncan sweep even the best swimmers away from shore into deeper\nwater.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nInexperienced swimmers should remain out of the water due to\ndangerous surf conditions.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWTBW"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KTBW 260753"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 5 AM EST EARLY THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY REMAINS IN EFFECT FROM 7 AM THIS MORNING TO 7 PM EST THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KTBW.SU.Y.0004.261126T1200Z-261127T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T19:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b11157bc38df7e7bd9ffea0efabb33ded8203c42.001.1",
             "type": "Feature",
             "geometry": null,
@@ -78,6 +482,107 @@
                     ],
                     "eventEndingTime": [
                         "2026-11-28T03:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "RPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
+                "areaDesc": "Coastal Volusia; Coastal Indian River; Coastal St. Lucie; Coastal Martin; Mainland Northern Brevard; Northern Brevard Barrier Islands; Mainland Southern Brevard; Southern Brevard Barrier Islands",
+                "geocode": {
+                    "SAME": [
+                        "012127",
+                        "012061",
+                        "012111",
+                        "012085",
+                        "012009"
+                    ],
+                    "UGC": [
+                        "FLZ141",
+                        "FLZ154",
+                        "FLZ159",
+                        "FLZ164",
+                        "FLZ347",
+                        "FLZ447",
+                        "FLZ647",
+                        "FLZ747"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ141",
+                    "https://api.weather.gov/zones/forecast/FLZ154",
+                    "https://api.weather.gov/zones/forecast/FLZ159",
+                    "https://api.weather.gov/zones/forecast/FLZ164",
+                    "https://api.weather.gov/zones/forecast/FLZ347",
+                    "https://api.weather.gov/zones/forecast/FLZ447",
+                    "https://api.weather.gov/zones/forecast/FLZ647",
+                    "https://api.weather.gov/zones/forecast/FLZ747"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.87131de146f16f4ea39fdc25ce6a9aeb5fad07a3.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.87131de146f16f4ea39fdc25ce6a9aeb5fad07a3.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T02:55:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T01:25:00-05:00",
+                "effective": "2026-11-26T01:25:00-05:00",
+                "onset": "2026-11-26T01:25:00-05:00",
+                "expires": "2026-11-26T11:00:00-05:00",
+                "ends": "2026-11-27T01:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Rip Current Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Melbourne FL",
+                "headline": "Rip Current Statement issued November 26 at 1:25AM EST until November 27 at 1:00AM EST by NWS Melbourne FL",
+                "description": "* WHAT...For the Coastal Flood Advisory, minor coastal flooding.\nFor the High Rip Current Risk, dangerous rip currents and rough\nsurf.\n\n* WHERE...Coastal Volusia, Coastal Indian River, Coastal Saint\nLucie, Coastal Martin, Mainland Northern Brevard, Northern\nBrevard Barrier Islands, Mainland Southern Brevard and\nSouthern Brevard Barrier Islands Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 11 AM EST this\nmorning. For the High Rip Current Risk, through late tonight.\n\n* IMPACTS...Some flooding of low-lying lots, parks and roadways\nmay occur near the shoreline. Only isolated road closures are\nexpected. Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
+                "instruction": "Onshore winds and above normal tides will combine to generate\nflooding of low areas along the shore. Do not drive around\nbarricades or through water of unknown depth. Take the necessary\nactions to protect flood-prone property.\n\nRip currents are powerful channels of water flowing quickly away\nfrom shore, which occur most often at low spots or breaks in the\nsandbar and in the vicinity of structures such as jetties and\npiers. Heed the advice of lifeguards, beach patrol flags and\nsigns.\n\nEntering the surf is strongly discouraged. If caught in a rip\ncurrent, relax and float. Don't swim against the current. If\nable, swim in a direction following the shoreline. If unable to\nescape, face the shore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMLB"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KMLB 260625"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 11 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH LATE TONIGHT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMLB.RP.S.0040.000000T0000Z-261127T0600Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T01:00:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -208,56 +713,139 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.39b29a37c494983934b71589ebb0d70e10be8e3e.001.2",
-                "areaDesc": "Coastal Volusia; Coastal Indian River; Coastal St. Lucie; Coastal Martin; Mainland Northern Brevard; Northern Brevard Barrier Islands; Mainland Southern Brevard; Southern Brevard Barrier Islands",
+                "id": "urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
+                "areaDesc": "Coastal Palm Beach County; Coastal Broward County",
                 "geocode": {
                     "SAME": [
-                        "012127",
-                        "012061",
-                        "012111",
-                        "012085",
-                        "012009"
+                        "012099",
+                        "012011"
                     ],
                     "UGC": [
-                        "FLZ141",
-                        "FLZ154",
-                        "FLZ159",
-                        "FLZ164",
-                        "FLZ347",
-                        "FLZ447",
-                        "FLZ647",
-                        "FLZ747"
+                        "FLZ168",
+                        "FLZ172"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ141",
-                    "https://api.weather.gov/zones/forecast/FLZ154",
-                    "https://api.weather.gov/zones/forecast/FLZ159",
-                    "https://api.weather.gov/zones/forecast/FLZ164",
-                    "https://api.weather.gov/zones/forecast/FLZ347",
-                    "https://api.weather.gov/zones/forecast/FLZ447",
-                    "https://api.weather.gov/zones/forecast/FLZ647",
-                    "https://api.weather.gov/zones/forecast/FLZ747"
+                    "https://api.weather.gov/zones/forecast/FLZ168",
+                    "https://api.weather.gov/zones/forecast/FLZ172"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.87131de146f16f4ea39fdc25ce6a9aeb5fad07a3.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.87131de146f16f4ea39fdc25ce6a9aeb5fad07a3.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T02:55:00-05:00"
+                        "sent": "2026-11-25T12:23:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-26T00:55:00-05:00"
                     }
                 ],
-                "sent": "2026-11-26T01:25:00-05:00",
-                "effective": "2026-11-26T01:25:00-05:00",
-                "onset": "2026-11-26T01:25:00-05:00",
-                "expires": "2026-11-26T11:00:00-05:00",
-                "ends": "2026-11-27T01:00:00-05:00",
+                "sent": "2026-11-26T00:56:00-05:00",
+                "effective": "2026-11-26T00:56:00-05:00",
+                "onset": "2026-11-26T00:56:00-05:00",
+                "expires": "2026-11-26T10:00:00-05:00",
+                "ends": "2026-11-26T10:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Miami FL",
+                "headline": "Coastal Flood Advisory issued November 26 at 12:56AM EST until November 26 at 10:00AM EST by NWS Miami FL",
+                "description": "* WHAT...For the Coastal Flood Advisory, moderate coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Palm Beach County and Coastal Broward County.\n\n* WHEN...For the Coastal Flood Advisory, until 10 AM EST\nThursday. For the High Rip Current Risk, through Thursday\nevening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWMFL"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KMFL 260556"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 10 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KMFL.CF.Y.0004.000000T0000Z-261126T1500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T10:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ba7d9101ed228aacc05d4e6029cc5482f173b39.001.2,2026-11-24T23:20:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.36c78a94ae7f8c2cdfedbef80d2c6eadcaf5d9db.001.2,2026-11-24T12:44:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
+                "areaDesc": "Coastal Miami Dade County",
+                "geocode": {
+                    "SAME": [
+                        "012086"
+                    ],
+                    "UGC": [
+                        "FLZ173"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ173"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T12:23:00-05:00"
+                    },
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.002.2",
+                        "identifier": "urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.002.2",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-26T00:55:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-26T00:56:00-05:00",
+                "effective": "2026-11-26T00:56:00-05:00",
+                "onset": "2026-11-26T00:56:00-05:00",
+                "expires": "2026-11-26T10:00:00-05:00",
+                "ends": "2026-11-26T19:00:00-05:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -266,21 +854,21 @@
                 "urgency": "Expected",
                 "event": "Rip Current Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Melbourne FL",
-                "headline": "Rip Current Statement issued November 26 at 1:25AM EST until November 27 at 1:00AM EST by NWS Melbourne FL",
-                "description": "* WHAT...For the Coastal Flood Advisory, minor coastal flooding.\nFor the High Rip Current Risk, dangerous rip currents and rough\nsurf.\n\n* WHERE...Coastal Volusia, Coastal Indian River, Coastal Saint\nLucie, Coastal Martin, Mainland Northern Brevard, Northern\nBrevard Barrier Islands, Mainland Southern Brevard and\nSouthern Brevard Barrier Islands Counties.\n\n* WHEN...For the Coastal Flood Advisory, until 11 AM EST this\nmorning. For the High Rip Current Risk, through late tonight.\n\n* IMPACTS...Some flooding of low-lying lots, parks and roadways\nmay occur near the shoreline. Only isolated road closures are\nexpected. Rip currents can sweep even the best swimmers away\nfrom shore into deeper water.",
-                "instruction": "Onshore winds and above normal tides will combine to generate\nflooding of low areas along the shore. Do not drive around\nbarricades or through water of unknown depth. Take the necessary\nactions to protect flood-prone property.\n\nRip currents are powerful channels of water flowing quickly away\nfrom shore, which occur most often at low spots or breaks in the\nsandbar and in the vicinity of structures such as jetties and\npiers. Heed the advice of lifeguards, beach patrol flags and\nsigns.\n\nEntering the surf is strongly discouraged. If caught in a rip\ncurrent, relax and float. Don't swim against the current. If\nable, swim in a direction following the shoreline. If unable to\nescape, face the shore and call or wave for help.",
+                "senderName": "NWS Miami FL",
+                "headline": "Rip Current Statement issued November 26 at 12:56AM EST until November 26 at 7:00PM EST by NWS Miami FL",
+                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Miami Dade County.\n\n* WHEN...For the Coastal Flood Statement, through Thursday\nmorning. For the High Rip Current Risk, through Thursday\nevening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
+                "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
                 "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "CFWMLB"
+                        "CFWMFL"
                     ],
                     "WMOidentifier": [
-                        "WHUS42 KMLB 260625"
+                        "WHUS42 KMFL 260556"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 11 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH LATE TONIGHT"
+                        "COASTAL FLOOD STATEMENT REMAINS IN EFFECT UNTIL 10 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -288,10 +876,13 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.KMLB.RP.S.0040.000000T0000Z-261127T0600Z/"
+                        "/O.CON.KMFL.RP.S.0034.000000T0000Z-261127T0000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-27T01:00:00-05:00"
+                        "2026-11-26T19:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ba7d9101ed228aacc05d4e6029cc5482f173b39.002.1,2026-11-24T23:20:00-05:00"
                     ]
                 },
                 "scope": "Public",
@@ -399,193 +990,6 @@
                     ],
                     "NationalWeatherService": [
                         "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.003.2",
-                "areaDesc": "Coastal Miami Dade County",
-                "geocode": {
-                    "SAME": [
-                        "012086"
-                    ],
-                    "UGC": [
-                        "FLZ173"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ173"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T12:23:00-05:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.002.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.002.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-26T00:55:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-26T00:56:00-05:00",
-                "effective": "2026-11-26T00:56:00-05:00",
-                "onset": "2026-11-26T00:56:00-05:00",
-                "expires": "2026-11-26T10:00:00-05:00",
-                "ends": "2026-11-26T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Rip Current Statement issued November 26 at 12:56AM EST until November 26 at 7:00PM EST by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Statement, isolated minor coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Miami Dade County.\n\n* WHEN...For the Coastal Flood Statement, through Thursday\nmorning. For the High Rip Current Risk, through Thursday\nevening.\n\n* IMPACTS...Some water on low lying roads and property. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
-                "instruction": "Do not drive through flooded roadways.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KMFL 260556"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD STATEMENT REMAINS IN EFFECT UNTIL 10 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMFL.RP.S.0034.000000T0000Z-261127T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T19:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ba7d9101ed228aacc05d4e6029cc5482f173b39.002.1,2026-11-24T23:20:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.e17ce9f94963767a9d6cf97b311366c2ea6c2202.001.1",
-                "areaDesc": "Coastal Palm Beach County; Coastal Broward County",
-                "geocode": {
-                    "SAME": [
-                        "012099",
-                        "012011"
-                    ],
-                    "UGC": [
-                        "FLZ168",
-                        "FLZ172"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ168",
-                    "https://api.weather.gov/zones/forecast/FLZ172"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.96fdce7234f2a2c25c387630a781922efbd77d03.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T12:23:00-05:00"
-                    },
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.db043410c598b4c703448d64056518f0ca638138.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-26T00:55:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-26T00:56:00-05:00",
-                "effective": "2026-11-26T00:56:00-05:00",
-                "onset": "2026-11-26T00:56:00-05:00",
-                "expires": "2026-11-26T10:00:00-05:00",
-                "ends": "2026-11-26T10:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Miami FL",
-                "headline": "Coastal Flood Advisory issued November 26 at 12:56AM EST until November 26 at 10:00AM EST by NWS Miami FL",
-                "description": "* WHAT...For the Coastal Flood Advisory, moderate coastal\nflooding. For the High Rip Current Risk, dangerous rip\ncurrents.\n\n* WHERE...Coastal Palm Beach County and Coastal Broward County.\n\n* WHEN...For the Coastal Flood Advisory, until 10 AM EST\nThursday. For the High Rip Current Risk, through Thursday\nevening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWMFL"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KMFL 260556"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT UNTIL 10 AM EST THIS MORNING... ...HIGH RIP CURRENT RISK REMAINS IN EFFECT THROUGH THIS EVENING"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KMFL.CF.Y.0004.000000T0000Z-261126T1500Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T10:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6ba7d9101ed228aacc05d4e6029cc5482f173b39.001.2,2026-11-24T23:20:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.36c78a94ae7f8c2cdfedbef80d2c6eadcaf5d9db.001.2,2026-11-24T12:44:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
                     ]
                 }
             }
@@ -962,6 +1366,85 @@
             }
         },
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
+                "areaDesc": "Coastal Duval",
+                "geocode": {
+                    "SAME": [
+                        "012031"
+                    ],
+                    "UGC": [
+                        "FLZ125"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ125"
+                ],
+                "references": [],
+                "sent": "2026-11-26T00:24:00-05:00",
+                "effective": "2026-11-26T00:24:00-05:00",
+                "onset": "2026-11-26T00:24:00-05:00",
+                "expires": "2026-11-26T15:00:00-05:00",
+                "ends": "2026-11-26T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Jacksonville FL",
+                "headline": "Coastal Flood Warning issued November 26 at 12:24AM EST until November 26 at 7:00PM EST by NWS Jacksonville FL",
+                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding mainly from west of Mayport along the St Johns River.\nFor the High Rip Current Risk, dangerous rip currents.\n\n* WHERE...Coastal Duval County.\n\n* WHEN...For the Coastal Flood Warning, until 7 PM EST this\nevening. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
+                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
+                "response": "Avoid",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWJAX"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KJAX 260524"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 7 PM EST THIS EVENING... ...HIGH RIP CURRENT RISK NOW IN EFFECT THROUGH THIS EVENING... ...HIGH SURF ADVISORY IS CANCELLED"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXA.KJAX.CF.W.0004.000000T0000Z-261127T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T19:00:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "CFW"
+                    ],
+                    "NationalWeatherService": [
+                        "CFW"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.4",
             "type": "Feature",
             "geometry": null,
@@ -1043,85 +1526,6 @@
                     ],
                     "NationalWeatherService": [
                         "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.db574f009fbd4685e0bc9286a8fc5d17a3f47993.001.3",
-                "areaDesc": "Coastal Duval",
-                "geocode": {
-                    "SAME": [
-                        "012031"
-                    ],
-                    "UGC": [
-                        "FLZ125"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ125"
-                ],
-                "references": [],
-                "sent": "2026-11-26T00:24:00-05:00",
-                "effective": "2026-11-26T00:24:00-05:00",
-                "onset": "2026-11-26T00:24:00-05:00",
-                "expires": "2026-11-26T15:00:00-05:00",
-                "ends": "2026-11-26T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Severe",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Warning",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Jacksonville FL",
-                "headline": "Coastal Flood Warning issued November 26 at 12:24AM EST until November 26 at 7:00PM EST by NWS Jacksonville FL",
-                "description": "* WHAT...For the Coastal Flood Warning, significant coastal\nflooding mainly from west of Mayport along the St Johns River.\nFor the High Rip Current Risk, dangerous rip currents.\n\n* WHERE...Coastal Duval County.\n\n* WHEN...For the Coastal Flood Warning, until 7 PM EST this\nevening. For the High Rip Current Risk, through this evening.\n\n* IMPACTS...Numerous roads may be closed. Low lying property\nincluding homes, businesses, and some critical infrastructure\nwill be inundated. Some shoreline erosion will occur. Rip\ncurrents can sweep even the best swimmers away from shore into\ndeeper water.",
-                "instruction": "Take the necessary actions to protect flood-prone property. If\ntravel is required, do not drive around barricades or through\nwater of unknown depth.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWJAX"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KJAX 260524"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD WARNING IN EFFECT UNTIL 7 PM EST THIS EVENING... ...HIGH RIP CURRENT RISK NOW IN EFFECT THROUGH THIS EVENING... ...HIGH SURF ADVISORY IS CANCELLED"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
-                    "VTEC": [
-                        "/O.EXA.KJAX.CF.W.0004.000000T0000Z-261127T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "CFW"
-                    ],
-                    "NationalWeatherService": [
-                        "CFW"
                     ]
                 }
             }
@@ -2170,92 +2574,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
-                "areaDesc": "Monroe Upper Keys",
-                "geocode": {
-                    "SAME": [
-                        "012087"
-                    ],
-                    "UGC": [
-                        "FLZ076"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ076"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bc3144bfc515ab532500df6af80bcc85da29ec3f.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.bc3144bfc515ab532500df6af80bcc85da29ec3f.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T11:57:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-25T19:23:00-05:00",
-                "effective": "2026-11-25T19:23:00-05:00",
-                "onset": "2026-11-25T19:23:00-05:00",
-                "expires": "2026-11-26T06:00:00-05:00",
-                "ends": "2026-11-26T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Key West FL",
-                "headline": "Coastal Flood Advisory issued November 25 at 7:23PM EST until November 26 at 7:00PM EST by NWS Key West FL",
-                "description": "* WHAT...Saltwater flooding.\n\n* WHERE...Upper Florida Keys.\n\n* WHEN...Until 7 PM EST Thursday.\n\n* IMPACTS...Saltwater flooding of low elevation streets and lots\nis expected. Some storm drains will overflow, and some\nseawalls and docks will be overtopped. Boaters can expect less\nclearance under fixed bridges. Motorists should remember that\npersistent puddles around the times of high tide are almost\ncertain to contain a mix of saltwater.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWKEY"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KKEY 260023"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KKEY.CF.Y.0006.000000T0000Z-261127T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T19:00:00-05:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c7568329f4d10b1668901a1ccb70c6ab8babda44.001.1,2026-11-24T22:26:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5e2d3502716a016591c91c6c2762caedd38815eb.001.2,2026-11-24T14:46:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.002.1",
             "type": "Feature",
             "geometry": null,
@@ -2339,6 +2657,92 @@
                     ],
                     "NationalWeatherService": [
                         "CFS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.be40d1e80895b70de5fdf9d5e52512002d25cf5c.001.1",
+                "areaDesc": "Monroe Upper Keys",
+                "geocode": {
+                    "SAME": [
+                        "012087"
+                    ],
+                    "UGC": [
+                        "FLZ076"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/FLZ076"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bc3144bfc515ab532500df6af80bcc85da29ec3f.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.bc3144bfc515ab532500df6af80bcc85da29ec3f.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T11:57:00-05:00"
+                    }
+                ],
+                "sent": "2026-11-25T19:23:00-05:00",
+                "effective": "2026-11-25T19:23:00-05:00",
+                "onset": "2026-11-25T19:23:00-05:00",
+                "expires": "2026-11-26T06:00:00-05:00",
+                "ends": "2026-11-26T19:00:00-05:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Key West FL",
+                "headline": "Coastal Flood Advisory issued November 25 at 7:23PM EST until November 26 at 7:00PM EST by NWS Key West FL",
+                "description": "* WHAT...Saltwater flooding.\n\n* WHERE...Upper Florida Keys.\n\n* WHEN...Until 7 PM EST Thursday.\n\n* IMPACTS...Saltwater flooding of low elevation streets and lots\nis expected. Some storm drains will overflow, and some\nseawalls and docks will be overtopped. Boaters can expect less\nclearance under fixed bridges. Motorists should remember that\npersistent puddles around the times of high tide are almost\ncertain to contain a mix of saltwater.",
+                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWKEY"
+                    ],
+                    "WMOidentifier": [
+                        "WHUS42 KKEY 260023"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.KKEY.CF.Y.0006.000000T0000Z-261127T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-26T19:00:00-05:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c7568329f4d10b1668901a1ccb70c6ab8babda44.001.1,2026-11-24T22:26:00-05:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.5e2d3502716a016591c91c6c2762caedd38815eb.001.2,2026-11-24T14:46:00-05:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
                     ]
                 }
             }
@@ -2440,387 +2844,8 @@
                     ]
                 }
             }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.2",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.2",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.2",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
-                "geocode": {
-                    "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
-                    ],
-                    "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.2",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T03:01:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-25T13:23:00-05:00",
-                "effective": "2026-11-25T13:23:00-05:00",
-                "onset": "2026-11-26T01:00:00-05:00",
-                "expires": "2026-11-26T05:00:00-05:00",
-                "ends": "2026-11-27T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Rip Current Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Rip Current Statement issued November 25 at 1:23PM EST until November 27 at 7:00PM EST by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents and large breaking waves expected.\nFor the Coastal Flood Advisory, minor coastal flooding expected.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, from 8 PM this evening\nto 5 AM EST Thursday. For the High Rip Current Risk, from late\ntonight through Thursday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.\n\nA High Surf Advisory means that high surf will affect beaches in\nthe advisory area, producing localized beach erosion and\ndangerous swimming conditions.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 251823"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 PM THIS EVENING TO 5 AM EST THURSDAY... ...HIGH RIP CURRENT RISK NOW IN EFFECT FROM 1 AM EST THURSDAY THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY IN EFFECT FROM 7 AM TO 7 PM EST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.EXT.KTBW.RP.S.0020.261126T0600Z-261128T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "RPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.3",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.3",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.3",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
-                "geocode": {
-                    "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
-                    ],
-                    "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T03:01:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-25T13:23:00-05:00",
-                "effective": "2026-11-25T13:23:00-05:00",
-                "onset": "2026-11-25T20:00:00-05:00",
-                "expires": "2026-11-26T05:00:00-05:00",
-                "ends": "2026-11-26T05:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Coastal Flood Advisory issued November 25 at 1:23PM EST until November 26 at 5:00AM EST by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents and large breaking waves expected.\nFor the Coastal Flood Advisory, minor coastal flooding expected.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, from 8 PM this evening\nto 5 AM EST Thursday. For the High Rip Current Risk, from late\ntonight through Thursday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.\n\nA High Surf Advisory means that high surf will affect beaches in\nthe advisory area, producing localized beach erosion and\ndangerous swimming conditions.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 251823"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 PM THIS EVENING TO 5 AM EST THURSDAY... ...HIGH RIP CURRENT RISK NOW IN EFFECT FROM 1 AM EST THURSDAY THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY IN EFFECT FROM 7 AM TO 7 PM EST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.CF.Y.0002.261126T0100Z-261126T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T05:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.002.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.002.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.002.1",
-                "areaDesc": "Coastal Levy; Coastal Citrus; Coastal Hernando; Coastal Pasco",
-                "geocode": {
-                    "SAME": [
-                        "012075",
-                        "012017",
-                        "012053",
-                        "012101"
-                    ],
-                    "UGC": [
-                        "FLZ139",
-                        "FLZ142",
-                        "FLZ148",
-                        "FLZ149"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ139",
-                    "https://api.weather.gov/zones/forecast/FLZ142",
-                    "https://api.weather.gov/zones/forecast/FLZ148",
-                    "https://api.weather.gov/zones/forecast/FLZ149"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.21f9e2fa95cc176af590f01b5ff8c0786bfd94c7.002.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T03:01:00-05:00"
-                    }
-                ],
-                "sent": "2026-11-25T13:23:00-05:00",
-                "effective": "2026-11-25T13:23:00-05:00",
-                "onset": "2026-11-25T20:00:00-05:00",
-                "expires": "2026-11-26T05:00:00-05:00",
-                "ends": "2026-11-26T05:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "Coastal Flood Advisory issued November 25 at 1:23PM EST until November 26 at 5:00AM EST by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Minor coastal flooding expected.\n\n* WHERE...Coastal Levy, Coastal Citrus, Coastal Hernando and\nCoastal Pasco Counties.\n\n* WHEN...From 8 PM this evening to 5 AM EST Thursday.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.",
-                "response": "Monitor",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 251823"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 PM THIS EVENING TO 5 AM EST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.KTBW.CF.Y.0002.261126T0100Z-261126T1000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T05:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "CFY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.f9a490591ae9ad28c42f347f8db63ae632c6c898.001.1",
-                "areaDesc": "Pinellas; Coastal Hillsborough; Coastal Manatee; Coastal Sarasota; Coastal Charlotte; Coastal Lee",
-                "geocode": {
-                    "SAME": [
-                        "012103",
-                        "012057",
-                        "012081",
-                        "012115",
-                        "012015",
-                        "012071"
-                    ],
-                    "UGC": [
-                        "FLZ050",
-                        "FLZ151",
-                        "FLZ155",
-                        "FLZ160",
-                        "FLZ162",
-                        "FLZ165"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/FLZ050",
-                    "https://api.weather.gov/zones/forecast/FLZ151",
-                    "https://api.weather.gov/zones/forecast/FLZ155",
-                    "https://api.weather.gov/zones/forecast/FLZ160",
-                    "https://api.weather.gov/zones/forecast/FLZ162",
-                    "https://api.weather.gov/zones/forecast/FLZ165"
-                ],
-                "references": [],
-                "sent": "2026-11-25T13:23:00-05:00",
-                "effective": "2026-11-25T13:23:00-05:00",
-                "onset": "2026-11-26T07:00:00-05:00",
-                "expires": "2026-11-26T05:00:00-05:00",
-                "ends": "2026-11-26T19:00:00-05:00",
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Minor",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "High Surf Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Tampa Bay Ruskin FL",
-                "headline": "High Surf Advisory issued November 25 at 1:23PM EST until November 26 at 7:00PM EST by NWS Tampa Bay Ruskin FL",
-                "description": "* WHAT...Dangerous rip currents and large breaking waves expected.\nFor the Coastal Flood Advisory, minor coastal flooding expected.\n\n* WHERE...Pinellas, Coastal Hillsborough, Coastal Manatee,\nCoastal Sarasota, Coastal Charlotte and Coastal Lee Counties.\n\n* WHEN...For the Coastal Flood Advisory, from 8 PM this evening\nto 5 AM EST Thursday. For the High Rip Current Risk, from late\ntonight through Thursday evening.\n\n* IMPACTS...Flooding of lots, parks, and roads with only\nisolated road closures expected. Rip currents can sweep even\nthe best swimmers away from shore into deeper water.",
-                "instruction": "If travel is required, allow extra time as some roads may be\nclosed. Do not drive around barricades or through water of\nunknown depth. Take the necessary actions to protect flood-prone\nproperty.\n\nSwim near a lifeguard. If caught in a rip current, relax and\nfloat. Don't swim against the current. If able, swim in a\ndirection following the shoreline. If unable to escape, face the\nshore and call or wave for help.\n\nA High Surf Advisory means that high surf will affect beaches in\nthe advisory area, producing localized beach erosion and\ndangerous swimming conditions.",
-                "response": "Avoid",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "CFWTBW"
-                    ],
-                    "WMOidentifier": [
-                        "WHUS42 KTBW 251823"
-                    ],
-                    "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 8 PM THIS EVENING TO 5 AM EST THURSDAY... ...HIGH RIP CURRENT RISK NOW IN EFFECT FROM 1 AM EST THURSDAY THROUGH FRIDAY EVENING... ...HIGH SURF ADVISORY IN EFFECT FROM 7 AM TO 7 PM EST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.NEW.KTBW.SU.Y.0004.261126T1200Z-261127T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-26T19:00:00-05:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "SUY"
-                    ]
-                }
-            }
         }
     ],
     "title": "Current watches, warnings, and advisories for Florida",
-    "updated": "2026-11-26T07:45:17+00:00"
+    "updated": "2026-11-26T08:08:05+00:00"
 }
