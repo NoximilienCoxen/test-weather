@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.lerp
 import com.caelumweather.lingua.tr
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -30,6 +34,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.LinearEasing
+import kotlinx.coroutines.delay
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlinx.coroutines.launch
 
 /**
  * "Scorri in su", sotto la prima sala, finche' non si e' sfogliato una volta.
@@ -105,7 +122,17 @@ internal fun PuntiniSale(
     palette: SalaPalette,
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * Dove sta il carosello, in pagine con la frazione (2,4 = fra la terza e
+     * la quarta). Se c'e', il trattino **segue il dito**: si allunga verso la
+     * sala che arriva e si accorcia su quella che se ne va, invece di saltare
+     * a gesto finito. Si legge solo nel disegno, niente ricomposizioni.
+     */
+    posizione: (() -> Float)? = null,
 ) {
+    val movimento = LocalMovimento.current
+    val coloreAcceso = palette.accentSuCielo
+    val colorePiano = palette.inkSuCielo.copy(alpha = 0.45f)
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -113,8 +140,39 @@ internal fun PuntiniSale(
     ) {
         sale.forEachIndexed { i, sala ->
             val attiva = i == corrente
-            val larghezza by animateDpAsState(if (attiva) 18.dp else 6.dp, label = "puntino")
+            val larghezza by animateDpAsState(
+                if (attiva) 18.dp else 6.dp,
+                animationSpec = if (movimento) spring(dampingRatio = 0.5f, stiffness = 420f) else snap(),
+                label = "puntino",
+            )
             val colore by animateColorAsState(if (attiva) palette.accentSuCielo else palette.inkSuCielo.copy(alpha = 0.45f), label = "puntino-colore")
+            // **L'arrivo si vede, e dice dove.** Quando una sala entra in
+            // scena il suo trattino si scioglie nella figuretta della sala,
+            // viva - la nuvola che lascia cadere le gocce, il sole che gira,
+            // la manica che sventola - per poco piu' di un secondo, e poi
+            // torna trattino (`disegnaIconaViva`). Solo al cambio, non
+            // all'apertura dell'app; con le animazioni ridotte niente.
+            val comparsa = remember { Animatable(0f) }
+            val fase = remember { Animatable(0f) }
+            var eraAttiva by remember { mutableStateOf(attiva) }
+            LaunchedEffect(attiva) {
+                val arrivata = attiva && !eraAttiva
+                eraAttiva = attiva
+                if (!attiva) {
+                    comparsa.animateTo(0f, tween(durationMillis = 140))
+                    return@LaunchedEffect
+                }
+                if (!arrivata || !movimento) return@LaunchedEffect
+                val giro = launch {
+                    fase.snapTo(0f)
+                    fase.animateTo(2f, tween(durationMillis = 2000, easing = LinearEasing))
+                }
+                comparsa.animateTo(1f, spring(dampingRatio = 0.55f, stiffness = 500f))
+                delay(1250)
+                comparsa.animateTo(0f, tween(durationMillis = 280, easing = FastOutSlowInEasing))
+                giro.cancel()
+            }
+            val coloreIcona = palette.accentSuCielo
             Box(
                 modifier = Modifier
                     .size(width = 32.dp, height = 28.dp)
@@ -126,12 +184,44 @@ internal fun PuntiniSale(
                     },
                 contentAlignment = Alignment.Center,
             ) {
-                Box(
+                val c = comparsa.value
+                Canvas(
                     modifier = Modifier
-                        .size(width = larghezza, height = 6.dp)
-                        .clip(CircleShape)
-                        .background(colore),
-                )
+                        .size(width = 18.dp, height = 6.dp)
+                        .graphicsLayer {
+                            val via = c.coerceIn(0f, 1f)
+                            alpha = 1f - via
+                            scaleX = 1f - 0.6f * via
+                            scaleY = 1f - 0.6f * via
+                        },
+                ) {
+                    val pos = posizione
+                    val (w, tinta) = if (pos != null && movimento) {
+                        val vicino = (1f - kotlin.math.abs(i - pos())).coerceIn(0f, 1f)
+                        (6.dp.toPx() + 12.dp.toPx() * vicino) to lerp(colorePiano, coloreAcceso, vicino)
+                    } else {
+                        larghezza.toPx() to colore
+                    }
+                    drawRoundRect(
+                        color = tinta,
+                        topLeft = Offset((size.width - w) / 2f, 0f),
+                        size = Size(w, size.height),
+                        cornerRadius = CornerRadius(size.height / 2f),
+                    )
+                }
+                if (c > 0.01f) {
+                    Canvas(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .graphicsLayer {
+                                alpha = c.coerceIn(0f, 1f)
+                                scaleX = 0.4f + 0.6f * c
+                                scaleY = 0.4f + 0.6f * c
+                            },
+                    ) {
+                        disegnaIconaViva(sala, coloreIcona, fase.value, c.coerceIn(0f, 1f))
+                    }
+                }
             }
         }
     }

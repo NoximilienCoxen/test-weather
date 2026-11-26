@@ -38,7 +38,7 @@ internal class MareWidget : CaelumWidget(WidgetKind.MARE) {
         vista: VistaWidget,
     ): Drawn {
         val where = requireNotNull(place)
-        val risposta = MareRepository(where).load()
+        val risposta = MareRepository(where).loadConScorta(context)
         val mare = risposta.getOrNull()
         val senzaMare = risposta.isSuccess && mare == null
         val unita = SettingsPrefs(context).settings.first().unit

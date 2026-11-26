@@ -168,6 +168,12 @@ class MainActivity : ComponentActivity() {
             if (impostazioni.notificheAllerte) AllerteUfficialiWorker.pianifica(applicationContext)
             // Il riepilogo si prenota da se' giro dopo giro; qui solo se la
             // catena si fosse interrotta (`KEEP` non sposta un turno che c'e').
+            if (impostazioni.avvisoOmbrello) {
+                com.caelumweather.notifiche.OmbrelloWorker.pianifica(applicationContext, impostazioni.oraOmbrello, sostituisci = false)
+            }
+            if (impostazioni.avvisoCambioPrevisione) {
+                com.caelumweather.notifiche.CambioPrevisioneWorker.pianifica(applicationContext)
+            }
             if (impostazioni.riepilogoMattino) {
                 RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
             }

@@ -314,9 +314,8 @@ fun SalaVentoScreen(
         //
         // Solo dove c'e': vedi `MareRepository`. Segue l'ora scelta come tutto
         // il resto della sala.
-        state.mareMostrato?.let { oraDiMare ->
-            SezioneMare(ora = oraDiMare, unita = state.unit, palette = palette, movimento = movimento, mare = state.mare.takeIf { state.forcedMare == null })
-        }
+        // Il mare aveva qui la sua sezione, e la scheda del vento sulla costa
+        // scorreva dentro di se'. Adesso ha una scheda sua: vedi `SalaMareScreen`.
     }
 }
 

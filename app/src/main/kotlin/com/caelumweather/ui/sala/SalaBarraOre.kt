@@ -1,5 +1,13 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.animation.core.snap
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.MaterialTheme
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -116,30 +124,50 @@ fun BarraDelleOre(
     val spostata = ora != oraAttuale.coerceIn(0, ORE - 1)
 
     Column(modifier = modifier.fillMaxWidth()) {
+        // **Riga alta quanto il bottone, sempre**: se crescesse solo quando il
+        // bottone compare, tutta la galleria sobbalzerebbe a ogni ora spostata.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth().height(RIGA_ORA).padding(bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             if (spostata) {
+                // **Un bottone vero, non un'etichetta.** Era una pastiglia alta
+                // ventidue punti subito sotto i puntini delle sale: mirandola si
+                // prendeva un puntino e si cambiava sala. Adesso e' un bottone
+                // tonale di Material 3 Expressive - alto, con l'icona, scritto in
+                // chiaro - che si squadra sotto il dito (`formaCheCede`).
+                val pressione = rememberPressione()
+                val forma = formaCheCede(pressione, riposo = 18.dp, premuto = 8.dp)
                 Row(
                     modifier = Modifier
-                        .cedevole(premuto = 0.92f)
-                        .clip(CircleShape)
+                        .fillMaxHeight()
+                        .cedevole(premuto = 0.94f, pressione = pressione)
+                        .clip(forma)
                         .background(palette.accent)
-                        .clickable(onClick = onTornaOra)
-                        .padding(horizontal = 12.dp, vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Canvas(modifier = Modifier.size(11.dp)) {
-                        drawCircle(
-                            color = palette.accentInk,
-                            radius = size.width / 2f - 1.dp.toPx(),
-                            style = Stroke(width = 2.dp.toPx()),
+                        .clickable(
+                            onClickLabel = tr("torna all'ora attuale", "back to now", "zurück zu jetzt", "retour à maintenant", "volver a ahora"),
+                            role = Role.Button,
+                            onClick = onTornaOra,
                         )
+                        .padding(start = 12.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    // Un orologio: il quadrante e le due lancette.
+                    Canvas(modifier = Modifier.size(18.dp)) {
+                        val tratto = 2.dp.toPx()
+                        val c = Offset(size.width / 2f, size.height / 2f)
+                        drawCircle(color = palette.accentInk, radius = size.width / 2f - tratto / 2f, style = Stroke(width = tratto))
+                        drawLine(palette.accentInk, c, Offset(c.x, c.y - size.height * 0.28f), strokeWidth = tratto, cap = StrokeCap.Round)
+                        drawLine(palette.accentInk, c, Offset(c.x + size.width * 0.22f, c.y), strokeWidth = tratto, cap = StrokeCap.Round)
                     }
-                    Text(text = tr("TORNA ALL'ORA ATTUALE", "BACK TO NOW", "ZURÜCK ZU JETZT", "RETOUR À MAINTENANT", "VOLVER A AHORA"), style = SalaType.sectionLabel, color = palette.accentInk)
+                    Text(
+                        text = tr("Torna all'ora attuale", "Back to now", "Zurück zu jetzt", "Retour à maintenant", "Volver a ahora"),
+                        style = SalaType.pill,
+                        color = palette.accentInk,
+                        maxLines = 1,
+                    )
                 }
             } else {
                 Text(
@@ -191,6 +219,23 @@ fun BarraDelleOre(
             }
         }
 
+        // **La maniglia si stringe mentre la si trascina**, come i cursori di
+        // Material 3 Expressive: da disco diventa una pillola verticale, il
+        // dito vede di nuovo le ore ai lati, e lasciandola torna tonda sulla
+        // molla dello schema Expressive. Con le animazioni ridotte resta tonda.
+        var trascinando by remember { mutableStateOf(false) }
+        val movimentoManiglia = LocalMovimento.current
+        val stretta by animateFloatAsState(
+            targetValue = if (trascinando && movimentoManiglia) 1f else 0f,
+            animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+            label = "maniglia",
+        )
+        // E scivola da un'ora all'altra invece di saltare, sulla stessa molla.
+        val posizioneManiglia by animateFloatAsState(
+            targetValue = ora.toFloat(),
+            animationSpec = if (movimentoManiglia) MaterialTheme.motionScheme.fastSpatialSpec() else snap(),
+            label = "maniglia-posizione",
+        )
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -228,13 +273,17 @@ fun BarraDelleOre(
                 }
                 .pointerInput(attiva) {
                     if (!attiva) return@pointerInput
-                    detectHorizontalDragGestures { change, _ ->
+                    detectHorizontalDragGestures(
+                        onDragStart = { trascinando = true },
+                        onDragEnd = { trascinando = false },
+                        onDragCancel = { trascinando = false },
+                    ) { change, _ ->
                         val i = indiceDa(change.position.x, size.width.toFloat())
                         if (i != sceltaOra) { colpetto(); scegli(i) }
                     }
                 },
         ) {
-            disegnaBarra(tinte, ora, palette, attiva)
+            disegnaBarra(tinte, ora, palette, attiva, stretta, posizioneManiglia)
         }
     }
 }
@@ -244,6 +293,9 @@ fun BarraDelleOre(
 private const val ORE = 24
 
 private val ALTEZZA = 34.dp
+
+/** La riga sopra la barra: l'invito a trascinare, o il bottone per tornare a adesso. */
+private val RIGA_ORA = 38.dp
 
 private fun indiceDa(x: Float, larghezza: Float): Int =
     (x / larghezza.coerceAtLeast(1f) * (ORE - 1)).roundToInt().coerceIn(0, ORE - 1)
@@ -283,11 +335,15 @@ private fun coloriDelleOre(
     }
 }
 
-private fun DrawScope.disegnaBarra(
+internal fun DrawScope.disegnaBarra(
     tinte: List<Color>,
     selected: Int,
     palette: SalaPalette,
     attiva: Boolean,
+    /** Da 0 (disco) a 1 (pillola stretta): vedi la nota sulla maniglia. */
+    stretta: Float = 0f,
+    /** Dove sta la maniglia, in ore con la frazione: scorre fra un'ora e l'altra. */
+    posizione: Float = selected.toFloat(),
 ) {
     val w = size.width
     val cy = size.height / 2f
@@ -323,13 +379,33 @@ private fun DrawScope.disegnaBarra(
     // tessere chiare del mezzogiorno sia da quelle blu della notte, che un
     // pallino di un colore solo non farebbe.
     if (!attiva) return
-    val x = (selected.toFloat() / (ORE - 1) * w).coerceIn(17.dp.toPx(), w - 17.dp.toPx())
     val rManiglia = 17.dp.toPx()
-    drawCircle(color = palette.panelSolido, radius = rManiglia, center = Offset(x, cy))
-    drawCircle(
-        color = palette.accent,
-        radius = 11.dp.toPx() - 2.5.dp.toPx(),
-        center = Offset(x, cy),
-        style = Stroke(width = 5.dp.toPx()),
+    val x = (posizione / (ORE - 1) * w).coerceIn(rManiglia, w - rManiglia)
+    // **Una forma sola che si trasforma**, senza scatti di stile a meta'
+    // strada: il disco si stringe in pillola, l'anello d'accento si allunga in
+    // un'asta e il foro al centro si chiude fino a sparire. La molla Expressive
+    // puo' oltrepassare di poco lo zero e l'uno: e' il piccolo schiacciamento
+    // che si vede, e le misure restano positive.
+    val t = stretta.coerceIn(-0.2f, 1.2f)
+    fun tra(a: Float, b: Float) = a + (b - a) * t
+    val larga = tra(rManiglia * 2f, 16.dp.toPx()).coerceAtLeast(10.dp.toPx())
+    val alta = rManiglia * 2f
+    drawRoundRect(
+        color = palette.panelSolido,
+        topLeft = Offset(x - larga / 2f, cy - alta / 2f),
+        size = Size(larga, alta),
+        cornerRadius = CornerRadius(larga / 2f),
     )
+    val dentroLarga = tra(22.dp.toPx(), 6.dp.toPx()).coerceAtLeast(4.dp.toPx())
+    val dentroAlta = tra(22.dp.toPx(), 24.dp.toPx())
+    drawRoundRect(
+        color = palette.accent,
+        topLeft = Offset(x - dentroLarga / 2f, cy - dentroAlta / 2f),
+        size = Size(dentroLarga, dentroAlta),
+        cornerRadius = CornerRadius(dentroLarga / 2f),
+    )
+    val foro = tra(12.dp.toPx(), 0f)
+    if (foro > 0.5f) {
+        drawCircle(color = palette.panelSolido, radius = foro / 2f, center = Offset(x, cy))
+    }
 }

@@ -25,6 +25,10 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -128,7 +132,10 @@ internal fun ColonnaInRitardo(modifier: Modifier = Modifier, content: @Composabl
  * consumare niente: il tocco resta a chi lo prendeva prima, e quando lo prende
  * uno scorrimento il comando torna su da se'.
  */
-fun Modifier.cedevole(/** Quanto si stringe: di meno i comandi larghi, di piu' i piccoli. */ premuto: Float = 0.96f): Modifier = composed {
+fun Modifier.cedevole(
+    /** Quanto si stringe: di meno i comandi larghi, di piu' i piccoli. */ premuto: Float = 0.96f,
+    /** Dove scrivere se il dito e' giu', per chi cambia forma insieme: vedi [formaCheCede]. */ pressione: Pressione? = null,
+): Modifier = composed {
     if (!LocalMovimento.current) return@composed this
     var giu by remember { mutableStateOf(false) }
     val scala by animateFloatAsState(
@@ -145,13 +152,55 @@ fun Modifier.cedevole(/** Quanto si stringe: di meno i comandi larghi, di piu' i
             awaitEachGesture {
                 awaitFirstDown(requireUnconsumed = false)
                 giu = true
+                pressione?.giu = true
                 try {
                     waitForUpOrCancellation()
                 } finally {
                     giu = false
+                    pressione?.giu = false
                 }
             }
         }
+}
+
+/** Se un comando e' premuto: lo scrive [cedevole], lo legge [formaCheCede]. */
+@Stable
+class Pressione {
+    var giu by mutableStateOf(false)
+}
+
+@Composable
+fun rememberPressione(): Pressione = remember { Pressione() }
+
+/**
+ * **La forma che cede al tocco**, alla maniera di Material 3 Expressive.
+ *
+ * Premuto, un comando tondo si fa piu' squadrato; scelto, cambia forma per
+ * restare diverso dagli altri anche senza colore. Il raggio corre sulla molla
+ * veloce dello schema di movimento Expressive (`MeteoTheme`), con un filo di
+ * rimbalzo, cosi' la forma si assesta come una cosa morbida e non scatta.
+ * Con le animazioni ridotte cambia di colpo.
+ */
+@Composable
+fun formaCheCede(
+    pressione: Pressione,
+    riposo: Dp,
+    premuto: Dp = riposo * 0.45f,
+    scelto: Boolean = false,
+    sceltoRaggio: Dp = riposo,
+): Shape {
+    val movimento = LocalMovimento.current
+    val bersaglio = when {
+        pressione.giu -> premuto
+        scelto -> sceltoRaggio
+        else -> riposo
+    }
+    val raggio by animateDpAsState(
+        targetValue = bersaglio,
+        animationSpec = if (movimento) MaterialTheme.motionScheme.fastSpatialSpec() else snap(),
+        label = "forma",
+    )
+    return RoundedCornerShape(raggio.coerceAtLeast(0.dp))
 }
 
 /**

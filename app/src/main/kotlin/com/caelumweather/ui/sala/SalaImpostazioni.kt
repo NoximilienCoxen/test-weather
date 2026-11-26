@@ -79,6 +79,7 @@ fun SalaImpostazioniScreen(
     state: UiState,
     palette: SalaPalette,
     onToggleAnimazioni: (Boolean) -> Unit,
+    onToggleColoriTelefono: (Boolean) -> Unit = {},
     onToggleWidgetColori: (Boolean) -> Unit,
     onToggleSchedeLarghe: (Boolean) -> Unit,
     onApriGuida: () -> Unit,
@@ -86,6 +87,9 @@ fun SalaImpostazioniScreen(
     onToggleNotificheAllerte: (Boolean) -> Unit,
     onToggleRiepilogo: (Boolean) -> Unit,
     onChooseOraRiepilogo: (Int) -> Unit,
+    onToggleOmbrello: (Boolean) -> Unit = {},
+    onChooseOraOmbrello: (Int) -> Unit = {},
+    onToggleCambioPrevisione: (Boolean) -> Unit = {},
     onToggleSoglia: (TipoSoglia, Boolean) -> Unit,
     onChooseSoglia: (TipoSoglia, Int) -> Unit,
     onToggleSoglieAltre: (Boolean) -> Unit,
@@ -232,7 +236,7 @@ fun SalaImpostazioniScreen(
                     // Era "Schede larghe", accesa toglieva la colonna. Ora la
                     // colonna e' spenta di serie e la voce dice cosa aggiunge.
                     titolo = tr("Colonna delle icone", "Icon column", "Symbolspalte", "Colonne d'icônes", "Columna de iconos"),
-                    nota = tr("le sette schermate in una colonna a destra, invece dei puntini in basso", "the seven screens in a column on the right, instead of the dots at the bottom", "die sieben Bildschirme in einer Spalte rechts statt der Punkte unten", "les sept écrans dans une colonne à droite, au lieu des points en bas", "las siete pantallas en una columna a la derecha, en lugar de los puntos abajo"),
+                    nota = tr("le schermate in una colonna a destra, invece dei puntini in basso", "the screens in a column on the right, instead of the dots at the bottom", "die Bildschirme in einer Spalte rechts statt der Punkte unten", "les écrans dans une colonne à droite, au lieu des points en bas", "las pantallas en una columna a la derecha, en lugar de los puntos abajo"),
                     acceso = !state.schedeLarghe,
                     palette = palette,
                     onCambia = { colonna -> onToggleSchedeLarghe(!colonna) },
@@ -240,6 +244,14 @@ fun SalaImpostazioniScreen(
                 // I colori dinamici esistono da Android 12: prima, la voce
                 // sarebbe una levetta che non cambia niente.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    FiloGruppo(palette)
+                    VoceInterruttore(
+                        titolo = tr("Colori del telefono", "Phone colours", "Telefonfarben", "Couleurs du téléphone", "Colores del teléfono"),
+                        nota = tr("schede, celle e accento prendono la tinta dello sfondo del telefono; il cielo resta quello vero", "cards, cells and accent take the tint of the phone's wallpaper; the sky stays the real one", "Karten, Zellen und Akzent übernehmen die Tönung des Hintergrundbilds; der Himmel bleibt echt", "fiches, cases et accent prennent la teinte du fond d'écran ; le ciel reste le vrai", "fichas, celdas y acento toman el tono del fondo de pantalla; el cielo sigue siendo el real"),
+                        acceso = state.coloriTelefono,
+                        palette = palette,
+                        onCambia = onToggleColoriTelefono,
+                    )
                     FiloGruppo(palette)
                     VoceInterruttore(
                         titolo = tr("Widget coi colori del telefono", "Widgets in phone colours", "Widgets in Telefonfarben", "Widgets aux couleurs du téléphone", "Widgets con los colores del teléfono"),
@@ -348,6 +360,12 @@ fun SalaImpostazioniScreen(
             val chiediPermessoRiepilogo = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleRiepilogo(concesso) }
+            val chiediPermessoOmbrello = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleOmbrello(concesso) }
+            val chiediPermessoCambio = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleCambioPrevisione(concesso) }
             GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS", "BENACHRICHTIGUNGEN", "NOTIFICATIONS", "NOTIFICACIONES"), palette = palette) {
                 VoceInterruttore(
                     titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),
@@ -377,6 +395,69 @@ fun SalaImpostazioniScreen(
                                 !PioggiaInArrivoWorker.puoNotificare(contesto) ->
                                 chiediPermessoAllerte.launch(Manifest.permission.POST_NOTIFICATIONS)
                             else -> onToggleNotificheAllerte(true)
+                        }
+                    },
+                )
+                FiloGruppo(palette)
+                // **"Porta l'ombrello"**: tace nei giorni asciutti, e quando
+                // parla dice solo da che ora e quanta (vedi `OmbrelloWorker`).
+                val ombrelloAcceso = state.avvisoOmbrello && PioggiaInArrivoWorker.puoNotificare(contesto)
+                VoceInterruttore(
+                    titolo = tr("Porta l'ombrello", "Take an umbrella", "Schirm mitnehmen", "Prends un parapluie", "Lleva paraguas"),
+                    nota = if (ombrelloAcceso) {
+                        tr(
+                            "alle ${oraRiepilogo(state.oraOmbrello)}, solo nei giorni in cui piove",
+                            "at ${oraRiepilogo(state.oraOmbrello)}, only on days with rain",
+                            "um ${oraRiepilogo(state.oraOmbrello)}, nur an Regentagen",
+                            "à ${oraRiepilogo(state.oraOmbrello)}, seulement les jours de pluie",
+                            "a las ${oraRiepilogo(state.oraOmbrello)}, solo los días de lluvia",
+                        )
+                    } else {
+                        tr("al mattino, solo se in giornata piove: da che ora e quanta", "in the morning, only if it rains during the day: from when and how much", "morgens, nur wenn es tagsüber regnet: ab wann und wie viel", "le matin, seulement s'il pleut dans la journée : à partir de quand et combien", "por la mañana, solo si llueve durante el día: desde cuándo y cuánta")
+                    },
+                    acceso = ombrelloAcceso,
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleOmbrello(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoOmbrello.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleOmbrello(true)
+                        }
+                    },
+                )
+                ComparsaMorbida(visibile = ombrelloAcceso) {
+                    SceltaSegmentata(
+                        voci = com.caelumweather.notifiche.OmbrelloWorker.ORE_POSSIBILI.map { it to oraRiepilogo(it) },
+                        scelta = state.oraOmbrello,
+                        palette = palette,
+                        onScegli = onChooseOraOmbrello,
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
+                    )
+                }
+                FiloGruppo(palette)
+                // **"La previsione e' cambiata"**: domani e dopodomani, solo
+                // per la pioggia che compare o sparisce e per 4 gradi di
+                // massima (vedi `CambioPrevisioneWorker`).
+                VoceInterruttore(
+                    titolo = tr("Previsione cambiata", "Forecast changed", "Vorhersage geändert", "Prévision modifiée", "Previsión cambiada"),
+                    nota = tr(
+                        "se per domani o dopodomani compare o sparisce la pioggia, o la massima cambia di 4°",
+                        "if rain appears or disappears for tomorrow or the day after, or the high moves by 4°",
+                        "wenn für morgen oder übermorgen Regen auftaucht oder verschwindet oder der Höchstwert sich um 4° ändert",
+                        "si la pluie apparaît ou disparaît pour demain ou après-demain, ou si la max bouge de 4°",
+                        "si para mañana o pasado aparece o desaparece la lluvia, o la máxima cambia 4°",
+                    ),
+                    acceso = state.avvisoCambioPrevisione && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleCambioPrevisione(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoCambio.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleCambioPrevisione(true)
                         }
                     },
                 )

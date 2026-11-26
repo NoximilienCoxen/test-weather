@@ -83,7 +83,8 @@ val firmaDiRilascio: Boolean =
 
 android {
     namespace = "com.caelumweather"
-    compileSdk = 37
+    // 37.2: Compose 1.13 (BOM 2026.11.01) vuole almeno la 37.1.
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         applicationId = "com.caelumweather"
@@ -219,6 +220,7 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     // `lifecycle-viewmodel-compose` tolta: dava `viewModel()`, che qui non si
     // chiama mai. Il ViewModel arriva da `by viewModels()` in `MainActivity` e

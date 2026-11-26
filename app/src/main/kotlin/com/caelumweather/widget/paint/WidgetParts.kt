@@ -185,3 +185,19 @@ internal val CREDITO_OPEN_METEO: List<String> get() = listOf(tr("Dati Open-Meteo
 
 /** Il credito del widget dell'aria: Open-Meteo e i dati CAMS di Copernicus. */
 internal val CREDITO_ARIA = listOf("Open-Meteo.com · CAMS Copernicus", "Open-Meteo · CAMS")
+
+/**
+ * **La colonna di adesso, in un contenitore tonale** - il "scelto" di Material
+ * 3 Expressive: una pillola alta, angoli interi, del colore d'accento appena
+ * accennato. Prima oggi (e "ORA") si distinguevano solo per l'etichetta piu'
+ * scura, e sulla Home a colpo d'occhio la settimana non aveva un inizio.
+ */
+internal fun DrawScope.colonnaScelta(cx: Float, larghezza: Float, alto: Float, basso: Float, ink: WidgetInk) {
+    val w = larghezza
+    drawRoundRect(
+        color = ink.accent.copy(alpha = if (ink.night) 0.22f else 0.13f),
+        topLeft = androidx.compose.ui.geometry.Offset(cx - w / 2f, alto),
+        size = androidx.compose.ui.geometry.Size(w, basso - alto),
+        cornerRadius = androidx.compose.ui.geometry.CornerRadius(w / 2f),
+    )
+}

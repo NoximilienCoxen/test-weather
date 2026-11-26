@@ -94,7 +94,9 @@ private fun DrawScope.columns(
     val lowTop = area.bottom - lineHeight(low)
     val trackTop = highTop + lineHeight(high) * 1.02f
     val trackBottom = lowTop - lineHeight(low) * 0.08f
-    val trackWidth = minOf(step * 0.16f, area.height * 0.05f)
+    // Piu' piena di prima (era 0.16 e 0.05): alla maniera Expressive la
+    // barretta e' una forma che si legge, non un filo.
+    val trackWidth = minOf(step * 0.22f, area.height * 0.07f)
     // Sotto questa altezza la barretta sarebbe un puntino che non dice niente:
     // restano i numeri, che dicono lo stesso.
     val withTrack = trackBottom - trackTop > area.height * 0.12f
@@ -105,6 +107,7 @@ private fun DrawScope.columns(
     days.forEachIndexed { i, day ->
         val cx = area.left + step * (i + 0.5f)
         val today = i == 0
+        if (today) colonnaScelta(cx, step * 0.90f, area.top - area.height * 0.04f, area.bottom, ink)
         textCentered(day.label, cx, area.top, label, if (today) ink.primary else ink.secondary)
 
         dayGlyph(Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize), day)

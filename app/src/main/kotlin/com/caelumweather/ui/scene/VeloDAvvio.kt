@@ -1,5 +1,7 @@
 package com.caelumweather.ui.scene
 
+import androidx.compose.foundation.layout.size
+import com.caelumweather.ui.sala.formaDellIndicatore
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -76,15 +78,27 @@ fun VeloDAvvio(
                 // Finche' i dati non ci sono, sotto il nome gira l'astro del
                 // momento: un sole, o una luna se e' notte. Sparisce col velo.
                 // Fermo se le animazioni sono ridotte (resta disegnato, non gira).
-                IndicatoreCielo(
-                    astro = if (notte) AstroDiAttesa.LUNA else AstroDiAttesa.SOLE,
-                    caricando = !pronto,
-                    tiro = 0f,
-                    colore = SalaTokens.neutral100,
-                    movimento = movimento,
-                    misura = 34.dp,
-                    modifier = Modifier.padding(top = 14.dp),
-                )
+                // Dietro l'astro, il guscio che cambia forma come l'indicatore
+                // di caricamento di Material 3 Expressive (`formaDellIndicatore`).
+                Box(
+                    modifier = Modifier
+                        .padding(top = 14.dp)
+                        .size(58.dp)
+                        .background(
+                            SalaTokens.neutral100.copy(alpha = 0.16f),
+                            formaDellIndicatore(caricando = !pronto, tiro = 1f, movimento = movimento),
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    IndicatoreCielo(
+                        astro = if (notte) AstroDiAttesa.LUNA else AstroDiAttesa.SOLE,
+                        caricando = !pronto,
+                        tiro = 0f,
+                        colore = SalaTokens.neutral100,
+                        movimento = movimento,
+                        misura = 34.dp,
+                    )
+                }
             }
         }
     }

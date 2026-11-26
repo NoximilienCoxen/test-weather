@@ -1,5 +1,18 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.graphics.shapes.Morph
+import androidx.compose.material3.toPath
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -167,5 +180,48 @@ private fun DrawScope.fiocco(c: Offset, lato: Float, colore: Color, angolo: Floa
                 }
             }
         }
+    }
+}
+
+/**
+ * **Il guscio dell'indicatore, che cambia forma** come l'indicatore di
+ * caricamento di Material 3 Expressive.
+ *
+ * Dentro resta il nostro astro (sole, luna, fiocco); e' il fondo a parlare
+ * Expressive. Tirando, il tondo si increspa nel biscotto a nove lobi a mano a
+ * mano che il dito scende; mentre carica, il biscotto gira piano e respira
+ * verso la stella morbida e indietro. Con le animazioni ridotte resta tondo.
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun formaDellIndicatore(caricando: Boolean, tiro: Float, movimento: Boolean): Shape {
+    if (!movimento) return CircleShape
+    val tirando = remember { Morph(MaterialShapes.Circle, MaterialShapes.Cookie9Sided) }
+    val respirando = remember { Morph(MaterialShapes.Cookie9Sided, MaterialShapes.SoftBurst) }
+    if (!caricando) {
+        return FormaInMutazione(tirando, tiro.coerceIn(0f, 1f), rotazione = tiro.coerceIn(0f, 1.3f) * 60f)
+    }
+    val giro = rememberInfiniteTransition(label = "guscio")
+    val angolo by giro.animateFloat(0f, 360f, infiniteRepeatable(tween(4800, easing = LinearEasing)), label = "guscio-angolo")
+    val respiro by giro.animateFloat(0f, 1f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "guscio-respiro")
+    return FormaInMutazione(respirando, respiro, rotazione = angolo)
+}
+
+/** Una forma a mezza strada fra due, girata attorno al centro. */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private class FormaInMutazione(
+    private val morph: Morph,
+    private val avanzamento: Float,
+    private val rotazione: Float,
+) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        // Le forme di `MaterialShapes` stanno nel quadrato unitario: si
+        // portano alla misura, si centrano, si girano e si rimettono a posto.
+        val percorso = morph.toPath(avanzamento, Path())
+        percorso.transform(Matrix().apply { scale(size.width, size.height) })
+        percorso.translate(Offset(-size.width / 2f, -size.height / 2f))
+        percorso.transform(Matrix().apply { rotateZ(rotazione) })
+        percorso.translate(Offset(size.width / 2f, size.height / 2f))
+        return Outline.Generic(percorso)
     }
 }

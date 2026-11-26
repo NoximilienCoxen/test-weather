@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.SliderState
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.caelumweather.lingua.inMezzoAllaFrase
 import com.caelumweather.lingua.tr
 import androidx.compose.foundation.Canvas
@@ -91,7 +95,7 @@ fun SalaLunaScreen(
         palette = palette,
         movimento = movimento,
         coloreDidascalia = cielo.inkSuCielo,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
     )
 
     PannelloSala(palette = palette, modifier = modifier) {
@@ -125,7 +129,7 @@ fun SalaLunaScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(tr("ILLUMINATA", "LIT", "BELEUCHTET", "ÉCLAIRÉE", "ILUMINADA"), "${(illuminata * 100f).roundToInt()} %", palette)
@@ -137,7 +141,7 @@ fun SalaLunaScreen(
             text = tr("LE PROSSIME FASI", "THE NEXT PHASES", "DIE NÄCHSTEN PHASEN", "LES PROCHAINES PHASES", "LAS PRÓXIMAS FASES"),
             style = SalaType.sectionLabel,
             color = palette.inkFaint,
-            modifier = Modifier.padding(top = 16.dp, bottom = 10.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -158,11 +162,11 @@ fun SalaLunaScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(24.dp))
                             .background(palette.chip)
-                            .padding(top = 12.dp, bottom = 10.dp, start = 4.dp, end = 4.dp),
+                            .padding(top = 6.dp, bottom = 6.dp, start = 4.dp, end = 4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(7.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
-                        Canvas(modifier = Modifier.size(26.dp)) { disegnaLuna(obiettivo, 1f) }
+                        Canvas(modifier = Modifier.size(22.dp)) { disegnaLuna(obiettivo, 1f) }
                         Text(
                             text = nome,
                             style = SalaType.giornoMax,
@@ -190,6 +194,7 @@ fun SalaLunaScreen(
  * il modo piu' diretto di vedere un ciclo che dal vero dura un mese. I numeri
  * del pannello seguono, perche' vengono tutti dallo stesso giorno.
  */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CursoreGiorni(
     spostamento: Int,
@@ -226,18 +231,50 @@ private fun CursoreGiorni(
                 )
             }
         }
+        // **Il cursore di Material 3 Expressive**: binario spesso staccato
+        // dalla maniglia, e una maniglia ad asta che si assottiglia sotto il
+        // dito. I colori restano quelli della sala.
+        val coloriCursore = SliderDefaults.colors(
+            thumbColor = palette.accent,
+            activeTrackColor = palette.accent,
+            inactiveTrackColor = palette.chip,
+            activeTickColor = Color.Transparent,
+            inactiveTickColor = Color.Transparent,
+        )
+        val toccoCursore = remember { MutableInteractionSource() }
+        val statoCursore = remember {
+            SliderState(
+                spostamento.toFloat(),
+                GIORNI_CURSORE * 2 - 1,
+                -GIORNI_CURSORE.toFloat()..GIORNI_CURSORE.toFloat(),
+            )
+        }
+        // Il giorno puo' cambiare anche da fuori ("torna a oggi"): il cursore segue.
+        LaunchedEffect(spostamento) {
+            if (statoCursore.value.roundToInt() != spostamento) statoCursore.value = spostamento.toFloat()
+        }
         Slider(
-            value = spostamento.toFloat(),
-            onValueChange = { onCambia(it.roundToInt()) },
-            valueRange = -GIORNI_CURSORE.toFloat()..GIORNI_CURSORE.toFloat(),
-            steps = GIORNI_CURSORE * 2 - 1,
-            colors = SliderDefaults.colors(
-                thumbColor = palette.accent,
-                activeTrackColor = palette.accent,
-                inactiveTrackColor = palette.chip,
-                activeTickColor = Color.Transparent,
-                inactiveTickColor = Color.Transparent,
-            ),
+            state = statoCursore,
+            onValueChange = { v: Float ->
+                statoCursore.value = v
+                onCambia(v.roundToInt())
+            },
+            colors = coloriCursore,
+            interactionSource = toccoCursore,
+            thumb = { _: SliderState ->
+                SliderDefaults.Thumb(interactionSource = toccoCursore, colors = coloriCursore)
+            },
+            track = { stato: SliderState ->
+                SliderDefaults.Track(
+                    sliderState = stato,
+                    colors = coloriCursore,
+                    drawStopIndicator = null,
+                    drawTick = { _, _ -> },
+                    thumbTrackGapSize = 5.dp,
+                    trackInsideCornerSize = 3.dp,
+                    modifier = Modifier.height(14.dp),
+                )
+            },
             modifier = Modifier.semantics { contentDescription = tr("Giorno della luna", "Day of the moon", "Tag des Mondes", "Jour de la lune", "Día de la luna") },
         )
     }

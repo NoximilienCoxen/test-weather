@@ -1,18 +1,27 @@
 [versions]
 junit = "4.13.2"
 robolectric = "4.17"
-agp = "9.5.1"
+agp = "9.5.3"
 kotlin = "2.4.21"
-composeBom = "2026.09.00"
+composeBom = "2026.11.01"
+# Le API Expressive (MaterialExpressiveTheme, MotionScheme.expressive,
+# LoadingIndicator, ButtonGroup) sono pubbliche dalla 1.5. La BOM 2026.11.01 la
+# porta gia'; resta scritta qui perche' scenderle sotto vorrebbe dire perderle
+# senza accorgersene. Versioni lette da Google Maven il 25 novembre 2026.
+material3 = "1.5.0"
 coreKtx = "1.19.1"
 activityCompose = "1.13.0"
-lifecycle = "2.11.0"
-# 1.12.0 letta da Maven Central il 10 novembre 2026.
-serialization = "1.12.0"
+# Non la usiamo direttamente: play-services-wearable porta la 1.1, e con quella
+# la richiesta dei permessi (registerForActivityResult) puo' perdere la
+# risposta. Lint lo segnala da AGP 9.5.3; si alza qui. Letta il 26 novembre 2026.
+fragment = "1.9.1"
+lifecycle = "2.11.1"
+# 1.13.0 letta da Maven Central il 25 novembre 2026.
+serialization = "1.13.0"
 # Wear OS (app per l'orologio, CONTESTO §50). Versioni lette da
 # `probe_deps.py` in CI l'11 ottobre 2026: da questo container Google Maven non
 # si raggiunge.
-wearCompose = "1.7.1"
+wearCompose = "1.7.2"
 wearFramework = "1.4.0"
 playServicesWearable = "20.0.1"
 # Tile e complicazione dell'orologio (CONTESTO §50.8). Lette da Google Maven
@@ -37,6 +46,7 @@ androidxTestRunner = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
@@ -48,7 +58,7 @@ compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
 compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 wear-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "wearCompose" }
 wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }

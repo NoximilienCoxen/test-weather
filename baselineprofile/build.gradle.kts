@@ -18,7 +18,8 @@ plugins {
  */
 android {
     namespace = "com.caelumweather.baselineprofile"
-    compileSdk = 37
+    // 37.2: Compose 1.13 (BOM 2026.11.01) vuole almeno la 37.1.
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         // 28: la soglia sotto cui il profilo non si raccoglie comunque.

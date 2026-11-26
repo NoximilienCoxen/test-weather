@@ -1,5 +1,8 @@
 package com.caelumweather.ui.sala
 
+import android.os.Build
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import com.caelumweather.lingua.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
@@ -77,9 +80,9 @@ import com.caelumweather.ui.motion.rememberVibrazioniMeteo
 import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import com.caelumweather.ui.sala.rooms.SalaAriaScreen
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
+import com.caelumweather.ui.sala.rooms.SalaMareScreen
 import com.caelumweather.ui.sala.rooms.SalaOggiScreen
 import com.caelumweather.ui.sala.rooms.SalaPioggiaScreen
-import com.caelumweather.ui.sala.rooms.SalaSettimanaScreen
 import com.caelumweather.ui.sala.rooms.SalaUvScreen
 import com.caelumweather.ui.sala.rooms.SalaVentoScreen
 import com.caelumweather.ui.scene.Scena as ScenaDAvvio
@@ -133,7 +136,10 @@ fun SalaShell(
     /** La scena del velo d'apertura: il cielo ne prende la tinta. Vedi [tingiCielo]. */
     scenaDAvvio: ScenaDAvvio? = null,
 ) {
-    val rooms = SalaRoom.entries
+    // Il mare c'e' solo dove c'e': la sua scheda, in fondo, compare quando
+    // arrivano i dati del mare e sparisce cambiando localita'.
+    val conMare = state.mareMostrato != null
+    val rooms = remember(conMare) { SalaRoom.entries.filter { it != SalaRoom.MARE || conMare } }
     val scope = rememberCoroutineScope()
 
     // Se l'indizio "scorri in su" serve ancora: vedi `IndizioSfoglio`.
@@ -485,9 +491,36 @@ fun SalaShell(
     // **Due palette quando il tema e' scelto a mano.** Le schede seguono la
     // scelta; cio' che sta sul cielo - intestazione, numero grande, colline,
     // barra delle ore, crediti - segue il cielo. In automatico sono la stessa.
-    val paletteCielo = remember(dkCielo, crepuscolo, chiusura) { salaPalette(dkCielo, crepuscolo, chiusura) }
-    val palette = remember(dk, crepuscolo, chiusura, paletteCielo) {
-        salaPalette(dk, crepuscolo, chiusura).conCieloDi(paletteCielo)
+    // **I colori del telefono**, se chiesti (Android 12+): il primario delle
+    // due tinte che il telefono ricava dallo sfondo prende il posto
+    // dell'arancione. Vedi `SalaPalette.conTelefono`.
+    val contestoColori = LocalContext.current
+    val accentiTelefono = remember(state.coloriTelefono) {
+        if (state.coloriTelefono && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            fun tinta(c: androidx.compose.material3.ColorScheme) = TintaTelefono(
+                primario = c.primary,
+                suPrimario = c.onPrimary,
+                carta = c.surfaceContainerLow,
+                pagina = c.surface,
+                chip = c.surfaceContainerHighest,
+                filo = c.outlineVariant,
+                inchiostro = c.onSurface,
+                inchiostroSecondario = c.onSurfaceVariant,
+            )
+            tinta(dynamicLightColorScheme(contestoColori)) to tinta(dynamicDarkColorScheme(contestoColori))
+        } else {
+            null
+        }
+    }
+    val paletteCielo = remember(dkCielo, crepuscolo, chiusura, accentiTelefono) {
+        salaPalette(dkCielo, crepuscolo, chiusura).let { p ->
+            accentiTelefono?.let { (chiaro, scuro) -> p.conTelefono(chiaro, scuro) } ?: p
+        }
+    }
+    val palette = remember(dk, crepuscolo, chiusura, paletteCielo, accentiTelefono) {
+        salaPalette(dk, crepuscolo, chiusura).let { p ->
+            accentiTelefono?.let { (chiaro, scuro) -> p.conTelefono(chiaro, scuro) } ?: p
+        }.conCieloDi(paletteCielo)
     }
 
     // ── Le icone delle barre di sistema ──────────────────────────────────────
@@ -570,6 +603,16 @@ fun SalaShell(
     // erano strette. Con le schede larghe la colonna non c'e' e i margini
     // sono dodici per parte.
     val larghe = state.schedeLarghe
+    // **Tablet e pieghevoli aperti, in orizzontale: cielo a sinistra, schede
+    // a destra.** Da 840 punti di larghezza (la classe "espansa" di Material)
+    // una colonna centrata copriva proprio il centro della scena, e sopra il
+    // pannello restava una striscia di cielo bassa e larga. Affiancate, la
+    // scena si vede intera e il pannello puo' salire quasi fino in cima: il
+    // cielo non gli sta piu' sopra ma accanto. Sotto gli 840 punti non cambia
+    // niente.
+    val affiancato = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >= 840
+    val allineamentoSale = if (affiancato) Alignment.TopEnd else Alignment.TopCenter
+    val margineAffiancato = if (affiancato) 24.dp else 0.dp
     val riservaColonna = if (larghe) 0.dp else 40.dp
     val margineSinistro = if (larghe) 12.dp else 14.dp
     val margineDestro = if (larghe) 12.dp else 16.dp
@@ -672,7 +715,8 @@ fun SalaShell(
             // riceve ogni tocco. Il carosello ricorda la sala da solo.
             if (viaDati < 0.999f) Column(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(allineamentoSale)
+                    .padding(end = margineAffiancato)
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize()
                     .graphicsLayer {
@@ -802,7 +846,12 @@ fun SalaShell(
                                     scaleY = scaleX
                                 }
                                 .size(46.dp)
-                                .background(palette.panelSolido, CircleShape),
+                                // Il guscio cambia forma, alla maniera Expressive:
+                                // vedi `formaDellIndicatore`.
+                                .background(
+                                    palette.panelSolido,
+                                    formaDellIndicatore(state.aggiornandoAMano, frazione, movimento = !ferme),
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
                             IndicatoreCielo(
@@ -929,7 +978,7 @@ fun SalaShell(
                         val scartoDellaScheda = remember(page, ferme) {
                             { if (ferme) 0f else pagerState.getOffsetDistanceInPages(page).coerceIn(-1f, 1f) }
                         }
-                        // **Almeno il 40 per cento dello schermo resta cielo**:
+                        // **Almeno il 30 per cento dello schermo resta cielo**:
                         // vedi `LocalAltezzaPannello`. Sotto i 260 punti non si
                         // scende, o su uno schermo basso il pannello sarebbe
                         // una feritoia.
@@ -939,7 +988,10 @@ fun SalaShell(
                                 Dp.Unspecified
                             } else {
                                 with(LocalDensity.current) {
-                                    (c.bottom - 14.dp.toPx() - QUOTA_CIELO * altezzaRadice).toDp()
+                                    // Affiancate, il cielo sta di lato: sopra
+                                    // il pannello basta il minimo.
+                                    val quota = if (affiancato) QUOTA_CIELO_AFFIANCATO else quotaCielo(this.fontScale)
+                                    (c.bottom - 14.dp.toPx() - quota * altezzaRadice).toDp()
                                 }.coerceAtLeast(260.dp)
                             }
                         }
@@ -986,13 +1038,6 @@ fun SalaShell(
                                         faseLunare = faseLunare,
                                         onVai = ::vaiA,
                                     )
-                                    SalaRoom.SETTIMANA -> SalaSettimanaScreen(
-                                        state = state,
-                                        palette = palette,
-                                        viewModel = viewModel,
-                                        faseLunare = faseLunare,
-                                        onVai = ::vaiA,
-                                    )
                                     SalaRoom.PIOGGIA -> SalaPioggiaScreen(
                                         state = state,
                                         palette = palette,
@@ -1009,6 +1054,7 @@ fun SalaShell(
                                         onSelectHour = viewModel::selectHour,
                                         movimento = !ferme,
                                     )
+                                    SalaRoom.MARE -> SalaMareScreen(state = state, palette = palette, movimento = !ferme)
                                     null -> Unit
                                 }
                             }
@@ -1034,6 +1080,10 @@ fun SalaShell(
                         corrente = pagerState.currentPage,
                         palette = palette,
                         onVai = ::vaiA,
+                        posizione = { pagerState.currentPage + pagerState.currentPageOffsetFraction },
+                        // Un filo d'aria fra i puntini e il bottone "torna all'ora
+                        // attuale": mirando l'uno non si prende l'altro.
+                        modifier = Modifier.padding(bottom = 4.dp),
                     )
                 }
 
@@ -1099,7 +1149,8 @@ fun SalaShell(
                 // Lo stesso tetto della colonna qui sopra: la colonna delle
                 // sale sta accanto alle schede, non sul bordo di un tablet.
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(allineamentoSale)
+                    .padding(end = margineAffiancato)
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize(),
             ) { ColonnaScorciatoie(
@@ -1156,6 +1207,7 @@ fun SalaShell(
                         state = state,
                         palette = palette,
                         onToggleAnimazioni = viewModel::setAnimazioniRidotte,
+                        onToggleColoriTelefono = viewModel::setColoriTelefono,
                         onToggleWidgetColori = viewModel::setWidgetColoriTelefono,
                         onToggleSchedeLarghe = viewModel::setSchedeLarghe,
                         onApriGuida = viewModel::apriGuida,
@@ -1163,6 +1215,9 @@ fun SalaShell(
                         onToggleNotificheAllerte = viewModel::setNotificheAllerte,
                         onToggleRiepilogo = viewModel::setRiepilogoMattino,
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
+                        onToggleOmbrello = viewModel::setAvvisoOmbrello,
+                        onChooseOraOmbrello = viewModel::setOraOmbrello,
+                        onToggleCambioPrevisione = viewModel::setAvvisoCambioPrevisione,
                         onToggleSoglia = viewModel::setSoglia,
                         onChooseSoglia = viewModel::setValoreSoglia,
                         onToggleSoglieAltre = viewModel::setSoglieAltreLocalita,
@@ -1383,6 +1438,9 @@ private const val DISSOLVENZA_SCHEDA = 0.65f
  */
 private val LARGHEZZA_SALE = 520.dp
 
+/** Con cielo e schede affiancati (`affiancato`), quanto cielo resta sopra il pannello. */
+private const val QUOTA_CIELO_AFFIANCATO = 0.08f
+
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L
 
@@ -1438,5 +1496,24 @@ private const val FORZA_TINTA = 0.5f
  */
 val LocalPaletteCielo = androidx.compose.runtime.compositionLocalOf<SalaPalette?> { null }
 
-/** La parte dello schermo che resta sempre al cielo, in ogni sala. */
-private const val QUOTA_CIELO = 0.40f
+/**
+ * La parte dello schermo che resta sempre al cielo, in ogni sala.
+ *
+ * Era il 40 per cento, e le schede piene scorrevano dentro di se': col
+ * carosello verticale voleva dire due gesti per cambiare sala. Al 30 per
+ * cento il cielo resta una fascia ampia sopra la scheda, e le schede - rese
+ * piu' dense - ci stanno intere senza nascondere niente.
+ */
+private const val QUOTA_CIELO = 0.30f
+
+/**
+ * **Col testo grande il cielo cede il posto.** Chi ingrandisce i caratteri
+ * dalle impostazioni del telefono ha bisogno di leggere prima che di guardare
+ * il cielo: a 1,3 le schede piene superavano il tetto di un centinaio di
+ * punti e tornavano a scorrere dentro di se'. La quota del cielo scende col
+ * crescere dei caratteri - un sesto dello schermo a 1,3, un dodicesimo da
+ * 1,5 in su - e le schede salgono quanto serve. Oltre, a ingrandimenti
+ * estremi, una scheda puo' ancora scorrere: meglio che tagliare il testo.
+ */
+internal fun quotaCielo(fontScale: Float): Float =
+    (QUOTA_CIELO - (fontScale - 1f).coerceAtLeast(0f) * 0.45f).coerceIn(0.08f, QUOTA_CIELO)

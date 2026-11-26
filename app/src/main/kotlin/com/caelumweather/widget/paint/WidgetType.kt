@@ -179,6 +179,51 @@ internal fun DrawScope.fitText(
 }
 
 /**
+ * Se [value] entra in [maxWidth] stringendo la larghezza dei caratteri e
+ * scendendo di corpo fino a [minScale], senza troncare.
+ */
+internal fun entraStretto(value: String, maxWidth: Float, sizePx: Float, type: WidgetType, weight: Int, letterSpacingEm: Float, minScale: Float): Boolean {
+    var brush = type.brush(sizePx * minScale, weight, WIDTH_NARROWEST, letterSpacingEm)
+    return type.widthOf(value, brush) <= maxWidth
+}
+
+/**
+ * **Una riga, o due prima dei puntini.** Le condizioni lunghe ("TEMPORALE E
+ * GRANDINE") troncate diventavano "TEMPORALE E G…" anche dove sotto c'era
+ * spazio: una frase del tempo a meta' non dice qual e'. Se la frase non entra
+ * su una riga si spezza fra le parole, nel punto che lascia le due righe piu'
+ * pari, a un corpo un poco piu' piccolo; solo se nemmeno cosi' ci sta, la
+ * seconda riga si tronca.
+ *
+ * @return l'altezza occupata.
+ */
+internal fun DrawScope.fitTextDueRighe(
+    value: String,
+    x: Float,
+    y: Float,
+    maxWidth: Float,
+    sizePx: Float,
+    type: WidgetType,
+    color: Color,
+    weight: Int = 600,
+    letterSpacingEm: Float = 0.10f,
+    minScale: Float = 0.8f,
+): Float {
+    val parole = value.split(" ").filter { it.isNotEmpty() }
+    if (parole.size < 2 || entraStretto(value, maxWidth, sizePx, type, weight, letterSpacingEm, minScale)) {
+        return lineHeight(fitText(value, x, y, maxWidth, sizePx, type, color, weight, letterSpacingEm, minScale))
+    }
+    val misura = type.brush(sizePx, weight, WIDTH_WIDEST, letterSpacingEm)
+    val taglio = (1 until parole.size).minByOrNull { i ->
+        maxOf(type.widthOf(parole.take(i).joinToString(" "), misura), type.widthOf(parole.drop(i).joinToString(" "), misura))
+    } ?: 1
+    val corpo = sizePx * 0.86f
+    val prima = fitText(parole.take(taglio).joinToString(" "), x, y, maxWidth, corpo, type, color, weight, letterSpacingEm, minScale)
+    val seconda = fitText(parole.drop(taglio).joinToString(" "), x, y + lineHeight(prima), maxWidth, corpo, type, color, weight, letterSpacingEm, minScale)
+    return lineHeight(prima) + lineHeight(seconda)
+}
+
+/**
  * Spezza sulle parole, mai dentro una parola.
  *
  * Una parola piu' larga del riquadro finisce da sola sulla sua riga e sborda:

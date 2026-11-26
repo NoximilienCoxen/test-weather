@@ -83,6 +83,8 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
         private const val SILENZIO_MINUTI = 90L
         const val CANALE = "pioggia_in_arrivo"
         private const val ID_NOTIFICA = 4201
+        /** L'acqua di Caelum, la stessa dei widget: il colore dell'attesa. */
+        private const val COLORE_ATTESA = 0xFF4F8FB0.toInt()
 
         fun pianifica(context: Context) {
             val richiesta = PeriodicWorkRequestBuilder<PioggiaInArrivoWorker>(15, TimeUnit.MINUTES)
@@ -127,7 +129,7 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
                 apri,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            val notifica = NotificationCompat.Builder(context, CANALE)
+            val costruttore = NotificationCompat.Builder(context, CANALE)
                 .setSmallIcon(R.drawable.ic_notifica_pioggia)
                 .setContentTitle(titolo)
                 .setContentText(testo)
@@ -138,11 +140,55 @@ class PioggiaInArrivoWorker(contesto: Context, parametri: WorkerParameters) : Co
                 .setAutoCancel(true)
                 // Dopo un'ora la notifica parla di una pioggia gia' caduta.
                 .setTimeoutAfter(Duration.ofMinutes(75).toMillis())
-                .build()
+            contoAllaRovescia(adesso, evento)?.let { c ->
+                // **Il conto alla rovescia.** L'orologio della notifica conta
+                // da solo fino all'inizio, senza che l'app si svegli ogni
+                // minuto: "fra circa 25 minuti" scritto alle 14:00 alle 14:20
+                // mentiva. Su Android 16 la stessa notifica chiede di salire
+                // fra gli aggiornamenti in tempo reale (chip nella barra di
+                // stato); per esserlo deve restare finche' non comincia,
+                // quindi non si scorre via e scade un quarto d'ora dopo
+                // l'inizio. Sotto i 5 minuti non serve: "a momenti" basta.
+                costruttore
+                    .setWhen(c.inizioMs)
+                    .setShowWhen(true)
+                    .setUsesChronometer(true)
+                    .setChronometerCountDown(true)
+                    .setOngoing(true)
+                    .setAutoCancel(false)
+                    .setRequestPromotedOngoing(true)
+                    .setStyle(
+                        NotificationCompat.ProgressStyle()
+                            .setStyledByProgress(false)
+                            .setProgressSegments(listOf(NotificationCompat.ProgressStyle.Segment(c.minuti).setColor(COLORE_ATTESA)))
+                            .setProgress(0)
+                            .setProgressTrackerIcon(null),
+                    )
+                    .setTimeoutAfter(Duration.ofMinutes(c.minuti.toLong() + 15).toMillis())
+            }
+            val notifica = costruttore.build()
             if (!puoNotificare(context)) return
             runCatching { NotificationManagerCompat.from(context).notify(ID_NOTIFICA, notifica) }
         }
     }
+}
+
+/** Fra quanto comincia, se vale la pena contarlo: almeno 5 minuti. */
+internal data class ContoAllaRovescia(val inizioMs: Long, val minuti: Int)
+
+/**
+ * [adesso] e l'inizio sono ore **del posto**, che puo' stare in un altro fuso
+ * rispetto al telefono: l'istante si ricava dalla distanza fra i due, sommata
+ * all'orologio del telefono [oraMs], non dal fuso del telefono.
+ */
+internal fun contoAllaRovescia(
+    adesso: LocalDateTime,
+    evento: PrecipitazioneInArrivo,
+    oraMs: Long = System.currentTimeMillis(),
+): ContoAllaRovescia? {
+    val distanza = Duration.between(adesso, evento.inizio)
+    if (distanza.toMinutes() < 5) return null
+    return ContoAllaRovescia(oraMs + distanza.toMillis(), distanza.toMinutes().toInt())
 }
 
 /** Titolo e testo della notifica: puri, per poterli provare. */

@@ -61,14 +61,18 @@ internal fun SezioneMare(
     modifier: Modifier = Modifier,
     /** Tutte le ore del mare, per le maree; nullo nelle catture che impongono l'onda. */
     mare: Mare? = null,
+    /** L'etichetta "IL MARE" sopra: serve quando la sezione sta dentro un'altra scheda. */
+    conEtichetta: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = tr("IL MARE", "THE SEA", "DAS MEER", "LA MER", "EL MAR"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
-        )
+        if (conEtichetta) {
+            Text(
+                text = tr("IL MARE", "THE SEA", "DAS MEER", "LA MER", "EL MAR"),
+                style = SalaType.sectionLabel,
+                color = palette.inkFaint,
+                modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
+            )
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,

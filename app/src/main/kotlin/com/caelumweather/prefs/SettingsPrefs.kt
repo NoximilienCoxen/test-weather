@@ -231,6 +231,8 @@ data class Settings(
      * meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** L'accento dell'app preso dai colori del telefono (Material You), invece dell'arancione. */
+    val coloriTelefono: Boolean = false,
     /**
      * I widget prendono i colori dal telefono (Material You, Android 12+)
      * invece del bianco e nero di sempre. Acceso di norma: dove il telefono
@@ -259,6 +261,11 @@ data class Settings(
     val riepilogoMattino: Boolean = false,
     /** A che ora arriva, in minuti dalla mezzanotte del telefono. */
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
+    /** "Porta l'ombrello": al mattino, solo nei giorni di pioggia. Spento di norma: vedi `OmbrelloWorker`. */
+    val avvisoOmbrello: Boolean = false,
+    val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
+    /** "La previsione e' cambiata" per domani e dopodomani. Spento di norma: vedi `CambioPrevisioneWorker`. */
+    val avvisoCambioPrevisione: Boolean = false,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte, pioggia, UV. */
@@ -407,6 +414,7 @@ class SettingsPrefs(private val context: Context) {
                 ?.let { saved -> CaptionStyle.entries.firstOrNull { it.name == saved } }
                 ?: CaptionStyle.COMPLETE,
             animazioniRidotte = prefs[KEY_ANIMAZIONI_RIDOTTE] ?: false,
+            coloriTelefono = prefs[KEY_COLORI_TELEFONO] ?: false,
             widgetColoriTelefono = prefs[KEY_WIDGET_COLORI_TELEFONO] ?: true,
             saleSfogliate = prefs[KEY_SALE_SFOGLIATE] ?: false,
             schedeLarghe = prefs[KEY_SCHEDE_LARGHE] ?: true,
@@ -415,6 +423,9 @@ class SettingsPrefs(private val context: Context) {
             notificheAllerte = prefs[KEY_NOTIFICHE_ALLERTE] ?: true,
             riepilogoMattino = prefs[KEY_RIEPILOGO] ?: false,
             oraRiepilogo = prefs[KEY_ORA_RIEPILOGO] ?: RiepilogoMattinoWorker.ORA_PREDEFINITA,
+            avvisoOmbrello = prefs[KEY_OMBRELLO] ?: false,
+            avvisoCambioPrevisione = prefs[KEY_CAMBIO_PREVISIONE] ?: false,
+            oraOmbrello = prefs[KEY_ORA_OMBRELLO]?.takeIf { it in com.caelumweather.notifiche.OmbrelloWorker.ORE_POSSIBILI } ?: com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             // Un valore salvato che non e' piu' fra quelli offerti torna al
             // predefinito: la scelta segmentata non saprebbe quale accendere.
@@ -514,6 +525,18 @@ class SettingsPrefs(private val context: Context) {
         context.settingsDataStore.edit { it[KEY_ORA_RIEPILOGO] = minuti }
     }
 
+    suspend fun setAvvisoOmbrello(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_OMBRELLO] = acceso }
+    }
+
+    suspend fun setAvvisoCambioPrevisione(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_CAMBIO_PREVISIONE] = acceso }
+    }
+
+    suspend fun setOraOmbrello(minuti: Int) {
+        context.settingsDataStore.edit { it[KEY_ORA_OMBRELLO] = minuti }
+    }
+
     suspend fun setPermessoNotificheChiesto() {
         context.settingsDataStore.edit { it[KEY_PERMESSO_NOTIFICHE] = true }
     }
@@ -554,6 +577,10 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setAnimazioniRidotte(ridotte: Boolean) {
         context.settingsDataStore.edit { it[KEY_ANIMAZIONI_RIDOTTE] = ridotte }
+    }
+
+    suspend fun setColoriTelefono(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_COLORI_TELEFONO] = acceso }
     }
 
     suspend fun setAlertToggle(kind: AlertToggleKind, value: Boolean) {
@@ -599,6 +626,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_WIND_UNIT = stringPreferencesKey("sala_unita_vento")
         val KEY_CAPTION_STYLE = stringPreferencesKey("sala_didascalie")
         val KEY_ANIMAZIONI_RIDOTTE = booleanPreferencesKey("sala_animazioni_ridotte")
+        val KEY_COLORI_TELEFONO = booleanPreferencesKey("sala_colori_telefono")
         val KEY_WIDGET_COLORI_TELEFONO = booleanPreferencesKey("widget_colori_telefono")
         val KEY_SALE_SFOGLIATE = booleanPreferencesKey("sala_sfogliata")
         val KEY_SCHEDE_LARGHE = booleanPreferencesKey("sala_schede_larghe")
@@ -607,6 +635,9 @@ class SettingsPrefs(private val context: Context) {
         val KEY_NOTIFICHE_ALLERTE = booleanPreferencesKey("notifiche_allerte")
         val KEY_RIEPILOGO = booleanPreferencesKey("riepilogo_mattino")
         val KEY_ORA_RIEPILOGO = intPreferencesKey("riepilogo_ora")
+        val KEY_OMBRELLO = booleanPreferencesKey("avviso_ombrello")
+        val KEY_ORA_OMBRELLO = intPreferencesKey("ombrello_ora")
+        val KEY_CAMBIO_PREVISIONE = booleanPreferencesKey("avviso_cambio_previsione")
         val KEY_PERMESSO_NOTIFICHE =booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_SOGLIA_GELO = booleanPreferencesKey("soglia_gelo")
         val KEY_SOGLIA_GELO_GRADI = intPreferencesKey("soglia_gelo_gradi")

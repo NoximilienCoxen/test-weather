@@ -129,6 +129,14 @@ data class UiState(
      */
     val mare: Mare? = null,
     /**
+     * La pioggia a quarti d'ora per le prossime due ore e mezza (Open-Meteo
+     * `minutely_15`), e l'ora di adesso **nel fuso della localita'**: la legge
+     * la riga "prossima ora" di Oggi. Vuota finche' non arriva, e per sempre
+     * se non arriva: allora la riga non compare.
+     */
+    val quarti: List<com.caelumweather.data.QuartoDOra> = emptyList(),
+    val quartiAdesso: java.time.LocalDateTime? = null,
+    /**
      * Com'era questo giorno un anno fa, dall'archivio. Nullo finche' non
      * arriva, e per sempre se non arriva: la riga allora non compare.
      */
@@ -225,6 +233,8 @@ data class UiState(
      * via d'uscita sarebbe stato dichiararla a meta'.
      */
     val animazioniRidotte: Boolean = false,
+    /** L'accento preso dai colori del telefono: vedi `SalaPalette.conTelefono`. */
+    val coloriTelefono: Boolean = false,
     /** I widget col tema del telefono (Material You): vedi `Settings.widgetColoriTelefono`. */
     val widgetColoriTelefono: Boolean = true,
     /** Le schede a tutta larghezza, senza la colonna delle sale. */
@@ -244,6 +254,9 @@ data class UiState(
     /** Il riepilogo del mattino, e a che ora (minuti dalla mezzanotte). */
     val riepilogoMattino: Boolean = false,
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
+    val avvisoOmbrello: Boolean = false,
+    val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
+    val avvisoCambioPrevisione: Boolean = false,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
@@ -671,6 +684,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         captionStyle = settings.captionStyle,
                         alertToggles = settings.alertToggles,
                         animazioniRidotte = settings.animazioniRidotte,
+                        coloriTelefono = settings.coloriTelefono,
                         widgetColoriTelefono = settings.widgetColoriTelefono,
                         schedeLarghe = settings.schedeLarghe,
                         guidaVista = settings.guidaVista,
@@ -678,6 +692,9 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         notificheAllerte = settings.notificheAllerte,
                         riepilogoMattino = settings.riepilogoMattino,
                         oraRiepilogo = settings.oraRiepilogo,
+                        avvisoOmbrello = settings.avvisoOmbrello,
+                        oraOmbrello = settings.oraOmbrello,
+                        avvisoCambioPrevisione = settings.avvisoCambioPrevisione,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                         soglie = settings.soglie,
                     )
@@ -723,6 +740,8 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                     air = null,
                     airUnavailable = false,
                     mare = null,
+                    quarti = emptyList(),
+                    quartiAdesso = null,
                     unAnnoFa = null,
                     alerts = emptyList(),
                     statoUfficiali = StatoAllerteUfficiali.IN_ATTESA,
@@ -824,8 +843,18 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // Se non arriva la sezione non compare, e quella di
                         // prima - dello stesso posto - resta.
                         launch {
-                            MareRepository(place).load().onSuccess { mare ->
+                            MareRepository(place).loadConScorta(getApplication(), freschezzaMinuti = 15).onSuccess { mare ->
                                 _state.update { it.copy(mare = mare) }
+                            }
+                        }
+
+                        // La pioggia dei prossimi minuti, a quarti d'ora: la
+                        // stessa richiesta della notifica "pioggia in arrivo"
+                        // (`PrevisioneABreve`), qui per la riga di Oggi. Stessa
+                        // regola del mare: se non arriva, la riga non c'e'.
+                        launch {
+                            com.caelumweather.data.PrevisioneABreve.carica(place).onSuccess { r ->
+                                _state.update { it.copy(quarti = r.quarti, quartiAdesso = r.adesso) }
                             }
                         }
 
@@ -1646,6 +1675,35 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.setRiepilogoMattino(acceso) }
     }
 
+    fun setAvvisoOmbrello(acceso: Boolean) {
+        val app = getApplication<Application>()
+        if (acceso) {
+            com.caelumweather.notifiche.OmbrelloWorker.pianifica(app, _state.value.oraOmbrello, sostituisci = true)
+        } else {
+            com.caelumweather.notifiche.OmbrelloWorker.annulla(app)
+        }
+        viewModelScope.launch { prefs.setAvvisoOmbrello(acceso) }
+    }
+
+    fun setAvvisoCambioPrevisione(acceso: Boolean) {
+        val app = getApplication<Application>()
+        _state.update { it.copy(avvisoCambioPrevisione = acceso) }
+        if (acceso) {
+            com.caelumweather.notifiche.CambioPrevisioneWorker.pianifica(app)
+        } else {
+            com.caelumweather.notifiche.CambioPrevisioneWorker.annulla(app)
+        }
+        viewModelScope.launch { prefs.setAvvisoCambioPrevisione(acceso) }
+    }
+
+    fun setOraOmbrello(minuti: Int) {
+        _state.update { it.copy(oraOmbrello = minuti) }
+        if (_state.value.avvisoOmbrello) {
+            com.caelumweather.notifiche.OmbrelloWorker.pianifica(getApplication(), minuti, sostituisci = true)
+        }
+        viewModelScope.launch { prefs.setOraOmbrello(minuti) }
+    }
+
     fun setOraRiepilogo(minuti: Int) {
         // Lo stato subito, il disco dopo: la scelta segmentata si sposta al
         // tocco, non quando il DataStore ha finito di scrivere.
@@ -1697,6 +1755,10 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
     fun chiudiGuida() {
         _state.update { it.copy(guidaAperta = false, guidaVista = true) }
         viewModelScope.launch { prefs.setGuidaVista() }
+    }
+
+    fun setColoriTelefono(acceso: Boolean) {
+        viewModelScope.launch { prefs.setColoriTelefono(acceso) }
     }
 
     fun setAnimazioniRidotte(ridotte: Boolean) {

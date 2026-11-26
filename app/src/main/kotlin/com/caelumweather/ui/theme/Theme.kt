@@ -1,7 +1,9 @@
 package com.caelumweather.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
@@ -147,6 +149,7 @@ private val MeteoShapes = Shapes(
 )
 
 @Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun MeteoTheme(
     colors: MeteoColors,
     content: @Composable () -> Unit,
@@ -161,10 +164,17 @@ fun MeteoTheme(
     // letto non e' neutro: costringe a calcolarlo, e a ogni fotogramma in cui
     // il cielo si muove costringeva a **ricalcolarlo**.
     val scheme = remember(colors) { colors.toColorScheme() }
-    MaterialTheme(
+    // **Material 3 Expressive, il movimento e non l'aspetto.** I colori e i
+    // caratteri restano quelli di Caelum; da Expressive viene lo schema di
+    // movimento - molle con un filo di rimbalzo per le forme che si muovono,
+    // piu' rapide e asciutte per i colori - che leggono i componenti Material
+    // (cursore, indicatore di caricamento, gruppi di bottoni) e le forme che
+    // cedono al tocco (`formaCheCede`).
+    MaterialExpressiveTheme(
         colorScheme = scheme,
         typography = MeteoTypography,
         shapes = MeteoShapes,
+        motionScheme = MotionScheme.expressive(),
         content = content,
     )
 }

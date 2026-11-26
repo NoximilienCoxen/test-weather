@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -559,6 +560,65 @@ fun salaPalette(dk: Float, crepuscolo: Float, chiusura: Float): SalaPalette {
  * cielo blu notte, colline verde chiaro sotto le stelle (Noceto, 15 novembre).
  * Il cielo non ha un tema: ha un'ora.
  */
+/**
+ * I colori di una tinta del telefono (Material You, Android 12+), quelli che
+ * servono alle sale: [chiaro] e [scuro] di [conTelefono] sono le due tinte,
+ * prese dagli schemi dinamici chiaro e scuro del telefono.
+ */
+data class TintaTelefono(
+    /** Il primario: l'accento. */
+    val primario: Color,
+    /** L'inchiostro sopra il primario. */
+    val suPrimario: Color,
+    /** Il fondo delle schede (surfaceContainerLow). */
+    val carta: Color,
+    /** Il fondo delle schermate a tutta pagina (surface). */
+    val pagina: Color,
+    /** Il fondo di pastiglie e celle (surfaceContainerHighest). */
+    val chip: Color,
+    /** I fili e i binari spenti (outlineVariant). */
+    val filo: Color,
+    /** L'inchiostro (onSurface). */
+    val inchiostro: Color,
+    /** L'inchiostro secondario (onSurfaceVariant). */
+    val inchiostroSecondario: Color,
+)
+
+/**
+ * **I colori del telefono, su tutta la sala e non solo sull'accento.**
+ *
+ * La prima stesura cambiava solo l'accento: un viola o un verde del telefono
+ * sopra la carta calda di Caelum, che e' color crema, e la scheda sembrava
+ * fatta da due mani diverse. Adesso la tinta del telefono arriva anche alla
+ * carta, alle celle, ai fili e agli inchiostri, come in un'app Material You;
+ * restano di Caelum il cielo, le colline e le scritte che ci stanno sopra.
+ *
+ * Fra la tinta chiara e la scura si passa con lo stesso `buio` che muove la
+ * carta. L'accento scritto sul cielo si scurisce o si schiarisce finche' si
+ * legge sul fondo delle colline: il primario della tinta scura, un viola
+ * chiaro, sul cielo di mezzogiorno spariva.
+ */
+fun SalaPalette.conTelefono(chiaro: TintaTelefono, scuro: TintaTelefono): SalaPalette {
+    fun t(a: Color, b: Color) = lerp(a, b, buio)
+    val carta = t(chiaro.carta, scuro.carta)
+    val inchiostro = t(chiaro.inchiostro, scuro.inchiostro)
+    val secondario = t(chiaro.inchiostroSecondario, scuro.inchiostroSecondario)
+    val accento = t(chiaro.primario, scuro.primario)
+    return copy(
+        ink = inchiostro,
+        inkSoft = secondario.readableOn(carta),
+        inkFaint = secondario.copy(alpha = 0.82f).readableOn(carta),
+        accent = accento.readableOn(carta, CONTRAST_AA_LARGE),
+        accentInk = t(chiaro.suPrimario, scuro.suPrimario),
+        chip = t(chiaro.chip, scuro.chip),
+        maniglia = t(chiaro.filo, scuro.filo),
+        panel = carta.copy(alpha = lerp(0.94f, 0.88f, buio)),
+        panelSolido = carta,
+        schermoPieno = t(chiaro.pagina, scuro.pagina),
+        accentSuCielo = accento.readableOn(collina3, CONTRAST_AA_LARGE),
+    )
+}
+
 fun SalaPalette.conCieloDi(cielo: SalaPalette): SalaPalette =
     if (cielo == this) this else copy(
         inkSuCielo = cielo.inkSuCielo,
@@ -582,10 +642,14 @@ object SalaType {
     val citta = TextStyle(fontFamily = Caprasimo, fontSize = 22.sp, lineHeight = 24.sp)
 
     /** Il titolo di ogni sala, in cima al pannello. */
+    // Due punti in piu' (era 26 su 28), alla maniera dei titoli enfatizzati
+    // di Material 3 Expressive: la riga che si legge per prima pesa di piu'.
+    // Non oltre: ogni punto qui si moltiplica per le righe di titolo di sette
+    // schede, e le schede devono stare intere sotto il tetto.
     val cardTitle = TextStyle(
         fontFamily = Caprasimo,
-        fontSize = 26.sp,
-        lineHeight = 28.sp,
+        fontSize = 28.sp,
+        lineHeight = 30.sp,
         letterSpacing = (-0.015).em,
     )
 

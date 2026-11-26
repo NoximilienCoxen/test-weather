@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.caelumweather.ui.sala.NumeroCheScorre
 import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.lingua.Lingue
@@ -31,6 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
@@ -164,7 +167,7 @@ fun SalaPioggiaScreen(
                     "${fuoco.precipProbability ?: 0} %",
                 style = SalaType.sectionLabel,
                 color = if (sottoIlDito >= 0) palette.accent else palette.inkFaint,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = 10.dp),
             )
         }
         Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
@@ -216,24 +219,43 @@ fun SalaPioggiaScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    // **Due grandezze in una colonna, e nessun pallino.** Le
+                    // colonne erano pillole tonde: un'ora con un millimetro
+                    // diventava un pallino, una con niente un trattino, e la
+                    // probabilita' non si vedeva. Adesso ogni ora ha un binario
+                    // chiaro alto quanto la **probabilita'** e, dentro, il
+                    // riempimento d'acqua dal basso quanto i **millimetri**:
+                    // tondo solo in cima, come un bicchiere. Un'ora probabile ma
+                    // scarsa e' un binario alto quasi vuoto; una asciutta e
+                    // certa non ha niente.
+                    val probabilita = ((ore[indice].precipProbability ?: 0) / 100f).coerceIn(0f, 1f)
+                    val evidenziata = i == sottoIlDito || (sottoIlDito < 0 && indice == scelta)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            // Una colonna a zero resta visibile: una colonna
-                            // assente si legge come un dato mancante, non come
-                            // un'ora asciutta.
-                            .height(misuraCheArriva((3f + quota * 85f).dp))
-                            .clip(CircleShape)
-                            .background(
-                                if (mm > 0.01) {
-                                    Brush.verticalGradient(
-                                        listOf(SalaTokens.acquaChiara, SalaTokens.acquaScura),
-                                    )
-                                } else {
-                                    Brush.verticalGradient(listOf(palette.maniglia, palette.maniglia))
-                                },
-                            ),
-                    )
+                            .height(ALTEZZA_COLONNA),
+                        contentAlignment = Alignment.BottomCenter,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(misuraCheArriva(ALTEZZA_COLONNA * probabilita.coerceAtLeast(0.06f)))
+                                .clip(RoundedCornerShape(topStart = 7.dp, topEnd = 7.dp, bottomStart = 3.dp, bottomEnd = 3.dp))
+                                .background(
+                                    if (evidenziata) SalaTokens.acquaChiara.copy(alpha = 0.40f)
+                                    else SalaTokens.acquaChiara.copy(alpha = 0.22f),
+                                ),
+                        )
+                        if (mm > 0.01) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(misuraCheArriva(ALTEZZA_COLONNA * quota.coerceAtLeast(0.08f)))
+                                    .clip(RoundedCornerShape(topStart = 7.dp, topEnd = 7.dp, bottomStart = 3.dp, bottomEnd = 3.dp))
+                                    .background(Brush.verticalGradient(listOf(SalaTokens.acquaChiara, SalaTokens.acquaScura))),
+                            )
+                        }
+                    }
                     Text(
                         text = oraDueCifre(ore[indice].time.hour),
                         style = SalaType.microLabel,
@@ -247,7 +269,7 @@ fun SalaPioggiaScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 14.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             CellaValore(
@@ -272,13 +294,13 @@ fun SalaPioggiaScreen(
                 ).joinToString(" · "),
                 style = SalaType.microLabel,
                 color = palette.inkSoft,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
 
         HorizontalDivider(
             color = palette.maniglia.copy(alpha = 0.5f),
-            modifier = Modifier.padding(top = 18.dp, bottom = 16.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 10.dp),
         )
 
         // ── La domanda, e la risposta ────────────────────────────────────────
@@ -293,20 +315,22 @@ fun SalaPioggiaScreen(
         // Al suo posto c'e' la domanda che uno si fa davvero guardando la
         // pioggia, e che i dati sanno **sempre** - per tutte le ore e per tutti
         // e sette i giorni: *quando comincia, quanto dura, quanta ne viene*.
-        Text(
-            text = tr("QUANDO", "WHEN", "WANN", "QUAND", "CUÁNDO"),
-            style = SalaType.sectionLabel,
-            color = palette.inkFaint,
-            modifier = Modifier.padding(bottom = 8.dp),
-        )
         // Tre o quattro filtri su tutte le ore della settimana e quattro
         // `String.format`: a ogni fotogramma, finche' questa sala e' composta.
         // La chiave e' la coppia da cui dipende davvero la frase.
         val quando = remember(state.forecast, state.detailHour?.time, state.selectedDay, state.nowIndex) {
             finestraPioggia(state)
         }
+        // L'etichetta sta in testa alla frase invece che su una riga sua: una
+        // riga in meno, e si legge lo stesso come una voce.
         Text(
-            text = quando,
+            text = buildAnnotatedString {
+                withStyle(SalaType.sectionLabel.toSpanStyle().copy(color = palette.inkFaint)) {
+                    append(tr("QUANDO", "WHEN", "WANN", "QUAND", "CUÁNDO"))
+                }
+                append("  ")
+                append(quando)
+            },
             style = SalaType.rowTitle,
             color = palette.ink,
         )
@@ -318,7 +342,7 @@ fun SalaPioggiaScreen(
                 text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
                 style = SalaType.sectionLabel,
                 color = palette.inkFaint,
-                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+                modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
             )
             SettimanaDellaPioggia(
                 giorni = giorni,
@@ -383,7 +407,7 @@ private fun SettimanaDellaPioggia(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(
-                    modifier = Modifier.height(46.dp).fillMaxWidth(),
+                    modifier = Modifier.height(28.dp).fillMaxWidth(),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
                     Box(
@@ -513,5 +537,8 @@ private fun nomeAfa(afa: Afa): String = when (afa) {
     Afa.AFOSA -> tr("afosa", "muggy", "schwül", "lourd", "bochornoso")
     Afa.OPPRIMENTE -> tr("opprimente", "oppressive", "drückend", "étouffant", "sofocante")
 }
+
+/** L'altezza di una colonna della pioggia: il cento per cento di probabilita'. */
+private val ALTEZZA_COLONNA = 58.dp
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)

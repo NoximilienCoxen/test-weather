@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.snap
 import com.caelumweather.lingua.tr
@@ -10,7 +11,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
@@ -22,14 +22,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -37,11 +35,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -126,11 +128,14 @@ private val RaggioCella = 22.dp
  * **Il cielo e' il punto forte dell'app, e i pannelli se lo mangiavano.** "La
  * luna" copriva lo schermo dall'intestazione alla barra delle ore, "La
  * settimana" lasciava un quarto di cielo. La Shell calcola quanto puo' salire
- * un pannello perche' sopra resti almeno il 40 per cento dello schermo, e lo
+ * un pannello perche' sopra resti almeno il 30 per cento dello schermo, e lo
  * passa qui; oltre, il pannello scorre dentro di se'. Fuori dalla Shell
  * (anteprime, prove) non c'e' tetto.
  */
 val LocalAltezzaPannello = compositionLocalOf { Dp.Unspecified }
+
+/** Chi vuole sapere quanto e' alto il pannello, in punti: lo usano le prove che misurano le sale. */
+val LocalMisuraPannello = compositionLocalOf<((Float) -> Unit)?> { null }
 
 /**
  * Sfuma il contenuto sul bordo da cui c'e' ancora da scorrere: e' il segno che
@@ -193,9 +198,16 @@ fun PannelloSala(
     // interi, e una dissolvenza sul bordo dice che sotto c'e' altro.
     val tetto = LocalAltezzaPannello.current
     val scorrimento = rememberScrollState()
+    val misura = LocalMisuraPannello.current
+    val densitaMisura = androidx.compose.ui.platform.LocalDensity.current
+    // La brina si scioglie al tocco: lo ascolta la scheda, non la brina (vedi `scioglieBrina`).
+    val vetro = LocalVetro.current
+    val brina = rememberStatoBrina()
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .scioglieBrina(brina, attiva = vetro.gelo > 0.02f && LocalMovimento.current)
+            .then(if (misura != null) Modifier.onPlaced { misura(it.size.height / densitaMisura.density) } else Modifier)
             .then(if (tetto != Dp.Unspecified) Modifier.heightIn(max = tetto) else Modifier)
             .clip(RoundedCornerShape(RaggioPannello))
             // Solo il riferimento alle coordinate, niente stato: vedi [OndaScheda].
@@ -228,7 +240,9 @@ fun PannelloSala(
                 // che di cielo sopra **non ne ha**: e' gia' alta quanto lo schermo,
                 // e ogni punto in piu' non la fa salire, le taglia una riga in
                 // fondo. Lo scatto della CI l'ha mostrato subito.
-                .padding(start = 22.dp, end = 22.dp, top = 24.dp, bottom = 18.dp),
+                // **Stretti di qualche punto** (erano 24 sopra e 18 sotto):
+                // ogni punto qui e' una riga in meno da scorrere.
+                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 14.dp),
         ) {
             // **Qui c'era una maniglia, ed e' stata tolta.** Cinquantadue punti
             // per cinque, in cima al pannello: voleva dire "questa cosa sta
@@ -257,8 +271,7 @@ fun PannelloSala(
         // si ferma sul bordo arrotondato invece di uscire in un rettangolo.
         if (bagliore) BaglioreDorato(Modifier.matchParentSize())
         // Brina e gocce sul vetro della scheda, dentro il ritaglio: vedi [Vetro].
-        val vetro = LocalVetro.current
-        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f)
+        if (vetro.gelo > 0.02f) BrinaSulVetro(vetro.gelo, Modifier.matchParentSize(), cartaScura = palette.buio > 0.5f, presenza = { brina.presenza.value })
         if (vetro.pioggia > 0.02f) GocceSulVetro(vetro.pioggia, Modifier.matchParentSize())
         // Il livello dell'onda c'e' solo mentre l'onda corre.
         if (onda != null && onda.corsa.isRunning) {
@@ -352,11 +365,18 @@ fun RowScope.CellaValore(
     onVai: (() -> Unit)? = null,
 ) {
     // La cella che porta altrove cede sotto il dito: e' il secondo segno, dopo
-    // la freccetta, che la distingue da una che si limita a dire.
+    // la freccetta, che la distingue da una che si limita a dire. Premuta si
+    // riempie e si squadra (vedi [formaCheCede]); a riposo resta il filo.
+    val pressione = rememberPressione()
+    val forma = formaCheCede(pressione, riposo = RaggioCella, premuto = 10.dp)
+    val fondo by animateColorAsState(
+        if (pressione.giu) palette.chip else palette.chip.copy(alpha = 0f),
+        label = "cella-fondo",
+    )
     Column(
         modifier = modifier
             .weight(1f)
-            .then(if (onVai != null) Modifier.cedevole() else Modifier)
+            .then(if (onVai != null) Modifier.cedevole(pressione = pressione) else Modifier)
             // **Niente fondo: un filo a sinistra.** Ogni cella era una pillola
             // piena, tre per riga in quasi ogni sala, accanto alle pastiglie e
             // ai comandi tondi: tutto arrotondato, tutto uguale, il segno piu'
@@ -373,7 +393,8 @@ fun RowScope.CellaValore(
                     strokeWidth = spessore,
                 )
             }
-            .clip(RoundedCornerShape(RaggioCella))
+            .clip(forma)
+            .background(fondo)
             // `then` e non due rami di `Column`: il corpo della cella e' lo
             // stesso, e duplicarlo per un modificatore vorrebbe dire che alla
             // prima rifinitura una delle due copie resta indietro.
@@ -513,7 +534,17 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
         if (primo) { primo = false; return@LaunchedEffect }
         if (scelto && movimento) {
             gesto.snapTo(0f)
-            gesto.animateTo(1f, tween(durationMillis = 760, easing = LinearOutSlowInEasing))
+            // **Il gesto finisce sempre dritto.** Interrotto a meta' - un altro
+            // giorno toccato prima della fine, la scheda sfogliata - il valore
+            // restava dov'era, e la figuretta restava girata di sbieco per
+            // sempre: nella striscia le icone sembravano ruotate a caso.
+            try {
+                gesto.animateTo(1f, tween(durationMillis = 760, easing = LinearOutSlowInEasing))
+            } finally {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) { gesto.snapTo(1f) }
+            }
+        } else {
+            gesto.snapTo(1f)
         }
     }
     val goccia = SalaTokens.acqua
@@ -525,13 +556,23 @@ fun IconaCheReagisce(glifo: GlifoMeteo, scelto: Boolean, modifier: Modifier = Mo
                 if (p >= 1f) return@graphicsLayer
                 val campana = kotlin.math.sin(PI.toFloat() * p)
                 when (glifo) {
-                    GlifoMeteo.SOLE, GlifoMeteo.POCO -> {
-                        rotationZ = 90f * p
+                    // Solo il sole fa il giro di raggi: con la nuvola davanti
+                    // ("poco nuvoloso") girava anche la nuvola, e da ferma in
+                    // un fotogramma qualunque sembrava storta.
+                    // **Nessuna figuretta gira.** Il sole faceva un quarto di
+                    // giro e la neve un terzo: a Sapporo, sette giorni di neve,
+                    // ogni tocco faceva girare un'icona e pareva un difetto
+                    // ("le icone ruotano"). Adesso il gesto e' un rimbalzo.
+                    GlifoMeteo.SOLE -> {
+                        scaleX = 1f + 0.18f * campana
+                        scaleY = scaleX
+                    }
+                    GlifoMeteo.POCO -> {
                         scaleX = 1f + 0.18f * campana
                         scaleY = scaleX
                     }
                     GlifoMeteo.NEVE -> {
-                        rotationZ = 120f * p
+                        translationY = 1.5.dp.toPx() * campana
                         scaleX = 1f + 0.12f * campana
                         scaleY = scaleX
                     }
@@ -1232,14 +1273,6 @@ internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
                 linea(12f + cos(a) * 7f, 12f + sin(a) * 7f, 12f + cos(a) * 9.6f, 12f + sin(a) * 9.6f)
             }
         }
-        // Il calendario: la cornice, la testata, gli anelli, sei giorni.
-        SalaRoom.SETTIMANA -> {
-            drawRoundRect(ink, p(3.5f, 5f), Size(17f * u, 15.5f * u), CornerRadius(3f * u), style = tratto)
-            linea(3.5f, 10f, 20.5f, 10f)
-            linea(8f, 3f, 8f, 6.5f)
-            linea(16f, 3f, 16f, 6.5f)
-            for (x in listOf(8f, 12f, 16f)) for (y in listOf(14f, 17.3f)) drawCircle(ink, 1.1f * u, p(x, y))
-        }
         // La nuvola a tratto, e tre righe di pioggia oblique.
         SalaRoom.PIOGGIA -> {
             val nuvola = Path().apply {
@@ -1289,6 +1322,19 @@ internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
             drawPath(manica, ink, style = tratto)
             linea(9f, 5.8f, 9f, 13.2f)
             linea(14f, 6.5f, 14f, 12.5f)
+        }
+        // Il mare: tre onde una sopra l'altra.
+        SalaRoom.MARE -> {
+            for ((k, y) in listOf(7f, 12f, 17f).withIndex()) {
+                val onda = Path().apply {
+                    moveTo(3f * u, y * u)
+                    for (i in 0 until 3) {
+                        val x = 3f + i * 6f
+                        cubicTo((x + 1.5f) * u, (y - 2.4f) * u, (x + 4.5f) * u, (y - 2.4f) * u, (x + 6f) * u, y * u)
+                    }
+                }
+                drawPath(onda, ink, style = tratto, alpha = if (k == 1) 1f else 0.85f)
+            }
         }
         // I raggi UV: il sole che sale sull'orizzonte.
         SalaRoom.UV -> {
@@ -1489,9 +1535,11 @@ fun VoceInterruttore(
     onCambia: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val pressione = rememberPressione()
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .cedevole(premuto = 0.99f, pressione = pressione)
             .toggleable(value = acceso, role = Role.Switch, onValueChange = onCambia)
             .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -1508,7 +1556,7 @@ fun VoceInterruttore(
                 )
             }
         }
-        InterruttoreSala(acceso = acceso, palette = palette)
+        InterruttoreSala(acceso = acceso, palette = palette, premuto = pressione.giu)
     }
 }
 
@@ -1537,29 +1585,64 @@ fun FrecciaAvanti(palette: SalaPalette, testo: String? = null) {
  * una che resta accesa.
  */
 @Composable
-fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier = Modifier) {
+fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier = Modifier, premuto: Boolean = false) {
+    // **L'interruttore di Material 3 Expressive**, nei colori della sala: da
+    // spento il pallino e' piccolo e il binario ha solo il bordo; acceso il
+    // pallino cresce e porta la spunta; sotto il dito si gonfia ancora. Le
+    // misure corrono sulla molla dello schema Expressive (`MeteoTheme`).
+    val movimento = LocalMovimento.current
+    val spec = if (movimento) MaterialTheme.motionScheme.fastSpatialSpec<Dp>() else snap()
+    val diametro by animateDpAsState(
+        targetValue = when {
+            premuto -> 28.dp
+            acceso -> 24.dp
+            else -> 16.dp
+        },
+        animationSpec = spec,
+        label = "interruttore-pallino",
+    )
     val corsa by animateDpAsState(
-        targetValue = if (acceso) 20.dp else 0.dp,
-        animationSpec = spring(dampingRatio = 0.8f, stiffness = 700f),
+        targetValue = if (acceso) 24.dp else 4.dp,
+        animationSpec = spec,
         label = "interruttore",
     )
     val binario by animateColorAsState(
-        targetValue = if (acceso) palette.accent else palette.maniglia,
+        targetValue = if (acceso) palette.accent else palette.chip,
         label = "binario",
+    )
+    val pallino by animateColorAsState(
+        targetValue = if (acceso) palette.accentInk else palette.inkFaint,
+        label = "pallino",
     )
     Box(
         modifier = modifier
-            .size(48.dp, 28.dp)
+            .size(52.dp, 32.dp)
             .clip(CircleShape)
-            .background(binario),
+            .background(binario)
+            .border(2.dp, if (acceso) palette.accent else palette.inkFaint, CircleShape),
     ) {
+        // Il centro del pallino scorre fra 16 e 36 punti; il diametro cambia
+        // attorno a quel centro.
         Box(
             modifier = Modifier
-                .padding(start = 3.dp + corsa, top = 3.dp)
-                .size(22.dp)
+                .offset(x = corsa + 12.dp - diametro / 2f + 0.dp, y = 16.dp - diametro / 2f)
+                .size(diametro)
                 .clip(CircleShape)
-                .background(if (acceso) palette.accentInk else SalaTokens.neutral100),
-        )
+                .background(pallino),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (acceso && diametro > 20.dp) {
+                Canvas(modifier = Modifier.size(12.dp)) {
+                    val tratto = 2.dp.toPx()
+                    val spunta = Path().apply {
+                        moveTo(size.width * 0.12f, size.height * 0.52f)
+                        lineTo(size.width * 0.40f, size.height * 0.78f)
+                        lineTo(size.width * 0.88f, size.height * 0.24f)
+                    }
+                    drawPath(spunta, palette.accent, style = Stroke(width = tratto, cap = StrokeCap.Round, join = StrokeJoin.Round))
+                }
+            }
+        }
     }
 }
 
@@ -1575,6 +1658,7 @@ private val StileSegmento = SalaType.rowNote.copy(fontSize = 13.sp, fontWeight =
  * Un binario unico dice "se ne sceglie una", e il cursore che scorre dice
  * quale e' cambiata.
  */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> SceltaSegmentata(
     voci: List<Pair<T, String>>,
@@ -1583,64 +1667,47 @@ fun <T> SceltaSegmentata(
     onScegli: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // **La scelta puo' non essere fra queste voci**: le lingue sono sei e
-    // stanno su due binari, e in uno dei due il cursore non c'e'. Li' sbiadisce
-    // restando dov'era, invece di saltare sulla prima voce a dire il falso.
-    val trovata = voci.indexOfFirst { it.first == scelta }
-    val indice = trovata
-    val posizione by animateFloatAsState(
-        targetValue = trovata.coerceAtLeast(0).toFloat(),
-        animationSpec = spring(dampingRatio = 0.85f, stiffness = 600f),
-        label = "segmento",
-    )
-    val presente by animateFloatAsState(
-        targetValue = if (trovata >= 0) 1f else 0f,
-        animationSpec = spring(dampingRatio = 1f, stiffness = 500f),
-        label = "segmento-presente",
-    )
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .clip(CircleShape)
-            .background(palette.maniglia)
-            .padding(3.dp),
+    // **Un gruppo di bottoni collegati, alla maniera di Material 3 Expressive.**
+    // Era un binario unico con un cursore che scivolava; adesso ogni voce e'
+    // un bottone suo, staccato dagli altri da un filo d'aria. Gli angoli
+    // esterni del gruppo sono tondi, quelli interni appena smussati; la voce
+    // scelta diventa una pillola intera e quella premuta si squadra, con la
+    // molla dello schema Expressive (`MeteoTheme`). I colori restano quelli
+    // della sala.
+    Row(
+        modifier = modifier.fillMaxWidth().height(44.dp),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
     ) {
-        val larga = maxWidth / voci.size
-        Box(
-            modifier = Modifier
-                .offset(x = larga * posizione)
-                .width(larga)
-                .fillMaxHeight()
-                .graphicsLayer { alpha = presente }
-                .clip(CircleShape)
-                .background(palette.accent),
-        )
-        Row(modifier = Modifier.fillMaxSize()) {
-            voci.forEachIndexed { i, (valore, nome) ->
-                val attiva = i == indice
-                val colore by animateColorAsState(
-                    targetValue = if (attiva) palette.accentInk else palette.ink,
-                    label = "segmento-testo",
+        voci.forEachIndexed { i, (valore, nome) ->
+            val attiva = valore == scelta
+            val forme = when (i) {
+                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                voci.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+            }
+            ToggleButton(
+                checked = attiva,
+                onCheckedChange = { onScegli(valore) },
+                shapes = forme,
+                colors = ToggleButtonDefaults.colors(
+                    containerColor = palette.maniglia,
+                    contentColor = palette.ink,
+                    checkedContainerColor = palette.accent,
+                    checkedContentColor = palette.accentInk,
+                ),
+                contentPadding = PaddingValues(horizontal = 6.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .semantics { role = Role.RadioButton },
+            ) {
+                Text(
+                    text = nome,
+                    style = StileSegmento,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
                 )
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(CircleShape)
-                        .selectable(selected = attiva, role = Role.RadioButton) { onScegli(valore) },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = nome,
-                        style = StileSegmento,
-                        color = colore,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                    )
-                }
             }
         }
     }

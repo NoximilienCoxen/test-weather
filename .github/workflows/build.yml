@@ -389,7 +389,7 @@ jobs:
       - name: Componenti SDK
         run: |
           yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
+          sdkmanager --install "platforms;android-37.2" "build-tools;36.0.0" \
             || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
 
       # Lint gira accanto ai test e non dentro `build`: sono i due controlli che
@@ -583,7 +583,7 @@ jobs:
           sdkmanager --list 2>/dev/null \
             | grep -E "platforms;android-3[5-9]|build-tools;3[6-9]" | head -20 || true
           echo "--- installo ---"
-          sdkmanager --install "platforms;android-37" "build-tools;36.0.0" \
+          sdkmanager --install "platforms;android-37.2" "build-tools;36.0.0" \
             || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
 
       - name: Versioni in uso
@@ -987,7 +987,7 @@ jobs:
           done
           { echo "ANDROID_HOME=$SDK"; echo "ANDROID_SDK_ROOT=$SDK"; } >> "$GITHUB_ENV"
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
-          "$SDK/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37" "build-tools;36.0.0" \
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37.2" "build-tools;36.0.0" \
             || echo "sdkmanager non ha installato: lascio che sia AGP a scaricare"
 
       # Si compila prima, fuori dall'emulatore: un errore di compilazione si

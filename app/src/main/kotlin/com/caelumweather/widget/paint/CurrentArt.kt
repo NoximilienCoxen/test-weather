@@ -180,7 +180,11 @@ private fun DrawScope.header(
     // Il corpo non cambia stringendo, quindi il blocco si puo' misurare prima
     // di scrivere: `fitText` restituisce lo stesso `lineHeight` che avrebbe
     // avuto il pennello largo.
-    val block = lineHeight(type.brush(nameSize, 600, 78, 0.10f)) + lineHeight(what)
+    // Se la condizione andra' su due righe il blocco e' piu' alto, e si centra
+    // lo stesso accanto alla cifra.
+    val dueRighe = condition.contains(' ') && !entraStretto(condition, textWidth, what.textSize, type, 700, 0.02f, 0.8f)
+    val block = lineHeight(type.brush(nameSize, 600, 78, 0.10f)) +
+        if (dueRighe) 2 * lineHeight(type.brush(what.textSize * 0.86f, 700, 76, 0.02f)) else lineHeight(what)
     val blockTop = digitsTop + (digitsHeight - block) / 2f
 
     val name = fitText(
@@ -192,7 +196,7 @@ private fun DrawScope.header(
         type = type,
         color = ink.secondary,
     )
-    fitText(
+    fitTextDueRighe(
         value = condition,
         x = textLeft,
         y = blockTop + lineHeight(name),
@@ -202,7 +206,7 @@ private fun DrawScope.header(
         color = ink.primary,
         weight = 700,
         letterSpacingEm = 0.02f,
-        minScale = 0.7f,
+        minScale = 0.8f,
     )
 
     weatherBody(

@@ -125,9 +125,12 @@ internal fun LunaInterattiva(
     }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        // Col testo grande la sfera si fa piu' piccola (fino a 150 punti):
+        // la scheda sotto cresce, e la pagina deve restare intera.
+        val lato = (220f - (androidx.compose.ui.platform.LocalDensity.current.fontScale - 1f).coerceAtLeast(0f) * 230f).coerceIn(150f, 220f).dp
         Canvas(
             modifier = Modifier
-                .size(220.dp)
+                .size(lato)
                 .semantics { contentDescription = tr("Luna, $descrizione. Trascina per girarle intorno.", "Moon, $descrizione. Drag to move around it.", "Mond, $descrizione. Ziehen, um ihn zu umrunden.", "Lune, $descrizione. Faites glisser pour en faire le tour.", "Luna, $descrizione. Arrastra para rodearla.") }
                 .pointerInput(movimento) {
                     // Il gesto si consuma: con il dito sulla luna ne' le sale

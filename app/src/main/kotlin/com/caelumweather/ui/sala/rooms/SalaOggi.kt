@@ -1,5 +1,9 @@
 package com.caelumweather.ui.sala.rooms
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.foundation.layout.size
 import com.caelumweather.ui.sala.cedevole
 import com.caelumweather.ui.sala.coloreChePassa
 import com.caelumweather.lingua.Lingue
@@ -34,6 +38,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.caelumweather.ui.sala.formaCheCede
+import com.caelumweather.ui.sala.rememberPressione
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -120,6 +126,8 @@ fun SalaOggiScreen(
      *  settimana e i tre riquadri dei valori. */
     onVai: (SalaRoom) -> Unit,
     modifier: Modifier = Modifier,
+    /** Se la curva della giornata parte aperta: lo usano le prove che misurano la sala. */
+    giornataApertaIniziale: Boolean = false,
 ) {
     val fase = salaPhaseOf(sky)
     val ora = state.detailHour ?: state.hour
@@ -132,7 +140,7 @@ fun SalaOggiScreen(
     // la scheda di un terzo e il numero grande saliva a coprire il sole, la
     // luna e il loro arco: il cielo e' il punto di questa sala. Da chiusa resta
     // una mini-curva accanto a "min · max", sul cielo, che la apre.
-    var giornataAperta by rememberSaveable { mutableStateOf(false) }
+    var giornataAperta by rememberSaveable { mutableStateOf(giornataApertaIniziale) }
     // Il giorno toccato si spande nella scheda: vedi [OndaScheda].
     val onda = rememberOndaScheda()
     val scopeOnda = rememberCoroutineScope()
@@ -266,6 +274,18 @@ fun SalaOggiScreen(
                         color = palette.accent,
                         modifier = Modifier.clickable(onClick = viewModel::backToNow),
                     )
+                    // Sui giorni lontani, quanto fidarsi (`Affidabilita.kt`):
+                    // per ultima, e cede lei se la riga e' stretta.
+                    affidabilitaDelGiorno(state.selectedDay)?.let { quanto ->
+                        Text(
+                            text = quanto,
+                            style = SalaType.pill,
+                            color = palette.inkFaint,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                    }
                 }
             }
 
@@ -291,6 +311,11 @@ fun SalaOggiScreen(
                 palette,
                 modifier = Modifier.padding(top = 7.dp),
             )
+            // Mentre la previsione arriva, l'indicatore di caricamento di
+            // Material 3 Expressive: forme che si trasformano una nell'altra.
+            if (senzaPrevisione && state.error == null && LocalMovimento.current) {
+                IndicatoreExpressive(colore = palette.accent, modifier = Modifier.padding(top = 10.dp).size(40.dp))
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
@@ -329,6 +354,37 @@ fun SalaOggiScreen(
             }
 
             // ── La giornata, in una curva (a richiesta) ──────────────────────
+            // La pioggia dei prossimi minuti, quando c'e': vedi `ProssimaOra`.
+            ProssimaOra(state = state, palette = palette, modifier = Modifier.padding(top = 8.dp))
+
+            // Cosa mettersi uscendo, in una riga (`CosaMettersi.kt`). Dalle
+            // ore vere: con il meteo imposto dalla cattura direbbe il vestito
+            // di un cielo che non si vede.
+            val vestito = remember(state.forecast, ora?.time, state.forcedWeatherCode) {
+                val da = ora?.time
+                if (state.forcedWeatherCode != null || da == null) null
+                else cosaMettersi(state.forecast?.allHours.orEmpty(), da)
+            }
+            // Con la curva della giornata aperta si stanno guardando le ore, e
+            // la riga allungava la scheda oltre il tetto (SchedeNelTettoRenderTest):
+            // compare di nuovo chiudendola.
+            ComparsaMorbida(visibile = vestito != null && !giornataAperta) {
+                if (vestito == null) return@ComparsaMorbida
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = palette.inkFaint)) {
+                            append(tr("Da mettere: ", "Wear: ", "Anziehen: ", "À porter : ", "Ponte: "))
+                        }
+                        withStyle(SpanStyle(color = palette.ink)) { append(vestito) }
+                    },
+                    style = SalaType.rowNote,
+                    color = palette.inkSoft,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+
             ComparsaMorbida(visibile = giornataAperta) {
                 Column {
                     GraficoGiornata(
@@ -371,28 +427,36 @@ fun SalaOggiScreen(
 
             Box(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 13.dp)
+                    .padding(top = 10.dp, bottom = 8.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(palette.maniglia.copy(alpha = palette.maniglia.alpha * 0.5f)),
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(text = tr("TOCCA UN GIORNO", "TAP A DAY", "TIPPE AUF EINEN TAG", "TOUCHEZ UN JOUR", "TOCA UN DÍA"), style = SalaType.sectionLabel, color = palette.inkFaint)
-                // **Non dice "apri la sala II".** Chi guarda non chiama queste
-                // schermate "sale" - e' un nome nostro, buono per il codice e
-                // non per chi legge: qui si nomina la cosa, la settimana.
-                Text(
-                    text = tr("apri la settimana", "open the week", "Woche öffnen", "ouvrir la semaine", "abrir la semana"),
-                    style = SalaType.pill,
-                    color = palette.accent,
-                    modifier = Modifier.clickable { onVai(SalaRoom.SETTIMANA) },
-                )
-            }
+            // ── La settimana ─────────────────────────────────────────────────
+            //
+            // **Era una scheda a parte, ed e' tornata qui.** "La settimana"
+            // ripeteva la striscia di questa scheda e, nei riquadri, i numeri
+            // delle celle qui sopra: chi la apriva trovava quasi la stessa
+            // pagina. Ne resta cio' che diceva di nuovo - la settimana in una
+            // riga - e i giorni si guardano tenendoli premuti (vedi
+            // `anteprimaATenerePremuto`), senza cambiare quello mostrato.
+            // Etichetta e riassunto sulla stessa riga: una riga in meno, e la
+            // settimana si legge come una voce col suo valore.
+            Text(
+                text = androidx.compose.ui.text.buildAnnotatedString {
+                    withStyle(SalaType.sectionLabel.toSpanStyle().copy(color = palette.inkFaint)) {
+                        append(tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"))
+                    }
+                    append("  ")
+                    append(remember(settimana, state.unit) { sommarioDella(settimana, state) })
+                },
+                style = SalaType.rowNote,
+                color = palette.inkSoft,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
 
             StrisciaGiorni(
                 settimana = settimana,
@@ -462,22 +526,52 @@ fun StrisciaGiorni(
 ) {
     // Solo riferimenti, niente stato e niente conti durante la disposizione.
     val coordinate = remember { mutableMapOf<Int, androidx.compose.ui.layout.LayoutCoordinates>() }
+    // **L'anteprima a tenere premuto** (vedi `anteprimaATenerePremuto`): il
+    // giorno sotto il dito, e il centro di ogni giorno per mettergli sopra il
+    // fumetto. Un colpetto a ogni giorno nuovo, come sulla barra delle ore.
+    var anteprima by remember { mutableStateOf<Int?>(null) }
+    // Aperta da TalkBack l'anteprima non ha un dito da staccare: si chiude da sola.
+    var anteprimaDaAccessibilita by remember { mutableStateOf(false) }
+    LaunchedEffect(anteprima, anteprimaDaAccessibilita) {
+        if (anteprima != null && anteprimaDaAccessibilita) {
+            kotlinx.coroutines.delay(6_000)
+            anteprima = null
+            anteprimaDaAccessibilita = false
+        }
+    }
+    val centri = remember { androidx.compose.runtime.mutableStateMapOf<Int, Float>() }
+    val vibrazioni = com.caelumweather.ui.motion.rememberVibrazioniMeteo()
+    val movimentoAnteprima = LocalMovimento.current
+    androidx.compose.foundation.layout.Box(modifier = modifier.fillMaxWidth()) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .anteprimaATenerePremuto(settimana.size) { i ->
+                if (i != anteprima) {
+                    if (i != null && movimentoAnteprima) vibrazioni.scatto()
+                    anteprima = i
+                }
+            },
         horizontalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
     ) {
         settimana.forEach { giorno ->
             val attivo = giorno.indice == scelto
+            // Il giorno scelto si squadra un poco oltre a cambiare colore, e
+            // premuto si squadra di piu': la forma dice quale e', anche a chi
+            // il bordo d'accento non lo distingue (vedi `formaCheCede`).
+            val pressione = rememberPressione()
+            val riposo = if (conMillimetri) 22.dp else 20.dp
+            val forma = formaCheCede(pressione, riposo = riposo, premuto = 10.dp, scelto = attivo, sceltoRaggio = 15.dp)
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .cedevole()
-                    .clip(RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp))
+                    .cedevole(pressione = pressione)
+                    .clip(forma)
                     .background(coloreChePassa(if (attivo) palette.chip else palette.chip.copy(alpha = 0f)))
                     .border(
                         width = 1.5.dp,
                         color = coloreChePassa(if (attivo) palette.accent else palette.accent.copy(alpha = 0f)),
-                        shape = RoundedCornerShape(if (conMillimetri) 22.dp else 20.dp),
+                        shape = forma,
                     )
                     // La figuretta e' un disegno, e i due numeri da soli non
                     // dicono quale e' la massima: per TalkBack il giorno si
@@ -491,13 +585,23 @@ fun StrisciaGiorni(
                             if (conMillimetri) append(tr(", ${String.format(Locale.ITALY, "%.1f", giorno.mm ?: 0.0)} millimetri", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimetres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} Millimeter", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} millimètres", ", ${String.format(Locale.UK, "%.1f", giorno.mm ?: 0.0)} milímetros"))
                         }
                         selected = attivo
+                        // Con TalkBack la pressione lunga arriva come azione,
+                        // non come dito appoggiato: apre la stessa anteprima.
+                        onLongClick(label = tr("anteprima del giorno", "preview the day", "Vorschau des Tages", "aperçu du jour", "vista previa del día")) {
+                            anteprimaDaAccessibilita = true
+                            anteprima = giorno.indice
+                            true
+                        }
                     }
-                    .then(if (onToccoDa != null) Modifier.onPlaced { coordinate[giorno.indice] = it } else Modifier)
+                    .onPlaced {
+                        if (onToccoDa != null) coordinate[giorno.indice] = it
+                        centri[giorno.indice] = it.positionInParent().x + it.size.width / 2f
+                    }
                     .clickable(onClickLabel = tr("mostra questo giorno", "show this day", "diesen Tag anzeigen", "afficher ce jour", "mostrar este día")) {
                         if (giorno.indice != scelto) coordinate[giorno.indice]?.let { onToccoDa?.invoke(it) }
                         onScegli(giorno.indice)
                     }
-                    .padding(top = 9.dp, bottom = 8.dp),
+                    .padding(top = 6.dp, bottom = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(if (conMillimetri) 5.dp else 6.dp),
             ) {
@@ -553,4 +657,12 @@ fun StrisciaGiorni(
             }
         }
     }
+    FumettoAnteprima(indice = anteprima, settimana = settimana, centri = centri, state = state, palette = palette)
+    }
+}
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun IndicatoreExpressive(colore: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
+    androidx.compose.material3.LoadingIndicator(modifier = modifier, color = colore)
 }
