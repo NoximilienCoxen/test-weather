@@ -109,7 +109,7 @@ class SogliePersonaliTest {
     fun `soglia e valore seguono le unita' scelte`() {
         val caldo = SogliaSuperata(TipoSoglia.CALDO, data.atTime(16, 0), 36.2, 33)
         val (titolo, testo) = testiSoglia("Forlì", caldo, leQuindici, TempUnit.FAHRENHEIT, SalaWindUnit.KMH)
-        assertEquals("Caldo a Forlì: massima di 97°", titolo)
+        assertEquals("Caldo a Forlì: percepiti 97°", titolo)
         assertTrue(testo, testo.startsWith("Prevista oggi verso le 16. La tua soglia: 91°."))
 
         val vento = SogliaSuperata(TipoSoglia.VENTO, data.atTime(18, 0), 19.0, 60)
@@ -151,5 +151,22 @@ class SogliePersonaliTest {
         )
         assertTrue(titolo, "Noceto" in titolo)
         assertTrue(testo, "5 mm/h" in testo)
+    }
+
+    @Test
+    fun `il caldo guarda la percepita, l'afa della pianura`() {
+        val mattina = data.atTime(8, 0)
+        // 31 gradi reali con l'afa che ne fa sentire 35: la soglia a 33 parte.
+        val afa = (0..23).map { h ->
+            HourForecast(time = data.atTime(h, 0), temperature = if (h == 15) 31.0 else 25.0, apparent = if (h == 15) 35.0 else 26.0)
+        }
+        val superate = soglieSuperate(afa, mattina, SogliePersonali(caldo = true, caldoGradi = 33))
+        assertEquals(listOf(TipoSoglia.CALDO), superate.map { it.tipo })
+        assertEquals(35.0, superate.single().valore, 1e-9)
+        // 34 reali ma secchi e ventilati, percepiti 32: sotto la soglia.
+        val secco = (0..23).map { h ->
+            HourForecast(time = data.atTime(h, 0), temperature = if (h == 15) 34.0 else 25.0, apparent = if (h == 15) 32.0 else 25.0)
+        }
+        assertTrue(soglieSuperate(secco, mattina, SogliePersonali(caldo = true, caldoGradi = 33)).isEmpty())
     }
 }

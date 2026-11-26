@@ -3,6 +3,7 @@ package com.caelumweather.data
 import com.caelumweather.lingua.tr
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.roundToInt
 
 /**
  * Le allerte che l'app si calcola da sola, dai numeri che ha gia' in mano.
@@ -25,7 +26,7 @@ import java.time.LocalTime
  * un numero e una costante non puo' fare. Il massimo che questa funzione si
  * permette e' l'arancione.
  */
-fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
+fun derivedAlerts(forecast: Forecast, soglie: SoglieAvvisi = SoglieAvvisi()): List<WeatherAlert> {
     val alerts = mutableListOf<WeatherAlert>()
     // Solo oggi e domani: piu' in la' la previsione e' troppo incerta perche'
     // valga la pena di allarmare qualcuno.
@@ -50,10 +51,13 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
 
         day.gustMax?.let { gust ->
             // In metri al secondo: l'app chiede `wind_speed_unit=ms` e i numeri
-            // arrivano cosi'. 20 m/s sono 72 km/h, 28 m/s poco piu' di 100.
+            // arrivano cosi'. La gialla parte dalla soglia scelta per il vento
+            // (la stessa della notifica "Raffiche", CONTESTO §84), l'arancione
+            // da 28 m/s - poco piu' di 100 km/h - o dalla soglia se e' piu' alta.
+            val kmh = (gust * 3.6).roundToInt()
             val level = when {
-                gust >= 28.0 -> AlertLevel.ARANCIONE
-                gust >= 20.0 -> AlertLevel.GIALLA
+                kmh >= maxOf(ARANCIONE_VENTO_KMH, soglie.ventoKmh) -> AlertLevel.ARANCIONE
+                kmh >= soglie.ventoKmh -> AlertLevel.GIALLA
                 else -> null
             }
             if (level != null) {
@@ -99,10 +103,13 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
         // Il caldo si misura sulla percepita e non sulla temperatura: sono i
         // gradi piu' l'umidita' a mandare la gente al pronto soccorso, e con
         // l'ottanta per cento di umidita' trentaquattro gradi ne pesano quaranta.
+        // La gialla dalla soglia scelta (la stessa della notifica "Caldo", che
+        // ora guarda anch'essa la percepita), l'arancione quattro gradi sopra.
         (day.apparentMax ?: day.tempMax)?.let { heat ->
+            val gradi = heat.roundToInt()
             val level = when {
-                heat >= 40.0 -> AlertLevel.ARANCIONE
-                heat >= 35.0 -> AlertLevel.GIALLA
+                gradi >= soglie.caldoGradi + ARANCIONE_CALDO_IN_PIU -> AlertLevel.ARANCIONE
+                gradi >= soglie.caldoGradi -> AlertLevel.GIALLA
                 else -> null
             }
             if (level != null) {
@@ -129,14 +136,16 @@ fun derivedAlerts(forecast: Forecast): List<WeatherAlert> {
             }
         }
 
-        // I raggi UV, che sono l'unico fenomeno per cui esisteva gia' un
-        // interruttore nelle impostazioni **senza niente dietro**. La soglia e'
-        // quella scritta sull'interruttore, sei, e non l'ho scelta io: e' il
-        // punto in cui la scala mondiale passa da "moderato" ad "alto".
+        // I raggi UV. La gialla dalla soglia scelta (la stessa della notifica
+        // "UV alto"), l'arancione dal gradino successivo della scala dell'OMS:
+        // 6 "alto" -> 8 "molto alto" -> 11 "estremo". **Con la soglia a 11 un
+        // gradino dopo non c'e'**: l'estremo e' gia' la cima della scala, e
+        // l'avviso nasce direttamente arancione, senza gialla prima.
         day.uvMax?.let { uv ->
+            val indice = uv.roundToInt()
             val level = when {
-                uv >= 8.0 -> AlertLevel.ARANCIONE
-                uv >= 6.0 -> AlertLevel.GIALLA
+                indice >= arancioneUv(soglie.uvIndice) -> AlertLevel.ARANCIONE
+                indice >= soglie.uvIndice -> AlertLevel.GIALLA
                 else -> null
             }
             if (level != null) {
@@ -214,3 +223,31 @@ fun mergeAlerts(official: List<WeatherAlert>, derived: List<WeatherAlert>): List
         }
         ).sortedByDescending { it.level.weight }
 }
+
+/**
+ * **Le soglie che l'avviso nell'app condivide con la notifica**, per gli
+ * argomenti in cui le due misurano la stessa cosa (CONTESTO §84): vento in km/h,
+ * indice UV, percepita del caldo in gradi Celsius. Un numero solo per argomento,
+ * scelto una volta nelle impostazioni; gli interruttori dicono solo dove compare.
+ * La pioggia no: l'app guarda i millimetri del giorno, la notifica quelli di
+ * un'ora, e sono due domande diverse.
+ */
+data class SoglieAvvisi(
+    val ventoKmh: Int = com.caelumweather.prefs.SogliePersonali.VENTO_PREDEFINITO,
+    val uvIndice: Int = com.caelumweather.prefs.SogliePersonali.UV_PREDEFINITO,
+    val caldoGradi: Int = com.caelumweather.prefs.SogliePersonali.CALDO_PREDEFINITO,
+) {
+    companion object {
+        fun da(s: com.caelumweather.prefs.SogliePersonali) = SoglieAvvisi(s.ventoKmh, s.uvIndice, s.caldoGradi)
+    }
+}
+
+/** Il gradino OMS dopo la soglia, o la soglia stessa se e' gia' l'estremo. */
+internal fun arancioneUv(soglia: Int): Int = when {
+    soglia < 8 -> 8
+    soglia < 11 -> 11
+    else -> soglia
+}
+
+private const val ARANCIONE_VENTO_KMH = 100
+private const val ARANCIONE_CALDO_IN_PIU = 4

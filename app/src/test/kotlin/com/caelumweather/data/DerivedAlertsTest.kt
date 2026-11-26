@@ -201,4 +201,55 @@ class DerivedAlertsTest {
         assertEquals(AlertLevel.ARANCIONE, merged.first().level)
         assertEquals(AlertLevel.GIALLA, merged.last().level)
     }
+
+    // ── Le soglie condivise con le notifiche (CONTESTO §84) ──
+
+    private fun giorno(gust: Double? = null, uv: Double? = null, percepita: Double? = null, minima: Double? = null, neve: Double? = null) = DayForecast(
+        date = LocalDate.of(2026, 9, 4),
+        label = "PROVA",
+        gustMax = gust,
+        uvMax = uv,
+        apparentMax = percepita,
+        apparentMin = minima,
+        snowfallSum = neve,
+    )
+
+    private fun livello(f: DayForecast, soglie: SoglieAvvisi, kind: AlertKind) =
+        derivedAlerts(forecastWith(f), soglie).firstOrNull { it.kind == kind }?.level
+
+    @Test
+    fun `il vento nell'app parte dalla soglia scelta, l'arancione resta a 100`() {
+        // 12 m/s sono 43 km/h: niente col 60 predefinito, gialla con la soglia a 40.
+        assertEquals(null, livello(giorno(gust = 12.0), SoglieAvvisi(), AlertKind.VENTO))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(gust = 12.0), SoglieAvvisi(ventoKmh = 40), AlertKind.VENTO))
+        // 17 m/s sono 61 km/h: col predefinito (60) e' gia' gialla, prima serviva 72.
+        assertEquals(AlertLevel.GIALLA, livello(giorno(gust = 17.0), SoglieAvvisi(), AlertKind.VENTO))
+        assertEquals(AlertLevel.ARANCIONE, livello(giorno(gust = 28.0), SoglieAvvisi(ventoKmh = 40), AlertKind.VENTO))
+    }
+
+    @Test
+    fun `l'uv sale di un gradino OMS, e con l'11 nasce arancione`() {
+        assertEquals(null, livello(giorno(uv = 7.0), SoglieAvvisi(uvIndice = 8), AlertKind.UV))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(uv = 8.0), SoglieAvvisi(uvIndice = 8), AlertKind.UV))
+        assertEquals(AlertLevel.ARANCIONE, livello(giorno(uv = 11.0), SoglieAvvisi(uvIndice = 8), AlertKind.UV))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(uv = 6.0), SoglieAvvisi(uvIndice = 6), AlertKind.UV))
+        assertEquals(AlertLevel.ARANCIONE, livello(giorno(uv = 8.0), SoglieAvvisi(uvIndice = 6), AlertKind.UV))
+        // L'estremo e' la cima della scala: nessuna gialla prima.
+        assertEquals(null, livello(giorno(uv = 10.0), SoglieAvvisi(uvIndice = 11), AlertKind.UV))
+        assertEquals(AlertLevel.ARANCIONE, livello(giorno(uv = 11.0), SoglieAvvisi(uvIndice = 11), AlertKind.UV))
+    }
+
+    @Test
+    fun `il caldo nell'app parte dalla soglia, sulla percepita, arancione quattro gradi sopra`() {
+        assertEquals(null, livello(giorno(percepita = 32.0), SoglieAvvisi(caldoGradi = 33), AlertKind.CALDO))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(percepita = 33.0), SoglieAvvisi(caldoGradi = 33), AlertKind.CALDO))
+        assertEquals(AlertLevel.ARANCIONE, livello(giorno(percepita = 37.0), SoglieAvvisi(caldoGradi = 33), AlertKind.CALDO))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(percepita = 37.0), SoglieAvvisi(caldoGradi = 36), AlertKind.CALDO))
+    }
+
+    @Test
+    fun `freddo e neve non cambiano soglia`() {
+        assertEquals(AlertLevel.GIALLA, livello(giorno(minima = -5.0), SoglieAvvisi(), AlertKind.FREDDO))
+        assertEquals(AlertLevel.GIALLA, livello(giorno(neve = 5.0), SoglieAvvisi(), AlertKind.NEVE_GHIACCIO))
+    }
 }

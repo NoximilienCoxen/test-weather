@@ -38,6 +38,7 @@ import com.caelumweather.data.mergeAlerts
 import com.caelumweather.data.riportataAOggi
 import com.caelumweather.prefs.AlertToggleKind
 import com.caelumweather.prefs.AlertToggles
+import com.caelumweather.data.SoglieAvvisi
 import com.caelumweather.prefs.CaptionStyle
 import com.caelumweather.prefs.CardTheme
 import com.caelumweather.prefs.SalaWindUnit
@@ -764,7 +765,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             if (altroPosto) {
                 leggiScorta(place, model)?.let { conservata ->
                     mettiInScena(conservata)
-                    _state.update { it.copy(alerts = derivedAlerts(conservata).filter { a -> permessa(a) }) }
+                    _state.update { it.copy(alerts = derivedAlerts(conservata, SoglieAvvisi.da(_state.value.soglie)).filter { a -> permessa(a) }) }
                 }
             }
             var wait = FIRST_RETRY_MS
@@ -898,7 +899,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         // Filtrano le **calcolate** e non le ufficiali, ed e'
                         // una scelta: un'allerta del servizio meteorologico non la
                         // si nasconde perche' un interruttore e' giu'.
-                        val derived = derivedAlerts(forecast).filter { permessa(it) }
+                        val derived = derivedAlerts(forecast, SoglieAvvisi.da(_state.value.soglie)).filter { permessa(it) }
                         _state.update { it.copy(alerts = derived) }
                         // `launch` figlio, non `viewModelScope`: vedi la nota
                         // sulla qualita' dell'aria poco sopra. Qui il danno
@@ -1607,9 +1608,11 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             AlertKind.TEMPORALI -> t.temporali
             AlertKind.UV -> t.uvAlto
             AlertKind.VENTO -> t.ventoForte
-            // Gli altri fenomeni calcolati - neve, caldo, freddo - non hanno un
-            // interruttore, e passano. Aggiungerne uno vorrebbe dire aggiungere
-            // anche la voce nelle impostazioni, non nasconderli in silenzio.
+            AlertKind.CALDO -> t.caldo
+            AlertKind.FREDDO -> t.freddo
+            AlertKind.NEVE_GHIACCIO -> t.neve
+            // Ogni fenomeno calcolato ha ora il suo interruttore (§84); un tipo
+            // nuovo senza voce nelle impostazioni passa, invece di sparire.
             else -> true
         }
     }

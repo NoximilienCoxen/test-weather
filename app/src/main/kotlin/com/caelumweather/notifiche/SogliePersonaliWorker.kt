@@ -255,8 +255,11 @@ internal fun soglieSuperate(
         }
     }
     if (soglie.caldo) {
-        finestra.filter { it.temperature != null }.maxByOrNull { it.temperature!! }?.let { h ->
-            val gradi = h.temperature!!
+        // **Sulla percepita**, come l'avviso nell'app (§84): con l'afa della
+        // pianura e' la misura che conta. Dove manca, la temperatura.
+        fun percepita(h: HourForecast) = h.apparent ?: h.temperature
+        finestra.filter { percepita(it) != null }.maxByOrNull { percepita(it)!! }?.let { h ->
+            val gradi = percepita(h)!!
             if (gradi.roundToInt() >= soglie.caldoGradi) {
                 superate += SogliaSuperata(TipoSoglia.CALDO, h.time, gradi, soglie.caldoGradi)
             }
@@ -333,7 +336,7 @@ internal fun testiSoglia(
         TipoSoglia.CALDO -> {
             val gradi = "${unita.from(evento.valore).roundToInt()}°"
             val soglia = gradiDiSoglia(evento.soglia, unita)
-            tr("Caldo a $citta: massima di $gradi", "Heat in $citta: high of $gradi", "Hitze in $citta: Höchstwert $gradi", "Chaleur à $citta : maximale de $gradi", "Calor en $citta: máxima de $gradi") to
+            tr("Caldo a $citta: percepiti $gradi", "Heat in $citta: feels like $gradi", "Hitze in $citta: gefühlt $gradi", "Chaleur à $citta : ressenti $gradi", "Calor en $citta: sensación de $gradi") to
                 tr("Prevista $quando. La tua soglia: $soglia. $coda", "Expected $quando. Your threshold: $soglia. $coda", "Erwartet $quando. Deine Schwelle: $soglia. $coda", "Prévue $quando. Votre seuil : $soglia. $coda", "Prevista $quando. Tu umbral: $soglia. $coda")
         }
         TipoSoglia.VENTO -> {
