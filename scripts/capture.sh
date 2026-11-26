@@ -200,6 +200,36 @@ welcome() {
   sleep 2
 }
 
+# ── Tablet: cielo a sinistra, schede a destra (CONTESTO §82.2) ───────────────
+#
+# Da 840 punti di larghezza Sala affianca le schede al cielo. L'emulatore e' un
+# telefono: per un minuto gli si da' lo schermo di un tablet in orizzontale
+# (1920x1200 a 240 dpi, cioe' 1280 punti), si scattano Oggi e la pioggia, e
+# si rimette tutto com'era **anche se qualcosa va storto**, o ogni scatto dopo
+# ritrarrebbe un tablet. Sta subito dopo il benvenuto per la regola di sempre:
+# cio' che non ha mai avuto uno scatto va davanti.
+tablet() {
+  echo "== tablet =="
+  alive || { echo "dispositivo non raggiungibile, salto"; return; }
+  local LINGUA=it
+  adbt shell wm size 1920x1200 >/dev/null 2>&1 || true
+  adbt shell wm density 240 >/dev/null 2>&1 || true
+  sleep 2
+  for sala in 0 1; do
+    adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+    sleep 1
+    adbt shell logcat -c >/dev/null 2>&1 || true
+    avvia --ei sezione "$sala" >/dev/null 2>&1 || true
+    attendi_previsione
+    sleep 3
+    shoot "tablet-sala-$sala"
+  done
+  adbt shell am force-stop "$PKG" >/dev/null 2>&1 || true
+  adbt shell wm size reset >/dev/null 2>&1 || true
+  adbt shell wm density reset >/dev/null 2>&1 || true
+  sleep 2
+}
+
 alive() {
   local state
   state=$(timeout 20 adb get-state 2>/dev/null | tr -d '\r')
@@ -980,6 +1010,7 @@ inglese() {
 }
 
 welcome
+tablet
 session SCURO
 session CHIARO
 inglese CHIARO
