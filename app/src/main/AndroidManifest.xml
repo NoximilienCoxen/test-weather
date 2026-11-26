@@ -22,6 +22,13 @@
     <!-- Pioggia e grandine in arrivo (notifiche/PioggiaInArrivoWorker) e allerte
          ufficiali (notifiche/AllerteUfficialiWorker). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--
+        Android 16: la notifica della pioggia in arrivo puo' salire fra gli
+        "aggiornamenti in tempo reale" (chip nella barra di stato col conto alla
+        rovescia). Permesso normale, concesso all'installazione; l'utente puo'
+        toglierlo dalle impostazioni della notifica.
+    -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
 
     <application
         android:name=".CaelumApp"

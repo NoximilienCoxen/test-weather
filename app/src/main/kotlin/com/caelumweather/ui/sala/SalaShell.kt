@@ -603,6 +603,16 @@ fun SalaShell(
     // erano strette. Con le schede larghe la colonna non c'e' e i margini
     // sono dodici per parte.
     val larghe = state.schedeLarghe
+    // **Tablet e pieghevoli aperti, in orizzontale: cielo a sinistra, schede
+    // a destra.** Da 840 punti di larghezza (la classe "espansa" di Material)
+    // una colonna centrata copriva proprio il centro della scena, e sopra il
+    // pannello restava una striscia di cielo bassa e larga. Affiancate, la
+    // scena si vede intera e il pannello puo' salire quasi fino in cima: il
+    // cielo non gli sta piu' sopra ma accanto. Sotto gli 840 punti non cambia
+    // niente.
+    val affiancato = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >= 840
+    val allineamentoSale = if (affiancato) Alignment.TopEnd else Alignment.TopCenter
+    val margineAffiancato = if (affiancato) 24.dp else 0.dp
     val riservaColonna = if (larghe) 0.dp else 40.dp
     val margineSinistro = if (larghe) 12.dp else 14.dp
     val margineDestro = if (larghe) 12.dp else 16.dp
@@ -705,7 +715,8 @@ fun SalaShell(
             // riceve ogni tocco. Il carosello ricorda la sala da solo.
             if (viaDati < 0.999f) Column(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(allineamentoSale)
+                    .padding(end = margineAffiancato)
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize()
                     .graphicsLayer {
@@ -977,7 +988,10 @@ fun SalaShell(
                                 Dp.Unspecified
                             } else {
                                 with(LocalDensity.current) {
-                                    (c.bottom - 14.dp.toPx() - quotaCielo(this.fontScale) * altezzaRadice).toDp()
+                                    // Affiancate, il cielo sta di lato: sopra
+                                    // il pannello basta il minimo.
+                                    val quota = if (affiancato) QUOTA_CIELO_AFFIANCATO else quotaCielo(this.fontScale)
+                                    (c.bottom - 14.dp.toPx() - quota * altezzaRadice).toDp()
                                 }.coerceAtLeast(260.dp)
                             }
                         }
@@ -1135,7 +1149,8 @@ fun SalaShell(
                 // Lo stesso tetto della colonna qui sopra: la colonna delle
                 // sale sta accanto alle schede, non sul bordo di un tablet.
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(allineamentoSale)
+                    .padding(end = margineAffiancato)
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize(),
             ) { ColonnaScorciatoie(
@@ -1202,6 +1217,7 @@ fun SalaShell(
                         onChooseOraRiepilogo = viewModel::setOraRiepilogo,
                         onToggleOmbrello = viewModel::setAvvisoOmbrello,
                         onChooseOraOmbrello = viewModel::setOraOmbrello,
+                        onToggleCambioPrevisione = viewModel::setAvvisoCambioPrevisione,
                         onToggleSoglia = viewModel::setSoglia,
                         onChooseSoglia = viewModel::setValoreSoglia,
                         onToggleSoglieAltre = viewModel::setSoglieAltreLocalita,
@@ -1421,6 +1437,9 @@ private const val DISSOLVENZA_SCHEDA = 0.65f
  * niente.
  */
 private val LARGHEZZA_SALE = 520.dp
+
+/** Con cielo e schede affiancati (`affiancato`), quanto cielo resta sopra il pannello. */
+private const val QUOTA_CIELO_AFFIANCATO = 0.08f
 
 /** Il velo d'apertura dura al massimo poco piu' di tre secondi: dopo, la guida. */
 private const val ATTESA_GUIDA_MS = 3800L

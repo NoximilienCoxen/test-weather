@@ -171,6 +171,9 @@ class MainActivity : ComponentActivity() {
             if (impostazioni.avvisoOmbrello) {
                 com.caelumweather.notifiche.OmbrelloWorker.pianifica(applicationContext, impostazioni.oraOmbrello, sostituisci = false)
             }
+            if (impostazioni.avvisoCambioPrevisione) {
+                com.caelumweather.notifiche.CambioPrevisioneWorker.pianifica(applicationContext)
+            }
             if (impostazioni.riepilogoMattino) {
                 RiepilogoMattinoWorker.pianifica(applicationContext, impostazioni.oraRiepilogo, sostituisci = false)
             }

@@ -101,6 +101,7 @@ internal fun DrawScope.hoursArt(
 
     shown.forEachIndexed { i, hour ->
         val cx = area.left + step * (i + 0.5f)
+        if (i == 0) colonnaScelta(cx, step * 0.90f, area.top - area.height * 0.04f, area.bottom, ink)
         textCentered(labels[i], cx, area.top, label, if (i == 0) ink.primary else ink.secondary)
         glifoNelRiquadro(
             Rect(cx - glyphSize / 2f, glyphTop, cx + glyphSize / 2f, glyphTop + glyphSize),

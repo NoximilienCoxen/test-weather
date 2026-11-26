@@ -264,6 +264,8 @@ data class Settings(
     /** "Porta l'ombrello": al mattino, solo nei giorni di pioggia. Spento di norma: vedi `OmbrelloWorker`. */
     val avvisoOmbrello: Boolean = false,
     val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
+    /** "La previsione e' cambiata" per domani e dopodomani. Spento di norma: vedi `CambioPrevisioneWorker`. */
+    val avvisoCambioPrevisione: Boolean = false,
     /** Vero da quando il permesso delle notifiche e' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = false,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte, pioggia, UV. */
@@ -422,6 +424,7 @@ class SettingsPrefs(private val context: Context) {
             riepilogoMattino = prefs[KEY_RIEPILOGO] ?: false,
             oraRiepilogo = prefs[KEY_ORA_RIEPILOGO] ?: RiepilogoMattinoWorker.ORA_PREDEFINITA,
             avvisoOmbrello = prefs[KEY_OMBRELLO] ?: false,
+            avvisoCambioPrevisione = prefs[KEY_CAMBIO_PREVISIONE] ?: false,
             oraOmbrello = prefs[KEY_ORA_OMBRELLO]?.takeIf { it in com.caelumweather.notifiche.OmbrelloWorker.ORE_POSSIBILI } ?: com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
             permessoNotificheChiesto = prefs[KEY_PERMESSO_NOTIFICHE] ?: false,
             // Un valore salvato che non e' piu' fra quelli offerti torna al
@@ -524,6 +527,10 @@ class SettingsPrefs(private val context: Context) {
 
     suspend fun setAvvisoOmbrello(acceso: Boolean) {
         context.settingsDataStore.edit { it[KEY_OMBRELLO] = acceso }
+    }
+
+    suspend fun setAvvisoCambioPrevisione(acceso: Boolean) {
+        context.settingsDataStore.edit { it[KEY_CAMBIO_PREVISIONE] = acceso }
     }
 
     suspend fun setOraOmbrello(minuti: Int) {
@@ -630,6 +637,7 @@ class SettingsPrefs(private val context: Context) {
         val KEY_ORA_RIEPILOGO = intPreferencesKey("riepilogo_ora")
         val KEY_OMBRELLO = booleanPreferencesKey("avviso_ombrello")
         val KEY_ORA_OMBRELLO = intPreferencesKey("ombrello_ora")
+        val KEY_CAMBIO_PREVISIONE = booleanPreferencesKey("avviso_cambio_previsione")
         val KEY_PERMESSO_NOTIFICHE =booleanPreferencesKey("permesso_notifiche_chiesto")
         val KEY_SOGLIA_GELO = booleanPreferencesKey("soglia_gelo")
         val KEY_SOGLIA_GELO_GRADI = intPreferencesKey("soglia_gelo_gradi")

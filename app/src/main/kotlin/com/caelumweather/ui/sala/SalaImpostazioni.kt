@@ -89,6 +89,7 @@ fun SalaImpostazioniScreen(
     onChooseOraRiepilogo: (Int) -> Unit,
     onToggleOmbrello: (Boolean) -> Unit = {},
     onChooseOraOmbrello: (Int) -> Unit = {},
+    onToggleCambioPrevisione: (Boolean) -> Unit = {},
     onToggleSoglia: (TipoSoglia, Boolean) -> Unit,
     onChooseSoglia: (TipoSoglia, Int) -> Unit,
     onToggleSoglieAltre: (Boolean) -> Unit,
@@ -362,6 +363,9 @@ fun SalaImpostazioniScreen(
             val chiediPermessoOmbrello = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { concesso -> onToggleOmbrello(concesso) }
+            val chiediPermessoCambio = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { concesso -> onToggleCambioPrevisione(concesso) }
             GruppoImpostazioni(titolo = tr("NOTIFICHE", "NOTIFICATIONS", "BENACHRICHTIGUNGEN", "NOTIFICATIONS", "NOTIFICACIONES"), palette = palette) {
                 VoceInterruttore(
                     titolo = tr("Pioggia e grandine in arrivo", "Rain and hail on the way", "Regen und Hagel im Anmarsch", "Pluie et grêle en approche", "Lluvia y granizo en camino"),
@@ -432,6 +436,31 @@ fun SalaImpostazioniScreen(
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 14.dp),
                     )
                 }
+                FiloGruppo(palette)
+                // **"La previsione e' cambiata"**: domani e dopodomani, solo
+                // per la pioggia che compare o sparisce e per 4 gradi di
+                // massima (vedi `CambioPrevisioneWorker`).
+                VoceInterruttore(
+                    titolo = tr("Previsione cambiata", "Forecast changed", "Vorhersage geändert", "Prévision modifiée", "Previsión cambiada"),
+                    nota = tr(
+                        "se per domani o dopodomani compare o sparisce la pioggia, o la massima cambia di 4°",
+                        "if rain appears or disappears for tomorrow or the day after, or the high moves by 4°",
+                        "wenn für morgen oder übermorgen Regen auftaucht oder verschwindet oder der Höchstwert sich um 4° ändert",
+                        "si la pluie apparaît ou disparaît pour demain ou après-demain, ou si la max bouge de 4°",
+                        "si para mañana o pasado aparece o desaparece la lluvia, o la máxima cambia 4°",
+                    ),
+                    acceso = state.avvisoCambioPrevisione && PioggiaInArrivoWorker.puoNotificare(contesto),
+                    palette = palette,
+                    onCambia = { vuole ->
+                        when {
+                            !vuole -> onToggleCambioPrevisione(false)
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                !PioggiaInArrivoWorker.puoNotificare(contesto) ->
+                                chiediPermessoCambio.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            else -> onToggleCambioPrevisione(true)
+                        }
+                    },
+                )
                 FiloGruppo(palette)
                 VoceInterruttore(
                     titolo = tr("Riepilogo del mattino", "Morning summary", "Morgenüberblick", "Résumé du matin", "Resumen de la mañana"),

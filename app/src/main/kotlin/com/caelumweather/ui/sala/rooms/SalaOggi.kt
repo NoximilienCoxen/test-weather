@@ -274,6 +274,18 @@ fun SalaOggiScreen(
                         color = palette.accent,
                         modifier = Modifier.clickable(onClick = viewModel::backToNow),
                     )
+                    // Sui giorni lontani, quanto fidarsi (`Affidabilita.kt`):
+                    // per ultima, e cede lei se la riga e' stretta.
+                    affidabilitaDelGiorno(state.selectedDay)?.let { quanto ->
+                        Text(
+                            text = quanto,
+                            style = SalaType.pill,
+                            color = palette.inkFaint,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                    }
                 }
             }
 
@@ -344,6 +356,30 @@ fun SalaOggiScreen(
             // ── La giornata, in una curva (a richiesta) ──────────────────────
             // La pioggia dei prossimi minuti, quando c'e': vedi `ProssimaOra`.
             ProssimaOra(state = state, palette = palette, modifier = Modifier.padding(top = 8.dp))
+
+            // Cosa mettersi uscendo, in una riga (`CosaMettersi.kt`). Dalle
+            // ore vere: con il meteo imposto dalla cattura direbbe il vestito
+            // di un cielo che non si vede.
+            val vestito = remember(state.forecast, ora?.time, state.forcedWeatherCode) {
+                val da = ora?.time
+                if (state.forcedWeatherCode != null || da == null) null
+                else cosaMettersi(state.forecast?.allHours.orEmpty(), da)
+            }
+            if (vestito != null) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = palette.inkFaint)) {
+                            append(tr("Da mettere: ", "Wear: ", "Anziehen: ", "À porter : ", "Ponte: "))
+                        }
+                        withStyle(SpanStyle(color = palette.ink)) { append(vestito) }
+                    },
+                    style = SalaType.rowNote,
+                    color = palette.inkSoft,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
 
             ComparsaMorbida(visibile = giornataAperta) {
                 Column {

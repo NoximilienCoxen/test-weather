@@ -205,6 +205,10 @@ internal fun ContenutoAnteprima(giorno: GiornoSettimana, state: UiState, palette
                     maxLines = 1,
                 )
                 Text(text = "${giorno.data} · ${giorno.tipo.inMezzoAllaFrase()}", style = SalaType.rowNote, color = palette.inkFaint, maxLines = 1)
+                // Sui giorni lontani, quanto fidarsi (`Affidabilita.kt`).
+                affidabilitaDelGiorno(giorno.indice)?.let { quanto ->
+                    Text(text = quanto, style = SalaType.rowNote, color = palette.accent, maxLines = 1)
+                }
             }
             IconaMeteo(giorno.glifo, modifier = Modifier.size(34.dp))
         }

@@ -256,6 +256,7 @@ data class UiState(
     val oraRiepilogo: Int = RiepilogoMattinoWorker.ORA_PREDEFINITA,
     val avvisoOmbrello: Boolean = false,
     val oraOmbrello: Int = com.caelumweather.notifiche.OmbrelloWorker.ORA_PREDEFINITA,
+    val avvisoCambioPrevisione: Boolean = false,
     /** Se il permesso delle notifiche e' gia' stato chiesto una volta. */
     val permessoNotificheChiesto: Boolean = true,
     /** Gli avvisi personali a soglia: gelo, caldo, vento forte. */
@@ -693,6 +694,7 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
                         oraRiepilogo = settings.oraRiepilogo,
                         avvisoOmbrello = settings.avvisoOmbrello,
                         oraOmbrello = settings.oraOmbrello,
+                        avvisoCambioPrevisione = settings.avvisoCambioPrevisione,
                         permessoNotificheChiesto = settings.permessoNotificheChiesto,
                         soglie = settings.soglie,
                     )
@@ -1681,6 +1683,17 @@ class WeatherViewModel(app: Application) : AndroidViewModel(app) {
             com.caelumweather.notifiche.OmbrelloWorker.annulla(app)
         }
         viewModelScope.launch { prefs.setAvvisoOmbrello(acceso) }
+    }
+
+    fun setAvvisoCambioPrevisione(acceso: Boolean) {
+        val app = getApplication<Application>()
+        _state.update { it.copy(avvisoCambioPrevisione = acceso) }
+        if (acceso) {
+            com.caelumweather.notifiche.CambioPrevisioneWorker.pianifica(app)
+        } else {
+            com.caelumweather.notifiche.CambioPrevisioneWorker.annulla(app)
+        }
+        viewModelScope.launch { prefs.setAvvisoCambioPrevisione(acceso) }
     }
 
     fun setOraOmbrello(minuti: Int) {

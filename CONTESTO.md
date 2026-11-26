@@ -8766,3 +8766,132 @@ app chiusa. Adesso scorrimento e sfumatura si mettono solo quando il tetto c'e'.
 della release sull'emulatore l'avrebbe preso, ma gira dopo la pubblicazione di
 `apk-prova`: lezione, nessuna APK va data a qualcuno prima che un emulatore
 l'abbia avviata (il job `prova` poi e' stato tolto, §79).
+
+## 81. Il giro di novembre: Expressive, sei sale, mare a parte, ombrello
+
+Ramo `ccr-660ed342-kfqy0q`, dal 20 al 25 novembre 2026. Le novita' sono state
+compilate nella sessione e mandate in chat come APK di debug, un giro per
+richiesta; arrivano a `main` con una sola pull request. **Questa sezione
+corregge le precedenti dove le contraddice** (§60, §78 e le parti sulla
+"settimana").
+
+### 81.1 Le sale adesso
+`SalaRoom`: OGGI I, PIOGGIA II, LUNA III, ARIA IV, VENTO V, UV VI, MARE VII.
+- **La settimana non e' piu' una sala.** Ripeteva Oggi: vive dentro Oggi, una
+  riga "LA SETTIMANA" (`sommarioDella`) sopra la striscia dei giorni. In
+  `SalaSettimana.kt` restano solo gli aiutanti.
+- **Il mare ha una sala sua**, l'ultima, e **solo dove c'e'**
+  (`UiState.mareMostrato`); altrove non esiste e non ha puntino. Il vento non
+  porta piu' il mare. La frase sotto il titolo usa la stessa scala Douglas della
+  riga (`StatoDelMare`): due scale davano due giudizi sulla stessa onda.
+- Gli indici di `scripts/capture.sh` seguono: oggi 0, pioggia 1, luna 2,
+  aria 3, vento 4, uv 5, mare 6 (scatto `*-mare`).
+
+### 81.2 Tutto visibile, piu' denso
+Le schede non scorrono due volte. Si era provata una scheda a due facce
+("altri dettagli" sul retro): **rifiutata**, le informazioni nascoste non
+piacciono. Si tiene tutto davanti e si stringe: `QUOTA_CIELO` e' 0.30 (non piu'
+0.40), titolo 28sp, pannello 20/14 di margine. Con il testo ingrandito il cielo
+cede ancora (`quotaCielo(fontScale)`, fino a 0.08). `SchedeNelTettoRenderTest`
+misura ogni sala dentro il tetto, anche a 1.3 e 1.6: i limiti (462 e 602 dp
+su 891) sono stime per un telefono basso, non misure dell'app intera.
+
+### 81.3 Material 3 Expressive, ibrido
+Carta, inchiostro e cielo restano di Caelum; dal sistema arrivano forme,
+movimento e componenti. `MaterialExpressiveTheme` con
+`MotionScheme.expressive()`; material3 1.5 (in BOM dalla 2026.11.01).
+- Forme che cedono al tocco (`formaCheCede`, `SalaMovimento.kt`), scelte
+  segmentate come ToggleButton collegati, interruttore Expressive,
+  `LoadingIndicator` in attesa, indicatore del trascinamento che si trasforma
+  (`IndicatoreCielo.kt`, Cookie9Sided/SoftBurst).
+- **I puntini in basso**: il trattino segue il dito; arrivando, il puntino
+  della sala diventa per un attimo la sua icona viva (`SalaPuntinoVivo.kt`).
+- **Nessuna icona ruota.** Una rotazione interrotta a meta' lasciava l'icona
+  storta; l'utente le voleva ferme. Le icone che reagiscono saltano e
+  scalano, e alla fine tornano a 1 anche se interrotte (`NonCancellable`).
+- La maniglia della barra delle ore passa da disco a pillola in continuo (prima
+  un ovale a scatti). "Torna all'ora attuale" e' un bottone di 38 dp in una
+  riga fissa: piccolo si sbagliava col pollice.
+- **Colori del telefono**: non piu' un tinteggio sopra la carta ma una
+  tavolozza intera presa dagli schemi dinamici (`TintaTelefono`,
+  `conTelefono`).
+
+### 81.4 Cosa e' stato aggiunto
+- **Anteprima tenendo premuto un giorno** (`AnteprimaGiorno.kt`), fumetto in
+  un Popup; per TalkBack un'azione lunga che lo chiude da sola in 6 s.
+- **Pioggia nei prossimi minuti** (`ProssimaOra.kt`): una riga in Oggi, solo
+  oggi, solo all'ora attuale, solo se entro due ore bagna.
+- **Pioggia**: colonne "a bicchiere", probabilita' come binario e millimetri
+  come riempimento.
+- **UV rifatta**: categoria OMS col suo colore, scala, colonne del giorno,
+  consiglio, ozono; resta la luce per le foto.
+- **Notifica "porta l'ombrello"** (`notifiche/OmbrelloWorker.kt`): al mattino
+  all'ora scelta, solo se fra adesso e le 22 un'ora porta >= 0.3 mm con
+  probabilita' >= 40%. Catena di lavori singoli come il riepilogo.
+- **Widget**: colori carta calda di Caelum, testi su due righe invece di
+  tagliati, marea che non si stira; il widget del mare si aggiorna da solo al
+  ridimensionamento leggendo una scorta su disco (`loadConScorta`).
+
+### 81.5 Trappole di questo giro
+- **La brina rubava i tocchi** sotto lo zero (Sapporo): il velo era un
+  fratello sopra il contenuto e, in Compose, prende il tocco il piu' alto. Ora
+  il gesto si legge sul genitore, passaggio Initial, senza consumare
+  (`scioglieBrina`); la presenza si legge **nel disegno**, non nella
+  composizione, se no ogni fotogramma ricompone la scheda. `BrinaTocchiTest`
+  tocca con MotionEvent veri.
+- Maven Central risponde 429 a Robolectric: nei test
+  `-Drobolectric.dependency.repo.url=https://maven-central.storage-download.googleapis.com/maven2`
+  in `JAVA_TOOL_OPTIONS`. Uno script d'init globale in `~/.gradle` non e'
+  consentito dalla sessione.
+- `scripts/import_audit.py --baseline` riscrive la base: non lanciarlo per
+  controllare.
+
+### 81.6 Non provato in mano
+La notifica dell'ombrello in un mattino vero, la riga dei prossimi minuti dal
+vivo, la sala del mare su una costa, i widget ridimensionati sulla Home,
+TalkBack, il testo grande non lineare di Android 14, e un tocco che a Sapporo
+ogni tanto si perdeva (causa probabile corretta, non confermata).
+
+## 82. Aggiornamenti e funzioni nuove del 26 novembre 2026
+
+### 82.1 Dipendenze
+Lette con `scripts/probe_deps.py` (Google Maven ora si raggiunge dal
+container): Compose BOM 2026.11.01 (Compose 1.13, material3 1.5.0 gia'
+dentro), AGP 9.5.3, Gradle 9.9.2, lifecycle 2.11.1, Wear Compose 1.7.2,
+kotlinx-serialization 1.13.0.
+- **Compose 1.13 vuole compileSdk 37.1**: tutti i moduli compilano contro la
+  37.2 (`compileSdk { version = release(37) { minorApiLevel = 2 } }`); la CI
+  installa `platforms;android-37.2`.
+- **fragment 1.9.1 dichiarato**: play-services-wearable porta la 1.1, e il lint
+  di AGP 9.5.3 blocca `registerForActivityResult` con quella.
+- **Robolectric resta 4.17**: la 4.18.1 c'e', ma le sue dipendenze nuove da
+  qui prendevano 429 da Maven Central a ogni tentativo. Da alzare quando la
+  rete lo permette (solo test).
+
+### 82.2 Funzioni
+- **Conto alla rovescia della pioggia** (`PioggiaInArrivoWorker`): con almeno
+  5 minuti di anticipo la notifica ha un cronometro che conta all'indietro da
+  solo fino all'inizio, e su Android 16 chiede di diventare un aggiornamento in
+  tempo reale (`setRequestPromotedOngoing`, `POST_PROMOTED_NOTIFICATIONS`,
+  `ProgressStyle`). Resta finche' non comincia, scade un quarto d'ora dopo.
+  L'istante si calcola dalla distanza fra le ore del posto, non dal fuso del
+  telefono (`contoAllaRovescia`).
+- **Cosa mettersi** (`CosaMettersi.kt`): riga "Da mettere:" in Oggi, dalla
+  percepita minima delle dieci ore dopo quella mostrata (mai oltre le 23), piu'
+  ombrello o scarpe, "a strati", vento, occhiali e crema.
+- **Quanto fidarsi** (`Affidabilita.kt`): dal terzo giorno "affidabilita'
+  discreta", dal quinto "solo la tendenza", accanto al giorno scelto e nel
+  fumetto dell'anteprima. Nessun ensemble: e' l'anticipo, detto onestamente.
+- **Previsione cambiata** (`CambioPrevisioneWorker`, spento di norma): ogni tre
+  ore domani e dopodomani; avvisa se la pioggia compare o sparisce o la massima
+  si sposta di 4 gradi rispetto all'ultima previsione di cui si e' parlato.
+- **Tablet e pieghevoli in orizzontale** (da 840 dp): cielo a sinistra,
+  colonna delle schede a destra, pannello fino quasi in cima
+  (`QUOTA_CIELO_AFFIANCATO`).
+- **Widget**: oggi e "ORA" in una pillola tonale (`colonnaScelta`), barrette
+  della settimana piu' piene.
+- Il riquadro delle impostazioni rapide c'era gia' (`tile/RiquadroMeteo`).
+
+### 82.3 Non provato in mano
+Il chip nella barra di stato di Android 16, l'avviso di cambio previsione con
+dati veri, la disposizione affiancata su un tablet vero.
