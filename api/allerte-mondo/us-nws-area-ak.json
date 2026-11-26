@@ -10,6 +10,79 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
+                "areaDesc": "St Lawrence Island",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ827"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ827"
+                ],
+                "references": [],
+                "sent": "2026-11-26T03:39:00-09:00",
+                "effective": "2026-11-26T03:39:00-09:00",
+                "onset": "2026-11-26T03:39:00-09:00",
+                "expires": "2026-11-26T16:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 3:39AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow are likely today and Friday with southeast winds\ngusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 1 to 3 inches expected through Friday evening.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 261239"
+                    ],
+                    "NWSheadline": [
+                        "Snow and Wind Likely Today and Friday"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.697a20ee9b0156dda6c849e7cc3fe57f6eff4af3.001.1",
             "type": "Feature",
             "geometry": null,
@@ -341,5 +414,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-26T12:13:27+00:00"
+    "updated": "2026-11-26T12:41:18+00:00"
 }
