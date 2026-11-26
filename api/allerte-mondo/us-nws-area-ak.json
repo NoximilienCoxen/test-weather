@@ -10,171 +10,13 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1",
-                "areaDesc": "Central Beaufort Sea Coast; Eastern Beaufort Sea Coast",
-                "geocode": {
-                    "SAME": [
-                        "002185"
-                    ],
-                    "UGC": [
-                        "AKZ804",
-                        "AKZ805"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ804",
-                    "https://api.weather.gov/zones/forecast/AKZ805"
-                ],
-                "references": [
-                    {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.74144808c7c9543ef104995c8e6d85f6c224bec8.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.74144808c7c9543ef104995c8e6d85f6c224bec8.001.1",
-                        "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T13:45:00-09:00"
-                    }
-                ],
-                "sent": "2026-11-25T06:33:00-09:00",
-                "effective": "2026-11-25T06:33:00-09:00",
-                "onset": "2026-11-25T06:33:00-09:00",
-                "expires": "2026-11-25T16:00:00-09:00",
-                "ends": "2026-11-27T15:00:00-09:00",
-                "status": "Actual",
-                "messageType": "Update",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Likely",
-                "urgency": "Expected",
-                "event": "Winter Weather Advisory",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Weather Advisory issued November 25 at 6:33AM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central and Eastern Beaufort Sea Coast.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. A brief decrease in winds is expected\nWednesday before winds strengthen once more Thursday.",
-                "instruction": "Use caution while traveling, especially in open areas.",
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "WSWNSB"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK41 PAFG 251533"
-                    ],
-                    "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "VTEC": [
-                        "/O.CON.PAFG.WW.Y.0100.000000T0000Z-261128T0000Z/"
-                    ],
-                    "eventEndingTime": [
-                        "2026-11-27T15:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1,2026-11-24T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1,2026-11-23T12:00:00-09:00"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "WWY"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727900b14ddcee4bb61b4971436d46d8d7f2c103.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.727900b14ddcee4bb61b4971436d46d8d7f2c103.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.727900b14ddcee4bb61b4971436d46d8d7f2c103.001.1",
-                "areaDesc": "Fairbanks Metro Area",
-                "geocode": {
-                    "SAME": [
-                        "002090"
-                    ],
-                    "UGC": [
-                        "AKZ844"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ844"
-                ],
-                "references": [],
-                "sent": "2026-11-24T13:23:00-09:00",
-                "effective": "2026-11-24T13:23:00-09:00",
-                "onset": "2026-11-24T13:23:00-09:00",
-                "expires": "2026-11-25T13:30:00-09:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Unknown",
-                "certainty": "Unknown",
-                "urgency": "Unknown",
-                "event": "Air Quality Alert",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Air Quality Alert issued November 24 at 1:23PM AKST by NWS Fairbanks AK",
-                "description": "The Department of Environmental Conservation has issued an Air\nQuality Alert which is IN EFFECT UNTIL 2 PM AKST THURSDAY.\n\nNorth Pole has a Stage 2 alert.\n\nFairbanks has no alert.",
-                "instruction": null,
-                "response": "Monitor",
-                "note": "Non-Weather Emergency Message. Not sent to IPAWS.",
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "AQAAFG"
-                    ],
-                    "WMOidentifier": [
-                        "AEAK79 PAFG 242223"
-                    ],
-                    "NWSheadline": [
-                        "AIR QUALITY ALERT IN EFFECT UNTIL 2 PM AKST THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "NWS"
-                    ],
-                    "NationalWeatherService": [
-                        "AQA"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b392a8d36e1776aee7585c1cf156d520d2d7ac43.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b392a8d36e1776aee7585c1cf156d520d2d7ac43.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.b392a8d36e1776aee7585c1cf156d520d2d7ac43.001.1",
+                "id": "urn:oid:2.49.0.1.840.0.4a477cce3bfca22878d1d994a1e0f6fbf07976e2.001.1",
                 "areaDesc": "City and Borough of Sitka; Western Kupreanof and Kuiu Island; City and Borough of Wrangell; Ketchikan Gateway Borough",
                 "geocode": {
                     "SAME": [
@@ -197,10 +39,10 @@
                     "https://api.weather.gov/zones/forecast/AKZ330"
                 ],
                 "references": [],
-                "sent": "2026-11-24T13:10:00-09:00",
-                "effective": "2026-11-24T13:10:00-09:00",
-                "onset": "2026-11-24T13:10:00-09:00",
-                "expires": "2026-11-25T13:15:00-09:00",
+                "sent": "2026-11-25T13:41:00-09:00",
+                "effective": "2026-11-25T13:41:00-09:00",
+                "onset": "2026-11-25T13:41:00-09:00",
+                "expires": "2026-11-26T01:45:00-09:00",
                 "ends": null,
                 "status": "Actual",
                 "messageType": "Alert",
@@ -211,8 +53,8 @@
                 "event": "Special Weather Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Juneau AK",
-                "headline": "Special Weather Statement issued November 24 at 1:10PM AKST by NWS Juneau AK",
-                "description": "Tidal levels across the panhandle are expected to be running high\nfor the next few days. These high tides combined with passing low\npressures and their associated fronts could create some\npotentially higher than normal water levels. Wind direction,\nmagnitude, and timing with these systems will be monitored closely as\na combination of high tide and winds in an onshore direction\ncould lead to tides exceeding astronomical high tide by a foot or\nmore.",
+                "headline": "Special Weather Statement issued November 25 at 1:41PM AKST by NWS Juneau AK",
+                "description": "Tidal levels across the panhandle are expected to be running high\nfor the next few days. These high tides combined with passing low\npressures and their associated fronts could create some\npotentially higher than normal water levels. Confidence has\nincreased for a slightly weaker system moving into the panhandle\nduring peak tides. Tides may exceed astronomical high tide, though\nthe likelihood of exceeding a foot has been reduced significantly.",
                 "instruction": null,
                 "response": "Execute",
                 "note": null,
@@ -221,7 +63,7 @@
                         "SPSAJK"
                     ],
                     "WMOidentifier": [
-                        "WWAK87 PAJK 242210"
+                        "WWAK87 PAJK 252241"
                     ],
                     "NWSheadline": [
                         "HIGH TIDAL WATER LEVELS THROUGH THURSDAY"
@@ -250,61 +92,216 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7f15d380552b4a026ce6e4f6d32ee31699d642a6.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7f15d380552b4a026ce6e4f6d32ee31699d642a6.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.7f15d380552b4a026ce6e4f6d32ee31699d642a6.001.1",
-                "areaDesc": "Shemya and Attu Islands",
+                "id": "urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
+                "areaDesc": "Kuskokwim Delta Coast and Nunivak Island",
                 "geocode": {
                     "SAME": [
-                        "002016"
+                        "002050"
                     ],
                     "UGC": [
-                        "AKZ791"
+                        "AKZ755"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ791"
+                    "https://api.weather.gov/zones/forecast/AKZ755"
+                ],
+                "references": [],
+                "sent": "2026-11-25T10:30:00-09:00",
+                "effective": "2026-11-25T10:30:00-09:00",
+                "onset": "2026-11-26T18:00:00-09:00",
+                "expires": "2026-11-26T06:15:00-09:00",
+                "ends": "2026-11-28T06:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Minor",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Coastal Flood Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Coastal Flood Advisory issued November 25 at 10:30AM AKST until November 28 at 6:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Coastal Flooding with water levels 1.5 to 3.0 feet above\nthe highest tide line possible.\n\n* WHERE...Kipnuk and Kwigillingok\n\n* WHEN...6 PM Thursday to 6 AM Saturday. Particularly the\novernight tide cycles Thursday night and Friday night.\n\n* IMPACTS...Potential flooding of low lying areas, including\nlowest portions of boardwalks. Coastal erosion possible.\n\n* ADDITIONAL DETAILS...A long duration of southerly winds combined\nwith the high tide cycle will increase the potential for\nelevated water levels, high surf, and coastal erosion Thursday\nnight and Friday night. For Saturday Night, though winds will be\nweaker and oriented more offshore, the tide cycle will remain\nhigh. Water levels are expected to be lower compared to Thursday\nNight and Friday, however there still is some potential for\ncoastal erosion. Stay tuned for forecast updates.",
+                "instruction": "A coastal flood advisory indicates that onshore winds and tides\nwill combine to generate flooding of low areas along the shore.",
+                "response": "Monitor",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "CFWALU"
+                    ],
+                    "WMOidentifier": [
+                        "WHAK42 PAFC 251930"
+                    ],
+                    "NWSheadline": [
+                        "COASTAL FLOOD ADVISORY IN EFFECT FROM 6 PM THURSDAY TO 6 AM AKST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFC.CF.Y.0007.261127T0300Z-261128T1500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-28T06:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "CFY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1",
+                "areaDesc": "Central Beaufort Sea Coast",
+                "geocode": {
+                    "SAME": [
+                        "002185"
+                    ],
+                    "UGC": [
+                        "AKZ804"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ804"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3e7965afb477e48c0fa1b32c6c8a1813a3ce5974.001.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.3e7965afb477e48c0fa1b32c6c8a1813a3ce5974.001.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-24T04:28:00-09:00"
+                        "sent": "2026-11-25T06:33:00-09:00"
                     }
                 ],
-                "sent": "2026-11-24T11:37:00-09:00",
-                "effective": "2026-11-24T11:37:00-09:00",
-                "onset": "2026-11-25T01:00:00-09:00",
-                "expires": "2026-11-25T09:00:00-09:00",
-                "ends": "2026-11-25T09:00:00-09:00",
+                "sent": "2026-11-25T07:52:00-09:00",
+                "effective": "2026-11-25T07:52:00-09:00",
+                "onset": "2026-11-25T07:52:00-09:00",
+                "expires": "2026-11-25T22:00:00-09:00",
+                "ends": "2026-11-27T15:00:00-09:00",
                 "status": "Actual",
                 "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Weather Advisory issued November 25 at 7:52AM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central Beaufort Sea Coast.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. A brief decrease in winds is expected\nWednesday before winds strengthen once more Thursday.",
+                "instruction": "Use caution while traveling, especially in open areas. Visit\n511.alaska.gov or call 5 1 1 for the latest road conditions.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWNSB"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFG 251652"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.CON.PAFG.WW.Y.0100.000000T0000Z-261128T0000Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T15:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.74144808c7c9543ef104995c8e6d85f6c224bec8.001.1,2026-11-24T13:45:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1,2026-11-24T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1,2026-11-23T12:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2",
+                "areaDesc": "Eastern Beaufort Sea Coast",
+                "geocode": {
+                    "SAME": [
+                        "002185"
+                    ],
+                    "UGC": [
+                        "AKZ805"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ805"
+                ],
+                "references": [],
+                "sent": "2026-11-25T07:52:00-09:00",
+                "effective": "2026-11-25T07:52:00-09:00",
+                "onset": "2026-11-25T07:52:00-09:00",
+                "expires": "2026-11-25T22:00:00-09:00",
+                "ends": "2026-11-27T15:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
                 "category": "Met",
                 "severity": "Severe",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "High Wind Warning",
+                "event": "Winter Storm Warning",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Anchorage AK",
-                "headline": "High Wind Warning issued November 24 at 11:37AM AKST until November 25 at 9:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...South winds 40 to 60 mph with gusts up to 75 mph expected.\n\n* WHERE...Shemya and Attu Islands.\n\n* WHEN...From 1 AM to 9 AM AKST Wednesday.\n\n* IMPACTS...High winds may move loose debris, damage property, and\ncause power outages. Travel will be difficult.\n\n* ADDITIONAL DETAILS...The strongest winds are expected between 5 and\n8 AM AKST Wednesday morning, with winds decreasing, but remaining\nfairly gusty after 9 AM.",
-                "instruction": "People are urged to secure loose objects that could be blown around\nor damaged by the wind. Prepare for the possibility of widespread\npower outages. Use caution if you must drive.",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Storm Warning issued November 25 at 7:52AM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Periods of blizzard conditions. Winds gusting as high as 45\nmph.\n\n* WHERE...Point Thompson.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. No significant visibility reductions\nare expected at Barter Island/Kaktovik due to open water limiting\nthe availability of blowable snow to the east.",
+                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency.",
                 "response": "Prepare",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "NPWALU"
+                        "WSWNSB"
                     ],
                     "WMOidentifier": [
-                        "WWAK72 PAFC 242037"
+                        "WWAK41 PAFG 251652"
                     ],
                     "NWSheadline": [
-                        "HIGH WIND WARNING REMAINS IN EFFECT FROM 1 AM TO 9 AM AKST WEDNESDAY"
+                        "WINTER STORM WARNING IN EFFECT UNTIL 3 PM AKST FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -315,10 +312,10 @@
                         "WXR"
                     ],
                     "VTEC": [
-                        "/O.CON.PAFC.HW.W.0017.261125T1000Z-261125T1800Z/"
+                        "/O.NEW.PAFG.WS.W.0029.261125T1652Z-261128T0000Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-25T09:00:00-09:00"
+                        "2026-11-27T15:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -327,15 +324,15 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "HWW"
+                        "WSW"
                     ],
                     "NationalWeatherService": [
-                        "HWW"
+                        "WSW"
                     ]
                 }
             }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-25T15:45:00+00:00"
+    "updated": "2026-11-26T00:32:44+00:00"
 }
