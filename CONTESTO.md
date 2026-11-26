@@ -8932,8 +8932,9 @@ dell'orologio), lint (54 avvisi, 0 errori), dichiarazioni mai nominate (28).
   `SalaRoom`, il parametro inutile di `luna`.
 - **Un doppione**: la regola "ora da ombrello" (0,3 mm e 40%) era in due posti;
   ora `oraDaOmbrello` in `OmbrelloWorker.kt`, usata anche da `CosaMettersi`.
-- **Lint**: controlli `SDK_INT < O` inutili con minSdk 26, `mipmap-anydpi-v26`
-  -> `mipmap-anydpi`, `SharedPreferences.edit {}` e `createBitmap` di core-ktx,
+- **Lint**: controlli `SDK_INT < O` inutili con minSdk 26
+  (`mipmap-anydpi-v26` resta: senza qualificatore aapt perde le icone
+  adattive, provato), `SharedPreferences.edit {}` e `createBitmap` di core-ktx,
   `mutableFloatStateOf`, offset dell'interruttore letto nel disegno,
   `LocalWindowInfo` invece di `screenWidthDp`, `app_name` non traducibile.
 - **Lasciato, con il perche'**: `Image.Builder()` deprecato nel Tile (la via
