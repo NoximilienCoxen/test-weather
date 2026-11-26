@@ -1557,12 +1557,14 @@ fun VoceInterruttore(
             if (!nota.isNullOrEmpty()) {
                 if (campanella) {
                     // **La campanella sta dentro il testo**, come una lettera:
-                    // va a capo con la nota invece di spingerla. A TalkBack la
-                    // si dice a parole, perche' un disegno non si legge.
-                    val parola = tr("Notifica", "Notification", "Benachrichtigung", "Notification", "Notificación")
+                    // va a capo con la nota invece di spingerla. Per TalkBack ha
+                    // la sua descrizione, "Notifica" (`Campanella`).
                     Text(
                         text = androidx.compose.ui.text.buildAnnotatedString {
-                            appendInlineContent(CAMPANELLA, "[$parola]")
+                            // Uno spazio a larghezza zero: il ripiego non puo' essere
+                            // vuoto, e "Notifica" qui si sentirebbe due volte
+                            // (`ImpostazioniRenderTest` lo conta).
+                            appendInlineContent(CAMPANELLA, "\u200B")
                             append(" ")
                             append(nota)
                         },
@@ -1577,9 +1579,7 @@ fun VoceInterruttore(
                         ),
                         style = SalaType.rowNote,
                         color = palette.inkFaint,
-                        modifier = Modifier
-                            .padding(top = 3.dp)
-                            .semantics { contentDescription = "$parola. $nota" },
+                        modifier = Modifier.padding(top = 3.dp),
                     )
                 } else {
                     Text(
@@ -1784,7 +1784,8 @@ private const val CAMPANELLA = "campanella"
  */
 @Composable
 private fun Campanella(colore: Color) {
-    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+    val descrizione = tr("Notifica", "Notification", "Benachrichtigung", "Notification", "Notificación")
+    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize().semantics { contentDescription = descrizione }) {
         val u = size.minDimension / 24f
         val corpo = Path().apply {
             moveTo(12f * u, 3f * u)

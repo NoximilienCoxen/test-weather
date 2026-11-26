@@ -8957,8 +8957,12 @@ dicevano quale compariva nell'app e quale suonava.
   Vento, Raggi UV, Temperatura, Allerte ufficiali, Riepiloghi
   (`SottotitoloGruppo`). Dentro ogni argomento prima "Nell'app ·", poi le
   notifiche, segnate da una campanella dentro il testo (`VoceInterruttore(
-  campanella = true)`, letta "Notifica" da TalkBack) o dalla parola
-  "Notifica ·" (`SegnoNotifica`, da scegliere).
+  campanella = true)`). **Scelta la campanella** sulla parola "Notifica ·", che
+  mandava a capo le note. L'icona ha `contentDescription` "Notifica"; il
+  segnaposto del testo ha come ripiego uno spazio a larghezza zero, se no
+  TalkBack direbbe "Notifica" due volte (`ImpostazioniRenderTest` lo conta
+  nell'albero di accessibilita' unito). La nota in fondo comincia con "Le voci
+  con la campanella arrivano come notifica".
 - **Le chiavi DataStore non sono cambiate**: solo posizione, titoli e note.
   Le soglie si chiamano Pioggia forte, Raffiche, UV alto, Gelo, Caldo.
 - **La nota in fondo dice solo il vero**: tacciono di notte (22-7) solo le
@@ -8974,4 +8978,9 @@ dicevano quale compariva nell'app e quale suonava.
   interruttore per caldo, freddo e neve calcolati.
 - `.claude/settings.json`: `attribution` vuota e `sessionUrl: false`, piu'
   `includeCoAuthoredBy: false` per le versioni vecchie: Claude Code non
-  aggiunge piu' trailer ne' link di sessione (§9, §11.2).
+  aggiunge piu' trailer ne' link di sessione (§9, §11.2). I commit di questo
+  ramo sono stati spolverati prima dell'unione; **`main` no, per scelta**
+  (contiene ancora le firme delle sessioni passate). Se un giorno lo si
+  riscrive: prima un tag di backup, poi va risistemato cio' che punta ai commit
+  vecchi (il corpo della release `apk-latest`, gli `INFO.txt` su
+  `ci-artifacts`, ogni altro clone del repository).

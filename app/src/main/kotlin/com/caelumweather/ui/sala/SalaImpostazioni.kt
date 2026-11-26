@@ -102,7 +102,6 @@ fun SalaImpostazioniScreen(
     onAggiorna: () -> Unit,
     onApriLegali: () -> Unit,
     onClose: () -> Unit,
-    segno: SegnoNotifica = SegnoNotifica.CAMPANELLA,
 ) {
     Column(
         modifier = Modifier
@@ -347,12 +346,11 @@ fun SalaImpostazioniScreen(
                 else -> cambia(true)
             }
 
-            // Le note cominciano tutte allo stesso modo: "Nell'app ·" per cio'
-            // che compare nelle schermate, "Notifica ·" (o la campanella) per
-            // cio' che suona.
-            val parola = segno == SegnoNotifica.PAROLA
+            // Le note dicono tutte di che cosa si tratta: "Nell'app ·" per cio'
+            // che compare nelle schermate, la campanella per cio' che suona.
+            // Si era provata anche la parola "Notifica ·": allungava le note
+            // fino ad andare a capo, ed e' stata scelta la campanella.
             fun nellApp(testo: String) = tr("Nell'app", "In the app", "In der App", "Dans l'app", "En la app") + " · " + testo
-            fun suona(testo: String) = if (parola) tr("Notifica", "Notification", "Benachrichtigung", "Notification", "Notificación") + " · " + testo else testo
 
             @Composable
             fun VoceSoglia(tipo: TipoSoglia) {
@@ -374,7 +372,7 @@ fun SalaImpostazioniScreen(
                         TipoSoglia.PIOGGIA -> tr("Pioggia forte", "Heavy rain", "Starkregen", "Pluie forte", "Lluvia fuerte")
                         TipoSoglia.UV -> tr("UV alto", "High UV", "Hoher UV-Index", "UV élevés", "UV alto")
                     },
-                    nota = suona(
+                    nota = (
                         when (tipo) {
                             TipoSoglia.GELO ->
                                 if (accesa) tr("minima a $s o sotto", "low of $s or below", "Tiefstwert $s oder darunter", "minimale à $s ou moins", "mínima de $s o menos")
@@ -391,12 +389,12 @@ fun SalaImpostazioniScreen(
                             TipoSoglia.UV ->
                                 if (accesa) tr("da $s", "from $s", "ab $s", "dès $s", "desde $s")
                                 else tr("quando l'indice UV passa una soglia tua", "when the UV index passes your threshold", "wenn der UV-Index deine Schwelle überschreitet", "quand l'indice UV dépasse votre seuil", "cuando el índice UV supera tu umbral")
-                        },
+                        }
                     ),
                     acceso = accesa,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { vuole ->
                         notifica(vuole, chiedi = {
                             sogliaInAttesa = tipo
@@ -424,11 +422,11 @@ fun SalaImpostazioniScreen(
                 // arrivo, le allerte o la previsione cambiata, che girano a ogni
                 // ora; ombrello e riepilogo arrivano all'ora scelta.
                 nota = tr(
-                    "Pioggia forte, Raffiche, UV alto, Gelo e Caldo tacciono fra le 22 e le 7. Sono previsioni: allerte ufficiali sono solo «Arancioni e rosse».",
-                    "Heavy rain, Gusts, High UV, Frost and Heat stay quiet from 10 pm to 7 am. They are forecasts: only «Orange and red» are official warnings.",
-                    "Starkregen, Böen, Hoher UV-Index, Frost und Hitze schweigen von 22 bis 7 Uhr. Es sind Vorhersagen: amtliche Warnungen sind nur «Orange und rot».",
-                    "Pluie forte, Rafales, UV élevés, Gel et Chaleur se taisent de 22 h à 7 h. Ce sont des prévisions : seules « Orange et rouges » sont des alertes officielles.",
-                    "Lluvia fuerte, Rachas, UV alto, Helada y Calor callan de 22 a 7 h. Son previsiones: solo «Naranjas y rojas» son alertas oficiales.",
+                    "Le voci con la campanella arrivano come notifica. Pioggia forte, Raffiche, UV alto, Gelo e Caldo tacciono fra le 22 e le 7. Sono previsioni: allerte ufficiali sono solo «Arancioni e rosse».",
+                    "Items with the bell arrive as notifications. Heavy rain, Gusts, High UV, Frost and Heat stay quiet from 10 pm to 7 am. They are forecasts: only «Orange and red» are official warnings.",
+                    "Einträge mit der Glocke kommen als Benachrichtigung. Starkregen, Böen, Hoher UV-Index, Frost und Hitze schweigen von 22 bis 7 Uhr. Es sind Vorhersagen: amtliche Warnungen sind nur «Orange und rot».",
+                    "Les éléments avec la cloche arrivent en notification. Pluie forte, Rafales, UV élevés, Gel et Chaleur se taisent de 22 h à 7 h. Ce sont des prévisions : seules « Orange et rouges » sont des alertes officielles.",
+                    "Las opciones con la campana llegan como notificación. Lluvia fuerte, Rachas, UV alto, Helada y Calor callan de 22 a 7 h. Son previsiones: solo «Naranjas y rojas» son alertas oficiales.",
                 ),
             ) {
                 // ── Pioggia ──
@@ -453,29 +451,29 @@ fun SalaImpostazioniScreen(
                 FiloGruppo(palette)
                 VoceInterruttore(
                     titolo = tr("Pioggia in arrivo", "Rain on the way", "Regen im Anmarsch", "Pluie en approche", "Lluvia en camino"),
-                    nota = suona(tr("nella prossima ora: pioggia, grandine o neve", "in the next hour: rain, hail or snow", "in der nächsten Stunde: Regen, Hagel oder Schnee", "dans l'heure : pluie, grêle ou neige", "en la próxima hora: lluvia, granizo o nieve")),
+                    nota = (tr("nella prossima ora: pioggia, grandine o neve", "in the next hour: rain, hail or snow", "in der nächsten Stunde: Regen, Hagel oder Schnee", "dans l'heure : pluie, grêle ou neige", "en la próxima hora: lluvia, granizo o nieve")),
                     acceso = state.notifichePioggia && puoNotificare,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { notifica(it, { chiediPermesso.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleNotifichePioggia) },
                 )
                 FiloGruppo(palette)
                 val ombrelloAcceso = state.avvisoOmbrello && puoNotificare
                 VoceInterruttore(
                     titolo = tr("Porta l'ombrello", "Take an umbrella", "Schirm mitnehmen", "Prends un parapluie", "Lleva paraguas"),
-                    nota = suona(
+                    nota = (
                         if (ombrelloAcceso) {
                             val ora = oraRiepilogo(state.oraOmbrello)
                             tr("alle $ora, nei giorni di pioggia", "at $ora, on rainy days", "um $ora, an Regentagen", "à $ora, les jours de pluie", "a las $ora, los días de lluvia")
                         } else {
                             tr("al mattino, nei giorni di pioggia", "in the morning, on rainy days", "morgens, an Regentagen", "le matin, les jours de pluie", "por la mañana, los días de lluvia")
-                        },
+                        }
                     ),
                     acceso = ombrelloAcceso,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { notifica(it, { chiediPermessoOmbrello.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleOmbrello) },
                 )
                 ComparsaMorbida(visibile = ombrelloAcceso) {
@@ -548,11 +546,11 @@ fun SalaImpostazioniScreen(
                 SottotitoloGruppo(tr("ALLERTE UFFICIALI", "OFFICIAL WARNINGS", "AMTLICHE WARNUNGEN", "ALERTES OFFICIELLES", "ALERTAS OFICIALES"), palette)
                 VoceInterruttore(
                     titolo = tr("Arancioni e rosse", "Orange and red", "Orange und rot", "Orange et rouges", "Naranjas y rojas"),
-                    nota = suona(tr("degli enti; nell'app si vedono tutte, anche le gialle", "from the authorities; in the app you see them all, yellow too", "der Behörden; in der App siehst du alle, auch gelbe", "des organismes ; dans l'app on les voit toutes, même les jaunes", "de los organismos; en la app se ven todas, también las amarillas")),
+                    nota = (tr("degli enti; nell'app si vedono tutte, anche le gialle", "from the authorities; in the app you see them all, yellow too", "der Behörden; in der App siehst du alle, auch gelbe", "des organismes ; dans l'app on les voit toutes, même les jaunes", "de los organismos; en la app se ven todas, también las amarillas")),
                     acceso = state.notificheAllerte && puoNotificare,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { notifica(it, { chiediPermessoAllerte.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleNotificheAllerte) },
                 )
 
@@ -561,18 +559,18 @@ fun SalaImpostazioniScreen(
                 val riepilogoAcceso = state.riepilogoMattino && puoNotificare
                 VoceInterruttore(
                     titolo = tr("Riepilogo del mattino", "Morning summary", "Morgenüberblick", "Résumé du matin", "Resumen de la mañana"),
-                    nota = suona(
+                    nota = (
                         if (riepilogoAcceso) {
                             val ora = oraRiepilogo(state.oraRiepilogo)
                             tr("ogni giorno alle $ora", "every day at $ora", "jeden Tag um $ora", "chaque jour à $ora", "cada día a las $ora")
                         } else {
                             tr("ogni mattina, la giornata in tre righe", "every morning, the day in three lines", "jeden Morgen, der Tag in drei Zeilen", "chaque matin, la journée en trois lignes", "cada mañana, el día en tres líneas")
-                        },
+                        }
                     ),
                     acceso = riepilogoAcceso,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { notifica(it, { chiediPermessoRiepilogo.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleRiepilogo) },
                 )
                 ComparsaMorbida(visibile = riepilogoAcceso) {
@@ -589,19 +587,19 @@ fun SalaImpostazioniScreen(
                 val scarto = if (state.unit == TempUnit.FAHRENHEIT) 7 else 4
                 VoceInterruttore(
                     titolo = tr("Previsione cambiata", "Forecast changed", "Vorhersage geändert", "Prévision modifiée", "Previsión cambiada"),
-                    nota = suona(
+                    nota = (
                         tr(
                             "domani e dopodomani: pioggia che compare o sparisce, massima ±$scarto°",
                             "tomorrow and the day after: rain appearing or vanishing, high ±$scarto°",
                             "morgen und übermorgen: Regen kommt oder geht, Höchstwert ±$scarto°",
                             "demain et après-demain : pluie qui apparaît ou disparaît, max ±$scarto°",
                             "mañana y pasado: lluvia que aparece o desaparece, máxima ±$scarto°",
-                        ),
+                        )
                     ),
                     acceso = state.avvisoCambioPrevisione && puoNotificare,
                     palette = palette,
                     compatta = true,
-                    campanella = !parola,
+                    campanella = true,
                     onCambia = { notifica(it, { chiediPermessoCambio.launch(Manifest.permission.POST_NOTIFICATIONS) }, onToggleCambioPrevisione) },
                 )
             }
@@ -756,9 +754,6 @@ private fun fusoOrario(secondi: Int): String {
     val resto = minuti % 60
     return if (resto == 0) "UTC$segno$ore" else "UTC$segno$ore:%02d".format(resto)
 }
-
-/** Come si segna una notifica nelle note: la parola "Notifica ·" o la campanella. */
-enum class SegnoNotifica { PAROLA, CAMPANELLA }
 
 /** Il sottotitolo di un argomento dentro il riquadro "Avvisi e notifiche". */
 @Composable

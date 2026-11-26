@@ -11,6 +11,8 @@ import com.caelumweather.ui.UiState
 import com.caelumweather.ui.theme.MeteoTheme
 import com.caelumweather.ui.theme.skyColors
 import com.caelumweather.data.SkyState
+import androidx.compose.ui.semantics.getOrNull
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,7 +42,9 @@ class ImpostazioniRenderTest {
         soglie = SogliePersonali(pioggia = true),
     )
 
-    private fun disegna(nome: String, palette: SalaPalette, segno: SegnoNotifica = SegnoNotifica.CAMPANELLA): Int {
+    private var ultima: ComponentActivity? = null
+
+    private fun disegna(nome: String, palette: SalaPalette): Int {
         shadowOf(RuntimeEnvironment.getApplication()).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
         attivita.setContent {
@@ -68,11 +72,11 @@ class ImpostazioniRenderTest {
                     onAggiorna = {},
                     onApriLegali = {},
                     onClose = {},
-                    segno = segno,
                 )
             }
         }
         repeat(40) { ShadowLooper.idleMainLooper(50, java.util.concurrent.TimeUnit.MILLISECONDS) }
+        ultima = attivita
         val vista: View = attivita.window.decorView.findViewById<android.view.ViewGroup>(android.R.id.content).getChildAt(0)
         val bitmap = Bitmap.createBitmap(vista.width.coerceAtLeast(1), vista.height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
         vista.draw(Canvas(bitmap))
@@ -96,12 +100,35 @@ class ImpostazioniRenderTest {
         File("build/widget-renders/impostazioni-misure.txt").delete()
         val chiaro = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
         val scuro = salaPalette(dk = 1f, crepuscolo = 0f, chiusura = 0f)
-        val altezze = listOf(
-            disegna("chiaro", chiaro),
-            disegna("scuro", scuro),
-            disegna("chiaro-parola", chiaro, SegnoNotifica.PAROLA),
-            disegna("scuro-parola", scuro, SegnoNotifica.PAROLA),
-        )
+        val altezze = listOf(disegna("chiaro", chiaro), disegna("scuro", scuro))
         assertTrue(altezze.all { it > 500 })
+    }
+
+    /**
+     * **La campanella si dice "Notifica" a TalkBack, una volta sola.** Si legge
+     * l'albero di accessibilita' di Compose, con i nodi uniti come li unisce la
+     * riga (che e' l'interruttore): la voce "Pioggia in arrivo" deve portare il
+     * titolo, la nota e la parola "Notifica" esattamente una volta.
+     */
+    @Test
+    fun `talkback legge la campanella come Notifica, una volta`() {
+        disegna("talkback", salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f))
+        val radice = ultima!!.window.decorView
+        fun cerca(v: View): androidx.compose.ui.platform.ViewRootForTest? =
+            v as? androidx.compose.ui.platform.ViewRootForTest
+                ?: (v as? android.view.ViewGroup)?.let { g -> (0 until g.childCount).firstNotNullOfOrNull { cerca(g.getChildAt(it)) } }
+        // L'albero unito come lo vede TalkBack: si parte dalla radice e si scende.
+        fun tutti(n: androidx.compose.ui.semantics.SemanticsNode): List<androidx.compose.ui.semantics.SemanticsNode> =
+            listOf(n) + n.children.flatMap { tutti(it) }
+        val nodi = tutti(cerca(radice)!!.semanticsOwner.rootSemanticsNode)
+        val voce = nodi.first { n: androidx.compose.ui.semantics.SemanticsNode ->
+            n.config.getOrNull(androidx.compose.ui.semantics.SemanticsProperties.Text)
+                ?.any { it.text.contains("Pioggia in arrivo") } == true
+        }
+        val testi = voce.config.getOrNull(androidx.compose.ui.semantics.SemanticsProperties.Text).orEmpty().map { it.text }
+        val descrizioni = voce.config.getOrNull(androidx.compose.ui.semantics.SemanticsProperties.ContentDescription).orEmpty()
+        val tutto = (descrizioni + testi).joinToString(" | ")
+        assertTrue(tutto, tutto.contains("nella prossima ora"))
+        assertEquals(tutto, 1, Regex("Notifica").findAll(tutto).count())
     }
 }
