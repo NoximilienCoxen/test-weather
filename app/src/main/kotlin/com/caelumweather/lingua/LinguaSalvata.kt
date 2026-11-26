@@ -1,5 +1,6 @@
 package com.caelumweather.lingua
 
+import androidx.core.content.edit
 import android.app.LocaleManager
 import android.content.Context
 import android.content.SharedPreferences
@@ -49,10 +50,10 @@ fun Lingue.inizializza(context: Context): Boolean {
 
 fun Lingue.scegli(context: Context, nuova: SceltaLingua) {
     impostaScelta(nuova)
-    context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit()
-        .putString(CHIAVE, nuova.name)
-        .putBoolean(PASSATA_AL_SISTEMA, true)
-        .apply()
+    context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit {
+        putString(CHIAVE, nuova.name)
+        putBoolean(PASSATA_AL_SISTEMA, true)
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         runCatching { context.getSystemService(LocaleManager::class.java)?.applicationLocales = nuova.perIlSistema() }
     }
@@ -64,7 +65,7 @@ fun Lingue.scegli(context: Context, nuova: SceltaLingua) {
 private fun allineaAlSistema(context: Context, prefs: SharedPreferences, salvata: SceltaLingua): SceltaLingua {
     val gestore = context.getSystemService(LocaleManager::class.java) ?: return salvata
     if (!prefs.getBoolean(PASSATA_AL_SISTEMA, false)) {
-        prefs.edit().putBoolean(PASSATA_AL_SISTEMA, true).apply()
+        prefs.edit { putBoolean(PASSATA_AL_SISTEMA, true) }
         if (salvata != SceltaLingua.AUTOMATICA) {
             gestore.applicationLocales = salvata.perIlSistema()
             return salvata
@@ -77,7 +78,7 @@ private fun allineaAlSistema(context: Context, prefs: SharedPreferences, salvata
         delSistema.isEmpty -> SceltaLingua.AUTOMATICA
         else -> SceltaLingua.di(Lingua.diCodice(delSistema[0].language) ?: Lingua.INGLESE)
     }
-    if (scelta != salvata) prefs.edit().putString(CHIAVE, scelta.name).apply()
+    if (scelta != salvata) prefs.edit { putString(CHIAVE, scelta.name) }
     return scelta
 }
 

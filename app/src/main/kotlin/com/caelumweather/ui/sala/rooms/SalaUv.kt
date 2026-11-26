@@ -281,9 +281,6 @@ private fun hhmm(t: java.time.LocalDateTime): String =
  */
 internal val EtichettaGrafico = SalaType.microLabel.copy(letterSpacing = 0.sp)
 
-/** L'aria fra una colonna e l'altra del grafico. */
-private val SPAZIO_COLONNE = 4.dp
-
 /** I nomi della scala mondiale: gli stessi cinque gradini di ogni bollettino. */
 private fun nomeUv(valore: Double): String = when {
     valore >= 11 -> tr("Estremo", "Extreme", "Extrem", "Extrême", "Extremo")

@@ -8921,3 +8921,24 @@ non lo vede mai: l'emulatore AOSP non ha geocoder.
   rigenerabile con `scripts/comuni_geonames.py`. Si prende la piu' vicina entro
   25 km, senza rete. Attribuzione in note legali e informativa. Controllo:
   `LocalitaVicineTest` legge il file vero.
+
+### 82.6 Pulizia del codice (26 novembre)
+Misurato, non a occhio: avvisi del compilatore (4, tutti nel Tile
+dell'orologio), lint (54 avvisi, 0 errori), dichiarazioni mai nominate (28).
+- **Tolto il codice morto**: `apriAllOra` e il salto d'ora dei riquadri della
+  settimana (`SaltoDOra`, uscito con la sala Settimana), `oreDiSole`,
+  `haMarea`, `inMezzo`, `SPAZIO_COLONNE`, `rCielo`, `WindTint`, `MoonTint`,
+  `mareChiaro`, `verdeChiaro`, `WidgetInk.bolt`, il numero romano di
+  `SalaRoom`, il parametro inutile di `luna`.
+- **Un doppione**: la regola "ora da ombrello" (0,3 mm e 40%) era in due posti;
+  ora `oraDaOmbrello` in `OmbrelloWorker.kt`, usata anche da `CosaMettersi`.
+- **Lint**: controlli `SDK_INT < O` inutili con minSdk 26, `mipmap-anydpi-v26`
+  -> `mipmap-anydpi`, `SharedPreferences.edit {}` e `createBitmap` di core-ktx,
+  `mutableFloatStateOf`, offset dell'interruttore letto nel disegno,
+  `LocalWindowInfo` invece di `screenWidthDp`, `app_name` non traducibile.
+- **Lasciato, con il perche'**: `Image.Builder()` deprecato nel Tile (la via
+  nuova cambia le risorse, da provare su un orologio); i rami per le versioni
+  vecchie di Android con `@Suppress("DEPRECATION")` (corretti); la scala
+  completa di `SalaTokens` (e' la copia del sistema di design, i gradini non
+  usati non costano); il blocco in verticale; `targetSdk` 36 (37 cambia
+  comportamenti, lo store chiede 36).

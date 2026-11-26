@@ -1,5 +1,6 @@
 package com.caelumweather.ui.sala
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.snap
@@ -1625,7 +1626,14 @@ fun InterruttoreSala(acceso: Boolean, palette: SalaPalette, modifier: Modifier =
         // attorno a quel centro.
         Box(
             modifier = Modifier
-                .offset(x = corsa + 12.dp - diametro / 2f + 0.dp, y = 16.dp - diametro / 2f)
+                // Nel disegno, non nella composizione: `corsa` e `diametro`
+                // sono animati, e l'offset coi valori ricomporrebbe a ogni passo.
+                .offset {
+                    IntOffset(
+                        (corsa + 12.dp - diametro / 2f).roundToPx(),
+                        (16.dp - diametro / 2f).roundToPx(),
+                    )
+                }
                 .size(diametro)
                 .clip(CircleShape)
                 .background(pallino),

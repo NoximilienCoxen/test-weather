@@ -3,6 +3,7 @@ package com.caelumweather.ui.sala.rooms
 import com.caelumweather.data.HourForecast
 import com.caelumweather.data.Wmo
 import com.caelumweather.lingua.tr
+import com.caelumweather.notifiche.oraDaOmbrello
 
 /**
  * **Cosa mettersi**, in una riga: "Giacca, a strati · ombrello · occhiali".
@@ -44,8 +45,7 @@ internal fun cosaMettersi(ore: List<HourForecast>, da: java.time.LocalDateTime):
         strato + tr(", a strati", ", in layers", ", im Zwiebellook", ", en couches", ", por capas")
     } else strato
 
-    fun bagnata(o: HourForecast) = (o.precipitation ?: 0.0) >= 0.3 && (o.precipProbability ?: 100) >= 40
-    val bagnate = finestra.filter(::bagnata)
+    val bagnate = finestra.filter(::oraDaOmbrello)
     if (bagnate.isNotEmpty()) {
         val neve = bagnate.count { o -> o.weatherCode?.let { Wmo.family(it) == Wmo.Family.NEVE } == true } * 2 > bagnate.size
         pezzi += if (neve) {

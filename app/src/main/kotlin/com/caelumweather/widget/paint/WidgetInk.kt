@@ -39,7 +39,6 @@ internal class WidgetInk(
     // Il blu dell'acqua delle schede, non un blu di sistema.
     val rain: Color get() = if (night) Color(0xFF7EA7BD) else Color(0xFF4F7D97)
     val snow: Color get() = if (night) Color(0xFFDCE6F2) else Color(0xFF8FB4DA)
-    val bolt: Color get() = Color(0xFFFFC83D)
 
     companion object {
         /**

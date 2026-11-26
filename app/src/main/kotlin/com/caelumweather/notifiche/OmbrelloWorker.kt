@@ -156,8 +156,7 @@ class OmbrelloWorker(contesto: Context, parametri: WorkerParameters) : Coroutine
 internal fun testiOmbrello(citta: String, ore: List<HourForecast>, adesso: LocalDateTime): Pair<String, String>? {
     val da = adesso.truncatedTo(ChronoUnit.HOURS)
     val giornata = ore.filter { !it.time.isBefore(da) && it.time.hour <= 22 }
-    fun bagnata(o: HourForecast) = (o.precipitation ?: 0.0) >= 0.3 && (o.precipProbability ?: 100) >= 40
-    val bagnate = giornata.filter(::bagnata)
+    val bagnate = giornata.filter(::oraDaOmbrello)
     if (bagnate.isEmpty()) return null
     val mm = giornata.sumOf { it.precipitation ?: 0.0 }
     val neve = bagnate.count { o -> o.weatherCode?.let { Wmo.family(it) == Wmo.Family.NEVE } == true } * 2 > bagnate.size
@@ -190,3 +189,13 @@ internal fun testiOmbrello(citta: String, ore: List<HourForecast>, adesso: Local
     }
     return titolo to corpo
 }
+
+/**
+ * **Un'ora per cui serve l'ombrello**: almeno tre decimi di millimetro con una
+ * probabilita' di almeno il 40 per cento (senza probabilita', si crede ai
+ * millimetri). Sotto e' l'umido che i modelli spargono dappertutto. Una regola
+ * sola per la notifica del mattino e per "cosa mettersi" (`CosaMettersi.kt`):
+ * se dicessero cose diverse, una delle due mentirebbe.
+ */
+internal fun oraDaOmbrello(o: HourForecast): Boolean =
+    (o.precipitation ?: 0.0) >= 0.3 && (o.precipProbability ?: 100) >= 40

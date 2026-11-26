@@ -16,7 +16,7 @@ internal fun DrawScope.scenaGrano(t: Float, notte: Boolean) {
     if (notte) {
         cielo(Scena.GRANO, notte, orizzonte)
         stelle(t, orizzonte)
-        luna(Offset(W * 0.22f, orizzonte * 0.35f), W * 0.055f, Colori.cieloNotteAlto, falce = true)
+        luna(Offset(W * 0.22f, orizzonte * 0.35f), W * 0.055f, falce = true)
     } else {
         cielo(Scena.GRANO, notte, orizzonte)
         sole(Offset(W * 0.24f, orizzonte * 0.4f), W * 0.08f)
@@ -75,7 +75,7 @@ internal fun DrawScope.scenaMontagna(t: Float, notte: Boolean) {
     if (notte) {
         cielo(Scena.MONTAGNA, notte, lago)
         stelle(t, lago * 0.8f, quante = 110)
-        luna(Offset(W * 0.72f, lago * 0.22f), W * 0.06f, Color(0xFF0B1224))
+        luna(Offset(W * 0.72f, lago * 0.22f), W * 0.06f)
     } else {
         cielo(Scena.MONTAGNA, notte, lago)
         sole(Offset(W * 0.2f, lago * 0.22f), W * 0.06f)

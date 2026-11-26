@@ -1,5 +1,6 @@
 package com.caelumweather.widget.paint
 
+import androidx.core.graphics.createBitmap
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Configuration
@@ -107,11 +108,7 @@ internal object WidgetCanvas {
      * angoli tondi si vede subito.
      */
     fun paint(frame: Frame, background: Int, body: DrawScope.() -> Unit): Bitmap {
-        val bitmap = Bitmap.createBitmap(
-            frame.widthPx,
-            frame.heightPx,
-            Bitmap.Config.ARGB_8888,
-        )
+        val bitmap = createBitmap(frame.widthPx, frame.heightPx)
         CanvasDrawScope().draw(
             Density(frame.scale, 1f),
             LayoutDirection.Ltr,

@@ -46,16 +46,9 @@ private val PanelOutlineVariant = Color(0xFF383C44)
 /** Le tinte delle grandezze. Sono quelle di sempre, promosse a token. */
 internal val SunTint = Color(0xFFFFDE59)
 internal val RainTint = Color(0xFF3C8DF5)
-internal val WindTint = Color(0xFF7EB8F7)
 internal val AirTint = Color(0xFF6FD09A)
 internal val AlertTint = Color(0xFFFF8A6B)
 
-/**
- * Il pallore della luna, ripreso dal corpo che la scultura disegna gia'
- * (`MeteoColors.moonCore`): la pillola e il pallino della pagina devono avere
- * il colore della cosa che annunciano, non un azzurro scelto a parte.
- */
-internal val MoonTint = Color(0xFFDDE3EE)
 
 // **Qui stava `MeteoAccents`, e con lei se ne vanno `skyAccents` e
 // `toAccents`.** Erano le tinte delle grandezze - sole, pioggia, vento, aria,

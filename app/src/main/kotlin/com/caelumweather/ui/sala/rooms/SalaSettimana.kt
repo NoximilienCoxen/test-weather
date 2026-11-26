@@ -75,12 +75,4 @@ internal fun sommarioDella(settimana: List<GiornoSettimana>, state: UiState): St
 
 private fun Double.virgola(): String = String.format(Lingue.locale, "%.1f", this)
 
-/**
- * "6 h di sole", e sotto la mezz'ora "sole assente": "0 h di sole" si legge
- * come un dato che manca, non come un giorno coperto.
- */
-internal fun oreDiSole(secondi: Double): String {
-    val ore = (secondi / 3600.0).roundToInt()
-    return if (ore == 0) tr("sole assente", "no sun", "keine Sonne", "pas de soleil", "sin sol") else tr("$ore h di sole", "$ore h of sun", "$ore Std. Sonne", "$ore h de soleil", "$ore h de sol")
-}
 

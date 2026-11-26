@@ -114,6 +114,10 @@ class TileCaelum : TileService() {
                     .build(),
             )
             .build()
+        // `Image.Builder()` con `setResourceId` e' deprecato in protolayout 1.4:
+        // la via nuova (`Image.Builder(scope).setImageResource(...)`) porta con
+        // se' le risorse e cambia `onTileResourcesRequest`. Si fa quando la si
+        // puo' provare su un orologio vero; questa funziona.
         return Box.Builder()
             .setWidth(expand())
             .setHeight(expand())

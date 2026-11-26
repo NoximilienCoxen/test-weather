@@ -16,24 +16,23 @@ import com.caelumweather.lingua.tr
  * e questo elenco e' tornato a essere quello che dice di essere: l'ordine delle
  * stanze e come si chiamano.
  *
- * Il numero romano resta perche' e' l'ordine, e serve alla galleria della CI per
- * dire quale scatto e' quale. **Non si scrive piu' a schermo**: chi guarda non
- * chiama queste schermate "sale", e non deve impararlo per usarle.
+ * L'ordine e' quello delle voci qui sotto (la galleria della CI le chiama per
+ * indice). Il numero romano che le accompagnava non lo leggeva piu' nessuno e
+ * se n'e' andato: chi guarda non chiama queste schermate "sale".
  */
 enum class SalaRoom(
-    val roman: String,
     private val headingIt: String,
     private val headingEn: String,
     private val headingDe: String,
     private val headingFr: String,
     private val headingEs: String,
 ) {
-    OGGI("I", "Oggi", "Today", "Heute", "Aujourd'hui", "Hoy"),
-    PIOGGIA("II", "La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
-    LUNA("III", "La luna", "The moon", "Der Mond", "La lune", "La luna"),
-    ARIA("IV", "L'aria", "Air", "Die Luft", "L'air", "El aire"),
-    VENTO("V", "Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
-    UV("VI", "I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
+    OGGI("Oggi", "Today", "Heute", "Aujourd'hui", "Hoy"),
+    PIOGGIA("La pioggia", "Rain", "Regen", "La pluie", "La lluvia"),
+    LUNA("La luna", "The moon", "Der Mond", "La lune", "La luna"),
+    ARIA("L'aria", "Air", "Die Luft", "L'air", "El aire"),
+    VENTO("Il vento", "Wind", "Der Wind", "Le vent", "El viento"),
+    UV("I raggi UV", "UV rays", "UV-Strahlung", "Les rayons UV", "Los rayos UV"),
 
     /**
      * Solo dove c'e' il mare (`UiState.mareMostrato`): altrove la scheda non
@@ -41,7 +40,7 @@ enum class SalaRoom(
      * previsione, e una scheda che spuntasse in mezzo sposterebbe sotto il
      * dito quella che si sta guardando.
      */
-    MARE("VII", "Il mare", "The sea", "Das Meer", "La mer", "El mar"),
+    MARE("Il mare", "The sea", "Das Meer", "La mer", "El mar"),
     ;
 
     /** Come si chiama, nella lingua dell'app. */
