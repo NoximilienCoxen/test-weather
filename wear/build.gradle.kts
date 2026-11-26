@@ -66,7 +66,8 @@ android {
         // di scarto basta per sempre (il conto dei commit e' a qualche
         // centinaio) e lascia leggibile il numero vero nelle ultime cifre.
         versionCode = 1_000_000 + commitCount
-        versionName = "1.0-$commitSha"
+        // Come il telefono: nome pulito, SHA solo in debug.
+        versionName = "1.0.0"
     }
 
     signingConfigs {
@@ -90,6 +91,7 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
+            versionNameSuffix = "-$commitSha"
             isDebuggable = false
         }
         release {

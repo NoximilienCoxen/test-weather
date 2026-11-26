@@ -58,6 +58,9 @@ val commitCount: Int = comando("git", "rev-list", "--count", "HEAD")?.toIntOrNul
     ?: 1
 val commitSha: String = comando("git", "rev-parse", "--short", "HEAD") ?: "ignoto"
 
+/** La versione che si legge sullo store: si alza a mano a ogni rilascio. */
+val VERSIONE = "1.0.0"
+
 /**
  * La chiave con cui si firma cio' che va sullo store, **letta da fuori**.
  *
@@ -93,7 +96,11 @@ android {
 
         // Vedi la nota in cima: non piu' 1 e "1.0" fissi.
         versionCode = commitCount
-        versionName = "1.0-$commitSha"
+        // **Il nome per lo store e' pulito**: "1.0.0" e' cio' che si legge
+        // nella scheda del Play Store. Lo SHA del commit resta sulla build di
+        // debug (`versionNameSuffix` qui sotto), dove serve a dire quale riga
+        // di storia si sta provando; nella release basta il `versionCode`.
+        versionName = VERSIONE
     }
 
     // Chiave di debug fissa e versionata. Senza, la CI ne genera una nuova a
@@ -121,6 +128,7 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
+            versionNameSuffix = "-$commitSha"
             // Non marcata come debuggabile: una app debuggabile gira con
             // ottimizzazioni ridotte, e questa schermata fa geometria in tempo
             // reale a ogni fotogramma. Misurando la fluidita' su una build

@@ -8895,3 +8895,12 @@ kotlinx-serialization 1.13.0.
 ### 82.3 Non provato in mano
 Il chip nella barra di stato di Android 16, l'avviso di cambio previsione con
 dati veri, la disposizione affiancata su un tablet vero.
+
+### 82.4 Verso la release (26 novembre)
+- `versionName` = `VERSIONE` ("1.0.0") in `app/build.gradle.kts`, "1.0.0" in
+  `wear/`; la debug aggiunge `-<sha>` (`versionNameSuffix`). A ogni rilascio
+  si alza a mano; il `versionCode` resta il conto dei commit.
+- Testi dello store (5 lingue), `docs/privacy.md` e note legali allineati a
+  questo giro: nove widget, ombrello, previsione cambiata, conto alla
+  rovescia, avvisi a soglia anche per pioggia e UV, mare con scheda sua,
+  anteprima dei giorni, cosa mettersi, tablet.

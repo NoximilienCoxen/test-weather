@@ -55,8 +55,11 @@ dispositivi (Wear OS Data Layer).
   widget di seguire la tua posizione. La posizione precisa non viene mai
   chiesta.
 - **Notifiche** (facoltativo): pioggia o grandine in arrivo, allerte ufficiali,
-  riepilogo del mattino, avvisi personali a soglia (gelo, caldo, vento forte).
-  Ognuna si spegne dalle impostazioni.
+  riepilogo del mattino, "porta l'ombrello", previsione cambiata, avvisi
+  personali a soglia (gelo, caldo, vento forte, pioggia, UV). Ognuna si spegne
+  dalle impostazioni. Su Android 16 la pioggia in arrivo può comparire fra gli
+  aggiornamenti in tempo reale (permesso "notifiche in evidenza"); anche questo
+  si toglie dalle impostazioni di Android.
 - **Vibrazione**: il riscontro al tocco.
 
 ### Cancellare i dati
@@ -126,8 +129,11 @@ over the link between the two devices (Wear OS Data Layer).
 - **Approximate location** (optional): only if you ask the app or a widget to
   follow your location. Precise location is never requested.
 - **Notifications** (optional): rain or hail on the way, official warnings,
-  morning summary, personal threshold notices (frost, heat, strong wind). Each
-  can be turned off in settings.
+  morning summary, "take an umbrella", forecast changed, personal threshold
+  notices (frost, heat, strong wind, rain, UV). Each can be turned off in
+  settings. On Android 16 rain on the way can appear among live updates
+  ("promoted notifications" permission); that too can be turned off in
+  Android settings.
 - **Vibration**: touch feedback.
 
 ### Deleting your data

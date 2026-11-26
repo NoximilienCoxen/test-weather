@@ -137,14 +137,14 @@ fun SalaLegaliScreen(
                 )
                 Paragrafo(
                     tr(
-                        "Gli AVVISI PERSONALI (gelo, caldo, vento forte) sono un'altra cosa ancora: " +
+                        "Gli AVVISI PERSONALI (gelo, caldo, vento forte, pioggia, UV) sono un'altra cosa ancora: " +
                             "la soglia la scegli tu, e la notifica ti dice soltanto che la previsione " +
                             "la passa. Una previsione può sbagliare, e l'avviso può arrivare tardi o " +
                             "non arrivare: non affidargli la sicurezza di persone, animali o cose.",
-                        "PERSONAL NOTICES (frost, heat, strong wind) are something else again: you choose the threshold, and the notification only tells you that the forecast crosses it. A forecast can be wrong, and the notice can arrive late or not at all: do not rely on it for the safety of people, animals or property.",
-                        "PERSÖNLICHE HINWEISE (Frost, Hitze, starker Wind) sind noch einmal etwas anderes: Die Schwelle wählst du, und die Benachrichtigung sagt dir nur, dass die Vorhersage sie überschreitet. Eine Vorhersage kann falsch sein, und der Hinweis kann zu spät oder gar nicht kommen: Verlasse dich für die Sicherheit von Menschen, Tieren oder Sachen nicht darauf.",
-                        "Les AVIS PERSONNELS (gel, chaleur, vent fort) sont encore autre chose : c'est vous qui choisissez le seuil, et la notification vous dit seulement que la prévision le franchit. Une prévision peut se tromper, et l'avis peut arriver tard ou ne pas arriver : ne lui confiez pas la sécurité de personnes, d'animaux ou de biens.",
-                        "Los AVISOS PERSONALES (helada, calor, viento fuerte) son otra cosa distinta: el umbral lo eliges tú, y la notificación solo te dice que la previsión lo supera. Una previsión puede equivocarse, y el aviso puede llegar tarde o no llegar: no le confíes la seguridad de personas, animales o cosas.",
+                        "PERSONAL NOTICES (frost, heat, strong wind, rain, UV) are something else again: you choose the threshold, and the notification only tells you that the forecast crosses it. A forecast can be wrong, and the notice can arrive late or not at all: do not rely on it for the safety of people, animals or property.",
+                        "PERSÖNLICHE HINWEISE (Frost, Hitze, starker Wind, Regen, UV) sind noch einmal etwas anderes: Die Schwelle wählst du, und die Benachrichtigung sagt dir nur, dass die Vorhersage sie überschreitet. Eine Vorhersage kann falsch sein, und der Hinweis kann zu spät oder gar nicht kommen: Verlasse dich für die Sicherheit von Menschen, Tieren oder Sachen nicht darauf.",
+                        "Les AVIS PERSONNELS (gel, chaleur, vent fort, pluie, UV) sont encore autre chose : c'est vous qui choisissez le seuil, et la notification vous dit seulement que la prévision le franchit. Une prévision peut se tromper, et l'avis peut arriver tard ou ne pas arriver : ne lui confiez pas la sécurité de personnes, d'animaux ou de biens.",
+                        "Los AVISOS PERSONALES (helada, calor, viento fuerte, lluvia, UV) son otra cosa distinta: el umbral lo eliges tú, y la notificación solo te dice que la previsión lo supera. Una previsión puede equivocarse, y el aviso puede llegar tarde o no llegar: no le confíes la seguridad de personas, animales o cosas.",
                     ),
                     palette,
                 )
