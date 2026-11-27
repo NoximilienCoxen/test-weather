@@ -1,5 +1,5 @@
 === modelli accettati (dall'errore su un nome inventato) ===
-{"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz","error":true}
+{"error":true,"reason":"Invalid value: Cannot initialize MultiDomains from invalid String value zzz"}
 
 === copertura reale sui due punti ===
   best_match
@@ -28,9 +28,9 @@
     Forli    48/48 ore  quota 40.0 m  prime [7.5, 8.2, 7.5]
   arpae_cosmo_5m
     Noceto    HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
-    Forli     HTTP 400  {"reason":"ARPAE COSMO models are not available anymore","error":true}
+    Forli     HTTP 0  URLError: <urlopen error [Errno 104] Connection reset by peer>
   gfs_seamless
-    Noceto   48/48 ore  quota 74.0 m  prime [7.7, 7.7, 7.6]
+    Noceto    HTTP 0  URLError: <urlopen error [Errno 104] Connection reset by peer>
     Forli    48/48 ore  quota 40.0 m  prime [8.8, 8.7, 8.4]
   knmi_seamless
     Noceto   48/48 ore  quota 74.0 m  prime [7.5, 7.5, 7.7]
@@ -44,10 +44,10 @@
     Londra    HTTP 400  {"error":true,"reason":"No data is available for this location"}
     Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
     Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
-    NewYork   HTTP 400  {"error":true,"reason":"No data is available for this location"}
+    NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   icon_d2
     Londra   48/48 ore  quota 29.0 m  prime [1.9, 1.6, 1.9]
-    Bergen    HTTP 400  {"reason":"No data is available for this location","error":true}
+    Bergen    HTTP 400  {"error":true,"reason":"No data is available for this location"}
     Singapore HTTP 400  {"reason":"No data is available for this location","error":true}
     NewYork   HTTP 400  {"reason":"No data is available for this location","error":true}
   meteofrance_seamless
