@@ -37,7 +37,7 @@ SCADENZA = time.monotonic() + 8 * 60
 AGENTE = "Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)"
 SITO = "https://allertameteo.regione.emilia-romagna.it"
 
-PAGINE = [
+PAGINE_LETTE = [
     # Secondo giro (27 novembre): la guida per gli sviluppatori e le note
     # legali sono linkate dal pie' di pagina; vanno lette per prime.
     ("sviluppatori", SITO + "/sviluppatori"),
@@ -49,10 +49,20 @@ PAGINE = [
     ("dati-aperti", SITO + "/dati-aperti"),
     ("zone-allerta", SITO + "/zone-di-allerta"),
 ]
+# Le pagine sono gia' state lette (CONTESTO §85.1): al terzo giro solo i servizi.
+PAGINE = []
 
 # Indirizzi da provare comunque: alcuni li ho visti citati, altri sono
 # tentativi ragionevoli. Un 404 nell'indice e' una risposta anche lui.
 TENTATIVI = [
+    # Terzo giro: i servizi della guida per gli sviluppatori, con la data del
+    # caso di Fontevivo (26 novembre, Allerta 119/2026 con "vento"), e i dati
+    # dei comuni che il sito usa per "Cerca un comune".
+    ("doc-stato-26nov", SITO + "/o/get-stato-allerta?data=2026-11-26%2012:00"),
+    ("doc-stato-adesso", SITO + "/o/get-stato-allerta"),
+    ("doc-cap-26nov", SITO + "/o/xmlcap?data=2026-11-26%2012:00"),
+    ("js-comuni-new", SITO + "/o/allerta-frontend-js/js/am.data.comuni-new.js?v=1.4"),
+    ("js-aree-idro-new", SITO + "/o/allerta-frontend-js/js/am.data.aree-idro-new.js?v=1.3"),
     # Il feed RSS linkato dalla pagina delle allerte.
     ("rss-allerte-bollettini", SITO + "/o/compila-allerta-portlet/feed?feed=allerte-bollettini"),
     # Lo stato per zona trovato al primo giro, e lo stesso con una data: la
@@ -87,7 +97,7 @@ def chiedi(url, accept="application/json, application/xml;q=0.9, text/html;q=0.8
     req = urllib.request.Request(url, headers={"User-Agent": AGENTE, "Accept": accept})
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
-            return r.status, r.headers.get("Content-Type", ""), r.read(3_000_000)
+            return r.status, r.headers.get("Content-Type", ""), r.read(20_000_000)
     except urllib.error.HTTPError as e:
         return e.code, e.headers.get("Content-Type", "") if e.headers else "", e.read(20000) if e.fp else b""
     except Exception as e:  # rete, TLS, timeout: va nell'indice anche questo
@@ -147,7 +157,7 @@ def main():
 
     # Prima i tentativi fissi, poi quello che il sito stesso indica (al
     # massimo sessanta, i PDF solo per l'intestazione).
-    da_chiedere = list(TENTATIVI) + [(f"trovato-{i:02d}", u) for i, u in enumerate(unici[:60])]
+    da_chiedere = list(TENTATIVI)[:5] + [(f"trovato-{i:02d}", u) for i, u in enumerate(unici[:0])]
     for nome, url in da_chiedere:
         stato, tipo, corpo = chiedi(url)
         if "pdf" in tipo.lower():
