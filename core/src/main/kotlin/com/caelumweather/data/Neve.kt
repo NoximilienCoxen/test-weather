@@ -81,8 +81,35 @@ fun postoRispettoAllaNeve(quotaPosto: Double?, quotaNeve: Int?): PostoSottoLaNev
     }
 }
 
-/** Vero se la sezione "La neve" ha motivo di esserci: neve in arrivo, o un posto di montagna. */
-fun serveLaNeve(previsione: Forecast?): Boolean {
+/**
+ * Sotto questo la neve al suolo non si conta: i modelli lasciano spesso qualche
+ * millimetro dopo una spruzzata, e una scheda per un velo che non si vede
+ * sarebbe rumore.
+ */
+const val NEVE_AL_SUOLO_MINIMA_CM = 1.0
+
+/**
+ * La neve al suolo all'ora [indiceOra] delle ventiquattro di oggi
+ * (`Forecast.hours`, la stessa lista di `UiState.nowIndex`), in centimetri.
+ * Nulla se l'API non la da' (una scorta vecchia, o un modello che non la ha).
+ */
+fun neveAlSuolo(previsione: Forecast, indiceOra: Int): Double? =
+    previsione.hours.getOrNull(indiceOra)?.snowDepth
+        ?: previsione.hours.firstNotNullOfOrNull { it.snowDepth }
+
+/**
+ * Vero se la scheda "La neve" ha motivo di esserci: neve prevista nei giorni
+ * della previsione, o neve al suolo adesso.
+ *
+ * **La quota del posto non basta piu'.** Finche' la neve era una sezione in
+ * fondo alla pioggia, sopra i mille metri compariva sempre, anche ad agosto, per
+ * dire "niente neve, zero termico a 3800 m". Come scheda a se' sarebbe una
+ * pagina in piu' da sfogliare per dire che non c'e' niente. Lo zero termico si
+ * legge nella scheda quando la neve c'e'; senza neve, ne' prevista ne' al
+ * suolo, non risponde a una domanda che uno si stia facendo (CONTESTO §85).
+ */
+fun serveLaNeve(previsione: Forecast?, indiceOra: Int = 0): Boolean {
     if (previsione == null) return false
-    return nevePrevista(previsione).isNotEmpty() || (previsione.elevation ?: 0.0) >= 1000.0
+    if (nevePrevista(previsione).isNotEmpty()) return true
+    return (neveAlSuolo(previsione, indiceOra) ?: 0.0) >= NEVE_AL_SUOLO_MINIMA_CM
 }

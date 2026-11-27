@@ -3,7 +3,7 @@ package com.caelumweather.ui.sala
 import com.caelumweather.lingua.tr
 
 /**
- * Le sei schermate del tempo, nell'ordine in cui si sfogliano.
+ * Le schermate del tempo: sei sempre, piu' neve e mare dove ci sono.
  *
  * **Erano sette.** "La settimana" ripeteva quasi tutta la prima: la stessa
  * striscia dei giorni e, nei riquadri, gli stessi numeri delle celle di Oggi.
@@ -16,8 +16,10 @@ import com.caelumweather.lingua.tr
  * e questo elenco e' tornato a essere quello che dice di essere: l'ordine delle
  * stanze e come si chiamano.
  *
- * L'ordine e' quello delle voci qui sotto (la galleria della CI le chiama per
- * indice). Il numero romano che le accompagnava non lo leggeva piu' nessuno e
+ * L'ordine in cui si sfogliano e' [inOrdine]; l'indice delle voci qui sotto e'
+ * quello con cui le chiama la galleria della CI (`--ei sezione`), e per non
+ * rinumerarle le schede aggiunte dopo vanno in fondo all'elenco anche quando
+ * si sfogliano altrove. Il numero romano che le accompagnava non lo leggeva piu' nessuno e
  * se n'e' andato: chi guarda non chiama queste schermate "sale".
  */
 enum class SalaRoom(
@@ -41,8 +43,29 @@ enum class SalaRoom(
      * dito quella che si sta guardando.
      */
     MARE("Il mare", "The sea", "Das Meer", "La mer", "El mar"),
+
+    /**
+     * Solo con la neve prevista nei prossimi giorni o al suolo
+     * (`serveLaNeve`): altrove la scheda non esiste. **Si sfoglia subito dopo
+     * la pioggia** (vedi [inOrdine]), e non in fondo come il mare: la neve
+     * arriva con la previsione stessa, quindi la scheda c'e' gia' quando la
+     * galleria si apre e non spunta sotto il dito. Le schede che seguono si
+     * spostano di un posto, sempre nello stesso ordine.
+     */
+    NEVE("La neve", "Snow", "Schnee", "La neige", "La nieve"),
     ;
 
     /** Come si chiama, nella lingua dell'app. */
     val heading: String get() = tr(headingIt, headingEn, headingDe, headingFr, headingEs)
+
+    companion object {
+        /** Le schede nell'ordine in cui si sfogliano; neve e mare solo se ci sono. */
+        fun inOrdine(conNeve: Boolean, conMare: Boolean): List<SalaRoom> = buildList {
+            add(OGGI)
+            add(PIOGGIA)
+            if (conNeve) add(NEVE)
+            addAll(listOf(LUNA, ARIA, VENTO, UV))
+            if (conMare) add(MARE)
+        }
+    }
 }

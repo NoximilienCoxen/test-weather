@@ -9019,3 +9019,87 @@ SoglieAvvisi)` riceve i numeri da `SogliePersonali` (`SoglieAvvisi.da`).
 - La schermata delle impostazioni, nello stato del test, passa da 2717 a 3012
   dp: tre righe nuove e, di norma, i selettori di UV e caldo aperti perche'
   i loro avvisi nell'app sono accesi.
+
+## 85. La neve in una scheda sua; l'allerta vento di Fontevivo
+
+**Il caso** (26 novembre 2026): a Sapporo la scheda della pioggia scorreva
+dentro di se'. La sezione "La neve" in fondo la portava a **689 dp** contro un
+tetto di 462; senza neve la pioggia e' a 459. Il test del tetto non aveva mai
+provato la pioggia con la neve.
+
+- **Scheda `SalaRoom.NEVE`** (`rooms/SalaNeve.kt`, ex `SezioneNeve.kt`):
+  centimetri attesi in tutta la previsione e fino a che quota, una colonnina per
+  giorno di neve, tre celle dell'ora scelta (al suolo, zero termico, quota neve
+  stimata), l'avvertenza sui bollettini valanghe. 364 dp nel caso Sapporo, 226
+  con la sola neve al suolo.
+- **Posizione fissa subito dopo la pioggia** (`SalaRoom.inOrdine`). Nell'enum
+  NEVE sta in fondo, dopo MARE, per non rinumerare `--ei sezione` della
+  galleria (`scripts/capture.sh`): l'ordine di sfoglio e l'indice dell'enum non
+  coincidono piu', e la colonna delle icone (`ColonnaScorciatoie`) ora riceve
+  l'elenco vero delle schede invece di `SalaRoom.entries` (prima mostrava il
+  mare anche dove non c'era). Quando la neve compare o sparisce il carosello
+  resta sulla stessa scheda (`LaunchedEffect(rooms)` in `SalaShell`); se sparisce
+  la neve che si guardava, si torna alla pioggia.
+- **Quando c'e'** (`serveLaNeve(previsione, indiceOra)`): neve prevista in un
+  giorno della previsione (da 0,1 cm) **o neve al suolo** adesso da 1 cm.
+  La neve al suolo e' `snow_depth` orario di Open-Meteo (metri, convertiti in
+  cm in `HourForecast.snowDepth`), chiesta da questo giro. **La quota del posto
+  non basta piu'**: prima sopra i mille metri la sezione c'era sempre, anche ad
+  agosto; come scheda sarebbe una pagina da sfogliare per dire "niente neve".
+  Con la neve al suolo il caso di montagna d'inverno e' coperto comunque.
+- **Il rimando nella pioggia**: "Neve in arrivo: 4,5 cm, vedi La neve ›",
+  toccabile, sulla stessa riga dell'etichetta LA SETTIMANA (la scheda e' a tre
+  punti dal tetto, una riga nuova la farebbe scorrere). Solo con neve prevista,
+  non per la sola neve al suolo.
+- Test: `SchedeNelTettoRenderTest` misura `pioggia-neve` (459), `neve` (364),
+  `neve-al-suolo` (226); `NeveTest` il criterio nuovo.
+
+**Fontevivo, allerta vento**: nel feed MeteoAlarm del 26 novembre (12:43 UTC)
+l'Emilia-Romagna aveva solo un'allerta gialla pioggia scaduta, nessun vento.
+L'app era coerente con la sua fonte; la scheda di Google veniva probabilmente
+dal sistema regionale. La sonda `scripts/probe_allerte_er.py` (passo "Le
+allerte regionali dell'Emilia-Romagna", in `ci-artifacts/api/allerte-er/`)
+guarda se Allerta Meteo Emilia-Romagna pubblica dati aperti per zona di allerta
+o solo PDF. Esito e proposta in §85.1.
+
+### 85.1 Allerta Meteo Emilia-Romagna: cosa pubblica (sonda del 27 novembre)
+
+Tre giri della sonda; i file grezzi del terzo sono in
+`ci-artifacts/api/allerte-er/` (giro del commit 0a18a697).
+
+- **Dati aperti per zona, non solo PDF.** La pagina `/sviluppatori` documenta:
+  - `GET /o/get-stato-allerta[?data=YYYY-MM-DD%20HH:mm]` (JSON): il documento
+    valido all'istante (di norma emesso verso le 11:45 per il giorno dopo):
+    `titolo`, `dataEmissione`, `dataInizio`, `dataFine`, `tendenza`,
+    `descrizionemeteo`, `link` al PDF, e una voce per sottozona (`A1`...`H2`)
+    con il colore di ogni fenomeno: `idraulica`, `idrogeologica`, `temporali`,
+    `vento`, `temperature_estreme`, `neve`, `ghiaccio_pioggia_gela`,
+    `stato_mare`, `mareggiate`. Valori `green|yellow|orange|red`, `null` dove
+    non si applica (il mare nelle zone interne). Le date sono nel formato Java
+    "Nov 26, 2026 12:00:00 AM", senza fuso (ora italiana).
+  - `GET /o/xmlcap[?data=...]`: lo stesso documento in CAP 1.2, un `<info>` per
+    sottozona (`<areaDesc>Emil-A1</areaDesc>`, **senza poligoni**), colori in
+    italiano (`VERDE`, `GIALLO`...).
+  - feed Atom `/o/compila-allerta-portlet/feed?feed=allerte-bollettini`.
+  - `/o/api/allerta/get-stato-allerta` (non documentato): solo i colori di
+    adesso per zona, in stringa ("vento:green,..."), senza date.
+- **Da coordinate a zona**: `/o/allerta-frontend-js/js/am.data.comuni-new.js`
+  e' un GeoJSON dei comuni (1,7 MB) con `SOTTOZONA` per comune: Fontevivo
+  (ISTAT 034016) e' **H2**. Servirebbe una tabella o dei poligoni semplificati
+  nell'APK (abbiamo gia' il punto nel poligono di `PoligonoCap`).
+- **Fontevivo il 26 novembre**: Allerta 119/2026 ("piene dei fiumi, frane e
+  piene dei corsi minori, vento e altri fenomeni"), vento **giallo solo in A1,
+  A2, C1, C2, E1** (burrasca moderata 62-74 km/h sui rilievi centro-orientali e
+  sul crinale). **H2 aveva vento verde**, e idrogeologica verde. Quindi anche la
+  fonte regionale non dava un'allerta vento per Fontevivo: la scheda di Google
+  riportava un'allerta regionale generica, non quella della zona.
+- **Licenza** (`/note-legali`): **CC BY-NC-SA 4.0**, anche per API e servizi
+  web: citare "Allerta Meteo Emilia-Romagna" con l'URL, **niente uso
+  commerciale**, condividere allo stesso modo le rielaborazioni (la tabella
+  comune -> zona lo sarebbe), non alterare loghi; raccomandato comunicare l'uso
+  ai contatti del sito. Loghi e marchi: tutti i diritti riservati.
+- **Affidabilita'**: al secondo giro, dopo una sessantina di richieste, il sito
+  ha rifiutato le connessioni (`Connection refused`), e alcune pagine vanno in
+  timeout a 20 s. Un lettore dovrebbe fare una richiesta per aggiornamento,
+  con tetto breve e ripiego silenzioso su MeteoAlarm.
+- La sonda, dopo questi giri, chiede solo `get-stato-allerta` e `xmlcap`.

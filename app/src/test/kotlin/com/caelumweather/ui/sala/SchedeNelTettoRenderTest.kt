@@ -117,6 +117,26 @@ class SchedeNelTettoRenderTest {
         return UiState(forecast = previsione, air = aria, selectedHour = 13)
     }
 
+    /** Lo stato di prova con neve in quattro giorni, a quote diverse (Sapporo). */
+    private fun conNeve(s: UiState): UiState {
+        val f = s.forecast!!
+        val cm = listOf(0.4, 0.0, 0.0, 1.4, 0.2, 0.0, 2.5, 0.0)
+        val giorni = f.days.mapIndexed { i, g -> g.copy(snowfallSum = cm[i]) }
+        val ore = f.allHours.map { h ->
+            val d = java.time.temporal.ChronoUnit.DAYS.between(oggi, h.time.toLocalDate()).toInt()
+            val nevica = cm.getOrElse(d) { 0.0 } > 0 && h.time.hour in 8..14
+            h.copy(snowfall = if (nevica) 0.3 else 0.0, precipitation = if (nevica) 0.4 else h.precipitation, freezingLevel = if (d == 4) 950.0 else 300.0, snowDepth = 12.0)
+        }
+        return s.copy(forecast = f.copy(days = giorni, allHours = ore, hours = ore.take(24)))
+    }
+
+    /** Lo stato di prova con trenta centimetri al suolo e nessuna nevicata (Cortina a fine inverno). */
+    private fun soloAlSuolo(s: UiState): UiState {
+        val f = s.forecast!!
+        val ore = f.allHours.map { it.copy(snowDepth = 30.0, freezingLevel = 2400.0) }
+        return s.copy(forecast = f.copy(allHours = ore, hours = ore.take(24), elevation = 1220.0))
+    }
+
     /** Disegna [contenuto] largo 411 dp, con il tetto [tetto], e ne restituisce l'altezza in dp. */
     private fun disegna(nome: String, contenuto: @Composable () -> Unit): Float {
         val attivita = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
@@ -173,6 +193,15 @@ class SchedeNelTettoRenderTest {
             "vento" to misura("vento") { SalaVentoScreen(state = s, palette = palette, movimento = false) },
             "mare" to misura("mare") { com.caelumweather.ui.sala.rooms.SalaMareScreen(state = s.copy(forcedMare = 110), palette = palette, movimento = false) },
             "uv" to misura("uv") { SalaUvScreen(state = s, palette = palette, onSelectHour = {}, movimento = false) },
+            // **La pioggia con la neve**: il caso di Sapporo (26 novembre 2026),
+            // che il test non vedeva e che sul telefono faceva scorrere la scheda
+            // (689 dp con la neve dentro). Adesso la pioggia ha solo il rimando,
+            // e la neve una scheda sua: quattro giorni a quote diverse, il caso
+            // piu' alto, con tre righe sotto ogni colonnina.
+            "pioggia-neve" to misura("pioggia-neve") { SalaPioggiaScreen(state = conNeve(s), palette = palette, onSelectHour = {}, onSelectDay = {}, movimento = false) },
+            "neve" to misura("neve") { com.caelumweather.ui.sala.rooms.SalaNeveScreen(state = conNeve(s), palette = palette) },
+            // Solo neve al suolo, nessuna nevicata in arrivo: la scheda corta.
+            "neve-al-suolo" to misura("neve-al-suolo") { com.caelumweather.ui.sala.rooms.SalaNeveScreen(state = soloAlSuolo(s), palette = palette) },
         )
         // **La riga della pioggia nei prossimi minuti** compare solo per oggi
         // e all'ora di adesso: qui la si misura da sola e la si somma al caso

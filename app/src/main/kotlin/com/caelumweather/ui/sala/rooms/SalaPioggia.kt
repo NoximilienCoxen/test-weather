@@ -36,12 +36,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.caelumweather.data.Afa
 import com.caelumweather.data.DayForecast
 import com.caelumweather.data.afaDi
-import com.caelumweather.data.serveLaNeve
 import kotlin.math.roundToInt
 import com.caelumweather.ui.UiState
 import com.caelumweather.ui.sala.CellaValore
@@ -70,6 +70,8 @@ fun SalaPioggiaScreen(
     /** Toccare una colonna della settimana cambia il giorno di tutta la galleria. */
     onSelectDay: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    /** Il rimando "Neve in arrivo" porta alla scheda della neve. */
+    onVaiAllaNeve: () -> Unit = {},
     /** Falso con le animazioni ridotte: niente vibrazioni sotto il dito. */
     movimento: Boolean = true,
 ) {
@@ -337,32 +339,55 @@ fun SalaPioggiaScreen(
 
         // ── I sette giorni ───────────────────────────────────────────────────
         val giorni = state.forecast?.days.orEmpty()
+        // **Il rimando alla neve**, quando la neve e' in arrivo: la neve ha una
+        // scheda sua, subito dopo questa (`SalaNeveScreen`). Sta sulla stessa
+        // riga dell'etichetta della settimana e non su una riga nuova: la
+        // scheda e' a tre punti dal tetto, e una riga in piu' la farebbe
+        // scorrere (CONTESTO §85).
+        val rimando = remember(state.forecast) { rimandoNeve(state.forecast) }
         if (giorni.size >= 3) {
-            Text(
-                text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
-                style = SalaType.sectionLabel,
-                color = palette.inkFaint,
-                modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = tr("LA SETTIMANA", "THE WEEK", "DIE WOCHE", "LA SEMAINE", "LA SEMANA"),
+                    style = SalaType.sectionLabel,
+                    color = palette.inkFaint,
+                )
+                if (rimando != null) {
+                    RimandoNeve(
+                        testo = rimando,
+                        palette = palette,
+                        onVai = onVaiAllaNeve,
+                        modifier = Modifier.weight(1f).padding(start = 12.dp),
+                    )
+                }
+            }
             SettimanaDellaPioggia(
                 giorni = giorni,
                 scelto = state.selectedDay,
                 palette = palette,
                 onVai = onSelectDay,
             )
-        }
-
-        // ── La neve, per chi sta in montagna ─────────────────────────────────
-        val prev = state.forecast
-        if (prev != null && serveLaNeve(prev)) {
-            SezioneNeve(
-                previsione = prev,
-                zeroTermicoOra = oraScelta?.freezingLevel,
-                unita = state.unit,
-                palette = palette,
-            )
+        } else if (rimando != null) {
+            RimandoNeve(testo = rimando, palette = palette, onVai = onVaiAllaNeve, modifier = Modifier.padding(top = 10.dp))
         }
     }
+}
+
+/** Il rimando di una riga alla scheda della neve: tocca e ci porta. */
+@Composable
+private fun RimandoNeve(testo: String, palette: SalaPalette, onVai: () -> Unit, modifier: Modifier = Modifier) {
+    Text(
+        text = "$testo ›",
+        style = SalaType.microLabel,
+        color = palette.accent,
+        textAlign = TextAlign.End,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier.clickable(onClickLabel = tr("apri La neve", "open Snow", "Schnee öffnen", "ouvrir La neige", "abrir La nieve"), onClick = onVai),
+    )
 }
 
 /**
