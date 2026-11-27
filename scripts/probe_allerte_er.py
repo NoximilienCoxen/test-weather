@@ -54,37 +54,13 @@ PAGINE = []
 
 # Indirizzi da provare comunque: alcuni li ho visti citati, altri sono
 # tentativi ragionevoli. Un 404 nell'indice e' una risposta anche lui.
+# Dopo i tre giri del 27 novembre (CONTESTO §85.1) restano i due servizi della
+# guida per gli sviluppatori: se cambiano forma, e' qui che si vede. Le pagine,
+# i dati dei comuni (1,7 MB) e i tentativi a vuoto non si chiedono piu': il
+# sito al secondo giro ha cominciato a rifiutare le connessioni.
 TENTATIVI = [
-    # Terzo giro: i servizi della guida per gli sviluppatori, con la data del
-    # caso di Fontevivo (26 novembre, Allerta 119/2026 con "vento"), e i dati
-    # dei comuni che il sito usa per "Cerca un comune".
-    ("doc-stato-26nov", SITO + "/o/get-stato-allerta?data=2026-11-26%2012:00"),
     ("doc-stato-adesso", SITO + "/o/get-stato-allerta"),
-    ("doc-cap-26nov", SITO + "/o/xmlcap?data=2026-11-26%2012:00"),
-    ("js-comuni-new", SITO + "/o/allerta-frontend-js/js/am.data.comuni-new.js?v=1.4"),
-    ("js-aree-idro-new", SITO + "/o/allerta-frontend-js/js/am.data.aree-idro-new.js?v=1.3"),
-    # Il feed RSS linkato dalla pagina delle allerte.
-    ("rss-allerte-bollettini", SITO + "/o/compila-allerta-portlet/feed?feed=allerte-bollettini"),
-    # Lo stato per zona trovato al primo giro, e lo stesso con una data: la
-    # risposta non dice a che giorno si riferisce.
-    ("api-stato-allerta-oggi", SITO + "/o/api/allerta/get-stato-allerta"),
-    ("api-stato-allerta-data", SITO + "/o/api/allerta/get-stato-allerta?data=2026-11-26"),
-    ("api-stato-allerta-domani", SITO + "/o/api/allerta/get-stato-allerta?giorno=domani"),
-    ("api-allerte", SITO + "/o/api/allerta/get-allerte"),
-    ("api-allerta-oggi", SITO + "/o/api/allerta/get-allerta-oggi"),
-    ("api-stato-allerta", SITO + "/o/api/allerta/get-stato-allerta"),
-    ("api-bollettini", SITO + "/o/api/allerta/get-bollettini"),
-    ("api-documenti", SITO + "/o/api/allerta/get-documenti"),
-    ("api-zone", SITO + "/o/api/allerta/get-zone"),
-    ("rss-allerte", SITO + "/rss/allerte"),
-    ("rss", SITO + "/rss"),
-    # Portale dei dati aperti della Regione (CKAN).
-    ("ckan-allerta", "https://dati.emilia-romagna.it/api/3/action/package_search?q=allerta&rows=20"),
-    ("ckan-zone", "https://dati.emilia-romagna.it/api/3/action/package_search?q=zone%20di%20allerta&rows=20"),
-    # Protezione Civile nazionale: i bollettini di criticita' per zona, in
-    # chiaro su GitHub. Non hanno il vento, ma hanno le zone.
-    ("dpc-repo", "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/contents/"),
-    ("dpc-avvisi-repo", "https://api.github.com/search/repositories?q=org:pcm-dpc"),
+    ("doc-cap-adesso", SITO + "/o/xmlcap"),
 ]
 
 PAROLE = re.compile(r"(/o/api/|\.json|geojson|/rss|\.xml|/cap|\.pdf|allert|bollettin|zone)", re.I)
@@ -157,7 +133,7 @@ def main():
 
     # Prima i tentativi fissi, poi quello che il sito stesso indica (al
     # massimo sessanta, i PDF solo per l'intestazione).
-    da_chiedere = list(TENTATIVI)[:5] + [(f"trovato-{i:02d}", u) for i, u in enumerate(unici[:0])]
+    da_chiedere = list(TENTATIVI)
     for nome, url in da_chiedere:
         stato, tipo, corpo = chiedi(url)
         if "pdf" in tipo.lower():

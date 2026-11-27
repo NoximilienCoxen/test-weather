@@ -9061,3 +9061,45 @@ dal sistema regionale. La sonda `scripts/probe_allerte_er.py` (passo "Le
 allerte regionali dell'Emilia-Romagna", in `ci-artifacts/api/allerte-er/`)
 guarda se Allerta Meteo Emilia-Romagna pubblica dati aperti per zona di allerta
 o solo PDF. Esito e proposta in §85.1.
+
+### 85.1 Allerta Meteo Emilia-Romagna: cosa pubblica (sonda del 27 novembre)
+
+Tre giri della sonda; i file grezzi del terzo sono in
+`ci-artifacts/api/allerte-er/` (giro del commit 0a18a697).
+
+- **Dati aperti per zona, non solo PDF.** La pagina `/sviluppatori` documenta:
+  - `GET /o/get-stato-allerta[?data=YYYY-MM-DD%20HH:mm]` (JSON): il documento
+    valido all'istante (di norma emesso verso le 11:45 per il giorno dopo):
+    `titolo`, `dataEmissione`, `dataInizio`, `dataFine`, `tendenza`,
+    `descrizionemeteo`, `link` al PDF, e una voce per sottozona (`A1`...`H2`)
+    con il colore di ogni fenomeno: `idraulica`, `idrogeologica`, `temporali`,
+    `vento`, `temperature_estreme`, `neve`, `ghiaccio_pioggia_gela`,
+    `stato_mare`, `mareggiate`. Valori `green|yellow|orange|red`, `null` dove
+    non si applica (il mare nelle zone interne). Le date sono nel formato Java
+    "Nov 26, 2026 12:00:00 AM", senza fuso (ora italiana).
+  - `GET /o/xmlcap[?data=...]`: lo stesso documento in CAP 1.2, un `<info>` per
+    sottozona (`<areaDesc>Emil-A1</areaDesc>`, **senza poligoni**), colori in
+    italiano (`VERDE`, `GIALLO`...).
+  - feed Atom `/o/compila-allerta-portlet/feed?feed=allerte-bollettini`.
+  - `/o/api/allerta/get-stato-allerta` (non documentato): solo i colori di
+    adesso per zona, in stringa ("vento:green,..."), senza date.
+- **Da coordinate a zona**: `/o/allerta-frontend-js/js/am.data.comuni-new.js`
+  e' un GeoJSON dei comuni (1,7 MB) con `SOTTOZONA` per comune: Fontevivo
+  (ISTAT 034016) e' **H2**. Servirebbe una tabella o dei poligoni semplificati
+  nell'APK (abbiamo gia' il punto nel poligono di `PoligonoCap`).
+- **Fontevivo il 26 novembre**: Allerta 119/2026 ("piene dei fiumi, frane e
+  piene dei corsi minori, vento e altri fenomeni"), vento **giallo solo in A1,
+  A2, C1, C2, E1** (burrasca moderata 62-74 km/h sui rilievi centro-orientali e
+  sul crinale). **H2 aveva vento verde**, e idrogeologica verde. Quindi anche la
+  fonte regionale non dava un'allerta vento per Fontevivo: la scheda di Google
+  riportava un'allerta regionale generica, non quella della zona.
+- **Licenza** (`/note-legali`): **CC BY-NC-SA 4.0**, anche per API e servizi
+  web: citare "Allerta Meteo Emilia-Romagna" con l'URL, **niente uso
+  commerciale**, condividere allo stesso modo le rielaborazioni (la tabella
+  comune -> zona lo sarebbe), non alterare loghi; raccomandato comunicare l'uso
+  ai contatti del sito. Loghi e marchi: tutti i diritti riservati.
+- **Affidabilita'**: al secondo giro, dopo una sessantina di richieste, il sito
+  ha rifiutato le connessioni (`Connection refused`), e alcune pagine vanno in
+  timeout a 20 s. Un lettore dovrebbe fare una richiesta per aggiornamento,
+  con tetto breve e ripiego silenzioso su MeteoAlarm.
+- La sonda, dopo questi giri, chiede solo `get-stato-allerta` e `xmlcap`.
