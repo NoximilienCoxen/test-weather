@@ -38,6 +38,10 @@ AGENTE = "Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)"
 SITO = "https://allertameteo.regione.emilia-romagna.it"
 
 PAGINE = [
+    # Secondo giro (27 novembre): la guida per gli sviluppatori e le note
+    # legali sono linkate dal pie' di pagina; vanno lette per prime.
+    ("sviluppatori", SITO + "/sviluppatori"),
+    ("note-legali", SITO + "/note-legali"),
     ("home", SITO + "/"),
     ("allerte-bollettini", SITO + "/allerte-e-bollettini"),
     ("allerte-bollettini-2", SITO + "/web/guest/allerte-e-bollettini"),
@@ -49,6 +53,13 @@ PAGINE = [
 # Indirizzi da provare comunque: alcuni li ho visti citati, altri sono
 # tentativi ragionevoli. Un 404 nell'indice e' una risposta anche lui.
 TENTATIVI = [
+    # Il feed RSS linkato dalla pagina delle allerte.
+    ("rss-allerte-bollettini", SITO + "/o/compila-allerta-portlet/feed?feed=allerte-bollettini"),
+    # Lo stato per zona trovato al primo giro, e lo stesso con una data: la
+    # risposta non dice a che giorno si riferisce.
+    ("api-stato-allerta-oggi", SITO + "/o/api/allerta/get-stato-allerta"),
+    ("api-stato-allerta-data", SITO + "/o/api/allerta/get-stato-allerta?data=2026-11-26"),
+    ("api-stato-allerta-domani", SITO + "/o/api/allerta/get-stato-allerta?giorno=domani"),
     ("api-allerte", SITO + "/o/api/allerta/get-allerte"),
     ("api-allerta-oggi", SITO + "/o/api/allerta/get-allerta-oggi"),
     ("api-stato-allerta", SITO + "/o/api/allerta/get-stato-allerta"),
@@ -125,6 +136,8 @@ def main():
     unici = []
     for u in trovati:
         u = u.split("#")[0]
+        if re.search(r"\.(css|png|svg|ico|jpg|gif|woff2?)(\?|$)", u, re.I):
+            continue
         if u not in visti and ("emilia-romagna" in u or "protezionecivile" in u):
             visti.add(u)
             unici.append(u)
